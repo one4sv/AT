@@ -1,0 +1,107 @@
+@use "./global.scss" as *;
+
+.redHabit {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 32vw;
+}
+.reviewHabit {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 1vh;
+}
+.backButton {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding: 1vh 1.5vw 1vh 0.5vw;
+    font-size: 20px;
+    border-radius: 6px;
+    flex: 1 ;
+    cursor: pointer;
+    &:hover {
+        background-color: $menuButtHover;
+    }
+}
+.habitWrapperIcon {
+    display: flex;
+    width: calc(32vw * 0.8);
+    height: 6vh;
+}
+.habitIconWrapper {
+    height: 100%;
+    width: 20%;
+    >svg {
+        height: 100%;
+        width: 100%;
+        color: $darkerAcsent;
+    }
+}
+.habitButts {
+    display: flex;
+    position: relative;
+    >div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1vh;
+        aspect-ratio: 1/1;
+        border-radius: 6px;
+        cursor: pointer;
+        >svg {
+            color: $borderHabit;
+            // padding: 1vh 1vw;
+            font-size: 30px;
+        }
+        &:hover {
+            background-color: $menuButtHover;
+            >.pinHabit {
+                color: $tc;
+            }    
+            >.delHabit {
+                color: #c40000;
+            }
+        }
+    }
+    >span {
+        position: absolute;
+        right: 5vw;
+        top: 1vh;
+        font-size: 18px;
+        color: $tc;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-in-out forwards, pulseBrightness 2s ease-in-out infinite;
+    }
+}
+.inpWrapperRedHabit {
+    width: 80%;
+    color: $borderHabit;
+    >label {
+        padding-inline-start: 0.5vw;
+    }
+    &:focus-within {
+        color: $acsentGreen
+    }
+}
+.redHabitSL {
+    @include selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, $borderWh, $tc, $bgc, 18px, 1vh, 1vw, 10%);
+    margin-bottom: 2vh;
+    >input {
+        @include input($tr, $tc, $tr, 4vh, 0, $tr);
+        border-bottom: 2px solid $borderHabit;
+        width: 100%;
+        cursor: pointer;
+        &:focus-visible {
+            border-bottom: 2px solid $acsentGreen;
+        }
+    }
+    &:focus-within {
+        >svg {
+            color: $acsentGreen;
+        }
+    }
+}

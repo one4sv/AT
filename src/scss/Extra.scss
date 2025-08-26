@@ -1,0 +1,39 @@
+@use "./global.scss" as *;
+
+.confirmDiv {
+    @include centerTopModal;
+    width: 100%;
+    height: 30vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 24px;
+    color: $tc;
+}
+.titleConfirm {
+    font-size: 48px;
+    position: absolute;
+    top: 1vh;
+    font-weight: 700;
+    min-height: 10vh;
+    text-align: center;
+    cursor: pointer;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.pageLoader {
+    left: 50%;
+    top: 25%;
+    position: fixed;
+}
+.loading {
+    height: 100%;
+}
+.blackout {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: #00000080;
+}

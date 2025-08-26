@@ -1,0 +1,26 @@
+@use "./global.scss" as *;
+@use "./habitThemes.scss";
+@use "./datepicker.scss";
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: $font;
+  scrollbar-width: thin;
+  scrollbar-color: $menuButtHover transparent;
+  overflow-x: hidden;
+}
+body {
+  background-color: $bgc;
+  margin: 0;
+  color: $tc;
+}
+#root {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+}
+.page-content {
+  width: 80vw;
+  position: absolute;
+  left: 20vw;
+}

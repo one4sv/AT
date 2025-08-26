@@ -1,0 +1,183 @@
+@use "./global.scss" as *;
+
+.accDiv {
+    width: 60%;
+    margin: 0 auto;
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.accInfo {
+    display: flex;
+    flex-direction: row;
+    margin-top: 1vh;
+    position: relative;
+}
+.accPic {
+    left: 0.5vw;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    height: 10vh;
+    background-color: $mc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    > svg {
+        height: 80%;
+        width: 80%;
+    }
+}
+.accInfoNames {
+    flex: 1;
+    margin-left: 0.5vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5vh;
+    >div {
+        color: $borderHabit;
+        >input {
+            background-color: $tr;
+            outline: none;
+            border: none;
+        }
+    }
+}
+.nameInput {
+    font-size: 30px;
+    color: $tc !important;
+}
+.nickInput {
+    color: $borderHabit;
+    font-size: 18px;
+}
+.accInfoWrapper {
+    display: flex;
+    align-items: center;
+}
+.accInfoRedButt {
+    right: 0;
+    height: 4vh;
+    padding: 1vh 1vw;
+    color: $borderWh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    background-color: $mc;
+    cursor: pointer;
+    &:hover {
+        background-color: $menuButtHover;
+        color: $tc;
+    }
+}
+
+.accExtraInfoWrapper {
+    margin-top: 2vh;
+    display: flex;
+    flex-direction: column;
+    color: $borderHabit;
+    >label {
+        width: 100%;
+        padding-left: 1vw;
+    }
+    &:focus-within {
+        color: $acsentGreen;
+    }
+}
+.extraInfoInput {
+    height: 2rem;
+    scrollbar-width: none;
+    resize: none;
+    background-color: $tr;
+    border: none;
+    color: $tc;
+    font-size: 18px;
+    outline: none;
+    &:focus-visible {
+        border-bottom: 1px solid $acsentGreen;
+    }
+}
+.accExtraInfo {
+    display: flex;
+    >div {
+        flex: 1;
+    }
+}
+
+.accContentSelector {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1vh;
+}
+.accContentSelect {
+    display: flex;
+    height: 5vh;
+}
+.accContentButt {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: $borderWh;
+    font-size: 20px;
+    border-radius: 12px;
+    &:hover {
+        background-color: $menuButtHover;
+        color: $tc;
+    }
+    &.active {
+        border-radius: 12px 12px 0 0;
+    }
+    &.habitsActive {
+        color: $acsentGreen;
+    }    
+    &.sendedActive {
+        color: $tc;
+    }
+    &.postsActive {
+        color: #a508e4;
+    }
+}
+.accContentLine {
+    height: 3px;
+    >div {
+        transition: left 0.2s ease;
+        position: relative;
+        height: 100%;
+        width: 33%;
+    }
+}
+.sendedLine{
+    left: 0;
+    background-color: $tc;
+}
+.habitsLine{
+    left: 33.5%;
+    background-color: $acsentGreen;
+}
+.postsLine{
+    left: 67%;
+    background-color: #a508e4;
+}
+.accHabitsInfo {
+    display: flex;
+}
+.accHabitsList {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    >div {
+        width: 50%;
+    }
+}
+.accNoPrivateAccess {
+    margin-top: 2vh;
+    width: 100%;
+    font-size: 24px;
+    text-align: center;
+    color: $borderHabit;
+}

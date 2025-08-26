@@ -1,0 +1,47 @@
+@use "../global" as *;
+
+.persFeedHabitsDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.persFeedHabits {
+    width: 20vw;
+    font-size: 18px;
+    background-color: $bgc;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    cursor: pointer;
+    > .persHabitOrder {
+        padding: 1vh 1vw;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        &:hover {
+            background-color: $menuButtHover;
+            padding: 1.5vh 1vw;
+        }
+        >.persSpan {
+            color: $borderWh;
+        }
+    }
+    >.active {
+        padding: 1.5vh 1vw;
+        background-color: $acsentGreen !important;
+        >.persSpan {
+            color: $tc;
+        }
+    }
+}
+.persSL {
+    @include selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, $borderWh, $tc, $bgc, 18px, 0.8vh, 0.8vw, 5%);
+    margin-bottom: 2vh;
+    >input {
+        @include input($mc, $tc, $borderWh, 4vh, 8px, $tc);
+        width: 20vw;
+        cursor: pointer;
+    }
+}

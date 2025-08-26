@@ -1,0 +1,51 @@
+@use "./global.scss" as *;
+
+// Calendar
+.react-datepicker__month-container {
+  background-color: $bgc;
+  border: 1px solid $borderWh;
+  border-radius: 8px;
+  font-family: inherit;
+  color: $tc;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.react-datepicker__header {
+  background-color: $bgc !important;
+  border-bottom: 1px solid $borderWh;
+}
+
+.react-datepicker__current-month,
+.react-datepicker-time__header,
+.react-datepicker-year-header,
+.react-datepicker__day-name {
+  color: $tc !important;
+}
+.react-datepicker__day {
+    box-sizing: border-box;
+    border: 1px solid transparent;
+  color: $tc !important;
+  &:hover {
+    background-color: $menuButtHover !important;
+    border: 1px solid $borderWh !important;
+    border-radius: 6px;
+  }
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #27c827 !important;
+  color: white;
+  border-radius: 6px;
+}
+
+.react-datepicker__day--today {
+  border: 1px solid #a8e63f;
+  border-radius: 6px;
+}
+.react-datepicker__day--outside-month {
+    color: $borderWh !important;
+}
+.react-datepicker__day--disabled {
+    color: $menuButtHover !important;
+}

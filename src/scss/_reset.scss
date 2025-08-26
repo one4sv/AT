@@ -1,0 +1,14 @@
+@use "./variables.scss" as *;
+* {
+    box-sizing: border-box;
+    font-family: $font;
+}
+input[type=number] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none; /* Chrome, Safari, Edge */
+  margin: 0;
+}

@@ -1,0 +1,8 @@
+@use "./variables.scss" as *;
+button {
+    cursor: pointer;
+}
+a {
+    color: $tc;
+    text-decoration: none;
+}

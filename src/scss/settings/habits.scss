@@ -1,0 +1,61 @@
+@use "../global" as *;
+
+.settingSpan {
+    font-size: 20px;
+    margin-bottom: 2vh;
+}
+.settingsOrder {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.orderShown {
+    width: 15vw;
+    background-color: $bgc;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    > .orderSetDiv {
+        padding: 1vh 1vw;
+        cursor: grab;
+        &:hover {
+            background-color: $menuButtHover;
+            padding: 1.5vh 1vw;
+        }
+        &:active {
+            cursor: grabbing;
+            background-color: $menuButtHover;
+        }
+        &.dragging {
+            opacity: 1;
+            transform: scale(1.05);
+            background-color: lighten($menuButtHover, 10%);
+        }
+
+        &.drag-over {
+            border: 2px dashed $menuButtHover;
+            background-color: lighten($menuButtHover, 20%);
+        }
+    }
+}
+.orderSpan {
+    width: 20vw;
+    margin: 1vh 0;
+    text-align: center;
+    color: $borderWh;
+}
+
+.inpAmountWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 2vh;
+    width: 10vw;
+    justify-content: space-between;
+    > input {
+        @include input(transparent, $tc, $borderHabit, 4vh, 8px, $tc);
+        width: 3vw;
+    }
+}

@@ -1,0 +1,11 @@
+@keyframes pulseBrightness {
+	0% {
+		filter: brightness(0.25);
+	}
+	50% {
+		filter: brightness(1);
+	}
+	100% {
+		filter: brightness(0.25);
+	}
+}

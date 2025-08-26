@@ -1,0 +1,244 @@
+@use "../global" as *;
+
+.sideMenu {
+    padding: 1vh 0 0;
+    position: fixed;
+    width: 20vw;
+    height: 100%;
+    background-color: $mc;
+    display: flex;
+    flex-direction: column;
+}
+.SMsearchDiv {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 4vh;
+}
+.SMmenuWrapper {
+    height: 4vh;
+    aspect-ratio: 1/1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.SMmenuButt {
+    height: 100%;
+    aspect-ratio: 1/1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $borderHabit;
+    border-radius: 50%;
+    cursor: pointer;
+    &:hover {
+        color: $borderWh;
+        background-color: $menuButtHover;
+    }
+    >svg {
+        position: absolute;
+        aspect-ratio: 1/1;
+        height: 5vh;
+        width: 2vw;
+    }
+}
+.SMmenuButt.active {
+    >svg {
+        color: $tc;
+        > circle:nth-of-type(2) {
+            color: $acsentGreen;
+        }
+    }
+}
+.SMprofileMenu {
+    top: 100%;
+    position: absolute;
+    background-color: $bgc;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    width: 8vw;
+    overflow: hidden;
+    border-radius: 12px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-25%);
+}
+.SMprofileButt {
+    flex: 1;
+    padding: 1vh 0.5vw;
+    cursor: pointer;
+    &:hover {
+        background-color: $menuButtHover;
+    }
+    &.exit {
+        display: flex;
+        align-items: center;
+        >svg {
+            height: 1rem;
+        }
+        &:hover {
+            color: $notValid;
+        }
+    }
+}
+.SMprofileMenu.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+}
+.SMsearch {
+    position: relative;
+    width: 80%;
+    color:$borderHabit;
+    &:hover {
+        color: $borderWh;
+        >input {
+            border: 1px solid $borderWh;
+        }
+    }
+    >input {
+        @include input($bgc, $tc, $borderHabit, 4vh, 12px, $acsentGreen);
+        font-size: 18px;
+        width:100%;
+        padding-inline-start: 0.5vw;
+    }
+    >svg {
+        @include svgInInput(4vh, 0,0.5vw);
+    }
+    &:focus-within {
+        color: $acsentGreen;
+    }
+}
+.SMtabs {
+    margin-top: 0.5vh;
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    width: 100%;
+    justify-content: space-around;
+}
+.SMtab {
+    flex: 4;
+    text-align: center;
+    border-radius: 8px;
+    padding: 0.8vh 0;
+    color: $borderHabit;
+    cursor: pointer;
+    &:hover {
+        color: $borderWh;
+        background-color: $menuButtHover;
+    }
+}
+.SMtab.active {
+    border-radius: 8px 8px 0 0;
+    color: $tc;
+}
+.SMtab.active.habits {
+    border-radius: 8px 8px 0 0;
+    color: $acsentGreen;
+}
+.SMline {
+    position: relative;
+    left: 0;
+    width: 50%;
+    height: 2px;
+    transition: left 0.2s ease;
+    background-color: white;
+}
+.SMline.habits {
+    background-color: $acsentGreen;
+    left: 50%;
+}
+.ListWrapper {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.slider {
+    display: flex;
+    width: 200%;
+    transition: transform 0.3s ease-in-out;
+    height: 100%;
+}
+
+.slide {
+    width: 50%;
+    height: 100%;
+    overflow-y:auto;
+    scrollbar-width: thin;
+    scrollbar-color: $menuButtHover $tr;
+    scrollbar-gutter: stable both-edges;
+}
+
+.SMlist {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: max-height 0.35s ease;
+    padding-bottom: 6vh;
+}
+.SMnavDiv {
+    position: absolute;
+    width: 100%;
+    height: 8vh;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
+.SMnav {
+    pointer-events: all;
+    display: flex;
+    background-color: $mc;
+    width: 60%;
+    height: 5vh;
+    border-radius: 20px;
+    overflow: hidden;
+}
+.SMnavButt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    color: $borderWh;
+    cursor: pointer;
+    &:hover {
+        background-color: $menuButtHover;
+        color: $tc;
+    }
+    >svg {
+        width: 40%;
+        height: 100%;
+    }
+}
+.plusMenu {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-color: $bgc;
+    border-radius: 12px;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    &.active {
+        transform: translateY(-100%);
+        opacity: 1;
+        pointer-events: all;
+    }
+}
+.plusMenuButt {
+    cursor: pointer;
+    padding: 1vh 1vw;
+    color: $borderWh;
+    &:hover {
+        color: $tc;
+        background-color: $menuButtHover;
+    }
+}

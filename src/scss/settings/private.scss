@@ -1,0 +1,31 @@
+@use "../global" as *;
+
+.privateShowInfo {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 1vw;
+    align-items: baseline;
+    justify-content: center;
+    height: fit-content;
+    width: 60%;
+    >label {
+        height: 3vh;
+    }
+}
+.privateSLWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    width: 100%;
+}
+.privateSL {
+    @include selectList(10vw, 3vh, 9%, 0.3vw, 0.4vh, $borderWh, $tc, $bgc, 18px, 0.8vh, 0.8vw, 5%);
+    // margin-bottom: 2vh;
+    >input {
+        @include input($mc, $tc, $borderWh, 3.5vh, 8px, $tc);
+        width: 10vw;
+        cursor: pointer;
+    }
+}

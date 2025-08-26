@@ -1,0 +1,220 @@
+@use "./global.scss" as *;
+
+.addHabitDiv {
+    @include centerTopModal;
+    width: 28vw;
+    min-height: auto;
+    // max-height: 80vh;
+    padding: 3vh 0 4vh;
+    background-color: $mc;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 11;
+}
+.titleAddHabit {
+    font-size: 32px;
+    margin: 1vh 0 1vh;
+}
+.addHabitWrapper {
+    margin-top: 1vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 80%;
+    >label {
+        color: $borderHabit;
+        width: 100%;
+        padding-left: 0.5vw;
+    }
+    &:focus-within {
+        >label {
+            color: $acsentGreen;
+        }
+    }
+    >span {
+        position: absolute;
+        right: 0;
+        bottom: -2vh;
+        font-size: 16px;
+        color: $borderWh;
+    }
+}
+.addHabitTimeWrapper {
+    display: flex;
+    margin-top: 1vh;
+    width: 80%;
+    justify-content: space-between;
+    >.addHabitWrapper {
+        width: 48%;
+    }
+}
+.addHabitInput {
+    background-color: $tr;
+    outline: none;
+    border: none;
+    border-bottom: 2px solid $borderHabit;
+    padding-bottom: 0.5vh;
+    color: $tc;
+    font-size: 20px;
+    width: 100%;
+    padding-inline-start: 0.25vw;
+    resize: none;
+    overflow-y: hidden;
+    &:focus-visible {
+        border-bottom: 2px solid $acsentGreen;
+
+    }
+}
+.tegSelector {
+    display: flex;
+    margin-top: 0.5vh;
+}
+.addTeg {
+    display: flex;
+    align-items: center;
+    color: $borderHabit;
+    background-color: $bgc;
+    padding: 0.5vh 0.5vw;
+    gap: 0.3rem;
+    border-radius: 6px;
+    border: 1px solid $borderWh;
+    outline: none;
+    &:hover {
+        color: $tc;
+        cursor: pointer;
+    }
+}
+.tagList {
+    opacity: 0;
+    top: 7vh;
+    position: absolute;
+    pointer-events: none;
+    background-color: $bgc;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    border-radius: 6px;
+    max-height: 250px;
+    overflow-y: scroll;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    z-index: 12;
+    width: 100%;
+    max-height: 20vh;
+    scrollbar-width: thin;
+    &.active {
+        pointer-events: all;
+        opacity: 1;
+    }
+}
+.tag {
+    display: flex;
+    align-items: center;
+    color: $borderHabit;
+    background-color: $bgc;
+    padding: 0.5vh 0.5vw;
+    gap: 0.3rem;
+    border-radius: 6px;
+    border: 1px solid $borderWh;
+    white-space: nowrap;    
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 3.5vh;
+    &:hover {
+        color: $tc;
+        cursor: pointer;
+    }
+    svg {
+        flex-shrink: 0;
+    }
+    &.active {
+        border: 1px solid $acsentGreen;
+        color: $acsentGreen;
+    }
+}
+
+.addHabbitCheckBox {
+    margin: 1vh 0;
+    color: $borderHabit;
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    >svg {
+        color: $borderHabit;
+        margin-right: 0.2vw;
+        width: 22px;
+        height: 22px;
+    }
+    >.active {
+        color: $acsentGreen;
+    }
+}
+.inpWrapperAddHabit {
+    color: $borderHabit;
+    >label {
+        padding-inline-start: 0.5vw;
+    }
+    &:focus-within {
+        color: $acsentGreen
+    }
+}
+.addHabitSL {
+    @include selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, $borderWh, $tc, $bgc, 18px, 1vh, 1vw, 10%);
+    margin-bottom: 2vh;
+    >input {
+        @include input($tr, $tc, $tr, 4vh, 0, $tr);
+        border-bottom: 2px solid $borderHabit;
+        width: 22vw;
+        cursor: pointer;
+        &:focus-visible {
+            border-bottom: 2px solid $acsentGreen;
+        }
+    }
+    &:focus-within {
+        >svg {
+            color: $acsentGreen;
+        }
+    }
+}
+.addHabitGoal {
+    @include longButt(80%, 5vh, 0, 0, $tr, $borderHabit, $tr, $menuButtHover);
+    margin-top: 2vh;
+    font-size: 20px;
+    &:hover {
+        color: $tc;
+    }
+}
+.addHabitSave {
+    @include longButt(80%, 5vh, 0, 0, $acsentGreen, $tc, $tr, $darkerAcsent);
+    margin-top: 1vh;
+    font-size: 20px;
+}
+.dayChanger {
+    position: relative;
+    width: 70%;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2vh;
+    >button {
+        flex: 1;
+        border-radius: 6px;
+        outline: none;
+        border: 1px solid black;
+        background-color: $bgc;
+        color: $borderWh;
+        aspect-ratio: 1/1;
+        &:hover {
+            background-color: $menuButtHover;
+            color: $tc;
+        }
+    }
+    >button.active {
+        background-color: $darkerAcsent;
+        color: $tc;
+        &:hover {
+            background-color: $acsentGreen;
+            color: $tc;
+        }
+    } 
+}

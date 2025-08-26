@@ -1,0 +1,180 @@
+@use "./_variables.scss" as *;
+
+@mixin input($bg, $c, $bor, $h, $br, $bh) {
+    background-color: $bg;
+    border: 1px solid $bor;
+    color: $c;
+    font-size: 16px;
+    outline: none;
+    height: $h;
+    border-radius: $br;
+
+    &:focus-visible {
+        border: 1px solid $bh;
+    }
+}
+@mixin inputGlow($line, $lineGlow, $focusLine, $focusGlow) {
+    &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 2px;
+        background-color: $line;
+        border-radius: 4px;
+        box-shadow: 0 0 12px $lineGlow;
+        opacity: 0.4;
+        transition: all 0.3s ease;
+        z-index: 1;
+    }
+
+    input:focus + &::after,
+    &:focus-within::after {
+        height: 3px;
+        opacity: 1;
+        background-color: $focusLine;
+        box-shadow: 0 0 20px $focusGlow;
+    }
+}
+@mixin longButt($w, $h, $padd-h, $padd-w, $bg, $c, $bord, $hov: null) {
+  width: $w;
+  height: $h;
+  padding: $padd-h $padd-w;
+  background-color: $bg;
+  color: $c;
+  border-radius: 8px;
+  font-size: 16px;
+  border: 1px solid $bord;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    @if $hov != null {
+      background-color: $hov;
+    } @else {
+      background-color: darken($bg, 10%);
+    }
+  }
+}
+
+@mixin gradButt($w, $h, $padd-h, $padd-w, $grad, $gradH, $c, $shad, $bord) {
+    width: $w;
+    height: $h;
+    padding: $padd-h $padd-w;
+    background: linear-gradient($grad);
+    color: $c;
+    border-radius: 8px;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.3s ease, box-shadow 0.1s ease;
+
+    &:hover {
+        background: linear-gradient$gradH;
+        box-shadow: 0 0 $shad;
+    }
+}
+@mixin centerTopModal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+}
+@mixin centerModal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+@mixin selectList($w, $h, $wI, $r, $t, $c, $ac, $bg, $fs, $ph, $pw, $tY) {
+    position: relative;
+    width:$w;
+    height:$h;
+    cursor: pointer;
+    >svg {
+        position: absolute;
+        width: $wI;
+        right:$r;
+        top: $t;
+        aspect-ratio:1/1;
+        color: $c;
+        pointer-events: none;
+        transition: rotate 0.3 ease;
+    }
+    >input {
+        padding-inline-start: 0.4vw;
+        &:focus-visible svg {
+            color: $ac;
+        }
+    }
+    >div {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        width: $w;
+        margin: 0 auto;
+        background-color: $bg;
+        border-radius: 12px;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(0);
+        z-index: 12;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        pointer-events: none;
+        &.active {
+            opacity: 1;
+            transform: translateY($tY);
+            pointer-events: auto;
+        }
+        > div {
+            font-size: $fs;
+            padding: $ph $pw;
+            color: $c;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            &:hover {
+                background-color: $menuButtHover;
+                color: $ac;
+            }
+        }
+    }
+}
+@mixin svgInInput($h, $t, $r) {
+    position: absolute;
+    aspect-ratio: 1/1;
+    height: $h;
+    right: $r;
+    top: $t;
+}
+
+@mixin themeHabit($br, $bg, $hover, $cPer, $shad, $cSvg, $cHn, $bH, $cShad, $HovHN, $HovPer) {
+    border: 1px solid $br;
+    background-color: $bg;
+    &:hover {
+        background-color: $hover;
+        // box-shadow: 0 0 $shad $cShad;
+        border: 1px solid $bH;
+        > .habitInfo {
+            > .habitName {
+                color: $HovHN
+            }
+            > .habitPer {
+                color: $HovPer
+            }
+        }
+    }
+    > .habitInfo {
+        > .habitName {
+            color: $cHn;
+        }
+        > .habitPer {
+            color: $cPer;
+        }
+        > .pinnedHabitSign {
+            color: $cSvg;
+        }
+    }
+}

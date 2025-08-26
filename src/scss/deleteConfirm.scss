@@ -1,0 +1,46 @@
+@use "./global" as *;
+
+.deleteDiv {
+    @include centerModal;
+    width: 20vw;
+    height: 20vh;
+    display: flex;
+    flex-direction: column;
+    background-color: $mc;
+    border-radius: 12px;
+    padding: 2vh 2vw;
+}
+.deleteSpan {
+    font-size: 24px;
+    text-align: center;
+}
+.deleteButts {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 4vh;
+    >button {
+        padding: 1vh 1vw;
+        border-radius: 8px;
+        outline: none;
+        font-size: 20px;
+    }
+}
+.deleteCancel {
+    background-color: $tr;
+    border: none;
+    color: $tc;
+    &:hover {
+        background-color: $menuButtHover;
+        color: $acsentGreen;
+    }
+}
+.deleteConfirm {
+    background-color: $tc;
+    border: 1px solid black;
+    color: black;
+    &:hover {
+        color: #a10f0f;
+        background-color: #e9e9e9;
+    }
+}

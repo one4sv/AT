@@ -1,0 +1,72 @@
+@use "./global.scss" as *;
+
+.feedCentral {
+    width: 40vw;
+    min-height: 100vh;
+    background-color: $tr;
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.feedNothing {
+    position: relative;
+    top: 25vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: lighten($borderWh, 20%);
+    font-size: 28px;
+    > span {
+        margin-bottom: 1vh;
+    }
+
+
+}
+.feedNothingTitle {
+    font-size: 36px !important;
+    margin-bottom: 3vh !important;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.feedNothingAdvices {
+    font-size: 22px;
+    display: flex;
+    flex-direction: column;
+    > span {
+        color: $borderWh;
+        margin-top: 1vh;
+        margin-bottom: 1vh;
+        > a {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    } 
+}
+.inpfeedNothingWrapper {
+    position: relative;
+    margin: 1vh auto;
+    width: 100%;
+    > input {
+        position: relative;
+        @include input($mc, $tc, $borderWh, 4vh, 8px, $tc);
+        margin: 0;
+        width: 100%;
+    }
+    >svg {
+        position: absolute;
+        width: 5%;
+        aspect-ratio: 1/1;
+        cursor: pointer;
+        top: 0.6vh;
+        right: 0vw;
+        z-index: 2;
+        color: $borderWh;
+        &:hover {
+            color: $tc;
+        }
+    }
+}

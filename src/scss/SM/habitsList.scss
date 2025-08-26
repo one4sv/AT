@@ -1,0 +1,134 @@
+@use "../global.scss" as *;
+
+.addHabitButt {
+    position: fixed;
+    background-color: $acsentGreen;
+    height: 6vh;
+    aspect-ratio: 1/1;
+    left: 16vw;
+    bottom: 1vh;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    cursor: pointer;
+    >svg {
+        height: 40px;
+        width: 40px;
+    }
+    &:hover {
+        background-color: darken($acsentGreen, 5%);
+    }
+}
+.habitsWrapperStats {
+    width: 100%;
+}
+.habitsOpen {
+    margin-top: 1vh;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding: 1vh 1vw;
+    align-items: center;
+    color: $borderHabit;
+    border-radius: 12px;
+    font-size: 18px;
+    height: 4vh;
+    cursor: pointer;
+    >svg {
+        transition: rotate 0.2s ease;
+    }
+    &:hover {
+        background-color: $menuButtHover;
+        color: $tc;
+    }
+}
+.orderWrapper {
+    // margin-top: 1vh;
+    user-select: none;
+    >span {
+        color: $borderHabit;
+        display: flex;
+        align-items: center;
+        padding-inline-start: 1vw;
+        cursor: pointer;
+        >svg {
+            transition: rotate 0.2s ease;
+        } 
+    }
+}
+.habitsContent {
+    position: relative;
+    width: 100%;
+    max-height: 85vh;
+    color: $borderHabit;
+}
+.habitsWrapper {
+    width: 100%;
+}
+.orderDiv {
+    width: 100%;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+}
+.orderName {
+    display: flex;
+    font-size: 18px;
+    width: 100%;
+    color: $borderHabit;
+    margin-bottom: 1vh;
+    >hr {
+        margin-left: 0.5vw;
+        flex: 1;
+        height: 1px;
+        border: 1px solid $borderHabit;
+    }
+}
+.habit {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    margin: 0.5vh auto 0;
+    border-radius: 12px;
+    padding: 1vh 0.5vw 1vh;
+    position: relative;
+    cursor: pointer;
+    gap: 0.5vw;
+    &:hover {
+        color: $tc;
+    }
+}
+.habitIcon {
+    flex: 1;
+    >svg {
+        height: 100%;
+        width: 100%;
+    }
+}
+.habitInfo {
+    flex: 8;
+}
+.habitPer {
+    position: relative;
+    margin-top: 1vh;
+    height: 1.2rem;
+}
+.moreHabits {
+    color: $borderHabit;
+}
+.pinnedHabitSign {
+    position: absolute;
+    top: 1vh;
+    right: 0.5vw;
+    fill: currentColor;
+}
+.habit.active {
+    background-color: $acsentGreen;
+    .habitPer {
+        color: $tc !important;
+    }
+    .pinnedHabitSign {
+        color: $tc;
+    }
+}

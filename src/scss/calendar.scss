@@ -1,0 +1,159 @@
+@use "./global.scss" as *;
+
+.calendarDiv {
+    // background-color: $mc;
+    width: fit-content;
+    padding: 1vh 1vw;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.DateChanger {
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.CalendarDateChanger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 9vw;
+}
+.selectedDate {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: pointer;
+    width: auto;
+    height: 5vh;
+    padding: 1vh 1vw;
+    z-index: 2;
+    > svg {
+        color: $borderHabit;
+    }
+    &:hover {
+        background-color: $menuButtHover;
+        > svg {
+            color: $tc;
+        }
+    }
+}
+.monthsList {
+    position: absolute;
+    display: grid;
+    top: 2vh;
+    grid-template-columns: repeat(3,1fr);
+    gap: 0.5vh;
+    width: fit-content;
+    padding: 0.5vh 0.2vw;
+    border-radius: 8px;
+    border: 1px solid $borderHabit;
+    opacity: 0;
+    transform: translateY(10%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    overflow: hidden;
+    background-color: $bgc;
+    &.active {
+        opacity: 1;
+        transform: translateY(20%);
+        pointer-events: auto;
+    }
+}
+
+.monthListElem {
+    aspect-ratio: 1/1;
+    height: 5vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    cursor: pointer;
+    &:hover {
+        background-color: $menuButtHover;
+    }
+    &.active {
+        background-color: $borderHabit;
+    }
+}
+.yearsList {
+    position: absolute;
+    display: flex;
+    top: 2vh;
+    flex-direction: column;
+    width: 100%;
+    padding: 0.5vh 0.2vw;
+    border-radius: 8px;
+    border: 1px solid $borderHabit;
+    opacity: 0;
+    transition: opacity 0.3s ease, top 0.3s ease;
+    pointer-events: none;
+    overflow: hidden;
+    background-color: $bgc;
+    &.active {
+        opacity: 1;
+        top: 7vh;
+        pointer-events: auto;
+    }
+}
+.yearListElem {
+    font-size: 18px;
+    height: 3vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    &:hover {
+        background-color: $menuButtHover;
+    }
+    &.active {
+        background-color: $borderHabit;
+    }
+}
+.calendarMain {
+    margin-top: 2vh;
+    width: 20vw;
+}
+.weekPattern {
+    display: flex;
+    gap: 0.5vw;
+    margin-bottom: 1vh;
+}
+.weekDays {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1;
+    flex: 1;
+    border-radius: 6px;
+    background-color: $menuButtHover;
+}
+.calendarDays {
+    display: grid;
+    grid-template-columns: repeat(7,9fr);
+    gap: 0.5vw;
+}
+.calDay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1;
+    flex: 1;
+    border-radius: 6px;
+    cursor: pointer;
+    &:hover {
+        background-color: $menuButtHover;
+    }
+    &.prevDays {
+        color: $borderHabit;
+    }
+    &.postDays {
+        color: $borderHabit;
+    }
+}

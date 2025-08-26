@@ -1,0 +1,128 @@
+@use "./global.scss" as *;
+@use "./settings/pers.scss";
+@use "./settings/private.scss";
+@use "./settings/habits.scss";
+
+.settingsDiv {
+    height: 80vh;
+    width: 60vw;
+    @include centerModal;
+    background-color: $mc;
+    display: flex;
+    flex-direction: row;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.settingsSideMenu {
+    position: relative;
+    height: 100%;
+    flex: 0 0 20%;
+    border-right: 1px solid black;
+    > div {
+        padding: 1vh 1vw;
+        font-size: 18px;
+        position: relative;
+        color: $borderWh;
+        cursor: pointer;
+        &:hover{
+            background-color: $menuButtHover;
+            color: $tc;
+        }
+    }
+    > .active {
+        background-color: $acsentGreen !important;
+        color: $tc;
+    }
+}
+.search {
+    cursor: text !important;
+    border-bottom: 1px solid black;
+    >input {
+        @include input(transparent, $tc, transparent, 100%, 0, 0 );
+        width:80%;
+    }
+    > svg {
+        @include svgInInput(100%, 0, 1vw);
+        cursor: text;
+    }
+}
+.settingsMainWrapper {
+    height: 100%;
+    flex: 1;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+.settingsMainWrapper::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+.settingsMain {
+    height: 100%;
+    width: 100%;
+}
+.tab {
+    min-height: 100%;
+    position: relative;
+    width: 100%;
+    padding: 2vh 2vw;
+    display: flex;
+    flex-direction: column;
+}
+.spanMain {
+    font-size: 24px;
+    margin-bottom: 2vh;
+}
+.spanSave {
+    position: absolute;
+    right: 3vw;
+    font-size: 18px;
+    color: $tc;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in-out forwards, pulseBrightness 2s ease-in-out infinite;
+}
+.spanSave.fade-out {
+    animation: fadeOut 0.5s ease-in-out forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+@keyframes pulseBrightness {
+    0%, 100% { filter: brightness(100%); }
+    50% { filter: brightness(150%); }
+}
+.inputWrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2vh;
+    >input {
+        @include input($mc, $tc, $borderHabit, 4vh, 8px, $tc);
+        font-size: 20px;
+        z-index: 13;
+        transition: border 0.2s ease-in;
+    }
+}
+.inputNotValid {
+    border-color: $notValid !important;
+}
+.notValidText {
+    top: 0;
+    z-index: 12;
+    position: absolute;
+    color: $notValid;
+    margin-top: 0.5vh;
+    font-size: 18px;
+    transition: top 0.2s ease-in;
+}
+// Привычки
+
+
+// Персонализация
+
+
