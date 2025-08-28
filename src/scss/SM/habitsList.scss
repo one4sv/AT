@@ -1,26 +1,5 @@
 @use "../global.scss" as *;
 
-.addHabitButt {
-    position: fixed;
-    background-color: $acsentGreen;
-    height: 6vh;
-    aspect-ratio: 1/1;
-    left: 16vw;
-    bottom: 1vh;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    cursor: pointer;
-    >svg {
-        height: 40px;
-        width: 40px;
-    }
-    &:hover {
-        background-color: darken($acsentGreen, 5%);
-    }
-}
 .habitsWrapperStats {
     width: 100%;
 }
@@ -31,7 +10,7 @@
     flex-direction: row;
     padding: 1vh 1vw;
     align-items: center;
-    color: $borderHabit;
+    color: var(--borderHabit);
     border-radius: 12px;
     font-size: 18px;
     height: 4vh;
@@ -40,15 +19,15 @@
         transition: rotate 0.2s ease;
     }
     &:hover {
-        background-color: $menuButtHover;
-        color: $tc;
+        background-color: var(--menuButtHover);
+        color: var(--tc);
     }
 }
 .orderWrapper {
     // margin-top: 1vh;
     user-select: none;
     >span {
-        color: $borderHabit;
+        color: var(--borderHabit);
         display: flex;
         align-items: center;
         padding-inline-start: 1vw;
@@ -62,7 +41,7 @@
     position: relative;
     width: 100%;
     max-height: 85vh;
-    color: $borderHabit;
+    color: var(--borderHabit);
 }
 .habitsWrapper {
     width: 100%;
@@ -76,13 +55,13 @@
     display: flex;
     font-size: 18px;
     width: 100%;
-    color: $borderHabit;
+    color: var(--borderHabit);
     margin-bottom: 1vh;
     >hr {
         margin-left: 0.5vw;
         flex: 1;
         height: 1px;
-        border: 1px solid $borderHabit;
+        border: 1px solid var(--borderHabit);
     }
 }
 .habit {
@@ -96,7 +75,7 @@
     cursor: pointer;
     gap: 0.5vw;
     &:hover {
-        color: $tc;
+        color: var(--tc);
     }
 }
 .habitIcon {
@@ -115,7 +94,7 @@
     height: 1.2rem;
 }
 .moreHabits {
-    color: $borderHabit;
+    color: var(--borderHabit);
 }
 .pinnedHabitSign {
     position: absolute;
@@ -124,11 +103,11 @@
     fill: currentColor;
 }
 .habit.active {
-    background-color: $acsentGreen;
+    background-color: var(--acsentGreen);
     .habitPer {
-        color: $tc !important;
+        color: var(--tc) !important;
     }
     .pinnedHabitSign {
-        color: $tc;
+        color: var(--tc);
     }
 }

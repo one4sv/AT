@@ -136,7 +136,7 @@
             flex-direction: row;
             align-items: center;
             &:hover {
-                background-color: $menuButtHover;
+                background-color: var(--menuButtHover);
                 color: $ac;
             }
         }

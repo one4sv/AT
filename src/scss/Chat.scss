@@ -12,17 +12,17 @@
     border-radius: 0 0 8px 8px;
     height: 6vh;
     display: flex;
-    background-color: $mc;
+    background-color: var(--mc);
 }
 .chatUserBack {
     height: 100%;
     border-radius: 8px;
     cursor: pointer;
     &:hover {
-        background-color: $menuButtHover;
+        background-color: var(--menuButtHover);
     }
     >svg {
-        color: $borderHabit;
+        color: var(--borderHabit);
         position: relative;
         right: 0.1vw;
         height: 100%;
@@ -35,7 +35,7 @@
     border-radius: 8px;
     flex: 6;
     &:hover {
-        background-color: $menuButtHover;
+        background-color: var(--menuButtHover);
     }
 }
 .chatUserPick {
@@ -48,6 +48,13 @@
         height: 90%;
         width: 90%;
     }
+    >img.chatUserAvatar {
+        height: 90%;
+        width: auto;
+        aspect-ratio: 1/1;
+        border-radius: 50%;
+        object-fit: cover;
+    }
 }
 .chatUserName {
     display: flex;
@@ -55,12 +62,12 @@
     justify-content: space-evenly;
 }
 .wasOnline {
-    color: $borderWh;
+    color: var(--borderWh);
 }
 .chatUserMenu {
     height: 100%;
     display: flex;
-    color: $borderHabit;
+    color: var(--borderHabit);
     >div {
         margin: 10%;
         cursor: pointer;
@@ -71,8 +78,8 @@
         justify-content: center;
         border-radius: 40%;
         &:hover {
-            color: $tc;
-            background-color: $menuButtHover;
+            color: var(--tc);
+            background-color: var(--menuButtHover);
         }
         >svg {
             height: 70%;
@@ -87,7 +94,8 @@
     flex-direction: column;
     overflow-y: scroll;
     scrollbar-width: none;
-    scrollbar-color: $menuButtHover $tr;
+    scrollbar-color: var(--menuButtHover) $tr;
+    margin-bottom: 3vh;
 }
 .messageWrapper {
     margin-top: 1vh;
@@ -97,22 +105,32 @@
     display: flex;
     flex-direction: column;
 }
+.dateDivider {
+    width: 100%;
+    text-align: center;
+    color: var(--borderWh);
+    font-size: 0.9rem;
+    margin: 1vh 0;
+    padding: 0.2vh 0.5vw;
+    user-select: none;
+    opacity: 0.9;
+}
 .message {
     max-width: 25vw;
     width: fit-content;
     padding: 0.5vh 0.5vw;
 
     &.ur {
-        background-color: $mess;
+        background-color: var(--mess);
         border-radius: 12px 12px 12px 0;
         >.messageDate {
-            color: $borderWh;
+            color: var(--borderWh);
         }
     }
     &.my {
         align-self: flex-end;
         position: relative;
-        background-color: $darkerAcsent;
+        background-color: var(--darkerAcsent);
         border-radius: 12px 12px 0 12px;
         display: flex;
         flex-direction: column;
@@ -121,6 +139,12 @@
             align-self: flex-end;
         }
     }
+}
+.messageText {
+    max-width: 25vw;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
 }
 .chatTAWrapper {
     display: flex;
@@ -132,13 +156,14 @@
 .chatTA {
     resize: none;
     width: 100%;
-    background-color: $mc;
-    color: $tc;
+    background-color: var(--mc);
+    color: var(--tc);
     font-size: 16px;
     height: 7vh;
     border-radius: 12px;
     padding: 0.5vh 7vw 0.5vh 0.5vw;
-    scrollbar-width: none;
+    box-sizing: border-box;
+    overflow-y: hidden;
 }
 .chatTAMenu {
     position: absolute;
@@ -158,9 +183,9 @@
         cursor: pointer;
         border-radius: 50%;
         &:hover {
-            background-color: $acsentGreen;
+            background-color: var(--acsentGreen);
             >.chatFile {
-                color: $tc;
+                color: var(--tc);
             }
         }
     }
@@ -170,7 +195,7 @@
     }
 }
 .chatFile {
-    color: $borderHabit;
+    color: var(--borderHabit);
     stroke-width: 2.5px;
 }
 .chatSend {

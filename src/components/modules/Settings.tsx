@@ -3,7 +3,7 @@ import type { RefObject } from "react";
 import { useSettings } from "../hooks/SettingsHook";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
 import { Search } from "lucide-react";
-import "../../scss/settings.scss";
+import "../../scss/modules/settings.scss";
 import HabitsTab from "../ts/settingsTabs/HabitsTab";
 import PersTab from "../ts/settingsTabs/PersTab";
 import PrivateTab from "../ts/settingsTabs/PrivateTab"

@@ -1,13 +1,13 @@
-@use "./global.scss" as *;
-@use "./settings/pers.scss";
-@use "./settings/private.scss";
-@use "./settings/habits.scss";
+@use "../global.scss" as *;
+@use "../settings/pers.scss";
+@use "../settings/private.scss";
+@use "../settings/habits.scss";
 
 .settingsDiv {
     height: 80vh;
     width: 60vw;
     @include centerModal;
-    background-color: $mc;
+    background-color: var(--mc);
     display: flex;
     flex-direction: row;
     border-radius: 12px;
@@ -22,23 +22,23 @@
         padding: 1vh 1vw;
         font-size: 18px;
         position: relative;
-        color: $borderWh;
+        color: var(--borderWh);
         cursor: pointer;
         &:hover{
-            background-color: $menuButtHover;
-            color: $tc;
+            background-color: var(--menuButtHover);
+            color: var(--tc);
         }
     }
     > .active {
-        background-color: $acsentGreen !important;
-        color: $tc;
+        background-color: var(--acsentGreen) !important;
+        color: var(--tc);
     }
 }
 .search {
     cursor: text !important;
     border-bottom: 1px solid black;
     >input {
-        @include input(transparent, $tc, transparent, 100%, 0, 0 );
+        @include input(transparent, var(--tc), transparent, 100%, 0, 0 );
         width:80%;
     }
     > svg {
@@ -77,7 +77,7 @@
     position: absolute;
     right: 3vw;
     font-size: 18px;
-    color: $tc;
+    color: var(--tc);
     opacity: 0;
     animation: fadeIn 0.5s ease-in-out forwards, pulseBrightness 2s ease-in-out infinite;
 }
@@ -102,27 +102,23 @@
     flex-direction: column;
     margin-bottom: 2vh;
     >input {
-        @include input($mc, $tc, $borderHabit, 4vh, 8px, $tc);
+        @include input(var(--mc), var(--tc), var(--borderHabit), 4vh, 8px, var(--tc));
         font-size: 20px;
         z-index: 13;
         transition: border 0.2s ease-in;
     }
 }
 .inputNotValid {
-    border-color: $notValid !important;
+    border-color: var(--notValid) !important;
 }
 .notValidText {
     top: 0;
     z-index: 12;
     position: absolute;
-    color: $notValid;
+    color: var(--notValid);
     margin-top: 0.5vh;
     font-size: 18px;
     transition: top 0.2s ease-in;
 }
-// Привычки
-
-
-// Персонализация
 
 

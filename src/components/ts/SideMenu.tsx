@@ -85,7 +85,7 @@ export default function SideMenu() {
                         onClick={() => setShowList(!showList)}
                         ref={buttonRef}
                     >
-                        <CircleUserRound />
+                        {user?.avatar_url ? <img className="SMmenuAvatar" src={user.avatar_url} alt={(user.username ?? user.nick) || undefined} /> : <CircleUserRound />}
                     </div>
                     <div className={`SMprofileMenu ${showList ? "active" : ""}`} ref={menuRef}>
                         <div className="SMprofileButt" onClick={() => {

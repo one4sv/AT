@@ -1,19 +1,19 @@
 @use "./global.scss" as *;
 
 .themeHabit-default {
-  @include themeHabit($tr, $tr, $menuButtHover, $borderWh, none, $borderHabit, $tc, $tc, transparent, $tc, $borderWh);
+  @include themeHabit($tr, $tr, var(--menuButtHover), var(--borderWh), none, var(--borderHabit), var(--tc), var(--tc), transparent, var(--tc), var(--borderWh));
 }
 .themeHabit-poison { 
-  @include themeHabit(#197e19, #24d324, #13d113, $tc, 30px, $tc, $tc, #197e19, #27c827, $tc, $tc); 
+  @include themeHabit(#197e19, #24d324, #13d113, var(--tc), 30px, var(--tc), var(--tc), #197e19, #27c827, var(--tc), var(--tc)); 
 }
 .themeHabit-apple { 
-  @include themeHabit(#d94e0a, #d94e0a, #ff9c3a, $tc, 30px, $tc, $tc, #e67300, #d94e0a, $tc, $tc); 
+  @include themeHabit(#d94e0a, #d94e0a, #ff9c3a, var(--tc), 30px, var(--tc), var(--tc), #e67300, #d94e0a, var(--tc), var(--tc)); 
 }
 .themeHabit-sky { 
-  @include themeHabit(#1565c0, #0d47a1, #1976d2, #d0e9ff, 30px, #0b3d91, $tc, #3a72d1, #1565c080, $tc, #d0e9ff); 
+  @include themeHabit(#1565c0, #0d47a1, #1976d2, #d0e9ff, 30px, #0b3d91, var(--tc), #3a72d1, #1565c080, var(--tc), #d0e9ff); 
 }
 .themeHabit-space { 
-  @include themeHabit(#301934, #1e142d, #3a1f4a, #b9a6d1, 30px, #4a2d6d, $tc, #5c3d8a, #493a5c, $tc, #b9a6d1); 
+  @include themeHabit(#301934, #1e142d, #3a1f4a, #b9a6d1, 30px, #4a2d6d, var(--tc), #5c3d8a, #493a5c, var(--tc), #b9a6d1); 
 }
 
 .themeHabit-grass {
@@ -30,5 +30,5 @@
 }
 
 .themeHabit-negative {
-  @include themeHabit(black, $tc, $tc, black, 15px, #000000, #000, #444, $tc, #000, black);
+  @include themeHabit(black, var(--tc), var(--tc), black, 15px, #000000, #000, #444, var(--tc), #000, black);
 }

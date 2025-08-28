@@ -1,18 +1,19 @@
 @use "./global.scss" as *;
 @use "./habitThemes.scss";
 @use "./datepicker.scss";
+
 html, body {
   height: 100%;
   width: 100%;
   font-family: $font;
   scrollbar-width: thin;
-  scrollbar-color: $menuButtHover transparent;
+  scrollbar-color: var(--menuButtHover) transparent;
   overflow-x: hidden;
 }
 body {
-  background-color: $bgc;
+  background-color: var(--bgc);
   margin: 0;
-  color: $tc;
+  color: var(--tc);
 }
 #root {
   width: 100%;

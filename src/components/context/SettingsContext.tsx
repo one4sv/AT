@@ -8,8 +8,10 @@ export interface SettingsContextType {
     setOrderHabits: React.Dispatch<React.SetStateAction<string[] | null>>    
     amountHabits:number[] | null
     setAmountHabits: React.Dispatch<React.SetStateAction<number[] | null>>
-    persFeedHabits:PersFeedHabits[] | null
-    setPersFeedHabits: React.Dispatch<React.SetStateAction<PersFeedHabits[] | null>>
+    theme:string
+    setTheme:React.Dispatch<React.SetStateAction<string>>
+    acsent:string
+    setAcsent:React.Dispatch<React.SetStateAction<string>>
     privateShow:PrivateSettings
     setPrivate:React.Dispatch<React.SetStateAction<PrivateSettings>>
     tab: string
@@ -17,17 +19,13 @@ export interface SettingsContextType {
     refetchSettings: () => Promise<void>;
 }
 
-export interface PersFeedHabits {
-    type:string,
-    theme:string,
-    colors:string[] | []
-}
 interface SettingsResponse {
     success: boolean;
     order: string[];
     amountHabits:number[];
-    persFeedHabits:PersFeedHabits[];
     private:PrivateSettings;
+    theme:string;
+    acsent:string;
 }
 export interface PrivateSettings {
     number: string,
@@ -39,7 +37,8 @@ export interface PrivateSettings {
 export const SettingsProvider = ({children}:{children:ReactNode}) => {
     const [ orderHabits, setOrderHabits ] = useState<string[] | null>([])
     const [ amountHabits, setAmountHabits ] = useState<number[] | null>([])
-    const [ persFeedHabits, setPersFeedHabits ] = useState<PersFeedHabits[] | null>(null)
+    const [ theme, setTheme ] = useState<string>("")
+    const [ acsent, setAcsent ] = useState<string>("")
     const [ privateShow, setPrivate ] = useState<PrivateSettings>({number: "", mail:"", habits:"", posts:""})
     const [ tab, setTab ] = useState<string>('acc')
 
@@ -51,8 +50,9 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
             if (res.data.success) {
                 setOrderHabits(res.data.order)
                 setAmountHabits(res.data.amountHabits)
-                setPersFeedHabits(res.data.persFeedHabits)
+                setTheme(res.data.theme)
                 setPrivate(res.data.private)
+                setAcsent(res.data.acsent)
             }
         }
         catch (err) {
@@ -65,7 +65,7 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
     }, [refetchSettings]);
 
     return(
-        <SettingsContext.Provider value={{ orderHabits, setOrderHabits, tab, setTab, refetchSettings, amountHabits, setAmountHabits, persFeedHabits, setPersFeedHabits, privateShow, setPrivate }}>
+        <SettingsContext.Provider value={{ orderHabits, setOrderHabits, tab, setTab, refetchSettings, amountHabits, setAmountHabits, theme, setTheme, privateShow, setPrivate, setAcsent, acsent }}>
             {children}
         </SettingsContext.Provider>
     )

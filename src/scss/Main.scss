@@ -17,7 +17,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: lighten($borderWh, 20%);
+    color: var(--borderWhLight);
     font-size: 28px;
     > span {
         margin-bottom: 1vh;
@@ -37,7 +37,7 @@
     display: flex;
     flex-direction: column;
     > span {
-        color: $borderWh;
+        color: var(--borderWh);
         margin-top: 1vh;
         margin-bottom: 1vh;
         > a {
@@ -52,7 +52,7 @@
     width: 100%;
     > input {
         position: relative;
-        @include input($mc, $tc, $borderWh, 4vh, 8px, $tc);
+        @include input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
         margin: 0;
         width: 100%;
     }
@@ -64,9 +64,9 @@
         top: 0.6vh;
         right: 0vw;
         z-index: 2;
-        color: $borderWh;
+        color: var(--borderWh);
         &:hover {
-            color: $tc;
+            color: var(--tc);
         }
     }
 }

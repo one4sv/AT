@@ -10,6 +10,7 @@ export interface User {
     mail: string | null;
     username: string | null;
     bio:string | null;
+    avatar_url: string | null;
 }
 
 interface UserResponse {
@@ -19,6 +20,7 @@ interface UserResponse {
     mail?: string;
     username?: string;
     bio?: string;
+    avatar_url?: string;
     error?: string;
     cookie?: boolean;
 }
@@ -38,7 +40,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const location = useLocation();
     const { showNotification } = useNote();
 
-    const [user, setUser] = useState<User>({ nick: null, mail: null, username: null, id:null, bio:null });
+    const [user, setUser] = useState<User>({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null });
     const [loadingUser, setLoadingUser] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
 
@@ -56,17 +58,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     nick: res.data.nick ?? null,
                     mail: res.data.mail ?? null,
                     username: res.data.username ?? null,
-                    bio:res.data.bio ?? null,
-                    id: res.data.id ?? null
+                    bio: res.data.bio ?? null,
+                    id: res.data.id ?? null,
+                    avatar_url: res.data.avatar_url ?? null
                 });
             } else {
-                setUser({ nick: null, mail: null, username: null, id:null, bio:null });
+                setUser({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null });
                 if (!res.data.cookie) {
                     showNotification("error", res.data.error || "Ошибка авторизации");
                 }
             }
         } catch (err) {
-            setUser({ nick: null, mail: null, username: null, id: null, bio:null });
+            setUser({ nick: null, mail: null, username: null, id: null, bio:null, avatar_url:null });
             if (axios.isAxiosError(err)) {
                 if (err.response?.status !== 401 && err.response?.status !== 403) {
                     showNotification("error", err.response?.data?.error || "Ошибка авторизации");

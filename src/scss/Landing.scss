@@ -22,7 +22,7 @@
     width: 25vw;
     height: 60%;
     border-radius: 22px;
-    background-color: $mc;
+    background-color: var(--mc);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -45,7 +45,7 @@
         flex-direction: column;
         align-items: center;
         > input {
-            @include input($mc, $tc, $borderWh, 4vh, 8px, $tc);
+            @include input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
             margin: 2vh 2.5vw 0 2.5vw;
             width: 15vw;
             position: relative;
@@ -56,12 +56,12 @@
             bottom: 1vh;
             width: 20vw;
             background-color: transparent;
-            color: $borderWh;
+            color: var(--borderWh);
             font-size: 18px;
             outline: none;
             border: none;
             &:hover {
-                color: $tc;
+                color: var(--tc);
             }
         }
     }
@@ -79,11 +79,11 @@
     margin-bottom: 1vh;
 }
 .greenButt {
-    @include gradButt(15vw, 4vh, 2px, 4px, (135deg, #27c827, #0eb408), (135deg, #27c827, #d3ff6f), $tc, 20px #70ff70, #2b9c2b);
+    @include gradButt(15vw, 4vh, 2px, 4px, (135deg, #27c827, #0eb408), (135deg, #27c827, #d3ff6f), var(--tc), 20px #70ff70, #2b9c2b);
     margin-bottom: 0.2vh;
 }
 .wtbgButt {
-    @include longButt(auto, auto, 0px, 0px, transparent, $tc, transparent);
+    @include longButt(auto, auto, 0px, 0px, transparent, var(--tc), transparent);
     &:hover {
         text-shadow: 0 0 5px white;
     }
@@ -98,7 +98,7 @@
     > input {
         margin: 0 !important;
         padding-inline-end: 2vw;
-        @include input($mc, $tc, $borderWh, 4vh, 8px, $tc);
+        @include input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
         // margin: 2vh 2.5vw 0 2.5vw;
         width: 15vw;
         position: relative;
@@ -112,9 +112,9 @@
         top: 0.6vh;
         right: 0.5vw;
         z-index: 2;
-        color: $borderWh;
+        color: var(--borderWh);
         &:hover {
-            color: $tc;
+            color: var(--tc);
         }
     }
 }
@@ -125,7 +125,7 @@
     z-index: 1;
     top: -1vh;
     position: absolute;
-    color: $borderWh;
+    color: var(--borderWh);
     height: 0;
     transition: top 0.3s ease;
 }

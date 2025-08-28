@@ -5,7 +5,8 @@ const BlackoutContext = createContext<BlackoutContextType | null>(null);
 
 export interface Blackout {
     seted:boolean;
-    module?:keyof typeof ModuleMap
+    module?:keyof typeof ModuleMap;
+    pick?:File;
 }
 export interface BlackoutContextType {
     blackout:Blackout

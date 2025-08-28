@@ -3,6 +3,6 @@ button {
     cursor: pointer;
 }
 a {
-    color: $tc;
+    color: var(--tc);
     text-decoration: none;
 }

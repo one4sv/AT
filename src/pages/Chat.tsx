@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router"
 import { useChat } from "../components/hooks/ChatHook"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState, Fragment } from "react"
 import "../scss/Chat.scss"
 import { CircleUserRound, Bell, ChevronLeft, SendHorizontal, Paperclip } from "lucide-react"
 import Loader from "../components/ts/Loader"
@@ -12,6 +12,8 @@ export default function Chat () {
     const { contactId } = useParams<{ contactId: string }>()
 
     const [ mess, setMess ] = useState<string>("")
+    const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
+    const chatRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
         if (contactId) refetchChat(contactId)
@@ -31,13 +33,44 @@ export default function Chat () {
             }
         }
     }
+    useEffect(() => {
+        const ta = textAreaRef.current;
+        if (!ta) return;
+        ta.style.height = "auto";
+        ta.style.minHeight = "7vh";
+        ta.style.height = ta.scrollHeight + "px";
+    }, [mess]);
+
+    useEffect(() => {
+        const el = chatRef.current;
+        if (!el) return;
+        requestAnimationFrame(() => {
+            el.scrollTop = el.scrollHeight;
+        });
+    }, [messages, chatLoading, contactId]);
     
-    const messageGetTime = (date:Date) => {
+    const messageGetTime = (date:Date | string) => {
         const d = new Date(date);
         return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } 
-    if (chatLoading) return <Loader />
+    }
 
+    const isSameDay = (a: Date, b: Date) => {
+        return a.getFullYear() === b.getFullYear()
+            && a.getMonth() === b.getMonth()
+            && a.getDate() === b.getDate();
+    }
+
+    const formatDateLabel = (d: Date) => {
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        if (isSameDay(d, today)) return "сегодня";
+        if (isSameDay(d, yesterday)) return "вчера";
+        return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long" });
+    }
+    if (chatLoading) return <Loader />
+    
     return(
         <div className="chatDiv">
             <div className="chatUser">
@@ -46,7 +79,11 @@ export default function Chat () {
                 </div>
                 <div className="chatUserInfo" onClick={() => navigate(`/acc/${contactId}`)}>
                     <div className="chatUserPick">
-                        <CircleUserRound/>
+                        {chatWith.avatar_url ? (
+                            <img className="chatUserAvatar" src={chatWith.avatar_url} alt={chatWith.username ?? chatWith.nick} />
+                        ) : (
+                            <CircleUserRound/>
+                        )}
                     </div>
                     <div className="chatUserName">
                         <span>{chatWith.username ?? chatWith.nick}</span>
@@ -59,20 +96,35 @@ export default function Chat () {
                     </div>
                 </div>
             </div>
-            <div className="chat">
-                {messages.map((mess) => (
-                    <div className="messageWrapper" key={mess.id}>
-                        <div className={`message ${mess.sender_id === Number(contactId) ? "ur" : "my"}`}>
-                            <div className="messageText">{mess.content}</div>
-                            <div className="messageDate">{messageGetTime(mess.created_at)}</div>
-                        </div>
-                    </div>
-                    
-                ))}
+            <div className="chat" ref={chatRef}>
+                {messages.map((m, i) => {
+                    const currDate = new Date(m.created_at);
+                    const prev = messages[i - 1];
+                    const prevDate = prev ? new Date(prev.created_at) : null;
+                    const needDivider = !prevDate || !isSameDay(prevDate, currDate);
+                    return (
+                        <Fragment key={`${m.id}-${i}`}>
+                            {needDivider && <div className="dateDivider">{formatDateLabel(currDate)}</div>}
+                            <div className="messageWrapper">
+                                <div className={`message ${m.sender_id === Number(contactId) ? "ur" : "my"}`}>
+                                    <div className="messageText">{m.content}</div>
+                                    <div className="messageDate">{messageGetTime(m.created_at)}</div>
+                                </div>
+                            </div>
+                        </Fragment>
+                    )
+                })}
             </div>
             <div className="chatTAWrapper">
-                <textarea name="chatTA" id="chatTA" className="chatTA" value={mess} onChange={(e) => setMess(e.currentTarget.value)} onKeyDown={handleKeyDown}>
-                </textarea>
+                <textarea
+                    name="chatTA"
+                    id="chatTA"
+                    className="chatTA"
+                    value={mess}
+                    ref={textAreaRef}
+                    onChange={(e) => setMess(e.currentTarget.value)}
+                    onKeyDown={handleKeyDown}
+                />
                 <div className="chatTAMenu">
                     <div className="chatTAbutt">
                         <Paperclip className="chatFile"/>

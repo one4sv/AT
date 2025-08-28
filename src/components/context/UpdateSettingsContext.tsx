@@ -3,26 +3,26 @@ import axios from "axios";
 import { useSettings } from "../hooks/SettingsHook";
 import { useUser } from "../hooks/UserHook";
 import { useNote } from "../hooks/NoteHook";
-import type { PersFeedHabits } from "./SettingsContext";
 import type { PrivateSettings } from "./SettingsContext";
 
 export type UpdateSettingsContextType = {
     setNewOrder: (val: string[]) => void;
     setNewAmount: (val: number[]) => void;
-    setNewPersFeedHabits: (val:PersFeedHabits[])=> void;
+    setNewTheme: (val:string)=> void;
+    setNewAcsent: (val:string)=> void;
     setNewPrivateShow: (val: PrivateSettings) => void;
     isUpdating: string[];
 };
 
 type UpdateQueueItem = {
     setting: string;
-    value: string | string[] | number[] | PersFeedHabits[] | PrivateSettings;
+    value: string | string[] | number[] | PrivateSettings;
 };
 
 const UpdateSettingsContext = createContext<UpdateSettingsContextType | null>(null);
 
 export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchSettings, amountHabits, orderHabits, persFeedHabits } = useSettings();
+    const { refetchSettings, amountHabits, orderHabits, theme, acsent } = useSettings();
     const { refetchUser, user } = useUser();
     const { showNotification } = useNote();
     const [ updateQueue, setUpdateQueue ] = useState<UpdateQueueItem[]>([]);
@@ -51,8 +51,12 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         setIsUpdating((prev) => [...new Set([...prev, "habits"])]);
     }, []);
 
-    const setNewPersFeedHabits = useCallback((val: PersFeedHabits[]) => {
-        setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "persFeedHabits"), {setting:"persFeedHabits", value:val}]);
+    const setNewTheme = useCallback((val: string) => {
+        setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "theme"), {setting:"theme", value:val}]);
+        setIsUpdating((prev) => [...new Set([...prev, "pers"])])
+    },[])
+    const setNewAcsent = useCallback((val: string) => {
+        setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "acsent"), {setting:"acsent", value:val}]);
         setIsUpdating((prev) => [...new Set([...prev, "pers"])])
     },[])
 
@@ -62,6 +66,13 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
         const { setting, value } = updateQueue[0];
 
+        // определяем, какой маркер isUpdating соответствует текущей настройке
+        const updatingKey = (s: string) =>
+            s === "order" || s === "amountHabits" ? "habits"
+            : s === "theme" || s === "acsent" ? "pers"
+            : s === "private" ? "private"
+            : "acc";
+ 
         // Проверка, изменились ли данные
         if (
             (setting === "amountHabits" && JSON.stringify(value) === JSON.stringify(amountHabits)) ||
@@ -69,10 +80,11 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
             (setting === "username" && value === user.username) ||
             (setting === "nick" && value === user.nick) ||
             (setting === "mail" && value === user.mail) ||
-            (setting === "persFeedHabits" && JSON.stringify(value) === JSON.stringify(persFeedHabits))
+            (setting === "theme" && value === theme) ||
+            (setting === "acsent" && value === acsent)
         ) {
             setUpdateQueue((prev) => prev.slice(1));
-            setIsUpdating((prev) => prev.filter((item) => item !== (setting === "order" || setting === "amountHabits" ? "habits" : "acc")));
+            setIsUpdating((prev) => prev.filter((item) => item !== updatingKey(setting)));
             setIsProcessing(false);
             return;
         }
@@ -102,10 +114,10 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
             console.error("❌ Ошибка при обновлении настроек:", err);
         } finally {
             setUpdateQueue((prev) => prev.slice(1));
-            setIsUpdating((prev) => prev.filter((item) => item !== (setting === "order" || setting === "amountHabits" ? "habits" : "acc")));
+            setIsUpdating((prev) => prev.filter((item) => item !== updatingKey(setting)));
             setIsProcessing(false);
         }
-    }, [isProcessing, updateQueue, amountHabits, orderHabits, user.username, user.nick, user.mail, persFeedHabits, refetchSettings, refetchUser, showNotification]);
+    }, [isProcessing, updateQueue, amountHabits, orderHabits, user.username, user.nick, user.mail, theme, refetchSettings, refetchUser, showNotification, acsent]);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -116,7 +128,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
     return (
         <UpdateSettingsContext.Provider
-            value={{ setNewOrder, setNewAmount, isUpdating, setNewPersFeedHabits, setNewPrivateShow }}
+            value={{ setNewOrder, setNewAmount, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent }}
         >
             {children}
         </UpdateSettingsContext.Provider>

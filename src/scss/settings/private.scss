@@ -21,10 +21,10 @@
     width: 100%;
 }
 .privateSL {
-    @include selectList(10vw, 3vh, 9%, 0.3vw, 0.4vh, $borderWh, $tc, $bgc, 18px, 0.8vh, 0.8vw, 5%);
+    @include selectList(10vw, 3vh, 9%, 0.3vw, 0.4vh, var(--borderWh), var(--tc), var(--bgc), 18px, 0.8vh, 0.8vw, 5%);
     // margin-bottom: 2vh;
     >input {
-        @include input($mc, $tc, $borderWh, 3.5vh, 8px, $tc);
+        @include input(var(--mc), var(--tc), var(--borderWh), 3.5vh, 8px, var(--tc));
         width: 10vw;
         cursor: pointer;
     }

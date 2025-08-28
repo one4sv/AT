@@ -1,7 +1,7 @@
 @use "./global.scss" as *;
 
 .calendarDiv {
-    // background-color: $mc;
+    // background-color: var(--mc);
     width: fit-content;
     padding: 1vh 1vw;
     border-radius: 12px;
@@ -35,12 +35,12 @@
     padding: 1vh 1vw;
     z-index: 2;
     > svg {
-        color: $borderHabit;
+        color: var(--borderHabit);
     }
     &:hover {
-        background-color: $menuButtHover;
+        background-color: var(--menuButtHover);
         > svg {
-            color: $tc;
+            color: var(--tc);
         }
     }
 }
@@ -53,13 +53,13 @@
     width: fit-content;
     padding: 0.5vh 0.2vw;
     border-radius: 8px;
-    border: 1px solid $borderHabit;
+    border: 1px solid var(--borderHabit);
     opacity: 0;
     transform: translateY(10%);
     transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: none;
     overflow: hidden;
-    background-color: $bgc;
+    background-color: var(--bgc);
     &.active {
         opacity: 1;
         transform: translateY(20%);
@@ -76,10 +76,10 @@
     border-radius: 12px;
     cursor: pointer;
     &:hover {
-        background-color: $menuButtHover;
+        background-color: var(--menuButtHover);
     }
     &.active {
-        background-color: $borderHabit;
+        background-color: var(--borderHabit);
     }
 }
 .yearsList {
@@ -90,12 +90,12 @@
     width: 100%;
     padding: 0.5vh 0.2vw;
     border-radius: 8px;
-    border: 1px solid $borderHabit;
+    border: 1px solid var(--borderHabit);
     opacity: 0;
     transition: opacity 0.3s ease, top 0.3s ease;
     pointer-events: none;
     overflow: hidden;
-    background-color: $bgc;
+    background-color: var(--bgc);
     &.active {
         opacity: 1;
         top: 7vh;
@@ -110,10 +110,10 @@
     align-items: center;
     cursor: pointer;
     &:hover {
-        background-color: $menuButtHover;
+        background-color: var(--menuButtHover);
     }
     &.active {
-        background-color: $borderHabit;
+        background-color: var(--borderHabit);
     }
 }
 .calendarMain {
@@ -132,7 +132,7 @@
     aspect-ratio: 1;
     flex: 1;
     border-radius: 6px;
-    background-color: $menuButtHover;
+    background-color: var(--menuButtHover);
 }
 .calendarDays {
     display: grid;
@@ -148,12 +148,12 @@
     border-radius: 6px;
     cursor: pointer;
     &:hover {
-        background-color: $menuButtHover;
+        background-color: var(--menuButtHover);
     }
     &.prevDays {
-        color: $borderHabit;
+        color: var(--borderHabit);
     }
     &.postDays {
-        color: $borderHabit;
+        color: var(--borderHabit);
     }
 }

@@ -1,0 +1,66 @@
+@use "../global.scss" as *;
+
+.pickHandlerDiv {
+    background-color: var(--bgc);
+    width: 40vw;
+    @include centerModal;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 2vh 1vw;
+}
+.cropContainer {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+.circleMask {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 50%;
+    box-shadow: 0 0 0 9999px #00000080; // затемнение вокруг круга
+    pointer-events: none; // чтобы не мешать перемещению
+}
+.pickHandlerImg {
+    width: 100%;
+    aspect-ratio: 1 / 1; // квадрат
+    position: relative;
+    margin-bottom: 1vh;
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; // масштабирует фото, чтобы заполнить блок без искажения
+        border-radius: 12px; // если нужно скругление
+    }
+}
+.pickHandlerButts {
+    display: flex;
+    justify-content: space-evenly;
+    >button {
+        padding: 1vh 1vw;
+        outline: none;
+        border: none;
+        font-size: 20px;
+        flex: 1;
+    }
+}
+.pickHandlerCancel {
+    background-color: $tr;
+    color: var(--borderWh);
+    border-radius: 8px;
+    &:hover {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
+    }
+}
+.pickHandlerConfirm {
+    background-color: $tr;
+    color: var(--tc);
+    border-radius: 8px;
+    &:hover {
+        background-color: var(--menuButtHover);
+        color: var(--acsentGreen);
+    }
+}

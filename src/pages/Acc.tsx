@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useUser } from "../components/hooks/UserHook";
-import { UserRound } from "lucide-react";
+import { Camera, UserRound } from "lucide-react";
 import "../scss/Acc.scss"
 import axios from "axios";
 import type { User } from "../components/context/UserContext";
@@ -10,12 +10,15 @@ import { useNote } from "../components/hooks/NoteHook";
 import Loader from "../components/ts/Loader";
 import HabitDiv from "../components/ts/Habit";
 import type { PrivateSettings } from "../components/context/SettingsContext";
+import { useUpUser } from "../components/hooks/UpdateUserHook";
+import { useBlackout } from "../components/hooks/BlackoutHook";
 
 
 export default function Acc() {
+    const { setBlackout } = useBlackout()
     const { user } = useUser()
     const { showNotification } = useNote()
-
+    const { newName, setNewName, newNick, setNewNick, newBio, setNewBio, newMail, setNewMail, newPick, handleSave } = useUpUser()
     const { contactId } = useParams()
     const navigate = useNavigate()
 
@@ -26,7 +29,9 @@ export default function Acc() {
     const [ selector, setSelector ] = useState<string>("sended")
     const [ red, setRed ] = useState<boolean>(false)
     const [ privateRules, setPrivateRules] = useState<PrivateSettings>({number: "", mail:"", habits:"", posts:""})
+    const [ previewUrl, setPreviewUrl ] = useState<string | null>(null)
 
+    const fileInputRef = useRef<HTMLInputElement>(null)
     const refetchAcc = async() => {
         try {
             setLoading(true)
@@ -51,22 +56,44 @@ export default function Acc() {
     const accInfoButt = () => {
         if (isMyAcc) setRed(!red)
         else navigate(`/chat/${acc?.id}`)
+        if (red) handleSave()
     }
 
+    useEffect(() => {
+        if (newPick) {
+            const url = URL.createObjectURL(newPick)
+            setPreviewUrl(url)
+            return () => URL.revokeObjectURL(url)
+        } else {
+            setPreviewUrl(null)
+        }
+    }, [newPick])
     if (loading) return <Loader />
 
     return (
         <div className="accDiv">
             <div className="accInfo">
-                <div className="accPic">
-                    <UserRound size={256}/>
+                <div className="accPic" onClick={() => isMyAcc && red && fileInputRef.current?.click()}>
+                    <input type="file" className="accPicksfileInput" accept="image/*" maxLength={1} ref={fileInputRef} onChange={(e) => {
+                        if (!e.target.files) return
+                        setBlackout({seted:true, module:"PickHandler", pick:e.target.files[0]})
+                    }}/>
+                    {previewUrl ? (
+                        <img src={previewUrl} alt="avatar preview" className="avatarImg"/>
+                    ) : acc?.avatar_url ? (
+                        <img src={acc.avatar_url} alt="avatar" className="avatarImg"/>
+                    ) : red ? (
+                        <Camera size={256}/>
+                    ) : (
+                        <UserRound size={128}/>
+                    )}
                 </div>
                 <div className="accInfoNames">
                     <div>
-                        <input id="name" className="accInput nameInput" value={acc?.username ?? undefined} readOnly={!red}/>
+                        <input id="name" className="accInput nameInput" value={(isMyAcc ? newName : acc?.username) ?? undefined} readOnly={!red} onChange={(e) => setNewName(e.currentTarget.value)}/>
                     </div>
                     <div>
-                        @<input id="name" className="accInput nickInput" value={acc?.nick ?? undefined} readOnly={!red}/>
+                        @<input id="name" className="accInput nickInput" value={(isMyAcc ? newNick : acc?.nick) ?? undefined} readOnly={!red} onChange={(e) => setNewNick(e.currentTarget.value)}/>
                     </div>
                 </div>
                 <div className="accInfoWrapper">
@@ -77,7 +104,7 @@ export default function Acc() {
             </div>
             <div className="accExtraInfoWrapper" style={{display: acc?.bio || red ? "flex" : "none"}}>
                 <label htmlFor="bioTA">Статус</label>
-                <textarea className="bioTA extraInfoInput" id="bioTA" value={acc?.bio ?? undefined} readOnly={!red}></textarea>
+                <textarea className="bioTA extraInfoInput" id="bioTA" value={(isMyAcc ? newBio : acc?.bio) ?? undefined} readOnly={!red} onChange={(e) => setNewBio(e.currentTarget.value)}></textarea>
             </div>
             <div className="accExtraInfo">
                 <div className="accExtraInfoWrapper">
@@ -96,7 +123,7 @@ export default function Acc() {
                     ): (
                         <>
                             <label htmlFor="mailTA">email</label>
-                            <input className="mailTA extraInfoInput" id="mailTA" value={acc?.mail ?? undefined} readOnly={!red}/>
+                            <input className="mailTA extraInfoInput" id="mailTA" value={(isMyAcc ? newMail : acc?.mail) ?? undefined} readOnly={!red} onChange={(e) => setNewMail(e.currentTarget.value)}/>
                         </>
                     )}
                 </div>

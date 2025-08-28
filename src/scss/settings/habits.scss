@@ -11,7 +11,7 @@
 }
 .orderShown {
     width: 15vw;
-    background-color: $bgc;
+    background-color: var(--bgc);
     border-radius: 12px;
     overflow: hidden;
     display: flex;
@@ -21,22 +21,22 @@
         padding: 1vh 1vw;
         cursor: grab;
         &:hover {
-            background-color: $menuButtHover;
+            background-color: var(--menuButtHover);
             padding: 1.5vh 1vw;
         }
         &:active {
             cursor: grabbing;
-            background-color: $menuButtHover;
+            background-color: var(--menuButtHover);
         }
         &.dragging {
             opacity: 1;
             transform: scale(1.05);
-            background-color: lighten($menuButtHover, 10%);
+            background-color: var(--menuButtHoverLight);
         }
 
         &.drag-over {
-            border: 2px dashed $menuButtHover;
-            background-color: lighten($menuButtHover, 20%);
+            border: 2px dashed var(--menuButtHover);
+            background-color: var(--menuButtHoverLighter);
         }
     }
 }
@@ -44,7 +44,7 @@
     width: 20vw;
     margin: 1vh 0;
     text-align: center;
-    color: $borderWh;
+    color: var(--borderWh);
 }
 
 .inpAmountWrapper {
@@ -55,7 +55,7 @@
     width: 10vw;
     justify-content: space-between;
     > input {
-        @include input(transparent, $tc, $borderHabit, 4vh, 8px, $tc);
+        @include input(transparent, var(--tc), var(--borderHabit), 4vh, 8px, var(--tc));
         width: 3vw;
     }
 }

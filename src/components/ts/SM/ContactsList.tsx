@@ -26,7 +26,11 @@ export default function ContactsList() {
                 sortedList.map((acc) => (
                     <div className={`contactsUser ${Number(contactId) === acc.id ? "active" : "" }`} key={acc.id} onClick={() => navigate(`/chat/${acc.id}`)}>
                         <div className="contactsUserPic">
-                            <CircleUserRound/>
+                            {acc.avatar_url ? (
+                                <img className="contactsUserAvatar" src={acc.avatar_url} alt={acc.username ?? acc.nick} />
+                            ) : (
+                                <CircleUserRound/>
+                            )}
                         </div>
                         <div className="contactsUserInfo">
                             <div className="contactsUserStr">
@@ -37,6 +41,9 @@ export default function ContactsList() {
                             </div>
                             {acc.lastMessage && (
                                 <div className="lastMess">
+                                    {acc.lastMessage.sender_id !== acc.id && (
+                                        <span>Вы:</span>
+                                    )}
                                     <span className="lmc">{acc.lastMessage.content}</span>
                                     <span>{messageGetTime(acc.lastMessage.created_at)}</span>
                                 </div>

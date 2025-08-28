@@ -1,5 +1,24 @@
-@forward "./variables.scss";
+@forward "./_variables";
+@use "./_variables" as vars;
 @forward "./utils.scss";
 @forward "./reset.scss";
 @forward "./animations.scss";
 @forward "./elements.scss";
+
+/* базовые fallback‑переменные — должны идти ПЕРВЫМИ */
+:root {
+  --bgc: #{vars.$bgc};
+  --tc: #{vars.$tc};
+  --borderWh: #{vars.$borderWh};
+  --mc: #{vars.$mc};
+  --menuButtHover: #{vars.$menuButtHover};
+  --acsentGreen: #{vars.$acsentGreen};
+  --darkerAcsent: #{vars.$darkerAcsent};
+  --borderHabit: #{vars.$borderHabit};
+  --mess: #{vars.$mess};
+  --greenGrad: #{vars.$greenGrad};
+  --font: #{vars.$font};
+}
+
+/* затем генерируем runtime-темы — они должны иметь приоритет над :root */
+@include vars.generate-theme-vars();

@@ -24,7 +24,7 @@
     flex: 1 ;
     cursor: pointer;
     &:hover {
-        background-color: $menuButtHover;
+        background-color: var(--menuButtHover);
     }
 }
 .habitWrapperIcon {
@@ -38,7 +38,7 @@
     >svg {
         height: 100%;
         width: 100%;
-        color: $darkerAcsent;
+        color: var(--darkerAcsent);
     }
 }
 .habitButts {
@@ -53,14 +53,14 @@
         border-radius: 6px;
         cursor: pointer;
         >svg {
-            color: $borderHabit;
+            color: var(--borderHabit);
             // padding: 1vh 1vw;
             font-size: 30px;
         }
         &:hover {
-            background-color: $menuButtHover;
+            background-color: var(--menuButtHover);
             >.pinHabit {
-                color: $tc;
+                color: var(--tc);
             }    
             >.delHabit {
                 color: #c40000;
@@ -72,36 +72,36 @@
         right: 5vw;
         top: 1vh;
         font-size: 18px;
-        color: $tc;
+        color: var(--tc);
         opacity: 0;
         animation: fadeIn 0.5s ease-in-out forwards, pulseBrightness 2s ease-in-out infinite;
     }
 }
 .inpWrapperRedHabit {
     width: 80%;
-    color: $borderHabit;
+    color: var(--borderHabit);
     >label {
         padding-inline-start: 0.5vw;
     }
     &:focus-within {
-        color: $acsentGreen
+        color: var(--acsentGreen)
     }
 }
 .redHabitSL {
-    @include selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, $borderWh, $tc, $bgc, 18px, 1vh, 1vw, 10%);
+    @include selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 10%);
     margin-bottom: 2vh;
     >input {
-        @include input($tr, $tc, $tr, 4vh, 0, $tr);
-        border-bottom: 2px solid $borderHabit;
+        @include input($tr, var(--tc), $tr, 4vh, 0, $tr);
+        border-bottom: 2px solid var(--borderHabit);
         width: 100%;
         cursor: pointer;
         &:focus-visible {
-            border-bottom: 2px solid $acsentGreen;
+            border-bottom: 2px solid var(--acsentGreen);
         }
     }
     &:focus-within {
         >svg {
-            color: $acsentGreen;
+            color: var(--acsentGreen);
         }
     }
 }

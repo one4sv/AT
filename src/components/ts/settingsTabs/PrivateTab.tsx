@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { type TabProps } from "../../modules/Settings";
 import SelectList, { type Option } from "../SelectList";
 import { useSettings } from "../../hooks/SettingsHook";
@@ -18,10 +17,6 @@ export default function PrivateTab({ tabRef, isUpdating, fadingOutSections, hand
         ...privateArr,
         { label: "Все", value: "all" },
     ];
-
-    useEffect(() => {
-        console.log(privateShow);
-    }, [privateShow]);
 
     const applyNewPrivate = (setting: keyof PrivateSettings, value: string) => {
         if (!privateShow) return;

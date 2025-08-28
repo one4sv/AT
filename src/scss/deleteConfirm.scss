@@ -6,7 +6,7 @@
     height: 20vh;
     display: flex;
     flex-direction: column;
-    background-color: $mc;
+    background-color: var(--mc);
     border-radius: 12px;
     padding: 2vh 2vw;
 }
@@ -29,14 +29,14 @@
 .deleteCancel {
     background-color: $tr;
     border: none;
-    color: $tc;
+    color: var(--tc);
     &:hover {
-        background-color: $menuButtHover;
-        color: $acsentGreen;
+        background-color: var(--menuButtHover);
+        color: var(--acsentGreen);
     }
 }
 .deleteConfirm {
-    background-color: $tc;
+    background-color: var(--tc);
     border: 1px solid black;
     color: black;
     &:hover {

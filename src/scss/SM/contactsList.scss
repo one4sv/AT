@@ -9,16 +9,28 @@
     border-radius: 12px;
     background-color: $tr;
     display: flex;
+    position: relative;
     &:hover {
-        background-color: $menuButtHover;
+        background-color: var(--menuButtHover);
     }
+
+    /* защита от выхода содержимого за пределы карточки */
+    overflow: hidden;
+    box-sizing: border-box;
 }
 .contactsUserPic {
     aspect-ratio: 1/1;
-    color: $borderWh;
+    color: var(--borderWh);
     >svg {
         height: 100%;
         width: 100%;
+    }
+    >img.contactsUserAvatar {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        display: block;
     }
 }
 .contactsUserInfo {
@@ -27,38 +39,49 @@
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+    position: relative;
+    /* важно для корректной работы text-overflow внутри flex-контейнера */
+    min-width: 0;
 }
 .contactsUserStr {
     display: flex;
     width: 100%;
 }
 .secSpan {
-    color: $darkerAcsent;
+    color: var(--darkerAcsent);
     margin-left: 0.3vw;
 }
 .contactsNothing {
-    color: $borderHabit;
+    color: var(--borderHabit);
     margin-top: 1vh;
     text-align: center;
     font-size: 20px;
 }
 .contactsUser.active {
-    background-color: $darkerAcsent;
+    background-color: var(--darkerAcsent);
     >.contactsUserPic > svg {
-        color: $tc;
+        // color: white;
+        color: var(--tc);
     }
     >.contactsUserInfo > .contactsUserStr> .secSpan {
-        color: $tc;
+        // color: white;
+        color: var(--tc);
     }
 }
 .lastMess {
     display: flex;
     width: 100%;
     justify-content: space-between;
+    position: relative;
+    align-items: center;
+    gap: 0.5rem;
+
     >.lmc {
+        /* разрешаем гибко занимать доступное место и обрезать длинный текст */
+        flex: 1 1 auto;
+        min-width: 0;
         white-space: nowrap;        // не переносим на новую строку
         overflow: hidden;           // скрываем лишнее
         text-overflow: ellipsis;    // показываем "..."
-        max-width: 200px;    
     }
 }

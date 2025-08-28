@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import "../../scss/addHabit.scss"
+import "../../scss/modules/addHabit.scss"
 import { forwardRef, useRef } from "react"
 import SelectList from "../ts/SelectList"
 import { SquareCheck, Square } from "lucide-react"
@@ -10,7 +10,7 @@ import { useNote } from "../hooks/NoteHook"
 import CalendarInput from "../ts/CalendarInput"
 import { useHabits } from "../hooks/HabitsHook"
 import TagSelector from "../ts/TagSelector"
-import DayChanger from "../ts/dayChanger"
+import DayChanger from "../ts/DayChanger"
 import { initialChosenDays } from "../ts/initialChosenDays"
 
 const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {

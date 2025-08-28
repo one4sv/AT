@@ -5,7 +5,7 @@
     position: fixed;
     width: 20vw;
     height: 100%;
-    background-color: $mc;
+    background-color: var(--mc);
     display: flex;
     flex-direction: column;
 }
@@ -30,12 +30,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $borderHabit;
+    color: var(--borderHabit);
     border-radius: 50%;
     cursor: pointer;
     &:hover {
-        color: $borderWh;
-        background-color: $menuButtHover;
+        color: var(--borderWh);
+        background-color: var(--menuButtHover);
     }
     >svg {
         position: absolute;
@@ -43,19 +43,26 @@
         height: 5vh;
         width: 2vw;
     }
+    >img.SMmenuAvatar {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        display: block;
+    }
 }
 .SMmenuButt.active {
     >svg {
-        color: $tc;
+        color: var(--tc);
         > circle:nth-of-type(2) {
-            color: $acsentGreen;
+            color: var(--acsentGreen);
         }
     }
 }
 .SMprofileMenu {
     top: 100%;
     position: absolute;
-    background-color: $bgc;
+    background-color: var(--bgc);
     z-index: 3;
     display: flex;
     flex-direction: column;
@@ -72,7 +79,7 @@
     padding: 1vh 0.5vw;
     cursor: pointer;
     &:hover {
-        background-color: $menuButtHover;
+        background-color: var(--menuButtHover);
     }
     &.exit {
         display: flex;
@@ -81,7 +88,7 @@
             height: 1rem;
         }
         &:hover {
-            color: $notValid;
+            color: var(--notValid);
         }
     }
 }
@@ -93,15 +100,15 @@
 .SMsearch {
     position: relative;
     width: 80%;
-    color:$borderHabit;
+    color:var(--borderHabit);
     &:hover {
-        color: $borderWh;
+        color: var(--borderWh);
         >input {
-            border: 1px solid $borderWh;
+            border: 1px solid var(--borderWh);
         }
     }
     >input {
-        @include input($bgc, $tc, $borderHabit, 4vh, 12px, $acsentGreen);
+        @include input(var(--bgc), var(--tc), var(--borderHabit), 4vh, 12px, var(--acsentGreen));
         font-size: 18px;
         width:100%;
         padding-inline-start: 0.5vw;
@@ -110,7 +117,7 @@
         @include svgInInput(4vh, 0,0.5vw);
     }
     &:focus-within {
-        color: $acsentGreen;
+        color: var(--acsentGreen);
     }
 }
 .SMtabs {
@@ -126,20 +133,20 @@
     text-align: center;
     border-radius: 8px;
     padding: 0.8vh 0;
-    color: $borderHabit;
+    color: var(--borderHabit);
     cursor: pointer;
     &:hover {
-        color: $borderWh;
-        background-color: $menuButtHover;
+        color: var(--borderWh);
+        background-color: var(--menuButtHover);
     }
 }
 .SMtab.active {
     border-radius: 8px 8px 0 0;
-    color: $tc;
+    color: var(--tc);
 }
 .SMtab.active.habits {
     border-radius: 8px 8px 0 0;
-    color: $acsentGreen;
+    color: var(--acsentGreen);
 }
 .SMline {
     position: relative;
@@ -147,10 +154,10 @@
     width: 50%;
     height: 2px;
     transition: left 0.2s ease;
-    background-color: white;
+    background-color: var(--tc);
 }
 .SMline.habits {
-    background-color: $acsentGreen;
+    background-color: var(--acsentGreen);
     left: 50%;
 }
 .ListWrapper {
@@ -171,7 +178,7 @@
     height: 100%;
     overflow-y:auto;
     scrollbar-width: thin;
-    scrollbar-color: $menuButtHover $tr;
+    scrollbar-color: var(--menuButtHover) $tr;
     scrollbar-gutter: stable both-edges;
 }
 
@@ -196,7 +203,7 @@
 .SMnav {
     pointer-events: all;
     display: flex;
-    background-color: $mc;
+    background-color: var(--mc);
     width: 60%;
     height: 5vh;
     border-radius: 20px;
@@ -207,11 +214,11 @@
     justify-content: center;
     align-items: center;
     flex: 1;
-    color: $borderWh;
+    color: var(--borderWh);
     cursor: pointer;
     &:hover {
-        background-color: $menuButtHover;
-        color: $tc;
+        background-color: var(--menuButtHover);
+        color: var(--tc);
     }
     >svg {
         width: 40%;
@@ -222,7 +229,7 @@
     display: flex;
     flex-direction: column;
     position: absolute;
-    background-color: $bgc;
+    background-color: var(--bgc);
     border-radius: 12px;
     overflow: hidden;
     opacity: 0;
@@ -236,9 +243,9 @@
 .plusMenuButt {
     cursor: pointer;
     padding: 1vh 1vw;
-    color: $borderWh;
+    color: var(--borderWh);
     &:hover {
-        color: $tc;
-        background-color: $menuButtHover;
+        color: var(--tc);
+        background-color: var(--menuButtHover);
     }
 }

@@ -25,7 +25,7 @@
     flex-direction: row;
     align-items: center;
     &:hover{
-        background-color: $menuButtHover;
+        background-color: var(--menuButtHover);
     }
 }
 .mainSearchDiv {
@@ -47,7 +47,7 @@
     >svg {
         position: absolute;
         right: 0;
-        color: $borderHabit;
+        color: var(--borderHabit);
         user-select: none;
     }
 }
@@ -56,19 +56,19 @@
     height: 100%;
     padding: 1vh 0;
     border: none;
-    color: $tc;
-    border-bottom: 1px solid $borderHabit;
+    color: var(--tc);
+    border-bottom: 1px solid var(--borderHabit);
     outline: none;
     width: 100%;
     font-size: 20px;
     z-index: 2;
     &:focus-visible {
         border: none;
-        border-bottom: 1px solid $tc;
+        border-bottom: 1px solid var(--tc);
     }
 }
 .mainSearchWrapper:focus-within > svg {
-    color: $tc;
+    color: var(--tc);
 }
 .habitsRefinhWrapper {
     position: relative;
@@ -86,11 +86,11 @@
     align-items: center;
     justify-content: center;
     border-radius: 6px;
-    color:$borderHabit;
+    color:var(--borderHabit);
     cursor: pointer;
     position: relative;
     &:hover{
-        color: $tc;
+        color: var(--tc);
     }
 }
 .habitsRefinhDiv {
@@ -100,10 +100,10 @@
     position: absolute;
     width: fit-content;
     pointer-events: none;
-    background-color: $mc;
+    background-color: var(--mc);
     z-index: 1;
     border-radius: 6px;
-    border: 1px solid $borderHabit;
+    border: 1px solid var(--borderHabit);
     display: flex;
     flex-direction: column;
     &.active {
@@ -118,9 +118,9 @@
     width: 100%;
     justify-content: start;
     padding: 0.5vh 0.5vw;
-    color: $borderWh;
+    color: var(--borderWh);
     &:hover {
-        color: $tc;
+        color: var(--tc);
     }
     > svg {
         cursor: pointer;

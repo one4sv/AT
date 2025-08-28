@@ -1,46 +1,40 @@
 @use "../global" as *;
 
-.persFeedHabitsDiv {
+.persTabDivDouble {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    gap: 1vw;
 }
-.persFeedHabits {
-    width: 20vw;
-    font-size: 18px;
-    background-color: $bgc;
-    border-radius: 12px;
-    overflow: hidden;
+.persDiv {
     display: flex;
     flex-direction: column;
-    user-select: none;
+    margin-bottom: 2vh;
+}
+.themeChanger {
+    display: flex;
+    background-color: var(--bgc);
+    overflow: hidden;
+    border-radius: 8px;
+}
+.themeSelector {
+    font-size: 20px;
+    color: var(--tc);
+    padding: 1vh 1vw;
     cursor: pointer;
-    > .persHabitOrder {
-        padding: 1vh 1vw;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        &:hover {
-            background-color: $menuButtHover;
-            padding: 1.5vh 1vw;
-        }
-        >.persSpan {
-            color: $borderWh;
-        }
+    outline: none;
+    border: none;
+    background-color: var(--bgc);
+    &:hover {
+        background-color: var(--menuButtHover);
     }
-    >.active {
-        padding: 1.5vh 1vw;
-        background-color: $acsentGreen !important;
-        >.persSpan {
-            color: $tc;
-        }
+    &.active {
+        background-color: var(--darkerAcsent);
     }
 }
 .persSL {
-    @include selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, $borderWh, $tc, $bgc, 18px, 0.8vh, 0.8vw, 5%);
+    @include selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 0.8vh, 0.8vw, 5%);
     margin-bottom: 2vh;
     >input {
-        @include input($mc, $tc, $borderWh, 4vh, 8px, $tc);
+        @include input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
         width: 20vw;
         cursor: pointer;
     }

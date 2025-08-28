@@ -1,4 +1,4 @@
-@use "./global.scss" as *;
+@use "../global.scss" as *;
 
 .addHabitDiv {
     @include centerTopModal;
@@ -6,7 +6,7 @@
     min-height: auto;
     // max-height: 80vh;
     padding: 3vh 0 4vh;
-    background-color: $mc;
+    background-color: var(--mc);
     border-radius: 30px;
     display: flex;
     flex-direction: column;
@@ -24,13 +24,13 @@
     position: relative;
     width: 80%;
     >label {
-        color: $borderHabit;
+        color: var(--borderHabit);
         width: 100%;
         padding-left: 0.5vw;
     }
     &:focus-within {
         >label {
-            color: $acsentGreen;
+            color: var(--acsentGreen);
         }
     }
     >span {
@@ -38,7 +38,7 @@
         right: 0;
         bottom: -2vh;
         font-size: 16px;
-        color: $borderWh;
+        color: var(--borderWh);
     }
 }
 .addHabitTimeWrapper {
@@ -54,16 +54,16 @@
     background-color: $tr;
     outline: none;
     border: none;
-    border-bottom: 2px solid $borderHabit;
+    border-bottom: 2px solid var(--borderHabit);
     padding-bottom: 0.5vh;
-    color: $tc;
+    color: var(--tc);
     font-size: 20px;
     width: 100%;
     padding-inline-start: 0.25vw;
     resize: none;
     overflow-y: hidden;
     &:focus-visible {
-        border-bottom: 2px solid $acsentGreen;
+        border-bottom: 2px solid var(--acsentGreen);
 
     }
 }
@@ -74,15 +74,15 @@
 .addTeg {
     display: flex;
     align-items: center;
-    color: $borderHabit;
-    background-color: $bgc;
+    color: var(--borderHabit);
+    background-color: var(--bgc);
     padding: 0.5vh 0.5vw;
     gap: 0.3rem;
     border-radius: 6px;
-    border: 1px solid $borderWh;
+    border: 1px solid var(--borderWh);
     outline: none;
     &:hover {
-        color: $tc;
+        color: var(--tc);
         cursor: pointer;
     }
 }
@@ -91,7 +91,7 @@
     top: 7vh;
     position: absolute;
     pointer-events: none;
-    background-color: $bgc;
+    background-color: var(--bgc);
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -111,82 +111,82 @@
 .tag {
     display: flex;
     align-items: center;
-    color: $borderHabit;
-    background-color: $bgc;
+    color: var(--borderHabit);
+    background-color: var(--bgc);
     padding: 0.5vh 0.5vw;
     gap: 0.3rem;
     border-radius: 6px;
-    border: 1px solid $borderWh;
+    border: 1px solid var(--borderWh);
     white-space: nowrap;    
     overflow: hidden;
     text-overflow: ellipsis;
     height: 3.5vh;
     &:hover {
-        color: $tc;
+        color: var(--tc);
         cursor: pointer;
     }
     svg {
         flex-shrink: 0;
     }
     &.active {
-        border: 1px solid $acsentGreen;
-        color: $acsentGreen;
+        border: 1px solid var(--acsentGreen);
+        color: var(--acsentGreen);
     }
 }
 
 .addHabbitCheckBox {
     margin: 1vh 0;
-    color: $borderHabit;
+    color: var(--borderHabit);
     display: flex;
     align-items: center;
     font-size: 18px;
     >svg {
-        color: $borderHabit;
+        color: var(--borderHabit);
         margin-right: 0.2vw;
         width: 22px;
         height: 22px;
     }
     >.active {
-        color: $acsentGreen;
+        color: var(--acsentGreen);
     }
 }
 .inpWrapperAddHabit {
-    color: $borderHabit;
+    color: var(--borderHabit);
     >label {
         padding-inline-start: 0.5vw;
     }
     &:focus-within {
-        color: $acsentGreen
+        color: var(--acsentGreen)
     }
 }
 .addHabitSL {
-    @include selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, $borderWh, $tc, $bgc, 18px, 1vh, 1vw, 10%);
+    @include selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 10%);
     margin-bottom: 2vh;
     >input {
-        @include input($tr, $tc, $tr, 4vh, 0, $tr);
-        border-bottom: 2px solid $borderHabit;
+        @include input($tr, var(--tc), $tr, 4vh, 0, $tr);
+        border-bottom: 2px solid var(--borderHabit);
         width: 22vw;
         cursor: pointer;
         &:focus-visible {
-            border-bottom: 2px solid $acsentGreen;
+            border-bottom: 2px solid var(--acsentGreen);
         }
     }
     &:focus-within {
         >svg {
-            color: $acsentGreen;
+            color: var(--acsentGreen);
         }
     }
 }
 .addHabitGoal {
-    @include longButt(80%, 5vh, 0, 0, $tr, $borderHabit, $tr, $menuButtHover);
+    @include longButt(80%, 5vh, 0, 0, $tr, var(--borderHabit), $tr, var(--menuButtHover));
     margin-top: 2vh;
     font-size: 20px;
     &:hover {
-        color: $tc;
+        color: var(--tc);
     }
 }
 .addHabitSave {
-    @include longButt(80%, 5vh, 0, 0, $acsentGreen, $tc, $tr, $darkerAcsent);
+    @include longButt(80%, 5vh, 0, 0, var(--acsentGreen), var(--tc), $tr, var(--darkerAcsent));
     margin-top: 1vh;
     font-size: 20px;
 }
@@ -201,20 +201,20 @@
         border-radius: 6px;
         outline: none;
         border: 1px solid black;
-        background-color: $bgc;
-        color: $borderWh;
+        background-color: var(--bgc);
+        color: var(--borderWh);
         aspect-ratio: 1/1;
         &:hover {
-            background-color: $menuButtHover;
-            color: $tc;
+            background-color: var(--menuButtHover);
+            color: var(--tc);
         }
     }
     >button.active {
-        background-color: $darkerAcsent;
-        color: $tc;
+        background-color: var(--darkerAcsent);
+        color: var(--tc);
         &:hover {
-            background-color: $acsentGreen;
-            color: $tc;
+            background-color: var(--acsentGreen);
+            color: var(--tc);
         }
     } 
 }

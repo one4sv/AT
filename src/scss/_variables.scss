@@ -1,13 +1,63 @@
+// цвета по умолчанию (оставляем как запасные значения для сборки)
 $bgc: #1d1d1d;
 $tc: white;
 $borderWh: #a1a1a1;
 $font: Arial, Helvetica, sans-serif;
-$greenGrad:linear-gradient(135deg, #1bac1b, #a8e63f);
-$mc:#222222;
+$greenGrad: linear-gradient(135deg, #1bac1b, #a8e63f);
+$mc: #222222;
 $menuButtHover: #2c2c2c;
 $acsentGreen: #13d313;
 $darkerAcsent: #10b310;
-$borderHabit:#646464;
+$borderHabit: #646464;
 $notValid: #f44336;
-$tr:transparent;
-$mess:#272727;
+$tr: transparent;
+$mess: #272727;
+
+// theme maps — перечисляем нужные токены (имена CSS‑переменных)
+$themes: (
+    light: (
+        bgc: #ffffff,
+        tc: #111111,
+        borderWh: #666666,
+        borderWhLight: lighten(#666666, 20%),
+        mc: #f5f5f5,
+        menuButtHover: #dfdfdf,
+        menuButtHoverLight: lighten(#dfdfdf, 10%),
+        menuButtHoverLighter: lighten(#dfdfdf, 20%),
+        acsentGreen: #1cd11c,
+        darkerAcsent: #14cf14,
+        notValid: #8a0000,
+        borderHabit: #777777,
+        mess: #f0f0f0
+    ),
+    dark: (
+        bgc: #1d1d1d,
+        tc: #ffffff,
+        borderWh: #a1a1a1,
+        borderWhLight: lighten(#a1a1a1, 20%),
+        mc: #222222,
+        menuButtHover: #2c2c2c,
+        menuButtHoverLight: lighten(#2c2c2c, 10%),
+        menuButtHoverLighter: lighten(#2c2c2c, 20%),
+        acsentGreen: #13d313,
+        darkerAcsent: #10b310,
+        notValid: #f44336,
+        borderHabit: #646464,
+        mess: #272727
+    )
+);
+
+// миксин: сгенерировать блок [data-theme=".."] { --name: value; ... }
+@function theme-get($theme-name, $key) {
+    @return map-get(map-get($themes, $theme-name), $key);
+}
+
+@mixin generate-theme-vars() {
+    @each $theme-name, $map in $themes {
+        [data-theme="#{$theme-name}"] {
+            @each $k, $v in $map {
+                --#{$k}: #{$v};
+            }
+        }
+    }
+}

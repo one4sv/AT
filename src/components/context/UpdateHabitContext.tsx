@@ -100,7 +100,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
         (value instanceof Date && selectedHabit?.end_date && value.getTime() === new Date(selectedHabit.end_date).getTime()))) ||
       (field === "ongoing" && value === selectedHabit?.ongoing) ||
       (field === "periodicity" && value === selectedHabit?.periodicity) ||
-      (field === "chosen_days" && JSON.stringify(value.sort()) === JSON.stringify((selectedHabit?.chosen_days || []).sort())) ||
+      (field === "chosen_days" && JSON.stringify(value?.sort()) === JSON.stringify((selectedHabit?.chosen_days || []).sort())) ||
       (field === "start_time" && value === selectedHabit?.start_time) ||
       (field === "end_time" && value === selectedHabit?.end_time) ||
       (field === "pinned" && value === selectedHabit?.pinned) ||
