@@ -1,4 +1,4 @@
-@use "./global.scss" as *;
+@use "./global.scss" as var;
 
 .accDiv {
     width: 60%;
@@ -48,7 +48,7 @@
     >div {
         color: var(--borderHabit);
         >input {
-            background-color: $tr;
+            background-color: var(--tr);
             outline: none;
             border: none;
         }
@@ -93,20 +93,20 @@
         padding-left: 1vw;
     }
     &:focus-within {
-        color: var(--acsentGreen);
+        color: var(--acsent);
     }
 }
 .extraInfoInput {
     height: 2rem;
     scrollbar-width: none;
     resize: none;
-    background-color: $tr;
+    background-color: var(--tr);
     border: none;
     color: var(--tc);
     font-size: 18px;
     outline: none;
     &:focus-visible {
-        border-bottom: 1px solid var(--acsentGreen);
+        border-bottom: 1px solid var(--acsent);
     }
 }
 .accExtraInfo {
@@ -142,7 +142,7 @@
         border-radius: 12px 12px 0 0;
     }
     &.habitsActive {
-        color: var(--acsentGreen);
+        color: var(--acsent);
     }    
     &.sendedActive {
         color: var(--tc);
@@ -166,7 +166,7 @@
 }
 .habitsLine{
     left: 33.5%;
-    background-color: var(--acsentGreen);
+    background-color: var(--acsent);
 }
 .postsLine{
     left: 67%;

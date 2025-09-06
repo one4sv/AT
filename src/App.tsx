@@ -39,21 +39,23 @@ function App() {
                       <AuthProvider>
                         <DeleteProvider>
                           <BlackoutProvider>
-                            <ThemeHandler/>
-                            <Notification />
-                            <Blackout/>
-                            <Routes>
-                              <Route path="/log" element={<Log />} />
-                              <Route path="/admin" element={<Admin />} />
-                              <Route path="/confirm" element={<Confirm />} />
-                              <Route element={<MainLayout />}>
-                                <Route path="/" element={<Main />} />
-                                <Route path="/stats" element={<Stats />} />
-                                <Route path="/stats/:habitId" element={<Stats />} />
-                                <Route path='/chat/:contactId' element={<Chat />}/>
-                                <Route path='/acc/:contactId' element={<Acc />}/>
-                              </Route>
-                            </Routes>
+                            {/* <GroupsProvider> */}
+                              <ThemeHandler/>
+                              <Notification />
+                              <Blackout/>
+                              <Routes>
+                                <Route path="/log" element={<Log />} />
+                                <Route path="/admin" element={<Admin />} />
+                                <Route path="/confirm" element={<Confirm />} />
+                                <Route element={<MainLayout />}>
+                                  <Route path="/" element={<Main />} />
+                                  <Route path="/stats" element={<Stats />} />
+                                  <Route path="/stats/:habitId" element={<Stats />} />
+                                  <Route path='/chat/:contactId' element={<Chat />}/>
+                                  <Route path='/acc/:contactId' element={<Acc />}/>
+                                </Route>
+                              </Routes>
+                            {/* </GroupsProvider> */}
                           </BlackoutProvider>
                         </DeleteProvider>
                       </AuthProvider>

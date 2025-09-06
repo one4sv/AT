@@ -1,4 +1,4 @@
-@use "./global.scss" as *;
+@use "./global.scss" as var;
 
 .habitMenu {
     width: 32vw;
@@ -52,7 +52,7 @@
     }
 }
 .mainSearchInput {
-    background-color: $tr;
+    background-color: var(--tr);
     height: 100%;
     padding: 1vh 0;
     border: none;

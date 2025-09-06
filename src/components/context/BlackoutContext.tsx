@@ -7,6 +7,7 @@ export interface Blackout {
     seted:boolean;
     module?:keyof typeof ModuleMap;
     pick?:File;
+    bg?:File;
 }
 export interface BlackoutContextType {
     blackout:Blackout

@@ -46,14 +46,15 @@ export default function Stats() {
         } else loadHabitFromServer(habitId)
     }, [habitId, habits, loadHabitFromServer]);
 
-    if (!loadingHabit) {
+    if (habit && !loadingHabit) {
         return <Loader/>
     }
-    if (!habit) return "Привычка не найдена"
 
     return (
         <div className="statsDiv">
-            <RedHabit habit={habit} readOnly={isReadOnly} id={Number(habitId)}/>
+            {habit ? ( 
+                <RedHabit habit={habit} readOnly={isReadOnly} id={Number(habitId)}/>
+            ) : ("")}
             <Calendar />
         </div>
     );

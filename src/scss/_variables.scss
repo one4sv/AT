@@ -6,11 +6,9 @@ $font: Arial, Helvetica, sans-serif;
 $greenGrad: linear-gradient(135deg, #1bac1b, #a8e63f);
 $mc: #222222;
 $menuButtHover: #2c2c2c;
-$acsentGreen: #13d313;
-$darkerAcsent: #10b310;
 $borderHabit: #646464;
 $notValid: #f44336;
-$tr: transparent;
+$tr: #00000000;
 $mess: #272727;
 
 // theme maps — перечисляем нужные токены (имена CSS‑переменных)
@@ -20,12 +18,9 @@ $themes: (
         tc: #111111,
         borderWh: #666666,
         borderWhLight: lighten(#666666, 20%),
-        mc: #f5f5f5,
         menuButtHover: #dfdfdf,
         menuButtHoverLight: lighten(#dfdfdf, 10%),
         menuButtHoverLighter: lighten(#dfdfdf, 20%),
-        acsentGreen: #1cd11c,
-        darkerAcsent: #14cf14,
         notValid: #8a0000,
         borderHabit: #777777,
         mess: #f0f0f0
@@ -35,17 +30,96 @@ $themes: (
         tc: #ffffff,
         borderWh: #a1a1a1,
         borderWhLight: lighten(#a1a1a1, 20%),
-        mc: #222222,
         menuButtHover: #2c2c2c,
         menuButtHoverLight: lighten(#2c2c2c, 10%),
         menuButtHoverLighter: lighten(#2c2c2c, 20%),
-        acsentGreen: #13d313,
-        darkerAcsent: #10b310,
         notValid: #f44336,
         borderHabit: #646464,
         mess: #272727
     )
 );
+$acsents: (
+    poison: (
+        light: (
+            acsent: #00cc44,
+            darkerAcsent: #009933
+        ),
+        dark: (
+            acsent: #11c011,
+            darkerAcsent: #10b310
+        )
+    ),
+    apple: (
+        light: (
+            acsent: #ff3333,
+            darkerAcsent: #cc0000
+        ),
+        dark: (
+            acsent: #ff3b3b,
+            darkerAcsent: #cc2f2f
+        )
+    ),
+    sky: (
+        light: (
+            acsent: #3399ff,
+            darkerAcsent: #0066cc
+        ),
+        dark: (
+            acsent: #007bff,
+            darkerAcsent: #0056b3
+        )
+    ),
+    space: (
+        light: (
+            acsent: #a066ff,
+            darkerAcsent: #6a1b9a
+        ),
+        dark: (
+            acsent: #9d4edd,
+            darkerAcsent: #4a148c
+        )
+    )
+);
+$decors: (
+    default: (
+        light: (
+            mc: #f5f5f5
+        ),
+        dark: (
+            mc: #222222,
+        )
+    ),
+    glass: (
+        light: (
+            mc: #ffffff99
+        ),
+        dark: (
+            mc: #22222299
+        )
+    )
+);
+
+// миксин: генерируем переменные декора для каждой комбинации decor + theme
+@mixin generate-decor-vars() {
+  @each $decor-name, $theme-map in $decors {
+    @each $theme-name, $map in $theme-map {
+      [data-theme="#{$theme-name}"][data-decor="#{$decor-name}"],
+      [data-decor="#{$decor-name}"][data-theme="#{$theme-name}"] {
+        @each $k, $v in $map {
+          --#{$k}: #{$v};
+        }
+      }
+    }
+  }
+}
+
+
+// --- добавляем дефолтные SCSS-переменные (fallback для :root) ---
+$__default-accent-key: poison !default;
+$__default-accent-theme: light !default;
+
+$acsent: map-get(map-get(map-get($acsents, $__default-accent-key), $__default-accent-theme), acsent);
+$darkerAcsent: map-get(map-get(map-get($acsents, $__default-accent-key), $__default-accent-theme), darkerAcsent);
 
 // миксин: сгенерировать блок [data-theme=".."] { --name: value; ... }
 @function theme-get($theme-name, $key) {
@@ -61,3 +135,20 @@ $themes: (
         }
     }
 }
+
+// миксин: генерируем переменные акцента для каждой комбинации acsent + theme
+@mixin generate-acsent-vars() {
+  @each $ac-name, $m in $acsents {
+    @each $theme-name, $map in $m {
+      [data-theme="#{$theme-name}"][data-acsent="#{$ac-name}"],
+      [data-acsent="#{$ac-name}"][data-theme="#{$theme-name}"] {
+        --acsent: #{map-get($map, acsent)};
+        --darkerAcsent: #{map-get($map, darkerAcsent)};
+      }
+    }
+  }
+}
+
+/* удалите или закомментируйте эти строки (они должны быть вызваны из _global.scss) */
+/* @include generate-theme-vars();
+@include generate-acsent-vars(); */

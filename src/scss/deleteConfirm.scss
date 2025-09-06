@@ -1,7 +1,7 @@
-@use "./global" as *;
+@use "./global" as var;
 
 .deleteDiv {
-    @include centerModal;
+    @include var.centerModal;
     width: 20vw;
     height: 20vh;
     display: flex;
@@ -27,12 +27,12 @@
     }
 }
 .deleteCancel {
-    background-color: $tr;
+    background-color: var(--tr);
     border: none;
     color: var(--tc);
     &:hover {
         background-color: var(--menuButtHover);
-        color: var(--acsentGreen);
+        color: var(--acsent);
     }
 }
 .deleteConfirm {

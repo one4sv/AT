@@ -9,3 +9,17 @@
 		filter: brightness(0.25);
 	}
 }
+@keyframes highlightFade {
+    0% { 
+		background-color: var(--darkerAcsent);
+		box-shadow: 0 0 50px var(--darkerAcsent); 
+	}
+    50% { 
+		background-color: var(--acsent); 
+		box-shadow: 0 0 25px var(--acsent)
+	}
+    100% { 
+		background-color: var(--darkerAcsent);
+		box-shadow: 0 0 1px var(--darkerAcsent)
+	}
+}

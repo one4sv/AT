@@ -38,12 +38,11 @@ const HabitsContext = createContext<HabitContextType | null>(null);
 
 export const HabitsProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
-    const { orderHabits } = useSettings()
+    const { orderHabits } = useSettings();
 
     const [ habits, setHabits ] = useState<Habit[] | null>(null);
     const [ loadingHabit, setLoadingHabit ] = useState(true);
     const [ newOrderHabits, setNewOrderHabits ] = useState<string[] | undefined>()
-
 
     const refetchHabits = useCallback(async () => {
         setLoadingHabit(true);

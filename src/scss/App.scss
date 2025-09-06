@@ -1,11 +1,11 @@
-@use "./global.scss" as *;
+@use "./global.scss" as var;
 @use "./habitThemes.scss";
 @use "./datepicker.scss";
 
 html, body {
   height: 100%;
   width: 100%;
-  font-family: $font;
+  font-family: var(--font);
   scrollbar-width: thin;
   scrollbar-color: var(--menuButtHover) transparent;
   overflow-x: hidden;
@@ -22,6 +22,23 @@ body {
 }
 .page-content {
   width: 80vw;
-  position: absolute;
+  position: relative;
   left: 20vw;
+  > * {
+    z-index: 1;
+  }
+}
+.background {
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+  overflow: hidden;
+  color: var(--darkerAcsent);
+  >div {
+    position: absolute;
+  }
+}
+.bgImg {
+  background-repeat: no-repeat;
+  background-size: cover;
 }

@@ -151,11 +151,12 @@
 }
 
 @mixin themeHabit($br, $bg, $hover, $cPer, $shad, $cSvg, $cHn, $bH, $cShad, $HovHN, $HovPer) {
+    box-sizing: border-box;
     border: 1px solid $br;
     background-color: $bg;
     &:hover {
         background-color: $hover;
-        // box-shadow: 0 0 $shad $cShad;
+        box-shadow: 0 0 $shad $cShad;
         border: 1px solid $bH;
         > .habitInfo {
             > .habitName {

@@ -1,4 +1,4 @@
-@use "./global.scss" as *;
+@use "./global.scss" as var;
 
 .chatDiv {
     width: 70%;
@@ -13,6 +13,9 @@
     height: 6vh;
     display: flex;
     background-color: var(--mc);
+    // overflow-x:hidden;
+    overflow-y: visible;
+    border-bottom: 1px solid var(--bgc);
 }
 .chatUserBack {
     height: 100%;
@@ -33,7 +36,9 @@
     cursor: pointer;
     display: flex;
     border-radius: 8px;
-    flex: 6;
+    // flex: 5;
+    width: 40%;
+    transition: width 0.2s ease;
     &:hover {
         background-color: var(--menuButtHover);
     }
@@ -44,6 +49,7 @@
     display: flex;
     align-items: center;
     padding-left: 0.5vw;
+    margin-right: 0.5vw;
     >svg {
         height: 90%;
         width: 90%;
@@ -60,6 +66,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+    text-wrap: nowrap;
 }
 .wasOnline {
     color: var(--borderWh);
@@ -68,24 +75,167 @@
     height: 100%;
     display: flex;
     color: var(--borderHabit);
-    >div {
-        margin: 10%;
-        cursor: pointer;
-        flex: 1;
-        aspect-ratio: 1/1;
+    flex: 1;
+    width: 50%;
+}
+.menuButt {
+    // margin: 1%;
+    margin: 0.7vh 0.2vw;
+    cursor: pointer;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20%;
+    &:hover {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    }
+    >svg {
+        height: 70%;
+        width: 70%;
+
+    }
+}
+.chatSearchWrapeer {
+    flex: 3;
+    display: flex;
+    position: relative;
+    align-items: center;
+    >.chatSearch {
+        background-color: var(--mc);
+        width: 100%;
+        border-radius: 8px;
+        transition: width 0.2s ease;
+        height: 100%;
         display: flex;
+        position: relative;
         align-items: center;
-        justify-content: center;
-        border-radius: 40%;
-        &:hover {
-            color: var(--tc);
-            background-color: var(--menuButtHover);
+        padding: 0 0.5vw;
+        >input {
+            @include var.input(var(--bgc), var(--tc), var(--borderHabit), 55%, 8px, var(--acsent));
+            width: 100%;
+            padding-inline-start: 0.5vw;
+            padding-inline-end: 2vw;
         }
         >svg {
-            height: 70%;
-            width: 70%;
-
+            position: absolute;
+            right: 0.8vw;
         }
+        &:focus-within {
+            >svg {
+                color: var(--acsent);
+            }
+        }
+        &:hover {
+            background-color: var(--menuButtHover);
+        }
+    }
+}
+.chatSearchDiv {
+    position: absolute;
+    top: 6vh;
+    padding: 0.5vh 0 0.5vh 0.5vw;
+    z-index: 2;
+    background-color: var(--mc);
+    width: 100%;
+    transition: height 0.2s ease;
+    overflow-x: hidden;
+    border-radius: 8px;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    // max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+.chatSearchDiv.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+.chatSearchDiv.closed {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+.chatSearchList {
+    width: 100%;
+    overflow-y:auto;
+    scrollbar-width: thin;
+    max-height: 22vh;
+    display: flex;
+    flex-direction: column;
+}
+.chatSearchInfo {
+    display: flex;
+    color: var(--tc);
+    align-items: center;
+    font-size: 18px;
+    justify-content: space-between;
+    >div > button {
+        color: var(--tc);
+        outline: none;
+        border: none;
+        border-radius: 6px;
+        background-color: var(--mc);
+        width: 2vw;
+        aspect-ratio: 1/1;
+        >svg {
+            width: 100%;
+            position: relative;
+            height: 100%;
+        }
+        &:hover {
+            background-color: var(--menuButtHover);
+        }
+    }
+}
+.chatSearchItem {
+    display: flex;
+    height: 5vh;
+    margin-bottom: 0.5vh;
+    border-radius: 8px;
+    gap: 0.5vw;
+    position: relative;
+    width: 100%;
+    padding: 0.5vh 0.5vw 0 0.5vw;
+    cursor: pointer;
+    &:hover {
+        background-color: var(--menuButtHover);
+    }
+}
+.chatSearchPic {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 1/1;
+    >img {
+        width: 100%;
+        height: 100%;
+        object-fit:cover;
+        border-radius: 50%;
+    }
+}
+.chatSearchItemInfo {
+    position: relative;
+    width: 93%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.chatSearcSender {
+    color: #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+}
+.chatSearchText {
+    display: flex;
+    width: 100%;
+    position: relative;
+    color: var(--borderWh);
+    >span {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;        // не переносим на новую строку
+        overflow: hidden;           // скрываем лишнее
+        text-overflow: ellipsis;    // показываем "..."
     }
 }
 .chat {
@@ -94,8 +244,11 @@
     flex-direction: column;
     overflow-y: scroll;
     scrollbar-width: none;
-    scrollbar-color: var(--menuButtHover) $tr;
-    margin-bottom: 3vh;
+    position: relative;
+    right: 2vw;
+    scrollbar-color: var(--menuButtHover) var(--tr);
+    padding: 0 2vw 3vh;
+    width: calc(100% + 4vw);
 }
 .messageWrapper {
     margin-top: 1vh;
@@ -119,7 +272,6 @@
     max-width: 25vw;
     width: fit-content;
     padding: 0.5vh 0.5vw;
-
     &.ur {
         background-color: var(--mess);
         border-radius: 12px 12px 12px 0;
@@ -134,11 +286,15 @@
         border-radius: 12px 12px 0 12px;
         display: flex;
         flex-direction: column;
+        color: white;
         >.messageDate {
-            color: #c7eec2;
+            color: #e0e0e0;
             align-self: flex-end;
         }
     }
+}
+.message.highlight {
+    animation: highlightFade 2s ease;
 }
 .messageText {
     max-width: 25vw;
@@ -183,7 +339,7 @@
         cursor: pointer;
         border-radius: 50%;
         &:hover {
-            background-color: var(--acsentGreen);
+            background-color: var(--acsent);
             >.chatFile {
                 color: var(--tc);
             }

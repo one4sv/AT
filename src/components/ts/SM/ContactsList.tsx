@@ -34,7 +34,7 @@ export default function ContactsList() {
                         </div>
                         <div className="contactsUserInfo">
                             <div className="contactsUserStr">
-                                <span>{acc.username ? acc.username: acc.nick}</span>
+                                <span className="nameSpan">{acc.username ? acc.username: acc.nick}</span>
                                 {!acc.lastMessage && (
                                     <span className="secSpan">{acc.username ? `| ${acc.nick}`: ""}</span>
                                 )}

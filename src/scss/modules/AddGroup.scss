@@ -1,0 +1,33 @@
+@use "../global.scss" as var;
+
+.AddGroupDiv {
+    @include var.centerTopModal;
+    width: 28vw;
+    min-height: auto;
+    // max-height: 80vh;
+    padding: 3vh 0 4vh;
+    background-color: var(--mc);
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 11;
+}
+.addGroupSL {
+    @include var.selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 1%);
+    margin-bottom: 2vh;
+    >input {
+        @include var.input(var(--tr), var(--tc), var(--tr), 4vh, 0, var(--tr));
+        border-bottom: 2px solid var(--borderHabit);
+        width: 22vw;
+        cursor: pointer;
+        &:focus-visible {
+            border-bottom: 2px solid var(--acsent);
+        }
+    }
+    &:focus-within {
+        >svg {
+            color: var(--acsent);
+        }
+    }
+}

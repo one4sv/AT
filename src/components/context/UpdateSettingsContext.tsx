@@ -10,6 +10,9 @@ export type UpdateSettingsContextType = {
     setNewAmount: (val: number[]) => void;
     setNewTheme: (val:string)=> void;
     setNewAcsent: (val:string)=> void;
+    setNewBg: (val:string)=> void;
+    setNewDecor: (val:string)=> void;
+    setBgUrl:(val:File) => void;
     setNewPrivateShow: (val: PrivateSettings) => void;
     isUpdating: string[];
 };
@@ -22,7 +25,7 @@ type UpdateQueueItem = {
 const UpdateSettingsContext = createContext<UpdateSettingsContextType | null>(null);
 
 export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchSettings, amountHabits, orderHabits, theme, acsent } = useSettings();
+    const { refetchSettings, amountHabits, orderHabits, theme, acsent, bg, decor } = useSettings();
     const { refetchUser, user } = useUser();
     const { showNotification } = useNote();
     const [ updateQueue, setUpdateQueue ] = useState<UpdateQueueItem[]>([]);
@@ -42,7 +45,6 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         setIsUpdating((prev) => [...new Set([...prev, "private"])]);
     }, []);
 
-
     const setNewAmount = useCallback((val: number[]) => {
         setUpdateQueue((prev) => [
             ...prev.filter((item) => item.setting !== "amountHabits"),
@@ -55,10 +57,40 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "theme"), {setting:"theme", value:val}]);
         setIsUpdating((prev) => [...new Set([...prev, "pers"])])
     },[])
+
     const setNewAcsent = useCallback((val: string) => {
         setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "acsent"), {setting:"acsent", value:val}]);
         setIsUpdating((prev) => [...new Set([...prev, "pers"])])
+    },[])       
+    const setNewDecor = useCallback((val: string) => {
+        setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "decor"), {setting:"decor", value:val}]);
+        setIsUpdating((prev) => [...new Set([...prev, "pers"])])
+    },[])    
+
+    const setNewBg = useCallback((val: string) => {
+        setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "bg"), {setting:"bg", value:val}]);
+        setIsUpdating((prev) => [...new Set([...prev, "pers"])])
     },[])
+
+    const setBgUrl = async(val: File) => {
+        try {
+            const bg = new FormData();
+            bg.append("bg", val);
+            const upRes = await axios.post("http://localhost:3001/uploadbg", bg, {
+                withCredentials: true,
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            if (upRes.data?.success) {
+                await refetchSettings();
+            } else {
+                showNotification("error", upRes.data?.error || "Не удалось загрузить аватар");
+                return;
+            }
+        } catch {
+            showNotification("error", "Не удалось загрузить аватар");
+            return;
+        }
+    }
 
     const processQueue = useCallback(async () => {
         if (isProcessing || updateQueue.length === 0) return;
@@ -81,7 +113,9 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
             (setting === "nick" && value === user.nick) ||
             (setting === "mail" && value === user.mail) ||
             (setting === "theme" && value === theme) ||
-            (setting === "acsent" && value === acsent)
+            (setting === "acsent" && value === acsent) ||
+            (setting === "decor" && value === decor) ||
+            (setting === "bg" && value === bg)
         ) {
             setUpdateQueue((prev) => prev.slice(1));
             setIsUpdating((prev) => prev.filter((item) => item !== updatingKey(setting)));
@@ -117,7 +151,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
             setIsUpdating((prev) => prev.filter((item) => item !== updatingKey(setting)));
             setIsProcessing(false);
         }
-    }, [isProcessing, updateQueue, amountHabits, orderHabits, user.username, user.nick, user.mail, theme, refetchSettings, refetchUser, showNotification, acsent]);
+    }, [isProcessing, updateQueue, amountHabits, orderHabits, user.username, user.nick, user.mail, theme, acsent, decor, bg, refetchSettings, refetchUser, showNotification]);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -128,7 +162,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
     return (
         <UpdateSettingsContext.Provider
-            value={{ setNewOrder, setNewAmount, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent }}
+            value={{ setNewOrder, setNewAmount, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent, setNewBg, setBgUrl, setNewDecor }}
         >
             {children}
         </UpdateSettingsContext.Provider>

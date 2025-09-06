@@ -1,0 +1,113 @@
+@use "../global.scss" as var;
+
+.backgroundHandlerDiv {
+    background-color: var(--bgc);
+    border-radius: 12px;
+    display: flex;
+    width: 60vw;
+    flex-direction: column;
+    padding: 2vh 1vw;
+    @include var.centerModal;
+}
+
+.backgroundHandlerImg {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    margin-bottom: 1vh;
+    overflow: hidden;
+    > .cropContainer {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+    }
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: filter 0.3s ease, transform 0.3s ease; /* Плавный переход для блюра и масштаба */
+    }
+}
+
+.backgroundHandlerControls {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    margin-bottom: 1vh;
+}
+
+.backgroundHandlerBlur,
+.backgroundHandlerZoom {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    label {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        background: var(--darkerAcsent);
+        border-radius: 3px;
+        outline: none;
+
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--acsent);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid var(--acsent);
+        }
+
+        &::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--tc);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid var(--acsent);
+        }
+    }
+}
+
+.backgroundHandlerButts {
+    display: flex;
+    justify-content: center;
+    gap: 1vw;
+
+    > button {
+        padding: 1vh 2vw;
+        outline: none;
+        border: none;
+        font-size: 18px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+}
+
+.backgroundHandlerCancel {
+    background-color: var(--tr);
+    color: var(--borderWh);
+
+    &:hover {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
+    }
+}
+
+.backgroundHandlerConfirm {
+    background-color: var(--tr);
+    color: var(--tc);
+
+    &:hover {
+        background-color: var(--menuButtHover);
+        color: var(--acsent);
+    }
+}

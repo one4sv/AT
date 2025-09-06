@@ -1,9 +1,9 @@
-@use "./global.scss" as *;
+@use "./global.scss" as var;
 
 .feedCentral {
     width: 40vw;
     min-height: 100vh;
-    background-color: $tr;
+    background-color: var(--tr);
     position: relative;
     margin: 0 auto;
     display: flex;
@@ -52,7 +52,7 @@
     width: 100%;
     > input {
         position: relative;
-        @include input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
+        @include var.input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
         margin: 0;
         width: 100%;
     }

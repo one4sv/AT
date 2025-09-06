@@ -1,10 +1,9 @@
-@use "../global.scss" as *;
+@use "../global.scss" as var;
 
 .addHabitDiv {
-    @include centerTopModal;
+    @include var.centerTopModal;
     width: 28vw;
     min-height: auto;
-    // max-height: 80vh;
     padding: 3vh 0 4vh;
     background-color: var(--mc);
     border-radius: 30px;
@@ -18,7 +17,7 @@
     margin: 1vh 0 1vh;
 }
 .addHabitWrapper {
-    margin-top: 1vh;
+    margin-bottom: 1vh;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -27,10 +26,11 @@
         color: var(--borderHabit);
         width: 100%;
         padding-left: 0.5vw;
+        user-select: none;
     }
     &:focus-within {
         >label {
-            color: var(--acsentGreen);
+            color: var(--acsent);
         }
     }
     >span {
@@ -43,7 +43,6 @@
 }
 .addHabitTimeWrapper {
     display: flex;
-    margin-top: 1vh;
     width: 80%;
     justify-content: space-between;
     >.addHabitWrapper {
@@ -51,7 +50,7 @@
     }
 }
 .addHabitInput {
-    background-color: $tr;
+    background-color: var(--tr);
     outline: none;
     border: none;
     border-bottom: 2px solid var(--borderHabit);
@@ -63,7 +62,7 @@
     resize: none;
     overflow-y: hidden;
     &:focus-visible {
-        border-bottom: 2px solid var(--acsentGreen);
+        border-bottom: 2px solid var(--acsent);
 
     }
 }
@@ -129,13 +128,13 @@
         flex-shrink: 0;
     }
     &.active {
-        border: 1px solid var(--acsentGreen);
-        color: var(--acsentGreen);
+        border: 1px solid var(--acsent);
+        color: var(--acsent);
     }
 }
 
 .addHabbitCheckBox {
-    margin: 1vh 0;
+    margin-bottom: 1vh;
     color: var(--borderHabit);
     display: flex;
     align-items: center;
@@ -147,7 +146,7 @@
         height: 22px;
     }
     >.active {
-        color: var(--acsentGreen);
+        color: var(--acsent);
     }
 }
 .inpWrapperAddHabit {
@@ -156,29 +155,29 @@
         padding-inline-start: 0.5vw;
     }
     &:focus-within {
-        color: var(--acsentGreen)
+        color: var(--acsent)
     }
 }
 .addHabitSL {
-    @include selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 10%);
+    @include var.selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 10%);
     margin-bottom: 2vh;
     >input {
-        @include input($tr, var(--tc), $tr, 4vh, 0, $tr);
+        @include var.input(var(--tr), var(--tc), var(--tr), 4vh, 0, var(--tr));
         border-bottom: 2px solid var(--borderHabit);
         width: 22vw;
         cursor: pointer;
         &:focus-visible {
-            border-bottom: 2px solid var(--acsentGreen);
+            border-bottom: 2px solid var(--acsent);
         }
     }
     &:focus-within {
         >svg {
-            color: var(--acsentGreen);
+            color: var(--acsent);
         }
     }
 }
 .addHabitGoal {
-    @include longButt(80%, 5vh, 0, 0, $tr, var(--borderHabit), $tr, var(--menuButtHover));
+    @include var.longButt(80%, 5vh, 0, 0, var(--tr), var(--borderHabit), var(--tr), var(--menuButtHover));
     margin-top: 2vh;
     font-size: 20px;
     &:hover {
@@ -186,7 +185,7 @@
     }
 }
 .addHabitSave {
-    @include longButt(80%, 5vh, 0, 0, var(--acsentGreen), var(--tc), $tr, var(--darkerAcsent));
+    @include var.longButt(80%, 5vh, 0, 0, var(--acsent), var(--tc), var(--tr), var(--darkerAcsent));
     margin-top: 1vh;
     font-size: 20px;
 }
@@ -213,7 +212,7 @@
         background-color: var(--darkerAcsent);
         color: var(--tc);
         &:hover {
-            background-color: var(--acsentGreen);
+            background-color: var(--acsent);
             color: var(--tc);
         }
     } 

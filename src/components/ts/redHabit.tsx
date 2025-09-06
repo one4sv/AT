@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { SquareCheck, ChevronLeft, Pin, PinOff, Trash2, Square } from "lucide-react";
+import { SquareCheck, ChevronLeft, Pin, PinOff, Trash2, Square, Plus } from "lucide-react";
 import CalendarInput from "../ts/CalendarInput";
 import SelectList from "./SelectList";
 import { useUpHabit } from "../hooks/UpdateHabitHook";
@@ -10,7 +10,7 @@ import TagSelector from "./TagSelector";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useDelete } from "../hooks/DeleteHook";
 import { tags, type Tag } from "./tags";
-import DayChanger from "./dayChanger";
+import DayChanger from "./DayChanger";
 import { initialChosenDays } from "./initialChosenDays";
 
 interface RedHabitProps {
@@ -224,7 +224,7 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
                 </div>
             </div>
 
-            <div className="addHabbitCheckBox" onClick={() => {
+            <div className="addHabbitCheckBox redHabitCheckbox" onClick={() => {
                 if (!readOnly) {
                     setOngoing(!ongoing);
                     setNewOngoing(habit.id, !ongoing);
@@ -289,6 +289,12 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
                         }}
                     />
                 </div>
+            </div>
+            <div className="addGoalButtDiv">
+                <button className="addGoalButt">
+                    <Plus />
+                    Добавить цель
+                </button>
             </div>
         </div>
     );

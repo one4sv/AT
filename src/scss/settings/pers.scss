@@ -1,4 +1,4 @@
-@use "../global" as *;
+@use "../global" as var;
 
 .persTabDivDouble {
     display: flex;
@@ -31,11 +31,68 @@
     }
 }
 .persSL {
-    @include selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 0.8vh, 0.8vw, 5%);
+    @include var.selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 0.8vh, 0.8vw, 5%);
     margin-bottom: 2vh;
     >input {
-        @include input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
+        @include var.input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
         width: 20vw;
         cursor: pointer;
     }
+}
+.bgPicker {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 1vw;
+    overflow-x: auto;
+}
+.bgPick {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5vh;
+    cursor: pointer;
+    >span {
+        color: var(--borderWh);
+    }
+    &:hover {
+        >.bgMini {
+            border: 1px solid var(--tc);
+        }
+        >span {
+            color: var(--tc);
+        }
+        >.bgCustom {
+            color: var(--tc);
+        }
+    }
+}
+.bgMini {
+    width: 8vw;
+    height: 8vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    overflow: hidden;
+    &.choosen {
+        border: 1px solid var(--acsent) !important;
+    }
+}
+.bgCustom {
+    width: 8vw;
+    height: 8vh;
+    background-color: var(--borderHabit);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    border-radius: 12px;
+    color: var(--borderWh);
+    > svg {
+        aspect-ratio: 1/1;
+    }
+}
+.bgSpanChoosen {
+    color: var(--acsent) !important;
 }

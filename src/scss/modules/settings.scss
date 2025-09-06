@@ -1,4 +1,4 @@
-@use "../global.scss" as *;
+@use "../global.scss" as var;
 @use "../settings/pers.scss";
 @use "../settings/private.scss";
 @use "../settings/habits.scss";
@@ -6,7 +6,7 @@
 .settingsDiv {
     height: 80vh;
     width: 60vw;
-    @include centerModal;
+    @include var.centerModal;
     background-color: var(--mc);
     display: flex;
     flex-direction: row;
@@ -30,7 +30,7 @@
         }
     }
     > .active {
-        background-color: var(--acsentGreen) !important;
+        background-color: var(--acsent) !important;
         color: var(--tc);
     }
 }
@@ -38,11 +38,11 @@
     cursor: text !important;
     border-bottom: 1px solid black;
     >input {
-        @include input(transparent, var(--tc), transparent, 100%, 0, 0 );
+        @include var.input(transparent, var(--tc), transparent, 100%, 0, 0 );
         width:80%;
     }
     > svg {
-        @include svgInInput(100%, 0, 1vw);
+        @include var.svgInInput(100%, 0, 1vw);
         cursor: text;
     }
 }
@@ -102,7 +102,7 @@
     flex-direction: column;
     margin-bottom: 2vh;
     >input {
-        @include input(var(--mc), var(--tc), var(--borderHabit), 4vh, 8px, var(--tc));
+        @include var.input(var(--mc), var(--tc), var(--borderHabit), 4vh, 8px, var(--tc));
         font-size: 20px;
         z-index: 13;
         transition: border 0.2s ease-in;

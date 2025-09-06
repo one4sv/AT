@@ -1,34 +1,6 @@
-@use "./global.scss" as *;
+@use "./global.scss" as var;
 
 .themeHabit-default {
-  @include themeHabit($tr, $tr, var(--menuButtHover), var(--borderWh), none, var(--borderHabit), var(--tc), var(--tc), transparent, var(--tc), var(--borderWh));
-}
-.themeHabit-poison { 
-  @include themeHabit(#197e19, #24d324, #13d113, var(--tc), 30px, var(--tc), var(--tc), #197e19, #27c827, var(--tc), var(--tc)); 
-}
-.themeHabit-apple { 
-  @include themeHabit(#d94e0a, #d94e0a, #ff9c3a, var(--tc), 30px, var(--tc), var(--tc), #e67300, #d94e0a, var(--tc), var(--tc)); 
-}
-.themeHabit-sky { 
-  @include themeHabit(#1565c0, #0d47a1, #1976d2, #d0e9ff, 30px, #0b3d91, var(--tc), #3a72d1, #1565c080, var(--tc), #d0e9ff); 
-}
-.themeHabit-space { 
-  @include themeHabit(#301934, #1e142d, #3a1f4a, #b9a6d1, 30px, #4a2d6d, var(--tc), #5c3d8a, #493a5c, var(--tc), #b9a6d1); 
+  @include var.themeHabit(var(--tr), var(--tr), var(--menuButtHover), var(--borderWh), none, var(--borderHabit), var(--tc), var(--tc), transparent, var(--tc), var(--borderWh));
 }
 
-.themeHabit-grass {
-  @include themeHabit(#4b820d, #daf7a6, #c1f27f, #3a5a07, 15px, #506619, #305502, #7bb32f, #50661980, #305502, #3a5a07);
-}
-.themeHabit-desert {
-  @include themeHabit(#c68a17, #ffd78e, #ffca4f, #a46200, 15px, #b2710d, #814c00, #ffbb33, #ffbb3380, #814c00, #a46200);
-}
-.themeHabit-sea {
-  @include themeHabit(#3a8dde, #a5cef7, #77b3f1, #1e4c85, 15px, #2c72bf, #153d6f, #5a9fff, #5a9fff80, #153d6f, #1e4c85);
-}
-.themeHabit-violet {
-  @include themeHabit(#7645a0, #bfa3da, #a57fcc, #533770, 15px, #673c99, #422b63, #8c6fc1, #8c6fc180, #422b63, #533770);
-}
-
-.themeHabit-negative {
-  @include themeHabit(black, var(--tc), var(--tc), black, 15px, #000000, #000, #444, var(--tc), #000, black);
-}

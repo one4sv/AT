@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
+import type { GroupType } from "../context/GroupsHabitContext";
 
 export type Option = {
   label: string;
@@ -22,7 +23,7 @@ export default function SelectList({
   placeholder?: string;
   className: string;
   chevron?: boolean;
-  arr: Option[];
+  arr: Option[] | GroupType[];
   hide?: boolean;
   prop?: React.Dispatch<React.SetStateAction<string | number | undefined >>;
   readOnly?: boolean;
@@ -56,7 +57,7 @@ export default function SelectList({
   }, [arr, prop, selected]);
 
   const handleSelect = (option: Option) => {
-    setSelectedLabel(option.label);
+    if (option.value !== "0") setSelectedLabel(option.label);
     setShowList(false);
     if (prop) prop(option.value);
     if (extraFunction) extraFunction(option.value);
@@ -97,15 +98,24 @@ export default function SelectList({
         {showList &&
           arr &&
           !showOnly &&
-          arr.map((option, idx) => (
-            <div
-              className="selectListButt"
-              key={idx}
-              onClick={() => handleSelect(option)}
-            >
-              {option.label}
-            </div>
-          ))}
+          arr.map((option:Option | GroupType, idx) => {
+            const Icon = option?.icon
+            return (
+              <div
+                className="selectListButt"
+                key={idx}
+                onClick={() => handleSelect(option)}
+              >
+                {option.icon ? 
+                  (
+                    <Icon color={option.color}/>
+                  ) : ('')
+                }
+                {option.label}
+              </div>
+            )
+          }
+          )}
       </div>
     </div>
   );

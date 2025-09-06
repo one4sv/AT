@@ -1,4 +1,4 @@
-@use "../global" as *;
+@use "../global" as var;
 
 .sideMenu {
     padding: 1vh 0 0;
@@ -8,6 +8,7 @@
     background-color: var(--mc);
     display: flex;
     flex-direction: column;
+    z-index: 2;
 }
 .SMsearchDiv {
     display: flex;
@@ -55,7 +56,7 @@
     >svg {
         color: var(--tc);
         > circle:nth-of-type(2) {
-            color: var(--acsentGreen);
+            color: var(--acsent);
         }
     }
 }
@@ -108,16 +109,16 @@
         }
     }
     >input {
-        @include input(var(--bgc), var(--tc), var(--borderHabit), 4vh, 12px, var(--acsentGreen));
+        @include var.input(var(--bgc), var(--tc), var(--borderHabit), 4vh, 12px, var(--acsent));
         font-size: 18px;
         width:100%;
         padding-inline-start: 0.5vw;
     }
     >svg {
-        @include svgInInput(4vh, 0,0.5vw);
+        @include var.svgInInput(4vh, 0,0.5vw);
     }
     &:focus-within {
-        color: var(--acsentGreen);
+        color: var(--acsent);
     }
 }
 .SMtabs {
@@ -146,7 +147,7 @@
 }
 .SMtab.active.habits {
     border-radius: 8px 8px 0 0;
-    color: var(--acsentGreen);
+    color: var(--acsent);
 }
 .SMline {
     position: relative;
@@ -157,7 +158,7 @@
     background-color: var(--tc);
 }
 .SMline.habits {
-    background-color: var(--acsentGreen);
+    background-color: var(--acsent);
     left: 50%;
 }
 .ListWrapper {
@@ -178,7 +179,7 @@
     height: 100%;
     overflow-y:auto;
     scrollbar-width: thin;
-    scrollbar-color: var(--menuButtHover) $tr;
+    scrollbar-color: var(--menuButtHover) var(--tr);
     scrollbar-gutter: stable both-edges;
 }
 

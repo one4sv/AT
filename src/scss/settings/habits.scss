@@ -1,4 +1,4 @@
-@use "../global" as *;
+@use "../global" as var;
 
 .settingSpan {
     font-size: 20px;
@@ -55,7 +55,7 @@
     width: 10vw;
     justify-content: space-between;
     > input {
-        @include input(transparent, var(--tc), var(--borderHabit), 4vh, 8px, var(--tc));
+        @include var.input(transparent, var(--tc), var(--borderHabit), 4vh, 8px, var(--tc));
         width: 3vw;
     }
 }

@@ -1,7 +1,7 @@
 @use "./variables.scss" as *;
 * {
-    box-sizing: border-box;
-    font-family: $font;
+  box-sizing: border-box;
+  font-family: var(--font);
 }
 input[type=number] {
   -moz-appearance: textfield; /* Firefox */

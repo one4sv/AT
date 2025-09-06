@@ -11,7 +11,12 @@ export interface SettingsContextType {
     theme:string
     setTheme:React.Dispatch<React.SetStateAction<string>>
     acsent:string
-    setAcsent:React.Dispatch<React.SetStateAction<string>>
+    setAcsent:React.Dispatch<React.SetStateAction<string>>    
+    bg:string
+    setBg:React.Dispatch<React.SetStateAction<string>>
+    decor:string
+    setDecor:React.Dispatch<React.SetStateAction<string>>
+    bgUrl:string;
     privateShow:PrivateSettings
     setPrivate:React.Dispatch<React.SetStateAction<PrivateSettings>>
     tab: string
@@ -26,6 +31,9 @@ interface SettingsResponse {
     private:PrivateSettings;
     theme:string;
     acsent:string;
+    bg:string;
+    decor:string;
+    bg_url:string;
 }
 export interface PrivateSettings {
     number: string,
@@ -39,6 +47,9 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
     const [ amountHabits, setAmountHabits ] = useState<number[] | null>([])
     const [ theme, setTheme ] = useState<string>("")
     const [ acsent, setAcsent ] = useState<string>("")
+    const [ bg, setBg ] = useState<string>("")
+    const [ bgUrl, setBgUrl ] = useState<string>("")
+    const [ decor, setDecor ] = useState<string>("")
     const [ privateShow, setPrivate ] = useState<PrivateSettings>({number: "", mail:"", habits:"", posts:""})
     const [ tab, setTab ] = useState<string>('acc')
 
@@ -53,6 +64,9 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
                 setTheme(res.data.theme)
                 setPrivate(res.data.private)
                 setAcsent(res.data.acsent)
+                setBg(res.data.bg)
+                setDecor(res.data.decor)
+                setBgUrl(res.data.bg_url)
             }
         }
         catch (err) {
@@ -65,7 +79,7 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
     }, [refetchSettings]);
 
     return(
-        <SettingsContext.Provider value={{ orderHabits, setOrderHabits, tab, setTab, refetchSettings, amountHabits, setAmountHabits, theme, setTheme, privateShow, setPrivate, setAcsent, acsent }}>
+        <SettingsContext.Provider value={{ orderHabits, setOrderHabits, tab, setTab, refetchSettings, amountHabits, setAmountHabits, theme, setTheme, privateShow, setPrivate, setAcsent, acsent, bg, setBg, bgUrl, decor, setDecor }}>
             {children}
         </SettingsContext.Provider>
     )
