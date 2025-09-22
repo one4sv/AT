@@ -8,7 +8,7 @@ export interface Habit {
     id:number;
     name: string;
     desc:string | "";
-    start_date: string | Date;
+    start_date: string;
     end_date: string | "" | Date;
     ongoing: boolean;
     periodicity: string;
@@ -18,6 +18,7 @@ export interface Habit {
     created_at:Date;
     tag:string | "";
     pinned:boolean;
+    done?:boolean;
 }
 
 interface HabitResponse {

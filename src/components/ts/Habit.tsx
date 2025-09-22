@@ -56,7 +56,7 @@ export default function HabitDiv({habit, id, isMyAcc}:{habit:Habit, id?:number, 
     if (isMyAcc === undefined) isMyAcc = true
 
     return(
-        <div className={`habit themeHabit-default ${id === habit.id ? "active" : ""}`} onClick={() => navigate(`/stats/${habit.id}`)}>
+        <div className={`habit themeHabit-default ${id === habit.id ? "active" : ""}`} onClick={() => navigate(`/habit/${habit.id}`)}>
             {habit.tag ? (
                 <div className="habitIcon">
                     {habitIcon()}

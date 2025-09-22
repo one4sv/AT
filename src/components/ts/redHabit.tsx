@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
-import { SquareCheck, ChevronLeft, Pin, PinOff, Trash2, Square, Plus } from "lucide-react";
+import { SquareCheck, Pin, PinOff, Trash2, Square, Check } from "lucide-react";
 import CalendarInput from "../ts/CalendarInput";
 import SelectList from "./SelectList";
 import { useUpHabit } from "../hooks/UpdateHabitHook";
@@ -12,22 +11,24 @@ import { useDelete } from "../hooks/DeleteHook";
 import { tags, type Tag } from "./tags";
 import DayChanger from "./DayChanger";
 import { initialChosenDays } from "./initialChosenDays";
+import { useDone } from "../hooks/DoneHook";
 
 interface RedHabitProps {
     habit: Habit;
     readOnly:boolean;
     id:number;
+    isDone:boolean
 }
 
-export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
+export default function RedHabit({ habit, readOnly, id, isDone }: RedHabitProps) {
     const {
         setNewName, setNewDescription, setNewStartDate, setNewEndDate,
         setNewOngoing, setNewPeriodicity, setNewDays,
         setNewStartTime, setNewEndTime, setNewTag, setPin, isUpdating
     } = useUpHabit();
-    const navigate = useNavigate();
     const { setBlackout } = useBlackout();
     const { setDeleteConfurm } = useDelete()
+    const { markDone } = useDone()
 
     const [name, setName] = useState<string>("");
     const [desc, setDesc] = useState<string>("");
@@ -103,31 +104,13 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
 
     return (
         <div className="redHabit">
-            <div className="reviewHabit">
-                <div className="backButton" onClick={() => navigate(-1)}>
-                    <ChevronLeft />
-                    Назад
-                </div>
-                <div className="habitButts">
-                    <span
-                        className="spanSaveHabit"
-                        style={{ display: isUpdating.includes(`habit_${habit.id}`) ? "block" : "none" }}
-                    >
-                        Сохранение...
-                    </span>
-                    <div onClick={() => {
-                        setPinned(!pinned);
-                        setPin(habit.id, !pinned);
-                    }}>
-                        {pinned || habit.pinned ? <PinOff className="pinHabit" /> : <Pin className="pinHabit" />}
-                    </div>
-                    <div onClick={() => {
-                        setDeleteConfurm({goal:"habit", id:habit.id, name:habit.name})
-                        setBlackout({seted:true, module:"Delete"})}}
-                    >
-                        <Trash2 className="delHabit" />
-                    </div>
-                </div>
+            <div className="saveHabit">
+                <span
+                    className="spanSaveHabit"
+                    style={{ display: isUpdating.includes(`habit_${habit.id}`) ? "block" : "none" }}
+                >
+                    Сохранение...
+                </span>
             </div>
             {selectedTag || habit.tag  ? (
                 <div className="habitWrapperIcon">
@@ -206,7 +189,7 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
                 <div className="addHabitWrapper">
                     <label>Дата окончания</label>
                     {ongoing || habit.ongoing  ? (
-                        <input type="text" className="addHabitInput" readOnly value={"По настоящее время"} />
+                        <input type="text" className="addHabitInput ongoingInput" readOnly value={"По настоящее время"} />
                     ) : (
                         <CalendarInput
                             value={endDate || habit.end_date}
@@ -290,11 +273,29 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
                     />
                 </div>
             </div>
-            <div className="addGoalButtDiv">
-                <button className="addGoalButt">
-                    <Plus />
-                    Добавить цель
-                </button>
+            <div className="habitButts">
+                {isDone ? (
+                    <button className="doneButt" onClick={() => markDone(habit.id)}>
+                        <Check />
+                        Выполнено
+                    </button>
+                ) : (
+                    <button className="doneButt" onClick={() => markDone(habit.id)}>
+                        Отметить выполненной
+                    </button>
+                )}
+                <div onClick={() => {
+                        setPinned(!pinned);
+                        setPin(habit.id, !pinned);
+                    }}>
+                        {pinned || habit.pinned ? <PinOff className="pinHabit" /> : <Pin className="pinHabit" />}
+                    </div>
+                    <div onClick={() => {
+                        setDeleteConfurm({goal:"habit", id:habit.id, name:habit.name})
+                        setBlackout({seted:true, module:"Delete"})}}
+                    >
+                        <Trash2 className="delHabit" />
+                </div>
             </div>
         </div>
     );

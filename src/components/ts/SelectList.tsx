@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
-import type { GroupType } from "../context/GroupsHabitContext";
+import type { GroupType } from "./chern/GroupsHabitContext";
 
 export type Option = {
   label: string;

@@ -1,18 +1,22 @@
 import { useEffect, useState, useRef } from "react"
+import { useCalendar } from "../hooks/CalendarHook";
+import { useTheHabit } from "../hooks/TheHabitHook";
 import "../../scss/calendar.scss"
 import { ChevronDown } from "lucide-react"
 import { useHabits } from "../hooks/HabitsHook"
+import type { Calendar } from "../context/CalendarContext"
+import DayCell from "./utils/DayCell"
 
 export default function Calendar() {
-    const { habits }= useHabits()
+    const { calendar } = useCalendar();
+    const { habit } = useTheHabit();
+    const { habits } = useHabits()
     const [ selectedMonth, setSelectedMonth ] = useState<number>(0)
     const [ selectedYear, setSelectedYear ] = useState<number>(0)
     const [ years, setYears ] = useState<number[] | null>([])
     const [ thisMonth, setThisMonth ] = useState<number[]>([])
     const [ prevMonth, setPrevMonth ] = useState<number[]>([])
     const [ postMonth, setPostMonth ] = useState<number[]>([])
-    // const [ endMonth, setEndMonth ] = useState<number>()
-    // const [ startMonth, setStartMonth ] = useState<number>()
     const [ showList, setShowList ] = useState({
         months:false,
         years:false
@@ -26,6 +30,7 @@ export default function Calendar() {
     const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
         "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
     ]
+    
     const dayWeek = [
         { value: 1, label: "пн" },
         { value: 2, label: "вт" },
@@ -35,6 +40,7 @@ export default function Calendar() {
         { value: 6, label: "сб" },
         { value: 0, label: "вс" },
     ];
+
     useEffect(() => {
         setSelectedMonth(month)
         setSelectedYear(year)
@@ -103,6 +109,39 @@ export default function Calendar() {
         setPostMonth(postMonth)
     }, [selectedMonth, selectedYear])
 
+    // Calendar.tsx
+    const renderCells = (days: number[], type: "prev" | "this" | "post") => {
+        return days.map((day, idx) => {
+            let cellMonth = selectedMonth;
+            let cellYear = selectedYear;
+
+            if (type === "prev") {
+                cellMonth = selectedMonth - 1;
+                if (cellMonth < 0) {
+                    cellMonth = 11;
+                    cellYear = selectedYear - 1;
+                }
+            } else if (type === "post") {
+                cellMonth = selectedMonth + 1;
+                if (cellMonth > 11) {
+                    cellMonth = 0;
+                    cellYear = selectedYear + 1;
+                }
+            }
+            return (
+                <DayCell
+                    calendar={calendar}
+                    habit={habit}
+                    habits={habits}
+                    key={idx}
+                    day={day}
+                    month={cellMonth}
+                    year={cellYear}
+                    type={type}
+                />
+            );
+        });
+    };
     return (
         <div className="calendarDiv">
             <div className="DateChanger">
@@ -136,15 +175,9 @@ export default function Calendar() {
                     ))}
                 </div>
                 <div className="calendarDays">
-                    {prevMonth.map((day, idx) => (
-                        <div className="calDay prevDays" key={idx}>{day}</div>
-                    ))}
-                    {thisMonth.map((day, idx) => (
-                        <div className="calDay thisDays" key={idx}>{day}</div>
-                    ))}
-                    {postMonth.map((day, idx) => (
-                        <div className="calDay postDays" key={idx}>{day}</div>
-                    ))}
+                {renderCells(prevMonth, "prev")}
+                {renderCells(thisMonth, "this")}
+                {renderCells(postMonth, "post")}
                 </div>
             </div>
         </div>

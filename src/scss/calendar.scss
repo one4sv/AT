@@ -20,7 +20,7 @@
     flex-direction: column;
     align-items: center;
     position: relative;
-    width: 9vw;
+    // width: 7vw;
 }
 .selectedDate {
     display: flex;
@@ -55,6 +55,7 @@
     border-radius: 8px;
     border: 1px solid var(--borderHabit);
     opacity: 0;
+    z-index: 4;
     transform: translateY(10%);
     transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: none;
@@ -92,6 +93,7 @@
     border-radius: 8px;
     border: 1px solid var(--borderHabit);
     opacity: 0;
+    z-index: 4;
     transition: opacity 0.3s ease, top 0.3s ease;
     pointer-events: none;
     overflow: hidden;
@@ -118,7 +120,7 @@
 }
 .calendarMain {
     margin-top: 2vh;
-    width: 20vw;
+    width: 18vw;
 }
 .weekPattern {
     display: flex;
@@ -146,7 +148,9 @@
     aspect-ratio: 1;
     flex: 1;
     border-radius: 6px;
+    flex-direction: column;
     cursor: pointer;
+    position: relative;
     &:hover {
         background-color: var(--menuButtHover);
     }
@@ -154,6 +158,49 @@
         color: var(--borderHabit);
     }
     &.postDays {
-        color: var(--borderHabit);
+        >span {
+            color: var(--borderHabit);
+        }
     }
+}
+.calendarDots {
+    position: absolute;
+    bottom: 15%;
+    display: flex;
+    gap: 20%;
+}
+.calendarDot {
+    height: 0.5vh;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    &.comp {
+        background-color: var(--acsent);
+    }
+    &.skip {
+        background-color: var(--borderHabit);
+    }
+    &.will {
+        background-color: var(--tc);
+    }
+}
+.hoverDayDiv {
+    position: fixed; // важно — позиционируем относительно вьюпорта
+    transform: translateX(-50%); // центрируем по left (left передаём как центр)
+    background-color: var(--bgc);
+    border: 1px solid var(--borderHabit);
+    padding: 0.5vh 0.5vw;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    z-index: 3;
+    max-width: 15vw;
+}
+
+.hoverRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--tc);
+    font-size: 15px;
 }

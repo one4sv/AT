@@ -10,15 +10,18 @@ import { ChatProvider } from './components/context/ChatContext';
 import { SettingsProvider } from './components/context/SettingsContext';
 import { UpdateHabitProvider } from './components/context/UpdateHabitContext';
 import { DeleteProvider } from './components/context/DeleteContext';
-import { UpdateUserProvider } from './components/context/UpdateUserContext';
+import { UpdateUserProvider } from './components/context/UpdateUserContext'
+import { DoneProvider } from './components/context/DoneContext';;
+import { CalendarProvider } from './components/context/CalendarContext';
+import { TheHabitProvider } from './components/context/TheHabitContext';
 
 import Log from './pages/Log'
 import Main from './pages/Main'
 import Confirm from './pages/Confirm';
-import Stats from './pages/Stats';
 import Chat from './pages/Chat';
 import Acc from './pages/Acc';
 import Admin from './pages/Admin';
+import HabitPage from './pages/HabitPage';
 
 import Notification from "./components/ts/Notification";
 import Blackout from './components/ts/Blackout';
@@ -39,23 +42,27 @@ function App() {
                       <AuthProvider>
                         <DeleteProvider>
                           <BlackoutProvider>
-                            {/* <GroupsProvider> */}
-                              <ThemeHandler/>
-                              <Notification />
-                              <Blackout/>
-                              <Routes>
-                                <Route path="/log" element={<Log />} />
-                                <Route path="/admin" element={<Admin />} />
-                                <Route path="/confirm" element={<Confirm />} />
-                                <Route element={<MainLayout />}>
-                                  <Route path="/" element={<Main />} />
-                                  <Route path="/stats" element={<Stats />} />
-                                  <Route path="/stats/:habitId" element={<Stats />} />
-                                  <Route path='/chat/:contactId' element={<Chat />}/>
-                                  <Route path='/acc/:contactId' element={<Acc />}/>
-                                </Route>
-                              </Routes>
-                            {/* </GroupsProvider> */}
+                            <TheHabitProvider>
+                              <DoneProvider>
+                                <CalendarProvider>
+                                  <ThemeHandler/>
+                                  <Notification />
+                                  <Blackout/>
+                                  <Routes>
+                                    <Route path="/log" element={<Log />} />
+                                    <Route path="/admin" element={<Admin />} />
+                                    <Route path="/confirm" element={<Confirm />} />
+                                    <Route element={<MainLayout />}>
+                                      <Route path="/" element={<Main />} />
+                                      <Route path="/habit" element={<HabitPage />} />
+                                      <Route path="/habit/:habitId" element={<HabitPage />} />
+                                      <Route path='/chat/:contactId' element={<Chat />}/>
+                                      <Route path='/acc/:contactId' element={<Acc />}/>
+                                    </Route>
+                                  </Routes>
+                                </CalendarProvider>
+                              </DoneProvider>
+                            </TheHabitProvider>
                           </BlackoutProvider>
                         </DeleteProvider>
                       </AuthProvider>

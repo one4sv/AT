@@ -156,7 +156,7 @@ export default function SideMenu() {
                     <div className="SMnavButt" onClick={()=> setShowPlusMenu(!showPlusMenu)} ref={plusRef}>
                         <Plus />
                     </div>
-                    <div className="SMnavButt" onClick={() => navigate("/stats")}>
+                    <div className="SMnavButt" onClick={() => navigate("/habit")}>
                         <ChartLine />
                     </div>
                 </div>

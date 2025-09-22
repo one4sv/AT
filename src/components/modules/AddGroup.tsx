@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react"
 import "../../scss/modules/AddGroup.scss"
 import TagSelector from "../ts/TagSelector";
 import SelectList from "../ts/SelectList";
-import { useGroups } from "../hooks/GroupsHabitHook";
+import { useGroups } from "../ts/chern/GroupsHabitHook";
 
 export default function AddGroup() {
     const { addGroup } = useGroups()
