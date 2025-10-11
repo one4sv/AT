@@ -22,6 +22,7 @@
 .contactsUserPic {
     aspect-ratio: 1/1;
     color: var(--borderWh);
+    position: relative;
     >svg {
         height: 100%;
         width: 100%;
@@ -32,6 +33,21 @@
         object-fit: cover;
         border-radius: 50%;
         display: block;
+    }
+}
+.contactOnlineStauts {
+    position: absolute;
+    aspect-ratio: 1/1;
+    height: 1vh;
+    pointer-events: none;
+    right: 0.2vw;
+    bottom: 0.2vh;
+    border-radius: 50%;
+    &.online {
+        background-color: var(--acsent);
+    }
+    &.offline {
+        background-color: var(--tr);
     }
 }
 .contactsUserInfo {

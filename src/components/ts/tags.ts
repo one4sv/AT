@@ -22,10 +22,10 @@ export type Tag = {
 export const tags: Tag[] = [
   { icon: Code, label: "Программирование", value: "coding", group:"hobby" },
   { icon: Palette , label: "Рисование", value: "paint", group:"hobby" },
-  { icon: Camera , label: "Фотографирование", value: "paint", group:"hobby" },
-  { icon: Guitar , label: "Музыка", value: "paint", group:"hobby" },
-  { icon: GameController , label: "Видеоигры", value: "paint", group:"hobby" },
-  { icon: DiceFive , label: "Настольные игры", value: "paint", group:"hobby" },
+  { icon: Camera , label: "Фотографирование", value: "photo", group:"hobby" },
+  { icon: Guitar , label: "Музыка", value: "music", group:"hobby" },
+  { icon: GameController , label: "Видеоигры", value: "games", group:"hobby" },
+  { icon: DiceFive , label: "Настольные игры", value: "dice", group:"hobby" },
 
   { icon: Bed, label: "Режим сна", value: "sleep", group:"health" },
   { icon: PersonSimpleWalk, label: "Шаги в день", value: "walking", group:"health" },

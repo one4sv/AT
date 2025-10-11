@@ -5,7 +5,7 @@ import { useParams } from "react-router"
 import { useChat } from "../../hooks/ChatHook"
 
 export default function ContactsList() {
-    const { list } = useChat()
+    const { list, onlineMap } = useChat()
     const { contactId } = useParams<{ contactId: string }>()
     const navigate = useNavigate()
 
@@ -31,6 +31,7 @@ export default function ContactsList() {
                             ) : (
                                 <CircleUserRound/>
                             )}
+                            <div className={`contactOnlineStauts ${contactId !== acc.id && onlineMap[acc?.id || ""] ? "online" : "offline"}`}></div>
                         </div>
                         <div className="contactsUserInfo">
                             <div className="contactsUserStr">

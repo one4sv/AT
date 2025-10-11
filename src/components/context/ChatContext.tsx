@@ -10,6 +10,7 @@ export interface chatWithType {
     username?:string | null, 
     nick:string,
     id:string,
+    last_online:string,
     avatar_url?: string | null,
 }
 export interface ChatContextType {
@@ -21,7 +22,8 @@ export interface ChatContextType {
     list:Acc[],
     search:string,
     setSearch:React.Dispatch<React.SetStateAction<string>>,
-    refetchContacts:() => Promise<void>
+    refetchContacts:() => Promise<void>,
+    onlineMap: Record<string, boolean>,
 }
 export interface message {
     id:number,
@@ -41,11 +43,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useUser();
     const { showNotification } = useNote();
 
-    const [chatWith, setChatWith] = useState<chatWithType>({ username: "", nick: "", id: "" });
+    const [chatWith, setChatWith] = useState<chatWithType>({ username: "", nick: "", id: "", last_online:"" });
     const [messages, setMessages] = useState<message[]>([]);
     const [chatLoading, setChatLoading] = useState<boolean>(true);
     const [list, setList] = useState<Acc[]>([]);
     const [search, setSearch] = useState<string>("");
+    const [onlineMap, setOnlineMap] = useState<Record<string, boolean>>({});
 
     const wsRef = useRef<WebSocket | null>(null);
     const chatWithRef = useRef<chatWithType>(chatWith);
@@ -59,7 +62,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setChatLoading(true);
             const res = await axios.get(`http://localhost:3001/chat/${chatWithId}`, { withCredentials: true });
             if (res.data.success) {
-                setChatWith({ username: res.data.user.username, nick: res.data.user.nick, id: chatWithId, avatar_url: res.data.user.avatar_url });
+                setChatWith({ username: res.data.user.username, nick: res.data.user.nick, id: chatWithId, avatar_url: res.data.user.avatar_url, last_online: res.data.user.last_online });
                 setMessages(res.data.messages);
             }
         } catch {
@@ -73,18 +76,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         if (!text.trim()) return;
 
         try {
-            // создаёт чат и сохраняет сообщение
-            const res = await axios.post(
-                "http://localhost:3001/chat",
-                { receiver_id, text },
-                { withCredentials: true }
-            );
-
-            if (res.data.success && res.data.message) {
-                setMessages(prev => [...prev, res.data.message]);
-            }
-
-            // передаём сообщение через сокет другим пользователям
+            // Отправляем через WebSocket, сервер вставит в БД и рассылает всем
             if (wsRef.current?.readyState === WebSocket.OPEN) {
                 wsRef.current.send(JSON.stringify({
                     type: "SEND_MESSAGE",
@@ -104,6 +96,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             if (res.data.success) {
                 setList(res.data.friendsArr);
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error:any) {
             showNotification("error", error?.response?.data?.error);
         }
@@ -114,36 +107,46 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
         wsRef.current = new WebSocket(`ws://localhost:3001/ws?userId=${user.id}`);
 
-
         wsRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
             if (data.type === "NEW_MESSAGE") {
-                const currentChatId = String(chatWithRef.current.id);
-                const messageSenderId = data?.message?.sender_id ? String(data.message.sender_id) : "";
-                const incomingChatId = String(data.chatId);
+                const currentChatId = chatWithRef.current.id;
+                const messageSenderId = String(data.message.sender_id);
 
-                if (messageSenderId && messageSenderId === currentChatId) {
-                    setMessages(prev => [...prev, data.message]);
-                } else if (incomingChatId === currentChatId) {
+                // если сообщение от текущего собеседника, добавляем в чат
+                if (messageSenderId === currentChatId || messageSenderId === user.id) {
                     setMessages(prev => [...prev, data.message]);
                 }
+
+                // всегда обновляем список контактов
                 refetchContacts();
+            }
+            if (data.type === "USER_STATUS") {
+                // 🔹 обновляем онлайн-статус всех пользователей
+                setOnlineMap(prev => ({ ...prev, [data.userId]: data.isOnline }));
+
+                // 🔹 для открытого чата обновляем last_online
+                if (chatWithRef.current.id === data.userId) {
+                setChatWith(prev => ({
+                    ...prev,
+                    last_online: data.isOnline ? "" : data.last_online || prev.last_online,
+                }));
+                }
             }
         };
 
-        return () => {
-            wsRef.current?.close();
-        };
-    }, [refetchContacts, user]);
+        return () => wsRef.current?.close();
+    }, [user.id, refetchContacts]);
 
     useEffect(() => {
         const timer = setTimeout(refetchContacts, 100);
         return () => clearTimeout(timer);
     }, [search, refetchContacts]);
+    // console.log(onlineMap)
 
     return (
-        <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, sendMess, messages, list, setSearch, search, refetchContacts }}>
+        <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, sendMess, messages, list, setSearch, search, refetchContacts, onlineMap }}>
             {children}
         </ChatContext.Provider>
     );

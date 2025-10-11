@@ -65,10 +65,11 @@
 .chatUserName {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: center;
+    gap: 0.5vh;
     text-wrap: nowrap;
 }
-.wasOnline {
+.chatOnlineStauts {
     color: var(--borderWh);
 }
 .chatUserMenu {

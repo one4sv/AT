@@ -5,9 +5,10 @@ import "../scss/Chat.scss"
 import { CircleUserRound, Bell, ChevronLeft, SendHorizontal, Paperclip, UserRoundPlus, Search, X, ChevronUp, ChevronDown } from "lucide-react"
 import Loader from "../components/ts/Loader"
 import { useUser } from "../components/hooks/UserHook"
+import formatLastOnline from "../components/ts/utils/formatOnline"
 
 export default function Chat () {
-    const { refetchChat, chatWith, chatLoading, sendMess, messages } = useChat()
+    const { refetchChat, chatWith, chatLoading, sendMess, messages, onlineMap } = useChat()
     const navigate = useNavigate()
     const { contactId } = useParams()
     const { user } = useUser()
@@ -201,7 +202,11 @@ export default function Chat () {
                     </div>
                     <div className="chatUserName">
                         <span>{chatWith.username ?? chatWith.nick}</span>
-                        <span className="wasOnline">был в сети 16 марта</span>
+                        <span className={`chatOnlineStauts ${onlineMap[chatWith?.id || ""] ? "online" : "offline"}`}>
+                            {onlineMap[chatWith?.id || ""] 
+                                ? "В сети" 
+                                : formatLastOnline(chatWith?.last_online)}
+                        </span>
                     </div>
                 </div>
 
