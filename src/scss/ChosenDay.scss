@@ -1,0 +1,87 @@
+@use "./global" as var;
+
+.chosenDayDiv {
+    background-color: var(--bgc);
+    border-radius: 12px;
+    display: flex;
+    margin-top: 0.5vh;
+    padding-bottom: 0.3vh;
+    flex-direction: column;
+    width: 20vw;
+    top: 0;
+    position: relative;
+    opacity: 0;
+    user-select: none;
+    pointer-events: none;
+    max-height: 40%;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--menuButtHover) transparent;
+    overflow-x: hidden;
+    &.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+}
+.chosenDayDate {
+    padding: 1vh 1vw;
+    font-size: 20px;
+    width: 100%;
+    border-bottom: 1px solid var(--borderWh);
+    margin-bottom: 1vh;
+}
+.cdHabitStr {
+    display: flex;
+    height: 4vh;
+    position: relative;
+    margin: 0 0.5vw 0.5vh;
+    &:hover {
+        .cdHabitInfo {
+            background-color: var(--menuButtHover);
+        }
+    }
+}
+.cdHabitInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.5vw;
+    width: 100%;
+    border-radius: 8px;
+    justify-content: space-between;
+    padding:0 0.5vw;
+    cursor: pointer;
+
+}
+.cdHabitName {
+    display: flex;
+    align-items: center;
+    gap: 0.5vw;
+    max-width: 60%;
+    flex-shrink: 1;
+    > span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+}
+
+.cdHabitDoneButt {
+    position: absolute;
+    height: 100%;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    right: 0;
+    pointer-events: none;
+    >svg {
+        width: 55%;
+        height: 55%;
+        cursor: pointer;
+        pointer-events: all;
+        color: var(--borderWh);
+    }
+}

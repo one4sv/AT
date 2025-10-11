@@ -1,16 +1,48 @@
-@use "./global.scss" as *;
+@use "./global.scss" as var;
 
 .statsDiv {
     position: relative;
     height: 100vh;
-    padding: 2vh 2vw 0;
+    padding: 1vh 0.5vw 0;
     display: flex;
     flex-direction: row;
-
 }
 .statsCal {
     display: flex;
     flex-direction: column;
     width: fit-content;
     margin-right: 2vw;
+}
+.habitMenu {
+    position: fixed;
+    width: 25vw;
+    z-index: 8;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--mc);
+    border-radius: 12px;
+    right: 0.5vw;
+    top: 1vh;
+    height: 98vh;
+    transition: right 0.3s ease;
+}
+.habitMenuShowButt {
+    position: absolute;
+    z-index: 20;
+    transform: translateY(-50%);
+    width: 2vw;
+    height: 10vh;
+    background-color: var(--mc);
+    top: 50%;
+    border-radius: 20px 0 0 20px;
+    left: -2vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: var(--borderHabit);
+    cursor: pointer;
+    &:hover {
+        color: var(--tc);
+    }
 }

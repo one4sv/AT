@@ -24,7 +24,7 @@ export default function ContactsList() {
         <div className="contactsList SMlist">
             {list ? (
                 sortedList.map((acc) => (
-                    <div className={`contactsUser ${Number(contactId) === acc.id ? "active" : "" }`} key={acc.id} onClick={() => navigate(`/chat/${acc.id}`)}>
+                    <div className={`contactsUser ${contactId === acc.id ? "active" : "" }`} key={acc.id} onClick={() => navigate(`/chat/${acc.id}`)}>
                         <div className="contactsUserPic">
                             {acc.avatar_url ? (
                                 <img className="contactsUserAvatar" src={acc.avatar_url} alt={acc.username ?? acc.nick} />

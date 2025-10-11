@@ -24,22 +24,28 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
                 withCredentials: true,
             });
             console.log("Ответ от сервера:", res.data);
+
             if (res.data.success) {
                 setSuccess(true);
-                setLoadingAuth(false);
-                console.log("Регистрация успешна:", res.data);
+                showNotification('success', 'Письмо с подтверждением отправлено!');
             } else {
                 setSuccess(false);
-                setLoadingAuth(false);
-                console.warn("Регистрация не пройдена:", res.data.error);
+                showNotification('error', res.data.error || 'Ошибка регистрации');
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Ошибка сервера:", error);
-            showNotification('error', 'Ошибка сервера');
             setSuccess(false);
+
+            if (error.response?.status === 409) {
+                showNotification('error', error.response.data.error || 'Ник или почта уже заняты');
+            } else {
+                showNotification('error', 'Ошибка сервера, попробуйте позже');
+            }
+        } finally {
             setLoadingAuth(false);
         }
     };
+
 
     const auth = async({ login, pass }: { login:string, pass:string }) => {
         setLoadingAuth(true);
@@ -56,16 +62,16 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
             )
             if (res.data.success) { 
                 setSuccess(true);
-                setLoadingAuth(false);
             } else {
-                showNotification('error', res.data.error);
-                setLoadingAuth(false);
+                showNotification('error', res.data.error);;
                 setSuccess(false);
             }  
-        } catch (error) {
+        } catch (error:any) {
             console.error(" Ошибка авторизации:", error);
-            showNotification('error', 'Ошибка сервера');
             setSuccess(false);
+            // if (error.response?.status === 401)
+            showNotification('error', error.response.data.error);
+        } finally {
             setLoadingAuth(false);
         }
     };

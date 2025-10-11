@@ -1,26 +1,38 @@
-@use "./global.scss" as *;
+@use "./global.scss" as var;
 
 .calendarDiv {
-    // background-color: var(--mc);
-    width: fit-content;
-    padding: 1vh 1vw;
-    border-radius: 12px;
+    width: 20vw;
     display: flex;
+    position: relative;
     flex-direction: column;
     align-items: center;
+}
+.calendarMain {
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: var(--bgc);
+    width: 100%;
+    height: fit-content;
+    padding: 1vh 1vw;
+}
+.calendarDates {
+    width: 100%;
+    margin-bottom: 1vh;
 }
 .DateChanger {
     width: 80%;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+    margin-bottom: 1vh;
 }
 .CalendarDateChanger {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
-    // width: 7vw;
 }
 .selectedDate {
     display: flex;
@@ -118,10 +130,7 @@
         background-color: var(--borderHabit);
     }
 }
-.calendarMain {
-    margin-top: 2vh;
-    width: 18vw;
-}
+
 .weekPattern {
     display: flex;
     gap: 0.5vw;
@@ -155,12 +164,22 @@
         background-color: var(--menuButtHover);
     }
     &.prevDays {
-        color: var(--borderHabit);
-    }
-    &.postDays {
-        >span {
+        > span {
             color: var(--borderHabit);
         }
+    }
+    &.postDays {
+        > span {
+            color: var(--borderHabit);
+        }
+    }
+    &.todayCD {
+        > span {
+            color: var(--acsent);
+        }
+    }
+    &.chosenDayCal {
+        border: 1px solid var(--acsent);
     }
 }
 .calendarDots {
@@ -174,7 +193,7 @@
     aspect-ratio: 1/1;
     border-radius: 50%;
     &.comp {
-        background-color: var(--acsent);
+        background-color: #11c011;
     }
     &.skip {
         background-color: var(--borderHabit);
@@ -184,15 +203,16 @@
     }
 }
 .hoverDayDiv {
-    position: fixed; // важно — позиционируем относительно вьюпорта
-    transform: translateX(-50%); // центрируем по left (left передаём как центр)
+    position: fixed;
     background-color: var(--bgc);
     border: 1px solid var(--borderHabit);
-    padding: 0.5vh 0.5vw;
+    padding: 0.5vh 0.3vw;
     border-radius: 6px;
+    max-width: 10vh;
     display: flex;
     flex-direction: column;
     pointer-events: none;
+    gap: 0.2vh;
     z-index: 3;
     max-width: 15vw;
 }
@@ -203,4 +223,132 @@
     gap: 8px;
     color: var(--tc);
     font-size: 15px;
+    &.hrEmpty {
+        color: var(--borderHabit);
+    }
+}
+.streakDiv {
+    margin: 1vh 0;
+    font-size: 18px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 4.5vh;
+    border-radius: 8px;
+    background-color: var(--bgc);
+}
+.streakStr {
+    display: flex;
+    align-items: center;
+    >svg {
+        position: relative;
+        bottom: 0.2vh;
+    }
+    &.cont {
+        color: var(--tc);
+        >svg {
+            color: red;
+        }
+        > span {
+            color: red;
+        }
+    }
+    &.null {
+        color: var(--borderHabit);
+    }
+    &.start {
+        color: var(--tc);
+        >svg {
+            color: orange;
+        }
+        > span {
+            color: orange;
+        }
+    }
+    &.warn {
+        color: var(--borderHabit);
+        >svg {
+            color: var(--tc);
+        }
+        > span {
+            color: var(--tc);
+        }
+    }
+}
+.doneButt {
+    @include var.longButt(100%, 4.5vh, 1vh, 1vw, var(--bgc), var(--tc), var(--tr), var(--menuButtHover));
+    display: inline-flex;
+    align-items: center;
+    font-size: 20px;
+    position: relative;
+    margin-bottom: 1vh;
+    >svg {
+        margin-right: 0.3vw;
+    }
+    &.dbComp {
+        >svg {
+            color: var(--darkerAcsent);
+        }
+    }
+    &:hover {
+        &.dbComp {
+            > svg {
+                color: var(--tc);
+            }
+        }        
+        &.dbMark {
+            > svg {
+                color: var(--acsent);
+            }
+        }
+    }
+}
+.habitDayComment {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--bgc);
+    border-radius: 8px;
+    padding: 1vh 1vw;
+    align-items:end;
+    >textarea {
+        width: 100%;
+        resize: none;
+        background-color: var(--tr);
+        color: var(--tc);
+        font-size: 16px;
+        font-family: var(--font);
+        border: none;
+        outline: none;
+        overflow: hidden;
+    }
+}
+.hdcTAExtra {
+    display: flex;
+    align-items: center;
+    >span {
+        margin-right: 0.5vw;
+        color: var(--borderHabit);
+    }
+    >button {
+        padding: 0.5vh 1vw;
+        font-size: 16px;
+        border-radius: 4px;
+        border: none;
+        outline: none;
+        color: var(--tc);
+        background-color: var(--acsent);
+        border: 1px solid var(--acsent);
+        &:hover {
+            background-color: var(--darkerAcsent);
+            border: 1px solid var(--darkerAcsent);
+        }
+        &:disabled {
+            color: var(--borderHabit);
+            background-color: var(--tr);
+            border: 1px solid var(--borderHabit);
+        }
+    }
 }

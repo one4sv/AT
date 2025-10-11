@@ -10,10 +10,11 @@
     background-color: var(--tr);
     display: flex;
     position: relative;
+    border: 1px solid var(--tr);
     &:hover {
         background-color: var(--menuButtHover);
+        border: 1px solid var(--tc);
     }
-
     /* защита от выхода содержимого за пределы карточки */
     overflow: hidden;
     box-sizing: border-box;

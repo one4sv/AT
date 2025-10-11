@@ -3,7 +3,6 @@ import { useHabits } from "../../hooks/HabitsHook";
 import type { Habit } from "../../context/HabitsContext";
 import { useEffect, useState } from "react";
 import HabitDiv from "../Habit";
-import { ChevronDown } from "lucide-react";
 import { useChat } from "../../hooks/ChatHook";
 import { useParams } from "react-router";
 
@@ -11,10 +10,6 @@ export default function HabitsList() {
     const { search } = useChat()
     const { habits, newOrderHabits } = useHabits();
     const { habitId } = useParams()
-    const [showList, setShowList] = useState<{ ongoing: boolean; archive: boolean }>({
-        ongoing: true,
-        archive: false
-    });
     const [showType, setShowType] = useState<{ [order: string]: boolean }>({});
     const todayNum = new Date().getDay();
     const tomorrowNum = todayNum !== 6 ? todayNum + 1 : 0;
@@ -63,7 +58,6 @@ export default function HabitsList() {
     return (
         <div className="habitsList SMlist">
                 {(["ongoing", "archive"] as const).map(section => {
-                    const isOpen = showList[section];
                     const sectionHabits = habits?.filter(h =>
                         section === "ongoing" ? h.ongoing : !h.ongoing
                     ) || [];
@@ -73,39 +67,25 @@ export default function HabitsList() {
 
                     return (
                         <div className="habitsWrapperStats" key={section}>
-                            <div
-                                className="habitsOpen"
-                                onClick={() =>
-                                    setShowList(prev => ({
-                                        ...prev,
-                                        [section]: !prev[section]
-                                    }))
-                                }
-                            >
-                                {section === "ongoing" ? "Актуальные" : "Архив"}
-                                <ChevronDown style={{ rotate: isOpen ? "180deg" : "" }} />
-                            </div>
-                            {isOpen &&
-                                newOrderHabits?.map(order => {
-                                    const filtered = filterHabitsByOrder(order, sectionHabits);
-                                    const unique = filtered.filter(h => !shownHabits.has(h.id))
-                                    unique.forEach(h => shownHabits.add(h.id))
+                            {newOrderHabits?.map(order => {
+                                const filtered = filterHabitsByOrder(order, sectionHabits);
+                                const unique = filtered.filter(h => !shownHabits.has(h.id))
+                                unique.forEach(h => shownHabits.add(h.id))
 
-                                    if (unique.length === 0) return null;
+                                if (unique.length === 0) return null;
 
-                                    return (
-                                        <div className="orderWrapper" key={order}>
-                                            {showType[order] && unique.map(habit => (
-                                                <HabitDiv
-                                                    habit={habit}
-                                                    order={order}
-                                                    key={habit.id}
-                                                    id={Number(habitId)}
-                                                />
-                                            ))}
-                                        </div>
-                                    );
-                                })}
+                                return (
+                                    <div className="orderWrapper" key={order}>
+                                        {showType[order] && unique.map(habit => (
+                                            <HabitDiv
+                                                habit={habit}
+                                                key={habit.id}
+                                                id={Number(habitId)}
+                                            />
+                                        ))}
+                                    </div>
+                                );
+                            })}
                         </div>
                     );
                 })}

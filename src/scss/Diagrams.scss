@@ -1,0 +1,10 @@
+@use "./global" as var;
+
+.diagramsDiv {
+    position: relative;
+    background-color: var(--bgc);
+    width: 20vw;
+    height: 39vh;
+    margin-left: 0.5vw;
+    border-radius: 12px;
+}

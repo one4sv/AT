@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { Plus, Pencil } from "lucide-react"
-import { tags } from "./tags"
+import { tags, groups } from "./tags"
 
 interface TagSelectorProps {
   selectedTag: string | null;
@@ -59,7 +59,15 @@ export default function TagSelector({ selectedTag, setSelectedTag, showOnly }: T
         </div>
       </div>
       <div className={`tagList ${showTagList ? "active" : ""}`} ref={tagListRef}>
-        {tags.map((tag, i) => {
+        {groups.map(({ group, value }) => {
+          const tagsInGroup = tags.filter(tag => tag.group === group)
+
+          if (!tagsInGroup.length) return null
+
+          return (
+            <div key={group} className="tagGroup">
+              <div className="tagGroupTitle">{value}</div>
+              {tagsInGroup.map((tag, i) => {
           const Icon = tag.icon
           if (selectedTag !== tag.value) return (
             <div
@@ -68,6 +76,9 @@ export default function TagSelector({ selectedTag, setSelectedTag, showOnly }: T
               onClick={() => setSelectedTag(tag.value)}
             >
               <Icon size={24} /> {tag.label}
+                  </div>
+                )
+              })}
             </div>
           )
         })}

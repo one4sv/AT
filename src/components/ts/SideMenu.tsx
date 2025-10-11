@@ -92,7 +92,7 @@ export default function SideMenu() {
                             setShowList(false)
                             navigate(`/acc/${user.id}`)
                         }}>
-                            {user.username}
+                            {user.username || user.nick}
                         </div>
                         <div
                             className="SMprofileButt"

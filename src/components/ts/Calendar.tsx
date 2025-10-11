@@ -6,13 +6,20 @@ import { ChevronDown } from "lucide-react"
 import { useHabits } from "../hooks/HabitsHook"
 import type { Calendar } from "../context/CalendarContext"
 import DayCell from "./utils/DayCell"
+import Streak from "./utils/Streak";
+import ChosenDay from "./utils/ChosenDay";
+import { useDone } from "../../components/hooks/DoneHook";
+import { useParams } from "react-router-dom";
+import DayComment from "./utils/DayComment";
+import DoneButton from "./utils/DoneButt";
 
 export default function Calendar() {
-    const { calendar } = useCalendar();
-    const { habit } = useTheHabit();
+    const { calendar, calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useCalendar();
+    const { habit, isDone, dayComment } = useTheHabit();
     const { habits } = useHabits()
-    const [ selectedMonth, setSelectedMonth ] = useState<number>(0)
-    const [ selectedYear, setSelectedYear ] = useState<number>(0)
+    const { markDone } = useDone()
+    const { habitId:id } = useParams<{habitId : string}>()
+
     const [ years, setYears ] = useState<number[] | null>([])
     const [ thisMonth, setThisMonth ] = useState<number[]>([])
     const [ prevMonth, setPrevMonth ] = useState<number[]>([])
@@ -30,7 +37,6 @@ export default function Calendar() {
     const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
         "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
     ]
-    
     const dayWeek = [
         { value: 1, label: "пн" },
         { value: 2, label: "вт" },
@@ -109,7 +115,6 @@ export default function Calendar() {
         setPostMonth(postMonth)
     }, [selectedMonth, selectedYear])
 
-    // Calendar.tsx
     const renderCells = (days: number[], type: "prev" | "this" | "post") => {
         return days.map((day, idx) => {
             let cellMonth = selectedMonth;
@@ -130,7 +135,7 @@ export default function Calendar() {
             }
             return (
                 <DayCell
-                    calendar={calendar}
+                    // calendar={calendar}
                     habit={habit}
                     habits={habits}
                     key={idx}
@@ -142,44 +147,61 @@ export default function Calendar() {
             );
         });
     };
+
     return (
         <div className="calendarDiv">
-            <div className="DateChanger">
-                <div className="CalendarDateChanger" ref={monthsRef}>
-                    <div className="selectedDate" onClick={() => setShowList({months:!showList.months, years:false})}>
-                        {months[selectedMonth]}
-                        <ChevronDown style={{ transform: `rotate(${showList.months ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
+            <div className="calendarMain" ref={calendarRef}>
+                <div className="DateChanger">
+                    <div className="CalendarDateChanger" ref={monthsRef}>
+                        <div className="selectedDate" onClick={() => setShowList({months:!showList.months, years:false})}>
+                            {months[selectedMonth]}
+                            <ChevronDown style={{ transform: `rotate(${showList.months ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
+                        </div>
+                        <div className={`monthsList ${showList.months ? "active" : ""}`} >
+                            {months.map((month, idx) => (
+                                <div className={`monthListElem ${idx === selectedMonth ? "active" : ""}`} key={idx} onClick={() => setSelectedMonth(idx)}>{month.slice(0,3)}.</div>
+                            ))}
+                        </div>
                     </div>
-                    <div className={`monthsList ${showList.months ? "active" : ""}`} >
-                        {months.map((month, idx) => (
-                            <div className={`monthListElem ${idx === selectedMonth ? "active" : ""}`} key={idx} onClick={() => setSelectedMonth(idx)}>{month.slice(0,3)}.</div>
-                        ))}
+                    <div className="CalendarDateChanger" ref={yearsRef}>
+                        <div className="selectedDate" onClick={() => setShowList({months:false, years:!showList.years})}>
+                            {selectedYear}
+                            <ChevronDown style={{ transform: `rotate(${showList.years ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
+                        </div>
+                        <div className={`yearsList ${showList.years ? "active" : ""}`} >
+                            {years?.map((year, idx) => (
+                                <div className={`yearListElem ${year === selectedYear ? "active" : ""}`} key={idx} onClick={() => setSelectedYear(year)}>{year}</div>
+                            ))}
+                        </div>
                     </div>
                 </div>
-                <div className="CalendarDateChanger" ref={yearsRef}>
-                    <div className="selectedDate" onClick={() => setShowList({months:false, years:!showList.years})}>
-                        {selectedYear}
-                        <ChevronDown style={{ transform: `rotate(${showList.years ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
-                    </div>
-                    <div className={`yearsList ${showList.years ? "active" : ""}`} >
-                        {years?.map((year, idx) => (
-                            <div className={`yearListElem ${year === selectedYear ? "active" : ""}`} key={idx} onClick={() => setSelectedYear(year)}>{year}</div>
+                <div className="calendarDates">
+                    <div className="weekPattern">
+                        {dayWeek.map((day, idx) => (
+                            <div className="weekDays" key={idx}>{day.label}</div>
                         ))}
+                    </div>
+                    <div className="calendarDays">
+                    {renderCells(prevMonth, "prev")}
+                    {renderCells(thisMonth, "this")}
+                    {renderCells(postMonth, "post")}
                     </div>
                 </div>
             </div>
-            <div className="calendarMain">
-                <div className="weekPattern">
-                    {dayWeek.map((day, idx) => (
-                        <div className="weekDays" key={idx}>{day.label}</div>
-                    ))}
-                </div>
-                <div className="calendarDays">
-                {renderCells(prevMonth, "prev")}
-                {renderCells(thisMonth, "this")}
-                {renderCells(postMonth, "post")}
-                </div>
-            </div>
+            
+            {id && habit ? <Streak habit={habit} calendar={calendar}/> : ""}
+            <ChosenDay/>
+
+            {id && (
+                <DoneButton isDone={isDone} habitId={Number(habit?.id)} markDone={markDone} />
+            )}
+            {id && isDone && (
+                <DayComment
+                    id={id}
+                    dayComment={dayComment}
+                />
+            )}
+
         </div>
     )
 }

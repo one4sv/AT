@@ -65,41 +65,56 @@
     }
 }
 .habit {
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
-    margin: 0.5vh auto 0;
-    border-radius: 12px;
-    padding: 1vh 0.5vw 1vh;
-    position: relative;
     cursor: pointer;
-    gap: 0.5vw;
+    margin: 0.2vh auto;
+    width: 100%;
+    height: 6vh;
+    padding: 0.5vh 0.5vw;
+    border-radius: 12px;
+    background-color: var(--tr);
+    display: flex;
+    position: relative;
+    border: 1px solid var(--tr);
     &:hover {
-        color: var(--tc);
+        background-color: var(--menuButtHover);
+        border: 1px solid var(--tc);
     }
+    /* защита от выхода содержимого за пределы карточки */
+    overflow: hidden;
+    box-sizing: border-box;
 }
 .habitIcon {
-    flex: 1;
+    aspect-ratio: 1/1;
     >svg {
         height: 100%;
         width: 100%;
     }
 }
 .habitInfo {
-    flex: 8;
+    flex: 1;
+    margin-left: 0.5vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    position: relative;
+    /* важно для корректной работы text-overflow внутри flex-контейнера */
+    min-width: 0;
+}
+.habitName {
+    display: flex;
+    width: 100%;
 }
 .habitPer {
-    position: relative;
-    margin-top: 1vh;
-    height: 1.2rem;
+    color: var(--darkerAcsent);
+    // margin-left: 0.3vw;
 }
 .moreHabits {
     color: var(--borderHabit);
 }
 .pinnedHabitSign {
     position: absolute;
-    top: 1vh;
-    right: 0.5vw;
+    top: 0.5vh;
+    right: 0.2vw;
     fill: currentColor;
 }
 .habit.active {

@@ -8,9 +8,8 @@ import { useUser } from "../components/hooks/UserHook"
 
 export default function Chat () {
     const { refetchChat, chatWith, chatLoading, sendMess, messages } = useChat()
-
     const navigate = useNavigate()
-    const { contactId } = useParams<{ contactId: string }>()
+    const { contactId } = useParams()
     const { user } = useUser()
     const [ mess, setMess ] = useState<string>("")
     const [ search, setSearch ] = useState<string>("")
@@ -29,7 +28,7 @@ export default function Chat () {
 
     useEffect(() => {
         if (contactId) refetchChat(contactId)
-        else navigate("/")
+        // else navigate("/")
     }, [contactId])
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -237,7 +236,7 @@ export default function Chat () {
                                 </div>
                                 <div className="chatSearchList">
                                     {searchedMessages.map((m, i) => {
-                                        const isMy = m.sender_id !== Number(contactId)
+                                        const isMy = m.sender_id !== contactId
                                         return (
                                             <div
                                                 key={m.id}
@@ -285,7 +284,7 @@ export default function Chat () {
                             <div className="messageWrapper"
                                 ref={(el) => {messageRefs.current.set(m.id, el)}}
                             >
-                                <div className={`message ${m.sender_id === Number(contactId) ? "ur" : "my"} ${highlightedId === m.id ? "highlight" : ""}`}>
+                                <div className={`message ${m.sender_id === contactId ? "ur" : "my"} ${highlightedId === m.id ? "highlight" : ""}`}>
                                     <div className="messageText">{m.content}</div>
                                     <div className="messageDate">{messageGetTime(m.created_at)}</div>
                                 </div>

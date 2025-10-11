@@ -1,13 +1,15 @@
-import { createContext, useState } from "react";
+import { createContext, useRef, useState, type RefObject} from "react";
 import { type ReactNode } from "react"
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
+// import { initChosenDay } from "../ts/utils/initChosenDay";
 const CalendarContext = createContext<CalendarContextType | null>(null);
 
 export interface Calendar {
     habitId:string;
     habitName:string;
     date:string;
+    comment?:string;
 }
 export interface CalendarContextType {
     calendar:Calendar[]
@@ -15,11 +17,23 @@ export interface CalendarContextType {
     fetchCalendarHabit:(id:string)=>void;
     fetchCalendarUser:()=>void;
     calendarLoading:boolean
+    chosenDay:string;
+    setChosenDay: React.Dispatch<React.SetStateAction<string>>
+    calendarRef:RefObject<HTMLDivElement | null>
+    selectedMonth:number;
+    setSelectedMonth:React.Dispatch<React.SetStateAction<number>>    
+    selectedYear:number;
+    setSelectedYear:React.Dispatch<React.SetStateAction<number>>
 }
 export const CalendarProvider = ({children} : {children : ReactNode}) => {
     const { showNotification } = useNote()
     const [ calendar, setCalendar ] = useState<Calendar[]>([])
     const [ calendarLoading, setCalendarLoading ] = useState(false)
+    const [ chosenDay, setChosenDay ] = useState<string>("")
+    const [ selectedMonth, setSelectedMonth ] = useState<number>(0)
+    const [ selectedYear, setSelectedYear ] = useState<number>(0)
+
+    const calendarRef = useRef<HTMLDivElement | null>(null)
 
     const fetchCalendarHabit = async(id:string) => {
         if (!id) return;
@@ -45,7 +59,7 @@ export const CalendarProvider = ({children} : {children : ReactNode}) => {
         }
     }
     return(
-        <CalendarContext.Provider value={{calendar, setCalendar, fetchCalendarHabit, fetchCalendarUser, calendarLoading }}>
+        <CalendarContext.Provider value={{calendar, setCalendar, fetchCalendarHabit, fetchCalendarUser, calendarLoading, chosenDay, setChosenDay, calendarRef, selectedMonth, selectedYear, setSelectedMonth, setSelectedYear }}>
             {children}
         </CalendarContext.Provider>
     )

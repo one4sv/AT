@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { SquareCheck, Pin, PinOff, Trash2, Square, Check } from "lucide-react";
+import { SquareCheck, Pin, PinOff, Trash2, Square } from "lucide-react";
 import CalendarInput from "../ts/CalendarInput";
 import SelectList from "./SelectList";
 import { useUpHabit } from "../hooks/UpdateHabitHook";
@@ -11,16 +11,14 @@ import { useDelete } from "../hooks/DeleteHook";
 import { tags, type Tag } from "./tags";
 import DayChanger from "./DayChanger";
 import { initialChosenDays } from "./initialChosenDays";
-import { useDone } from "../hooks/DoneHook";
 
 interface RedHabitProps {
     habit: Habit;
     readOnly:boolean;
     id:number;
-    isDone:boolean
 }
 
-export default function RedHabit({ habit, readOnly, id, isDone }: RedHabitProps) {
+export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
     const {
         setNewName, setNewDescription, setNewStartDate, setNewEndDate,
         setNewOngoing, setNewPeriodicity, setNewDays,
@@ -28,19 +26,18 @@ export default function RedHabit({ habit, readOnly, id, isDone }: RedHabitProps)
     } = useUpHabit();
     const { setBlackout } = useBlackout();
     const { setDeleteConfurm } = useDelete()
-    const { markDone } = useDone()
 
-    const [name, setName] = useState<string>("");
-    const [desc, setDesc] = useState<string>("");
-    const [startTime, setStartTime] = useState<string>("");
-    const [endTime, setEndTime] = useState<string>("");
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
+    const [ name, setName ] = useState<string>("");
+    const [ desc, setDesc ] = useState<string>("");
+    const [ startTime, setStartTime ] = useState<string>("");
+    const [ endTime, setEndTime ] = useState<string>("");
+    const [ startDate, setStartDate ] = useState<Date | null>(null);
+    const [ endDate, setEndDate ] = useState<Date | null>(null);
     const [ periodicity, setPeriodicity ] = useState<string>("")
-    const [ongoing, setOngoing] = useState<boolean>(false);
-    const [pinned, setPinned] = useState<boolean>(false);
-    const [selectedTag, setSelectedTag] = useState<string | null>(null)
-    const [chosenDays, setChosenDays] = useState<{ value: number; label: string; chosen: boolean }[]>(initialChosenDays);
+    const [ ongoing, setOngoing ] = useState<boolean>(false);
+    const [ pinned, setPinned ] = useState<boolean>(false);
+    const [ selectedTag, setSelectedTag ] = useState<string | null>(null)
+    const [ chosenDays, setChosenDays ] = useState<{ value: number; label: string; chosen: boolean }[]>(initialChosenDays);
 
     useEffect(() => {
         if (id) {
@@ -104,13 +101,29 @@ export default function RedHabit({ habit, readOnly, id, isDone }: RedHabitProps)
 
     return (
         <div className="redHabit">
-            <div className="saveHabit">
-                <span
-                    className="spanSaveHabit"
-                    style={{ display: isUpdating.includes(`habit_${habit.id}`) ? "block" : "none" }}
-                >
-                    Сохранение...
-                </span>
+            <div className="habitFirstStr">
+                <div className="saveHabit">
+                    <span
+                        className="spanSaveHabit"
+                        style={{ display: isUpdating.includes(`habit_${habit.id}`) ? "block" : "none" }}
+                    >
+                        Сохранение...
+                    </span>
+                </div>
+                <div className="habitButts">
+                    <div onClick={() => {
+                            setPinned(!pinned);
+                            setPin(habit.id, !pinned);
+                        }}>
+                            {pinned || habit.pinned ? <PinOff className="pinHabit" /> : <Pin className="pinHabit" />}
+                        </div>
+                        <div onClick={() => {
+                            setDeleteConfurm({goal:"habit", id:habit.id, name:habit.name})
+                            setBlackout({seted:true, module:"Delete"})}}
+                        >
+                            <Trash2 className="delHabit" />
+                    </div>
+                </div>
             </div>
             {selectedTag || habit.tag  ? (
                 <div className="habitWrapperIcon">
@@ -238,7 +251,7 @@ export default function RedHabit({ habit, readOnly, id, isDone }: RedHabitProps)
             </div>
 
             {(periodicity || habit.periodicity) === "weekly" && (
-                <DayChanger toggleDay={toggleDay} chosenDays={chosenDays} showOnly={readOnly}/>
+                <DayChanger toggleDay={toggleDay} chosenDays={chosenDays} showOnly={readOnly} chosenArr={habit.chosen_days}/>
             )}
 
             <div className="addHabitTimeWrapper">
@@ -273,30 +286,7 @@ export default function RedHabit({ habit, readOnly, id, isDone }: RedHabitProps)
                     />
                 </div>
             </div>
-            <div className="habitButts">
-                {isDone ? (
-                    <button className="doneButt" onClick={() => markDone(habit.id)}>
-                        <Check />
-                        Выполнено
-                    </button>
-                ) : (
-                    <button className="doneButt" onClick={() => markDone(habit.id)}>
-                        Отметить выполненной
-                    </button>
-                )}
-                <div onClick={() => {
-                        setPinned(!pinned);
-                        setPin(habit.id, !pinned);
-                    }}>
-                        {pinned || habit.pinned ? <PinOff className="pinHabit" /> : <Pin className="pinHabit" />}
-                    </div>
-                    <div onClick={() => {
-                        setDeleteConfurm({goal:"habit", id:habit.id, name:habit.name})
-                        setBlackout({seted:true, module:"Delete"})}}
-                    >
-                        <Trash2 className="delHabit" />
-                </div>
-            </div>
+            
         </div>
     );
 }

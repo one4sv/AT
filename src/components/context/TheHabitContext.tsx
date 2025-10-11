@@ -11,6 +11,7 @@ export interface TheHabitContextType {
     habit:Habit | undefined;
     isReadOnly:boolean;
     isDone:boolean;
+    dayComment:string
 }
 export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const { showNotification } = useNote()
@@ -18,16 +19,18 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const [habit, setHabit] = useState<Habit>();
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [isDone, setIsDone] = useState(false);
+    const [ dayComment, setDayComment ] = useState<string>("")
 
     const loadHabit = useCallback(async (id: string | null) => {
         setLoadingHabit(true);
         try {
             const res = await axios.get(`http://localhost:3001/habits/${id}`, { withCredentials: true });
-            const { success, habit, isRead, isDone } = res.data
+            const { success, habit, isRead, isDone, comment } = res.data
             if (success) {
                 setHabit(habit);
                 setIsReadOnly(isRead);
                 setIsDone(isDone)
+                setDayComment(comment)
             }
         } catch {
             showNotification("error", "Не удалось получить привычку")
@@ -37,7 +40,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     }, [showNotification]);
     
     return(
-        <TheHabitContext.Provider value={{loadHabit, loadingHabit, habit, isReadOnly, isDone}}>
+        <TheHabitContext.Provider value={{loadHabit, loadingHabit, habit, isReadOnly, isDone, dayComment}}>
             {children}
         </TheHabitContext.Provider>
     )

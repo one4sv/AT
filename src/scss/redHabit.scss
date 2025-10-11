@@ -1,41 +1,26 @@
 @use "./global.scss" as var;
 
 .redHabit {
-    position: fixed;
     right: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 25vw;
+    width: 100%;
+}
+.habitFirstStr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
 }
 .saveHabit {
-    width: 100%;
+    flex: 1;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 1vh;
-    height: 2vh;
     >span {
-        position: absolute;
-        right: 5vw;
-        top: 1vh;
         font-size: 18px;
         color: var(--tc);
         opacity: 0;
         animation: fadeIn 0.5s ease-in-out forwards, pulseBrightness 2s ease-in-out infinite;
-    }
-}
-.backButton {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    padding: 1vh 1.5vw 1vh 0.5vw;
-    font-size: 20px;
-    border-radius: 6px;
-    flex: 1 ;
-    cursor: pointer;
-    &:hover {
-        background-color: var(--menuButtHover);
     }
 }
 .habitWrapperIcon {
@@ -49,7 +34,7 @@
     >svg {
         height: 100%;
         width: 100%;
-        color: var(--darkerAcsent);
+        color: var(--acsent);
     }
 }
 .addHabbitCheckBox.redHabitCheckbox {
@@ -62,7 +47,8 @@
     display: flex;
     position: relative;
     width: 80%;
-    margin-top: 1vh;
+    margin: 1vh 0 0;
+    justify-content: end;
     >div {
         display: flex;
         align-items: center;
@@ -72,6 +58,7 @@
         aspect-ratio: 1/1;
         border-radius: 6px;
         cursor: pointer;
+        right: 0;
         >svg {
             color: var(--borderHabit);
             font-size: 30px;
@@ -116,9 +103,4 @@
         }
     }
 }
-.doneButt {
-    @include var.longButt(80%, 4.5vh, 1vh, 1vw, var(--acsent), var(--tc), var(--tr), var(--darkerAcsent));
-    display: flex;
-    align-items: center;
-    font-size: 20px;
-}
+

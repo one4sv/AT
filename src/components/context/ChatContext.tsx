@@ -25,12 +25,12 @@ export interface ChatContextType {
 }
 export interface message {
     id:number,
-    sender_id:number,
+    sender_id:string,
     content:string,
     created_at:Date
 }
 export interface Acc {
-    id:number,
+    id:string,
     username:string | null,
     nick:string,
     avatar_url?: string | null,
@@ -69,53 +69,60 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const sendMess = (receiver_id: string, text: string) => {
-        if (wsRef.current?.readyState === WebSocket.OPEN) {
-            wsRef.current.send(JSON.stringify({ type: "SEND_MESSAGE", receiver_id, text }));
+    const sendMess = async (receiver_id: string, text: string) => {
+        if (!text.trim()) return;
 
-            // Оптимистичное добавление сообщения в UI сразу
-            setMessages(prev => [
-                ...prev,
-                {
-                    id: Date.now(), // временный id
-                    sender_id: Number(user?.id || 0),
-                    content: text,
-                    created_at: new Date()
-                }
-            ]);
+        try {
+            // создаёт чат и сохраняет сообщение
+            const res = await axios.post(
+                "http://localhost:3001/chat",
+                { receiver_id, text },
+                { withCredentials: true }
+            );
+
+            if (res.data.success && res.data.message) {
+                setMessages(prev => [...prev, res.data.message]);
+            }
+
+            // передаём сообщение через сокет другим пользователям
+            if (wsRef.current?.readyState === WebSocket.OPEN) {
+                wsRef.current.send(JSON.stringify({
+                    type: "SEND_MESSAGE",
+                    receiver_id,
+                    text
+                }));
+            }
+        } catch (error) {
+            console.error("Ошибка при отправке:", error);
         }
     };
 
     const refetchContacts = useCallback(async () => {
-        if (!user) return;
+        if (user.nick === null) return;
         try {
             const res = await axios.post("http://localhost:3001/contacts", { search }, { withCredentials: true });
             if (res.data.success) {
                 setList(res.data.friendsArr);
             }
-        } catch {
-            showNotification("error", "Ошибка сервера");
+        } catch (error:any) {
+            showNotification("error", error?.response?.data?.error);
         }
-    }, [search, user]);
+    }, [search, showNotification, user.nick]);
 
     useEffect(() => {
         if (!user?.id) return;
 
         wsRef.current = new WebSocket(`ws://localhost:3001/ws?userId=${user.id}`);
 
-        // wsRef.current.onopen = () => console.log("WebSocket connected");
 
         wsRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
             if (data.type === "NEW_MESSAGE") {
                 const currentChatId = String(chatWithRef.current.id);
-                // message.sender_id — id пользователя, который отправил сообщение
                 const messageSenderId = data?.message?.sender_id ? String(data.message.sender_id) : "";
                 const incomingChatId = String(data.chatId);
 
-                // Если currentChatId — это user id (id собеседника), сравниваем по sender_id
-                // Иначе (если currentChatId хранит chat_id) сравниваем по chatId
                 if (messageSenderId && messageSenderId === currentChatId) {
                     setMessages(prev => [...prev, data.message]);
                 } else if (incomingChatId === currentChatId) {
@@ -125,12 +132,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             }
         };
 
-        // wsRef.current.onclose = () => console.log("WebSocket closed");
-
         return () => {
             wsRef.current?.close();
         };
-    }, [user]);
+    }, [refetchContacts, user]);
 
     useEffect(() => {
         const timer = setTimeout(refetchContacts, 100);

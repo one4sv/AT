@@ -5,7 +5,7 @@ import { useNote } from "../hooks/NoteHook";
 import { useNavigate, useLocation } from "react-router";
 
 export interface User {
-    id: number | null;
+    id: string | null;
     nick: string | null;
     mail: string | null;
     username: string | null;
@@ -15,7 +15,7 @@ export interface User {
 
 interface UserResponse {
     success: boolean;
-    id?: number;
+    id?: string;
     nick?: string;
     mail?: string;
     username?: string;
@@ -82,16 +82,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }, [initialLoading, showNotification]);
 
     useEffect(() => {
+        if (initialLoading)
         refetchUser();
-    }, [refetchUser]);
+    }, [initialLoading, refetchUser, user.nick]);
 
     useEffect(() => {
         // ждём, пока данные пользователя загрузятся
         if (initialLoading || loadingUser) return;
 
         // если пользователь не авторизован — уводим
-        if (!isAuthenticated && location.pathname !== "/confirm" && location.pathname !== "/admin") {
-            navigate("/log");
+        if (!isAuthenticated && location.pathname !== "/confirm" && location.pathname !== "/admin" && !initialLoading) {
+            navigate("/sign");
         }
     }, [isAuthenticated, loadingUser, navigate, location.pathname, initialLoading]);
 

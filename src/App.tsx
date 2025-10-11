@@ -15,7 +15,7 @@ import { DoneProvider } from './components/context/DoneContext';;
 import { CalendarProvider } from './components/context/CalendarContext';
 import { TheHabitProvider } from './components/context/TheHabitContext';
 
-import Log from './pages/Log'
+import Sign from './pages/Sign'
 import Main from './pages/Main'
 import Confirm from './pages/Confirm';
 import Chat from './pages/Chat';
@@ -32,8 +32,8 @@ function App() {
   return (
     <Router>
       <NoteProvider>
-        <SettingsProvider>
-          <UserProvider>
+        <UserProvider>
+          <SettingsProvider>
             <UpdateSettingsProvider>
               <HabitsProvider>
                 <ChatProvider>
@@ -43,13 +43,13 @@ function App() {
                         <DeleteProvider>
                           <BlackoutProvider>
                             <TheHabitProvider>
-                              <DoneProvider>
-                                <CalendarProvider>
+                              <CalendarProvider>
+                                <DoneProvider>
                                   <ThemeHandler/>
                                   <Notification />
                                   <Blackout/>
                                   <Routes>
-                                    <Route path="/log" element={<Log />} />
+                                    <Route path="/sign" element={<Sign />} />
                                     <Route path="/admin" element={<Admin />} />
                                     <Route path="/confirm" element={<Confirm />} />
                                     <Route element={<MainLayout />}>
@@ -60,8 +60,8 @@ function App() {
                                       <Route path='/acc/:contactId' element={<Acc />}/>
                                     </Route>
                                   </Routes>
-                                </CalendarProvider>
                               </DoneProvider>
+                              </CalendarProvider>
                             </TheHabitProvider>
                           </BlackoutProvider>
                         </DeleteProvider>
@@ -71,8 +71,8 @@ function App() {
                 </ChatProvider>
               </HabitsProvider>
             </UpdateSettingsProvider>
-          </UserProvider>
-        </SettingsProvider>
+          </SettingsProvider>
+        </UserProvider>
       </NoteProvider>
     </Router>
   );

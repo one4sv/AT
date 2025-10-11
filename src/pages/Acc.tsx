@@ -49,7 +49,7 @@ export default function Acc() {
 
     useEffect(() => {
         if (!contactId) navigate("/")
-        if (Number(contactId) === user.id) setIsMyAcc(true)
+        if (contactId === user.id) setIsMyAcc(true)
         refetchAcc()
     }, [contactId, user.id])
 

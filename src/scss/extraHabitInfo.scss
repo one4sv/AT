@@ -1,0 +1,30 @@
+@use "./global.scss" as var;
+
+.extraHabitInfoDiv {
+    margin-top: 2vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.extraHabitInfoShower {
+    width: 80%;
+    color: var(--borderWh);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+        color: var(--tc);
+        &::after {
+            background-color: var(--tc);
+        }
+    }
+
+    &::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background-color: var(--borderWh);
+    }
+}

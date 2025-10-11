@@ -3,14 +3,19 @@ import { createContext } from "react";
 import { type ReactNode } from "react"
 import { useHabits } from "../hooks/HabitsHook";
 import { useTheHabit } from "../hooks/TheHabitHook";
+import { useCalendar } from "../hooks/CalendarHook";
+import { useParams } from "react-router";
 const DoneContext = createContext<DoneContextType | null>(null);
 
 export interface DoneContextType {
-    markDone:(id:number) => void
+    sendDayComment:(id:string, text:string) => void;
+    markDone:(id:number) => void;
 }
 export const DoneProvider = ({children} : {children : ReactNode}) => {
+    const { habitId } = useParams<{habitId:string}>()
     const { refetchHabits } = useHabits()
     const { loadHabit } = useTheHabit()
+    const { fetchCalendarHabit, fetchCalendarUser } = useCalendar()
 
     const markDone = async(id:number) => {
         try {
@@ -18,13 +23,26 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
             if (res.data.success) {
                 refetchHabits()
                 loadHabit(id.toString())
+                if (habitId) fetchCalendarHabit(id.toString())
+                else fetchCalendarUser()
+            }
+        } catch (err) {
+            console.log("ошибка", err)
+        }
+    }
+    const sendDayComment = async(id:string, text:string) => {
+        try {
+            const res = await axios.post("http://localhost:3001/daycomment", { habit_id: id, text:text }, { withCredentials:true})
+            if (res.data.success) {
+                fetchCalendarHabit(id)
+                loadHabit(id)
             }
         } catch (err) {
             console.log("ошибка", err)
         }
     } 
     return(
-        <DoneContext.Provider value={{markDone}}>
+        <DoneContext.Provider value={{ sendDayComment, markDone}}>
             {children}
         </DoneContext.Provider>
     )

@@ -1,6 +1,7 @@
 import { createContext, useState, useCallback, useEffect } from "react";
 import type { ReactNode } from "react";
 import axios from "axios";
+import { useUser } from "../hooks/UserHook";
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
 export interface SettingsContextType {
@@ -43,6 +44,7 @@ export interface PrivateSettings {
 }
 
 export const SettingsProvider = ({children}:{children:ReactNode}) => {
+    const { user } = useUser()
     const [ orderHabits, setOrderHabits ] = useState<string[] | null>([])
     const [ amountHabits, setAmountHabits ] = useState<number[] | null>([])
     const [ theme, setTheme ] = useState<string>("")
@@ -75,8 +77,8 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
     }, [])
 
     useEffect(() => {
-            refetchSettings();
-    }, [refetchSettings]);
+        if (user) refetchSettings();
+    }, [refetchSettings, user]);
 
     return(
         <SettingsContext.Provider value={{ orderHabits, setOrderHabits, tab, setTab, refetchSettings, amountHabits, setAmountHabits, theme, setTheme, privateShow, setPrivate, setAcsent, acsent, bg, setBg, bgUrl, decor, setDecor }}>

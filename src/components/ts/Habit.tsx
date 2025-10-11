@@ -9,11 +9,14 @@ export default function HabitDiv({habit, id, isMyAcc}:{habit:Habit, id?:number, 
     const todayNum = new Date().getDay()
 
     const ruPeriodicity = (habit: Habit) => {
-        const { periodicity: per, start_time: sd, end_time: ed, chosen_days } = habit;
+        const { periodicity: per, start_time: st, end_time: et, chosen_days } = habit;
 
         const formatTime = () => {
-            if (sd || ed) {
-                return ed ? ` с ${sd} по ${ed}` : ` в ${sd}`;
+            if (st && et && st !== null) {
+                return ` с ${st} по ${et}`;
+            }
+            if (st || et) {
+                return st ? ` в ${st}` : ` до ${et}`
             }
             return "";
         };

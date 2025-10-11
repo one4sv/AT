@@ -92,20 +92,29 @@
     pointer-events: none;
     background-color: var(--bgc);
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    flex-direction: column;
     border-radius: 6px;
-    max-height: 250px;
+    max-height: 20vh;
     overflow-y: scroll;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     z-index: 12;
     width: 100%;
     max-height: 20vh;
     scrollbar-width: thin;
+    padding: 0.5vh 0.5vw;
     &.active {
         pointer-events: all;
         opacity: 1;
     }
+}
+.tagGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.tagGroupTitle {
+    margin-top: 1vh;
+    width: 100%;
 }
 .tag {
     display: flex;

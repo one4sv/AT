@@ -5,6 +5,7 @@ import { useSettings } from "../hooks/SettingsHook";
 
 export default function MainLayout() {
   const { decor } = useSettings()
+
   return (
     <div className="app-layout">
       <SideMenu />
