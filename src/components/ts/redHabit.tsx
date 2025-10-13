@@ -188,7 +188,7 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
                 <div className="addHabitWrapper">
                     <label>Дата начала</label>
                     <CalendarInput
-                        value={startDate || habit.start_date}
+                        value={startDate || new Date(habit.start_date)}
                         readOnly={readOnly}
                         onChange={(date) => {
                             setStartDate(date);
@@ -205,7 +205,7 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
                         <input type="text" className="addHabitInput ongoingInput" readOnly value={"По настоящее время"} />
                     ) : (
                         <CalendarInput
-                            value={endDate || habit.end_date}
+                            value={endDate || new Date(habit.end_date)}
                             readOnly={readOnly}
                             onChange={(date) => {
                                 setEndDate(date);
