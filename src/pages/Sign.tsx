@@ -232,7 +232,7 @@ export default function Log() {
         {(loadingAuth || loadingUser) && (
           <div className="loading">
             <div className="loadingPic"></div>
-            <span>Секундучку...</span>
+            <span>Секундочку...</span>
           </div>
         )}
 
