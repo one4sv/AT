@@ -97,7 +97,7 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
     }
     useEffect(() => {
         if (selectedTag !== habit.tag && selectedTag) setNewTag(habit.id, selectedTag)
-    }, [selectedTag])
+    }, [habit.id, habit.tag, selectedTag, setNewTag])
 
     return (
         <div className="redHabit">
