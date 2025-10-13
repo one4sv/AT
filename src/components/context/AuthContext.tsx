@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
     const register = async ({ mail, pass, nick }:{mail:string, pass:string, nick:string }) => {
         setLoadingAuth(true);
         try {
-            const res = await axios.post(`${API_URL}/register`, { mail, pass, nick }, {
+            const res = await axios.post(`${API_URL}register`, { mail, pass, nick }, {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             });
