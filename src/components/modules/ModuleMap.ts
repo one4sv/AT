@@ -2,8 +2,8 @@ import AddHabit from './AddHabit';
 import Settings from './Settings';
 import DeleteConfirm from './DeleteConfirm';
 import { PickHandler } from './PickHandler';
-import AddGroup from './AddGroup';
-import { BgHandler } from './bgHandler';
+import AddGroup from '../ts/chern/AddGroup';
+import { BgHandler } from './BgHandler';
 
 const ModuleMap: Record<string, React.FC> = {
     AddHabit: AddHabit,

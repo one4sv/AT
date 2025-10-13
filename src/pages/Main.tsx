@@ -1,7 +1,7 @@
 import { useUser } from "../components/hooks/UserHook";
 import Loader from "../components/ts/Loader.tsx";
 import { useNote } from "../components/hooks/NoteHook.ts";
-import { Ghost, Search } from "lucide-react";
+import { Ghost} from "lucide-react";
 import "../scss/Main.scss"
 
 export default function Feed() {

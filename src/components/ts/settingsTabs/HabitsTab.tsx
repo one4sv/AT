@@ -114,7 +114,7 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
         setDragOverIndex(null);
     };
 
-    const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    const handleDragStart = (_e: React.DragEvent<HTMLDivElement>, index: number) => {
         dragItem.current = index;
         setDraggingIndex(index);
     };
@@ -124,7 +124,7 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
         setDragOverIndex(index);
     };
 
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>, dropIndex: number) => {
+    const handleDrop = (_e: React.DragEvent<HTMLDivElement>, dropIndex: number) => {
         if (dragItem.current === null) return;
         const newOrder = [...displayOrder];
         const draggedItem = newOrder.splice(dragItem.current, 1)[0];
