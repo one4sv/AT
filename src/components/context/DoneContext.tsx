@@ -16,10 +16,10 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
     const { refetchHabits } = useHabits()
     const { loadHabit } = useTheHabit()
     const { fetchCalendarHabit, fetchCalendarUser } = useCalendar()
-
+    const API_URL = import.meta.env.VITE_API_URL
     const markDone = async(id:number) => {
         try {
-            const res = await axios.post("http://localhost:3001/markdone", { habit_id: id }, { withCredentials:true})
+            const res = await axios.post(`${API_URL}markdone`, { habit_id: id }, { withCredentials:true})
             if (res.data.success) {
                 refetchHabits()
                 loadHabit(id.toString())
@@ -32,7 +32,7 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
     }
     const sendDayComment = async(id:string, text:string) => {
         try {
-            const res = await axios.post("http://localhost:3001/daycomment", { habit_id: id, text:text }, { withCredentials:true})
+            const res = await axios.post(`${API_URL}daycomment`, { habit_id: id, text:text }, { withCredentials:true})
             if (res.data.success) {
                 fetchCalendarHabit(id)
                 loadHabit(id)

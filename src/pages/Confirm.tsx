@@ -13,7 +13,7 @@ export default function Confirm() {
   const [status, setStatus] = useState<"pending" | "success" | "error" | "expired">("pending");
   const [countdown, setCountdown] = useState(5);
   const { showNotification } = useNote()
-
+  const API_URL = import.meta.env.VITE_API_URL
   const navigate = useNavigate();
 
   // Проверка токена
@@ -26,7 +26,7 @@ export default function Confirm() {
       }
 
       try {
-        const res = await axios.post("http://localhost:3001/confirm", { token }, { withCredentials:true });
+        const res = await axios.post(`${API_URL}confirm`, { token }, { withCredentials:true });
         if (res.data.success) {
           setStatus("success");
           refetchUser()

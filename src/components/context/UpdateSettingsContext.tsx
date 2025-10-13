@@ -28,6 +28,8 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
     const { refetchSettings, amountHabits, orderHabits, theme, acsent, bg, decor } = useSettings();
     const { refetchUser, user } = useUser();
     const { showNotification } = useNote();
+    const API_URL = import.meta.env.VITE_API_URL
+
     const [ updateQueue, setUpdateQueue ] = useState<UpdateQueueItem[]>([]);
     const [ isUpdating, setIsUpdating ] = useState<string[]>([]);
     const [ isProcessing, setIsProcessing ] = useState(false);
@@ -76,7 +78,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         try {
             const bg = new FormData();
             bg.append("bg", val);
-            const upRes = await axios.post("http://localhost:3001/uploadbg", bg, {
+            const upRes = await axios.post(`${API_URL}uploadbg`, bg, {
                 withCredentials: true,
                 headers: { "Content-Type": "multipart/form-data" },
             });
@@ -127,7 +129,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         console.log("Отправляю на сервер", setting, value);
 
         try {
-            const res = await axios.post("http://localhost:3001/updatesettings", payload, {
+            const res = await axios.post(`${API_URL}updatesettings`, payload, {
                 withCredentials: true,
             });
             if (res.data.success) {

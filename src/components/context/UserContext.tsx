@@ -41,7 +41,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { showNotification } = useNote();
-
+    const API_URL = import.meta.env.VITE_API_URL
+    const API_WS = import.meta.env.VITE_API_WS
     const [user, setUser] = useState<User>({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null });
     const [loadingUser, setLoadingUser] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
@@ -54,7 +55,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         if (initialLoading) setLoadingUser(true);
 
         try {
-            const res = await axios.get<UserResponse>("http://localhost:3001/user", {
+            const res = await axios.get<UserResponse>(`${API_URL}user`, {
                 withCredentials: true,
             });
             if (res.data.success) {
@@ -102,7 +103,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         if (!user?.id) return;
 
-        wsRef.current = new WebSocket(`ws://localhost:3001/ws?userId=${user.id}`);
+        wsRef.current = new WebSocket(`${API_WS}ws?userId=${user.id}`);
 
         wsRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);

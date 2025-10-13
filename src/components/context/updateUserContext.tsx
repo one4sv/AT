@@ -24,6 +24,8 @@ export interface UpdateUserContextType {
 export const UpdateUserProvider = ({children}:{children:ReactNode}) => {
     const {user, refetchUser} = useUser()
     const { showNotification } = useNote()
+    const API_URL = import.meta.env.VITE_API_URL
+
     const [ newName, setNewName ] = useState<string>("")
     const [ newNick, setNewNick ] = useState<string>("")
     const [ newBio, setNewBio ] = useState<string>("")
@@ -46,7 +48,7 @@ export const UpdateUserProvider = ({children}:{children:ReactNode}) => {
             try {
                 const fd = new FormData();
                 fd.append("avatar", newPick);
-                const upRes = await axios.post("http://localhost:3001/uploadavatar", fd, {
+                const upRes = await axios.post(`${API_URL}uploadavatar`, fd, {
                     withCredentials: true,
                     headers: { "Content-Type": "multipart/form-data" },
                 });
@@ -72,7 +74,7 @@ export const UpdateUserProvider = ({children}:{children:ReactNode}) => {
         if (payload.length < 1) return
 
         try {
-            const res = await axios.post("http://localhost:3001/updateuser", payload, {withCredentials:true});
+            const res = await axios.post(`${API_URL}updateuser`, payload, {withCredentials:true});
             if (res.data.success) {
                 await refetchUser();
                 showNotification("success", "Данные обновлены");

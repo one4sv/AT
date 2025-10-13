@@ -6,9 +6,10 @@ import "../scss/Main.scss"
 
 export default function Feed() {
     const { showNotification } = useNote()
+    const LINK = import.meta.env.LINK
 
     const copyLink = () => {
-        navigator.clipboard.writeText("http://localhost:5173")
+        navigator.clipboard.writeText(`${LINK}`)
         showNotification("success", "Ссылка скопирована")
     }
     const { initialLoading } = useUser();
@@ -26,10 +27,6 @@ export default function Feed() {
                 </span>
                 <div className="feedNothingAdvices">
                     <span className="feedNothingAdvice">1. Найти друзей в AchieveTogether и начать общаться</span>
-                    <div className="inpfeedNothingWrapper">
-                        <input type="text" placeholder="Nickname или имя" />
-                        <Search strokeWidth={1.5} />
-                    </div>
                     <span className="feedNothingAdvice">2. <a>Завести первую привычку или цель</a> начать можно с малого</span>
                     <span className="feedNothingAdvice">3. <a onClick={() => copyLink()}>Пригласите друзей в Achieve Together</a> вместе веселей</span>
                 </div>

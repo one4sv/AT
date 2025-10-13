@@ -45,6 +45,8 @@ export interface PrivateSettings {
 
 export const SettingsProvider = ({children}:{children:ReactNode}) => {
     const { user } = useUser()
+    const API_URL = import.meta.env.VITE_API_URL
+
     const [ orderHabits, setOrderHabits ] = useState<string[] | null>([])
     const [ amountHabits, setAmountHabits ] = useState<number[] | null>([])
     const [ theme, setTheme ] = useState<string>("")
@@ -57,7 +59,7 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
 
     const refetchSettings = useCallback( async() => {
         try {
-            const res = await axios.get<SettingsResponse>("http://localhost:3001/settings", {
+            const res = await axios.get<SettingsResponse>(`${API_URL}settings`, {
                 withCredentials: true,
             })
             if (res.data.success) {

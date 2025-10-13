@@ -32,6 +32,7 @@ export const CalendarProvider = ({children} : {children : ReactNode}) => {
     const [ chosenDay, setChosenDay ] = useState<string>("")
     const [ selectedMonth, setSelectedMonth ] = useState<number>(0)
     const [ selectedYear, setSelectedYear ] = useState<number>(0)
+    const API_URL = import.meta.env.VITE_API_URL
 
     const calendarRef = useRef<HTMLDivElement | null>(null)
 
@@ -39,7 +40,7 @@ export const CalendarProvider = ({children} : {children : ReactNode}) => {
         if (!id) return;
         setCalendarLoading(true)
         try {
-            const res = await axios.get(`http://localhost:3001/calendar/${id}`, {withCredentials: true})
+            const res = await axios.get(`${API_URL}calendar/${id}`, {withCredentials: true})
             if (res.data.success) setCalendar(res.data.calendar)
         } catch {
             showNotification("error", "Ошибка получения календаря")
@@ -50,7 +51,7 @@ export const CalendarProvider = ({children} : {children : ReactNode}) => {
     const fetchCalendarUser = async() => {
         setCalendarLoading(true)
         try {
-            const res = await axios.get("http://localhost:3001/calendar", {withCredentials: true})
+            const res = await axios.get(`${API_URL}calendar`, {withCredentials: true})
             if (res.data.success) setCalendar(res.data.calendar)
         } catch {
             showNotification("error", "Ошибка получения общего календаря")

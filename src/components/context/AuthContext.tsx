@@ -15,11 +15,12 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
     const { showNotification } = useNote();
     const [success, setSuccess] = useState(false);
     const [loadingAuth, setLoadingAuth] = useState(false);
+    const API_URL = import.meta.env.VITE_API_URL
 
     const register = async ({ mail, pass, nick }:{mail:string, pass:string, nick:string }) => {
         setLoadingAuth(true);
         try {
-            const res = await axios.post('http://localhost:3001/register', { mail, pass, nick }, {
+            const res = await axios.post(`${API_URL}/register`, { mail, pass, nick }, {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             });
@@ -51,7 +52,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
         setLoadingAuth(true);
         try {
             const res = await axios.post(
-                'http://localhost:3001/auth',
+                `${API_URL}auth`,
                 { login, pass },
                 {
                     headers: {

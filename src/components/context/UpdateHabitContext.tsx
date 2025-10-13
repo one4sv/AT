@@ -30,6 +30,8 @@ const UpdateHabitContext = createContext<UpdateHabitContextType | null>(null);
 export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
   const { habits, refetchHabits } = useHabits();
   const { showNotification } = useNote();
+  const API_URL = import.meta.env.VITE_API_URL
+
   const [updateQueue, setUpdateQueue] = useState<UpdateQueueItem[]>([]);
   const [isUpdating, setIsUpdating] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -119,7 +121,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     };
 
     try {
-      const res = await axios.post("http://localhost:3001/updatehabit", payload, {
+      const res = await axios.post(`${API_URL}updatehabit`, payload, {
         withCredentials: true,
       });
       if (res.data.success) {

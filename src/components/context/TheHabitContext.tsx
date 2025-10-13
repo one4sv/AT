@@ -15,6 +15,8 @@ export interface TheHabitContextType {
 }
 export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const { showNotification } = useNote()
+    const API_URL = import.meta.env.VITE_API_URL
+
     const [ loadingHabit, setLoadingHabit ] = useState(false)
     const [habit, setHabit] = useState<Habit>();
     const [isReadOnly, setIsReadOnly] = useState(false);
@@ -24,7 +26,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const loadHabit = useCallback(async (id: string | null) => {
         setLoadingHabit(true);
         try {
-            const res = await axios.get(`http://localhost:3001/habits/${id}`, { withCredentials: true });
+            const res = await axios.get(`${API_URL}habits/${id}`, { withCredentials: true });
             const { success, habit, isRead, isDone, comment } = res.data
             if (success) {
                 setHabit(habit);

@@ -42,6 +42,8 @@ export interface Acc {
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useUser();
     const { showNotification } = useNote();
+    const API_URL = import.meta.env.VITE_API_URL
+    const API_WS = import.meta.env.VITE_API_WS
 
     const [chatWith, setChatWith] = useState<chatWithType>({ username: "", nick: "", id: "", last_online:"" });
     const [messages, setMessages] = useState<message[]>([]);
@@ -60,7 +62,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const refetchChat = async (chatWithId: string) => {
         try {
             setChatLoading(true);
-            const res = await axios.get(`http://localhost:3001/chat/${chatWithId}`, { withCredentials: true });
+            const res = await axios.get(`${API_URL}chat/${chatWithId}`, { withCredentials: true });
             if (res.data.success) {
                 setChatWith({ username: res.data.user.username, nick: res.data.user.nick, id: chatWithId, avatar_url: res.data.user.avatar_url, last_online: res.data.user.last_online });
                 setMessages(res.data.messages);
@@ -92,7 +94,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const refetchContacts = useCallback(async () => {
         if (user.nick === null) return;
         try {
-            const res = await axios.post("http://localhost:3001/contacts", { search }, { withCredentials: true });
+            const res = await axios.post(`${API_URL}contacts`, { search }, { withCredentials: true });
             if (res.data.success) {
                 setList(res.data.friendsArr);
             }
@@ -105,7 +107,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         if (!user?.id) return;
 
-        wsRef.current = new WebSocket(`ws://localhost:3001/ws?userId=${user.id}`);
+        wsRef.current = new WebSocket(`${API_WS}ws?userId=${user.id}`);
 
         wsRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);

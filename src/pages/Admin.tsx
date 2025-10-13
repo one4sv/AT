@@ -5,7 +5,8 @@ export default function Admin() {
   const [nick, setNick] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
-
+  const API_URL = import.meta.env.VITE_API_URL
+  
   const handleLogin = async () => {
     if (!nick.trim()) return;
 
@@ -13,7 +14,7 @@ export default function Admin() {
     setMsg("");
     try {
       const res = await axios.post(
-        "http://localhost:3001/admin",
+        `${API_URL}admin`,
         { nick: nick.trim() },
         { withCredentials: true } // чтобы токен в куки отправился
       );

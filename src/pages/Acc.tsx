@@ -23,6 +23,7 @@ export default function Acc() {
     const { contactId } = useParams();
     const { onlineMap } = useChat();
     const navigate = useNavigate();
+    const API_URL = import.meta.env.VITE_API_URL
 
     const [isMyAcc, setIsMyAcc] = useState<boolean>(false);
     const [acc, setAcc] = useState<User>();
@@ -44,7 +45,7 @@ export default function Acc() {
         if (!contactId) return;
         setLoading(true);
         try {
-            const res = await axios.get(`http://localhost:3001/acc/${contactId}`, { withCredentials: true });
+            const res = await axios.get(`${API_URL}acc/${contactId}`, { withCredentials: true });
             if (res.data.success) {
                 setAcc(res.data.acc);
                 setHabits(res.data.habits);

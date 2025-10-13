@@ -40,6 +40,7 @@ const HabitsContext = createContext<HabitContextType | null>(null);
 export const HabitsProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
     const { orderHabits } = useSettings();
+    const API_URL = import.meta.env.VITE_API_URL
 
     const [ habits, setHabits ] = useState<Habit[] | null>(null);
     const [ loadingHabit, setLoadingHabit ] = useState(true);
@@ -48,7 +49,7 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
     const refetchHabits = useCallback(async () => {
         setLoadingHabit(true);
         try {
-            const res = await axios.get<HabitResponse>("http://localhost:3001/habits", {
+            const res = await axios.get<HabitResponse>(`${API_URL}habits`, {
                 withCredentials: true,
             });
 

@@ -13,13 +13,14 @@ export default function DeleteConfirm () {
     const { deleteConfirm } = useDelete()
     const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
+    const API_URL = import.meta.env.VITE_API_URL
 
     const navigate = useNavigate()
 
     const deleteThis = async() => {
         const {goal, id} = deleteConfirm
         try {
-            const res = await axios.post("http://localhost:3001/delete", { goal:goal, delete_id:id }, {withCredentials:true})
+            const res = await axios.post(`${API_URL}delete`, { goal:goal, delete_id:id }, {withCredentials:true})
             if (res.data.success) {
                 if (goal === "habit") {
                     refetchHabits()

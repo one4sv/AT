@@ -17,6 +17,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     const { refetchHabits } = useHabits()
     const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
+    const API_URL = import.meta.env.VITE_API_URL
 
     const [ name, setName ] = useState<string>("")
     const [ desc, setDescription ] = useState<string>("")
@@ -104,7 +105,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
         }
         console.log(payload)
         try {
-            const res = await axios.post("http://localhost:3001/addhabit", payload, {withCredentials:true});
+            const res = await axios.post(`${API_URL}addhabit`, payload, {withCredentials:true});
             if (res.data.success) {
                 setBlackout({ seted: false, module: undefined });
                 showNotification("success", "Успешно добавлено")

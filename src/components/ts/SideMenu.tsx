@@ -17,6 +17,7 @@ export default function SideMenu() {
     const { setTab } = useSettings()
     const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
+    const API_URL = import.meta.env.VITE_API_URL
 
     const navigate = useNavigate()
 
@@ -30,7 +31,7 @@ export default function SideMenu() {
 
     const logOut = async () => {
         try {
-            const res = await axios.get("http://localhost:3001/logout", { withCredentials: true })
+            const res = await axios.get(`${API_URL}logout`, { withCredentials: true })
             if (res.data.success) {
                 refetchUser()
             } else {
