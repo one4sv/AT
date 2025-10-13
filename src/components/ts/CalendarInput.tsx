@@ -1,4 +1,3 @@
-import React from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -27,17 +26,17 @@ export default function CalendarInput({
     onChange(date);
   };
 
-  const handleChangeRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.currentTarget.value;
+  const handleChangeRaw = (event: any) => {
+    if (!event) return;
+    const target = event.target as HTMLInputElement;
+    const inputValue = target.value;
     if (!inputValue) return;
 
     let digits = inputValue.replace(/\D/g, '');
-
     if (digits.length > 2) digits = digits.slice(0, 2) + '.' + digits.slice(2);
     if (digits.length > 5) digits = digits.slice(0, 5) + '.' + digits.slice(5, 9);
-
     digits = digits.slice(0, 10);
-    e.currentTarget.value = digits;
+    target.value = digits;
 
     if (digits.length === 10) {
       const [day, month, year] = digits.split('.');

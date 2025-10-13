@@ -27,7 +27,7 @@ export default function Diagrams() {
         } else {
             // 3. Одна привычка + день не выбран
             if (habit?.periodicity !== "weekly") {
-                const startDate = new Date(year, month, 1)
+                // const startDate = new Date(year, month, 1)
                 const endDate = new Date(year, month + 1, 0)
                 const daysInMonth = Array.from({ length: endDate.getDate() }, (_, i) =>
                     new Date(year, month, i + 1).toISOString().slice(0, 10)
