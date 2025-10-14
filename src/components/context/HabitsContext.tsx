@@ -19,6 +19,7 @@ export interface Habit {
     tag:string | "";
     pinned:boolean;
     done?:boolean;
+    user_id:string;
 }
 
 interface HabitResponse {

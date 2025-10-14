@@ -18,7 +18,7 @@ export default function Habit() {
     const { calendarLoading } = useCalendar()
     const { loadHabit, habit, isReadOnly, loadingHabit } = useTheHabit()
     const { habitId } = useParams<{ habitId: string }>();
-    const [ showHabitMenu, setShowHabitMenu ] = useState(false)
+    const [ showHabitMenu, setShowHabitMenu ] = useState(true)
 
     useEffect(() => {
         if (habitId) {

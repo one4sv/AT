@@ -1,36 +1,33 @@
-import { useNavigate, useParams } from "react-router"
+import { useParams } from "react-router"
 import { useChat } from "../components/hooks/ChatHook"
 import { useEffect, useRef, useState, Fragment, useMemo } from "react"
 import "../scss/Chat.scss"
-import { CircleUserRound, Bell, ChevronLeft, SendHorizontal, Paperclip, UserRoundPlus, Search, X, ChevronUp, ChevronDown } from "lucide-react"
+import { SendHorizontal, Paperclip, } from "lucide-react"
 import Loader from "../components/ts/Loader"
-import { useUser } from "../components/hooks/UserHook"
-import formatLastOnline from "../components/ts/utils/formatOnline"
+import { File, FileText, FileArchive, FileAudio,
+  FileCode, FileXls, FilePpt,
+  X,
+} from "@phosphor-icons/react";
+import ChatUser from "../components/ts/chatUser"
 
 export default function Chat () {
-    const { refetchChat, chatWith, chatLoading, sendMess, messages, onlineMap } = useChat()
-    const navigate = useNavigate()
+    const { refetchChat, chatLoading, sendMess, messages, } = useChat()
     const { contactId } = useParams()
-    const { user } = useUser()
     const [ mess, setMess ] = useState<string>("")
     const [ search, setSearch ] = useState<string>("")
-    const [selectedIndex, setSelectedIndex] = useState<number>(0)
-    const [isSearchOpen, setIsSearchOpen] = useState(false)
-    const [highlightedId, setHighlightedId] = useState<number | null>(null)
-
+    const [ selectedIndex, setSelectedIndex ] = useState<number>(0)
+    const [ highlightedId, setHighlightedId ] = useState<number | null>(null)
+    const [ files, setFiles ] = useState<File[]>([]) 
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
     const chatRef = useRef<HTMLDivElement | null>(null)
-    const searchRef = useRef<HTMLDivElement | null>(null)
-    const nameRef = useRef<HTMLDivElement | null>(null)
-    const searchDivRef = useRef<HTMLDivElement | null>(null)
-
     const messageRefs = useRef<Map<number, HTMLDivElement | null>>(new Map())
     const searchItemRefs = useRef<Map<number, HTMLDivElement | null>>(new Map())
+    const inputFileRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         if (contactId) refetchChat(contactId)
         // else navigate("/")
-    }, [contactId])
+    }, [contactId, refetchChat])
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter") {
@@ -38,11 +35,16 @@ export default function Chat () {
                 setMess(prev => prev + "\n")
             } else {
                 e.preventDefault()
-                if (mess.trim() && contactId) {
-                    sendMess(contactId, mess.trim())
-                    setMess("")
-                }
+                handleSend()
             }
+        }
+    }
+
+    const handleSend = async () => {
+        if (contactId && (mess.trim() || files.length > 0)) {
+            await sendMess(contactId, mess.trim(), files)
+            setMess("")
+            setFiles([])
         }
     }
 
@@ -77,23 +79,10 @@ export default function Chat () {
         const today = new Date();
         const yesterday = new Date();
         yesterday.setDate(today.getDate() - 1);
-
         if (isSameDay(d, today)) return "сегодня";
         if (isSameDay(d, yesterday)) return "вчера";
         return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long" });
     }
-
-    useEffect(() => {
-        if (!nameRef.current || !searchRef.current) return;
-
-        if (search.length > 0) {
-            nameRef.current.style.width = "0";
-            searchRef.current.style.width = "100%";
-        } else {
-            nameRef.current.style.width = "40%";
-            searchRef.current.style.width = "50%";
-        }
-    }, [search.length])
 
     const searchedMessages = useMemo(() => {
         if (!search.trim()) return [];
@@ -104,25 +93,6 @@ export default function Chat () {
             )
             .reverse();
     }, [messages, search]);
-
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (
-                searchDivRef.current &&
-                !searchDivRef.current.contains(e.target as Node) &&
-                searchRef.current &&
-                !searchRef.current.contains(e.target as Node)
-            ) {
-                setIsSearchOpen(false)
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
-
-    useEffect(() => {
-        setIsSearchOpen(search.trim().length > 0)
-    }, [search])
 
     const scrollToMessage = (id: number) => {
         const el = messageRefs.current.get(id)
@@ -138,7 +108,6 @@ export default function Chat () {
 
     const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (!searchedMessages.length) return;
-
         if (e.key === "ArrowDown") {
             e.preventDefault();
             setSelectedIndex(prev => Math.min(searchedMessages.length - 1, prev + 1));
@@ -154,16 +123,12 @@ export default function Chat () {
 
     const handleArrowClick = (dir: "up" | "down") => {
         if (!searchedMessages.length) return;
-
         let newIndex = selectedIndex;
         if (dir === "up") newIndex = Math.min(searchedMessages.length - 1, selectedIndex + 1);
         if (dir === "down") newIndex = Math.max(0, selectedIndex - 1);
-
         setSelectedIndex(newIndex);
-
         const target = searchedMessages[newIndex];
         if (!target) return;
-
         const el = messageRefs.current.get(target.id);
         if (el) {
             el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -184,99 +149,33 @@ export default function Chat () {
         el?.scrollIntoView({ block: "nearest" });
     }, [selectedIndex, searchedMessages]);
 
+    const getIconByType = (name: string, type: string) => {
+        const ext = name.split(".").pop()?.toLowerCase();
+        if (type.startsWith("audio/")) return <FileAudio />;
+        if (ext === "zip" || ext === "rar" || ext === "7z") return <FileArchive />;
+        if (ext === "pdf") return <FileText />;
+        if (["doc", "docx"].includes(ext || "")) return <FileText />;
+        if (["xls", "xlsx", "csv"].includes(ext || "")) return <FileXls />;
+        if (["ppt", "pptx"].includes(ext || "")) return <FilePpt />;
+        if (["js", "ts", "jsx", "tsx", "html", "css", "json", "xml", "py", "cpp", "c", "cs", "java"].includes(ext || "")) return <FileCode />;
+        return <File />;
+    };
+
     if (chatLoading) return <Loader />
 
     return(
         <div className="chatDiv">
-            <div className="chatUser">
-                <div className="chatUserBack" onClick={() => navigate("/")}>
-                    <ChevronLeft />
-                </div>
-                <div className="chatUserInfo" onClick={() => navigate(`/acc/${contactId}`)} ref={nameRef}>
-                    <div className="chatUserPick">
-                        {chatWith.avatar_url ? (
-                            <img className="chatUserAvatar" src={chatWith.avatar_url} alt={chatWith.username ?? chatWith.nick} />
-                        ) : (
-                            <CircleUserRound/>
-                        )}
-                    </div>
-                    <div className="chatUserName">
-                        <span>{chatWith.username ?? chatWith.nick}</span>
-                        <span className={`chatOnlineStauts ${onlineMap[chatWith?.id || ""] ? "online" : "offline"}`}>
-                            {onlineMap[chatWith?.id || ""] 
-                                ? "В сети" 
-                                : formatLastOnline(chatWith?.last_online)}
-                        </span>
-                    </div>
-                </div>
-
-                <div className="chatUserMenu" ref={searchRef}>
-                    <div className="chatSearchWrapeer">
-                        <div className="chatSearch">
-                            <input
-                                type="text"
-                                placeholder="Поиск по сообщениям"
-                                value={search}
-                                onChange={(e) => { setSearch(e.target.value); setSelectedIndex(0) }}
-                                onFocus={() => setIsSearchOpen(true)}
-                                onKeyDown={handleSearchKeyDown}
-                            />
-                            {search.length > 0 ? (
-                                <X color="white" cursor="pointer" onClick={() => { setSearch(""); setSelectedIndex(0); setIsSearchOpen(false); }}/>
-                            ): (
-                                <Search/>
-                            )}
-                        </div>
-                        {search.trim().length > 0 && (
-                            <div
-                                ref={searchDivRef}
-                                className={`chatSearchDiv ${isSearchOpen ? "open" : "closed"}`}
-                            >
-                                <div className="chatSearchInfo">
-                                    <span>{searchedMessages.length} результатов</span>
-                                    <div>
-                                        <button onClick={() => handleArrowClick("up")} disabled={!searchedMessages.length}><ChevronUp/></button>
-                                        <button onClick={() => handleArrowClick("down")} disabled={!searchedMessages.length}><ChevronDown/></button>
-                                    </div>
-                                </div>
-                                <div className="chatSearchList">
-                                    {searchedMessages.map((m, i) => {
-                                        const isMy = m.sender_id !== contactId
-                                        return (
-                                            <div
-                                                key={m.id}
-                                                className={`chatSearchItem ${selectedIndex === i ? "active" : ""}`}
-                                                onClick={() => { setSelectedIndex(i); scrollToMessage(m.id); }}
-                                                ref={(el) => { searchItemRefs.current.set(m.id, el) }}
-                                            >
-                                                <div className="chatSearchPic">
-                                                    {isMy && user.avatar_url ? (
-                                                        <img src={user.avatar_url}/>
-                                                    ) : !isMy && chatWith.avatar_url ? (
-                                                        <img src={chatWith.avatar_url}/>
-                                                    ) : ("") }
-                                                </div>
-                                                <div className="chatSearchItemInfo">
-                                                    <div className="chatSearcSender">
-                                                        <span className="chatSearchName">{isMy ? "Вы" : (chatWith?.username || chatWith.nick)}</span>
-                                                        <span className="chatSearchDate">{new Date(m.created_at).toLocaleDateString("ru-RU")}</span>
-                                                    </div>
-                                                    <div className="chatSearchText">
-                                                        <span>{m.content}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                    <div className="menuButt"><UserRoundPlus/></div>
-                    <div className="menuButt"><Bell/></div>
-                </div>
-            </div>
-
+            <ChatUser
+                search={search}
+                setSearch={setSearch}
+                selectedIndex={selectedIndex}
+                setSelectedIndex={setSelectedIndex}
+                searchedMessages={searchedMessages}
+                handleSearchKeyDown={handleSearchKeyDown}
+                handleArrowClick={handleArrowClick}
+                scrollToMessage={scrollToMessage}
+                searchItemRefs={searchItemRefs}
+            />
             <div className="chat" ref={chatRef}>
                 {messages.map((m, i) => {
                     const currDate = new Date(m.created_at)
@@ -291,6 +190,28 @@ export default function Chat () {
                             >
                                 <div className={`message ${m.sender_id === contactId ? "ur" : "my"} ${highlightedId === m.id ? "highlight" : ""}`}>
                                     <div className="messageText">{m.content}</div>
+                                    {m.files && m.files.length > 0 && (
+                                        <div className="messageFiles">
+                                            {m.files.map((file, j) => {
+                                                const isImage = file.type.startsWith("image/");
+                                                const isVideo = file.type.startsWith("video/");
+                                                return (
+                                                    <div key={j} className="messageFile">
+                                                        {isImage ? (
+                                                            <img src={file.url} alt={file.name} className="messageFilePreview" />
+                                                        ) : isVideo ? (
+                                                            <video src={file.url} className="messageFilePreview" controls />
+                                                        ) : (
+                                                            <a href={file.url} download={file.name} className="messageFileOther">
+                                                                {getIconByType(file.name, file.type)}
+                                                                <span className="messageFileName">{file.name}</span>
+                                                            </a>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                     <div className="messageDate">{messageGetTime(m.created_at)}</div>
                                 </div>
                             </div>
@@ -298,27 +219,61 @@ export default function Chat () {
                     )
                 })}
             </div>
-
+           
+           
             <div className="chatTAWrapper">
+                {files.length > 0 && (
+                <div className="chatTAFiles">
+                    {files.map((file, i) => {
+                        const isImage = file.type.startsWith("image/");
+                        const isVideo = file.type.startsWith("video/");
+                        const previewUrl = URL.createObjectURL(file);
+                        return (
+                            <div key={i} className="chatTAFile">
+                                <div className="chatTAFileOverlay" onClick={() => {
+                                    setFiles(prev => prev.filter((_, idx) => idx !== i));
+                                }}>
+                                    <X/>
+                                </div>
+                                {isImage ? (
+                                    <img src={previewUrl} alt={file.name} className="chatTAFilePreview" />
+                                ) : isVideo ? (
+                                    <video src={previewUrl} className="chatTAFilePreview" controls />
+                                ) : (
+                                    <div className="chatTAFileOther">
+                                    {getIconByType(file.name, file.type)}
+                                    <span className="chatTAFileName">{file.name}</span>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
                 <textarea
                     name="chatTA"
                     id="chatTA"
-                    className="chatTA"
+                    className={`chatTA ${files.length > 0 ? "chatTAwFiles" : ""}`}
                     value={mess}
                     ref={textAreaRef}
                     onChange={(e) => setMess(e.currentTarget.value)}
                     onKeyDown={handleKeyDown}
                 />
                 <div className="chatTAMenu">
-                    <div className="chatTAbutt">
+                    <input
+                        type="file"
+                        multiple
+                        style={{ display: "none" }}
+                        ref={inputFileRef}
+                        onChange={(e) => {
+                            if (!e.target.files) return;
+                            setFiles(prev => [...prev, ...Array.from(e.target.files)]);
+                        }}
+                    />
+                    <div className="chatTAbutt" onClick={() => inputFileRef.current?.click()}>
                         <Paperclip className="chatFile"/>
-                    </div>                    
-                    <div className="chatTAbutt" onClick={() => {
-                        if (contactId && mess.trim()) {
-                            sendMess(contactId, mess.trim())
-                            setMess("")
-                        }
-                    }}>
+                    </div>
+                    <div className="chatTAbutt" onClick={handleSend}>
                         <SendHorizontal className="chatSend" fill="currenColor"/>
                     </div>
                 </div>

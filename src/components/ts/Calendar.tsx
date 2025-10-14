@@ -72,17 +72,26 @@ export default function Calendar() {
     }, [showList]);
 
     useEffect(() => {
-        if (!habits) return
+        if (!habits || !habit) return
         const yearsSet = new Set<number>()
-
-        habits.forEach(h => {
-            const sd = new Date(h.start_date).getFullYear()
-            yearsSet.add(sd)
-            if (h.end_date ) {
-                const ed = new Date(h.end_date).getFullYear()
-                yearsSet.add(ed)
+        if (id && habit) {
+            for (let y = 0; y <= today.getFullYear() - new Date(habit.start_date).getFullYear(); y++) {
+                yearsSet.add(today.getFullYear() - y)
             }
-        })
+        } else {
+            habits.forEach(h => {
+                const sd = new Date(h.start_date).getFullYear()
+                yearsSet.add(sd)
+                if (h.end_date ) {
+                    const ed = new Date(h.end_date).getFullYear()
+                    yearsSet.add(ed)
+                }
+                for (let y = 0; y <= today.getFullYear() - new Date(habit.start_date).getFullYear(); y++) {
+                    yearsSet.add(today.getFullYear() - y)
+                }
+            })
+        }
+
         const yearsArray = Array.from(yearsSet).sort((a, b) => a - b);
         setYears(yearsArray)
     },[habits])
@@ -192,7 +201,7 @@ export default function Calendar() {
             {id && habit ? <Streak habit={habit} calendar={calendar}/> : ""}
             <ChosenDay/>
 
-            {id && (
+            {id && habits?.find(h => h.id === Number(id)) && (
                 <DoneButton isDone={isDone} habitId={Number(habit?.id)} markDone={markDone} />
             )}
             {id && isDone && (
