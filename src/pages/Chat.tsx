@@ -27,7 +27,7 @@ export default function Chat () {
     useEffect(() => {
         if (contactId) refetchChat(contactId)
         // else navigate("/")
-    }, [contactId, refetchChat])
+    }, [contactId])
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter") {
