@@ -20,7 +20,7 @@ import Main from './pages/Main'
 import Confirm from './pages/Confirm';
 import Chat from './pages/Chat';
 import Acc from './pages/Acc';
-import Admin from './pages/Admin';
+// import Admin from './pages/Admin';
 import HabitPage from './pages/HabitPage';
 
 import Notification from "./components/ts/Notification";
