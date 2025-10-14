@@ -8,7 +8,7 @@ import { File, FileText, FileArchive, FileAudio,
   FileCode, FileXls, FilePpt,
   X,
 } from "@phosphor-icons/react";
-import ChatUser from "../components/ts/chatUser"
+import ChatUser from "../components/ts/ChatUser"
 
 export default function Chat () {
     const { refetchChat, chatLoading, sendMess, messages, } = useChat()
