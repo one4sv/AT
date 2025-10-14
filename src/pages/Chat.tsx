@@ -267,7 +267,7 @@ export default function Chat () {
                         ref={inputFileRef}
                         onChange={(e) => {
                             if (!e.target.files) return;
-                            setFiles(prev => [...prev, ...Array.from(e.target.files)]);
+                            setFiles(prev => [...prev, ...(e.target.files ? Array.from(e.target.files) : [])]);
                         }}
                     />
                     <div className="chatTAbutt" onClick={() => inputFileRef.current?.click()}>
