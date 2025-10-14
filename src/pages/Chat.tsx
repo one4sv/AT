@@ -6,11 +6,15 @@ import { SendHorizontal, Paperclip, } from "lucide-react"
 import Loader from "../components/ts/Loader"
 import { File, FileText, FileArchive, FileAudio,
   FileCode, FileXls, FilePpt,
-  X,
+  X, Check
 } from "@phosphor-icons/react";
 import ChatUser from "../components/ts/ChatUser"
+import axios from "axios"
+import { useUser } from "../components/hooks/UserHook"
+import { Checks } from "@phosphor-icons/react/dist/ssr"
 
 export default function Chat () {
+    const { user } = useUser()
     const { refetchChat, chatLoading, sendMess, messages, } = useChat()
     const { contactId } = useParams()
     const [ mess, setMess ] = useState<string>("")
@@ -23,11 +27,26 @@ export default function Chat () {
     const messageRefs = useRef<Map<number, HTMLDivElement | null>>(new Map())
     const searchItemRefs = useRef<Map<number, HTMLDivElement | null>>(new Map())
     const inputFileRef = useRef<HTMLInputElement>(null)
+    const API_URL = import.meta.env.VITE_API_URL
 
     useEffect(() => {
         if (contactId) refetchChat(contactId)
         // else navigate("/")
     }, [contactId])
+
+    useEffect(() => {
+        if (!contactId || !user?.id) return;
+        if (!user?.id) return;
+        const unreadMessages = messages.filter(
+            m => !m.read_by.includes(user.id!) && m.sender_id !== user.id
+        );
+        if (unreadMessages.length > 0) {
+            unreadMessages.forEach(m => {
+            axios.post(`${API_URL}chat/read`, { messageId: m.id }, { withCredentials: true });
+            });
+        }
+    }, [contactId, messages, user.id]);
+
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter") {
@@ -188,7 +207,7 @@ export default function Chat () {
                             <div className="messageWrapper"
                                 ref={(el) => {messageRefs.current.set(m.id, el)}}
                             >
-                                <div className={`message ${m.sender_id === contactId ? "ur" : "my"} ${highlightedId === m.id ? "highlight" : ""}`}>
+                                <div className={`message ${m.sender_id === user.id ? "my" : "ur"} ${highlightedId === m.id ? "highlight" : ""}`}>
                                     <div className="messageText">{m.content}</div>
                                     {m.files && m.files.length > 0 && (
                                         <div className="messageFiles">
@@ -212,7 +231,19 @@ export default function Chat () {
                                             })}
                                         </div>
                                     )}
-                                    <div className="messageDate">{messageGetTime(m.created_at)}</div>
+                                    <div className="messageDate">
+                                        {messageGetTime(m.created_at)}
+                                        {m.sender_id === user.id && contactId && 
+                                            m.read_by.map(id => id.toString()).includes(contactId!) && (
+                                                <div className="messageUnread"><Checks/></div>
+                                            )
+                                        }
+                                        {m.sender_id === user.id && contactId && 
+                                            !m.read_by.map(id => id.toString()).includes(contactId!) && (
+                                                <div className="messageUnread"><Check/></div>
+                                            )
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </Fragment>

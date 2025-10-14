@@ -50,7 +50,7 @@ function App() {
                                   <Blackout/>
                                   <Routes>
                                     <Route path="/sign" element={<Sign />} />
-                                    <Route path="/admin" element={<Admin />} />
+                                    {/* <Route path="/admin" element={<Admin />} /> */}
                                     <Route path="/confirm" element={<Confirm />} />
                                     <Route element={<MainLayout />}>
                                       <Route path="/" element={<Main />} />

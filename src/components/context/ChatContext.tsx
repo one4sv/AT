@@ -32,7 +32,8 @@ export interface message {
     sender_id:string,
     content:string,
     created_at:Date,
-    files?: { url: string, name: string, type: string }[], // Добавлено
+    files?: { url: string, name: string, type: string }[],
+    read_by:string[]
 }
 
 export interface Acc {
@@ -141,6 +142,15 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     last_online: data.isOnline ? "" : data.last_online || prev.last_online,
                 }));
                 }
+            }
+            if (data.type === "MESSAGE_READ") {
+                setMessages(prev =>
+                prev.map(m =>
+                    m.id === data.messageId
+                    ? { ...m, read_by: [...m.read_by, data.userId] }
+                    : m
+                )
+                );
             }
         };
         return () => wsRef.current?.close();
