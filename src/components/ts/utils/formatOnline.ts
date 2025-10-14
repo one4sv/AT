@@ -1,18 +1,11 @@
 export default function formatLastOnline(lastOnline: string | null | undefined) {
   if (!lastOnline) return "";
 
-  // Всегда парсим как UTC (если приходит без Z — добавим)
-  const utcString = lastOnline.endsWith("Z") ? lastOnline : `${lastOnline}Z`;
-  const lastDateUTC = new Date(utcString);
-
-  // Переводим в локальное время
-  const localLastDate = new Date(
-    lastDateUTC.getTime() + new Date().getTimezoneOffset() * -60000
-  );
+  const lastDate = new Date(lastOnline); // просто парсим напрямую
+  if (isNaN(lastDate.getTime())) return ""; // на случай некорректной строки
 
   const now = new Date();
-
-  const diffMs = now.getTime() - localLastDate.getTime();
+  const diffMs = now.getTime() - lastDate.getTime();
   const diffSec = Math.floor(diffMs / 1000);
   const diffMin = Math.floor(diffSec / 60);
   const diffHour = Math.floor(diffMin / 60);
@@ -26,9 +19,8 @@ export default function formatLastOnline(lastOnline: string | null | undefined) 
 
   const yesterday = new Date();
   yesterday.setDate(now.getDate() - 1);
-  if (localLastDate > yesterday) return "В сети вчера";
+  if (lastDate > yesterday) return "В сети вчера";
 
-  // Для более старых дат — "09 окт."
   const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short" };
-  return `В сети ${localLastDate.toLocaleDateString("ru-RU", options)}`;
+  return `В сети ${lastDate.toLocaleDateString("ru-RU", options)}`;
 }
