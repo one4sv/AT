@@ -42,6 +42,7 @@ export interface Acc {
     nick:string,
     avatar_url?: string | null,
     lastMessage:message | null,
+    unread_count:number,
 }
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
@@ -91,11 +92,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             });
 
             if (res.data.success) {
-                // const newMessage = res.data.message;
-                // Если в текущем чате, добавляем локально (WS тоже пришлёт, но для мгновенности)
-                // if (chatWithRef.current.id === receiver_id) {
-                //     setMessages(prev => [...prev, newMessage]);
-                // }
                 refetchContacts();
             }
         } catch (error) {

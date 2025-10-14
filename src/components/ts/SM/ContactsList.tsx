@@ -39,13 +39,21 @@ export default function ContactsList() {
                                 {!acc.lastMessage && (
                                     <span className="secSpan">{acc.username ? `| ${acc.nick}`: ""}</span>
                                 )}
+                                {acc.unread_count > 0 && (
+                                    <div className="contactsUnreadCount">{acc.unread_count}</div>
+                                )}
                             </div>
                             {acc.lastMessage && (
                                 <div className="lastMess">
-                                    {acc.lastMessage.sender_id !== acc.id && (
-                                        <span>Вы:</span>
-                                    )}
-                                    <span className="lmc">{acc.lastMessage.content}</span>
+                                    {acc.lastMessage.sender_id !== acc.id && <span>Вы: </span>}
+                                    <span className="lmc">
+                                        {acc.lastMessage.content && <span>{acc.lastMessage.content} </span>}
+                                        {acc.lastMessage.files?.length ? (
+                                            <span className="lmcMediafile">
+                                                {acc.lastMessage.files.length} mediafile{acc.lastMessage.files.length > 1 ? "s" : ""}
+                                            </span>
+                                        ) : null}
+                                    </span>
                                     <span>{messageGetTime(acc.lastMessage.created_at)}</span>
                                 </div>
                             )}
