@@ -67,7 +67,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [onlineMap, setOnlineMap] = useState<Record<string, boolean>>({});
     const [isTyping, setIsTyping] = useState(false);
     const [typingStatus, setTypingStatus] = useState(false);
-    const typingTimeout = useRef<NodeJS.Timeout | null>(null);
+    const typingTimeout = useRef<number | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
     const chatWithRef = useRef<chatWithType>(chatWith);
 
@@ -210,28 +210,38 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         return () => clearTimeout(timer);
     }, [search, refetchContacts]);
 
-    const handleTyping = (contactId:string) => {
-    if (!user?.id || !contactId) return;
+    const handleTyping = (contactId: string) => {
+        if (!user?.id || !contactId) return;
 
-    if (!isTyping) {
-        wsRef.current?.send(JSON.stringify({
-            type: "TYPING",
-            to: contactId
-        }));
-        setIsTyping(true);
-    }
+        if (!isTyping) {
+            wsRef.current?.send(JSON.stringify({
+                type: "TYPING",
+                to: contactId
+            }));
+            setIsTyping(true);
+        }
 
-    if (typingTimeout.current) clearTimeout(typingTimeout.current);
-    typingTimeout.current = setTimeout(() => {
-        wsRef.current?.send(JSON.stringify({
-            type: "STOP_TYPING",
-            to: contactId
-        }));
-        setIsTyping(false);
-    }, 2000); // 2 секунды бездействия = перестал печатать
-};
+        // Очистка предыдущего таймера
+        if (typingTimeout.current) {
+            clearTimeout(typingTimeout.current);
+        }
 
-    // console.log(onlineMap)
+        typingTimeout.current = window.setTimeout(() => {
+            wsRef.current?.send(JSON.stringify({
+                type: "STOP_TYPING",
+                to: contactId
+            }));
+            setIsTyping(false);
+            typingTimeout.current = null; // обязательно сбрасываем ref
+        }, 2000); // 2 секунды бездействия
+        };
+        useEffect(() => {
+        return () => {
+            if (typingTimeout.current) {
+                clearTimeout(typingTimeout.current);
+            }
+        };
+    }, []);
     return (
         <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, sendMess, messages, list, setSearch, search, refetchContacts, onlineMap, setReaction, handleTyping, typingStatus }}>
             {children}

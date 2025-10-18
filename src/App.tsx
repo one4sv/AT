@@ -20,7 +20,7 @@ import Main from './pages/Main'
 import Confirm from './pages/Confirm';
 import Chat from './pages/Chat';
 import Acc from './pages/Acc';
-import Admin from './pages/Admin';
+// import Admin from './pages/Admin';
 import HabitPage from './pages/HabitPage';
 
 import Notification from "./components/ts/Notification";
@@ -50,7 +50,7 @@ function App() {
                                   <Blackout/>
                                   <Routes>
                                     <Route path="/sign" element={<Sign />} />
-                                    <Route path="/admin" element={<Admin />} />
+                                    {/* <Route path="/admin" element={<Admin />} /> */}
                                     <Route path="/confirm" element={<Confirm />} />
                                     <Route element={<MainLayout />}>
                                       <Route path="/" element={<Main />} />
