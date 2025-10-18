@@ -29,7 +29,7 @@ export default function ChatUser({
     searchItemRefs
 }: ChatUserProps) {
     const { user } = useUser()
-    const { chatWith, onlineMap } = useChat()
+    const { chatWith, onlineMap, typingStatus } = useChat()
     const { contactId } = useParams()
     
     const navigate = useNavigate()
@@ -84,11 +84,14 @@ export default function ChatUser({
                 </div>
                 <div className="chatUserName">
                     <span>{chatWith.username ?? chatWith.nick}</span>
-                    <span className={`chatOnlineStauts ${onlineMap[chatWith?.id || ""] ? "online" : "offline"}`}>
-                        {onlineMap[chatWith?.id || ""] 
-                            ? "В сети" 
-                            : formatLastOnline(chatWith?.last_online)}
+                    <span className={`chatOnlineStauts ${typingStatus ? "chatTyping" : "chatStopTyping"}`}>
+                        {typingStatus 
+                            ? "печатает..." 
+                            : onlineMap[chatWith?.id || ""] 
+                                ? "В сети" 
+                                : formatLastOnline(chatWith?.last_online)}
                     </span>
+
                 </div>
             </div>
 

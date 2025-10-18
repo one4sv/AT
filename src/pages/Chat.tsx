@@ -6,17 +6,19 @@ import { SendHorizontal, Paperclip, } from "lucide-react"
 import Loader from "../components/ts/Loader"
 import { File, FileText, FileArchive, FileAudio,
   FileCode, FileXls, FilePpt,
-  X, Check, SmileySticker
+  X, Check, SmileySticker,
+  Heart
 } from "@phosphor-icons/react";
 import ChatUser from "../components/ts/ChatUser"
 import axios from "axios"
 import { useUser } from "../components/hooks/UserHook"
 import { Checks } from "@phosphor-icons/react/dist/ssr"
 import { Emojies, EmojiesGroups } from "../components/ts/utils/emojies"
+import { reactionIcons } from "../components/ts/utils/ReactionsIcons"
 
 export default function Chat () {
     const { user } = useUser()
-    const { refetchChat, chatLoading, sendMess, messages, } = useChat()
+    const { refetchChat, chatLoading, sendMess, messages, setReaction, chatWith, handleTyping } = useChat()
     const { contactId } = useParams()
     const [ mess, setMess ] = useState<string>("")
     const [ search, setSearch ] = useState<string>("")
@@ -24,6 +26,7 @@ export default function Chat () {
     const [ highlightedId, setHighlightedId ] = useState<number | null>(null)
     const [ files, setFiles ] = useState<File[]>([]) 
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false) 
+    const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
 
     const emojiBarRef = useRef<HTMLDivElement | null>(null);
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
@@ -35,7 +38,6 @@ export default function Chat () {
 
     useEffect(() => {
         if (contactId) refetchChat(contactId)
-        // else navigate("/")
     }, [contactId])
 
     useEffect(() => {
@@ -216,7 +218,6 @@ export default function Chat () {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [showEmojiBar]);
 
-
     if (chatLoading) return <Loader />
 
     return(
@@ -238,13 +239,30 @@ export default function Chat () {
                     const prev = messages[i - 1]
                     const prevDate = prev ? new Date(prev.created_at) : null
                     const needDivider = !prevDate || !isSameDay(prevDate, currDate)
+                    const isMy = m.sender_id === user.id
                     return (
                         <Fragment key={`${m.id}-${i}`}>
                             {needDivider && <div className="dateDivider">{formatDateLabel(currDate)}</div>}
-                            <div className="messageWrapper"
+                            <div
+                                className="messageWrapper"
                                 ref={(el) => {messageRefs.current.set(m.id, el)}}
+                                onMouseEnter={() => setShowReactionButt(m.id)}
+                                onMouseLeave={() => setShowReactionButt(0)}
+                                onMouseDown={(e) => {
+                                    if (e.detail === 2) { // двойной клик
+                                    const el = e.currentTarget;
+                                    el.style.userSelect = "none"; // временно блокируем выделение
+                                    setTimeout(() => {
+                                        el.style.userSelect = "text"; // возвращаем обратно через 300мс
+                                    }, 300);
+                                    }
+                                }}
+                                onDoubleClick={(e) => {
+                                    e.preventDefault()
+                                    setReaction(m.id, "Heart")
+                                }}
                             >
-                                <div className={`message ${m.sender_id === user.id ? "my" : "ur"} ${highlightedId === m.id ? "highlight" : ""}`}>
+                                <div className={`message ${ isMy ? "my" : "ur"} ${highlightedId === m.id ? "highlight" : ""}`}>
                                     <div className="messageText">{m.content}</div>
                                     {m.files && m.files.length > 0 && (
                                         <div className="messageFiles">
@@ -269,16 +287,48 @@ export default function Chat () {
                                         </div>
                                     )}
                                     <div className="messageDate">
-                                        {messageGetTime(m.created_at)}
-                                        {m.sender_id === user.id && contactId && 
-                                            m.read_by.map(id => id.toString()).includes(contactId!) && (
+                                        {showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && (
+                                            <div 
+                                                className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
+                                                onClick={() => setReaction(m.id, "Heart")}
+                                            >
+                                                <Heart weight="fill" />
+                                            </div>
+                                        )}
+                                        {!isMy && messageGetTime(m.created_at)}
+                                        {m.reactions && m.reactions.length > 0 && (
+                                            <div className="reactions" onClick={()=> setReaction(m.id, "Heart")}>
+                                                {Object.entries(
+                                                    m.reactions.reduce((acc, r) => {
+                                                        if (!acc[r.reaction]) acc[r.reaction] = [];
+                                                        acc[r.reaction].push(r.user_id);
+                                                        return acc;
+                                                    }, {} as Record<string, string[]>)
+                                                ).map(([reaction, users]) => (
+                                                    <div key={reaction} className={`reactionItem ${isMy ? "myR" : "urR"}`}>
+                                                        {reactionIcons[reaction]}
+                                                        <div className="reactionUsers">
+                                                            {users.slice(0, 2).map((userId) => {
+                                                                const src = userId === user.id ? user.avatar_url : chatWith.avatar_url;
+                                                                return (
+                                                                    <div key={userId} className="reactionUser">
+                                                                        <img src={src!} alt="" />
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                            {users.length > 2 && <span>+{users.length - 2}</span>}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {isMy && messageGetTime(m.created_at)}
+                                        {isMy && 
+                                            (m.read_by.map(id => id.toString()).includes(contactId!) ? (
                                                 <div className="messageUnread"><Checks/></div>
-                                            )
-                                        }
-                                        {m.sender_id === user.id && contactId && 
-                                            !m.read_by.map(id => id.toString()).includes(contactId!) && (
+                                            ) : (
                                                 <div className="messageUnread"><Check/></div>
-                                            )
+                                            ))
                                         }
                                     </div>
                                 </div>
@@ -343,7 +393,7 @@ export default function Chat () {
                     className={`chatTA ${files.length > 0 ? "chatTAwFiles" : ""}`}
                     value={mess}
                     ref={textAreaRef}
-                    onChange={(e) => setMess(e.currentTarget.value)}
+                    onChange={(e) => { setMess(e.currentTarget.value); handleTyping(contactId!); }}
                     onKeyDown={handleKeyDown}
                 />
                 <div className="chatTAMenu">

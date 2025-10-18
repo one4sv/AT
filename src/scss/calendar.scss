@@ -221,6 +221,7 @@
 .hoverRow {
     display: flex;
     align-items: center;
+    white-space: pre-line;
     gap: 8px;
     color: var(--tc);
     font-size: 15px;

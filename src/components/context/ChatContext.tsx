@@ -3,6 +3,7 @@ import { type ReactNode } from "react";
 import { useNote } from "../hooks/NoteHook";
 import { useUser } from "../hooks/UserHook";
 import axios from "axios";
+import { api } from "../ts/api";
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
@@ -12,6 +13,10 @@ export interface chatWithType {
     id:string,
     last_online:string,
     avatar_url?: string | null,
+}
+export interface ReactionsType {
+    user_id:string,
+    reaction:string,
 }
 
 export interface ChatContextType {
@@ -25,6 +30,9 @@ export interface ChatContextType {
     setSearch:React.Dispatch<React.SetStateAction<string>>,
     refetchContacts:() => Promise<void>,
     onlineMap: Record<string, boolean>,
+    setReaction: (mId: number, reaction:string) => Promise<void>,
+    handleTyping:(contactId:string) => void,
+    typingStatus:boolean
 }
 
 export interface message {
@@ -33,7 +41,8 @@ export interface message {
     content:string,
     created_at:Date,
     files?: { url: string, name: string, type: string }[],
-    read_by:string[]
+    read_by:string[],
+    reactions:ReactionsType[]
 }
 
 export interface Acc {
@@ -56,6 +65,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [list, setList] = useState<Acc[]>([]);
     const [search, setSearch] = useState<string>("");
     const [onlineMap, setOnlineMap] = useState<Record<string, boolean>>({});
+    const [isTyping, setIsTyping] = useState(false);
+    const [typingStatus, setTypingStatus] = useState(false);
+    const typingTimeout = useRef<NodeJS.Timeout | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
     const chatWithRef = useRef<chatWithType>(chatWith);
 
@@ -125,41 +137,103 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 if (messageSenderId === currentChatId || messageSenderId === user.id) {
                     setMessages(prev => [...prev, data.message]);
                 }
-                // всегда обновляем список контактов
                 refetchContacts();
             }
             if (data.type === "USER_STATUS") {
-                // 🔹 обновляем онлайн-статус всех пользователей
                 setOnlineMap(prev => ({ ...prev, [data.userId]: data.isOnline }));
-                // 🔹 для открытого чата обновляем last_online
                 if (chatWithRef.current.id === data.userId) {
-                setChatWith(prev => ({
-                    ...prev,
-                    last_online: data.isOnline ? "" : data.last_online || prev.last_online,
-                }));
+                    setChatWith(prev => ({
+                        ...prev,
+                        last_online: data.isOnline ? "" : data.last_online || prev.last_online,
+                    }));
                 }
             }
             if (data.type === "MESSAGE_READ") {
                 setMessages(prev =>
-                prev.map(m =>
-                    m.id === data.messageId
-                    ? { ...m, read_by: [...m.read_by, data.userId] }
-                    : m
-                )
+                    prev.map(m =>
+                        m.id === data.messageId
+                        ? { ...m, read_by: [...m.read_by, data.userId] }
+                        : m
+                    )
                 );
+            }
+            if (data.type === "MESSAGE_REACTION") {
+                setMessages(prev =>
+                    prev.map(m => {
+                        if (m.id !== data.messageId) return m;
+
+                        const reactions = m.reactions || [];
+
+                        if (data.removed) {
+                            // удаляем реакцию
+                            return {
+                                ...m,
+                                reactions: reactions.filter(r => !(r.user_id === data.user_id && r.reaction === data.reaction))
+                            };
+                        } else {
+                            // добавляем/обновляем реакцию
+                            return {
+                                ...m,
+                                reactions: [
+                                    ...reactions.filter(r => !(r.user_id === data.user_id && r.reaction === data.reaction)),
+                                    { user_id: data.user_id, reaction: data.reaction }
+                                ]
+                            };
+                        }
+                    })
+                );
+            }
+            if (data.type === "TYPING") {
+                if (data.from === chatWithRef.current.id) {
+                    setTypingStatus(true);
+                }
+            }
+            if (data.type === "STOP_TYPING") {
+                if (data.from === chatWithRef.current.id) {
+                    setTypingStatus(false);
+                }
             }
         };
         return () => wsRef.current?.close();
-    }, [user.id, refetchContacts]);
+    }, [user.id, refetchContacts, API_WS]);
+
+    const setReaction = async (mId: number, reaction: string) => {
+        try {
+            await api.post("/reactions", { mId, reaction });
+        } catch (err) {
+            console.error("Ошибка при отправке реакции", err);
+        }
+    };
 
     useEffect(() => {
         const timer = setTimeout(refetchContacts, 100);
         return () => clearTimeout(timer);
     }, [search, refetchContacts]);
 
+    const handleTyping = (contactId:string) => {
+    if (!user?.id || !contactId) return;
+
+    if (!isTyping) {
+        wsRef.current?.send(JSON.stringify({
+            type: "TYPING",
+            to: contactId
+        }));
+        setIsTyping(true);
+    }
+
+    if (typingTimeout.current) clearTimeout(typingTimeout.current);
+    typingTimeout.current = setTimeout(() => {
+        wsRef.current?.send(JSON.stringify({
+            type: "STOP_TYPING",
+            to: contactId
+        }));
+        setIsTyping(false);
+    }, 2000); // 2 секунды бездействия = перестал печатать
+};
+
     // console.log(onlineMap)
     return (
-        <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, sendMess, messages, list, setSearch, search, refetchContacts, onlineMap }}>
+        <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, sendMess, messages, list, setSearch, search, refetchContacts, onlineMap, setReaction, handleTyping, typingStatus }}>
             {children}
         </ChatContext.Provider>
     );

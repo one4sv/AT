@@ -9,10 +9,22 @@ export default function ContactsList() {
     const { contactId } = useParams<{ contactId: string }>()
     const navigate = useNavigate()
 
-    const messageGetTime = (date:Date) => {
+    const messageGetTime = (date: Date) => {
         const d = new Date(date);
-        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } 
+        const now = new Date();
+        const diff = now.getTime() - d.getTime();
+        const oneDay = 24 * 60 * 60 * 1000;
+
+        if (diff < oneDay) {
+            // Сообщение за последние 24 часа → показываем время
+            return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else {
+            return d.toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'short',
+            });
+        }
+    };
 
     const sortedList = list.slice().sort((a, b) => {
         const timeA = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;

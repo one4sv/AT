@@ -68,14 +68,14 @@ export default function TagSelector({ selectedTag, setSelectedTag, showOnly }: T
             <div key={group} className="tagGroup">
               <div className="tagGroupTitle">{value}</div>
               {tagsInGroup.map((tag, i) => {
-          const Icon = tag.icon
-          if (selectedTag !== tag.value) return (
-            <div
-              className="tag"
-              key={i}
-              onClick={() => setSelectedTag(tag.value)}
-            >
-              <Icon size={24} /> {tag.label}
+                const Icon = tag.icon
+                if (selectedTag !== tag.value) return (
+                  <div
+                    className="tag"
+                    key={i}
+                    onClick={() => setSelectedTag(tag.value)}
+                  >
+                  <Icon size={24} /> {tag.label}
                   </div>
                 )
               })}

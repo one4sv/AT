@@ -74,6 +74,9 @@
 }
 .chatOnlineStauts {
     color: var(--borderWh);
+    &.chatTyping {
+        color: var(--acsent);
+    }
 }
 .chatUserMenu {
     height: 100%;
@@ -243,16 +246,17 @@
     }
 }
 .chat {
-    flex: 1;
+    top: 5vh;
+    height: 88%;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
-    scrollbar-width: none;
+    scrollbar-width: thin;
     position: relative;
-    right: 2vw;
     scrollbar-color: var(--menuButtHover) var(--tr);
-    padding: 5vh 2vw 3vh;
-    width: calc(100% + 4vw);
+    padding-bottom:2vh;
+    margin-bottom:4vh;
+    width: 100%;
 }
 .messageWrapper {
     margin-top: 1vh;
@@ -261,20 +265,28 @@
     height: fit-content;
     display: flex;
     flex-direction: column;
+    user-select: text;
 }
 .dateDivider {
-    width: 100%;
+    position: sticky;
+    top: 2vh;
+    z-index: 2;
+    background-color: var(--mc);
+    width: fit-content;
+    margin: 0 auto;
     text-align: center;
     color: var(--borderWh);
-    font-size: 0.9rem;
-    margin: 1vh 0;
-    padding: 0.2vh 0.5vw;
-    user-select: none;
-    opacity: 0.9;
+    font-size: 1rem;
+    padding: 0.3vh 0.8vw;
+    border-radius: 6px;
+    opacity: 0.95;
 }
+
 .messageDate {
     display: flex;
     align-items: center;
+    margin-top: 4px;
+    height: 2vh;
 }
 .message {
     max-width: 25vw;
@@ -383,12 +395,92 @@
     overflow-wrap: break-word;
     white-space: pre-wrap;
 }
+.reactionButt {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    user-select: none;
+    cursor: pointer;
+    height: 1.4rem;
+    width: 1.5vw;
+    font-size: 20px;
+    >svg {
+        color: #d60000;
+    }
+    &.myRB {
+        right: 75px;
+        background-color: var(--darkerAcsent);
+        &:hover {
+            background-color: var(--acsent);
+        }
+    }    
+    &.urRB {
+        left: 55px;
+        background-color: var(--mess);
+        &:hover {
+            background-color: var(--borderHabit);
+        }
+    }
+}
+.reactions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3vw;
+}
+.reactionItem {
+    display: flex;
+    align-items: center;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding-left: 0.3vw;
+    &.myR {
+        margin-right: 0.5vw;
+        &:hover {
+            background-color: var(--acsent);
+        }
+    }
+    &.urR {
+        margin-left: 0.5vw;
+        &:hover {
+            background-color: var(--borderHabit);
+        }
+    }
+    .reactionUsers {
+        display: flex;
+        align-items: center;
+        gap: -0.3vw;
+
+        .reactionUser {
+            width: 1.3vw;
+            height: 1.3vw;
+            border-radius: 50%;
+            overflow: hidden;
+
+            > img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        span {
+            margin-left: 0.3vw;
+            color: var(--borderWh);
+            font-size: 0.8rem;
+        }
+    }
+}
+
 .chatTAWrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
     position: relative;
-    bottom: 2vh;
+    // bottom: 2vh;
 }
 .chatTAFiles {
     width: 100%;

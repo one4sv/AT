@@ -1,8 +1,8 @@
 export default function formatLastOnline(lastOnline: string | null | undefined) {
   if (!lastOnline) return "";
 
-  const lastDate = new Date(lastOnline); // просто парсим напрямую
-  if (isNaN(lastDate.getTime())) return ""; // на случай некорректной строки
+  const lastDate = new Date(lastOnline);
+  if (isNaN(lastDate.getTime())) return "";
 
   const now = new Date();
   const diffMs = now.getTime() - lastDate.getTime();
@@ -19,8 +19,18 @@ export default function formatLastOnline(lastOnline: string | null | undefined) 
 
   const yesterday = new Date();
   yesterday.setDate(now.getDate() - 1);
-  if (lastDate > yesterday) return "В сети вчера";
+
+  const timeStr = lastDate.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+
+  if (
+    lastDate.getDate() === yesterday.getDate() &&
+    lastDate.getMonth() === yesterday.getMonth() &&
+    lastDate.getFullYear() === yesterday.getFullYear()
+  ) {
+    return `В сети вчера в ${timeStr}`;
+  }
 
   const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short" };
-  return `В сети ${lastDate.toLocaleDateString("ru-RU", options)}`;
+  const dateStr = lastDate.toLocaleDateString("ru-RU", options);
+  return `В сети ${dateStr} в ${timeStr}`;
 }
