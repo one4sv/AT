@@ -2,7 +2,6 @@ import { createContext, useRef, useState, type RefObject} from "react";
 import { type ReactNode } from "react"
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
-// import { initChosenDay } from "../ts/utils/initChosenDay";
 const CalendarContext = createContext<CalendarContextType | null>(null);
 
 export interface Calendar {

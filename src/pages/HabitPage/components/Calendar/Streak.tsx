@@ -1,6 +1,6 @@
 import { Fire } from "@phosphor-icons/react";
-import type { Calendar } from "../../context/CalendarContext";
-import type { Habit } from "../../context/HabitsContext";
+import type { Calendar } from "../../../../components/context/CalendarContext";
+import type { Habit } from "../../../../components/context/HabitsContext";
 
 export interface StreakType {
     habit: Habit;
