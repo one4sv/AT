@@ -17,6 +17,12 @@ export interface SettingsContextType {
     setBg:React.Dispatch<React.SetStateAction<string>>
     decor:string
     setDecor:React.Dispatch<React.SetStateAction<string>>
+    twoAuth:boolean | null
+    setTwoAuth:React.Dispatch<React.SetStateAction<boolean | null>>    
+    note:boolean
+    setNote:React.Dispatch<React.SetStateAction<boolean>>    
+    messNote:boolean
+    setMessNote:React.Dispatch<React.SetStateAction<boolean>>
     bgUrl:string;
     privateShow:PrivateSettings
     setPrivate:React.Dispatch<React.SetStateAction<PrivateSettings>>
@@ -35,6 +41,9 @@ interface SettingsResponse {
     bg:string;
     decor:string;
     bg_url:string;
+    twoAuth:boolean;
+    note:boolean;
+    messNote:boolean;
 }
 export interface PrivateSettings {
     number: string,
@@ -54,6 +63,9 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
     const [ bg, setBg ] = useState<string>("")
     const [ bgUrl, setBgUrl ] = useState<string>("")
     const [ decor, setDecor ] = useState<string>("")
+    const [ twoAuth, setTwoAuth ] = useState<boolean | null>(false)
+    const [ note, setNote ] = useState<boolean>(false)
+    const [ messNote, setMessNote ] = useState<boolean>(false)
     const [ privateShow, setPrivate ] = useState<PrivateSettings>({number: "", mail:"", habits:"", posts:""})
     const [ tab, setTab ] = useState<string>('acc')
 
@@ -71,6 +83,9 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
                 setBg(res.data.bg)
                 setDecor(res.data.decor)
                 setBgUrl(res.data.bg_url)
+                setTwoAuth(res.data.twoAuth)
+                setNote(res.data.note)
+                setMessNote(res.data.messNote)
             }
         }
         catch (err) {
@@ -83,7 +98,9 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
     }, [refetchSettings, user]);
 
     return(
-        <SettingsContext.Provider value={{ orderHabits, setOrderHabits, tab, setTab, refetchSettings, amountHabits, setAmountHabits, theme, setTheme, privateShow, setPrivate, setAcsent, acsent, bg, setBg, bgUrl, decor, setDecor }}>
+        <SettingsContext.Provider value={{ orderHabits, setOrderHabits, tab, setTab, refetchSettings, amountHabits, setAmountHabits,
+         theme, setTheme, privateShow, setPrivate, setAcsent, acsent, bg, setBg, bgUrl,
+          decor, setDecor, twoAuth, setTwoAuth, note, setNote, messNote, setMessNote }}>
             {children}
         </SettingsContext.Provider>
     )

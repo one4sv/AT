@@ -2,6 +2,9 @@
 @use "../settings/pers.scss";
 @use "../settings/private.scss";
 @use "../settings/habits.scss";
+@use "../settings/safety.scss";
+@use "../settings/chat.scss";
+@use "../settings/note.scss";
 
 .settingsDiv {
     height: 80vh;
@@ -119,6 +122,22 @@
     margin-top: 0.5vh;
     font-size: 18px;
     transition: top 0.2s ease-in;
+}
+.settingsTabDiv {
+    display: flex;
+    width: 100%;
+}
+.tabDivStr {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.tabDivSpan {
+    font-size: 18px;
+}
+.noticeTabStr {
+    color: var(--borderWh);
+    font-size: 16px;
 }
 
 

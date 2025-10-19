@@ -1,9 +1,9 @@
 import { useMemo, useRef, useState } from "react";
-import type { Habit } from "../../context/HabitsContext";
+import type { Habit } from "../../../../components/context/HabitsContext";
 import HoverDay from "./HoverDay";
 import { useParams } from "react-router-dom";
-import { useCalendar } from "../../hooks/CalendarHook";
-import { getDayArrays } from "./getDayArrs";
+import { useCalendar } from "../../../../components/hooks/CalendarHook";
+import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
 
 interface DayCellProps {
     habit: Habit | undefined;

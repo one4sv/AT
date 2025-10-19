@@ -1,0 +1,30 @@
+.toggler {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 2vh;
+    width: 2vw;
+    background-color: var(--mc);
+    border: 1px solid var(--tc);
+    border-radius: 14px;
+    cursor: pointer;
+    padding: 1px;
+    justify-content: flex-start;
+    transition: background-color 0.3s ease, justify-content 0.3s ease;
+    &.true {
+        justify-content: flex-end;
+        >.togglerCircle {
+            background-color: var(--acsent);
+        }
+    }
+}
+.togglerCircle {
+    position: relative;
+    border-radius: 50%;
+    height: 100%;
+    left: 0;
+    aspect-ratio: 1/1;
+    background-color: var(--tc);
+    border: 1px solid var(--bgc);
+    transition: background-color 0.3s ease, justify-content 0.3s ease;
+}

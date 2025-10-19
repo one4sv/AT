@@ -1,16 +1,17 @@
 import { Bell, ChevronDown, ChevronLeft, ChevronUp, CircleUserRound, UserRoundPlus, X, Search } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
-import formatLastOnline from "./utils/formatOnline";
-import { useUser } from "../hooks/UserHook";
-import { useChat } from "../hooks/ChatHook";
+import formatLastOnline from "../../../components/ts/utils/formatOnline";
+import { useUser } from "../../../components/hooks/UserHook";
+import { useChat } from "../../../components/hooks/ChatHook";
 import { useEffect, useRef, useState } from "react";
+import type { message } from "../../../components/context/ChatContext";
 
 interface ChatUserProps {
     search: string;
     setSearch: React.Dispatch<React.SetStateAction<string>>;
     selectedIndex: number;
     setSelectedIndex: React.Dispatch<React.SetStateAction<number>>;
-    searchedMessages: any[];
+    searchedMessages: message[];
     handleSearchKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     handleArrowClick: (dir: "up" | "down") => void;
     scrollToMessage: (id: number) => void;

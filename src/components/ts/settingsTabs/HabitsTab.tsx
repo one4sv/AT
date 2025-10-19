@@ -163,7 +163,7 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
             <div className="settingsTab">
                 <div className="settingsOrder">
                     <div className="feedSettingsOrder">
-                        <div className="settingSpan">Порядок отображения на главной странице:</div>
+                        <div className="settingSpan">Порядок отображения:</div>
                         <div className="orderFull">
                             <div className="orderShown">
                                 {displayOrder.map((type, index) => (

@@ -1,27 +1,22 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useUser } from "../components/hooks/UserHook";
-import { Camera, UserRound } from "lucide-react";
-import "../scss/Acc.scss";
+import { useUser } from "../../components/hooks/UserHook";
+import "./scss/Acc.scss";
 import axios from "axios";
-import type { User } from "../components/context/UserContext";
-import type { Habit } from "../components/context/HabitsContext";
-import { useNote } from "../components/hooks/NoteHook";
-import Loader from "../components/ts/Loader";
-import HabitDiv from "../components/ts/Habit";
-import type { PrivateSettings } from "../components/context/SettingsContext";
-import { useUpUser } from "../components/hooks/UpdateUserHook";
-import { useBlackout } from "../components/hooks/BlackoutHook";
-import formatLastOnline from "../components/ts/utils/formatOnline";
-import { useChat } from "../components/hooks/ChatHook";
+import type { User } from "../../components/context/UserContext";
+import type { Habit } from "../../components/context/HabitsContext";
+import { useNote } from "../../components/hooks/NoteHook";
+import Loader from "../../components/ts/Loader";
+import HabitDiv from "../../components/ts/Habit";
+import type { PrivateSettings } from "../../components/context/SettingsContext";
+import { useUpUser } from "../../components/hooks/UpdateUserHook";
+import AccInfo from "./components/AccInfo";
 
 export default function Acc() {
-    const { setBlackout } = useBlackout();
     const { user } = useUser();
     const { showNotification } = useNote();
-    const { newName, setNewName, newNick, setNewNick, newBio, setNewBio, newMail, setNewMail, newPick, handleSave } = useUpUser();
+    const { newBio, setNewBio, newMail, setNewMail } = useUpUser();
     const { contactId } = useParams();
-    const { onlineMap } = useChat();
     const navigate = useNavigate();
     const API_URL = import.meta.env.VITE_API_URL
 
@@ -30,11 +25,8 @@ export default function Acc() {
     const [habits, setHabits] = useState<Habit[]>();
     const [loading, setLoading] = useState<boolean>(true);
     const [selector, setSelector] = useState<string>("sended");
-    const [red, setRed] = useState<boolean>(false); 
+    const [red, setRed] = useState<boolean>(false);
     const [privateRules, setPrivateRules] = useState<PrivateSettings>({ number: "", mail: "", habits: "", posts: "" });
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const canView = useCallback(
         (field: keyof PrivateSettings) => isMyAcc || privateRules[field] !== "nobody",
@@ -64,82 +56,11 @@ export default function Acc() {
         refetchAcc();
     }, [contactId, user.id, refetchAcc, navigate]);
 
-    const accInfoButt = () => {
-        if (isMyAcc) {
-            if (red) handleSave();
-            setRed(!red);
-        } else {
-            navigate(`/chat/${acc?.id}`);
-        }
-    };
-
-    useEffect(() => {
-        if (newPick instanceof File) {
-            const url = URL.createObjectURL(newPick);
-            setPreviewUrl(url);
-            return () => URL.revokeObjectURL(url);
-        } else {
-            setPreviewUrl(null);
-        }
-    }, [newPick]);
-
     if (loading) return <Loader />;
 
     return (
         <div className="accDiv">
-            <div className="accInfo">
-                <div
-                    className="accPic"
-                    onClick={() => isMyAcc && red && fileInputRef.current?.click()}
-                >
-                    <input
-                        type="file"
-                        className="accPicksfileInput"
-                        accept="image/*"
-                        ref={fileInputRef}
-                        onChange={(e) => e.target.files && setBlackout({ seted: true, module: "PickHandler", pick: e.target.files[0] })}
-                    />
-                    {previewUrl ? (
-                        <img src={previewUrl} alt="avatar preview" className="avatarImg" />
-                    ) : acc?.avatar_url ? (
-                        <img src={acc.avatar_url} alt="avatar" className="avatarImg" />
-                    ) : red ? (
-                        <Camera size={256} />
-                    ) : (
-                        <UserRound size={128} />
-                    )}
-                </div>
-                <div className="accInfoNames">
-                    <div className="accMainInfoStr">
-                        <input
-                            className="accInput nameInput"
-                            value={(isMyAcc ? newName : acc?.username) ?? ""}
-                            readOnly={!red}
-                            onChange={(e) => setNewName(e.currentTarget.value)}
-                        />
-                    </div>
-                    <div>
-                        @
-                        <input
-                            className="accInput nickInput"
-                            value={(isMyAcc ? newNick : acc?.nick) ?? ""}
-                            readOnly={!red}
-                            onChange={(e) => setNewNick(e.currentTarget.value)}
-                        />
-                    </div>
-                </div>
-                <div className="accInfoWrapper">
-                    <div className="accInfoRedButt" onClick={accInfoButt}>
-                        {isMyAcc ? (red ? "Сохранить" : "Редактировать профиль") : "Написать сообщение"}
-                    </div>
-                    <div className={`accOnlineStauts ${onlineMap[acc?.id || ""] ? "online" : "offline"}`}>
-                        {onlineMap[acc?.id || ""] 
-                            ? "В сети" 
-                            : formatLastOnline(acc?.last_online)}
-                    </div>
-                </div>
-            </div>
-
+            <AccInfo red={red} setRed={setRed} acc={acc} isMyAcc={isMyAcc}/>
             <div className="accExtraInfoWrapper" style={{ display: acc?.bio || red ? "flex" : "none" }}>
                 <label htmlFor="bioTA">Статус</label>
                 <textarea

@@ -1,4 +1,4 @@
-@use "./global.scss" as var;
+@use "../../../scss/global" as var;
 
 .calendarDiv {
     width: 20vw;
@@ -333,6 +333,11 @@
     >span {
         margin-right: 0.5vw;
         color: var(--borderHabit);
+        display: flex;
+        align-items: center;
+        >svg {
+            margin-right: 0.2vw;
+        }
     }
     >button {
         padding: 0.5vh 1vw;

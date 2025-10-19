@@ -1,0 +1,11 @@
+@use "../global.scss" as var;
+
+.safetyTogglerDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 2vw;
+}
+.safetyButt {
+    @include var.longButt(fit-content, 3vh, 0vh, 1vw, var(--acsent), var(--tc), var(--bgc), var(--darkerAcsent));
+}

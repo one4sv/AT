@@ -20,6 +20,10 @@ export default function ExtraHabitInfo() {
                         <Square id="checkBoxAutoComp" className="notactive" />
                         <label htmlFor="checkBoxPresent">Продолжительная привычка</label>
                     </div>
+                    <div className="addHabbitCheckBox redHabitCheckbox">
+                        <Square id="checkBoxAutoComp" className="notactive" />
+                        <label htmlFor="checkBoxPresent">Расписание</label>
+                    </div>
                 </div>
             </div>
         </div>

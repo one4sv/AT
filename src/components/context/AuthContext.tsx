@@ -7,6 +7,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export interface AuthContextType {
     register: (data: { mail: string; pass: string; nick: string }) => Promise<void>;
     auth: (data: { pass: string, login:string }) => Promise<void>;
+    isTwoAuth:boolean
     success: boolean;
     loadingAuth: boolean;
 }
@@ -15,6 +16,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
     const { showNotification } = useNote();
     const [success, setSuccess] = useState(false);
     const [loadingAuth, setLoadingAuth] = useState(false);
+    const [isTwoAuth, setIsTwoAuth] = useState(false);
     const API_URL = import.meta.env.VITE_API_URL
 
     const register = async ({ mail, pass, nick }:{mail:string, pass:string, nick:string }) => {
@@ -63,6 +65,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
             )
             if (res.data.success) { 
                 setSuccess(true);
+                setIsTwoAuth(res.data.two_auth)
             } else {
                 showNotification('error', res.data.error);;
                 setSuccess(false);
@@ -77,7 +80,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
         }
     };
     return (
-        <AuthContext.Provider value={{ loadingAuth, auth, register, success}}>
+        <AuthContext.Provider value={{ loadingAuth, auth, register, success, isTwoAuth}}>
             {children}
         </AuthContext.Provider>
     );

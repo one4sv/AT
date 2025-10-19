@@ -2,15 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { CaretDoubleRight } from "@phosphor-icons/react";
 
-import { useTheHabit } from "../components/hooks/TheHabitHook";
-import { useCalendar } from "../components/hooks/CalendarHook";
-import Calendar from "../components/ts/Calendar";
-import RedHabit from "../components/ts/redHabit";
-import Loader from "../components/ts/Loader";
-import Goals from "../components/ts/Goals";
-import ExtraHabitInfo from "../components/ts/ExtraHabitInfo";
-import "../scss/Stats.scss";
-import Diagrams from "../components/ts/Diagrams";
+import { useTheHabit } from "../../components/hooks/TheHabitHook";
+import { useCalendar } from "../../components/hooks/CalendarHook";
+import Calendar from "./components/Calendar/Calendar";
+import RedHabit from "./components/HabitInfo/HabitInfo";
+import Loader from "../../components/ts/Loader";
+import Goals from "./components/HabitInfo/Goals";
+import ExtraHabitInfo from "./components/HabitInfo/ExtraHabitInfo";
+import "./scss/habitInfo.scss";
+import "./scss/redHabit.scss";
+import Diagrams from "./components/Calendar/Diagrams";
 
 
 export default function Habit() {

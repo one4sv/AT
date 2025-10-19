@@ -6,7 +6,7 @@ import { useUser } from "../components/hooks/UserHook";
 import { useNavigate } from "react-router-dom";
 
 export default function Log() {
-  const { register, auth, success, loadingAuth } = useAuth();
+  const { register, auth, success, loadingAuth, isTwoAuth } = useAuth();
   const { loadingUser, isAuthenticated } = useUser();
   const navigate = useNavigate();
 
@@ -113,6 +113,7 @@ export default function Log() {
     e.preventDefault();
     if (login && pass) {
       await auth({ login, pass });
+      if (!isTwoAuth) window.location.reload()
     }
   };
 
@@ -237,13 +238,15 @@ export default function Log() {
         )}
 
         {/* Подтверждение почты */}
-        <div className="landingFormConfEmail" style={{ display: success ? "flex" : "none" }}>
-          <div className="ConfEmailText">
-            <span>Проверьте почту.</span>
-            <span>Мы отправили вам письмо с ссылкой для входа.</span>
-            <button type="button" className="wtbgButt">Отправить письмо повторно.</button>
+        {!isTwoAuth && !loadingAuth && (
+          <div className="landingFormConfEmail" style={{ display: success ? "flex" : "none" }}>
+            <div className="ConfEmailText">
+              <span>Проверьте почту.</span>
+              <span>Мы отправили вам письмо с ссылкой для входа.</span>
+              <button type="button" className="wtbgButt">Отправить письмо повторно.</button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="landingFooter">

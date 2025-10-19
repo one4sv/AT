@@ -3,6 +3,7 @@ import { type ReactNode } from "react";
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
 import { useNavigate, useLocation } from "react-router";
+import { requestNotificationPermission } from "../ts/utils/NoteRequest";
 
 export interface User {
     id: string | null;
@@ -119,6 +120,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             wsRef.current?.close();
         };
     }, [user?.id]);
+
+    useEffect(() => {
+        if (user.id === null) return
+        requestNotificationPermission();
+    }, [user.id]);
 
     return (
         <UserContext.Provider value={{ isAuthenticated, user, loadingUser, initialLoading, refetchUser }}>

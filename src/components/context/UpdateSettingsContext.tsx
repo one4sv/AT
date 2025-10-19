@@ -13,13 +13,15 @@ export type UpdateSettingsContextType = {
     setNewBg: (val:string)=> void;
     setNewDecor: (val:string)=> void;
     setBgUrl:(val:File) => void;
+    setNewNote:(val:boolean) => void;
+    setNewMessNote:(val:boolean) => void;
     setNewPrivateShow: (val: PrivateSettings) => void;
     isUpdating: string[];
 };
 
 type UpdateQueueItem = {
     setting: string;
-    value: string | string[] | number[] | PrivateSettings;
+    value: string | string[] | number[] | PrivateSettings | boolean;
 };
 
 const UpdateSettingsContext = createContext<UpdateSettingsContextType | null>(null);
@@ -73,6 +75,23 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "bg"), {setting:"bg", value:val}]);
         setIsUpdating((prev) => [...new Set([...prev, "pers"])])
     },[])
+
+    const setNewNote = useCallback((val: boolean) => {
+        setUpdateQueue((prev) => [
+            ...prev.filter((item) => item.setting !== "note"),
+            { setting: "note", value: val },
+        ]);
+        setIsUpdating((prev) => [...new Set([...prev, "note"])]);
+    }, []);
+
+    const setNewMessNote = useCallback((val: boolean) => {
+        setUpdateQueue((prev) => [
+            ...prev.filter((item) => item.setting !== "messNote"),
+            { setting: "mess_note", value: val },
+        ]);
+        setIsUpdating((prev) => [...new Set([...prev, "note"])]);
+    }, []);
+
 
     const setBgUrl = async(val: File) => {
         try {
@@ -153,7 +172,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
             setIsUpdating((prev) => prev.filter((item) => item !== updatingKey(setting)));
             setIsProcessing(false);
         }
-    }, [isProcessing, updateQueue, amountHabits, orderHabits, user.username, user.nick, user.mail, theme, acsent, decor, bg, refetchSettings, refetchUser, showNotification]);
+    }, [isProcessing, updateQueue, amountHabits, orderHabits, user.username, user.nick, user.mail, theme, acsent, decor, bg, API_URL, refetchSettings, refetchUser, showNotification]);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -164,7 +183,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
     return (
         <UpdateSettingsContext.Provider
-            value={{ setNewOrder, setNewAmount, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent, setNewBg, setBgUrl, setNewDecor }}
+            value={{ setNewOrder, setNewAmount, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote }}
         >
             {children}
         </UpdateSettingsContext.Provider>

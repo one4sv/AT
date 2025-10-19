@@ -1,0 +1,16 @@
+@use "../global" as var;
+
+.chatTabDiv {
+    display: flex;
+    gap: 2vw;
+    align-items: center;
+    height: 4vh;
+}
+.chatTabSL {
+    @include var.selectList(5vw, 3vh, 20%, 0.3vw, 0.4vh, var(--borderWh), var(--tc), var(--bgc), 18px, 0.4vh, 0.4vw, 5%);
+    >input {
+        @include var.input(var(--mc), var(--tc), var(--borderWh), 3vh, 8px, var(--tc));
+        width: 5vw;
+        cursor: pointer;
+    }
+}

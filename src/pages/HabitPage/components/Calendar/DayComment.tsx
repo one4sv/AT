@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useDone } from "../../hooks/DoneHook";
+import { useDone } from "../../../../components/hooks/DoneHook";
+import { ArrowBendDownLeftIcon } from "@phosphor-icons/react";
 
 interface DayCommentProps {
   id: string;
@@ -51,6 +52,7 @@ export default function DayComment({ id, dayComment }: DayCommentProps) {
         maxLength={200}
       />
       <div className="hdcTAExtra">
+        <span><ArrowBendDownLeftIcon/>shift+enter</span>
         <span>{comment.length}/200</span>
         <button
           className="saveCommentButton"

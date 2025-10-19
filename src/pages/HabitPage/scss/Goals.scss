@@ -1,7 +1,8 @@
-@use "./global.scss" as var;
+@use "../../../scss/global" as var;
 
 .goalsDiv {
-    width: 20vw;
+    width: 22vw;
+    margin: 0 auto;
 }
 .addGoalButtDiv {
     width: 80%;

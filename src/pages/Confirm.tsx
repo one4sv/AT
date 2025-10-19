@@ -36,7 +36,7 @@ export default function Confirm() {
       } catch (err) {
         if (axios.isAxiosError(err)) {
           const response = err.response;
-          if (response && response.status === 404 && response.data?.reason === "expired") {
+          if (response && response.status === 404 && response.data?.error === "Срок действия токена истёк") {
             setStatus("expired");
             showNotification("error", "Срок действия ссылки истёк");
           } else {

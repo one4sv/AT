@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
 import { SquareCheck, Pin, PinOff, Trash2, Square } from "lucide-react";
-import CalendarInput from "../ts/CalendarInput";
-import SelectList from "./SelectList";
-import { useUpHabit } from "../hooks/UpdateHabitHook";
-import type { Habit } from "../context/HabitsContext";
-import "../../scss/redHabit.scss";
-import TagSelector from "./TagSelector";
-import { useBlackout } from "../hooks/BlackoutHook";
-import { useDelete } from "../hooks/DeleteHook";
-import { tags, type Tag } from "./tags";
-import DayChanger from "./DayChanger";
-import { initialChosenDays } from "./initialChosenDays";
+import CalendarInput from "../../../../components/ts/CalendarInput";
+import SelectList from "../../../../components/ts/SelectList";
+import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
+import type { Habit } from "../../../../components/context/HabitsContext";
+import TagSelector from "../../../../components/ts/TagSelector";
+import { useBlackout } from "../../../../components/hooks/BlackoutHook";
+import { useDelete } from "../../../../components/hooks/DeleteHook";
+import { tags, type Tag } from "../../../../components/ts/tags";
+import DayChanger from "../../../../components/ts/DayChanger";
+import { initialChosenDays } from "../../../../components/ts/initialChosenDays";
 
 interface RedHabitProps {
     habit: Habit;

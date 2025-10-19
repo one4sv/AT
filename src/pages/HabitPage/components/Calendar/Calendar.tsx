@@ -1,17 +1,17 @@
 import { useEffect, useState, useRef } from "react"
-import { useCalendar } from "../hooks/CalendarHook";
-import { useTheHabit } from "../hooks/TheHabitHook";
+import { useCalendar } from "../../../../components/hooks/CalendarHook";
+import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import "../../scss/calendar.scss"
 import { ChevronDown } from "lucide-react"
-import { useHabits } from "../hooks/HabitsHook"
-import type { Calendar } from "../context/CalendarContext"
-import DayCell from "./utils/DayCell"
-import Streak from "./utils/Streak";
-import ChosenDay from "./utils/ChosenDay";
-import { useDone } from "../../components/hooks/DoneHook";
+import { useHabits } from "../../../../components/hooks/HabitsHook"
+import type { Calendar } from "../../../../components/context/CalendarContext"
+import DayCell from "./DayCell"
+import Streak from "./Streak";
+import ChosenDay from "../../../../components/ts/utils/ChosenDay";
+import { useDone } from "../../../../components/hooks/DoneHook";
 import { useParams } from "react-router-dom";
-import DayComment from "./utils/DayComment";
-import DoneButton from "./utils/DoneButt";
+import DayComment from "./DayComment";
+import DoneButton from "./DoneButt";
 
 export default function Calendar() {
     const { calendar, calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useCalendar();

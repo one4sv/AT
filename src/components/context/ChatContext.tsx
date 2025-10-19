@@ -4,6 +4,8 @@ import { useNote } from "../hooks/NoteHook";
 import { useUser } from "../hooks/UserHook";
 import axios from "axios";
 import { api } from "../ts/api";
+import { showBrowserNotification } from "../ts/utils/NoteRequest";
+import { useSettings } from "../hooks/SettingsHook";
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
@@ -57,6 +59,7 @@ export interface Acc {
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useUser();
     const { showNotification } = useNote();
+    const { note, messNote } = useSettings()
     const API_URL = import.meta.env.VITE_API_URL
     const API_WS = import.meta.env.VITE_API_WS
     const [chatWith, setChatWith] = useState<chatWithType>({ username: "", nick: "", id: "", last_online:"" });
@@ -133,11 +136,32 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             if (data.type === "NEW_MESSAGE") {
                 const currentChatId = chatWithRef.current.id;
                 const messageSenderId = String(data.message.sender_id);
-                // если сообщение от текущего собеседника, добавляем в чат
+
+                // Если открыта переписка с этим пользователем — просто добавляем сообщение
                 if (messageSenderId === currentChatId || messageSenderId === user.id) {
                     setMessages(prev => [...prev, data.message]);
                 }
+
+                // Обновляем список контактов
                 refetchContacts();
+
+                // Показываем уведомление, если вкладка не активна и сообщение не наше
+                if (document.visibilityState === "hidden" && messageSenderId !== user.id && note && messNote) {
+                    const senderName = data.username
+                        ? `${data.username} | ${data.nick}`
+                        : data.nick || "Новый собеседник";
+
+                    const bodyText =
+                        data.message.content && data.message.content.trim() !== ""
+                            ? data.message.content
+                            : `${data.message.files?.length || 0} медиафайл(ов)`;
+
+                    showBrowserNotification(senderName, {
+                        body: bodyText,
+                        icon: "/favicon.png",
+                        url: `/chat/${messageSenderId}`,
+                    });
+                }
             }
             if (data.type === "USER_STATUS") {
                 setOnlineMap(prev => ({ ...prev, [data.userId]: data.isOnline }));

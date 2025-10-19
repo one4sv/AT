@@ -1,9 +1,9 @@
 import { useParams } from "react-router"
 import "../../scss/Diagrams.scss"
-import { useCalendar } from "../hooks/CalendarHook"
-import { useTheHabit } from "../hooks/TheHabitHook"
-import { useHabits } from "../hooks/HabitsHook"
-import { getDayArrays } from "./utils/getDayArrs"
+import { useCalendar } from "../../../../components/hooks/CalendarHook"
+import { useTheHabit } from "../../../../components/hooks/TheHabitHook"
+import { useHabits } from "../../../../components/hooks/HabitsHook"
+import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
 
 export interface DiagramType {
     procent:number;

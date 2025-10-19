@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import type { Habit } from "../context/HabitsContext";
+import type { Habit } from "../../../../components/context/HabitsContext";
 import "../../scss/Goals.scss"
 interface GoalsProps {
     habit: Habit | undefined;
