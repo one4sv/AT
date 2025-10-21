@@ -55,9 +55,9 @@ export default function AccInfo({acc, red, setRed, isMyAcc} : AccInfoProps) {
                     onChange={(e) => e.target.files && setBlackout({ seted: true, module: "PickHandler", pick: e.target.files[0] })}
                 />
                 {previewUrl ? (
-                    <img src={previewUrl} alt="avatar preview" className="avatarImg" onClick={() => setBlackout({seted:true, module:"ImgPrev", img:file.url})}/>
+                    <img src={previewUrl} alt="avatar preview" className="avatarImg" onClick={() => setBlackout({seted:true, module:"ImgPrev", img:previewUrl})}/>
                 ) : acc?.avatar_url ? (
-                    <img src={acc.avatar_url} alt="avatar" className="avatarImg" onClick={() => setBlackout({seted:true, module:"ImgPrev", img:file.url})}/>
+                    <img src={acc.avatar_url} alt="avatar" className="avatarImg" onClick={() => setBlackout({seted:true, module:"ImgPrev", img:acc.avatar_url})}/>
                 ) : red ? (
                     <Camera size={256} />
                 ) : (
