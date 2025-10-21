@@ -21,7 +21,8 @@ export type Post = {
     media?:Media[];
     habit_id?:number,
     text:string,
-    likes:string[]
+    likes:string[],
+    created_at: string
 }
 
 export default function Acc() {
@@ -150,7 +151,7 @@ export default function Acc() {
                     <AccHabits isMyAcc={isMyAcc} habits={habits} canView={canView}/>
                 )}
                 {selector === "posts" && (
-                    <AccPosts posts={posts} habits={habits}/>
+                    <AccPosts posts={posts} habits={habits} isMy={isMyAcc} refetch={refetchAcc}/>
                 )}
                 {selector === "sended" && (
                     <AccMedia media={media}/>

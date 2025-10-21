@@ -17,7 +17,7 @@ interface RedHabitProps {
     id:number;
 }
 
-export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
+export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
     const {
         setNewName, setNewDescription, setNewStartDate, setNewEndDate,
         setNewOngoing, setNewPeriodicity, setNewDays,
@@ -27,7 +27,7 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
     const { setDeleteConfurm } = useDelete()
 
     const [ name, setName ] = useState<string>("");
-    const [ desc, setDesc ] = useState<string>("");
+    const [ desc, setDesc ] = useState<string | undefined>("");
     const [ startTime, setStartTime ] = useState<string>("");
     const [ endTime, setEndTime ] = useState<string>("");
     const [ startDate, setStartDate ] = useState<Date | null>(null);
@@ -40,19 +40,29 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
 
     useEffect(() => {
         if (id) {
-            setName("");
-            setDesc("");
-            setStartTime("");
-            setEndTime("");
-            setStartDate(null);
-            setEndDate(null);
-            setPeriodicity("");
-            setOngoing(false);
-            setPinned(false);
-            setSelectedTag(null);
-            setChosenDays(initialChosenDays);
+            setName(habit.name || "");
+            setDesc(habit.desc || "");
+            setStartTime(habit.start_time || "");
+            setEndTime(habit.end_time || "");
+            setStartDate(habit.start_date ? new Date(habit.start_date) : null);
+            setEndDate(habit.end_date ? new Date(habit.end_date) : null);
+            setPeriodicity(habit.periodicity || "");
+            setOngoing(habit.ongoing || false);
+            setPinned(habit.pinned || false);
+            setSelectedTag(habit.tag || null);
+
+            // корректно обновляем chosenDays на основе habit.chosen_days
+            if (Array.isArray(habit.chosen_days) && habit.chosen_days !== null) {
+                setChosenDays(initialChosenDays.map(day => ({
+                    ...day,
+                    chosen: habit.chosen_days!.includes(day.value)
+                })));
+            } else {
+                setChosenDays(initialChosenDays);
+            }
         }
     }, [id]);
+
 
     const periodicityArr = [
         { label: "каждый день", value: "everyday" },
@@ -71,20 +81,24 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
         }
         return digits;
     };
-
+    
     const toggleDay = (value: number) => {
         setNewPeriodicity(habit.id, "weekly")
         setChosenDays(chosenDays.map(day =>
             day.value === value ? { ...day, chosen: !day.chosen } : day
         ));
+        if (habit.chosen_days)
         setNewDays(habit.id, chosenDays.map(day =>
             day.value === value ? { ...day, chosen: !day.chosen } : day
         ));
     };
 
-    const clearChosenDays = () => {
-        setChosenDays(chosenDays.map(d => ({ ...d, chosen: false })));
-        setNewDays(habit.id, chosenDays?.map(d => ({ ...d, chosen: false })));
+    const clearChosenDays = (val:string) => {
+        if (val !== "weekly") {
+            setChosenDays(initialChosenDays);
+            setNewDays(habit.id, null);
+        }
+
     };
 
     const tagIcon = () => {
@@ -124,29 +138,12 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
                     </div>
                 </div>
             </div>
-            {selectedTag || habit.tag  ? (
-                <div className="habitWrapperIcon">
+            <div className="habitWrapperIcon">
+                {(selectedTag || habit.tag) && (
                     <div className="habitIconWrapper">
                         {tagIcon()}
                     </div>
-                    <div className="addHabitWrapper">
-                        <label htmlFor="redHabitName">Название</label>
-                        <input
-                            id="redHabitName"
-                            type="text"
-                            className="addHabitInput"
-                            maxLength={40}
-                            readOnly={readOnly}
-                            value={name || habit.name}
-                            onChange={(e) => {
-                                setName(e.target.value);
-                                setNewName(habit.id, e.target.value);
-                            }}
-                        />
-                        <span>{name.length || habit.name.length}/40</span>
-                    </div>
-                </div>
-            ) : (
+                )}
                 <div className="addHabitWrapper">
                     <label htmlFor="redHabitName">Название</label>
                     <input
@@ -155,38 +152,39 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
                         className="addHabitInput"
                         maxLength={40}
                         readOnly={readOnly}
-                        value={name || habit.name}
+                        defaultValue={name || habit.name}
+                        minLength={1}
                         onChange={(e) => {
                             setName(e.target.value);
                             setNewName(habit.id, e.target.value);
                         }}
                     />
-                    <span>{name.length || habit.name.length}/40</span>
+                    <span>{name.length}/40</span>
+                </div>
             </div>
-            )}
-
             <div className="addHabitWrapper">
                 <label htmlFor="redHabitDesc">Описание</label>
                 <textarea
                     id="redHabitDesc"
                     className="addHabitInput"
                     maxLength={120}
-                    value={desc || habit.desc}
+                    defaultValue={desc || habit.desc}
                     readOnly={readOnly}
                     onChange={(e) => {
                         setDesc(e.currentTarget.value);
                         setNewDescription(habit.id, e.currentTarget.value);
                     }}
                 />
-                <span>{desc?.length || habit.desc?.length}/120</span>
+                <span>{desc?.length || 0}/120</span>
             </div>
             <div className="addHabitWrapper">
                 <TagSelector selectedTag={habit.tag || selectedTag} setSelectedTag={setSelectedTag} showOnly={readOnly}/>
             </div>
             <div className="addHabitTimeWrapper">
                 <div className="addHabitWrapper">
-                    <label>Дата начала</label>
+                    <label htmlFor="sdInput">Дата начала</label>
                     <CalendarInput
+                        id="sdInput"
                         value={startDate || new Date(habit.start_date)}
                         readOnly={readOnly}
                         onChange={(date) => {

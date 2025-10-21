@@ -13,7 +13,6 @@ export default function DayChanger({
         <div className="dayChanger">
             {chosenDays.map(({ value, label, chosen }) => {
                 const isChosen = chosenArr?.some(c => c === value) || chosen;
-
                 return (
                     <button
                         key={value}

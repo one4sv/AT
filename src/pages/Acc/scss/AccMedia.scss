@@ -1,32 +1,36 @@
 .accMedia {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(15vh, 1fr));
-    gap: 8px;
     width: 100%;
-    padding: 8px 0;
+    height: 100%;
+    overflow-y: auto;
+    position: relative;
+    bottom: 0.5vh;
+}
+.accMediaGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding: 0.5vh 0.5vw;
+    grid-auto-rows: 1fr;
+    grid-gap: 0.5vh 0.5vw;
 }
 
 .accMediaItem {
-    position: relative;
     overflow: hidden;
-    border-radius: 10px;
+    position: relative;
     cursor: pointer;
-    background-color: var(--bg2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+    &:hover {
+        transform: scale(1.05);
+    }
 }
 
 .accMediaPreview {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    transition: transform 0.3s ease;
-    border-radius: 10px;
-}
-
-.accMediaItem:hover .accMediaPreview {
-    transform: scale(1.05);
 }
 
 .accMediaOther {
@@ -36,4 +40,6 @@
     padding: 10px;
     text-align: center;
     display: block;
+    border-radius: 6px;
+
 }

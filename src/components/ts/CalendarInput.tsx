@@ -2,7 +2,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 interface CalendarInputProps {
-  value: Date | null;
+  value?: Date | null;
   onChange: (date: Date | null) => void;
   maxDate?: Date;
   minDate?: Date;

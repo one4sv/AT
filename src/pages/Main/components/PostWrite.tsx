@@ -104,10 +104,10 @@ export default function PostWrite() {
     }
 
     const handleSend = async () => {
-        if (text.length > 0 || files.length > 0) {
+        if (text.trim().length > 0 || files.length > 0) {
             try {
                 const formData = new FormData();
-                formData.append("text", text);
+                formData.append("text", text.trim());
                 if (habit && habit !== "none") {
                     formData.append("habit_id", String(habit));
                 }
@@ -134,7 +134,6 @@ export default function PostWrite() {
         }
         
     };
-
 
     return (
         <div className={`postWriteWrapper ${fs ? "PWTAWFS" : ""}`} ref={postWriteRef} >

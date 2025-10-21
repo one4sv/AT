@@ -54,19 +54,25 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const enqueueUpdate = useCallback((habitId: number, field: string, value: any) => {
-    setLocalChanges((prev) => ({
-      ...prev,
-      [habitId]: {
-        ...prev[habitId],
-        [field]: value,
-      },
-    }));
+    if ((field === "name" || field === "start_date") && (!value || value.trim() === "")) return;
 
-    setUpdateQueue((prev) => [
-      ...prev.filter((item) => !(item.field === field && item.habitId === habitId)),
-      { habitId, field, value },
-    ]);
-    setIsUpdating((prev) => [...new Set([...prev, `habit_${habitId}`])]);
+    // ⏳ задержка перед постановкой в очередь
+    clearTimeout((enqueueUpdate as any)._timeout);
+    (enqueueUpdate as any)._timeout = setTimeout(() => {
+      setLocalChanges((prev) => ({
+        ...prev,
+        [habitId]: {
+          ...prev[habitId],
+          [field]: value,
+        },
+      }));
+
+      setUpdateQueue((prev) => [
+        ...prev.filter((item) => !(item.field === field && item.habitId === habitId)),
+        { habitId, field, value },
+      ]);
+      setIsUpdating((prev) => [...new Set([...prev, `habit_${habitId}`])]);
+    }, 400);
   }, []);
 
   const setNewName = useCallback((habitId: number, val: string) => enqueueUpdate(habitId, "name", val), [enqueueUpdate]);
@@ -87,68 +93,63 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
   const setNewTag = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "tag", val), [enqueueUpdate]);
 
   const processQueue = useCallback(async () => {
-    if (isProcessing || updateQueue.length === 0) return;
-    setIsProcessing(true);
+  if (isProcessing || updateQueue.length === 0) return;
+  setIsProcessing(true);
 
-    const { habitId, field, value } = updateQueue[0];
-    const selectedHabit = habits?.find((h) => h.id === habitId);
+  const { habitId, field, value } = updateQueue[0];
+  const selectedHabit = habits?.find((h) => h.id === habitId);
 
-    if (
-      (field === "name" && value === selectedHabit?.name) ||
-      (field === "desc" && value === selectedHabit?.desc) ||
-      (field === "start_date" && value instanceof Date && selectedHabit?.start_date && value.getTime() === new Date(selectedHabit.start_date).getTime()) ||
-      (field === "start_date" && value === null && selectedHabit?.start_date === undefined) ||
-      (field === "end_date" && ((value === null && selectedHabit?.end_date === undefined) ||
-        (value instanceof Date && selectedHabit?.end_date && value.getTime() === new Date(selectedHabit.end_date).getTime()))) ||
-      (field === "ongoing" && value === selectedHabit?.ongoing) ||
-      (field === "periodicity" && value === selectedHabit?.periodicity) ||
-      (field === "chosen_days" && Array.isArray(value) && JSON.stringify(value?.sort()) === JSON.stringify((selectedHabit?.chosen_days || []).sort())) ||
-      (field === "start_time" && value === selectedHabit?.start_time) ||
-      (field === "end_time" && value === selectedHabit?.end_time) ||
-      (field === "pinned" && value === selectedHabit?.pinned) ||
-      (field === "tag" && value === selectedHabit?.tag)
-    ) {
+  if (
+    (field === "name" && value === selectedHabit?.name) ||
+    (field === "desc" && value === selectedHabit?.desc) ||
+    (field === "start_date" && ((value == null && selectedHabit?.start_date == null) ||
+      (value instanceof Date && selectedHabit?.start_date && value.getTime() === new Date(selectedHabit.start_date).getTime()))) ||
+    (field === "end_date" && ((value == null && selectedHabit?.end_date == null) ||
+      (value instanceof Date && selectedHabit?.end_date && value.getTime() === new Date(selectedHabit.end_date).getTime()))) ||
+    (field === "ongoing" && value === selectedHabit?.ongoing) ||
+    (field === "periodicity" && value === selectedHabit?.periodicity) ||
+    (field === "chosen_days" && Array.isArray(value) && JSON.stringify(value?.sort()) === JSON.stringify((selectedHabit?.chosen_days || []).sort())) ||
+    (field === "start_time" && value === selectedHabit?.start_time) ||
+    (field === "end_time" && value === selectedHabit?.end_time) ||
+    (field === "pinned" && value === selectedHabit?.pinned) ||
+    (field === "tag" && value === selectedHabit?.tag)
+  ) {
+    removeField(habitId, field);
+    setUpdateQueue((prev) => prev.slice(1));
+    setIsUpdating((prev) => prev.filter((item) => item !== `habit_${habitId}`));
+    setIsProcessing(false);
+    return;
+  }
+
+  const payload = {
+    habit_id: habitId,
+    [field]: value instanceof Date ? value.toISOString() : value,
+  };
+
+  try {
+    const res = await axios.post(`${API_URL}updatehabit`, payload, {
+      withCredentials: true,
+    });
+    if (res.data.success) {
+      console.log("✅ Успешно обновлено:", field);
       removeField(habitId, field);
-      setUpdateQueue((prev) => prev.slice(1));
-      setIsUpdating((prev) => prev.filter((item) => item !== `habit_${habitId}`));
-      setIsProcessing(false);
-      return;
-    }
-
-    const payload = {
-      habit_id: habitId,
-      [field]: value instanceof Date ? value.toISOString() : value,
-    };
-
-    try {
-      const res = await axios.post(`${API_URL}updatehabit`, payload, {
-        withCredentials: true,
-      });
-      if (res.data.success) {
-        console.log("✅ Успешно обновлено:", field);
-        showNotification("success", field === "pinned" ? "Закреплено" : "Обновлено");
-        removeField(habitId, field);
-        // Вызываем refetchHabits только если очередь пуста
-        if (updateQueue.length === 1) {
-          refetchHabits();
-        }
-      } else {
-        throw new Error(res.data.error || "Ошибка при обновлении привычки");
-      }
-    } catch (err) {
-      showNotification("error", "Ошибка при обновлении привычки");
-      console.error("❌ Ошибка при обновлении привычки:", err);
-      removeField(habitId, field);
-      // Вызываем refetchHabits только если очередь пуста
-      if (updateQueue.length === 1) {
+      if (updateQueue.length > 0) {
         refetchHabits();
       }
-    } finally {
-      setUpdateQueue((prev) => prev.slice(1));
-      setIsUpdating((prev) => prev.filter((item) => item !== `habit_${habitId}`));
-      setIsProcessing(false);
+    } else {
+      throw new Error(res.data.error || "Ошибка при обновлении привычки");
     }
-  }, [isProcessing, updateQueue, habits, showNotification, refetchHabits, removeField]);
+  } catch (err) {
+    showNotification("error", "Ошибка при обновлении привычки");
+    console.error("❌ Ошибка при обновлении привычки:", err);
+    // НЕ удаляем при ошибке — очередь попробует снова при следующем триггере
+    // if (updateQueue.length === 1) refetchHabits(); // Опционально, если нужно
+  } finally {
+    setUpdateQueue((prev) => prev.slice(1));
+    setIsUpdating((prev) => prev.filter((item) => item !== `habit_${habitId}`));
+    setIsProcessing(false);
+  }
+}, [isProcessing, updateQueue, habits, showNotification, refetchHabits, removeField]);
 
   useEffect(() => {
     if (updateQueue.length === 0 || isProcessing) return;

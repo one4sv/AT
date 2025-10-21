@@ -126,7 +126,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             if (res.data.success) {
                 setList(res.data.friendsArr);
             }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error:any) {
             showNotification("error", error?.response?.data?.error);
         }
@@ -138,18 +137,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         wsRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === "NEW_MESSAGE") {
-                const currentChatId = chatWithRef.current.id;
                 const messageSenderId = String(data.message.sender_id);
-
-                // Если открыта переписка с этим пользователем — просто добавляем сообщение
-                if (messageSenderId === currentChatId || messageSenderId === user.id) {
-                    setMessages(prev => [...prev, data.message]);
-                }
-
-                // Обновляем список контактов
+                setMessages(prev => [...prev, data.message]);
                 refetchContacts();
 
-                // Показываем уведомление, если вкладка не активна и сообщение не наше
                 if (document.visibilityState === "hidden" && messageSenderId !== user.id && note && messNote) {
                     const senderName = data.username
                         ? `${data.username} | ${data.nick}`

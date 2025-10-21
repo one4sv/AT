@@ -24,7 +24,7 @@ export default function DeleteConfirm () {
             if (res.data.success) {
                 if (goal === "habit") {
                     refetchHabits()
-                    navigate("/stats")
+                    navigate("/habit")
                     setBlackout({seted:false})
                 } else {
                     refetchContacts()

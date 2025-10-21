@@ -4,14 +4,18 @@
     display: flex;
     flex-direction: column;
     width: 60%;
-    margin: 1vh auto 0;
+    margin: 0 auto;
     gap: 0.8vh;
+    overflow-y:auto;
+    scrollbar-width: thin;
+    position: relative;
 }
 .accPost {
     background-color: var(--mc);
     border-radius: 12px;
     padding: 1vh 0.5vw;
     max-height: 50vh;
+    position: relative;
 }
 .accPostHabit {
     min-width: 40%;
@@ -41,33 +45,79 @@
     height: 60%;
 }
 .accPostText {
+    padding: 0;
     margin-top: 0.4vh;
     white-space: pre-wrap;
     line-height: 1.2rem;
+    font-size: 16px;
+    font-family: var(--font);
+    resize: none;
+    width: 100%;
+    background-color: var(--tr);
+    color: var(--tc);
+    border: none;
+    outline: none;
     >a {
         color: var(--acsent);
+    }
+}
+.accPostBottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 4vh;
+    margin-top: 0.4vw;
+}
+.accPostDate {
+    color: var(--borderHabit);
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+.accPostButts {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+.accPostButts {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    font-size: 24px;
+}
+.accPostButt {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5vh 0.3vw;
+    cursor: pointer;
+    border-radius: 8px;
+    gap: 0.2vw;
+    &:hover {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
     }
 }
 .accPostInteract {
     display: flex;
     align-items: center;
-    margin-top: 0.4vw;
-    height: 3vh;
     gap: 0.4vw;
     >div {
         height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 0 0.3vw;
+        padding: 0.5vh 0.3vw;
         cursor: pointer;
-        border-radius: 4px;
+        border-radius: 8px;
         gap: 0.2vw;
         &:hover {
             background-color: var(--menuButtHover);
         }
         >svg {
-            font-size: 22px;
+            font-size: 24px;
         }
     }
 }
@@ -94,16 +144,16 @@
 
 .postFileGrid {
     width: 100%;
-    max-height: 15vh;
+    max-height: 14vh;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 12px;
     position: relative;
+    cursor: pointer;
     .postFilePreview {
         width: 100%;
         height: 100%;
         object-fit: cover;
         border-radius: 8px;
-        cursor: pointer;
     }
     .postFileOther {
         display: flex;
@@ -123,4 +173,14 @@
             width: 90%;
         }
     }
+    &:hover .chatTAFileOverlay {
+        opacity: 1;
+        margin: 0;
+    }
+}
+.apEmojiBar {
+    width: 80%;
+    z-index: 9;
+    position: absolute;
+    background-color: var(--bgc);
 }
