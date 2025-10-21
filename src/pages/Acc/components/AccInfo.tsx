@@ -57,7 +57,7 @@ export default function AccInfo({acc, red, setRed, isMyAcc} : AccInfoProps) {
                 {previewUrl ? (
                     <img src={previewUrl} alt="avatar preview" className="avatarImg"/>
                 ) : acc?.avatar_url && acc.avatar_url !== null ? (
-                    <img src={acc.avatar_url} alt="avatar" className="avatarImg" onClick={() => setBlackout({seted:true, module:"ImgPrev", img:acc.avatar_url ?? undefined})}/>
+                    <img src={acc.avatar_url} alt="avatar" className="avatarImg" onClick={() => {if (!red) setBlackout({seted:true, module:"ImgPrev", img:acc.avatar_url ?? undefined})}}/>
                 ) : red ? (
                     <Camera size={256} />
                 ) : (
