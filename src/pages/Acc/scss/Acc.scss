@@ -1,4 +1,7 @@
 @use "../../../scss/global" as var;
+@use "./AccHabits.scss";
+@use "./AccPosts.scss";
+@use "./AccMedia.scss";
 
 .accDiv {
     width: 60%;
@@ -9,10 +12,12 @@
     flex-direction: column;
 }
 .accInfo {
+    border-radius: 12px;
     display: flex;
     flex-direction: row;
     margin-top: 1vh;
     position: relative;
+    padding: 1vh 0.5vw;
 }
 .accPic {
     left: 0.5vw;
@@ -55,8 +60,7 @@
     }
 }
 .accOnlineStauts {
-    position: absolute;
-    top: 7.3vh;
+    position: relative;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -78,18 +82,21 @@
 .accInfoWrapper {
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-direction: column;
     position: relative;
 }
 .accInfoRedButt {
     right: 0;
     height: 4vh;
-    padding: 1vh 1vw;
+    padding: 1vh 0;
+    width: 12vw;
     color: var(--borderWh);
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 8px;
-    background-color: var(--mc);
+    background-color: var(--buttBg);
     cursor: pointer;
     &:hover {
         background-color: var(--menuButtHover);
@@ -136,8 +143,8 @@
     margin-top: 1vh;
 }
 .accContentSelect {
-    display: flex;
-    height: 5vh;
+  display: flex;
+  height: 5vh;
 }
 .accContentButt {
     display: flex;
@@ -167,37 +174,43 @@
 }
 .accContentLine {
     height: 3px;
+    position: relative;
     >div {
-        transition: left 0.2s ease;
-        position: relative;
+        transition: left 0.2s ease, background-color 0.2s ease;
+        position: absolute;
         height: 100%;
-        width: 33%;
     }
 }
-.sendedLine{
+
+.sendedLine {
     left: 0;
+    width: 33%;
     background-color: var(--tc);
 }
-.habitsLine{
+
+.habitsLine {
     left: 33.5%;
+    width: 33%;
     background-color: var(--acsent);
 }
-.postsLine{
+
+.postsLine {
     left: 67%;
+    width: 33%;
     background-color: #a508e4;
 }
-.accHabitsInfo {
-    display: flex;
-}
-.accHabitsList {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    justify-content: center;
-    >div {
+
+.myAccCL {
+    &.habitsLine {
+        left: 0;
+        width: 50%;
+    }
+    &.postsLine {
+        left: 50%;
         width: 50%;
     }
 }
+
 .accNoPrivateAccess {
     margin-top: 2vh;
     width: 100%;

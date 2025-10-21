@@ -1,0 +1,123 @@
+@use "../../../scss/global" as var;
+
+.postWriteWrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    margin-bottom: 1vh;
+    &.PWTAWFS {
+        position: absolute;
+        top: 1vh;
+        left: 0;
+        z-index: 9;
+        height: 98vh;
+        width: 100%;
+    }
+}
+.postWriteBar {
+    width: 100%;
+    border-radius: 12px 12px 0 0;
+    background-color: var(--mc);
+    color: var(--tc);
+    height: 6vh;
+    display: flex;
+    padding-left: 0.5vw;
+    gap: 0.5vw;
+    align-items: center;
+    &.pwBarwFiles::after {
+        content: "";
+        position: absolute;
+        margin-top: 6vh;
+        left: 2.5%;
+        width: 95%;
+        height: 1px;
+        background-color: var(--borderHabit);
+    }
+}
+.postWriteTA {
+    width: 100%;
+    background-color: var(--mc);
+    resize: none;
+    color: var(--tc);
+    border-radius: 12px;
+    font-family: var(--font);
+    font-size: 16px;
+    padding: 0.5vh 0.5vw;
+    scrollbar-width:thin;
+    box-sizing: border-box;
+    &.PWTAwFiles {
+        border-radius: 0 0 12px 12px;
+    }
+}
+.postWriteSvgButt {
+    height: 3vh;
+    aspect-ratio: 1/1;
+    cursor: pointer;
+    color: var(--borderWh);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: 0.1vh;
+    >svg {
+        width: 80%;
+        height: 80%;
+    }
+    &.pwFSButt {
+        >svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+    &:hover {
+        color: var(--tc);
+    }
+}
+.postWriteSL {
+    position: relative;
+    @include var.selectList(10vw, 3.5vh, 9%, 0.3vw, 0.4vh, var(--tc), var(--tc), var(--bgc), 16px, 0.8vh, 0.4vw, 5%, true);
+    >input {
+        @include var.input(var(--darkerAcsent), var(--tc), var(--tr), 3.5vh, 6px, var(--tc));
+        width: 10vw;
+        cursor: pointer;
+    }
+    >div {
+        border-radius: 6px;
+        font-weight: 100;
+        >div {
+            color: var(--borderWh);
+        }
+    }
+}
+.pwTAButtWrapper {
+    position: absolute;
+    height: 10vh;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    right: 1vw;
+    pointer-events: none;
+}
+.postWriteTAButt {
+    border-radius: 50%;
+    height: 4vh;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+    cursor: pointer;
+    position: absolute;
+    right: 0.5vw;
+    &:hover {
+        background-color: var(--acsent);
+    }
+}
+.pwEmojiBar {
+    left: 0 !important;
+    border-radius: 12px !important;
+}
+.pwTAFileswBar {
+    border-radius: 0 !important;
+}

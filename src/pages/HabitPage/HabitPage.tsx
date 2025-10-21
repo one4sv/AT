@@ -43,7 +43,7 @@ export default function Habit() {
                     </div>
                     <RedHabit habit={habit} readOnly={isReadOnly} id={Number(habitId)}/>
                     <Goals habit={habit} readOnly={isReadOnly} id={Number(habitId)}/>
-                    <ExtraHabitInfo />
+                    <ExtraHabitInfo habit={habit} readOnly={isReadOnly}/>
                 </div>
             ) : ("")}
         </div>

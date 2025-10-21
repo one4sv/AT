@@ -1,0 +1,126 @@
+@use "../../../scss/global" as var;
+
+.accPosts {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    margin: 1vh auto 0;
+    gap: 0.8vh;
+}
+.accPost {
+    background-color: var(--mc);
+    border-radius: 12px;
+    padding: 1vh 0.5vw;
+    max-height: 50vh;
+}
+.accPostHabit {
+    min-width: 40%;
+    width: fit-content;
+    max-width: 70%;
+    display: flex;
+    align-items: center;
+    background-color: var(--acsent);
+    border-radius: 6px;
+    cursor: pointer;
+    height: 3vh;
+    padding: 0 0.2vw 0 ;
+    position: relative;
+}
+.aphIcon {
+    display: flex;
+    align-items: center;
+    height: 80%;
+    margin-right: 0.3vw;
+    >svg {
+        height: 100%;
+    }
+}
+.aphGo {
+    position: absolute;
+    right: 0.2vw;
+    height: 60%;
+}
+.accPostText {
+    margin-top: 0.4vh;
+    white-space: pre-wrap;
+    line-height: 1.2rem;
+    >a {
+        color: var(--acsent);
+    }
+}
+.accPostInteract {
+    display: flex;
+    align-items: center;
+    margin-top: 0.4vw;
+    height: 3vh;
+    gap: 0.4vw;
+    >div {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 0.3vw;
+        cursor: pointer;
+        border-radius: 4px;
+        gap: 0.2vw;
+        &:hover {
+            background-color: var(--menuButtHover);
+        }
+        >svg {
+            font-size: 22px;
+        }
+    }
+}
+.accPostLikes {
+    &:hover {
+        >svg {
+            color: #d60000;
+        }
+    }
+}
+.accPostComment {
+    &:hover {
+        >svg {
+            color: var(--acsent);
+        }
+    }
+}
+.postMediaGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5vw;
+    margin-top: 0.5vh;
+}
+
+.postFileGrid {
+    width: 100%;
+    max-height: 15vh;
+    overflow: hidden;
+    border-radius: 8px;
+    position: relative;
+    .postFilePreview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .postFileOther {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        font-size: 0.8rem;
+        padding: 0.5vh 0;
+        background-color: var(--acsent);
+        border-radius: 6px;
+        gap: 0.2vh;
+        .postFileName {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 90%;
+        }
+    }
+}

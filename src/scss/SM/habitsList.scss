@@ -75,13 +75,14 @@
     display: flex;
     position: relative;
     border: 1px solid var(--tr);
-    &:hover {
-        background-color: var(--menuButtHover);
-        border: 1px solid var(--tc);
-    }
-    /* защита от выхода содержимого за пределы карточки */
+    background-color: var(--hbg);
+    box-sizing: border-box;
     overflow: hidden;
     box-sizing: border-box;
+    &:hover {
+        background-color: var(--hbgh);
+        border: 1px solid var(--tc);
+    }
 }
 .habitIcon {
     aspect-ratio: 1/1;
@@ -97,7 +98,6 @@
     flex-direction: column;
     justify-content: space-evenly;
     position: relative;
-    /* важно для корректной работы text-overflow внутри flex-контейнера */
     min-width: 0;
 }
 .habitName {
@@ -106,7 +106,6 @@
 }
 .habitPer {
     color: var(--darkerAcsent);
-    // margin-left: 0.3vw;
 }
 .moreHabits {
     color: var(--borderHabit);

@@ -2,7 +2,7 @@ import './scss/App.scss'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppProvider  } from './components/ts/AppProvider';
 import Sign from './pages/Sign'
-import Main from './pages/Main'
+import Main from './pages/Main/Main'
 import Confirm from './pages/Confirm';
 import Chat from './pages/Chat/Chat';
 import Acc from './pages/Acc/Acc';

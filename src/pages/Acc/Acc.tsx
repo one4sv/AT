@@ -7,10 +7,22 @@ import type { User } from "../../components/context/UserContext";
 import type { Habit } from "../../components/context/HabitsContext";
 import { useNote } from "../../components/hooks/NoteHook";
 import Loader from "../../components/ts/Loader";
-import HabitDiv from "../../components/ts/Habit";
 import type { PrivateSettings } from "../../components/context/SettingsContext";
 import { useUpUser } from "../../components/hooks/UpdateUserHook";
 import AccInfo from "./components/AccInfo";
+import AccHabits from "./components/AccHabits";
+import AccPosts from "./components/AccPosts";
+import type { Media } from "../../components/context/ChatContext";
+import AccMedia from "./components/AccMedia";
+
+export type Post = {
+    id:number,
+    user_id:string,
+    media?:Media[];
+    habit_id?:number,
+    text:string,
+    likes:string[]
+}
 
 export default function Acc() {
     const { user } = useUser();
@@ -20,12 +32,14 @@ export default function Acc() {
     const navigate = useNavigate();
     const API_URL = import.meta.env.VITE_API_URL
 
-    const [isMyAcc, setIsMyAcc] = useState<boolean>(false);
-    const [acc, setAcc] = useState<User>();
-    const [habits, setHabits] = useState<Habit[]>();
-    const [loading, setLoading] = useState<boolean>(true);
-    const [selector, setSelector] = useState<string>("sended");
-    const [red, setRed] = useState<boolean>(false);
+    const [ isMyAcc, setIsMyAcc ] = useState<boolean>(false);
+    const [ acc, setAcc ] = useState<User>();
+    const [ habits, setHabits ] = useState<Habit[]>();
+    const [ loading, setLoading ] = useState<boolean>(true);
+    const [ selector, setSelector ] = useState<string>("sended");
+    const [ red, setRed ] = useState<boolean>(false);
+    const [ posts, setPosts ] = useState<Post[]>([])
+    const [ media, setMedia ]  = useState<Media[]>([])
     const [privateRules, setPrivateRules] = useState<PrivateSettings>({ number: "", mail: "", habits: "", posts: "" });
 
     const canView = useCallback(
@@ -42,6 +56,8 @@ export default function Acc() {
                 setAcc(res.data.acc);
                 setHabits(res.data.habits);
                 setPrivateRules(res.data.privateRules);
+                setPosts(res.data.posts)
+                setMedia(res.data.media)
             }
         } catch {
             showNotification("error", "Не удалось найти пользователя");
@@ -52,7 +68,9 @@ export default function Acc() {
 
     useEffect(() => {
         if (!contactId) navigate("/");
-        setIsMyAcc(contactId === user.id);
+        const my = contactId === user.id
+        setIsMyAcc(my);
+        if (my) setSelector("habits")
         refetchAcc();
     }, [contactId, user.id, refetchAcc, navigate]);
 
@@ -73,7 +91,7 @@ export default function Acc() {
             </div>
 
             <div className="accExtraInfo">
-                <div className="accExtraInfoWrapper">
+                <div className="accExtraInfoWrapper woutBg">
                     {!canView("number") ? (
                         <span>Пользователь скрыл номер телефона</span>
                     ) : (
@@ -83,7 +101,7 @@ export default function Acc() {
                         </>
                     )}
                 </div>
-                <div className="accExtraInfoWrapper">
+                <div className="accExtraInfoWrapper woutBg">
                     {!canView("mail") ? (
                         <span>Пользователь скрыл электронную почту</span>
                     ) : (
@@ -102,37 +120,40 @@ export default function Acc() {
             </div>
 
             <div className="accContentSelector">
-                <div className="accContentSelect">
-                    {["sended", "habits", "posts"].map((sel) => (
-                        <div
-                            key={sel}
-                            className={`accContentButt ${selector === sel ? sel + "Active active" : ""}`}
-                            onClick={() => setSelector(sel)}
-                        >
-                            {sel === "sended" ? "Отправленное" : sel === "habits" ? "Привычки" : "Посты"}
-                        </div>
-                    ))}
+                <div
+                    className={`accContentSelect ${
+                        selector === 'sended' ? 'sendedActive' :
+                        selector === 'habits' ? 'habitsActive' :
+                        'postsActive'
+                    } ${isMyAcc ? 'myAccCL' : ''}`}
+                >
+                    {["sended", "habits", "posts"].map((sel) => {
+                        if (sel === "sended" && isMyAcc) return null
+                        return (
+                            <div
+                                key={sel}
+                                className={`accContentButt ${selector === sel ? sel + "Active active" : ""}`}
+                                onClick={() => setSelector(sel)}
+                            >
+                                {sel === "sended" ? "Отправленное" : sel === "habits" ? "Привычки" : "Посты"}
+                            </div>
+                        )
+                    })}
                 </div>
                 <div className="accContentLine">
-                    <div className={`${selector}Line`}></div>
+                    <div className={`${selector}Line ${isMyAcc ? "myAccCL" : ""}`}></div>
                 </div>
             </div>
 
             <div className="accContent">
                 {selector === "habits" && (
-                    <div className="accHabits">
-                        <div className="accHabitsInfo">
-                            <div className="accHabitChart"></div>
-                            <div className="accHabitOverall"></div>
-                        </div>
-                        <div className="accHabitsList">
-                            {!canView("habits") ? (
-                                <span className="accNoPrivateAccess">Пользователь скрыл привычки</span>
-                            ) : (
-                                habits?.map((habit) => <HabitDiv key={habit.id} habit={habit} isMyAcc={isMyAcc} />)
-                            )}
-                        </div>
-                    </div>
+                    <AccHabits isMyAcc={isMyAcc} habits={habits} canView={canView}/>
+                )}
+                {selector === "posts" && (
+                    <AccPosts posts={posts} habits={habits}/>
+                )}
+                {selector === "sended" && (
+                    <AccMedia media={media}/>
                 )}
             </div>
         </div>

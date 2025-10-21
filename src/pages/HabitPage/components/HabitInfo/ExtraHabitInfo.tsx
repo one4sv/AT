@@ -2,10 +2,14 @@ import { ChevronDown } from "lucide-react";
 import "../../scss/extraHabitInfo.scss"
 import { useState } from "react";
 import { Square } from "@phosphor-icons/react";
+import type { Habit } from "../../../../components/context/HabitsContext";
 
-export default function ExtraHabitInfo() {
+export default function ExtraHabitInfo({habit, readOnly}:{habit:Habit, readOnly:boolean}) {
     const [ isShown, setIsShown ] = useState(false)
-    return (
+
+    if (habit && readOnly) return null
+
+    return (        
         <div className="extraHabitInfoDiv">
             <div className="extraHabitInfoShower" onClick={()=>setIsShown(!isShown)}>
                 Дополнительно <ChevronDown />

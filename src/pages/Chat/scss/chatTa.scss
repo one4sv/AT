@@ -3,7 +3,7 @@
     flex-direction: column;
     width: 100%;
     position: relative;
-    // bottom: 2vh;
+    margin-bottom: 1vh;
 }
 .chatTAFiles {
     width: 100%;
@@ -13,7 +13,7 @@
     height: 8vh;
     display: flex;
     flex-direction: row;
-    overflow-x: auto; // Добавляем скролл если много файлов
+    overflow-x: auto;
     padding: 0.5vh 0.5vw;
     gap: 0.5vw;
 }
@@ -130,11 +130,12 @@
     background-color: var(--mc);
     color: var(--tc);
     font-size: 16px;
-    height: 7vh;
+    height: 9vh;
+    max-height: 50vh;
     border-radius: 12px;
     padding: 0.5vh 9vw 0.5vh 0.5vw;
     box-sizing: border-box;
-    overflow-y: hidden;
+    scrollbar-width:thin;
     &.chatTAwFiles {
         border-radius: 0 0 12px 12px;
     }

@@ -285,7 +285,6 @@ export default function RedHabit({ habit, readOnly, id }: RedHabitProps) {
                     />
                 </div>
             </div>
-            
         </div>
     );
 }

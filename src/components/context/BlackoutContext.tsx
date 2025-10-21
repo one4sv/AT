@@ -8,6 +8,7 @@ export interface Blackout {
     module?:keyof typeof ModuleMap;
     pick?:File;
     bg?:File;
+    img?:string
 }
 export interface BlackoutContextType {
     blackout:Blackout

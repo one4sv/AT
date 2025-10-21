@@ -87,61 +87,80 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
-@mixin selectList($w, $h, $wI, $r, $t, $c, $ac, $bg, $fs, $ph, $pw, $tY) {
-    position: relative;
-    width:$w;
-    height:$h;
-    cursor: pointer;
-    >svg {
-        position: absolute;
-        width: $wI;
-        right:$r;
-        top: $t;
-        aspect-ratio:1/1;
-        color: $c;
-        pointer-events: none;
-        transition: rotate 0.3 ease;
+@mixin selectList(
+  $w, $h, $wI, $r, $t, $c, $ac, $bg, $fs, $ph, $pw, $tY,
+  $upwards: false
+) {
+  position: relative;
+  width: $w;
+  height: $h;
+  cursor: pointer;
+
+  > svg {
+    position: absolute;
+    width: $wI;
+    right: $r;
+    top: $t;
+    aspect-ratio: 1/1;
+    color: $c;
+    pointer-events: none;
+    transition: rotate 0.3 ease;
+  }
+
+  > input {
+    padding-inline-start: 0.4vw;
+    &:focus-visible svg {
+      color: $ac;
     }
-    >input {
-        padding-inline-start: 0.4vw;
-        &:focus-visible svg {
-            color: $ac;
-        }
+  }
+
+  > div {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: $w;
+    margin: 0 auto;
+    background-color: $bg;
+    border-radius: 12px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(0);
+    z-index: 12;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+
+    @if $upwards {
+      bottom: 100%; // вместо top
+      transform-origin: bottom;
+    } @else {
+      top: 100%;
+      transform-origin: top;
     }
-    >div {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        width: $w;
-        margin: 0 auto;
-        background-color: $bg;
-        border-radius: 12px;
-        overflow: hidden;
-        opacity: 0;
-        transform: translateY(0);
-        z-index: 12;
-        transition: opacity 0.3s ease, transform 0.3s ease;
-        pointer-events: none;
-        &.active {
-            opacity: 1;
-            transform: translateY($tY);
-            pointer-events: auto;
-        }
-        > div {
-            font-size: $fs;
-            padding: $ph $pw;
-            color: $c;
-            cursor: pointer;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            &:hover {
-                background-color: var(--menuButtHover);
-                color: $ac;
-            }
-        }
+
+    &.active {
+      opacity: 1;
+      transform: translateY(
+        if($upwards, -$tY, $tY)
+      ); // при "вверх" двигаем в другую сторону
+      pointer-events: auto;
     }
+
+    > div {
+      font-size: $fs;
+      padding: $ph $pw;
+      color: $c;
+      cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      &:hover {
+        background-color: var(--menuButtHover);
+        color: $ac;
+      }
+    }
+  }
 }
+
 @mixin svgInInput($h, $t, $r) {
     position: absolute;
     aspect-ratio: 1/1;

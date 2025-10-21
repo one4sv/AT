@@ -54,10 +54,21 @@ export function ChatTAWrapper() {
     useEffect(() => {
         const ta = textAreaRef.current;
         if (!ta) return;
+
         ta.style.height = "auto";
-        ta.style.minHeight = "7vh";
-        ta.style.height = ta.scrollHeight + "px";
+        ta.style.minHeight = "10vh";
+
+        const newHeight = ta.scrollHeight;
+        ta.style.height = newHeight + "px";
+
+        // 👇 если больше 50vh — включаем прокрутку
+        if (newHeight > window.innerHeight * 0.5) {
+            ta.style.overflowY = "auto";
+        } else {
+            ta.style.overflowY = "hidden";
+        }
     }, [mess]);
+
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {

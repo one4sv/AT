@@ -6,6 +6,8 @@ import type { message } from "../../../components/context/ChatContext";
 import { useUser } from "../../../components/hooks/UserHook";
 import { useParams } from "react-router-dom";
 import GetIconByType from "../utils/getIconByType";
+import Linkify from "linkify-react";
+import { useBlackout } from "../../../components/hooks/BlackoutHook";
 
 type MessageComponentType = {
     isMy: boolean,
@@ -15,6 +17,7 @@ type MessageComponentType = {
 }
 export default function Message ({ isMy, highlightedId, message:m, messageRefs } : MessageComponentType) {
     const { setReaction, chatWith } = useChat()
+    const { setBlackout } = useBlackout()
     const { user } = useUser()
     const { contactId } = useParams()
     
@@ -45,7 +48,7 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
             }}
         >
             <div className={`message ${ isMy ? "my" : "ur"} ${highlightedId === m.id ? "highlight" : ""}`}>
-                <div className="messageText">{m.content}</div>
+                <div className="messageText"><Linkify>{m.content}</Linkify></div>
                 {m.files && m.files.length > 0 && (
                     <div className="messageFiles">
                         {m.files.map((file, j) => {
@@ -54,7 +57,7 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
                             return (
                                 <div key={j} className="messageFile">
                                     {isImage ? (
-                                        <img src={file.url} alt={file.name} className="messageFilePreview" />
+                                        <img src={file.url} alt={file.name} className="messageFilePreview" onClick={() => setBlackout({seted:true, module:"ImgPrev", img:file.url})}/>
                                     ) : isVideo ? (
                                         <video src={file.url} className="messageFilePreview" controls />
                                     ) : (

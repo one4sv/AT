@@ -1,0 +1,16 @@
+@use "../../../scss/global" as var;
+
+.accHabitsInfo {
+    display: flex;
+}
+.accHabitsList {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    justify-content: center;
+    background-color: var(--mc);
+    border-radius: 12px;
+    margin: 1vh auto;
+    box-sizing: border-box;
+    gap: 0.2vh;
+}

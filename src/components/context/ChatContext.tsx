@@ -20,7 +20,11 @@ export interface ReactionsType {
     user_id:string,
     reaction:string,
 }
-
+export interface Media {
+    url: string, 
+    name: string, 
+    type: string
+}
 export interface ChatContextType {
     chatWith:chatWithType,
     refetchChat:(chatWithId:string) => Promise<void>,
@@ -42,7 +46,7 @@ export interface message {
     sender_id:string,
     content:string,
     created_at:Date,
-    files?: { url: string, name: string, type: string }[],
+    files?: Media[],
     read_by:string[],
     reactions:ReactionsType[]
 }

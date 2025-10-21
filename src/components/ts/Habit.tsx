@@ -1,7 +1,7 @@
 import type { Habit } from "../context/HabitsContext"
 import { useNavigate } from "react-router"
 import { PushPinIcon  } from "@phosphor-icons/react"
-import { tags } from "./tags"
+import { habitIcon } from "./habitIcon"
 
 export default function HabitDiv({habit, id, isMyAcc}:{habit:Habit, id?:number, isMyAcc?:boolean}) {
     const navigate = useNavigate()
@@ -48,13 +48,6 @@ export default function HabitDiv({habit, id, isMyAcc}:{habit:Habit, id?:number, 
 
         return formatTime();
     };
-
-    const habitIcon = () => {
-        const selectedTag = tags.find(tag => tag.value === habit.tag)
-        if (!selectedTag) return null
-        const Icon = selectedTag.icon
-        return <Icon size={24} />
-    }
     
     if (isMyAcc === undefined) isMyAcc = true
 
@@ -62,7 +55,7 @@ export default function HabitDiv({habit, id, isMyAcc}:{habit:Habit, id?:number, 
         <div className={`habit themeHabit-default ${id === habit.id ? "active" : ""}`} onClick={() => navigate(`/habit/${habit.id}`)}>
             {habit.tag ? (
                 <div className="habitIcon">
-                    {habitIcon()}
+                    {habitIcon(habit)}
                 </div>
             ):(
                 <></>
