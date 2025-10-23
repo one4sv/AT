@@ -77,7 +77,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const typingTimeout = useRef<number | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
     const chatWithRef = useRef<chatWithType>(chatWith);
-
     useEffect(() => {
         chatWithRef.current = chatWith;
     }, [chatWith]);
@@ -122,14 +121,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const refetchContacts = useCallback(async () => {
         if (user.nick === null) return;
         try {
-            const res = await axios.post(`${API_URL}contacts`, { search }, { withCredentials: true });
+            const res = await api.post(`${API_URL}contacts`, { search });
             if (res.data.success) {
                 setList(res.data.friendsArr);
             }
         } catch (error:any) {
             showNotification("error", error?.response?.data?.error);
         }
-    }, [search, showNotification, user.nick]);
+    }, [API_URL, search, showNotification, user.nick]);
 
     useEffect(() => {
         if (!user?.id) return;
@@ -214,7 +213,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             }
         };
         return () => wsRef.current?.close();
-    }, [user.id, refetchContacts, API_WS]);
+    }, [user.id, refetchContacts, API_WS, note, messNote]);
 
     const setReaction = async (mId: number, reaction: string) => {
         try {

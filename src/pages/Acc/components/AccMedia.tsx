@@ -2,13 +2,13 @@ import type { Media } from "../../../components/context/ChatContext";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import GetIconByType from "../../Chat/utils/getIconByType";
 
-export default function AccMedia({ media }: { media: Media[] }) {
+export default function AccMedia({ media }: { media: Media[] | undefined}) {
     const { setBlackout } = useBlackout()
 
     return (
         <div className="accMedia">
             <div className="accMediaGrid">
-                {media.map((file, i) => {
+                {media?.map((file, i) => {
                     const isImage = file.type.startsWith("image/");
                     const isVideo = file.type.startsWith("video/");
 

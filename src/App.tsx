@@ -33,6 +33,7 @@ function App() {
             <Route path="/habit/:habitId" element={<HabitPage />} />
             <Route path='/chat/:contactId' element={<Chat />}/>
             <Route path='/acc/:contactId' element={<Acc />}/>
+            <Route path='/acc' element={<Acc />}/>
           </Route>
         </Routes>        
       </AppProvider>         

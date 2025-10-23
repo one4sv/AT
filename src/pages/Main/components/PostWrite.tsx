@@ -5,9 +5,9 @@ import { useHabits } from "../../../components/hooks/HabitsHook"
 import { Paperclip, SmileySticker, X } from "@phosphor-icons/react"
 import { SendHorizontal } from "lucide-react"
 import { useNote } from "../../../components/hooks/NoteHook"
-import { Emojies, EmojiesGroups } from "../../Chat/utils/emojies"
 import GetIconByType from "../../Chat/utils/getIconByType"
 import { api } from "../../../components/ts/api"
+import EmojiBar from "../../../components/ts/utils/emojiBar"
 
 export default function PostWrite() {
     const { habits } = useHabits()
@@ -23,7 +23,6 @@ export default function PostWrite() {
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
     const postWriteRef = useRef<HTMLDivElement | null>(null)
     const inputFileRef = useRef<HTMLInputElement>(null)
-    const emojiBarRef = useRef<HTMLDivElement | null>(null)
 
     const habitsArr = useMemo(() => {
         const arr = [{ label: "без привычки", value: "none" }];
@@ -70,38 +69,6 @@ export default function PostWrite() {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [fs, showPWbar]);
-    
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (
-            emojiBarRef.current &&
-            !emojiBarRef.current.contains(e.target as Node) &&
-            showEmojiBar
-            ) {
-            setShowEmojiBar(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [showEmojiBar]);
-
-    const handleAddEmoji = (emoji:string) => {
-        const ta = textAreaRef.current;
-        if (!ta) return;
-
-        const start = ta.selectionStart;
-        const end = ta.selectionEnd;
-
-        setText(prev => {
-            const newValue = prev.slice(0, start) + emoji + prev.slice(end);
-            requestAnimationFrame(() => {
-                ta.focus();
-                ta.selectionStart = ta.selectionEnd = start + emoji.length;
-            });
-            return newValue;
-        });
-    }
 
     const handleSend = async () => {
         if (text.trim().length > 0 || files.length > 0) {
@@ -137,31 +104,9 @@ export default function PostWrite() {
 
     return (
         <div className={`postWriteWrapper ${fs ? "PWTAWFS" : ""}`} ref={postWriteRef} >
-            {showEmojiBar && (
-                <div className="emojiBar pwEmojiBar" ref={emojiBarRef}>
-                    {EmojiesGroups.map((g, i) => (
-                        <div className="emojiGroup" key={i}>
-                            <div className="emojiGroupName">{g.value}</div>
-                            <div className="emojiList">
-                                {Emojies.filter(e => e.group === g.group).map((e, j) => (
-                                    <div
-                                        className="emoji"
-                                        key={j}
-                                        onClick={() => handleAddEmoji(e.pic)}
-                                    >
-                                        {e.pic}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+            <EmojiBar setText={setText} cn={"pwEmojiBar"} setShowEmojiBar={setShowEmojiBar} showEmojiBar={showEmojiBar} taRef={textAreaRef}/>
             {showPWbar && (
                 <div className={`postWriteBar ${files.length > 0 ? "pwBarwFiles" : ""}`}>
-                    {/* <div className="postWriteSvgButt pwFSButt" onClick={() => setFS(!fs)}>
-                        {fs ? <CornersIn /> : <CornersOut/>}
-                    </div> */}
                     <SelectList arr={habitsArr} className="postWriteSL" selected={"none"} prop={setHabit}/>
                     {!fs && (
                         <>

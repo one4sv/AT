@@ -85,6 +85,8 @@
     align-items: center;
     height: 100%;
     font-size: 24px;
+    gap: 0.2vw;
+    margin-right: 0.2vw;
 }
 .accPostButt {
     height: 100%;
@@ -94,7 +96,6 @@
     padding: 0.5vh 0.3vw;
     cursor: pointer;
     border-radius: 8px;
-    gap: 0.2vw;
     &:hover {
         background-color: var(--menuButtHover);
         color: var(--tc);

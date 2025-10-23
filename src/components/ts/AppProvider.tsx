@@ -1,3 +1,4 @@
+import type React from 'react';
 import { AuthProvider } from '../context/AuthContext';
 import { NoteProvider } from "../context/NoteContext";
 import { UserProvider } from '../context/UserContext';
@@ -12,7 +13,7 @@ import { UpdateUserProvider } from '../context/UpdateUserContext'
 import { DoneProvider } from '../context/DoneContext';;
 import { CalendarProvider } from '../context/CalendarContext';
 import { TheHabitProvider } from '../context/TheHabitContext';
-import type React from 'react';
+import { AccProvider } from '../context/AccContext';
 
 export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
     <NoteProvider>
@@ -24,17 +25,19 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                             <UpdateHabitProvider>
                                 <UpdateUserProvider>
                                     <AuthProvider>
-                                        <DeleteProvider>
-                                            <BlackoutProvider>
-                                                <TheHabitProvider>
-                                                    <CalendarProvider>
-                                                        <DoneProvider>
-                                                            {children}
-                                                        </DoneProvider>
-                                                    </CalendarProvider>
-                                                </TheHabitProvider>
-                                            </BlackoutProvider>
-                                        </DeleteProvider>
+                                        <AccProvider>
+                                            <DeleteProvider>
+                                                <BlackoutProvider>
+                                                    <TheHabitProvider>
+                                                        <CalendarProvider>
+                                                            <DoneProvider>
+                                                                {children}
+                                                            </DoneProvider>
+                                                        </CalendarProvider>
+                                                    </TheHabitProvider>
+                                                </BlackoutProvider>
+                                            </DeleteProvider>
+                                        </AccProvider>
                                     </AuthProvider>
                                 </UpdateUserProvider>
                             </UpdateHabitProvider>

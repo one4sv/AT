@@ -17,6 +17,7 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
     const { loadHabit } = useTheHabit()
     const { fetchCalendarHabit, fetchCalendarUser } = useCalendar()
     const API_URL = import.meta.env.VITE_API_URL
+    
     const markDone = async(id:number) => {
         try {
             const res = await axios.post(`${API_URL}markdone`, { habit_id: id }, { withCredentials:true})

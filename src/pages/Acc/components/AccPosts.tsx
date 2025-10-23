@@ -1,31 +1,45 @@
 import { ChevronRight } from "lucide-react";
 import type { Habit } from "../../../components/context/HabitsContext";
 import { habitIcon } from "../../../components/ts/habitIcon";
-import type { Post } from "../Acc";
+import type { Post } from "../../../components/context/AccContext";
 import { ChatCircle, Check, Heart, PencilSimple, SmileySticker, Trash } from "@phosphor-icons/react";
-import { Paperclip, X } from "@phosphor-icons/react";
-import { useNavigate } from "react-router";
+import { Paperclip } from "@phosphor-icons/react";
+import { useNavigate, useParams } from "react-router";
 import Linkify from "linkify-react";
-import GetIconByType from "../../Chat/utils/getIconByType";
-import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import formatCreated from "../utils/formatCreated";
 import { useEffect, useRef, useState } from "react";
 import { api } from "../../../components/ts/api";
-import { Emojies, EmojiesGroups } from "../../Chat/utils/emojies";
+import EmojiBar from "../../../components/ts/utils/emojiBar";
+import AccPostMedia from "../utils/AccPostMedia";
+import { useDelete } from "../../../components/hooks/DeleteHook";
+import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import { useUser } from "../../../components/hooks/UserHook";
+import { useAcc } from "../../../components/hooks/AccHook";
 
-export default function AccPosts({ posts, habits, isMy, refetch }: { posts: Post[], habits: Habit[] | undefined, isMy: boolean, refetch:()=>Promise<void> }) {
-    const { setBlackout } = useBlackout();
+interface AccPostsProps {
+    posts: Post[] | undefined,
+    habits: Habit[] | undefined,
+    isMy: boolean,
+    refetch:(contactId:string)=>Promise<void>
+}
+export default function AccPosts({ posts, habits, isMy, refetch }: AccPostsProps) {
+    const { user } = useUser()
+    const { setPosts } = useAcc()
+    const { setDeleteConfirm } = useDelete()
+    const { setBlackout } = useBlackout()
+    const [ hover, setHover ] = useState(0);
+    const [ red, setRed ] = useState(0);
+    const { contactId } = useParams();
     const navigate = useNavigate();
-    const [hover, setHover] = useState(0);
-    const [red, setRed] = useState(0);
-    const [newText, setNewText] = useState("");
-    const [keptMedia, setKeptMedia] = useState<any[]>([]);
-    const [newFiles, setNewFiles] = useState<File[]>([]);
+
+    const [ newText, setNewText] = useState("");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [ keptMedia, setKeptMedia ] = useState<any[]>([]);
+    const [ newFiles, setNewFiles ] = useState<File[]>([]);
+    const [ emojiPos, setEmojiPos ] = useState<{top: number, left: number}>({top: 0, left: 0});
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false)
     const taRef = useRef<HTMLTextAreaElement>(null);
     const inputFileRef = useRef<HTMLInputElement>(null);
-    const emojiBarRef = useRef<HTMLDivElement | null>(null)
-    const [emojiPos, setEmojiPos] = useState<{top: number, left: number}>({top: 0, left: 0});
 
     const upPost = async () => {
         const formData = new FormData();
@@ -42,7 +56,7 @@ export default function AccPosts({ posts, habits, isMy, refetch }: { posts: Post
             setNewText("");
             setKeptMedia([]);
             setNewFiles([]);
-            refetch()
+            refetch(contactId!)
         }
     };
 
@@ -58,41 +72,6 @@ export default function AccPosts({ posts, habits, isMy, refetch }: { posts: Post
 
         setShowEmojiBar(prev => !prev);
     };
-
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (
-                emojiBarRef.current && 
-                !emojiBarRef.current?.contains(e.target as Node) &&
-                taRef.current &&
-                !taRef.current.contains(e.target as Node) &&
-                showEmojiBar
-            ) {
-                setShowEmojiBar(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-
-    }, [showEmojiBar]);
-
-    const handleAddEmoji = (emoji:string) => {
-        const ta = taRef.current;
-        if (!ta) return;
-
-        const start = ta.selectionStart;
-        const end = ta.selectionEnd;
-
-        setNewText(prev => {
-            const newValue = prev.slice(0, start) + emoji + prev.slice(end);
-            requestAnimationFrame(() => {
-                ta.focus();
-                ta.selectionStart = ta.selectionEnd = start + emoji.length;
-            });
-            return newValue;
-        });
-    }
 
     useEffect(() => {
         if (!red) return;
@@ -114,35 +93,34 @@ export default function AccPosts({ posts, habits, isMy, refetch }: { posts: Post
         adjustHeight();
     }, [red, newText]);
 
+    const like = async (id: number) => {
+        try {
+            const res = await api.post("/like", { id });
+            if (res.data.success) {
+                setPosts(prev =>
+                    prev?.map(p =>
+                        p.id === id
+                            ? {
+                                ...p,
+                                likes: res.data.liked
+                                    ? [...p.likes, user.id]
+                                    : p.likes.filter((uid) => uid !== user.id),
+                            }
+                            : p
+                    )
+                );
+            }
+        } catch (e) {
+            console.error("Ошибка при лайке:", e);
+        }
+    };
+
     return (
         <div className="accPosts">
-            {showEmojiBar && (
-                <div
-                    className="emojiBar apEmojiBar"
-                    ref={emojiBarRef}
-                    style={{ top: emojiPos.top, left: emojiPos.left }}
-                >
-                    {EmojiesGroups.map((g, i) => (
-                        <div className="emojiGroup" key={i}>
-                            <div className="emojiGroupName">{g.value}</div>
-                            <div className="emojiList">
-                                {Emojies.filter(e => e.group === g.group).map((e, j) => (
-                                    <div
-                                        className="emoji"
-                                        key={j}
-                                        onClick={() => handleAddEmoji(e.pic)}
-                                    >
-                                        {e.pic}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-            {posts.map((post) => {
+            <EmojiBar setText={setNewText} cn={"apEmojiBar"} setShowEmojiBar={setShowEmojiBar} showEmojiBar={showEmojiBar} taRef={taRef} emojiPos={emojiPos}/>
+            {posts?.map((post) => {
                 let likesCount = 0;
-                let like = false;
+                const isLiked = post.likes?.includes(user.id!);
                 if (post.likes) likesCount = post.likes.length;
                 let habit = null;
                 if (post.habit_id) habit = habits?.find(h => h.id === post.habit_id);
@@ -168,120 +146,16 @@ export default function AccPosts({ posts, habits, isMy, refetch }: { posts: Post
                                 onChange={(e) => setNewText(e.target.value)}
                             ></textarea>
                         )}
-                        {red !== post.id && (
-                            <div className="accPostmedia">
-                                {post.media && post.media.length > 0 && (
-                                    <div className="postMediaGrid">
-                                        {post.media.map((file, j) => {
-                                            const isImage = file.type.startsWith("image/");
-                                            const isVideo = file.type.startsWith("video/");
-                                            return (
-                                                <div key={j} className="postFileGrid">
-                                                    {isImage ? (
-                                                        <img
-                                                            src={file.url}
-                                                            alt={file.name}
-                                                            className="postFilePreview"
-                                                            onClick={() => setBlackout({ seted: true, module: "ImgPrev", img: file.url })}
-                                                        />
-                                                    ) : isVideo ? (
-                                                        <video src={file.url} className="postFilePreview" controls />
-                                                    ) : (
-                                                        <a href={file.url} download={file.name} className="postFileOther">
-                                                            {GetIconByType(file.name, file.type)}
-                                                            <span className="postFileName">{file.name}</span>
-                                                        </a>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                        {red === post.id && (
-                            <div className="accPostmedia">
-                                {(keptMedia.length > 0 || newFiles.length > 0) && (
-                                <div className="postMediaGrid">
-                                    {keptMedia.map((file, j) => {
-                                        const isImage = file.type.startsWith("image/");
-                                        const isVideo = file.type.startsWith("video/");
-                                        return (
-                                            <div key={`kept-${j}`} className="postFileGrid">
-                                            <div
-                                                className="chatTAFileOverlay"
-                                                onClick={() => setKeptMedia((prev) => prev.filter((_, idx) => idx !== j))}
-                                            >
-                                                <X />
-                                            </div>
-                                            {isImage ? (
-                                                <img
-                                                    src={file.url}
-                                                    alt={file.name}
-                                                    className="postFilePreview"
-                                                    onClick={() => setBlackout({ seted: true, module: "ImgPrev", img: file.url })}
-                                                />
-                                            ) : isVideo ? (
-                                                <video src={file.url} className="postFilePreview" controls />
-                                            ) : (
-                                                <div className="postFileOther">
-                                                    {GetIconByType(file.name, file.type)}
-                                                    <span className="postFileName">{file.name}</span>
-                                                </div>
-                                            )}
-                                            </div>
-                                        );
-                                    })}
-                                    {newFiles.map((file, i) => {
-                                        const previewUrl = URL.createObjectURL(file);
-                                        const isImage = file.type.startsWith("image/");
-                                        const isVideo = file.type.startsWith("video/");
-                                        return (
-                                            <div key={`new-${i}`} className="postFileGrid">
-                                                <div
-                                                    className="chatTAFileOverlay"
-                                                    onClick={() => setNewFiles((prev) => prev.filter((_, idx) => idx !== i))}
-                                                >
-                                                    <X />
-                                                </div>
-                                                {isImage ? (
-                                                    <img src={previewUrl} alt={file.name} className="postFilePreview" />
-                                                ) : isVideo ? (
-                                                    <video src={previewUrl} className="postFilePreview" controls />
-                                                ) : (
-                                                    <div className="postFileOther">
-                                                        {GetIconByType(file.name, file.type)}
-                                                        <span className="postFileName">{file.name}</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                                )}
-                                <input
-                                type="file"
-                                multiple
-                                style={{ display: "none" }}
-                                ref={inputFileRef}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                    const files = e.target.files;
-                                    if (!files) return;
-                                    setNewFiles((prev) => [...prev, ...Array.from(files)]);
-                                }}
-                                />
-                            </div>
-                        )}
+                        <AccPostMedia red={red === post.id} media={post.media} keptMedia={keptMedia} newFiles={newFiles} setKeptMedia={setKeptMedia} setNewFiles={setNewFiles} inputFileRef={inputFileRef}/>
                         <div className="accPostBottom">
                             <div className="accPostInteract">
                                 <div
                                     className="accPostLikes"
                                     onClick={() => {
-                                        likesCount += 1;
-                                        like = !like;
+                                        like(post.id)
                                     }}
                                 >
-                                {like ? <Heart weight="fill" color="#d60000" /> : <Heart />}
+                                {isLiked ? <Heart weight="fill" color="#d60000" /> : <Heart />}
                                 <span>{likesCount}</span>
                                 </div>
                                     <div className="accPostComment">
@@ -316,8 +190,11 @@ export default function AccPosts({ posts, habits, isMy, refetch }: { posts: Post
                                         >
                                             {red === post.id ? <Check /> : <PencilSimple />}
                                         </div>
-                                            <div className="accPostButt">
-                                            <Trash /> {/* Здесь можно добавить onClick для удаления поста, если нужно */}
+                                        <div className="accPostButt" onClick={() => {
+                                            setDeleteConfirm({goal:"post", id:post.id, name: post.text.length > 10 ? post.text.slice(0, 15) + "…" : post.text})
+                                            setBlackout({seted:true, module:"Delete"})
+                                        }}>
+                                            <Trash />
                                         </div>
                                     </div>
                                 )}

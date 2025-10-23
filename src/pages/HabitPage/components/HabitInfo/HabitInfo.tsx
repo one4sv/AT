@@ -24,7 +24,7 @@ export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
         setNewStartTime, setNewEndTime, setNewTag, setPin, isUpdating
     } = useUpHabit();
     const { setBlackout } = useBlackout();
-    const { setDeleteConfurm } = useDelete()
+    const { setDeleteConfirm } = useDelete()
 
     const [ name, setName ] = useState<string>("");
     const [ desc, setDesc ] = useState<string | undefined>("");
@@ -131,7 +131,7 @@ export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
                             {pinned || habit.pinned ? <PinOff className="pinHabit" /> : <Pin className="pinHabit" />}
                         </div>
                         <div onClick={() => {
-                            setDeleteConfurm({goal:"habit", id:habit.id, name:habit.name})
+                            setDeleteConfirm({goal:"habit", id:habit.id, name:habit.name})
                             setBlackout({seted:true, module:"Delete"})}}
                         >
                             <Trash2 className="delHabit" />

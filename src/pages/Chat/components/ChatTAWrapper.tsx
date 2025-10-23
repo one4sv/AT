@@ -1,10 +1,10 @@
 import { Paperclip, SmileySticker, X } from "@phosphor-icons/react";
 import { SendHorizontal } from "lucide-react";
-import { Emojies, EmojiesGroups } from "../utils/emojies";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { useChat } from "../../../components/hooks/ChatHook";
 import GetIconByType from "../utils/getIconByType";
+import EmojiBar from "../../../components/ts/utils/emojiBar";
 
 export function ChatTAWrapper() {
     const { sendMess, handleTyping } = useChat()
@@ -13,26 +13,9 @@ export function ChatTAWrapper() {
     const [ files, setFiles ] = useState<File[]>([]) 
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false) 
     
-    const emojiBarRef = useRef<HTMLDivElement | null>(null);
     const inputFileRef = useRef<HTMLInputElement>(null)
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
 
-    const handleAddEmoji = (emoji:string) => {
-        const ta = textAreaRef.current;
-        if (!ta) return;
-
-        const start = ta.selectionStart;
-        const end = ta.selectionEnd;
-
-        setMess(prev => {
-            const newValue = prev.slice(0, start) + emoji + prev.slice(end);
-            requestAnimationFrame(() => {
-                ta.focus();
-                ta.selectionStart = ta.selectionEnd = start + emoji.length;
-            });
-            return newValue;
-        });
-    }
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter") {
             if (e.ctrlKey) {
@@ -61,7 +44,6 @@ export function ChatTAWrapper() {
         const newHeight = ta.scrollHeight;
         ta.style.height = newHeight + "px";
 
-        // 👇 если больше 50vh — включаем прокрутку
         if (newHeight > window.innerHeight * 0.5) {
             ta.style.overflowY = "auto";
         } else {
@@ -69,24 +51,9 @@ export function ChatTAWrapper() {
         }
     }, [mess]);
 
-
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (
-            emojiBarRef.current &&
-            !emojiBarRef.current.contains(e.target as Node) &&
-            showEmojiBar
-            ) {
-            setShowEmojiBar(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [showEmojiBar]);
-
     return (
         <div className="chatTAWrapper">
+            <EmojiBar setText={setMess} setShowEmojiBar={setShowEmojiBar} taRef={textAreaRef} showEmojiBar={showEmojiBar}/>
             {files.length > 0 && (
                 <div className="chatTAFiles">
                     {files.map((file, i) => {
@@ -113,26 +80,6 @@ export function ChatTAWrapper() {
                             </div>
                         );
                     })}
-                </div>
-            )}
-            {showEmojiBar && (
-                <div className="emojiBar" ref={emojiBarRef}>
-                    {EmojiesGroups.map((g, i) => (
-                        <div className="emojiGroup" key={i}>
-                            <div className="emojiGroupName">{g.value}</div>
-                            <div className="emojiList">
-                                {Emojies.filter(e => e.group === g.group).map((e, j) => (
-                                    <div
-                                        className="emoji"
-                                        key={j}
-                                        onClick={() => handleAddEmoji(e.pic)}
-                                    >
-                                        {e.pic}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
                 </div>
             )}
             <textarea

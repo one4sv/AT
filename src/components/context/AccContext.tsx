@@ -1,0 +1,68 @@
+import { createContext, useCallback, useState, type Dispatch, type SetStateAction } from "react";
+import { type ReactNode } from "react"
+import { api } from "../ts/api";
+import { useNote } from "../hooks/NoteHook";
+import type { PrivateSettings } from "./SettingsContext";
+import type { Media } from "./ChatContext";
+import type { User } from "./UserContext";
+import type { Habit } from "./HabitsContext";
+
+const AccContext = createContext<AccContextType | null>(null);
+
+export type Post = {
+    id:number,
+    user_id:string,
+    media?:Media[];
+    habit_id?:number,
+    text:string,
+    likes:(string | null)[],
+    created_at: string
+}
+export interface AccContextType {
+    refetchAcc:(contactId:string) => Promise<void>
+    acc:User | undefined,
+    habits:Habit[] | undefined,
+    loading:boolean,
+    posts:Post[] | undefined,
+    setPosts:Dispatch<SetStateAction<Post[]>>
+    media:Media[] | undefined,
+    privateRules: PrivateSettings,
+
+}
+export const AccProvider = ({children} : {children : ReactNode}) => {
+    const { showNotification } = useNote();
+    const [ acc, setAcc ] = useState<User>();
+    const [ habits, setHabits ] = useState<Habit[]>();
+    const [ loading, setLoading ] = useState<boolean>(true);
+    const [ posts, setPosts ] = useState<Post[]>([])
+    const [ media, setMedia ]  = useState<Media[]>([])
+    const [privateRules, setPrivateRules] = useState<PrivateSettings>({ number: "", mail: "", habits: "", posts: "" });
+    const API_URL = import.meta.env.VITE_API_URL
+
+    const refetchAcc = useCallback(async (contactId:string) => {
+        if (!contactId) return;
+        setLoading(true);
+        try {
+            const res = await api.get(`${API_URL}acc/${contactId}`);
+            if (res.data.success) {
+                setAcc(res.data.acc);
+                setHabits(res.data.habits);
+                setPrivateRules(res.data.privateRules);
+                setPosts(res.data.posts)
+                setMedia(res.data.media)
+            }
+        } catch {
+            showNotification("error", "Не удалось найти пользователя");
+        } finally {
+            setLoading(false);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [API_URL]);
+    return(
+        <AccContext.Provider value={{refetchAcc, acc, habits, loading, posts, media, privateRules, setPosts}}>
+            {children}
+        </AccContext.Provider>
+    )
+}
+
+export default AccContext;

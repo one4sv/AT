@@ -9,12 +9,12 @@ export interface Delete {
 }
 export interface DeleteContextType {
     deleteConfirm:Delete,
-    setDeleteConfurm:React.Dispatch<React.SetStateAction<Delete>>
+    setDeleteConfirm:React.Dispatch<React.SetStateAction<Delete>>
 }
 export const DeleteProvider = ({children} : {children : ReactNode}) => {
-    const [ deleteConfirm, setDeleteConfurm ] = useState<Delete>({ goal:"", id:0,name:"" })
+    const [ deleteConfirm, setDeleteConfirm ] = useState<Delete>({ goal:"", id:0,name:"" })
     return(
-        <DeleteContext.Provider value={{deleteConfirm, setDeleteConfurm}}>
+        <DeleteContext.Provider value={{deleteConfirm, setDeleteConfirm}}>
             {children}
         </DeleteContext.Provider>
     )

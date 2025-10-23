@@ -15,7 +15,6 @@
         background-color: var(--menuButtHover);
         border: 1px solid var(--tc);
     }
-    /* защита от выхода содержимого за пределы карточки */
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -99,6 +98,7 @@
         /* разрешаем гибко занимать доступное место и обрезать длинный текст */
         flex: 1 1 auto;
         min-width: 0;
+        max-width: 12vw;
         white-space: nowrap;        // не переносим на новую строку
         overflow: hidden;           // скрываем лишнее
         text-overflow: ellipsis;    // показываем "..."
