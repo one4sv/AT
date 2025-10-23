@@ -7,7 +7,7 @@ import { SendHorizontal } from "lucide-react"
 import { useNote } from "../../../components/hooks/NoteHook"
 import GetIconByType from "../../Chat/utils/getIconByType"
 import { api } from "../../../components/ts/api"
-import EmojiBar from "../../../components/ts/utils/emojiBar"
+import EmojiBar from "../../../components/ts/utils/EmojiBar"
 
 export default function PostWrite() {
     const { habits } = useHabits()

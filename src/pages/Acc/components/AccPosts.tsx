@@ -9,7 +9,7 @@ import Linkify from "linkify-react";
 import formatCreated from "../utils/formatCreated";
 import { useEffect, useRef, useState } from "react";
 import { api } from "../../../components/ts/api";
-import EmojiBar from "../../../components/ts/utils/emojiBar";
+import EmojiBar from "../../../components/ts/utils/EmojiBar";
 import AccPostMedia from "../utils/AccPostMedia";
 import { useDelete } from "../../../components/hooks/DeleteHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { useChat } from "../../../components/hooks/ChatHook";
 import GetIconByType from "../utils/getIconByType";
-import EmojiBar from "../../../components/ts/utils/emojiBar";
+import EmojiBar from "../../../components/ts/utils/EmojiBar";
 
 export function ChatTAWrapper() {
     const { sendMess, handleTyping } = useChat()
