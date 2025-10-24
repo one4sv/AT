@@ -9,22 +9,24 @@ import type { Habit } from "./HabitsContext";
 
 const AccContext = createContext<AccContextType | null>(null);
 
-export type Post = {
+export type PostType = {
     id:number,
-    user_id:string,
+    user:User,
     media?:Media[];
-    habit_id?:number,
+    habit?:Habit,
     text:string,
     likes:(string | null)[],
-    created_at: string
+    created_at: string,
+    comments_count:number
 }
 export interface AccContextType {
     refetchAcc:(contactId:string) => Promise<void>
+    refetchPosts:(contactId:string) => Promise<void>
     acc:User | undefined,
     habits:Habit[] | undefined,
     loading:boolean,
-    posts:Post[] | undefined,
-    setPosts:Dispatch<SetStateAction<Post[]>>
+    posts:PostType[] | undefined,
+    setPosts:Dispatch<SetStateAction<PostType[]>>
     media:Media[] | undefined,
     privateRules: PrivateSettings,
 
@@ -34,7 +36,7 @@ export const AccProvider = ({children} : {children : ReactNode}) => {
     const [ acc, setAcc ] = useState<User>();
     const [ habits, setHabits ] = useState<Habit[]>();
     const [ loading, setLoading ] = useState<boolean>(true);
-    const [ posts, setPosts ] = useState<Post[]>([])
+    const [ posts, setPosts ] = useState<PostType[]>([])
     const [ media, setMedia ]  = useState<Media[]>([])
     const [privateRules, setPrivateRules] = useState<PrivateSettings>({ number: "", mail: "", habits: "", posts: "" });
     const API_URL = import.meta.env.VITE_API_URL
@@ -48,7 +50,6 @@ export const AccProvider = ({children} : {children : ReactNode}) => {
                 setAcc(res.data.acc);
                 setHabits(res.data.habits);
                 setPrivateRules(res.data.privateRules);
-                setPosts(res.data.posts)
                 setMedia(res.data.media)
             }
         } catch {
@@ -58,8 +59,24 @@ export const AccProvider = ({children} : {children : ReactNode}) => {
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [API_URL]);
+    
+    const refetchPosts = useCallback(async (contactId:string) => {
+        if (!contactId) return;
+        setLoading(true);
+        try {
+            const res = await api.get(`${API_URL}posts/${contactId}`);
+            if (res.data.success) {
+                setPosts(res.data.posts)
+            }
+        } catch {
+            showNotification("error", "Не удалось найти посты");
+        } finally {
+            setLoading(false);
+        }
+    }, [API_URL, showNotification])
+    
     return(
-        <AccContext.Provider value={{refetchAcc, acc, habits, loading, posts, media, privateRules, setPosts}}>
+        <AccContext.Provider value={{refetchAcc, acc, habits, loading, posts, media, privateRules, setPosts, refetchPosts}}>
             {children}
         </AccContext.Provider>
     )

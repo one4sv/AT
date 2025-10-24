@@ -13,7 +13,7 @@ import { useAcc } from "../../components/hooks/AccHook";
 
 export default function Acc() {
     const { user } = useUser();
-    const { refetchAcc, loading, media, posts, habits, acc, privateRules } = useAcc()
+    const { refetchAcc, loading, media, posts, habits, acc, privateRules, refetchPosts } = useAcc()
     const { newBio, setNewBio, newMail, setNewMail } = useUpUser();
     const { contactId } = useParams();
     const navigate = useNavigate();
@@ -34,12 +34,12 @@ export default function Acc() {
             navigate(`/acc/${user.id}`, { replace: true });
             return;
         }
-
         refetchAcc(contactId);
+        refetchPosts(contactId)
         const my = contactId === user.id;
         setIsMyAcc(my);
         if (my) setSelector("habits");
-    }, [contactId, user?.id, refetchAcc, navigate]);
+    }, [contactId, user.id, refetchAcc, navigate, refetchPosts]);
 
 
     if (loading) return <Loader />;

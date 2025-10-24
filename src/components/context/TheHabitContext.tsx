@@ -1,12 +1,13 @@
-import axios from "axios";
 import { createContext, useCallback, useState } from "react";
 import { type ReactNode } from "react"
 import type { Habit } from "./HabitsContext";
 import { useNote } from "../hooks/NoteHook";
+import { api } from "../ts/api";
 const TheHabitContext = createContext<TheHabitContextType | null>(null);
 
 export interface TheHabitContextType {
     loadHabit:(id:string | null) => void;
+    findHabit:(id:string | null) => void
     loadingHabit:boolean;
     habit:Habit | undefined;
     isReadOnly:boolean;
@@ -18,15 +19,19 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const API_URL = import.meta.env.VITE_API_URL
 
     const [ loadingHabit, setLoadingHabit ] = useState(false)
-    const [habit, setHabit] = useState<Habit>();
-    const [isReadOnly, setIsReadOnly] = useState(false);
-    const [isDone, setIsDone] = useState(false);
+    const [ habit, setHabit ] = useState<Habit>();
+    const [ isReadOnly, setIsReadOnly ] = useState(false);
+    const [ isDone, setIsDone ] = useState(false);
     const [ dayComment, setDayComment ] = useState<string>("")
+
+    const findHabit = async(id:string | null) => {
+        return api.get(`${API_URL}habits/${id}`);
+    }
 
     const loadHabit = useCallback(async (id: string | null) => {
         setLoadingHabit(true);
         try {
-            const res = await axios.get(`${API_URL}habits/${id}`, { withCredentials: true });
+            const res = await findHabit(id)
             const { success, habit, isRead, isDone, comment } = res.data
             if (success) {
                 setHabit(habit);
@@ -42,7 +47,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     }, [showNotification]);
     
     return(
-        <TheHabitContext.Provider value={{loadHabit, loadingHabit, habit, isReadOnly, isDone, dayComment}}>
+        <TheHabitContext.Provider value={{loadHabit, loadingHabit, habit, isReadOnly, isDone, dayComment, findHabit}}>
             {children}
         </TheHabitContext.Provider>
     )

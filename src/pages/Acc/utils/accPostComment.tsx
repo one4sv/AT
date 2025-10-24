@@ -3,7 +3,6 @@ import EmojiBar from "../../../components/ts/utils/EmojiBar";
 import { Paperclip, SmileySticker, UserCircle } from "@phosphor-icons/react";
 import { SendHorizontal } from "lucide-react";
 import { api } from "../../../components/ts/api";
-import { useAcc } from "../../../components/hooks/AccHook";
 import { useNavigate } from "react-router";
 import MinLoader from "../../../components/ts/MinLoader";
 import type { Media } from "../../../components/context/ChatContext";
@@ -11,6 +10,7 @@ import CommentTAFiles from "./CommentTAFiles";
 import type { User } from "../../../components/context/UserContext";
 import formatCreated from "./formatCreated";
 import AccPostMedia from "./AccPostMedia";
+import { useUser } from "../../../components/hooks/UserHook";
 
 interface Comments {
     id:number,
@@ -22,8 +22,8 @@ interface Comments {
 }
 export default function AccPostComment({id}:{id:number}) {
     const navigate = useNavigate()
+    const { user } = useUser()
     const [ comment, setComment] = useState("");
-    const { acc, refetchAcc } = useAcc()
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false)
     const [ emojiPos, setEmojiPos ] = useState<{top: number, left: number}>({top: 0, left: 0});
     const [ files, setFiles ] = useState<File[]>([])
@@ -64,21 +64,61 @@ export default function AccPostComment({id}:{id:number}) {
         setShowEmojiBar(prev => !prev);
     };
 
-    const sendComment = async() => {
-        const formData = new FormData();
-        formData.append("text", comment);
-        formData.append("id", String(id));
-        formData.append("goal", "post");
-        files.forEach((file) => formData.append("media", file));
+    const sendComment = async () => {
+        if (!comment.trim() && files.length === 0 && user.id === null) return;
 
-        const res = await api.post("/sendcomment", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        });
-        if (res.data.success && acc && acc.id) {
-            refetchAcc(acc.id)
-            navigate(`/acc/${acc.id}`)
+        const tempComment: Comments = {
+            id: Date.now(),
+            post_id: id,
+            text: comment,
+            files: [],
+            user: user,
+            created_at: new Date().toISOString(),
+        };
+
+        // добавляем временно в список
+        setComments((prev) => prev ? [tempComment, ...prev] : [tempComment]);
+
+        // очищаем инпуты
+        setComment("");
+        setFiles([]);
+
+        try {
+            const formData = new FormData();
+            formData.append("text", tempComment.text);
+            formData.append("id", String(id));
+            formData.append("goal", "post");
+            files.forEach((file) => formData.append("media", file));
+
+            const res = await api.post("/sendcomment", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            if (res.data.success && res.data.comment) {
+                // заменяем временный комментарий на настоящий (с id от сервера)
+                setComments((prev) =>
+                    prev
+                        ? prev.map((c) =>
+                            c.id === tempComment.id ? res.data.comment : c
+                        )
+                        : [res.data.comment]
+                );
+            } else {
+                // если сервер не вернул успех — откатываем
+                setComments((prev) =>
+                    prev ? prev.filter((c) => c.id !== tempComment.id) : prev
+                );
+            }
+        } catch (err) {
+            console.error(err);
+            // если ошибка — удаляем временный комментарий
+            setComments((prev) =>
+                prev ? prev.filter((c) => c.id !== tempComment.id) : prev
+            );
         }
-    }
+    };
+
+
 
     const getComms = async() => {
         setLoadingComms(true)
@@ -133,15 +173,15 @@ export default function AccPostComment({id}:{id:number}) {
                     return (
                         <div className="comment" key={c.id}>
                             <div className="commentInfo">
-                                <div className="commentUser" onClick={() => navigate(`/acc/${user.id}`)}>
+                                <div className="commentUser" onClick={() => navigate(`/acc/${user?.id}`)}>
                                     <div className="commentAvatar">
-                                        {user.avatar_url ? (
+                                        {user?.avatar_url ? (
                                             <img src={user.avatar_url}/>
                                         ) : (
                                             <UserCircle />
                                         )}
                                     </div>
-                                    {c.user.username || c.user.nick}
+                                    {user?.username || user?.nick}
                                 </div>
                                 <div className="commentDate">
                                     {formatCreated(c.created_at)}
