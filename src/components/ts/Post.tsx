@@ -181,8 +181,8 @@ export default function Post({ post, isMy }: PostProps) {
         <div className="PostDiv" onMouseEnter={() => isMy && setHover(true)} onMouseLeave={() => setHover(false)}>
             <div className="Post">
                 {!location.pathname.includes("/acc") && (
-                    <div className="commentUser" onClick={() => navigate(`/acc/${post.user.id}`)}>
-                        <div className="commentAvatar">
+                    <div className="postUser" onClick={() => navigate(`/acc/${post.user.id}`)}>
+                        <div className="postAvatar">
                             {post.user.avatar_url ? (
                                 <img src={post.user.avatar_url}/>
                             ) : (

@@ -21,6 +21,7 @@
     background-color: var(--acsent);
     border-radius: 6px;
     cursor: pointer;
+    margin-top: 0.6vh;
     height: 3vh;
     padding: 0 0.2vw 0 ;
     position: relative;
@@ -171,5 +172,27 @@
     &:hover .chatTAFileOverlay {
         opacity: 1;
         margin: 0;
+    }
+}
+.postUser {
+    display: flex;
+    align-items: center;
+    gap: 0.3vw;
+    cursor: pointer;
+    width: fit-content;
+    margin-bottom: 0.6vh;
+    color: var(--tc);
+    &:hover {
+        text-decoration: underline;
+    }
+}
+.postAvatar {
+    height: 3vh;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    overflow: hidden;
+    >img {
+        height: 100%;
+        aspect-ratio: 1/1;
     }
 }
