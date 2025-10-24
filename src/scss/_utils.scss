@@ -198,3 +198,11 @@
         }
     }
 }
+@mixin TA($w, $h, $bg, $c) {
+  resize: none;
+  font-family: $font;
+  color: $c;
+  width: $w;
+  height: $h;
+  background-color: $bg;
+}

@@ -15,6 +15,7 @@ import { useDelete } from "../../../components/hooks/DeleteHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useUser } from "../../../components/hooks/UserHook";
 import { useAcc } from "../../../components/hooks/AccHook";
+import AccPostComment from "../utils/accPostComment";
 
 interface AccPostsProps {
     posts: Post[] | undefined,
@@ -38,6 +39,7 @@ export default function AccPosts({ posts, habits, isMy, refetch }: AccPostsProps
     const [ newFiles, setNewFiles ] = useState<File[]>([]);
     const [ emojiPos, setEmojiPos ] = useState<{top: number, left: number}>({top: 0, left: 0});
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false)
+    const [ showComment, setShowComment ] = useState<number[]>([])
     const taRef = useRef<HTMLTextAreaElement>(null);
     const inputFileRef = useRef<HTMLInputElement>(null);
 
@@ -125,82 +127,95 @@ export default function AccPosts({ posts, habits, isMy, refetch }: AccPostsProps
                 let habit = null;
                 if (post.habit_id) habit = habits?.find(h => h.id === post.habit_id);
                 return (
-                    <div className="accPost" key={post.id} onMouseEnter={() => isMy && setHover(post.id)} onMouseLeave={() => setHover(0)}>
-                        {habit && (
-                            <div className="accPostHabit" onClick={() => navigate(`/habit/${habit.id}`)}>
-                                <div className="aphIcon">{habitIcon(habit)}</div>
-                                <div className="aphName">{habit.name}</div>
-                                <ChevronRight className="aphGo" />
-                            </div>
-                        )}
-                        {red !== post.id && (
-                            <div className="accPostText">
-                                <Linkify>{post.text}</Linkify>
-                            </div>
-                        )}
-                        {red === post.id && (
-                            <textarea
-                                ref={taRef}
-                                value={newText}
-                                className="accPostText"
-                                onChange={(e) => setNewText(e.target.value)}
-                            ></textarea>
-                        )}
-                        <AccPostMedia red={red === post.id} media={post.media} keptMedia={keptMedia} newFiles={newFiles} setKeptMedia={setKeptMedia} setNewFiles={setNewFiles} inputFileRef={inputFileRef}/>
-                        <div className="accPostBottom">
-                            <div className="accPostInteract">
-                                <div
-                                    className="accPostLikes"
-                                    onClick={() => {
-                                        like(post.id)
-                                    }}
-                                >
-                                {isLiked ? <Heart weight="fill" color="#d60000" /> : <Heart />}
-                                <span>{likesCount}</span>
+                    <div className="accPostDiv" key={post.id} onMouseEnter={() => isMy && setHover(post.id)} onMouseLeave={() => setHover(0)}>
+                        <div className="accPost">
+                            {habit && (
+                                <div className="accPostHabit" onClick={() => navigate(`/habit/${habit.id}`)}>
+                                    <div className="aphIcon">{habitIcon(habit)}</div>
+                                    <div className="aphName">{habit.name}</div>
+                                    <ChevronRight className="aphGo" />
                                 </div>
-                                    <div className="accPostComment">
-                                    <ChatCircle />
+                            )}
+                            {red !== post.id && (
+                                <div className="accPostText">
+                                    <Linkify>{post.text}</Linkify>
                                 </div>
-                            </div>
-                            <div className="accPostDate">
-                                {hover === post.id && (
-                                    <div className="accPostButts">
-                                        {red === post.id && (
-                                            <>
-                                                <div className="accPostButt" onClick={() => handleToggleEmojiBar()}>
-                                                    <SmileySticker className="pwSvg"/>
-                                                </div>
-                                                <div className="accPostButt" onClick={() => inputFileRef.current?.click()}>
-                                                    <Paperclip className="pwSvg" />
-                                                </div>
-                                            </>
-                                        )}
-                                        <div
-                                            className="accPostButt"
-                                            onClick={() => {
-                                                if (red === post.id) {
-                                                upPost();
-                                                } else {
-                                                setRed(post.id);
-                                                setNewText(post.text);
-                                                setKeptMedia(post.media || []);
-                                                setNewFiles([]);
-                                                }
-                                            }}
-                                        >
-                                            {red === post.id ? <Check /> : <PencilSimple />}
-                                        </div>
-                                        <div className="accPostButt" onClick={() => {
-                                            setDeleteConfirm({goal:"post", id:post.id, name: post.text.length > 10 ? post.text.slice(0, 15) + "…" : post.text})
-                                            setBlackout({seted:true, module:"Delete"})
-                                        }}>
-                                            <Trash />
-                                        </div>
+                            )}
+                            {red === post.id && (
+                                <textarea
+                                    ref={taRef}
+                                    value={newText}
+                                    className="accPostText"
+                                    onChange={(e) => setNewText(e.target.value)}
+                                ></textarea>
+                            )}
+                            <AccPostMedia red={red === post.id} media={post.media} keptMedia={keptMedia} newFiles={newFiles} setKeptMedia={setKeptMedia} setNewFiles={setNewFiles} inputFileRef={inputFileRef}/>
+                            <div className="accPostBottom">
+                                <div className="accPostInteract">
+                                    <div
+                                        className="accPostLikes"
+                                        onClick={() => {
+                                            like(post.id)
+                                        }}
+                                    >
+                                    {isLiked ? <Heart weight="fill" color="#d60000" /> : <Heart />}
+                                    <span>{likesCount}</span>
                                     </div>
-                                )}
-                                <span>{formatCreated(post.created_at)}</span>
+                                    <div className="accPostComment"
+                                        onClick={() =>
+                                            setShowComment((prev) =>
+                                            prev.includes(post.id)
+                                                ? prev.filter((id) => id !== post.id)
+                                                : [...prev, post.id]
+                                            )
+                                        }
+                                    >
+                                        <ChatCircle />
+                                    </div>
+                                </div>
+                                <div className="accPostDate">
+                                    {hover === post.id && (
+                                        <div className="accPostButts">
+                                            {red === post.id && (
+                                                <>
+                                                    <div className="accPostButt" onClick={() => handleToggleEmojiBar()}>
+                                                        <SmileySticker className="pwSvg"/>
+                                                    </div>
+                                                    <div className="accPostButt" onClick={() => inputFileRef.current?.click()}>
+                                                        <Paperclip className="pwSvg" />
+                                                    </div>
+                                                </>
+                                            )}
+                                            <div
+                                                className="accPostButt"
+                                                onClick={() => {
+                                                    if (red === post.id) {
+                                                    upPost();
+                                                    } else {
+                                                    setRed(post.id);
+                                                    setNewText(post.text);
+                                                    setKeptMedia(post.media || []);
+                                                    setNewFiles([]);
+                                                    }
+                                                }}
+                                            >
+                                                {red === post.id ? <Check /> : <PencilSimple />}
+                                            </div>
+                                            <div className="accPostButt" onClick={() => {
+                                                setDeleteConfirm({goal:"post", id:post.id, name: post.text.length > 10 ? post.text.slice(0, 15) + "…" : post.text})
+                                                setBlackout({seted:true, module:"Delete"})
+                                            }}>
+                                                <Trash />
+                                            </div>
+                                        </div>
+                                    )}
+                                    <span>{formatCreated(post.created_at)}</span>
+                                </div>
                             </div>
                         </div>
+                        {showComment.includes(post.id) && (
+                            <AccPostComment id={post.id}/>
+                        )}
                     </div>
                 );
             })}

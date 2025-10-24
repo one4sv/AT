@@ -31,7 +31,6 @@ export default function Acc() {
         if (!user?.id) return; // ждём загрузки user
 
         if (!contactId) {
-            // если путь /acc без параметра — редирект на свой профиль
             navigate(`/acc/${user.id}`, { replace: true });
             return;
         }

@@ -10,6 +10,11 @@
     scrollbar-width: thin;
     position: relative;
 }
+.accPostDiv {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vh;
+}
 .accPost {
     background-color: var(--mc);
     border-radius: 12px;
@@ -71,11 +76,6 @@
 }
 .accPostDate {
     color: var(--borderHabit);
-    display: flex;
-    align-items: center;
-    height: 100%;
-}
-.accPostButts {
     display: flex;
     align-items: center;
     height: 100%;

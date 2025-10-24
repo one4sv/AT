@@ -1,0 +1,106 @@
+@use "../../../scss/global" as var;
+
+.AccPostComments {
+    width: 100%;
+    position: relative;
+}
+.AccPostCommentWrite {
+    margin: 0 auto;
+    width: 99%;
+    background-color: var(--mc);
+    border-radius: 6px;
+    position: relative;
+}
+.AccPostCommentTA {
+    @include var.TA(100%, 6vh, var(--tr), var(--tc));
+    font-size: 14px;
+    border-radius: 6px;
+    padding-inline: 0.3vw;
+}
+.sendCommentTAButt {
+    position: absolute;
+    right: 0.2vw;
+    cursor: pointer;
+    border-radius: 50%;
+    top: 0.5vh;
+    height: 3vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1/1;
+    font-size: 24px;
+    >svg {
+        height: 60%;
+        width: 60%;
+    }
+    &:hover {
+        background-color: var(--acsent);
+    }
+}
+.AccPostCommentBar {
+    display: flex;   
+    padding: 0.2vh 0.2vw;
+    width: 100%;
+}
+.apcbSvg {
+    height: 20px;
+    width: 20px;
+}
+.commentLoad {
+    position: absolute;
+    right: 0.2vw;
+    height: 3vh;
+    aspect-ratio: 1/1;
+    padding: 0.2vh 0.2vw;
+    display: flex;
+    justify-content: center;
+}
+.comments {
+    width: 99%;
+    margin: 0 auto;
+}
+.comment {
+    padding: 0.8vh 0.4vw;
+    background-color: var(--mc);
+    border-radius: 6px;
+    width: 100%;
+    margin: 0.3vh auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2vh;
+}
+.commentInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.commentUser {
+    display: flex;
+    align-items: center;
+    gap: 0.3vw;
+    color: var(--borderHabit);
+    cursor: pointer;
+    width: fit-content;
+    &:hover {
+        text-decoration: underline;
+        color: var(--tc);
+    }
+}
+.commentAvatar {
+    height: 3vh;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    overflow: hidden;
+    >img {
+        height: 100%;
+        aspect-ratio: 1/1;
+    }
+}
+.commentDate {
+    color: var(--borderHabit);
+    width: fit-content;
+    font-size: 14px;
+}
+.commentText {
+
+}
