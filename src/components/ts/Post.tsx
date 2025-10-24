@@ -207,7 +207,7 @@ export default function Post({ post, isMy }: PostProps) {
                     </div>
                 )}
                 {post.habit && (
-                    <div className="PostHabit" onClick={() => navigate(`/habit/${post.habit}`)}>
+                    <div className="PostHabit" onClick={() => navigate(`/habit/${post.habit?.id}`)}>
                         <div className="aphIcon">{habitIcon(post.habit)}</div>
                         <div className="aphName">{post.habit.name}</div>
                         <ChevronRight className="aphGo" />
