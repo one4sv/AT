@@ -25,9 +25,8 @@ export default function Diagrams() {
             // 1. привычка + выбран день
             console.log("привычка + выбран день")
         } else {
-            // 2. привычка + день не выбран
+            // 2. привычка every day+ день не выбран
             if (habit?.periodicity !== "weekly") {
-                // const startDate = new Date(year, month, 1)
                 const endDate = new Date(year, month + 1, 0)
                 const daysInMonth = Array.from({ length: endDate.getDate() }, (_, i) =>
                     new Date(year, month, i + 1).toISOString().slice(0, 10)
@@ -42,7 +41,7 @@ export default function Diagrams() {
                 const procent = daysInMonth.length > 0 ? (completed / daysInMonth.length) * 100 : 0
                 Diagram.push({ procent, label: "Выполнено", color: "comp" })
             } else {
-                return
+                console.log("привычка weekly + выбран день")
             }
         }
     } else {
