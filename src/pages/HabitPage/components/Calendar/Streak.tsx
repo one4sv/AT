@@ -1,6 +1,8 @@
 import { Fire } from "@phosphor-icons/react";
 import type { Calendar } from "../../../../components/context/CalendarContext";
 import type { Habit } from "../../../../components/context/HabitsContext";
+import { useHabits } from "../../../../components/hooks/HabitsHook";
+import { useEffect, useState } from "react";
 
 export interface StreakType {
     habit: Habit;
@@ -8,6 +10,13 @@ export interface StreakType {
 }
 
 export default function Streak({ habit, calendar }: StreakType) {
+    const { habits } = useHabits()
+    const [ isMy, setIsMy ] = useState(false)
+
+    useEffect(() => {
+        if (habits?.find(h => h.id === habit.id)) setIsMy(true)
+    }, [habit.id, habits])
+
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
@@ -87,29 +96,29 @@ export default function Streak({ habit, calendar }: StreakType) {
             {habit.periodicity !== "sometimes" && !isTodayChosenWeekly && habit.periodicity === "weekly" ? (
                 <div className="streakStr start">
                     <Fire weight="fill" size={24}/> 
-                    Сегодня можно отдохнуть! 
+                    {isMy && "Сегодня можно отдохнуть! "} 
                     Streak:&nbsp;<span>{streak}</span>&nbsp;{pluralizeDay(streak)}
                 </div>
             ) : habit.periodicity !== "sometimes" && showYesterdayWarning ? (
                 <div className="streakStr warn">
                     <Fire weight="fill" size={24}/> 
-                    Не потеряйте стрик&nbsp;<span>{streakUntilYesterday}</span>&nbsp;{pluralizeDay(streakUntilYesterday)}!
+                    {isMy && `Не потеряйте стрик `}<span>{streakUntilYesterday}</span>&nbsp;{pluralizeDay(streakUntilYesterday)}!
                 </div>
             ) : habit.periodicity !== "sometimes" && (
                 streak === 0 ? (
                     <div className="streakStr null">
                         <Fire weight="fill" size={24}/> 
-                        Никогда не поздно начать!
+                        {isMy ? "Никогда не поздно начать!" : "Streak: 0"}
                     </div>
                 ) : streak > 7 ? (
                     <div className="streakStr cont">
                         <Fire weight="fill" size={24}/> 
-                        Да вы в ударе! Streak:&nbsp;<span>{streak}</span>&nbsp;{pluralizeDay(streak)}
+                        {isMy && "Да вы в ударе!"} Streak:&nbsp;<span>{streak}</span>&nbsp;{pluralizeDay(streak)}
                     </div>
                 ) : (
                     <div className="streakStr start">
                         <Fire weight="fill" size={24}/> 
-                        Начало положено! 
+                        {isMy && "Начало положено! "} 
                         Streak:&nbsp;<span>{streak}</span>&nbsp;{pluralizeDay(streak)}
                     </div>
                 )

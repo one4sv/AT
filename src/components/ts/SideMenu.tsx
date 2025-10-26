@@ -10,15 +10,19 @@ import ContactsList from "./SM/ContactsList.tsx"
 import { useNavigate } from "react-router"
 import { useSettings } from "../hooks/SettingsHook.ts"
 import { useChat } from "../hooks/ChatHook.ts"
+import { useHabits } from "../hooks/HabitsHook.ts"
+import MinLoader from "./MinLoader.tsx"
+import { useLocation } from "react-router"
 
 export default function SideMenu() {
-    const { setSearch } = useChat()
+    const { setSearch, loadingList } = useChat()
+    const { loadingHabits } = useHabits()
     const { user, refetchUser } = useUser()
     const { setTab } = useSettings()
     const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
     const API_URL = import.meta.env.VITE_API_URL
-
+    const location = useLocation()
     const navigate = useNavigate()
 
     const [ showList, setShowList ] = useState(false)
@@ -28,6 +32,10 @@ export default function SideMenu() {
     const buttonRef = useRef<HTMLDivElement>(null)
     const plusRef = useRef<HTMLDivElement>(null)
     const plusMenuRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (location.pathname.includes("/habit")) setActieveTab("habits")
+    },[location.pathname])
 
     const logOut = async () => {
         try {
@@ -76,6 +84,7 @@ export default function SideMenu() {
         document.addEventListener("mousedown", handleClickOutside)
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
+
 
     return (
         <div className="sideMenu">
@@ -131,13 +140,26 @@ export default function SideMenu() {
                 </div>
             </div>
             <div className={`SMline ${actieveTab === "message" ? "mess" : "habits"}`} />
+
             <div className="ListWrapper">
                 <div className="slider" style={{ transform: `translateX(${actieveTab === "message" ? 0 : -50}%)` }}>
                     <div className="slide">
-                        <ContactsList />
+                        {loadingList ? (
+                            <div className="menuLoader">
+                                <MinLoader/>
+                            </div>
+                        ) : (
+                            <ContactsList />
+                        )}
                     </div>
                     <div className="slide">
-                        <HabitsList />
+                        {loadingHabits ? (
+                            <div className="menuLoader">
+                                <MinLoader/>
+                            </div>
+                        ) : (
+                            <HabitsList />
+                        )}
                     </div>
                 </div>
             </div>

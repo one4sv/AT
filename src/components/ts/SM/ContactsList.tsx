@@ -16,7 +16,6 @@ export default function ContactsList() {
         const oneDay = 24 * 60 * 60 * 1000;
 
         if (diff < oneDay) {
-            // Сообщение за последние 24 часа → показываем время
             return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         } else {
             return d.toLocaleDateString('ru-RU', {

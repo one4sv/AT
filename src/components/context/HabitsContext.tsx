@@ -31,7 +31,7 @@ interface HabitResponse {
 
 export interface HabitContextType {
     habits: Habit[] | null;
-    loadingHabit: boolean;
+    loadingHabits: boolean;
     refetchHabits: () => Promise<void>;
     newOrderHabits: string[] | undefined;
 }
@@ -44,11 +44,11 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
     const API_URL = import.meta.env.VITE_API_URL
 
     const [ habits, setHabits ] = useState<Habit[] | null>(null);
-    const [ loadingHabit, setLoadingHabit ] = useState(true);
+    const [ loadingHabits, setLoadingHabits ] = useState(true);
     const [ newOrderHabits, setNewOrderHabits ] = useState<string[] | undefined>()
 
     const refetchHabits = useCallback(async () => {
-        setLoadingHabit(true);
+        setLoadingHabits(true);
         try {
             const res = await axios.get<HabitResponse>(`${API_URL}habits`, {
                 withCredentials: true,
@@ -67,7 +67,7 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
                 }
             }
             } finally {
-            setLoadingHabit(false);
+            setLoadingHabits(false);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -104,7 +104,7 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
     }, [habits, orderHabits]);
 
     return (
-        <HabitsContext.Provider value={{ habits, loadingHabit, refetchHabits, newOrderHabits }}>
+        <HabitsContext.Provider value={{ habits, loadingHabits, refetchHabits, newOrderHabits }}>
         {children}
         </HabitsContext.Provider>
     );

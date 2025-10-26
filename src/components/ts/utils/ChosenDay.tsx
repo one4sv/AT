@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useCalendar } from "../../hooks/CalendarHook";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../../scss/ChosenDay.scss"
@@ -9,7 +9,7 @@ import { useHabits } from "../../hooks/HabitsHook";
 import { getDayArrays } from "./getDayArrs";
 
 export default function ChosenDay() {
-    const { chosenDay: day, setChosenDay, calendarRef, calendar } = useCalendar()
+    const { chosenDay: day, calendar } = useCalendar()
     const { markDone } = useDone()
     const { habits } = useHabits()
     const { habitId:id } = useParams<{ habitId: string }>();
@@ -22,24 +22,9 @@ export default function ChosenDay() {
     const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
     const { completedArr, skippedArr, willArr } = useMemo(
-        () => getDayArrays(day, calendar, habits, id),
+        () => getDayArrays(day, calendar, habits, id, ),
         [day, calendar, habits, id]
     )
-
-    useEffect(() => {
-        const handleClickOutside = (e:MouseEvent) => {
-            if (
-                ChosenDayRef.current && 
-                !ChosenDayRef.current.contains(e.target as Node) &&
-                calendarRef.current &&
-                !calendarRef.current.contains(e.target as Node)
-            ) setChosenDay("")
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        }
-    }, [calendarRef, setChosenDay])
 
     const doneButt = (cn:string, id:string) => {
         if (cn === "comp" && day === todayStr) {

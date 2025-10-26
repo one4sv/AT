@@ -8,18 +8,15 @@ import type { Calendar } from "../../../../components/context/CalendarContext"
 import DayCell from "./DayCell"
 import Streak from "./Streak";
 import ChosenDay from "../../../../components/ts/utils/ChosenDay";
-import { useDone } from "../../../../components/hooks/DoneHook";
 import { useParams } from "react-router-dom";
 import DayComment from "./DayComment";
 import DoneButton from "./DoneButt";
 
 export default function Calendar() {
     const { calendar, calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useCalendar();
-    const { habit, isDone, dayComment } = useTheHabit();
+    const { habit, doable } = useTheHabit();
     const { habits } = useHabits()
-    const { markDone } = useDone()
     const { habitId:id } = useParams<{habitId : string}>()
-
     const [ years, setYears ] = useState<number[] | null>([])
     const [ thisMonth, setThisMonth ] = useState<number[]>([])
     const [ prevMonth, setPrevMonth ] = useState<number[]>([])
@@ -144,7 +141,6 @@ export default function Calendar() {
             }
             return (
                 <DayCell
-                    // calendar={calendar}
                     habit={habit}
                     habits={habits}
                     key={idx}
@@ -201,13 +197,12 @@ export default function Calendar() {
             {id && habit ? <Streak habit={habit} calendar={calendar}/> : ""}
             <ChosenDay/>
 
-            {id && habits?.find(h => h.id === Number(id)) && (
-                <DoneButton isDone={isDone} habitId={Number(habit?.id)} markDone={markDone} />
+            {id && doable && habits?.find(h => h.id === Number(id)) && (
+                <DoneButton habitId={Number(habit?.id)} />
             )}
-            {id && isDone && (
+            {id && (
                 <DayComment
                     id={id}
-                    dayComment={dayComment}
                 />
             )}
 

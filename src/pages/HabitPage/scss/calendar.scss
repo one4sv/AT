@@ -6,6 +6,7 @@
     position: relative;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
 }
 .calendarMain {
     border-radius: 12px;
@@ -14,7 +15,7 @@
     flex-direction: column;
     background-color: var(--bgc);
     width: 100%;
-    height: fit-content;
+    aspect-ratio: 1/1;
     padding: 1vh 1vw;
 }
 .calendarDates {
@@ -146,6 +147,7 @@
     background-color: var(--menuButtHover);
 }
 .calendarDays {
+    width: 100%;
     display: grid;
     grid-template-columns: repeat(7,9fr);
     gap: 0.5vw;
@@ -155,9 +157,9 @@
     justify-content: center;
     align-items: center;
     aspect-ratio: 1;
-    flex: 1;
+    height: 100%;
     border-radius: 6px;
-    border: 1px solid var(--tr);
+    box-sizing: border-box;
     flex-direction: column;
     cursor: pointer;
     position: relative;
@@ -180,7 +182,8 @@
         }
     }
     &.chosenDayCal {
-        border: 1px solid var(--acsent);
+        outline: 1px solid var(--acsent);
+        outline-offset: -1px; // чтобы не вылезала наружу
     }
 }
 .calendarDots {
@@ -325,13 +328,15 @@
         border: none;
         outline: none;
         overflow: hidden;
+        field-sizing: content;
     }
 }
 .hdcTAExtra {
+    width: 100%;
+    justify-content: space-between;
     display: flex;
     align-items: center;
     >span {
-        margin-right: 0.5vw;
         color: var(--borderHabit);
         display: flex;
         align-items: center;
@@ -339,23 +344,30 @@
             margin-right: 0.2vw;
         }
     }
-    >button {
-        padding: 0.5vh 1vw;
-        font-size: 16px;
-        border-radius: 4px;
-        border: none;
-        outline: none;
-        color: var(--tc);
-        background-color: var(--acsent);
-        border: 1px solid var(--acsent);
-        &:hover {
-            background-color: var(--darkerAcsent);
-            border: 1px solid var(--darkerAcsent);
-        }
-        &:disabled {
-            color: var(--borderHabit);
-            background-color: var(--tr);
-            border: 1px solid var(--borderHabit);
+    >div {
+        color: var(--borderHabit);
+        display: flex;
+        align-items: center;
+        gap: 0.5vw;
+        >button {
+            padding: 0.5vh 1vw;
+            font-size: 16px;
+            border-radius: 4px;
+            border: none;
+            outline: none;
+            color: var(--tc);
+            background-color: var(--acsent);
+            border: 1px solid var(--acsent);
+            &:hover {
+                background-color: var(--darkerAcsent);
+                border: 1px solid var(--darkerAcsent);
+            }
+            &:disabled {
+                color: var(--borderHabit);
+                background-color: var(--tr);
+                border: 1px solid var(--borderHabit);
+            }
         }
     }
+    
 }

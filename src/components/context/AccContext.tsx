@@ -31,55 +31,77 @@ export interface AccContextType {
     privateRules: PrivateSettings,
 
 }
-export const AccProvider = ({children} : {children : ReactNode}) => {
+export const AccProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
-    const [ acc, setAcc ] = useState<User>();
-    const [ habits, setHabits ] = useState<Habit[]>();
-    const [ loading, setLoading ] = useState<boolean>(true);
-    const [ posts, setPosts ] = useState<PostType[]>([])
-    const [ media, setMedia ]  = useState<Media[]>([])
-    const [privateRules, setPrivateRules] = useState<PrivateSettings>({ number: "", mail: "", habits: "", posts: "" });
-    const API_URL = import.meta.env.VITE_API_URL
+    const [acc, setAcc] = useState<User>();
+    const [habits, setHabits] = useState<Habit[]>();
+    const [posts, setPosts] = useState<PostType[]>([]);
+    const [media, setMedia] = useState<Media[]>([]);
+    const [privateRules, setPrivateRules] = useState<PrivateSettings>({
+        number: "",
+        mail: "",
+        habits: "",
+        posts: "",
+    });
+    const [accLoading, setAccLoading] = useState<boolean>(true);
+    const [postsLoading, setPostsLoading] = useState<boolean>(true);
 
-    const refetchAcc = useCallback(async (contactId:string) => {
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    const refetchAcc = useCallback(async (contactId: string) => {
         if (!contactId) return;
-        setLoading(true);
+        setAccLoading(true);
         try {
             const res = await api.get(`${API_URL}acc/${contactId}`);
             if (res.data.success) {
                 setAcc(res.data.acc);
                 setHabits(res.data.habits);
                 setPrivateRules(res.data.privateRules);
-                setMedia(res.data.media)
+                setMedia(res.data.media);
             }
         } catch {
             showNotification("error", "Не удалось найти пользователя");
         } finally {
-            setLoading(false);
+            setAccLoading(false);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [API_URL]);
-    
-    const refetchPosts = useCallback(async (contactId:string) => {
+    }, [API_URL, showNotification]);
+
+    const refetchPosts = useCallback(async (contactId: string) => {
         if (!contactId) return;
-        setLoading(true);
+        setPostsLoading(true);
         try {
             const res = await api.get(`${API_URL}posts/${contactId}`);
             if (res.data.success) {
-                setPosts(res.data.posts)
+                setPosts(res.data.posts);
             }
         } catch {
             showNotification("error", "Не удалось найти посты");
         } finally {
-            setLoading(false);
+            setPostsLoading(false);
         }
-    }, [API_URL, showNotification])
-    
-    return(
-        <AccContext.Provider value={{refetchAcc, acc, habits, loading, posts, media, privateRules, setPosts, refetchPosts}}>
+    }, [API_URL, showNotification]);
+
+    // общий loading: true, если хотя бы один из подзагрузчиков активен
+    const loading = accLoading || postsLoading;
+
+    return (
+        <AccContext.Provider
+            value={{
+                refetchAcc,
+                acc,
+                habits,
+                loading,
+                posts,
+                media,
+                privateRules,
+                setPosts,
+                refetchPosts,
+            }}
+        >
             {children}
         </AccContext.Provider>
-    )
-}
+    );
+};
+
 
 export default AccContext;

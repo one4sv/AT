@@ -38,7 +38,8 @@ export interface ChatContextType {
     onlineMap: Record<string, boolean>,
     setReaction: (mId: number, reaction:string) => Promise<void>,
     handleTyping:(contactId:string) => void,
-    typingStatus:boolean
+    typingStatus:boolean,
+    loadingList:boolean
 }
 
 export interface message {
@@ -70,6 +71,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [messages, setMessages] = useState<message[]>([]);
     const [chatLoading, setChatLoading] = useState<boolean>(true);
     const [list, setList] = useState<Acc[]>([]);
+    const [loadingList, setLoadingList] = useState(true);
     const [search, setSearch] = useState<string>("");
     const [onlineMap, setOnlineMap] = useState<Record<string, boolean>>({});
     const [isTyping, setIsTyping] = useState(false);
@@ -120,13 +122,17 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     const refetchContacts = useCallback(async () => {
         if (user.nick === null) return;
+        setLoadingList(true)
         try {
             const res = await api.post(`${API_URL}contacts`, { search });
             if (res.data.success) {
                 setList(res.data.friendsArr);
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error:any) {
             showNotification("error", error?.response?.data?.error);
+        } finally {
+            setLoadingList(false)
         }
     }, [API_URL, search, showNotification, user.nick]);
 
@@ -261,7 +267,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         };
     }, []);
     return (
-        <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, sendMess, messages, list, setSearch, search, refetchContacts, onlineMap, setReaction, handleTyping, typingStatus }}>
+        <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, sendMess, messages, list, setSearch, search, refetchContacts, onlineMap, setReaction, handleTyping, typingStatus, loadingList }}>
             {children}
         </ChatContext.Provider>
     );

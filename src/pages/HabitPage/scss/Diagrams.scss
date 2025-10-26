@@ -4,7 +4,10 @@
     position: relative;
     background-color: var(--bgc);
     width: 20vw;
-    height: 39vh;
+    display: inline-block;
+    aspect-ratio: 1/1;
     margin-left: 0.5vw;
     border-radius: 12px;
+    align-self: start;
+    padding: 1vh 1vw;
 }

@@ -47,7 +47,7 @@ export default function Diagrams() {
         }
     } else {
         if (chosenDay) {
-            const { completedArr, skippedArr } = getDayArrays(chosenDay, calendar, habits, id)
+            const { completedArr, skippedArr } = getDayArrays(chosenDay, calendar, habits, id, habit)
             const cLength = completedArr.length
             const sLength = skippedArr.length
             const all = cLength + sLength
@@ -57,8 +57,8 @@ export default function Diagrams() {
                 Diagram.push({ procent: (sLength / all) * 100, label: "Пропущенные", color: "skip" })
             }
         } else {
-            // 1. Все привычки + день не выбран → пока заглушка
-            return <div>Здесь ещё не придумали для месячной диаграммы всех привычек</div>
+            const today = new Date()
+            
         }
     }
 

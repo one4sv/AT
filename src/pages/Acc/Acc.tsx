@@ -28,19 +28,23 @@ export default function Acc() {
     );
 
     useEffect(() => {
-        if (!user?.id) return; // ждём загрузки user
+        if (!user?.id) return;
 
         if (!contactId) {
             navigate(`/acc/${user.id}`, { replace: true });
             return;
         }
-        refetchAcc(contactId);
-        refetchPosts(contactId)
         const my = contactId === user.id;
         setIsMyAcc(my);
         if (my) setSelector("habits");
-    }, [contactId, user.id, refetchAcc, navigate, refetchPosts]);
 
+        (async () => {
+            await Promise.all([
+                refetchAcc(contactId),
+                refetchPosts(contactId)
+            ]);
+        })();
+    }, [contactId, user?.id, refetchAcc, navigate, refetchPosts]);
 
     if (loading) return <Loader />;
 

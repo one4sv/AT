@@ -9,6 +9,7 @@ export interface Calendar {
     habitName:string;
     date:string;
     comment?:string;
+    isDone?:boolean;
 }
 export interface CalendarContextType {
     calendar:Calendar[]

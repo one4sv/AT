@@ -1,42 +1,48 @@
 import { useEffect, useRef, useState } from "react";
 import { useDone } from "../../../../components/hooks/DoneHook";
 import { ArrowBendDownLeftIcon } from "@phosphor-icons/react";
+import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
+import { useCalendar } from "../../../../components/hooks/CalendarHook";
 
 interface DayCommentProps {
   id: string;
-  dayComment: string;
 }
 
-export default function DayComment({ id, dayComment }: DayCommentProps) {
+export default function DayComment({ id }: DayCommentProps) {
   const { sendDayComment } = useDone()
-  const [ comment, setComment ] = useState(dayComment || "");
+  const { dayComment, todayComment } = useTheHabit()
+  const { chosenDay } = useCalendar()
+
+  const [ comment, setComment ] = useState(todayComment || "");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
     const el = textareaRef.current;
     if (el) {
-      el.style.height = "auto"; // сброс, чтобы scrollHeight был корректным
-      // высота по контенту, максимум 30% высоты окна
+      el.style.height = "auto";
       el.style.height = Math.min(el.scrollHeight, window.innerHeight * 0.3) + "px";
     }
   };
 
-  // При первом рендере тоже можно подстроить под начальный контент
   useEffect(() => {
     const el = textareaRef.current;
     if (el) {
       el.style.height = "auto";
       el.style.height = Math.min(el.scrollHeight, window.innerHeight * 0.3) + "px";
     }
-  }, []);
+  }, [comment]);
 
+  useEffect(() => {
+    if (dayComment !== null) setComment(dayComment)
+    else setComment(todayComment || "")
+  }, [dayComment, todayComment])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (comment.trim() !== "") {
-        sendDayComment(id, comment);
+        sendDayComment(id, comment, chosenDay);
       }
     }
   };
@@ -53,14 +59,16 @@ export default function DayComment({ id, dayComment }: DayCommentProps) {
       />
       <div className="hdcTAExtra">
         <span><ArrowBendDownLeftIcon/>shift+enter</span>
-        <span>{comment.length}/200</span>
-        <button
-          className="saveCommentButton"
-          disabled={comment.trim() === ""}
-          onClick={() => sendDayComment(id, comment)}
-        >
-          Сохранить
-        </button>
+        <div>
+          <span>{comment.length}/200</span>
+          <button
+            className="saveCommentButton"
+            disabled={comment.trim() === "" && todayComment === "" && dayComment === ""}
+            onClick={() => sendDayComment(id, comment, chosenDay)}
+          >
+            Сохранить
+          </button>
+        </div>
       </div>
     </div>
   );

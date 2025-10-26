@@ -8,8 +8,8 @@ import { useParams } from "react-router";
 const DoneContext = createContext<DoneContextType | null>(null);
 
 export interface DoneContextType {
-    sendDayComment:(id:string, text:string) => void;
-    markDone:(id:number) => void;
+    sendDayComment:(id:string, text:string, date:string) => void;
+    markDone:(id:number, date:string) => void;
 }
 export const DoneProvider = ({children} : {children : ReactNode}) => {
     const { habitId } = useParams<{habitId:string}>()
@@ -18,9 +18,9 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
     const { fetchCalendarHabit, fetchCalendarUser } = useCalendar()
     const API_URL = import.meta.env.VITE_API_URL
     
-    const markDone = async(id:number) => {
+    const markDone = async(id:number, date:string) => {
         try {
-            const res = await axios.post(`${API_URL}markdone`, { habit_id: id }, { withCredentials:true})
+            const res = await axios.post(`${API_URL}markdone`, { habit_id: id, date:date }, { withCredentials:true})
             if (res.data.success) {
                 refetchHabits()
                 loadHabit(id.toString())
@@ -31,9 +31,10 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
             console.log("ошибка", err)
         }
     }
-    const sendDayComment = async(id:string, text:string) => {
+
+    const sendDayComment = async(id:string, text:string, date:string) => {
         try {
-            const res = await axios.post(`${API_URL}daycomment`, { habit_id: id, text:text }, { withCredentials:true})
+            const res = await axios.post(`${API_URL}daycomment`, { habit_id: id, text:text, date:date }, { withCredentials:true})
             if (res.data.success) {
                 fetchCalendarHabit(id)
                 loadHabit(id)
