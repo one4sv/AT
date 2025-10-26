@@ -11,3 +11,20 @@
     align-self: start;
     padding: 1vh 1vw;
 }
+.diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 80%;
+}
+.diagramLegend {
+    margin-top: 2vh;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5vw  ;
+}
+.legendStr {
+    display: flex;
+    align-items: center;
+    gap: 0.3vw;
+}

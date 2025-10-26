@@ -10,6 +10,7 @@ export interface Calendar {
     date:string;
     comment?:string;
     isDone?:boolean;
+    created_at?:Date;
 }
 export interface CalendarContextType {
     calendar:Calendar[]

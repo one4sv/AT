@@ -13,7 +13,7 @@ export default function formatCreated(created: string | null | undefined) {
   if (diffSec < 60) return "Только что";
   if (diffMin < 2) return "Минуту назад";
   if (diffMin < 60) return `${diffMin} минут назад`;
-  if (diffHour < 2) return "час назад";
+  if (diffHour < 2) return "Час назад";
   if (diffHour < 5) return `${diffHour} часа назад`;
   if (diffHour < 24) return `${diffHour} часов назад`;
 
@@ -27,7 +27,7 @@ export default function formatCreated(created: string | null | undefined) {
     lastDate.getMonth() === yesterday.getMonth() &&
     lastDate.getFullYear() === yesterday.getFullYear()
   ) {
-    return `вчера в ${timeStr}`;
+    return `Вчера в ${timeStr}`;
   }
 
   const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short" };
