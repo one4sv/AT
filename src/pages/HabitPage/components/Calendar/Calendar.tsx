@@ -7,7 +7,7 @@ import { useHabits } from "../../../../components/hooks/HabitsHook"
 import type { Calendar } from "../../../../components/context/CalendarContext"
 import DayCell from "./DayCell"
 import Streak from "./Streak";
-import ChosenDay from "../../../../components/ts/utils/ChosenDay";
+import ChosenDay from "./ChosenDay";
 import { useParams } from "react-router-dom";
 import DayComment from "./DayComment";
 import DoneButton from "./DoneButt";

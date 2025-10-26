@@ -22,10 +22,10 @@ export default function Diagrams() {
 
     if (id) {
         if (chosenDay) {
-            // 4. Одна привычка + выбран день → пока заглушка
-            return <div>Детали дня для одной привычки (пока заглушка)</div>
+            // 1. привычка + выбран день
+            console.log("привычка + выбран день")
         } else {
-            // 3. Одна привычка + день не выбран
+            // 2. привычка + день не выбран
             if (habit?.periodicity !== "weekly") {
                 // const startDate = new Date(year, month, 1)
                 const endDate = new Date(year, month + 1, 0)
@@ -42,10 +42,11 @@ export default function Diagrams() {
                 const procent = daysInMonth.length > 0 ? (completed / daysInMonth.length) * 100 : 0
                 Diagram.push({ procent, label: "Выполнено", color: "comp" })
             } else {
-                return <div>Пока ничего нет для weekly привычки</div>
+                return
             }
         }
     } else {
+            // 3. нет привычки + выбран день
         if (chosenDay) {
             const { completedArr, skippedArr } = getDayArrays(chosenDay, calendar, habits, id, habit)
             const cLength = completedArr.length
@@ -56,9 +57,9 @@ export default function Diagrams() {
                 Diagram.push({ procent: (cLength / all) * 100, label: "Выполненные", color: "comp" })
                 Diagram.push({ procent: (sLength / all) * 100, label: "Пропущенные", color: "skip" })
             }
+            // 4. нет привычки + нет дня
         } else {
-            const today = new Date()
-            
+            console.log("нет привычки + нет дня")
         }
     }
 

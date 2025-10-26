@@ -1,12 +1,12 @@
 import { useMemo, useRef, useState } from "react";
-import { useCalendar } from "../../hooks/CalendarHook";
+import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useNavigate, useParams } from "react-router-dom";
-import "../../../scss/ChosenDay.scss"
-import type { Calendar } from "../../context/CalendarContext";
+import "../../scss/ChosenDay.scss"
+import type { Calendar } from "../../../../components/context/CalendarContext";
 import { CheckCircle, Circle } from "@phosphor-icons/react";
-import { useDone } from "../../hooks/DoneHook";
-import { useHabits } from "../../hooks/HabitsHook";
-import { getDayArrays } from "./getDayArrs";
+import { useDone } from "../../../../components/hooks/DoneHook";
+import { useHabits } from "../../../../components/hooks/HabitsHook";
+import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
 
 export default function ChosenDay() {
     const { chosenDay: day, calendar } = useCalendar()
@@ -27,10 +27,10 @@ export default function ChosenDay() {
     )
 
     const doneButt = (cn:string, id:string) => {
-        if (cn === "comp" && day === todayStr) {
+        if (cn === "comp") {
             if (mouseOver === id) return <CheckCircle weight="fill"/>
             else return <CheckCircle weight="fill" color="#11c011"/>
-        } else if (cn === "skip" && day === todayStr) {
+        } else if (cn === "skip") {
             if (mouseOver === id) return <CheckCircle/>
             else return <Circle/>
         } else return
@@ -45,7 +45,7 @@ export default function ChosenDay() {
         const et = habit?.end_time;
 
         if (st && et && st !== null) {
-            return ` с ${st} по ${et}`;
+            return ` с ${st} до ${et}`;
         }
         if (st || et) {
             return st ? `в ${st}` : `до ${et}`
@@ -70,7 +70,7 @@ export default function ChosenDay() {
                             ) : ""}
                             
                         </div>
-                        <div className="cdHabitDoneButt" onMouseOver={() => setMouseOver(c.habitId)} onMouseLeave={() => setMouseOver("")} onClick={() => markDone(Number(c.habitId))}>
+                        <div className="cdHabitDoneButt" onMouseOver={() => setMouseOver(c.habitId)} onMouseLeave={() => setMouseOver("")} onClick={() => markDone(Number(c.habitId), day)}>
                             {doneButt(cn, c.habitId)}
                         </div>
                     </div>
