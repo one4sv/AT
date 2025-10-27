@@ -85,9 +85,14 @@ export default function ChosenDay() {
             <div className="chosenDayDate">
                 {`${d}.${m}.${y}`}
             </div>
-            {mappingHabits(completedArr, "comp")}
-            {mappingHabits(skippedArr, "skip")}
-            {mappingHabits(willArr, "will")}
+            {(completedArr.length > 0 || skippedArr.length > 0 || willArr.length > 0) && (
+                <div className="cdhabits">
+                    {mappingHabits(completedArr, "comp")}
+                    {mappingHabits(skippedArr, "skip")}
+                    {mappingHabits(willArr, "will")}
+                </div>
+            )}
+            
         </div>
     )
 }

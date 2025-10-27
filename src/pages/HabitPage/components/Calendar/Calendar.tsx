@@ -69,29 +69,35 @@ export default function Calendar() {
     }, [showList]);
 
     useEffect(() => {
-        if (!habits || !habit) return
-        const yearsSet = new Set<number>()
+        if (!habits) return;
+        const yearsSet = new Set<number>();
+        const today = new Date(); // 🔹 переместили внутрь
+
         if (id && habit) {
-            for (let y = 0; y <= today.getFullYear() - new Date(habit.start_date).getFullYear(); y++) {
-                yearsSet.add(today.getFullYear() - y)
+            const startYear = new Date(habit.start_date).getFullYear();
+            for (let y = startYear; y <= today.getFullYear(); y++) {
+                yearsSet.add(y);
             }
         } else {
             habits.forEach(h => {
-                const sd = new Date(h.start_date).getFullYear()
-                yearsSet.add(sd)
-                if (h.end_date ) {
-                    const ed = new Date(h.end_date).getFullYear()
-                    yearsSet.add(ed)
+                const sd = new Date(h.start_date).getFullYear();
+                yearsSet.add(sd);
+                if (h.end_date) {
+                    const ed = new Date(h.end_date).getFullYear();
+                    yearsSet.add(ed);
                 }
-                for (let y = 0; y <= today.getFullYear() - new Date(habit.start_date).getFullYear(); y++) {
-                    yearsSet.add(today.getFullYear() - y)
+                const startYear = new Date(h.start_date).getFullYear();
+                for (let y = startYear; y <= today.getFullYear(); y++) {
+                    yearsSet.add(y);
                 }
-            })
+            });
         }
 
         const yearsArray = Array.from(yearsSet).sort((a, b) => a - b);
-        setYears(yearsArray)
-    },[habits])
+        setYears(yearsArray);
+    }, [habits, habit, id]); // 🔹 убрали today
+
+
 
     useEffect(() => {
         if (!selectedMonth || !selectedYear) return

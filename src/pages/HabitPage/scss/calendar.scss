@@ -15,8 +15,9 @@
     flex-direction: column;
     background-color: var(--bgc);
     width: 100%;
-    aspect-ratio: 1/1;
     padding: 1vh 1vw;
+    min-height:39vh;
+    height: fit-content;
 }
 .calendarDates {
     width: 100%;
@@ -200,10 +201,13 @@
         background-color: #11c011;
     }
     &.skip {
-        background-color: var(--borderHabit);
+        background-color: #646464;
     }
     &.will {
-        background-color: var(--tc);
+        background-color: white;
+    }
+    &.nothing {
+        background-color: #111111;
     }
 }
 .hoverDayDiv {

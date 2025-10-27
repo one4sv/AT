@@ -2,10 +2,10 @@
 
 .chosenDayDiv {
     background-color: var(--bgc);
-    border-radius: 12px;
+    border-radius: 8px;
     display: flex;
     margin-top: 0.5vh;
-    padding-bottom: 0.3vh;
+    // padding-bottom: 0.3vh;
     flex-direction: column;
     width: 20vw;
     top: 0;
@@ -25,16 +25,24 @@
 }
 .chosenDayDate {
     padding: 1vh 1vw;
+    display: flex;
+    height: 4vh;
+    align-items: center;
     font-size: 20px;
     width: 100%;
-    border-bottom: 1px solid var(--borderWh);
-    margin-bottom: 1vh;
+}
+.cdhabits {
+    width: 100%;
+    border-top: 1px solid var(--tc);
+    padding-top: 0.5vh;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3vh;
 }
 .cdHabitStr {
     display: flex;
     height: 4vh;
     position: relative;
-    margin: 0 0.5vw 0.5vh;
     &:hover {
         .cdHabitInfo {
             background-color: var(--menuButtHover);
