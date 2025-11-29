@@ -4,33 +4,29 @@ import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../components/hooks/AuthHook";
 import { useUser } from "../components/hooks/UserHook";
 import { useNavigate } from "react-router-dom";
+import { isMobile } from "react-device-detect";
 
 export default function Log() {
   const { register, auth, success, loadingAuth, isTwoAuth } = useAuth();
   const { loadingUser, isAuthenticated } = useUser();
   const navigate = useNavigate();
-
   const [showRules, setShowRules] = useState(false);
-
   // Поля формы
   const [mail, setMail] = useState("");
   const [pass, setPass] = useState("");
   const [nick, setNick] = useState("");
   const [confPass, setConfPass] = useState("");
   const [login, setLogin] = useState("");
-
   const [showedPass, setShowedPass] = useState({
     auth: false,
     reg: false,
     conf: false,
   });
-
   // Состояние валидности
   const [isValidNick, setIsValidNick] = useState(true);
   const [isValidMail, setIsValidMail] = useState(true);
   const [isValidPass, setIsValidPass] = useState(true);
   const [isValidConf, setIsValidConf] = useState(true);
-
   const formRef = useRef<HTMLDivElement>(null);
   const authRef = useRef<HTMLInputElement>(null);
   const regRef = useRef<HTMLInputElement>(null);
@@ -40,25 +36,31 @@ export default function Log() {
   // --- Навигация между формами ---
   const swipeForm = (targetForm: "auth" | "reg") => {
     if (!formRef.current) return;
-    const scrollTarget = targetForm === "reg" ? 1 : 0;
-    formRef.current.scrollTo({
-      left: scrollTarget * formRef.current.clientWidth,
-      behavior: "smooth",
-    });
+    if (isMobile) {
+      // На мобильных просто показываем одну форму, скрываем другую (используем state для переключения)
+      setActiveForm(targetForm);
+    } else {
+      const scrollTarget = targetForm === "reg" ? 1 : 0;
+      formRef.current.scrollTo({
+        left: scrollTarget * formRef.current.clientWidth,
+        behavior: "smooth",
+      });
+    }
   };
+
+  // Добавляем состояние для активной формы на мобильных
+  const [activeForm, setActiveForm] = useState<"auth" | "reg">("auth");
 
   // --- Валидация ---
   const validateNick = (value: string) => {
     setNick(value);
     setIsValidNick(value.trim().length >= 3);
   };
-
   const validateMail = (value: string) => {
     setMail(value);
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setIsValidMail(regex.test(value));
   };
-
   const validatePass = (value: string) => {
     setPass(value);
     const lengthV = value.length >= 8 && value.length <= 30;
@@ -68,7 +70,6 @@ export default function Log() {
     // проверка совпадения с confirm
     setIsValidConf(value === confPass);
   };
-
   const validateConf = (value: string) => {
     setConfPass(value);
     setIsValidConf(value === pass && value.length > 0);
@@ -89,31 +90,27 @@ export default function Log() {
     }
     setShowRules(true);
   };
-
   const handleBlur = () => {
     hideTimeout.current = window.setTimeout(() => {
       setShowRules(false);
       hideTimeout.current = null;
     }, 200);
   };
-
   const handleMouseEnter = () => handleFocus();
   const handleMouseLeave = () => handleBlur();
 
   // --- Отправка форм ---
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (isValidNick && isValidMail && isValidPass && isValidConf) {
       await register({ mail, pass, nick });
     }
   };
-
   const handleAuth = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (login && pass) {
       await auth({ login, pass });
-      if (!isTwoAuth) window.location.reload()
+      if (!isTwoAuth) window.location.reload();
     }
   };
 
@@ -125,24 +122,31 @@ export default function Log() {
 
   return (
     <div className="landing">
-      <div className="landingDiv">
+      <div className={`landingDiv ${isMobile ? "mobile" : ""}`}>
         <div className="title">Achieve Together</div>
-
         {/* Форма */}
-        <div className="landingForm" ref={formRef} style={{ display: success || loadingAuth || loadingUser ? "none" : "flex" }}>
+        <div
+          className={`landingForm ${isMobile ? "mobile" : ""}`}
+          ref={formRef}
+          style={{ display: success || loadingAuth || loadingUser ? "none" : "flex" }}
+        >
           {/* Авторизация */}
-          <form className="landingFormAuth" onSubmit={handleAuth}>
+          <form
+            className="landingFormAuth"
+            onSubmit={handleAuth}
+            style={{ display: isMobile && activeForm !== "auth" ? "none" : "flex" }}
+          >
             <input
               type="text"
-              className={`inpLand`}
+              className={`inpLand ${isMobile ? "mobile" : ""}`}
               placeholder="Email или nickname:"
               required
               onInput={(e) => setLogin(e.currentTarget.value)}
             />
-            <div className="passWrap">
+            <div className={`passWrap ${isMobile ? "mobile" : ""}`}>
               <input
                 type={showedPass.auth ? "text" : "password"}
-                className="inpLand"
+                className={`inpLand ${isMobile ? "mobile" : ""}`}
                 placeholder="Пароль:"
                 ref={authRef}
                 required
@@ -155,38 +159,39 @@ export default function Log() {
               )}
             </div>
             <div className="landingButts">
-              <button type="submit" className="whiteButt">Войти</button>
+              <button type="submit" className={`whiteButt ${isMobile ? "mobile" : ""}`}>Войти</button>
               <a href="" className="wtbgButt">Забыли пароль?</a>
             </div>
             <button type="button" onClick={() => swipeForm("reg")}>Создать аккаунт</button>
           </form>
-
           {/* Регистрация */}
-          <form className="landingFormReg" onSubmit={handleRegister}>
+          <form
+            className="landingFormReg"
+            onSubmit={handleRegister}
+            style={{ display: isMobile && activeForm !== "reg" ? "none" : "flex" }}
+          >
             <input
               type="text"
-              className={`inpLand ${!isValidNick ? "inputNotValid" : ""}`}
+              className={`inpLand ${!isValidNick ? "inputNotValid" : ""} ${isMobile ? "mobile" : ""}`}
               placeholder="Nickname:"
               required
               onInput={(e) => validateNick(e.currentTarget.value)}
             />
-
             <input
               type="text"
-              className={`inpLand ${!isValidMail ? "inputNotValid" : ""}`}
+              className={`inpLand ${!isValidMail ? "inputNotValid" : ""} ${isMobile ? "mobile" : ""}`}
               placeholder="Email:"
               required
               onInput={(e) => validateMail(e.currentTarget.value)}
             />
-
             <div
-              className={`passWrap ${showRules ? "showRules" : ""}`}
+              className={`passWrap ${showRules ? "showRules" : ""} ${isMobile ? "mobile" : ""}`}
               onFocus={handleMouseEnter}
               onBlur={handleMouseLeave}
             >
               <input
                 type={showedPass.reg ? "text" : "password"}
-                className={`inpLand ${!isValidPass ? "inputNotValid" : ""}`}
+                className={`inpLand ${!isValidPass ? "inputNotValid" : ""} ${isMobile ? "mobile" : ""}`}
                 placeholder="Пароль:"
                 ref={regRef}
                 required
@@ -205,11 +210,10 @@ export default function Log() {
                 <li style={{ color: /[A-Za-z]/.test(pass) && /\d/.test(pass) ? "white" : "#a1a1a1" }}>Минимум 1 цифра и буква</li>
               </ul>
             </div>
-
-            <div className="passWrap">
+            <div className={`passWrap ${isMobile ? "mobile" : ""}`}>
               <input
                 type={showedPass.conf ? "text" : "password"}
-                className={`inpLand ${!isValidConf ? "inputNotValid" : ""}`}
+                className={`inpLand ${!isValidConf ? "inputNotValid" : ""} ${isMobile ? "mobile" : ""}`}
                 placeholder="Повторите пароль:"
                 ref={confRef}
                 required
@@ -221,14 +225,12 @@ export default function Log() {
                 <EyeOff onClick={() => showPass("conf")} />
               )}
             </div>
-
             <div className="landingButts">
-              <button type="submit" className="greenButt">Создать аккаунт</button>
+              <button type="submit" className={`greenButt ${isMobile ? "mobile" : ""}`}>Создать аккаунт</button>
             </div>
             <button type="button" onClick={() => swipeForm("auth")}>Войти в аккаунт</button>
           </form>
         </div>
-
         {/* Загрузка */}
         {(loadingAuth || loadingUser) && (
           <div className="loading">
@@ -236,7 +238,6 @@ export default function Log() {
             <span>Секундочку...</span>
           </div>
         )}
-
         {/* Подтверждение почты */}
         {!isTwoAuth && !loadingAuth && (
           <div className="landingFormConfEmail" style={{ display: success ? "flex" : "none" }}>
@@ -248,7 +249,6 @@ export default function Log() {
           </div>
         )}
       </div>
-
       <div className="landingFooter">
         <div>Achieve Together © 2025</div>
         <div>

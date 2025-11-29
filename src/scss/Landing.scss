@@ -1,24 +1,19 @@
 @use "./global.scss" as var;
 
 .title {
-    font-size: 48px;
+    font-size: 40px;
     position: relative;
     top: 1vh;
     font-weight: 700;
-    min-height: 10vh;
     text-align: center;
+    margin-bottom:2vh;
 }
 .landing {
     width: 100%;
-    min-height: 100%;
-    position: absolute;
-    display: flex;
-    flex-direction: row;
+    height: 100%;
 }
 .landingDiv {
     @include var.centerTopModal;
-    position: absolute;
-    right: 0;
     width: 25vw;
     height: 60%;
     border-radius: 22px;
@@ -27,16 +22,25 @@
     flex-direction: column;
     align-items: center;
     overflow: hidden;
+
+    &.mobile {
+        width: 90vw;
+    }
+    
 }
 .landingForm {
     position: relative;
-    // top: 5vh;
     height: 49vh;
     width: 20vw;
     overflow-x: hidden;
     display: flex;
     flex-direction: row;
     padding-bottom: 2vh;
+
+    &.mobile {
+        width: 85vw;
+    }
+
     >form {
         position: relative;
         height: 100%;
@@ -50,11 +54,15 @@
             width: 15vw;
             position: relative;
             z-index: 2;
+            
+            &.mobile {
+                width: 70vw;
+            }
         }
         >button {
             position: absolute;
-            bottom: 1vh;
-            width: 20vw;
+            bottom: 0;
+            width:fit-content;
             background-color: transparent;
             color: var(--borderWh);
             font-size: 18px;
@@ -77,10 +85,16 @@
 .whiteButt {
     @include var.gradButt(15vw, 4vh, 2px, 4px, (135deg, #ffffff, #ffffff), (135deg, #ffffff, #ececec), black, 20px #ffffff, black);
     margin-bottom: 1vh;
+    &.mobile {
+        width: 70vw;
+    }
 }
 .greenButt {
     @include var.gradButt(15vw, 4vh, 2px, 4px, (135deg, #27c827, #0eb408), (135deg, #27c827, #d3ff6f), var(--tc), 20px #70ff70, #2b9c2b);
     margin-bottom: 0.2vh;
+    &.mobile {
+        width: 70vw;
+    }
 }
 .wtbgButt {
     @include var.longButt(auto, auto, 0px, 0px, transparent, var(--tc), transparent);
@@ -95,14 +109,19 @@
     height: 4vh;
     overflow: hidden;
     transition: height 0.3s ease;
+    &.mobile {
+        width: 70vw;
+    }
     > input {
         margin: 0 !important;
         padding-inline-end: 2vw;
         @include var.input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
-        // margin: 2vh 2.5vw 0 2.5vw;
         width: 15vw;
         position: relative;
         z-index: 2;
+        &.mobile {
+            width: 70vw;
+        }
     }
     > svg {
         position: absolute;
@@ -122,6 +141,8 @@
     height: 13vh;
 }
 .passRules {
+    margin-top: 1vh;
+    margin-block-end: 0;
     z-index: 1;
     top: -1vh;
     position: absolute;
@@ -131,7 +152,7 @@
 }
 .passRules.active {
     top: 4vh;
-    height: auto;
+    height: fit-content;
 }
 .landingFooter {
     position: absolute;
@@ -139,19 +160,18 @@
     width: 100%;
     bottom: 2vh;
     display: flex;
-    justify-content: center;
-    flex-direction: column;
     align-items: center;
+    gap: 1vh;
+    flex-direction: column;
     >div {
-        margin-top: 2vh;
-        width: 40%;
+        width: 100%;
+        gap: 0.1vw;
         display: flex;
         flex-direction: row;
         justify-content: space-evenly;
         >a {
             color: white;
             text-decoration: none;
-
             &:hover {
                 text-decoration: underline;
             }
@@ -173,95 +193,4 @@
         margin-bottom: 2vh;
         width: 20vw;
     }
-}
-.landingPics {
-    display: flex;
-    width: 72vw;
-    height: 100vh;
-    overflow: hidden;
-}
-.picWrap {
-    position: relative;
-    margin-left: 10vw;
-}
-.achieveDiv {
-    position: absolute;
-    bottom: 4vw;
-    width: 90%;
-    margin: 0 auto;
-    left: 5%;
-    height: 10vh;
-    background: var(--greenGrad);
-    border-radius: 12px;
-    display: flex;
-    padding: 1%;
-    box-sizing: border-box;
-    box-shadow: 0 0 20px #3fc93f;
-    border: 1px solid #1e751e;
-    transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3 ease;
-
-    &:hover {
-    box-shadow: 0 0 30px #70ff70;
-    background: linear-gradient(135deg, #27c827, #d3ff6f);
-    border: 1px solid #28a728;
-    }
-
-    &:hover .achieveIcon {
-    box-shadow: 0 0 30px #70ff70;
-    background: linear-gradient(135deg, #27c827, #d3ff6f);
-    border: 1px solid #28a728;
-    }
-
-    &:hover .achieveSpan {
-    text-shadow: 0 0 4px #baffba;
-    color: #f7fff7;
-    }
-
-    &:hover .achieveInfo {
-    text-shadow: 0 0 3px #caffca;
-    color: #ffffff;
-    opacity: 1;
-    }
-}
-.achieveIcon {
-    height: 100%;
-    aspect-ratio: 1/1;
-    border-radius: 12px;
-    border: 1px solid #28a728;
-    box-sizing: border-box;
-    background: linear-gradient(
-        145deg,
-        #2eb82e,
-        #a8e63f
-    );
-    display: block;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 0 20px #3fc93f, 0 2px 4px #0a3e0a;
-
-    >img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        display: block;
-    }
-}
-.landingSpans {
-    display: flex;
-    flex-direction: column;
-    padding-inline-start: 2%;
-    
-}
-.achieveSpan {
-    font-size: 1.4vw;
-    font-weight: 600;
-    color: #ffffff;
-    transition: all 0.3s ease;
-}
-
-.achieveInfo {
-    font-size: 1vw;
-    color: #eaffea;
-    opacity: 0.9;
-    transition: all 0.3s ease;
 }
