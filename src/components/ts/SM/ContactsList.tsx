@@ -3,7 +3,7 @@ import { CircleUserRound } from "lucide-react"
 import { useNavigate } from "react-router"
 import { useParams } from "react-router"
 import { useChat } from "../../hooks/ChatHook"
-
+import { isMobile } from "react-device-detect"
 export default function ContactsList() {
     const { list, onlineMap } = useChat()
     const { contactId } = useParams<{ contactId: string }>()
@@ -44,7 +44,7 @@ export default function ContactsList() {
                             )}
                             <div className={`contactOnlineStauts ${contactId !== acc.id && onlineMap[acc?.id || ""] ? "online" : "offline"}`}></div>
                         </div>
-                        <div className="contactsUserInfo">
+                        <div className={`contactsUserInfo ${isMobile ? "mobile" : ""}`}>
                             <div className="contactsUserStr">
                                 <span className="nameSpan">{acc.username ? acc.username: acc.nick}</span>
                                 {!acc.lastMessage && (
@@ -55,7 +55,7 @@ export default function ContactsList() {
                                 )}
                             </div>
                             {acc.lastMessage && (
-                                <div className="lastMess">
+                                <div className={`lastMess ${isMobile ? "mobile" : ""}`}>
                                     {acc.lastMessage.sender_id !== acc.id && <span>Вы: </span>}
                                     <span className="lmc">
                                         {acc.lastMessage.content && <span>{acc.lastMessage.content} </span>}

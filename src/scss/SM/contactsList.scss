@@ -58,6 +58,9 @@
     position: relative;
     /* важно для корректной работы text-overflow внутри flex-контейнера */
     min-width: 0;
+    &.mobile {
+        margin-left: 2vw;
+    }
 }
 .contactsUserStr {
     display: flex;
@@ -104,6 +107,11 @@
         text-overflow: ellipsis;    // показываем "..."
         >.lmcMediafile {
             color: var(--acsent);
+        }
+    }
+    &.mobile {
+        >.lmc {
+            max-width: 60vw;
         }
     }
 }

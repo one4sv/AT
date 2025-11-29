@@ -7,6 +7,7 @@ import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
 import formatComp from "../../utils/formatComp"
 import { Doughnut } from "react-chartjs-2"
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { isMobile } from "react-device-detect"
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -218,7 +219,7 @@ export default function Diagrams() {
     };
 
     return (
-        <div className="diagramsDiv">
+        <div className={`diagramsDiv ${isMobile ? "mobile" : ""}`}>
             {Diagram.length > 0
                 ? (
                     <>

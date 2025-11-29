@@ -20,7 +20,13 @@ body {
   min-height: 100%;
   display: flex;
 }
-.page-content {
+.mobile-layout {
+  width: 100%;
+}
+.mobile-layout .page-content {
+  width: 100%;
+}
+.app-layout .page-content {
   width: 80vw;
   position: relative;
   left: 20vw;

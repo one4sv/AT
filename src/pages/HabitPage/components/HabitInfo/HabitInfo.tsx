@@ -49,9 +49,7 @@ export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
             setPeriodicity(habit.periodicity || "");
             setOngoing(habit.ongoing || false);
             setPinned(habit.pinned || false);
-            setSelectedTag(habit.tag || null);
 
-            // корректно обновляем chosenDays на основе habit.chosen_days
             if (Array.isArray(habit.chosen_days) && habit.chosen_days !== null) {
                 setChosenDays(initialChosenDays.map(day => ({
                     ...day,

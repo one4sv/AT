@@ -13,6 +13,7 @@ import { useChat } from "../hooks/ChatHook.ts"
 import { useHabits } from "../hooks/HabitsHook.ts"
 import MinLoader from "./MinLoader.tsx"
 import { useLocation } from "react-router"
+import { isMobile } from "react-device-detect"
 
 export default function SideMenu() {
     const { setSearch, loadingList } = useChat()
@@ -87,7 +88,7 @@ export default function SideMenu() {
 
 
     return (
-        <div className="sideMenu">
+        <div className={`sideMenu ${isMobile ? "mobileSM" : ""}`}>
             <div className="SMsearchDiv">
                 <div className="SMmenuWrapper">
                     <div
@@ -97,7 +98,7 @@ export default function SideMenu() {
                     >
                         {user?.avatar_url ? <img className="SMmenuAvatar" src={user.avatar_url} alt={(user.username ?? user.nick) || undefined} /> : <CircleUserRound />}
                     </div>
-                    <div className={`SMprofileMenu ${showList ? "active" : ""}`} ref={menuRef}>
+                    <div className={`SMprofileMenu ${showList ? "active" : ""} ${isMobile ? "mobile" : ""}`} ref={menuRef}>
                         <div className="SMprofileButt" onClick={() => {
                             setShowList(false)
                             navigate(`/acc/${user.id}`)
@@ -143,7 +144,7 @@ export default function SideMenu() {
 
             <div className="ListWrapper">
                 <div className="slider" style={{ transform: `translateX(${actieveTab === "message" ? 0 : -50}%)` }}>
-                    <div className="slide">
+                    <div className={`slide ${isMobile ? "mobileSlide" : ""}`}>
                         {loadingList ? (
                             <div className="menuLoader">
                                 <MinLoader/>
@@ -152,7 +153,7 @@ export default function SideMenu() {
                             <ContactsList />
                         )}
                     </div>
-                    <div className="slide">
+                    <div className={`slide ${isMobile ? "mobileSlide" : ""}`}>
                         {loadingHabits ? (
                             <div className="menuLoader">
                                 <MinLoader/>

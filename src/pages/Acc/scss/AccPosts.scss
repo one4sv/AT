@@ -10,6 +10,10 @@
     scrollbar-width: thin;
     position: relative;
     padding-bottom: 1vh;
+
+    &.mobile {
+        width: 90%;
+    }
 }
 .apEmojiBar {
     width: 80%;

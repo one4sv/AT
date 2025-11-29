@@ -8,6 +8,7 @@ import { useNote } from "../../../components/hooks/NoteHook"
 import GetIconByType from "../../Chat/utils/getIconByType"
 import { api } from "../../../components/ts/api"
 import EmojiBar from "../../../components/ts/utils/EmojiBar"
+import { isMobile } from "react-device-detect"
 
 export default function PostWrite() {
     const { habits } = useHabits()
@@ -103,7 +104,7 @@ export default function PostWrite() {
     };
 
     return (
-        <div className={`postWriteWrapper ${fs ? "PWTAWFS" : ""}`} ref={postWriteRef} >
+        <div className={`postWriteWrapper ${fs ? "PWTAWFS" : ""} ${isMobile ? "mobile" : ""}`} ref={postWriteRef} >
             <EmojiBar setText={setText} cn={"pwEmojiBar"} setShowEmojiBar={setShowEmojiBar} showEmojiBar={showEmojiBar} taRef={textAreaRef}/>
             {showPWbar && (
                 <div className={`postWriteBar ${files.length > 0 ? "pwBarwFiles" : ""}`}>
@@ -153,7 +154,7 @@ export default function PostWrite() {
             )}
             <textarea
                 value={text} 
-                className={`postWriteTA ${showPWbar || files.length > 0 ? "PWTAwFiles" : ""}`} 
+                className={`postWriteTA ${showPWbar || files.length > 0 ? "PWTAwFiles" : ""} ${isMobile ? "mobile" : ""}`} 
                 ref={textAreaRef} 
                 onChange={(e) => setText(e.target.value)} 
                 onFocus={()=>setShowPWbar(true)}

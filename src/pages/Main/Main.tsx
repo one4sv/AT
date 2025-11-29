@@ -7,6 +7,7 @@ import "./scss/Main.scss"
 import type { PostType } from "../../components/context/AccContext.tsx";
 import { api } from "../../components/ts/api.ts";
 import Post from "../../components/ts/Post.tsx";
+import { isMobile } from "react-device-detect";
 
 export default function Feed() {
     const { initialLoading, user } = useUser();
@@ -31,8 +32,8 @@ export default function Feed() {
     if (initialLoading || postLoading) return <Loader />;
 
     return (
-        <div className="MainDiv">
-            <div className="postFeed">
+        <div className={`MainDiv ${isMobile ? "mobile" : ""}`}>
+            <div className={`postFeed ${isMobile ? "mobile" : ""}`}>
                 {posts.length === 0 ? (
                     <FeedNothing/>
                 ) : (

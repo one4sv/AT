@@ -1,5 +1,6 @@
 import { useEffect, useRef, type Dispatch, type RefObject, type SetStateAction } from "react";
 import { Emojies, EmojiesGroups } from "./emojies";
+import { isMobile } from "react-device-detect";
 interface emojiBarProps {
     taRef:RefObject<HTMLTextAreaElement | null>
     setText: Dispatch<SetStateAction<string>>;
@@ -46,7 +47,7 @@ export default function EmojiBar({taRef, setText, showEmojiBar, setShowEmojiBar,
     if (!showEmojiBar) return null
 
     return (
-        <div className={`emojiBar ${cn}`} ref={emojiBarRef} style={{ top: emojiPos?.top, left: emojiPos?.left }}>
+        <div className={`emojiBar ${cn} ${isMobile ? "mobile" : ""}`} ref={emojiBarRef} style={{ top: emojiPos?.top, left: emojiPos?.left }}>
             {EmojiesGroups.map((g, i) => (
                 <div className="emojiGroup" key={i}>
                     <div className="emojiGroupName">{g.value}</div>

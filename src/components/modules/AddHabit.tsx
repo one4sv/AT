@@ -12,6 +12,7 @@ import { useHabits } from "../hooks/HabitsHook"
 import TagSelector from "../ts/TagSelector"
 import DayChanger from "../ts/DayChanger"
 import { initialChosenDays } from "../ts/initialChosenDays"
+import { isMobile } from "react-device-detect"
 
 const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     const { refetchHabits } = useHabits()
@@ -132,7 +133,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
         }
     }, [desc]);
     return (
-        <div className="addHabitDiv" ref={ref}>
+        <div className={`addHabitDiv ${isMobile ? "mobile" : ""}`} ref={ref}>
             <div className="addHabitWrapper">
                 <label htmlFor="inputName">Название</label>
                 <input type="text" id="inputName" className="inputName addHabitInput" maxLength={40} onChange={(e)=>setName(e.currentTarget.value)}/>

@@ -17,6 +17,8 @@ import type { PostType } from "../context/AccContext";
 import type { Media } from "../context/ChatContext";
 import { useLocation } from "react-router";
 import "../../scss/Post.scss"
+import { isMobile } from "react-device-detect";
+
 interface PostProps {
     post: PostType
     isMy: boolean
@@ -179,7 +181,7 @@ export default function Post({ post, isMy }: PostProps) {
 
     return (
         <div className="PostDiv" onMouseEnter={() => isMy && setHover(true)} onMouseLeave={() => setHover(false)}>
-            <div className="Post">
+            <div className={`Post ${isMobile ? "mobile" : ""}`}>
                 {!location.pathname.includes("/acc") && (
                     <div className="postUser" onClick={() => navigate(`/acc/${post.user.id}`)}>
                         <div className="postAvatar">

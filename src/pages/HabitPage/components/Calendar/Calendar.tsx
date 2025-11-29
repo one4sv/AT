@@ -11,6 +11,7 @@ import ChosenDay from "./ChosenDay";
 import { useParams } from "react-router-dom";
 import DayComment from "./DayComment";
 import DoneButton from "./DoneButt";
+import { isMobile } from "react-device-detect";
 
 export default function Calendar() {
     const { calendar, calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useCalendar();
@@ -160,7 +161,7 @@ export default function Calendar() {
     };
 
     return (
-        <div className="calendarDiv">
+        <div className={`calendarDiv ${isMobile ? "mobile" : ""}`}>
             <div className="calendarMain" ref={calendarRef}>
                 <div className="DateChanger">
                     <div className="CalendarDateChanger" ref={monthsRef}>

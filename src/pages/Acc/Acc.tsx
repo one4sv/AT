@@ -10,6 +10,7 @@ import AccHabits from "./components/AccHabits";
 import AccPosts from "./components/AccPosts";
 import AccMedia from "./components/AccMedia";
 import { useAcc } from "../../components/hooks/AccHook";
+import { isMobile } from "react-device-detect";
 
 export default function Acc() {
     const { user } = useUser();
@@ -49,7 +50,7 @@ export default function Acc() {
     if (loading) return <Loader />;
 
     return (
-        <div className="accDiv">
+        <div className={`accDiv ${isMobile ? "mobile" : ""}`}>
             <AccInfo red={red} setRed={setRed} acc={acc} isMyAcc={isMyAcc}/>
             <div className="accExtraInfoWrapper" style={{ display: acc?.bio || red ? "flex" : "none" }}>
                 <label htmlFor="bioTA">Статус</label>
@@ -62,7 +63,7 @@ export default function Acc() {
                 ></textarea>
             </div>
 
-            <div className="accExtraInfo">
+            <div className={`accExtraInfo ${isMobile ? "mobile" :""}`}>
                 <div className="accExtraInfoWrapper woutBg">
                     {!canView("number") ? (
                         <span>Пользователь скрыл номер телефона</span>

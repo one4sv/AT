@@ -24,7 +24,7 @@ export default function Streak({ habit, calendar }: StreakType) {
     const formatDate = (d: Date) =>
         `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-    const datesSet = new Set(calendar.map(d => d.date));
+    const datesSet = new Set(calendar.map(d => d.isDone === true ? d.date : null));
     const startDate = habit.start_date ? new Date(habit.start_date) : new Date(0);
 
     const checkStreak = (fromDate: Date) => {
@@ -102,7 +102,7 @@ export default function Streak({ habit, calendar }: StreakType) {
             ) : habit.periodicity !== "sometimes" && showYesterdayWarning ? (
                 <div className="streakStr warn">
                     <Fire weight="fill" size={24}/> 
-                    {isMy && `Не потеряйте стрик `}<span>{streakUntilYesterday}</span>&nbsp;{pluralizeDay(streakUntilYesterday)}!
+                    {isMy && `Не потеряйте стрик`}&nbsp;<span>{streakUntilYesterday}</span>&nbsp;{pluralizeDay(streakUntilYesterday)}!
                 </div>
             ) : habit.periodicity !== "sometimes" && (
                 streak === 0 ? (

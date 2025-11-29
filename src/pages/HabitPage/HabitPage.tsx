@@ -12,6 +12,7 @@ import "./scss/habitInfo.scss";
 import "./scss/redHabit.scss";
 import Diagrams from "./components/Calendar/Diagrams";
 import HabitInfo from "./components/HabitInfo/HabitInfo";
+import { isMobile } from "react-device-detect";
 
 
 export default function Habit() {
@@ -33,11 +34,11 @@ export default function Habit() {
         return <Loader/>
     }
     return (
-        <div className="statsDiv">
+        <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
             <Calendar/>
             <Diagrams/>
             {habitId && habit ? (
-                <div className="habitMenu" style={{right: showHabitMenu ? "0.5vw" : "-25vw"}}>
+                <div className={`habitMenu ${isMobile ? "mobile" : ""}`} style={{right: showHabitMenu ? "0.5vw" : "-25vw"}}>
                     <div className="habitMenuShowButt" onClick={()=> setShowHabitMenu(!showHabitMenu)}>
                         <CaretDoubleRight style={{transform: `rotate(${showHabitMenu ? "0deg" : "180deg"})`}}/>
                     </div>

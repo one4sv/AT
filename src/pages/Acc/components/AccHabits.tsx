@@ -1,3 +1,4 @@
+import { isMobile } from "react-device-detect";
 import type { Habit } from "../../../components/context/HabitsContext";
 import type { PrivateSettings } from "../../../components/context/SettingsContext";
 import HabitDiv from "../../../components/ts/Habit";
@@ -14,7 +15,7 @@ export default function AccHabits({habits, canView, isMyAcc}:acchabitsProps) {
                 <div className="accHabitChart"></div>
                 <div className="accHabitOverall"></div>
             </div>
-            <div className="accHabitsList">
+            <div className={`accHabitsList ${isMobile ? "mobile" : ""}`}>
                 {!canView("habits") ? (
                     <span className="accNoPrivateAccess">Пользователь скрыл привычки</span>
                 ) : (

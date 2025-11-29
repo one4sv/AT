@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import GetIconByType from "../utils/getIconByType";
 import Linkify from "linkify-react";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import { isMobile } from "react-device-detect";
 
 type MessageComponentType = {
     isMy: boolean,
@@ -47,8 +48,8 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
                 setReaction(m.id, "Heart")
             }}
         >
-            <div className={`message ${ isMy ? "my" : "ur"} ${highlightedId === m.id ? "highlight" : ""}`}>
-                <div className="messageText"><Linkify>{m.content}</Linkify></div>
+            <div className={`message ${ isMy ? "my" : "ur"} ${highlightedId === m.id ? "highlight" : ""} ${isMobile ? "mobile" : ""}`}>
+                <div className={`messageText ${isMobile ? "mobile" : ""}`}><Linkify>{m.content}</Linkify></div>
                 {m.files && m.files.length > 0 && (
                     <div className="messageFiles">
                         {m.files.map((file, j) => {

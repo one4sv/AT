@@ -8,6 +8,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    
+    &.mobile {
+        width: 100%;
+        height: 95vh;
+    }
 }
 .postFeed {
     display: flex;
@@ -19,6 +24,9 @@
     scrollbar-width: thin;
     padding: 1vh 0;
     overflow-y: auto;
+    &.mobile {
+        width: 95%;
+    }
 }
 .feedNothing {
     position: absolute;
@@ -78,7 +86,4 @@
             color: var(--tc);
         }
     }
-}
-.mainPosts {
-
 }

@@ -8,7 +8,13 @@
     background-color: var(--mc);
     display: flex;
     flex-direction: column;
-    z-index: 2;
+    z-index: 8;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    &.mobileSM {
+        width: 100%;
+        height: calc(100% - 5vh);
+    }
 }
 .SMsearchDiv {
     display: flex;
@@ -74,6 +80,11 @@
     opacity: 0;
     pointer-events: none;
     transform: translateY(-25%);
+    
+    &.mobile {
+        width: fit-content;
+        padding: 0 2vw;
+    }
 }
 .SMprofileButt {
     flex: 1;
@@ -187,6 +198,9 @@
     scrollbar-width: thin;
     scrollbar-color: var(--menuButtHover) var(--tr);
     scrollbar-gutter: stable both-edges;
+    &.mobileSlide {
+        padding: 0 5vw;
+    }
 }
 
 .SMlist {

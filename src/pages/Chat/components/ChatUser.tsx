@@ -5,6 +5,7 @@ import { useUser } from "../../../components/hooks/UserHook";
 import { useChat } from "../../../components/hooks/ChatHook";
 import { useEffect, useRef, useState } from "react";
 import type { message } from "../../../components/context/ChatContext";
+import { isMobile } from "react-device-detect";
 
 interface ChatUserProps {
     search: string;
@@ -47,8 +48,12 @@ export default function ChatUser({
             nameRef.current.style.width = "0";
             searchRef.current.style.width = "100%";
         } else {
-            nameRef.current.style.width = "40%";
-            searchRef.current.style.width = "50%";
+            if (!isMobile) {
+                nameRef.current.style.width = "40%";
+                searchRef.current.style.width = "50%";
+            } else {
+                nameRef.current.style.width = "70%";
+            }
         }
     }, [search.length])
 
@@ -75,7 +80,7 @@ export default function ChatUser({
             <div className="chatUserBack" onClick={() => navigate("/")}>
                 <ChevronLeft />
             </div>
-            <div className="chatUserInfo" onClick={() => navigate(`/acc/${contactId}`)} ref={nameRef}>
+            <div className={`chatUserInfo ${isMobile ? "mobile" : ""}`} onClick={() => navigate(`/acc/${contactId}`)} style={{display:search.length > 0 ? "none" : "flex"}} ref={nameRef}>
                 <div className="chatUserPick">
                     {chatWith.avatar_url ? (
                         <img className="chatUserAvatar" src={chatWith.avatar_url} alt={chatWith.username ?? chatWith.nick} />
@@ -97,7 +102,7 @@ export default function ChatUser({
             </div>
 
             <div className="chatUserMenu" ref={searchRef}>
-                <div className="chatSearchWrapeer">
+                <div className={`chatSearchWrapeer ${isMobile ? "mobile" : ""}`}>
                     <div className="chatSearch">
                         <input
                             type="text"

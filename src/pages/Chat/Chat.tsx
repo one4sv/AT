@@ -10,6 +10,7 @@ import { useUser } from "../../components/hooks/UserHook"
 import { ChatTAWrapper } from "./components/ChatTAWrapper"
 import DateDivider from "./components/DateDivider"
 import { isSameDay } from "./utils/isSameDay"
+import { isMobile } from "react-device-detect"
 
 export default function Chat () {
     const { user } = useUser()
@@ -117,7 +118,7 @@ export default function Chat () {
     if (chatLoading) return <Loader />
 
     return(
-        <div className="chatDiv">
+        <div className={`chatDiv ${isMobile ? "mobile" : ""}`}>
             <ChatUser
                 search={search}
                 setSearch={setSearch}

@@ -2,7 +2,7 @@
 
 .diagramsDiv {
     position: relative;
-    background-color: var(--bgc);
+    background-color: var(--mc);
     width: 20vw;
     display: inline-block;
     height: 39vh;
@@ -10,6 +10,11 @@
     border-radius: 12px;
     align-self: start;
     padding: 1vh 1vw;
+
+    &.mobile {
+        width: 90%;
+        align-self: center;
+    }
 }
 .diagram {
     display: flex;

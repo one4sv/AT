@@ -11,6 +11,11 @@
     padding: 1vh 0.5vw;
     max-height: 50vh;
     position: relative;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    &.mobile {
+        padding: 0.5vh 1vw;
+    }
 }
 .PostHabit {
     min-width: 40%;
