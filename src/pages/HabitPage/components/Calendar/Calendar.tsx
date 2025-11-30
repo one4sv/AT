@@ -29,7 +29,7 @@ export default function Calendar() {
     const monthsRef = useRef<HTMLDivElement>(null)
     const yearsRef = useRef<HTMLDivElement>(null)
 
-    const isMy = habits?.find(h => h.id === Number(id))
+    const isMy = habits?.some(h => h.id === Number(id)) || false
     const today = new Date()
     const month = today.getMonth()
     const year = today.getFullYear()
