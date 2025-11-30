@@ -4,8 +4,11 @@ import { useNavigate } from "react-router"
 import { useParams } from "react-router"
 import { useChat } from "../../hooks/ChatHook"
 import { isMobile } from "react-device-detect"
+import { useContextMenu } from "../../hooks/ContextMenuHook"
+
 export default function ContactsList() {
     const { list, onlineMap } = useChat()
+    const { openMenu } = useContextMenu()
     const { contactId } = useParams<{ contactId: string }>()
     const navigate = useNavigate()
 
@@ -35,7 +38,10 @@ export default function ContactsList() {
         <div className="contactsList SMlist">
             {list ? (
                 sortedList.map((acc) => (
-                    <div className={`contactsUser ${contactId === acc.id ? "active" : "" }`} key={acc.id} onClick={() => navigate(`/chat/${acc.id}`)}>
+                    <div className={`contactsUser ${contactId === acc.id ? "active" : "" }`} key={acc.id} onClick={() => navigate(`/chat/${acc.id}`)} onContextMenu={(e) => {
+                        e.preventDefault()
+                        openMenu(e.clientX, e.clientY, "chat", undefined, {id:acc.id, name:acc.username ? acc.username : acc.nick})
+                    }}>
                         <div className="contactsUserPic">
                             {acc.avatar_url ? (
                                 <img className="contactsUserAvatar" src={acc.avatar_url} alt={acc.username ?? acc.nick} />
@@ -56,6 +62,7 @@ export default function ContactsList() {
                             </div>
                             {acc.lastMessage && (
                                 <div className={`lastMess ${isMobile ? "mobile" : ""}`}>
+                                    <div>
                                     {acc.lastMessage.sender_id !== acc.id && <span>Вы: </span>}
                                     <span className="lmc">
                                         {acc.lastMessage.content && <span>{acc.lastMessage.content} </span>}
@@ -65,6 +72,7 @@ export default function ContactsList() {
                                             </span>
                                         ) : null}
                                     </span>
+                                    </div>
                                     <span>{messageGetTime(acc.lastMessage.created_at)}</span>
                                 </div>
                             )}

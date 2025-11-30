@@ -18,6 +18,7 @@ import type { Media } from "../context/ChatContext";
 import { useLocation } from "react-router";
 import "../../scss/Post.scss"
 import { isMobile } from "react-device-detect";
+import { useContextMenu } from "../hooks/ContextMenuHook";
 
 interface PostProps {
     post: PostType
@@ -28,6 +29,8 @@ export default function Post({ post, isMy }: PostProps) {
     const { setBlackout } = useBlackout()
     const { setPosts } = useAcc()
     const { user } = useUser()
+    const { openMenu } = useContextMenu()
+
     const navigate = useNavigate()
     const location = useLocation()
     const [ newText, setNewText ] = useState("");
@@ -180,7 +183,19 @@ export default function Post({ post, isMy }: PostProps) {
     if (post.likes) likesCount = post.likes.length;
 
     return (
-        <div className="PostDiv" onMouseEnter={() => isMy && setHover(true)} onMouseLeave={() => setHover(false)}>
+        <div className="PostDiv" onMouseEnter={() => isMy && setHover(true)} onMouseLeave={() => setHover(false)} onContextMenu={(e) => {
+            e.preventDefault();
+            openMenu(e.clientX, e.clientY, "post", undefined, {id:String(post.id), name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text, red, func: () => {
+                if (red) {
+                    upPost();
+                } else {
+                    setRed(true);
+                    setNewText(post.text);
+                    setKeptMedia(post.media || []);
+                    setNewFiles([]);
+                }
+            }})
+        }}>
             <div className={`Post ${isMobile ? "mobile" : ""}`}>
                 {!location.pathname.includes("/acc") && (
                     <div className="postUser" onClick={() => navigate(`/acc/${post.user.id}`)}>
@@ -261,7 +276,7 @@ export default function Post({ post, isMy }: PostProps) {
                                 {red ? <Check /> : <PencilSimple />}
                             </div>
                             <div className="PostButt" onClick={() => {
-                                setDeleteConfirm({goal:"post", id:post.id, name: post.text.length > 10 ? post.text.slice(0, 15) + "…" : post.text})
+                                setDeleteConfirm({goal:"post", id:post.id, name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text})
                                 setBlackout({seted:true, module:"Delete"})
                             }}>
                                 <Trash />

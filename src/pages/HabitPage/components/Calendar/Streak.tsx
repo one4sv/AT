@@ -93,7 +93,7 @@ export default function Streak({ habit, calendar }: StreakType) {
                 </div>
             )}
 
-            {habit.periodicity !== "sometimes" && !isTodayChosenWeekly && habit.periodicity === "weekly" ? (
+            {habit.periodicity !== "sometimes" && !isTodayChosenWeekly && habit.periodicity === "weekly" && streak > 0 ? (
                 <div className="streakStr start">
                     <Fire weight="fill" size={24}/> 
                     {isMy && "Сегодня можно отдохнуть! "} 

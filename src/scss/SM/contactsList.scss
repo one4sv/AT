@@ -97,21 +97,26 @@
     align-items: center;
     gap: 0.2rem;
 
-    >.lmc {
-        /* разрешаем гибко занимать доступное место и обрезать длинный текст */
-        flex: 1 1 auto;
-        min-width: 0;
-        max-width: 12vw;
-        white-space: nowrap;        // не переносим на новую строку
-        overflow: hidden;           // скрываем лишнее
-        text-overflow: ellipsis;    // показываем "..."
-        >.lmcMediafile {
-            color: var(--acsent);
+
+    > div {
+        display: flex;
+        gap: 0.2rem;
+        > .lmc {
+            /* разрешаем гибко занимать доступное место и обрезать длинный текст */
+            flex: 1 1 auto;
+            min-width: 0;
+            max-width: 9vw;
+            white-space: nowrap;        // не переносим на новую строку
+            overflow: hidden;           // скрываем лишнее
+            text-overflow: ellipsis;    // показываем "..."
+            >.lmcMediafile {
+                color: var(--acsent);
+            }
         }
-    }
-    &.mobile {
-        >.lmc {
-            max-width: 60vw;
+        &.mobile {
+            >.lmc {
+                max-width: 60vw;
+            }
         }
     }
 }

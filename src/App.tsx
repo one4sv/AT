@@ -13,6 +13,7 @@ import Notification from "./components/ts/Notification";
 import Blackout from './components/ts/Blackout';
 import ThemeHandler from './components/hooks/themeHook';
 import ResponsiveLayout from './components/layout/ResponsiveLayout';
+import ContextMenu from './components/ts/ContextMenu';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <ThemeHandler />
         <Notification />
         <Blackout />
+        <ContextMenu/>
         <Routes>
           <Route path="/sign" element={<Sign />} />
           {window.location.hostname === "localhost" && (

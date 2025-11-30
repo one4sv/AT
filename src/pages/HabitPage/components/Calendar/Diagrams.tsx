@@ -190,8 +190,6 @@ export default function Diagrams() {
             if (nothingProcent > 0) Diagram.push({ procent: nothingProcent, label: "Свободно", color: "nothing" });
         }
     }
-    console.log(calendar)
-    console.log(habits)
 
     const colors: Record<string, string> = {
         comp: "#129e12",

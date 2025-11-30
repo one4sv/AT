@@ -3,6 +3,7 @@ import { type ReactNode } from "react"
 import type { Habit } from "./HabitsContext";
 import { useNote } from "../hooks/NoteHook";
 import { api } from "../ts/api";
+import { useCalendar } from "../hooks/CalendarHook";
 
 const TheHabitContext = createContext<TheHabitContextType | null>(null);
 
@@ -23,6 +24,7 @@ export interface TheHabitContextType {
 }
 export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const { showNotification } = useNote()
+    const { fetchCalendarHabit } = useCalendar()
     const API_URL = import.meta.env.VITE_API_URL
 
     const [ loadingHabit, setLoadingHabit ] = useState(false)
@@ -44,6 +46,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
             const res = await findHabit(id)
             const { success, habit, isRead, isDone, comment } = res.data
             if (success) {
+                fetchCalendarHabit(id!)
                 setHabit(habit);
                 setIsReadOnly(isRead);
                 setTodayDone(isDone)

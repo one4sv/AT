@@ -6,9 +6,10 @@ import { useCalendar } from "../../../../components/hooks/CalendarHook";
 
 interface DayCommentProps {
   id: string;
+  isMy: boolean;
 }
 
-export default function DayComment({ id }: DayCommentProps) {
+export default function DayComment({ id, isMy }: DayCommentProps) {
   const { sendDayComment } = useDone()
   const { dayComment, todayComment } = useTheHabit()
   const { chosenDay } = useCalendar()
@@ -52,6 +53,7 @@ export default function DayComment({ id }: DayCommentProps) {
       <textarea
         placeholder="Комментарий"
         ref={textareaRef}
+        readOnly={!isMy}
         onChange={handleTextareaChange}
         onKeyDown={handleKeyDown}
         value={comment}

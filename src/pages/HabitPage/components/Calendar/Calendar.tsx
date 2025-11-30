@@ -29,6 +29,7 @@ export default function Calendar() {
     const monthsRef = useRef<HTMLDivElement>(null)
     const yearsRef = useRef<HTMLDivElement>(null)
 
+    const isMy = habits?.find(h => h.id === Number(id))
     const today = new Date()
     const month = today.getMonth()
     const year = today.getFullYear()
@@ -97,8 +98,6 @@ export default function Calendar() {
         const yearsArray = Array.from(yearsSet).sort((a, b) => a - b);
         setYears(yearsArray);
     }, [habits, habit, id]); // 🔹 убрали today
-
-
 
     useEffect(() => {
         if (!selectedMonth || !selectedYear) return
@@ -204,11 +203,12 @@ export default function Calendar() {
             {id && habit ? <Streak habit={habit} calendar={calendar}/> : ""}
             <ChosenDay/>
 
-            {id && doable && habits?.find(h => h.id === Number(id)) && (
+            {id && doable && isMy && (
                 <DoneButton habitId={Number(habit?.id)} />
             )}
             {id && (
                 <DayComment
+                    isMy={isMy}
                     id={id}
                 />
             )}

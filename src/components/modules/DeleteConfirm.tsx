@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useDelete } from "../hooks/DeleteHook";
 import { useHabits } from "../hooks/HabitsHook";
@@ -9,6 +8,7 @@ import "../../scss/deleteConfirm.scss";
 import { useAcc } from "../hooks/AccHook";
 import { useState, useEffect } from "react";
 import { useUser } from "../hooks/UserHook";
+import { api } from "../ts/api";
 
 export default function DeleteConfirm() {
     const { user } = useUser()
@@ -32,10 +32,9 @@ export default function DeleteConfirm() {
     const deleteThis = async () => {
         const { goal, id } = deleteConfirm;
         try {
-            const res = await axios.post(
+            const res = await api.post(
                 `${API_URL}delete`,
-                { goal: goal, delete_id: id },
-                { withCredentials: true }
+                { goal: goal, delete_id: id }
             );
 
             if (res.data.success) {

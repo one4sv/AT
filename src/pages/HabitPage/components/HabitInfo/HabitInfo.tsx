@@ -123,16 +123,16 @@ export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
                 </div>
                 <div className="habitButts">
                     <div onClick={() => {
-                            setPinned(!pinned);
-                            setPin(habit.id, !pinned);
-                        }}>
-                            {pinned || habit.pinned ? <PinOff className="pinHabit" /> : <Pin className="pinHabit" />}
-                        </div>
-                        <div onClick={() => {
-                            setDeleteConfirm({goal:"habit", id:habit.id, name:habit.name})
-                            setBlackout({seted:true, module:"Delete"})}}
-                        >
-                            <Trash2 className="delHabit" />
+                        setPinned(!pinned);
+                        setPin(habit.id, !pinned);
+                    }}>
+                        {pinned || habit.pinned ? <PinOff className="pinHabit" /> : <Pin className="pinHabit" />}
+                    </div>
+                    <div onClick={() => {
+                        setDeleteConfirm({goal:"habit", id:habit.id, name:habit.name})
+                        setBlackout({seted:true, module:"Delete"})}}
+                    >
+                        <Trash2 className="delHabit" />
                     </div>
                 </div>
             </div>

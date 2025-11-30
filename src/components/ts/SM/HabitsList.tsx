@@ -81,6 +81,7 @@ export default function HabitsList() {
                                                 habit={habit}
                                                 key={habit.id}
                                                 id={Number(habitId)}
+                                                isMyAcc={true}
                                             />
                                         ))}
                                     </div>

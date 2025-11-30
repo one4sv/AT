@@ -14,7 +14,7 @@ export function getDayArrays( dateStr: string, calendar: Calendar[], habits: Hab
     const skippedArr: Calendar[] = []
     const today = new Date()
 
-    if (id) {
+    if (id && habit) {
         const h = habits?.find(h => String(h.id) === id)
         if (h) {
             if (new Date(h.start_date) <= date) {

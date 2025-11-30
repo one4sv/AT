@@ -1,0 +1,34 @@
+@use "./global" as var;
+
+.ContextMenuWrapper {
+    position: fixed;
+    background-color: var(--bgc);
+    color: var(--borderWh);
+    border-radius: 8px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    width: 8vw;
+    overflow: hidden;
+}
+.ContextMenuButt {
+    padding: 0.7vh 0.5vw;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+
+    >svg {
+        width: 1vw;
+        height: 1vw;
+        margin-right: 0.3vw;
+    }
+
+    &.delete:hover {
+        color: var(--notValid);
+    }
+    &:hover {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    }
+}

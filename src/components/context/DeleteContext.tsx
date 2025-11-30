@@ -4,7 +4,7 @@ const DeleteContext = createContext<DeleteContextType | null>(null);
 
 export interface Delete {
     goal:string,
-    id:number,
+    id:string | number,
     name:string
 }
 export interface DeleteContextType {
@@ -12,7 +12,7 @@ export interface DeleteContextType {
     setDeleteConfirm:React.Dispatch<React.SetStateAction<Delete>>
 }
 export const DeleteProvider = ({children} : {children : ReactNode}) => {
-    const [ deleteConfirm, setDeleteConfirm ] = useState<Delete>({ goal:"", id:0,name:"" })
+    const [ deleteConfirm, setDeleteConfirm ] = useState<Delete>({ goal:"", id:"", name:"" })
     return(
         <DeleteContext.Provider value={{deleteConfirm, setDeleteConfirm}}>
             {children}

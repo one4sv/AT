@@ -2,8 +2,10 @@ import type { Habit } from "../context/HabitsContext"
 import { useNavigate } from "react-router"
 import { PushPinIcon  } from "@phosphor-icons/react"
 import { habitIcon } from "./habitIcon"
+import { useContextMenu } from "../hooks/ContextMenuHook"
 
 export default function HabitDiv({habit, id, isMyAcc}:{habit:Habit, id?:number, isMyAcc?:boolean}) {
+    const { openMenu } = useContextMenu()
     const navigate = useNavigate()
     
     const todayNum = new Date().getDay()
@@ -52,7 +54,11 @@ export default function HabitDiv({habit, id, isMyAcc}:{habit:Habit, id?:number, 
     if (isMyAcc === undefined) isMyAcc = true
 
     return(
-        <div className={`habit themeHabit-default ${id === habit.id ? "active" : ""}`} onClick={() => navigate(`/habit/${habit.id}`)}>
+        <div className={`habit themeHabit-default ${id === habit.id ? "active" : ""}`} onClick={() => navigate(`/habit/${habit.id}`)} onContextMenu={(e) => {
+            if (!isMyAcc) return
+            e.preventDefault()
+            openMenu( e.clientX, e.clientY, "habit", habit, {id:String(habit.id), name:habit.name})
+        }}>
             {habit.tag ? (
                 <div className="habitIcon">
                     {habitIcon(habit)}
