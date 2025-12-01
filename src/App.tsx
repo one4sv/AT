@@ -33,8 +33,8 @@ function App() {
             <Route index element={<Main />} />
             <Route path="habit" element={<HabitPage />} />
             <Route path="habit/:habitId" element={<HabitPage />} />
-            <Route path="chat/:contactId" element={<Chat />} />
-            <Route path="acc/:contactId" element={<Acc />} />
+            <Route path="chat/:nick" element={<Chat />} />
+            <Route path="acc/:nick" element={<Acc />} />
             <Route path="acc" element={<Acc />} />
           </Route>
         </Routes>

@@ -38,7 +38,7 @@ export default function AccInfo({acc, red, setRed, isMyAcc} : AccInfoProps) {
             if (red) handleSave();
             setRed(!red);
         } else {
-            navigate(`/chat/${acc?.id}`);
+            navigate(`/chat/${acc?.nick}`);
         }
     };
     return (

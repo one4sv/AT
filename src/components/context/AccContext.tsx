@@ -20,8 +20,8 @@ export type PostType = {
     comments_count:number
 }
 export interface AccContextType {
-    refetchAcc:(contactId:string) => Promise<void>
-    refetchPosts:(contactId:string) => Promise<void>
+    refetchAcc:(nick:string) => Promise<void>
+    refetchPosts:(nick:string) => Promise<void>
     acc:User | undefined,
     habits:Habit[] | undefined,
     loading:boolean,
@@ -48,11 +48,11 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
 
     const API_URL = import.meta.env.VITE_API_URL;
 
-    const refetchAcc = useCallback(async (contactId: string) => {
-        if (!contactId) return;
+    const refetchAcc = useCallback(async (nick: string) => {
+        if (!nick) return;
         setAccLoading(true);
         try {
-            const res = await api.get(`${API_URL}acc/${contactId}`);
+            const res = await api.get(`${API_URL}acc/${nick}`);
             if (res.data.success) {
                 setAcc(res.data.acc);
                 setHabits(res.data.habits);
@@ -66,11 +66,11 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [API_URL, showNotification]);
 
-    const refetchPosts = useCallback(async (contactId: string) => {
-        if (!contactId) return;
+    const refetchPosts = useCallback(async (nick: string) => {
+        if (!nick) return;
         setPostsLoading(true);
         try {
-            const res = await api.get(`${API_URL}posts/${contactId}`);
+            const res = await api.get(`${API_URL}posts/${nick}`);
             if (res.data.success) {
                 setPosts(res.data.posts);
             }

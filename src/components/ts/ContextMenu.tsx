@@ -85,7 +85,7 @@ export default function ContextMenu() {
             )}
             {menu.point === "chat" && options && options.id && options.name && (
                 <>
-                    <div className="ContextMenuButt" onClick={() => navigate(`/acc/${options.id}`)}>
+                    <div className="ContextMenuButt" onClick={() => navigate(`/acc/${options.nick}`)}>
                         <User/>
                         Открыть профиль
                     </div>

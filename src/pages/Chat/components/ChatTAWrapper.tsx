@@ -9,7 +9,7 @@ import { isMobile } from "react-device-detect";
 
 export function ChatTAWrapper() {
     const { sendMess, handleTyping } = useChat()
-    const { contactId } = useParams()
+    const { nick } = useParams()
     const [ mess, setMess ] = useState<string>("")
     const [ files, setFiles ] = useState<File[]>([]) 
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false) 
@@ -30,8 +30,8 @@ export function ChatTAWrapper() {
         }
     }
     const handleSend = async () => {
-        if (contactId && (mess.trim() || files.length > 0)) {
-            await sendMess(contactId, mess.trim(), files)
+        if (nick && (mess.trim() || files.length > 0)) {
+            await sendMess(nick, mess.trim(), files)
             setMess("")
             setFiles([])
             setShowChatBar(false)
@@ -120,7 +120,7 @@ export function ChatTAWrapper() {
                 className={`chatTA ${showChatBar || files.length > 0 ? "chatTAwFiles" : ""} ${isMobile ? "mobile" : ""}`}
                 value={mess}
                 ref={textAreaRef}
-                onChange={(e) => { setMess(e.currentTarget.value); handleTyping(contactId!); }}
+                onChange={(e) => { setMess(e.currentTarget.value); handleTyping(nick!); }}
                 onKeyDown={handleKeyDown}
                 onFocus={() => setShowChatBar(true)}
                 placeholder="Напишите сообщение..."

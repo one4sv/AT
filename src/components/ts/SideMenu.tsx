@@ -101,7 +101,7 @@ export default function SideMenu() {
                     <div className={`SMprofileMenu ${showList ? "active" : ""} ${isMobile ? "mobile" : ""}`} ref={menuRef}>
                         <div className="SMprofileButt" onClick={() => {
                             setShowList(false)
-                            navigate(`/acc/${user.id}`)
+                            navigate(`/acc/${user.nick}`)
                         }}>
                             {user.username || user.nick}
                         </div>

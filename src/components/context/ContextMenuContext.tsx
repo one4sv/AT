@@ -7,6 +7,7 @@ type MenuOptions = {
     isDone?: boolean;
     name?:string;
     red?:boolean;
+    nick?:string;
     func?: () => void;
 };
 

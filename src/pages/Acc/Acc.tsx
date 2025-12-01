@@ -16,7 +16,7 @@ export default function Acc() {
     const { user } = useUser();
     const { refetchAcc, loading, media, posts, habits, acc, privateRules, refetchPosts } = useAcc()
     const { newBio, setNewBio, newMail, setNewMail } = useUpUser();
-    const { contactId } = useParams();
+    const { nick } = useParams();
     const navigate = useNavigate();
     const [ selector, setSelector ] = useState<string>("sended");
     const [ isMyAcc, setIsMyAcc ] = useState<boolean>(false);
@@ -31,21 +31,21 @@ export default function Acc() {
     useEffect(() => {
         if (!user?.id) return;
 
-        if (!contactId) {
+        if (!nick) {
             navigate(`/acc/${user.id}`, { replace: true });
             return;
         }
-        const my = contactId === user.id;
+        const my = nick === user.nick;
         setIsMyAcc(my);
         if (my) setSelector("habits");
 
         (async () => {
             await Promise.all([
-                refetchAcc(contactId),
-                refetchPosts(contactId)
+                refetchAcc(nick),
+                refetchPosts(nick)
             ]);
         })();
-    }, [contactId, user?.id, refetchAcc, navigate, refetchPosts]);
+    }, [nick, user?.id, refetchAcc, navigate, refetchPosts]);
 
     if (loading) return <Loader />;
 
@@ -70,7 +70,7 @@ export default function Acc() {
                     ) : (
                         <>
                             <label htmlFor="numTA">Телефон</label>
-                            <input className="numTA extraInfoInput" id="numTA" value="89083026130" readOnly={!red} />
+                            <input className="numTA extraInfoInput" id="numTA" value="Не реализовано" readOnly={!red} />
                         </>
                     )}
                 </div>

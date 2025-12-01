@@ -40,7 +40,7 @@ export default function DeleteConfirm() {
             if (res.data.success) {
                 if (goal === "post") {
                     refetchAcc(user.id!);
-                    navigate(`/acc/${user.id}`);
+                    navigate(`/acc/${user.nick}`);
                 } else if (goal === "habit") {
                     refetchHabits();
                     navigate("/habit");

@@ -106,15 +106,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
         wsRef.current = new WebSocket(`${API_WS}ws?userId=${user.id}`);
 
-        wsRef.current.onmessage = (event) => {
-            const data = JSON.parse(event.data);
+        // wsRef.current.onmessage = (event) => {
+        //     const data = JSON.parse(event.data);
 
-            if (data.type === "USER_STATUS") {
-                console.log(
-                    `Пользователь ${data.userId} ${data.isOnline ? "в сети" : "вышел"}`
-                );
-            }
-        };
+        //     if (data.type === "USER_STATUS") {
+        //         console.log(
+        //             `Пользователь ${data.userId} ${data.isOnline ? "в сети" : "вышел"}`
+        //         );
+        //     }
+        // };
 
         return () => {
             wsRef.current?.close();

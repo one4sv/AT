@@ -30,20 +30,19 @@ export default function ChatUser({
     scrollToMessage,
     searchItemRefs
 }: ChatUserProps) {
-    const { user } = useUser()
-    const { chatWith, onlineMap, typingStatus } = useChat()
-    const { contactId } = useParams()
-    
-    const navigate = useNavigate()
-    const [ isSearchOpen, setIsSearchOpen ] = useState(false)
-    
-    const nameRef = useRef<HTMLDivElement | null>(null)
-    const searchRef = useRef<HTMLDivElement | null>(null)
-    const searchDivRef = useRef<HTMLDivElement | null>(null)
+    const { user } = useUser();
+    const { chatWith, onlineMap, typingStatus } = useChat();
+    const { nick } = useParams();
+   
+    const navigate = useNavigate();
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+   
+    const nameRef = useRef<HTMLDivElement | null>(null);
+    const searchRef = useRef<HTMLDivElement | null>(null);
+    const searchDivRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (!nameRef.current || !searchRef.current) return;
-
         if (search.length > 0) {
             nameRef.current.style.width = "0";
             searchRef.current.style.width = "100%";
@@ -55,7 +54,7 @@ export default function ChatUser({
                 nameRef.current.style.width = "70%";
             }
         }
-    }, [search.length])
+    }, [search.length]);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -65,22 +64,23 @@ export default function ChatUser({
                 searchRef.current &&
                 !searchRef.current.contains(e.target as Node)
             ) {
-                setIsSearchOpen(false)
+                setIsSearchOpen(false);
             }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     useEffect(() => {
-        setIsSearchOpen(search.trim().length > 0)
-    }, [search])
+        setIsSearchOpen(search.trim().length > 0);
+    }, [search]);
+
     return (
         <div className="chatUser">
             <div className="chatUserBack" onClick={() => navigate("/")}>
                 <ChevronLeft />
             </div>
-            <div className={`chatUserInfo ${isMobile ? "mobile" : ""}`} onClick={() => navigate(`/acc/${contactId}`)} style={{display:search.length > 0 ? "none" : "flex"}} ref={nameRef}>
+            <div className={`chatUserInfo ${isMobile ? "mobile" : ""}`} onClick={() => navigate(`/acc/${nick}`)} style={{display:search.length > 0 ? "none" : "flex"}} ref={nameRef}>
                 <div className="chatUserPick">
                     {chatWith.avatar_url ? (
                         <img className="chatUserAvatar" src={chatWith.avatar_url} alt={chatWith.username ?? chatWith.nick} />
@@ -91,16 +91,14 @@ export default function ChatUser({
                 <div className="chatUserName">
                     <span>{chatWith.username ?? chatWith.nick}</span>
                     <span className={`chatOnlineStauts ${typingStatus ? "chatTyping" : "chatStopTyping"}`}>
-                        {typingStatus 
-                            ? "печатает..." 
-                            : onlineMap[chatWith?.id || ""] 
-                                ? "В сети" 
+                        {typingStatus
+                            ? "печатает..."
+                            : onlineMap[chatWith?.nick || ""]  // Изменено на .nick
+                                ? "В сети"
                                 : formatLastOnline(chatWith?.last_online)}
                     </span>
-
                 </div>
             </div>
-
             <div className="chatUserMenu" ref={searchRef}>
                 <div className={`chatSearchWrapeer ${isMobile ? "mobile" : ""}`}>
                     <div className="chatSearch">
@@ -132,7 +130,7 @@ export default function ChatUser({
                             </div>
                             <div className="chatSearchList">
                                 {searchedMessages.map((m, i) => {
-                                    const isMy = m.sender_id !== contactId
+                                    const isMy = m.sender_id === user.id
                                     return (
                                         <div
                                             key={m.id}
@@ -167,5 +165,5 @@ export default function ChatUser({
                 <div className="menuButt"><Bell/></div>
             </div>
         </div>
-    )
+    );
 }

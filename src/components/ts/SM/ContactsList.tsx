@@ -9,7 +9,7 @@ import { useContextMenu } from "../../hooks/ContextMenuHook"
 export default function ContactsList() {
     const { list, onlineMap } = useChat()
     const { openMenu } = useContextMenu()
-    const { contactId } = useParams<{ contactId: string }>()
+    const { nick } = useParams<{ nick: string }>()
     const navigate = useNavigate()
 
     const messageGetTime = (date: Date) => {
@@ -38,9 +38,9 @@ export default function ContactsList() {
         <div className="contactsList SMlist">
             {list ? (
                 sortedList.map((acc) => (
-                    <div className={`contactsUser ${contactId === acc.id ? "active" : "" }`} key={acc.id} onClick={() => navigate(`/chat/${acc.id}`)} onContextMenu={(e) => {
+                    <div className={`contactsUser ${nick === acc.nick ? "active" : "" }`} key={acc.id} onClick={() => navigate(`/chat/${acc.nick}`)} onContextMenu={(e) => {
                         e.preventDefault()
-                        openMenu(e.clientX, e.clientY, "chat", undefined, {id:acc.id, name:acc.username ? acc.username : acc.nick})
+                        openMenu(e.clientX, e.clientY, "chat", undefined, {id:acc.id, name:acc.username ? acc.username : acc.nick, nick:acc.nick})
                     }}>
                         <div className="contactsUserPic">
                             {acc.avatar_url ? (
@@ -48,7 +48,7 @@ export default function ContactsList() {
                             ) : (
                                 <CircleUserRound/>
                             )}
-                            <div className={`contactOnlineStauts ${contactId !== acc.id && onlineMap[acc?.id || ""] ? "online" : "offline"}`}></div>
+                            <div className={`contactOnlineStauts ${nick !== acc.nick && onlineMap[acc?.nick || ""] ? "online" : "offline"}`}></div>
                         </div>
                         <div className={`contactsUserInfo ${isMobile ? "mobile" : ""}`}>
                             <div className="contactsUserStr">

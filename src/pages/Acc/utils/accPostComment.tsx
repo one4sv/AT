@@ -173,7 +173,7 @@ export default function AccPostComment({id}:{id:number}) {
                     return (
                         <div className="comment" key={c.id}>
                             <div className="commentInfo">
-                                <div className="commentUser" onClick={() => navigate(`/acc/${user?.id}`)}>
+                                <div className="commentUser" onClick={() => navigate(`/acc/${user?.nick}`)}>
                                     <div className="commentAvatar">
                                         {user?.avatar_url ? (
                                             <img src={user.avatar_url}/>

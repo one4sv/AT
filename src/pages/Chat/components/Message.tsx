@@ -4,7 +4,6 @@ import { useChat } from "../../../components/hooks/ChatHook";
 import { useState } from "react";
 import type { message } from "../../../components/context/ChatContext";
 import { useUser } from "../../../components/hooks/UserHook";
-import { useParams } from "react-router-dom";
 import GetIconByType from "../utils/getIconByType";
 import Linkify from "linkify-react";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
@@ -20,7 +19,6 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
     const { setReaction, chatWith } = useChat()
     const { setBlackout } = useBlackout()
     const { user } = useUser()
-    const { contactId } = useParams()
     
     const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
 
@@ -110,7 +108,7 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
                     )}
                     {isMy && messageGetTime(m.created_at)}
                     {isMy && 
-                        (m.read_by.map(id => id.toString()).includes(contactId!) ? (
+                        (m.read_by.map(id => id.toString()).includes(chatWith.id) ? (
                             <div className="messageUnread"><Checks/></div>
                         ) : (
                             <div className="messageUnread"><Check/></div>

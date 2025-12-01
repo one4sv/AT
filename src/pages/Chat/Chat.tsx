@@ -15,7 +15,7 @@ import { isMobile } from "react-device-detect"
 export default function Chat () {
     const { user } = useUser()
     const { refetchChat, chatLoading, messages } = useChat()
-    const { contactId } = useParams()
+    const { nick } = useParams()
     const [ search, setSearch ] = useState<string>("")
     const [ selectedIndex, setSelectedIndex ] = useState<number>(0)
     const [ highlightedId, setHighlightedId ] = useState<number | null>(null)
@@ -26,11 +26,11 @@ export default function Chat () {
     const API_URL = import.meta.env.VITE_API_URL
 
     useEffect(() => {
-        if (contactId) refetchChat(contactId)
-    }, [contactId])
+        if (nick) refetchChat(nick)
+    }, [nick])
 
     useEffect(() => {
-        if (!contactId || !user?.id) return;
+        if (!nick || !user?.id) return;
         if (!user?.id) return;
         const unreadMessages = messages.filter(
             m => !m.read_by.includes(user.id!) && m.sender_id !== user.id
@@ -40,7 +40,7 @@ export default function Chat () {
             axios.post(`${API_URL}chat/read`, { messageId: m.id }, { withCredentials: true });
             });
         }
-    }, [contactId, messages, user.id]);
+    }, [nick, messages, user.id]);
 
     useEffect(() => {
         const el = chatRef.current;
@@ -48,7 +48,7 @@ export default function Chat () {
         requestAnimationFrame(() => {
             el.scrollTop = el.scrollHeight;
         });
-    }, [messages, chatLoading, contactId]);
+    }, [messages, chatLoading, nick]);
 
     const searchedMessages = useMemo(() => {
         if (!search.trim()) return [];
