@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import "../../scss/ContextMenu.scss"
 import { useContextMenu } from "../hooks/ContextMenuHook";
-import { createPortal } from "react-dom";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useDelete } from "../hooks/DeleteHook";
-import { Check, CheckCircle, Circle, PencilSimple, PushPin, PushPinSlash, Trash } from "@phosphor-icons/react";
+import { Check, CheckCircle, Circle, PencilSimple, PushPin, PushPinSlash, Trash, User } from "@phosphor-icons/react";
 import { useUpHabit } from "../hooks/UpdateHabitHook";
 import { useDone } from "../hooks/DoneHook";
+import { useNavigate } from "react-router";
 
 export default function ContextMenu() {
     const { menu } = useContextMenu();
@@ -14,6 +14,9 @@ export default function ContextMenu() {
     const { setDeleteConfirm } = useDelete()
     const { setPin } = useUpHabit()
     const { markDone } = useDone()
+
+    const navigate = useNavigate()
+
     const [pos, setPos] = useState<{ top: number; left: number }>({ top: menu.y, left: menu.x });
 
     const menuRef = useRef<HTMLDivElement>(null);
@@ -60,7 +63,7 @@ export default function ContextMenu() {
 
     if (!menu.visible) return null;
 
-    const menuContent = (
+    return (
         <div className="ContextMenuWrapper" ref={menuRef} style={{
             top: pos.top,
             left: pos.left,
@@ -81,7 +84,13 @@ export default function ContextMenu() {
                 </>
             )}
             {menu.point === "chat" && options && options.id && options.name && (
-                deleteButt()
+                <>
+                    <div className="ContextMenuButt" onClick={() => navigate(`/acc/${options.id}`)}>
+                        <User/>
+                        Открыть профиль
+                    </div>
+                    {deleteButt()}
+                </>
             )}
             {menu.point === "post" && options && options.id && options.name && (
                 <>
@@ -97,5 +106,4 @@ export default function ContextMenu() {
 
         </div>
     )
-    return createPortal(menuContent, document.body);
 }
