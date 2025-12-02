@@ -55,9 +55,8 @@ export default function HabitDiv({habit, id, isMyAcc}:{habit:Habit, id?:number, 
 
     return(
         <div className={`habit themeHabit-default ${id === habit.id ? "active" : ""}`} onClick={() => navigate(`/habit/${habit.id}`)} onContextMenu={(e) => {
-            if (!isMyAcc) return
             e.preventDefault()
-            openMenu( e.clientX, e.clientY, "habit", habit, {id:String(habit.id), name:habit.name})
+            openMenu( e.clientX, e.clientY, "habit", {id:String(habit.id), name:habit.name, isMy:isMyAcc}, habit)
         }}>
             {habit.tag ? (
                 <div className="habitIcon">

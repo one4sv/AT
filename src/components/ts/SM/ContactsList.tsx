@@ -5,6 +5,7 @@ import { useParams } from "react-router"
 import { useChat } from "../../hooks/ChatHook"
 import { isMobile } from "react-device-detect"
 import { useContextMenu } from "../../hooks/ContextMenuHook"
+import { PushPin, SpeakerSimpleX } from "@phosphor-icons/react"
 
 export default function ContactsList() {
     const { list, onlineMap } = useChat()
@@ -40,7 +41,7 @@ export default function ContactsList() {
                 sortedList.map((acc) => (
                     <div className={`contactsUser ${nick === acc.nick ? "active" : "" }`} key={acc.id} onClick={() => navigate(`/chat/${acc.nick}`)} onContextMenu={(e) => {
                         e.preventDefault()
-                        openMenu(e.clientX, e.clientY, "chat", undefined, {id:acc.id, name:acc.username ? acc.username : acc.nick, nick:acc.nick})
+                        openMenu(e.clientX, e.clientY, "chat", {id:acc.id, isMy:acc.lastMessage?.id !== undefined, name:acc.username ? acc.username : acc.nick, nick:acc.nick}, undefined, {note:acc.note, is_blocked:acc.is_blocked, pinned:acc.pinned})
                     }}>
                         <div className="contactsUserPic">
                             {acc.avatar_url ? (
@@ -52,7 +53,7 @@ export default function ContactsList() {
                         </div>
                         <div className={`contactsUserInfo ${isMobile ? "mobile" : ""}`}>
                             <div className="contactsUserStr">
-                                <span className="nameSpan">{acc.username ? acc.username: acc.nick}</span>
+                                <span className="nameSpan">{acc.username ? acc.username: acc.nick} {acc.note ? "" : <SpeakerSimpleX weight="fill"/>} {acc.pinned ? <PushPin weight="fill"/> : ""}</span>
                                 {!acc.lastMessage && (
                                     <span className="secSpan">{acc.username ? `| ${acc.nick}`: ""}</span>
                                 )}

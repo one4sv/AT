@@ -15,6 +15,9 @@ export interface chatWithType {
     id: string,
     last_online: string,
     avatar_url?: string | null,
+    note?:boolean,
+    is_blocked?:boolean,
+    pinned?:boolean
 }
 
 export interface ReactionsType {
@@ -38,6 +41,7 @@ export interface ChatContextType {
     search: string,
     setSearch: React.Dispatch<React.SetStateAction<string>>,
     refetchContacts: () => Promise<void>,
+    refetchContactsWTLoading: () => Promise<void>,
     onlineMap: Record<string, boolean>,
     setReaction: (mId: number, reaction: string) => Promise<void>,
     handleTyping: (nick: string) => void,
@@ -62,6 +66,9 @@ export interface Acc {
     avatar_url?: string | null,
     lastMessage: message | null,
     unread_count: number,
+    note:boolean,
+    is_blocked:boolean,
+    pinned:boolean
 }
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
@@ -92,7 +99,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setChatLoading(true);
             const res = await api.get(`${API_URL}chat/${nick}`, { withCredentials: true });
             if (res.data.success) {
-                setChatWith({ username: res.data.user.username, nick: nick, id: res.data.user.id, avatar_url: res.data.user.avatar_url, last_online: res.data.user.last_online });
+                setChatWith({ username: res.data.user.username, nick: nick, id: res.data.user.id, avatar_url: res.data.user.avatar_url,
+                    last_online: res.data.user.last_online, note:res.data.user.note, is_blocked:res.data.user.is_blocked, pinned:res.data.user.pinned });
                 setMessages(res.data.messages);
             }
         } catch {
@@ -122,13 +130,16 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const refetchContacts = useCallback(async () => {
+    const refetchContactsWTLoading = useCallback(async () => {
         if (user.nick === null) return;
-        setLoadingList(true);
         try {
             const res = await api.post(`${API_URL}contacts`, { search });
             if (res.data.success) {
-                setList(res.data.friendsArr);
+                const sortedList = res.data.friendsArr.slice().sort((a: Acc, b: Acc) => {
+                    if (a.pinned === b.pinned) return 0;
+                    return a.pinned ? -1 : 1;
+                });
+                setList(sortedList);
             }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
@@ -137,6 +148,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setLoadingList(false);
         }
     }, [API_URL, search, showNotification, user.nick]);
+
+    const refetchContacts = useCallback(async () => {
+        setLoadingList(true);
+        await refetchContactsWTLoading();
+    }, [refetchContactsWTLoading]);
 
     useEffect(() => {
         if (!user?.id) return;
@@ -149,8 +165,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     if (prev.some(m => m.id === data.message.id)) return prev;
                     return [...prev, data.message];
                 });
-                // refetchContacts();
-                if (document.visibilityState === "hidden" && messageSenderId !== user.id && note && messNote) {
+                refetchContactsWTLoading();
+                if (document.visibilityState === "hidden" && messageSenderId !== user.id && note && messNote &&
+                    list.some(acc => acc.id === messageSenderId && acc.note))
+                {
                     const senderName = data.username
                         ? `${data.username} | ${data.nick}`
                         : data.nick || "Новый собеседник";
@@ -182,6 +200,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                         : m
                     )
                 );
+                refetchContactsWTLoading()
             }
             if (data.type === "MESSAGE_REACTION") {
                 setMessages(prev =>
@@ -263,7 +282,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     return (
-        <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, sendMess, messages, list, setSearch, search, refetchContacts, onlineMap, setReaction, handleTyping, typingStatus, loadingList }}>
+        <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, sendMess, messages, list, setSearch, search,
+            refetchContacts, onlineMap, setReaction, handleTyping, typingStatus, loadingList, refetchContactsWTLoading }}>
             {children}
         </ChatContext.Provider>
     );

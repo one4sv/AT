@@ -185,7 +185,7 @@ export default function Post({ post, isMy }: PostProps) {
     return (
         <div className="PostDiv" onMouseEnter={() => isMy && setHover(true)} onMouseLeave={() => setHover(false)} onContextMenu={(e) => {
             e.preventDefault();
-            openMenu(e.clientX, e.clientY, "post", undefined, {id:String(post.id), name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text, red, func: () => {
+            openMenu(e.clientX, e.clientY, "post", {id:String(post.id), name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text, isMy:isMy, red:red, func: () => {
                 if (red) {
                     upPost();
                 } else {

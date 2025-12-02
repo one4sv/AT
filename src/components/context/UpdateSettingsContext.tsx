@@ -79,7 +79,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
     const setNewNote = useCallback((val: boolean) => {
         setUpdateQueue((prev) => [
             ...prev.filter((item) => item.setting !== "note"),
-            { setting: "note", value: val },
+            { setting: "new_note", value: val },
         ]);
         setIsUpdating((prev) => [...new Set([...prev, "note"])]);
     }, []);
@@ -87,7 +87,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
     const setNewMessNote = useCallback((val: boolean) => {
         setUpdateQueue((prev) => [
             ...prev.filter((item) => item.setting !== "messNote"),
-            { setting: "mess_note", value: val },
+            { setting: "new_mess_note", value: val },
         ]);
         setIsUpdating((prev) => [...new Set([...prev, "note"])]);
     }, []);

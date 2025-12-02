@@ -70,6 +70,7 @@ export default function SideMenu() {
         document.addEventListener("mousedown", handleClickOutside)
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
+    
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (

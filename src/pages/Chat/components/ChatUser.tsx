@@ -6,6 +6,7 @@ import { useChat } from "../../../components/hooks/ChatHook";
 import { useEffect, useRef, useState } from "react";
 import type { message } from "../../../components/context/ChatContext";
 import { isMobile } from "react-device-detect";
+import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 
 interface ChatUserProps {
     search: string;
@@ -33,6 +34,7 @@ export default function ChatUser({
     const { user } = useUser();
     const { chatWith, onlineMap, typingStatus } = useChat();
     const { nick } = useParams();
+    const { openMenu } = useContextMenu();
    
     const navigate = useNavigate();
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -80,7 +82,15 @@ export default function ChatUser({
             <div className="chatUserBack" onClick={() => navigate("/")}>
                 <ChevronLeft />
             </div>
-            <div className={`chatUserInfo ${isMobile ? "mobile" : ""}`} onClick={() => navigate(`/acc/${nick}`)} style={{display:search.length > 0 ? "none" : "flex"}} ref={nameRef}>
+            <div className={`chatUserInfo ${isMobile ? "mobile" : ""}`}
+                onClick={() => navigate(`/acc/${nick}`)} 
+                style={{display:search.length > 0 ? "none" : "flex"}} 
+                ref={nameRef}
+                onContextMenu={(e) => {
+                    e.preventDefault()
+                    openMenu(e.clientX, e.clientY, "acc", {id:chatWith.id, name:chatWith.username ? chatWith.username : chatWith.nick, nick:chatWith.nick}, undefined, {note:chatWith.note, is_blocked:chatWith.is_blocked, pinned:chatWith.pinned})
+                }}
+            >
                 <div className="chatUserPick">
                     {chatWith.avatar_url ? (
                         <img className="chatUserAvatar" src={chatWith.avatar_url} alt={chatWith.username ?? chatWith.nick} />

@@ -5,7 +5,7 @@ import { useNote } from "../../../components/hooks/NoteHook";
 export default function FeedNothing() {
     const { showNotification } = useNote()
     const { setBlackout } = useBlackout()
-    const LINK = import.meta.env.LINK
+    const LINK = import.meta.env.VITE_LINK
 
     const copyLink = () => {
         navigator.clipboard.writeText(`${LINK}`)

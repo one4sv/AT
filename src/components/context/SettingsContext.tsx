@@ -42,8 +42,8 @@ interface SettingsResponse {
     decor:string;
     bg_url:string;
     twoAuth:boolean;
-    note:boolean;
-    messNote:boolean;
+    all_note:boolean;
+    new_mess_note:boolean;
 }
 export interface PrivateSettings {
     number: string,
@@ -64,8 +64,8 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
     const [ bgUrl, setBgUrl ] = useState<string>("")
     const [ decor, setDecor ] = useState<string>("")
     const [ twoAuth, setTwoAuth ] = useState<boolean | null>(false)
-    const [ note, setNote ] = useState<boolean>(false)
-    const [ messNote, setMessNote ] = useState<boolean>(false)
+    const [ note, setNote ] = useState<boolean>(true)
+    const [ messNote, setMessNote ] = useState<boolean>(true)
     const [ privateShow, setPrivate ] = useState<PrivateSettings>({number: "", mail:"", habits:"", posts:""})
     const [ tab, setTab ] = useState<string>('acc')
 
@@ -84,15 +84,15 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
                 setDecor(res.data.decor)
                 setBgUrl(res.data.bg_url)
                 setTwoAuth(res.data.twoAuth)
-                setNote(res.data.note)
-                setMessNote(res.data.messNote)
+                setNote(res.data.all_note)
+                setMessNote(res.data.new_mess_note)
             }
         }
         catch (err) {
             console.log("Ошибка", err)
         }
     }, [])
-
+    
     useEffect(() => {
         if (user) refetchSettings();
     }, [refetchSettings, user]);
