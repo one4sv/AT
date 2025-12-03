@@ -113,9 +113,9 @@ export default function ContextMenu() {
                 {chatInfo?.note ? <BellSlash/> : <Bell/>}
                 {chatInfo?.note ? "Без звука" : "Включить звук"}
             </div>
-            <div className="ContextMenuButt" onClick={() => toggleBlocked()}>
+            <div className={`ContextMenuButt ${chatInfo?.is_blocked ? "" : "delete"}`} onClick={() => toggleBlocked()}>
                 {chatInfo?.is_blocked ? <CheckCircle/> : <Prohibit/>}
-                {chatInfo?.is_blocked ? "Разблокировать" :"Заблокировать"}
+                {chatInfo?.is_blocked ? "Разблокировать" : "Заблокировать"}
             </div>
         </>
     )

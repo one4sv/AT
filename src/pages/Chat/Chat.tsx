@@ -11,10 +11,11 @@ import { ChatTAWrapper } from "./components/ChatTAWrapper"
 import DateDivider from "./components/DateDivider"
 import { isSameDay } from "./utils/isSameDay"
 import { isMobile } from "react-device-detect"
+import { Prohibit } from "@phosphor-icons/react"
 
 export default function Chat () {
     const { user } = useUser()
-    const { refetchChat, chatLoading, messages } = useChat()
+    const { refetchChat, chatLoading, messages, chatWith } = useChat()
     const { nick } = useParams()
     const [ search, setSearch ] = useState<string>("")
     const [ selectedIndex, setSelectedIndex ] = useState<number>(0)
@@ -145,7 +146,14 @@ export default function Chat () {
                     )
                 })}
             </div>
-           <ChatTAWrapper/>
+            {chatWith.is_blocked || chatWith.am_i_blocked ? (
+                <div className="chatIsBlocked">
+                    <Prohibit/>
+                    {chatWith.am_i_blocked ? <span>Данный пользователь заблокировал вас</span> : <span>Вы заблокировали данного пользователя</span>}
+                </div>
+            ) : (
+                <ChatTAWrapper/>
+            )}
         </div>
     )
 }

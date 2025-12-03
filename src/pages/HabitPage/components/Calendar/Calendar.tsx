@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 import DayComment from "./DayComment";
 import DoneButton from "./DoneButt";
 import { isMobile } from "react-device-detect";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 
 export default function Calendar() {
     const { calendar, calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useCalendar();
@@ -158,13 +159,21 @@ export default function Calendar() {
             );
         });
     };
-
     return (
         <div className={`calendarDiv ${isMobile ? "mobile" : ""}`}>
             <div className="calendarMain" ref={calendarRef}>
                 <div className="DateChanger">
+                    <div className="setMonthButt left" onClick={() => {
+                        if (selectedMonth === 0) {
+                            setSelectedMonth(11)
+                            setSelectedYear((prev) => prev - 1)
+                        }
+                        else setSelectedMonth((prev) => prev - 1)
+                    }}>
+                        <CaretLeft/>
+                    </div>
                     <div className="CalendarDateChanger" ref={monthsRef}>
-                        <div className="selectedDate" onClick={() => setShowList({months:!showList.months, years:false})}>
+                        <div className="selectedDate fixedWidth" onClick={() => setShowList({months:!showList.months, years:false})}>
                             {months[selectedMonth]}
                             <ChevronDown style={{ transform: `rotate(${showList.months ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
                         </div>
@@ -184,6 +193,15 @@ export default function Calendar() {
                                 <div className={`yearListElem ${year === selectedYear ? "active" : ""}`} key={idx} onClick={() => setSelectedYear(year)}>{year}</div>
                             ))}
                         </div>
+                    </div>
+                    <div className="setMonthButt right" onClick={() => {
+                        if (selectedMonth === 11) {
+                            setSelectedMonth(0)
+                            setSelectedYear((prev) => prev + 1)
+                        }
+                        else setSelectedMonth((prev) => prev + 1)
+                    }}>
+                        <CaretRight/>
                     </div>
                 </div>
                 <div className="calendarDates">

@@ -30,8 +30,15 @@ export default function ContactsList() {
     };
 
     const sortedList = list.slice().sort((a, b) => {
+        // 1. Сначала закреплённые
+        if (a.pinned !== b.pinned) {
+            return a.pinned ? -1 : 1; 
+        }
+
+        // 2. Потом по времени последнего сообщения
         const timeA = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;
         const timeB = b.lastMessage ? new Date(b.lastMessage.created_at).getTime() : 0;
+
         return timeB - timeA;
     });
 

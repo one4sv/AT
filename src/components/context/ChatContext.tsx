@@ -17,7 +17,8 @@ export interface chatWithType {
     avatar_url?: string | null,
     note?:boolean,
     is_blocked?:boolean,
-    pinned?:boolean
+    pinned?:boolean,
+    am_i_blocked?:boolean
 }
 
 export interface ReactionsType {
@@ -100,7 +101,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             const res = await api.get(`${API_URL}chat/${nick}`, { withCredentials: true });
             if (res.data.success) {
                 setChatWith({ username: res.data.user.username, nick: nick, id: res.data.user.id, avatar_url: res.data.user.avatar_url,
-                    last_online: res.data.user.last_online, note:res.data.user.note, is_blocked:res.data.user.is_blocked, pinned:res.data.user.pinned });
+                    last_online: res.data.user.last_online, note:res.data.user.note, is_blocked:res.data.user.is_blocked, pinned:res.data.user.pinned, am_i_blocked:res.data.user.am_i_blocked });
                 setMessages(res.data.messages);
             }
         } catch {
@@ -135,11 +136,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await api.post(`${API_URL}contacts`, { search });
             if (res.data.success) {
-                const sortedList = res.data.friendsArr.slice().sort((a: Acc, b: Acc) => {
-                    if (a.pinned === b.pinned) return 0;
-                    return a.pinned ? -1 : 1;
-                });
-                setList(sortedList);
+                setList(res.data.friendsArr);
             }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {

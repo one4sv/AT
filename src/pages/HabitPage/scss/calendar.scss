@@ -29,17 +29,38 @@
     margin-bottom: 1vh;
 }
 .DateChanger {
-    width: 80%;
+    width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: space-around;
     margin-bottom: 1vh;
+}
+.setMonthButt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 3vh;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--borderHabit);
+    &:hover {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
+    }
+    &.left {
+        border-radius: 12px 0 0 12px;
+    }
+    &.right {
+        border-radius: 0 12px 12px 0;
+    }
 }
 .CalendarDateChanger {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
+
 }
 .selectedDate {
     display: flex;
@@ -51,8 +72,10 @@
     cursor: pointer;
     width: auto;
     height: 5vh;
-    padding: 1vh 1vw;
+    padding: 0.5vh 0.6vw 0.5vh 0.8vw;
     z-index: 2;
+    gap: 0.1vw;
+    justify-content: center;
     > svg {
         color: var(--borderHabit);
     }
@@ -61,6 +84,9 @@
         > svg {
             color: var(--tc);
         }
+    }
+    &.fixedWidth {
+        width: 7vw;
     }
 }
 .monthsList {

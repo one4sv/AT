@@ -1,3 +1,26 @@
+.chatIsBlocked {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    margin-bottom: 1vh;
+    background-color: var(--mc);
+    align-items: center;
+    color: var(--borderWh);
+    border-radius: 12px;
+    font-size: 20px;
+    height: 10vh;
+    padding: 1vh 0.5vw;
+    >svg {
+        font-size: 3rem;
+        margin-bottom: 0.5vh;
+    }
+
+    &.mobile {
+        margin-bottom: 0;
+    }
+}
+
 .chatTAWrapper {
     display: flex;
     flex-direction: column;
