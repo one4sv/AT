@@ -207,6 +207,12 @@ export default function ContextMenu() {
                             Реакция
                         </div>
                     )}
+                    {!curChat.isChose && curChat.isMy &&(
+                        <div className="ContextMenuButt">
+                            <PencilSimple/>
+                            Изменить
+                        </div>
+                    )}
                     <div className="ContextMenuButt" onClick={() => {
                         if (!curChat.isChose) {
                             curChat.setIsChose(true)

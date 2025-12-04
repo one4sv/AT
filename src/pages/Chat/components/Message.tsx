@@ -60,7 +60,7 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
                     return reaction ? reaction.reaction : "none";
                 })();
                 openMenu(e.clientX, e.clientY, "mess", { id:String(m.id)}, undefined, undefined,
-                    { isChose, setIsChose, setMess:setChosenMess, chosenMess, isReacted }
+                    { isChose, setIsChose, setMess:setChosenMess, chosenMess, isReacted, isMy:m.sender_id === user.id }
                 )
             }}
 

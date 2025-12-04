@@ -21,7 +21,8 @@ export interface curChatType {
     setIsChose:React.Dispatch<React.SetStateAction<boolean>>,
     chosenMess:number[]
     setMess:React.Dispatch<React.SetStateAction<number[]>>,
-    isReacted?:string
+    isReacted?:string,
+    isMy?:boolean
 }
 
 type MenuState = {
