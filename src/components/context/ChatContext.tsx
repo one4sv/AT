@@ -15,10 +15,10 @@ export interface chatWithType {
     id: string,
     last_online: string,
     avatar_url?: string | null,
-    note?:boolean,
-    is_blocked?:boolean,
-    pinned?:boolean,
-    am_i_blocked?:boolean
+    note:boolean,
+    is_blocked:boolean,
+    pinned:boolean,
+    am_i_blocked:boolean
 }
 
 export interface ReactionsType {
@@ -78,7 +78,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const { note, messNote } = useSettings();
     const API_URL = import.meta.env.VITE_API_URL;
     const API_WS = import.meta.env.VITE_API_WS;
-    const [chatWith, setChatWith] = useState<chatWithType>({ username: "", nick: "", id: "", last_online: "" });
+    const [chatWith, setChatWith] = useState<chatWithType>({ username: "", nick: "", id: "", last_online: "", note:true, is_blocked:false, pinned:false, am_i_blocked:false });
     const [messages, setMessages] = useState<message[]>([]);
     const [chatLoading, setChatLoading] = useState<boolean>(true);
     const [list, setList] = useState<Acc[]>([]);

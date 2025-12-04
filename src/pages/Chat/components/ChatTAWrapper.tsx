@@ -1,4 +1,4 @@
-import { Paperclip, SmileySticker, X } from "@phosphor-icons/react";
+import {  CaretDoubleDown, Paperclip, Prohibit, SmileySticker, X } from "@phosphor-icons/react";
 import { SendHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
@@ -7,8 +7,8 @@ import GetIconByType from "../utils/getIconByType";
 import EmojiBar from "../../../components/ts/utils/EmojiBar";
 import { isMobile } from "react-device-detect";
 
-export function ChatTAWrapper() {
-    const { sendMess, handleTyping } = useChat()
+export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean, handleGoDown:()=> void}) {
+    const { sendMess, handleTyping, chatWith } = useChat()
     const { nick } = useParams()
     const [ mess, setMess ] = useState<string>("")
     const [ files, setFiles ] = useState<File[]>([]) 
@@ -70,8 +70,25 @@ export function ChatTAWrapper() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [showChatBar]);
 
+    if (chatWith.am_i_blocked || chatWith.is_blocked) return (
+        <div className="chatIsBlocked">
+            {showGoDown && (
+                <div className="goDown" onClick={handleGoDown}>
+                    <CaretDoubleDown />
+                </div>
+            )}
+            <Prohibit/>
+            {chatWith.am_i_blocked ? <span>Данный пользователь заблокировал вас</span> : <span>Вы заблокировали данного пользователя</span>}
+        </div>
+    )
+
     return (
         <div className={`chatTAWrapper ${isMobile ? "mobile" : ""}`} ref={chatTARef}>
+            {showGoDown && (
+                <div className="goDown" onClick={handleGoDown}>
+                    <CaretDoubleDown />
+                </div>
+            )}
             <EmojiBar setText={setMess} setShowEmojiBar={setShowEmojiBar} taRef={textAreaRef} showEmojiBar={showEmojiBar}/>
             {showChatBar && (
                 <div className={`chatWriteBar ${files.length > 0 ? "chatBarwFiles" : ""}`}>

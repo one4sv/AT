@@ -1,11 +1,36 @@
 .messageWrapper {
-    margin-top: 1vh;
+    // margin-top: 1vh;
     width: 100%;
     position: relative;
     height: fit-content;
     display: flex;
-    flex-direction: column;
     user-select: text;
+    border-radius: 12px;
+    padding: 0.5vh 0.2vw;
+    &.choosing:hover {
+        background-color: var(--chosing_mess);
+    }
+    &.chosen {
+        background-color: var(--acsent_op);
+    }
+}
+.messChoseButt {
+    height: 2.5vh;
+    width: 2.5vh;
+    aspect-ratio: 1/1;
+    margin: 1.5vh 0.2vw 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    >svg {
+        height: 100%;
+        width: 100%;
+    }
+    &:hover {
+        background-color: #e0e0e08f;
+    }
 }
 .dateDivider {
     position: sticky;
@@ -21,7 +46,6 @@
     border-radius: 6px;
     opacity: 0.95;
 }
-
 .messageDate {
     display: flex;
     align-items: center;
@@ -31,7 +55,7 @@
 .message {
     max-width: 25vw;
     width: fit-content;
-    padding: 0.5vh 0.5vw;
+    padding: 0.6vh 0.5vw;
     &.ur {
         background-color: var(--mess);
         border-radius: 12px 12px 12px 0;
@@ -40,7 +64,8 @@
         }
     }
     &.my {
-        align-self: flex-end;
+        justify-self:end;
+        margin-left: auto;
         position: relative;
         background-color: var(--darkerAcsent);
         border-radius: 12px 12px 0 12px;

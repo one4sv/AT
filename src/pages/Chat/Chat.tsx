@@ -11,23 +11,31 @@ import { ChatTAWrapper } from "./components/ChatTAWrapper"
 import DateDivider from "./components/DateDivider"
 import { isSameDay } from "./utils/isSameDay"
 import { isMobile } from "react-device-detect"
-import { Prohibit } from "@phosphor-icons/react"
 
 export default function Chat () {
     const { user } = useUser()
-    const { refetchChat, chatLoading, messages, chatWith } = useChat()
+    const { refetchChat, chatLoading, messages} = useChat()
     const { nick } = useParams()
     const [ search, setSearch ] = useState<string>("")
     const [ selectedIndex, setSelectedIndex ] = useState<number>(0)
     const [ highlightedId, setHighlightedId ] = useState<number | null>(null)
+    const [ isChose, setIsChose ] = useState<boolean>(false)
+    const [ chosenMess, setChosenMess ] = useState<number[]>([])
+    const [ showGoDown, setShowGoDown ] = useState<boolean>(false)
 
     const chatRef = useRef<HTMLDivElement | null>(null)
     const messageRefs = useRef<Map<number, HTMLDivElement | null>>(new Map())
     const searchItemRefs = useRef<Map<number, HTMLDivElement | null>>(new Map())
     const API_URL = import.meta.env.VITE_API_URL
+    const isFirstLoad = useRef(true)
 
     useEffect(() => {
-        if (nick) refetchChat(nick)
+        if (nick) {
+            setIsChose(false)
+            setChosenMess([])
+            refetchChat(nick)
+            isFirstLoad.current = true
+        }
     }, [nick])
 
     useEffect(() => {
@@ -44,12 +52,40 @@ export default function Chat () {
     }, [nick, messages, user.id]);
 
     useEffect(() => {
+        if (!isFirstLoad.current) return;
         const el = chatRef.current;
-        if (!el) return;
+        if (!el || chatLoading) return;
         requestAnimationFrame(() => {
             el.scrollTop = el.scrollHeight;
         });
-    }, [messages, chatLoading, nick]);
+        isFirstLoad.current = false;
+    }, [messages, chatLoading]);
+
+    useEffect(() => {
+        const el = chatRef.current;
+        if (!el) return;
+
+        const handleScroll = () => {
+            const threshold = 300; // Порог в пикселях от низа
+            const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+            setShowGoDown(!isNearBottom);
+        };
+
+        el.addEventListener("scroll", handleScroll);
+
+        // Вызовем обработчик сразу, чтобы правильно выставить состояние
+        handleScroll();
+
+        return () => el.removeEventListener("scroll", handleScroll);
+    }, [chatRef.current]);
+
+
+    const handleGoDown = () => {
+        const el = chatRef.current;
+        if (el) {
+            el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+        }
+    };
 
     const searchedMessages = useMemo(() => {
         if (!search.trim()) return [];
@@ -130,6 +166,10 @@ export default function Chat () {
                 handleArrowClick={handleArrowClick}
                 scrollToMessage={scrollToMessage}
                 searchItemRefs={searchItemRefs}
+                isChose={isChose}
+                setIsChose={setIsChose}
+                chosenMess={chosenMess}
+                setChosenMess={setChosenMess}
             />
             <div className="chat" ref={chatRef}>
                 {messages.map((m, i) => {
@@ -141,19 +181,12 @@ export default function Chat () {
                     return (
                         <Fragment key={`${m.id}-${i}`}>
                             {needDivider && <DateDivider currDate={currDate}/>}
-                            <Message message={m} isMy={isMy} highlightedId={highlightedId} messageRefs={messageRefs}/>
+                            <Message message={m} isMy={isMy} highlightedId={highlightedId} messageRefs={messageRefs} isChose={isChose} setIsChose={setIsChose} chosenMess={chosenMess} setChosenMess={setChosenMess}/>
                         </Fragment>
                     )
                 })}
             </div>
-            {chatWith.is_blocked || chatWith.am_i_blocked ? (
-                <div className="chatIsBlocked">
-                    <Prohibit/>
-                    {chatWith.am_i_blocked ? <span>Данный пользователь заблокировал вас</span> : <span>Вы заблокировали данного пользователя</span>}
-                </div>
-            ) : (
-                <ChatTAWrapper/>
-            )}
+            <ChatTAWrapper showGoDown={showGoDown} handleGoDown={handleGoDown}/>
         </div>
     )
 }

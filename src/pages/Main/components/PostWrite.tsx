@@ -159,6 +159,12 @@ export default function PostWrite() {
                 onChange={(e) => setText(e.target.value)} 
                 onFocus={()=>setShowPWbar(true)}
                 placeholder="Расскажите что-нибудь..."
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();  // предотвращаем добавление новой строки
+                        handleSend();
+                    }
+                }}
             >
             </textarea>
             <input

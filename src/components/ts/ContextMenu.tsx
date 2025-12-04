@@ -3,7 +3,7 @@ import "../../scss/ContextMenu.scss"
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useDelete } from "../hooks/DeleteHook";
-import { Bell, BellSlash, Check, CheckCircle, Circle, Link, PencilSimple, Prohibit, PushPin, PushPinSlash, Trash, User } from "@phosphor-icons/react";
+import { Bell, BellSlash, Check, CheckCircle, Circle, CopySimple, Heart, Link, PencilSimple, Prohibit, PushPin, PushPinSlash, ShareFat, Trash, User } from "@phosphor-icons/react";
 import { useUpHabit } from "../hooks/UpdateHabitHook";
 import { useDone } from "../hooks/DoneHook";
 import { useLocation, useNavigate } from "react-router";
@@ -16,13 +16,14 @@ export default function ContextMenu() {
     const { setDeleteConfirm } = useDelete()
     const { setPin } = useUpHabit()
     const { markDone } = useDone()
-    const { refetchContactsWTLoading, refetchChat } = useChat()
+    const { refetchContactsWTLoading, refetchChat, setReaction } = useChat()
 
     const navigate = useNavigate()
     const location = useLocation()
     const CopyLink = import.meta.env.VITE_LINK
 
-    const [pos, setPos] = useState<{ top: number; left: number }>({ top: menu.y, left: menu.x });
+    const [pos, setPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+    const [isAdjusted, setIsAdjusted] = useState(false);
 
     const menuRef = useRef<HTMLDivElement>(null);
     
@@ -30,10 +31,16 @@ export default function ContextMenu() {
     const options = menu.options
     const point = menu.point
     const chatInfo = menu.chatInfo
+    const curChat = menu.curChat
     const dateStr = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`;
 
     useEffect(() => {
-        if (!menu.visible || !menuRef.current) return;
+        if (!menu.visible) {
+            setIsAdjusted(false);
+            return;
+        }
+
+        if (!menuRef.current) return;
 
         const menuRect = menuRef.current.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
@@ -53,6 +60,7 @@ export default function ContextMenu() {
         }
 
         setPos({ top, left });
+        setIsAdjusted(true);
     }, [menu.x, menu.y, menu.visible]);
 
     const offSound = async() => {
@@ -71,7 +79,6 @@ export default function ContextMenu() {
         try {
             const res = await api.post("/togglepinned", {id: options!.id})
             if (res.data.success) {
-                console.log("за")
                 refetchContactsWTLoading()
                 if (location.pathname === `/chat/${options!.nick}`) refetchChat(options!.nick!)
             }
@@ -114,7 +121,7 @@ export default function ContextMenu() {
                 {chatInfo?.note ? "Без звука" : "Включить звук"}
             </div>
             <div className={`ContextMenuButt ${chatInfo?.is_blocked ? "" : "delete"}`} onClick={() => toggleBlocked()}>
-                {chatInfo?.is_blocked ? <CheckCircle/> : <Prohibit/>}
+                {chatInfo?.is_blocked ? <Prohibit weight="fill"/> : <Prohibit/>}
                 {chatInfo?.is_blocked ? "Разблокировать" : "Заблокировать"}
             </div>
         </>
@@ -122,10 +129,13 @@ export default function ContextMenu() {
 
     if (!menu.visible) return null;
 
+    const currentPos = isAdjusted ? pos : { top: menu.y, left: menu.x };
+
     return (
         <div className="ContextMenuWrapper" ref={menuRef} style={{
-            top: pos.top,
-            left: pos.left,
+            top: currentPos.top,
+            left: currentPos.left,
+            visibility: isAdjusted ? 'visible' : 'hidden',
         }}
         onContextMenu={(e) => e.preventDefault()}
         >
@@ -176,10 +186,58 @@ export default function ContextMenu() {
                     {deleteButt}
                 </>
             )}
-            {point === "acc" && (
+            {point === "acc" && curChat && curChat.setMess && (
                 <>
+                    <div className="ContextMenuButt" onClick={() => {
+                        curChat.setIsChose(!curChat.isChose)
+                        curChat.setMess([])
+                    }}>
+                        {curChat.isChose ? <Circle/> : <CheckCircle />}
+                        {curChat.isChose ? "Отменить выбор" : "Выбрать сообщения"}
+                    </div>
                     {linkButt}
                     {personButt}
+                </>
+            )}
+            {point === "mess" && curChat && curChat.setMess && (
+                <>
+                    {!curChat.isChose && (
+                        <div className="ContextMenuButt" onClick={() => setReaction(Number(options.id), "Heart")}>
+                            {curChat.isReacted !== "none" ? <Heart weight="fill"/> : <Heart/>}
+                            Реакция
+                        </div>
+                    )}
+                    <div className="ContextMenuButt" onClick={() => {
+                        if (!curChat.isChose) {
+                            curChat.setIsChose(true)
+                            curChat.setMess!([Number(options.id)])
+                        }
+                        else {
+                            curChat.setMess([])
+                            curChat.setIsChose(false)
+                        }
+                    }}>
+                        {curChat.isChose ? <Circle/> : <CheckCircle />}
+                        {curChat.isChose ? "Отменить выбор" : "Выбрать"}
+                    </div>
+                    {!curChat.isChose && (
+                        <div className="ContextMenuButt">
+                            <ShareFat style={{ transform: "scaleX(-1)" }}/>
+                            Ответить
+                        </div>
+                    )}
+                    <div className="ContextMenuButt">
+                        <CopySimple />
+                        {curChat.chosenMess.length > 0 ? "Копировать выбранное" : "Копировать"}
+                    </div>
+                    <div className="ContextMenuButt">
+                        <ShareFat/>
+                        {curChat.chosenMess.length > 0 ? "Переслать выбранное" : "Переслать"}
+                    </div>                    
+                    <div className="ContextMenuButt delete">
+                        <Trash/>
+                        {curChat.chosenMess.length > 0 ? "Удалить выбранное" : "Удалить"}
+                    </div>
                 </>
             )}
         </div>

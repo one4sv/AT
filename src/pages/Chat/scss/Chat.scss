@@ -93,9 +93,8 @@
     flex: 1;
     width: 50%;
 }
-.menuButt {
-    // margin: 1%;
-    margin: 0.7vh 0.2vw;
+.userMenuCall {
+    margin: 0.7vh 0.5vw 0.7vh 0;
     cursor: pointer;
     aspect-ratio: 1/1;
     display: flex;
@@ -107,9 +106,45 @@
         background-color: var(--menuButtHover);
     }
     >svg {
-        height: 70%;
-        width: 70%;
-
+        height: 60%;
+        width: 60%;
+        aspect-ratio: 1/1;
+    }
+}
+.ChosenCountDiv {
+    position: absolute;
+    left: 101%;
+    width: 11vw;
+    background-color: var(--bgc);
+    cursor: pointer;
+    top: 0.5vh;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ChosenCount {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 2vh 0;
+    
+}
+.ChosenCountButt {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    padding: 1vh;
+    color: var(--borderWh);
+    &:hover {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    }
+    &.delete {
+        color: var(--notValid);
     }
 }
 .chatSearchWrapeer {
@@ -277,6 +312,30 @@
     margin-bottom:6vh;
     width: 100%;
 }
+.goDown {
+    position: absolute;
+    background-color: var(--mc);
+    height: 4vh;
+    width: 4vh;
+    z-index: 9;
+    bottom: 115%;
+    border-radius: 50%;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--borderHabit);
+    
+    >svg {
+        width: 80%;
+        height: 80%;
+    }
+    &:hover {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    }
+}
 
 .reactionButt {
     position: absolute;
@@ -357,10 +416,3 @@
         }
     }
 }
-// Эффект блюра для стеклянного декора
-// [data-decor="glass"] {
-//     .chatUser {
-//         backdrop-filter: blur(12px);
-//         -webkit-backdrop-filter: blur(12px);
-//     }
-// }

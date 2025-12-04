@@ -1,4 +1,4 @@
-import { Bell, ChevronDown, ChevronLeft, ChevronUp, CircleUserRound, UserRoundPlus, X, Search } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronUp, CircleUserRound, X, Search } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useUser } from "../../../components/hooks/UserHook";
@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import type { message } from "../../../components/context/ChatContext";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
+import { CopySimple, DotsThreeOutlineVertical, ShareFat, Trash } from "@phosphor-icons/react";
 
 interface ChatUserProps {
     search: string;
@@ -18,6 +19,10 @@ interface ChatUserProps {
     handleArrowClick: (dir: "up" | "down") => void;
     scrollToMessage: (id: number) => void;
     searchItemRefs: React.MutableRefObject<Map<number, HTMLDivElement | null>>;
+    isChose:boolean,
+    setIsChose:React.Dispatch<React.SetStateAction<boolean>>,
+    chosenMess:number[],
+    setChosenMess:React.Dispatch<React.SetStateAction<number[]>>
 }
 
 export default function ChatUser({
@@ -29,19 +34,25 @@ export default function ChatUser({
     handleSearchKeyDown,
     handleArrowClick,
     scrollToMessage,
-    searchItemRefs
+    searchItemRefs,
+    isChose,
+    setIsChose,
+    setChosenMess,
+    chosenMess
 }: ChatUserProps) {
     const { user } = useUser();
     const { chatWith, onlineMap, typingStatus } = useChat();
     const { nick } = useParams();
-    const { openMenu } = useContextMenu();
+    const { openMenu, menu, closeMenu } = useContextMenu();
    
     const navigate = useNavigate();
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [ isSearchOpen, setIsSearchOpen ] = useState(false);
+    const [ hovered, setHovered ] = useState(false);
    
     const nameRef = useRef<HTMLDivElement | null>(null);
     const searchRef = useRef<HTMLDivElement | null>(null);
     const searchDivRef = useRef<HTMLDivElement | null>(null);
+    const chatUserRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (!nameRef.current || !searchRef.current) return;
@@ -77,8 +88,37 @@ export default function ChatUser({
         setIsSearchOpen(search.trim().length > 0);
     }, [search]);
 
+    const handleMenuClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!chatUserRef.current) return;
+
+        if (menu.visible) {
+            closeMenu()
+            return
+        }
+
+        const rect = chatUserRef.current.getBoundingClientRect();
+        const x = rect.left + rect.width * 0.95; // 95% от ширины .chatUser
+        const y = window.innerHeight * 0.065; // 6.5vh от верха viewport
+
+        openMenu(x, y, "acc", {
+            id: chatWith.id,
+            name: chatWith.username ? chatWith.username : chatWith.nick,
+            nick: chatWith.nick
+        }, undefined, {
+            note: chatWith.note,
+            is_blocked: chatWith.is_blocked,
+            pinned: chatWith.pinned
+        }, {
+            isChose,
+            setIsChose,
+            setMess:setChosenMess,
+            chosenMess
+        });
+    };
+
     return (
-        <div className="chatUser">
+        <div className="chatUser" ref={chatUserRef}>
             <div className="chatUserBack" onClick={() => navigate("/")}>
                 <ChevronLeft />
             </div>
@@ -88,7 +128,9 @@ export default function ChatUser({
                 ref={nameRef}
                 onContextMenu={(e) => {
                     e.preventDefault()
-                    openMenu(e.clientX, e.clientY, "acc", {id:chatWith.id, name:chatWith.username ? chatWith.username : chatWith.nick, nick:chatWith.nick}, undefined, {note:chatWith.note, is_blocked:chatWith.is_blocked, pinned:chatWith.pinned})
+                    openMenu(e.clientX, e.clientY, "acc", {id:chatWith.id, name:chatWith.username ? chatWith.username : chatWith.nick, nick:chatWith.nick}, undefined,
+                        {note:chatWith.note, is_blocked:chatWith.is_blocked, pinned:chatWith.pinned}, {isChose, setIsChose, setMess:setChosenMess, chosenMess}
+                    )
                 }}
             >
                 <div className="chatUserPick">
@@ -171,9 +213,36 @@ export default function ChatUser({
                         </div>
                     )}
                 </div>
-                <div className="menuButt"><UserRoundPlus/></div>
-                <div className="menuButt"><Bell/></div>
+                <div className="userMenuCall" onClick={handleMenuClick}>
+                    <DotsThreeOutlineVertical weight="fill"/>
+                </div>
             </div>
+            {isChose && (
+                <div className="ChosenCountDiv">
+                    <div className="ChosenCount" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} onClick={() => {
+                        setIsChose(false)
+                        setChosenMess([])
+                    }}>
+                        {hovered ? (
+                            <>Отменить</>
+                        ) : (
+                            <span>Выбрано: {chosenMess.length} сообщений</span>
+                        )}
+                    </div>
+                    <div className="ChosenCountButt">
+                        <CopySimple/>
+                        Копировать выбронное
+                    </div>
+                    <div className="ChosenCountButt">
+                        <ShareFat/>
+                        Переслать выбронное
+                    </div>
+                    <div className="ChosenCountButt delete">
+                        <Trash/>
+                        Удалить выбранное
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

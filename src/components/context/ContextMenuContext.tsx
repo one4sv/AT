@@ -5,16 +5,23 @@ const ContextMenuContext = createContext<ContextMenuContextType | null>(null);
 type MenuOptions = {
     id: string;
     isDone?: boolean;
-    name:string;
+    name?:string;
     red?:boolean;
     nick?:string;
     isMy?:boolean;
     func?: () => void;
 };
 export interface chatInfoType {
-    note?:boolean,
-    is_blocked?:boolean,
-    pinned?:boolean
+    note:boolean,
+    is_blocked:boolean,
+    pinned:boolean,
+}
+export interface curChatType {
+    isChose:boolean,
+    setIsChose:React.Dispatch<React.SetStateAction<boolean>>,
+    chosenMess:number[]
+    setMess:React.Dispatch<React.SetStateAction<number[]>>,
+    isReacted?:string
 }
 
 type MenuState = {
@@ -24,12 +31,13 @@ type MenuState = {
     visible: boolean;
     habit?:Habit;
     options: MenuOptions;
-    chatInfo?:chatInfoType
+    chatInfo?:chatInfoType;
+    curChat?:curChatType;
 };
 
 export type ContextMenuContextType = {
     menu: MenuState;
-    openMenu: (x: number, y: number, point: string, options: MenuOptions, habit?:Habit, chatInfo?:chatInfoType ) => void;
+    openMenu: (x: number, y: number, point: string, options: MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType ) => void;
     closeMenu: () => void;
 };
 
@@ -43,12 +51,12 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
         visible: false,
     });
 
-    const openMenu = (x:number, y:number, point:string, options:MenuOptions, habit?:Habit, chatInfo?:chatInfoType ) => {
-        setMenu({ x, y, point, habit, options, chatInfo, visible: true });
+    const openMenu = (x:number, y:number, point:string, options:MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType ) => {
+        setMenu({ x, y, point, habit, options, chatInfo, visible: true, curChat });
     };
 
     const closeMenu = () => {
-        setMenu((m) => ({ ...m, visible: false }));
+        setMenu({ x: -1000, visible: false, y: 0, point: "", options: {id: "", name: ""}});
     };
 
     useEffect(() => {
