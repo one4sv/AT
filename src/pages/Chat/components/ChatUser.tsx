@@ -8,6 +8,8 @@ import type { message } from "../../../components/context/ChatContext";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { CopySimple, DotsThreeOutlineVertical, ShareFat, Trash } from "@phosphor-icons/react";
+import { useDelete } from "../../../components/hooks/DeleteHook";
+import { useBlackout } from "../../../components/hooks/BlackoutHook";
 
 interface ChatUserProps {
     search: string;
@@ -21,8 +23,8 @@ interface ChatUserProps {
     searchItemRefs: React.MutableRefObject<Map<number, HTMLDivElement | null>>;
     isChose:boolean,
     setIsChose:React.Dispatch<React.SetStateAction<boolean>>,
-    chosenMess:number[],
-    setChosenMess:React.Dispatch<React.SetStateAction<number[]>>
+    chosenMess:{id:number, text:string}[],
+    setChosenMess:React.Dispatch<React.SetStateAction<{id:number, text:string}[]>>,
 }
 
 export default function ChatUser({
@@ -35,17 +37,15 @@ export default function ChatUser({
     handleArrowClick,
     scrollToMessage,
     searchItemRefs,
-    isChose,
-    setIsChose,
-    setChosenMess,
-    chosenMess
 }: ChatUserProps) {
     const { user } = useUser();
     const { chatWith, onlineMap, typingStatus } = useChat();
-    const { nick } = useParams();
     const { openMenu, menu, closeMenu } = useContextMenu();
-   
+    const { setDeleteConfirm, setDeleteMess, setChosenMess, chosenMess, setIsChose, isChose } = useDelete()
+    const { setBlackout } = useBlackout()
     const navigate = useNavigate();
+    const { nick } = useParams();
+    
     const [ isSearchOpen, setIsSearchOpen ] = useState(false);
     const [ hovered, setHovered ] = useState(false);
    
@@ -109,11 +109,6 @@ export default function ChatUser({
             note: chatWith.note,
             is_blocked: chatWith.is_blocked,
             pinned: chatWith.pinned
-        }, {
-            isChose,
-            setIsChose,
-            setMess:setChosenMess,
-            chosenMess
         });
     };
 
@@ -129,7 +124,7 @@ export default function ChatUser({
                 onContextMenu={(e) => {
                     e.preventDefault()
                     openMenu(e.clientX, e.clientY, "acc", {id:chatWith.id, name:chatWith.username ? chatWith.username : chatWith.nick, nick:chatWith.nick}, undefined,
-                        {note:chatWith.note, is_blocked:chatWith.is_blocked, pinned:chatWith.pinned}, {isChose, setIsChose, setMess:setChosenMess, chosenMess}
+                        {note:chatWith.note, is_blocked:chatWith.is_blocked, pinned:chatWith.pinned}
                     )
                 }}
             >
@@ -229,7 +224,14 @@ export default function ChatUser({
                             <span>Выбрано: {chosenMess.length} сообщений</span>
                         )}
                     </div>
-                    <div className="ChosenCountButt">
+                    <div className="ChosenCountButt" onClick={() => {
+                        if (chosenMess.length === 0) return 
+                            const result = chosenMess
+                                .sort((a,b) => a.id - b.id)
+                                .map(m => m.text)
+                                .join("\n")
+                            navigator.clipboard.writeText(result)
+                    }}>
                         <CopySimple/>
                         Копировать выбронное
                     </div>
@@ -237,7 +239,12 @@ export default function ChatUser({
                         <ShareFat/>
                         Переслать выбронное
                     </div>
-                    <div className="ChosenCountButt delete">
+                    <div className="ChosenCountButt delete" onClick={() => {
+                        if (chosenMess.length === 0) return
+                        setDeleteConfirm({goal:"mess", id:"", name:"сообщений"})
+                        setDeleteMess(chosenMess.map((m) => m.id))
+                        setBlackout({seted:true, module:"Delete"})
+                    }}>
                         <Trash/>
                         Удалить выбранное
                     </div>

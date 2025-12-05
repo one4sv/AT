@@ -6,6 +6,7 @@ import axios from "axios";
 import { api } from "../ts/api";
 import { showBrowserNotification } from "../ts/utils/NoteRequest";
 import { useSettings } from "../hooks/SettingsHook";
+import { useNavigate } from "react-router";
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
@@ -76,7 +77,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useUser();
     const { showNotification } = useNote();
     const { note, messNote } = useSettings();
-
+    const navigate = useNavigate()
     const API_URL = import.meta.env.VITE_API_URL;
     const API_WS = import.meta.env.VITE_API_WS;
 
@@ -106,9 +107,21 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 setChatWith({ username: res.data.user.username, nick: nick, id: res.data.user.id, avatar_url: res.data.user.avatar_url,
                     last_online: res.data.user.last_online, note:res.data.user.note, is_blocked:res.data.user.is_blocked, pinned:res.data.user.pinned, am_i_blocked:res.data.user.am_i_blocked });
                 setMessages(res.data.messages);
+            } else {
+                showNotification("error", "Не удалось получить данные");
+                if (window.history.length > 1) {
+                    navigate(-1);
+                } else {
+                    navigate("/"); // заменить на нужный маршрут списка чатов
+                }
             }
         } catch {
             showNotification("error", "Не удалось получить данные");
+            if (window.history.length > 1) {
+                navigate(-1);
+            } else {
+                navigate("/"); // заменить на нужный маршрут списка чатов
+            }
         } finally {
             setChatLoading(false);
         }
@@ -233,6 +246,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 if (data.from === chatWithRef.current.nick) {  // Изменено на .nick
                     setTypingStatus(false);
                 }
+            }
+            if (data.type === "MESSAGE_DELETED") {
+                console.log("Received MESSAGE_DELETED", data);
+                setMessages(prev =>
+                    prev.filter(m => String(m.id) !== String(data.messageId))
+                );
             }
         };
         return () => wsRef.current?.close();

@@ -6,11 +6,14 @@ import { useChat } from "../../hooks/ChatHook"
 import { isMobile } from "react-device-detect"
 import { useContextMenu } from "../../hooks/ContextMenuHook"
 import { PushPin, SpeakerSimpleX } from "@phosphor-icons/react"
+import { useDrop } from "../../hooks/DropHook"
 
 export default function ContactsList() {
     const { list, onlineMap } = useChat()
     const { openMenu } = useContextMenu()
     const { nick } = useParams<{ nick: string }>()
+    const { setDroppedFiles } = useDrop()
+
     const navigate = useNavigate()
 
     const messageGetTime = (date: Date) => {
@@ -42,6 +45,20 @@ export default function ContactsList() {
         return timeB - timeA;
     });
 
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>, nick:string) => {
+        e.preventDefault();
+        const droppedFiles = Array.from(e.dataTransfer.files);
+        if (droppedFiles.length > 0) {
+            navigate(`/chat/${nick}`);
+            // if (chatLoading)
+            setTimeout(() => {
+                setDroppedFiles(prev => [...prev, ...droppedFiles]);
+        }, 10);
+        }
+        // Делаем переход с небольшим таймаутом, чтобы setDroppedFiles успел отработать
+
+    };
+
     return (
         <div className="contactsList SMlist">
             {list ? (
@@ -49,6 +66,10 @@ export default function ContactsList() {
                     <div className={`contactsUser ${nick === acc.nick ? "active" : "" }`} key={acc.id} onClick={() => navigate(`/chat/${acc.nick}`)} onContextMenu={(e) => {
                         e.preventDefault()
                         openMenu(e.clientX, e.clientY, "chat", {id:acc.id, isMy:acc.lastMessage?.id !== undefined, name:acc.username ? acc.username : acc.nick, nick:acc.nick}, undefined, {note:acc.note, is_blocked:acc.is_blocked, pinned:acc.pinned})
+                    }}
+                    onDragOver={(e) => e.preventDefault()} onDrop={(e) => {
+                        e.preventDefault();
+                        handleDrop(e, acc.nick);
                     }}>
                         <div className="contactsUserPic">
                             {acc.avatar_url ? (

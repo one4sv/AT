@@ -11,16 +11,16 @@ import { ChatTAWrapper } from "./components/ChatTAWrapper"
 import DateDivider from "./components/DateDivider"
 import { isSameDay } from "./utils/isSameDay"
 import { isMobile } from "react-device-detect"
+import { useDelete } from "../../components/hooks/DeleteHook"
 
 export default function Chat () {
     const { user } = useUser()
     const { refetchChat, chatLoading, messages} = useChat()
     const { nick } = useParams()
+    const { chosenMess, setChosenMess, isChose, setIsChose } = useDelete()
     const [ search, setSearch ] = useState<string>("")
     const [ selectedIndex, setSelectedIndex ] = useState<number>(0)
     const [ highlightedId, setHighlightedId ] = useState<number | null>(null)
-    const [ isChose, setIsChose ] = useState<boolean>(false)
-    const [ chosenMess, setChosenMess ] = useState<number[]>([])
     const [ showGoDown, setShowGoDown ] = useState<boolean>(false)
 
     const chatRef = useRef<HTMLDivElement | null>(null)
@@ -48,7 +48,6 @@ export default function Chat () {
             axios.post(`${API_URL}chat/read`, { messageId: m.id }, { withCredentials: true });
             });
         }
-        console.log(unreadMessages)
     }, [nick, messages, user.id]);
 
     useEffect(() => {
@@ -192,7 +191,8 @@ export default function Chat () {
                     return (
                         <Fragment key={`${m.id}-${i}`}>
                             {needDivider && <DateDivider currDate={currDate}/>}
-                            <Message message={m} isMy={isMy} highlightedId={highlightedId} messageRefs={messageRefs} isChose={isChose} setIsChose={setIsChose} chosenMess={chosenMess} setChosenMess={setChosenMess}/>
+                            <Message message={m} isMy={isMy} highlightedId={highlightedId} messageRefs={messageRefs}
+                        />
                         </Fragment>
                     )
                 })}

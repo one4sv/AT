@@ -17,12 +17,9 @@ export interface chatInfoType {
     pinned:boolean,
 }
 export interface curChatType {
-    isChose:boolean,
-    setIsChose:React.Dispatch<React.SetStateAction<boolean>>,
-    chosenMess:number[]
-    setMess:React.Dispatch<React.SetStateAction<number[]>>,
     isReacted?:string,
-    isMy?:boolean
+    isMy?:boolean,
+    text?:string,
 }
 
 type MenuState = {

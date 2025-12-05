@@ -15,6 +15,7 @@ import { CalendarProvider } from '../context/CalendarContext';
 import { TheHabitProvider } from '../context/TheHabitContext';
 import { AccProvider } from '../context/AccContext';
 import { ContextMenuProvider } from '../context/ContextMenuContext';
+import { DropProvider } from '../context/DropContext';
 
 export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
     <NoteProvider>
@@ -33,7 +34,9 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                                                         <TheHabitProvider>
                                                             <DoneProvider>
                                                                 <ContextMenuProvider>
-                                                                    {children}
+                                                                    <DropProvider>
+                                                                        {children}
+                                                                    </DropProvider>
                                                                 </ContextMenuProvider>
                                                             </DoneProvider>
                                                         </TheHabitProvider>

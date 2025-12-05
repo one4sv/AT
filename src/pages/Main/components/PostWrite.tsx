@@ -9,10 +9,15 @@ import GetIconByType from "../../Chat/utils/getIconByType"
 import { api } from "../../../components/ts/api"
 import EmojiBar from "../../../components/ts/utils/EmojiBar"
 import { isMobile } from "react-device-detect"
+import { useDrop } from "../../../components/hooks/DropHook"
+import { useLocation } from "react-router-dom"
 
 export default function PostWrite() {
     const { habits } = useHabits()
     const { showNotification } = useNote()
+    const { droppedFiles, setDroppedFiles } = useDrop()
+    
+    const location = useLocation();
 
     const [ text, setText ] = useState("")
     const [ showPWbar, setShowPWbar ] = useState(false)
@@ -103,6 +108,23 @@ export default function PostWrite() {
         
     };
 
+    const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+        const pastedFiles = Array.from(e.clipboardData.files);
+        if (pastedFiles.length > 0) {
+            e.preventDefault();
+            setFiles(prev => [...prev, ...pastedFiles]);
+            setShowPWbar(true);
+        }
+    }
+
+    useEffect(() => {
+        if (location.pathname === "/" && droppedFiles?.length > 0) {
+            setShowPWbar(true)
+            setFiles((prev) => [ ...prev, ...droppedFiles])
+            setDroppedFiles([])
+        }
+    }, [droppedFiles, location.pathname, setDroppedFiles])
+
     return (
         <div className={`postWriteWrapper ${fs ? "PWTAWFS" : ""} ${isMobile ? "mobile" : ""}`} ref={postWriteRef} >
             <EmojiBar setText={setText} cn={"pwEmojiBar"} setShowEmojiBar={setShowEmojiBar} showEmojiBar={showEmojiBar} taRef={textAreaRef}/>
@@ -159,6 +181,7 @@ export default function PostWrite() {
                 onChange={(e) => setText(e.target.value)} 
                 onFocus={()=>setShowPWbar(true)}
                 placeholder="Расскажите что-нибудь..."
+                onPaste={handlePaste}
                 onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();  // предотвращаем добавление новой строки

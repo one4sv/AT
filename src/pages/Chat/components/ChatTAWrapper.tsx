@@ -1,19 +1,24 @@
 import {  CaretDoubleDown, Paperclip, Prohibit, SmileySticker, X } from "@phosphor-icons/react";
 import { SendHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { useChat } from "../../../components/hooks/ChatHook";
 import GetIconByType from "../utils/getIconByType";
 import EmojiBar from "../../../components/ts/utils/EmojiBar";
 import { isMobile } from "react-device-detect";
+import { useDrop } from "../../../components/hooks/DropHook";
 
 export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean, handleGoDown:()=> void}) {
-    const { sendMess, handleTyping, chatWith } = useChat()
+    const { sendMess, handleTyping, chatWith, chatLoading } = useChat()
     const { nick } = useParams()
+    const { droppedFiles, setDroppedFiles } = useDrop()
+
     const [ mess, setMess ] = useState<string>("")
     const [ files, setFiles ] = useState<File[]>([]) 
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false) 
     const [ showChatBar, setShowChatBar ] = useState<boolean>(false)
+
+    const location = useLocation();
     
     const inputFileRef = useRef<HTMLInputElement>(null)
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
@@ -70,6 +75,18 @@ export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean,
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [showChatBar]);
 
+    useEffect(() => {
+        setFiles([]);
+    }, [nick]);
+
+    useEffect(() => {
+        if (location.pathname.startsWith("/chat") && droppedFiles?.length > 0 && nick && !chatLoading) {
+            setShowChatBar(true)
+            setFiles((prev) => [ ...prev, ...droppedFiles])
+            setDroppedFiles([])
+        }
+    }, [chatLoading, droppedFiles, location.pathname, nick, setDroppedFiles])
+
     if (chatWith.am_i_blocked || chatWith.is_blocked) return (
         <div className="chatIsBlocked">
             {showGoDown && (
@@ -81,6 +98,15 @@ export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean,
             {chatWith.am_i_blocked ? <span>Данный пользователь заблокировал вас</span> : <span>Вы заблокировали данного пользователя</span>}
         </div>
     )
+    const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+        const pastedFiles = Array.from(e.clipboardData.files);
+        if (pastedFiles.length > 0) {
+            e.preventDefault();
+            setFiles(prev => [...prev, ...pastedFiles]);
+            setShowChatBar(true);
+        }
+    }
+
 
     return (
         <div className={`chatTAWrapper ${isMobile ? "mobile" : ""}`} ref={chatTARef}>
@@ -141,6 +167,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean,
                 onKeyDown={handleKeyDown}
                 onFocus={() => setShowChatBar(true)}
                 placeholder="Напишите сообщение..."
+                onPaste={handlePaste}
             />
             <input
                 type="file"

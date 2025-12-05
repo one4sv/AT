@@ -13,9 +13,10 @@ import { useChat } from "../hooks/ChatHook";
 export default function ContextMenu() {
     const { menu } = useContextMenu();
     const { setBlackout } = useBlackout()
-    const { setDeleteConfirm } = useDelete()
+    const { setDeleteConfirm, setDeleteMess } = useDelete()
     const { setPin } = useUpHabit()
     const { markDone } = useDone()
+    const { isChose, setIsChose, chosenMess, setChosenMess } = useDelete()
     const { refetchContactsWTLoading, refetchChat, setReaction } = useChat()
 
     const navigate = useNavigate()
@@ -100,7 +101,7 @@ export default function ContextMenu() {
     }
     const deleteButt = (
         <div className="ContextMenuButt delete" onClick={() => {
-            setDeleteConfirm({goal:point, id:options!.id, name:options!.name!})
+            setDeleteConfirm({goal:point, id:options.id, name:options.name!})
             setBlackout({seted:true, module:"Delete"})}}
         >
             <Trash/>
@@ -186,63 +187,79 @@ export default function ContextMenu() {
                     {deleteButt}
                 </>
             )}
-            {point === "acc" && curChat && curChat.setMess && (
+            {point === "acc" && curChat && setChosenMess && (
                 <>
                     <div className="ContextMenuButt" onClick={() => {
-                        curChat.setIsChose(!curChat.isChose)
-                        curChat.setMess([])
+                        setIsChose(!isChose)
+                        setChosenMess([])
                     }}>
-                        {curChat.isChose ? <Circle/> : <CheckCircle />}
-                        {curChat.isChose ? "Отменить выбор" : "Выбрать сообщения"}
+                        {isChose ? <Circle/> : <CheckCircle />}
+                        {isChose ? "Отменить выбор" : "Выбрать сообщения"}
                     </div>
                     {linkButt}
                     {personButt}
                 </>
             )}
-            {point === "mess" && curChat && curChat.setMess && (
+            {point === "mess" && curChat && setChosenMess && (
                 <>
-                    {!curChat.isChose && (
+                    {!isChose && (
                         <div className="ContextMenuButt" onClick={() => setReaction(Number(options.id), "Heart")}>
                             {curChat.isReacted !== "none" ? <Heart weight="fill"/> : <Heart/>}
                             Реакция
                         </div>
                     )}
-                    {!curChat.isChose && curChat.isMy &&(
+                    {!isChose && curChat.isMy &&(
                         <div className="ContextMenuButt">
                             <PencilSimple/>
                             Изменить
                         </div>
                     )}
                     <div className="ContextMenuButt" onClick={() => {
-                        if (!curChat.isChose) {
-                            curChat.setIsChose(true)
-                            curChat.setMess!([Number(options.id)])
+                        if (!isChose) {
+                            setIsChose(true)
+                            setChosenMess!([{id:Number(options.id), text:curChat.text!}])
                         }
                         else {
-                            curChat.setMess([])
-                            curChat.setIsChose(false)
+                            setChosenMess([])
+                            setIsChose(false)
                         }
                     }}>
-                        {curChat.isChose ? <Circle/> : <CheckCircle />}
-                        {curChat.isChose ? "Отменить выбор" : "Выбрать"}
+                        {isChose ? <Circle/> : <CheckCircle />}
+                        {isChose ? "Отменить выбор" : "Выбрать"}
                     </div>
-                    {!curChat.isChose && (
+                    {!isChose && (
                         <div className="ContextMenuButt">
                             <ShareFat style={{ transform: "scaleX(-1)" }}/>
                             Ответить
                         </div>
                     )}
-                    <div className="ContextMenuButt">
+                    <div className="ContextMenuButt" onClick={() => {
+                        if (chosenMess.length > 0) {
+                            const result = chosenMess
+                                .sort((a,b) => a.id - b.id)
+                                .map(m => m.text)
+                                .join("\n")
+                            navigator.clipboard.writeText(result)
+                        }
+                        else navigator.clipboard.writeText(curChat.text!)
+                    }}>
                         <CopySimple />
-                        {curChat.chosenMess.length > 0 ? "Копировать выбранное" : "Копировать"}
+                        {chosenMess.length > 0 ? "Копировать выбранное" : "Копировать"}
                     </div>
                     <div className="ContextMenuButt">
                         <ShareFat/>
-                        {curChat.chosenMess.length > 0 ? "Переслать выбранное" : "Переслать"}
+                        {chosenMess.length > 0 ? "Переслать выбранное" : "Переслать"}
                     </div>                    
-                    <div className="ContextMenuButt delete">
+                    <div className="ContextMenuButt delete" onClick={() => {
+                        if (chosenMess.length > 0) {
+                            setDeleteConfirm({goal:point, id:"", name:"сообщений"})
+                            setDeleteMess(chosenMess.map((m) => m.id))
+                        }
+                        else setDeleteConfirm({goal:point, id:options.id, name:"сообщений"})
+                        setBlackout({seted:true, module:"Delete"})
+                    }}>
                         <Trash/>
-                        {curChat.chosenMess.length > 0 ? "Удалить выбранное" : "Удалить"}
+                        {chosenMess.length > 0 ? "Удалить выбранное" : "Удалить"}
                     </div>
                 </>
             )}

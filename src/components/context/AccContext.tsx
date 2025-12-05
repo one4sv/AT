@@ -6,6 +6,7 @@ import type { PrivateSettings } from "./SettingsContext";
 import type { Media } from "./ChatContext";
 import type { User } from "./UserContext";
 import type { Habit } from "./HabitsContext";
+import { useNavigate } from "react-router";
 
 const AccContext = createContext<AccContextType | null>(null);
 
@@ -33,6 +34,9 @@ export interface AccContextType {
 }
 export const AccProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
+
+    const navigate = useNavigate()
+
     const [acc, setAcc] = useState<User>();
     const [habits, setHabits] = useState<Habit[]>();
     const [posts, setPosts] = useState<PostType[]>([]);
@@ -58,9 +62,21 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
                 setHabits(res.data.habits);
                 setPrivateRules(res.data.privateRules);
                 setMedia(res.data.media);
+            } else {
+                showNotification("error", "Не удалось найти пользователя");
+                if (window.history.length > 1) {
+                    navigate(-1);
+                } else {
+                    navigate("/"); // заменить на нужный маршрут списка чатов
+                }
             }
         } catch {
             showNotification("error", "Не удалось найти пользователя");
+            if (window.history.length > 1) {
+                navigate(-1);
+            } else {
+                navigate("/"); // заменить на нужный маршрут списка чатов
+            }
         } finally {
             setAccLoading(false);
         }

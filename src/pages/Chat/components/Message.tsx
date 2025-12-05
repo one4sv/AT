@@ -9,20 +9,18 @@ import Linkify from "linkify-react";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
+import { useDelete } from "../../../components/hooks/DeleteHook";
 
 type MessageComponentType = {
     isMy: boolean,
     highlightedId: number | null,
     message: message,
     messageRefs: React.MutableRefObject<Map<number, HTMLDivElement | null>>,
-    isChose:boolean,
-    setIsChose:React.Dispatch<React.SetStateAction<boolean>>,
-    chosenMess:number[],
-    setChosenMess: React.Dispatch<React.SetStateAction<number[]>>,
 }
-export default function Message ({ isMy, highlightedId, message:m, messageRefs, isChose, setIsChose, chosenMess, setChosenMess } : MessageComponentType) {
+export default function Message ({ isMy, highlightedId, message:m, messageRefs } : MessageComponentType) {
     const { setReaction, chatWith } = useChat()
     const { setBlackout } = useBlackout()
+    const { chosenMess, setChosenMess, isChose } = useDelete()
     const { user } = useUser()
     const { openMenu } = useContextMenu()
     const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
@@ -34,7 +32,7 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
 
     return (
         <div
-            className={`messageWrapper ${isChose ? "choosing" : ""} ${chosenMess.includes(m.id) ? "chosen" : ""} `}
+            className={`messageWrapper ${isChose ? "choosing" : ""} ${chosenMess.some(mess => mess.id === m.id) ? "chosen" : ""} `}
             ref={(el) => {messageRefs.current.set(m.id, el)}}
             onMouseEnter={() => setShowReactionButt(m.id)}
             onMouseLeave={() => setShowReactionButt(0)}
@@ -49,8 +47,8 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
             }}
             onClick={() => {
                 if (isChose) {
-                    if (chosenMess.includes(m.id)) setChosenMess((prev) => prev.filter(id => id !== m.id));
-                    else setChosenMess((prev) => [...prev, m.id]);
+                    if (chosenMess.some((mess) => mess.id === m.id )) setChosenMess((prev) => prev.filter(mess => mess.id !== m.id));
+                    else setChosenMess((prev) => [...prev, { id:m.id, text:m.content}]);
                 }
             }}
             onContextMenu={(e) => {
@@ -60,7 +58,7 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
                     return reaction ? reaction.reaction : "none";
                 })();
                 openMenu(e.clientX, e.clientY, "mess", { id:String(m.id)}, undefined, undefined,
-                    { isChose, setIsChose, setMess:setChosenMess, chosenMess, isReacted, isMy:m.sender_id === user.id }
+                    { isReacted, isMy:m.sender_id === user.id, text:m.content}
                 )
             }}
 
@@ -71,11 +69,15 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
         >
             {isChose && (
                 <div className="messChoseButt" style={{opacity: isChose ? "1" : "0"}} onClick={() => {
-                    if (chosenMess.includes(m.id)) setChosenMess((prev) => prev.filter(id => id !== m.id));
-                    else setChosenMess((prev) => [...prev, m.id]);
+                    if (chosenMess.some((mess) => mess.id === m.id)) { 
+                        setChosenMess((prev) => prev.filter(mess => mess.id !== m.id))
+                    }
+                    else {
+                        setChosenMess((prev) => [...prev, { id:m.id, text:m.content}])
+                    }
                     
                 }}>
-                    {chosenMess.includes(m.id) ? <CheckCircle weight="fill"/> : <CheckCircle/> }
+                    {chosenMess.some((mess) => mess.id === m.id) ? <CheckCircle weight="fill"/> : <CheckCircle/> }
                 </div>
             )}
             <div className={`message ${ isMy ? "my" : "ur"} ${highlightedId === m.id ? "highlight" : ""} ${isMobile ? "mobile" : ""}`}>

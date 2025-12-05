@@ -4,37 +4,44 @@ import { useHabits } from "../hooks/HabitsHook";
 import { useChat } from "../hooks/ChatHook";
 import { useNavigate} from "react-router";
 import { useNote } from "../hooks/NoteHook";
-import "../../scss/deleteConfirm.scss";
+import "../../scss/modules/deleteConfirm.scss";
 import { useAcc } from "../hooks/AccHook";
 import { useState, useEffect } from "react";
 import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
+import Toggler from "../ts/toggler";
 
 export default function DeleteConfirm() {
     const { user } = useUser()
     const { refetchHabits } = useHabits();
-    const { refetchContacts } = useChat();
-    const { deleteConfirm } = useDelete();
+    const { refetchContacts, refetchContactsWTLoading } = useChat();
+    const { deleteConfirm, deleteMess, setChosenMess, setIsChose } = useDelete();
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
     const { refetchAcc } = useAcc();
-    const API_URL = import.meta.env.VITE_API_URL;
-    const [delThing, setDelThing] = useState("");
+
     const navigate = useNavigate();
 
+    const API_URL = import.meta.env.VITE_API_URL;
+    const [ delThing, setDelThing] = useState("");
+    const [ delForAll, setDelForAll ] = useState(false)
+    
     useEffect(() => {
         if (deleteConfirm.goal === "post") setDelThing("пост");
         else if (deleteConfirm.goal === "habit") setDelThing("привычку");
         else if (deleteConfirm.goal === "chat") setDelThing("диалог с");
+        else if (deleteConfirm.goal === "mess" && deleteMess && deleteMess.length >0) setDelThing(String(deleteMess?.length));
+        else if (deleteConfirm.goal === "mess" && deleteMess && deleteMess.length === 0) setDelThing("это");
         else setDelThing("объект");
-    }, [deleteConfirm.goal]);
+
+    }, [deleteConfirm.goal, deleteMess, deleteMess?.length]);
 
     const deleteThis = async () => {
         const { goal, id } = deleteConfirm;
         try {
             const res = await api.post(
                 `${API_URL}delete`,
-                { goal: goal, delete_id: id }
+                { goal: goal === "mess" && delForAll ? "messForAll" : goal, delete_id: deleteMess && deleteMess.length > 0 ? deleteMess : id}
             );
 
             if (res.data.success) {
@@ -47,6 +54,10 @@ export default function DeleteConfirm() {
                 } else if (goal === "chat") {
                     refetchContacts();
                     navigate("/");
+                } else if (goal === "mess") {
+                    refetchContactsWTLoading()
+                    setIsChose(false)
+                    setChosenMess([])
                 }
                 setBlackout({ seted: false });
             }
@@ -60,6 +71,12 @@ export default function DeleteConfirm() {
             <span className="deleteSpan">
                 {`Вы действительно хотите удалить ${delThing} ${deleteConfirm.name}?`}
             </span>
+            {deleteConfirm.goal === "mess" && (
+                <div className={`deleteMessForAll ${delForAll ? "on" : ""}`} onClick={() => setDelForAll(prev => !prev)}>
+                    <Toggler state={delForAll} setState={setDelForAll}/>
+                    Удалить эти сообщения для всех
+                </div>
+            )}
             <div className="deleteButts">
                 <button
                     className="deleteCancel"
