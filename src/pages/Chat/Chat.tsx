@@ -40,15 +40,15 @@ export default function Chat () {
 
     useEffect(() => {
         if (!nick || !user?.id) return;
-        if (!user?.id) return;
         const unreadMessages = messages.filter(
             m => !m.read_by.includes(user.id!) && m.sender_id !== user.id
         );
-        if (unreadMessages.length > 0) {
+        if (unreadMessages.length > 0 && nick) {
             unreadMessages.forEach(m => {
             axios.post(`${API_URL}chat/read`, { messageId: m.id }, { withCredentials: true });
             });
         }
+        console.log(unreadMessages)
     }, [nick, messages, user.id]);
 
     useEffect(() => {
@@ -144,13 +144,24 @@ export default function Chat () {
     };
 
     useEffect(() => {
-        searchItemRefs.current.clear();
-        if (!searchedMessages.length) return;
-        const target = searchedMessages[selectedIndex];
-        if (!target) return;
-        const el = searchItemRefs.current.get(target.id);
-        el?.scrollIntoView({ block: "nearest" });
-    }, [selectedIndex, searchedMessages]);
+        const el = chatRef.current;
+        if (!el || chatLoading) return;
+
+        const threshold = 300; // порог в пикселях, чтобы считать, что чат «внизу»
+        const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+
+        if (isFirstLoad.current) {
+            // При первой загрузке просто скроллим вниз
+            requestAnimationFrame(() => {
+                el.scrollTop = el.scrollHeight;
+            });
+            isFirstLoad.current = false;
+        } else if (isNearBottom) {
+            requestAnimationFrame(() => {
+                el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+            });
+        }
+    }, [messages, chatLoading]);
 
     if (chatLoading) return <Loader />
 

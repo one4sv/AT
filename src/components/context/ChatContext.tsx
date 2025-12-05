@@ -57,7 +57,7 @@ export interface message {
     created_at: Date,
     files?: Media[],
     read_by: string[],
-    reactions: ReactionsType[]
+    reactions: ReactionsType[],
 }
 
 export interface Acc {
@@ -76,8 +76,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useUser();
     const { showNotification } = useNote();
     const { note, messNote } = useSettings();
+
     const API_URL = import.meta.env.VITE_API_URL;
     const API_WS = import.meta.env.VITE_API_WS;
+
     const [chatWith, setChatWith] = useState<chatWithType>({ username: "", nick: "", id: "", last_online: "", note:true, is_blocked:false, pinned:false, am_i_blocked:false });
     const [messages, setMessages] = useState<message[]>([]);
     const [chatLoading, setChatLoading] = useState<boolean>(true);
@@ -87,6 +89,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [onlineMap, setOnlineMap] = useState<Record<string, boolean>>({});
     const [isTyping, setIsTyping] = useState(false);
     const [typingStatus, setTypingStatus] = useState(false);
+
     const typingTimeout = useRef<number | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
     const chatWithRef = useRef<chatWithType>(chatWith);
@@ -110,7 +113,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setChatLoading(false);
         }
     };
-
     const sendMess = async (receiver_nick: string, text: string, files: File[] = []) => {  // Изменено на receiver_nick
         if (!text.trim() && files.length === 0) return;
         try {
@@ -123,7 +125,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             if (res.data.success) {
-                refetchContacts();
+                refetchContactsWTLoading();
             }
         } catch (error) {
             console.error("Ошибка при отправке:", error);
@@ -151,6 +153,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         await refetchContactsWTLoading();
     }, [refetchContactsWTLoading]);
 
+
     useEffect(() => {
         if (!user?.id) return;
         wsRef.current = new WebSocket(`${API_WS}ws?userId=${user.id}`);
@@ -158,14 +161,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             const data = JSON.parse(event.data);
             if (data.type === "NEW_MESSAGE") {
                 const messageSenderId = String(data.message.sender_id);
-                setMessages(prev => {
-                    if (prev.some(m => m.id === data.message.id)) return prev;
-                    return [...prev, data.message];
-                });
+                if (messageSenderId === user.id || messageSenderId === chatWithRef.current.id) {
+                    setMessages(prev => {
+                        return [...prev, data.message];
+                    });
+                }
                 refetchContactsWTLoading();
-                if (document.visibilityState === "hidden" && messageSenderId !== user.id && note && messNote &&
-                    list.some(acc => acc.id === messageSenderId && acc.note))
-                {
+                if (document.visibilityState === "hidden" && messageSenderId !== user.id && note && messNote && data.is_note) {
                     const senderName = data.username
                         ? `${data.username} | ${data.nick}`
                         : data.nick || "Новый собеседник";
@@ -190,6 +192,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 }
             }
             if (data.type === "MESSAGE_READ") {
+                console.log(data)
                 setMessages(prev =>
                     prev.map(m =>
                         m.id === data.messageId
