@@ -10,6 +10,7 @@ import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { CopySimple, DotsThreeOutlineVertical, ShareFat, Trash } from "@phosphor-icons/react";
 import { useDelete } from "../../../components/hooks/DeleteHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import { useMessages } from "../../../components/hooks/MessagesHook";
 
 interface ChatUserProps {
     search: string;
@@ -41,7 +42,8 @@ export default function ChatUser({
     const { user } = useUser();
     const { chatWith, onlineMap, typingStatus } = useChat();
     const { openMenu, menu, closeMenu } = useContextMenu();
-    const { setDeleteConfirm, setDeleteMess, setChosenMess, chosenMess, setIsChose, isChose } = useDelete()
+    const { setDeleteConfirm, setDeleteMess } = useDelete()
+    const { setChosenMess, chosenMess, setIsChose, isChose } = useMessages()
     const { setBlackout } = useBlackout()
     const navigate = useNavigate();
     const { nick } = useParams();

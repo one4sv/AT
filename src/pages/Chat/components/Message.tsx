@@ -9,7 +9,7 @@ import Linkify from "linkify-react";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
-import { useDelete } from "../../../components/hooks/DeleteHook";
+import { useMessages } from "../../../components/hooks/MessagesHook";
 
 type MessageComponentType = {
     isMy: boolean,
@@ -20,7 +20,7 @@ type MessageComponentType = {
 export default function Message ({ isMy, highlightedId, message:m, messageRefs } : MessageComponentType) {
     const { setReaction, chatWith } = useChat()
     const { setBlackout } = useBlackout()
-    const { chosenMess, setChosenMess, isChose } = useDelete()
+    const { chosenMess, setChosenMess, isChose } = useMessages()
     const { user } = useUser()
     const { openMenu } = useContextMenu()
     const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
@@ -32,7 +32,7 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
 
     return (
         <div
-            className={`messageWrapper ${isChose ? "choosing" : ""} ${chosenMess.some(mess => mess.id === m.id) ? "chosen" : ""} `}
+            className={`messageWrapper ${isChose ? "choosing" : ""} ${chosenMess.some(mess => mess.id === m.id) ? "chosen" : ""} ${highlightedId === m.id ? "highlight" : ""}`}
             ref={(el) => {messageRefs.current.set(m.id, el)}}
             onMouseEnter={() => setShowReactionButt(m.id)}
             onMouseLeave={() => setShowReactionButt(0)}
@@ -80,7 +80,7 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
                     {chosenMess.some((mess) => mess.id === m.id) ? <CheckCircle weight="fill"/> : <CheckCircle/> }
                 </div>
             )}
-            <div className={`message ${ isMy ? "my" : "ur"} ${highlightedId === m.id ? "highlight" : ""} ${isMobile ? "mobile" : ""}`}>
+            <div className={`message ${ isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""}`}>
                 <div className={`messageText ${isMobile ? "mobile" : ""}`}><Linkify>{m.content}</Linkify></div>
                 {m.files && m.files.length > 0 && (
                     <div className="messageFiles">

@@ -3,12 +3,16 @@ import "../../scss/ContextMenu.scss"
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useDelete } from "../hooks/DeleteHook";
-import { Bell, BellSlash, Check, CheckCircle, Circle, CopySimple, Heart, Link, PencilSimple, Prohibit, PushPin, PushPinSlash, ShareFat, Trash, User } from "@phosphor-icons/react";
+import {  ChatTeardrop, Check, CheckCircle, Circle, CopySimple, Heart, Link, PencilSimple, PushPin, PushPinSlash, ShareFat, Trash, User } from "@phosphor-icons/react";
 import { useUpHabit } from "../hooks/UpdateHabitHook";
 import { useDone } from "../hooks/DoneHook";
-import { useLocation, useNavigate } from "react-router";
-import { api } from "./api";
+import { useNavigate } from "react-router";
 import { useChat } from "../hooks/ChatHook";
+import { OffSound } from "./CM/funcs/Offsound";
+import { ToggleBlocked } from "./CM/funcs/ToggleBlocked";
+import { TogglePinned } from "./CM/funcs/TogglePinned";
+import { DownloadButt } from "./CM/funcs/DownloadButt";
+import { useMessages } from "../hooks/MessagesHook";
 
 export default function ContextMenu() {
     const { menu } = useContextMenu();
@@ -16,11 +20,10 @@ export default function ContextMenu() {
     const { setDeleteConfirm, setDeleteMess } = useDelete()
     const { setPin } = useUpHabit()
     const { markDone } = useDone()
-    const { isChose, setIsChose, chosenMess, setChosenMess } = useDelete()
-    const { refetchContactsWTLoading, refetchChat, setReaction } = useChat()
+    const { isChose, setIsChose, chosenMess, setChosenMess, setPendingScrollId } = useMessages()
+    const { setReaction } = useChat()
 
     const navigate = useNavigate()
-    const location = useLocation()
     const CopyLink = import.meta.env.VITE_LINK
 
     const [pos, setPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
@@ -64,41 +67,6 @@ export default function ContextMenu() {
         setIsAdjusted(true);
     }, [menu.x, menu.y, menu.visible]);
 
-    const offSound = async() => {
-        try {
-            const res = await api.post("/offsound", {id: options!.id})
-            if (res.data.success) {
-                refetchContactsWTLoading()
-                if (location.pathname === `/chat/${options!.nick}`) refetchChat(options!.nick!)
-            }
-        } catch (error) {
-            console.log("Ошибка при отключении звуков:", error)
-        }
-    }
-
-    const togglePinned = async() => {
-        try {
-            const res = await api.post("/togglepinned", {id: options!.id})
-            if (res.data.success) {
-                refetchContactsWTLoading()
-                if (location.pathname === `/chat/${options!.nick}`) refetchChat(options!.nick!)
-            }
-        } catch (error) {
-            console.log("Ошибка при переключении закрепления:", error)
-        }
-    }
-
-    const toggleBlocked = async() => {
-        try {
-            const res = await api.post("/toggleblocked", {id: options!.id})
-            if (res.data.success) {
-                refetchContactsWTLoading()
-                if (location.pathname === `/chat/${options!.nick}`) refetchChat(options!.nick!)
-            }
-        } catch (error) {
-            console.log("Ошибка при переключении блокировки:", error)
-        }
-    }
     const deleteButt = (
         <div className="ContextMenuButt delete" onClick={() => {
             setDeleteConfirm({goal:point, id:options.id, name:options.name!})
@@ -115,16 +83,17 @@ export default function ContextMenu() {
             Скопировать ссылку
         </div>
     )
+
     const personButt = (
         <>
-            <div className="ContextMenuButt" onClick={() => offSound()}>
-                {chatInfo?.note ? <BellSlash/> : <Bell/>}
-                {chatInfo?.note ? "Без звука" : "Включить звук"}
-            </div>
-            <div className={`ContextMenuButt ${chatInfo?.is_blocked ? "" : "delete"}`} onClick={() => toggleBlocked()}>
-                {chatInfo?.is_blocked ? <Prohibit weight="fill"/> : <Prohibit/>}
-                {chatInfo?.is_blocked ? "Разблокировать" : "Заблокировать"}
-            </div>
+            {chatInfo && (
+                <>
+                    <OffSound bool={chatInfo.note} id={options.id}/>
+                    <ToggleBlocked nick={options.nick} bool={chatInfo.is_blocked} id={options.id}/>
+                </>
+            )}
+
+
         </>
     )
 
@@ -166,10 +135,7 @@ export default function ContextMenu() {
                         <User/>
                         Открыть профиль
                     </div>
-                    <div className="ContextMenuButt" onClick={() => togglePinned()}>
-                        {chatInfo?.pinned ? <PushPinSlash/> : <PushPin/>}
-                        {chatInfo?.pinned ? "Открепить чат" : "Закрепить чат"}
-                    </div>
+                    <TogglePinned bool={chatInfo!.pinned} id={options.id}/>
                     {personButt}
                     {options && options.isMy && (
                         deleteButt
@@ -187,7 +153,7 @@ export default function ContextMenu() {
                     {deleteButt}
                 </>
             )}
-            {point === "acc" && curChat && setChosenMess && (
+            {point === "acc" && (
                 <>
                     <div className="ContextMenuButt" onClick={() => {
                         setIsChose(!isChose)
@@ -260,6 +226,18 @@ export default function ContextMenu() {
                     }}>
                         <Trash/>
                         {chosenMess.length > 0 ? "Удалить выбранное" : "Удалить"}
+                    </div>
+                </>
+            )}
+            {point==="media" && (
+                <>
+                    {options.url && options.name && DownloadButt(options.url, options.name)}
+                    <div className="ContextMenuButt" onClick={() => {
+                        setPendingScrollId(Number(options.id));  // Установите ID перед навигацией
+                        navigate(`/chat/${options.nick}`);
+                    }}>
+                        <ChatTeardrop style={{ transform: "scaleX(-1)" }}/>
+                        Показать в чате
                     </div>
                 </>
             )}

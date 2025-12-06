@@ -1,9 +1,13 @@
+import { useParams } from "react-router";
 import type { Media } from "../../../components/context/ChatContext";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import GetIconByType from "../../Chat/utils/getIconByType";
 
 export default function AccMedia({ media }: { media: Media[] | undefined}) {
     const { setBlackout } = useBlackout()
+    const { openMenu } = useContextMenu()
+    const { nick } = useParams()
 
     return (
         <div className="accMedia">
@@ -13,7 +17,10 @@ export default function AccMedia({ media }: { media: Media[] | undefined}) {
                     const isVideo = file.type.startsWith("video/");
 
                     return (
-                        <div key={i} className="accMediaItem">
+                        <div key={i} className="accMediaItem" onContextMenu={(e) => {
+                            e.preventDefault()
+                            openMenu(e.clientX, e.clientY, "media", {id:file.message_id, nick:nick, name:file.name, url:file.url})
+                        }}>
                             {isImage ? (
                                 <img
                                     src={file.url}

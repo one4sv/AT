@@ -239,6 +239,9 @@
     color: var(--borderHabit);
     stroke-width: 2.5px;
     font-size: 24px;
+    &:hover {
+        color: var(--tc);
+    }
 }
 .chatSend {
     font-size: 24px;

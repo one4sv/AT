@@ -11,31 +11,40 @@ import { ChatTAWrapper } from "./components/ChatTAWrapper"
 import DateDivider from "./components/DateDivider"
 import { isSameDay } from "./utils/isSameDay"
 import { isMobile } from "react-device-detect"
-import { useDelete } from "../../components/hooks/DeleteHook"
+import { useMessages } from "../../components/hooks/MessagesHook"
+import { useLocation } from "react-router"
 
 export default function Chat () {
     const { user } = useUser()
     const { refetchChat, chatLoading, messages} = useChat()
     const { nick } = useParams()
-    const { chosenMess, setChosenMess, isChose, setIsChose } = useDelete()
+    const { chosenMess, setChosenMess, isChose, setIsChose, pendingScrollId, setPendingScrollId } = useMessages()
     const [ search, setSearch ] = useState<string>("")
     const [ selectedIndex, setSelectedIndex ] = useState<number>(0)
     const [ highlightedId, setHighlightedId ] = useState<number | null>(null)
     const [ showGoDown, setShowGoDown ] = useState<boolean>(false)
+    const [ isFirstLoad, setIsFirstLoad ] = useState(true)
+
+    const location = useLocation()
 
     const chatRef = useRef<HTMLDivElement | null>(null)
     const messageRefs = useRef<Map<number, HTMLDivElement | null>>(new Map())
     const searchItemRefs = useRef<Map<number, HTMLDivElement | null>>(new Map())
+    const highlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const API_URL = import.meta.env.VITE_API_URL
-    const isFirstLoad = useRef(true)
+
+    useEffect(() => {
+        if (chatLoading === true) setIsFirstLoad(true);
+    }, [chatLoading]);
 
     useEffect(() => {
         if (nick) {
             setIsChose(false)
             setChosenMess([])
             refetchChat(nick)
-            isFirstLoad.current = true
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nick])
 
     useEffect(() => {
@@ -48,34 +57,25 @@ export default function Chat () {
             axios.post(`${API_URL}chat/read`, { messageId: m.id }, { withCredentials: true });
             });
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nick, messages, user.id]);
-
-    useEffect(() => {
-        if (!isFirstLoad.current) return;
-        const el = chatRef.current;
-        if (!el || chatLoading) return;
-        requestAnimationFrame(() => {
-            el.scrollTop = el.scrollHeight;
-        });
-        isFirstLoad.current = false;
-    }, [messages, chatLoading]);
 
     useEffect(() => {
         const el = chatRef.current;
         if (!el) return;
 
         const handleScroll = () => {
-            const threshold = 300; // Порог в пикселях от низа
+            const threshold = 300;
             const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
             setShowGoDown(!isNearBottom);
         };
 
         el.addEventListener("scroll", handleScroll);
 
-        // Вызовем обработчик сразу, чтобы правильно выставить состояние
         handleScroll();
 
         return () => el.removeEventListener("scroll", handleScroll);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chatRef.current]);
 
 
@@ -96,17 +96,31 @@ export default function Chat () {
             .reverse();
     }, [messages, search]);
 
+
     const scrollToMessage = (id: number) => {
-        const el = messageRefs.current.get(id)
-        if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "center" })
-            setHighlightedId(null)
-            requestAnimationFrame(() => {
-                setHighlightedId(id)
-                setTimeout(() => setHighlightedId(null), 2000)
-            })
+        const el = messageRefs.current.get(id);
+        if (!el) {
+            console.log("No el for id", id, " — ref не найден!");
+            return;
         }
-    }
+
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+        setHighlightedId(null);
+
+        requestAnimationFrame(() => {
+            setHighlightedId(id);
+        });
+
+        if (highlightTimeoutRef.current) {
+            clearTimeout(highlightTimeoutRef.current);
+        }
+        highlightTimeoutRef.current = setTimeout(() => {
+            setHighlightedId(null);
+            highlightTimeoutRef.current = null;
+        }, 2000);
+    };
+
 
     const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (!searchedMessages.length) return;
@@ -131,36 +145,31 @@ export default function Chat () {
         setSelectedIndex(newIndex);
         const target = searchedMessages[newIndex];
         if (!target) return;
-        const el = messageRefs.current.get(target.id);
-        if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "center" });
-            setHighlightedId(null);
-            requestAnimationFrame(() => {
-                setHighlightedId(target.id);
-                setTimeout(() => setHighlightedId(null), 2000);
-            });
-        }
+        scrollToMessage(target.id)
     };
 
     useEffect(() => {
         const el = chatRef.current;
         if (!el || chatLoading) return;
-
-        const threshold = 300; // порог в пикселях, чтобы считать, что чат «внизу»
-        const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
-
-        if (isFirstLoad.current) {
-            // При первой загрузке просто скроллим вниз
-            requestAnimationFrame(() => {
-                el.scrollTop = el.scrollHeight;
-            });
-            isFirstLoad.current = false;
-        } else if (isNearBottom) {
-            requestAnimationFrame(() => {
-                el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-            });
+        if (isFirstLoad === true) {
+            el.scrollTop = el.scrollHeight;
+            setIsFirstLoad(false)
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [messages, chatLoading]);
+
+    useEffect(() => {
+    if (!chatLoading && pendingScrollId !== null && messages.some(m => m.id === pendingScrollId)) {
+        requestAnimationFrame(() => {
+            const el = messageRefs.current.get(pendingScrollId);
+            if (el) {
+                scrollToMessage(pendingScrollId);
+                setTimeout(() => setPendingScrollId(null), 300);
+            }
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chatLoading, messages, pendingScrollId]);
 
     if (chatLoading) return <Loader />
 
@@ -189,7 +198,7 @@ export default function Chat () {
                     const needDivider = !prevDate || !isSameDay(prevDate, currDate)
                     const isMy = m.sender_id === user.id
                     return (
-                        <Fragment key={`${m.id}-${i}`}>
+                        <Fragment key={m.id}>
                             {needDivider && <DateDivider currDate={currDate}/>}
                             <Message message={m} isMy={isMy} highlightedId={highlightedId} messageRefs={messageRefs}
                         />

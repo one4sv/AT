@@ -1,5 +1,4 @@
 .messageWrapper {
-    // margin-top: 1vh;
     width: 100%;
     position: relative;
     height: fit-content;
@@ -153,11 +152,15 @@
         background-color: var(--menuButtHover);
     }
 }
-.message.highlight {
-    animation: highlightFade 2s ease;
-    >.messageDate {
-        color: var(--tc);
+.messageWrapper.highlight {
+    animation: highlightFadeWrapper 2s ease;
+    > .message {
+        animation: highlightFadeMessage 2s ease;
+        >.messageDate {
+            color: var(--tc);
+        }
     }
+    
 }
 .messageText {
     max-width: 25vw;

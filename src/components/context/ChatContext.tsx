@@ -30,7 +30,8 @@ export interface ReactionsType {
 export interface Media {
     url: string,
     name: string,
-    type: string
+    type: string,
+    message_id:string
 }
 
 export interface ChatContextType {
