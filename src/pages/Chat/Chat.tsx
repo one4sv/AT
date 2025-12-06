@@ -12,7 +12,6 @@ import DateDivider from "./components/DateDivider"
 import { isSameDay } from "./utils/isSameDay"
 import { isMobile } from "react-device-detect"
 import { useMessages } from "../../components/hooks/MessagesHook"
-import { useLocation } from "react-router"
 
 export default function Chat () {
     const { user } = useUser()
@@ -24,8 +23,6 @@ export default function Chat () {
     const [ highlightedId, setHighlightedId ] = useState<number | null>(null)
     const [ showGoDown, setShowGoDown ] = useState<boolean>(false)
     const [ isFirstLoad, setIsFirstLoad ] = useState(true)
-
-    const location = useLocation()
 
     const chatRef = useRef<HTMLDivElement | null>(null)
     const messageRefs = useRef<Map<number, HTMLDivElement | null>>(new Map())

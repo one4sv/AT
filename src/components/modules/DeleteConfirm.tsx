@@ -10,12 +10,14 @@ import { useState, useEffect } from "react";
 import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
 import Toggler from "../ts/toggler";
+import { useMessages } from "../hooks/MessagesHook";
 
 export default function DeleteConfirm() {
     const { user } = useUser()
     const { refetchHabits } = useHabits();
     const { refetchContacts, refetchContactsWTLoading } = useChat();
-    const { deleteConfirm, deleteMess, setChosenMess, setIsChose } = useDelete();
+    const { deleteConfirm, deleteMess } = useDelete();
+    const { setChosenMess, setIsChose } = useMessages()
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
     const { refetchAcc } = useAcc();
