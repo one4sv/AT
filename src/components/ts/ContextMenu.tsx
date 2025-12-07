@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "../../scss/ContextMenu.scss"
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { useBlackout } from "../hooks/BlackoutHook";
@@ -15,12 +15,12 @@ import { DownloadButt } from "./CM/funcs/DownloadButt";
 import { useMessages } from "../hooks/MessagesHook";
 
 export default function ContextMenu() {
-    const { menu } = useContextMenu();
+    const { menu, menuRef } = useContextMenu();
     const { setBlackout } = useBlackout()
     const { setDeleteConfirm, setDeleteMess } = useDelete()
     const { setPin } = useUpHabit()
     const { markDone } = useDone()
-    const { isChose, setIsChose, chosenMess, setChosenMess, setPendingScrollId } = useMessages()
+    const { isChose, setIsChose, chosenMess, setChosenMess, setPendingScrollId, setAnswer, setRedacting } = useMessages()
     const { setReaction } = useChat()
 
     const navigate = useNavigate()
@@ -29,7 +29,6 @@ export default function ContextMenu() {
     const [pos, setPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
     const [isAdjusted, setIsAdjusted] = useState(false);
 
-    const menuRef = useRef<HTMLDivElement>(null);
     
     const habit = menu.habit
     const options = menu.options
@@ -65,7 +64,7 @@ export default function ContextMenu() {
 
         setPos({ top, left });
         setIsAdjusted(true);
-    }, [menu.x, menu.y, menu.visible]);
+    }, [menu.x, menu.y, menu.visible, menuRef]);
 
     const deleteButt = (
         <div className="ContextMenuButt delete" onClick={() => {
@@ -100,7 +99,8 @@ export default function ContextMenu() {
     if (!menu.visible) return null;
 
     const currentPos = isAdjusted ? pos : { top: menu.y, left: menu.x };
-
+    console.log(options.id)
+    
     return (
         <div className="ContextMenuWrapper" ref={menuRef} style={{
             top: currentPos.top,
@@ -175,11 +175,15 @@ export default function ContextMenu() {
                         </div>
                     )}
                     {!isChose && curChat.isMy &&(
-                        <div className="ContextMenuButt">
+                        <div className="ContextMenuButt" onClick={() => {
+                            setAnswer(null)
+                            setRedacting({id:options.id, text:curChat.text!})
+                        }}>
                             <PencilSimple/>
                             Изменить
                         </div>
                     )}
+                    {options?.url && options?.name && !isChose && DownloadButt(options.url, options.name)}
                     <div className="ContextMenuButt" onClick={() => {
                         if (!isChose) {
                             setIsChose(true)
@@ -194,7 +198,10 @@ export default function ContextMenu() {
                         {isChose ? "Отменить выбор" : "Выбрать"}
                     </div>
                     {!isChose && (
-                        <div className="ContextMenuButt">
+                        <div className="ContextMenuButt" onClick={() => {
+                            setRedacting(null)
+                            setAnswer({id:options.id, sender:curChat.sender!, text:curChat.text!})
+                        }}>
                             <ShareFat style={{ transform: "scaleX(-1)" }}/>
                             Ответить
                         </div>

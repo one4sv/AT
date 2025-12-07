@@ -24,7 +24,8 @@ $themes: (
         notValid: #8a0000,
         borderHabit: #777777,
         mess: #f0f0f0,
-        chosing_mess:#00000036
+        chosing_mess:#00000036,
+        on_con_menu_mess:#6464643a,
     ),
     dark: (
         bgc: #1d1d1d,
@@ -37,7 +38,8 @@ $themes: (
         notValid: #f44336,
         borderHabit: #646464,
         mess: #272727,
-        chosing_mess:#ffffff36
+        chosing_mess:#e4e4e436,
+        on_con_menu_mess:#6464643a,
     )
 );
 $acsents: (
@@ -45,23 +47,27 @@ $acsents: (
         light: (
             acsent: #00cc44,
             acsent_op: #00cc442a,
-            darkerAcsent: #009933
+            acsent_hov: #00cc443a,
+            darkerAcsent: #00a738
         ),
         dark: (
             acsent: #129e12,
             acsent_op: #00ff002a,
-            darkerAcsent: #129612
+            acsent_hov: #129e123a,
+            darkerAcsent: #169116
         )
     ),
     apple: (
         light: (
             acsent: #ff3333,
             acsent_op: #ff33332a,
+            acsent_hov: #ff33333a,
             darkerAcsent: #cc0000
         ),
         dark: (
             acsent: #ff3b3b,
             acsent_op: #ff00002a,
+            acsent_hov: #ff3b3b3a,
             darkerAcsent: #cc2f2f
         )
     ),
@@ -69,11 +75,13 @@ $acsents: (
         light: (
             acsent: #3399ff,
             acsent_op: #3399ff2a,
+            acsent_hov: #3399ff3a,
             darkerAcsent: #0066cc
         ),
         dark: (
             acsent: #007bff,
             acsent_op: #007bff2a,
+            acsent_hov: #007bff3a,
             darkerAcsent: #0056b3
         )
     ),
@@ -81,11 +89,13 @@ $acsents: (
         light: (
             acsent: #a066ff,
             acsent_op: #a066ff2a,
+            acsent_hov: #a066ff3a,
             darkerAcsent: #6a1b9a
         ),
         dark: (
             acsent: #892dd4,
             acsent_op: #8c00ff2a,
+            acsent_hov: #8c00ff3a,
             darkerAcsent: #4a148c
         )
     )
@@ -171,6 +181,7 @@ $darkerAcsent: map-get(map-get(map-get($acsents, $__default-accent-key), $__defa
         --acsent: #{map-get($map, acsent)};
         --darkerAcsent: #{map-get($map, darkerAcsent)};
         --acsent_op: #{map-get($map, acsent_op)};
+        --acsent_hov: #{map-get($map, acsent_hov)};
       }
     }
   }

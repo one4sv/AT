@@ -1,4 +1,4 @@
-import {  CaretDoubleDown, Paperclip, Prohibit, SmileySticker, X } from "@phosphor-icons/react";
+import {  CaretDoubleDown, Paperclip, Prohibit, SmileySticker, Sticker, X } from "@phosphor-icons/react";
 import { SendHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
@@ -7,11 +7,16 @@ import GetIconByType from "../utils/getIconByType";
 import EmojiBar from "../../../components/ts/utils/EmojiBar";
 import { isMobile } from "react-device-detect";
 import { useDrop } from "../../../components/hooks/DropHook";
+import { useMessages } from "../../../components/hooks/MessagesHook";
+import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
+import { MessBarBlock } from "../utils/messBarBlock";
 
-export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean, handleGoDown:()=> void}) {
+export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { showGoDown:boolean, handleGoDown:()=> void, scrollToMessage:(id:number) => void}) {
     const { sendMess, handleTyping, chatWith, chatLoading } = useChat()
     const { nick } = useParams()
     const { droppedFiles, setDroppedFiles } = useDrop()
+    const { answer, redacting } = useMessages()
+    const { menuRef } = useContextMenu()
 
     const [ mess, setMess ] = useState<string>("")
     const [ files, setFiles ] = useState<File[]>([]) 
@@ -36,7 +41,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean,
     }
     const handleSend = async () => {
         if (nick && (mess.trim() || files.length > 0)) {
-            await sendMess(nick, mess.trim(), files)
+            await sendMess(nick, mess.trim(), files, answer !== null ? answer.id : undefined)
             setMess("")
             setFiles([])
             setShowChatBar(false)
@@ -61,9 +66,22 @@ export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean,
     }, [mess]);
 
     useEffect(() => {
+        if (answer !== null || redacting !== null) setShowChatBar(true);
+
         const handleClickOutside = (e: MouseEvent) => {
+            if (e.button === 2 || !chatTARef.current || answer !== null || redacting !== null) return;
+
+            if (menuRef.current === null) {
+                if (
+                    !chatTARef.current.contains(e.target as Node) &&
+                    showChatBar
+                ) {
+                    setShowChatBar(false);
+                }
+                return;
+            }
             if (
-                chatTARef.current &&
+                !menuRef.current.contains(e.target as Node) &&
                 !chatTARef.current.contains(e.target as Node) &&
                 showChatBar
             ) {
@@ -72,8 +90,11 @@ export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean,
         };
 
         document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [showChatBar]);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [answer, menuRef, redacting, showChatBar]);
+
 
     useEffect(() => {
         setFiles([]);
@@ -107,7 +128,6 @@ export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean,
         }
     }
 
-
     return (
         <div className={`chatTAWrapper ${isMobile ? "mobile" : ""}`} ref={chatTARef}>
             {showGoDown && (
@@ -124,6 +144,15 @@ export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean,
                     <div className="chatWriteSvgButt" onClick={() => setShowEmojiBar(!showEmojiBar)}>
                         <SmileySticker className="chatSvg"/>
                     </div>
+                    <div className="chatWriteSvgButt">
+                        <Sticker className="chatSvg"/>
+                    </div>
+                    {answer !== null && (
+                        <MessBarBlock object={answer} scrollToMessage={scrollToMessage} />
+                    )}
+                    {redacting !== null && (
+                        <MessBarBlock object={redacting} scrollToMessage={scrollToMessage} />
+                    )}
                     <div className="chatWriteTAButt" onClick={handleSend}>
                         <SendHorizontal className="chatSend" fill="currenColor"/>
                     </div>
@@ -148,8 +177,8 @@ export function ChatTAWrapper({showGoDown, handleGoDown} : { showGoDown:boolean,
                                     <video src={previewUrl} className="chatTAFilePreview" controls />
                                 ) : (
                                     <div className="chatTAFileOther">
-                                    {GetIconByType(file.name, file.type)}
-                                    <span className="chatTAFileName">{file.name}</span>
+                                        {GetIconByType(file.name, file.type)}
+                                        <span className="chatTAFileName">{file.name}</span>
                                     </div>
                                 )}
                             </div>

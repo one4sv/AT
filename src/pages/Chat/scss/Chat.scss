@@ -320,18 +320,20 @@
     z-index: 9;
     bottom: 115%;
     border-radius: 50%;
-    left: 50%;
+    left: 48%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     color: var(--borderHabit);
+    opacity: 0.5;
     
     >svg {
         width: 80%;
         height: 80%;
     }
     &:hover {
+        opacity: 1;
         color: var(--tc);
         background-color: var(--menuButtHover);
     }

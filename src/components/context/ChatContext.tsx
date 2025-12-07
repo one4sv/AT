@@ -37,7 +37,7 @@ export interface Media {
 export interface ChatContextType {
     chatWith: chatWithType,
     refetchChat: (nick: string) => Promise<void>,
-    sendMess: (receiver_nick: string, text: string, files?: File[]) => Promise<void>,  // Изменено на receiver_nick
+    sendMess: (receiver_nick: string, text: string, files?: File[], answer_id?: string) => Promise<void>,  // Изменено на receiver_nick
     chatLoading: boolean,
     messages: message[],
     list: Acc[],
@@ -60,6 +60,7 @@ export interface message {
     files?: Media[],
     read_by: string[],
     reactions: ReactionsType[],
+    answer_id:number | null
 }
 
 export interface Acc {
@@ -127,12 +128,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setChatLoading(false);
         }
     };
-    const sendMess = async (receiver_nick: string, text: string, files: File[] = []) => {  // Изменено на receiver_nick
+    const sendMess = async (receiver_nick: string, text: string, files: File[] = [], answer_id?:string) => {
         if (!text.trim() && files.length === 0) return;
         try {
             const formData = new FormData();
-            formData.append("receiver_nick", receiver_nick);  // Изменено
+            formData.append("receiver_nick", receiver_nick);
             formData.append("text", text);
+            if (answer_id) formData.append("answer_id", answer_id)
             files.forEach(file => formData.append("files", file));
             const res = await axios.post(`${API_URL}chat`, formData, {
                 withCredentials: true,

@@ -16,13 +16,15 @@ type MessageComponentType = {
     highlightedId: number | null,
     message: message,
     messageRefs: React.MutableRefObject<Map<number, HTMLDivElement | null>>,
+    answer:{id:number, name:string, text:string} | undefined,
+    scrollToMessage?:(id:number) => void,
 }
-export default function Message ({ isMy, highlightedId, message:m, messageRefs } : MessageComponentType) {
+export default function Message ({ isMy, highlightedId, message:m, messageRefs, answer, scrollToMessage } : MessageComponentType) {
     const { setReaction, chatWith } = useChat()
     const { setBlackout } = useBlackout()
     const { chosenMess, setChosenMess, isChose } = useMessages()
     const { user } = useUser()
-    const { openMenu } = useContextMenu()
+    const { openMenu, menu } = useContextMenu()
     const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
 
     const messageGetTime = (date: Date | string) => {
@@ -32,7 +34,9 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
 
     return (
         <div
-            className={`messageWrapper ${isChose ? "choosing" : ""} ${chosenMess.some(mess => mess.id === m.id) ? "chosen" : ""} ${highlightedId === m.id ? "highlight" : ""}`}
+            className={`messageWrapper ${isChose ? "choosing" : ""} ${chosenMess.some(mess => mess.id === m.id) ? "chosen" : ""} ${highlightedId === m.id ? "highlight" : ""}
+                ${menu.point === "mess" && menu.options.id === String(m.id) && "onContextMenu"}
+            `}
             ref={(el) => {messageRefs.current.set(m.id, el)}}
             onMouseEnter={() => setShowReactionButt(m.id)}
             onMouseLeave={() => setShowReactionButt(0)}
@@ -58,7 +62,7 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
                     return reaction ? reaction.reaction : "none";
                 })();
                 openMenu(e.clientX, e.clientY, "mess", { id:String(m.id)}, undefined, undefined,
-                    { isReacted, isMy:m.sender_id === user.id, text:m.content}
+                    { isReacted, isMy:m.sender_id === user.id, text:m.content || `${m.files?.length} media`, sender:m.sender_id === user.id ? user.username || user.nick! : chatWith.username || chatWith.nick! }
                 )
             }}
 
@@ -81,6 +85,16 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
                 </div>
             )}
             <div className={`message ${ isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""}`}>
+                {answer && scrollToMessage && (
+                    <div className="answerMess" onClick={() => scrollToMessage(answer.id)}>
+                        <div className="answerMess1str">
+                            {answer.name}
+                        </div>
+                        <div className="answerMess2str">
+                            {answer.text}
+                        </div>
+                    </div>
+                )}
                 <div className={`messageText ${isMobile ? "mobile" : ""}`}><Linkify>{m.content}</Linkify></div>
                 {m.files && m.files.length > 0 && (
                     <div className="messageFiles">
@@ -90,7 +104,19 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
                             return (
                                 <div key={j} className="messageFile">
                                     {isImage ? (
-                                        <img src={file.url} alt={file.name} className="messageFilePreview" onClick={() => setBlackout({seted:true, module:"ImgPrev", img:file.url})}/>
+                                        <img src={file.url} alt={file.name} className="messageFilePreview" onClick={() => setBlackout({seted:true, module:"ImgPrev", img:file.url})}
+                                        onContextMenu={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            const isReacted = (() => {
+                                                const reaction = m.reactions.find(r => r.user_id === user.id);
+                                                return reaction ? reaction.reaction : "none";
+                                            })();
+                                            openMenu(e.clientX, e.clientY, "mess", { id:String(m.id), name:file.name, url:file.url }, undefined, undefined,
+                                                { isReacted, isMy:m.sender_id === user.id, text:m.content,
+                                                sender:m.sender_id === user.id ? user.username || user.nick! : chatWith.username || chatWith.nick! }
+                                            )
+                                        }}/>
                                     ) : isVideo ? (
                                         <video src={file.url} className="messageFilePreview" controls />
                                     ) : (
@@ -105,14 +131,26 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs }
                     </div>
                 )}
                 <div className="messageDate">
-                    {showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && !isChose && (
-                        <div 
-                            className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
-                            onClick={() => setReaction(m.id, "Heart")}
-                        >
-                            <Heart weight="fill" />
-                        </div>
-                    )}
+                    {highlightedId === m.id && m.reactions && m.reactions.length === 0 ? (
+                            <div 
+                                className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
+                                style={{opacity: showReactionButt === m.id ? "1" : "0"}}
+                                onClick={() => setReaction(m.id, "Heart")}
+                            >
+                                <Heart weight="fill" />
+                            </div>
+                        
+                        )
+                        : (showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && !isChose && (
+                            <div 
+                                className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
+                                onClick={() => setReaction(m.id, "Heart")}
+                            >
+                                <Heart weight="fill" />
+                            </div>
+                        ))
+                    }
+                    {}
                     {!isMy && messageGetTime(m.created_at)}
                     {m.reactions && m.reactions.length > 0 && (
                         <div className="reactions" onClick={()=> setReaction(m.id, "Heart")}>

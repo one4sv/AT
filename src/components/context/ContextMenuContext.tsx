@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState, type ReactNode } from "react"
+import { createContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react"
 import type { Habit } from "./HabitsContext"
 const ContextMenuContext = createContext<ContextMenuContextType | null>(null)
 
@@ -21,6 +21,7 @@ export interface curChatType {
     isReacted?:string,
     isMy?:boolean,
     text?:string,
+    sender?:string
 }
 
 type MenuState = {
@@ -37,7 +38,8 @@ type MenuState = {
 export type ContextMenuContextType = {
     menu: MenuState
     openMenu: (x: number, y: number, point: string, options: MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType ) => void
-    closeMenu: () => void
+    closeMenu: () => void,
+    menuRef:RefObject<HTMLDivElement | null>
 }
 
 
@@ -49,6 +51,7 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
         options: {id: "", name: ""},
         visible: false,
     })
+    const menuRef = useRef<HTMLDivElement>(null);
 
     const openMenu = (x:number, y:number, point:string, options:MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType ) => {
         setMenu({ x, y, point, habit, options, chatInfo, visible: true, curChat })
@@ -61,12 +64,16 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
     useEffect(() => {
         const close = () => closeMenu()
         window.addEventListener("click", close)
+        document.addEventListener("scroll", close, true)
 
-        return () => window.removeEventListener("click", close)
+        return () => {
+            window.removeEventListener("click", close)
+            document.removeEventListener("scroll", close, true)
+        }
     }, [])
 
     return (
-        <ContextMenuContext.Provider value={{ menu, openMenu, closeMenu }}>
+        <ContextMenuContext.Provider value={{ menu, openMenu, closeMenu, menuRef }}>
             {children}
         </ContextMenuContext.Provider>
     )

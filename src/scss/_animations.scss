@@ -34,3 +34,14 @@
 		box-shadow: 0 0 1px var(--darkerAcsent)
 	}
 }
+@keyframes highlightFadeReaction {
+	0% {
+		background-color: var(--darkerAcsent);
+	}
+	50% {
+		background-color: var(--acsent);
+	}
+	100% {
+		background-color: var(--darkerAcsent);
+	}
+}

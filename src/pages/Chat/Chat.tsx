@@ -1,88 +1,76 @@
-import { useParams } from "react-router"
-import { useChat } from "../../components/hooks/ChatHook"
-import { useEffect, useRef, useState, Fragment, useMemo } from "react"
+import { useParams } from "react-router";
+import { useChat } from "../../components/hooks/ChatHook";
+import { useMessages } from "../../components/hooks/MessagesHook";
+import { useUser } from "../../components/hooks/UserHook";
+import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import "./scss/Chat.scss"
-import Loader from "../../components/ts/Loader"
-import ChatUser from "./components/ChatUser"
-import Message from "./components/Message"
-import axios from "axios"
-import { useUser } from "../../components/hooks/UserHook"
-import { ChatTAWrapper } from "./components/ChatTAWrapper"
-import DateDivider from "./components/DateDivider"
-import { isSameDay } from "./utils/isSameDay"
-import { isMobile } from "react-device-detect"
-import { useMessages } from "../../components/hooks/MessagesHook"
 
-export default function Chat () {
-    const { user } = useUser()
-    const { refetchChat, chatLoading, messages} = useChat()
-    const { nick } = useParams()
-    const { chosenMess, setChosenMess, isChose, setIsChose, pendingScrollId, setPendingScrollId } = useMessages()
-    const [ search, setSearch ] = useState<string>("")
-    const [ selectedIndex, setSelectedIndex ] = useState<number>(0)
-    const [ highlightedId, setHighlightedId ] = useState<number | null>(null)
-    const [ showGoDown, setShowGoDown ] = useState<boolean>(false)
-    const [ isFirstLoad, setIsFirstLoad ] = useState(true)
+import { useEffect, useMemo, useRef, useState, Fragment } from "react";
+import DateDivider from "./components/DateDivider";
+import Message from "./components/Message";
+import ChatUser from "./components/ChatUser";
+import { ChatTAWrapper } from "./components/ChatTAWrapper";
 
-    const chatRef = useRef<HTMLDivElement | null>(null)
-    const messageRefs = useRef<Map<number, HTMLDivElement | null>>(new Map())
-    const searchItemRefs = useRef<Map<number, HTMLDivElement | null>>(new Map())
-    const highlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+import { isSameDay } from "./utils/isSameDay";
+import { isMobile } from "react-device-detect";
+import Loader from "../../components/ts/Loader";
+import { api } from "../../components/ts/api";
+
+export default function Chat() {
+    const { user } = useUser();
+    const { refetchChat, chatLoading, messages, chatWith } = useChat();
+    const { chosenMess, setChosenMess, isChose, setIsChose, pendingScrollId, setPendingScrollId } = useMessages();
+
+    const { nick } = useParams();
+
+    const [search, setSearch] = useState("");
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [highlightedId, setHighlightedId] = useState<number | null>(null);
+    const [showGoDown, setShowGoDown] = useState(false);
+
+    const searchItemRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
+    const virtuosoRef = useRef<VirtuosoHandle | null>(null);
+    const messageRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
+    const highlightTimeoutRef = useRef<number | null>(null);
 
     const API_URL = import.meta.env.VITE_API_URL
 
     useEffect(() => {
-        if (chatLoading === true) setIsFirstLoad(true);
-    }, [chatLoading]);
-
-    useEffect(() => {
         if (nick) {
-            setIsChose(false)
-            setChosenMess([])
-            refetchChat(nick)
+            setIsChose(false);
+            setChosenMess([]);
+            refetchChat(nick);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nick])
+    }, [nick]);
 
+    // Автопометка прочитанного
     useEffect(() => {
-        if (!nick || !user?.id) return;
-        const unreadMessages = messages.filter(
+        if (!user?.id) return;
+
+        const unread = messages.filter(
             m => !m.read_by.includes(user.id!) && m.sender_id !== user.id
         );
-        if (unreadMessages.length > 0 && nick) {
-            unreadMessages.forEach(m => {
-            axios.post(`${API_URL}chat/read`, { messageId: m.id }, { withCredentials: true });
-            });
+
+        if (unread.length) {
+            unread.forEach(m =>
+                api.post(`${API_URL}chat/read`, { messageId: m.id }, { withCredentials: true })
+            );
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nick, messages, user.id]);
+    }, [messages, user?.id]);
 
-    useEffect(() => {
-        const el = chatRef.current;
-        if (!el) return;
-
-        const handleScroll = () => {
-            const threshold = 300;
-            const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
-            setShowGoDown(!isNearBottom);
-        };
-
-        el.addEventListener("scroll", handleScroll);
-
-        handleScroll();
-
-        return () => el.removeEventListener("scroll", handleScroll);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chatRef.current]);
-
-
-    const handleGoDown = () => {
-        const el = chatRef.current;
-        if (el) {
-            el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-        }
+    const handleArrowClick = (dir: "up" | "down") => {
+        setHighlightedId(null);
+        if (!searchedMessages.length) return;
+        let newIndex = selectedIndex;
+        if (dir === "down") newIndex = Math.min(searchedMessages.length - 1, selectedIndex + 1);
+        if (dir === "up") newIndex = Math.max(0, selectedIndex - 1);
+        setSelectedIndex(newIndex);
+        const target = searchedMessages[newIndex];
+        if (!target) return;
+        scrollToMessage(target.id)
     };
 
+    // Поиск сообщений
     const searchedMessages = useMemo(() => {
         if (!search.trim()) return [];
         return messages
@@ -93,84 +81,91 @@ export default function Chat () {
             .reverse();
     }, [messages, search]);
 
-
     const scrollToMessage = (id: number) => {
-        const el = messageRefs.current.get(id);
-        if (!el) {
-            console.log("No el for id", id, " — ref не найден!");
-            return;
-        }
-
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-
-        setHighlightedId(null);
-
-        requestAnimationFrame(() => {
-            setHighlightedId(id);
-        });
+        const index = messages.findIndex(m => m.id === id);
+        if (index === -1) return;
 
         if (highlightTimeoutRef.current) {
             clearTimeout(highlightTimeoutRef.current);
         }
-        highlightTimeoutRef.current = setTimeout(() => {
+
+        setHighlightedId(id);
+
+        virtuosoRef.current?.scrollToIndex({
+            index,
+            behavior: "smooth",
+            align: "center",
+        });
+
+        highlightTimeoutRef.current = window.setTimeout(() => {
             setHighlightedId(null);
             highlightTimeoutRef.current = null;
         }, 2000);
     };
 
-
     const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (!searchedMessages.length) return;
+        setHighlightedId(null);
         if (e.key === "ArrowDown") {
             e.preventDefault();
-            setSelectedIndex(prev => Math.min(searchedMessages.length - 1, prev + 1));
+            setSelectedIndex(prev => Math.min(prev + 1, searchedMessages.length - 1));
         } else if (e.key === "ArrowUp") {
             e.preventDefault();
-            setSelectedIndex(prev => Math.max(0, prev - 1));
+            setSelectedIndex(prev => Math.max(prev - 1, 0));
         } else if (e.key === "Enter") {
             e.preventDefault();
-            const target = searchedMessages[selectedIndex];
-            if (target) scrollToMessage(target.id);
+            scrollToMessage(searchedMessages[selectedIndex].id);
         }
-    }
-
-    const handleArrowClick = (dir: "up" | "down") => {
-        if (!searchedMessages.length) return;
-        let newIndex = selectedIndex;
-        if (dir === "up") newIndex = Math.min(searchedMessages.length - 1, selectedIndex + 1);
-        if (dir === "down") newIndex = Math.max(0, selectedIndex - 1);
-        setSelectedIndex(newIndex);
-        const target = searchedMessages[newIndex];
-        if (!target) return;
-        scrollToMessage(target.id)
     };
 
     useEffect(() => {
-        const el = chatRef.current;
-        if (!el || chatLoading) return;
-        if (isFirstLoad === true) {
-            el.scrollTop = el.scrollHeight;
-            setIsFirstLoad(false)
+        if (pendingScrollId === null) return;
+
+        const index = messages.findIndex(m => m.id === pendingScrollId);
+        if (index === -1) return;
+
+        if (highlightTimeoutRef.current) {
+            clearTimeout(highlightTimeoutRef.current);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [messages, chatLoading]);
 
-    useEffect(() => {
-    if (!chatLoading && pendingScrollId !== null && messages.some(m => m.id === pendingScrollId)) {
-        requestAnimationFrame(() => {
-            const el = messageRefs.current.get(pendingScrollId);
-            if (el) {
-                scrollToMessage(pendingScrollId);
-                setTimeout(() => setPendingScrollId(null), 300);
-            }
+        setHighlightedId(pendingScrollId);
+
+        // Сначала мгновенный скролл, чтобы Virtuoso отрисовал элемент
+        virtuosoRef.current?.scrollToIndex({
+            index,
+            behavior: "auto",
+            align: "center",
         });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chatLoading, messages, pendingScrollId]);
 
-    if (chatLoading) return <Loader />
+        // Плавный скролл с задержкой, чтобы избежать "прыжка"
+        const timeoutId = window.setTimeout(() => {
+            virtuosoRef.current?.scrollToIndex({
+                index,
+                behavior: "smooth",
+                align: "center",
+            });
+        }, 10);
 
-    return(
+        highlightTimeoutRef.current = window.setTimeout(() => {
+            setHighlightedId(null);
+            setPendingScrollId(null);
+            highlightTimeoutRef.current = null;
+            window.clearTimeout(timeoutId);
+        }, 2000);
+
+        // Очистка таймаутов при размонтировании
+        return () => {
+            if (highlightTimeoutRef.current) {
+                clearTimeout(highlightTimeoutRef.current);
+                highlightTimeoutRef.current = null;
+            }
+            window.clearTimeout(timeoutId);
+        }
+    }, [pendingScrollId, messages]);
+
+    if (chatLoading) return <Loader />;
+
+    return (
         <div className={`chatDiv ${isMobile ? "mobile" : ""}`}>
             <ChatUser
                 search={search}
@@ -187,23 +182,48 @@ export default function Chat () {
                 chosenMess={chosenMess}
                 setChosenMess={setChosenMess}
             />
-            <div className="chat" ref={chatRef}>
-                {messages.map((m, i) => {
-                    const currDate = new Date(m.created_at)
-                    const prev = messages[i - 1]
-                    const prevDate = prev ? new Date(prev.created_at) : null
-                    const needDivider = !prevDate || !isSameDay(prevDate, currDate)
-                    const isMy = m.sender_id === user.id
+            <Virtuoso
+                className="chat"
+                ref={virtuosoRef}
+                data={messages}
+                followOutput="smooth"
+                overscan={5}
+                initialTopMostItemIndex={messages.length - 1}
+                atBottomStateChange={bottom => setShowGoDown(!bottom)}
+                rangeChanged={(range) => {
+                    if (pendingScrollId === null) return;
+
+                    const index = messages.findIndex(m => m.id === pendingScrollId);
+                    if (index === -1) return;
+
+                    if (index >= range.startIndex && index <= range.endIndex) {
+                    setPendingScrollId(null);
+                    }
+                }}
+                itemContent={(index, m) => {
+                    const currDate = new Date(m.created_at);
+                    const prev = messages[index - 1];
+                    const needDivider = !prev || !isSameDay(new Date(prev.created_at), currDate);
+                    const find = messages.find(mess => mess.id === m.answer_id)
+                    const name = find?.sender_id === chatWith.id ? chatWith.username || chatWith.nick : user.username || user.nick
+                    const answer = find ? {id:find.id, name:name!, text:find.content ? find.content : `${find.files?.length} mediafile`} : undefined
                     return (
                         <Fragment key={m.id}>
-                            {needDivider && <DateDivider currDate={currDate}/>}
-                            <Message message={m} isMy={isMy} highlightedId={highlightedId} messageRefs={messageRefs}
-                        />
+                            {needDivider && <DateDivider currDate={currDate} />}
+                            <Message
+                                message={m}
+                                isMy={m.sender_id === user.id}
+                                highlightedId={highlightedId}
+                                messageRefs={messageRefs}
+                                answer={answer}
+                                scrollToMessage={answer ? scrollToMessage : undefined}
+                            />
                         </Fragment>
-                    )
-                })}
-            </div>
-            <ChatTAWrapper showGoDown={showGoDown} handleGoDown={handleGoDown}/>
+                    );
+                }}
+            />
+
+            <ChatTAWrapper showGoDown={showGoDown} handleGoDown={() => virtuosoRef.current?.scrollToIndex({ index: "LAST", behavior: "smooth" })} scrollToMessage={scrollToMessage}/>
         </div>
-    )
+    );
 }
