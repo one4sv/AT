@@ -9,7 +9,7 @@ import { isMobile } from "react-device-detect";
 import { useDrop } from "../../../components/hooks/DropHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
-import { MessBarBlock } from "../utils/messBarBlock";
+import { MessBarBlock } from "../utils/MessBarBlock";
 
 export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { showGoDown:boolean, handleGoDown:()=> void, scrollToMessage:(id:number) => void}) {
     const { sendMess, handleTyping, chatWith, chatLoading } = useChat()

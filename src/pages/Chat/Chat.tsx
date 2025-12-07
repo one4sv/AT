@@ -15,6 +15,7 @@ import { isSameDay } from "./utils/isSameDay";
 import { isMobile } from "react-device-detect";
 import Loader from "../../components/ts/Loader";
 import { api } from "../../components/ts/api";
+import type { message } from "../../components/context/ChatContext";
 
 export default function Chat() {
     const { user } = useUser();
@@ -189,8 +190,8 @@ export default function Chat() {
                 followOutput="smooth"
                 overscan={5}
                 initialTopMostItemIndex={messages.length - 1}
-                atBottomStateChange={bottom => setShowGoDown(!bottom)}
-                rangeChanged={(range) => {
+                atBottomStateChange={(bottom:boolean) => setShowGoDown(!bottom)}
+                rangeChanged={(range: { startIndex: number; endIndex: number }) => {
                     if (pendingScrollId === null) return;
 
                     const index = messages.findIndex(m => m.id === pendingScrollId);
@@ -200,7 +201,7 @@ export default function Chat() {
                     setPendingScrollId(null);
                     }
                 }}
-                itemContent={(index, m) => {
+                itemContent={(index: number, m: message) => {
                     const currDate = new Date(m.created_at);
                     const prev = messages[index - 1];
                     const needDivider = !prev || !isSameDay(new Date(prev.created_at), currDate);
