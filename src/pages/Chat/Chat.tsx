@@ -45,7 +45,6 @@ export default function Chat() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nick]);
 
-    // Автопометка прочитанного
     useEffect(() => {
         if (!user?.id) return;
 
@@ -126,23 +125,22 @@ export default function Chat() {
         if (pendingScrollId === null) return;
 
         const index = messages.findIndex(m => m.id === pendingScrollId);
-        if (index === -1) return;
 
         if (highlightTimeoutRef.current) {
             clearTimeout(highlightTimeoutRef.current);
         }
 
-        setHighlightedId(pendingScrollId);
-
         const timeoutId = window.setTimeout(() => {
             virtuosoRef.current?.scrollToIndex({
                 index,
                 behavior: "smooth",
-                align: "center",
+                align: "start",
             });
-        }, 10);
-
-        scrollToMessage(pendingScrollId)
+            const timeBefScroll = window.setTimeout(() => {
+                scrollToMessage(pendingScrollId)
+                window.clearTimeout(timeBefScroll);
+            }, 400)
+        }, 100);
 
         return () => {
             if (highlightTimeoutRef.current) {
