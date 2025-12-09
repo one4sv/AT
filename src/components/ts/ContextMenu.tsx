@@ -99,7 +99,6 @@ export default function ContextMenu() {
     if (!menu.visible) return null;
 
     const currentPos = isAdjusted ? pos : { top: menu.y, left: menu.x };
-    console.log(options.id)
     
     return (
         <div className="ContextMenuWrapper" ref={menuRef} style={{

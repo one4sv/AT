@@ -42,6 +42,7 @@ export default function Chat() {
             setChosenMess([]);
             refetchChat(nick);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nick]);
 
     // Автопометка прочитанного
@@ -57,7 +58,7 @@ export default function Chat() {
                 api.post(`${API_URL}chat/read`, { messageId: m.id }, { withCredentials: true })
             );
         }
-    }, [messages, user?.id]);
+    }, [API_URL, messages, user.id]);
 
     const handleArrowClick = (dir: "up" | "down") => {
         setHighlightedId(null);
@@ -103,6 +104,8 @@ export default function Chat() {
             highlightTimeoutRef.current = null;
         }, 2000);
     };
+    
+    if (highlightedId !== null) console.log("id", highlightedId)
 
     const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (!searchedMessages.length) return;
@@ -131,14 +134,6 @@ export default function Chat() {
 
         setHighlightedId(pendingScrollId);
 
-        // Сначала мгновенный скролл, чтобы Virtuoso отрисовал элемент
-        virtuosoRef.current?.scrollToIndex({
-            index,
-            behavior: "auto",
-            align: "center",
-        });
-
-        // Плавный скролл с задержкой, чтобы избежать "прыжка"
         const timeoutId = window.setTimeout(() => {
             virtuosoRef.current?.scrollToIndex({
                 index,
@@ -147,14 +142,8 @@ export default function Chat() {
             });
         }, 10);
 
-        highlightTimeoutRef.current = window.setTimeout(() => {
-            setHighlightedId(null);
-            setPendingScrollId(null);
-            highlightTimeoutRef.current = null;
-            window.clearTimeout(timeoutId);
-        }, 2000);
+        scrollToMessage(pendingScrollId)
 
-        // Очистка таймаутов при размонтировании
         return () => {
             if (highlightTimeoutRef.current) {
                 clearTimeout(highlightTimeoutRef.current);
@@ -198,7 +187,7 @@ export default function Chat() {
                     if (index === -1) return;
 
                     if (index >= range.startIndex && index <= range.endIndex) {
-                    setPendingScrollId(null);
+                        setPendingScrollId(null);
                     }
                 }}
                 itemContent={(index: number, m: message) => {
