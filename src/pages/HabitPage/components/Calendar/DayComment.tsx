@@ -3,7 +3,7 @@ import { useDone } from "../../../../components/hooks/DoneHook";
 import { ArrowBendDownLeftIcon } from "@phosphor-icons/react";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
-import { LoaderSmall } from "../../../../components/ts/loaderSmall";
+import { LoaderSmall } from "../../../../components/ts/LoaderSmall";
 
 interface DayCommentProps {
   id: string;

@@ -3,7 +3,7 @@ import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useEffect, useState } from "react";
 import { useDone } from "../../../../components/hooks/DoneHook";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
-import { LoaderSmall } from "../../../../components/ts/loaderSmall";
+import { LoaderSmall } from "../../../../components/ts/LoaderSmall";
 
 interface DoneButtonProps {
   habitId: number;
