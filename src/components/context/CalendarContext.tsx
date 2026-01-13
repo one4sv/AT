@@ -16,7 +16,9 @@ export interface CalendarContextType {
     calendar:Calendar[]
     setCalendar: React.Dispatch<React.SetStateAction<Calendar[]>>
     fetchCalendarHabit:(id:string)=>void;
+    fetchCalendarHabitWLoading:(id:string)=>void;
     fetchCalendarUser:()=>void;
+    fetchCalendarWLoading:()=>void;
     calendarLoading:boolean
     chosenDay:string;
     setChosenDay: React.Dispatch<React.SetStateAction<string>>
@@ -39,29 +41,39 @@ export const CalendarProvider = ({children} : {children : ReactNode}) => {
 
     const fetchCalendarHabit = async(id:string) => {
         if (!id) return;
-        setCalendarLoading(true)
         try {
             const res = await axios.get(`${API_URL}calendar/${id}`, {withCredentials: true})
             if (res.data.success) setCalendar(res.data.calendar)
         } catch {
             showNotification("error", "Ошибка получения календаря")
-        } finally {
-            setCalendarLoading(false)
         }
     }
-    const fetchCalendarUser = async() => {
+
+    const fetchCalendarHabitWLoading = async(id:string) => {
         setCalendarLoading(true)
+        await fetchCalendarHabit(id)
+        setCalendarLoading(false)
+    }
+
+    const fetchCalendarUser = async() => {
         try {
             const res = await axios.get(`${API_URL}calendar`, {withCredentials: true})
             if (res.data.success) setCalendar(res.data.calendar)
         } catch {
             showNotification("error", "Ошибка получения общего календаря")
-        } finally {
-            setCalendarLoading(false)
         }
     }
+
+    const fetchCalendarWLoading = async() => {
+        setCalendarLoading(true)
+        await fetchCalendarUser()
+        setCalendarLoading(false)
+    }
+
     return(
-        <CalendarContext.Provider value={{calendar, setCalendar, fetchCalendarHabit, fetchCalendarUser, calendarLoading, chosenDay, setChosenDay, calendarRef, selectedMonth, selectedYear, setSelectedMonth, setSelectedYear }}>
+        <CalendarContext.Provider value={{calendar, setCalendar, fetchCalendarHabit, fetchCalendarUser,
+            calendarLoading, chosenDay, setChosenDay, calendarRef, selectedMonth, selectedYear,
+            setSelectedMonth, setSelectedYear, fetchCalendarWLoading, fetchCalendarHabitWLoading }}>
             {children}
         </CalendarContext.Provider>
     )

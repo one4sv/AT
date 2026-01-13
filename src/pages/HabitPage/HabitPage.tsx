@@ -18,13 +18,13 @@ import { isMobile } from "react-device-detect";
 export default function Habit() {
     const { fetchCalendarHabit, fetchCalendarUser } = useCalendar()
     const { calendarLoading } = useCalendar()
-    const { loadHabit, habit, isReadOnly, loadingHabit } = useTheHabit()
+    const { loadHabitWLoading, habit, isReadOnly, loadingHabit } = useTheHabit()
     const { habitId } = useParams<{ habitId: string }>();
     const [ showHabitMenu, setShowHabitMenu ] = useState(true)
 
     useEffect(() => {
         if (habitId) {
-            loadHabit(habitId)
+            loadHabitWLoading(habitId)
             fetchCalendarHabit(habitId)
         } else fetchCalendarUser()
     // eslint-disable-next-line react-hooks/exhaustive-deps

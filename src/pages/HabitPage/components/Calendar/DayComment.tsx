@@ -3,6 +3,7 @@ import { useDone } from "../../../../components/hooks/DoneHook";
 import { ArrowBendDownLeftIcon } from "@phosphor-icons/react";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
+import { LoaderSmall } from "../../../../components/ts/loaderSmall";
 
 interface DayCommentProps {
   id: string;
@@ -10,7 +11,7 @@ interface DayCommentProps {
 }
 
 export default function DayComment({ id, isMy }: DayCommentProps) {
-  const { sendDayComment } = useDone()
+  const { sendDayComment, waitComAnswer } = useDone()
   const { dayComment, todayComment } = useTheHabit()
   const { chosenDay } = useCalendar()
 
@@ -65,10 +66,12 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           <span>{comment.length}/200</span>
           <button
             className="saveCommentButton"
-            disabled={comment.trim() === "" && todayComment === "" && dayComment === ""}
+            disabled={comment.trim() === "" || todayComment === "" || dayComment === "" || !isMy || waitComAnswer}
             onClick={() => sendDayComment(id, comment, chosenDay)}
           >
-            Сохранить
+            {waitComAnswer ? (
+              <LoaderSmall />
+            ) : "Сохранить"}
           </button>
         </div>
       </div>

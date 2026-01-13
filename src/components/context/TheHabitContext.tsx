@@ -9,7 +9,8 @@ const TheHabitContext = createContext<TheHabitContextType | null>(null);
 
 export interface TheHabitContextType {
     loadHabit:(id:string | null) => void;
-    findHabit:(id:string | null) => void
+    findHabit:(id:string | null) => void;
+    loadHabitWLoading:(id:string | null) => void;
     loadingHabit:boolean;
     habit:Habit | undefined;
     isReadOnly:boolean;
@@ -41,7 +42,6 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     }
 
     const loadHabit = useCallback(async (id: string | null) => {
-        setLoadingHabit(true);
         try {
             const res = await findHabit(id)
             const { success, habit, isRead, isDone, comment } = res.data
@@ -54,15 +54,19 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
             }
         } catch {
             showNotification("error", "Не удалось получить привычку")
-        } finally {
-            setLoadingHabit(false)
         }
     }, [showNotification]);
+
+    const loadHabitWLoading = async(id:string | null) => {
+        setLoadingHabit(true)
+        await loadHabit(id)
+        setLoadingHabit(false)
+    }
     
     return(
         <TheHabitContext.Provider value={{loadHabit, loadingHabit, habit, isReadOnly,
         isDone, setIsDone, dayComment, todayComment, setDayComment, 
-        findHabit, todayDone, setDoable, doable}}>
+        findHabit, todayDone, setDoable, doable, loadHabitWLoading}}>
             {children}
         </TheHabitContext.Provider>
     )

@@ -151,7 +151,7 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
 
     return (
         <div className="tab" ref={tabRef}>
-            <span className="spanMain">Привычки</span>
+            <span className="spanMain">Активности</span>
             {fadingOutSections.includes("habits") && (
                 <span
                     className={`spanSave ${!isUpdating.includes("habits") ? "fade-out" : ""}`}

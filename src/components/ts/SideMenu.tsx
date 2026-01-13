@@ -138,7 +138,7 @@ export default function SideMenu() {
                     className={`SMtab ${actieveTab === "habits" ? "active habits" : ""}`}
                     onClick={() => setActieveTab("habits")}
                 >
-                    Привычки
+                    Активности
                 </div>
             </div>
             <div className={`SMline ${actieveTab === "message" ? "mess" : "habits"}`} />
@@ -168,7 +168,7 @@ export default function SideMenu() {
             <div className="SMnavDiv">
                 <div className={`plusMenu ${showPlusMenu ? "active" : ""}`} ref={plusMenuRef}>
                     <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"AddHabit"})}>
-                        Добавить привычку
+                        Добавить активность
                     </div>
                     <div className="plusMenuButt">
                         Создать чат

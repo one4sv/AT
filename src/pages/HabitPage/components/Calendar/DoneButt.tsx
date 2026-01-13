@@ -3,14 +3,15 @@ import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useEffect, useState } from "react";
 import { useDone } from "../../../../components/hooks/DoneHook";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
+import { LoaderSmall } from "../../../../components/ts/loaderSmall";
 
 interface DoneButtonProps {
   habitId: number;
 }
 
 export default function DoneButton({ habitId }: DoneButtonProps) {
-  const { todayDone, isDone } = useTheHabit()
-  const { markDone } = useDone()
+  const { todayDone, isDone  } = useTheHabit()
+  const { markDone, waitDoneAnswer } = useDone()
   const { chosenDay } = useCalendar()
   const [ done, setDone ] = useState(todayDone)
   
@@ -25,7 +26,9 @@ export default function DoneButton({ habitId }: DoneButtonProps) {
       onClick={() => markDone(habitId, chosenDay)}
     >
       {done ? <CheckCircle weight="fill" /> : <Circle />}
-      {done ? "Выполнено" : "Выполнить"}
+      {waitDoneAnswer ? (
+        <LoaderSmall />
+      ) : done ? "Выполнено" : "Выполнить"}
     </button>
   );
 }

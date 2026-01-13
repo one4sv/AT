@@ -47,10 +47,12 @@ export default function Calendar() {
         { value: 0, label: "вс" },
     ];
 
+    console.log(year)
+
     useEffect(() => {
         setSelectedMonth(month)
         setSelectedYear(year)
-    },[month, year])
+    },[])
 
     useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -74,7 +76,7 @@ export default function Calendar() {
     useEffect(() => {
         if (!habits) return;
         const yearsSet = new Set<number>();
-        const today = new Date(); // 🔹 переместили внутрь
+        const today = new Date();
 
         if (id && habit) {
             const startYear = new Date(habit.start_date).getFullYear();
@@ -101,7 +103,7 @@ export default function Calendar() {
     }, [habits, habit, id]); // 🔹 убрали today
 
     useEffect(() => {
-        if (!selectedMonth || !selectedYear) return
+        if (selectedMonth === null || selectedYear === null) return
         const endDate = new Date(selectedYear, selectedMonth+1, 0).getDate()
         const preMonth = Array.from({ length: endDate }, (_, i) => 1 + i);
         setThisMonth(preMonth)

@@ -45,3 +45,17 @@
 		background-color: var(--darkerAcsent);
 	}
 }
+@keyframes loaderSmallAnim {
+    0% {
+        background-color: #d1d1d1;
+        transform: scale(1);
+    }
+    50% {
+        background-color: var(--tc);
+        transform: scale(1.3);
+    }
+    100% {
+        background-color: #d1d1d1;
+        transform: scale(1);
+    }
+}

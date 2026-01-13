@@ -72,7 +72,7 @@ export default function Settings() {
                     <Search />
                 </div>
                 <div onClick={() => scrollToTab("pers")} className={tab === "pers" ? "active" : ""}>Персонализация</div>
-                <div onClick={() => scrollToTab("habits")} className={tab === "habits" ? "active" : ""}>Привычки</div>
+                <div onClick={() => scrollToTab("habits")} className={tab === "habits" ? "active" : ""}>Активности</div>
                 <div onClick={() => scrollToTab("safety")} className={tab === "safety" ? "active" : ""}>Безопасность</div>
                 <div onClick={() => scrollToTab("private")} className={tab === "private" ? "active" : ""}>Приватность</div>
                 <div onClick={() => scrollToTab("note")} className={tab === "note" ? "active" : ""}>Уведомления</div>
