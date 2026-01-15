@@ -92,6 +92,9 @@
     background-color: var(--darkerAcsent);
     aspect-ratio: 1/1;
 }
+.isReadCL {
+    color: var(--acsent);
+}
 .secSpan {
     color: var(--darkerAcsent);
     margin-left: 0.3vw;
@@ -146,6 +149,9 @@
             }
             >.secSpan {
                 color: white;
+            }
+            >.isReadCL {
+                color: var(--tc);
             }
         }
         >.lastMess {

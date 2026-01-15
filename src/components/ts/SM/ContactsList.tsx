@@ -1,5 +1,5 @@
 import "../../../scss/SM/contactsList.scss"
-import { CircleUserRound } from "lucide-react"
+import { Check, CheckCheck, CircleUserRound } from "lucide-react"
 import { useNavigate } from "react-router"
 import { useParams } from "react-router"
 import { useChat } from "../../hooks/ChatHook"
@@ -56,7 +56,6 @@ export default function ContactsList() {
         }, 10);
         }
         // Делаем переход с небольшим таймаутом, чтобы setDroppedFiles успел отработать
-
     };
 
     return (
@@ -85,8 +84,15 @@ export default function ContactsList() {
                                 {!acc.lastMessage && (
                                     <span className="secSpan">{acc.username ? `| ${acc.nick}`: ""}</span>
                                 )}
-                                {acc.unread_count > 0 && (
-                                    <div className="contactsUnreadCount">{acc.unread_count}</div>
+                                {acc.lastMessage?.sender_id === acc.id ? (
+                                    acc.unread_count > 0 && (
+                                        <div className="contactsUnreadCount">{acc.unread_count}</div>
+                                )) : (
+                                    acc.lastMessage && acc.lastMessage?.read_by.length > 0 ? (
+                                        <CheckCheck className="isReadCL" height={10}/>
+                                    ):(
+                                        <Check className="isReadCL" height={18}/>
+                                    )
                                 )}
                             </div>
                             {typingStatus ? 
@@ -95,15 +101,15 @@ export default function ContactsList() {
                                 acc.lastMessage && (
                                     <div className={`lastMess ${isMobile ? "mobile" : ""}`}>
                                         <div>
-                                        {acc.lastMessage.sender_id !== acc.id && <span>Вы: </span>}
-                                        <span className="lmc">
-                                            {acc.lastMessage.content && <span>{acc.lastMessage.content} </span>}
-                                            {acc.lastMessage.files?.length ? (
-                                                <span className="lmcMediafile">
-                                                    {acc.lastMessage.files.length} mediafile{acc.lastMessage.files.length > 1 ? "s" : ""}
-                                                </span>
-                                            ) : null}
-                                        </span>
+                                            {acc.lastMessage.sender_id !== acc.id && <span>Вы: </span>}
+                                            <span className="lmc">
+                                                {acc.lastMessage.content && <span>{acc.lastMessage.content} </span>}
+                                                {acc.lastMessage.files?.length ? (
+                                                    <span className="lmcMediafile">
+                                                        {acc.lastMessage.files.length} mediafile{acc.lastMessage.files.length > 1 ? "s" : ""}
+                                                    </span>
+                                                ) : null}
+                                            </span>
                                         </div>
                                         <span>{messageGetTime(acc.lastMessage.created_at)}</span>
                                     </div>
