@@ -1,4 +1,4 @@
-import { Check, Heart, Checks, CheckCircle } from "@phosphor-icons/react";
+import { Heart, CheckCircle } from "@phosphor-icons/react";
 import { reactionIcons } from "./ReactionsIcons"
 import { useChat } from "../../../components/hooks/ChatHook";
 import React, { useState } from "react";
@@ -10,6 +10,7 @@ import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
+import { Check, CheckCheck } from "lucide-react";
 // import { Pen } from "lucide-react";
 
 type MessageComponentType = {
@@ -135,78 +136,66 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
                         })}
                     </div>
                 )}
-                <div className="messageDate">
-                    {highlightedId === m.id && m.reactions && m.reactions.length === 0 ? (
-                            <div 
-                                className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
-                                style={{opacity: showReactionButt === m.id ? "1" : "0"}}
-                                onClick={() => setReaction(m.id, "Heart")}
-                            >
-                                <Heart weight="fill" />
-                            </div>
-                        
-                        )
-                        : (showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && !isChose && (
-                            <div 
-                                className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
-                                onClick={() => setReaction(m.id, "Heart")}
-                            >
-                                <Heart weight="fill" />
-                            </div>
-                        ))
-                    }
-                    {!isMy && (
-                        messageGetTime(m.created_at)
-                    )}
-                    {isMy && m.edited && (
-                        <>
-                            {/* <Pen fill="currentColor" height={15}/> */}
+                <div className="messageStatusBarDiv">
+                    <div className="messageBar">
+                        <span className="messTime">{messageGetTime(m.created_at)}</span> 
+                        {m.edited && (
                             <span className="editedMess">изменено</span>
-                        </>
-                    )}
-                    {m.reactions && m.reactions.length > 0 && (
-                        <div className="reactions" onClick={()=> setReaction(m.id, "Heart")}>
-                            {Object.entries(
-                                m.reactions.reduce((acc, r) => {
-                                    if (!acc[r.reaction]) acc[r.reaction] = [];
-                                    acc[r.reaction].push(r.user_id);
-                                    return acc;
-                                }, {} as Record<string, string[]>)
-                            ).map(([reaction, users]) => (
-                                <div key={reaction} className={`reactionItem ${isMy ? "myR" : "urR"}`}>
-                                    {reactionIcons[reaction]}
-                                    <div className="reactionUsers">
-                                        {users.slice(0, 2).map((userId) => {
-                                            const src = userId === user.id ? user.avatar_url : chatWith.avatar_url;
-                                            return (
-                                                <div key={userId} className="reactionUser">
-                                                    <img src={src!} alt="" />
-                                                </div>
-                                            );
-                                        })}
-                                        {users.length > 2 && <span>+{users.length - 2}</span>}
+                        )}
+                        {m.reactions && m.reactions.length > 0 && (
+                            <div className="reactions" onClick={()=> setReaction(m.id, "Heart")}>
+                                {Object.entries(
+                                    m.reactions.reduce((acc, r) => {
+                                        if (!acc[r.reaction]) acc[r.reaction] = [];
+                                        acc[r.reaction].push(r.user_id);
+                                        return acc;
+                                    }, {} as Record<string, string[]>)
+                                ).map(([reaction, users]) => (
+                                    <div key={reaction} className={`reactionItem ${isMy ? "myR" : "urR"}`}>
+                                        {reactionIcons[reaction]}
+                                        <div className="reactionUsers">
+                                            {users.slice(0, 2).map((userId) => {
+                                                const src = userId === user.id ? user.avatar_url : chatWith.avatar_url;
+                                                return (
+                                                    <div key={userId} className="reactionUser">
+                                                        <img src={src!} alt="" />
+                                                    </div>
+                                                );
+                                            })}
+                                            {users.length > 2 && <span>+{users.length - 2}</span>}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    {isMy && (
-                        <span className="messTime">{messageGetTime(m.created_at)}</span>
-                    )}
-                    {!isMy && m.edited && (
-                        <>
-                            {/* <Pen fill="currentColor" height={15}/> */}
-                            <span className="editedMess">изменено</span>
-                        </>
-                    )}
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     {isMy && 
                         (m.read_by.map(id => id.toString()).includes(chatWith.id) ? (
-                            <div className="messageReadSign read"><Checks/></div>
+                            <div className="messageReadSign read"><CheckCheck/></div>
                         ) : (
                             <div className="messageReadSign unread"><Check/></div>
                         ))
                     }
                 </div>
+                {highlightedId === m.id && m.reactions && m.reactions.length === 0 ? (
+                        <div 
+                            className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
+                            style={{opacity: showReactionButt === m.id ? "1" : "0"}}
+                            onClick={() => setReaction(m.id, "Heart")}
+                        >
+                            <Heart weight="fill" />
+                        </div>
+                    
+                    )
+                    : (showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && !isChose && (
+                        <div 
+                            className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
+                            onClick={() => setReaction(m.id, "Heart")}
+                        >
+                            <Heart weight="fill" />
+                        </div>
+                    ))
+                }
             </div>
         </div>
     )
