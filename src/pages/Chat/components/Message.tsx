@@ -10,6 +10,7 @@ import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
+// import { Pen } from "lucide-react";
 
 type MessageComponentType = {
     isMy: boolean,
@@ -154,8 +155,15 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
                             </div>
                         ))
                     }
-                    {}
-                    {!isMy && messageGetTime(m.created_at)}
+                    {!isMy && (
+                        messageGetTime(m.created_at)
+                    )}
+                    {isMy && m.edited && (
+                        <>
+                            {/* <Pen fill="currentColor" height={15}/> */}
+                            <span className="editedMess">изменено</span>
+                        </>
+                    )}
                     {m.reactions && m.reactions.length > 0 && (
                         <div className="reactions" onClick={()=> setReaction(m.id, "Heart")}>
                             {Object.entries(
@@ -182,7 +190,15 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
                             ))}
                         </div>
                     )}
-                    {isMy && messageGetTime(m.created_at)}
+                    {isMy && (
+                        <span className="messTime">{messageGetTime(m.created_at)}</span>
+                    )}
+                    {!isMy && m.edited && (
+                        <>
+                            {/* <Pen fill="currentColor" height={15}/> */}
+                            <span className="editedMess">изменено</span>
+                        </>
+                    )}
                     {isMy && 
                         (m.read_by.map(id => id.toString()).includes(chatWith.id) ? (
                             <div className="messageReadSign read"><Checks/></div>

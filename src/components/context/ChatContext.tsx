@@ -62,7 +62,7 @@ export interface message {
     read_by: string[],
     reactions: ReactionsType[],
     answer_id:number | null,
-    reded:boolean
+    edited:boolean
 }
 
 export interface Acc {
