@@ -89,7 +89,7 @@ export default function ContactsList() {
                                         <div className="contactsUnreadCount">{acc.unread_count}</div>
                                 )) : (
                                     acc.lastMessage && acc.lastMessage?.read_by.length > 0 ? (
-                                        <CheckCheck className="isReadCL" height={10}/>
+                                        <CheckCheck className="isReadCL" height={18}/>
                                     ):(
                                         <Check className="isReadCL" height={18}/>
                                     )

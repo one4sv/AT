@@ -263,12 +263,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 );
             }
             if (data.type === "TYPING") {
-                if (data.from === chatWithRef.current.nick) {  // Изменено на .nick
+                if (data.from === chatWithRef.current.nick) {
                     setTypingStatus(true);
                 }
             }
             if (data.type === "STOP_TYPING") {
-                if (data.from === chatWithRef.current.nick) {  // Изменено на .nick
+                if (data.from === chatWithRef.current.nick) {
                     setTypingStatus(false);
                 }
             }
@@ -277,6 +277,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 setMessages(prev =>
                     prev.filter(m => String(m.id) !== String(data.messageId))
                 );
+                refetchContactsWTLoading()
             }
             if (data.type === "MESSAGE_EDITED") {
                 setMessages(prev =>
@@ -286,7 +287,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             }
         };
         return () => wsRef.current?.close();
-    }, [user.id, refetchContacts, API_WS, note, messNote]);
+    }, [user.id, refetchContacts, API_WS, note, messNote, refetchContactsWTLoading]);
 
     const setReaction = async (mId: number, reaction: string) => {
         try {
