@@ -66,7 +66,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           <span>{comment.length}/200</span>
           <button
             className="saveCommentButton"
-            disabled={comment.trim() === "" || todayComment === "" || dayComment === "" || !isMy || waitComAnswer}
+            disabled={comment.trim() === "" && todayComment === "" && dayComment === "" || !isMy || waitComAnswer}
             onClick={() => sendDayComment(id, comment, chosenDay)}
           >
             {waitComAnswer ? (

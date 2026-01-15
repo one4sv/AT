@@ -62,7 +62,11 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
                     return reaction ? reaction.reaction : "none";
                 })();
                 openMenu(e.clientX, e.clientY, "mess", { id:String(m.id)}, undefined, undefined,
-                    { isReacted, isMy:m.sender_id === user.id, text:m.content || `${m.files?.length} media`, sender:m.sender_id === user.id ? user.username || user.nick! : chatWith.username || chatWith.nick! }
+                    {
+                        isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content || `${m.files?.length} mediafile`, 
+                        sender:m.sender_id === user.id ? user.username || user.nick! : chatWith.username || chatWith.nick!,
+                        files:m.files || undefined,
+                    }
                 )
             }}
 
@@ -113,7 +117,7 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
                                                 return reaction ? reaction.reaction : "none";
                                             })();
                                             openMenu(e.clientX, e.clientY, "mess", { id:String(m.id), name:file.name, url:file.url }, undefined, undefined,
-                                                { isReacted, isMy:m.sender_id === user.id, text:m.content,
+                                                { isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content || `${m.files?.length} mediafile`,
                                                 sender:m.sender_id === user.id ? user.username || user.nick! : chatWith.username || chatWith.nick! }
                                             )
                                         }}/>
@@ -181,9 +185,9 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
                     {isMy && messageGetTime(m.created_at)}
                     {isMy && 
                         (m.read_by.map(id => id.toString()).includes(chatWith.id) ? (
-                            <div className="messageUnread"><Checks/></div>
+                            <div className="messageReadSign read"><Checks/></div>
                         ) : (
-                            <div className="messageUnread"><Check/></div>
+                            <div className="messageReadSign unread"><Check/></div>
                         ))
                     }
                 </div>

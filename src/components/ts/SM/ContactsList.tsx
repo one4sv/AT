@@ -9,7 +9,7 @@ import { PushPin, SpeakerSimpleX } from "@phosphor-icons/react"
 import { useDrop } from "../../hooks/DropHook"
 
 export default function ContactsList() {
-    const { list, onlineMap } = useChat()
+    const { list, onlineMap, typingStatus } = useChat()
     const { openMenu } = useContextMenu()
     const { nick } = useParams<{ nick: string }>()
     const { setDroppedFiles } = useDrop()
@@ -89,22 +89,26 @@ export default function ContactsList() {
                                     <div className="contactsUnreadCount">{acc.unread_count}</div>
                                 )}
                             </div>
-                            {acc.lastMessage && (
-                                <div className={`lastMess ${isMobile ? "mobile" : ""}`}>
-                                    <div>
-                                    {acc.lastMessage.sender_id !== acc.id && <span>Вы: </span>}
-                                    <span className="lmc">
-                                        {acc.lastMessage.content && <span>{acc.lastMessage.content} </span>}
-                                        {acc.lastMessage.files?.length ? (
-                                            <span className="lmcMediafile">
-                                                {acc.lastMessage.files.length} mediafile{acc.lastMessage.files.length > 1 ? "s" : ""}
-                                            </span>
-                                        ) : null}
-                                    </span>
+                            {typingStatus ? 
+                                "Печатает..."
+                            :
+                                acc.lastMessage && (
+                                    <div className={`lastMess ${isMobile ? "mobile" : ""}`}>
+                                        <div>
+                                        {acc.lastMessage.sender_id !== acc.id && <span>Вы: </span>}
+                                        <span className="lmc">
+                                            {acc.lastMessage.content && <span>{acc.lastMessage.content} </span>}
+                                            {acc.lastMessage.files?.length ? (
+                                                <span className="lmcMediafile">
+                                                    {acc.lastMessage.files.length} mediafile{acc.lastMessage.files.length > 1 ? "s" : ""}
+                                                </span>
+                                            ) : null}
+                                        </span>
+                                        </div>
+                                        <span>{messageGetTime(acc.lastMessage.created_at)}</span>
                                     </div>
-                                    <span>{messageGetTime(acc.lastMessage.created_at)}</span>
-                                </div>
-                            )}
+                                )
+                            }
                         </div>
                     </div>
                 ))

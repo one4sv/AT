@@ -34,7 +34,7 @@ export default function PersTab({ tabRef, isUpdating, fadingOutSections, handleA
 
     const acsentArr = [
         { label: "ядовитый", value: "poison" },
-        { label: "кармаельное яблоко", value: "apple" },
+        { label: "карамельное яблоко", value: "apple" },
         { label: "небесный глубокий", value: "sky" },
         { label: "космическая даль", value: "space" },
         { label: "своя", value: "custom" },

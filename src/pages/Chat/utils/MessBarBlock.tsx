@@ -2,7 +2,7 @@ import { X } from "@phosphor-icons/react";
 import { useMessages } from "../../../components/hooks/MessagesHook";
 
 export function MessBarBlock({ object, scrollToMessage }: { 
-    object: { id: string, sender?: string, text: string },
+    object: { id: string, sender?: string, previewText:string },
     scrollToMessage: (id: number) => void
 }) {
     const { setAnswer, setRedacting } = useMessages();
@@ -16,7 +16,7 @@ export function MessBarBlock({ object, scrollToMessage }: {
                     {object.sender}
                 </div>
                 <div className="answer2str">
-                    {object.text}
+                    {object.previewText}
                 </div>
             </div>
             <div className="closeAnswer" 

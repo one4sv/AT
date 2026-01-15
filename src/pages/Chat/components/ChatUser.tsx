@@ -142,7 +142,7 @@ export default function ChatUser({
                     <span className={`chatOnlineStauts ${typingStatus ? "chatTyping" : "chatStopTyping"}`}>
                         {typingStatus
                             ? "печатает..."
-                            : onlineMap[chatWith?.nick || ""]  // Изменено на .nick
+                            : onlineMap[chatWith?.nick || ""]
                                 ? "В сети"
                                 : formatLastOnline(chatWith?.last_online)}
                     </span>

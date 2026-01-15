@@ -49,7 +49,8 @@ export interface ChatContextType {
     setReaction: (mId: number, reaction: string) => Promise<void>,
     handleTyping: (nick: string) => void,
     typingStatus: boolean,
-    loadingList: boolean
+    loadingList: boolean,
+    editMess:(messageId: number, text: string, newFiles: File[], keptUrls: string[], answer_id?: string)=>Promise<void>
 }
 
 export interface message {
@@ -60,7 +61,8 @@ export interface message {
     files?: Media[],
     read_by: string[],
     reactions: ReactionsType[],
-    answer_id:number | null
+    answer_id:number | null,
+    reded:boolean
 }
 
 export interface Acc {
@@ -114,7 +116,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 if (window.history.length > 1) {
                     navigate(-1);
                 } else {
-                    navigate("/"); // заменить на нужный маршрут списка чатов
+                    navigate("/");
                 }
             }
         } catch {
@@ -122,9 +124,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             if (window.history.length > 1) {
                 navigate(-1);
             } else {
-                navigate("/"); // заменить на нужный маршрут списка чатов
+                navigate("/");
             }
-        } finally {
+        } finally { 
             setChatLoading(false);
         }
     };
@@ -146,6 +148,26 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         } catch (error) {
             console.error("Ошибка при отправке:", error);
             showNotification("error", "Не удалось отправить сообщение");
+        }
+    };
+
+    const editMess = async (messageId: number, text: string, newFiles: File[] = [], keptUrls: string[] = [], answer_id?: string) => {
+        try {
+            const formData = new FormData();
+            formData.append("text", text);
+            if (answer_id) formData.append("answer_id", answer_id);
+            formData.append("kept_urls", JSON.stringify(keptUrls));
+            newFiles.forEach(file => formData.append("files", file));
+            const res = await axios.patch(`${API_URL}messages/${messageId}`, formData, {
+                withCredentials: true,
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+            if (res.data.success) {
+                refetchContactsWTLoading();
+            }
+        } catch (error) {
+            console.error("Ошибка при редактировании:", error);
+            showNotification("error", "Не удалось отредактировать сообщение");
         }
     };
 
@@ -256,6 +278,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     prev.filter(m => String(m.id) !== String(data.messageId))
                 );
             }
+            if (data.type === "MESSAGE_EDITED") {
+                setMessages(prev =>
+                    prev.map(m => m.id === data.message.id ? { ...data.message, edited: true } : m)
+                );
+                refetchContactsWTLoading();
+            }
         };
         return () => wsRef.current?.close();
     }, [user.id, refetchContacts, API_WS, note, messNote]);
@@ -305,7 +333,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, sendMess, messages, list, setSearch, search,
-            refetchContacts, onlineMap, setReaction, handleTyping, typingStatus, loadingList, refetchContactsWTLoading }}>
+            refetchContacts, onlineMap, setReaction, handleTyping, typingStatus, loadingList, refetchContactsWTLoading, editMess }}>
             {children}
         </ChatContext.Provider>
     );

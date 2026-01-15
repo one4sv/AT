@@ -1,5 +1,6 @@
 import { createContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react"
 import type { Habit } from "./HabitsContext"
+import type { Media } from "./ChatContext"
 const ContextMenuContext = createContext<ContextMenuContextType | null>(null)
 
 type MenuOptions = {
@@ -10,7 +11,7 @@ type MenuOptions = {
     nick?:string,
     isMy?:boolean,
     func?: () => void,
-    url?:string
+    url?:string,
 }
 export interface chatInfoType {
     note:boolean,
@@ -21,7 +22,9 @@ export interface curChatType {
     isReacted?:string,
     isMy?:boolean,
     text?:string,
-    sender?:string
+    sender?:string,
+    files?:Media[],
+    previewText:string
 }
 
 type MenuState = {
@@ -41,7 +44,6 @@ export type ContextMenuContextType = {
     closeMenu: () => void,
     menuRef:RefObject<HTMLDivElement | null>
 }
-
 
 export function ContextMenuProvider({ children }:{ children: ReactNode }) {
     const [menu, setMenu] = useState<MenuState>({

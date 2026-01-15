@@ -176,7 +176,7 @@ export default function ContextMenu() {
                     {!isChose && curChat.isMy &&(
                         <div className="ContextMenuButt" onClick={() => {
                             setAnswer(null)
-                            setRedacting({id:options.id, text:curChat.text!})
+                            setRedacting({id:options.id, text:curChat.text!, media:curChat.files, previewText:curChat.previewText})
                         }}>
                             <PencilSimple/>
                             Изменить
@@ -199,7 +199,7 @@ export default function ContextMenu() {
                     {!isChose && (
                         <div className="ContextMenuButt" onClick={() => {
                             setRedacting(null)
-                            setAnswer({id:options.id, sender:curChat.sender!, text:curChat.text!})
+                            setAnswer({id:options.id, sender:curChat.sender!, text:curChat.text!, previewText:curChat.previewText})
                         }}>
                             <ShareFat style={{ transform: "scaleX(-1)" }}/>
                             Ответить

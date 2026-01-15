@@ -10,16 +10,20 @@ import { useDrop } from "../../../components/hooks/DropHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { MessBarBlock } from "../utils/MessBarBlock";
+import type { Media } from "../../../components/context/ChatContext";
 
 export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { showGoDown:boolean, handleGoDown:()=> void, scrollToMessage:(id:number) => void}) {
-    const { sendMess, handleTyping, chatWith, chatLoading } = useChat()
+    const { sendMess, handleTyping, chatWith, chatLoading, editMess } = useChat()
     const { nick } = useParams()
     const { droppedFiles, setDroppedFiles } = useDrop()
-    const { answer, redacting } = useMessages()
+    const { answer, redacting, setRedacting } = useMessages()
     const { menuRef } = useContextMenu()
 
     const [ mess, setMess ] = useState<string>("")
+    const [ oldMess, setOldMess ] = useState<string>("") //сохранить текст до редактирования
     const [ files, setFiles ] = useState<File[]>([]) 
+    const [ oldFiles, setOldFiles ] = useState<File[]>([]) // сохр файлы до редактирования
+    const [ oldMedia, setOldMedia ] = useState<Media[]>([])
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false) 
     const [ showChatBar, setShowChatBar ] = useState<boolean>(false)
 
@@ -28,6 +32,26 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
     const inputFileRef = useRef<HTMLInputElement>(null)
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
     const chatTARef = useRef<HTMLDivElement | null>(null)
+
+    useEffect(() => {
+        if (redacting !== null) {
+            setOldMess(mess)
+            setOldFiles(files)
+            setMess(redacting.text || "")
+            setFiles([])
+            setOldMedia(redacting.media ?? [])
+        } else {
+            setMess(oldMess)
+            setFiles(oldFiles)
+            setOldMedia([])
+        }
+    }, [redacting])
+
+
+    const allFilesForDisplay = [
+        ...oldMedia.map(m => ({ ...m, isOld: true })),
+        ...files.map(f => ({ ...f, isOld: false })),
+    ];
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter") {
@@ -40,10 +64,20 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
         }
     }
     const handleSend = async () => {
-        if (nick && (mess.trim() || files.length > 0)) {
-            await sendMess(nick, mess.trim(), files, answer !== null ? answer.id : undefined)
+        const trimmedMess = mess.trim();
+        const hasContent = trimmedMess || files.length > 0 || (redacting && oldMedia.length > 0);
+        if (nick && hasContent) {
+            if (redacting !== null) {
+                // Собираем keptUrls из oldMedia (они уже отфильтрованы при удалении)
+                const keptUrls = oldMedia.map(m => m.url);
+                await editMess(Number(redacting.id), trimmedMess, files, keptUrls, answer !== null ? answer.id : undefined);
+                setRedacting(null); // Очищаем режим редактирования
+            } else {
+                await sendMess(nick, trimmedMess, files, answer !== null ? answer.id : undefined);
+            }
             setMess("")
             setFiles([])
+            setOldMedia([])
             setShowChatBar(false)
         }
     }
@@ -128,6 +162,19 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
         }
     }
 
+    const handleRemoveFile = (index: number) => {
+        if (index < oldMedia.length) {
+            setOldMedia(prev => prev.filter((_, i) => i !== index));
+        } else {
+            setFiles(prev => prev.filter((_, i) => i !== index - oldMedia.length));
+        }
+    };
+
+    function isOldMedia(file: typeof allFilesForDisplay[number]): file is (Media & { isOld: true }) {
+        return file.isOld === true;
+    }
+
+
     return (
         <div className={`chatTAWrapper ${isMobile ? "mobile" : ""}`} ref={chatTARef}>
             {showGoDown && (
@@ -158,27 +205,29 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
                     </div>
                 </div>
             )}
-            {files.length > 0 && (
+            {allFilesForDisplay.length > 0 && (
                 <div className={`chatTAFiles ${showChatBar ? "chatTAFileswBar" : ""}`}>
-                    {files.map((file, i) => {
+                    {allFilesForDisplay.map((file, i) => {
                         const isImage = file.type.startsWith("image/");
                         const isVideo = file.type.startsWith("video/");
-                        const previewUrl = URL.createObjectURL(file);
+                        const previewUrl = isOldMedia(file) 
+                            ? file.url 
+                            : URL.createObjectURL(file as File);
+                        const name = file.name;
+
                         return (
                             <div key={i} className="chatTAFile">
-                                <div className="chatTAFileOverlay" onClick={() => {
-                                    setFiles(prev => prev.filter((_, idx) => idx !== i));
-                                }}>
-                                    <X/>
+                                <div className="chatTAFileOverlay" onClick={() => handleRemoveFile(i)}>
+                                    <X />
                                 </div>
                                 {isImage ? (
-                                    <img src={previewUrl} alt={file.name} className="chatTAFilePreview" />
+                                    <img src={previewUrl} alt={name} className="chatTAFilePreview" />
                                 ) : isVideo ? (
                                     <video src={previewUrl} className="chatTAFilePreview" controls />
                                 ) : (
                                     <div className="chatTAFileOther">
-                                        {GetIconByType(file.name, file.type)}
-                                        <span className="chatTAFileName">{file.name}</span>
+                                        {GetIconByType(name, file.type)}
+                                        <span className="chatTAFileName">{name}</span>
                                     </div>
                                 )}
                             </div>

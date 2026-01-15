@@ -83,7 +83,7 @@
     &.mobile {
         max-width: 50vw;
         padding: 0.7vh 1vw;
-        margin: 0 1vw;
+        // margin: 0 1vw;
     }
 }
 .answerMess {
@@ -118,16 +118,19 @@
         max-width: 100%;
     }
 }
-.messageUnread {
+.messageReadSign {
     height: 100%;
-    border-radius: 50%;
     aspect-ratio: 1/1;
     margin-left: 0.2vw;
     display: flex;
     align-items: center;
-    >svg {
+    position: relative;
+    &.read > svg {
         width: 100%;
         height: 100%;
+    }
+    &.unread {
+        left: 3px;
     }
 }
 .messageFiles {
