@@ -1,6 +1,6 @@
 import type { Habit } from "../context/HabitsContext"
 import { useNavigate } from "react-router"
-import { PushPinIcon  } from "@phosphor-icons/react"
+import { CheckCircle, PushPinIcon  } from "@phosphor-icons/react"
 import { habitIcon } from "./habitIcon"
 import { useContextMenu } from "../hooks/ContextMenuHook"
 
@@ -52,7 +52,7 @@ export default function HabitDiv({habit, id, isMyAcc}:{habit:Habit, id?:number, 
     };
     
     if (isMyAcc === undefined) isMyAcc = true
-
+    console.log(habit.name, habit.done)
     return(
         <div className={`habit themeHabit-default ${id === habit.id ? "active" : ""}`} onClick={() => navigate(`/habit/${habit.id}`)} onContextMenu={(e) => {
             e.preventDefault()
@@ -67,8 +67,11 @@ export default function HabitDiv({habit, id, isMyAcc}:{habit:Habit, id?:number, 
             )}
             <div className="habitInfo">
                 <div className="habitName">{habit.name}</div>
-                <div className="habitPer">{ruPeriodicity(habit)}</div>
-                {habit.pinned && isMyAcc ? <PushPinIcon className="pinnedHabitSign" weight="fill"/> : ""}
+                <div className="habitPer">
+                    {ruPeriodicity(habit)}
+                    {habit.done && <CheckCircle className="habitHLStatus" weight="fill"/>}
+                </div>
+                {habit.pinned && isMyAcc && <PushPinIcon className="pinnedHabitSign" weight="fill"/>}
             </div>
         </div>
     )

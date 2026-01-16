@@ -25,6 +25,7 @@ export default function Diagrams() {
     const { habits } = useHabits()
     const Diagram: DiagramType[] = []
     let Info: string | undefined = undefined
+    
     if (id) {
         if (chosenDay) {
             // 1. привычка + выбран день

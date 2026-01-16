@@ -86,10 +86,11 @@
 }
 .habitIcon {
     aspect-ratio: 1/1;
-    >svg {
-        height: 100%;
-        width: 100%;
-    }
+    position: relative;
+}
+.habitIconSvg {
+    height: 100%;
+    width: 100%;
 }
 .habitInfo {
     flex: 1;
@@ -124,4 +125,14 @@
     .pinnedHabitSign {
         color: white;
     }
+}
+.habitHLStatus {
+    position: absolute;
+    aspect-ratio: 1/1;
+    height: 2vh;
+    width: 2vh;
+    pointer-events: none;
+    right: 0.2vw;
+    bottom: 0.2vh;
+    border-radius: 50%;
 }
