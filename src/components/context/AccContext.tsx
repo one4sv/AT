@@ -64,7 +64,7 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
                 setMedia(res.data.media);
             } else {
                 showNotification("error", "Не удалось найти пользователя");
-                if (window.history.length > 1) {
+                if (window.history.length > 2) {
                     navigate(-1);
                 } else {
                     navigate("/"); // заменить на нужный маршрут списка чатов
@@ -72,7 +72,7 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
             }
         } catch {
             showNotification("error", "Не удалось найти пользователя");
-            if (window.history.length > 1) {
+            if (window.history.length > 2) {
                 navigate(-1);
             } else {
                 navigate("/"); // заменить на нужный маршрут списка чатов
