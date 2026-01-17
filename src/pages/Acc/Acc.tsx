@@ -11,17 +11,19 @@ import AccPosts from "./components/AccPosts";
 import AccMedia from "./components/AccMedia";
 import { useAcc } from "../../components/hooks/AccHook";
 import { isMobile } from "react-device-detect";
+import { usePageTitle } from "../../components/hooks/PageContextHook";
 
 export default function Acc() {
     const { user } = useUser();
     const { refetchAcc, loading, media, posts, habits, acc, privateRules, refetchPosts } = useAcc()
     const { newBio, setNewBio, newMail, setNewMail } = useUpUser();
     const { nick } = useParams();
+    const { setTitle } = usePageTitle()
+
     const navigate = useNavigate();
     const [ selector, setSelector ] = useState<string>("sended");
     const [ isMyAcc, setIsMyAcc ] = useState<boolean>(false);
     const [ red, setRed ] = useState<boolean>(false);
-
 
     const canView = useCallback(
         (field: keyof PrivateSettings) => isMyAcc || privateRules[field] !== "nobody",
@@ -45,7 +47,19 @@ export default function Acc() {
                 refetchPosts(nick)
             ]);
         })();
-    }, [nick, user?.id, refetchAcc, navigate, refetchPosts]);
+    }, [nick, user.id, refetchAcc, navigate, refetchPosts, user.nick]);
+
+    useEffect(() => {
+        const timeout = window.setTimeout(() => {
+            if (acc && !loading && acc.nick) {
+                setTitle(acc.username || acc.nick);
+            }
+        }, 100)
+        return () => {
+            window.clearTimeout(timeout)
+        }
+    }, [acc, loading]);
+
 
     if (loading) return <Loader />;
 

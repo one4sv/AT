@@ -1,0 +1,38 @@
+@use "../global" as var;
+
+.contactListModule {
+    @include var.centerModal;
+    background-color: var(--mc);
+    height: 70%;
+    width: 25%;
+    border-radius: 12px;
+    padding: 1vh 0.5vw;
+}
+.redirectBar {
+    display: flex;
+    align-items: center;
+    height: 4vh;
+    gap: 5px;
+}
+.cancelRedirect {
+    height: 100%;
+    width: 18%;
+    display: flex;
+    justify-content: center;
+    
+}
+.cancelRedirectButt {
+    border-radius: 6px;
+    aspect-ratio: 1.25/1;
+    >svg {
+        height: 100%;
+        width: 100%;
+        color: var(--borderHabit);
+    }
+    &:hover {
+        background-color: var(--menuButtHover);
+        >svg {
+            color: var(--tc);
+        }
+    }
+}

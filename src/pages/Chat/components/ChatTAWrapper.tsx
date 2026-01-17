@@ -16,7 +16,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
     const { sendMess, handleTyping, chatWith, chatLoading, editMess } = useChat()
     const { nick } = useParams()
     const { droppedFiles, setDroppedFiles } = useDrop()
-    const { answer, redacting, setRedacting } = useMessages()
+    const { answer, editing, setEditing, redirect, setRedirect, showNames, setShowNames } = useMessages()
     const { menuRef } = useContextMenu()
 
     const [ mess, setMess ] = useState<string>("")
@@ -34,18 +34,18 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
     const chatTARef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
-        if (redacting !== null) {
+        if (editing !== null) {
             setOldMess(mess)
             setOldFiles(files)
-            setMess(redacting.text || "")
+            setMess(editing.text || "")
             setFiles([])
-            setOldMedia(redacting.media ?? [])
+            setOldMedia(editing.media ?? [])
         } else {
             setMess(oldMess)
             setFiles(oldFiles)
             setOldMedia([])
         }
-    }, [redacting])
+    }, [editing])
 
 
     const allFilesForDisplay = [
@@ -65,20 +65,21 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
     }
     const handleSend = async () => {
         const trimmedMess = mess.trim();
-        const hasContent = trimmedMess || files.length > 0 || (redacting && oldMedia.length > 0);
+        const hasContent = trimmedMess || files.length > 0 || (editing && oldMedia.length > 0);
         if (nick && hasContent) {
-            if (redacting !== null) {
-                // Собираем keptUrls из oldMedia (они уже отфильтрованы при удалении)
+            if (editing !== null) {
                 const keptUrls = oldMedia.map(m => m.url);
-                await editMess(Number(redacting.id), trimmedMess, files, keptUrls, answer !== null ? answer.id : undefined);
-                setRedacting(null); // Очищаем режим редактирования
+                await editMess(Number(editing.id), trimmedMess, files, keptUrls, answer !== null ? answer.id : undefined);
+                setEditing(null);
             } else {
-                await sendMess(nick, trimmedMess, files, answer !== null ? answer.id : undefined);
+                await sendMess(nick, trimmedMess, files, answer !== null ? answer.id : undefined, redirect, showNames);
             }
             setMess("")
             setFiles([])
             setOldMedia([])
             setShowChatBar(false)
+            setRedirect(undefined)
+            setShowNames(true)
         }
     }
 
@@ -100,10 +101,10 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
     }, [mess]);
 
     useEffect(() => {
-        if (answer !== null || redacting !== null) setShowChatBar(true);
+        if (answer !== null || editing !== null || redirect !== undefined) setShowChatBar(true);
 
         const handleClickOutside = (e: MouseEvent) => {
-            if (e.button === 2 || !chatTARef.current || answer !== null || redacting !== null) return;
+            if (e.button === 2 || !chatTARef.current || answer !== null || editing !== null || redirect !== undefined) return;
 
             if (menuRef.current === null) {
                 if (
@@ -127,7 +128,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [answer, menuRef, redacting, showChatBar]);
+    }, [answer, menuRef, editing, showChatBar, redirect]);
 
 
     useEffect(() => {
@@ -197,8 +198,15 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
                     {answer !== null && (
                         <MessBarBlock object={answer} scrollToMessage={scrollToMessage} />
                     )}
-                    {redacting !== null && (
-                        <MessBarBlock object={redacting} scrollToMessage={scrollToMessage} />
+                    {editing !== null && (
+                        <MessBarBlock object={editing} scrollToMessage={scrollToMessage} />
+                    )}
+                    {redirect !== undefined && (
+                        <MessBarBlock object={redirect?.length === 1 ? 
+                            { id:String(redirect[0].id) , sender:redirect[0].sender_name, 
+                                previewText:redirect[0].content.length > 0 ? redirect[0].content : `${redirect[0].files?.length} mediafile` } 
+                            : { id:"0", sender:[...new Set(redirect.filter(m => m.sender_name === m.sender_name).map(m => m.sender_name))].join(',  '), previewText:`${redirect.length} сообщения`}} 
+                        scrollToMessage={scrollToMessage} />
                     )}
                     <div className="chatWriteTAButt" onClick={handleSend}>
                         <SendHorizontal className="chatSend" fill="currenColor"/>

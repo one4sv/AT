@@ -13,6 +13,7 @@ import "./scss/redHabit.scss";
 import Diagrams from "./components/Calendar/Diagrams";
 import HabitInfo from "./components/HabitInfo/HabitInfo";
 import { isMobile } from "react-device-detect";
+import { usePageTitle } from "../../components/hooks/PageContextHook";
 
 
 export default function Habit() {
@@ -20,15 +21,32 @@ export default function Habit() {
     const { calendarLoading } = useCalendar()
     const { loadHabitWLoading, habit, isReadOnly, loadingHabit } = useTheHabit()
     const { habitId } = useParams<{ habitId: string }>();
+    const { setTitle } = usePageTitle()
     const [ showHabitMenu, setShowHabitMenu ] = useState(true)
 
     useEffect(() => {
         if (habitId) {
             loadHabitWLoading(habitId)
             fetchCalendarHabit(habitId)
-        } else fetchCalendarUser()
+        } else {
+            fetchCalendarUser()
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [habitId]);
+
+    useEffect(() => {
+        const timeout = window.setTimeout(() => {
+            if (habitId && habit?.name && !loadingHabit) {
+                setTitle(habit.name)
+            } else {
+                document.title = "Активности";
+            }
+        }, 100)
+        return () => {
+            window.clearTimeout(timeout)
+        }
+    }, [habitId, habit?.name]);
+
     
     if (loadingHabit || calendarLoading) {
         return <Loader/>
@@ -50,3 +68,4 @@ export default function Habit() {
         </div>
     );
 }
+

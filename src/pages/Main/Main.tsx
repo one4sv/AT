@@ -8,11 +8,14 @@ import type { PostType } from "../../components/context/AccContext.tsx";
 import { api } from "../../components/ts/api.ts";
 import Post from "../../components/ts/Post.tsx";
 import { isMobile } from "react-device-detect";
+import { usePageTitle } from "../../components/hooks/PageContextHook.tsx";
 
 export default function Feed() {
     const { initialLoading, user } = useUser();
     const [ postLoading, setPostLoading ] = useState(true)
     const [ posts, setPosts ] = useState<PostType[]>([])
+    const { setTitle } = usePageTitle()
+    setTitle("Главная")
     
     const postFor = async () => {
         try {

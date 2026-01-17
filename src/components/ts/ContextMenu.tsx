@@ -3,7 +3,7 @@ import "../../scss/ContextMenu.scss"
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useDelete } from "../hooks/DeleteHook";
-import {  ChatTeardrop, Check, CheckCircle, Circle, CopySimple, Heart, Link, PencilSimple, PushPin, PushPinSlash, ShareFat, Trash, User } from "@phosphor-icons/react";
+import {  ChatTeardrop, Check, CheckCircle, Circle, CopySimple, Eye, EyeSlash, Heart, Link, PencilSimple, PushPin, PushPinSlash, ShareFat, Trash, User } from "@phosphor-icons/react";
 import { useUpHabit } from "../hooks/UpdateHabitHook";
 import { useDone } from "../hooks/DoneHook";
 import { useNavigate } from "react-router";
@@ -20,8 +20,8 @@ export default function ContextMenu() {
     const { setDeleteConfirm, setDeleteMess } = useDelete()
     const { setPin } = useUpHabit()
     const { markDone } = useDone()
-    const { isChose, setIsChose, chosenMess, setChosenMess, setPendingScrollId, setAnswer, setRedacting } = useMessages()
-    const { setReaction } = useChat()
+    const { isChose, setIsChose, chosenMess, setChosenMess, setPendingScrollId, setAnswer, setEditing, setRedirect, showNames, setShowNames } = useMessages()
+    const { setReaction, messages } = useChat()
 
     const navigate = useNavigate()
     const CopyLink = import.meta.env.VITE_LINK
@@ -176,7 +176,7 @@ export default function ContextMenu() {
                     {!isChose && curChat.isMy &&(
                         <div className="ContextMenuButt" onClick={() => {
                             setAnswer(null)
-                            setRedacting({id:options.id, text:curChat.text!, media:curChat.files, previewText:curChat.previewText})
+                            setEditing({id:options.id, text:curChat.text!, media:curChat.files, previewText:curChat.previewText})
                         }}>
                             <PencilSimple/>
                             Изменить
@@ -198,7 +198,7 @@ export default function ContextMenu() {
                     </div>
                     {!isChose && (
                         <div className="ContextMenuButt" onClick={() => {
-                            setRedacting(null)
+                            setEditing(null)
                             setAnswer({id:options.id, sender:curChat.sender!, text:curChat.text!, previewText:curChat.previewText})
                         }}>
                             <ShareFat style={{ transform: "scaleX(-1)" }}/>
@@ -218,7 +218,16 @@ export default function ContextMenu() {
                         <CopySimple />
                         {chosenMess.length > 0 ? "Копировать выбранное" : "Копировать"}
                     </div>
-                    <div className="ContextMenuButt">
+                    <div className="ContextMenuButt" onClick={() => {
+                        const redirectValue =
+                            chosenMess.length > 0
+                                ? messages.filter(m =>
+                                    chosenMess.some(cm => cm.id === m.id)
+                                )
+                                : messages.filter(m => m.id === Number(options.id));
+                        setRedirect(redirectValue);
+                        setBlackout({seted:true, module:"Redirecting"})
+                    }}>
                         <ShareFat/>
                         {chosenMess.length > 0 ? "Переслать выбранное" : "Переслать"}
                     </div>                    
@@ -235,7 +244,7 @@ export default function ContextMenu() {
                     </div>
                 </>
             )}
-            {point==="media" && (
+            {point === "media" && (
                 <>
                     {options.url && options.name && DownloadButt(options.url, options.name)}
                     <div className="ContextMenuButt" onClick={() => {
@@ -244,6 +253,16 @@ export default function ContextMenu() {
                     }}>
                         <ChatTeardrop style={{ transform: "scaleX(-1)" }}/>
                         Показать в чате
+                    </div>
+                </>
+            )}
+            {point === "messBar" && (
+                <>
+                    <div className="ContextMenuButt" onClick={() => {
+                        setShowNames(!showNames)
+                    }}>
+                        {showNames ? <EyeSlash/> : <Eye/>} 
+                        {showNames ? "Скрыть имена" : "Показать имена"} 
                     </div>
                 </>
             )}

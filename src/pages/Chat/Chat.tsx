@@ -16,11 +16,13 @@ import { isMobile } from "react-device-detect";
 import Loader from "../../components/ts/Loader";
 import { api } from "../../components/ts/api";
 import type { message } from "../../components/context/ChatContext";
+import { usePageTitle } from "../../components/hooks/PageContextHook";
 
 export default function Chat() {
     const { user } = useUser();
     const { refetchChat, chatLoading, messages, chatWith } = useChat();
     const { chosenMess, setChosenMess, isChose, setIsChose, pendingScrollId, setPendingScrollId } = useMessages();
+    const { setTitle } = usePageTitle()
 
     const { nick } = useParams();
 
@@ -151,6 +153,32 @@ export default function Chat() {
         }
     }, [pendingScrollId, messages]);
 
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+            setIsChose(false);
+            setChosenMess([]);
+            }
+        };
+
+        window.addEventListener("keydown", handleEsc);
+
+        return () => {
+            window.removeEventListener("keydown", handleEsc);
+        };
+    }, [setIsChose, setChosenMess]);
+
+    useEffect(() => {
+        const timeout = window.setTimeout(() => {
+            if (!chatLoading && chatWith) {
+                setTitle(chatWith.username || chatWith.nick);
+            }
+        }, 100)
+        return () => {
+            window.clearTimeout(timeout)
+        }
+    }, [chatLoading, chatWith]);
+
     if (chatLoading) return <Loader />;
 
     return (
@@ -175,7 +203,7 @@ export default function Chat() {
                 ref={virtuosoRef}
                 data={messages}
                 followOutput="smooth"
-                overscan={5}
+                overscan={10}
                 initialTopMostItemIndex={messages.length - 1}
                 atBottomStateChange={(bottom:boolean) => setShowGoDown(!bottom)}
                 rangeChanged={(range: { startIndex: number; endIndex: number }) => {
@@ -193,14 +221,13 @@ export default function Chat() {
                     const prev = messages[index - 1];
                     const needDivider = !prev || !isSameDay(new Date(prev.created_at), currDate);
                     const find = messages.find(mess => mess.id === m.answer_id)
-                    const name = find?.sender_id === chatWith.id ? chatWith.username || chatWith.nick : user.username || user.nick
+                    const name = find?.sender_name
                     const answer = find ? {id:find.id, name:name!, text:find.content ? find.content : `${find.files?.length} mediafile`} : undefined
                     return (
                         <Fragment key={m.id}>
                             {needDivider && <DateDivider currDate={currDate} />}
                             <Message
                                 message={m}
-                                isMy={m.sender_id === user.id}
                                 highlightedId={highlightedId}
                                 messageRefs={messageRefs}
                                 answer={answer}

@@ -80,6 +80,12 @@
         padding: 0.7vh 1vw;
     }
 }
+.senderName {
+    color: var(--acsent);
+    font-size: 14px;
+    cursor: pointer;
+    
+}
 .answerMess {
     min-width: 10vw;
     max-width: 25vw;

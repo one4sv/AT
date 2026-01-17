@@ -40,10 +40,10 @@ export default function ChatUser({
     searchItemRefs,
 }: ChatUserProps) {
     const { user } = useUser();
-    const { chatWith, onlineMap, typingStatus } = useChat();
+    const { chatWith, onlineMap, typingStatus, messages } = useChat();
     const { openMenu, menu, closeMenu } = useContextMenu();
     const { setDeleteConfirm, setDeleteMess } = useDelete()
-    const { setChosenMess, chosenMess, setIsChose, isChose } = useMessages()
+    const { setChosenMess, chosenMess, setIsChose, isChose, setRedirect } = useMessages()
     const { setBlackout } = useBlackout()
     const navigate = useNavigate();
     const { nick } = useParams();
@@ -237,7 +237,10 @@ export default function ChatUser({
                         <CopySimple/>
                         Копировать выбронное
                     </div>
-                    <div className="ChosenCountButt">
+                    <div className="ChosenCountButt" onClick={() =>  {
+                        setRedirect(messages.filter(m => chosenMess.some(cm => cm.id === m.id)))
+                        setBlackout({seted:true, module:"Redirecting"})
+                    }}>
                         <ShareFat/>
                         Переслать выбронное
                     </div>

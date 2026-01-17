@@ -11,35 +11,37 @@ import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
 import { Check, CheckCheck } from "lucide-react";
-// import { Pen } from "lucide-react";
+import { useNavigate } from "react-router";
 
 type MessageComponentType = {
-    isMy: boolean,
-    highlightedId: number | null,
+    highlightedId?: number | null,
     message: message,
-    messageRefs: React.MutableRefObject<Map<number, HTMLDivElement | null>>,
+    messageRefs?: React.MutableRefObject<Map<number, HTMLDivElement | null>>,
     answer:{id:number, name:string, text:string} | undefined,
     scrollToMessage?:(id:number) => void,
+    showNames?:(boolean)
 }
-export default function Message ({ isMy, highlightedId, message:m, messageRefs, answer, scrollToMessage } : MessageComponentType) {
+export default function Message ({ highlightedId, message:m, messageRefs, answer, scrollToMessage, showNames } : MessageComponentType) {
     const { setReaction, chatWith } = useChat()
     const { setBlackout } = useBlackout()
     const { chosenMess, setChosenMess, isChose } = useMessages()
     const { user } = useUser()
     const { openMenu, menu } = useContextMenu()
     const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
-
+    
+    const navigate = useNavigate()
     const messageGetTime = (date: Date | string) => {
         const d = new Date(date);
         return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
+    const isMy = m.sender_id === user.id ? true : false
 
     return (
         <div
             className={`messageWrapper ${isChose ? "choosing" : ""} ${chosenMess.some(mess => mess.id === m.id) ? "chosen" : ""} ${highlightedId === m.id ? "highlight" : ""}
                 ${menu.point === "mess" && menu.options.id === String(m.id) && "onContextMenu"}
             `}
-            ref={(el) => {messageRefs.current.set(m.id, el)}}
+            ref={(el) => {messageRefs?.current.set(m.id, el)}}
             onMouseEnter={() => setShowReactionButt(m.id)}
             onMouseLeave={() => setShowReactionButt(0)}
             onMouseDown={(e) => {
@@ -91,6 +93,7 @@ export default function Message ({ isMy, highlightedId, message:m, messageRefs, 
                 </div>
             )}
             <div className={`message ${ isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""}`}>
+                {!isMy && showNames && <div className="senderName" style={{cursor: isChose ? "default" : "pointer"}} onClick={() => !isChose && navigate(`/acc/${m.sender_nick}`)}>{m.sender_name}</div>}
                 {answer && scrollToMessage && (
                     <div className="answerMess" onClick={() => scrollToMessage(answer.id)}>
                         <div className="answerMess1str">

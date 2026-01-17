@@ -17,6 +17,7 @@ import { AccProvider } from '../context/AccContext';
 import { ContextMenuProvider } from '../context/ContextMenuContext';
 import { DropProvider } from '../context/DropContext';
 import { MessagesProvider } from '../context/MessagesContext';
+import { PageTitleProvider } from '../context/PageTitleContext';
 
 export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
     <NoteProvider>
@@ -37,7 +38,9 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                                                                 <MessagesProvider>
                                                                     <ContextMenuProvider>
                                                                         <DropProvider>
-                                                                            {children}
+                                                                            <PageTitleProvider>
+                                                                                {children}
+                                                                            </PageTitleProvider>
                                                                         </DropProvider>
                                                                     </ContextMenuProvider>
                                                                 </MessagesProvider>

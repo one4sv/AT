@@ -37,7 +37,7 @@ export interface Media {
 export interface ChatContextType {
     chatWith: chatWithType,
     refetchChat: (nick: string) => Promise<void>,
-    sendMess: (receiver_nick: string, text: string, files?: File[], answer_id?: string) => Promise<void>,  // Изменено на receiver_nick
+    sendMess: (receiver_nick: string, text: string, files?: File[], answer_id?: string, redirect?:message[], showNames?:boolean) => Promise<void>,
     chatLoading: boolean,
     messages: message[],
     list: Acc[],
@@ -56,13 +56,17 @@ export interface ChatContextType {
 export interface message {
     id: number,
     sender_id: string,
+    sender_name:string,
+    sender_nick:string,
     content: string,
     created_at: Date,
     files?: Media[],
     read_by: string[],
     reactions: ReactionsType[],
     answer_id:number | null,
-    edited:boolean
+    edited:boolean,
+    redirected_id:number,
+    show_names:boolean
 }
 
 export interface Acc {
@@ -106,11 +110,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const refetchChat = async (nick: string) => {
         try {
             setChatLoading(true);
-            const res = await api.get(`${API_URL}chat/${nick}`, { withCredentials: true });
+            const res = await api.get(`${API_URL}chat/${nick}`);
             if (res.data.success) {
                 setChatWith({ username: res.data.user.username, nick: nick, id: res.data.user.id, avatar_url: res.data.user.avatar_url,
                     last_online: res.data.user.last_online, note:res.data.user.note, is_blocked:res.data.user.is_blocked, pinned:res.data.user.pinned, am_i_blocked:res.data.user.am_i_blocked });
                 setMessages(res.data.messages);
+                if (messages.find(m => m.redirected_id !== null)) console.log(messages.filter(m => m.redirected_id !== null))
             } else {
                 showNotification("error", "Не удалось получить данные");
                 if (window.history.length > 1) {
@@ -130,18 +135,22 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setChatLoading(false);
         }
     };
-    const sendMess = async (receiver_nick: string, text: string, files: File[] = [], answer_id?:string) => {
+
+    const sendMess = async (receiver_nick: string, text: string, files: File[] = [], answer_id?:string, redirect?:message[], showNames?:boolean) => {
         if (!text.trim() && files.length === 0) return;
         try {
             const formData = new FormData();
             formData.append("receiver_nick", receiver_nick);
             formData.append("text", text);
+            if (redirect) {
+                const ids = [...new Set(redirect.map(m => m.id))]
+                formData.append("redirect", JSON.stringify(ids))
+                formData.append("showNames", showNames ? "1" : "0")
+            }
             if (answer_id) formData.append("answer_id", answer_id)
             files.forEach(file => formData.append("files", file));
-            const res = await axios.post(`${API_URL}chat`, formData, {
-                withCredentials: true,
-                headers: { "Content-Type": "multipart/form-data" }
-            });
+
+            const res = await api.post(`${API_URL}chat`, formData)
             if (res.data.success) {
                 refetchContactsWTLoading();
             }
@@ -176,7 +185,17 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await api.post(`${API_URL}contacts`, { search });
             if (res.data.success) {
-                setList(res.data.friendsArr);
+                const sortedList = res.data.friendsArr.slice().sort((a:Acc, b:Acc) => {
+                    if (a.pinned !== b.pinned) {
+                        return a.pinned ? -1 : 1; 
+                    }
+
+                    const timeA = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;
+                    const timeB = b.lastMessage ? new Date(b.lastMessage.created_at).getTime() : 0;
+
+                    return timeB - timeA;
+                });
+                setList(sortedList);
             }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {

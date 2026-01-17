@@ -1,0 +1,14 @@
+@use "../global" as var;
+
+.redirectMessesDiv {
+    @include var.centerModal;
+    background-color: var(--mc);
+    height: 70%;
+    width: 30%;
+    border-radius: 12px;
+    padding: 1vh 0.5vw;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    // padding: 1vh 0.5vw;
+}
