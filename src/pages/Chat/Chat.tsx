@@ -156,8 +156,8 @@ export default function Chat() {
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
-            setIsChose(false);
-            setChosenMess([]);
+                setIsChose(false);
+                setChosenMess([]);
             }
         };
 
@@ -169,13 +169,8 @@ export default function Chat() {
     }, [setIsChose, setChosenMess]);
 
     useEffect(() => {
-        const timeout = window.setTimeout(() => {
-            if (!chatLoading && chatWith) {
-                setTitle(chatWith.username || chatWith.nick);
-            }
-        }, 100)
-        return () => {
-            window.clearTimeout(timeout)
+        if (!chatLoading && chatWith.nick === nick) {
+            setTitle(chatWith.username || chatWith.nick);
         }
     }, [chatLoading, chatWith]);
 

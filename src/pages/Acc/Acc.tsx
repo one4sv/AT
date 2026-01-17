@@ -50,13 +50,8 @@ export default function Acc() {
     }, [nick, user.id, refetchAcc, navigate, refetchPosts, user.nick]);
 
     useEffect(() => {
-        const timeout = window.setTimeout(() => {
-            if (acc && !loading && acc.nick) {
-                setTitle(acc.username || acc.nick);
-            }
-        }, 100)
-        return () => {
-            window.clearTimeout(timeout)
+        if (acc && !loading && acc.nick === nick) {
+            setTitle(acc.username || acc.nick);
         }
     }, [acc, loading]);
 

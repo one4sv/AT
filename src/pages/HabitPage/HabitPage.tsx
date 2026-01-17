@@ -35,17 +35,12 @@ export default function Habit() {
     }, [habitId]);
 
     useEffect(() => {
-        const timeout = window.setTimeout(() => {
-            if (habitId && habit?.name && !loadingHabit) {
-                setTitle(habit.name)
-            } else {
-                document.title = "Активности";
-            }
-        }, 100)
-        return () => {
-            window.clearTimeout(timeout)
+        if (habit && Number(habitId) === habit.id && habit?.name && !loadingHabit) {
+            setTitle(habit.name)
+        } else if (!habitId) {
+            document.title = "Активности";
         }
-    }, [habitId, habit?.name]);
+    }, [habitId, habit, habit?.name, loadingHabit, setTitle]);
 
     
     if (loadingHabit || calendarLoading) {
