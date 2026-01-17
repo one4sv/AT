@@ -17,7 +17,7 @@ export function MessBarBlock({ object, scrollToMessage }: {
     if (editing) barType = "Редактировать: ";
     else if (answer) barType = "Ответ: ";
     else if (redirect && showNames) barType = "Переслать от: ";
-    else if (redirect && !showNames) barType = "Переслать: ";
+    else if (redirect && !showNames) barType = "Переслать от: ";
 
     return (
         <div className="answerDiv" onContextMenu={(e) => {

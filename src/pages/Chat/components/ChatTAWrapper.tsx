@@ -1,4 +1,4 @@
-import {  CaretDoubleDown, Paperclip, Prohibit, SmileySticker, Sticker, X } from "@phosphor-icons/react";
+import { CaretDoubleDown, Paperclip, Prohibit, SmileySticker, Sticker, X } from "@phosphor-icons/react";
 import { SendHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
@@ -49,9 +49,9 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
 
 
     const allFilesForDisplay = [
-        ...oldMedia.map(m => ({ ...m, isOld: true })),
-        ...files.map(f => ({ ...f, isOld: false })),
-    ];
+        ...oldMedia.map(m => ({ file: m, isOld: true })),
+        ...files.map(f => ({ file: f, isOld: false })),
+    ] as { file: Media | File; isOld: boolean }[];
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter") {
@@ -65,7 +65,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
     }
     const handleSend = async () => {
         const trimmedMess = mess.trim();
-        const hasContent = trimmedMess || files.length > 0 || (editing && oldMedia.length > 0);
+        const hasContent = trimmedMess || files.length > 0 || (editing && oldMedia.length > 0) || redirect;
         if (nick && hasContent) {
             if (editing !== null) {
                 const keptUrls = oldMedia.map(m => m.url);
@@ -138,7 +138,10 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
     useEffect(() => {
         if (location.pathname.startsWith("/chat") && droppedFiles?.length > 0 && nick && !chatLoading) {
             setShowChatBar(true)
-            setFiles((prev) => [ ...prev, ...droppedFiles])
+            setFiles((prev) => [
+                ...prev,
+                ...droppedFiles.filter(f => f instanceof File && typeof f.type === 'string')
+            ]);
             setDroppedFiles([])
         }
     }, [chatLoading, droppedFiles, location.pathname, nick, setDroppedFiles])
@@ -155,7 +158,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
         </div>
     )
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-        const pastedFiles = Array.from(e.clipboardData.files);
+        const pastedFiles = Array.from(e.clipboardData.files).filter(f => f instanceof File && typeof f.type === 'string');
         if (pastedFiles.length > 0) {
             e.preventDefault();
             setFiles(prev => [...prev, ...pastedFiles]);
@@ -171,8 +174,8 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
         }
     };
 
-    function isOldMedia(file: typeof allFilesForDisplay[number]): file is (Media & { isOld: true }) {
-        return file.isOld === true;
+    function isOldMedia(item: typeof allFilesForDisplay[number]): item is { file: Media; isOld: true } {
+        return item.isOld === true;
     }
 
 
@@ -204,7 +207,11 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
                     {redirect !== undefined && (
                         <MessBarBlock object={redirect?.length === 1 ? 
                             { id:String(redirect[0].id) , sender:redirect[0].sender_name, 
-                                previewText:redirect[0].content.length > 0 ? redirect[0].content : `${redirect[0].files?.length} mediafile` } 
+                                previewText:redirect[0].content.length > 0
+                                    ? redirect[0].content
+                                    : redirect[0].files?.length 
+                                        ? `${redirect[0].files?.length} mediafile`
+                                        :"Пересланное сообщение"} 
                             : { id:"0", sender:[...new Set(redirect.filter(m => m.sender_name === m.sender_name).map(m => m.sender_name))].join(',  '), previewText:`${redirect.length} сообщения`}} 
                         scrollToMessage={scrollToMessage} />
                     )}
@@ -215,13 +222,22 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
             )}
             {allFilesForDisplay.length > 0 && (
                 <div className={`chatTAFiles ${showChatBar ? "chatTAFileswBar" : ""}`}>
-                    {allFilesForDisplay.map((file, i) => {
-                        const isImage = file.type.startsWith("image/");
-                        const isVideo = file.type.startsWith("video/");
-                        const previewUrl = isOldMedia(file) 
-                            ? file.url 
-                            : URL.createObjectURL(file as File);
-                        const name = file.name;
+                    {allFilesForDisplay.map((item, i) => {
+                        const { file } = item;
+                        const isImage = isOldMedia(item)
+                            ? (file as Media).url?.match(/\.(png|jpe?g|gif|webp)$/i)
+                            : (file as File).type?.startsWith("image/") ?? false;
+                        const isVideo = isOldMedia(item)
+                            ? (file as Media).url?.match(/\.(mp4|webm|ogg)$/i)
+                            : (file as File).type?.startsWith("video/") ?? false;
+                        const name = file.name ?? 'unknown';
+
+                        let previewUrl: string | undefined;
+                        if (isImage || isVideo) {
+                            previewUrl = isOldMedia(item)
+                                ? (file as Media).url
+                                : URL.createObjectURL(file as File);
+                        }
 
                         return (
                             <div key={i} className="chatTAFile">
@@ -234,7 +250,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
                                     <video src={previewUrl} className="chatTAFilePreview" controls />
                                 ) : (
                                     <div className="chatTAFileOther">
-                                        {GetIconByType(name, file.type)}
+                                        {GetIconByType(name, (file as Media | File).type ?? '')}
                                         <span className="chatTAFileName">{name}</span>
                                     </div>
                                 )}
@@ -262,7 +278,8 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
                 ref={inputFileRef}
                 onChange={(e) => {
                     if (!e.target.files) return;
-                    setFiles(prev => [...prev, ...(e.target.files ? Array.from(e.target.files) : [])]);
+                    const selectedFiles = Array.from(e.target.files).filter(f => f instanceof File && typeof f.type === 'string');
+                    setFiles(prev => [...prev, ...selectedFiles]);
                 }}
             />
         </div>

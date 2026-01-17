@@ -1,29 +1,29 @@
-import { Heart, CheckCircle } from "@phosphor-icons/react";
+import { Heart, CheckCircle, ShareFat } from "@phosphor-icons/react";
 import { reactionIcons } from "./ReactionsIcons"
 import { useChat } from "../../../components/hooks/ChatHook";
 import React, { useState } from "react";
 import type { message } from "../../../components/context/ChatContext";
 import { useUser } from "../../../components/hooks/UserHook";
-import GetIconByType from "../utils/getIconByType";
 import Linkify from "linkify-react";
-import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
 import { Check, CheckCheck } from "lucide-react";
 import { useNavigate } from "react-router";
+import AnswerMess from "./AnswerMess";
+import MessageFiles from "./MessageFiles";
 
 type MessageComponentType = {
     highlightedId?: number | null,
     message: message,
     messageRefs?: React.MutableRefObject<Map<number, HTMLDivElement | null>>,
-    answer:{id:number, name:string, text:string} | undefined,
+    answer?:{id:number, name:string, text:string},
+    redir_answer?:{id:number, name:string, text:string},
     scrollToMessage?:(id:number) => void,
     showNames?:(boolean)
 }
-export default function Message ({ highlightedId, message:m, messageRefs, answer, scrollToMessage, showNames } : MessageComponentType) {
+export default function Message ({ highlightedId, message:m, messageRefs, answer, scrollToMessage, showNames, redir_answer } : MessageComponentType) {
     const { setReaction, chatWith } = useChat()
-    const { setBlackout } = useBlackout()
     const { chosenMess, setChosenMess, isChose } = useMessages()
     const { user } = useUser()
     const { openMenu, menu } = useContextMenu()
@@ -67,7 +67,7 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                 })();
                 openMenu(e.clientX, e.clientY, "mess", { id:String(m.id)}, undefined, undefined,
                     {
-                        isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content || `${m.files?.length} mediafile`, 
+                        isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content || (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : "Пересланное сообщение"),
                         sender:m.sender_id === user.id ? user.username || user.nick! : chatWith.username || chatWith.nick!,
                         files:m.files || undefined,
                     }
@@ -95,48 +95,22 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
             <div className={`message ${ isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""}`}>
                 {!isMy && showNames && <div className="senderName" style={{cursor: isChose ? "default" : "pointer"}} onClick={() => !isChose && navigate(`/acc/${m.sender_nick}`)}>{m.sender_name}</div>}
                 {answer && scrollToMessage && (
-                    <div className="answerMess" onClick={() => scrollToMessage(answer.id)}>
-                        <div className="answerMess1str">
-                            {answer.name}
-                        </div>
-                        <div className="answerMess2str">
-                            {answer.text}
-                        </div>
-                    </div>
+                    <AnswerMess answer={answer} scrollToMessage={scrollToMessage}/>
                 )}
                 <div className={`messageText ${isMobile ? "mobile" : ""}`}><Linkify>{m.content}</Linkify></div>
                 {m.files && m.files.length > 0 && (
-                    <div className="messageFiles">
-                        {m.files.map((file, j) => {
-                            const isImage = file.type.startsWith("image/");
-                            const isVideo = file.type.startsWith("video/");
-                            return (
-                                <div key={j} className="messageFile">
-                                    {isImage ? (
-                                        <img src={file.url} alt={file.name} className="messageFilePreview" onClick={() => setBlackout({seted:true, module:"ImgPrev", img:file.url})}
-                                        onContextMenu={(e) => {
-                                            e.preventDefault()
-                                            e.stopPropagation()
-                                            const isReacted = (() => {
-                                                const reaction = m.reactions.find(r => r.user_id === user.id);
-                                                return reaction ? reaction.reaction : "none";
-                                            })();
-                                            openMenu(e.clientX, e.clientY, "mess", { id:String(m.id), name:file.name, url:file.url }, undefined, undefined,
-                                                { isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content || `${m.files?.length} mediafile`,
-                                                sender:m.sender_id === user.id ? user.username || user.nick! : chatWith.username || chatWith.nick! }
-                                            )
-                                        }}/>
-                                    ) : isVideo ? (
-                                        <video src={file.url} className="messageFilePreview" controls />
-                                    ) : (
-                                        <a href={file.url} download={file.name} className="messageFileOther">
-                                            {GetIconByType(file.name, file.type)}
-                                            <span className="messageFileName">{file.name}</span>
-                                        </a>
-                                    )}
-                                </div>
-                            );
-                        })}
+                    <MessageFiles files={m.files} m={m}/>
+                )}
+                {m.redirected_id && (
+                    <div className="redirectedMess">
+                        <div className="redirectSign"><ShareFat weight="fill"/>{`Переслано ${m.redirected_name ? "от" : ""}`}&nbsp;<span onClick={() => navigate(`/acc/${m.redirected_nick}`)}>{m.redirected_name}</span></div>
+                        {m.redirected_answer && redir_answer && m.redirected_name && scrollToMessage && (
+                            <AnswerMess answer={redir_answer} scrollToMessage={scrollToMessage}/>
+                        )}
+                        <div className="redirectText"><Linkify>{m.redirected_content}</Linkify></div>
+                        {m.redirected_files && m.redirected_files.length > 0 && (
+                            <MessageFiles files={m.redirected_files} m={m}/>
+                        )}
                     </div>
                 )}
                 <div className="messageStatusBarDiv">

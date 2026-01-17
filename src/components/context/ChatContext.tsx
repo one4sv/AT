@@ -2,7 +2,6 @@ import { createContext, useState, useEffect, useCallback, useRef } from "react";
 import { type ReactNode } from "react";
 import { useNote } from "../hooks/NoteHook";
 import { useUser } from "../hooks/UserHook";
-import axios from "axios";
 import { api } from "../ts/api";
 import { showBrowserNotification } from "../ts/utils/NoteRequest";
 import { useSettings } from "../hooks/SettingsHook";
@@ -56,17 +55,21 @@ export interface ChatContextType {
 export interface message {
     id: number,
     sender_id: string,
-    sender_name:string,
-    sender_nick:string,
+    sender_name: string,
+    sender_nick: string,
     content: string,
     created_at: Date,
     files?: Media[],
     read_by: string[],
     reactions: ReactionsType[],
-    answer_id:number | null,
-    edited:boolean,
-    redirected_id:number,
-    show_names:boolean
+    answer_id: number | null,
+    edited: boolean,
+    redirected_id: number | null,  
+    redirected_name?: string | null,  
+    redirected_nick?: string | null,  
+    redirected_content?: string | null, 
+    redirected_files?: Media[] | null,  
+    redirected_answer?: number | null,  
 }
 
 export interface Acc {
@@ -115,7 +118,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 setChatWith({ username: res.data.user.username, nick: nick, id: res.data.user.id, avatar_url: res.data.user.avatar_url,
                     last_online: res.data.user.last_online, note:res.data.user.note, is_blocked:res.data.user.is_blocked, pinned:res.data.user.pinned, am_i_blocked:res.data.user.am_i_blocked });
                 setMessages(res.data.messages);
-                if (messages.find(m => m.redirected_id !== null)) console.log(messages.filter(m => m.redirected_id !== null))
             } else {
                 showNotification("error", "Не удалось получить данные");
                 if (window.history.length > 1) {
@@ -137,7 +139,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const sendMess = async (receiver_nick: string, text: string, files: File[] = [], answer_id?:string, redirect?:message[], showNames?:boolean) => {
-        if (!text.trim() && files.length === 0) return;
+        if (!text.trim() && files.length === 0 && !redirect) return;
         try {
             const formData = new FormData();
             formData.append("receiver_nick", receiver_nick);
@@ -167,10 +169,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             if (answer_id) formData.append("answer_id", answer_id);
             formData.append("kept_urls", JSON.stringify(keptUrls));
             newFiles.forEach(file => formData.append("files", file));
-            const res = await axios.patch(`${API_URL}messages/${messageId}`, formData, {
-                withCredentials: true,
-                headers: { "Content-Type": "multipart/form-data" }
-            });
+            const res = await api.patch(`${API_URL}messages/${messageId}`, formData)
             if (res.data.success) {
                 refetchContactsWTLoading();
             }

@@ -175,7 +175,6 @@ export default function ContextMenu() {
                     )}
                     {!isChose && curChat.isMy &&(
                         <div className="ContextMenuButt" onClick={() => {
-                            setAnswer(null)
                             setEditing({id:options.id, text:curChat.text!, media:curChat.files, previewText:curChat.previewText})
                         }}>
                             <PencilSimple/>
@@ -198,7 +197,6 @@ export default function ContextMenu() {
                     </div>
                     {!isChose && (
                         <div className="ContextMenuButt" onClick={() => {
-                            setEditing(null)
                             setAnswer({id:options.id, sender:curChat.sender!, text:curChat.text!, previewText:curChat.previewText})
                         }}>
                             <ShareFat style={{ transform: "scaleX(-1)" }}/>
@@ -225,8 +223,9 @@ export default function ContextMenu() {
                                     chosenMess.some(cm => cm.id === m.id)
                                 )
                                 : messages.filter(m => m.id === Number(options.id));
-                        setRedirect(redirectValue);
+                        setRedirect(redirectValue)
                         setBlackout({seted:true, module:"Redirecting"})
+                        setChosenMess([])
                     }}>
                         <ShareFat/>
                         {chosenMess.length > 0 ? "Переслать выбранное" : "Переслать"}

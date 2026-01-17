@@ -217,7 +217,31 @@ export default function Chat() {
                     const needDivider = !prev || !isSameDay(new Date(prev.created_at), currDate);
                     const find = messages.find(mess => mess.id === m.answer_id)
                     const name = find?.sender_name
-                    const answer = find ? {id:find.id, name:name!, text:find.content ? find.content : `${find.files?.length} mediafile`} : undefined
+                    const answer = find
+                        ? {
+                            id: find.id,
+                            name: name!,
+                            text: find.content
+                                ? find.content
+                                : m.files?.length
+                                    ? `${m.files.length} mediafile`
+                                    : "Пересланное сообщение",
+                        }
+                        : undefined;
+
+                    const redir_find = messages.find(mess => mess.id === m.redirected_answer || mess.redirected_id === m.redirected_answer)
+                    const redir_name = redir_find?.redirected_name
+                    const redir_answer = redir_find 
+                        ? {
+                            id:redir_find.id, 
+                            name:redir_name || "", 
+                            text:redir_find.content
+                                ? redir_find.content 
+                                : redir_find.files?.length
+                                    ? `${redir_find.files.length} mediafile`
+                                    : "Пересланное сообщение",
+                        }
+                        : undefined
                     return (
                         <Fragment key={m.id}>
                             {needDivider && <DateDivider currDate={currDate} />}
@@ -226,6 +250,7 @@ export default function Chat() {
                                 highlightedId={highlightedId}
                                 messageRefs={messageRefs}
                                 answer={answer}
+                                redir_answer={redir_answer}
                                 scrollToMessage={answer ? scrollToMessage : undefined}
                             />
                         </Fragment>

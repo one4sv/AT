@@ -24,23 +24,23 @@ export interface MessagesContextType {
 }
 
 export const MessagesProvider = ({ children }: { children: ReactNode }) => {
-    const [chosenMess, setChosenMess] = useState<{ id: number; text: string }[]>([])
-    const [isChose, setIsChose] = useState(false)
-    const [pendingScrollId, setPendingScrollId] = useState<number | null>(null)
-    const [answerState, setAnswerState] = useState<{
+    const [ chosenMess, setChosenMess ] = useState<{ id: number; text: string }[]>([])
+    const [  isChose, setIsChose ] = useState(false)
+    const [ pendingScrollId, setPendingScrollId ] = useState<number | null>(null)
+    const [ answerState, setAnswerState ] = useState<{
         id: string
         sender: string
         text?: string
         previewText: string
         media?: Media[]
     } | null>(null)
-    const [editingState, setEditingState] = useState<{
+    const [ editingState, setEditingState ] = useState<{
         id: string
         text?: string
         previewText: string
         media?: Media[]
     } | null>(null)
-    const [redirectState, setRedirectState] = useState<message[] | undefined>(undefined)
+    const [ redirectState, setRedirectState ] = useState<message[] | undefined>(undefined)
     const [ showNames, setShowNames ] = useState(true)
 
     const location = useLocation()
@@ -68,11 +68,18 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         setAnswerState(null)
         setEditingState(null)
-        if (!location.pathname.startsWith("/chat") || redirectState?.length === 0) {
+        if (!location.pathname.startsWith("/chat")) {
             setShowNames(true)
             setRedirectState(undefined)
         }
-    }, [location.pathname, redirectState?.length])
+    }, [location.pathname])
+
+    useEffect(() => {
+        if (redirectState?.length === 0) {
+            setShowNames(true)
+            setRedirectState(undefined)
+        }
+    }, [redirectState?.length])
 
     return (
         <MessagesContext.Provider

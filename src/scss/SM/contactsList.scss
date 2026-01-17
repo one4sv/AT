@@ -107,7 +107,6 @@
     align-items: center;
     gap: 0.2rem;
 
-
     > div {
         display: flex;
         gap: 0.2rem;
@@ -119,7 +118,7 @@
             white-space: nowrap;        // не переносим на новую строку
             overflow: hidden;           // скрываем лишнее
             text-overflow: ellipsis;    // показываем "..."
-            >.lmcMediafile {
+            &.lmcExtra {
                 color: var(--acsent);
             }
         }
@@ -130,6 +129,7 @@
         }
     }
 }
+
 .contactsNothing {
     color: var(--borderHabit);
     margin-top: 1vh;
@@ -142,7 +142,7 @@
         color: white;
     }
     >.contactsUserInfo {
-        >.contactsUserStr{
+        >.contactsUserStr {
             color: white;
             > .nameSpan > svg {
                 color: white;
@@ -156,7 +156,7 @@
         }
         >.lastMess {
             color: white;
-            >.lmc>.lmcMediafile {
+            >div > .lmc {
                 color: white;
             }
         }

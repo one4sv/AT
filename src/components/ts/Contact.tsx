@@ -96,13 +96,15 @@ export default function Contact({acc}:ContactType) {
                         <div className={`lastMess ${isMobile ? "mobile" : ""}`}>
                             <div>
                                 {acc.lastMessage.sender_id !== acc.id && <span>Вы: </span>}
-                                <span className="lmc">
-                                    {acc.lastMessage.content && <span>{acc.lastMessage.content} </span>}
-                                    {acc.lastMessage.files?.length ? (
-                                        <span className="lmcMediafile">
-                                            {acc.lastMessage.files.length} mediafile{acc.lastMessage.files.length > 1 ? "s" : ""}
-                                        </span>
-                                    ) : null}
+                                <span className={`lmc ${!acc.lastMessage.content && "lmcExtra"}`}>
+                                    {acc.lastMessage.content ? (
+                                        <span>{acc.lastMessage.content}</span>
+                                    ) : (
+                                        "Пересланное сообщение"
+                                    )}
+                                    {acc.lastMessage.files?.length ? 
+                                            (`${acc.lastMessage.files.length} mediafile${acc.lastMessage.files.length > 1 ? "s" : ""}`)
+                                    : ""}
                                 </span>
                             </div>
                             <span>{messageGetTime(acc.lastMessage.created_at)}</span>

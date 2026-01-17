@@ -3,9 +3,14 @@ import "../../scss/modules/Redirecting.scss";
 import { Search } from "lucide-react";
 import { useChat } from "../hooks/ChatHook";
 import { X } from "@phosphor-icons/react";
+import { useBlackout } from "../hooks/BlackoutHook";
+import { useMessages } from "../hooks/MessagesHook";
 
 export default function Redirecting() {
     const { setSearch } = useChat()
+    const { setBlackout } = useBlackout()
+    const { setRedirect } = useMessages()
+
     return (
         <div className="contactListModule">
             <div className="redirectBar">
@@ -14,7 +19,10 @@ export default function Redirecting() {
                     <Search />
                 </div>
                 <div className="cancelRedirect">
-                    <div className="cancelRedirectButt">
+                    <div className="cancelRedirectButt" onClick={() => {
+                        setBlackout({seted:false})
+                        setRedirect(undefined)
+                    }}>
                         <X/>
                     </div>
                 </div>
