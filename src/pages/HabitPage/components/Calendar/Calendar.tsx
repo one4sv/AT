@@ -47,12 +47,10 @@ export default function Calendar() {
         { value: 0, label: "вс" },
     ];
 
-    console.log(year)
-
     useEffect(() => {
         setSelectedMonth(month)
         setSelectedYear(year)
-    },[])
+    },[month, setSelectedMonth, setSelectedYear, year])
 
     useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

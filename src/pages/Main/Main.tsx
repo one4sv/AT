@@ -15,8 +15,11 @@ export default function Feed() {
     const [ postLoading, setPostLoading ] = useState(true)
     const [ posts, setPosts ] = useState<PostType[]>([])
     const { setTitle } = usePageTitle()
-    setTitle("Главная")
-    
+
+    useEffect(() => {
+        setTitle("Главная")
+    }, [setTitle])
+
     const postFor = async () => {
         try {
             const res = await api.get(`feed`)

@@ -6,6 +6,7 @@ import { BgHandler } from './BgHandler';
 import ImgPrev from './ImgPrev';
 import Redirecting from './Redirecting';
 import RedirectMesses from './RedirectMesses';
+import CreateChat from './CreateChat';
 
 const ModuleMap: Record<string, React.FC> = {
     AddHabit: AddHabit,
@@ -15,7 +16,8 @@ const ModuleMap: Record<string, React.FC> = {
     BgHandler:BgHandler,
     ImgPrev:ImgPrev,
     Redirecting:Redirecting,
-    RedirectMesses:RedirectMesses
+    RedirectMesses:RedirectMesses,
+    CreateChat:CreateChat
 };
 
 export default ModuleMap;

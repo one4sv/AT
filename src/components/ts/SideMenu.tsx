@@ -170,7 +170,7 @@ export default function SideMenu() {
                     <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"AddHabit"})}>
                         Добавить активность
                     </div>
-                    <div className="plusMenuButt">
+                    <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"CreateChat"})}>
                         Создать чат
                     </div>
                 </div>
