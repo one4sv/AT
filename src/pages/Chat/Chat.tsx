@@ -17,6 +17,7 @@ import Loader from "../../components/ts/Loader";
 import { api } from "../../components/ts/api";
 import type { message } from "../../components/context/ChatContext";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
+import getCornerType from "./components/getCornet";
 
 export default function Chat() {
     const { user } = useUser();
@@ -252,6 +253,7 @@ export default function Chat() {
                                 answer={answer}
                                 redir_answer={redir_answer}
                                 scrollToMessage={answer ? scrollToMessage : undefined}
+                                cornerType={getCornerType(m.id, messages.map(msg => msg.id), chosenMess.map(cm => cm.id))}
                             />
                         </Fragment>
                     );

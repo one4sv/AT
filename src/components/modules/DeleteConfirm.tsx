@@ -74,9 +74,9 @@ export default function DeleteConfirm() {
                 {`Вы действительно хотите удалить ${delThing} ${deleteConfirm.name}?`}
             </span>
             {deleteConfirm.goal === "mess" && (
-                <div className={`deleteMessForAll ${delForAll ? "on" : ""}`} onClick={() => setDelForAll(prev => !prev)}>
+                <div className={`deleteMessForAll ${delForAll ? "on" : ""}`}>
                     <Toggler state={delForAll} setState={setDelForAll}/>
-                    Удалить эти сообщения для всех
+                    <span onClick={() => setDelForAll(prev => !prev)}>Удалить эти сообщения для всех</span>
                 </div>
             )}
             <div className="deleteButts">

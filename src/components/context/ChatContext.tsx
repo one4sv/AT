@@ -36,7 +36,7 @@ export interface Media {
 export interface ChatContextType {
     chatWith: chatWithType,
     refetchChat: (nick: string) => Promise<void>,
-    sendMess: (receiver_nick: string, text: string, files?: File[], answer_id?: string, redirect?:message[], showNames?:boolean) => Promise<void>,
+    sendMess: (receiver_nick: string, text: string, files?: File[], answer_id?: string, redirect?:message[], showNames?:boolean) => Promise<boolean |  undefined>,
     chatLoading: boolean,
     messages: message[],
     list: Acc[],
@@ -49,7 +49,7 @@ export interface ChatContextType {
     handleTyping: (nick: string) => void,
     typingStatus: boolean,
     loadingList: boolean,
-    editMess:(messageId: number, text: string, newFiles: File[], keptUrls: string[], answer_id?: string)=>Promise<void>
+    editMess:(messageId: number, text: string, newFiles: File[], keptUrls: string[], answer_id?: string)=>Promise<boolean | undefined>
 }
 
 export interface message {
@@ -155,10 +155,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             const res = await api.post(`${API_URL}chat`, formData)
             if (res.data.success) {
                 refetchContactsWTLoading();
+                return true;
             }
         } catch (error) {
             console.error("Ошибка при отправке:", error);
             showNotification("error", "Не удалось отправить сообщение");
+            return false;
         }
     };
 
@@ -172,10 +174,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             const res = await api.patch(`${API_URL}messages/${messageId}`, formData)
             if (res.data.success) {
                 refetchContactsWTLoading();
+                return true;
             }
         } catch (error) {
             console.error("Ошибка при редактировании:", error);
             showNotification("error", "Не удалось отредактировать сообщение");
+            return false;
         }
     };
 

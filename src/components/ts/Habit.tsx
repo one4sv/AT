@@ -15,7 +15,7 @@ export default function HabitDiv({habit, id, isMyAcc}:{habit:Habit, id?:number, 
 
         const formatTime = () => {
             if (st && et && st !== null) {
-                return ` с ${st} по ${et}`;
+                return ` с ${st} до ${et}`;
             }
             if (st || et) {
                 return st ? ` в ${st}` : ` до ${et}`

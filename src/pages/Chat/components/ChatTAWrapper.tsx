@@ -1,4 +1,4 @@
-import { CaretDoubleDown, Paperclip, Prohibit, SmileySticker, Sticker, X } from "@phosphor-icons/react";
+import { CaretDoubleDown, ClockCountdown, Paperclip, Prohibit, SmileySticker, Sticker, X } from "@phosphor-icons/react";
 import { SendHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
@@ -26,7 +26,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
     const [ oldMedia, setOldMedia ] = useState<Media[]>([])
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false) 
     const [ showChatBar, setShowChatBar ] = useState<boolean>(false)
-
+    const [ sending, setSending ] = useState<boolean>(false)
     const location = useLocation();
     
     const inputFileRef = useRef<HTMLInputElement>(null)
@@ -67,19 +67,27 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
         const trimmedMess = mess.trim();
         const hasContent = trimmedMess || files.length > 0 || (editing && oldMedia.length > 0) || redirect;
         if (nick && hasContent) {
-            if (editing !== null) {
-                const keptUrls = oldMedia.map(m => m.url);
-                await editMess(Number(editing.id), trimmedMess, files, keptUrls, answer !== null ? answer.id : undefined);
-                setEditing(null);
-            } else {
-                await sendMess(nick, trimmedMess, files, answer !== null ? answer.id : undefined, redirect, showNames);
+            setSending(true);
+            try {
+                if (editing !== null) {
+                    const keptUrls = oldMedia.map(m => m.url);
+                    if (await editMess(Number(editing.id), trimmedMess, files, keptUrls, answer !== null ? answer.id : undefined) === true) {
+                        setEditing(null);
+                    }
+                } else {
+                    if (await sendMess(nick, trimmedMess, files, answer !== null ? answer.id : undefined, redirect, showNames)) {
+                        setMess("")
+                        setOldMedia([])
+                        setRedirect(undefined)
+                        setShowChatBar(false)
+                        setShowNames(true)
+                    }
+                }
+            } catch (error) {
+                console.error("Ошибка при отправке сообщения:", error);
+            } finally {
+                setSending(false);
             }
-            setMess("")
-            setFiles([])
-            setOldMedia([])
-            setShowChatBar(false)
-            setRedirect(undefined)
-            setShowNames(true)
         }
     }
 
@@ -216,7 +224,11 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
                         scrollToMessage={scrollToMessage} />
                     )}
                     <div className="chatWriteTAButt" onClick={handleSend}>
-                        <SendHorizontal className="chatSend" fill="currenColor"/>
+                        {sending ? (
+                            <ClockCountdown className="chatSend"/>
+                        ) : (
+                            <SendHorizontal className="chatSend" fill="currenColor"/>
+                        )}
                     </div>
                 </div>
             )}

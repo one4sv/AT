@@ -9,7 +9,12 @@ export default function Toggler({state, disable, setState}:TogglerProps) {
     const switchToggler = () => setState?.(!state)
 
     return (
-        <div className={`toggler ${state ? "true" : "false"} ${disable ? "disable" : ""}`} onClick={() => !disable && switchToggler()}>
+        <div className={`toggler ${state ? "true" : "false"} ${disable ? "disable" : ""}`} onClick={(e) => {
+            e.preventDefault()
+            if (!disable) {
+                switchToggler()
+            }
+        }}>
             <div className="togglerCircle"></div>
         </div>
     )

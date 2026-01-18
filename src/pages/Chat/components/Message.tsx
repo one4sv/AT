@@ -20,9 +20,10 @@ type MessageComponentType = {
     answer?:{id:number, name:string, text:string},
     redir_answer?:{id:number, name:string, text:string},
     scrollToMessage?:(id:number) => void,
-    showNames?:(boolean)
+    showNames?:(boolean),
+    cornerType?: string | null,
 }
-export default function Message ({ highlightedId, message:m, messageRefs, answer, scrollToMessage, showNames, redir_answer } : MessageComponentType) {
+export default function Message ({ highlightedId, message:m, messageRefs, answer, scrollToMessage, showNames, redir_answer, cornerType } : MessageComponentType) {
     const { setReaction, chatWith } = useChat()
     const { chosenMess, setChosenMess, isChose } = useMessages()
     const { user } = useUser()
@@ -39,6 +40,7 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
     return (
         <div
             className={`messageWrapper ${isChose ? "choosing" : ""} ${chosenMess.some(mess => mess.id === m.id) ? "chosen" : ""} ${highlightedId === m.id ? "highlight" : ""}
+                ${cornerType ? `corner-${cornerType}` : ""}
                 ${menu.point === "mess" && menu.options.id === String(m.id) && "onContextMenu"}
             `}
             ref={(el) => {messageRefs?.current.set(m.id, el)}}
@@ -75,6 +77,7 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
             }}
 
             onDoubleClick={(e) => {
+                if (isChose) return;
                 e.preventDefault()
                 setReaction(m.id, "Heart")
             }}

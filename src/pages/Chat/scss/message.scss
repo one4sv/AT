@@ -15,6 +15,21 @@
     &.onContextMenu {
         background-color: var(--chosing_mess);
     }
+    &.corner-single {
+        border-radius: 12px;
+    }
+
+    &.corner-first {
+        border-radius: 12px 12px 0 0; // скругление только сверху
+    }
+
+    &.corner-last {
+        border-radius: 0 0 12px 12px; // скругление только снизу
+    }
+
+    &.corner-middle {
+        border-radius: 0; // без скруглений
+    }
 }
 .messChoseButt {
     height: 2.5vh;
@@ -58,6 +73,9 @@
     &.ur {
         background-color: var(--mess);
         border-radius: 12px 12px 12px 0;
+        >.redirectedMess > .redirectSign > span {
+            color: var(--acsent);
+        }
     }
     &.my {
         justify-self:end;
