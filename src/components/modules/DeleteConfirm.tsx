@@ -46,9 +46,9 @@ export default function DeleteConfirm() {
                 { goal: goal === "mess" && delForAll ? "messForAll" : goal, delete_id: deleteMess && deleteMess.length > 0 ? deleteMess : id}
             );
 
-            if (res.data.success) {
+            if (res.data.success && user.nick) {
                 if (goal === "post") {
-                    refetchAcc(user.id!);
+                    refetchAcc(user.nick);
                     navigate(`/acc/${user.nick}`);
                 } else if (goal === "habit") {
                     refetchHabits();

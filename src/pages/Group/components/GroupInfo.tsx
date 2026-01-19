@@ -8,6 +8,7 @@ import { useUser } from "../../../components/hooks/UserHook";
 import { api } from "../../../components/ts/api";
 import { useParams } from "react-router";
 import { useNote } from "../../../components/hooks/NoteHook";
+import { useChat } from "../../../components/hooks/ChatHook";
 
 interface GroupInfoProps {
     group: Group | undefined,
@@ -18,7 +19,7 @@ export default function AccInfo({group} : GroupInfoProps) {
     const { user } = useUser()
     const { refetchGroup, members, newAva } = useGroup()
     const { showNotification } = useNote()
-
+    const { refetchContactsWTLoading } = useChat()
     const navigate = useNavigate()
     const API_URL = import.meta.env.VITE_API_URL;
     const { id }  = useParams()
@@ -43,13 +44,20 @@ export default function AccInfo({group} : GroupInfoProps) {
 
     const handleSave = async() => {
         if (!user || !id) return;
+        const updates: {row: string, value: string}[] = [];
+        if (newName !== "" && newName !== group?.name) updates.push({row: "username", value: newName});
+        if (newDesc !== group?.desc) updates.push({row: "desc", value: newDesc});
         if (newAva) {
             try {
                 const fd = new FormData();
                 fd.append("avatar", newAva);
+                fd.append("group", id);
                 const upRes = await api.post(`${API_URL}uploadavatar`, fd );
                 if (upRes.data?.success) {
-                    await refetchGroup(id);
+                    if (updates.length === 0) {
+                        await refetchContactsWTLoading()
+                        await refetchGroup(id)
+                    }
                 } else {
                     showNotification("error", upRes.data?.error || "Не удалось загрузить аватар");
                     return;
@@ -60,22 +68,22 @@ export default function AccInfo({group} : GroupInfoProps) {
             }
         }
 
-        const payload: {row: string, value: string}[] = [];
-        if (newName !== "" && newName !== user.username) payload.push({row:"username", value:newName});
-        if (newDesc !== user.bio) payload.push({row:"bio", value:newDesc});
-
-        if (payload.length < 1) return
-
-        try {
-            const res = await api.post(`${API_URL}updategroup`, payload);
-            if (res.data.success) {
-                await refetchGroup(id);
-                showNotification("success", "Данные обновлены");
-            } else {
+        if (updates.length > 0) {
+            try {
+                const res = await api.post(`${API_URL}updategroup`, {
+                    group: id,        // ← добавляем ID группы
+                    updates           // ← массив изменений
+                });
+                if (res.data.success) {
+                    await refetchGroup(id);
+                    await refetchContactsWTLoading(); // если нужно обновить список чатов
+                    showNotification("success", "Данные обновлены");
+                } else {
                 showNotification("error", res.data.error || "Не удалось обновить данные");
+                }
+            } catch {
+                showNotification("error", "Не удалось обновить данные");
             }
-        } catch {
-            showNotification("error", "Не удалось обновить данные")
         }
         setRed(false);
     }
@@ -116,7 +124,14 @@ export default function AccInfo({group} : GroupInfoProps) {
                 </div>
                 <div className="groupButtsWrapper">
                     {redactable && (
-                        <div className="groupInfoButt" onClick={() => handleSave()}>
+                        <div className="groupInfoButt" onClick={() => {
+                            if (red) {
+                                handleSave()
+                                setRed(false)
+                            } else {
+                                setRed(true)
+                            }
+                        }}>
                             {red ? "Сохранить" : "Редактировать"}
                         </div>   
                     )}
