@@ -133,7 +133,7 @@ export default function CreateChat() {
                                     <Camera />
                                 )}
                             </div>
-                            <span>{con.username || con.nick}</span>
+                            <span>{con.name || con.nick}</span>
                             <div className="createChatConRemove">
                                 <X />
                             </div>
@@ -158,7 +158,7 @@ export default function CreateChat() {
                                     <Camera />
                                 )}
                             </div>
-                            <span>{con.username || con.nick}</span>
+                            <span>{con.name || con.nick}</span>
                             <div className="createChatConCheck">
                                 {chosenCons.some(acc => acc.id === con.id) ? (
                                     <CheckCircle weight="fill" />
