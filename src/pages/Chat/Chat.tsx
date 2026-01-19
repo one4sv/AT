@@ -18,14 +18,15 @@ import { api } from "../../components/ts/api";
 import type { message } from "../../components/context/ChatContext";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import getCornerType from "./components/getCornet";
+import SystemMessage from "./components/SystemMessage";
 
 export default function Chat() {
     const { user } = useUser();
-    const { refetchChat, chatLoading, messages, chatWith } = useChat();
+    const { refetchChat, chatLoading, messages, chatWith, refetchGroupChat } = useChat();
     const { chosenMess, setChosenMess, isChose, setIsChose, pendingScrollId, setPendingScrollId } = useMessages();
     const { setTitle } = usePageTitle()
 
-    const { nick } = useParams();
+    const { nick, id } = useParams();
 
     const [search, setSearch] = useState("");
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -40,13 +41,16 @@ export default function Chat() {
     const API_URL = import.meta.env.VITE_API_URL
 
     useEffect(() => {
-        if (nick) {
-            setIsChose(false);
-            setChosenMess([]);
+        setIsChose(false);
+        setChosenMess([]);
+        if (id) {
+            refetchGroupChat(id);
+        }
+        else if (nick) {
             refetchChat(nick);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nick]);
+    }, [nick, id]);
 
     useEffect(() => {
         if (!user?.id) return;
@@ -170,10 +174,10 @@ export default function Chat() {
     }, [setIsChose, setChosenMess]);
 
     useEffect(() => {
-        if (!chatLoading && chatWith.nick === nick) {
-            setTitle(chatWith.username || chatWith.nick);
+        if (!chatLoading && chatWith && (chatWith.nick === nick || chatWith.id === id)) {
+            setTitle(chatWith.name || chatWith.nick);
         }
-    }, [chatLoading, chatWith]);
+    }, [chatLoading, chatWith, id, nick, setTitle]);
 
     if (chatLoading) return <Loader />;
 
@@ -246,6 +250,7 @@ export default function Chat() {
                     return (
                         <Fragment key={m.id}>
                             {needDivider && <DateDivider currDate={currDate} />}
+                            <SystemMessage m={m}/>
                             <Message
                                 message={m}
                                 highlightedId={highlightedId}

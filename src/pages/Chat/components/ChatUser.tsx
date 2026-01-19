@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronLeft, ChevronUp, CircleUserRound, X, Search } from "lucide-react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useUser } from "../../../components/hooks/UserHook";
 import { useChat } from "../../../components/hooks/ChatHook";
@@ -46,7 +46,6 @@ export default function ChatUser({
     const { setChosenMess, chosenMess, setIsChose, isChose, setRedirect } = useMessages()
     const { setBlackout } = useBlackout()
     const navigate = useNavigate();
-    const { nick } = useParams();
     
     const [ isSearchOpen, setIsSearchOpen ] = useState(false);
     const [ hovered, setHovered ] = useState(false);
@@ -92,7 +91,7 @@ export default function ChatUser({
 
     const handleMenuClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!chatUserRef.current) return;
+        if (!chatUserRef.current || !chatWith) return;
 
         if (menu.visible) {
             closeMenu()
@@ -105,7 +104,7 @@ export default function ChatUser({
 
         openMenu(x, y, "acc", {
             id: chatWith.id,
-            name: chatWith.username ? chatWith.username : chatWith.nick,
+            name: chatWith.name ? chatWith.name : chatWith.nick,
             nick: chatWith.nick
         }, undefined, {
             note: chatWith.note,
@@ -120,31 +119,38 @@ export default function ChatUser({
                 <ChevronLeft />
             </div>
             <div className={`chatUserInfo ${isMobile ? "mobile" : ""}`}
-                onClick={() => navigate(`/acc/${nick}`)} 
+                onClick={() => {
+                    if (!chatWith) return;
+                    if (chatWith.is_group) navigate(`/room/${chatWith.id}`)
+                    else navigate(`/acc/${chatWith.nick}`)
+                }} 
                 style={{display:search.length > 0 ? "none" : "flex"}} 
                 ref={nameRef}
                 onContextMenu={(e) => {
+                    if (!chatWith) return;
                     e.preventDefault()
-                    openMenu(e.clientX, e.clientY, "acc", {id:chatWith.id, name:chatWith.username ? chatWith.username : chatWith.nick, nick:chatWith.nick}, undefined,
+                    openMenu(e.clientX, e.clientY, "acc", {id:chatWith.id, name:chatWith.name ? chatWith.name : chatWith.nick, nick:chatWith.is_group ? `g/${chatWith.id}` : chatWith.nick}, undefined,
                         {note:chatWith.note, is_blocked:chatWith.is_blocked, pinned:chatWith.pinned}
                     )
                 }}
             >
                 <div className="chatUserPick">
-                    {chatWith.avatar_url ? (
-                        <img className="chatUserAvatar" src={chatWith.avatar_url} alt={chatWith.username ?? chatWith.nick} />
+                    {chatWith && chatWith.avatar_url ? (
+                        <img className="chatUserAvatar" src={chatWith.avatar_url} alt={chatWith.name ?? chatWith.nick} />
                     ) : (
                         <CircleUserRound/>
                     )}
                 </div>
                 <div className="chatUserName">
-                    <span>{chatWith.username ?? chatWith.nick}</span>
+                    <span>{chatWith ? chatWith.name || chatWith.nick : ""}</span>
                     <span className={`chatOnlineStauts ${typingStatus ? "chatTyping" : "chatStopTyping"}`}>
-                        {typingStatus
-                            ? "печатает..."
-                            : onlineMap[chatWith?.nick || ""]
-                                ? "В сети"
-                                : formatLastOnline(chatWith?.last_online)}
+                        { chatWith?.is_group
+                            ? `${chatWith.members.length} ${chatWith.members.length > 5 ? "участников" : "участника"}, ${chatWith.members.filter(m => onlineMap[m.nick]).length} в сети`
+                            : typingStatus
+                                ? "печатает..."
+                                : onlineMap[chatWith?.nick || ""]
+                                    ? "В сети"
+                                    : formatLastOnline(chatWith?.last_online)}
                     </span>
                 </div>
             </div>
@@ -190,13 +196,15 @@ export default function ChatUser({
                                             <div className="chatSearchPic">
                                                 {isMy && user.avatar_url ? (
                                                     <img src={user.avatar_url}/>
-                                                ) : !isMy && chatWith.avatar_url ? (
+                                                ) : !isMy && chatWith && chatWith.avatar_url && !chatWith.is_group ? (
                                                     <img src={chatWith.avatar_url}/>
-                                                ) : ("") }
+                                                ) : !isMy && chatWith && chatWith.members.find(member => member.id === m.sender_id)?.avatar_url && chatWith.is_group ? (
+                                                    <img src={chatWith.members.find(member => member.id === m.sender_id)?.avatar_url}/>
+                                                ) : ""}
                                             </div>
                                             <div className="chatSearchItemInfo">
                                                 <div className="chatSearcSender">
-                                                    <span className="chatSearchName">{isMy ? "Вы" : (chatWith?.username || chatWith.nick)}</span>
+                                                    <span className="chatSearchName">{isMy ? "Вы" : (m.sender_name || m.sender_nick)}</span>
                                                     <span className="chatSearchDate">{new Date(m.created_at).toLocaleDateString("ru-RU")}</span>
                                                 </div>
                                                 <div className="chatSearchText">

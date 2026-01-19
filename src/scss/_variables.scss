@@ -108,6 +108,7 @@ $decors: (
             hbgh: #ffffff99,
             buttBg:$mc,
             nodef:#00000000,
+            systemMessBg: #ffffff57,
         ),
         dark: (
             mc: #222222,
@@ -115,6 +116,7 @@ $decors: (
             hbgh: #222222,
             buttBg:$mc,
             nodef:#00000000,
+            systemMessBg: #44444457,
         )
     ),
     glass: (
@@ -124,6 +126,7 @@ $decors: (
             hbgh: #ffffff00,
             buttBg:#00000000,
             nodef:#ffffff99,
+            systemMessBg: #ffffff57,
         ),
         dark: (
             mc: #22222257,
@@ -131,6 +134,7 @@ $decors: (
             hbgh: #22222200,
             buttBg:#00000000,
             nodef:#22222257,
+            systemMessBg: #44444457,
         )
     )
 );

@@ -1,6 +1,5 @@
 import type { Media, message } from "../../../components/context/ChatContext";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
-import { useChat } from "../../../components/hooks/ChatHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useUser } from "../../../components/hooks/UserHook";
 import GetIconByType from "../utils/getIconByType";
@@ -8,7 +7,6 @@ import GetIconByType from "../utils/getIconByType";
 export default function MessageFiles({files, m} : {files:Media[], m:message}) {
     const { setBlackout } = useBlackout()
     const { user } = useUser()
-    const { chatWith } = useChat()
     const { openMenu } = useContextMenu()
     return (
         <div className="messageFiles">
@@ -28,7 +26,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                                 })();
                                 openMenu(e.clientX, e.clientY, "mess", { id:String(m.id), name:file.name, url:file.url }, undefined, undefined,
                                     { isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content ?? (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : "Пересланное сообщение"),
-                                    sender:m.sender_id === user.id ? user.username || user.nick! : chatWith.username || chatWith.nick! }
+                                    sender:m.sender_name }
                                 )
                             }}/>
                         ) : isVideo ? (

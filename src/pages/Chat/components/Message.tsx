@@ -29,13 +29,15 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
     const { user } = useUser()
     const { openMenu, menu } = useContextMenu()
     const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
-    
+
     const navigate = useNavigate()
     const messageGetTime = (date: Date | string) => {
         const d = new Date(date);
         return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
     const isMy = m.sender_id === user.id ? true : false
+
+    if (m.is_system) return null
 
     return (
         <div
@@ -70,7 +72,7 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                 openMenu(e.clientX, e.clientY, "mess", { id:String(m.id)}, undefined, undefined,
                     {
                         isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content || (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : "Пересланное сообщение"),
-                        sender:m.sender_id === user.id ? user.username || user.nick! : chatWith.username || chatWith.nick!,
+                        sender:m.sender_name,
                         files:m.files || undefined,
                     }
                 )
@@ -96,7 +98,11 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                 </div>
             )}
             <div className={`message ${ isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""}`}>
-                {!isMy && showNames && <div className="senderName" style={{cursor: isChose ? "default" : "pointer"}} onClick={() => !isChose && navigate(`/acc/${m.sender_nick}`)}>{m.sender_name}</div>}
+                {!isMy && (showNames === undefined || showNames === true) && chatWith?.is_group && 
+                    <div className="senderName" style={{cursor: isChose ? "default" : "pointer"}} onClick={() => !isChose && navigate(`/acc/${m.sender_nick}`)}>
+                        {m.sender_name}
+                    </div>
+                }
                 {answer && scrollToMessage && (
                     <AnswerMess answer={answer} scrollToMessage={scrollToMessage}/>
                 )}
@@ -135,7 +141,12 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                                         {reactionIcons[reaction]}
                                         <div className="reactionUsers">
                                             {users.slice(0, 2).map((userId) => {
-                                                const src = userId === user.id ? user.avatar_url : chatWith.avatar_url;
+                                                if (!chatWith) return null;
+                                                const src = userId === user.id
+                                                    ? user.avatar_url
+                                                    : chatWith.is_group 
+                                                        ? chatWith.members.find(m => m.id === userId)?.avatar_url
+                                                        : chatWith.avatar_url
                                                 return (
                                                     <div key={userId} className="reactionUser">
                                                         <img src={src!} alt="" />
@@ -149,8 +160,8 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                             </div>
                         )}
                     </div>
-                    {isMy && 
-                        (m.read_by.map(id => id.toString()).includes(chatWith.id) ? (
+                    {isMy && chatWith &&
+                        (m.read_by.map.length > 0 ? (
                             <div className="messageReadSign read"><CheckCheck/></div>
                         ) : (
                             <div className="messageReadSign unread"><Check/></div>

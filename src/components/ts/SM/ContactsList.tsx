@@ -8,8 +8,8 @@ export default function ContactsList() {
     return (
         <div className="contactsList SMlist">
             {list ? (
-                list.map((acc) => (
-                    <Contact acc={acc} key={acc.id}/>
+                list.map((contact) => (
+                    <Contact contact={contact} key={contact.id}/>
                 ))
             ) : (
                 <div className="contactsNothing">

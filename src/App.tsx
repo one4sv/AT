@@ -14,6 +14,7 @@ import Blackout from './components/ts/Blackout';
 import ThemeHandler from './components/hooks/themeHook';
 import ResponsiveLayout from './components/layout/ResponsiveLayout';
 import ContextMenu from './components/ts/ContextMenu';
+import Group from './pages/Group/Group';
 
 function App() {
   return (
@@ -34,7 +35,9 @@ function App() {
             <Route path="habit" element={<HabitPage />} />
             <Route path="habit/:habitId" element={<HabitPage />} />
             <Route path="chat/:nick" element={<Chat />} />
+            <Route path="chat/g/:id" element={<Chat />} />
             <Route path="acc/:nick" element={<Acc />} />
+            <Route path="room/:id" element={<Group />} />
             <Route path="acc" element={<Acc />} />
           </Route>
         </Routes>

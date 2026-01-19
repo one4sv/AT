@@ -10,17 +10,18 @@ import { useNavigate } from "react-router";
 const ChatContext = createContext<ChatContextType | null>(null);
 
 export interface chatWithType {
-    username?: string | null,
+    name?: string | null,
     nick: string,
     id: string,
-    last_online: string,
     avatar_url?: string | null,
     note:boolean,
     is_blocked:boolean,
     pinned:boolean,
-    am_i_blocked:boolean
+    am_i_blocked:boolean,
+    is_group:boolean,
+    members: { id:string, nick:string, avatar_url:string }[],
+    last_online: string,
 }
-
 export interface ReactionsType {
     user_id: string,
     reaction: string,
@@ -34,12 +35,12 @@ export interface Media {
 }
 
 export interface ChatContextType {
-    chatWith: chatWithType,
+    chatWith: chatWithType | null,
     refetchChat: (nick: string) => Promise<void>,
-    sendMess: (receiver_nick: string, text: string, files?: File[], answer_id?: string, redirect?:message[], showNames?:boolean) => Promise<boolean |  undefined>,
+    refetchGroupChat: (id: string) => Promise<void>,
     chatLoading: boolean,
     messages: message[],
-    list: Acc[],
+    list: Contact[],
     search: string,
     setSearch: React.Dispatch<React.SetStateAction<string>>,
     refetchContacts: () => Promise<void>,
@@ -49,7 +50,6 @@ export interface ChatContextType {
     handleTyping: (nick: string) => void,
     typingStatus: boolean,
     loadingList: boolean,
-    editMess:(messageId: number, text: string, newFiles: File[], keptUrls: string[], answer_id?: string)=>Promise<boolean | undefined>
 }
 
 export interface message {
@@ -69,19 +69,21 @@ export interface message {
     redirected_nick?: string | null,  
     redirected_content?: string | null, 
     redirected_files?: Media[] | null,  
-    redirected_answer?: number | null,  
+    redirected_answer?: number | null,
+    is_system: boolean,
 }
 
-export interface Acc {
+export interface Contact {
     id: string,
-    username: string | null,
+    name: string | null,
     nick: string,
     avatar_url?: string | null,
     lastMessage: message | null,
     unread_count: number,
     note:boolean,
     is_blocked:boolean,
-    pinned:boolean
+    pinned:boolean,
+    is_group:boolean,
 }
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
@@ -92,16 +94,16 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const API_URL = import.meta.env.VITE_API_URL;
     const API_WS = import.meta.env.VITE_API_WS;
 
-    const [chatWith, setChatWith] = useState<chatWithType>({ username: "", nick: "", id: "", last_online: "", note:true, is_blocked:false, pinned:false, am_i_blocked:false });
-    const [messages, setMessages] = useState<message[]>([]);
-    const [chatLoading, setChatLoading] = useState<boolean>(true);
-    const [list, setList] = useState<Acc[]>([]);
-    const [loadingList, setLoadingList] = useState(true);
-    const [search, setSearch] = useState<string>("");
-    const [onlineMap, setOnlineMap] = useState<Record<string, boolean>>({});
-    const [isTyping, setIsTyping] = useState(false);
-    const [typingStatus, setTypingStatus] = useState(false);
-
+    const [ chatWith, setChatWith ] = useState<chatWithType | null>(null);
+    const [ messages, setMessages ] = useState<message[]>([]);
+    const [ chatLoading, setChatLoading ] = useState<boolean>(true);
+    const [ list, setList ] = useState<Contact[]>([]);
+    const [ loadingList, setLoadingList ] = useState(true);
+    const [ search, setSearch ] = useState<string>("");
+    const [ onlineMap, setOnlineMap ] = useState<Record<string, boolean>>({});
+    const [ isTyping, setIsTyping ] = useState(false);
+    const [ typingStatus, setTypingStatus ] = useState(false);
+    
     const typingTimeout = useRef<number | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
     const chatWithRef = useRef<chatWithType>(chatWith);
@@ -115,12 +117,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setChatLoading(true);
             const res = await api.get(`${API_URL}chat/${nick}`);
             if (res.data.success) {
-                setChatWith({ username: res.data.user.username, nick: nick, id: res.data.user.id, avatar_url: res.data.user.avatar_url,
-                    last_online: res.data.user.last_online, note:res.data.user.note, is_blocked:res.data.user.is_blocked, pinned:res.data.user.pinned, am_i_blocked:res.data.user.am_i_blocked });
+                setChatWith({ name: res.data.user.username, nick: res.data.user.nick, id: res.data.user.id, avatar_url: res.data.user.avatar_url,
+                    last_online: res.data.user.last_online, note:res.data.user.note, is_blocked:res.data.user.is_blocked, pinned:res.data.user.pinned, am_i_blocked:res.data.user.am_i_blocked,
+                    is_group:false, members: [] });
                 setMessages(res.data.messages);
             } else {
                 showNotification("error", "Не удалось получить данные");
-                if (window.history.length > 1) {
+                if (window.history.length > 0) {
                     navigate(-1);
                 } else {
                     navigate("/");
@@ -128,58 +131,38 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             }
         } catch {
             showNotification("error", "Не удалось получить данные");
-            if (window.history.length > 1) {
-                navigate(-1);
+            if (window.history.length > 0) {
+                navigate('/');
             } else {
-                navigate("/");
+                // navigate("/");
             }
         } finally { 
             setChatLoading(false);
         }
     };
 
-    const sendMess = async (receiver_nick: string, text: string, files: File[] = [], answer_id?:string, redirect?:message[], showNames?:boolean) => {
-        if (!text.trim() && files.length === 0 && !redirect) return;
+    const refetchGroupChat = async (id: string) => {
+        setChatLoading(true);
         try {
-            const formData = new FormData();
-            formData.append("receiver_nick", receiver_nick);
-            formData.append("text", text);
-            if (redirect) {
-                const ids = [...new Set(redirect.map(m => m.id))]
-                formData.append("redirect", JSON.stringify(ids))
-                formData.append("showNames", showNames ? "1" : "0")
-            }
-            if (answer_id) formData.append("answer_id", answer_id)
-            files.forEach(file => formData.append("files", file));
-
-            const res = await api.post(`${API_URL}chat`, formData)
+            const res = await api.get(`${API_URL}chat/group/${id}`);
             if (res.data.success) {
-                refetchContactsWTLoading();
-                return true;
+                setChatWith({
+                    ...res.data.chat,
+                    is_group: true,
+                    last_online: "",
+                    nick: `group_${id}`,
+                })
+                setMessages(res.data.messages);
             }
-        } catch (error) {
-            console.error("Ошибка при отправке:", error);
-            showNotification("error", "Не удалось отправить сообщение");
-            return false;
-        }
-    };
-
-    const editMess = async (messageId: number, text: string, newFiles: File[] = [], keptUrls: string[] = [], answer_id?: string) => {
-        try {
-            const formData = new FormData();
-            formData.append("text", text);
-            if (answer_id) formData.append("answer_id", answer_id);
-            formData.append("kept_urls", JSON.stringify(keptUrls));
-            newFiles.forEach(file => formData.append("files", file));
-            const res = await api.patch(`${API_URL}messages/${messageId}`, formData)
-            if (res.data.success) {
-                refetchContactsWTLoading();
-                return true;
+        } catch {
+            showNotification("error", "Не удалось получить данные группы");
+            if (window.history.length > 0) {
+                navigate("/");
+            } else {
+                navigate("/");
             }
-        } catch (error) {
-            console.error("Ошибка при редактировании:", error);
-            showNotification("error", "Не удалось отредактировать сообщение");
-            return false;
+        } finally {
+            setChatLoading(false);
         }
     };
 
@@ -188,7 +171,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await api.post(`${API_URL}contacts`, { search });
             if (res.data.success) {
-                const sortedList = res.data.friendsArr.slice().sort((a:Acc, b:Acc) => {
+                const sortedList = res.data.friendsArr.slice().sort((a:Contact, b:Contact) => {
                     if (a.pinned !== b.pinned) {
                         return a.pinned ? -1 : 1; 
                     }
@@ -221,7 +204,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             const data = JSON.parse(event.data);
             if (data.type === "NEW_MESSAGE") {
                 const messageSenderId = String(data.message.sender_id);
-                if (messageSenderId === user.id || messageSenderId === chatWithRef.current.id) {
+                if (messageSenderId === user.id || (chatWithRef.current && messageSenderId === chatWithRef.current.id) || (chatWithRef.current?.is_group)) {
                     setMessages(prev => {
                         return [...prev, data.message];
                     });
@@ -238,17 +221,25 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     showBrowserNotification(senderName, {
                         body: bodyText,
                         icon: "/favicon.png",
-                        url: `/chat/${data.nick}`,  // Изменено на data.nick
+                        url: data.is_group
+                            ? `/chat/g/${data.chat_id}`
+                            : `/chat/${data.nick}`,  // Изменено на data.nick
                     });
                 }
             }
-            if (data.type === "USER_STATUS") {
+            if (data.type === "USER_STATUS" && chatWith?.is_group === false) {
                 setOnlineMap(prev => ({ ...prev, [data.nick]: data.isOnline }));  // Изменено на [data.nick]
-                if (chatWithRef.current.nick === data.nick) {  // Изменено на .nick
-                    setChatWith(prev => ({
-                        ...prev,
-                        last_online: data.isOnline ? "" : data.last_online || prev.last_online,
-                    }));
+                if (chatWithRef.current && "nick" in chatWithRef.current && chatWithRef.current.nick === data.nick) {  // Изменено на .nick
+                    setChatWith(prev => {
+                        if (!prev || prev.is_group) return prev;
+
+                        return {
+                            ...prev,
+                            last_online: data.isOnline
+                            ? ""
+                            : data.last_online || prev.last_online,
+                        };
+                    });
                 }
             }
             if (data.type === "MESSAGE_READ") {
@@ -284,13 +275,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     })
                 );
             }
-            if (data.type === "TYPING") {
-                if (data.from === chatWithRef.current.nick) {
+            if (data.type === "TYPING" && chatWith?.is_group === false) {
+                if (chatWithRef.current && "nick" in chatWithRef.current && data.from === chatWithRef.current.nick) {
                     setTypingStatus(true);
                 }
             }
-            if (data.type === "STOP_TYPING") {
-                if (data.from === chatWithRef.current.nick) {
+            if (data.type === "STOP_TYPING" && chatWith?.is_group === false) {
+                if (chatWithRef.current && "nick" in chatWithRef.current && data.from === chatWithRef.current.nick) {
                     setTypingStatus(false);
                 }
             }
@@ -355,8 +346,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     return (
-        <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, sendMess, messages, list, setSearch, search,
-            refetchContacts, onlineMap, setReaction, handleTyping, typingStatus, loadingList, refetchContactsWTLoading, editMess }}>
+        <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, messages, list, setSearch, search,
+            refetchContacts, onlineMap, setReaction, handleTyping, typingStatus, loadingList, refetchContactsWTLoading, refetchGroupChat }}>
             {children}
         </ChatContext.Provider>
     );

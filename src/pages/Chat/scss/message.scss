@@ -18,7 +18,6 @@
     &.corner-single {
         border-radius: 12px;
     }
-
     &.corner-first {
         border-radius: 12px 12px 0 0; // скругление только сверху
     }
@@ -30,6 +29,19 @@
     &.corner-middle {
         border-radius: 0; // без скруглений
     }
+}
+.systemMessage {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 1vh auto;
+    background-color: var(--systemMessBg);
+    color: var(--tc);
+    border-radius: 12px;
+    justify-content: center;
+    align-items: center;
+    min-height: 3vh;
 }
 .messChoseButt {
     height: 2.5vh;
@@ -51,7 +63,7 @@
 }
 .dateDivider {
     position: sticky;
-    top: 2vh;
+    top: 1vh;
     z-index: 2;
     background-color: var(--mc);
     width: fit-content;
@@ -291,7 +303,8 @@
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-
+    cursor: pointer;
+    
     &:hover {
         transform: scale(1.01);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

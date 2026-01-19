@@ -17,7 +17,7 @@ export default function Acc() {
     const { user } = useUser();
     const { refetchAcc, loading, media, posts, habits, acc, privateRules, refetchPosts } = useAcc()
     const { newBio, setNewBio, newMail, setNewMail } = useUpUser();
-    const { nick } = useParams();
+    const { nick, id } = useParams();
     const { setTitle } = usePageTitle()
 
     const navigate = useNavigate();
@@ -32,9 +32,8 @@ export default function Acc() {
 
     useEffect(() => {
         if (!user?.id) return;
-
         if (!nick) {
-            navigate(`/acc/${user.id}`, { replace: true });
+            navigate(`/acc/${user.nick}`, { replace: true });
             return;
         }
         const my = nick === user.nick;
@@ -47,7 +46,7 @@ export default function Acc() {
                 refetchPosts(nick)
             ]);
         })();
-    }, [nick, user.id, refetchAcc, navigate, refetchPosts, user.nick]);
+    }, [nick, user.id, refetchAcc, navigate, refetchPosts, user.nick, id]);
 
     useEffect(() => {
         if (acc && !loading && acc.nick === nick) {

@@ -1,4 +1,4 @@
-import type { Acc } from "../context/ChatContext";
+import type { Contact } from "../context/ChatContext";
 import { PushPin, SpeakerSimpleX } from "@phosphor-icons/react"
 import { Check, CheckCheck, CircleUserRound } from "lucide-react"
 import { isMobile } from "react-device-detect"
@@ -8,18 +8,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDrop } from "../hooks/DropHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useMessages } from "../hooks/MessagesHook";
+import { useUser } from "../hooks/UserHook";
 
 export interface ContactType {
-    acc:Acc
+    contact:Contact
 }
 
-export default function Contact({acc}:ContactType) {
+export default function Contact({contact}:ContactType) {
     const { onlineMap, typingStatus } = useChat()
     const { setBlackout } = useBlackout()
     const { openMenu } = useContextMenu()
     const { setDroppedFiles } = useDrop()
     const { setIsChose } = useMessages()
-
+    const { user } = useUser()
     const { nick } = useParams<{ nick: string }>()
     const navigate = useNavigate()
 
@@ -51,38 +52,39 @@ export default function Contact({acc}:ContactType) {
     };
 
     return (
-        <div className={`contactsUser ${nick === acc.nick ? "active" : "" }`} key={acc.id} onClick={() => {
-            navigate(`/chat/${acc.nick}`)
+        <div className={`contactsUser ${nick === contact.nick ? "active" : "" }`} key={contact.id} onClick={() => {
+            if (contact.is_group) navigate(`/chat/g/${contact.id}`)
+            else navigate(`/chat/${contact.nick}`)
             setBlackout({seted:false})
             setIsChose(false)
         }} onContextMenu={(e) => {
             e.preventDefault()
-            openMenu(e.clientX, e.clientY, "chat", {id:acc.id, isMy:acc.lastMessage?.id !== undefined, name:acc.username ? acc.username : acc.nick, nick:acc.nick}, undefined, {note:acc.note, is_blocked:acc.is_blocked, pinned:acc.pinned})
+            openMenu(e.clientX, e.clientY, "chat", {id:contact.id, isMy:contact.lastMessage?.id !== undefined, name:contact.name ? contact.name : contact.nick, nick:contact.nick}, undefined, {note:contact.note, is_blocked:contact.is_blocked, pinned:contact.pinned})
         }}
         onDragOver={(e) => e.preventDefault()} onDrop={(e) => {
             e.preventDefault();
-            handleDrop(e, acc.nick);
+            handleDrop(e, contact.nick);
         }}
         >
             <div className="contactsUserPic">
-                {acc.avatar_url ? (
-                    <img className="contactsUserAvatar" src={acc.avatar_url} alt={acc.username ?? acc.nick} />
+                {contact.avatar_url ? (
+                    <img className="contactsUserAvatar" src={contact.avatar_url} alt={contact.name ?? contact.nick} />
                 ) : (
                     <CircleUserRound/>
                 )}
-                <div className={`contactOnlineStauts ${nick !== acc.nick && onlineMap[acc?.nick || ""] ? "online" : "offline"}`}></div>
+                <div className={`contactOnlineStauts ${nick !== contact.nick && onlineMap[contact?.nick || ""] ? "online" : "offline"}`}></div>
             </div>
             <div className={`contactsUserInfo ${isMobile ? "mobile" : ""}`}>
                 <div className="contactsUserStr">
-                    <span className="nameSpan">{acc.username ? acc.username: acc.nick} {acc.note ? "" : <SpeakerSimpleX weight="fill"/>} {acc.pinned ? <PushPin weight="fill"/> : ""}</span>
-                    {!acc.lastMessage && (
-                        <span className="secSpan">{acc.username ? `| ${acc.nick}`: ""}</span>
+                    <span className="nameSpan">{contact.name ? contact.name: contact.nick} {contact.note ? "" : <SpeakerSimpleX weight="fill"/>} {contact.pinned ? <PushPin weight="fill"/> : ""}</span>
+                    {!contact.lastMessage && (
+                        <span className="secSpan">{contact.name ? `| ${contact.nick}`: ""}</span>
                     )}
-                    {acc.lastMessage?.sender_id === acc.id ? (
-                        acc.unread_count > 0 && (
-                            <div className="contactsUnreadCount">{acc.unread_count}</div>
+                    {contact.lastMessage?.sender_id !== user.id ? (
+                        contact.unread_count > 0 && (
+                            <div className="contactsUnreadCount">{contact.unread_count}</div>
                     )) : (
-                        acc.lastMessage && acc.lastMessage?.read_by.length > 0 ? (
+                        contact.lastMessage && contact.lastMessage?.read_by.length > 0 ? (
                             <CheckCheck className="isReadCL" height={18}/>
                         ):(
                             <Check className="isReadCL" height={18}/>
@@ -92,22 +94,26 @@ export default function Contact({acc}:ContactType) {
                 {typingStatus ? 
                     "Печатает..."
                 :
-                    acc.lastMessage && (
+                    contact.lastMessage && (
                         <div className={`lastMess ${isMobile ? "mobile" : ""}`}>
                             <div>
-                                {acc.lastMessage.sender_id !== acc.id && <span>Вы: </span>}
-                                <span className={`lmc ${!acc.lastMessage.content && "lmcExtra"}`}>
-                                    {acc.lastMessage.content ? (
-                                        <span>{acc.lastMessage.content}</span>
-                                    ) : (
+                                {!contact.lastMessage.is_system && (
+                                    contact.lastMessage.sender_id === user.id
+                                        ? <span>Вы:</span>
+                                        : contact.is_group && <span>{contact.lastMessage.sender_name}:</span>
+                                )
+                                }
+                                <span className={`lmc ${!contact.lastMessage.content || contact.lastMessage.is_system ? "lmcExtra" : ""}`}>
+                                    {contact.lastMessage.content ? (
+                                        <span>{contact.lastMessage.content}</span>
+                                    ) : contact.lastMessage.files?.length ? 
+                                        (`${contact.lastMessage.files.length} mediafile${contact.lastMessage.files.length > 1 ? "s" : ""}`)
+                                    : (
                                         "Пересланное сообщение"
                                     )}
-                                    {acc.lastMessage.files?.length ? 
-                                            (`${acc.lastMessage.files.length} mediafile${acc.lastMessage.files.length > 1 ? "s" : ""}`)
-                                    : ""}
                                 </span>
                             </div>
-                            <span>{messageGetTime(acc.lastMessage.created_at)}</span>
+                            <span>{messageGetTime(contact.lastMessage.created_at)}</span>
                         </div>
                     )
                 }

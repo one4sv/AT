@@ -5,11 +5,12 @@ import { useUpUser } from "../hooks/UpdateUserHook"
 import Cropper from "react-easy-crop"
 import type { Area } from "react-easy-crop"
 import getCroppedImg from "../ts/utils/cropImage"
+import { useGroup } from "../hooks/GroupHook"
 
 export const PickHandler = () => {
     const { blackout, setBlackout } = useBlackout()
     const { setNewPick } = useUpUser()
-
+    const { setNewAva } = useGroup()
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1)
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
@@ -21,7 +22,8 @@ export const PickHandler = () => {
     const cropImageHandler = async () => {
         if (!blackout.pick || !croppedAreaPixels) return
         const croppedFile = await getCroppedImg(blackout.pick, croppedAreaPixels)
-        setNewPick(croppedFile)
+        if (location.pathname.includes("/room")) setNewAva(croppedFile)
+        if (location.pathname.includes("/acc")) setNewPick(croppedFile)
         setBlackout({ seted: false })
     }
 

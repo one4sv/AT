@@ -1,0 +1,57 @@
+@use "../../../scss/global" as var;
+@use "./GroupMembers.scss";
+
+.groupDiv {
+    width: 60%;
+    margin: 0 auto;
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &.mobile {
+        width: 90%;
+        height: 100%;
+    }
+}
+.groupInfo {
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 1vh;
+    position: relative;
+    padding: 1vh 0.5vw;
+    background-color: var(--nodef);
+    padding: 0.5vh 0.5vw;
+    backdrop-filter: blur(12px);
+}
+.groupInfoWrapper {
+    display: flex;
+    width: 100%;
+}
+.groupButtsWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: column;
+    position: relative;   
+    gap: 0.5vh;
+}
+.groupInfoButt {
+    right: 0;
+    height: 3.5vh;
+    padding: 1vh 0;
+    width: 10vw;
+    color: var(--borderWh);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    background-color: var(--systemMessBg);
+    cursor: pointer;
+    &:hover {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
+    }
+}

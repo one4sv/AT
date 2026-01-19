@@ -11,6 +11,6 @@ export default function DateDivider({currDate, notop}:{currDate:Date, notop?:boo
         return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long" });
     }
     return (
-        <div className="dateDivider" style={{ top:notop ? "0vh" : "2vh" }}>{formatDateLabel(currDate)}</div>
+        <div className="dateDivider" style={{ top:notop ? "0vh" : "1vh" }}>{formatDateLabel(currDate)}</div>
     )
 }

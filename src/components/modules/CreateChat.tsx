@@ -3,7 +3,7 @@ import '../../scss/modules/CreateChat.scss';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useChat } from '../hooks/ChatHook';
 import { Search } from 'lucide-react';
-import type { Acc } from '../context/ChatContext';
+import type { Contact } from '../context/ChatContext';
 import { api } from '../ts/api';
 import { useNote } from '../hooks/NoteHook';
 import { LoaderSmall } from '../ts/LoaderSmall';
@@ -18,9 +18,9 @@ export default function CreateChat() {
     const [ name, setName ] = useState<string>("")
     const [ desc, setDesc ] = useState<string>("")
     const [ createChatSearch, setCreateChatSearch ] = useState<string>(search)
-    const [ createChatList, setCreateChatList ] = useState<Acc[]>(list)
+    const [ createChatList, setCreateChatList ] = useState<Contact[]>(list)
     const [ loadingList, setLoadingList ] = useState<boolean>(false);
-    const [ chosenCons, setChosenCons ] = useState<Acc[]>([]);
+    const [ chosenCons, setChosenCons ] = useState<Contact[]>([]);
     const [ pick, setPick ] = useState<File | null>(null);
     const [ loadingCreateChat, setLoadingCreateChat ] = useState<boolean>(false);
 
@@ -31,7 +31,7 @@ export default function CreateChat() {
         try {
             const res = await api.post(`${API_URL}contacts`, { search: createChatSearch });
             if (res.data.success) {
-                const sortedList = res.data.friendsArr.slice().sort((a:Acc, b:Acc) => {
+                const sortedList = res.data.friendsArr.slice().sort((a:Contact, b:Contact) => {
                     if (a.pinned !== b.pinned) {
                         return a.pinned ? -1 : 1; 
                     }
@@ -41,7 +41,7 @@ export default function CreateChat() {
 
                     return timeB - timeA;
                 });
-                setCreateChatList(sortedList);
+                setCreateChatList(sortedList.filter((con:Contact) => !con.is_group));
             }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {

@@ -11,10 +11,12 @@ import { useMessages } from "../../../components/hooks/MessagesHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { MessBarBlock } from "../utils/MessBarBlock";
 import type { Media } from "../../../components/context/ChatContext";
+import { useSendMess } from "../../../components/hooks/SendMessHook";
 
 export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { showGoDown:boolean, handleGoDown:()=> void, scrollToMessage:(id:number) => void}) {
-    const { sendMess, handleTyping, chatWith, chatLoading, editMess } = useChat()
-    const { nick } = useParams()
+    const { handleTyping, chatWith, chatLoading } = useChat()
+    const { sendMess, editMess } = useSendMess()
+    const { nick, id } = useParams()
     const { droppedFiles, setDroppedFiles } = useDrop()
     const { answer, editing, setEditing, redirect, setRedirect, showNames, setShowNames } = useMessages()
     const { menuRef } = useContextMenu()
@@ -66,7 +68,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
     const handleSend = async () => {
         const trimmedMess = mess.trim();
         const hasContent = trimmedMess || files.length > 0 || (editing && oldMedia.length > 0) || redirect;
-        if (nick && hasContent) {
+        if ((nick || id) && hasContent) {
             setSending(true);
             try {
                 if (editing !== null) {
@@ -75,9 +77,9 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
                         setEditing(null);
                     }
                 } else {
-                    if (await sendMess(nick, trimmedMess, files, answer !== null ? answer.id : undefined, redirect, showNames)) {
+                    if (await sendMess({nick:nick, id:id}, trimmedMess, files, answer !== null ? answer.id : undefined, redirect, showNames)) {
                         setMess("")
-                        setOldMedia([])
+                        setFiles([])
                         setRedirect(undefined)
                         setShowChatBar(false)
                         setShowNames(true)
@@ -144,7 +146,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
     }, [nick]);
 
     useEffect(() => {
-        if (location.pathname.startsWith("/chat") && droppedFiles?.length > 0 && nick && !chatLoading) {
+        if (location.pathname.startsWith("/chat") && droppedFiles?.length > 0 && (nick || id) && !chatLoading) {
             setShowChatBar(true)
             setFiles((prev) => [
                 ...prev,
@@ -154,7 +156,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
         }
     }, [chatLoading, droppedFiles, location.pathname, nick, setDroppedFiles])
 
-    if (chatWith.am_i_blocked || chatWith.is_blocked) return (
+    if (chatWith && (chatWith.am_i_blocked || chatWith.is_blocked)) return (
         <div className="chatIsBlocked">
             {showGoDown && (
                 <div className="goDown" onClick={handleGoDown}>
