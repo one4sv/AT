@@ -3,7 +3,7 @@ import "../../scss/ContextMenu.scss"
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useDelete } from "../hooks/DeleteHook";
-import {  ChatTeardrop, Check, CheckCircle, Circle, CopySimple, Eye, EyeSlash, Heart, Link, PencilSimple, PushPin, PushPinSlash, ShareFat, Trash, User } from "@phosphor-icons/react";
+import {  ChatTeardrop, Check, CheckCircle, Circle, CopySimple, Eye, EyeSlash, Heart, Link, PencilSimple, PushPin, PushPinSlash, ShareFat, Trash, User, UserMinus, Users } from "@phosphor-icons/react";
 import { useUpHabit } from "../hooks/UpdateHabitHook";
 import { useDone } from "../hooks/DoneHook";
 import { useNavigate } from "react-router";
@@ -77,7 +77,14 @@ export default function ContextMenu() {
     )
 
     const linkButt = (
-        <div className="ContextMenuButt" onClick={() => {navigator.clipboard.writeText(`${CopyLink}/${point}/${point === "chat" || point === "acc" ? options?.nick : options?.id}`)}}>
+        <div className="ContextMenuButt" onClick={() => {
+            const link = point === "habit" ? `habit/${options.id}` :
+                point === "chat" ? (chatInfo?.is_group ? `chat/g/${options.id}` : `chat/${options.nick}`) :
+                point === "acc" ? (chatInfo?.is_group ? `room/${options.id}` : `acc/${options.nick}`) :
+                point === "member" ? `acc/${options.nick}` :
+                "";
+            navigator.clipboard.writeText(`${CopyLink}/${link}`)
+        }}>
             <Link/>
             Скопировать ссылку
         </div>
@@ -130,10 +137,17 @@ export default function ContextMenu() {
             {point === "chat" && (
                 <>
                     {linkButt}
-                    <div className="ContextMenuButt" onClick={() => navigate(`/acc/${options.nick}`)}>
-                        <User/>
-                        Открыть профиль
-                    </div>
+                    {chatInfo?.is_group ? (
+                        <div className="ContextMenuButt" onClick={() => navigate(`/room/${options.id}`)}>
+                            <Users/>
+                            Информация о чате
+                        </div>
+                    ) : (
+                        <div className="ContextMenuButt" onClick={() => navigate(`/acc/${options.nick}`)}>
+                            <User/>
+                            Открыть профиль
+                        </div>
+                    )}
                     <TogglePinned bool={chatInfo!.pinned} id={options.id}/>
                     {personButt}
                     {options && options.isMy && (
@@ -163,6 +177,23 @@ export default function ContextMenu() {
                     </div>
                     {linkButt}
                     {personButt}
+                </>
+            )}
+            {point === "member" && (
+                <>
+                    <div className="ContextMenuButt" onClick={() => navigate(`/acc/${options.nick}`)}>
+                        <User/>
+                        Открыть профиль
+                    </div>
+                    <div className="ContextMenuButt" onClick={() => navigate(`/chat/${options.nick}`)}>
+                        <ChatTeardrop/>
+                        Открыть чат
+                    </div>
+                    {linkButt}
+                    <div className="ContextMenuButt delete">
+                        <UserMinus />
+                        Исключить из группы
+                    </div>
                 </>
             )}
             {point === "mess" && curChat && setChosenMess && (

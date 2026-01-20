@@ -17,6 +17,7 @@ export interface chatInfoType {
     note:boolean,
     is_blocked:boolean,
     pinned:boolean,
+    is_group?:boolean,
 }
 export interface curChatType {
     isReacted?:string,

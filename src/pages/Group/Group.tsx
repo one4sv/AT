@@ -32,7 +32,6 @@ export default function Group() {
         }
     }, [group, groupLoading, id, setTitle]);
 
-    console.log(group);
     if (groupLoading) return <Loader/>;
 
     return (

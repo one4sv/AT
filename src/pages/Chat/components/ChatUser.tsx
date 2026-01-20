@@ -130,7 +130,7 @@ export default function ChatUser({
                     if (!chatWith) return;
                     e.preventDefault()
                     openMenu(e.clientX, e.clientY, "acc", {id:chatWith.id, name:chatWith.name ? chatWith.name : chatWith.nick, nick:chatWith.is_group ? `g/${chatWith.id}` : chatWith.nick}, undefined,
-                        {note:chatWith.note, is_blocked:chatWith.is_blocked, pinned:chatWith.pinned}
+                        {note:chatWith.note, is_blocked:chatWith.is_blocked, pinned:chatWith.pinned, is_group:chatWith.is_group}
                     )
                 }}
             >

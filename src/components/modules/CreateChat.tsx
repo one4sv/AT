@@ -1,6 +1,6 @@
 import { Camera, CheckCircle, Circle, X } from '@phosphor-icons/react';
 import '../../scss/modules/CreateChat.scss';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useChat } from '../hooks/ChatHook';
 import { Search } from 'lucide-react';
 import type { Contact } from '../context/ChatContext';
@@ -8,23 +8,25 @@ import { api } from '../ts/api';
 import { useNote } from '../hooks/NoteHook';
 import { LoaderSmall } from '../ts/LoaderSmall';
 import { useBlackout } from '../hooks/BlackoutHook';
+import CreateChatInfo from './components/CreateChatInfo';
+import InviteUser from './components/InviteUser';
+import { useGroup } from '../hooks/GroupHook';
 
 export default function CreateChat() {
-    const { list, search, refetchContacts } = useChat()
-    const { setBlackout } = useBlackout();
+    const { search, refetchContacts } = useChat()
+    const { setBlackout, blackout } = useBlackout();
+    const { members, refetchGroup, group } = useGroup() 
     const { showNotification } = useNote();
     const API_URL = import.meta.env.VITE_API_URL;
 
     const [ name, setName ] = useState<string>("")
     const [ desc, setDesc ] = useState<string>("")
+    const [ createChatList, setCreateChatList ] = useState<Contact[]>([])
     const [ createChatSearch, setCreateChatSearch ] = useState<string>(search)
-    const [ createChatList, setCreateChatList ] = useState<Contact[]>(list)
     const [ loadingList, setLoadingList ] = useState<boolean>(false);
     const [ chosenCons, setChosenCons ] = useState<Contact[]>([]);
     const [ pick, setPick ] = useState<File | null>(null);
     const [ loadingCreateChat, setLoadingCreateChat ] = useState<boolean>(false);
-
-    const inputFileRef =  useRef<HTMLInputElement>(null);
 
     const refetchCreateChat = useCallback(async () => {
         setLoadingList(true);
@@ -41,7 +43,13 @@ export default function CreateChat() {
 
                     return timeB - timeA;
                 });
-                setCreateChatList(sortedList.filter((con:Contact) => !con.is_group));
+                let filteredList = sortedList.filter((con:Contact) => !con.is_group)
+                if (blackout.point === "InviteUser") {
+                    filteredList = filteredList.filter((con:Contact) => 
+                        !members.some((member) => member.nick === con.nick)
+                    );
+                }
+                setCreateChatList(filteredList);
             }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
@@ -49,7 +57,7 @@ export default function CreateChat() {
         } finally {
             setLoadingList(false);
         }
-    }, [API_URL, createChatSearch, showNotification]);
+    }, [API_URL, blackout.point, createChatSearch, members, showNotification]);
 
     useEffect(() => {
         const timer = setTimeout(refetchCreateChat, 100);
@@ -59,27 +67,42 @@ export default function CreateChat() {
     const createChat = async () => {
         setLoadingCreateChat(true);
         const formData = new FormData();
-        formData.append("name", name);
-        formData.append("desc", desc);
+        let path = ""
+
         formData.append("members", JSON.stringify(chosenCons.map(con => con.id)));
-        if (pick) {
-            formData.append("pick", pick);
-        }
-        if (!name.trim()) {
-            showNotification("error", "Введите название чата");
-            return;
-        }
-        if (chosenCons.length < 1) {
-            showNotification("error", "Выберите хотя бы одного участника");
-            return;
+        if (blackout.point === "InviteUser") {
+            formData.append("group_id", group.id);
+            path = "group/addusers"
+        }  else {
+            if (!name.trim()) {
+                showNotification("error", "Введите название чата");
+                return;
+            }
+            if (chosenCons.length < 1) {
+                showNotification("error", "Выберите хотя бы одного участника");
+                return;
+            }
+            formData.append("name", name);
+            formData.append("desc", desc);
+            if (pick) {
+                formData.append("pick", pick);
+            }
+            path = "createchat"
         }
         try {
-            const res = await api.post(`${API_URL}createchat`, formData);
-            if (res.data.success) {
-                showNotification("success", "Чат создан");
-                setBlackout({ seted: false });
-                refetchContacts();
-            }
+            const res = await api.post(`${API_URL}${path}`, formData);
+                if (res.data.success) {
+                    if (blackout.point === "InviteUser") {
+                        await refetchGroup(group.id);
+                    } else {
+                        showNotification("success", "Чат создан");
+                        setName("");
+                        setDesc("");
+                        setPick(null);
+                    }
+                }
+            setBlackout({ seted: false });
+            refetchContacts();
         } catch (error) {
             const err = error as { response?: { data?: { error?: string } } };
             showNotification("error", err?.response?.data?.error || "Не удалось создать чат");
@@ -91,31 +114,12 @@ export default function CreateChat() {
     
     return (
         <div className="createChatDiv">
-            <div className="createChatInfo">
-                <div className="creteChatStr">
-                    <input type="file" accept="image/*" hidden ref={inputFileRef} onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) setPick(file);
-                    }}/>
-                    <div className="creteChatPickPre" onClick={() => inputFileRef.current?.click()}>
-                        {pick ? (
-                            <img src={URL.createObjectURL(pick)} className="createChatPick" alt="Chat Avatar Preview"/>
-                        ) : <Camera />}
-                    </div>
-                    <div className="createChatWrapper">
-                        <label htmlFor="createChatname">Название</label>
-                        <input type="text" id="createChatname" className='createChatname' value={name} onChange={(e) => setName(e.target.value)} maxLength={40} minLength={3}/>
-                        <span>{name.length}/40</span>
-                    </div>
-                </div>
-                <div className="creteChatStr">
-                    <div className="createChatWrapper">
-                        <label htmlFor="createChatDesc">Описание</label>
-                        <textarea id="createChatDesc" className='createChatDesc' value={desc} onChange={(e) => setDesc(e.target.value)} maxLength={150}/>
-                        <span>{desc.length}/150</span>
-                    </div>
-                </div>
-            </div>
+            {blackout.point === "InviteUser" ? (
+                <InviteUser />
+            ) : (
+                <CreateChatInfo pick={pick} setPick={setPick} name={name} setName={setName} desc={desc} setDesc={setDesc}/>
+            )}
+            
             <div className="createChatList">
                 <div className="createChatSearch">
                     <input type="text" name="searchList" id="searchList" value={createChatSearch} onChange={(e) => setCreateChatSearch(e.target.value)}/>
@@ -170,14 +174,14 @@ export default function CreateChat() {
                     ))
                 )}
             </div>
-            <button className='createChatButt' disabled={chosenCons.length < 1 || name.trim() === ""} onClick={() => {
-                if (chosenCons.length < 1 || name.trim() === "") return
+            <button className='createChatButt' disabled={chosenCons.length < 1 || (name.trim() === "" && blackout.point !== "InviteUser")} onClick={() => {
+                if (chosenCons.length < 1 || (name.trim() === "" && blackout.point !== "InviteUser")) return
                 createChat()
             }}>
                 {loadingCreateChat ? (
                     <LoaderSmall/>
                 ) : (
-                    "Создать"
+                    blackout.point === "InviteUser" ? "Подтвердить" : "Создать"
                 )}
             </button>
         </div>

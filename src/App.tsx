@@ -15,6 +15,7 @@ import ThemeHandler from './components/hooks/themeHook';
 import ResponsiveLayout from './components/layout/ResponsiveLayout';
 import ContextMenu from './components/ts/ContextMenu';
 import Group from './pages/Group/Group';
+import Join from './pages/Join';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             <Route path="chat/g/:id" element={<Chat />} />
             <Route path="acc/:nick" element={<Acc />} />
             <Route path="room/:id" element={<Group />} />
+            <Route path="join/:token" element={<Join />} />
             <Route path="acc" element={<Acc />} />
           </Route>
         </Routes>

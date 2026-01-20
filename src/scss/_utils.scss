@@ -57,7 +57,7 @@
   }
 }
 
-@mixin gradButt($w, $h, $padd-h, $padd-w, $grad, $gradH, $c, $shad, $bord) {
+@mixin gradButt($w, $h, $padd-h, $padd-w, $grad, $gradH, $c, $shad) {
     width: $w;
     height: $h;
     padding: $padd-h $padd-w;
@@ -71,7 +71,7 @@
     transition: background 0.3s ease, box-shadow 0.1s ease;
 
     &:hover {
-        background: linear-gradient$gradH;
+        background: linear-gradient($gradH);
         box-shadow: 0 0 $shad;
     }
 }

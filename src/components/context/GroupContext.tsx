@@ -31,12 +31,14 @@ export interface Group {
     name: string,
     desc:  string | null,
     avatar_url: string | null,
+    link: string | null,
+    invite_expires_at: string | null,
 }
 
 export const GroupProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
     const navigate = useNavigate();
-    const [ group, setGroup ] = useState<Group>({ id: "", name: "", desc: null, avatar_url: null });
+    const [ group, setGroup ] = useState<Group>({ id: "", name: "", desc: null, avatar_url: null, link: "", invite_expires_at: null });
     const [ media, setMedia ] = useState<Media[]>([]);
     const [ members, setMembers ] = useState<Member[]>([]);  
     const [ habits, setHabits ] = useState<Habit[]>([]);
@@ -49,9 +51,15 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await api.get(`${API_URL}group/${id}`);
             if (res.data.success) {
-                setGroup(res.data.acc);
+                setGroup(res.data.group);
                 setHabits(res.data.habits);
-                setMembers(res.data.members);
+                const sortedMembers = res.data.members.slice().sort((a:Member, b:Member) => {
+                    const timeA = a.last_online ? new Date(a.last_online).getTime() : 0;
+                    const timeB = b.last_online ? new Date(b.last_online).getTime() : 0;
+
+                    return timeB - timeA;
+                });
+                setMembers(sortedMembers);
                 setMedia(res.data.media);
             } else {
                 showNotification("error", "Не удалось найти группу");

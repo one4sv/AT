@@ -83,14 +83,14 @@
 }
 
 .whiteButt {
-    @include var.gradButt(15vw, 4vh, 2px, 4px, (135deg, #ffffff, #ffffff), (135deg, #ffffff, #ececec), black, 20px #ffffff, black);
+    @include var.gradButt(15vw, 4vh, 2px, 4px, (135deg, #ffffff, #ffffff), (135deg, #ffffff, #ececec), black, 20px #ffffff);
     margin-bottom: 1vh;
     &.mobile {
         width: 70vw;
     }
 }
 .greenButt {
-    @include var.gradButt(15vw, 4vh, 2px, 4px, (135deg, #27c827, #0eb408), (135deg, #27c827, #d3ff6f), var(--tc), 20px #70ff70, #2b9c2b);
+    @include var.gradButt(15vw, 4vh, 2px, 4px, (135deg, #27c827, #0eb408), (135deg, #27c827, #d3ff6f), var(--tc), 20px #70ff70);
     margin-bottom: 0.2vh;
     &.mobile {
         width: 70vw;

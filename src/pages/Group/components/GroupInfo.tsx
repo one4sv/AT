@@ -14,7 +14,7 @@ interface GroupInfoProps {
     group: Group | undefined,
 }
 
-export default function AccInfo({group} : GroupInfoProps) {
+export default function GroupInfo({group} : GroupInfoProps) {
     const { setBlackout } = useBlackout();
     const { user } = useUser()
     const { refetchGroup, members, newAva } = useGroup()

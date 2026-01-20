@@ -1,0 +1,39 @@
+@use "./global.scss" as var;
+
+.joinDiv {
+    width: 60%;
+    margin: 0 auto;
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    > div > div > textarea {
+        pointer-events: none;
+    }
+    
+    &.mobile {
+        width: 90%;
+        height: 100%;
+    }
+}
+.joinMain {
+    position: relative;
+    top: 10vh;
+    background-color: var(--mc);
+    border-radius: 20px;
+    padding: 1vh 1vw;
+}
+.joinWord {
+    font-size: 2rem;
+    color: var(--tc);
+    text-align: center;
+    margin-bottom: 2vh;
+}
+.joinAccept {
+    margin-top: 2vh;
+    text-align: center;
+}
+.joinAcceptButt {
+    @include var.gradButt(18vw, 5vh, 0, 0, (135deg, var(--acsent), var(--darkerAcsent)), (135deg, var(--acsent), var(--darkerAcsent)), white, 20px var(--acsent));
+}

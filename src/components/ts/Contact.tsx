@@ -59,7 +59,11 @@ export default function Contact({contact}:ContactType) {
             setIsChose(false)
         }} onContextMenu={(e) => {
             e.preventDefault()
-            openMenu(e.clientX, e.clientY, "chat", {id:contact.id, isMy:contact.lastMessage?.id !== undefined, name:contact.name ? contact.name : contact.nick, nick:contact.nick}, undefined, {note:contact.note, is_blocked:contact.is_blocked, pinned:contact.pinned})
+            openMenu(e.clientX, e.clientY, "chat",
+                {id:contact.id, isMy:contact.lastMessage?.id !== undefined, name:contact.name ? contact.name : contact.nick, nick:contact.nick},
+                undefined,
+                {note:contact.note, is_blocked:contact.is_blocked, pinned:contact.pinned, is_group:contact.is_group}
+            )
         }}
         onDragOver={(e) => e.preventDefault()} onDrop={(e) => {
             e.preventDefault();
@@ -91,18 +95,19 @@ export default function Contact({contact}:ContactType) {
                         )
                     )}
                 </div>
-                {typingStatus ? 
-                    "Печатает..."
-                :
-                    contact.lastMessage && (
+                {typingStatus
+                    ?  "Печатает..."
+                    : contact.lastMessage && (
                         <div className={`lastMess ${isMobile ? "mobile" : ""}`}>
                             <div>
-                                {!contact.lastMessage.is_system && (
+                                {contact.lastMessage.is_system
+                                ? (
+                                    contact.is_group && <span className="lmc lmcExtra">{contact.lastMessage.sender_name}</span>
+                                ) : (
                                     contact.lastMessage.sender_id === user.id
                                         ? <span>Вы:</span>
                                         : contact.is_group && <span>{contact.lastMessage.sender_name}:</span>
-                                )
-                                }
+                                )}
                                 <span className={`lmc ${!contact.lastMessage.content || contact.lastMessage.is_system ? "lmcExtra" : ""}`}>
                                     {contact.lastMessage.content ? (
                                         <span>{contact.lastMessage.content}</span>
