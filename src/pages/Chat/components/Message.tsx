@@ -145,13 +145,17 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                                                 const src = userId === user.id
                                                     ? user.avatar_url
                                                     : chatWith.is_group 
-                                                        ? chatWith.members.find(m => m.id === userId)?.avatar_url
+                                                        ? chatWith.members.find(m => m.id === userId)
+                                                            ? chatWith.members.find(m => m.id === userId)?.avatar_url
+                                                            : ""
                                                         : chatWith.avatar_url
-                                                return (
-                                                    <div key={userId} className="reactionUser">
-                                                        <img src={src!} alt="" />
-                                                    </div>
-                                                );
+                                                if (src) {
+                                                    return (
+                                                        <div key={userId} className="reactionUser">
+                                                            <img src={src} alt="" />
+                                                        </div>
+                                                    );
+                                                }
                                             })}
                                             {users.length > 2 && <span>+{users.length - 2}</span>}
                                         </div>

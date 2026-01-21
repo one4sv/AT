@@ -197,7 +197,7 @@ export default function ContextMenu() {
                     )}
                 </>
             )}
-            {point === "member" && curChat && (
+            {point === "member" && memberInfo && (
                 <>
                     <div className="ContextMenuButt" onClick={() => navigate(`/acc/${options.nick}`)}>
                         <User/>

@@ -12,6 +12,7 @@ import { api } from "../ts/api";
 import Toggler from "../ts/toggler";
 import { useMessages } from "../hooks/MessagesHook";
 import { useGroup } from "../hooks/GroupHook";
+import axios from "axios";
 
 export default function DeleteConfirm() {
     const { user } = useUser()
@@ -75,7 +76,11 @@ export default function DeleteConfirm() {
             } else {
                 showNotification("error", res.data.message || "Не удалось удалить");
             }
-        } catch {
+        } catch (error) {
+            console.log(error)
+            if (axios.isAxiosError(error)) {
+                showNotification("error", error.response?.data?.error || "Не удалось получить данные группы");
+            }
             showNotification("error", "Не удалось удалить");
         }
     };

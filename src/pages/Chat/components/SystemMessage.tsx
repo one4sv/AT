@@ -7,7 +7,7 @@ export default function SystemMessage({m}:{m:message}) {
     if (!m.is_system) return null
     
     return (
-        // <div className="messageWrapper">
+        <div className="messageWrapper">
             <div className="systemMessage">
                 <span className="systemMessageSender" onClick={()=> navigate(`/acc/${m.sender_nick}`)}>
                     {m.sender_name}
@@ -17,7 +17,7 @@ export default function SystemMessage({m}:{m:message}) {
                     {m.content}
                 </span>
             </div>
-        // </div>
+        </div>
 
     )
 }
