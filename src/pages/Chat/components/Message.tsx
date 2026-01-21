@@ -37,8 +37,6 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
     }
     const isMy = m.sender_id === user.id ? true : false
 
-    if (m.is_system) return null
-
     return (
         <div
             className={`messageWrapper ${isChose ? "choosing" : ""} ${chosenMess.some(mess => mess.id === m.id) ? "chosen" : ""} ${highlightedId === m.id ? "highlight" : ""}

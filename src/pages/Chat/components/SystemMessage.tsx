@@ -3,8 +3,6 @@ import type { message } from "../../../components/context/ChatContext";
 
 export default function SystemMessage({m}:{m:message}) {
     const navigate = useNavigate()
-
-    if (!m.is_system) return null
     
     return (
         <div className="messageWrapper">

@@ -250,16 +250,19 @@ export default function Chat() {
                     return (
                         <Fragment key={m.id}>
                             {needDivider && <DateDivider currDate={currDate} />}
-                            <SystemMessage m={m}/>
-                            <Message
-                                message={m}
-                                highlightedId={highlightedId}
-                                messageRefs={messageRefs}
-                                answer={answer}
-                                redir_answer={redir_answer}
-                                scrollToMessage={answer ? scrollToMessage : undefined}
-                                cornerType={getCornerType(m.id, messages.map(msg => msg.id), chosenMess.map(cm => cm.id))}
-                            />
+                            {m.is_system ? (
+                                <SystemMessage m={m}/>
+                            ) : (
+                                <Message
+                                    message={m}
+                                    highlightedId={highlightedId}
+                                    messageRefs={messageRefs}
+                                    answer={answer}
+                                    redir_answer={redir_answer}
+                                    scrollToMessage={answer ? scrollToMessage : undefined}
+                                    cornerType={getCornerType(m.id, messages.map(msg => msg.id), chosenMess.map(cm => cm.id))}
+                                />
+                            )}
                         </Fragment>
                     );
                 }}
