@@ -28,7 +28,7 @@ function Notification() {
             <p
                 id="notificationHead"
             >
-                {type === "success" ? "Успешно!" : "Ошибка!"}
+                {type === "success" ? "Успешно!" : type === "info" ? "Уведомление" : "Ошибка!"}
             </p>
             <p id="notificationBody">{txt}</p>
         </div>

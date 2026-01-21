@@ -307,6 +307,29 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     }
                 }
             }
+            if (data.type === "KICKED_FROM_GROUP") {
+                const kickedGroupId = data.group_id;
+
+                showNotification("info", 
+                    data.reason === "kicked" 
+                    ? `Вы были исключены из группы "${data.group_name}"`
+                    : `Вы покинули группу "${data.group_name}"`
+                );
+
+                if (chatWith?.is_group && chatWith.id === kickedGroupId) {
+                    navigate("/");
+                }
+
+                if (location.pathname.startsWith("/room/")) {
+                    const currentId = location.pathname.split("/room/")[1];
+                    if (currentId === kickedGroupId) {
+                    navigate("/");
+                    }
+                }
+
+                // Обновляем список чатов (группа исчезнет из preview)
+                refetchContactsWTLoading();
+                }
             if (data.type === "TYPING" && chatWith?.is_group === false) {
                 if (chatWithRef.current && "nick" in chatWithRef.current && data.from === chatWithRef.current.id) {
                     setTypingStatus(true);

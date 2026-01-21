@@ -1,10 +1,11 @@
 import { createContext, useCallback, useEffect, useState, type ReactNode } from "react";
 import type { Habit } from "./HabitsContext";
 import { api } from "../ts/api";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useNote } from "../hooks/NoteHook";
 import type { Media } from "./ChatContext";
 import axios from "axios";
+import { useChat } from "../hooks/ChatHook";
 
 const GroupContext = createContext<GroupContextType | null>(null);
 
@@ -38,10 +39,9 @@ export interface Group {
 
 export const GroupProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
-
+    const { onlineMap } = useChat()
     const navigate = useNavigate();
     const API_URL = import.meta.env.VITE_API_URL;
-    const { id } = useParams<{ id: string }>();
 
     const [ group, setGroup ] = useState<Group>({ id: "", name: "", desc: null, avatar_url: null, link: "", invite_expires_at: null });
     const [ media, setMedia ] = useState<Media[]>([]);
@@ -56,12 +56,19 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
             if (res.data.success) {
                 setGroup(res.data.group);
                 setHabits(res.data.habits);
-                const sortedMembers = res.data.members.slice().sort((a:Member, b:Member) => {
+                const sortedMembers = res.data.members.slice().sort((a: Member, b: Member) => {
+                    const onlineA = onlineMap[a.id] || false;
+                    const onlineB = onlineMap[b.id] || false;
+
+                    if (onlineA !== onlineB) {
+                        return onlineA ? -1 : 1; // онлайн впереди (true < false)
+                    }
+
                     const timeA = a.last_online ? new Date(a.last_online).getTime() : 0;
                     const timeB = b.last_online ? new Date(b.last_online).getTime() : 0;
 
-                    return timeB - timeA;
-                });
+                    return timeB - timeA; // по убыванию времени
+                    });
                 setMembers(sortedMembers);
                 setMedia(res.data.media);
             } else {
@@ -86,7 +93,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         const handler = (e: CustomEvent) => {
-            if (group.id && e.detail === id) {
+            if (group.id && e.detail === group.id) {
                 refetchGroup(group.id);
             }
         };
@@ -96,7 +103,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
         return () => {
         window.removeEventListener("groupUpdated", handler as EventListener);
         };
-    }, [group.id, id, refetchGroup]);
+    }, [group.id, refetchGroup]);
 
     return (
         <GroupContext.Provider value={{ refetchGroup, group, habits, members, media, groupLoading, refetchGroupWLoading, newAva, setNewAva }}>

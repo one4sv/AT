@@ -146,7 +146,7 @@ export default function ChatUser({
                     <span>{chatWith ? chatWith.name || chatWith.nick : ""}</span>
                     <span className={`chatOnlineStauts ${typingStatus ? "chatTyping" : "chatStopTyping"}`}>
                         { chatWith?.is_group
-                            ? `${chatWith.members.length} ${chatWith.members.length > 5 ? "участников" : "участника"}, ${chatWith.members.filter(m => onlineMap[m.nick]).length} в сети`
+                            ? `${chatWith.members.length} ${chatWith.members.length > 5 ? "участников" : "участника"}, ${chatWith.members.filter(m => onlineMap[m.id]).length} в сети`
                             : typingStatus
                                 ? "печатает..."
                                 : onlineMap[chatWith?.id || ""]
