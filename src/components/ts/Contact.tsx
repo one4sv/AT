@@ -76,7 +76,7 @@ export default function Contact({contact}:ContactType) {
                 ) : (
                     <CircleUserRound/>
                 )}
-                <div className={`contactOnlineStauts ${nick !== contact.nick && onlineMap[contact?.nick || ""] ? "online" : "offline"}`}></div>
+                <div className={`contactOnlineStauts ${nick !== contact.nick && onlineMap[contact?.id || ""] ? "online" : "offline"}`}></div>
             </div>
             <div className={`contactsUserInfo ${isMobile ? "mobile" : ""}`}>
                 <div className="contactsUserStr">

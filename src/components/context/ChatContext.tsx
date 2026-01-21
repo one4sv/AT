@@ -240,18 +240,22 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     });
                 }
             }
-            if (data.type === "USER_STATUS" && chatWith?.is_group === false) {
-                setOnlineMap(prev => ({ ...prev, [data.nick]: data.isOnline }));  // Изменено на [data.nick]
-                if (chatWithRef.current && "nick" in chatWithRef.current && chatWithRef.current.nick === data.nick) {  // Изменено на .nick
+            if (data.type === "USER_STATUS") {
+                setOnlineMap(prev => ({
+                    ...prev,
+                    [data.userId]: data.isOnline
+                }));
+                if (
+                    chatWithRef.current &&
+                    chatWithRef.current.id === data.userId &&
+                    !chatWithRef.current.is_group
+                ) {
                     setChatWith(prev => {
-                        if (!prev || prev.is_group) return prev;
-
-                        return {
-                            ...prev,
-                            last_online: data.isOnline
-                            ? ""
-                            : data.last_online || prev.last_online,
-                        };
+                    if (!prev) return prev;
+                    return {
+                        ...prev,
+                        last_online: data.isOnline ? "" : (data.last_online || prev.last_online)
+                    };
                     });
                 }
             }
@@ -288,13 +292,28 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     })
                 );
             }
+            if (data.type === "GROUP_UPDATED") {
+                refetchContactsWTLoading();
+
+                if (chatWith?.is_group && chatWith.id === data.group_id) {
+                    refetchGroupChat(data.group_id);
+                }
+
+                // Для страницы /room/
+                if (location.pathname.startsWith("/room/")) {
+                    const currentGroupId = location.pathname.split("/room/")[1];
+                    if (currentGroupId === data.group_id) {
+                        window.dispatchEvent(new CustomEvent("groupUpdated", { detail: data.group_id }));
+                    }
+                }
+            }
             if (data.type === "TYPING" && chatWith?.is_group === false) {
-                if (chatWithRef.current && "nick" in chatWithRef.current && data.from === chatWithRef.current.nick) {
+                if (chatWithRef.current && "nick" in chatWithRef.current && data.from === chatWithRef.current.id) {
                     setTypingStatus(true);
                 }
             }
             if (data.type === "STOP_TYPING" && chatWith?.is_group === false) {
-                if (chatWithRef.current && "nick" in chatWithRef.current && data.from === chatWithRef.current.nick) {
+                if (chatWithRef.current && "nick" in chatWithRef.current && data.from === chatWithRef.current.id) {
                     setTypingStatus(false);
                 }
             }

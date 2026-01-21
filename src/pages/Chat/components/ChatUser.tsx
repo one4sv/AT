@@ -149,7 +149,7 @@ export default function ChatUser({
                             ? `${chatWith.members.length} ${chatWith.members.length > 5 ? "участников" : "участника"}, ${chatWith.members.filter(m => onlineMap[m.nick]).length} в сети`
                             : typingStatus
                                 ? "печатает..."
-                                : onlineMap[chatWith?.nick || ""]
+                                : onlineMap[chatWith?.id || ""]
                                     ? "В сети"
                                     : formatLastOnline(chatWith?.last_online)}
                     </span>
