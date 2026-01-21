@@ -5,11 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useUser } from "../../../components/hooks/UserHook";
+import { useChat } from "../../../components/hooks/ChatHook";
 
 export default function GroupMembers({members}: {members:Member[]}) {
     const { openMenu } = useContextMenu()
     const { setBlackout } = useBlackout();
     const { user } = useUser();
+    const { onlineMap } = useChat()
     const navigate = useNavigate();
     const myRole = members.find((m) => m.id === user.id)?.role || null;
     
@@ -40,7 +42,11 @@ export default function GroupMembers({members}: {members:Member[]}) {
                     )}                        
                     <div className="groupMemberInfo">
                         <span className="groupMemberName">{member.name ? member.name : member.nick}</span>
-                        <span className="groupMemberLastOnline">{formatLastOnline(member.last_online)}</span>
+                        <span className="groupMemberLastOnline">
+                            {onlineMap[member?.id || ""]
+                                ? "В сети"
+                                : formatLastOnline(member?.last_online)}
+                        </span>
                     </div>
                     <span className="groupMemberRole">{member.role ? member.role : "Участник"}</span>
 
