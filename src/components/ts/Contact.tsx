@@ -50,7 +50,7 @@ export default function Contact({contact}:ContactType) {
         }, 10);
         }
     };
-
+    
     return (
         <div className={`contactsUser ${nick === contact.nick ? "active" : "" }`} key={contact.id} onClick={() => {
             if (contact.is_group) navigate(`/chat/g/${contact.id}`)
@@ -80,7 +80,7 @@ export default function Contact({contact}:ContactType) {
             </div>
             <div className={`contactsUserInfo ${isMobile ? "mobile" : ""}`}>
                 <div className="contactsUserStr">
-                    <span className="nameSpan">{contact.name ? contact.name: contact.nick} {contact.note ? "" : <SpeakerSimpleX weight="fill"/>} {contact.pinned ? <PushPin weight="fill"/> : ""}</span>
+                    <span className="nameSpan">{contact.name ? contact.name: contact.nick} {contact.note === false ? <SpeakerSimpleX weight="fill"/> : "" } {contact.pinned ? <PushPin weight="fill"/> : ""}</span>
                     {!contact.lastMessage && (
                         <span className="secSpan">{contact.name ? `| ${contact.nick}`: ""}</span>
                     )}

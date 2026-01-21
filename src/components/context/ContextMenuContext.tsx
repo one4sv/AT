@@ -37,11 +37,15 @@ type MenuState = {
     options: MenuOptions,
     chatInfo?:chatInfoType,
     curChat?:curChatType,
+    memberInfo?:MemberType,
 }
-
+type MemberType = {
+    isMe?:boolean,
+    role:string | null,
+}
 export type ContextMenuContextType = {
     menu: MenuState
-    openMenu: (x: number, y: number, point: string, options: MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType ) => void
+    openMenu: (x: number, y: number, point: string, options: MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType, memberInfo?:MemberType  ) => void
     closeMenu: () => void,
     menuRef:RefObject<HTMLDivElement | null>
 }
@@ -56,8 +60,8 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
     })
     const menuRef = useRef<HTMLDivElement>(null);
 
-    const openMenu = (x:number, y:number, point:string, options:MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType ) => {
-        setMenu({ x, y, point, habit, options, chatInfo, visible: true, curChat })
+    const openMenu = (x:number, y:number, point:string, options:MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType, memberInfo?:MemberType ) => {
+        setMenu({ x, y, point, habit, options, chatInfo, visible: true, curChat, memberInfo })
     }
 
     const closeMenu = () => {

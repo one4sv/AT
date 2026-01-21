@@ -1,9 +1,12 @@
-import { createContext, useCallback, useState, type ReactNode } from "react";
+import { createContext, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import type { Habit } from "./HabitsContext";
 import { api } from "../ts/api";
 import { useNavigate } from "react-router-dom";
 import { useNote } from "../hooks/NoteHook";
 import type { Media } from "./ChatContext";
+import { useUser } from "../hooks/UserHook";
+import { useChat } from "../hooks/ChatHook";
+import axios from "axios";
 
 const GroupContext = createContext<GroupContextType | null>(null);
 
@@ -37,6 +40,8 @@ export interface Group {
 
 export const GroupProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
+    const { user } = useUser();
+    const { refetchGroupChatWLoading, chatWith } = useChat();
     const navigate = useNavigate();
     const [ group, setGroup ] = useState<Group>({ id: "", name: "", desc: null, avatar_url: null, link: "", invite_expires_at: null });
     const [ media, setMedia ] = useState<Media[]>([]);
@@ -44,8 +49,11 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
     const [ habits, setHabits ] = useState<Habit[]>([]);
     const [ groupLoading, setGroupLoading ] = useState<boolean>(true);
     const [ newAva, setNewAva ] = useState<File | undefined>(undefined);
-
+    const API_WS = import.meta.env.VITE_API_WS;
     const API_URL = import.meta.env.VITE_API_URL;
+    
+    const wsRef = useRef<WebSocket | null>(null);
+
 
     const refetchGroup = useCallback(async (id: string) => {
         try {
@@ -62,11 +70,14 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
                 setMembers(sortedMembers);
                 setMedia(res.data.media);
             } else {
-                showNotification("error", "Не удалось найти группу");
+                console.log(res);
+                showNotification("error", res.data.message || "Не удалось найти группу");
                 navigate("/");
             }
-        } catch {
-            showNotification("error", "Не удалось найти группу");
+        } catch (error){
+            if (axios.isAxiosError(error)) {
+                showNotification("error", error.response?.data?.error || "Не удалось получить данные группы");
+            }
             navigate("/"); 
         } finally {
             setGroupLoading(false);
@@ -77,6 +88,19 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
         setGroupLoading(true);
         await refetchGroup(id);
     }, [refetchGroup]);
+
+    useEffect(() => {
+        if (!user?.id) return;
+        wsRef.current = new WebSocket(`${API_WS}ws?userId=${user.id}`);
+        wsRef.current.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+                if (location.pathname.startsWith("/chat/g") && chatWith && data.group_id === chatWith.id && chatWith?.is_group) {
+                    refetchGroupChatWLoading(data.group_id);
+                } else if (location.pathname.startsWith("/room/") && data.group_id === group.id) {
+                    refetchGroup(group.id);
+            }
+        }
+    }, [API_WS, user?.id, chatWith, refetchGroupChatWLoading, group.id, refetchGroup]);
 
     return (
         <GroupContext.Provider value={{ refetchGroup, group, habits, members, media, groupLoading, refetchGroupLoading, newAva, setNewAva }}>

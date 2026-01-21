@@ -7,7 +7,7 @@ import GetIconByType from "../../Chat/utils/getIconByType";
 export default function AccMedia({ media }: { media: Media[] | undefined}) {
     const { setBlackout } = useBlackout()
     const { openMenu } = useContextMenu()
-    const { nick } = useParams()
+    const { nick, id } = useParams()
 
     return (
         <div className="accMedia">
@@ -19,7 +19,7 @@ export default function AccMedia({ media }: { media: Media[] | undefined}) {
                     return (
                         <div key={i} className="accMediaItem" onContextMenu={(e) => {
                             e.preventDefault()
-                            openMenu(e.clientX, e.clientY, "media", {id:file.message_id, nick:nick, name:file.name, url:file.url})
+                            openMenu(e.clientX, e.clientY, "media", {id:file.message_id, nick:nick ? nick : `g/${id}`, name:file.name, url:file.url}, undefined)
                         }}>
                             {isImage ? (
                                 <img

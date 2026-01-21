@@ -3,7 +3,7 @@ import "../../scss/ContextMenu.scss"
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useDelete } from "../hooks/DeleteHook";
-import {  ChatTeardrop, Check, CheckCircle, Circle, CopySimple, Eye, EyeSlash, Heart, Link, PencilSimple, PushPin, PushPinSlash, ShareFat, Trash, User, UserMinus, Users } from "@phosphor-icons/react";
+import {  ChatTeardrop, Check, CheckCircle, Circle, CopySimple, Eye, EyeSlash, Heart, Link, PencilSimple, PushPin, PushPinSlash, ShareFat, SignOut, Trash, User, UserMinus, Users } from "@phosphor-icons/react";
 import { useUpHabit } from "../hooks/UpdateHabitHook";
 import { useDone } from "../hooks/DoneHook";
 import { useNavigate } from "react-router";
@@ -22,7 +22,6 @@ export default function ContextMenu() {
     const { markDone } = useDone()
     const { isChose, setIsChose, chosenMess, setChosenMess, setPendingScrollId, setAnswer, setEditing, setRedirect, showNames, setShowNames } = useMessages()
     const { setReaction, messages } = useChat()
-
     const navigate = useNavigate()
     const CopyLink = import.meta.env.VITE_LINK
 
@@ -35,6 +34,7 @@ export default function ContextMenu() {
     const point = menu.point
     const chatInfo = menu.chatInfo
     const curChat = menu.curChat
+    const memberInfo = menu.memberInfo
     const dateStr = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`;
 
     useEffect(() => {
@@ -95,11 +95,11 @@ export default function ContextMenu() {
             {chatInfo && (
                 <>
                     <OffSound bool={chatInfo.note} id={options.id}/>
-                    <ToggleBlocked nick={options.nick} bool={chatInfo.is_blocked} id={options.id}/>
+                    {!chatInfo.is_group && (
+                        <ToggleBlocked nick={options.nick} bool={chatInfo.is_blocked} id={options.id}/>
+                    )}
                 </>
             )}
-
-
         </>
     )
 
@@ -150,8 +150,17 @@ export default function ContextMenu() {
                     )}
                     <TogglePinned bool={chatInfo!.pinned} id={options.id}/>
                     {personButt}
-                    {options && options.isMy && (
+                    {options && options.isMy && !chatInfo?.is_group && (
                         deleteButt
+                    )}
+                    {chatInfo?.is_group && (
+                        <div className="ContextMenuButt delete" onClick={() => {
+                            setDeleteConfirm({goal:"leave", id:options.id, name:options.name!})
+                            setBlackout({seted:true, module:"Delete"})
+                        }}>
+                            <SignOut/>
+                            Покинуть беседу
+                        </div>
                     )}
                 </>
             )}
@@ -177,9 +186,18 @@ export default function ContextMenu() {
                     </div>
                     {linkButt}
                     {personButt}
+                    {chatInfo?.is_group && (
+                        <div className="ContextMenuButt delete" onClick={() => {
+                            setDeleteConfirm({goal:"leave", id:options.id, name:options.name!})
+                            setBlackout({seted:true, module:"Delete"})
+                        }}>
+                            <SignOut/>
+                            Покинуть беседу
+                        </div>
+                    )}
                 </>
             )}
-            {point === "member" && (
+            {point === "member" && curChat && (
                 <>
                     <div className="ContextMenuButt" onClick={() => navigate(`/acc/${options.nick}`)}>
                         <User/>
@@ -190,10 +208,16 @@ export default function ContextMenu() {
                         Открыть чат
                     </div>
                     {linkButt}
-                    <div className="ContextMenuButt delete">
-                        <UserMinus />
-                        Исключить из группы
-                    </div>
+                    {memberInfo && !memberInfo.isMe && memberInfo.role !== null && (
+                        <div className="ContextMenuButt delete" onClick={() => {
+                            setDeleteConfirm({goal:point, id:options.id, name:options.name!})
+                            setBlackout({seted:true, module:"Delete"})
+                        }}>
+                            <UserMinus />
+                            Исключить из группы
+                        </div>
+                    )}
+                    
                 </>
             )}
             {point === "mess" && curChat && setChosenMess && (

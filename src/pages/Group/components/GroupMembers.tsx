@@ -4,11 +4,14 @@ import { User, UserPlus } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import { useUser } from "../../../components/hooks/UserHook";
 
 export default function GroupMembers({members}: {members:Member[]}) {
     const { openMenu } = useContextMenu()
     const { setBlackout } = useBlackout();
+    const { user } = useUser();
     const navigate = useNavigate();
+    const myRole = members.find((m) => m.id === user.id)?.role || null;
     
     return (
         <div className="groupMembers">
@@ -27,7 +30,7 @@ export default function GroupMembers({members}: {members:Member[]}) {
                 }}
                 onContextMenu={(e) => {
                     e.preventDefault()
-                    openMenu(e.clientX, e.clientY, "member", {id: member.id, nick: member.nick, name: member.name || member.nick})
+                    openMenu(e.clientX, e.clientY, "member", {id: member.id, nick: member.nick, name: member.name || member.nick}, undefined, undefined, undefined, { isMe: user.id === member.id, role: myRole})
                 }}
                 >
                     {member.avatar_url ? (

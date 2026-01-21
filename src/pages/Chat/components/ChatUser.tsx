@@ -109,7 +109,8 @@ export default function ChatUser({
         }, undefined, {
             note: chatWith.note,
             is_blocked: chatWith.is_blocked,
-            pinned: chatWith.pinned
+            pinned: chatWith.pinned,
+            is_group: chatWith.is_group
         });
     };
 

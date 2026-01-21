@@ -6,6 +6,7 @@ import { api } from "../ts/api";
 import { showBrowserNotification } from "../ts/utils/NoteRequest";
 import { useSettings } from "../hooks/SettingsHook";
 import { useNavigate } from "react-router";
+import axios from "axios";
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
@@ -37,7 +38,9 @@ export interface Media {
 export interface ChatContextType {
     chatWith: chatWithType | null,
     refetchChat: (nick: string) => Promise<void>,
+    refetchChatWLoading: (nick: string) => Promise<void>,
     refetchGroupChat: (id: string) => Promise<void>,
+    refetchGroupChatWLoading: (id: string) => Promise<void>,
     chatLoading: boolean,
     messages: message[],
     list: Contact[],
@@ -114,7 +117,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     const refetchChat = async (nick: string) => {
         try {
-            setChatLoading(true);
             const res = await api.get(`${API_URL}chat/${nick}`);
             if (res.data.success) {
                 setChatWith({ name: res.data.user.username, nick: res.data.user.nick, id: res.data.user.id, avatar_url: res.data.user.avatar_url,
@@ -141,8 +143,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const refetchGroupChat = async (id: string) => {
+    const refetchGroupChatWLoading = async (nick: string) => {
         setChatLoading(true);
+        await refetchChat(nick);
+    }
+
+    const refetchGroupChat = async (id: string) => {
         try {
             const res = await api.get(`${API_URL}chat/group/${id}`);
             if (res.data.success) {
@@ -153,18 +159,25 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     nick: `group_${id}`,
                 })
                 setMessages(res.data.messages);
-            }
-        } catch {
-            showNotification("error", "Не удалось получить данные группы");
-            if (window.history.length > 0) {
-                navigate("/");
             } else {
+                showNotification("error", res.data.message || "Не удалось получить данные группы");
                 navigate("/");
             }
+        } catch (error) {
+            console.error(error);
+            if (axios.isAxiosError(error)) {
+                showNotification("error", error.response?.data?.error || "Не удалось получить данные группы");
+            }
+            navigate("/");
         } finally {
             setChatLoading(false);
         }
     };
+
+    const refetchChatWLoading = async (id: string) => {
+        setChatLoading(true);
+        await refetchChat(id);
+    }
 
     const refetchContactsWTLoading = useCallback(async () => {
         if (user.nick === null) return;
@@ -346,8 +359,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     return (
-        <ChatContext.Provider value={{ chatWith, refetchChat, chatLoading, messages, list, setSearch, search,
-            refetchContacts, onlineMap, setReaction, handleTyping, typingStatus, loadingList, refetchContactsWTLoading, refetchGroupChat }}>
+        <ChatContext.Provider value={{ chatWith, refetchChat, refetchChatWLoading, chatLoading, messages, list, setSearch, search,
+            refetchContacts, onlineMap, setReaction, handleTyping, typingStatus, loadingList, refetchContactsWTLoading, refetchGroupChat, refetchGroupChatWLoading }}>
             {children}
         </ChatContext.Provider>
     );

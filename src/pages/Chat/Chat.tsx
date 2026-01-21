@@ -22,7 +22,7 @@ import SystemMessage from "./components/SystemMessage";
 
 export default function Chat() {
     const { user } = useUser();
-    const { refetchChat, chatLoading, messages, chatWith, refetchGroupChat } = useChat();
+    const { refetchChatWLoading, chatLoading, messages, chatWith, refetchGroupChat } = useChat();
     const { chosenMess, setChosenMess, isChose, setIsChose, pendingScrollId, setPendingScrollId } = useMessages();
     const { setTitle } = usePageTitle()
 
@@ -47,7 +47,7 @@ export default function Chat() {
             refetchGroupChat(id);
         }
         else if (nick) {
-            refetchChat(nick);
+            refetchChatWLoading(nick);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nick, id]);

@@ -35,20 +35,20 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
                 setSuccess(false);
                 showNotification('error', res.data.error || 'Ошибка регистрации');
             }
-        } catch (error: any) {
+        } catch (error) {
             console.error("Ошибка сервера:", error);
             setSuccess(false);
-
-            if (error.response?.status === 409) {
-                showNotification('error', error.response.data.error || 'Ник или почта уже заняты');
-            } else {
-                showNotification('error', 'Ошибка сервера, попробуйте позже');
+            if (axios.isAxiosError(error)) {
+                if (error.response?.status === 409) {
+                    showNotification('error', error.response.data.error || 'Ник или почта уже заняты');
+                } else {
+                    showNotification('error', 'Ошибка сервера, попробуйте позже');
+                }
             }
         } finally {
             setLoadingAuth(false);
         }
     };
-
 
     const auth = async({ login, pass }: { login:string, pass:string }) => {
         setLoadingAuth(true);
@@ -70,11 +70,12 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
                 showNotification('error', res.data.error);;
                 setSuccess(false);
             }  
-        } catch (error:any) {
+        } catch (error) {
             console.error(" Ошибка авторизации:", error);
             setSuccess(false);
-            // if (error.response?.status === 401)
-            showNotification('error', error.response.data.error);
+            if (axios.isAxiosError(error)) {
+                showNotification("error", error.response?.data?.message || "Ошибка авторизации");
+            }
         } finally {
             setLoadingAuth(false);
         }
