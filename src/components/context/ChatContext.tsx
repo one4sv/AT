@@ -302,13 +302,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 // Для страницы /room/
                 if (location.pathname.startsWith("/room/")) {
                     const currentGroupId = location.pathname.split("/room/")[1];
-                    if (currentGroupId === data.group_id) {
+                    if (currentGroupId === String(data.group_id)) {
                         window.dispatchEvent(new CustomEvent("groupUpdated", { detail: data.group_id }));
                     }
                 }
             }
             if (data.type === "KICKED_FROM_GROUP") {
-                const kickedGroupId = data.group_id;
+                const kickedGroupId:string = data.group_id;
 
                 showNotification("info", 
                     data.reason === "kicked" 
@@ -316,14 +316,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     : `Вы покинули группу "${data.group_name}"`
                 );
 
-                if (chatWith?.is_group && chatWith.id === kickedGroupId) {
+                if (chatWith?.is_group && String(chatWith.id) === String(kickedGroupId)) {
                     navigate("/");
                 }
 
                 if (location.pathname.startsWith("/room/")) {
-                    const currentId = location.pathname.split("/room/")[1];
+                    const currentId:string = location.pathname.split("/room/")[1];
                     if (currentId === kickedGroupId) {
-                    navigate("/");
+                        navigate("/");
                     }
                 }
 

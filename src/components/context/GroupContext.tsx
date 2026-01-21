@@ -91,9 +91,12 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
         await refetchGroup(id);
     }, [refetchGroup]);
 
+    console.log()
     useEffect(() => {
         const handler = (e: CustomEvent) => {
-            if (group.id && e.detail === group.id) {
+            console.log(e.detail, typeof e.detail)
+            console.log(group.id, typeof group.id)
+            if (group.id && String(e.detail) === String(group.id)) {
                 refetchGroup(group.id);
             }
         };
