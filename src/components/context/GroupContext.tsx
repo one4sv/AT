@@ -10,7 +10,7 @@ const GroupContext = createContext<GroupContextType | null>(null);
 
 export interface GroupContextType {
     refetchGroup:(id:string) => Promise<void>,
-    refetchGroupLoading?:(id:string) => Promise<void>,
+    refetchGroupWLoading:(id:string) => Promise<void>,
     group:Group,
     habits:Habit[],
     members:Member[],
@@ -47,7 +47,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
     const [ media, setMedia ] = useState<Media[]>([]);
     const [ members, setMembers ] = useState<Member[]>([]);  
     const [ habits, setHabits ] = useState<Habit[]>([]);
-    const [ groupLoading, setGroupLoading ] = useState<boolean>(true);
+    const [ groupLoading, setGroupLoading ] = useState<boolean>(false);
     const [ newAva, setNewAva ] = useState<File | undefined>(undefined);
 
     const refetchGroup = useCallback(async (id: string) => {
@@ -79,7 +79,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [API_URL, showNotification]);
 
-    const refetchGroupLoading = useCallback(async (id: string) => {
+    const refetchGroupWLoading = useCallback(async (id: string) => {
         setGroupLoading(true);
         await refetchGroup(id);
     }, [refetchGroup]);
@@ -99,7 +99,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
     }, [group.id, id, refetchGroup]);
 
     return (
-        <GroupContext.Provider value={{ refetchGroup, group, habits, members, media, groupLoading, refetchGroupLoading, newAva, setNewAva }}>
+        <GroupContext.Provider value={{ refetchGroup, group, habits, members, media, groupLoading, refetchGroupWLoading, newAva, setNewAva }}>
         {children}
         </GroupContext.Provider>
     );

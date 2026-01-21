@@ -12,9 +12,9 @@ import Loader from "../../components/ts/Loader";
 import "./scss/Group.scss";
 
 export default function Group() {
-    const { group, media, members, habits, refetchGroup, groupLoading  } = useGroup();
+    const { group, media, members, habits, refetchGroupWLoading, groupLoading  } = useGroup();
     const { setTitle } = usePageTitle()
-    const { id } = useParams()
+    const { id } = useParams<{id:string}>()
     const [ selector, setSelector ] = useState<string>("sended");
     const navigate = useNavigate();
     
@@ -23,11 +23,11 @@ export default function Group() {
             navigate(`/`, { replace: true });
             return;
         }
-        refetchGroup(id);
-    }, [navigate, id, group?.id, refetchGroup]);
+        refetchGroupWLoading(id);
+    }, [navigate, id, group.id, refetchGroupWLoading]);
 
     useEffect(() => {
-        if (group && !groupLoading && group.id === id) {
+        if (group && !groupLoading && String(group.id) === id) {
             setTitle(group.name)
         }
     }, [group, groupLoading, id, setTitle]);

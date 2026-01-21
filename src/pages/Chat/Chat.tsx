@@ -174,7 +174,7 @@ export default function Chat() {
     }, [setIsChose, setChosenMess]);
 
     useEffect(() => {
-        if (!chatLoading && chatWith && (chatWith.nick === nick || chatWith.id === id)) {
+        if (!chatLoading && chatWith && (chatWith.nick === nick || String(chatWith.id) === id)) {
             setTitle(chatWith.name || chatWith.nick);
         }
     }, [chatLoading, chatWith, id, nick, setTitle]);
