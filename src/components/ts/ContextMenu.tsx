@@ -13,6 +13,7 @@ import { ToggleBlocked } from "./CM/funcs/ToggleBlocked";
 import { TogglePinned } from "./CM/funcs/TogglePinned";
 import { DownloadButt } from "./CM/funcs/DownloadButt";
 import { useMessages } from "../hooks/MessagesHook";
+import { useSendMess } from "../hooks/SendMessHook";
 
 export default function ContextMenu() {
     const { menu, menuRef } = useContextMenu();
@@ -22,6 +23,7 @@ export default function ContextMenu() {
     const { markDone } = useDone()
     const { isChose, setIsChose, chosenMess, setChosenMess, setPendingScrollId, setAnswer, setEditing, setRedirect, showNames, setShowNames } = useMessages()
     const { setReaction, messages } = useChat()
+    const { pinMess } = useSendMess()
     const navigate = useNavigate()
     const CopyLink = import.meta.env.VITE_LINK
 
@@ -270,6 +272,13 @@ export default function ContextMenu() {
                     }}>
                         <CopySimple />
                         {chosenMess.length > 0 ? "Копировать выбранное" : "Копировать"}
+                    </div>
+                    <div className="ContextMenuButt" onClick={() => {
+                        pinMess(options.id)
+                    }}>
+                        {curChat.is_pinned ? ( <PushPinSlash/> ) : ( <PushPin/> )}
+                        {curChat.is_pinned ? "Открепить" : "Закрепить"}
+
                     </div>
                     <div className="ContextMenuButt" onClick={() => {
                         const redirectValue =

@@ -9,7 +9,7 @@ const SendMessContext = createContext<SendMessContextType | null>(null);
 export interface SendMessContextType {
     sendMess: (receiver:{ nick?: string, id?: string }, text: string, files?: File[], answer_id?: string, redirect?:message[], showNames?:boolean) => Promise<boolean |  undefined>,
     editMess:(messageId: number, text: string, newFiles: File[], keptUrls: string[], answer_id?: string)=>Promise<boolean | undefined>
-
+    pinMess: (messageId:string) => Promise<boolean | undefined>
 } 
 
 export const SendMessProvider = ({ children }: { children: ReactNode }) => {
@@ -62,9 +62,23 @@ export const SendMessProvider = ({ children }: { children: ReactNode }) => {
             return false;
         }
     };
+    
+    const pinMess = async (messageId: string) => {
+        try {
+            const res = await api.post(`${API_URL}pinmess`, { message_id: messageId });
+            if (res.data.success) {
+                refetchContactsWTLoading();
+                return true;
+            }
+        } catch (error) {
+            console.error("Ошибка при закреплении:", error);
+            showNotification("error", "Не удалось закрепить сообщение");
+            return false;
+        }
+    };
 
   return (
-    <SendMessContext.Provider value={{ sendMess, editMess }}>
+    <SendMessContext.Provider value={{ sendMess, editMess, pinMess }}>
       {children}
     </SendMessContext.Provider>
   );

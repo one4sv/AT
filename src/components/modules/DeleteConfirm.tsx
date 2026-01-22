@@ -41,9 +41,7 @@ export default function DeleteConfirm() {
         else if (deleteConfirm.goal === "leave") setDelThing(`${deleteConfirm.name}`);
         else setDelThing("объект");
 
-    }, [deleteConfirm.goal, deleteMess, deleteMess?.length]);
-
-    console.log(deleteConfirm);
+    }, [deleteConfirm.goal, deleteConfirm.name, deleteMess]);
 
     const deleteThis = async () => {
         const { goal, id } = deleteConfirm;
@@ -77,7 +75,6 @@ export default function DeleteConfirm() {
                 showNotification("error", res.data.message || "Не удалось удалить");
             }
         } catch (error) {
-            console.log(error)
             if (axios.isAxiosError(error)) {
                 showNotification("error", error.response?.data?.error || "Не удалось получить данные группы");
             }

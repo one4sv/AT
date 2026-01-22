@@ -74,6 +74,8 @@ export interface message {
     redirected_files?: Media[] | null,  
     redirected_answer?: number | null,
     is_system: boolean,
+    is_pinned:boolean,
+    target_id:string | null,
 }
 
 export interface Contact {
@@ -215,6 +217,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         wsRef.current = new WebSocket(`${API_WS}ws?userId=${user.id}`);
         wsRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
+            console.log(data.type)
             if (data.type === "NEW_MESSAGE") {
                 const messageSenderId = String(data.message.sender_id);
                 if (messageSenderId === user.id || (chatWithRef.current && messageSenderId === chatWithRef.current.id) || (chatWithRef.current?.is_group)) {
@@ -269,6 +272,15 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     )
                 );
                 refetchContactsWTLoading()
+            }
+            if (data.type === "MESSAGE_PIN_TOGGLED") {
+                setMessages(prev =>
+                    prev.map(m =>
+                    m.id === data.message_id
+                        ? { ...m, is_pinned: data.is_pinned }
+                        : m
+                    )
+                );
             }
             if (data.type === "MESSAGE_REACTION") {
                 setMessages(prev =>

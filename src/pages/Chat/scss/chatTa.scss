@@ -1,9 +1,8 @@
 .chatIsBlocked {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 70%;
     position: relative;
-    margin-bottom: 1vh;
     background-color: var(--mc);
     align-items: center;
     color: var(--borderWh);
@@ -11,6 +10,8 @@
     font-size: 20px;
     height: 10vh;
     padding: 1vh 0.5vw;
+    margin: 0 auto 1vh;
+
     >svg {
         font-size: 3rem;
         margin-bottom: 0.5vh;
@@ -18,18 +19,20 @@
 
     &.mobile {
         margin-bottom: 0;
+        width: 100%;
     }
 }
 
 .chatTAWrapper {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 70%;
     position: relative;
-    margin-bottom: 1vh;
     border-radius: 12px;
+    margin: 0 auto 1vh;
     &.mobile {
         margin-bottom: 0;
+        width: 100%;
     }
 }
 .chatWriteBar {

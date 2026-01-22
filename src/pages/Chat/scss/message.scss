@@ -43,6 +43,9 @@
     align-items: center;
     min-height: 3vh;
     cursor: default;
+    > div {
+        margin-left: 3px;
+    }
 }
 .systemMessageSender:hover {
     text-decoration: underline;
@@ -169,6 +172,10 @@
 }
 .editedMess {
     font-size: 12px;
+}
+.messBarSvg {
+    height: 14px;
+    width: 14px;
 }
 .reactionButt {
     position: absolute;

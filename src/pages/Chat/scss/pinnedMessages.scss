@@ -1,0 +1,16 @@
+.pinnedMessages {
+    height: 100%;
+    flex: 1;
+    padding: 1vh 1vw;
+    border-radius: 8px;
+    &:hover {
+        background-color: var(--menuButtHover);
+        > div > .pmsCount {
+            color: var(--borderWh);
+        }
+    }
+    cursor: pointer;
+}
+.pmsCount {
+    color: var(--borderHabit);
+}

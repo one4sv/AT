@@ -1,4 +1,4 @@
-import { Heart, CheckCircle, ShareFat } from "@phosphor-icons/react";
+import { Heart, CheckCircle, ShareFat, PushPin } from "@phosphor-icons/react";
 import { reactionIcons } from "./ReactionsIcons"
 import { useChat } from "../../../components/hooks/ChatHook";
 import React, { useState } from "react";
@@ -72,6 +72,7 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                         isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content || (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : "Пересланное сообщение"),
                         sender:m.sender_name,
                         files:m.files || undefined,
+                        is_pinned:m.is_pinned
                     }
                 )
             }}
@@ -123,6 +124,9 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                 <div className="messageStatusBarDiv">
                     <div className="messageBar">
                         <span className="messTime">{messageGetTime(m.created_at)}</span> 
+                        {m.is_pinned && (
+                            <PushPin weight="fill" className="messBarSvg"/>
+                        )}
                         {m.edited && (
                             <span className="editedMess">изменено</span>
                         )}

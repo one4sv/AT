@@ -25,7 +25,8 @@ export interface curChatType {
     text?:string,
     sender?:string,
     files?:Media[],
-    previewText:string
+    previewText:string,
+    is_pinned?:boolean
 }
 
 type MenuState = {

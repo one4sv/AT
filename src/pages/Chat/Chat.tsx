@@ -251,7 +251,7 @@ export default function Chat() {
                         <Fragment key={m.id}>
                             {needDivider && <DateDivider currDate={currDate} />}
                             {m.is_system ? (
-                                <SystemMessage m={m}/>
+                                <SystemMessage m={m} answer={answer} scrollToMessage={answer ? scrollToMessage : undefined}/>
                             ) : (
                                 <Message
                                     message={m}

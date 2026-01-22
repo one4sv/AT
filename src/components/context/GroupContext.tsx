@@ -72,7 +72,6 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
                 setMembers(sortedMembers);
                 setMedia(res.data.media);
             } else {
-                console.log(res);
                 showNotification("error", res.data.message || "Не удалось найти группу");
                 navigate("/");
             }
@@ -91,11 +90,8 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
         await refetchGroup(id);
     }, [refetchGroup]);
 
-    console.log()
     useEffect(() => {
         const handler = (e: CustomEvent) => {
-            console.log(e.detail, typeof e.detail)
-            console.log(group.id, typeof group.id)
             if (group.id && String(e.detail) === String(group.id)) {
                 refetchGroup(group.id);
             }

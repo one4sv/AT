@@ -11,6 +11,7 @@ import { CopySimple, DotsThreeOutlineVertical, ShareFat, Trash } from "@phosphor
 import { useDelete } from "../../../components/hooks/DeleteHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
+import PinnedMessages from "./PinnedMessages";
 
 interface ChatUserProps {
     search: string;
@@ -56,21 +57,6 @@ export default function ChatUser({
     const chatUserRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        if (!nameRef.current || !searchRef.current) return;
-        if (search.length > 0) {
-            nameRef.current.style.width = "0";
-            searchRef.current.style.width = "100%";
-        } else {
-            if (!isMobile) {
-                nameRef.current.style.width = "40%";
-                searchRef.current.style.width = "50%";
-            } else {
-                nameRef.current.style.width = "70%";
-            }
-        }
-    }, [search.length]);
-
-    useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (
                 searchDivRef.current &&
@@ -99,7 +85,7 @@ export default function ChatUser({
         }
 
         const rect = chatUserRef.current.getBoundingClientRect();
-        const x = rect.left + rect.width * 0.95; // 95% от ширины .chatUser
+        const x = rect.left + rect.width * 0.86; // 95% от ширины .chatUser
         const y = window.innerHeight * 0.065; // 6.5vh от верха viewport
 
         openMenu(x, y, "acc", {
@@ -113,19 +99,19 @@ export default function ChatUser({
             is_group: chatWith.is_group
         });
     };
-
     return (
         <div className="chatUser" ref={chatUserRef}>
-            <div className="chatUserBack" onClick={() => navigate("/")}>
-                <ChevronLeft />
-            </div>
+            {isMobile && (
+                <div className="chatUserBack" onClick={() => navigate("/")}>
+                    <ChevronLeft />
+                </div>
+            )}
             <div className={`chatUserInfo ${isMobile ? "mobile" : ""}`}
                 onClick={() => {
                     if (!chatWith) return;
                     if (chatWith.is_group) navigate(`/room/${chatWith.id}`)
                     else navigate(`/acc/${chatWith.nick}`)
                 }} 
-                style={{display:search.length > 0 ? "none" : "flex"}} 
                 ref={nameRef}
                 onContextMenu={(e) => {
                     if (!chatWith) return;
@@ -155,73 +141,77 @@ export default function ChatUser({
                     </span>
                 </div>
             </div>
-            <div className="chatUserMenu" ref={searchRef}>
-                <div className={`chatSearchWrapeer ${isMobile ? "mobile" : ""}`}>
-                    <div className="chatSearch">
-                        <input
-                            type="text"
-                            placeholder="Поиск по сообщениям"
-                            value={search}
-                            onChange={(e) => { setSearch(e.target.value); setSelectedIndex(0) }}
-                            onFocus={() => setIsSearchOpen(true)}
-                            onKeyDown={handleSearchKeyDown}
-                        />
-                        {search.length > 0 ? (
-                            <X color="white" cursor="pointer" onClick={() => { setSearch(""); setSelectedIndex(0); setIsSearchOpen(false); }}/>
-                        ): (
-                            <Search/>
-                        )}
-                    </div>
-                    {search.trim().length > 0 && (
-                        <div
-                            ref={searchDivRef}
-                            className={`chatSearchDiv ${isSearchOpen ? "open" : "closed"}`}
-                        >
-                            <div className="chatSearchInfo">
-                                <span>{searchedMessages.length} результатов</span>
-                                <div>
-                                    <button onClick={() => handleArrowClick("up")} disabled={!searchedMessages.length}><ChevronUp/></button>
-                                    <button onClick={() => handleArrowClick("down")} disabled={!searchedMessages.length}><ChevronDown/></button>
-                                </div>
-                            </div>
-                            <div className="chatSearchList">
-                                {searchedMessages.map((m, i) => {
-                                    const isMy = m.sender_id === user.id
-                                    return (
-                                        <div
-                                            key={m.id}
-                                            className={`chatSearchItem ${selectedIndex === i ? "active" : ""}`}
-                                            onClick={() => { setSelectedIndex(i); scrollToMessage(m.id); }}
-                                            ref={(el) => { searchItemRefs.current.set(m.id, el) }}
-                                        >
-                                            <div className="chatSearchPic">
-                                                {isMy && user.avatar_url ? (
-                                                    <img src={user.avatar_url}/>
-                                                ) : !isMy && chatWith && chatWith.avatar_url && !chatWith.is_group ? (
-                                                    <img src={chatWith.avatar_url}/>
-                                                ) : !isMy && chatWith && chatWith.members.find(member => member.id === m.sender_id)?.avatar_url && chatWith.is_group ? (
-                                                    <img src={chatWith.members.find(member => member.id === m.sender_id)?.avatar_url}/>
-                                                ) : ""}
-                                            </div>
-                                            <div className="chatSearchItemInfo">
-                                                <div className="chatSearcSender">
-                                                    <span className="chatSearchName">{isMy ? "Вы" : (m.sender_name || m.sender_nick)}</span>
-                                                    <span className="chatSearchDate">{new Date(m.created_at).toLocaleDateString("ru-RU")}</span>
-                                                </div>
-                                                <div className="chatSearchText">
-                                                    <span>{m.content}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </div>
+            
+            {messages.find(m => m.is_pinned) && (
+                <PinnedMessages messages={messages}/>
+            )}
+            <div className={`chatSearchWrapeer ${isMobile ? "mobile" : ""}`}
+                style={{position: search.length > 0 ? "absolute" : "relative", marginLeft:search.length > 0 ? "4.5%" : "0"}} 
+            >
+                <div className="chatSearch">
+                    <input
+                        type="text"
+                        placeholder="Поиск по сообщениям"
+                        value={search}
+                        onChange={(e) => { setSearch(e.target.value); setSelectedIndex(0) }}
+                        onFocus={() => setIsSearchOpen(true)}
+                        onKeyDown={handleSearchKeyDown}
+                    />
+                    {search.length > 0 ? (
+                        <X color="white" cursor="pointer" onClick={() => { setSearch(""); setSelectedIndex(0); setIsSearchOpen(false); }}/>
+                    ): (
+                        <Search/>
                     )}
                 </div>
-                <div className="userMenuCall" onClick={handleMenuClick}>
-                    <DotsThreeOutlineVertical weight="fill"/>
-                </div>
+                {search.trim().length > 0 && (
+                    <div
+                        ref={searchDivRef}
+                        className={`chatSearchDiv ${isSearchOpen ? "open" : "closed"}`}
+                    >
+                        <div className="chatSearchInfo">
+                            <span>{searchedMessages.length} результатов</span>
+                            <div>
+                                <button onClick={() => handleArrowClick("up")} disabled={!searchedMessages.length}><ChevronUp/></button>
+                                <button onClick={() => handleArrowClick("down")} disabled={!searchedMessages.length}><ChevronDown/></button>
+                            </div>
+                        </div>
+                        <div className="chatSearchList">
+                            {searchedMessages.map((m, i) => {
+                                const isMy = m.sender_id === user.id
+                                return (
+                                    <div
+                                        key={m.id}
+                                        className={`chatSearchItem ${selectedIndex === i ? "active" : ""}`}
+                                        onClick={() => { setSelectedIndex(i); scrollToMessage(m.id); }}
+                                        ref={(el) => { searchItemRefs.current.set(m.id, el) }}
+                                    >
+                                        <div className="chatSearchPic">
+                                            {isMy && user.avatar_url ? (
+                                                <img src={user.avatar_url}/>
+                                            ) : !isMy && chatWith && chatWith.avatar_url && !chatWith.is_group ? (
+                                                <img src={chatWith.avatar_url}/>
+                                            ) : !isMy && chatWith && chatWith.members.find(member => member.id === m.sender_id)?.avatar_url && chatWith.is_group ? (
+                                                <img src={chatWith.members.find(member => member.id === m.sender_id)?.avatar_url}/>
+                                            ) : ""}
+                                        </div>
+                                        <div className="chatSearchItemInfo">
+                                            <div className="chatSearcSender">
+                                                <span className="chatSearchName">{isMy ? "Вы" : (m.sender_name || m.sender_nick)}</span>
+                                                <span className="chatSearchDate">{new Date(m.created_at).toLocaleDateString("ru-RU")}</span>
+                                            </div>
+                                            <div className="chatSearchText">
+                                                <span>{m.content}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                )}
+            </div>
+            <div className="userMenuCall" onClick={handleMenuClick}>
+                <DotsThreeOutlineVertical weight="fill"/>
             </div>
             {isChose && (
                 <div className="ChosenCountDiv">
