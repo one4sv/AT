@@ -5,18 +5,16 @@ import UserInChatUserList from "./UserInChatUserList"
 import { List } from "@phosphor-icons/react"
 
 interface PinnedType {
-    messages:message[],
+    pms:message[],
     scrollToMessage:(id:number) => void
 }
-export default function PinnedMessages({messages, scrollToMessage} : PinnedType) {
+export default function PinnedMessages({pms, scrollToMessage} : PinnedType) {
     const { user } = useUser()
-
-    const pms = messages.filter(m => m.is_pinned)
     const [ showNow, setShowNow ] = useState<number>(pms.length - 1)
-    const showing = pms[showNow] || pms[showNow + 1] || "";
     const [ showList, setShowList ] = useState(false)
-    const [isHolding, setIsHolding] = useState(false)
-
+    const [ isHolding, setIsHolding  ] = useState(false)
+    
+    const currentpm = pms.at(showNow) ?? pms.at(-1)
     const pmRef = useRef<HTMLDivElement | null>(null)
     const timerRef = useRef<number | null>(null)
     const longPressTriggered = useRef(false)
@@ -24,7 +22,11 @@ export default function PinnedMessages({messages, scrollToMessage} : PinnedType)
     const mouseYRef = useRef<number | null>(null)
     const rafRef = useRef<number | null>(null)
 
-    console.log(timerRef)
+    useEffect(() => {
+        if (showNow >= pms.length) {
+            setShowNow(Math.max(0, pms.length - 1))
+        }
+    }, [pms.length])
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -109,6 +111,8 @@ export default function PinnedMessages({messages, scrollToMessage} : PinnedType)
             timerRef.current = null
         }
     }
+
+    if (!currentpm) return null
     return (
         <div className="pinnedMessages" ref={pmRef} style={{cursor:isHolding ? "grabbing" : "pointer"}}>
             <div className="pmsMain">
@@ -116,7 +120,7 @@ export default function PinnedMessages({messages, scrollToMessage} : PinnedType)
                     onMouseUp={mouseUp}
                     onClick={() => {
                         if (longPressTriggered.current) return
-                        scrollToPin(pms[showNow], showNow)
+                        scrollToPin(currentpm, showNow)
                     }}
                 >
                     <span className="pmsCount">
@@ -124,11 +128,11 @@ export default function PinnedMessages({messages, scrollToMessage} : PinnedType)
                     </span>
                     <div className="pmsShowNow">
                         <span className="pmsSender">
-                            {showing.sender_id === user.id ? "Вы" : showing.sender_name || showing.sender_nick}: 
+                            {currentpm.sender_id === user.id ? "Вы" : currentpm.sender_name || currentpm.sender_nick}: 
                         </span>
                         &nbsp;
                         <span className="pmsText">
-                            {` ${showing.content || showing.files?.length || "Пересланное сообщение"}`}
+                            {` ${currentpm.content || currentpm.files?.length || "Пересланное сообщение"}`}
                         </span>
                     </div>
                 </div>

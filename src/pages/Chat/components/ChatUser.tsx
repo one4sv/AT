@@ -143,7 +143,7 @@ export default function ChatUser({
             </div>
             
             {messages.find(m => m.is_pinned) && (
-                <PinnedMessages messages={messages} scrollToMessage={scrollToMessage}/>
+                <PinnedMessages pms={messages.filter(m => m.is_pinned)} scrollToMessage={scrollToMessage}/>
             )}
             <div className={`chatSearchWrapeer ${isMobile ? "mobile" : ""}`}
                 style={{position: search.length > 0 ? "absolute" : "relative", marginLeft:search.length > 0 ? "4.5%" : "0"}} 
