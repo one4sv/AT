@@ -1,7 +1,6 @@
 import { ChevronDown, ChevronLeft, ChevronUp, CircleUserRound, X, Search } from "lucide-react";
 import { useNavigate } from "react-router";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
-import { useUser } from "../../../components/hooks/UserHook";
 import { useChat } from "../../../components/hooks/ChatHook";
 import { useEffect, useRef, useState } from "react";
 import type { message } from "../../../components/context/ChatContext";
@@ -12,6 +11,7 @@ import { useDelete } from "../../../components/hooks/DeleteHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
 import PinnedMessages from "./PinnedMessages";
+import UserInChatUserList from "./UserInChatUserList";
 
 interface ChatUserProps {
     search: string;
@@ -40,7 +40,6 @@ export default function ChatUser({
     scrollToMessage,
     searchItemRefs,
 }: ChatUserProps) {
-    const { user } = useUser();
     const { chatWith, onlineMap, typingStatus, messages } = useChat();
     const { openMenu, menu, closeMenu } = useContextMenu();
     const { setDeleteConfirm, setDeleteMess } = useDelete()
@@ -99,6 +98,7 @@ export default function ChatUser({
             is_group: chatWith.is_group
         });
     };
+
     return (
         <div className="chatUser" ref={chatUserRef}>
             {isMobile && (
@@ -143,10 +143,11 @@ export default function ChatUser({
             </div>
             
             {messages.find(m => m.is_pinned) && (
-                <PinnedMessages messages={messages}/>
+                <PinnedMessages messages={messages} scrollToMessage={scrollToMessage}/>
             )}
             <div className={`chatSearchWrapeer ${isMobile ? "mobile" : ""}`}
                 style={{position: search.length > 0 ? "absolute" : "relative", marginLeft:search.length > 0 ? "4.5%" : "0"}} 
+                ref={searchRef}
             >
                 <div className="chatSearch">
                     <input
@@ -177,7 +178,6 @@ export default function ChatUser({
                         </div>
                         <div className="chatSearchList">
                             {searchedMessages.map((m, i) => {
-                                const isMy = m.sender_id === user.id
                                 return (
                                     <div
                                         key={m.id}
@@ -185,25 +185,9 @@ export default function ChatUser({
                                         onClick={() => { setSelectedIndex(i); scrollToMessage(m.id); }}
                                         ref={(el) => { searchItemRefs.current.set(m.id, el) }}
                                     >
-                                        <div className="chatSearchPic">
-                                            {isMy && user.avatar_url ? (
-                                                <img src={user.avatar_url}/>
-                                            ) : !isMy && chatWith && chatWith.avatar_url && !chatWith.is_group ? (
-                                                <img src={chatWith.avatar_url}/>
-                                            ) : !isMy && chatWith && chatWith.members.find(member => member.id === m.sender_id)?.avatar_url && chatWith.is_group ? (
-                                                <img src={chatWith.members.find(member => member.id === m.sender_id)?.avatar_url}/>
-                                            ) : ""}
-                                        </div>
-                                        <div className="chatSearchItemInfo">
-                                            <div className="chatSearcSender">
-                                                <span className="chatSearchName">{isMy ? "Вы" : (m.sender_name || m.sender_nick)}</span>
-                                                <span className="chatSearchDate">{new Date(m.created_at).toLocaleDateString("ru-RU")}</span>
-                                            </div>
-                                            <div className="chatSearchText">
-                                                <span>{m.content}</span>
-                                            </div>
-                                        </div>
+                                        <UserInChatUserList m={m}/>
                                     </div>
+
                                 )
                             })}
                         </div>

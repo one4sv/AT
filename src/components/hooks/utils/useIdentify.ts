@@ -5,7 +5,7 @@ const identifyCache = new Map<string, { name: string; nick: string; avatar_url: 
 
 export function useIdentify(id: string | null | undefined) {
     const [ identified, setIdentified ] = useState<{ name: string; nick: string; avatar_url: string | null; } | null>(null);
-    const [loadingIdentify, setLoadingIdentify] = useState(false);
+    const [ loadingIdentify, setLoadingIdentify ] = useState(false);
 
     useEffect(() => {
         if (!id) {
