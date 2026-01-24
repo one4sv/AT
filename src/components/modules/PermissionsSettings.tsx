@@ -11,7 +11,7 @@ import Loader from "../ts/Loader"
 import { ArrowLeft } from "lucide-react"
 import SvgRain from "./components/SvgRain"
 import ImgsMembers from "./components/ImgsMembers"
-import AutoDesc from "../ts/utils/autoDesc"
+import AutoDesc from "../ts/utils/AutoDesc"
 import SelectList from "../ts/SelectList"
 import { useBlackout } from "../hooks/BlackoutHook"
 

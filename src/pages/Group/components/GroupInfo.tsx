@@ -29,7 +29,7 @@ export default function GroupInfo({group} : GroupInfoProps) {
 
     const [ newName, setNewName ] = useState<string>(group?.name || "");
     const [ newDesc, setNewDesc ] = useState<string>(group?.desc || "");
-    const redactable = members.some(m => m.role === "admin" && m.id === user.id);
+    const redactable = members.some(m => (m.role_name === "admin" || m.role_name === "owner") && m.id === user.id);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
