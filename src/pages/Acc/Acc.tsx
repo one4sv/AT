@@ -116,7 +116,7 @@ export default function Acc() {
                                 className={`accContentButt ${selector === sel ? sel + "Active active" : ""}`}
                                 onClick={() => setSelector(sel)}
                             >
-                                {sel === "sended" ? "Отправленное" : sel === "habits" ? "Привычки" : "Посты"}
+                                {sel === "sended" ? "Отправленное" : sel === "habits" ? "Активности" : "Посты"}
                             </div>
                         )
                     })}

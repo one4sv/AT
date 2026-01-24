@@ -40,7 +40,7 @@ export default function ChatUser({
     scrollToMessage,
     searchItemRefs,
 }: ChatUserProps) {
-    const { chatWith, onlineMap, typingStatus, messages } = useChat();
+    const { chatWith, onlineMap, typingMap, messages } = useChat();
     const { openMenu, menu, closeMenu } = useContextMenu();
     const { setDeleteConfirm, setDeleteMess } = useDelete()
     const { setChosenMess, chosenMess, setIsChose, isChose, setRedirect } = useMessages()
@@ -99,6 +99,16 @@ export default function ChatUser({
         });
     };
 
+    const typingNames = typingMap[chatWith?.id || ''] || [];
+    const typingText =
+        typingNames.length > 0
+            ? chatWith?.is_group
+                ? `${typingNames.slice(0, 3).join(", ")}${typingNames.length > 3 ? "…" : ""} печатает...`
+                : "Печатает..."
+            : null;
+
+    const curOnline = chatWith ? chatWith.members.filter(m => onlineMap[m.id]).length - 1 : 0
+
     return (
         <div className="chatUser" ref={chatUserRef}>
             {isMobile && (
@@ -130,14 +140,16 @@ export default function ChatUser({
                 </div>
                 <div className="chatUserName">
                     <span>{chatWith ? chatWith.name || chatWith.nick : ""}</span>
-                    <span className={`chatOnlineStauts ${typingStatus ? "chatTyping" : "chatStopTyping"}`}>
-                        { chatWith?.is_group
-                            ? `${chatWith.members.length} ${chatWith.members.length > 5 ? "участников" : "участника"}, ${chatWith.members.filter(m => onlineMap[m.id]).length} в сети`
-                            : typingStatus
-                                ? "печатает..."
-                                : onlineMap[chatWith?.id || ""]
-                                    ? "В сети"
-                                    : formatLastOnline(chatWith?.last_online)}
+                    <span className={`chatOnlineStauts ${typingText ? "chatTyping" : "chatStopTyping"}`}>
+                        {chatWith?.is_group
+                            ? typingText
+                                ? typingText
+                                : `${chatWith.members.length} ${chatWith.members.length > 5 ? "участников" : "участника"}${curOnline > 0 ? `, ${curOnline} в сети`  : ""} `
+                                : typingText
+                                    ? typingText
+                                    : onlineMap[chatWith?.id || ""]
+                                        ? "В сети"
+                                        : formatLastOnline(chatWith?.last_online)}
                     </span>
                 </div>
             </div>

@@ -106,21 +106,28 @@
     position: relative;
     align-items: center;
     gap: 0.2rem;
+    white-space: nowrap;        // не переносим на новую строку
+    min-width: 0;
 
     > div {
         display: flex;
         gap: 0.2rem;
+        flex: 1;
+        min-width: 0;
+        > .lmsender {
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
         > .lmc {
-            /* разрешаем гибко занимать доступное место и обрезать длинный текст */
-            flex: 1 1 auto;
+            flex: 1;
             min-width: 0;
-            max-width: 9vw;
             white-space: nowrap;        // не переносим на новую строку
             overflow: hidden;           // скрываем лишнее
             text-overflow: ellipsis;    // показываем "..."
-            &.lmcExtra {
-                color: var(--acsent);
-            }
+        }
+        .messageGetTime {
+            flex-shrink: 0;
+            white-space: nowrap;
         }
         &.mobile {
             >.lmc {
@@ -129,7 +136,9 @@
         }
     }
 }
-
+.lmcExtra {
+    color: var(--acsent);
+}
 .contactsNothing {
     color: var(--borderHabit);
     margin-top: 1vh;
@@ -154,10 +163,18 @@
                 color: var(--tc);
             }
         }
+        > .nowTyping {
+            color: var(--tc);
+        }
         >.lastMess {
             color: white;
-            >div > .lmc {
-                color: white;
+            >div {
+                > .lmsender {
+                    color: white;
+                }
+                > .lmc {
+                    color: white;
+                }
             }
         }
     }

@@ -14,7 +14,7 @@ import type { Media } from "../../../components/context/ChatContext";
 import { useSendMess } from "../../../components/hooks/SendMessHook";
 
 export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { showGoDown:boolean, handleGoDown:()=> void, scrollToMessage:(id:number) => void}) {
-    const { handleTyping, chatWith, chatLoading } = useChat()
+    const { handleTyping, chatWith, chatLoading, stopTyping } = useChat()
     const { sendMess, editMess } = useSendMess()
     const { nick, id } = useParams()
     const { droppedFiles, setDroppedFiles } = useDrop()
@@ -81,8 +81,8 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
                         setMess("")
                         setFiles([])
                         setRedirect(undefined)
-                        setShowChatBar(false)
                         setShowNames(true)
+                        stopTyping()
                     }
                 }
             } catch (error) {
@@ -279,7 +279,10 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
                 className={`chatTA ${showChatBar || files.length > 0 ? "chatTAwFiles" : ""} ${isMobile ? "mobile" : ""}`}
                 value={mess}
                 ref={textAreaRef}
-                onChange={(e) => { setMess(e.currentTarget.value); handleTyping(nick!); }}
+                onChange={(e) => {
+                    setMess(e.currentTarget.value)
+                    if (!editing) handleTyping(chatWith ? chatWith.id : "")
+                }}
                 onKeyDown={handleKeyDown}
                 onFocus={() => setShowChatBar(true)}
                 placeholder="Напишите сообщение..."

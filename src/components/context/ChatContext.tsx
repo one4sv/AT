@@ -3,10 +3,10 @@ import { type ReactNode } from "react";
 import { useNote } from "../hooks/NoteHook";
 import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
-import { showBrowserNotification } from "../ts/utils/NoteRequest";
 import { useSettings } from "../hooks/SettingsHook";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { NotificationAggregator } from "../ts/utils/NotificationAggregator";
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
@@ -22,6 +22,7 @@ export interface chatWithType {
     is_group:boolean,
     members: { id:string, nick:string, avatar_url:string }[],
     last_online: string,
+    chat_id:string,
 }
 export interface ReactionsType {
     user_id: string,
@@ -50,9 +51,10 @@ export interface ChatContextType {
     refetchContactsWTLoading: () => Promise<void>,
     onlineMap: Record<string, boolean>,
     setReaction: (mId: number, reaction: string) => Promise<void>,
-    handleTyping: (nick: string) => void,
-    typingStatus: boolean,
+    handleTyping: (id:string) => void,
+    typingMap: Record<string, string[]>,
     loadingList: boolean,
+    stopTyping:()=> void
 }
 
 export interface message {
@@ -107,11 +109,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [ search, setSearch ] = useState<string>("");
     const [ onlineMap, setOnlineMap ] = useState<Record<string, boolean>>({});
     const [ isTyping, setIsTyping ] = useState(false);
-    const [ typingStatus, setTypingStatus ] = useState(false);
+    const [ typingMap, setTypingMap ] = useState<Record<string, string[]>>({});
     
     const typingTimeout = useRef<number | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
-    const chatWithRef = useRef<chatWithType>(chatWith);
+    const chatWithRef = useRef<chatWithType | null>(chatWith);
+    const notificationAggregator = new NotificationAggregator();
 
     useEffect(() => {
         chatWithRef.current = chatWith;
@@ -121,9 +124,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await api.get(`${API_URL}chat/${nick}`);
             if (res.data.success) {
-                setChatWith({ name: res.data.user.username, nick: res.data.user.nick, id: res.data.user.id, avatar_url: res.data.user.avatar_url,
-                    last_online: res.data.user.last_online, note:res.data.user.note, is_blocked:res.data.user.is_blocked, pinned:res.data.user.pinned, am_i_blocked:res.data.user.am_i_blocked,
-                    is_group:false, members: [] });
+                const user = res.data.user
+                setChatWith({ name: user.username, nick: user.nick, id: user.id, avatar_url: user.avatar_url,
+                    last_online: user.last_online, note:user.note, is_blocked:user.is_blocked, pinned:user.pinned, am_i_blocked:user.am_i_blocked,
+                    is_group:false, members: [], chat_id:res.data.chat_id });
                 setMessages(res.data.messages);
             } else {
                 showNotification("error", "Не удалось получить данные");
@@ -135,18 +139,15 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             }
         } catch {
             showNotification("error", "Не удалось получить данные");
-            if (window.history.length > 0) {
-                navigate('/');
-            } else {
-                // navigate("/");
-            }
+            navigate('/');
         } finally { 
             setChatLoading(false);
         }
     };
-    const refetchChatWLoading = async (id: string) => {
+    const refetchChatWLoading = async (nick: string) => {
+        console.log("refetching")
         setChatLoading(true);
-        await refetchChat(id);
+        await refetchChat(nick);
     }
 
     const refetchGroupChat = async (id: string) => {
@@ -158,6 +159,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     is_group: true,
                     last_online: "",
                     nick: `group_${id}`,
+                    chat_id:res.data.chat.id
                 })
                 setMessages(res.data.messages);
             } else {
@@ -215,30 +217,34 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         wsRef.current = new WebSocket(`${API_WS}ws?userId=${user.id}`);
         wsRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log(data.type)
+            console.log(data)
             if (data.type === "NEW_MESSAGE") {
-                const messageSenderId = String(data.message.sender_id);
-                if (messageSenderId === user.id || (chatWithRef.current && messageSenderId === chatWithRef.current.id) || (chatWithRef.current?.is_group)) {
+                if (chatWithRef.current && String(chatWithRef.current.chat_id) === String(data.chat_id)) {
                     setMessages(prev => {
                         return [...prev, data.message];
                     });
                 }
                 refetchContactsWTLoading();
-                if (document.visibilityState === "hidden" && messageSenderId !== user.id && note && messNote && data.is_note) {
-                    const senderName = data.username
-                        ? `${data.username} | ${data.nick}`
-                        : data.nick || "Новый собеседник";
-                    const bodyText =
-                        data.message.content && data.message.content.trim() !== ""
-                            ? data.message.content
-                            : `${data.message.files?.length || 0} медиафайл(ов)`;
-                    showBrowserNotification(senderName, {
-                        body: bodyText,
-                        icon: "/favicon.png",
-                        url: data.is_group
-                            ? `/chat/g/${data.chat_id}`
-                            : `/chat/${data.nick}`,  // Изменено на data.nick
-                    });
+                if (data.type === "NEW_MESSAGE") {
+                    const messageSenderId = String(data.message.sender_id);
+                    if (chatWithRef.current && String(chatWithRef.current.chat_id) === String(data.chat_id)) {
+                        setMessages(prev => [...prev, data.message]);
+                    }
+                    refetchContactsWTLoading();
+
+                    if (document.visibilityState === "hidden" && messageSenderId !== user.id && note && messNote && data.is_note) {
+                        const chatKey = data.is_group ? `g_${data.chat_id}` : `p_${data.nick ?? data.message.sender_id}`;
+
+                        notificationAggregator.enqueueMessage(chatKey, {
+                        content: data.message.content,
+                        files: data.message.files,
+                        is_group: data.is_group,
+                        chat_id: data.chat_id,
+                        nick: data.nick,
+                        username: data.username,
+                        chat_name: data.chat_name,
+                        });
+                    }
                 }
             }
             if (data.type === "USER_STATUS") {
@@ -261,7 +267,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 }
             }
             if (data.type === "MESSAGE_READ") {
-                console.log(data)
                 setMessages(prev =>
                     prev.map(m =>
                         m.id === data.messageId
@@ -305,7 +310,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             if (data.type === "GROUP_UPDATED") {
                 refetchContactsWTLoading();
 
-                if (chatWith?.is_group && chatWith.id === data.group_id) {
+                if (chatWithRef.current?.is_group && chatWithRef.current.id === data.group_id) {
                     refetchGroupChat(data.group_id);
                 }
 
@@ -326,7 +331,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     : `Вы покинули группу "${data.group_name}"`
                 );
 
-                if (chatWith?.is_group && String(chatWith.id) === String(kickedGroupId)) {
+                if (chatWithRef.current?.is_group && String(chatWithRef.current?.id) === String(kickedGroupId)) {
                     navigate("/");
                 }
 
@@ -340,18 +345,22 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 // Обновляем список чатов (группа исчезнет из preview)
                 refetchContactsWTLoading();
                 }
-            if (data.type === "TYPING" && chatWith?.is_group === false) {
-                if (chatWithRef.current && "nick" in chatWithRef.current && data.from === chatWithRef.current.id) {
-                    setTypingStatus(true);
-                }
+            if (data.type === "TYPING") {
+                const chatKey = data.chat_id || data.from;
+                setTypingMap(prev => ({
+                    ...prev,
+                    [chatKey]: [...new Set([...(prev[chatKey] || []), data.sender_name])]
+                }));
             }
-            if (data.type === "STOP_TYPING" && chatWith?.is_group === false) {
-                if (chatWithRef.current && "nick" in chatWithRef.current && data.from === chatWithRef.current.id) {
-                    setTypingStatus(false);
-                }
+            if (data.type === "STOP_TYPING") {
+                const chatKey = data.chat_id || data.from;
+                setTypingMap(prev => ({
+                    ...prev,
+                    [chatKey]: (prev[chatKey] || []).filter(name => name !== data.sender_name)
+                }));
             }
             if (data.type === "MESSAGE_DELETED") {
-                console.log("Received MESSAGE_DELETED", data);
+                // console.log("Received MESSAGE_DELETED", data);
                 setMessages(prev =>
                     prev.filter(m => String(m.id) !== String(data.messageId))
                 );
@@ -365,7 +374,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             }
         };
         return () => wsRef.current?.close();
-    }, [user.id, refetchContacts, API_WS, note, messNote, refetchContactsWTLoading]);
+    }, [user.id, refetchContacts, API_WS, note, messNote, refetchContactsWTLoading, showNotification, navigate]);
 
     const setReaction = async (mId: number, reaction: string) => {
         try {
@@ -380,25 +389,44 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         return () => clearTimeout(timer);
     }, [search, refetchContacts]);
 
-    const handleTyping = (nick: string) => {
-        if (!user?.id || !nick) return;
+    const stopTyping = useCallback(() => {
+        if (!user?.id || !chatWithRef.current || !wsRef.current) return;
+
+        wsRef.current.send(JSON.stringify({
+            type: "STOP_TYPING",
+            to: chatWithRef.current.id,
+            is_group: chatWithRef.current.is_group,
+        }));
+
+        setIsTyping(false);
+        
+        if (typingTimeout.current) {
+            clearTimeout(typingTimeout.current);
+            typingTimeout.current = null;
+        }
+    }, [user?.id]);
+
+    // Также обнови handleTyping, чтобы он использовал stopTyping
+    const handleTyping = (id: string) => {
+        if (!user?.id || !chatWithRef.current) return;
+
+        // Отправляем TYPING только если ещё не печатаем
         if (!isTyping) {
             wsRef.current?.send(JSON.stringify({
                 type: "TYPING",
-                to: nick
+                to: id,
+                is_group: chatWithRef.current.is_group,
             }));
             setIsTyping(true);
         }
+
+        // Сбрасываем таймер
         if (typingTimeout.current) {
             clearTimeout(typingTimeout.current);
         }
+
         typingTimeout.current = window.setTimeout(() => {
-            wsRef.current?.send(JSON.stringify({
-                type: "STOP_TYPING",
-                to: nick
-            }));
-            setIsTyping(false);
-            typingTimeout.current = null;
+            stopTyping();
         }, 2000);
     };
 
@@ -412,7 +440,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <ChatContext.Provider value={{ chatWith, refetchChat, refetchChatWLoading, chatLoading, messages, list, setSearch, search,
-            refetchContacts, onlineMap, setReaction, handleTyping, typingStatus, loadingList, refetchContactsWTLoading, refetchGroupChat, refetchGroupChatWLoading }}>
+            refetchContacts, onlineMap, setReaction, handleTyping, typingMap, loadingList, refetchContactsWTLoading, refetchGroupChat, refetchGroupChatWLoading,
+            stopTyping}}>
             {children}
         </ChatContext.Provider>
     );

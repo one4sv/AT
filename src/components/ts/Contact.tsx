@@ -17,7 +17,7 @@ export interface ContactType {
 }
 
 export default function Contact({ contact }: ContactType) {
-    const { onlineMap, typingStatus } = useChat()
+    const { onlineMap, typingMap } = useChat()
     const { setBlackout } = useBlackout()
     const { openMenu } = useContextMenu()
     const { setDroppedFiles } = useDrop()
@@ -31,6 +31,8 @@ export default function Contact({ contact }: ContactType) {
             ? contact.lastMessage.target_id.toString()
             : null
     );
+
+    if (contact.unread_count > 0) console.log("unread",contact.unread_count)
 
     const partsLast = useMemo(() => {
         if (
@@ -70,6 +72,11 @@ export default function Contact({ contact }: ContactType) {
             }, 10);
         }
     };
+
+    const typingNames = typingMap[contact.id] || [];
+    const typingText = typingNames.length > 0 
+        ? (contact.is_group ? `${typingNames.join(', ')} печатает...` : 'Печатает...')
+        : null;
 
     return (
         <div
@@ -125,14 +132,18 @@ export default function Contact({ contact }: ContactType) {
                         )
                     )}
                 </div>
-                {typingStatus
-                    ? "Печатает..."
+                {typingText
+                    ? (
+                        <div className="nowTyping lmcExtra">
+                            {typingText}
+                        </div>
+                    )
                     : contact.lastMessage && (
                         <div className={`lastMess ${isMobile ? "mobile" : ""}`}>
                             <div>
                                 {contact.lastMessage.is_system
                                     ? (
-                                        <span className="lmc lmcExtra">{contact.lastMessage.sender_name}</span>
+                                        <span className="lmsender lmcExtra">{contact.lastMessage.sender_name}</span>
                                     )
                                     : (
                                         contact.lastMessage.sender_id === user.id
@@ -142,12 +153,10 @@ export default function Contact({ contact }: ContactType) {
                                 <span className={`lmc ${!contact.lastMessage.content || contact.lastMessage.is_system ? "lmcExtra" : ""}`}>
                                     {contact.lastMessage.content ? (
                                         partsLast && targetForLast ? (
-                                            <span>
-                                                {partsLast.before}{targetForLast.name || targetForLast.nick}{partsLast.after}
-                                            </span>
+                                                `${partsLast.before}${targetForLast.name || targetForLast.nick}${partsLast.after}`
                                         ) : (
                                             // Обычный текст (или пока грузится имя)
-                                            <span>{contact.lastMessage.content}</span>
+                                            `${contact.lastMessage.content}`
                                         )
                                     ) : contact.lastMessage.files?.length ?
                                         (`${contact.lastMessage.files.length} mediafile${contact.lastMessage.files.length > 1 ? "s" : ""}`)
@@ -156,7 +165,7 @@ export default function Contact({ contact }: ContactType) {
                                         )}
                                 </span>
                             </div>
-                            <span>{messageGetTime(contact.lastMessage.created_at)}</span>
+                            <span className="messageGetTime">{messageGetTime(contact.lastMessage.created_at)}</span>
                         </div>
                     )
                 }

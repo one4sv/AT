@@ -39,14 +39,16 @@ export default function Chat() {
     const highlightTimeoutRef = useRef<number | null>(null);
 
     const API_URL = import.meta.env.VITE_API_URL
-
+    
     useEffect(() => {
         setIsChose(false);
         setChosenMess([]);
         if (id) {
+            console.log("refetching group chat by id:", id)
             refetchGroupChatWLoading(id);
         }
         else if (nick) {
+            console.log("refetching chat by nick:", nick)
             refetchChatWLoading(nick);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps

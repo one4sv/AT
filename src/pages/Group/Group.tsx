@@ -52,7 +52,7 @@ export default function Group() {
                                 className={`accContentButt ${selector === sel ? sel + "Active active" : ""}`}
                                 onClick={() => setSelector(sel)}
                             >
-                                {sel === "sended" ? "Отправленное" : sel === "habits" ? `Участники: ${members.length}` : "Привычки"}
+                                {sel === "sended" ? "Отправленное" : sel === "habits" ? `Участники: ${members.length}` : "Активности"}
                             </div>
                         )
                     })}
