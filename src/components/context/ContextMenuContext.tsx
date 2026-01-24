@@ -1,6 +1,7 @@
 import { createContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react"
 import type { Habit } from "./HabitsContext"
 import type { Media } from "./ChatContext"
+import type { Perms } from "./GroupContext"
 const ContextMenuContext = createContext<ContextMenuContextType | null>(null)
 
 type MenuOptions = {
@@ -42,7 +43,7 @@ type MenuState = {
 }
 type MemberType = {
     isMe?:boolean,
-    role:string | null,
+    myPerms?:Perms | null
 }
 export type ContextMenuContextType = {
     menu: MenuState

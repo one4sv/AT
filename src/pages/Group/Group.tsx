@@ -12,7 +12,7 @@ import Loader from "../../components/ts/Loader";
 import "./scss/Group.scss";
 
 export default function Group() {
-    const { group, media, members, habits, refetchGroupWLoading, groupLoading  } = useGroup();
+    const { group, media, members, habits, refetchGroupWLoading, groupLoading, myPerms  } = useGroup();
     const { setTitle } = usePageTitle()
     const { id } = useParams<{id:string}>()
     const [ selector, setSelector ] = useState<string>("sended");
@@ -67,7 +67,7 @@ export default function Group() {
                     <AccMedia media={media}/>
                 )}
                 {selector === "habits" && (
-                    <GroupMembers members={members}/>
+                    <GroupMembers members={members} myPerms={myPerms}/>
                 )}
                 {selector === "posts" && (
                     <AccHabits habits={habits}/>

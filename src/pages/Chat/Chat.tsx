@@ -22,7 +22,7 @@ import SystemMessage from "./components/SystemMessage";
 
 export default function Chat() {
     const { user } = useUser();
-    const { refetchChatWLoading, chatLoading, messages, chatWith, refetchGroupChat } = useChat();
+    const { refetchChatWLoading, chatLoading, messages, chatWith, refetchGroupChatWLoading } = useChat();
     const { chosenMess, setChosenMess, isChose, setIsChose, pendingScrollId, setPendingScrollId } = useMessages();
     const { setTitle } = usePageTitle()
 
@@ -44,7 +44,7 @@ export default function Chat() {
         setIsChose(false);
         setChosenMess([]);
         if (id) {
-            refetchGroupChat(id);
+            refetchGroupChatWLoading(id);
         }
         else if (nick) {
             refetchChatWLoading(nick);

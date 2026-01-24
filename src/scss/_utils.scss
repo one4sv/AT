@@ -10,7 +10,7 @@
     border-radius: $br;
 
     &:focus-visible {
-        border: 1px solid $bh;
+      border: 1px solid $bh;
     }
 }
 @mixin inputGlow($line, $lineGlow, $focusLine, $focusGlow) {

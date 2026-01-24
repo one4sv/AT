@@ -3,7 +3,7 @@ import "../../scss/ContextMenu.scss"
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useDelete } from "../hooks/DeleteHook";
-import {  ChatTeardrop, Check, CheckCircle, Circle, CopySimple, Eye, EyeSlash, Heart, Link, PencilSimple, PushPin, PushPinSlash, ShareFat, SignOut, Trash, User, UserMinus, Users } from "@phosphor-icons/react";
+import {  ChatTeardrop, Check, CheckCircle, Circle, CopySimple, Eye, EyeSlash, Heart, Link, PencilSimple, Prohibit, PushPin, PushPinSlash, ShareFat, SignOut, Trash, User, UserMinus, Users } from "@phosphor-icons/react";
 import { useUpHabit } from "../hooks/UpdateHabitHook";
 import { useDone } from "../hooks/DoneHook";
 import { useNavigate } from "react-router";
@@ -210,7 +210,7 @@ export default function ContextMenu() {
                         Открыть чат
                     </div>
                     {linkButt}
-                    {memberInfo && !memberInfo.isMe && memberInfo.role !== null && (
+                    {memberInfo && !memberInfo.isMe && memberInfo.myPerms?.kick_users === true && (
                         <div className="ContextMenuButt delete" onClick={() => {
                             setDeleteConfirm({goal:point, id:options.id, name:options.name!})
                             setBlackout({seted:true, module:"Delete"})
@@ -219,7 +219,15 @@ export default function ContextMenu() {
                             Исключить из группы
                         </div>
                     )}
-                    
+                    {memberInfo && !memberInfo.isMe && memberInfo.myPerms?.ban_users === true && (
+                        <div className="ContextMenuButt delete" onClick={() => {
+                            setDeleteConfirm({goal:point, id:options.id, name:options.name!})
+                            setBlackout({seted:true, module:"Delete"})
+                        }}>
+                            <Prohibit />
+                            Заблоировать
+                        </div>
+                    )}
                 </>
             )}
             {point === "mess" && curChat && setChosenMess && (

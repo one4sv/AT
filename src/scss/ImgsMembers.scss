@@ -1,0 +1,76 @@
+@use "./global" as var;
+
+.imgsMembers {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    overflow: hidden;
+}
+.imgsSlider {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+.memberProf {
+    width: 25vw;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex: 0 0 100%;
+}
+.memberProfImg {
+    border-radius: 50%;
+    background-color: var(--mc);
+    overflow: hidden;
+    height: 70%;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    >svg {
+        width: 70%;
+        height: 70%;
+    }
+}
+.memberProfName {
+    font-size: 20px;
+    background-color: var(--bgc);
+    border-radius: 12px;
+    padding: 2px 4px;
+}
+.memberProfRole {
+    color: var(--acsent);
+    font-size: 20px;
+    background-color: var(--bgc);
+    border-radius: 12px;
+    padding: 2px 4px;
+}
+.imgMembersCaret {
+    position: absolute;
+    height: 100%;
+    width: 4vw;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--borderHabit);
+    z-index: 5;
+    &:hover {
+        color: var(--tc);
+    }
+    > svg {
+        width: 100%;
+        height: 100%;
+    }
+    &.right {
+        right: 0;
+    }
+}

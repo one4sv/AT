@@ -23,7 +23,7 @@ export default function Contact({ contact }: ContactType) {
     const { setDroppedFiles } = useDrop()
     const { setIsChose } = useMessages()
     const { user } = useUser()
-    const { nick } = useParams<{ nick: string }>()
+    const { nick, id } = useParams<{ nick: string, id:string }>()
     const navigate = useNavigate()
 
     const { identified: targetForLast } = useIdentify(
@@ -73,7 +73,7 @@ export default function Contact({ contact }: ContactType) {
 
     return (
         <div
-            className={`contactsUser ${nick === contact.nick ? "active" : ""}`}
+            className={`contactsUser ${nick === contact.nick || id == contact.id ? "active" : ""}`}
             key={contact.id}
             onClick={() => {
                 if (contact.is_group) navigate(`/chat/g/${contact.id}`)

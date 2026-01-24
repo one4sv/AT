@@ -1,11 +1,10 @@
 import { createContext, useState } from "react";
 import { type ReactNode } from "react"
-import ModuleMap from "../modules/ModuleMap";
 const BlackoutContext = createContext<BlackoutContextType | null>(null);
 
 export interface Blackout {
     seted:boolean;
-    module?:keyof typeof ModuleMap;
+    module?:string;
     pick?:File;
     bg?:File;
     img?:string,

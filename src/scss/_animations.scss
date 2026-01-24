@@ -77,3 +77,11 @@
 		transform: translateY(-30px);
 	}
 }
+@keyframes rainFall {
+    from {
+        transform: translateY(0%) rotate(0deg);
+    }
+    to {
+        transform: translateY(1000%) rotate(360deg);
+    }
+}

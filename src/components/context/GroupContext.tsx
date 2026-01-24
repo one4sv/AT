@@ -19,14 +19,16 @@ export interface GroupContextType {
     groupLoading:boolean,
     newAva:File | undefined,
     setNewAva:React.Dispatch<React.SetStateAction<File | undefined>>,
+    myPerms:Perms | null
 } 
 export interface Member {
     id: string,
     name: string | null,
     nick: string,
     avatar_url: string | null,
-    role: string |  null,
+    role_id: string,
     last_online: string | null,
+    role_name:string
 }
 export interface Group {
     id: string,
@@ -36,7 +38,18 @@ export interface Group {
     link: string | null,
     invite_expires_at: string | null,
 }
-
+export interface Perms {
+    change_avatar: boolean,
+    change_name: boolean,
+    change_desc: boolean,
+    pin_messages: boolean,
+    redirect_messages: boolean,
+    delete_others: boolean,
+    manage_roles: boolean,
+    kick_users: boolean,
+    ban_users: boolean,
+    can_invite_users: boolean,
+}
 export const GroupProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
     const { onlineMap } = useChat()
@@ -48,6 +61,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
     const [ members, setMembers ] = useState<Member[]>([]);  
     const [ habits, setHabits ] = useState<Habit[]>([]);
     const [ groupLoading, setGroupLoading ] = useState<boolean>(false);
+    const [ myPerms, setMyPerms ] = useState<Perms | null>(null)
     const [ newAva, setNewAva ] = useState<File | undefined>(undefined);
 
     const refetchGroup = useCallback(async (id: string) => {
@@ -71,6 +85,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
                     });
                 setMembers(sortedMembers);
                 setMedia(res.data.media);
+                setMyPerms(res.data.my_perms)
             } else {
                 showNotification("error", res.data.message || "Не удалось найти группу");
                 navigate("/");
@@ -105,7 +120,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
     }, [group.id, refetchGroup]);
 
     return (
-        <GroupContext.Provider value={{ refetchGroup, group, habits, members, media, groupLoading, refetchGroupWLoading, newAva, setNewAva }}>
+        <GroupContext.Provider value={{ refetchGroup, group, habits, members, media, groupLoading, refetchGroupWLoading, newAva, setNewAva, myPerms }}>
         {children}
         </GroupContext.Provider>
     );

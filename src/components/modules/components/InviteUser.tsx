@@ -49,9 +49,7 @@ export default function InviteUser() {
 
     const timeLeftText = expiresAt && !isExpired
         ? `Ссылка истекает ${formatDistanceToNow(expiresAt, { locale: ru, addSuffix: true })}`
-        : isExpired
-        ? "Ссылка истекла"
-        : "";
+        : ""
 
     return (
         <div className="inviteUser">
@@ -65,7 +63,7 @@ export default function InviteUser() {
                 e.preventDefault();
                 linking()
             }}>
-                <input type="text" className="inviteUserLink" name="" id="inviteUserLink" readOnly value={linked || ""} placeholder={loading ? "Генерируем..." :  "Нажмите чтобы создать ссылку"}/>
+                <input type="text" className="inviteUserLink" name="" id="inviteUserLink" readOnly value={linked && !isExpired ? linked : ""} placeholder={loading ? "Генерируем..." :  "Нажмите чтобы создать ссылку"}/>
                 <button>{linked ? <Copy/> : <Link/>}</button>
             </div>
             <span>{timeLeftText}</span>

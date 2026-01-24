@@ -144,10 +144,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setChatLoading(false);
         }
     };
-
-    const refetchGroupChatWLoading = async (nick: string) => {
+    const refetchChatWLoading = async (id: string) => {
         setChatLoading(true);
-        await refetchChat(nick);
+        await refetchChat(id);
     }
 
     const refetchGroupChat = async (id: string) => {
@@ -175,10 +174,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setChatLoading(false);
         }
     };
-
-    const refetchChatWLoading = async (id: string) => {
+    const refetchGroupChatWLoading = async (id: string) => {
         setChatLoading(true);
-        await refetchChat(id);
+        await refetchGroupChat(id);
     }
 
     const refetchContactsWTLoading = useCallback(async () => {
