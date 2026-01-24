@@ -219,32 +219,24 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             const data = JSON.parse(event.data);
             console.log(data)
             if (data.type === "NEW_MESSAGE") {
+                const messageSenderId = String(data.message.sender_id);
                 if (chatWithRef.current && String(chatWithRef.current.chat_id) === String(data.chat_id)) {
-                    setMessages(prev => {
-                        return [...prev, data.message];
-                    });
+                    setMessages(prev => [...prev, data.message]);
                 }
                 refetchContactsWTLoading();
-                if (data.type === "NEW_MESSAGE") {
-                    const messageSenderId = String(data.message.sender_id);
-                    if (chatWithRef.current && String(chatWithRef.current.chat_id) === String(data.chat_id)) {
-                        setMessages(prev => [...prev, data.message]);
-                    }
-                    refetchContactsWTLoading();
 
-                    if (document.visibilityState === "hidden" && messageSenderId !== user.id && note && messNote && data.is_note) {
-                        const chatKey = data.is_group ? `g_${data.chat_id}` : `p_${data.nick ?? data.message.sender_id}`;
+                if (document.visibilityState === "hidden" && messageSenderId !== user.id && note && messNote && data.is_note) {
+                    const chatKey = data.is_group ? `g_${data.chat_id}` : `p_${data.nick ?? data.message.sender_id}`;
 
-                        notificationAggregator.enqueueMessage(chatKey, {
-                        content: data.message.content,
-                        files: data.message.files,
-                        is_group: data.is_group,
-                        chat_id: data.chat_id,
-                        nick: data.nick,
-                        username: data.username,
-                        chat_name: data.chat_name,
-                        });
-                    }
+                    notificationAggregator.enqueueMessage(chatKey, {
+                    content: data.message.content,
+                    files: data.message.files,
+                    is_group: data.is_group,
+                    chat_id: data.chat_id,
+                    nick: data.nick,
+                    username: data.username,
+                    chat_name: data.chat_name,
+                    });
                 }
             }
             if (data.type === "USER_STATUS") {

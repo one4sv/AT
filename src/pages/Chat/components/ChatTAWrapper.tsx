@@ -18,7 +18,7 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
     const { sendMess, editMess } = useSendMess()
     const { nick, id } = useParams()
     const { droppedFiles, setDroppedFiles } = useDrop()
-    const { answer, editing, setEditing, redirect, setRedirect, showNames, setShowNames } = useMessages()
+    const { answer, editing, setEditing, redirect, setRedirect, showNames, setShowNames, setChosenMess } = useMessages()
     const { menuRef } = useContextMenu()
 
     const [ mess, setMess ] = useState<string>("")
@@ -75,11 +75,13 @@ export function ChatTAWrapper({showGoDown, handleGoDown, scrollToMessage} : { sh
                     const keptUrls = oldMedia.map(m => m.url);
                     if (await editMess(Number(editing.id), trimmedMess, files, keptUrls, answer !== null ? answer.id : undefined) === true) {
                         setEditing(null);
+                        setChosenMess([])
                     }
                 } else {
                     if (await sendMess({nick:nick, id:id}, trimmedMess, files, answer !== null ? answer.id : undefined, redirect, showNames)) {
                         setMess("")
                         setFiles([])
+                        setChosenMess([])
                         setRedirect(undefined)
                         setShowNames(true)
                         stopTyping()
