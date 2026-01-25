@@ -132,7 +132,11 @@ export default function PinnedMessages({pms, scrollToMessage} : PinnedType) {
                         </span>
                         &nbsp;
                         <span className="pmsText">
-                            {` ${currentpm.content || currentpm.files?.length || "Пересланное сообщение"}`}
+                            {currentpm.content
+                                ? currentpm.content
+                                : currentpm.files && currentpm.files.length > 0
+                                    ? `${currentpm.files?.length} mediafiles`
+                                    : "Пересланное сообщение"}
                         </span>
                     </div>
                 </div>

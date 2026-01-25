@@ -35,7 +35,12 @@ export default function UserInChatUserList({m}:ChatUserListType) {
                     <span className="chatSearchDate">{new Date(m.created_at).toLocaleDateString("ru-RU")}</span>
                 </div>
                 <div className="chatSearchText">
-                    <span>{m.content}</span>
+                    <span>
+                        {m.content
+                            ? m.content
+                            : m.files && m.files.length > 0
+                                ? `${m.files?.length} mediafiles`
+                                : "Пересланное сообщение"}</span>
                 </div>
             </div>
         </>
