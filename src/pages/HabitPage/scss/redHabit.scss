@@ -53,13 +53,15 @@
     width: 80%;
     margin: 1vh 0 0;
     justify-content: end;
+    height: 4vh;
     >div {
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-left: 0.5vw;
-        padding: 1vh;
+        margin-left: 0.2vw;
+        // padding: 1vh;
         aspect-ratio: 1/1;
+        height: 100%;
         border-radius: 6px;
         cursor: pointer;
         right: 0;
@@ -89,6 +91,27 @@
         color: var(--acsent)
     }
 }
+.thisArchieved {
+    width: 80%;
+    height: fit-content;
+    color: var(--borderHabit);
+    display: flex;
+    height: 2.4rem;
+    margin: 0.2vh 0 0.5vh;
+    gap: 0.5vw;
+}
+.thisArchievedSvg {
+    height: 100%;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.thisArchievedText {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 .redHabitSL {
     @include var.selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 10%);
     >input {
@@ -107,4 +130,3 @@
         }
     }
 }
-

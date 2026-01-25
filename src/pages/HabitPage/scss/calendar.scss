@@ -272,7 +272,7 @@
     }
 }
 .streakDiv {
-    margin: 1vh 0;
+    margin-top: 1vh;
     font-size: 18px;
     width: 100%;
     display: flex;
@@ -326,7 +326,7 @@
     align-items: center;
     font-size: 20px;
     position: relative;
-    margin-bottom: 1vh;
+    margin-top: 1vh;
     >svg {
         margin-right: 0.3vw;
     }
@@ -349,6 +349,7 @@
     }
 }
 .habitDayComment {
+    margin-top: 1vh;
     position: relative;
     display: flex;
     flex-direction: column;

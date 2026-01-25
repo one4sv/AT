@@ -63,16 +63,18 @@ export default function ChosenDay() {
                             <div className="cdHabitName">
                                 <div className={`calendarDot ${cn}`}/><span className="cdHabitText">{c.habitName}</span>
                             </div>
-                            { day > todayStr ? (
+                            {day > todayStr ? (
                                 <div className="sdHabitTime">
                                     {getHabitTime(c.habitId)}
                                 </div>
                             ) : ""}
                             
                         </div>
-                        <div className="cdHabitDoneButt" onMouseOver={() => setMouseOver(c.habitId)} onMouseLeave={() => setMouseOver("")} onClick={() => markDone(Number(c.habitId), day)}>
-                            {doneButt(cn, c.habitId)}
-                        </div>
+                        {!c.is_archieve &&
+                            <div className="cdHabitDoneButt" onMouseOver={() => setMouseOver(c.habitId)} onMouseLeave={() => setMouseOver("")} onClick={() => markDone(Number(c.habitId), day)}>
+                                {doneButt(cn, c.habitId)}
+                            </div>
+                        }
                     </div>
                 ))}
             </div>

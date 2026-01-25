@@ -7,7 +7,6 @@ import type { PrivateSettings } from "./SettingsContext";
 
 export type UpdateSettingsContextType = {
     setNewOrder: (val: string[]) => void;
-    setNewAmount: (val: number[]) => void;
     setNewTheme: (val:string)=> void;
     setNewAcsent: (val:string)=> void;
     setNewBg: (val:string)=> void;
@@ -27,7 +26,7 @@ type UpdateQueueItem = {
 const UpdateSettingsContext = createContext<UpdateSettingsContextType | null>(null);
 
 export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchSettings, amountHabits, orderHabits, theme, acsent, bg, decor } = useSettings();
+    const { refetchSettings, orderHabits, theme, acsent, bg, decor } = useSettings();
     const { refetchUser, user } = useUser();
     const { showNotification } = useNote();
     const API_URL = import.meta.env.VITE_API_URL
@@ -47,14 +46,6 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
             { setting: "private", value: val }
         ]);
         setIsUpdating((prev) => [...new Set([...prev, "private"])]);
-    }, []);
-
-    const setNewAmount = useCallback((val: number[]) => {
-        setUpdateQueue((prev) => [
-            ...prev.filter((item) => item.setting !== "amountHabits"),
-            { setting: "amountHabits", value: val },
-        ]);
-        setIsUpdating((prev) => [...new Set([...prev, "habits"])]);
     }, []);
 
     const setNewTheme = useCallback((val: string) => {
@@ -121,14 +112,13 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
         // определяем, какой маркер isUpdating соответствует текущей настройке
         const updatingKey = (s: string) =>
-            s === "order" || s === "amountHabits" ? "habits"
+            s === "order" ? "habits"
             : s === "theme" || s === "acsent" ? "pers"
             : s === "private" ? "private"
             : "acc";
  
         // Проверка, изменились ли данные
         if (
-            (setting === "amountHabits" && JSON.stringify(value) === JSON.stringify(amountHabits)) ||
             (setting === "order" && JSON.stringify(value) === JSON.stringify(orderHabits)) ||
             (setting === "username" && value === user.username) ||
             (setting === "nick" && value === user.nick) ||
@@ -172,7 +162,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
             setIsUpdating((prev) => prev.filter((item) => item !== updatingKey(setting)));
             setIsProcessing(false);
         }
-    }, [isProcessing, updateQueue, amountHabits, orderHabits, user.username, user.nick, user.mail, theme, acsent, decor, bg, API_URL, refetchSettings, refetchUser, showNotification]);
+    }, [isProcessing, updateQueue, orderHabits, user.username, user.nick, user.mail, theme, acsent, decor, bg, API_URL, refetchSettings, refetchUser, showNotification]);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -183,7 +173,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
     return (
         <UpdateSettingsContext.Provider
-            value={{ setNewOrder, setNewAmount, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote }}
+            value={{ setNewOrder, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote }}
         >
             {children}
         </UpdateSettingsContext.Provider>

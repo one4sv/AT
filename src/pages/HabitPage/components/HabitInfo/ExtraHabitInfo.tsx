@@ -18,10 +18,6 @@ export default function ExtraHabitInfo({habit, readOnly}:{habit:Habit, readOnly:
                 <div className="extraHabitInfoStr">
                     <div className="addHabbitCheckBox redHabitCheckbox">
                         <Square id="checkBoxAutoComp" className="notactive" />
-                        <label htmlFor="checkBoxPresent">Автовыполнение</label>
-                    </div>
-                    <div className="addHabbitCheckBox redHabitCheckbox">
-                        <Square id="checkBoxAutoComp" className="notactive" />
                         <label htmlFor="checkBoxPresent">Продолжительная привычка</label>
                     </div>
                     <div className="addHabbitCheckBox redHabitCheckbox">

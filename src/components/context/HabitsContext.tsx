@@ -9,7 +9,7 @@ export interface Habit {
     name: string;
     desc:string | "";
     start_date: string;
-    end_date: string | "" | Date;
+    end_date: string | "";
     ongoing: boolean;
     periodicity: string;
     chosen_days: number[] | null;
@@ -20,6 +20,7 @@ export interface Habit {
     pinned:boolean;
     done?:boolean;
     user_id:string;
+    is_archieve:boolean;
 }
 
 interface HabitResponse {

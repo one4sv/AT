@@ -11,6 +11,7 @@ export interface Calendar {
     comment?:string;
     isDone?:boolean;
     created_at?:Date;
+    is_archieve:boolean
 }
 export interface CalendarContextType {
     calendar:Calendar[]

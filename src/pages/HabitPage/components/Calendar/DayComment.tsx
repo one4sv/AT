@@ -12,7 +12,7 @@ interface DayCommentProps {
 
 export default function DayComment({ id, isMy }: DayCommentProps) {
   const { sendDayComment, waitComAnswer } = useDone()
-  const { dayComment, todayComment } = useTheHabit()
+  const { dayComment, todayComment, habit } = useTheHabit()
   const { chosenDay } = useCalendar()
 
   const [ comment, setComment ] = useState<string | null>(todayComment || "");
@@ -53,7 +53,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
       <textarea
         placeholder="Комментарий"
         ref={textareaRef}
-        readOnly={!isMy}
+        readOnly={!isMy || (habit && habit.is_archieve)}
         onChange={handleTextareaChange}
         onKeyDown={handleKeyDown}
         value={comment || ""}
@@ -65,7 +65,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           <span>{comment?.length}/200</span>
           <button
             className="saveCommentButton"
-            disabled={todayComment === "" && dayComment === "" || !isMy || waitComAnswer}
+            disabled={todayComment === "" && dayComment === "" || !isMy || waitComAnswer || habit?.is_archieve}
             onClick={() => sendDayComment(id, comment, chosenDay)}
           >
             {waitComAnswer ? (

@@ -7,8 +7,6 @@ const SettingsContext = createContext<SettingsContextType | null>(null);
 export interface SettingsContextType {
     orderHabits:string[] | null
     setOrderHabits: React.Dispatch<React.SetStateAction<string[] | null>>    
-    amountHabits:number[] | null
-    setAmountHabits: React.Dispatch<React.SetStateAction<number[] | null>>
     theme:string
     setTheme:React.Dispatch<React.SetStateAction<string>>
     acsent:string
@@ -34,7 +32,6 @@ export interface SettingsContextType {
 interface SettingsResponse {
     success: boolean;
     order: string[];
-    amountHabits:number[];
     private:PrivateSettings;
     theme:string;
     acsent:string;
@@ -57,7 +54,6 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
     const API_URL = import.meta.env.VITE_API_URL
 
     const [ orderHabits, setOrderHabits ] = useState<string[] | null>([])
-    const [ amountHabits, setAmountHabits ] = useState<number[] | null>([])
     const [ theme, setTheme ] = useState<string>("")
     const [ acsent, setAcsent ] = useState<string>("")
     const [ bg, setBg ] = useState<string>("")
@@ -76,7 +72,6 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
             })
             if (res.data.success) {
                 setOrderHabits(res.data.order)
-                setAmountHabits(res.data.amountHabits)
                 setTheme(res.data.theme)
                 setPrivate(res.data.private)
                 setAcsent(res.data.acsent)
@@ -98,7 +93,7 @@ export const SettingsProvider = ({children}:{children:ReactNode}) => {
     }, [refetchSettings, user]);
 
     return(
-        <SettingsContext.Provider value={{ orderHabits, setOrderHabits, tab, setTab, refetchSettings, amountHabits, setAmountHabits,
+        <SettingsContext.Provider value={{ orderHabits, setOrderHabits, tab, setTab, refetchSettings,
          theme, setTheme, privateShow, setPrivate, setAcsent, acsent, bg, setBg, bgUrl,
           decor, setDecor, twoAuth, setTwoAuth, note, setNote, messNote, setMessNote }}>
             {children}

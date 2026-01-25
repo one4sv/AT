@@ -14,6 +14,7 @@ export type UpdateHabitContextType = {
   setNewStartTime: (habitId: number, val: string | null) => void;
   setNewEndTime: (habitId: number, val: string | null) => void;
   setPin: (habitId: number, val: boolean) => void;
+  putInArchieve: (habitId: number, val: boolean) => void;
   setNewTag: (habitId: number, val: string | null) => void;
   isUpdating: string[];
   localChanges: { [key: number]: Partial<Record<string, any>> };
@@ -93,6 +94,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
   const setNewStartTime = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "start_time", val), [enqueueUpdate]);
   const setNewEndTime = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "end_time", val), [enqueueUpdate]);
   const setPin = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "pinned", val), [enqueueUpdate]);
+  const putInArchieve = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "is_archieve", val), [enqueueUpdate]);
   const setNewTag = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "tag", val), [enqueueUpdate]);
 
   const processQueue = useCallback(async () => {
@@ -175,6 +177,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
         setNewTag,
         isUpdating,
         localChanges,
+        putInArchieve
       }}
     >
       {children}

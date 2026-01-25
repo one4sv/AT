@@ -1,35 +1,11 @@
 import type { Calendar } from "../../context/CalendarContext"
 import type { Habit } from "../../context/HabitsContext"
+import { isTimePassed, parseLocalDate, startOfToday } from "./dayArrHelpFuncs"
 
 interface DayArrays {
   completedArr: Calendar[]
   skippedArr: Calendar[]
   willArr: Calendar[]
-}
-
-// ===== helpers =====
-
-function parseLocalDate(dateStr: string) {
-  const [y, m, d] = dateStr.split("-").map(Number)
-  return new Date(y, m - 1, d)
-}
-
-function startOfToday() {
-  const t = new Date()
-  t.setHours(0, 0, 0, 0)
-  return t
-}
-
-function isTimePassed(endTime?: string) {
-  if (!endTime) return true // времени нет → считаем прошедшим
-
-  const [h, m] = endTime.split(":").map(Number)
-  const now = new Date()
-
-  const end = new Date()
-  end.setHours(h, m, 0, 0)
-
-  return now >= end
 }
 
 // ===== main =====
@@ -53,7 +29,7 @@ export function getDayArrays(
   const willArr: Calendar[] = []
 
   const processHabit = (h: Habit) => {
-    if (parseLocalDate(h.start_date) > date) return
+    if (parseLocalDate(h.start_date) > date || ( h.end_date && parseLocalDate(h.end_date) < date)) return
 
     const match =
       h.periodicity === "everyday" ||
@@ -71,7 +47,8 @@ export function getDayArrays(
         habitId: h.id.toString(),
         habitName: h.name,
         date: dateStr,
-        isDone: false
+        isDone: false,
+        is_archieve:h.is_archieve
       })
       return
     }
@@ -81,7 +58,8 @@ export function getDayArrays(
         habitId: h.id.toString(),
         habitName: h.name,
         date: dateStr,
-        isDone: false
+        isDone: false,
+        is_archieve:h.is_archieve
       })
       return
     }
@@ -93,14 +71,16 @@ export function getDayArrays(
           habitId: h.id.toString(),
           habitName: h.name,
           date: dateStr,
-          isDone: false
+          isDone: false,
+          is_archieve:h.is_archieve
         })
       } else {
         willArr.push({
           habitId: h.id.toString(),
           habitName: h.name,
           date: dateStr,
-          isDone: false
+          isDone: false,
+          is_archieve:h.is_archieve
         })
       }
     }
