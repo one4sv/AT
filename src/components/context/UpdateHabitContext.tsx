@@ -1,4 +1,4 @@
-import { useEffect, useState, createContext, useCallback, type ReactNode } from "react";
+import { useEffect, useState, createContext, useCallback, type ReactNode, useRef } from "react";
 import axios from "axios";
 import { useHabits } from "../hooks/HabitsHook";
 import { useNote } from "../hooks/NoteHook";
@@ -36,7 +36,8 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
   const [isUpdating, setIsUpdating] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [localChanges, setLocalChanges] = useState<{ [key: number]: Partial<Record<string, any>> }>({});
-
+  const debounceRef = useRef<number | null>(null)
+  
   const removeField = useCallback((habitId: number, field: string) => {
     setLocalChanges((prev) => {
       const updated = { ...prev };
@@ -57,22 +58,23 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     if (field === "name" && (!value || value.trim() === "")) return;
     if (field === "start_date" && !value) return;
 
-    // ⏳ задержка перед постановкой в очередь
-    clearTimeout((enqueueUpdate as any)._timeout);
-    (enqueueUpdate as any)._timeout = setTimeout(() => {
-      setLocalChanges((prev) => ({
+    if (debounceRef.current) {
+      window.clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = window.setTimeout(() => {
+      setLocalChanges(prev => ({
         ...prev,
         [habitId]: {
           ...prev[habitId],
           [field]: value,
-        },
+        }
       }));
 
-      setUpdateQueue((prev) => [
-        ...prev.filter((item) => !(item.field === field && item.habitId === habitId)),
+      setUpdateQueue(prev => [
+        ...prev.filter(item => !(item.field === field && item.habitId === habitId)),
         { habitId, field, value },
       ]);
-      setIsUpdating((prev) => [...new Set([...prev, `habit_${habitId}`])]);
+      setIsUpdating(prev => [...new Set([...prev, `habit_${habitId}`])]);
     }, 400);
   }, []);
 

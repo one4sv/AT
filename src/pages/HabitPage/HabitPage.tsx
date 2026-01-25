@@ -55,7 +55,7 @@ export default function Habit() {
                     <div className="habitMenuShowButt" onClick={()=> setShowHabitMenu(!showHabitMenu)}>
                         <CaretDoubleRight style={{transform: `rotate(${showHabitMenu ? "0deg" : "180deg"})`}}/>
                     </div>
-                    <HabitInfo habit={habit} readOnly={isReadOnly} id={Number(habitId)}/>
+                    <HabitInfo habit={habit} readOnly={isReadOnly}/>
                     <Goals habit={habit} readOnly={isReadOnly} id={Number(habitId)}/>
                     <ExtraHabitInfo habit={habit} readOnly={isReadOnly}/>
                 </div>
