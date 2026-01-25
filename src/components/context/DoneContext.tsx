@@ -8,7 +8,7 @@ import { useHabits } from "../hooks/HabitsHook";
 const DoneContext = createContext<DoneContextType | null>(null);
 
 export interface DoneContextType {
-    sendDayComment:(id:string, text:string, date:string) => void;
+    sendDayComment:(id:string, text:string | null, date:string) => void;
     markDone:(id:number, date:string) => void;
     markDoneWLoading:(id:number, date:string) => void;
     waitDoneAnswer:boolean;
