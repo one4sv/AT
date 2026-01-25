@@ -29,7 +29,7 @@ export default function ImgsMembers({members}:{members:MemberPermType[]}) {
             return i - 1;
         });
     };
-    console.log(index)
+    
     return (
         <div className="imgsMembers">
             {members.length > 1 &&

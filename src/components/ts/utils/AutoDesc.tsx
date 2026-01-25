@@ -1,25 +1,48 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ChangeEvent } from "react";
 
-export default function AutoDesc({ desc, readOnly, className }: { desc: string | null, readOnly?: boolean, className:string }) {
+interface AutoDescProps {
+    value?: string;                  // контролируемое значение (рекомендуется)
+    defaultValue?: string;           // fallback для неконтролируемого режима
+    readOnly?: boolean;
+    className?: string;
+    onChange?: (newValue: string) => void;   // ← новый опциональный колбэк
+}
+
+export default function AutoDesc({
+    value,
+    defaultValue = "",
+    readOnly = false,
+    className = "",
+    onChange,
+}: AutoDescProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+
     const adjustHeight = () => {
         const el = textareaRef.current;
         if (!el) return;
-        el.style.height = "auto";  // сброс высоты
-        el.style.height = el.scrollHeight + "px"; // установка под контент
+        el.style.height = "auto";
+        el.style.height = `${el.scrollHeight}px`;
     };
 
     useEffect(() => {
         adjustHeight();
-    }, [desc]);
+    }, [value]);
+
+    const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        adjustHeight();
+        onChange?.(e.target.value);
+    };
+
+    const displayValue = value !== undefined ? value : defaultValue;
 
     return (
         <textarea
             ref={textareaRef}
-            readOnly={readOnly ?? false}
+            value={displayValue}           // контролируемое значение
+            readOnly={readOnly}
             className={className}
-            value={desc || ""}
-            onInput={adjustHeight}
+            onInput={adjustHeight}         // на всякий случай (для быстрого ввода)
+            onChange={handleChange}
         />
     );
 }

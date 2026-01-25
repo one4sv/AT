@@ -17,7 +17,9 @@ export default function SelectList({
   extraFunction,
   selected,
   id,
-  showOnly
+  showOnly,
+  showSelected,
+  onChange
 }: {
   placeholder?: string;
   className: string;
@@ -29,7 +31,9 @@ export default function SelectList({
   extraFunction?: (value:string) => void;
   id?:string;
   selected?: string | number| undefined;
-  showOnly?: boolean | undefined
+  showOnly?: boolean | undefined;
+  showSelected?:boolean;
+  onChange?: (value: string) => void;
 }) {
   const [showList, setShowList] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState<string>("");
@@ -40,6 +44,7 @@ export default function SelectList({
   if (chevron === undefined) chevron = true
   if (readOnly === undefined) readOnly = true
   if (showOnly === undefined) showOnly = false
+  if (showSelected === undefined) showSelected = true
 
   useEffect(() => {
     if (selected !== undefined) {
@@ -60,6 +65,7 @@ export default function SelectList({
     setShowList(false);
     if (prop) prop(option.value);
     if (extraFunction) extraFunction(option.value);
+    onChange?.(option.value);
   };
 
   useEffect(() => {
@@ -97,7 +103,7 @@ export default function SelectList({
         {showList &&
           arr &&
           !showOnly &&
-          arr.map((option:Option, idx) => {
+          arr.filter(option => showSelected || option.value !== selected).map((option:Option, idx) => {
             return (
               <div
                 className="selectListButt"

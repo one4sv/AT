@@ -58,7 +58,7 @@ const PERM_ICONS: Record<keyof Perms, React.ComponentType<{ size?: number }>> = 
 const ALL_PERM_KEYS = Object.keys(PERM_LABELS) as (keyof Perms)[];
 
 export default function PermissionsSettings() {
-    const { group } = useGroup()
+    const { group, refetchGroup } = useGroup()
     const { user } = useUser()
     const { setBlackout } = useBlackout()
     const API_URL = import.meta.env.VITE_API_URL;
@@ -70,6 +70,20 @@ export default function PermissionsSettings() {
     const [ showRole, setShowRole ] = useState<RoleType | undefined>(undefined)
     const [ showMember, setShowMember ] = useState<MemberPermType | undefined>()
     const [ slided, setSlided ] = useState(false)
+    const [ changes, setChanges ] = useState<{ 
+        target: string, 
+        target_id: string, 
+        label: string, 
+        value: string | number | boolean | null
+    }[]>([])
+
+    // Локальные редактируемые состояния
+    const [editedName, setEditedName] = useState<string>("")
+    const [editedRank, setEditedRank] = useState<number>(0)
+    const [editedDesc, setEditedDesc] = useState<string>("")
+    const [editedPermissions, setEditedPermissions] = useState<Perms | null>(null)
+    const [editedMemberRoleId, setEditedMemberRoleId] = useState<string | number | undefined>(undefined)
+    const [editedDefaultRoleId, setEditedDefaultRoleId] = useState<string | number |undefined>(undefined)
 
     const refetchMembers = useCallback( async() => {
         if (!group) return
@@ -108,12 +122,48 @@ export default function PermissionsSettings() {
         }
     }, [API_URL, group])
 
+    const handleSave = async() => {
+        if (!group || changes.length === 0) return
+        setLoadingPermissions(true)
+        try {
+            const res = await api.post(`${API_URL}editpermissions/${group.id}`, changes)
+            if (res.data.success) {
+                setBlackout({seted:false})
+                await refetchGroup(group.id)
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoadingPermissions(false)
+        }
+    }
+
     const slide = (role?:RoleType, member?:MemberPermType) => {
         if (!member && !role) return
         setSlided(true)
         if (role) setShowRole(role)
         else setShowMember(member)
     }
+
+    // Сброс/инициализация локальных состояний при открытии слайда
+    useEffect(() => {
+        if (showRole) {
+            setEditedName(showRole.role_name)
+            setEditedRank(showRole.rank)
+            setEditedDesc(showRole.desc || "")
+            setEditedPermissions({...showRole.permissions})
+        } else if (showMember) {
+            setEditedMemberRoleId(showMember.role_id)
+            setEditedPermissions({...showMember.permissions})
+        } else {
+            setEditedPermissions(null)
+        }
+    }, [showRole, showMember])
+
+    // Инициализация дефолтной роли
+    useEffect(() => {
+        setEditedDefaultRoleId(roles.find(r => r.is_default)?.role_id)
+    }, [roles])
 
     useEffect(() => {
         if (!group) return
@@ -170,18 +220,26 @@ export default function PermissionsSettings() {
                                     </div>
                                 </div>
                             )}
-                            <div className="roleWrapper">
-                                <div className="role">
-                                    <div className="roleName">
-                                        <span className="roleName1str addRole">Роль по умолчанию</span>
-                                    </div>
-                                    <div className="roleLength">
-                                        <SelectList className="permSL defRole"
-                                            arr={roles.filter(r => r.is_editable).map(r => ({ label:r.role_name, value:r.role_id}))}
-                                            selected={roles.find(r => r.is_default)?.role_id}
-                                        />
-                                    </div>
+                            <div className="defRole">
+                                <div className="roleName">
+                                    Роль по умолчанию:
                                 </div>
+                                <SelectList className="permSL"
+                                    arr={roles.filter(r => r.is_editable).map(r => ({ label:r.role_name, value:r.role_id}))}
+                                    selected={editedDefaultRoleId}
+                                    prop={setEditedDefaultRoleId}   // обновляем локальное состояние
+                                    extraFunction={(value) => {      // собираем изменение
+                                        const original = roles.find(r => r.is_default)?.role_id
+                                        if (value !== original) {
+                                            setChanges(prev => [...prev, {
+                                                target: "group",
+                                                target_id: group!.id,
+                                                label: "default_role_id",
+                                                value
+                                            }])
+                                        }
+                                    }}
+                                />
                             </div>
                         </div>
                     </div>
@@ -225,48 +283,137 @@ export default function PermissionsSettings() {
                     <div className="infoWrapper">
                         {showRole ? (
                             <div className="permSettingsDiv">
-                                <label htmlFor="" className="permLabel">Название</label>
+                                <label className="permLabel">Название</label>
                                 <div className={`keyWrapper ${!isEditable ? "noteditable" : ""} roleInp`}>
-                                    <input type="text" name="permInp" id="permInp" className="permInp" readOnly={!isEditable} defaultValue={showRole.role_name}/>
+                                    <input
+                                        type="text"
+                                        className="permInp"
+                                        readOnly={!isEditable}
+                                        value={editedName}
+                                        onChange={(e) => {
+                                            const val = e.target.value
+                                            setEditedName(val)
+                                            if (val !== showRole.role_name) {
+                                                setChanges(prev => [...prev, {
+                                                    target: "role",
+                                                    target_id: showRole.role_id,
+                                                    label: "role_name",
+                                                    value: val
+                                                }])
+                                            }
+                                        }}
+                                    />
                                 </div>
-                                <label htmlFor="" className="permLabel">Приоритет (максимум 100)</label>
+                                <label className="permLabel">Приоритет (максимум 99)</label>
                                 <div className={`keyWrapper ${!isEditable ? "noteditable" : ""} roleInp`}>
-                                    <input type="number" name="permInp" min={1} max={99} id="permInp" className="permInp" readOnly={!isEditable} defaultValue={showRole.rank}/>
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        max={99}
+                                        className="permInp"
+                                        readOnly={!isEditable}
+                                        value={editedRank}
+                                        onChange={(e) => {
+                                            const val = Number(e.target.value)
+                                            if (!isNaN(val) && val > 0 && val < 100) {
+                                                setEditedRank(val)
+                                                if (val !== showRole.rank) {
+                                                    setChanges(prev => [...prev, {
+                                                        target: "role",
+                                                        target_id: showRole.role_id,
+                                                        label: "rank",               // ← исправлено
+                                                        value: val
+                                                    }])
+                                                }
+                                            }
+                                        }}
+                                    />
                                 </div>
                             </div>
-                        )  : (
+                        ) : (
                             <div className="permSettingsDiv">
-                                <label htmlFor="" className="permLabel">Роль</label>
+                                <label className="permLabel">Роль</label>
                                 <div className={`keyWrapper ${!isEditable ? "noteditable" : ""} roleInp`}>
-                                    <SelectList className="permSL" arr={roles.map(r => ({ label:r.role_name, value:r.role_id}))} selected={showMember?.role_id}/>
+                                    <SelectList
+                                        className="permSL"
+                                        arr={roles.map(r => ({ label:r.role_name, value:r.role_id}))}
+                                        selected={editedMemberRoleId ?? showMember?.role_id}
+                                        prop={setEditedMemberRoleId}
+                                        extraFunction={(value) => {
+                                            if (value !== showMember?.role_id) {
+                                                setChanges(prev => [...prev, {
+                                                    target: "member",
+                                                    target_id: showMember!.id,
+                                                    label: "role_id",
+                                                    value
+                                                }])
+                                            }
+                                        }}
+                                        showSelected={false}
+                                    />
                                 </div>
                             </div>
                         )}
-                        <label htmlFor="" className="permLabel">
-                            {showRole && `${Object.values(showRole.permissions).filter(Boolean).length}`}
-                            {showMember && `${Object.values(showMember.permissions).filter(Boolean).length}`}
-                            /10 разрешений
+                        <label className="permLabel">
+                            {Object.values(editedPermissions || {}).filter(Boolean).length}/10 разрешений
                         </label>
-                        {ALL_PERM_KEYS.map((key, i) => {
+                        {ALL_PERM_KEYS.map((key) => {
                             const Icon = PERM_ICONS[key];
-                            const permissions = showRole ? showRole.permissions : showMember?.permissions;
-                            if (!permissions) return null;
+                            const currentState = editedPermissions?.[key] ?? false
+
                             return (
-                                <div key={i}>
-                                    <div className={`keyWrapper ${!isEditable ? "noteditable" : ""}`}>
+                                <div key={key}>
+                                    <div
+                                        className={`keyWrapper ${!isEditable ? "noteditable" : ""}`}
+                                        onClick={() => {
+                                            if (!isEditable) return;
+
+                                            const newState = !currentState;
+
+                                            setEditedPermissions(prev =>
+                                                prev ? { ...prev, [key]: newState } : prev
+                                            );
+
+                                            setChanges(prev => [...prev, {
+                                                target: showRole ? "role" : "member",
+                                                target_id: showRole ? showRole.role_id : showMember!.id,
+                                                label: key,
+                                                value: newState
+                                            }]);
+                                        }}
+                                        >
                                         <div className="permDiv">
                                             <Icon size={20} />
                                             <span className="permStr">{PERM_LABELS[key]}</span>
                                         </div>
-                                        <Toggler state={permissions[key]} disable={!isEditable} />
+                                        <Toggler
+                                            state={currentState}
+                                            disable={!isEditable}
+                                        />
                                     </div>
                                 </div>
                             );
                         })}
                         {showRole && (
                             <>
-                                <label htmlFor="" className="permLabel">Описание</label>
-                                <AutoDesc className="roleDesc" readOnly={!isEditable} desc={showRole.desc || ""}/>
+                                <label className="permLabel">Описание</label>
+                                <AutoDesc
+                                    className="roleDesc"
+                                    readOnly={!isEditable}
+                                    value={editedDesc}
+                                    onChange={(val) => {
+                                        setEditedDesc(val);
+                                        const original = showRole.desc || "";
+                                        if (val !== original) {
+                                            setChanges(prev => [...prev, {
+                                                target: "role",
+                                                target_id: showRole.role_id,
+                                                label: "desc",
+                                                value: val || null   // если пусто — отправляем null
+                                            }]);
+                                        }
+                                    }}
+                                />
                             </>
                         )}
                     </div>
@@ -278,7 +425,7 @@ export default function PermissionsSettings() {
                         <button className="permButt permCancel" onClick={() => setBlackout({seted:true})}>
                             Отмена
                         </button>
-                        <button className="permButt permSave">
+                        <button className="permButt permSave" onClick={() => handleSave()}>
                             Сохранить
                         </button>
                     </div>
