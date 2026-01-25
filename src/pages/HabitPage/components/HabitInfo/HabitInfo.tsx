@@ -96,7 +96,6 @@ export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
             setChosenDays(initialChosenDays);
             setNewDays(habit.id, null);
         }
-
     };
 
     const tagIcon = () => {
@@ -150,14 +149,14 @@ export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
                         className="addHabitInput"
                         maxLength={40}
                         readOnly={readOnly}
-                        defaultValue={name || habit.name}
+                        value={name}
                         minLength={1}
                         onChange={(e) => {
                             setName(e.target.value);
                             setNewName(habit.id, e.target.value);
                         }}
                     />
-                    <span>{name.length}/40</span>
+                    <span>{name?.length || 0}/40</span>
                 </div>
             </div>
             <div className="addHabitWrapper">
@@ -166,7 +165,7 @@ export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
                     id="redHabitDesc"
                     className="addHabitInput"
                     maxLength={120}
-                    defaultValue={desc || habit.desc}
+                    value={desc}
                     readOnly={readOnly}
                     onChange={(e) => {
                         setDesc(e.currentTarget.value);
@@ -183,7 +182,7 @@ export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
                     <label htmlFor="sdInput">Дата начала</label>
                     <CalendarInput
                         id="sdInput"
-                        value={startDate || new Date(habit.start_date)}
+                        value={startDate}
                         readOnly={readOnly}
                         onChange={(date) => {
                             setStartDate(date);
@@ -200,7 +199,7 @@ export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
                         <input type="text" className="addHabitInput ongoingInput" readOnly value={"По настоящее время"} />
                     ) : (
                         <CalendarInput
-                            value={endDate || new Date(habit.end_date)}
+                            value={endDate}
                             readOnly={readOnly}
                             onChange={(date) => {
                                 setEndDate(date);
@@ -256,7 +255,7 @@ export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
                         type="text"
                         placeholder="чч:мм"
                         className="addHabitInput"
-                        value={startTime || habit.start_time}
+                        value={startTime}
                         readOnly={readOnly}
                         onChange={(e) => {
                             const formattedTime = formatTimeInput(e.target.value);
@@ -271,7 +270,7 @@ export default function HabitInfo({ habit, readOnly, id }: RedHabitProps) {
                         type="text"
                         placeholder="чч:мм"
                         className="addHabitInput"
-                        value={endTime || habit.end_time}
+                        value={endTime}
                         readOnly={readOnly}
                         onChange={(e) => {
                             const formattedTime = formatTimeInput(e.target.value);

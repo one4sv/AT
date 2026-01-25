@@ -38,10 +38,8 @@ export const CalendarProvider = ({children} : {children : ReactNode}) => {
     const API_URL = import.meta.env.VITE_API_URL
 
     const calendarRef = useRef<HTMLDivElement | null>(null)
-
     const fetchCalendarHabit = async(id:string) => {
         if (!id) return;
-        console.log("fetchCalendarHabit", id)
         try {
             const res = await axios.get(`${API_URL}calendar/${id}`, {withCredentials: true})
             if (res.data.success) setCalendar(res.data.calendar)
@@ -57,7 +55,6 @@ export const CalendarProvider = ({children} : {children : ReactNode}) => {
     }
 
     const fetchCalendarUser = async() => {
-        console.log("fetchCalendarUser")
         try {
             const res = await axios.get(`${API_URL}calendar`, {withCredentials: true})
             if (res.data.success) setCalendar(res.data.calendar)

@@ -15,7 +15,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   const { dayComment, todayComment } = useTheHabit()
   const { chosenDay } = useCalendar()
 
-  const [ comment, setComment ] = useState(todayComment || "");
+  const [ comment, setComment ] = useState<string | null>(todayComment || "");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -36,19 +36,18 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   }, [comment]);
 
   useEffect(() => {
-    if (dayComment !== null) setComment(dayComment)
+    if (chosenDay) setComment(dayComment)
     else setComment(todayComment || "")
-  }, [dayComment, todayComment])
+  }, [chosenDay, dayComment])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (comment.trim() !== "") {
-        sendDayComment(id, comment, chosenDay);
-      }
+      sendDayComment(id, comment, chosenDay);
     }
   };
 
+  console.log("dayComment", dayComment, "\ntodayComment", todayComment)
   return (
     <div className="habitDayComment">
       <textarea
@@ -57,16 +56,16 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
         readOnly={!isMy}
         onChange={handleTextareaChange}
         onKeyDown={handleKeyDown}
-        value={comment}
+        value={comment || ""}
         maxLength={200}
       />
       <div className="hdcTAExtra">
         <span><ArrowBendDownLeftIcon/>shift+enter</span>
         <div>
-          <span>{comment.length}/200</span>
+          <span>{comment?.length}/200</span>
           <button
             className="saveCommentButton"
-            disabled={comment.trim() === "" && todayComment === "" && dayComment === "" || !isMy || waitComAnswer}
+            disabled={todayComment === "" && dayComment === "" || !isMy || waitComAnswer}
             onClick={() => sendDayComment(id, comment, chosenDay)}
           >
             {waitComAnswer ? (

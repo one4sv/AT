@@ -54,7 +54,8 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const enqueueUpdate = useCallback((habitId: number, field: string, value: any) => {
-    if ((field === "name" || field === "start_date") && (!value || value.trim() === "")) return;
+    if (field === "name" && (!value || value.trim() === "")) return;
+    if (field === "start_date" && !value) return;
 
     // ⏳ задержка перед постановкой в очередь
     clearTimeout((enqueueUpdate as any)._timeout);

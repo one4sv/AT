@@ -145,7 +145,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
     const refetchChatWLoading = async (nick: string) => {
-        console.log("refetching")
         setChatLoading(true);
         await refetchChat(nick);
     }
@@ -217,7 +216,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         wsRef.current = new WebSocket(`${API_WS}ws?userId=${user.id}`);
         wsRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log(data)
             if (data.type === "NEW_MESSAGE") {
                 const messageSenderId = String(data.message.sender_id);
                 if (chatWithRef.current && String(chatWithRef.current.chat_id) === String(data.chat_id)) {

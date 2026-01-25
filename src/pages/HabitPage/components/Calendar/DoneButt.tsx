@@ -11,19 +11,21 @@ interface DoneButtonProps {
 
 export default function DoneButton({ habitId }: DoneButtonProps) {
   const { todayDone, isDone  } = useTheHabit()
-  const { markDone, waitDoneAnswer } = useDone()
+  const { markDoneWLoading, waitDoneAnswer } = useDone()
   const { chosenDay } = useCalendar()
   const [ done, setDone ] = useState(todayDone)
   
+  console.log("isDone", isDone, "todayDone", todayDone, "done", done)
+
   useEffect(() => {
     if (isDone !== null) setDone(isDone)
     else setDone(todayDone)
-  }, [isDone, todayDone])
+  }, [chosenDay, isDone, todayDone, chosenDay])
 
   return (
     <button
       className={`doneButt ${done ? "dbComp" : "dbMark"}`}
-      onClick={() => markDone(habitId, chosenDay)}
+      onClick={() => markDoneWLoading(habitId, chosenDay)}
     >
       {done ? <CheckCircle weight="fill" /> : <Circle />}
       {waitDoneAnswer ? (
