@@ -47,13 +47,12 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
     }
   };
 
-  console.log("dayComment", dayComment, "\ntodayComment", todayComment)
   return (
     <div className="habitDayComment">
       <textarea
         placeholder="Комментарий"
         ref={textareaRef}
-        readOnly={!isMy || (habit && habit.is_archieve)}
+        readOnly={!isMy || (habit && habit.is_archived)}
         onChange={handleTextareaChange}
         onKeyDown={handleKeyDown}
         value={comment || ""}
@@ -65,7 +64,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           <span>{comment?.length}/200</span>
           <button
             className="saveCommentButton"
-            disabled={todayComment === "" && dayComment === "" || !isMy || waitComAnswer || habit?.is_archieve}
+            disabled={todayComment === "" && dayComment === "" || !isMy || waitComAnswer || habit?.is_archived}
             onClick={() => sendDayComment(id, comment, chosenDay)}
           >
             {waitComAnswer ? (

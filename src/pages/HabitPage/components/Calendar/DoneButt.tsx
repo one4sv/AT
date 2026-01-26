@@ -15,8 +15,6 @@ export default function DoneButton({ habitId }: DoneButtonProps) {
   const { chosenDay } = useCalendar()
   const [ done, setDone ] = useState(todayDone)
   
-  console.log("isDone", isDone, "todayDone", todayDone, "done", done)
-
   useEffect(() => {
     if (isDone !== null) setDone(isDone)
     else setDone(todayDone)

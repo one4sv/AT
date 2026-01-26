@@ -5,14 +5,16 @@ export interface TogglerProps {
     disable?: boolean;
     setState?: Dispatch<SetStateAction<boolean>> | ((val: boolean) => void);
     onToggle?: (newState: boolean) => void;
-    stopPropagation?: boolean
+    stopPropagation?: boolean;
+    funcToggle?:  (val:boolean) => void
 }
-export default function Toggler({state, disable, setState, onToggle, stopPropagation}:TogglerProps) {
+export default function Toggler({state, disable, setState, onToggle, stopPropagation, funcToggle}:TogglerProps) {
     if (!stopPropagation) stopPropagation = false
     const switchToggler = () => {
         const newState = !state;
         setState?.(newState);
         onToggle?.(newState);
+        funcToggle?.(newState)
     };
 
     return (

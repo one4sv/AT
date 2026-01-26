@@ -2,9 +2,10 @@ import { useEffect, useState, useRef } from "react";
 import { useSettings } from "../../hooks/SettingsHook";
 import { useUpSettings } from "../../hooks/UpdateSettingsHook";
 import { type TabProps } from "../../modules/Settings";
+import Toggler from "../toggler";
 export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handleAnimationEnd }: TabProps) {
-    const { orderHabits } = useSettings();
-    const { setNewOrder } = useUpSettings();
+    const { orderHabits, showArchived, showArchivedInAcc } = useSettings();
+    const { setNewOrder, setNewShowArchived, setNewShowArchivedInAcc } = useUpSettings();
 
     const [isInitialOrderSync, setIsInitialOrderSync] = useState(true);
     
@@ -77,27 +78,40 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
                 </span>
             )}
             <div className="settingsTab">
-                <div className="settingsOrder">
-                    <div className="feedSettingsOrder">
-                        <div className="settingSpan">Порядок отображения:</div>
-                        <div className="orderFull">
-                            <div className="orderShown">
-                                {displayOrder.map((type, index) => (
-                                    <div
-                                        key={type}
-                                        className={`orderSetDiv 
-                                            ${draggingIndex === index ? "dragging" : ""} 
-                                            ${dragOverIndex === index ? "drag-over" : ""}`}
-                                        draggable
-                                        onDragStart={(e) => handleDragStart(e, index)}
-                                        onDragOver={(e) => handleDragOver(e, index)}
-                                        onDrop={(e) => handleDrop(e, index)}
-                                        onDragEnd={handleDragEnd}
-                                    >
-                                        {getHabitLabel(type)}
-                                    </div>
-                                ))}
-                            </div>
+                <div className="persTabDivDouble">
+                    <div className="settingsOrder">
+                        <div className="settingSpan">
+                            Порядок отображения:
+                        </div>
+                        <div className="orderShown">
+                            {displayOrder.map((type, index) => (
+                                <div
+                                    key={type}
+                                    className={`orderSetDiv 
+                                        ${draggingIndex === index ? "dragging" : ""} 
+                                        ${dragOverIndex === index ? "drag-over" : ""}`}
+                                    draggable
+                                    onDragStart={(e) => handleDragStart(e, index)}
+                                    onDragOver={(e) => handleDragOver(e, index)}
+                                    onDrop={(e) => handleDrop(e, index)}
+                                    onDragEnd={handleDragEnd}
+                                >
+                                    {getHabitLabel(type)}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="archiveSettings">
+                        <div className="settingSpan">
+                            Архив привычек:
+                        </div>
+                        <div className="archiveSettingToggler">
+                            Показывать архивные в боковом меню
+                            <Toggler state={showArchived} funcToggle={setNewShowArchived}/>
+                        </div>
+                        <div className="archiveSettingToggler">
+                            Показывать архивные в моём профиле
+                            <Toggler state={showArchivedInAcc} funcToggle={setNewShowArchivedInAcc}/>
                         </div>
                     </div>
                 </div>

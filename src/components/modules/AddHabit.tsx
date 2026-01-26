@@ -104,14 +104,12 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             showNotification("error", "Заполните время начала");
             return;
         }
-        console.log(payload)
         try {
             const res = await axios.post(`${API_URL}addhabit`, payload, {withCredentials:true});
             if (res.data.success) {
                 setBlackout({ seted: false, module: undefined });
                 showNotification("success", "Успешно добавлено")
             }
-            console.log("Успешно отправлено:", res.data);
             refetchHabits()
         } catch (err) {
             console.error("Ошибка при отправке:", err);

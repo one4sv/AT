@@ -70,7 +70,7 @@ export default function ChosenDay() {
                             ) : ""}
                             
                         </div>
-                        {!c.is_archieve &&
+                        {!c.is_archived &&
                             <div className="cdHabitDoneButt" onMouseOver={() => setMouseOver(c.habitId)} onMouseLeave={() => setMouseOver("")} onClick={() => markDone(Number(c.habitId), day)}>
                                 {doneButt(cn, c.habitId)}
                             </div>

@@ -6,8 +6,9 @@
 }
 .settingsOrder {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
+    height: 20vh;
+    width: 40%;
 }
 .orderShown {
     width: 15vw;
@@ -58,4 +59,11 @@
         @include var.input(transparent, var(--tc), var(--borderHabit), 4vh, 8px, var(--tc));
         width: 3vw;
     }
+}
+.archiveSettingToggler {
+    display: flex;
+    gap: 0.5vw;
+    height: 3vh;
+    justify-content: space-between;
+    flex: 1;
 }

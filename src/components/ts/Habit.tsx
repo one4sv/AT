@@ -4,14 +4,14 @@ import { CheckCircle, PushPinIcon  } from "@phosphor-icons/react"
 import { habitIcon } from "./habitIcon"
 import { useContextMenu } from "../hooks/ContextMenuHook"
 
-export default function HabitDiv({habit, id, isMyAcc, is_archieve}:{habit:Habit, id?:number, isMyAcc?:boolean, is_archieve?:boolean}) {
+export default function HabitDiv({habit, id, isMyAcc, is_archived}:{habit:Habit, id?:number, isMyAcc?:boolean, is_archived?:boolean}) {
     const { openMenu } = useContextMenu()
     const navigate = useNavigate()
     
     const todayNum = new Date().getDay()
     const ruPeriodicity = (habit: Habit) => {
         const { periodicity: per, start_time: st, end_time: et, chosen_days } = habit;
-        if (habit.is_archieve) return "в архиве"
+        if (habit.is_archived) return "в архиве"
 
         const formatTime = () => {
             if (st && et && st !== null) {
@@ -68,7 +68,7 @@ export default function HabitDiv({habit, id, isMyAcc, is_archieve}:{habit:Habit,
             <div className="habitInfo">
                 <div className="habitName">{habit.name}</div>
                 <div className="habitPer">
-                    {!is_archieve && ruPeriodicity(habit)}
+                    {!is_archived && ruPeriodicity(habit)}
                     {habit.done && <CheckCircle className="habitHLStatus" weight="fill"/>}
                 </div>
                 {habit.pinned && isMyAcc && <PushPinIcon className="pinnedHabitSign" weight="fill"/>}

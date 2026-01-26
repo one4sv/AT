@@ -35,7 +35,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     const [ periodicity, setPeriodicity ] = useState<string>("")
     const [ ongoing, setOngoing ] = useState<boolean>(false);
     const [ pinned, setPinned ] = useState<boolean>(false);
-    const [ archieved, setArcvhieved ] = useState<boolean>(false);
+    const [ archived, setArcvhieved ] = useState<boolean>(false);
     const [ selectedTag, setSelectedTag ] = useState<string | null>(null)
     const [ chosenDays, setChosenDays ] = useState<{ value: number; label: string; chosen: boolean }[]>(initialChosenDays);
 
@@ -50,7 +50,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
         setPeriodicity(habit.periodicity ?? "");
         setOngoing(Boolean(habit.ongoing));
         setPinned(Boolean(habit.pinned));
-        setArcvhieved(Boolean(habit.is_archieve));
+        setArcvhieved(Boolean(habit.is_archived));
         if (Array.isArray(habit.chosen_days)) {
             setChosenDays(initialChosenDays.map(day => ({
             ...day,
@@ -125,10 +125,10 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                 </div>
                 <div className="habitButts">
                     <div onClick={() => {
-                        setArcvhieved(!archieved)
-                        putInArchieve(habit.id, !archieved)
+                        setArcvhieved(!archived)
+                        putInArchieve(habit.id, !archived)
                     }}>
-                        {archieved ? <BoxArrowUp className="pinHabit"/> : <BoxArrowDown className="pinHabit"/>}
+                        {archived ? <BoxArrowUp className="pinHabit"/> : <BoxArrowDown className="pinHabit"/>}
                     </div>
                     <div onClick={() => {
                         setPinned(!pinned);
@@ -144,14 +144,14 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     </div>
                 </div>
             </div>
-            {archieved && (
-                <div className="thisArchieved">
-                    <div className="thisArchievedSvg">
+            {archived && (
+                <div className="thisarchived">
+                    <div className="thisarchivedSvg">
                         <WarningCircle />
                     </div>
-                    <div className="thisArchievedText">
-                        <span className="thisArchieved1str">Активность перенесена в архив.</span>
-                        {!readOnly && <span className="thisArchieved2str">Её невозможно обновить.</span>}
+                    <div className="thisarchivedText">
+                        <span className="thisarchived1str">Активность перенесена в архив.</span>
+                        {!readOnly && <span className="thisarchived2str">Её невозможно обновить.</span>}
                     </div>
                 </div>
             )}
@@ -168,7 +168,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         type="text"
                         className="addHabitInput"
                         maxLength={40}
-                        readOnly={readOnly || archieved}
+                        readOnly={readOnly || archived}
                         value={name}
                         minLength={1}
                         onChange={(e) => {
@@ -186,7 +186,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     className="addHabitInput"
                     maxLength={120}
                     value={desc}
-                    readOnly={readOnly || archieved}
+                    readOnly={readOnly || archived}
                     onChange={(e) => {
                         setDesc(e.currentTarget.value);
                         setNewDescription(habit.id, e.currentTarget.value);
@@ -195,7 +195,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                 <span>{desc?.length || 0}/120</span>
             </div>
             <div className="addHabitWrapper">
-                <TagSelector selectedTag={habit.tag || selectedTag} setSelectedTag={setSelectedTag} showOnly={readOnly || archieved}/>
+                <TagSelector selectedTag={habit.tag || selectedTag} setSelectedTag={setSelectedTag} showOnly={readOnly || archived}/>
             </div>
             <div className="addHabitTimeWrapper">
                 <div className="addHabitWrapper">
@@ -203,7 +203,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     <CalendarInput
                         id="sdInput"
                         value={startDate}
-                        readOnly={readOnly || archieved}
+                        readOnly={readOnly || archived}
                         onChange={(date) => {
                             setStartDate(date);
                             setNewStartDate(habit.id, date);
@@ -220,7 +220,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     ) : (
                         <CalendarInput
                             value={endDate}
-                            readOnly={readOnly || archieved}
+                            readOnly={readOnly || archived}
                             onChange={(date) => {
                                 setEndDate(date);
                                 setNewEndDate(habit.id, date);
@@ -234,7 +234,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             </div>
 
             <div className="addHabbitCheckBox redHabitCheckbox" onClick={() => {
-                if (!readOnly && !archieved) {
+                if (!readOnly && !archived) {
                     setOngoing(!ongoing);
                     setNewOngoing(habit.id, !ongoing);
                 }
@@ -252,7 +252,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                 <SelectList
                     placeholder=""
                     className="redHabitSL"
-                    showOnly={readOnly || archieved}
+                    showOnly={readOnly || archived}
                     arr={periodicityArr}
                     prop={(value) => {
                         setPeriodicity(value as string);
@@ -264,7 +264,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             </div>
 
             {(periodicity || habit.periodicity) === "weekly" && (
-                <DayChanger toggleDay={toggleDay} chosenDays={chosenDays} showOnly={readOnly || archieved} chosenArr={habit.chosen_days}/>
+                <DayChanger toggleDay={toggleDay} chosenDays={chosenDays} showOnly={readOnly || archived} chosenArr={habit.chosen_days}/>
             )}
 
             <div className="addHabitTimeWrapper">
@@ -275,7 +275,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         placeholder="чч:мм"
                         className="addHabitInput"
                         value={startTime}
-                        readOnly={readOnly || archieved}
+                        readOnly={readOnly || archived}
                         onChange={(e) => {
                             const formattedTime = formatTimeInput(e.target.value);
                             setStartTime(formattedTime);
@@ -290,7 +290,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         placeholder="чч:мм"
                         className="addHabitInput"
                         value={endTime}
-                        readOnly={readOnly || archieved}
+                        readOnly={readOnly || archived}
                         onChange={(e) => {
                             const formattedTime = formatTimeInput(e.target.value);
                             setEndTime(formattedTime);

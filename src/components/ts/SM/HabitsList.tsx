@@ -1,22 +1,23 @@
 import "../../../scss/SM/habitsList.scss";
 import { useHabits } from "../../hooks/HabitsHook";
+import { useSettings } from "../../hooks/SettingsHook";
 import type { Habit } from "../../context/HabitsContext";
-import { useEffect, useState } from "react";
 import HabitDiv from "../Habit";
 import { useChat } from "../../hooks/ChatHook";
 import { useParams } from "react-router";
 
 export default function HabitsList() {
-    const { search } = useChat()
+    const { search } = useChat();
     const { habits, newOrderHabits } = useHabits();
-    const { habitId } = useParams()
-    const [showType, setShowType] = useState<{ [order: string]: boolean }>({});
+    const { showArchived } = useSettings();
+    const { habitId } = useParams();
+
     const todayNum = new Date().getDay();
     const tomorrowNum = todayNum !== 6 ? todayNum + 1 : 0;
 
     const filterHabitsByOrder = (order: string, habits: Habit[]) => {
         if (!habits) return [];
-        
+
         let filtered: Habit[] = [];
 
         if (order === "pinned") filtered = habits.filter(h => h.pinned);
@@ -45,51 +46,48 @@ export default function HabitsList() {
         return filtered;
     };
 
-    useEffect(() => {
-        if (newOrderHabits) {
-            const initialShow: { [order: string]: boolean } = {};
-            newOrderHabits.forEach(order => {
-                initialShow[order] = true;
-            });
-            setShowType(initialShow);
-        }
-    }, [newOrderHabits]);
+    // Секции: сначала активные, потом (если разрешено) архивные
+    const sections: ("ongoing" | "archive")[] = ["ongoing"];
+    if (showArchived) {
+        sections.push("archive");
+    }
 
     return (
         <div className="habitsList SMlist">
-                {(["ongoing", "archive"] as const).map(section => {
-                    const sectionHabits = habits?.filter(h =>
-                        section === "ongoing" ? h.ongoing : !h.ongoing
-                    ) || [];
+            {sections.map(section => {
+                const sectionHabits = habits?.filter(h =>
+                    section === "ongoing" ? h.ongoing : !h.ongoing
+                ) || [];
 
-                    if (sectionHabits.length === 0) return null;
-                    const shownHabits = new Set<number>();
+                if (sectionHabits.length === 0) return null;
 
-                    return (
-                        <div className="habitsWrapperStats" key={section}>
-                            {newOrderHabits?.map(order => {
-                                const filtered = filterHabitsByOrder(order, sectionHabits);
-                                const unique = filtered.filter(h => !shownHabits.has(h.id))
-                                unique.forEach(h => shownHabits.add(h.id))
+                const shownHabits = new Set<number>();
 
-                                if (unique.length === 0) return null;
+                return (
+                    <div className="habitsWrapperStats" key={section}>
+                        {newOrderHabits?.map(order => {
+                            const filtered = filterHabitsByOrder(order, sectionHabits);
+                            const unique = filtered.filter(h => !shownHabits.has(h.id));
+                            unique.forEach(h => shownHabits.add(h.id));
 
-                                return (
-                                    <div className="orderWrapper" key={order}>
-                                        {showType[order] && unique.map(habit => (
-                                            <HabitDiv
-                                                habit={habit}
-                                                key={habit.id}
-                                                id={Number(habitId)}
-                                                isMyAcc={true}
-                                            />
-                                        ))}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    );
-                })}
-            </div>
+                            if (unique.length === 0) return null;
+
+                            return (
+                                <div className="orderWrapper" key={order}>
+                                    {unique.map(habit => (
+                                        <HabitDiv
+                                            habit={habit}
+                                            key={habit.id}
+                                            id={Number(habitId)}
+                                            isMyAcc={true}
+                                        />
+                                    ))}
+                                </div>
+                            );
+                        })}
+                    </div>
+                );
+            })}
+        </div>
     );
 }

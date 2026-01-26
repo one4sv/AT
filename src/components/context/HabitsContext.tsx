@@ -20,7 +20,7 @@ export interface Habit {
     pinned:boolean;
     done?:boolean;
     user_id:string;
-    is_archieve:boolean;
+    is_archive:boolean;
 }
 
 interface HabitResponse {

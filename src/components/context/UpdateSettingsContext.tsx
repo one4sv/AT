@@ -15,6 +15,8 @@ export type UpdateSettingsContextType = {
     setNewNote:(val:boolean) => void;
     setNewMessNote:(val:boolean) => void;
     setNewPrivateShow: (val: PrivateSettings) => void;
+    setNewShowArchived: (val: boolean) => void;
+    setNewShowArchivedInAcc: (val: boolean) => void;
     isUpdating: string[];
 };
 
@@ -26,7 +28,7 @@ type UpdateQueueItem = {
 const UpdateSettingsContext = createContext<UpdateSettingsContextType | null>(null);
 
 export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchSettings, orderHabits, theme, acsent, bg, decor } = useSettings();
+    const { refetchSettings, orderHabits, theme, acsent, bg, decor, showArchived, showArchivedInAcc } = useSettings();
     const { refetchUser, user } = useUser();
     const { showNotification } = useNote();
     const API_URL = import.meta.env.VITE_API_URL
@@ -39,6 +41,14 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "order"), { setting: "order", value: val }]);
         setIsUpdating((prev) => [...new Set([...prev, "habits"])]);
     }, []);    
+    const setNewShowArchived = useCallback((val: boolean) => {
+        setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "show_archived"), {setting:"show_archived", value:val}]);
+        setIsUpdating((prev) => [...new Set([...prev, "habits"])])
+    },[])    
+    const setNewShowArchivedInAcc = useCallback((val: boolean) => {
+        setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "show_archived_in_acc"), {setting:"show_archived_in_acc", value:val}]);
+        setIsUpdating((prev) => [...new Set([...prev, "habits"])])
+    },[])
 
     const setNewPrivateShow = useCallback((val: PrivateSettings) => {
         setUpdateQueue((prev) => [
@@ -65,7 +75,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
     const setNewBg = useCallback((val: string) => {
         setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "bg"), {setting:"bg", value:val}]);
         setIsUpdating((prev) => [...new Set([...prev, "pers"])])
-    },[])
+    },[])    
 
     const setNewNote = useCallback((val: boolean) => {
         setUpdateQueue((prev) => [
@@ -111,15 +121,18 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         const { setting, value } = updateQueue[0];
 
         // определяем, какой маркер isUpdating соответствует текущей настройке
-        const updatingKey = (s: string) =>
-            s === "order" ? "habits"
-            : s === "theme" || s === "acsent" ? "pers"
-            : s === "private" ? "private"
-            : "acc";
+        const updatingKey = (s: string) => {
+            if (s === "order" || s === "show_archived" || s === "show_archived_in_acc") return "habits";
+            if (["theme", "acsent", "bg", "decor"].includes(s)) return "pers";
+            if (s === "private") return "private";
+            return "acc";
+        };
  
         // Проверка, изменились ли данные
         if (
             (setting === "order" && JSON.stringify(value) === JSON.stringify(orderHabits)) ||
+            (setting === "show_archived" && value === showArchived) ||
+            (setting === "show_Archived_in_acc" && value === showArchivedInAcc) ||
             (setting === "username" && value === user.username) ||
             (setting === "nick" && value === user.nick) ||
             (setting === "mail" && value === user.mail) ||
@@ -162,7 +175,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
             setIsUpdating((prev) => prev.filter((item) => item !== updatingKey(setting)));
             setIsProcessing(false);
         }
-    }, [isProcessing, updateQueue, orderHabits, user.username, user.nick, user.mail, theme, acsent, decor, bg, API_URL, refetchSettings, refetchUser, showNotification]);
+    }, [isProcessing, updateQueue, orderHabits, showArchived, showArchivedInAcc, user.username, user.nick, user.mail, theme, acsent, decor, bg, API_URL, refetchSettings, refetchUser, showNotification]);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -173,7 +186,8 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
     return (
         <UpdateSettingsContext.Provider
-            value={{ setNewOrder, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote }}
+            value={{ setNewOrder, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote, 
+                setNewShowArchived, setNewShowArchivedInAcc }}
         >
             {children}
         </UpdateSettingsContext.Provider>

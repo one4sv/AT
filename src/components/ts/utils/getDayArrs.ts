@@ -48,7 +48,7 @@ export function getDayArrays(
         habitName: h.name,
         date: dateStr,
         isDone: false,
-        is_archieve:h.is_archieve
+        is_archived:h.is_archived
       })
       return
     }
@@ -59,7 +59,7 @@ export function getDayArrays(
         habitName: h.name,
         date: dateStr,
         isDone: false,
-        is_archieve:h.is_archieve
+        is_archived:h.is_archived
       })
       return
     }
@@ -72,7 +72,7 @@ export function getDayArrays(
           habitName: h.name,
           date: dateStr,
           isDone: false,
-          is_archieve:h.is_archieve
+          is_archived:h.is_archived
         })
       } else {
         willArr.push({
@@ -80,7 +80,7 @@ export function getDayArrays(
           habitName: h.name,
           date: dateStr,
           isDone: false,
-          is_archieve:h.is_archieve
+          is_archived:h.is_archived
         })
       }
     }

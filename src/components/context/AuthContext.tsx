@@ -26,7 +26,6 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             });
-            console.log("Ответ от сервера:", res.data);
 
             if (res.data.success) {
                 setSuccess(true);

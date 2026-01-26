@@ -94,7 +94,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
   const setNewStartTime = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "start_time", val), [enqueueUpdate]);
   const setNewEndTime = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "end_time", val), [enqueueUpdate]);
   const setPin = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "pinned", val), [enqueueUpdate]);
-  const putInArchieve = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "is_archieve", val), [enqueueUpdate]);
+  const putInArchieve = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "is_archived", val), [enqueueUpdate]);
   const setNewTag = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "tag", val), [enqueueUpdate]);
 
   const processQueue = useCallback(async () => {

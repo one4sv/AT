@@ -350,7 +350,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 }));
             }
             if (data.type === "MESSAGE_DELETED") {
-                // console.log("Received MESSAGE_DELETED", data);
                 setMessages(prev =>
                     prev.filter(m => String(m.id) !== String(data.messageId))
                 );

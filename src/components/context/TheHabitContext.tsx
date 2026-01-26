@@ -4,6 +4,8 @@ import type { Habit } from "./HabitsContext";
 import { useNote } from "../hooks/NoteHook";
 import { api } from "../ts/api";
 import { useCalendar } from "../hooks/CalendarHook";
+import axios from "axios";
+import { useNavigate } from "react-router";
 
 const TheHabitContext = createContext<TheHabitContextType | null>(null);
 
@@ -26,6 +28,7 @@ export interface TheHabitContextType {
 export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const { showNotification } = useNote()
     const { fetchCalendarHabit } = useCalendar()
+    const navigate = useNavigate()
     const API_URL = import.meta.env.VITE_API_URL
 
     const [ loadingHabit, setLoadingHabit ] = useState(false)
@@ -52,8 +55,13 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
                 setTodayDone(isDone)
                 setTodayComment(comment)
             }
-        } catch {
-            showNotification("error", "Не удалось получить привычку")
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                showNotification("error", err.response?.data?.error)
+                if (err.response?.status === 403) {
+                    navigate(-1)
+                }
+            }
         }
     }, [showNotification]);
 

@@ -218,10 +218,10 @@ export default function Calendar() {
                 </div>
             </div>
             
-            {id && habit && !habit.is_archieve ? <Streak habit={habit} calendar={calendar}/> : ""}
+            {id && habit && !habit.is_archived ? <Streak habit={habit} calendar={calendar}/> : ""}
             <ChosenDay/>
 
-            {id && doable && isMy && !habit?.is_archieve && (
+            {id && doable && isMy && !habit?.is_archived && (
                 <DoneButton habitId={Number(habit?.id)} />
             )}
             {id && (
