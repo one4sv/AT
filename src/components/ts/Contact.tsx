@@ -32,8 +32,6 @@ export default function Contact({ contact }: ContactType) {
             : null
     );
 
-    if (contact.unread_count > 0) console.log("unread",contact.unread_count)
-
     const partsLast = useMemo(() => {
         if (
             !contact.lastMessage?.is_system ||

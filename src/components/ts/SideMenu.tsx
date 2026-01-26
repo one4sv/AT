@@ -47,7 +47,6 @@ export default function SideMenu() {
     const plusMenuRef = useRef<HTMLDivElement>(null)
     const filtersRef = useRef<HTMLDivElement>(null)
 
-    // --- long press refs/state ---
     const timerRef = useRef<number | null>(null)
     const longPressTriggered = useRef(false)
 
@@ -57,7 +56,6 @@ export default function SideMenu() {
         if (location.pathname.includes("/habit")) setActiveTab("habits")
     }, [location.pathname])
 
-    // --- message filters ---
     useEffect(() => {
         const filters: {label: string, value: string, new: string}[] = []
         
@@ -134,7 +132,6 @@ export default function SideMenu() {
             setHabitsSelected(filters[0])
         }
     }, [habits, newOrderHabits, showArchived])
-
     const logOut = async () => {
         try {
             const res = await axios.get(`${API_URL}logout`, { withCredentials: true })
@@ -245,7 +242,6 @@ export default function SideMenu() {
         }
     }, [])
 
-    console.log(filterType, isFilterOpen)
     return (
         <div className={`sideMenu ${isMobile ? "mobileSM" : ""}`}>
             <div className="SMsearchDiv">
@@ -375,7 +371,7 @@ export default function SideMenu() {
                         }}
                     >
                         {filter.label}
-                        {filterType === "messages" && <span className="new">{filter.new}</span>}
+                        {filterType === "messages" && <span className="new">{` ${filter.new}`}</span>}
                     </div>
                 ))}
             </div>
