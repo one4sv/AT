@@ -21,18 +21,18 @@ export default function SideMenu() {
     const { setSearch, loadingList, list } = useChat()
     const { loadingHabits, habits, newOrderHabits } = useHabits()
     const { user, refetchUser } = useUser()
-    const { setTab, showArchived } = useSettings() // ← добавили showArchived
+    const { setTab, showArchived } = useSettings()
     const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
     const API_URL = import.meta.env.VITE_API_URL
     const location = useLocation()
     const navigate = useNavigate()
 
-    const [filterType, setFilterType] = useState<"messages" | "habits" | null>(null) // позиция
-    const [isFilterOpen, setIsFilterOpen] = useState(false) // открыто/закрыто
+    const [filterType, setFilterType] = useState<"messages" | "habits">("messages")
+    const [isFilterOpen, setIsFilterOpen] = useState(false)
 
     const [showList, setShowList] = useState(false)
-    const [activeTab, setActiveTab] = useState<string>("messages") // ← исправили опечатку
+    const [activeTab, setActiveTab] = useState<string>("messages")
     const [showPlusMenu, setShowPlusMenu] = useState<boolean>(false)
     
     const [messagesFilters, setMessagesFilters] = useState<{label: string, value: string, new: string}[]>([])
@@ -47,13 +47,17 @@ export default function SideMenu() {
     const plusMenuRef = useRef<HTMLDivElement>(null)
     const filtersRef = useRef<HTMLDivElement>(null)
 
+    // --- long press refs/state ---
+    const timerRef = useRef<number | null>(null)
+    const longPressTriggered = useRef(false)
+
     const newLength = list.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
 
     useEffect(() => {
         if (location.pathname.includes("/habit")) setActiveTab("habits")
     }, [location.pathname])
 
-    // Фильтры для сообщений
+    // --- message filters ---
     useEffect(() => {
         const filters: {label: string, value: string, new: string}[] = []
         
@@ -81,12 +85,12 @@ export default function SideMenu() {
 
         setMessagesFilters(filters)
         
-        // Если текущий выбранный фильтр исчез (например, новых стало 0), сбрасываем на "Все"
         if (!filters.some(f => f.value === messageSelected.value)) {
             setMessageSelected(filters[0] ?? { label: "Все", value: "all", new: "" })
         }
     }, [list, newLength])
 
+    // --- habits filters ---
     useEffect(() => {
         const filters: { label: string; value: string, new: string }[] = []
         filters.push({ label: "Активности", value: "all", new:"0" })
@@ -193,29 +197,55 @@ export default function SideMenu() {
         document.addEventListener("mousedown", handleClickOutside)
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
+    const startLongPress = (openFn: () => void) => {
+        longPressTriggered.current = false
 
-    const handleTabClick = (tab: "messages" | "habits") => {
-        if (activeTab === tab) {
-            if (isFilterOpen) {
-                setIsFilterOpen(false)
-            } else {
-                setFilterType(tab)
-                setIsFilterOpen(true)
-            }
-        } else {
-            setActiveTab(tab)
-            if (isFilterOpen) {
-                setIsFilterOpen(false)
-                setTimeout(() => {
-                    setFilterType(tab)
-                    setIsFilterOpen(true)
-                }, 300) // время анимации закрытия
-            } else {
-                setFilterType(tab)
-            }
+        if (timerRef.current) {
+            clearTimeout(timerRef.current)
+        }
+
+        timerRef.current = window.setTimeout(() => {
+            longPressTriggered.current = true
+            openFn()
+        }, 350)
+    }
+
+    const cancelLongPress = () => {
+        if (timerRef.current) {
+            clearTimeout(timerRef.current)
+            timerRef.current = null
         }
     }
 
+    useEffect(() => {
+        const onUp = () => cancelLongPress()
+        document.addEventListener("mouseup", onUp)
+        document.addEventListener("touchend", onUp)
+        return () => {
+            document.removeEventListener("mouseup", onUp)
+            document.removeEventListener("touchend", onUp)
+        }
+    }, [])
+
+    useEffect(() => {
+        const handleUp = (event: MouseEvent | TouchEvent) => {
+            cancelLongPress()
+            if (
+                tabsRef.current &&
+                !tabsRef.current.contains(event.target as Node)
+            ) setIsFilterOpen(false)
+        }
+
+        document.addEventListener("mouseup", handleUp)
+        document.addEventListener("touchend", handleUp)
+
+        return () => {
+            document.removeEventListener("mouseup", handleUp)
+            document.removeEventListener("touchend", handleUp)
+        }
+    }, [])
+
+    console.log(filterType, isFilterOpen)
     return (
         <div className={`sideMenu ${isMobile ? "mobileSM" : ""}`}>
             <div className="SMsearchDiv">
@@ -256,13 +286,55 @@ export default function SideMenu() {
             </div>
 
             <div className="SMtabs" ref={tabsRef}>
-                <div className={`SMtab ${activeTab === "messages" ? "active" : ""}`} onClick={() => handleTabClick("messages")}>
+                <div className={`SMtab ${activeTab === "messages" ? "active" : ""}`}
+                    onMouseDown={() => startLongPress(() => {
+                        setFilterType("messages")
+                        setIsFilterOpen(true)
+                    })}
+                    onTouchStart={() => startLongPress(() => {
+                        setFilterType("messages")
+                        setIsFilterOpen(true)
+                    })}
+                    onMouseUp={() => {
+                        setFilterType("messages")
+                        if (activeTab === "messages") {
+                            if (!isFilterOpen) {
+                                setIsFilterOpen(true)
+                            } else {
+                                setIsFilterOpen(false)
+                            }
+                        } else {
+                            setActiveTab("messages")
+                        }
+                    }}
+                >
                     {activeTab === "messages" && <div className="SMfilter"><SortAscending /></div>}
                     {messageSelected.label}
                     {messageSelected.new !== "" && <span className="newMessagesLength">{messageSelected.new}</span>}
                 </div>
 
-                <div className={`SMtab ${activeTab === "habits" ? "active habits" : ""}`} onClick={() => handleTabClick("habits")}>
+                <div className={`SMtab ${activeTab === "habits" ? "active" : ""}`}
+                    onMouseDown={() => startLongPress(() => {
+                        setFilterType("habits")
+                        setIsFilterOpen(true)
+                    })}
+                    onTouchStart={() => startLongPress(() => {
+                        setFilterType("habits")
+                        setIsFilterOpen(true)
+                    })}
+                    onMouseUp={() => {
+                        setFilterType("habits")
+                        if (activeTab === "habits") {
+                            if (!isFilterOpen) {
+                                setIsFilterOpen(true)
+                            } else {
+                                setIsFilterOpen(false)
+                            }
+                        } else {
+                            setActiveTab("habits")
+                        }
+                    }}
+                >
                     {activeTab === "habits" && <div className="SMfilter"><SortAscending /></div>}
                     {habitsSelected.label}
                 </div>
@@ -272,14 +344,32 @@ export default function SideMenu() {
 
             <div className={`SMfiltersDiv ${isFilterOpen ? "open" : ""} ${filterType || ""}`} ref={filtersRef}>
                 {(filterType === "messages" ? messagesFilters : habitsFilters).map(filter => (
-                    <div
-                        key={filter.value}
-                        className={`filterItem ${ (filterType === "messages" ? messageSelected.value : habitsSelected.value) === filter.value ? "selected" : "" }`}
-                        onClick={() => {
+                    <div className={`filterItem ${
+                            messageSelected.value === filter.value ? "selected" : ""
+                        }`} key={filter.value}
+                        onMouseUp={() => {
+                            setActiveTab(filterType!)
                             if (filterType === "messages") {
                                 setMessageSelected(filter)
-                            } else {
+                                setActiveTab("messages")
+                            }
+
+                            if (filterType === "habits") {
                                 setHabitsSelected(filter)
+                                setActiveTab("habits")
+                            }
+
+                            setIsFilterOpen(false)
+                        }}
+                        onTouchEnd={() => {
+                            setActiveTab(filterType!)
+                            if (filterType === "messages") {
+                                setMessageSelected(filter)
+                                setActiveTab("messages")
+                            }
+                            if (filterType === "habits") {
+                                setHabitsSelected(filter)
+                                setActiveTab("habits")
                             }
                             setIsFilterOpen(false)
                         }}

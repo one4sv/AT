@@ -143,6 +143,8 @@
     width: 100%;
     justify-content: space-around;
     z-index: 3;
+    user-select: none;
+
 }
 .SMtab {
     text-align: center;
@@ -207,7 +209,7 @@
     pointer-events: none;
     transform: translateY(-8px);
     transition: opacity 0.3s ease, transform 0.3s ease;
-
+    user-select: none;
     &.open {
         opacity: 1;
         pointer-events: all;
