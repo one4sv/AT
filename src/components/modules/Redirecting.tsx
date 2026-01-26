@@ -27,7 +27,7 @@ export default function Redirecting() {
                     </div>
                 </div>
             </div>
-            <ContactsList/>
+            <ContactsList filter="all"/>
         </div>
     )
 }
