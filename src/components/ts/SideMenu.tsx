@@ -14,29 +14,122 @@ import { useHabits } from "../hooks/HabitsHook.ts"
 import MinLoader from "./MinLoader.tsx"
 import { useLocation } from "react-router"
 import { isMobile } from "react-device-detect"
+import { SortAscending } from "@phosphor-icons/react"
+import { filterHabitsByOrder } from "./utils/filteredHabitsByOrder.tsx"
 
 export default function SideMenu() {
-    const { setSearch, loadingList } = useChat()
-    const { loadingHabits } = useHabits()
+    const { setSearch, loadingList, list } = useChat()
+    const { loadingHabits, habits, newOrderHabits } = useHabits()
     const { user, refetchUser } = useUser()
-    const { setTab } = useSettings()
+    const { setTab, showArchived } = useSettings() // ← добавили showArchived
     const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
     const API_URL = import.meta.env.VITE_API_URL
     const location = useLocation()
     const navigate = useNavigate()
 
-    const [ showList, setShowList ] = useState(false)
-    const [ actieveTab, setActieveTab ] = useState<string>("message")
-    const [ showPlusMenu, setShowPlusMenu ] = useState<boolean>(false)
+    const [filterType, setFilterType] = useState<"messages" | "habits" | null>(null) // позиция
+    const [isFilterOpen, setIsFilterOpen] = useState(false) // открыто/закрыто
+
+    const [showList, setShowList] = useState(false)
+    const [activeTab, setActiveTab] = useState<string>("messages") // ← исправили опечатку
+    const [showPlusMenu, setShowPlusMenu] = useState<boolean>(false)
+    
+    const [messagesFilters, setMessagesFilters] = useState<{label: string, value: string, new: string}[]>([])
+    const [habitsFilters, setHabitsFilters] = useState<{label: string, value: string, new: string}[]>([])
+    const [messageSelected, setMessageSelected] = useState<{label: string, value: string, new: string}>({ label: "Сообщения", value: "all", new: "0" })
+    const [habitsSelected, setHabitsSelected] = useState<{label: string, value: string, new: string}>({label: "Активности", value: "all", new:"0"})
+
+    const tabsRef = useRef<HTMLDivElement>(null)
     const menuRef = useRef<HTMLDivElement>(null)
     const buttonRef = useRef<HTMLDivElement>(null)
     const plusRef = useRef<HTMLDivElement>(null)
     const plusMenuRef = useRef<HTMLDivElement>(null)
+    const filtersRef = useRef<HTMLDivElement>(null)
+
+    const newLength = list.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
 
     useEffect(() => {
-        if (location.pathname.includes("/habit")) setActieveTab("habits")
-    },[location.pathname])
+        if (location.pathname.includes("/habit")) setActiveTab("habits")
+    }, [location.pathname])
+
+    // Фильтры для сообщений
+    useEffect(() => {
+        const filters: {label: string, value: string, new: string}[] = []
+        
+        const totalNew = newLength > 99 ? "99+" : newLength > 0 ? String(newLength) : ""
+        filters.push({ label: "Сообщения", value: "all", new: totalNew })
+        setMessageSelected({ label: "Сообщения", value: "all", new: totalNew })
+
+        if (newLength > 0) {
+            filters.push({ label: "Новые", value: "new", new: totalNew })
+        }
+
+        const privateChats = list.filter(c => !c.is_group)
+        if (privateChats.length > 0) {
+            const privateNewCount = privateChats.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
+            const privateNew = privateNewCount > 99 ? "99+" : privateNewCount > 0 ? String(privateNewCount) : ""
+            filters.push({ label: "Личные", value: "private", new: privateNew })
+        }
+
+        const groupChats = list.filter(c => c.is_group)
+        if (groupChats.length > 0) {
+            const groupNewCount = groupChats.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
+            const groupNew = groupNewCount > 99 ? "99+" : groupNewCount > 0 ? String(groupNewCount) : ""
+            filters.push({ label: "Беседы", value: "group", new: groupNew })
+        }
+
+        setMessagesFilters(filters)
+        
+        // Если текущий выбранный фильтр исчез (например, новых стало 0), сбрасываем на "Все"
+        if (!filters.some(f => f.value === messageSelected.value)) {
+            setMessageSelected(filters[0] ?? { label: "Все", value: "all", new: "" })
+        }
+    }, [list, newLength])
+
+    useEffect(() => {
+        const filters: { label: string; value: string, new: string }[] = []
+        filters.push({ label: "Активности", value: "all", new:"0" })
+
+        if (newOrderHabits && habits) {
+            const groupLabels: Record<string, string> = {
+                everyday: "Ежедневные",
+                today: "Сегодня",
+                tomorrow: "Завтра",
+                sometimes: "Иногда",
+            }
+
+            const activeHabits = habits.filter(h => !h.is_archived)
+
+            newOrderHabits.forEach(order => {
+                if (order === "pinned") return
+
+                const groupHabits = filterHabitsByOrder(order, activeHabits, "")
+                if (groupHabits.length > 0) {
+                    let label = groupLabels[order]
+                    if (!label) {
+                        const date = new Date(order)
+                        if (!isNaN(date.getTime())) {
+                            label = date.toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })
+                        } else {
+                            return
+                        }
+                    }
+                    filters.push({ label, value: order, new:"0" })
+                }
+            })
+
+            const hasArchived = habits.some(h => h.is_archived)
+            if (hasArchived) {
+                filters.push({ label: "Архив", value: "archived", new:"0" })
+            }
+        }
+
+        setHabitsFilters(filters)
+        if (!filters.some(f => f.value === habitsSelected.value)) {
+            setHabitsSelected(filters[0])
+        }
+    }, [habits, newOrderHabits, showArchived])
 
     const logOut = async () => {
         try {
@@ -48,29 +141,28 @@ export default function SideMenu() {
             }
         } catch (error: unknown) {
             if (isAxiosError(error)) {
-                showNotification("error", error.response?.data?.message || "Ошибка при выходе")
+                showNotification("error", error.response?.data?.messages || "Ошибка при выходе")
             } else {
                 showNotification("error", "Что-то пошло не так")
             }
         }
     }
 
+    // Закрытие меню профиля
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
-                menuRef.current &&
-                !menuRef.current.contains(event.target as Node) &&
-                buttonRef.current &&
-                !buttonRef.current.contains(event.target as Node)
+                menuRef.current && !menuRef.current.contains(event.target as Node) &&
+                buttonRef.current && !buttonRef.current.contains(event.target as Node)
             ) {
                 setShowList(false)
             }
         }
-
         document.addEventListener("mousedown", handleClickOutside)
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
-    
+
+    // Закрытие плюс-меню
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -82,11 +174,47 @@ export default function SideMenu() {
                 setShowPlusMenu(false)
             }
         }
-
         document.addEventListener("mousedown", handleClickOutside)
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
 
+    // Закрытие фильтров при клике вне
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                filtersRef.current && 
+                !filtersRef.current.contains(event.target as Node) && 
+                tabsRef.current && 
+                !tabsRef.current.contains(event.target as Node)
+            ) {
+                setIsFilterOpen(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
+
+    const handleTabClick = (tab: "messages" | "habits") => {
+        if (activeTab === tab) {
+            if (isFilterOpen) {
+                setIsFilterOpen(false)
+            } else {
+                setFilterType(tab)
+                setIsFilterOpen(true)
+            }
+        } else {
+            setActiveTab(tab)
+            if (isFilterOpen) {
+                setIsFilterOpen(false)
+                setTimeout(() => {
+                    setFilterType(tab)
+                    setIsFilterOpen(true)
+                }, 300) // время анимации закрытия
+            } else {
+                setFilterType(tab)
+            }
+        }
+    }
 
     return (
         <div className={`sideMenu ${isMobile ? "mobileSM" : ""}`}>
@@ -122,49 +250,65 @@ export default function SideMenu() {
                     </div>
                 </div>
                 <div className="SMsearch">
-                    <input type="text" className="SMsearchInput" onChange={(e) => setSearch(e.currentTarget.value)}/>
+                    <input type="text" className="SMsearchInput" onChange={(e) => setSearch(e.currentTarget.value)} placeholder="Поиск..." />
                     <Search />
                 </div>
             </div>
 
-            <div className="SMtabs">
-                <div
-                    className={`SMtab ${actieveTab === "message" ? "active" : ""}`}
-                    onClick={() => setActieveTab("message")}
-                >
-                    Сообщения
+            <div className="SMtabs" ref={tabsRef}>
+                <div className={`SMtab ${activeTab === "messages" ? "active" : ""}`} onClick={() => handleTabClick("messages")}>
+                    {activeTab === "messages" && <div className="SMfilter"><SortAscending /></div>}
+                    {messageSelected.label}
+                    {messageSelected.new !== "" && <span className="newMessagesLength">{messageSelected.new}</span>}
                 </div>
-                <div
-                    className={`SMtab ${actieveTab === "habits" ? "active habits" : ""}`}
-                    onClick={() => setActieveTab("habits")}
-                >
-                    Активности
+
+                <div className={`SMtab ${activeTab === "habits" ? "active habits" : ""}`} onClick={() => handleTabClick("habits")}>
+                    {activeTab === "habits" && <div className="SMfilter"><SortAscending /></div>}
+                    {habitsSelected.label}
                 </div>
             </div>
-            <div className={`SMline ${actieveTab === "message" ? "mess" : "habits"}`} />
+
+            <div className={`SMline ${activeTab === "messages" ? "mess" : "habits"}`} />
+
+            <div className={`SMfiltersDiv ${isFilterOpen ? "open" : ""} ${filterType || ""}`} ref={filtersRef}>
+                {(filterType === "messages" ? messagesFilters : habitsFilters).map(filter => (
+                    <div
+                        key={filter.value}
+                        className={`filterItem ${ (filterType === "messages" ? messageSelected.value : habitsSelected.value) === filter.value ? "selected" : "" }`}
+                        onClick={() => {
+                            if (filterType === "messages") {
+                                setMessageSelected(filter)
+                            } else {
+                                setHabitsSelected(filter)
+                            }
+                            setIsFilterOpen(false)
+                        }}
+                    >
+                        {filter.label}
+                        {filterType === "messages" && <span className="new">{filter.new}</span>}
+                    </div>
+                ))}
+            </div>
 
             <div className="ListWrapper">
-                <div className="slider" style={{ transform: `translateX(${actieveTab === "message" ? 0 : -50}%)` }}>
+                <div className="slider" style={{ transform: `translateX(${activeTab === "messages" ? 0 : -50}%)` }}>
                     <div className={`slide ${isMobile ? "mobileSlide" : ""}`}>
                         {loadingList ? (
-                            <div className="menuLoader">
-                                <MinLoader/>
-                            </div>
+                            <div className="menuLoader"><MinLoader /></div>
                         ) : (
-                            <ContactsList />
+                            <ContactsList filter={messageSelected.value} />
                         )}
                     </div>
                     <div className={`slide ${isMobile ? "mobileSlide" : ""}`}>
                         {loadingHabits ? (
-                            <div className="menuLoader">
-                                <MinLoader/>
-                            </div>
+                            <div className="menuLoader"><MinLoader /></div>
                         ) : (
-                            <HabitsList />
+                            <HabitsList filter={habitsSelected.value} />
                         )}
                     </div>
                 </div>
             </div>
+
             <div className="SMnavDiv">
                 <div className={`plusMenu ${showPlusMenu ? "active" : ""}`} ref={plusMenuRef}>
                     <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"AddHabit"})}>

@@ -1,14 +1,12 @@
 @use "../global" as var;
 
 .sideMenu {
-    padding: 1vh 0 0;
     position: fixed;
     width: 20vw;
     height: 100%;
     background-color: var(--mc);
     display: flex;
     flex-direction: column;
-    z-index: 8;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     &.mobileSM {
@@ -17,11 +15,14 @@
     }
 }
 .SMsearchDiv {
+    padding-top: 1vh;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
     width: 100%;
-    height: 4vh;
+    height: 5vh;
+    z-index: 4;
+    background-color: var(--mc);
 }
 .SMmenuWrapper {
     height: 4vh;
@@ -70,7 +71,7 @@
     top: 100%;
     position: absolute;
     background-color: var(--bgc);
-    z-index: 3;
+    z-index: 6;
     display: flex;
     flex-direction: column;
     width: 8vw;
@@ -88,6 +89,7 @@
 }
 .SMprofileButt {
     flex: 1;
+    z-index: 6;
     padding: 1vh 0.5vw;
     cursor: pointer;
     &:hover {
@@ -133,20 +135,25 @@
     }
 }
 .SMtabs {
-    margin-top: 0.5vh;
+    background-color: var(--mc);
+    padding-top: 0.5vh;
     display: flex;
     align-items: center;
     font-size: 18px;
     width: 100%;
     justify-content: space-around;
+    z-index: 3;
 }
 .SMtab {
-    flex: 4;
     text-align: center;
     border-radius: 8px;
     padding: 0.8vh 0;
     color: var(--borderHabit);
+    width: 50%;
     cursor: pointer;
+    position: relative;
+    z-index: 3;
+
     &:hover {
         color: var(--borderWh);
         background-color: var(--menuButtHover);
@@ -160,6 +167,20 @@
     border-radius: 8px 8px 0 0;
     color: var(--acsent);
 }
+.SMfilter {
+    position: absolute;
+    color: var(--borderHabit);
+    left: 0.5vw;
+    &:hover {
+        color: var(--borderWh);
+    }
+}
+.newMessagesLength {
+    position: absolute;
+    margin-left: 0.2vw;
+    font-size: 14px;
+    aspect-ratio: 1/1;
+}
 .SMline {
     position: relative;
     left: 0;
@@ -171,6 +192,49 @@
 .SMline.habits {
     background-color: var(--acsent);
     left: 50%;
+}
+.SMfiltersDiv {
+    position: absolute;
+    top: 10vh;
+    width: 50%;
+    z-index: 2;
+    background-color: var(--bgc);
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    &.open {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+    }
+
+    &.message {
+        left: 0;
+    }
+
+    &.habits {
+        left: 50%;
+    }
+    > div {
+        width: 100%;
+        text-align: center;
+        padding: 0.5vh 0;
+        color: var(--borderHabit);
+        cursor: pointer;
+        &.selected {
+            color: var(--borderWhLight);
+        }
+        &:hover {
+            background-color: var(--menuButtHover);
+            color: var(--tc);
+        }
+    }
 }
 .menuLoader {
     position: relative;

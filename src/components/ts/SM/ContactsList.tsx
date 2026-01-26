@@ -2,7 +2,7 @@ import "../../../scss/SM/contactsList.scss"
 import { useChat } from "../../hooks/ChatHook"
 import Contact from "../Contact"
 
-export default function ContactsList() {
+export default function ContactsList({filter} : {filter: string}) {
     const { list } = useChat()
 
     return (
