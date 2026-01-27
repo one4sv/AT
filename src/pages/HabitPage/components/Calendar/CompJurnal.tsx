@@ -26,7 +26,7 @@ export default function CompJurnal({isMy, calendar}:CompJurnalProps) {
             <div className="compJurnalMain">
                 {sortedCalendar.map((day) => {
                     const { date, comment, habitName, habitId, created_at } = day
-                    const created = new Date(created_at).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" })
+                    const created = created_at && new Date(created_at).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" })
                     return (
                         <div className="CJrecord" key={`${date}-${habitId}`} onClick={() => {
                             if (!id) navigate(`/habit/${habitId}`)
