@@ -9,13 +9,13 @@ import DayCell from "./DayCell"
 import Streak from "./Streak";
 import ChosenDay from "./ChosenDay";
 import { useParams } from "react-router-dom";
-import DayComment from "./DayComment";
 import DoneButton from "./DoneButt";
 import { isMobile } from "react-device-detect";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import CompJurnal from "./CompJurnal";
 
 export default function Calendar() {
-    const { calendar, calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useCalendar();
+    const { calendar, calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, chosenDay } = useCalendar();
     const { habit, doable } = useTheHabit();
     const { habits } = useHabits()
     const { habitId:id } = useParams<{habitId : string}>()
@@ -60,7 +60,7 @@ export default function Calendar() {
         const clickedOutsideYears = yearsRef.current && !yearsRef.current.contains(e.target as Node);
 
         if (clickedOutsideMonths && clickedOutsideYears) {
-        setShowList({ months: false, years: false });
+            setShowList({ months: false, years: false });
         }
     };
 
@@ -160,7 +160,7 @@ export default function Calendar() {
         });
     };
     return (
-        <div className={`calendarDiv ${isMobile ? "mobile" : ""}`}>
+        <div className={`calendarDiv ${isMobile ? "mobile" : ""} ${id ? !habit?.is_archived ? "withHabit" : "noHabit" : "noHabit"}`}>
             <div className="calendarMain" ref={calendarRef}>
                 <div className="DateChanger">
                     <div className="setMonthButt left" onClick={() => {
@@ -219,18 +219,14 @@ export default function Calendar() {
             </div>
             
             {id && habit && !habit.is_archived ? <Streak habit={habit} calendar={calendar}/> : ""}
-            <ChosenDay/>
-
             {id && doable && isMy && !habit?.is_archived && (
                 <DoneButton habitId={Number(habit?.id)} />
             )}
-            {id && (
-                <DayComment
-                    isMy={isMy}
-                    id={id}
+            {!id && chosenDay
+                ? <ChosenDay/>
+                : <CompJurnal isMy={isMy} calendar={calendar}
                 />
-            )}
-
+            }
         </div>
     )
 }

@@ -7,10 +7,16 @@
     flex-direction: column;
     align-items: center;
     overflow: hidden;
-
+    height: 98vh;
     &.mobile {
         width: 90%;
         margin-bottom: 2vh;
+    }
+    &.withHabit > .compJurnalDiv {
+        max-height: 47vh;
+    }
+    &.noHabit > .compJurnalDiv {
+        max-height: 58vh;
     }
 }
 .calendarMain {
@@ -346,29 +352,6 @@
                 color: var(--acsent);
             }
         }
-    }
-}
-.habitDayComment {
-    margin-top: 1vh;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    background-color: var(--mc);
-    border-radius: 8px;
-    padding: 1vh 1vw;
-    align-items:end;
-    >textarea {
-        width: 100%;
-        resize: none;
-        background-color: var(--tr);
-        color: var(--tc);
-        font-size: 16px;
-        font-family: var(--font);
-        border: none;
-        outline: none;
-        overflow: hidden;
-        field-sizing: content;
     }
 }
 .hdcTAExtra {

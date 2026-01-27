@@ -2,11 +2,13 @@
 
 .statsDiv {
     position: relative;
-    height: 100vh;
+    height: 120vh;
     padding: 1vh 0.5vw 0;
     display: flex;
     flex-direction: row;
-    
+    overflow: auto;
+    overflow-x: hidden;
+    scrollbar-arrow-color: var(--tr);
     &.mobile {
         height: auto;
         width: 100%;

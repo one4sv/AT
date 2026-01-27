@@ -1,0 +1,71 @@
+@use "../../../scss/global" as var;
+
+.compJurnalDiv {
+    margin-top: 1vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--mc);
+    border-radius: 8px;
+    align-items:end;
+}
+.habitDayComment {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items:end;
+    border-radius: 8px;
+    border: 1px solid var(--borderHabit);
+    padding: 1vh 0.5vw;
+    &:focus-within {
+        border-color: var(--tc);
+    }
+    >textarea {
+        width: 100%;
+        resize: none;
+        background-color: var(--tr);
+        color: var(--tc);
+        font-size: 16px;
+        font-family: var(--font);
+        border: none;
+        outline: none;
+        overflow: hidden;
+        field-sizing: content;
+    }
+}
+.compJurnalMain {
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    height: 100%;
+    width: 100%;
+}
+.CJrecord {
+    width: 100%;
+    padding: 1vh 0.5vw;
+    border-radius: 8px;
+    cursor: pointer;
+    &:hover {
+        background-color: var(--menuButtHover);
+    }
+}
+.CJdates {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.CJdate {
+    display: flex;
+    color: #11c011;
+    align-items: center;
+    gap: 0.2vw;
+}
+.CJcreated {
+    color: var(--borderHabit);
+    font-size: 14px;
+}
+.CJcomment {
+    color: var(--borderWh);
+    white-space: pre-wrap;
+}

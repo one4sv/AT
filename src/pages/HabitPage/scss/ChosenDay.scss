@@ -4,8 +4,7 @@
     background-color: var(--bgc);
     border-radius: 8px;
     display: flex;
-    margin-top: 0.5vh;
-    // padding-bottom: 0.3vh;
+    margin-top: 1vh;
     flex-direction: column;
     width: 20vw;
     top: 0;
@@ -13,7 +12,7 @@
     opacity: 0;
     user-select: none;
     pointer-events: none;
-    max-height: 40%;
+    max-height: 58vh;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--menuButtHover) transparent;

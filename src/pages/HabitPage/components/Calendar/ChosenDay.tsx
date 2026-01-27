@@ -81,7 +81,6 @@ export default function ChosenDay() {
         )
     }
 
-    if (id || day === "") return null;
     return (
         <div className={`chosenDayDiv ${day === "" ? "" : "active"}`} ref={ChosenDayRef}>
             <div className="chosenDayDate">
