@@ -17,7 +17,7 @@ import { usePageTitle } from "../../components/hooks/PageContextHook";
 
 
 export default function Habit() {
-    const { fetchCalendarHabit, fetchCalendarUser } = useCalendar()
+    const { fetchCalendarHabit, fetchCalendarWLoading } = useCalendar()
     const { calendarLoading } = useCalendar()
     const { loadHabitWLoading, habit, isReadOnly, loadingHabit } = useTheHabit()
     const { habitId } = useParams<{ habitId: string }>();
@@ -29,7 +29,7 @@ export default function Habit() {
             loadHabitWLoading(habitId)
             fetchCalendarHabit(habitId)
         } else {
-            fetchCalendarUser()
+            fetchCalendarWLoading()
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [habitId]);

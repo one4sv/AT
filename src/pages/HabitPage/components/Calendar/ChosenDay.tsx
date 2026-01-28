@@ -21,7 +21,7 @@ export default function ChosenDay() {
     const today = new Date();
     const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-    const { completedArr, skippedArr, willArr } = useMemo(
+    const { completedArr, skippedArr, willArr, nowArr } = useMemo(
         () => getDayArrays(day, calendar, habits, id, ),
         [day, calendar, habits, id]
     )
@@ -33,7 +33,10 @@ export default function ChosenDay() {
         } else if (cn === "skip") {
             if (mouseOver === id) return <CheckCircle/>
             else return <Circle/>
-        } else return
+        } else if (cn === "now") {
+            if (mouseOver === id) return <CheckCircle color="#4DA3FF"/>
+            else return <Circle color="#4DA3FF"/>
+        }
     }
 
     const getHabitTime = (id: string) => {
@@ -89,8 +92,9 @@ export default function ChosenDay() {
             {(completedArr.length > 0 || skippedArr.length > 0 || willArr.length > 0) && (
                 <div className="cdhabits">
                     {mappingHabits(completedArr, "comp")}
-                    {mappingHabits(skippedArr, "skip")}
+                    {mappingHabits(nowArr, "now")}
                     {mappingHabits(willArr, "will")}
+                    {mappingHabits(skippedArr, "skip")}
                 </div>
             )}
             

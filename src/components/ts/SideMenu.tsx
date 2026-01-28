@@ -60,8 +60,9 @@ export default function SideMenu() {
         const filters: {label: string, value: string, new: string}[] = []
         
         const totalNew = newLength > 99 ? "99+" : newLength > 0 ? String(newLength) : ""
-        filters.push({ label: "Сообщения", value: "all", new: totalNew })
-        setMessageSelected({ label: "Сообщения", value: "all", new: totalNew })
+        const startFilter = { label: "Сообщения", value: "messages", new: totalNew }
+        filters.push(startFilter)
+        setMessageSelected(startFilter)
 
         if (newLength > 0) {
             filters.push({ label: "Новые", value: "new", new: totalNew })
@@ -132,6 +133,7 @@ export default function SideMenu() {
             setHabitsSelected(filters[0])
         }
     }, [habits, newOrderHabits, showArchived])
+
     const logOut = async () => {
         try {
             const res = await axios.get(`${API_URL}logout`, { withCredentials: true })
@@ -341,7 +343,7 @@ export default function SideMenu() {
             <div className={`SMfiltersDiv ${isFilterOpen ? "open" : ""} ${filterType || ""}`} ref={filtersRef}>
                 {(filterType === "messages" ? messagesFilters : habitsFilters).map(filter => (
                     <div className={`filterItem ${
-                            messageSelected.value === filter.value ? "selected" : ""
+                            messageSelected.value === filter.value || habitsSelected.value === filter.value ? "selected" : ""
                         }`} key={filter.value}
                         onMouseUp={() => {
                             setActiveTab(filterType!)

@@ -3,6 +3,8 @@ import type { Calendar } from "../../../../components/context/CalendarContext";
 import type { Habit } from "../../../../components/context/HabitsContext";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { useEffect, useState } from "react";
+import { getStreakView } from "../../utils/getStrakView";
+import "../../scss/Strak.scss";
 
 export interface StreakType {
     habit: Habit;
@@ -56,7 +58,6 @@ export default function Streak({ habit, calendar }: StreakType) {
     };
 
     const streak = checkStreak(today);
-    const streakUntilYesterday = checkStreak(yesterday);
 
     const pluralizeDay = (streak: number) => {
         const n = Math.abs(streak) % 100;
@@ -73,7 +74,6 @@ export default function Streak({ habit, calendar }: StreakType) {
         habit.chosen_days?.includes(todayDayOfWeek) &&
         today >= startDate;
 
-    // Предупреждение «вчера был стрик», только если today — обычный день
     let showYesterdayWarning = false;
     if (habit.periodicity !== "sometimes" && !isTodayChosenWeekly && yesterday >= startDate) {
         const yesterdayDayOfWeek = yesterday.getDay();
@@ -85,43 +85,23 @@ export default function Streak({ habit, calendar }: StreakType) {
             showYesterdayWarning = true;
         }
     }
+
+    const view = getStreakView(habit, streak, isMy, showYesterdayWarning, isTodayChosenWeekly);
+    const { cl, text, showCount } = view || {};
+
     return (
         <div className="streakDiv">
-            {habit.periodicity === "sometimes" && (
-                <div className="streakStr null">
-                    Стрик для этой привычки недоступен
+            {view && (
+                <div className={`streakStr ${cl}`}>
+                    <Fire weight="fill" size={24} />
+                    {text && `${text} `}
+                    {showCount && (
+                        <>
+                            Streak:&nbsp;<span>{streak}</span>&nbsp;
+                            {pluralizeDay(streak)}
+                        </>
+                    )}
                 </div>
-            )}
-
-            {habit.periodicity !== "sometimes" && !isTodayChosenWeekly && habit.periodicity === "weekly" && streak > 0 ? (
-                <div className="streakStr start">
-                    <Fire weight="fill" size={24}/> 
-                    {isMy && "Сегодня можно отдохнуть! "} 
-                    Streak:&nbsp;<span>{streak}</span>&nbsp;{pluralizeDay(streak)}
-                </div>
-            ) : habit.periodicity !== "sometimes" && showYesterdayWarning ? (
-                <div className="streakStr warn">
-                    <Fire weight="fill" size={24}/> 
-                    {isMy && `Не потеряйте стрик`}&nbsp;<span>{streakUntilYesterday}</span>&nbsp;{pluralizeDay(streakUntilYesterday)}!
-                </div>
-            ) : habit.periodicity !== "sometimes" && (
-                streak === 0 ? (
-                    <div className="streakStr null">
-                        <Fire weight="fill" size={24}/> 
-                        {isMy ? "Никогда не поздно начать!" : "Streak: 0"}
-                    </div>
-                ) : streak > 7 ? (
-                    <div className="streakStr cont">
-                        <Fire weight="fill" size={24}/> 
-                        {isMy && "Да вы в ударе!"} 
-                    </div>
-                ) : (
-                    <div className="streakStr start">
-                        <Fire weight="fill" size={24}/> 
-                        {isMy && "Начало положено! "} 
-                        Streak:&nbsp;<span>{streak}</span>&nbsp;{pluralizeDay(streak)}
-                    </div>
-                )
             )}
         </div>
     );

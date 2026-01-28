@@ -6,6 +6,7 @@ interface DayArrays {
   completedArr: Calendar[]
   skippedArr: Calendar[]
   willArr: Calendar[]
+  nowArr: Calendar[]
 }
 
 // ===== main =====
@@ -27,6 +28,7 @@ export function getDayArrays(
 
   const skippedArr: Calendar[] = []
   const willArr: Calendar[] = []
+  const nowArr: Calendar[] = []
 
   const processHabit = (h: Habit) => {
     if (parseLocalDate(h.start_date) > date || ( h.end_date && parseLocalDate(h.end_date) < date)) return
@@ -66,7 +68,16 @@ export function getDayArrays(
 
     // === TODAY ===
     if (isToday) {
-      if (!h.end_time || isTimePassed(h.end_time)) {
+      if (h.start_time && !isTimePassed(h.start_time)) {
+        willArr.push({
+          habitId: h.id.toString(),
+          habitName: h.name,
+          date: dateStr,
+          isDone: false,
+          is_archived:h.is_archived
+        })
+        return
+      } else if (!h.end_time || isTimePassed(h.end_time)) {
         skippedArr.push({
           habitId: h.id.toString(),
           habitName: h.name,
@@ -74,8 +85,8 @@ export function getDayArrays(
           isDone: false,
           is_archived:h.is_archived
         })
-      } else {
-        willArr.push({
+      } else if (h.start_time && h.end_time && !isTimePassed(h.end_time) && isTimePassed(h.start_time)) {
+        nowArr.push({
           habitId: h.id.toString(),
           habitName: h.name,
           date: dateStr,
@@ -93,5 +104,5 @@ export function getDayArrays(
     habits?.forEach(processHabit)
   }
 
-  return { completedArr, skippedArr, willArr }
+  return { completedArr, skippedArr, willArr, nowArr }
 }

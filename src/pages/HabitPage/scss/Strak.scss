@@ -1,0 +1,88 @@
+@use "../../../scss/global" as var;
+
+.streakDiv {
+    margin-top: 1vh;
+    font-size: 18px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 4.5vh;
+    border-radius: 8px;
+    background-color: var(--mc);
+}
+.streakStr {
+    display: flex;
+    align-items: center;
+    >svg {
+        position: relative;
+        bottom: 0.2vh;
+    }
+    &.warn {
+        color: var(--borderHabit);
+        >svg {
+            color: var(--tc);
+        }
+        > span {
+            color: var(--tc);
+        }
+    }
+    &.null {
+        color: var(--borderHabit);
+    }
+    &.max {
+        color: var(--tc);
+        >svg {
+            color: #892dd4;
+        }
+        > span {
+            color: #892dd4;
+        }
+    }
+    &.comp {
+        color: var(--tc);
+        >svg {
+            color: #4DA3FF;
+        }
+        > span {
+            color: #4DA3FF;
+        }
+    }
+    &.month {
+        color: var(--tc);
+        >svg {
+            color: #2ed118;
+        }
+        > span {
+            color: #2ed118;
+        }
+    }
+    &.half {
+        color: var(--tc);
+        >svg {
+            color: red;
+        }
+        > span {
+            color: red;
+        }
+    }
+    &.week {
+        color: var(--tc);
+        >svg {
+            color: #ff8800;
+        }
+        > span {
+            color: #ff8800;
+        }
+    }
+    &.start {
+        color: var(--tc);
+        >svg {
+            color: #ffc400;
+        }
+        > span {
+            color: #ffc400;
+        }
+    }
+
+}

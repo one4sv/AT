@@ -8,7 +8,7 @@ export default function ContactsList({filter} : {filter: string}) {
     const [ filtered, setFilterd ] = useState(list)
 
     useEffect(() => {
-        if (filter === "all") setFilterd(list)
+        if (filter === "messages") setFilterd(list)
         else if (filter === "new") setFilterd(list.filter(c => c.unread_count > 0))
         else if (filter === "private") setFilterd(list.filter(c => !c.is_group))
         else if (filter === "group") setFilterd(list.filter(c => c.is_group))

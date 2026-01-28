@@ -9,6 +9,18 @@
     background-color: var(--mc);
     border-radius: 8px;
     align-items:end;
+    min-height:0;
+    height: max-content;
+    height: 58vh;
+    &.withHabitnDone {
+        height: 47vh;
+    }
+    &.withArchivedHabit {
+        height: 58vh;
+    }
+    &.withHabit {
+        height: 52.5vh;
+    }
 }
 .habitDayComment {
     position: relative;
@@ -20,7 +32,7 @@
     border: 1px solid var(--borderHabit);
     padding: 1vh 0.5vw;
     &:focus-within {
-        border-color: var(--tc);
+        border-color: var(--borderWh);
     }
     >textarea {
         width: 100%;
@@ -36,8 +48,6 @@
     }
 }
 .compJurnalMain {
-    overflow-y: scroll;
-    scrollbar-width: thin;
     height: 100%;
     width: 100%;
 }

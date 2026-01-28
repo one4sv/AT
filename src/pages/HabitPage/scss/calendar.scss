@@ -13,10 +13,10 @@
         margin-bottom: 2vh;
     }
     &.withHabit > .compJurnalDiv {
-        max-height: 47vh;
+        height: 47vh;
     }
     &.noHabit > .compJurnalDiv {
-        max-height: 58vh;
+        height: 58vh;
     }
 }
 .calendarMain {
@@ -250,6 +250,9 @@
     &.nothing {
         background-color: #111111;
     }
+    &.now {
+        background-color: #4DA3FF;
+    }
 }
 .hoverDayDiv {
     position: fixed;
@@ -262,7 +265,7 @@
     flex-direction: column;
     pointer-events: none;
     gap: 0.2vh;
-    z-index: 3;
+    z-index: 5;
     max-width: 15vw;
 }
 
@@ -277,55 +280,7 @@
         color: var(--borderHabit);
     }
 }
-.streakDiv {
-    margin-top: 1vh;
-    font-size: 18px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 4.5vh;
-    border-radius: 8px;
-    background-color: var(--mc);
-}
-.streakStr {
-    display: flex;
-    align-items: center;
-    >svg {
-        position: relative;
-        bottom: 0.2vh;
-    }
-    &.cont {
-        color: var(--tc);
-        >svg {
-            color: red;
-        }
-        > span {
-            color: red;
-        }
-    }
-    &.null {
-        color: var(--borderHabit);
-    }
-    &.start {
-        color: var(--tc);
-        >svg {
-            color: orange;
-        }
-        > span {
-            color: orange;
-        }
-    }
-    &.warn {
-        color: var(--borderHabit);
-        >svg {
-            color: var(--tc);
-        }
-        > span {
-            color: var(--tc);
-        }
-    }
-}
+
 .doneButt {
     @include var.longButt(100%, 4.5vh, 1vh, 1vw, var(--mc), var(--tc), var(--tr), var(--menuButtHover));
     display: inline-flex;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { Habit } from "../../../../components/context/HabitsContext";
 import HoverDay from "./HoverDay";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
@@ -26,7 +26,7 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
     const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
     const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
-    const { completedArr, skippedArr, willArr } = useMemo(
+    const { completedArr, skippedArr, willArr, nowArr } = useMemo(
         () => getDayArrays(dateStr, calendar, habits, id, habit),
         [dateStr, calendar, habits, habit, id]
     )
@@ -35,15 +35,6 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
         const found = calendar.find(c => c.date === dateStr);
         return found ? found.comment : "";
     }, [calendar, dateStr]);
-
-    useEffect(() => {
-        if (id) {
-            setChosenDay("")
-            setIsDone(null)
-            setDoable(true)
-            setDayComment(null)
-        }
-    }, [id])
     
     return (
         <div
@@ -58,8 +49,10 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
                     if (completedArr.length > 0) {
                         setIsDone(true)
                         setDoable(true)
-                    }
-                    else if (skippedArr.length > 0) {
+                    } else if (skippedArr.length > 0) {
+                        setIsDone(false)
+                        setDoable(true)
+                    } else if (nowArr.length > 0) {
                         setIsDone(false)
                         setDoable(true)
                     }
@@ -79,6 +72,7 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
             <span>{day}</span>
             <div className="calendarDots">
                 {completedArr.length > 0 && <div className="calendarDot comp"></div>}
+                {nowArr.length > 0 && <div className="calendarDot now"></div>}
                 {willArr.length > 0 && <div className="calendarDot will"></div>}
                 {skippedArr.length > 0 && <div className="calendarDot skip"></div>}
             </div>

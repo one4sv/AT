@@ -8,6 +8,7 @@ import formatComp from "../../utils/formatComp"
 import { Doughnut } from "react-chartjs-2"
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { isMobile } from "react-device-detect"
+import { useState } from "react"
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -16,6 +17,7 @@ export interface DiagramType {
     days?:number;
     label:string;
     color:string;
+    count:number
 }
 
 export default function Diagrams() {
@@ -23,6 +25,8 @@ export default function Diagrams() {
     const { chosenDay, calendar, selectedMonth : month, selectedYear : year } = useCalendar()
     const { habit } = useTheHabit()
     const { habits } = useHabits()
+
+    const [ showCounts, setShowCounts ] = useState(false)
     const Diagram: DiagramType[] = []
     let Info: string | undefined = undefined
     
@@ -46,16 +50,32 @@ export default function Diagrams() {
                 let totalPlanned = 0;
                 let totalNothing = 0;
 
-                // Определяем дату старта для привычки
-                const pointDay = habit.start_date < daysInMonth[0]
-                    ? daysInMonth[0]
-                    : habit.start_date;
+                const monthStart = daysInMonth[0];
+                const monthEnd = daysInMonth[daysInMonth.length - 1];
+
+                const pointDay = habit.start_date < monthStart
+                ? monthStart
+                : habit.start_date;
+
+                const rawEndDay = habit.end_date
+                ? new Date(habit.end_date).toISOString().slice(0, 10)
+                : null;
+
+                const endDay = rawEndDay && rawEndDay < monthEnd
+                ? rawEndDay
+                : monthEnd;
 
                 const beforePointDays = daysInMonth.filter(day => day < pointDay);
-                let activeDays = daysInMonth.filter(day => day >= pointDay);
+                const afterEndDays = rawEndDay
+                ? daysInMonth.filter(day => day > endDay)
+                : [];
 
-                // 🔹 Дни до начала привычки — "Свободно"
+                let activeDays = daysInMonth.filter(
+                day => day >= pointDay && day <= endDay
+                );
+
                 totalNothing += beforePointDays.length;
+                totalNothing += afterEndDays.length;
 
                 // 🔹 Если привычка weekly — берём только выбранные дни
                 if (habit.periodicity === "weekly" && Array.isArray(habit.chosen_days) && habit.chosen_days.length > 0) {
@@ -85,29 +105,32 @@ export default function Diagrams() {
                 const plannedProcent = (totalPlanned / totalMonth) * 100;
                 const nothingProcent = (totalNothing / totalMonth) * 100;
 
-                if (completedProcent > 0) Diagram.push({ procent: completedProcent, label: "Выполнено", color: "comp" });
-                if (skippedProcent > 0) Diagram.push({ procent: skippedProcent, label: "Пропущено", color: "skip" });
-                if (plannedProcent > 0) Diagram.push({ procent: plannedProcent, label: "В планах", color: "will" });
-                if (nothingProcent > 0) Diagram.push({ procent: nothingProcent, label: "Свободно", color: "nothing" });
+                if (completedProcent > 0) Diagram.push({ procent: completedProcent, label: "Выполнено", color: "comp", count: totalDone });
+                if (skippedProcent > 0) Diagram.push({ procent: skippedProcent, label: "Пропущено", color: "skip", count: totalSkipped });
+                if (plannedProcent > 0) Diagram.push({ procent: plannedProcent, label: "В планах", color: "will", count: totalPlanned });
+                if (nothingProcent > 0) Diagram.push({ procent: nothingProcent, label: "Свободно", color: "nothing", count: totalNothing });
             }
         }
     } else {
         if (chosenDay) {
             // 3. нет привычки + выбран день
-            const { completedArr, skippedArr, willArr } = getDayArrays(chosenDay, calendar, habits, id, habit);
+            const { completedArr, skippedArr, willArr, nowArr } = getDayArrays(chosenDay, calendar, habits, id, habit);
             const cLength = completedArr.length;
             const sLength = skippedArr.length;
             const wLength = willArr.length;
-            const all = cLength + sLength + wLength;
+            const nLength = nowArr.length;
+            const all = cLength + sLength + wLength + nLength;
 
             if (all > 0) {
                 const compProcent = (cLength / all) * 100;
                 const skipProcent = (sLength / all) * 100;
                 const willProcent = (wLength / all) * 100;
-                if (willProcent > 0) Diagram.push({ procent: willProcent, label: "В планах", color: "will" });
-                if (compProcent > 0) Diagram.push({ procent: compProcent, label: "Выполненные", color: "comp" });
-                if (skipProcent > 0) Diagram.push({ procent: skipProcent, label: "Пропущенные", color: "skip" });
-            } else Diagram.push({ procent: 100, label: "Свободно", color: "nothing" });
+                const nowProcent = (nLength / all) * 100;
+                if (willProcent > 0) Diagram.push({ procent: willProcent, label: "В планах", color: "will", count: wLength });
+                if (compProcent > 0) Diagram.push({ procent: compProcent, label: "Выполненные", color: "comp", count: cLength });
+                if (skipProcent > 0) Diagram.push({ procent: skipProcent, label: "Пропущенные", color: "skip", count: sLength });
+                if (nowProcent > 0) Diagram.push({ procent: nowProcent, label: "В процессе", color: "now", count: nLength });
+            } else Diagram.push({ procent: 100, label: "Свободно", color: "nothing", count: all });
         } else {
             // 4. нет привычки + нет дня
             if (!habits) return null;
@@ -185,10 +208,10 @@ export default function Diagrams() {
             const plannedProcent = totalActiveHabitDays > 0 ? (totalPlanned / totalActiveHabitDays) * activeFraction * 100 : 0;
             const nothingProcent = totalDays > 0 ? totalNothing / totalDays * 100 : 0;
 
-            if (completedProcent > 0) Diagram.push({ procent: completedProcent, label: "Выполнено", color: "comp" });
-            if (skippedProcent > 0) Diagram.push({ procent: skippedProcent, label: "Пропущено", color: "skip" });
-            if (plannedProcent > 0) Diagram.push({ procent: plannedProcent, label: "В планах", color: "will" });
-            if (nothingProcent > 0) Diagram.push({ procent: nothingProcent, label: "Свободно", color: "nothing" });
+            if (completedProcent > 0) Diagram.push({ procent: completedProcent, label: "Выполнено", color: "comp", count: totalDone });
+            if (skippedProcent > 0) Diagram.push({ procent: skippedProcent, label: "Пропущено", color: "skip", count: totalSkipped });
+            if (plannedProcent > 0) Diagram.push({ procent: plannedProcent, label: "В планах", color: "will", count: totalPlanned });
+            if (nothingProcent > 0) Diagram.push({ procent: nothingProcent, label: "Свободно", color: "nothing", count: totalNothing });
         }
     }
 
@@ -196,7 +219,8 @@ export default function Diagrams() {
         comp: "#129e12",
         skip: "#646464",
         will: "#dddddd",
-        nothing: "#111111"
+        nothing: "#111111",
+        now: "#4DA3FF",
     };
     const data = {
         labels: Diagram.map((d) => d.label),
@@ -209,7 +233,9 @@ export default function Diagrams() {
         ],
     };
     const options = {
-        cutout: "80%",
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "75%",
         plugins: {
             legend: {
                 display: false,
@@ -221,19 +247,17 @@ export default function Diagrams() {
         <div className={`diagramsDiv ${isMobile ? "mobile" : ""}`}>
             {Diagram.length > 0
                 ? (
-                    <>
-                        <div className="diagram">
-                            <Doughnut data={data} options={options} />
-                        </div>
-                        <div className="diagramLegend">
+                    <div className="diagram">
+                        <Doughnut data={data} options={options} />
+                            <div className="diagramLegend" onClick={() => setShowCounts(!showCounts)}>
                             {Diagram.map((d, i) => (
                                 <div className="legendStr" key={i}>
                                     <div className={`calendarDot ${d.color}`}></div>
-                                    {d.label}: {d.procent.toFixed(0)}%
+                                    {d.label}: <span>{showCounts ? d.count : `${d.procent.toFixed(0)}%`}</span>
                                 </div>
                             ))}
                         </div>
-                    </>
+                    </div>
                 )
                 : Info
                     ? (

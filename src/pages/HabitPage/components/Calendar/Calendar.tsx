@@ -13,12 +13,15 @@ import DoneButton from "./DoneButt";
 import { isMobile } from "react-device-detect";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import CompJurnal from "./CompJurnal";
+import { isTimePassed } from "../../../../components/ts/utils/dayArrHelpFuncs";
 
 export default function Calendar() {
-    const { calendar, calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, chosenDay } = useCalendar();
-    const { habit, doable } = useTheHabit();
+    const { calendar, calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, chosenDay, setChosenDay } = useCalendar();
+    const { habit, doable, setDoable, setDayComment, setIsDone } = useTheHabit();
     const { habits } = useHabits()
+
     const { habitId:id } = useParams<{habitId : string}>()
+    
     const [ years, setYears ] = useState<number[] | null>([])
     const [ thisMonth, setThisMonth ] = useState<number[]>([])
     const [ prevMonth, setPrevMonth ] = useState<number[]>([])
@@ -29,6 +32,7 @@ export default function Calendar() {
     })
     const monthsRef = useRef<HTMLDivElement>(null)
     const yearsRef = useRef<HTMLDivElement>(null)
+    const h = habit
 
     const isMy = habits?.some(h => h.id === Number(id)) || false
     const today = new Date()
@@ -46,6 +50,25 @@ export default function Calendar() {
         { value: 6, label: "сб" },
         { value: 0, label: "вс" },
     ];
+
+    useEffect(() => {
+        if (id && h) {
+            setChosenDay("")
+            setIsDone(null)
+            setDayComment(null)
+            if ((h.start_time && h.end_time && !isTimePassed(h.end_time) && isTimePassed(h.start_time)) ||
+                (h.start_time && !h.end_time && isTimePassed(h.start_time)) ||
+                (h.end_time && !h.start_time && !isTimePassed(h.end_time)) ||
+                (!h.start_time && !h.end_time)) setDoable(true)
+            else setDoable(false)
+            if (h.is_archived) {
+                const m = new Date(h.end_date).getMonth()
+                setSelectedMonth(m)
+                const y = new Date(h.end_date).getFullYear()
+                setSelectedYear(y)
+            }
+        }
+    }, [id])
 
     useEffect(() => {
         setSelectedMonth(month)
@@ -76,8 +99,8 @@ export default function Calendar() {
         const yearsSet = new Set<number>();
         const today = new Date();
 
-        if (id && habit) {
-            const startYear = new Date(habit.start_date).getFullYear();
+        if (id && h) {
+            const startYear = new Date(h.start_date).getFullYear();
             for (let y = startYear; y <= today.getFullYear(); y++) {
                 yearsSet.add(y);
             }
@@ -98,7 +121,7 @@ export default function Calendar() {
 
         const yearsArray = Array.from(yearsSet).sort((a, b) => a - b);
         setYears(yearsArray);
-    }, [habits, habit, id]); // 🔹 убрали today
+    }, [habits, h, id]); // 🔹 убрали today
 
     useEffect(() => {
         if (selectedMonth === null || selectedYear === null) return
@@ -148,7 +171,7 @@ export default function Calendar() {
             }
             return (
                 <DayCell
-                    habit={habit}
+                    habit={h}
                     habits={habits}
                     key={idx}
                     day={day}
@@ -160,7 +183,7 @@ export default function Calendar() {
         });
     };
     return (
-        <div className={`calendarDiv ${isMobile ? "mobile" : ""} ${id ? !habit?.is_archived ? "withHabit" : "noHabit" : "noHabit"}`}>
+        <div className={`calendarDiv ${isMobile ? "mobile" : ""}`}>
             <div className="calendarMain" ref={calendarRef}>
                 <div className="DateChanger">
                     <div className="setMonthButt left" onClick={() => {
@@ -218,14 +241,13 @@ export default function Calendar() {
                 </div>
             </div>
             
-            {id && habit && !habit.is_archived ? <Streak habit={habit} calendar={calendar}/> : ""}
-            {id && doable && isMy && !habit?.is_archived && (
-                <DoneButton habitId={Number(habit?.id)} />
+            {id && h && !h.is_archived ? <Streak habit={h} calendar={calendar}/> : ""}
+            {id && doable && isMy && !h?.is_archived && (
+                <DoneButton habitId={Number(h?.id)} />
             )}
             {!id && chosenDay
                 ? <ChosenDay/>
-                : <CompJurnal isMy={isMy} calendar={calendar}
-                />
+                : <CompJurnal isMy={isMy} calendar={calendar}/>
             }
         </div>
     )
