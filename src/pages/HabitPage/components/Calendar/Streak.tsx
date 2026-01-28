@@ -113,7 +113,7 @@ export default function Streak({ habit, calendar }: StreakType) {
                 ) : streak > 7 ? (
                     <div className="streakStr cont">
                         <Fire weight="fill" size={24}/> 
-                        {isMy && "Да вы в ударе!"} Streak:&nbsp;<span>{streak}</span>&nbsp;{pluralizeDay(streak)}
+                        {isMy && "Да вы в ударе!"} 
                     </div>
                 ) : (
                     <div className="streakStr start">
