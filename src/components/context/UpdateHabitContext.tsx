@@ -1,7 +1,8 @@
 import { useEffect, useState, createContext, useCallback, type ReactNode, useRef } from "react";
-import axios from "axios";
 import { useHabits } from "../hooks/HabitsHook";
 import { useNote } from "../hooks/NoteHook";
+import { useTheHabit } from "../hooks/TheHabitHook";
+import { api } from "../ts/api";
 
 export type UpdateHabitContextType = {
   setNewName: (habitId: number, val: string) => void;
@@ -16,29 +17,35 @@ export type UpdateHabitContextType = {
   setPin: (habitId: number, val: boolean) => void;
   putInArchieve: (habitId: number, val: boolean) => void;
   setNewTag: (habitId: number, val: string | null) => void;
+  setNewTimer: (habitId: number, val: boolean) => void;
+  setNewScheduleBool: (habitId: number, val: boolean) => void;
   isUpdating: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   localChanges: { [key: number]: Partial<Record<string, any>> };
 };
 
 type UpdateQueueItem = {
-  habitId: number;
-  field: string;
-  value: string | number[] | boolean | Date | null;
+  habitId: number,
+  field: string,
+  value: string | number[] | boolean | Date | null,
+  table: string
 };
 
 const UpdateHabitContext = createContext<UpdateHabitContextType | null>(null);
 
 export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
-  const { habits, refetchHabits } = useHabits();
+  const { refetchHabits } = useHabits();
+  const { habitSettings, habit, loadHabit } = useTheHabit();
   const { showNotification } = useNote();
-  const API_URL = import.meta.env.VITE_API_URL
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [updateQueue, setUpdateQueue] = useState<UpdateQueueItem[]>([]);
   const [isUpdating, setIsUpdating] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [localChanges, setLocalChanges] = useState<{ [key: number]: Partial<Record<string, any>> }>({});
   const debounceRef = useRef<number | null>(null)
-  
+
   const removeField = useCallback((habitId: number, field: string) => {
     setLocalChanges((prev) => {
       const updated = { ...prev };
@@ -55,7 +62,8 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
-  const enqueueUpdate = useCallback((habitId: number, field: string, value: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const enqueueUpdate = useCallback((habitId: number, field: string, value: any, table: string) => {
     if (field === "name" && (!value || value.trim() === "")) return;
     if (field === "start_date" && !value) return;
 
@@ -73,88 +81,91 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
 
       setUpdateQueue(prev => [
         ...prev.filter(item => !(item.field === field && item.habitId === habitId)),
-        { habitId, field, value },
+        { habitId, field, value, table },
       ]);
       setIsUpdating(prev => [...new Set([...prev, `habit_${habitId}`])]);
     }, 400);
   }, []);
 
-  const setNewName = useCallback((habitId: number, val: string) => enqueueUpdate(habitId, "name", val), [enqueueUpdate]);
-  const setNewDescription = useCallback((habitId: number, val: string) => enqueueUpdate(habitId, "desc", val), [enqueueUpdate]);
-  const setNewStartDate = useCallback((habitId: number, val: Date | null) => enqueueUpdate(habitId, "start_date", val), [enqueueUpdate]);
-  const setNewEndDate = useCallback((habitId: number, val: Date | null) => enqueueUpdate(habitId, "end_date", val), [enqueueUpdate]);
-  const setNewOngoing = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "ongoing", val), [enqueueUpdate]);
+  const setNewName = useCallback((habitId: number, val: string) => enqueueUpdate(habitId, "name", val, "habits"), [enqueueUpdate]);
+  const setNewDescription = useCallback((habitId: number, val: string) => enqueueUpdate(habitId, "desc", val, "habits"), [enqueueUpdate]);
+  const setNewStartDate = useCallback((habitId: number, val: Date | null) => enqueueUpdate(habitId, "start_date", val, "habits"), [enqueueUpdate]);
+  const setNewEndDate = useCallback((habitId: number, val: Date | null) => enqueueUpdate(habitId, "end_date", val, "habits"), [enqueueUpdate]);
+  const setNewOngoing = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "ongoing", val, "habits"), [enqueueUpdate]);
   const setNewPeriodicity = useCallback((habitId: number, val: string | number | null) => {
-    if (typeof val === "string") enqueueUpdate(habitId, "periodicity", val);
+    if (typeof val === "string") enqueueUpdate(habitId, "periodicity", val, "habits");
   }, [enqueueUpdate]);
   const setNewDays = useCallback((habitId: number, days: { value: number; label: string; chosen: boolean }[] | null) => {
     const val = days?.filter(d => d.chosen).map(d => d.value) || [];
-    enqueueUpdate(habitId, "chosen_days", val);
+    enqueueUpdate(habitId, "chosen_days", val, "habits");
   }, [enqueueUpdate]);
-  const setNewStartTime = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "start_time", val), [enqueueUpdate]);
-  const setNewEndTime = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "end_time", val), [enqueueUpdate]);
-  const setPin = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "pinned", val), [enqueueUpdate]);
-  const putInArchieve = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "is_archived", val), [enqueueUpdate]);
-  const setNewTag = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "tag", val), [enqueueUpdate]);
+  const setNewStartTime = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "start_time", val, "habits"), [enqueueUpdate]);
+  const setNewEndTime = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "end_time", val, "habits"), [enqueueUpdate]);
+  const setPin = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "pinned", val, "habits"), [enqueueUpdate]);
+  const putInArchieve = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "is_archived", val, "habits"), [enqueueUpdate]);
+  const setNewTag = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "tag", val, "habits"), [enqueueUpdate]);
+
+  // settings
+  const setNewTimer = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "timer", val, "habits_settings"), [enqueueUpdate]);
+  const setNewScheduleBool = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "schedule", val, "habits_settings"), [enqueueUpdate]);
 
   const processQueue = useCallback(async () => {
-  if (isProcessing || updateQueue.length === 0) return;
-  setIsProcessing(true);
+    if (isProcessing || updateQueue.length === 0) return;
+    setIsProcessing(true);
 
-  const { habitId, field, value } = updateQueue[0];
-  const selectedHabit = habits?.find((h) => h.id === habitId);
+    const { habitId, field, value, table } = updateQueue[0];
 
-  if (
-    (field === "name" && value === selectedHabit?.name) ||
-    (field === "desc" && value === selectedHabit?.desc) ||
-    (field === "start_date" && ((value == null && selectedHabit?.start_date == null) ||
-      (value instanceof Date && selectedHabit?.start_date && value.getTime() === new Date(selectedHabit.start_date).getTime()))) ||
-    (field === "end_date" && ((value == null && selectedHabit?.end_date == null) ||
-      (value instanceof Date && selectedHabit?.end_date && value.getTime() === new Date(selectedHabit.end_date).getTime()))) ||
-    (field === "ongoing" && value === selectedHabit?.ongoing) ||
-    (field === "periodicity" && value === selectedHabit?.periodicity) ||
-    (field === "chosen_days" && Array.isArray(value) && JSON.stringify(value?.sort()) === JSON.stringify((selectedHabit?.chosen_days || []).sort())) ||
-    (field === "start_time" && value === selectedHabit?.start_time) ||
-    (field === "end_time" && value === selectedHabit?.end_time) ||
-    (field === "pinned" && value === selectedHabit?.pinned) ||
-    (field === "tag" && value === selectedHabit?.tag)
-  ) {
-    removeField(habitId, field);
-    setUpdateQueue((prev) => prev.slice(1));
-    setIsUpdating((prev) => prev.filter((item) => item !== `habit_${habitId}`));
-    setIsProcessing(false);
-    return;
-  }
-
-  const payload = {
-    habit_id: habitId,
-    [field]: value instanceof Date ? value.toISOString() : value,
-  };
-
-  try {
-    const res = await axios.post(`${API_URL}updatehabit`, payload, {
-      withCredentials: true,
-    });
-    if (res.data.success) {
-      console.log("✅ Успешно обновлено:", field);
+    if (
+      (field === "name" && value === habit?.name) ||
+      (field === "desc" && value === habit?.desc) ||
+      (field === "start_date" && ((value == null && habit?.start_date == null) ||
+        (value instanceof Date && habit?.start_date && value.getTime() === new Date(habit.start_date).getTime()))) ||
+      (field === "end_date" && ((value == null && habit?.end_date == null) ||
+        (value instanceof Date && habit?.end_date && value.getTime() === new Date(habit.end_date).getTime()))) ||
+      (field === "ongoing" && value === habit?.ongoing) ||
+      (field === "periodicity" && value === habit?.periodicity) ||
+      (field === "chosen_days" && Array.isArray(value) && JSON.stringify(value?.sort()) === JSON.stringify((habit?.chosen_days || []).sort())) ||
+      (field === "start_time" && value === habit?.start_time) ||
+      (field === "end_time" && value === habit?.end_time) ||
+      (field === "pinned" && value === habit?.pinned) ||
+      (field === "tag" && value === habit?.tag) ||
+      (field === "timer" && value === habitSettings.timer) ||
+      (field === "schedule" && value === habitSettings.schedule)
+    ) {
       removeField(habitId, field);
+      setUpdateQueue((prev) => prev.slice(1));
+      setIsUpdating((prev) => prev.filter((item) => item !== `habit_${habitId}`));
+      setIsProcessing(false);
+      return;
+    }
+
+    const payload = {
+      habit_id: habitId,
+      [field]: value instanceof Date ? value.toISOString() : value,
+      table,
+    };
+
+    try {
+      const res = await api.post(`${API_URL}updatehabit`, payload)
+      if (res.data.success) {
+        console.log("✅ Успешно обновлено:", field);
+        removeField(habitId, field);
       if (updateQueue.length > 0) {
         refetchHabits();
+        loadHabit(String(habitId))
       }
-    } else {
-      throw new Error(res.data.error || "Ошибка при обновлении привычки");
+      } else {
+        throw new Error(res.data.error || "Ошибка при обновлении привычки");
+      }
+    } catch (err) {
+      showNotification("error", "Ошибка при обновлении привычки");
+      console.error("❌ Ошибка при обновлении привычки:", err);
+    } finally {
+      setUpdateQueue((prev) => prev.slice(1));
+      setIsUpdating((prev) => prev.filter((item) => item !== `habit_${habitId}`));
+      setIsProcessing(false);
     }
-  } catch (err) {
-    showNotification("error", "Ошибка при обновлении привычки");
-    console.error("❌ Ошибка при обновлении привычки:", err);
-    // НЕ удаляем при ошибке — очередь попробует снова при следующем триггере
-    // if (updateQueue.length === 1) refetchHabits(); // Опционально, если нужно
-  } finally {
-    setUpdateQueue((prev) => prev.slice(1));
-    setIsUpdating((prev) => prev.filter((item) => item !== `habit_${habitId}`));
-    setIsProcessing(false);
-  }
-}, [isProcessing, updateQueue, habits, showNotification, refetchHabits, removeField]);
+  }, [isProcessing, updateQueue, habit, habitSettings, showNotification, removeField]);
 
   useEffect(() => {
     if (updateQueue.length === 0 || isProcessing) return;
@@ -177,7 +188,9 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
         setNewTag,
         isUpdating,
         localChanges,
-        putInArchieve
+        putInArchieve,
+        setNewTimer,
+        setNewScheduleBool
       }}
     >
       {children}

@@ -24,6 +24,11 @@ export interface TheHabitContextType {
     setDayComment:Dispatch<SetStateAction<string | null>>
     doable:boolean;
     setDoable:Dispatch<SetStateAction<boolean>>;
+    habitSettings:HabitSettings;
+}
+export interface HabitSettings {
+    timer:boolean;
+    schedule:boolean
 }
 export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const { showNotification } = useNote()
@@ -39,7 +44,10 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const [ doable, setDoable ] = useState(true);
     const [ dayComment, setDayComment ] = useState<string | null>(null)
     const [ todayComment, setTodayComment ] = useState<string>("")
-
+    const [ habitSettings, setHabitSettings ] = useState<HabitSettings>({
+        timer: false,
+        schedule: false
+    })
     const findHabit = async(id:string | null) => {
         return api.get(`${API_URL}habits/${id}`);
     }
@@ -47,13 +55,14 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const loadHabit = useCallback(async (id: string | null) => {
         try {
             const res = await findHabit(id)
-            const { success, habit, isRead, isDone, comment } = res.data
+            const { success, habit, isRead, isDone, comment, settings } = res.data
             if (success) {
                 fetchCalendarHabit(id!)
                 setHabit(habit);
                 setIsReadOnly(isRead);
                 setTodayDone(isDone)
                 setTodayComment(comment)
+                setHabitSettings(settings)
             }
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -74,7 +83,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     return(
         <TheHabitContext.Provider value={{loadHabit, loadingHabit, habit, isReadOnly,
         isDone, setIsDone, dayComment, todayComment, setDayComment, 
-        findHabit, todayDone, setDoable, doable, loadHabitWLoading}}>
+        findHabit, todayDone, setDoable, doable, loadHabitWLoading, habitSettings}}>
             {children}
         </TheHabitContext.Provider>
     )

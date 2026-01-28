@@ -119,13 +119,15 @@ export default function ContextMenu() {
         >
             {point === "habit" && habit && (
                 <>
+                    {options?.isMy && (
+                        <div className="ContextMenuButt" onClick={() => markDone(habit.id, dateStr)}>
+                            {habit.done ? <CheckCircle weight="fill" /> : <Circle />}
+                            {habit.done ? "Выполнено" : "Выполнить"}
+                        </div>
+                    )}
                     {linkButt}
                     {options?.isMy && (
                         <>
-                            <div className="ContextMenuButt" onClick={() => markDone(habit.id, dateStr)}>
-                                {habit.done ? <CheckCircle weight="fill" /> : <Circle />}
-                                {habit.done ? "Выполнено" : "Выполнить"}
-                            </div>
                             <div className="ContextMenuButt" onClick={() => setPin(habit.id, !habit.pinned)}>
                                 {habit.pinned ? <PushPinSlash/> : <PushPin/>}
                                 {habit.pinned ? "Открепить" : "Закрепить"}
@@ -134,7 +136,6 @@ export default function ContextMenu() {
                         </>
                     )}
                 </>
-
             )}
             {point === "chat" && (
                 <>

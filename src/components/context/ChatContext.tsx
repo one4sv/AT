@@ -227,13 +227,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     const chatKey = data.is_group ? `g_${data.chat_id}` : `p_${data.nick ?? data.message.sender_id}`;
 
                     notificationAggregator.enqueueMessage(chatKey, {
-                    content: data.message.content,
-                    files: data.message.files,
-                    is_group: data.is_group,
-                    chat_id: data.chat_id,
-                    nick: data.nick,
-                    username: data.username,
-                    chat_name: data.chat_name,
+                        content: data.message.content,
+                        files: data.message.files,
+                        is_group: data.is_group,
+                        chat_id: data.chat_id,
+                        nick: data.nick,
+                        username: data.username,
+                        chat_name: data.chat_name,
                     });
                 }
             }
@@ -248,12 +248,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     !chatWithRef.current.is_group
                 ) {
                     setChatWith(prev => {
-                    if (!prev) return prev;
-                    return {
-                        ...prev,
-                        last_online: data.isOnline ? "" : (data.last_online || prev.last_online)
-                    };
-                    });
+                        if (!prev) return prev;
+                        return {
+                            ...prev,
+                            last_online: data.isOnline ? "" : (data.last_online || prev.last_online)
+                        }
+                    })
                 }
             }
             if (data.type === "MESSAGE_READ") {

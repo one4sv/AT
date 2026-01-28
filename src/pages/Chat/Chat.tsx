@@ -44,11 +44,9 @@ export default function Chat() {
         setIsChose(false);
         setChosenMess([]);
         if (id) {
-            console.log("refetching group chat by id:", id)
             refetchGroupChatWLoading(id);
         }
         else if (nick) {
-            console.log("refetching chat by nick:", nick)
             refetchChatWLoading(nick);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,8 +111,6 @@ export default function Chat() {
         }, 2000);
     };
     
-    if (highlightedId !== null) console.log("id", highlightedId)
-
     const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (!searchedMessages.length) return;
         setHighlightedId(null);

@@ -1,14 +1,14 @@
 @use "../../../scss/global" as var;
 
 .extraHabitInfoDiv {
-    margin-top: 2vh;
-    width: 100%;
+    width: 80%;
+    margin: 1vh auto 0;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 .extraHabitInfoShower {
-    width: 80%;
+    width: 100%;
     color: var(--borderWh);
     display: flex;
     align-items: center;
@@ -26,5 +26,46 @@
         flex: 1;
         height: 1px;
         background-color: var(--borderWh);
+    }
+}
+.extraHabitInfoSettings {
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+    width: 100%;
+    &.shown {
+        grid-template-rows: 1fr;
+    }
+    > div {
+        overflow: hidden;
+    }
+}
+.extraHabitInfo {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vh;
+    color: var(--borderWhLight);
+
+    &.readonly {
+        color: var(--borderHabit);
+    }
+}
+.redHabitStr {
+    display: flex;
+    justify-content: center;
+    > span {
+        width: 30%;
+        &.redHabitToggler {
+            display: flex;
+            justify-content: center;
+            > .toggler.disable {
+                border-color: var(--borderHabit);
+                > .togglerCircle {
+                    background-color: var(--borderHabit);
+                }
+            }
+        }
     }
 }

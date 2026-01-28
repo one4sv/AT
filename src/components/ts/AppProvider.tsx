@@ -29,15 +29,15 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                     <HabitsProvider>
                         <ChatProvider>
                             <SendMessProvider>
-                                <UpdateHabitProvider>
-                                    <UpdateUserProvider>
-                                        <AuthProvider>
-                                            <AccProvider>
-                                                <GroupProvider>
-                                                    <DeleteProvider>
-                                                        <BlackoutProvider>
-                                                            <CalendarProvider>
-                                                                <TheHabitProvider>
+                                <UpdateUserProvider>
+                                    <AuthProvider>
+                                        <AccProvider>
+                                            <GroupProvider>
+                                                <DeleteProvider>
+                                                    <BlackoutProvider>
+                                                        <CalendarProvider>
+                                                            <TheHabitProvider>
+                                                                <UpdateHabitProvider>
                                                                     <DoneProvider>
                                                                         <MessagesProvider>
                                                                             <ContextMenuProvider>
@@ -49,15 +49,15 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                                                                             </ContextMenuProvider>
                                                                         </MessagesProvider>
                                                                     </DoneProvider>
-                                                                </TheHabitProvider>
-                                                            </CalendarProvider>
-                                                        </BlackoutProvider>
-                                                    </DeleteProvider>
-                                                </GroupProvider>
-                                            </AccProvider>
-                                        </AuthProvider>
-                                    </UpdateUserProvider>
-                                </UpdateHabitProvider>
+                                                                </UpdateHabitProvider>
+                                                            </TheHabitProvider>
+                                                        </CalendarProvider>
+                                                    </BlackoutProvider>
+                                                </DeleteProvider>
+                                            </GroupProvider>
+                                        </AccProvider>
+                                    </AuthProvider>
+                                </UpdateUserProvider>
                             </SendMessProvider>
                         </ChatProvider>
                     </HabitsProvider>

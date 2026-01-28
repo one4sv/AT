@@ -247,7 +247,9 @@ export default function Calendar() {
             )}
             {!id && chosenDay
                 ? <ChosenDay/>
-                : <CompJurnal isMy={isMy} calendar={calendar}/>
+                : calendar.length > 0
+                    ? <CompJurnal isMy={isMy} calendar={calendar}/>
+                    : ""
             }
         </div>
     )

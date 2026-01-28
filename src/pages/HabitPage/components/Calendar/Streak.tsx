@@ -3,8 +3,8 @@ import type { Calendar } from "../../../../components/context/CalendarContext";
 import type { Habit } from "../../../../components/context/HabitsContext";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { useEffect, useState } from "react";
-import { getStreakView } from "../../utils/getStrakView";
-import "../../scss/Strak.scss";
+import { getStreakView } from "../../utils/getStreakView";
+import "../../scss/Streak.scss";
 
 export interface StreakType {
     habit: Habit;
@@ -58,6 +58,7 @@ export default function Streak({ habit, calendar }: StreakType) {
     };
 
     const streak = checkStreak(today);
+    const streakUntilYesterday = checkStreak(yesterday);
 
     const pluralizeDay = (streak: number) => {
         const n = Math.abs(streak) % 100;
@@ -86,8 +87,8 @@ export default function Streak({ habit, calendar }: StreakType) {
         }
     }
 
-    const view = getStreakView(habit, streak, isMy, showYesterdayWarning, isTodayChosenWeekly);
-    const { cl, text, showCount } = view || {};
+    const view = getStreakView(habit, streak, streakUntilYesterday, isMy, showYesterdayWarning, isTodayChosenWeekly);
+    const { cl, text, showCount, count } = view || {};
 
     return (
         <div className="streakDiv">
@@ -95,10 +96,10 @@ export default function Streak({ habit, calendar }: StreakType) {
                 <div className={`streakStr ${cl}`}>
                     <Fire weight="fill" size={24} />
                     {text && `${text} `}
-                    {showCount && (
+                    {showCount && count && (
                         <>
-                            Streak:&nbsp;<span>{streak}</span>&nbsp;
-                            {pluralizeDay(streak)}
+                            Streak:&nbsp;<span>{count}</span>&nbsp;
+                            {pluralizeDay(count)}
                         </>
                     )}
                 </div>

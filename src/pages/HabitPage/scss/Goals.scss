@@ -1,19 +1,21 @@
 @use "../../../scss/global" as var;
 
-.goalsDiv {
-    width: 22vw;
+.habitPlusDiv {
+    width: 21vw;
     margin: 0 auto;
 }
-.addGoalButtDiv {
-    width: 80%;
-    margin-top: 1vh
+.habitPlusButts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2vh;
 }
-.addGoalButt {
+.addGoalButtDiv {
     @include var.longButt(100%, 5vh, 1vh, 1vw, var(--tr), var(--borderWh), var(--tr), var(--tr));
     display: flex;
     align-items: center;
-    font-size: 20px;
+    font-size: 18px;
     &:hover {
         color: var(--tc);
+        background-color: var(--menuButtHover);
     }
 }

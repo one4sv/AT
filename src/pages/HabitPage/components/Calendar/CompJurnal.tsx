@@ -34,10 +34,10 @@ export default function CompJurnal({ isMy, calendar }: CompJurnalProps) {
             else return "withHabit"
         }
     }
+
     return (
         <div className={`compJurnalDiv ${jurnalHeight() || ""}`} >
             {id && <DayComment id={id} isMy={isMy} />}
-
             <div className="compJurnalMain">
                 <Virtuoso
                     data={sortedCalendar}

@@ -244,12 +244,12 @@ export default function Diagrams() {
     };
 
     return (
-        <div className={`diagramsDiv ${isMobile ? "mobile" : ""}`}>
+        <div className={`diagramsDiv ${isMobile ? "mobile" : ""}`} onClick={() => setShowCounts(!showCounts)}>
             {Diagram.length > 0
                 ? (
                     <div className="diagram">
                         <Doughnut data={data} options={options} />
-                            <div className="diagramLegend" onClick={() => setShowCounts(!showCounts)}>
+                            <div className="diagramLegend">
                             {Diagram.map((d, i) => (
                                 <div className="legendStr" key={i}>
                                     <div className={`calendarDot ${d.color}`}></div>
