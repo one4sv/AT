@@ -40,9 +40,8 @@ export default function Diagrams() {
             if (habit) {
                 const endDate = new Date(year, month + 1, 0)
                 const daysInMonth = Array.from({ length: endDate.getDate() }, (_, i) =>
-                    new Date(year, month, i + 1).toISOString().slice(0, 10)
+                    new Date(year, month, i + 2).toISOString().slice(0, 10)
                 )
-
                 const today = new Date();
                 const totalMonth = daysInMonth.length;
                 let totalDone = 0;

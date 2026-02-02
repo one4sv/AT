@@ -1,6 +1,5 @@
 import { Virtuoso } from "react-virtuoso";
 import { useNavigate, useParams } from "react-router-dom";
-import DayComment from "./DayComment";
 import "../../scss/CompJurnal.scss"
 import type { Calendar } from "../../../../components/context/CalendarContext";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
@@ -11,7 +10,7 @@ interface CompJurnalProps {
     calendar: Calendar[];
 }
 
-export default function CompJurnal({ isMy, calendar }: CompJurnalProps) {
+export default function CompJurnal({ calendar }: CompJurnalProps) {
     const { setDayComment, setIsDone, doable, habit } = useTheHabit()
     const { setChosenDay, setSelectedYear, setSelectedMonth } = useCalendar();
 
@@ -37,7 +36,6 @@ export default function CompJurnal({ isMy, calendar }: CompJurnalProps) {
 
     return (
         <div className={`compJurnalDiv ${jurnalHeight() || ""}`} >
-            {id && <DayComment id={id} isMy={isMy} />}
             <div className="compJurnalMain">
                 <Virtuoso
                     data={sortedCalendar}

@@ -3,8 +3,8 @@ import { Plus, Pencil } from "lucide-react"
   import { tags, groups } from "./tags"
 
 interface TagSelectorProps {
-  selectedTag: string | null;
-  setSelectedTag: (tag: string | null) => void;
+  selectedTag?: string;
+  setSelectedTag: (tag: string | undefined) => void;
   showOnly?:boolean | undefined;
 }
 
@@ -41,7 +41,7 @@ export default function TagSelector({ selectedTag, setSelectedTag, showOnly }: T
             <div
               className="tag active"
               key={i}
-              onClick={() => !showOnly && setSelectedTag(null)}
+              onClick={() => !showOnly && setSelectedTag(undefined)}
             >
               <Icon size={24} /> {tag.label}
             </div>

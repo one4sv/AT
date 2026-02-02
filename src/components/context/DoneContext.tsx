@@ -4,6 +4,7 @@ import { type ReactNode } from "react"
 import { useTheHabit } from "../hooks/TheHabitHook";
 import { useCalendar } from "../hooks/CalendarHook";
 import { useHabits } from "../hooks/HabitsHook";
+import { api } from "../ts/api";
 
 const DoneContext = createContext<DoneContextType | null>(null);
 
@@ -15,7 +16,7 @@ export interface DoneContextType {
     waitComAnswer:boolean;
 }
 export const DoneProvider = ({children} : {children : ReactNode}) => {
-    const { loadHabit, setIsDone, isDone, habit } = useTheHabit()
+    const { loadHabit, setIsDone, isDone, habit, habitTimer } = useTheHabit()
     const { fetchCalendarHabit, fetchCalendarUser } = useCalendar()
     const { refetchHabits } = useHabits()
     const [ waitDoneAnswer, setWaitDoneAnswer ] = useState(false);
@@ -24,7 +25,7 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
 
     const markDone = async(id:number, date:string) => {
         try {
-            const res = await axios.post(`${API_URL}markdone`, { habit_id: id, date:date }, { withCredentials:true})
+            const res = await api.post(`${API_URL}markdone`, { habit_id: id, date:date })
             if (res.data.success) {
                 if (habit && habit.id === id){
                     loadHabit(id.toString())
@@ -33,6 +34,7 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
                 }
                 if (!id) fetchCalendarUser()
             }
+            if (habitTimer && habitTimer.status !== "ended") api.post(`${API_URL}timer/stop`, {habit_id:id, time:new Date(), timer_id:habitTimer?.id })
         } catch (err) {
             console.log("ошибка", err)
         } finally {

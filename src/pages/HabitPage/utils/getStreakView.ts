@@ -31,7 +31,7 @@ export const getStreakView = (
     ) {
         return {
             cl: "start",
-            text: isMy ? "Сегодня можно отдохнуть." : undefined,
+            text: isMy ? "Сегодня можно отдохнуть." : "Сегодня выходной",
             showCount: true,
             count: streak,
         };
@@ -40,7 +40,7 @@ export const getStreakView = (
     if (showYesterdayWarning) {
         return {
             cl: "warn",
-            text: isMy ? "Не потеряйте стрик!" : undefined,
+            text: isMy ? "Не потеряйте стрик!" : "Сегодня не выполнено",
             showCount: true,
             count: streakUntilYesterday,
         };
@@ -49,7 +49,7 @@ export const getStreakView = (
     if (streak === 0) {
         return {
             cl: "null",
-            text: isMy ? "Никогда не поздно начать!" : undefined,
+            text: isMy ? "Никогда не поздно начать!" : "streak: 0",
             showCount: false,
             count:0
         };

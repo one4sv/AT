@@ -1,0 +1,32 @@
+@use "../../../scss/global" as var;
+
+.dayCommentDiv {
+    height: 100%;
+    background-color: var(--mc);
+    border-radius: 12px;
+}
+.habitDayComment {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 19.5vw;
+    border-radius: 12px;
+    align-items:end;
+    border: 1px solid var(--borderHabit);
+    padding: 1vh 0.5vw;
+    &:focus-within {
+        border-color: var(--borderWh);
+    }
+    >textarea {
+        width: 100%;
+        resize: none;
+        background-color: var(--tr);
+        color: var(--tc);
+        font-size: 16px;
+        font-family: var(--font);
+        border: none;
+        outline: none;
+        overflow: hidden;
+        field-sizing: content;
+    }
+}

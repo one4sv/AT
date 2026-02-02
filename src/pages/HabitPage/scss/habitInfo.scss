@@ -2,13 +2,8 @@
 
 .statsDiv {
     position: relative;
-    height: 120vh;
-    padding: 1vh 0.5vw 0;
-    display: flex;
-    flex-direction: row;
-    overflow: auto;
-    overflow-x: hidden;
-    scrollbar-arrow-color: var(--tr);
+    height: 100vh;
+    overflow: hidden;
     &.mobile {
         height: auto;
         width: 100%;
@@ -16,6 +11,26 @@
         flex-direction: column;
         align-items: center;
     }
+}
+.StatsDivMain {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 1vh 0.5vw;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vw;
+}
+.StatsDivHabit {
+    height: 39vh;
+    display: flex;
+    gap: 0.5vw;
+}
+.StatsDivStats {
+    width: 100%;
+    display: flex;
+    gap: 0.5vw;
 }
 .statsCal {
     display: flex;
@@ -30,10 +45,8 @@
     display: flex;
     flex-direction: column;
     background-color: var(--mc);
-    border-radius: 12px;
-    right: 0.5vw;
-    top: 1vh;
-    height: 98vh;
+    top: 5vh;
+    height: 100vh;
     transition: right 0.3s ease;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);

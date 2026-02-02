@@ -1,22 +1,11 @@
 @use "../../../scss/global" as var;
 
-.streakDiv {
-    margin-top: 1vh;
-    font-size: 18px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 4.5vh;
-    border-radius: 8px;
-    background-color: var(--mc);
-}
 .streakStr {
     display: flex;
     align-items: center;
+    font-size: 14px;
     >svg {
         position: relative;
-        bottom: 0.2vh;
     }
     &.warn {
         color: var(--borderHabit);

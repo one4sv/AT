@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
-import { SquareCheck, Pin, PinOff, Trash2, Square } from "lucide-react";
+import { SquareCheck, Square } from "lucide-react";
 import CalendarInput from "../../../../components/ts/CalendarInput";
 import SelectList from "../../../../components/ts/SelectList";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import type { Habit } from "../../../../components/context/HabitsContext";
 import TagSelector from "../../../../components/ts/TagSelector";
-import { useBlackout } from "../../../../components/hooks/BlackoutHook";
-import { useDelete } from "../../../../components/hooks/DeleteHook";
-import { tags, type Tag } from "../../../../components/ts/tags";
 import DayChanger from "../../../../components/ts/DayChanger";
 import { initialChosenDays } from "../../../../components/ts/initialChosenDays";
-import { BoxArrowDown, BoxArrowUp, WarningCircle } from "@phosphor-icons/react";
+import { WarningCircle } from "@phosphor-icons/react";
+import { TagIcon } from "../../utils/TagIcon";
 
 interface RedHabitProps {
     habit: Habit;
@@ -21,10 +19,8 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     const {
         setNewName, setNewDescription, setNewStartDate, setNewEndDate,
         setNewOngoing, setNewPeriodicity, setNewDays, setNewStartTime,
-        setNewEndTime, setNewTag, setPin, isUpdating, putInArchieve
+        setNewEndTime, setNewTag
     } = useUpHabit();
-    const { setBlackout } = useBlackout();
-    const { setDeleteConfirm } = useDelete()
 
     const [ name, setName ] = useState<string>("");
     const [ desc, setDesc ] = useState<string | undefined>("");
@@ -34,9 +30,8 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     const [ endDate, setEndDate ] = useState<Date | null>(null);
     const [ periodicity, setPeriodicity ] = useState<string>("")
     const [ ongoing, setOngoing ] = useState<boolean>(false);
-    const [ pinned, setPinned ] = useState<boolean>(false);
     const [ archived, setArcvhieved ] = useState<boolean>(false);
-    const [ selectedTag, setSelectedTag ] = useState<string | null>(null)
+    const [ selectedTag, setSelectedTag ] = useState<string | undefined>()
     const [ chosenDays, setChosenDays ] = useState<{ value: number; label: string; chosen: boolean }[]>(initialChosenDays);
 
     useEffect(() => {
@@ -49,7 +44,6 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
         setEndDate(habit.end_date ? new Date(habit.end_date) : null);
         setPeriodicity(habit.periodicity ?? "");
         setOngoing(Boolean(habit.ongoing));
-        setPinned(Boolean(habit.pinned));
         setArcvhieved(Boolean(habit.is_archived));
         if (Array.isArray(habit.chosen_days)) {
             setChosenDays(initialChosenDays.map(day => ({
@@ -99,14 +93,6 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             setNewDays(habit.id, null);
         }
     };
-
-    const tagIcon = () => {
-        let tag:Tag | undefined
-        if (selectedTag || habit.tag) tag = tags.find(tag => tag.value === (selectedTag || habit.tag))
-        if (!tag) return null
-        const Icon = tag.icon
-        return <Icon size={24} />
-    }
     
     useEffect(() => {
         if (selectedTag !== habit.tag && selectedTag) setNewTag(habit.id, selectedTag)
@@ -114,36 +100,6 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
 
     return (
         <div className="redHabit">
-            <div className="habitFirstStr">
-                <div className="saveHabit">
-                    <span
-                        className="spanSaveHabit"
-                        style={{ display: isUpdating.includes(`habit_${habit.id}`) ? "block" : "none" }}
-                    >
-                        Сохранение...
-                    </span>
-                </div>
-                <div className="habitButts">
-                    <div onClick={() => {
-                        setArcvhieved(!archived)
-                        putInArchieve(habit.id, !archived)
-                    }}>
-                        {archived ? <BoxArrowUp className="pinHabit"/> : <BoxArrowDown className="pinHabit"/>}
-                    </div>
-                    <div onClick={() => {
-                        setPinned(!pinned);
-                        setPin(habit.id, !pinned);
-                    }}>
-                        {pinned || habit.pinned ? <PinOff className="pinHabit" /> : <Pin className="pinHabit" />}
-                    </div>
-                    <div onClick={() => {
-                        setDeleteConfirm({goal:"habit", id:habit.id, name:habit.name})
-                        setBlackout({seted:true, module:"Delete"})}}
-                    >
-                        <Trash2 className="delHabit" />
-                    </div>
-                </div>
-            </div>
             {archived && (
                 <div className="thisarchived">
                     <div className="thisarchivedSvg">
@@ -158,7 +114,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             <div className="habitWrapperIcon">
                 {(selectedTag || habit.tag) && (
                     <div className="habitIconWrapper">
-                        {tagIcon()}
+                        {TagIcon(habit, selectedTag)}
                     </div>
                 )}
                 <div className="addHabitWrapper">

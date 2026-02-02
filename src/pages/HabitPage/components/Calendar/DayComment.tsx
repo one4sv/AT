@@ -4,6 +4,7 @@ import { ArrowBendDownLeftIcon } from "@phosphor-icons/react";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { LoaderSmall } from "../../../../components/ts/LoaderSmall";
+import "../../scss/DayComment.scss"
 
 interface DayCommentProps {
   id: string;
@@ -48,31 +49,34 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   };
 
   return (
-    <div className="habitDayComment">
-      <textarea
-        placeholder="Комментарий"
-        ref={textareaRef}
-        readOnly={!isMy || (habit && habit.is_archived)}
-        onChange={handleTextareaChange}
-        onKeyDown={handleKeyDown}
-        value={comment || ""}
-        maxLength={200}
-      />
-      <div className="hdcTAExtra">
-        <span><ArrowBendDownLeftIcon/>shift+enter</span>
-        <div>
-          <span>{comment?.length}/200</span>
-          <button
-            className="saveCommentButton"
-            disabled={comment?.trim() === "" && todayComment === "" && (dayComment === null || dayComment ==="") || !isMy || waitComAnswer || habit?.is_archived}
-            onClick={() => sendDayComment(id, comment, chosenDay)}
-          >
-            {waitComAnswer ? (
-              <LoaderSmall />
-            ) : "Сохранить"}
-          </button>
+    <div className="dayCommentDiv">
+      <div className="habitDayComment">
+        <textarea
+          placeholder="Комментарий"
+          ref={textareaRef}
+          readOnly={!isMy || (habit && habit.is_archived)}
+          onChange={handleTextareaChange}
+          onKeyDown={handleKeyDown}
+          value={comment || ""}
+          maxLength={200}
+        />
+        <div className="hdcTAExtra">
+          <span><ArrowBendDownLeftIcon/>shift+enter</span>
+          <div>
+            <span>{comment?.length}/200</span>
+            <button
+              className="saveCommentButton"
+              disabled={comment?.trim() === "" && todayComment === "" && (dayComment === null || dayComment ==="") || !isMy || waitComAnswer || habit?.is_archived}
+              onClick={() => sendDayComment(id, comment, chosenDay)}
+            >
+              {waitComAnswer ? (
+                <LoaderSmall />
+              ) : "Сохранить"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
+    
   );
 }

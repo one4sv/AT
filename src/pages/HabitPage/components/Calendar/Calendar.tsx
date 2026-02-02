@@ -6,18 +6,15 @@ import { ChevronDown } from "lucide-react"
 import { useHabits } from "../../../../components/hooks/HabitsHook"
 import type { Calendar } from "../../../../components/context/CalendarContext"
 import DayCell from "./DayCell"
-import Streak from "./Streak";
 import ChosenDay from "./ChosenDay";
 import { useParams } from "react-router-dom";
-import DoneButton from "./DoneButt";
 import { isMobile } from "react-device-detect";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
-import CompJurnal from "./CompJurnal";
 import { isTimePassed } from "../../../../components/ts/utils/dayArrHelpFuncs";
 
 export default function Calendar() {
-    const { calendar, calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, chosenDay, setChosenDay } = useCalendar();
-    const { habit, doable, setDoable, setDayComment, setIsDone } = useTheHabit();
+    const { calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, chosenDay, setChosenDay } = useCalendar();
+    const { habit, setDoable, setDayComment, setIsDone } = useTheHabit();
     const { habits } = useHabits()
 
     const { habitId:id } = useParams<{habitId : string}>()
@@ -34,7 +31,7 @@ export default function Calendar() {
     const yearsRef = useRef<HTMLDivElement>(null)
     const h = habit
 
-    const isMy = habits?.some(h => h.id === Number(id)) || false
+    // const isMy = habits?.some(h => h.id === Number(id)) || false
     const today = new Date()
     const month = today.getMonth()
     const year = today.getFullYear()
@@ -240,16 +237,8 @@ export default function Calendar() {
                     </div>
                 </div>
             </div>
-            
-            {id && h && !h.is_archived ? <Streak habit={h} calendar={calendar}/> : ""}
-            {id && doable && isMy && !h?.is_archived && (
-                <DoneButton habitId={Number(h?.id)} />
-            )}
-            {!id && chosenDay
-                ? <ChosenDay/>
-                : calendar.length > 0
-                    ? <CompJurnal isMy={isMy} calendar={calendar}/>
-                    : ""
+            {!id && chosenDay &&
+                <ChosenDay/>
             }
         </div>
     )

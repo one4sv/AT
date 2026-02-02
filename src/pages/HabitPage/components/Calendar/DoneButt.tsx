@@ -14,11 +14,13 @@ export default function DoneButton({ habitId }: DoneButtonProps) {
   const { markDoneWLoading, waitDoneAnswer } = useDone()
   const { chosenDay } = useCalendar()
   const [ done, setDone ] = useState(todayDone)
-  
+
+  console.log(done, todayDone, isDone)
+
   useEffect(() => {
-    if (isDone !== null) setDone(isDone)
+    if (isDone !== null && chosenDay) setDone(isDone)
     else setDone(todayDone)
-  }, [chosenDay, isDone, todayDone, chosenDay])
+  }, [chosenDay, isDone, todayDone])
 
   return (
     <button

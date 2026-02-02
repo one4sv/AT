@@ -13,6 +13,7 @@ export interface TheHabitContextType {
     loadHabit:(id:string | null) => void;
     findHabit:(id:string | null) => void;
     loadHabitWLoading:(id:string | null) => void;
+    loadTimer:(id:number) => void,
     loadingHabit:boolean;
     habit:Habit | undefined;
     isReadOnly:boolean;
@@ -25,6 +26,16 @@ export interface TheHabitContextType {
     doable:boolean;
     setDoable:Dispatch<SetStateAction<boolean>>;
     habitSettings:HabitSettings;
+    habitTimer:habitTimer | null,
+    setHabitTimer: React.Dispatch<SetStateAction<habitTimer | null>>
+}
+export interface habitTimer {
+    id:number,
+    started_at:Date,
+    end_at:Date,
+    status:string,
+    pauses: {start: string, end: string | null}[],
+    curcles: {time: string, text: string | null}[],
 }
 export interface HabitSettings {
     timer:boolean;
@@ -44,6 +55,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const [ doable, setDoable ] = useState(true);
     const [ dayComment, setDayComment ] = useState<string | null>(null)
     const [ todayComment, setTodayComment ] = useState<string>("")
+    const [ habitTimer, setHabitTimer ] = useState<habitTimer | null>(null)
     const [ habitSettings, setHabitSettings ] = useState<HabitSettings>({
         timer: false,
         schedule: false
@@ -55,7 +67,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const loadHabit = useCallback(async (id: string | null) => {
         try {
             const res = await findHabit(id)
-            const { success, habit, isRead, isDone, comment, settings } = res.data
+            const { success, habit, isRead, isDone, comment, settings, timer } = res.data
             if (success) {
                 fetchCalendarHabit(id!)
                 setHabit(habit);
@@ -63,6 +75,14 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
                 setTodayDone(isDone)
                 setTodayComment(comment)
                 setHabitSettings(settings)
+                setHabitTimer(timer ? {
+                    id: timer.id,
+                    started_at: new Date(timer.started_at),
+                    end_at: new Date(timer.end_at),
+                    status: timer.status,
+                    pauses: timer.pauses || [],
+                    curcles: timer.curcles || []
+                } : null)
             }
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -74,6 +94,25 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
         }
     }, [showNotification]);
 
+    const loadTimer = useCallback(async (habit_id:number) => {
+        try {
+            const res = await api.get(`${API_URL}timer/${habit_id}`)
+            if (res.data.success) {
+                const timer = res.data.timer
+                setHabitTimer(timer ? {
+                    id: timer.id,
+                    started_at: new Date(timer.started_at),
+                    end_at: new Date(timer.end_at),
+                    status: timer.status,
+                    pauses: timer.pauses || [],
+                    curcles: timer.curcles || []
+                } : null)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }, [API_URL])
+
     const loadHabitWLoading = async(id:string | null) => {
         setLoadingHabit(true)
         await loadHabit(id)
@@ -83,7 +122,8 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     return(
         <TheHabitContext.Provider value={{loadHabit, loadingHabit, habit, isReadOnly,
         isDone, setIsDone, dayComment, todayComment, setDayComment, 
-        findHabit, todayDone, setDoable, doable, loadHabitWLoading, habitSettings}}>
+        findHabit, todayDone, setDoable, doable, loadHabitWLoading, habitSettings,
+        habitTimer, setHabitTimer, loadTimer}}>
             {children}
         </TheHabitContext.Provider>
     )

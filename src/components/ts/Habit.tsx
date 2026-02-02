@@ -52,7 +52,7 @@ export default function HabitDiv({habit, id, isMyAcc, is_archived}:{habit:Habit,
     };
     
     if (isMyAcc === undefined) isMyAcc = true
-
+        
     return(
         <div className={`habit themeHabit-default ${id === habit.id ? "active" : ""}`} onClick={() => navigate(`/habit/${habit.id}`)} onContextMenu={(e) => {
             e.preventDefault()

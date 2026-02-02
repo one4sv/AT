@@ -1,0 +1,27 @@
+.habitNameMain {
+    height: 100%;
+    display: flex;
+    border-radius: 8px;
+    width: 30%;
+    align-items: center;
+    cursor: pointer;
+    &:hover {
+        background-color: var(--menuButtHover);
+    }
+
+}
+.habitNameTag {
+    color: var(--borderWh);
+}
+.saveHabit {
+    flex: 1;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    >span {
+        font-size: 18px;
+        color: var(--tc);
+        opacity: 0;
+        animation: fadeIn 0.5s ease-in-out forwards, pulseBrightness 2s ease-in-out infinite;
+    }
+}

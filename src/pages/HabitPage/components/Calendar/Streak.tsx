@@ -90,20 +90,19 @@ export default function Streak({ habit, calendar }: StreakType) {
     const view = getStreakView(habit, streak, streakUntilYesterday, isMy, showYesterdayWarning, isTodayChosenWeekly);
     const { cl, text, showCount, count } = view || {};
 
+    if (!view) return null
+
     return (
-        <div className="streakDiv">
-            {view && (
-                <div className={`streakStr ${cl}`}>
-                    <Fire weight="fill" size={24} />
-                    {text && `${text} `}
-                    {showCount && count && (
-                        <>
-                            Streak:&nbsp;<span>{count}</span>&nbsp;
-                            {pluralizeDay(count)}
-                        </>
-                    )}
-                </div>
+        <div className={`streakStr ${cl}`}>
+            <Fire weight="fill" size={16} />
+            {text && `${text} `}
+            {showCount && count && (
+                <>
+                    Streak:&nbsp;<span>{count}</span>&nbsp;
+                    {pluralizeDay(count)}
+                </>
             )}
         </div>
-    );
+    )
+    
 }

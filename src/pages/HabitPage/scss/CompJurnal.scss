@@ -22,31 +22,6 @@
         height: 52.5vh;
     }
 }
-.habitDayComment {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    align-items:end;
-    border-radius: 8px;
-    border: 1px solid var(--borderHabit);
-    padding: 1vh 0.5vw;
-    &:focus-within {
-        border-color: var(--borderWh);
-    }
-    >textarea {
-        width: 100%;
-        resize: none;
-        background-color: var(--tr);
-        color: var(--tc);
-        font-size: 16px;
-        font-family: var(--font);
-        border: none;
-        outline: none;
-        overflow: hidden;
-        field-sizing: content;
-    }
-}
 .compJurnalMain {
     height: 100%;
     width: 100%;

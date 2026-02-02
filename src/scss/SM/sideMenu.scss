@@ -9,6 +9,7 @@
     flex-direction: column;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    z-index: 7;
     &.mobileSM {
         width: 100%;
         height: calc(100% - 5vh);

@@ -3,7 +3,7 @@ import "../../scss/ContextMenu.scss"
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useDelete } from "../hooks/DeleteHook";
-import {  ChatTeardrop, Check, CheckCircle, Circle, CopySimple, Eye, EyeSlash, Heart, Link, PencilSimple, Prohibit, PushPin, PushPinSlash, ShareFat, SignOut, Trash, User, UserMinus, Users } from "@phosphor-icons/react";
+import {  BoxArrowDown, BoxArrowUp, ChatTeardrop, Check, CheckCircle, Circle, CopySimple, Eye, EyeSlash, Heart, Link, PencilSimple, Prohibit, PushPin, PushPinSlash, ShareFat, SignOut, Trash, User, UserMinus, Users } from "@phosphor-icons/react";
 import { useUpHabit } from "../hooks/UpdateHabitHook";
 import { useDone } from "../hooks/DoneHook";
 import { useNavigate } from "react-router";
@@ -19,7 +19,7 @@ export default function ContextMenu() {
     const { menu, menuRef } = useContextMenu();
     const { setBlackout } = useBlackout()
     const { setDeleteConfirm, setDeleteMess } = useDelete()
-    const { setPin } = useUpHabit()
+    const { setPin, putInArchieve } = useUpHabit()
     const { markDone } = useDone()
     const { isChose, setIsChose, chosenMess, setChosenMess, setPendingScrollId, setAnswer, setEditing, setRedirect, showNames, setShowNames } = useMessages()
     const { setReaction, messages } = useChat()
@@ -119,7 +119,7 @@ export default function ContextMenu() {
         >
             {point === "habit" && habit && (
                 <>
-                    {options?.isMy && (
+                    {options?.isMy && habit.done !== undefined && (
                         <div className="ContextMenuButt" onClick={() => markDone(habit.id, dateStr)}>
                             {habit.done ? <CheckCircle weight="fill" /> : <Circle />}
                             {habit.done ? "Выполнено" : "Выполнить"}
@@ -132,6 +132,12 @@ export default function ContextMenu() {
                                 {habit.pinned ? <PushPinSlash/> : <PushPin/>}
                                 {habit.pinned ? "Открепить" : "Закрепить"}
                             </div>
+                            {habit.done === undefined && (
+                                <div className="ContextMenuButt delete" onClick={() => putInArchieve(habit.id, !habit.is_archived)}>
+                                    {habit.is_archived ? <BoxArrowUp className="pinHabit"/> : <BoxArrowDown className="pinHabit"/>}
+                                    {habit.is_archived ? "Вернуть" : "В архив"}
+                                </div>
+                            )}
                             {deleteButt}
                         </>
                     )}
