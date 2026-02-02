@@ -28,7 +28,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     const [ endDate, setEndDate ] = useState<Date | null>(null)
     const [startTime, setStartTime] = useState<string>("")
     const [endTime, setEndTime] = useState<string>("") 
-    const [selectedTag, setSelectedTag] = useState<string | null>(null)
+    const [selectedTag, setSelectedTag] = useState<string | undefined>()
 
     const [chosenDays, setChosenDays] = useState(initialChosenDays)
 
