@@ -50,7 +50,6 @@ export default function CompletionProgress() {
     const todayStr = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`
     const isHistorical = chosenDay && chosenDay !== todayStr
     const currentTimer = isHistorical ? showTimer : habitTimer
-
     const hasOpenPause = currentTimer?.pauses.some(p => p.end === null)
     useEffect(() => {
         if (!hasOpenPause) return

@@ -14,6 +14,10 @@ interface DayCellProps {
     month: number;
     year: number;
 }
+const toDateStr = (d: Date | string) => {
+  const dateObj = typeof d === "string" ? new Date(d) : d;
+  return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")}`;
+};
 
 export default function DayCell({ habits, habit, day, month, year, type }: DayCellProps) {
     const { setChosenDay, calendar, chosenDay, timers } = useCalendar()
@@ -35,7 +39,7 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
         const found = calendar.find(c => c.date === dateStr);
         return found ? found.comment : "";
     }, [calendar, dateStr]);
-    
+
     return (
         <div
             ref={cellRef}
@@ -46,7 +50,7 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
                 if (chosenDay !== dateStr) {
                     setChosenDay(dateStr)
                     setDayComment(comment || "")
-                    setShowTimer(timers?.find(t => t.end_at === date) || null)
+                    setShowTimer(timers?.find(t => toDateStr(t.end_at) === dateStr) || null)
                     if (completedArr.length > 0) {
                         setIsDone(true)
                         setDoable(true)
