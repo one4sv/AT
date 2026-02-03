@@ -1,9 +1,9 @@
 import { Virtuoso } from "react-virtuoso";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../scss/CompJurnal.scss"
-import type { Calendar } from "../../../../components/context/CalendarContext";
-import { useCalendar } from "../../../../components/hooks/CalendarHook";
-import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
+import type { Calendar } from "../../../../../components/context/CalendarContext";
+import { useCalendar } from "../../../../../components/hooks/CalendarHook";
+import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 
 interface CompJurnalProps {
     isMy: boolean;

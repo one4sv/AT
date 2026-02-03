@@ -1,10 +1,10 @@
 import { useMemo, useRef, useState } from "react";
-import type { Habit } from "../../../../components/context/HabitsContext";
+import type { Habit } from "../../../../../components/context/HabitsContext";
 import HoverDay from "./HoverDay";
-import { useCalendar } from "../../../../components/hooks/CalendarHook";
-import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
+import { useCalendar } from "../../../../../components/hooks/CalendarHook";
+import { getDayArrays } from "../../../../../components/ts/utils/getDayArrs";
 import { useParams } from "react-router-dom";
-import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
+import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 
 interface DayCellProps {
     habit: Habit | undefined;
@@ -16,8 +16,8 @@ interface DayCellProps {
 }
 
 export default function DayCell({ habits, habit, day, month, year, type }: DayCellProps) {
-    const { setChosenDay, calendar, chosenDay } = useCalendar()
-    const { setDayComment, setIsDone, setDoable } = useTheHabit()
+    const { setChosenDay, calendar, chosenDay, timers } = useCalendar()
+    const { setDayComment, setIsDone, setDoable, setShowTimer } = useTheHabit()
     const [hovered, setHovered] = useState(false);
     const { habitId:id } = useParams<{ habitId: string }>();
     const cellRef = useRef<HTMLDivElement | null>(null);
@@ -46,6 +46,7 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
                 if (chosenDay !== dateStr) {
                     setChosenDay(dateStr)
                     setDayComment(comment || "")
+                    setShowTimer(timers?.find(t => t.end_at === date) || null)
                     if (completedArr.length > 0) {
                         setIsDone(true)
                         setDoable(true)
@@ -66,6 +67,7 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
                     setDayComment(null)
                     setIsDone(null)
                     setDoable(true)
+                    setShowTimer(null)
                 }
             }}
         >

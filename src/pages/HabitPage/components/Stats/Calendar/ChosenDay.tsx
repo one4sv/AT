@@ -1,12 +1,12 @@
 import { useMemo, useRef, useState } from "react";
-import { useCalendar } from "../../../../components/hooks/CalendarHook";
+import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import { useNavigate, useParams } from "react-router-dom";
-import "../../scss/ChosenDay.scss"
-import type { Calendar } from "../../../../components/context/CalendarContext";
+import "../../../scss/ChosenDay.scss"
+import type { Calendar } from "../../../../../components/context/CalendarContext";
 import { CheckCircle, Circle } from "@phosphor-icons/react";
-import { useDone } from "../../../../components/hooks/DoneHook";
-import { useHabits } from "../../../../components/hooks/HabitsHook";
-import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
+import { useDone } from "../../../../../components/hooks/DoneHook";
+import { useHabits } from "../../../../../components/hooks/HabitsHook";
+import { getDayArrays } from "../../../../../components/ts/utils/getDayArrs";
 
 export default function ChosenDay() {
     const { chosenDay: day, calendar } = useCalendar()

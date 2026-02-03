@@ -10,11 +10,11 @@ import { isMobile } from "react-device-detect";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import GoalsChats from "./components/HabitInfo/GoalsChats";
 import HabitSettings from "./components/HabitInfo/HabitSettings";
-import HabitName from "./components/HabitName";
-import Timer from "./components/Timer/Timer";
-import Calendar from "./components/Calendar/Calendar";
-import Diagrams from "./components/Calendar/Diagrams";
-import DayComment from "./components/Calendar/DayComment";
+import HabitName from "./components/HabitInfo/HabitName";
+import Timer from "./components/Habit/Timer/Timer";
+import Calendar from "./components/Stats/Calendar/Calendar";
+import Diagrams from "./components/Stats/Diagrams/Diagrams";
+import DayComment from "./components/Habit/Comment/DayComment";
 
 
 export default function Habit() {

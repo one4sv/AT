@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { useDone } from "../../../../components/hooks/DoneHook";
+import { useDone } from "../../../../../components/hooks/DoneHook";
 import { ArrowBendDownLeftIcon } from "@phosphor-icons/react";
-import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
-import { useCalendar } from "../../../../components/hooks/CalendarHook";
-import { LoaderSmall } from "../../../../components/ts/LoaderSmall";
-import "../../scss/DayComment.scss"
+import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
+import { useCalendar } from "../../../../../components/hooks/CalendarHook";
+import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
+import "../../../scss/DayComment.scss"
+import CompletionProgress from "./ComplitionProgress";
 
 interface DayCommentProps {
   id: string;
@@ -66,7 +67,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
             <span>{comment?.length}/200</span>
             <button
               className="saveCommentButton"
-              disabled={comment?.trim() === "" && todayComment === "" && (dayComment === null || dayComment ==="") || !isMy || waitComAnswer || habit?.is_archived}
+              disabled={comment?.trim() === "" || todayComment === "" && (dayComment === null || dayComment ==="") || !isMy || waitComAnswer || habit?.is_archived}
               onClick={() => sendDayComment(id, comment, chosenDay)}
             >
               {waitComAnswer ? (
@@ -76,6 +77,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           </div>
         </div>
       </div>
+      <CompletionProgress/>
     </div>
     
   );

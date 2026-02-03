@@ -1,10 +1,10 @@
 import { useParams } from "react-router"
-import "../../scss/Diagrams.scss"
-import { useCalendar } from "../../../../components/hooks/CalendarHook"
-import { useTheHabit } from "../../../../components/hooks/TheHabitHook"
-import { useHabits } from "../../../../components/hooks/HabitsHook"
-import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
-import formatComp from "../../utils/formatComp"
+import "../../../scss/Diagrams.scss"
+import { useCalendar } from "../../../../../components/hooks/CalendarHook"
+import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
+import { useHabits } from "../../../../../components/hooks/HabitsHook"
+import { getDayArrays } from "../../../../../components/ts/utils/getDayArrs";
+import formatComp from "../../../utils/formatComp"
 import { Doughnut } from "react-chartjs-2"
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { isMobile } from "react-device-detect"

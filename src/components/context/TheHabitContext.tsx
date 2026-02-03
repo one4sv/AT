@@ -27,15 +27,17 @@ export interface TheHabitContextType {
     setDoable:Dispatch<SetStateAction<boolean>>;
     habitSettings:HabitSettings;
     habitTimer:habitTimer | null,
-    setHabitTimer: React.Dispatch<SetStateAction<habitTimer | null>>
+    setHabitTimer: React.Dispatch<SetStateAction<habitTimer | null>>,
+    showTimer:habitTimer | null,
+    setShowTimer: React.Dispatch<SetStateAction<habitTimer | null>>
 }
 export interface habitTimer {
     id:number,
     started_at:Date,
     end_at:Date,
     status:string,
-    pauses: {start: string, end: string | null}[],
-    curcles: {time: string, text: string | null}[],
+    pauses: {start: string, time:string, end: string | null}[],
+    circles: {time: string, text: string | null}[],
 }
 export interface HabitSettings {
     timer:boolean;
@@ -56,6 +58,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const [ dayComment, setDayComment ] = useState<string | null>(null)
     const [ todayComment, setTodayComment ] = useState<string>("")
     const [ habitTimer, setHabitTimer ] = useState<habitTimer | null>(null)
+    const [ showTimer, setShowTimer ] = useState<habitTimer | null>(null)
     const [ habitSettings, setHabitSettings ] = useState<HabitSettings>({
         timer: false,
         schedule: false
@@ -81,7 +84,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
                     end_at: new Date(timer.end_at),
                     status: timer.status,
                     pauses: timer.pauses || [],
-                    curcles: timer.curcles || []
+                    circles: timer.circles || []
                 } : null)
             }
         } catch (err) {
@@ -105,7 +108,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
                     end_at: new Date(timer.end_at),
                     status: timer.status,
                     pauses: timer.pauses || [],
-                    curcles: timer.curcles || []
+                    circles: timer.circles || []
                 } : null)
             }
         } catch (error) {
@@ -123,7 +126,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
         <TheHabitContext.Provider value={{loadHabit, loadingHabit, habit, isReadOnly,
         isDone, setIsDone, dayComment, todayComment, setDayComment, 
         findHabit, todayDone, setDoable, doable, loadHabitWLoading, habitSettings,
-        habitTimer, setHabitTimer, loadTimer}}>
+        habitTimer, setHabitTimer, loadTimer, setShowTimer, showTimer}}>
             {children}
         </TheHabitContext.Provider>
     )

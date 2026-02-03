@@ -1,9 +1,9 @@
 import { CheckCircle, Circle } from "@phosphor-icons/react";
-import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
+import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 import { useEffect, useState } from "react";
-import { useDone } from "../../../../components/hooks/DoneHook";
-import { useCalendar } from "../../../../components/hooks/CalendarHook";
-import { LoaderSmall } from "../../../../components/ts/LoaderSmall";
+import { useDone } from "../../../../../components/hooks/DoneHook";
+import { useCalendar } from "../../../../../components/hooks/CalendarHook";
+import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
 
 interface DoneButtonProps {
   habitId: number;
@@ -14,8 +14,6 @@ export default function DoneButton({ habitId }: DoneButtonProps) {
   const { markDoneWLoading, waitDoneAnswer } = useDone()
   const { chosenDay } = useCalendar()
   const [ done, setDone ] = useState(todayDone)
-
-  console.log(done, todayDone, isDone)
 
   useEffect(() => {
     if (isDone !== null && chosenDay) setDone(isDone)

@@ -1,12 +1,12 @@
 import { useRef, type SetStateAction } from "react"
-import type { Habit } from "../../../components/context/HabitsContext"
-import "../scss/HabitName.scss"
-import { useUpHabit } from "../../../components/hooks/UpdateHabitHook"
-import { TagIcon } from "../utils/TagIcon"
-import Streak from "./Calendar/Streak"
-import { useCalendar } from "../../../components/hooks/CalendarHook"
+import type { Habit } from "../../../../components/context/HabitsContext"
+import "../../scss/HabitName.scss"
+import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook"
+import { TagIcon } from "../../utils/TagIcon"
+import Streak from "./Streak"
+import { useCalendar } from "../../../../components/hooks/CalendarHook"
 import { DotsThreeOutlineVertical } from "@phosphor-icons/react"
-import { useContextMenu } from "../../../components/hooks/ContextMenuHook"
+import { useContextMenu } from "../../../../components/hooks/ContextMenuHook"
 
 interface HabitNameProps {
     habit:Habit | undefined,
