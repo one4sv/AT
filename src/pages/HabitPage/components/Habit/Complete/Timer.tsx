@@ -1,14 +1,13 @@
+import { useEffect, useState } from "react"
+import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
+import { useCalendar } from "../../../../../components/hooks/CalendarHook"
+import { useHabitTimer } from "../../../../../components/hooks/utils/useHabitTimer"
+import { calculateUntilTimer } from "../../../utils/calculateUntilNext"
+import { SVGclock } from "../../../utils/SVGclock"
 import { FlagPennant, Pause, Play, Square } from "@phosphor-icons/react"
 import "../../../scss/Timer.scss"
-import { SVGclock } from "../../../utils/SVGclock"
-import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
-import { useState, useEffect } from "react"
-import DoneButton from "./DoneButt"
-import { calculateUntilTimer } from "../../../utils/calculateUntilNext"
-import { useHabitTimer } from "../../../../../components/hooks/utils/useHabitTimer"
-import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 
-export default function Timer() {
+export default function Timer () {
     const { habit, habitTimer, todayDone, showTimer } = useTheHabit()
     const { chosenDay } = useCalendar()
     const [ untilDisplay, setUntilDisplay ] = useState("00:00:00")
@@ -18,7 +17,7 @@ export default function Timer() {
     const todayStr = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`
     const isHistorical = chosenDay && chosenDay !== todayStr
 
-    const currentTimer = isHistorical ? (showTimer) : habitTimer
+    const currentTimer = isHistorical ? showTimer : habitTimer
 
     const canControl = !isHistorical
 
@@ -89,45 +88,47 @@ export default function Timer() {
 
     if (!habit) return null
 
+    const [hoursStr, minutesStr, secondsStr] = timerDisplay.split(':')
+    const hours = parseInt(hoursStr, 10)
+    const minutes = parseInt(minutesStr, 10)
+    const seconds = parseInt(secondsStr, 10)
+    
     return (
-        <div className="timerDiv">
-            <div className="timerMain">
-                <SVGclock/>
-                <div className="timerNums">
-                    <div className="untilNums">
-                        {untilDisplay}
-                    </div>
-                    <div className="timerLeft">
-                        {timerDisplay}
+        <div className="completeMain">
+            <SVGclock hours={hours} minutes={minutes} seconds={seconds} />
+            <div className="timerNums">
+                <div className="untilNums">
+                    {untilDisplay}
+                </div>
+                <div className="timerLeft">
+                    {timerDisplay}
+                </div>
+            </div>
+            {canControl && (
+                <div className="timerButts">
+                    {isTimerActive && !isEnded && (
+                        <div className="launchButt" onClick={() => {
+                            if (isPaused) timerStop()
+                            else timerCircle()
+                        }}>
+                            {isPaused ? <Square weight="fill"/> : <FlagPennant weight="fill"/>}
+                        </div>
+                    )}
+                    <div className={`launchButt ${isEnded ? "disabled" : ""}`} onClick={() => {
+                        if (isEnded) return
+                        if (!isTimerActive) timerStart()
+                        else if (isPaused) timerStart()
+                        else timerPause()
+                    }}>
+                        {isTimerActive && !isEnded
+                            ? isPaused
+                                ? <Play weight="fill"/>
+                                : <Pause weight="fill"/>
+                            : <Play weight="fill"/>
+                        }
                     </div>
                 </div>
-                {canControl && (
-                    <div className="timerButts">
-                        {isTimerActive && !isEnded && (
-                            <div className="launchButt" onClick={() => {
-                                if (isPaused) timerStop()
-                                else timerCircle()
-                            }}>
-                                {isPaused ? <Square weight="fill"/> : <FlagPennant weight="fill"/>}
-                            </div>
-                        )}
-                        <div className={`launchButt ${isEnded ? "disabled" : ""}`} onClick={() => {
-                            if (isEnded) return
-                            if (!isTimerActive) timerStart()
-                            else if (isPaused) timerStart()
-                            else timerPause()
-                        }}>
-                            {isTimerActive && !isEnded
-                                ? isPaused
-                                    ? <Play weight="fill"/>
-                                    : <Pause weight="fill"/>
-                                : <Play weight="fill"/>
-                            }
-                        </div>
-                    </div>
-                )}
-            </div>
-            <DoneButton habitId={habit.id}/>
+            )}
         </div>
     )
 }

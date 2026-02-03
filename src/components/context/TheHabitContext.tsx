@@ -30,6 +30,11 @@ export interface TheHabitContextType {
     setHabitTimer: React.Dispatch<SetStateAction<habitTimer | null>>,
     showTimer:habitTimer | null,
     setShowTimer: React.Dispatch<SetStateAction<habitTimer | null>>
+    habitCounter:habitCounter | null,
+    setHabitCounter: React.Dispatch<SetStateAction<habitCounter | null>>,
+    showCounter:habitCounter | null,
+    setShowCounter: React.Dispatch<SetStateAction<habitCounter | null>>,
+    counterSettings:counterSettingsType | null,
 }
 export interface habitTimer {
     id:number,
@@ -39,8 +44,21 @@ export interface habitTimer {
     pauses: {start: string, time:string, end: string | null}[],
     circles: {time: string, text: string | null}[],
 }
+export interface habitCounter {
+    id:number,
+    started_at:Date,
+    count:number,
+    progression:{ count:number, time:Date, text:string }[],
+    min_count:number
+}
+export interface counterSettingsType {
+    id:number,
+    min_count:number,
+    redCountRight:number,
+    redCountLeft:number,
+}
 export interface HabitSettings {
-    timer:boolean;
+    metric_type:"timer" | "counter";
     schedule:boolean
 }
 export const TheHabitProvider = ({children} : {children : ReactNode}) => {
@@ -59,10 +77,14 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const [ todayComment, setTodayComment ] = useState<string>("")
     const [ habitTimer, setHabitTimer ] = useState<habitTimer | null>(null)
     const [ showTimer, setShowTimer ] = useState<habitTimer | null>(null)
+    const [ habitCounter, setHabitCounter ] =  useState<habitCounter | null>(null)
+    const [ showCounter, setShowCounter ] =  useState<habitCounter | null>(null)
+    const [ counterSettings, setCounterSettings ] =  useState<counterSettingsType | null>(null)
     const [ habitSettings, setHabitSettings ] = useState<HabitSettings>({
-        timer: false,
+        metric_type: "timer",
         schedule: false
     })
+
     const findHabit = async(id:string | null) => {
         return api.get(`${API_URL}habits/${id}`);
     }
@@ -70,7 +92,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     const loadHabit = useCallback(async (id: string | null) => {
         try {
             const res = await findHabit(id)
-            const { success, habit, isRead, isDone, comment, settings, timer } = res.data
+            const { success, habit, isRead, isDone, comment, settings, timer, counter, counterSettings } = res.data
             if (success) {
                 fetchCalendarHabit(id!)
                 setHabit(habit);
@@ -78,6 +100,8 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
                 setTodayDone(isDone)
                 setTodayComment(comment)
                 setHabitSettings(settings)
+                setCounterSettings(counterSettings)
+                setHabitCounter(counter)
                 setHabitTimer(timer ? {
                     id: timer.id,
                     started_at: new Date(timer.started_at),
@@ -126,7 +150,8 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
         <TheHabitContext.Provider value={{loadHabit, loadingHabit, habit, isReadOnly,
         isDone, setIsDone, dayComment, todayComment, setDayComment, 
         findHabit, todayDone, setDoable, doable, loadHabitWLoading, habitSettings,
-        habitTimer, setHabitTimer, loadTimer, setShowTimer, showTimer}}>
+        habitTimer, setHabitTimer, loadTimer, setShowTimer, showTimer,
+        habitCounter, setHabitCounter, showCounter, setShowCounter, counterSettings}}>
             {children}
         </TheHabitContext.Provider>
     )

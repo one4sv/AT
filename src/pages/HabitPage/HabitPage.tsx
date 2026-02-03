@@ -11,10 +11,10 @@ import { usePageTitle } from "../../components/hooks/PageContextHook";
 import GoalsChats from "./components/HabitInfo/GoalsChats";
 import HabitSettings from "./components/HabitInfo/HabitSettings";
 import HabitName from "./components/HabitInfo/HabitName";
-import Timer from "./components/Habit/Timer/Timer";
 import Calendar from "./components/Stats/Calendar/Calendar";
 import Diagrams from "./components/Stats/Diagrams/Diagrams";
 import DayComment from "./components/Habit/Comment/DayComment";
+import Complete from "./components/Habit/Complete/Complete";
 
 
 export default function Habit() {
@@ -53,7 +53,7 @@ export default function Habit() {
             <div className="StatsDivMain" style={{top:habitId ? "6vh" : "0"}}>
                 {habitId && 
                     <div className="StatsDivHabit">
-                        <Timer/>
+                        <Complete/>
                         <DayComment id={habitId} isMy={!isReadOnly}/>
                     </div>
                 }

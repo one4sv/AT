@@ -2,7 +2,7 @@ import { createContext, useRef, useState, type RefObject} from "react";
 import { type ReactNode } from "react"
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
-import { type habitTimer } from "./TheHabitContext";
+import { type habitCounter, type habitTimer } from "./TheHabitContext";
 
 const CalendarContext = createContext<CalendarContextType | null>(null);
 
@@ -31,13 +31,15 @@ export interface CalendarContextType {
     setSelectedMonth: React.Dispatch<React.SetStateAction<number>>    
     selectedYear: number;
     setSelectedYear: React.Dispatch<React.SetStateAction<number>>;
-    timers: habitTimer[] | null
+    timers: habitTimer[] | null,
+    counters: habitCounter[] | null
 }
 
 export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote()
     const [calendar, setCalendar] = useState<Calendar[]>([])
     const [timers, setTimers] = useState<habitTimer[] | null>(null)
+    const [counters, setCounters] = useState<habitCounter[] | null>(null)
     const [calendarLoading, setCalendarLoading] = useState(false)
     const [chosenDay, setChosenDay] = useState<string>("")
     const [selectedMonth, setSelectedMonth] = useState<number>(0)
@@ -61,6 +63,7 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
                     pauses: timer.pauses || [],
                     circles: timer.circles || []
                 }))
+                setCounters(res.data.counters)
 
                 setTimers(convertedTimers)
             }
@@ -95,7 +98,7 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
             calendar, setCalendar, fetchCalendarHabit, fetchCalendarUser,
             calendarLoading, chosenDay, setChosenDay, calendarRef, selectedMonth, selectedYear,
             setSelectedMonth, setSelectedYear, fetchCalendarWLoading, fetchCalendarHabitWLoading,
-            timers
+            timers, counters
         }}>
             {children}
         </CalendarContext.Provider>

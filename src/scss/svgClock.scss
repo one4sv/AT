@@ -1,0 +1,25 @@
+@use "./global" as var;
+
+.topLineClock {
+    stroke: var(--tc);
+}
+
+.dialClock {
+    stroke: var(--tc);
+}
+
+.centerDotClock {
+    fill: var(--tc);
+}
+
+.hourLineClock {
+    stroke: var(--acsent);
+}
+
+.minLineClock {
+    stroke: var(--tc);
+}
+
+.secLineClock {
+    stroke: var(--borderWhLight);
+}

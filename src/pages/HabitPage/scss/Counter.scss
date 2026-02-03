@@ -1,0 +1,147 @@
+@use "../../../scss/global" as var;
+
+.counterScore {
+    font-size: 20px;
+    color: var(--acsent);
+}
+.counterScore {
+    margin-top: 1vh;
+    display: flex;
+    flex-direction: row;
+    gap: 5px; 
+}
+
+.digitSquare {
+    width: 40px;
+    height: 50px; 
+    background-color: var(--menuButtHover);
+    border-radius: 5px; 
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: var(--tc);
+}
+
+.digitWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.5s ease-in-out;
+}
+
+.digitSquare.changing .digitWrapper {
+    transform: translateY(100%);
+}
+
+.digitSquare.changing::before {
+    content: attr(data-prev);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.5s ease-in-out;
+    transform: translateY(0);
+}
+
+.digitSquare.changing::before {
+    transform: translateY(-100%);
+}
+.counterMin {
+    margin-top: 0.5vh;
+    color: var(--borderWh);
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.25vw;
+    user-select: none;
+    left: 0.5vw;
+    &:hover {
+        >svg {
+            visibility: visible;
+        }
+    }
+    > span {
+        outline: none;
+        &:focus {
+            color: var(--tc);
+        }
+    }
+    > svg {
+        margin-left: 0.2vw;
+        visibility: hidden;
+        right: -1vw;
+    }
+}
+.launchButtWrapper {
+    position: relative;
+    border-radius: 50%;
+    height: 6vh;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:hover {
+        background-color: var(--menuButtHover);
+        >.counterRedButt {
+            background-color: var(--menuButtHover);
+            display: flex;
+        }
+    }
+}
+.counterChange {
+    width: 6vw;
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 3vh;
+    > svg {
+        width: 1vw;
+        height: 1vw;
+    }
+}
+.changeCounterInp {
+    @include var.input(var(--tr), var(--tc), var(--tr), 3vh, 0, var(--tr));
+    width: 4vw;
+    border-bottom: 1px solid var(--borderHabit);
+    &:focus {
+        border-bottom: 1px solid var(--acsent);
+    }
+}
+.counterRedButt {
+    position: absolute;
+    top:95%;
+    height: 25px;
+    border-radius: 0 0 6px 6px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: var(--borderHabit);
+    display: none;
+    &:hover {
+        color: var(--acsent);
+    }
+    >svg {
+        height: 70%;
+        width: 70%;
+    }
+}
+.flyingNumber {
+    position: fixed;
+    color: var(--tc);
+    font-size: 20px;
+    pointer-events: none;
+    z-index: 90;
+    animation: flyToCounter 1s ease-in-out forwards;
+}

@@ -9,7 +9,7 @@
 }
 .extraHabitInfoShower {
     width: 100%;
-    color: var(--borderWh);
+    // color: var(--borderWh);
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -42,7 +42,8 @@
     }
 }
 .extraHabitInfo {
-    width: 100%;
+    margin: 0 auto;
+    width: 80%;
     display: flex;
     flex-direction: column;
     gap: 0.5vh;
@@ -52,20 +53,41 @@
         color: var(--borderHabit);
     }
 }
+.redHabitBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3vh;
+}
 .redHabitStr {
     display: flex;
-    justify-content: center;
-    > span {
-        width: 30%;
-        &.redHabitToggler {
-            display: flex;
-            justify-content: center;
-            > .toggler.disable {
-                border-color: var(--borderHabit);
-                > .togglerCircle {
-                    background-color: var(--borderHabit);
-                }
+    justify-content: space-between;
+}
+.redHabitSpan {
+    color: var(--borderWhLight);
+    &.redHabitToggler {
+        display: flex;
+        justify-content: center;
+        > .toggler.disable {
+            border-color: var(--borderHabit);
+            > .togglerCircle {
+                background-color: var(--borderHabit);
             }
         }
     }
+}
+.redHabitSettingSpan {
+    display: flex;
+    color: var(--borderWh);
+    cursor: pointer;
+    gap: 0.25vw;
+    &:hover {
+        color: var(--tc);
+    }
+    &.disabled {
+        color: var(--borderHabit);
+        cursor: default;
+    }
+}
+.techSpan {
+    color: var(--borderHabit);
 }

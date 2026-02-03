@@ -24,7 +24,6 @@
     }
 }
 .orderWrapper {
-    // margin-top: 1vh;
     user-select: none;
     >span {
         color: var(--borderHabit);
@@ -133,6 +132,6 @@
     width: 2vh;
     pointer-events: none;
     right: 0.2vw;
-    bottom: 0.2vh;
+    bottom: 0.4vh;
     border-radius: 50%;
 }

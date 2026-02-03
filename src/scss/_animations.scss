@@ -85,3 +85,13 @@
         transform: translateY(1000%) rotate(360deg);
     }
 }
+@keyframes flyToCounter {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(0, -150%) scale(1.5);
+        opacity: 0;
+    }
+}

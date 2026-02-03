@@ -17,7 +17,7 @@ export type UpdateHabitContextType = {
   setPin: (habitId: number, val: boolean) => void;
   putInArchieve: (habitId: number, val: boolean) => void;
   setNewTag: (habitId: number, val: string | null) => void;
-  setNewTimer: (habitId: number, val: boolean) => void;
+  setNewMetricType: (habitId: number, val: "timer" | "counter") => void;
   setNewScheduleBool: (habitId: number, val: boolean) => void;
   isUpdating: string[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -84,7 +84,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
         { habitId, field, value, table },
       ]);
       setIsUpdating(prev => [...new Set([...prev, `habit_${habitId}`])]);
-    }, 400);
+    }, 300);
   }, []);
 
   const setNewName = useCallback((habitId: number, val: string) => enqueueUpdate(habitId, "name", val, "habits"), [enqueueUpdate]);
@@ -106,7 +106,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
   const setNewTag = useCallback((habitId: number, val: string | null) => enqueueUpdate(habitId, "tag", val, "habits"), [enqueueUpdate]);
 
   // settings
-  const setNewTimer = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "timer", val, "habits_settings"), [enqueueUpdate]);
+  const setNewMetricType = useCallback((habitId: number, val: "timer" | "counter") => enqueueUpdate(habitId, "metric_type", val, "habits_settings"), [enqueueUpdate]);
   const setNewScheduleBool = useCallback((habitId: number, val: boolean) => enqueueUpdate(habitId, "schedule", val, "habits_settings"), [enqueueUpdate]);
 
   const processQueue = useCallback(async () => {
@@ -129,7 +129,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
       (field === "end_time" && value === habit?.end_time) ||
       (field === "pinned" && value === habit?.pinned) ||
       (field === "tag" && value === habit?.tag) ||
-      (field === "timer" && value === habitSettings.timer) ||
+      (field === "metric_type" && value === habitSettings.metric_type) ||
       (field === "schedule" && value === habitSettings.schedule)
     ) {
       removeField(habitId, field);
@@ -189,7 +189,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
         isUpdating,
         localChanges,
         putInArchieve,
-        setNewTimer,
+        setNewMetricType,
         setNewScheduleBool
       }}
     >

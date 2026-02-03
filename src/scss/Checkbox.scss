@@ -1,0 +1,25 @@
+@use "./global.scss" as *;
+
+.checkbox {
+    border-radius: 50%;
+    height: 2vh;
+    aspect-ratio: 1/1;
+    width: 2vh;
+    background-color: var(--bgc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    &.disabled {
+        cursor: default;
+    }
+}
+.checkboxTrue {
+    background-color: var(--acsent);
+    border-radius: 50%;
+    height: 50%;
+    width: 50%;
+    &.disabled {
+        background-color: var(--borderWh);
+    }
+}

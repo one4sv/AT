@@ -3,7 +3,9 @@ import {
   SneakerMove, SoccerBall, Strategy, Volleyball, Hockey, PingPong, Racquet,
   DribbbleLogo, PersonSimpleSwim, PersonSimpleSnowboard, PersonSimpleSki,
   PersonSimpleBike, BowlingBall, BoxingGlove, PersonSimpleWalk, Code,
-  BookBookmark, Briefcase, Palette, Camera, Guitar, BowlFood
+  BookBookmark, Briefcase, Palette, Camera, Guitar, BowlFood,
+  PersonSimpleTaiChi,
+  PersonArmsSpread
 } from "@phosphor-icons/react"
 import { Bed } from "lucide-react";
 import { DiceFive, GameController } from "@phosphor-icons/react/dist/ssr";
@@ -43,8 +45,10 @@ export const tags: Tag[] = [
   { icon: DribbbleLogo, label: "Баскетбол", value: "basketball", group:"sport" },
   { icon: SneakerMove, label: "Бег", value: "running", group:"sport" },
   { icon: SoccerBall, label: "Футбол", value: "football", group:"sport" },
-  { icon: Strategy, label: "Спортивные игры", value: "games", group:"sport" },
+  { icon: Strategy, label: "Спортивные игры", value: "strategy", group:"sport" },
   { icon: Volleyball, label: "Волейбол", value: "volleyball", group:"sport" },
+  { icon: PersonSimpleTaiChi, label: "Йога", value: "yoga ", group:"sport" },
+  { icon: PersonArmsSpread , label: "Спорт", value: "sport", group:"sport" },
 
   { icon: BookBookmark, label: "Учёба", value: "study", group:"maintime" },
   { icon: Briefcase , label: "Работа", value: "work", group:"maintime" },
