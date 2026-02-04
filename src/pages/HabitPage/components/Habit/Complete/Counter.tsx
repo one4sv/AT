@@ -40,7 +40,7 @@ export default function Counter() {
     }, [serverCount])
 
     const pendingVal = useRef(0)
-    const timeoutRef = useRef<Timeout | null>(null)
+    const timeoutRef = useRef<number | null>(null)
 
     const sendDelta = async (totalVal: number) => {
         if (totalVal === 0 || !habit?.id || isHistorical) return
@@ -62,7 +62,7 @@ export default function Counter() {
         pendingVal.current += val
 
         if (timeoutRef.current) clearTimeout(timeoutRef.current)
-        timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = window.setTimeout(() => {
             sendDelta(pendingVal.current)
             pendingVal.current = 0
         }, 600)
