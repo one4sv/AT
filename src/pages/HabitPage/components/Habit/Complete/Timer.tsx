@@ -107,25 +107,29 @@ export default function Timer () {
             {canControl && (
                 <div className="timerButts">
                     {isTimerActive && !isEnded && (
-                        <div className="launchButt" onClick={() => {
-                            if (isPaused) timerStop()
-                            else timerCircle()
-                        }}>
-                            {isPaused ? <Square weight="fill"/> : <FlagPennant weight="fill"/>}
+                        <div className="launchButtWrapper">
+                            <div className="launchButt" onClick={() => {
+                                if (isPaused) timerStop()
+                                else timerCircle()
+                            }}>
+                                {isPaused ? <Square weight="fill"/> : <FlagPennant weight="fill"/>}
+                            </div>
                         </div>
                     )}
-                    <div className={`launchButt ${isEnded ? "disabled" : ""}`} onClick={() => {
-                        if (isEnded) return
-                        if (!isTimerActive) timerStart()
-                        else if (isPaused) timerStart()
-                        else timerPause()
-                    }}>
-                        {isTimerActive && !isEnded
-                            ? isPaused
-                                ? <Play weight="fill"/>
-                                : <Pause weight="fill"/>
-                            : <Play weight="fill"/>
-                        }
+                    <div className="launchButtWrapper">
+                        <div className={`launchButt ${isEnded ? "disabled" : ""}`} onClick={() => {
+                            if (isEnded) return
+                            if (!isTimerActive) timerStart()
+                            else if (isPaused) timerStart()
+                            else timerPause()
+                        }}>
+                            {isTimerActive && !isEnded
+                                ? isPaused
+                                    ? <Play weight="fill"/>
+                                    : <Pause weight="fill"/>
+                                : <Play weight="fill"/>
+                            }
+                        </div>
                     </div>
                 </div>
             )}

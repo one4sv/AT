@@ -24,7 +24,7 @@ export default function Counter() {
     const currentCounter = isHistorical ? showCounter : habitCounter
 
     const serverCount = currentCounter?.count || 0
-    const minCount = counterSettings?.min_count || 0
+    const minCount = currentCounter?.min_count || 0
 
     const [localCount, setLocalCount] = useState(serverCount)
     const paddedCount = localCount.toString().padStart(4, '0')
@@ -45,7 +45,7 @@ export default function Counter() {
     const sendDelta = async (totalVal: number) => {
         if (totalVal === 0 || !habit?.id || isHistorical) return
         try {
-            await api.post(`${API_URL}counter/plus`, { habit_id: habit.id, val: totalVal })
+            await api.post(`${API_URL}counter/value`, { habit_id: habit.id, val: totalVal })
             if (loadHabit) loadHabit(String(habit.id))
         } catch (err) {
             console.error(err)
@@ -56,7 +56,7 @@ export default function Counter() {
     const changeCount = (val: number) => {
         if (isHistorical || !habit) return
 
-        const newLocal = Math.max(minCount, localCount + val)
+        const newLocal = Math.max(0, localCount + val)
         setLocalCount(newLocal)
 
         pendingVal.current += val
@@ -67,6 +67,7 @@ export default function Counter() {
             pendingVal.current = 0
         }, 600)
     }
+
     console.log(flyingNumbers)
     const handleClickWithFly = (val: number, side: "left" | "right") => {
         if (!counterRef.current || val === 0) return
@@ -83,23 +84,29 @@ export default function Counter() {
     const restoreCounter = async () => {
         if (isHistorical || !habit?.id) return
         try {
-            await api.post(`${API_URL}counter/restore`, { habit_id: habit.id })
-            if (loadHabit) loadHabit(String(habit.id))
+            const res = await api.post(`${API_URL}counter/restore`, { habit_id: habit.id })
+            if (res.data.success) loadHabit(String(habit.id))
         } catch (err) {
             console.error(err)
         }
     }
 
-    const updateCounterSetting = async (field: "min_counter" | "redCounterRight" | "redCounterLeft", value: number) => {
+    const updateCounterSetting = async (field: "min_counter" | "red_counter_right" | "red_counter_left", value: number) => {
         if (!habit?.id || isHistorical) return
         try {
-            await api.post(`${API_URL}counter/settings`, {
+            const res = await api.post(`${API_URL}counter/settings`, {
                 habit_id: habit.id,
                 [field]: value
             })
-            if (loadHabit) loadHabit(String(habit.id))
+            if (res.data.success) loadHabit(String(habit.id))
         } catch (err) {
             console.error(err)
+        }
+    }
+    const saveMin = (el: HTMLElement) => {
+        const newMin = parseInt(el.textContent || "0", 10) || 0
+        if (counterSettings && newMin !== counterSettings.min_count) {
+            updateCounterSetting("min_counter", newMin)
         }
     }
 
@@ -118,15 +125,17 @@ export default function Counter() {
             </div>
             <div className="counterMin">
                 цель: <span
-                    contentEditable
+                    contentEditable={!isHistorical}
                     suppressContentEditableWarning
-                    onBlur={(e) => {
-                        const newMin = parseInt(e.currentTarget.textContent || "0", 10) || 0
-                        if (newMin !== counterSettings.min_count) {
-                            updateCounterSetting("min_counter", newMin)
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            e.preventDefault()
+                            saveMin(e.currentTarget)
+                            e.currentTarget.blur()
                         }
                     }}
-                >{counterSettings.min_count}</span>
+                    onBlur={(e) => saveMin(e.currentTarget)}
+                >{minCount}</span>
                 <Pen fill="currentColor" width={12} height={12} />
             </div>
             <div className="timerButts">
@@ -140,32 +149,37 @@ export default function Counter() {
                             {f.val}
                         </div>
                     ))}
-                    <div className={`launchButt ${edit === "left" ? "editing" : ""}`} onClick={() => {
+                    <div className={`launchButt ${edit === "left" ? "editing" : ""} ${isHistorical ? "disabled" : ""}`} onClick={() => {
                         if (edit === "left") return
-                        handleClickWithFly(counterSettings.redCountLeft ?? 0, "left")
+                        handleClickWithFly(counterSettings.red_counter_left ?? 0, "left")
                     }}>
                         + <span
-                            contentEditable={edit === "left"}
+                            contentEditable={edit === "left" && !isHistorical}
                             suppressContentEditableWarning
                             onBlur={(e) => {
                                 const newVal = parseInt(e.currentTarget.textContent || "0", 10) || 0
-                                if (newVal !== counterSettings.redCountLeft) {
-                                    updateCounterSetting("redCounterLeft", newVal)
+                                if (newVal !== counterSettings.red_counter_left) {
+                                    updateCounterSetting("red_counter_left", newVal)
                                 }
                             }}
-                        >{counterSettings.redCountLeft ?? 0}</span>
+                        >{counterSettings.red_counter_left ?? 0}</span>
                     </div>
-                    <div className="counterRedButt" onClick={() => {
-                        if (edit === "left") {
-                            setEdit("")
-                        } else setEdit("left")
-                    }}>
-                        {edit === "left" ? 
-                            <Send fill="currentColor"/>
-                            :
-                            <Pen fill="currentColor"/>
-                        }
-                    </div>
+                    {!isHistorical ? (
+                        <div className="counterRedButt" onClick={() => {
+                            if (edit === "left") {
+                                setEdit("")
+                            } else setEdit("left")
+                        }}>
+                            {edit === "left" ? 
+                                <Send fill="currentColor"/>
+                                :
+                                <Pen fill="currentColor"/>
+                            }
+                        </div>
+                    ) : (
+                        ""
+                    )}
+                    
                 </div>
                 <div className="launchButtWrapper">
                     {flyingNumbers.filter(n => n.side ==="right").map(f => (
@@ -177,33 +191,39 @@ export default function Counter() {
                             {f.val}
                         </div>
                     ))}
-                    <div className={`launchButt ${edit === "right" ? "editing" : ""}`} onClick={() => {
+                    <div className={`launchButt ${edit === "right" ? "editing" : ""} ${isHistorical ? "disabled" : ""}`} onClick={() => {
+                        if (isHistorical) return
                         if (edit === "right") return
-                        handleClickWithFly(counterSettings.redCountRight, "right")
+                        handleClickWithFly(counterSettings.red_counter_right, "right")
                     }}>
                         + <span
-                            contentEditable={edit === "right"}
+                            contentEditable={edit === "right" && !isHistorical}
                             suppressContentEditableWarning
                             onBlur={(e) => {
                                 const newVal = parseInt(e.currentTarget.textContent || "0", 10) || 0
-                                if (newVal !== counterSettings.redCountRight) {
-                                    updateCounterSetting("redCounterRight", newVal)
+                                if (newVal !== counterSettings.red_counter_right) {
+                                    updateCounterSetting("red_counter_right", newVal)
                                 }
                             }}
-                        >{counterSettings.redCountRight}</span>
+                        >{counterSettings.red_counter_right}</span>
                     </div>
-                    <div className="counterRedButt" onClick={() => {
-                        if (edit === "right") {
-                            setEdit("")
-                        }
-                        else setEdit("right")
-                    }}>
-                        {edit === "right" ? 
-                            <Send fill="currentColor"/>
-                            :
-                            <Pen fill="currentColor"/>
-                        }
-                    </div>
+                    {!isHistorical ? (
+                        <div className="counterRedButt" onClick={() => {
+                            if (edit === "right") {
+                                setEdit("")
+                            }
+                            else setEdit("right")
+                        }}>
+                            {edit === "right" ? 
+                                <Send fill="currentColor"/>
+                                :
+                                <Pen fill="currentColor"/>
+                            }
+                        </div>
+                    ) : (
+                        ""
+                    )}
+                    
                 </div>
             </div>
 
@@ -229,11 +249,15 @@ export default function Counter() {
                         </div>
                     )}
                 </div>
-
-                <div className="launchButt" onClick={restoreCounter}>
-                    <ArrowClockwise />
+                <div className="launchButtWrapper">
+                    <div className={`launchButt ${isHistorical ? "disabled" : ""}`} onClick={() => {
+                        if (isHistorical) return
+                        restoreCounter()
+                    }}>
+                        <ArrowClockwise />
+                    </div>
                 </div>
-
+               
                 <div className="counterChange">
                     <Plus weight="bold" />
                     <input

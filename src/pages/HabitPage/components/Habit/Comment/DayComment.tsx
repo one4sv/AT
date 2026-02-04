@@ -6,6 +6,8 @@ import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
 import "../../../scss/DayComment.scss"
 import CompletionProgress from "./ComplitionProgress";
+import CounterProgression from "./CounterProgression";
+import { todayStrFunc } from "../../../utils/dateToStr";
 
 interface DayCommentProps {
   id: string;
@@ -14,11 +16,24 @@ interface DayCommentProps {
 
 export default function DayComment({ id, isMy }: DayCommentProps) {
   const { sendDayComment, waitComAnswer } = useDone()
-  const { dayComment, todayComment, habit } = useTheHabit()
+  const { dayComment, todayComment, habit, habitCounter, showCounter, showTimer, habitTimer, habitSettings } = useTheHabit()
   const { chosenDay } = useCalendar()
 
   const [ comment, setComment ] = useState<string | null>(todayComment || "");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const todayStr = todayStrFunc()
+  const isHistorical = chosenDay && chosenDay !== todayStr || false
+  const currentTimer = isHistorical ? showTimer : habitTimer
+  const currentCounter = isHistorical ? showCounter : habitCounter
+  
+  let current = ""
+  if (currentTimer && currentCounter) {
+    if (habitSettings.metric_type === "timer") current = "timer"
+    else current = "counter"
+  }
+  else if (currentTimer && currentCounter === null) current = "timer"
+  else if (currentCounter && currentTimer === null) current = "counter"
+  else current = "none"
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
@@ -77,7 +92,10 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           </div>
         </div>
       </div>
-      <CompletionProgress/>
+      {current === "timer"
+        ? <CompletionProgress currentTimer={currentTimer}  isHistorical={isHistorical}/>
+        : <CounterProgression currentCounter={currentCounter} isHistorical={isHistorical}/>
+      }
     </div>
     
   );

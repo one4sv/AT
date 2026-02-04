@@ -39,6 +39,9 @@
     aspect-ratio: 1/1;
     > span {
         outline: none;
+        white-space: nowrap;
+        word-wrap: none;
+        text-wrap-mode: nowrap;
     }
     &:hover {
         background-color: var(--acsent);

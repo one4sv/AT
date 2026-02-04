@@ -1,8 +1,8 @@
 import { Send } from "lucide-react"
-import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
 import { useEffect, useMemo, useReducer, useState } from "react"
 import { api } from "../../../../../components/ts/api"
+import type { habitTimer } from "../../../../../components/context/TheHabitContext"
 
 interface Event {
     type: "start" | "pause" | "circle" | "end"
@@ -38,19 +38,16 @@ const placeholders = [
     "Расскажи, что было?", "Что нового?", "Что интересного?", "Что дальше?", "Какое впечатление?", "Что изменилось?"
 ]
 
-export default function CompletionProgress() {
-    const { chosenDay } = useCalendar()
-    const { showTimer, habitTimer, habit, loadTimer } = useTheHabit()
+export default function CompletionProgress({currentTimer, isHistorical}:{currentTimer:habitTimer | null, isHistorical:boolean}) {
+    const { habit, loadTimer } = useTheHabit()
     const API_URL = import.meta.env.VITE_API_URL
 
     const [editedTexts, setEditedTexts] = useState<Record<string, string>>({})
     const [, forceUpdate] = useReducer(x => x + 1, 0)
     const [placeholderMap, setPlaceholderMap] = useState<Record<string, string>>({})
-
-    const todayStr = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`
-    const isHistorical = chosenDay && chosenDay !== todayStr
-    const currentTimer = isHistorical ? showTimer : habitTimer
     const hasOpenPause = currentTimer?.pauses.some(p => p.end === null)
+
+
     useEffect(() => {
         if (!hasOpenPause) return
         const interval = setInterval(forceUpdate, 1000)

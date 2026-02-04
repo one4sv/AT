@@ -48,14 +48,14 @@ export interface habitCounter {
     id:number,
     started_at:Date,
     count:number,
-    progression:{ count:number, time:Date, text:string }[],
+    progression:{ count:string, time:Date, text:string }[],
     min_count:number
 }
 export interface counterSettingsType {
     id:number,
     min_count:number,
-    redCountRight:number,
-    redCountLeft:number,
+    red_counter_right:number,
+    red_counter_left:number,
 }
 export interface HabitSettings {
     metric_type:"timer" | "counter";

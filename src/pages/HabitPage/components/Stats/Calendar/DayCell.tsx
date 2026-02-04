@@ -20,8 +20,8 @@ const toDateStr = (d: Date | string) => {
 };
 
 export default function DayCell({ habits, habit, day, month, year, type }: DayCellProps) {
-    const { setChosenDay, calendar, chosenDay, timers } = useCalendar()
-    const { setDayComment, setIsDone, setDoable, setShowTimer } = useTheHabit()
+    const { setChosenDay, calendar, chosenDay, timers, counters } = useCalendar()
+    const { setDayComment, setIsDone, setDoable, setShowTimer, setShowCounter } = useTheHabit()
     const [hovered, setHovered] = useState(false);
     const { habitId:id } = useParams<{ habitId: string }>();
     const cellRef = useRef<HTMLDivElement | null>(null);
@@ -51,6 +51,7 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
                     setChosenDay(dateStr)
                     setDayComment(comment || "")
                     setShowTimer(timers?.find(t => toDateStr(t.end_at) === dateStr) || null)
+                    setShowCounter(counters?.find(t => toDateStr(t.started_at) === dateStr) || null)
                     if (completedArr.length > 0) {
                         setIsDone(true)
                         setDoable(true)
@@ -72,6 +73,7 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
                     setIsDone(null)
                     setDoable(true)
                     setShowTimer(null)
+                    setShowCounter(null)
                 }
             }}
         >

@@ -73,6 +73,9 @@
         }
     }
     > span {
+        word-wrap: none;
+        text-wrap-mode: nowrap;
+        white-space: nowrap;
         outline: none;
         &:focus {
             color: var(--tc);
