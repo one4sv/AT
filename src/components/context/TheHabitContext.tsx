@@ -14,6 +14,7 @@ export interface TheHabitContextType {
     findHabit:(id:string | null) => void;
     loadHabitWLoading:(id:string | null) => void;
     loadTimer:(id:number) => void,
+    loadCounter:(id:number) => void,
     loadingHabit:boolean;
     habit:Habit | undefined;
     isReadOnly:boolean;
@@ -101,7 +102,17 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
                 setTodayComment(comment)
                 setHabitSettings(settings)
                 setCounterSettings(counterSettings)
-                setHabitCounter(counter)
+                setHabitCounter(counter ? {
+                    id: counter.id,
+                    started_at: new Date(counter.started_at),
+                    count: counter.count,
+                    progression: (counter.progression || []).map((item: { count: string, time: string, text: string }) => ({
+                        count: item.count,
+                        time: new Date(item.time),
+                        text: item.text
+                    })),
+                    min_count: counter.min_count
+                } : null);
                 setHabitTimer(timer ? {
                     id: timer.id,
                     started_at: new Date(timer.started_at),
@@ -140,6 +151,28 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
         }
     }, [API_URL])
 
+    const loadCounter = useCallback(async (habit_id:number) => {
+        try {
+            const res = await api.get(`${API_URL}counter/${habit_id}`)
+            if (res.data.success) {
+                const counter = res.data.counter;
+                setHabitCounter(counter ? {
+                    id: counter.id,
+                    started_at: new Date(counter.started_at),
+                    count: counter.count,
+                    progression: (counter.progression || []).map((item: { count: string, time: string, text: string }) => ({
+                        count: item.count,
+                        time: new Date(item.time),  // Парсинг вложенной даты
+                        text: item.text
+                    })),
+                    min_count: counter.min_count
+                } : null);
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }, [API_URL])
+
     const loadHabitWLoading = async(id:string | null) => {
         setLoadingHabit(true)
         await loadHabit(id)
@@ -148,7 +181,7 @@ export const TheHabitProvider = ({children} : {children : ReactNode}) => {
     
     return(
         <TheHabitContext.Provider value={{loadHabit, loadingHabit, habit, isReadOnly,
-        isDone, setIsDone, dayComment, todayComment, setDayComment, 
+        isDone, setIsDone, dayComment, todayComment, setDayComment, loadCounter,
         findHabit, todayDone, setDoable, doable, loadHabitWLoading, habitSettings,
         habitTimer, setHabitTimer, loadTimer, setShowTimer, showTimer,
         habitCounter, setHabitCounter, showCounter, setShowCounter, counterSettings}}>

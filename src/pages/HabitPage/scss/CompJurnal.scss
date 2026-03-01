@@ -1,26 +1,16 @@
 @use "../../../scss/global" as var;
 
 .compJurnalDiv {
-    margin-top: 1vh;
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 19.5vw;
     background-color: var(--mc);
     border-radius: 8px;
     align-items:end;
     min-height:0;
     height: max-content;
-    height: 58vh;
-    &.withHabitnDone {
-        height: 47vh;
-    }
-    &.withArchivedHabit {
-        height: 58vh;
-    }
-    &.withHabit {
-        height: 52.5vh;
-    }
+    height: 39vh;
 }
 .compJurnalMain {
     height: 100%;

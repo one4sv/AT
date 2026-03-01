@@ -24,7 +24,7 @@ export default function Timer () {
     const isTimerActive = currentTimer !== null && canControl
     const isPaused = canControl && currentTimer?.status === "paused"
     const isEnded = isHistorical || (currentTimer ? currentTimer.status === "ended" || new Date(currentTimer.end_at).getTime() <= Date.now() : todayDone)
-
+    
     useEffect(() => {
         if (!habit) return
 

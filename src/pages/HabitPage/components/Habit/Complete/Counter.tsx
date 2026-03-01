@@ -56,8 +56,10 @@ export default function Counter() {
     const changeCount = (val: number) => {
         if (isHistorical || !habit) return
 
-        const newLocal = Math.max(0, localCount + val)
-        setLocalCount(newLocal)
+        setLocalCount(prev => {
+            const newLocal = Math.max(0, prev + val)
+            return newLocal
+        })
 
         pendingVal.current += val
 
@@ -237,11 +239,13 @@ export default function Counter() {
                         className="changeCounterInp"
                         min="1"
                         max="9999"
+                        maxLength={4}
                     />
                     {customMinus && (
                         <div className="sendCircle" onClick={() => {
                             const val = parseInt(customMinus, 10) || 0
                             if (val > 0) {
+                                changeCount(-val)
                                 setCustomMinus("")
                             }
                         }}>
@@ -266,12 +270,15 @@ export default function Counter() {
                         onChange={(e) => setCustomPlus(e.target.value)}
                         className="changeCounterInp"
                         min="1"
+                        minLength={1}
                         max="9999"
+                        maxLength={4}
                     />
                     {customPlus && (
                         <div className="sendCircle" onClick={() => {
                             const val = parseInt(customPlus, 10) || 0
                             if (val > 0) {
+                                changeCount(val)
                                 setCustomPlus("")
                             }
                         }}>

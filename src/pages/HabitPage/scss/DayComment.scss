@@ -6,6 +6,8 @@
     border-radius: 12px;
     width: 19.5vw;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 .habitDayComment {
     position: relative;
@@ -88,6 +90,11 @@
     &.emptyEvents {
         text-align: center;
     }
+    &:hover {
+        >.textPlus {
+            display: flex;
+        }
+    }
 }
 .eventTime {
     color: var(--borderWh);
@@ -98,18 +105,29 @@
 }
 .circleEditWrapper {
     width: 100%;
+    position: relative;
 }
-.circleInp {
+.circleTA {
     width: 100%;
-    @include var.input(var(--tr), var(--borderWh), var(--tr), 3vh, 0, var(--tr));
+    resize: none;
+    background-color: var(--tr);
+    color: var(--tc);
+    font-size: 16px;
+    font-family: var(--font);
+    border: none;
+    outline: none;
+    overflow: hidden;
     border-bottom: 1px solid var(--borderHabit);
+    height: auto;
+    min-height: 2vh;
+    padding: 0;
+    padding-inline-start: 2px;
+    padding-inline-end: 2vw;
     &:focus {
         border-bottom: 1px solid var(--acsent);
         color: var(--tc);
-        padding-inline-end: 2vw;
     }
     &::placeholder {
-        padding-inline-start: 0.2vw;
         color: var(--borderHabit);
     }
 }
@@ -129,5 +147,41 @@
     > svg {
         width: 80%;
         height: 80%;
+    }
+}
+.textPlus {
+    display: none;
+    cursor: pointer;
+    top: 60%;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    &:hover {
+        > span {
+            color: var(--acsent);
+        }
+        > div {
+            background-color: var(--borderWh);
+        }
+    }
+    >div {
+        width: 45%;
+        height: 1px;
+        background-color: var(--borderHabit);
+    }
+    >span {
+        width: 10%;
+    }
+}
+.circleText.savedText {
+    word-wrap: break-word;
+    cursor: pointer;
+    padding-inline-end: 2vw;
+    border-bottom: 1px solid var(--tr);
+    padding-inline-start: 2px;
+    min-height: 2vh;
+    &:hover {
+        color: var(--acsent);
     }
 }

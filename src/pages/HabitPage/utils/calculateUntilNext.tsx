@@ -36,7 +36,7 @@ export const calculateUntilTimer = (habit: Habit, isEnded: boolean): string => {
             .toString()
             .padStart(2, "0")}:${s.toString().padStart(2, "0")}`
 
-        return d > 0 ? `${d}d ${time}` : time
+        return d > 0 ? `${d} д. ${time}` : time
     }
 
     const { h: sH, m: sM } = parseTime(habit.start_time)
@@ -44,28 +44,22 @@ export const calculateUntilTimer = (habit: Habit, isEnded: boolean): string => {
 
     const startToday = buildDate(now, sH, sM)
     const endToday = buildDate(now, eH, eM)
+    const hasEnd = !!habit.end_time
+    const dayEnded = hasEnd && now >= endToday
 
-    // Если таймер уже закончился, всегда показываем сколько до начала следующего периода
-    if (isEnded) {
-        if (now < startToday) {
-            return "начало через: " + formatDiff(startToday)
-        } else {
-            // Если уже после начала сегодня, считаем до следующего дня (для daily)
-            const tomorrow = new Date(startToday)
-            tomorrow.setDate(tomorrow.getDate() + 1)
-            return "начало через: " + formatDiff(tomorrow)
+    const canUseToday = !isEnded && !dayEnded
+
+
+    if (habit.periodicity === "everyday") {
+        if (canUseToday) {
+            if (now < startToday)
+                return "начало через: " + formatDiff(startToday)
+
+            if (hasEnd && now >= startToday && now < endToday)
+                return "конец через: " + formatDiff(endToday)
         }
-    }
 
-    // Обычная логика для разных периодичностей:
-
-    if (habit.periodicity === "daily" || habit.periodicity === "everyday") {
-        if (now < startToday)
-            return "начало через: " + formatDiff(startToday)
-
-        if (habit.end_time && now >= startToday && now < endToday)
-            return "конец через: " + formatDiff(endToday)
-
+        // иначе ищем завтра
         const tomorrow = new Date(startToday)
         tomorrow.setDate(tomorrow.getDate() + 1)
         return "начало через: " + formatDiff(tomorrow)
@@ -73,17 +67,16 @@ export const calculateUntilTimer = (habit: Habit, isEnded: boolean): string => {
 
     if (
         habit.periodicity === "weekly" &&
-        habit.chosen_days &&
-        habit.chosen_days.length > 0
+        habit.chosen_days?.length
     ) {
         const todayDay = now.getDay()
         const isChosenToday = habit.chosen_days.includes(todayDay)
 
-        if (isChosenToday) {
+        if (isChosenToday && canUseToday) {
             if (now < startToday)
                 return "начало через: " + formatDiff(startToday)
 
-            if (habit.end_time && now >= startToday && now < endToday)
+            if (hasEnd && now >= startToday && now < endToday)
                 return "конец через: " + formatDiff(endToday)
         }
 
@@ -99,14 +92,6 @@ export const calculateUntilTimer = (habit: Habit, isEnded: boolean): string => {
     }
 
     if (habit.periodicity === "sometimes") return ""
-
-    if (now < startToday)
-        return "начало через: " + formatDiff(startToday)
-
-    if (habit.end_time) {
-        if (now < endToday)
-            return "конец через: " + formatDiff(endToday)
-    }
 
     return "00:00:00"
 }

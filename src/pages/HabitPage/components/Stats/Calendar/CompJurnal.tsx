@@ -1,16 +1,11 @@
 import { Virtuoso } from "react-virtuoso";
 import { useNavigate, useParams } from "react-router-dom";
-import "../../scss/CompJurnal.scss"
-import type { Calendar } from "../../../../../components/context/CalendarContext";
+import "../../../scss/CompJurnal.scss";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 
-interface CompJurnalProps {
-    isMy: boolean;
-    calendar: Calendar[];
-}
-
-export default function CompJurnal({ calendar }: CompJurnalProps) {
+export default function CompJurnal() {
+    const { calendar } = useCalendar()
     const { setDayComment, setIsDone, doable, habit } = useTheHabit()
     const { setChosenDay, setSelectedYear, setSelectedMonth } = useCalendar();
 

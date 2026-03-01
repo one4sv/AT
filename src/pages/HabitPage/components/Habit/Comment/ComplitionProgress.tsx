@@ -3,6 +3,7 @@ import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
 import { useEffect, useMemo, useReducer, useState } from "react"
 import { api } from "../../../../../components/ts/api"
 import type { habitTimer } from "../../../../../components/context/TheHabitContext"
+import { placeholders } from "../../../utils/placeholders"
 
 interface Event {
     type: "start" | "pause" | "circle" | "end"
@@ -33,18 +34,14 @@ const formatTime = (iso: string): string => {
     return new Date(iso).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
 }
 
-const placeholders = [
-    "Что произошло?", "Что случилось?", "Что сделали?", "Ну как оно там?", "Что получилось?", "Как успехи?",
-    "Расскажи, что было?", "Что нового?", "Что интересного?", "Что дальше?", "Какое впечатление?", "Что изменилось?"
-]
-
 export default function CompletionProgress({currentTimer, isHistorical}:{currentTimer:habitTimer | null, isHistorical:boolean}) {
-    const { habit, loadTimer } = useTheHabit()
+    const { habit, loadTimer, setHabitTimer } = useTheHabit()
     const API_URL = import.meta.env.VITE_API_URL
 
     const [editedTexts, setEditedTexts] = useState<Record<string, string>>({})
     const [, forceUpdate] = useReducer(x => x + 1, 0)
     const [placeholderMap, setPlaceholderMap] = useState<Record<string, string>>({})
+    const [editingKeys, setEditingKeys] = useState<string[]>([])
     const hasOpenPause = currentTimer?.pauses.some(p => p.end === null)
 
 
@@ -132,28 +129,37 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
     }, [events])
 
     const handleSend = async (circleTime: string, newText: string) => {
-        if (!habit || !currentTimer || isHistorical || !newText.trim()) return
+    if (!habit || !currentTimer) return
 
-        try {
-            await api.post(`${API_URL}timer/circle/text`, {
-                habit_id: habit.id,
-                timer_id: currentTimer.id,
-                time: circleTime,
-                text: newText.trim()
-            })
-            loadTimer(habit.id)
-            const timeout = setTimeout(() => {
-                setEditedTexts(prev => {
-                    const updated = { ...prev }
-                    delete updated[circleTime]
-                    return updated
-                })
-            }, 100)
-            return clearTimeout(timeout)
-        } catch (err) {
-            console.error("Ошибка сохранения текста круга:", err)
-        }
+    setHabitTimer(prev => {
+        if (!prev) return prev
+        const updatedCircles = prev.circles.map(c =>
+            c.time === circleTime ? { ...c, text: newText } : c 
+        )
+        return { ...prev, circles: updatedCircles }
+    })
+
+    try {
+        await api.post(`${API_URL}timer/circle/text`, {
+            habit_id: habit.id,
+            timer_id: currentTimer.id,
+            time: circleTime,
+            text: newText
+        })
+
+        setEditedTexts(prev => {
+            const updated = { ...prev }
+            delete updated[circleTime]
+            return updated
+        })
+
+        setEditingKeys(prev => prev.filter(k => k !== circleTime))
+
+        loadTimer(habit.id)
+    } catch (err) {
+        console.error("Ошибка сохранения текста круга:", err)
     }
+}
 
     if (!currentTimer) {
         return (
@@ -200,6 +206,7 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
                     const currentValue = editedTexts[event.time] ?? event.text ?? ""
                     const hasChanged = currentValue.trim() !== (event.text ?? "").trim()
                     const canEdit = !isHistorical
+                    const isEditing = editingKeys.includes(event.time)
 
                     return (
                         <div key={key} className="eventStr circleStr">
@@ -207,38 +214,73 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
                                 <span className="eventTime">{event.time}</span>: круг завершён
                             </div>
 
-                            {event.text && !canEdit && (
-                                <div className="circleText savedText">{event.text}</div>
-                            )}
-
-                            {canEdit && (
+                            {isEditing && canEdit ? (
                                 <div className="circleEditWrapper">
-                                    <input
-                                        type="text"
-                                        className="circleInp"
+                                    <textarea
+                                        className="circleTA"
                                         placeholder={currentValue ? "" : placeholderMap[event.time]}
                                         maxLength={200}
                                         value={currentValue}
-                                        onChange={(e) => setEditedTexts(prev => ({
-                                            ...prev,
-                                            [event.time]: e.target.value
-                                        }))}
+                                        onFocus={(e) => {
+                                            const ta = e.target;
+                                            ta.style.height = 'auto';
+                                            ta.style.height = `${ta.scrollHeight}px`;
+                                            ta.selectionStart = ta.value.length;
+                                            ta.selectionEnd = ta.value.length;
+                                        }}
+                                        onChange={(e) => {
+                                            const ta = e.target;
+                                            ta.style.height = 'auto';
+                                            ta.style.height = `${ta.scrollHeight}px`;
+                                            setEditedTexts(prev => ({
+                                                ...prev,
+                                                [event.time]: e.target.value
+                                            }));
+                                        }}
                                         onKeyDown={(e) => {
-                                            if (e.key === "Enter" && hasChanged && currentValue.trim()) {
-                                                handleSend(event.time, currentValue)
+                                            if (e.key === "Enter" && !e.shiftKey && hasChanged) {
+                                                e.preventDefault();
+                                                handleSend(event.time, currentValue.trim())
+                                                setEditingKeys(prev => prev.filter(k => k !== event.time))
                                             }
                                         }}
+                                        onBlur={() => {
+                                            if (hasChanged) {
+                                                handleSend(event.time, currentValue.trim())
+                                            }
+                                            setEditingKeys(prev => prev.filter(k => k !== event.time))
+                                        }}
+                                        rows={1}
+                                        autoFocus
                                     />
-                                    {hasChanged && currentValue.trim() && (
+                                    {hasChanged && (
                                         <div
                                             className="sendCircle"
-                                            onClick={() => handleSend(event.time, currentValue)}
+                                            onClick={() => {
+                                                handleSend(event.time, currentValue.trim())
+                                                setEditingKeys(prev => prev.filter(k => k !== event.time))
+                                            }}
                                         >
                                             <Send fill="currentColor"/>
                                         </div>
                                     )}
                                 </div>
-                            )}
+                            ) : event.text ? (
+                                <div className="circleText savedText" onClick={() => {
+                                    if (canEdit) {
+                                        setEditingKeys(prev => [...prev, event.time])
+                                        setEditedTexts(prev => ({ ...prev, [event.time]: event.text ?? "" }))
+                                    }
+                                }}>
+                                    {event.text}
+                                </div>
+                            ) : canEdit ? (
+                                <div className="textPlus" onClick={() => setEditingKeys(prev => [...prev, event.time])}>
+                                    <div/>
+                                    <span>+</span>
+                                    <div/>
+                                </div>
+                            ) : null}
                         </div>
                     )
                 }

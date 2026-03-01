@@ -15,6 +15,7 @@ import Calendar from "./components/Stats/Calendar/Calendar";
 import Diagrams from "./components/Stats/Diagrams/Diagrams";
 import DayComment from "./components/Habit/Comment/DayComment";
 import Complete from "./components/Habit/Complete/Complete";
+import CompJurnal from "./components/Stats/Calendar/CompJurnal";
 
 
 export default function Habit() {
@@ -51,14 +52,17 @@ export default function Habit() {
         <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
             {habitId && <HabitName habit={habit} showHabitMenu={showHabitMenu} setShowHabitMenu={setShowHabitMenu} isReadOnly={isReadOnly}/>}
             <div className="StatsDivMain" style={{top:habitId ? "6vh" : "0"}}>
-                {habitId && 
                     <div className="StatsDivHabit">
-                        <Complete/>
-                        <DayComment id={habitId} isMy={!isReadOnly}/>
+                        <Calendar/>
+                        {habitId &&
+                            <>
+                                <Complete/>
+                                <DayComment id={habitId} isMy={!isReadOnly}/>
+                            </>
+                        }
+                        <CompJurnal/>
                     </div>
-                }
                 <div className="StatsDivStats">
-                    <Calendar/>
                     <Diagrams/>
                 </div>
             </div>

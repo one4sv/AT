@@ -113,7 +113,7 @@ export default function SideMenu() {
                     if (!label) {
                         const date = new Date(order)
                         if (!isNaN(date.getTime())) {
-                            label = date.toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })
+                            label = date.toLocaleDateString("ru-RU", { weekday: "short", day: "numeric", month: "numeric" })
                         } else {
                             return
                         }
