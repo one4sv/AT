@@ -3,9 +3,10 @@ import { useSettings } from "../../hooks/SettingsHook";
 import { useUpSettings } from "../../hooks/UpdateSettingsHook";
 import { type TabProps } from "../../modules/Settings";
 import Toggler from "../toggler";
+import DatePicker from "react-datepicker";
 export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handleAnimationEnd }: TabProps) {
-    const { orderHabits, showArchived, showArchivedInAcc } = useSettings();
-    const { setNewOrder, setNewShowArchived, setNewShowArchivedInAcc } = useUpSettings();
+    const { orderHabits, showArchived, showArchivedInAcc, weekStart } = useSettings();
+    const { setNewOrder, setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart } = useUpSettings();
 
     const [isInitialOrderSync, setIsInitialOrderSync] = useState(true);
     
@@ -16,7 +17,6 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
 
     const dragItem = useRef<number | null>(null);
 
-    // Синхронизация порядка привычек
     useEffect(() => {
         if (orderHabits && Array.isArray(orderHabits) && isInitialOrderSync) {
             setDisplayOrder(orderHabits);
@@ -24,7 +24,6 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
         }
     }, [orderHabits, isInitialOrderSync]);
 
-    // Drag'n'Drop обработчики
     const handleDragEnd = () => {
         dragItem.current = null;
         setDraggingIndex(null);
@@ -81,7 +80,7 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
                 <div className="persTabDivDouble">
                     <div className="settingsOrder">
                         <div className="settingSpan">
-                            Порядок отображения:
+                            Порядок отображения
                         </div>
                         <div className="orderShown">
                             {displayOrder.map((type, index) => (
@@ -103,7 +102,7 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
                     </div>
                     <div className="archiveSettings">
                         <div className="settingSpan">
-                            Архив привычек:
+                            Архив привычек
                         </div>
                         <div className="archiveSettingToggler">
                             Показывать архивные в боковом меню
@@ -114,6 +113,24 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
                             <Toggler state={showArchivedInAcc} funcToggle={setNewShowArchivedInAcc}/>
                         </div>
                     </div>
+                </div>
+                <div className="habitTabDiv">
+                    <div className="settingSpan">
+                        Расписание
+                    </div>
+                    Ввести отчёт недель с
+                    <DatePicker
+                        className="habitTabDP"
+                        selected={weekStart ? new Date(weekStart) : null}
+                        maxDate={new Date()}
+                        dateFormat="dd.MM.yyyy"
+                        minDate={new Date(2000,0,1)}
+                        onChange={(date)=> {
+                            if(!date) return
+                            const formatted = date.toISOString().split("T")[0]
+                            setNewWeekStart(formatted)
+                        }}
+                    />
                 </div>
             </div>
         </div>

@@ -5,11 +5,12 @@ interface HoverDayProps {
     completed: number;
     missed: number;
     planned: number;
+    ongoing: number;
     targetRef: React.RefObject<HTMLDivElement | null>;
     comment?:string;
 }
 
-export default function HoverDay({ completed, missed, planned, targetRef, comment }: HoverDayProps) {
+export default function HoverDay({ ongoing, completed, missed, planned, targetRef, comment }: HoverDayProps) {
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const { habitId: id } = useParams<{habitId:string}>()
     
@@ -35,10 +36,11 @@ export default function HoverDay({ completed, missed, planned, targetRef, commen
         >
             {!id ? (
                 <>
+                    {ongoing > 0 && <div className="hoverRow"><div className="calendarDot now" /> В процессе: {ongoing}</div>}
                     {completed > 0 && <div className="hoverRow"><div className="calendarDot comp" /> Выполнено: {completed}</div>}
                     {missed > 0 && <div className="hoverRow"><div className="calendarDot skip" /> Пропущено: {missed}</div>}
                     {planned > 0 && <div className="hoverRow"><div className="calendarDot will" /> Запланировано: {planned}</div>}
-                    {completed === 0 && missed === 0 && planned === 0 && (
+                    {completed === 0 && missed === 0 && planned === 0 && ongoing === 0 && (
                         <div className="hoverRow hrEmpty">В этот день нет привычек</div>
                     )}
                 </>

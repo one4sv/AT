@@ -1,10 +1,10 @@
 import { useMemo, useRef, useState } from "react";
-import type { Habit } from "../../../../../components/context/HabitsContext";
+import type { Habit } from "../../../../../../components/context/HabitsContext";
 import HoverDay from "./HoverDay";
-import { useCalendar } from "../../../../../components/hooks/CalendarHook";
-import { getDayArrays } from "../../../../../components/ts/utils/getDayArrs";
+import { useCalendar } from "../../../../../../components/hooks/CalendarHook";
+import { getDayArrays } from "../../../../../../components/ts/utils/getDayArrs";
 import { useParams } from "react-router-dom";
-import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
+import { useTheHabit } from "../../../../../../components/hooks/TheHabitHook";
 
 interface DayCellProps {
     habit: Habit | undefined;
@@ -89,6 +89,7 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
                     completed={completedArr.length}
                     missed={skippedArr.length}
                     planned={willArr.length}
+                    ongoing={nowArr.length}
                     targetRef={cellRef}
                     comment={comment}
                 />

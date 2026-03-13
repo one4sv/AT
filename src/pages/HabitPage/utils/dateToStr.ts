@@ -4,6 +4,9 @@ export const todayStrFunc = () => {
 export const dateToStrFormat = (date:Date) => {
     return `${String(new Date(date).getDate()).padStart(2, "0")}.${String(new Date(date).getMonth() + 1).padStart(2, "0")}.${new Date(date).getFullYear()}`
 }
+export const dateToCalendarFormat = (date:Date) => {
+    return `${new Date(date).getFullYear()}-${String(new Date(date).getMonth() + 1).padStart(2, "0")}-${String(new Date(date).getDate()).padStart(2, "0")}`
+}
 export const timeToStr = (date: Date | string) => {
     const d = new Date(date)
 

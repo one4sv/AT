@@ -2,7 +2,7 @@
 
 .settingSpan {
     font-size: 20px;
-    margin-bottom: 2vh;
+    margin-bottom: 1vh;
 }
 .settingsOrder {
     display: flex;
@@ -66,4 +66,10 @@
     height: 3vh;
     justify-content: space-between;
     flex: 1;
+}
+.habitTabDP {
+    @include var.input(var(--mc), var(--tc), var(--borderHabit), fit-content, 4px, var(--tc));
+    padding-inline: 5px;
+    width: 6vw;
+    margin-left: 10px;
 }

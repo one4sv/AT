@@ -11,11 +11,13 @@ import { usePageTitle } from "../../components/hooks/PageContextHook";
 import GoalsChats from "./components/HabitInfo/GoalsChats";
 import HabitSettings from "./components/HabitInfo/HabitSettings";
 import HabitName from "./components/HabitInfo/HabitName";
-import Calendar from "./components/Stats/Calendar/Calendar";
+import Calendar from "./components/Habit/Complete/Calendar/Calendar";
 import Diagrams from "./components/Stats/Diagrams/Diagrams";
 import DayComment from "./components/Habit/Comment/DayComment";
 import Complete from "./components/Habit/Complete/Complete";
-import CompJurnal from "./components/Stats/Calendar/CompJurnal";
+import CompJurnal from "./components/Habit/Complete/Calendar/CompJurnal";
+import Schedule from "./components/Schedule/Schedule";
+import ChosenDay from "./components/Habit/Complete/Calendar/ChosenDay";
 
 
 export default function Habit() {
@@ -51,17 +53,19 @@ export default function Habit() {
     return (
         <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
             {habitId && <HabitName habit={habit} showHabitMenu={showHabitMenu} setShowHabitMenu={setShowHabitMenu} isReadOnly={isReadOnly}/>}
-            <div className="StatsDivMain" style={{top:habitId ? "6vh" : "0"}}>
-                    <div className="StatsDivHabit">
-                        <Calendar/>
-                        {habitId &&
-                            <>
-                                <Complete/>
-                                <DayComment id={habitId} isMy={!isReadOnly}/>
-                            </>
-                        }
-                        <CompJurnal/>
-                    </div>
+            <div className={`StatsDivMain ${habitId ? "sdmwm" : ""}`} style={{top:habitId ? "6vh" : "0"}}>
+                <div className="StatsDivHabit">
+                    <Calendar/>
+                    {habitId &&
+                        <>
+                            <Complete isMy={!isReadOnly}/>
+                            <DayComment id={habitId} isMy={!isReadOnly}/>
+                        </>
+                    }
+                    <CompJurnal/>
+                    {!habitId && <ChosenDay/>}
+                </div>
+                <Schedule id={habitId} isMy={!isReadOnly}/>
                 <div className="StatsDivStats">
                     <Diagrams/>
                 </div>

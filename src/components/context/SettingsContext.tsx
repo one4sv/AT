@@ -30,7 +30,9 @@ export interface SettingsContextType {
     showArchived: boolean,
     setShowArchived: React.Dispatch<SetStateAction<boolean>>
     showArchivedInAcc: boolean,
-    setShowArchivedInAcc: React.Dispatch<SetStateAction<boolean>>
+    setShowArchivedInAcc: React.Dispatch<SetStateAction<boolean>>,
+    weekStart: string | null
+    setWeekStart: React.Dispatch<React.SetStateAction<string | null>>,
     refetchSettings: () => Promise<void>;
 }
 
@@ -48,6 +50,7 @@ interface SettingsResponse {
     new_mess_note: boolean;
     show_archived: boolean;
     show_archived_in_acc: boolean;
+    week_start: string
 }
 
 export interface PrivateSettings {
@@ -73,6 +76,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [privateShow, setPrivate] = useState<PrivateSettings>({ number: "", mail: "", habits: "", posts: "" });
     const [showArchived, setShowArchived] = useState<boolean>(false);
     const [showArchivedInAcc, setShowArchivedInAcc] = useState<boolean>(false);
+    const [weekStart, setWeekStart] = useState<string | null>(null);
     const [tab, setTab] = useState<string>('acc');
 
     const refetchSettings = useCallback(async () => {
@@ -93,6 +97,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setMessNote(res.data.new_mess_note ?? true);
                 setShowArchived(res.data.show_archived ?? false);
                 setShowArchivedInAcc(res.data.show_archived_in_acc ?? false);
+                setWeekStart(res.data.week_start ?? null);
             }
         } catch (err) {
             console.error("Ошибка загрузки настроек:", err);
@@ -108,7 +113,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             orderHabits, setOrderHabits, tab, setTab, refetchSettings,
             theme, setTheme, privateShow, setPrivate, setAcsent, acsent, bg, setBg, bgUrl,
             decor, setDecor, twoAuth, setTwoAuth, note, setNote, messNote, setMessNote,
-            showArchived, setShowArchived, showArchivedInAcc, setShowArchivedInAcc
+            showArchived, setShowArchived, showArchivedInAcc, setShowArchivedInAcc,
+            weekStart, setWeekStart
         }}>
             {children}
         </SettingsContext.Provider>

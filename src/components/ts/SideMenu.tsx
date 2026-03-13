@@ -16,10 +16,12 @@ import { useLocation } from "react-router"
 import { isMobile } from "react-device-detect"
 import { SortAscending } from "@phosphor-icons/react"
 import { filterHabitsByOrder } from "./utils/filteredHabitsByOrder.tsx"
+import { useScheduleContext } from "../hooks/ScheduleHook.ts"
 
 export default function SideMenu() {
     const { setSearch, loadingList, list } = useChat()
     const { loadingHabits, habits, newOrderHabits } = useHabits()
+    const { refreshSchedules } = useScheduleContext()
     const { user, refetchUser } = useUser()
     const { setTab, showArchived } = useSettings()
     const { setBlackout } = useBlackout()
@@ -51,7 +53,11 @@ export default function SideMenu() {
     const longPressTriggered = useRef(false)
 
     const newLength = list.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
-
+    
+    useEffect(() => {
+        refreshSchedules()
+    }, [])
+    
     useEffect(() => {
         if (location.pathname.includes("/habit")) setActiveTab("habits")
     }, [location.pathname])

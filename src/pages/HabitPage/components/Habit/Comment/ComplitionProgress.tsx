@@ -64,14 +64,15 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
 
         let cumulativePauseMs = 0
         currentTimer.pauses.forEach(p => {
-            let pauseTime: string
+            let pauseTime: string;
+
             if (p.time) {
-                pauseTime = p.time
+                pauseTime = p.time;
             } else {
-                const pauseStartMs = new Date(p.start).getTime()
-                const startedMs = currentTimer.started_at.getTime()
-                const elapsedMs = pauseStartMs - startedMs - cumulativePauseMs
-                pauseTime = formatElapsed(elapsedMs)
+                const pauseStartMs = new Date(p.start).getTime();
+                const startedMs = currentTimer.started_at.getTime();
+                const elapsedMs = pauseStartMs - startedMs - cumulativePauseMs;
+                pauseTime = formatElapsed(elapsedMs);
             }
 
             list.push({
@@ -79,12 +80,12 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
                 time: pauseTime,
                 start: p.start,
                 end: p.end
-            })
+            });
 
             if (p.end) {
-                cumulativePauseMs += new Date(p.end).getTime() - new Date(p.start).getTime()
+                cumulativePauseMs += new Date(p.end).getTime() - new Date(p.start).getTime();
             }
-        })
+        });
 
         currentTimer.circles.forEach(c => {
             list.push({
@@ -187,19 +188,32 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
                 }
 
                 if (event.type === "pause") {
-                    const startTime = formatTime(event.start!)
-                    const isOpen = !event.end
-                    const endTime = isOpen ? "сейчас" : formatTime(event.end!)
-                    const durationMs = isOpen
-                        ? Date.now() - new Date(event.start!).getTime()
-                        : new Date(event.end!).getTime() - new Date(event.start!).getTime()
-                    const duration = formatDuration(durationMs)
+                    const startTime = formatTime(event.start!);
+                    const isOpen = !event.end;
+
+                    let durationMs: number;
+
+                    if (isOpen) {
+                        if (currentTimer.status === "ended" || isHistorical) {
+                            durationMs = new Date(currentTimer.end_at).getTime() - new Date(event.start!).getTime();
+                        } else {
+                            durationMs = Date.now() - new Date(event.start!).getTime();
+                        }
+                    } else {
+                        durationMs = new Date(event.end!).getTime() - new Date(event.start!).getTime();
+                    }
+
+                    const duration = formatDuration(durationMs);
 
                     return (
                         <div key={key} className="eventStr pauseStr">
-                            <span className="eventTime">{event.time}</span>: пауза с {startTime} до {endTime} (длительность {duration})
+                            <span className="eventTime">{event.time}</span>: пауза с {startTime} до{" "}
+                            {isOpen 
+                                ? (currentTimer.status === "ended" || isHistorical ? formatTime(currentTimer.end_at.toISOString()) : "сейчас") 
+                                : formatTime(event.end!)
+                            } (длительность {duration})
                         </div>
-                    )
+                    );
                 }
 
                 if (event.type === "circle") {

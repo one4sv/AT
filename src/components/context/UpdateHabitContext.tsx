@@ -84,7 +84,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
         { habitId, field, value, table },
       ]);
       setIsUpdating(prev => [...new Set([...prev, `habit_${habitId}`])]);
-    }, 300);
+    }, 100);
   }, []);
 
   const setNewName = useCallback((habitId: number, val: string) => enqueueUpdate(habitId, "name", val, "habits"), [enqueueUpdate]);
@@ -113,15 +113,15 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     if (isProcessing || updateQueue.length === 0) return;
     setIsProcessing(true);
 
-    const { habitId, field, value, table } = updateQueue[0];
+  const { habitId, field, value, table } = updateQueue[0];
 
     if (
       (field === "name" && value === habit?.name) ||
       (field === "desc" && value === habit?.desc) ||
-      (field === "start_date" && ((value == null && habit?.start_date == null) ||
-        (value instanceof Date && habit?.start_date && value.getTime() === new Date(habit.start_date).getTime()))) ||
-      (field === "end_date" && ((value == null && habit?.end_date == null) ||
-        (value instanceof Date && habit?.end_date && value.getTime() === new Date(habit.end_date).getTime()))) ||
+        (field === "start_date" && ((value == null && habit?.start_date == null) ||
+            (value instanceof Date && habit?.start_date && value.getTime() === new Date(habit.start_date).getTime()))) ||
+        (field === "end_date" && ((value == null && habit?.end_date == null) ||
+            (value instanceof Date && habit?.end_date && value.getTime() === new Date(habit.end_date).getTime()))) ||
       (field === "ongoing" && value === habit?.ongoing) ||
       (field === "periodicity" && value === habit?.periodicity) ||
       (field === "chosen_days" && Array.isArray(value) && JSON.stringify(value?.sort()) === JSON.stringify((habit?.chosen_days || []).sort())) ||
@@ -132,12 +132,12 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
       (field === "metric_type" && value === habitSettings.metric_type) ||
       (field === "schedule" && value === habitSettings.schedule)
     ) {
-      removeField(habitId, field);
-      setUpdateQueue((prev) => prev.slice(1));
-      setIsUpdating((prev) => prev.filter((item) => item !== `habit_${habitId}`));
-      setIsProcessing(false);
-      return;
-    }
+    removeField(habitId, field);
+    setUpdateQueue((prev) => prev.slice(1));
+    setIsUpdating((prev) => prev.filter((item) => item !== `habit_${habitId}`));
+    setIsProcessing(false);
+    return;
+}
 
     const payload = {
       habit_id: habitId,
@@ -153,7 +153,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
       if (updateQueue.length > 0) {
         refetchHabits();
         loadHabit(String(habitId))
-      }
+        }
       } else {
         throw new Error(res.data.error || "Ошибка при обновлении привычки");
       }

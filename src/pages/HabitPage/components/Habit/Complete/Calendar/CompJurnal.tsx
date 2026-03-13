@@ -1,8 +1,8 @@
 import { Virtuoso } from "react-virtuoso";
 import { useNavigate, useParams } from "react-router-dom";
-import "../../../scss/CompJurnal.scss";
-import { useCalendar } from "../../../../../components/hooks/CalendarHook";
-import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
+import "../../../../scss/CompJurnal.scss";
+import { useCalendar } from "../../../../../../components/hooks/CalendarHook";
+import { useTheHabit } from "../../../../../../components/hooks/TheHabitHook";
 
 export default function CompJurnal() {
     const { calendar } = useCalendar()

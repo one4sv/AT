@@ -3,6 +3,8 @@
 .persTabDivDouble {
     display: flex;
     gap: 1vw;
+    height: fit-content;
+    max-height: 17vh;
 }
 .persDiv {
     display: flex;

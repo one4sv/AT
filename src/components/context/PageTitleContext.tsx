@@ -3,7 +3,7 @@ import { createContext, useEffect, useState, type ReactNode, type SetStateAction
 const PageTitleContext = createContext<PageTitleContextType | null>(null);
 
 export interface PageTitleContextType {
-    setTitle: React.Dispatch<SetStateAction<string>>
+  setTitle: React.Dispatch<SetStateAction<string>>
 } 
 
 export const PageTitleProvider = ({ children }: { children: ReactNode }) => {

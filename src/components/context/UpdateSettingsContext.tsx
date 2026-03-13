@@ -17,6 +17,7 @@ export type UpdateSettingsContextType = {
     setNewPrivateShow: (val: PrivateSettings) => void;
     setNewShowArchived: (val: boolean) => void;
     setNewShowArchivedInAcc: (val: boolean) => void;
+    setNewWeekStart: (val: string) => void;
     isUpdating: string[];
 };
 
@@ -49,6 +50,13 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "show_archived_in_acc"), {setting:"show_archived_in_acc", value:val}]);
         setIsUpdating((prev) => [...new Set([...prev, "habits"])])
     },[])
+    const setNewWeekStart = useCallback((val: string) => {
+        setUpdateQueue((prev) => [
+            ...prev.filter((item) => item.setting !== "week_start"),
+            { setting: "week_start", value: val }
+        ]);
+        setIsUpdating((prev) => [...new Set([...prev, "habits"])]);
+    }, []);
 
     const setNewPrivateShow = useCallback((val: PrivateSettings) => {
         setUpdateQueue((prev) => [
@@ -187,7 +195,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
     return (
         <UpdateSettingsContext.Provider
             value={{ setNewOrder, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote, 
-                setNewShowArchived, setNewShowArchivedInAcc }}
+                setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart }}
         >
             {children}
         </UpdateSettingsContext.Provider>

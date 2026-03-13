@@ -36,24 +36,33 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
 
     useEffect(() => {
         if (!habit) return;
-        setName(habit.name ?? "");
-        setDesc(habit.desc ?? "");
-        setStartTime(habit.start_time ?? "");
-        setEndTime(habit.end_time ?? "");
         setStartDate(habit.start_date ? new Date(habit.start_date) : null);
         setEndDate(habit.end_date ? new Date(habit.end_date) : null);
         setPeriodicity(habit.periodicity ?? "");
         setOngoing(Boolean(habit.ongoing));
         setArcvhieved(Boolean(habit.is_archived));
+
+        if (name === "" || name === habit.name) {
+            setName(habit.name ?? "");
+        }
+        if (!desc || desc === habit.desc) {
+            setDesc(habit.desc ?? "");
+        }
+        if (!startTime || startTime === habit.start_time) {
+            setStartTime(habit.start_time ?? "");
+        }
+        if (!endTime || endTime === habit.end_time) {
+            setEndTime(habit.end_time ?? "");
+        }
+
         if (Array.isArray(habit.chosen_days)) {
             setChosenDays(initialChosenDays.map(day => ({
-            ...day,
-            chosen: (habit.chosen_days as number[]).includes(day.value)
+                ...day,
+                chosen: (habit.chosen_days as number[]).includes(day.value)
             })));
         } else {
             setChosenDays(initialChosenDays);
         }
-    // зависимости: когда меняется объект привычки — обновляем state
     }, [habit]);
 
     const periodicityArr = [
@@ -81,17 +90,9 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
 
         setChosenDays(prev => {
             const next = prev.map(day => day.value === value ? { ...day, chosen: !day.chosen } : day);
-            // отправляем на сервер выбранные дни в виде массива чисел (или null)
             setNewDays(habit.id, next);
             return next;
         });
-    };
-
-    const clearChosenDays = (val:string) => {
-        if (val !== "weekly") {
-            setChosenDays(initialChosenDays);
-            setNewDays(habit.id, null);
-        }
     };
     
     useEffect(() => {
@@ -141,7 +142,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     id="redHabitDesc"
                     className="addHabitInput"
                     maxLength={120}
-                    value={desc}
+                    value={desc || habit.desc}
                     readOnly={readOnly || archived}
                     onChange={(e) => {
                         setDesc(e.currentTarget.value);
@@ -214,7 +215,6 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         setPeriodicity(value as string);
                         setNewPeriodicity(habit.id, value as string);
                     }}
-                    extraFunction={clearChosenDays}
                     selected={periodicity || habit.periodicity}
                 />
             </div>

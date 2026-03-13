@@ -4,7 +4,7 @@ import DoneButton from "./DoneButt";
 import Timer from "./Timer";
 import "../../../scss/Complete.scss"
 
-export default function Complete() {
+export default function Complete({isMy} : {isMy:boolean}) {
     const { habit, habitSettings } = useTheHabit()
 
     if (!habit) return
@@ -13,7 +13,7 @@ export default function Complete() {
         <div className="completeDiv">
             {habitSettings.metric_type === "timer" && <Timer/>}
             {habitSettings.metric_type === "counter" && <Counter/>}
-            <DoneButton habitId={habit.id}/>
+            {isMy && <DoneButton habitId={habit.id}/>}
         </div>
     )
 }

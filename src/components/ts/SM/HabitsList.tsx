@@ -16,7 +16,6 @@ export default function HabitsList({ filter }: { filter?: string }) {
     const { habitId } = useParams();
     const [filtered, setFiltered] = useState(habits);
     const shownHabits = new Set<number>();
-    console.log(filter);
 
     const getTargetDate = (f: string | undefined): Date | null => {
         if (!f) return null;

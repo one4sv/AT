@@ -32,7 +32,7 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
                     fetchCalendarHabit(id.toString())
                     setIsDone(!isDone)
                 }
-                if (!id) fetchCalendarUser()
+                if (!habit || habit.id === id) fetchCalendarUser()
             }
             if (habitTimer && habitTimer.status !== "ended") api.post(`${API_URL}timer/stop`, {habit_id:id, time:new Date(), timer_id:habitTimer?.id })
         } catch (err) {

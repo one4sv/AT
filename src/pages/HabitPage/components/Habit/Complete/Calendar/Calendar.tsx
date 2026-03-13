@@ -1,19 +1,18 @@
 import { useEffect, useState, useRef } from "react"
-import { useCalendar } from "../../../../../components/hooks/CalendarHook";
-import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
-import "../../../scss/calendar.scss"
+import { useCalendar } from "../../../../../../components/hooks/CalendarHook";
+import { useTheHabit } from "../../../../../../components/hooks/TheHabitHook";
+import "../../../../scss/calendar.scss"
 import { ChevronDown } from "lucide-react"
-import { useHabits } from "../../../../../components/hooks/HabitsHook"
-import type { Calendar } from "../../../../../components/context/CalendarContext"
+import { useHabits } from "../../../../../../components/hooks/HabitsHook"
+import type { Calendar } from "../../../../../../components/context/CalendarContext"
 import DayCell from "./DayCell"
-import ChosenDay from "./ChosenDay";
 import { useParams } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
-import { isTimePassed } from "../../../../../components/ts/utils/dayArrHelpFuncs";
+import { isTimePassed } from "../../../../../../components/ts/utils/dayArrHelpFuncs";
 
 export default function Calendar() {
-    const { calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, chosenDay, setChosenDay } = useCalendar();
+    const { calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, setChosenDay } = useCalendar();
     const { habit, setDoable, setDayComment, setIsDone } = useTheHabit();
     const { habits } = useHabits()
 
@@ -31,7 +30,6 @@ export default function Calendar() {
     const yearsRef = useRef<HTMLDivElement>(null)
     const h = habit
 
-    // const isMy = habits?.some(h => h.id === Number(id)) || false
     const today = new Date()
     const month = today.getMonth()
     const year = today.getFullYear()
@@ -237,9 +235,6 @@ export default function Calendar() {
                     </div>
                 </div>
             </div>
-            {!id && chosenDay &&
-                <ChosenDay/>
-            }
         </div>
     )
 }

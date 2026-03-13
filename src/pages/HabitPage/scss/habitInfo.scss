@@ -3,24 +3,23 @@
 .statsDiv {
     position: relative;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
-    &.mobile {
-        height: auto;
-        width: 100%;
-        padding: 2vh 2vw;
-        flex-direction: column;
-        align-items: center;
-    }
 }
+
 .StatsDivMain {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
     padding: 1vh 0.5vw;
     display: flex;
     flex-direction: column;
     gap: 0.5vw;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+.sdmwm {
+    margin-top: 6vh;
 }
 .StatsDivHabit {
     height: 39vh;

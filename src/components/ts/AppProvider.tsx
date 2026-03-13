@@ -20,6 +20,7 @@ import { MessagesProvider } from '../context/MessagesContext';
 import { PageTitleProvider } from '../context/PageTitleContext';
 import { SendMessProvider } from '../context/SendMessContext';
 import { GroupProvider } from '../context/GroupContext';
+import { ScheduleProvider } from '../context/ScheduleContext';
 
 export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
     <NoteProvider>
@@ -40,13 +41,15 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                                                                 <UpdateHabitProvider>
                                                                     <DoneProvider>
                                                                         <MessagesProvider>
-                                                                            <ContextMenuProvider>
-                                                                                <DropProvider>
-                                                                                    <PageTitleProvider>
-                                                                                        {children}
-                                                                                    </PageTitleProvider>
-                                                                                </DropProvider>
-                                                                            </ContextMenuProvider>
+                                                                            <ScheduleProvider>
+                                                                                <ContextMenuProvider>
+                                                                                    <DropProvider>
+                                                                                        <PageTitleProvider>
+                                                                                            {children}
+                                                                                        </PageTitleProvider>
+                                                                                    </DropProvider>
+                                                                                </ContextMenuProvider>
+                                                                            </ScheduleProvider>
                                                                         </MessagesProvider>
                                                                     </DoneProvider>
                                                                 </UpdateHabitProvider>

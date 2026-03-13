@@ -3,6 +3,7 @@ import { useNavigate } from "react-router"
 import { CheckCircle, PushPinIcon  } from "@phosphor-icons/react"
 import { habitIcon } from "./habitIcon"
 import { useContextMenu } from "../hooks/ContextMenuHook"
+import { formatHabitTime } from "./utils/formatHabitTime"
 
 export default function HabitDiv({habit, id, isMyAcc, is_archived}:{habit:Habit, id?:number, isMyAcc?:boolean, is_archived?:boolean}) {
     const { openMenu } = useContextMenu()
@@ -10,20 +11,11 @@ export default function HabitDiv({habit, id, isMyAcc, is_archived}:{habit:Habit,
     
     const todayNum = new Date().getDay()
     const ruPeriodicity = (habit: Habit) => {
-        const { periodicity: per, start_time: st, end_time: et, chosen_days } = habit;
+        const { periodicity: per, chosen_days } = habit;
         if (habit.is_archived) return "в архиве"
 
-        const formatTime = () => {
-            if (st && et && st !== null) {
-                return ` с ${st} до ${et}`;
-            }
-            if (st || et) {
-                return st ? ` в ${st}` : ` до ${et}`
-            }
-            return "";
-        };
-        if (per === "everyday") return `Каждый день${formatTime()}`;
-        if (per === "sometimes") return `Иногда${formatTime()}`;
+        if (per === "everyday") return `Каждый день${formatHabitTime(habit)}`;
+        if (per === "sometimes") return `Иногда${formatHabitTime(habit)}`;
         if (per === "weekly" && chosen_days && chosen_days.length > 0) {
             let nearestDiff = 7;
             for (const day of chosen_days) {
@@ -45,10 +37,10 @@ export default function HabitDiv({habit, id, isMyAcc, is_archived}:{habit:Habit,
                 dayLabel = date.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" });
             }
 
-            return `${dayLabel}${formatTime()}`;
+            return `${dayLabel}${formatHabitTime(habit)}`;
         }
 
-        return formatTime();
+        return formatHabitTime(habit);
     };
     
     if (isMyAcc === undefined) isMyAcc = true
