@@ -33,3 +33,21 @@
         background-color: var(--menuButtHover);
     }
 }
+@media (max-width: 767px) {
+    .ContextMenuWrapper {
+        min-width: 40vw;
+        max-width: 90vw;
+        font-size: 14px;
+    }
+
+    .ContextMenuButt {
+        padding: 0.5vh 2vw;
+        gap: 2vw;
+        font-size: 4vw;
+
+        > svg {
+            width: 6vw;
+            height: 6vw;
+        }
+    }
+}

@@ -12,6 +12,10 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    &.mobile > .chat {
+        width: 100%;
+        margin: 0 0 6vh;
+    }
 }
 
 .chat {
@@ -26,9 +30,6 @@
     padding-bottom:1vh;
     width: 70%;
     margin: 0 auto 6vh;
-    &.mobile {
-        width: 100%;
-    }
 }
 .goDown {
     position: absolute;

@@ -100,6 +100,19 @@
     max-height: 38vh;
     scrollbar-width: thin;
 }
+@media (max-width: 800px) {
+    .schedule {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+    .scheduleWrapper {
+        flex: 0 0 90vw;
+        scroll-snap-align: start;
+        max-height: 70vh;
+    }
+}
 .scheduleInfo {
     padding: 0.5vh 0.5vw;
     display: flex;

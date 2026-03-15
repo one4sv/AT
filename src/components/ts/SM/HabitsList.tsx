@@ -48,7 +48,6 @@ export default function HabitsList({ filter }: { filter?: string }) {
 
         let filteredHabits = habits;
 
-        // Фильтр по архиву
         if (filter === "archived") {
             filteredHabits = habits.filter(h => h.is_archived);
         } else {

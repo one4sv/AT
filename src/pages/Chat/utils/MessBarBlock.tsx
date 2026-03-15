@@ -3,6 +3,7 @@ import { useMessages } from "../../../components/hooks/MessagesHook";
 import { useChat } from "../../../components/hooks/ChatHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
+import { isMobile } from "react-device-detect";
 
 export function MessBarBlock({ object, scrollToMessage }: { 
     object: { id: string, sender?: string, previewText:string },
@@ -20,7 +21,7 @@ export function MessBarBlock({ object, scrollToMessage }: {
     else if (redirect && !showNames) barType = "Переслать от: ";
 
     return (
-        <div className="answerDiv" onContextMenu={(e) => {
+        <div className={`answerDiv ${isMobile && "mobile"}`} onContextMenu={(e) => {
             if (redirect === undefined) return
             e.preventDefault()
             openMenu(e.clientX, e.clientY, "messBar", {id:""})

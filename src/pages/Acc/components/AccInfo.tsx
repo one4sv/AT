@@ -6,6 +6,7 @@ import { useChat } from "../../../components/hooks/ChatHook";
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import type { User } from "../../../components/context/UserContext";
 import { useNavigate } from "react-router";
+import { isMobile } from "react-device-detect";
 
 interface AccInfoProps {
     acc: User | undefined,
@@ -74,7 +75,7 @@ export default function AccInfo({acc, red, setRed, isMyAcc} : AccInfoProps) {
                     />
                 </div>
                 <div>
-                    @
+                    {!isMobile && "@"}
                     <input
                         className="accInput nickInput"
                         value={(isMyAcc ? newNick : acc?.nick) ?? ""}

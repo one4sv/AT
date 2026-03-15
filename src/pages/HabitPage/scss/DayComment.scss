@@ -9,11 +9,16 @@
     display: flex;
     flex-direction: column;
 }
+@media (max-width:800px) {
+    .dayCommentDiv {
+        min-height: 40vh;
+        width: 100%;
+    }
+}
 .habitDayComment {
     position: relative;
     display: flex;
     flex-direction: column;
-    // width: 19.5vw;
     width: 100%;
     border-radius: 12px;
     align-items:end;

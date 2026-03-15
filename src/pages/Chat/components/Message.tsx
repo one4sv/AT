@@ -76,7 +76,6 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                     }
                 )
             }}
-
             onDoubleClick={(e) => {
                 if (isChose) return;
                 e.preventDefault()
@@ -184,7 +183,7 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                         </div>
                     
                     )
-                    : (showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && !isChose && (
+                    : (!isMobile && showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && !isChose && (
                         <div 
                             className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
                             onClick={() => setReaction(m.id, "Heart")}

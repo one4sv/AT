@@ -10,9 +10,11 @@
     height: 100%;
     background-color: var(--mc);
     border-radius: 12px;
-    &.mobile {
-        width: 90%;
-        margin-bottom: 2vh;
+}
+@media (max-width:800px) {
+    .completeDiv {
+        min-height: 40vh;
+        width: 100%;
     }
 }
 .doneButt {

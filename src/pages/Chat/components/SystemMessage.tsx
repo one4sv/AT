@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import type { message } from "../../../components/context/ChatContext";
 import { useIdentify } from "../../../components/hooks/utils/useIdentify";
+import { isMobile } from "react-device-detect";
 
 interface SystemMessageType {
     m: message;
@@ -26,16 +27,14 @@ export default function SystemMessage({m, answer, scrollToMessage}: SystemMessag
 
     return (
         <div className="messageWrapper">
-            <div className="systemMessage">
+            <div className={`systemMessage ${isMobile && "mobile"}`}>
                 <span className="systemMessageSender" onClick={() => navigate(`/acc/${m.sender_nick}`)}>
                     {m.sender_name}
                 </span>
-                &nbsp;
                 {parts ? (
                     <span>
                         {parts.before}
-                        <span className="systemMessageSender" onClick={() => targetAccount && targetAccount.nick && navigate(`/acc/${targetAccount.nick}`)
-                        }>
+                        <span className="systemMessageSender" onClick={() => targetAccount && targetAccount.nick && navigate(`/acc/${targetAccount.nick}`)}>
                             {displayTargetName}
                         </span>
                         {parts.after}

@@ -4,7 +4,6 @@
     background-color: var(--bgc);
     border-radius: 8px;
     display: flex;
-    // margin-top: 1vh;
     flex-direction: column;
     width: 19.5vw;
     top: 0;
@@ -20,6 +19,13 @@
     &.active {
         opacity: 1;
         pointer-events: all;
+    }
+}
+@media (max-width:800px) {
+    .chosenDayDiv {
+        min-height: 0;
+        height: fit-content;
+        width: 100%;
     }
 }
 .chosenDayDate {

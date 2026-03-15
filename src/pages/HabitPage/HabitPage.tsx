@@ -21,7 +21,7 @@ import ChosenDay from "./components/Habit/Complete/Calendar/ChosenDay";
 
 
 export default function Habit() {
-    const { fetchCalendarHabit, fetchCalendarWLoading } = useCalendar()
+    const { fetchCalendarHabit, fetchCalendarWLoading, chosenDay } = useCalendar()
     const { calendarLoading } = useCalendar()
     const { loadHabitWLoading, habit, isReadOnly, loadingHabit } = useTheHabit()
     const { habitId } = useParams<{ habitId: string }>();
@@ -63,7 +63,7 @@ export default function Habit() {
                         </>
                     }
                     <CompJurnal/>
-                    {!habitId && <ChosenDay/>}
+                    {!habitId && chosenDay && <ChosenDay/>}
                 </div>
                 <Schedule id={habitId} isMy={!isReadOnly}/>
                 <div className="StatsDivStats">
@@ -71,7 +71,7 @@ export default function Habit() {
                 </div>
             </div>
             {habitId && habit && (
-                <div className={`habitMenu ${isMobile ? "mobile" : ""}`} style={{right: showHabitMenu ? "0" : "-25vw"}}>
+                <div className={`habitMenu ${isMobile ? "mobile" : ""}`} style={{right: showHabitMenu ? "0" : isMobile ? "-100vw" : "-25vw"}}>
                     <HabitInfo habit={habit} readOnly={isReadOnly}/>
                     <GoalsChats habit={habit} readOnly={isReadOnly} id={Number(habitId)}/>
                     <HabitSettings readOnly={isReadOnly}/>

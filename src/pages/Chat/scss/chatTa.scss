@@ -251,6 +251,9 @@
     width: 74%;
     cursor: pointer;
     height: 70%;
+    &.mobile {
+        width: 64%;
+    }
     >div {
         border-radius: 8px;
         &:hover {

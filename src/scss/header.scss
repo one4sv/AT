@@ -9,8 +9,11 @@
     background-color: var(--mc);
     display: flex;
     z-index: 8;
+    justify-content: center;
 }
 .menuShowButt {
+    position: absolute;
+    left: 0;
     height: 100%;
     aspect-ratio: 1/1;
     display: flex;
@@ -29,6 +32,5 @@
 .titleHeader {
     font-size: 24px;
     font-weight: 600;
-    margin-left: 18%;
     align-self: center;
 }

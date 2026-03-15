@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronLeft, ChevronUp, CircleUserRound, X, Search } from "lucide-react";
+import { ChevronDown, ChevronUp, CircleUserRound, X, Search } from "lucide-react";
 import { useNavigate } from "react-router";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useChat } from "../../../components/hooks/ChatHook";
@@ -6,12 +6,13 @@ import { useEffect, useRef, useState } from "react";
 import type { message } from "../../../components/context/ChatContext";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
-import { CopySimple, DotsThreeOutlineVertical, ShareFat, Trash } from "@phosphor-icons/react";
+import { CopySimple, DotsThreeOutlineVertical, List, ShareFat, Trash } from "@phosphor-icons/react";
 import { useDelete } from "../../../components/hooks/DeleteHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
 import PinnedMessages from "./PinnedMessages";
 import UserInChatUserList from "./UserInChatUserList";
+import { useSideMenu } from "../../../components/hooks/SideMenuHook";
 
 interface ChatUserProps {
     search: string;
@@ -45,6 +46,7 @@ export default function ChatUser({
     const { setDeleteConfirm, setDeleteMess } = useDelete()
     const { setChosenMess, chosenMess, setIsChose, isChose, setRedirect } = useMessages()
     const { setBlackout } = useBlackout()
+    const { setShowSideMenu, showSideMenu } = useSideMenu()
     const navigate = useNavigate();
     
     const [ isSearchOpen, setIsSearchOpen ] = useState(false);
@@ -112,8 +114,8 @@ export default function ChatUser({
     return (
         <div className="chatUser" ref={chatUserRef}>
             {isMobile && (
-                <div className="chatUserBack" onClick={() => navigate("/")}>
-                    <ChevronLeft />
+                <div className="chatUserBack" onClick={() => setShowSideMenu(!showSideMenu)}>
+                    <List />
                 </div>
             )}
             <div className={`chatUserInfo ${isMobile ? "mobile" : ""}`}
@@ -154,7 +156,7 @@ export default function ChatUser({
                 </div>
             </div>
             
-            {messages.find(m => m.is_pinned) && (
+            {messages.find(m => m.is_pinned) && !isMobile && (
                 <PinnedMessages pms={messages.filter(m => m.is_pinned)} scrollToMessage={scrollToMessage}/>
             )}
             <div className={`chatSearchWrapeer ${isMobile ? "mobile" : ""}`}
@@ -209,7 +211,7 @@ export default function ChatUser({
             <div className="userMenuCall" onClick={handleMenuClick}>
                 <DotsThreeOutlineVertical weight="fill"/>
             </div>
-            {isChose && (
+            {isChose && ! isMobile && (
                 <div className="ChosenCountDiv">
                     <div className="ChosenCount" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} onClick={() => {
                         setIsChose(false)

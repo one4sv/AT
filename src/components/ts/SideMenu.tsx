@@ -95,7 +95,6 @@ export default function SideMenu() {
         }
     }, [list, newLength])
 
-    // --- habits filters ---
     useEffect(() => {
         const filters: { label: string; value: string, new: string }[] = []
         filters.push({ label: "Активности", value: "all", new:"0" })
@@ -157,7 +156,6 @@ export default function SideMenu() {
         }
     }
 
-    // Закрытие меню профиля
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -171,7 +169,6 @@ export default function SideMenu() {
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
 
-    // Закрытие плюс-меню
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -187,7 +184,6 @@ export default function SideMenu() {
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
 
-    // Закрытие фильтров при клике вне
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (

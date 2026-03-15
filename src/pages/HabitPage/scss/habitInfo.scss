@@ -7,7 +7,6 @@
     flex-direction: column;
     overflow: hidden;
 }
-
 .StatsDivMain {
     flex: 1;
     min-height: 0;
@@ -51,10 +50,12 @@
     -webkit-backdrop-filter: blur(12px);
 
     &.mobile {
-        position: relative;
-        width: 90%;
-        height: auto;
-        padding-bottom: 2vh;
+        position: fixed;
+        top: 6vh;
+        width: 100%;
+        height: calc(100% - 6vh);
+        padding: 2vh 0;
+        z-index: 4;
     }
 }
 .habitMenuShowButt {
@@ -75,5 +76,15 @@
     cursor: pointer;
     &:hover {
         color: var(--tc);
+    }
+}
+@media (max-width: 800px) {
+    .StatsDivMain {
+        height: 100%;
+        overflow-y: auto;
+    }
+    .StatsDivHabit {
+        height: auto;
+        flex-direction: column;
     }
 }

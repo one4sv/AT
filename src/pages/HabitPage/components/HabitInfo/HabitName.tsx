@@ -5,8 +5,9 @@ import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook"
 import { TagIcon } from "../../utils/TagIcon"
 import Streak from "./Streak"
 import { useCalendar } from "../../../../components/hooks/CalendarHook"
-import { DotsThreeOutlineVertical } from "@phosphor-icons/react"
+import { DotsThreeOutlineVertical, List } from "@phosphor-icons/react"
 import { useContextMenu } from "../../../../components/hooks/ContextMenuHook"
+import { useSideMenu } from "../../../../components/hooks/SideMenuHook"
 
 interface HabitNameProps {
     habit:Habit | undefined,
@@ -18,6 +19,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu, isRea
     const { isUpdating } = useUpHabit()
     const { calendar } = useCalendar()
     const { menu, closeMenu, openMenu } = useContextMenu()
+    const { setShowSideMenu, showSideMenu } = useSideMenu()
     const habitNameRef = useRef<HTMLDivElement | null>(null);
 
     if (!habit) return null
@@ -40,6 +42,9 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu, isRea
     
     return (
         <div className="chatUser" ref={habitNameRef}>
+            <div className="chatUserBack" onClick={() => setShowSideMenu(!showSideMenu)}>
+                <List/>
+            </div>
             <div className="habitNameMain" onClick={() => setShowHabitMenu(!showHabitMenu)}>
                 {habit.tag && (
                     <div className="habitNameTag chatUserPick">

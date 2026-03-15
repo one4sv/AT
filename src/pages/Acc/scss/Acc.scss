@@ -16,6 +16,43 @@
     &.mobile {
         width: 90%;
         height: 100%;
+        > .accInfo {
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            gap: 1vh;
+            padding: 2.5vh 4vw;
+            > .accPic {
+                left: 0;
+                height: 15vh;
+            }
+            > .accInfoNames {
+                margin-left: 0;
+                text-align: center;
+                width: 100%;
+                > .accMainInfoStr > input {
+                    width: 100%;
+                    text-align: center;
+                }
+                > div {
+                    width: 100%;
+                    > input {
+                        text-align: center;
+                        width: 100%;
+                    }
+                }
+            }
+            > .accInfoWrapper {
+                width: 100%;
+                align-items: center;
+                gap: 5px;
+                > .accInfoRedButt {
+                    width: 100%; 
+                    max-width: 280px;
+                    right: auto;
+                }
+            }
+        }
     }
 }
 .accInfo {

@@ -13,6 +13,9 @@
     &.mobileSM {
         width: 100%;
         height: calc(100% - 5vh);
+        &.hh {
+            height: 100%;
+        }
     }
 }
 .SMsearchDiv {

@@ -9,8 +9,13 @@
     border-radius: 8px;
     align-items:end;
     min-height:0;
-    height: max-content;
     height: 39vh;
+}
+@media (max-width:800px) {
+    .compJurnalDiv {
+        min-height: 40vh;
+        width: 100%;
+    }
 }
 .compJurnalMain {
     height: 100%;
