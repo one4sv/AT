@@ -43,7 +43,7 @@ export default function ScheduleBlock({
     const today = new Date()
     const navigate = useNavigate()
     const tempIdRef = useRef(1)
-    
+    // console.log(extraBlocks)
     const getTimeClass = (h: Habit, day: number, date:Date) => {
         const now = new Date()
 
@@ -85,6 +85,7 @@ export default function ScheduleBlock({
         return (Number(h) || 0) * 60 + (Number(m) || 0)
     }
 
+    console.log(countInps)
     return (
         <div className={`scheduleBlock ${!edit && getTimeClass(habit, d.value, d.date)}`} onClick={() => isGeneral && !edit && navigate(`/habit/${habit.id}`)}>
             {getTimeClass(habit, d.value, d.date) === "ongoing" && !edit &&
@@ -102,15 +103,20 @@ export default function ScheduleBlock({
                         .filter(b => b.isSeparator !== isOddWeek(weekStart, d.date))
                         .sort((a, b) => timeToMinutes(a.start_time) - timeToMinutes(b.start_time))
                         .map((block) => (
-                            <div key={`${block.id}-${d.fullDate}`} className="scheduleExtraBlock">
-                                <span className="scheduleHabitTime">
-                                    {block.start_time && block.end_time 
-                                        ? `с ${block.start_time} до ${block.end_time}` 
-                                        : block.start_time || ""}
-                                </span>
-                                <span className="scheduleHabitName">{block.name}</span>
+                            <div className="scheduleExtraBlockWrapper" key={`${block.id}-${d.fullDate}`}>
+                                <div className="scheduleExtraBlockLine">
+                                </div>
+                                <div  className="scheduleExtraBlock">
+                                    <span className="scheduleHabitTime">
+                                        {block.start_time && block.end_time 
+                                            ? `с ${block.start_time} до ${block.end_time}` 
+                                            : block.start_time || ""}
+                                    </span>
+                                    <span className="scheduleHabitName">{block.name}</span>
+                                </div>
                             </div>
-                    ))}
+                        ))
+                    }
                 </div>
             )}
 

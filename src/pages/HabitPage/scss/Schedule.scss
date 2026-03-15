@@ -140,17 +140,6 @@
     &:hover {
         border: 1px solid var(--tc);
     }
-    &.ongoing {
-        > .scheduleBlockText > .scheduleHabitTime {
-            color: var(--borderWhLight);
-        }
-    }
-    &.skipped {
-        background-color: var(--borderHabit);
-        > .scheduleBlockText > .scheduleHabitTime {
-            color: var(--borderWhLight);
-        }
-    }
     &.done {
         background-color: #129e12;
         > .scheduleBlockText > .scheduleHabitTime {
@@ -162,9 +151,14 @@
                 color: var(--tc);
             }
         }
-        >.scheduleExtraBlocks > .scheduleExtraBlock > .scheduleHabitTime {
-            color: var(--borderWhLight);
-        }
+        >.scheduleExtraBlocks > .scheduleExtraBlockWrapper {
+            > .scheduleExtraBlockLine {
+                background-color: var(--borderWhLight);
+            }
+            > .scheduleExtraBlock > .scheduleHabitTime {
+                color: var(--borderWhLight);
+            }
+        } 
     }
 }
 .scheduleBar {
@@ -181,7 +175,7 @@
     background-color: #129e12;
 }
 .scheduleBlockText {
-    padding: 0.5vh 0.5vw;
+    padding: 0.5vh 0.4vw;
     display: flex;
     flex-direction: column;
 }
@@ -198,12 +192,20 @@
 .scheduleBlockInputs {
     width: 100%;
 }
+.scheduleExtraBlockWrapper {
+    display: flex;
+}
+.scheduleExtraBlockLine {
+    margin: 0 0.3vw 0 0.4vw;
+    width: 1px;
+    background-color: var(--borderHabit);
+}
 .scheduleExtraBlock {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap:2px;
-    padding: 0.3vh 0.75vw;
+    // padding: 0.3vh 0.75vw;
 }
 .scheduleInpTime {
     display: flex;

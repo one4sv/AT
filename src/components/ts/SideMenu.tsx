@@ -16,12 +16,12 @@ import { useLocation } from "react-router"
 import { isMobile } from "react-device-detect"
 import { SortAscending } from "@phosphor-icons/react"
 import { filterHabitsByOrder } from "./utils/filteredHabitsByOrder.tsx"
-import { useScheduleContext } from "../hooks/ScheduleHook.ts"
+import { useSchedule } from "../hooks/ScheduleHook.ts"
 
 export default function SideMenu() {
     const { setSearch, loadingList, list } = useChat()
     const { loadingHabits, habits, newOrderHabits } = useHabits()
-    const { refreshSchedules } = useScheduleContext()
+    const { refreshSchedules } = useSchedule()
     const { user, refetchUser } = useUser()
     const { setTab, showArchived } = useSettings()
     const { setBlackout } = useBlackout()

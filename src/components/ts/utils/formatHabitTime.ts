@@ -10,3 +10,10 @@ export const formatHabitTime = (habit:Habit) => {
     }
     return "";
 };
+
+export const formatScheduleTime = (minutes: number) => {
+    if (minutes <= 0 || minutes >= 24 * 60) return "";
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+};

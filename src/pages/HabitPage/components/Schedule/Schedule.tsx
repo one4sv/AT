@@ -4,7 +4,7 @@ import { useHabits } from "../../../../components/hooks/HabitsHook"
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook"
 import type { Habit } from "../../../../components/context/HabitsContext"
 import { Pencil } from "lucide-react"
-import { useScheduleContext } from "../../../../components/hooks/ScheduleHook"
+import { useSchedule } from "../../../../components/hooks/ScheduleHook"
 import ScheduleBlock from "../../utils/ScheduleBlock"
 import type { ScheduleBlockType } from "../../../../components/context/ScheduleContext"
 import { isOddWeek } from "../../utils/isOddWeek"
@@ -25,10 +25,11 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
     const { habits } = useHabits()
     const { habit } = useTheHabit()
     const { weekStart } = useSettings()
-    const { schedules, habitSchedule, loadHabitSchedule, saveHabitSchedule, loading, schedule_settings } = useScheduleContext()
+    const { schedules, habitSchedule, loadHabitSchedule, saveHabitSchedule, loading, schedule_settings } = useSchedule()
     
     const [edit, setEdit] = useState(false)
     const [isWeek, setIsWeek] = useState(true)
+    const [ oldWeekSet, setOldWeekSet ] = useState(true)
     const [weekSeparator, setWeekSeparator] = useState(false)
     const [countInps, setCountInps] = useState<CountInpsType[]>([])
     const hasAnySeparated = useMemo(() =>
@@ -86,30 +87,35 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
     }
 
     const enterEditMode = async () => {
-        setEdit(true)
+        setOldWeekSet(isWeek)
         setIsWeek(false)
-        if (id) {
-            setWeekSeparator(currentSettings?.isSeparated ?? false)
-
-            const newCountInps: CountInpsType[] = []
-            currentHabitBlocks.forEach((b: ScheduleBlockType) => {
-                const targetWeek = b.isSeparator ? secondWeek : week
-                const dayEntry = targetWeek.find(d => d.value === b.day_of_week)
-                if (dayEntry) {
-                    newCountInps.push({
-                        id: b.id,
-                        day_of_week: b.day_of_week,
-                        isSeparator: b.isSeparator,
-                        fullDate: dayEntry.fullDate,
-                        start_time: b.start_time || "",
-                        end_time: b.end_time || "",
-                        name: b.name || ""
-                    })
-                }
-            })
-            setCountInps(newCountInps)
-        }
+        setEdit(true)
     }
+
+    useEffect(() => {
+        if (!edit || !id) return
+
+        const newCountInps: CountInpsType[] = []
+
+        currentHabitBlocks.forEach((b) => {
+            const targetWeek = b.isSeparator ? secondWeek : week
+
+            const dayEntry = targetWeek.find(d => d.value === b.day_of_week)
+            if (dayEntry) {
+                newCountInps.push({
+                    id: b.id,
+                    day_of_week: b.day_of_week,
+                    isSeparator: b.isSeparator,
+                    fullDate: dayEntry.fullDate,
+                    start_time: b.start_time || "",
+                    end_time: b.end_time || "",
+                    name: b.name || ""
+                })
+            }
+        })
+
+        setCountInps(newCountInps)
+    }, [edit, id, currentHabitBlocks, week, secondWeek, weekSeparator])
 
     const handleSave = async () => {
         if (!id || !habit) return
@@ -126,6 +132,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
 
         await saveHabitSchedule(id, blocksToSend, weekSeparator)
         setEdit(false)
+        setIsWeek(oldWeekSet)
         setCountInps([])
     }
 
@@ -135,6 +142,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
         !habit.is_archived &&
         (habit.chosen_days?.includes(value) || habit.periodicity === "everyday")
 
+    console.log(isWeek)
     return (
         <div className="scheduleDiv">
             <div className="scheduleOptions">
@@ -167,6 +175,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                                     <div
                                         className="scheduleOpt restore"
                                         onClick={() => {
+                                            setIsWeek(oldWeekSet)
                                             setEdit(false)
                                             setCountInps([])
                                             setWeekSeparator(false)

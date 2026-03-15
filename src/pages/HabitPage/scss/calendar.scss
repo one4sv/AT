@@ -96,7 +96,7 @@
     border: 1px solid var(--borderHabit);
     opacity: 0;
     z-index: 4;
-    transform: translateY(10%);
+    transform: translateY(0%);
     transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: none;
     overflow: hidden;
@@ -105,7 +105,7 @@
     -webkit-backdrop-filter: blur(12px);
     &.active {
         opacity: 1;
-        transform: translateY(20%);
+        transform: translateY(10%);
         pointer-events: auto;
     }
 }
@@ -142,7 +142,7 @@
     background-color: var(--bgc);
     &.active {
         opacity: 1;
-        top: 7vh;
+        top: 4.2vh;
         pointer-events: auto;
     }
     backdrop-filter: blur(12px);
