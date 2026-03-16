@@ -22,10 +22,25 @@
 }
 .privateSL {
     @include var.selectList(10vw, 3vh, 9%, 0.3vw, 0.4vh, var(--borderWh), var(--tc), var(--bgc), 18px, 0.8vh, 0.8vw, 5%);
-    // margin-bottom: 2vh;
     >input {
         @include var.input(var(--mc), var(--tc), var(--borderWh), 3.5vh, 8px, var(--tc));
         width: 10vw;
         cursor: pointer;
+    }
+}
+@media (max-width:800px) {
+    .privateShowInfo {
+        width: 100%;
+        gap: 1vh;
+    }
+    .privateSL {
+        width: 30vw;
+        > div {
+            width: 100%;
+        }
+        > input {
+            box-sizing: border-box;
+            width: 100%;
+        }
     }
 }

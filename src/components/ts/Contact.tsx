@@ -11,6 +11,7 @@ import { useMessages } from "../hooks/MessagesHook";
 import { useUser } from "../hooks/UserHook";
 import { useIdentify } from  "../hooks/utils/useIdentify"
 import { useMemo } from "react";
+import { useSideMenu } from "../hooks/SideMenuHook";
 
 export interface ContactType {
     contact: Contact
@@ -23,6 +24,7 @@ export default function Contact({ contact }: ContactType) {
     const { setDroppedFiles } = useDrop()
     const { setIsChose } = useMessages()
     const { user } = useUser()
+    const { setShowSideMenu } = useSideMenu()
     const { nick, id } = useParams<{ nick: string, id:string }>()
     const navigate = useNavigate()
 
@@ -78,13 +80,14 @@ export default function Contact({ contact }: ContactType) {
 
     return (
         <div
-            className={`contactsUser ${nick === contact.nick || id == contact.id ? "active" : ""}`}
+            className={`contactsUser ${(nick === contact.nick || id === contact.id) && !isMobile ? "active" : ""}`}
             key={contact.id}
             onClick={() => {
                 if (contact.is_group) navigate(`/chat/g/${contact.id}`)
                 else navigate(`/chat/${contact.nick}`)
                 setBlackout({ seted: false })
                 setIsChose(false)
+                setShowSideMenu(false)
             }}
             onContextMenu={(e) => {
                 e.preventDefault()

@@ -14,3 +14,15 @@
         cursor: pointer;
     }
 }
+@media (max-width:800px) {
+    .chatTabSL {
+        width: 20vw;
+        > div {
+            width: 100%;
+        }
+        > input {
+            box-sizing: border-box;
+            width: 100%;
+        }
+    }
+}

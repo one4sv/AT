@@ -268,7 +268,8 @@ export default function SideMenu() {
                             className="SMprofileButt"
                             onClick={() => {
                                 setShowList(false)
-                                setTab("pers")
+                                if (!isMobile) setTab("pers")
+                                else setTab("menu")
                                 setBlackout({ seted: true, module: "Settings" })
                             }}
                         >

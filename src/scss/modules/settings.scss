@@ -27,7 +27,7 @@
         position: relative;
         color: var(--borderWh);
         cursor: pointer;
-        &:hover{
+        &:hover {
             background-color: var(--menuButtHover);
             color: var(--tc);
         }
@@ -37,6 +37,7 @@
         color: var(--tc);
     }
 }
+
 .search {
     cursor: text !important;
     border-bottom: 1px solid black;
@@ -49,21 +50,25 @@
         cursor: text;
     }
 }
+
 .settingsMainWrapper {
     height: 100%;
     flex: 1;
     overflow-y: auto;
     scroll-behavior: smooth;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
+
 .settingsMainWrapper::-webkit-scrollbar {
-    display: none; /* Chrome, Safari */
+    display: none;
 }
+
 .settingsMain {
     height: 100%;
     width: 100%;
 }
+
 .tab {
     min-height: 100%;
     position: relative;
@@ -72,9 +77,20 @@
     display: flex;
     flex-direction: column;
 }
+
 .spanMain {
-    font-size: 24px;
+    font-size: 22px;
     margin-bottom: 2vh;
+    display: flex;
+    align-items: center;
+    >svg {
+        height: 100%;
+        aspect-ratio: 1/1;
+    }
+}
+.settingSpan {
+    font-size: 20px;
+    margin-bottom: 1vh;
 }
 .spanSave {
     position: absolute;
@@ -86,18 +102,6 @@
 }
 .spanSave.fade-out {
     animation: fadeOut 0.5s ease-in-out forwards;
-}
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-@keyframes pulseBrightness {
-    0%, 100% { filter: brightness(100%); }
-    50% { filter: brightness(150%); }
 }
 .inputWrap {
     position: relative;
@@ -139,5 +143,62 @@
     color: var(--borderWh);
     font-size: 16px;
 }
+@media (max-width: 800px) {
+    .settingsDiv {
+        height: 100vh;
+        width: 100vw;
+        border-radius: 0;
+        overflow: hidden;
+    }
 
+    .settingsDiv.mobile-menu-view {
+        .settingsSideMenu {
+            flex: 0 0 100vw !important;
+            width: 100vw;
+            min-width: 100vw;
+            border-right: none;
+        }
+        .settingsMainWrapper {
+            display: none !important;
+        }
+    }
 
+    .settingsDiv:not(.mobile-menu-view) {
+        .settingsSideMenu {
+            display: none !important;
+        }
+        .settingsMainWrapper {
+            flex: 0 0 100vw !important;
+            width: 100vw;
+            min-width: 100vw;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        .settingsMain {
+            height: auto;
+            min-height: 100%;
+        }
+    }
+
+    .settingsMainTitle {
+        display: flex;
+        font-size: 16px;
+        width: 100%;
+        height: 4.5vh;
+        align-items: center;
+        border-bottom: 1px solid black;
+        padding: 0 2vw;
+    }
+
+    .spanMain {
+        padding-bottom: 1vh;
+        margin-bottom: 0.5vh;
+        font-size: 22px;
+        border-bottom: 1px solid black;
+    }
+    .settingSpan {
+        width: 100%;
+        
+    }
+}

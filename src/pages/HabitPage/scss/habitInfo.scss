@@ -43,7 +43,8 @@
     display: flex;
     flex-direction: column;
     background-color: var(--mc);
-    top: 5vh;
+    top: 6vh;
+    padding-top: 1vh;
     height: 100vh;
     transition: right 0.3s ease;
     backdrop-filter: blur(12px);

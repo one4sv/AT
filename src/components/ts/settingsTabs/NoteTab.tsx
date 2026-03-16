@@ -2,13 +2,14 @@ import { useSettings } from "../../hooks/SettingsHook";
 import { useUpSettings } from "../../hooks/UpdateSettingsHook";
 import type { TabProps } from "../../modules/Settings";
 import Toggler from "../toggler";
+import { SpanMain } from "./SpanMain";
 
 export default function NoteTab({ tabRef, isUpdating, fadingOutSections, handleAnimationEnd }: TabProps) {
     const { note, messNote } = useSettings()
     const { setNewNote, setNewMessNote } = useUpSettings()
     return (
         <div className="tab" ref={tabRef}>
-            <span className="spanMain">Чаты</span>
+            <SpanMain text="Уведоления"/>
             {fadingOutSections.includes("note") && (
                 <span
                     className={`spanSave ${!isUpdating.includes("note") ? "fade-out" : ""}`}

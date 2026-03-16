@@ -3,6 +3,7 @@ import type { TabProps } from "../../modules/Settings";
 import { useSettings } from "../../hooks/SettingsHook";
 import { api } from "../api";
 import { useEffect, useState } from "react";
+import { SpanMain } from "./SpanMain";
 
 export default function SafetyTab({ tabRef, isUpdating, fadingOutSections, handleAnimationEnd }: TabProps) {
     const { user } = useUser()
@@ -22,7 +23,7 @@ export default function SafetyTab({ tabRef, isUpdating, fadingOutSections, handl
     }, [])
     return (
         <div className="tab" ref={tabRef}>
-            <span className="spanMain">Безопасность</span>
+            <SpanMain text="Безопасность"/>
             {fadingOutSections.includes("safety") && (
                 <span
                     className={`spanSave ${!isUpdating.includes("safety") ? "fade-out" : ""}`}

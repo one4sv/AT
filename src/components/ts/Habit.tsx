@@ -7,9 +7,12 @@ import { formatHabitTime, formatScheduleTime } from "./utils/formatHabitTime"
 import { useSchedule } from "../hooks/ScheduleHook"
 import { isOddWeek } from "../../pages/HabitPage/utils/isOddWeek"
 import { useSettings } from "../hooks/SettingsHook"
+import { isMobile } from "react-device-detect"
+import { useSideMenu } from "../hooks/SideMenuHook"
 
 export default function HabitDiv({habit, id, isMyAcc, is_archived}:{habit:Habit, id?:number, isMyAcc?:boolean, is_archived?:boolean}) {
     const { openMenu } = useContextMenu()
+    const { setShowSideMenu } = useSideMenu()
     const navigate = useNavigate()
     const { schedules } = useSchedule()
     const { weekStart } = useSettings()
@@ -110,7 +113,10 @@ export default function HabitDiv({habit, id, isMyAcc, is_archived}:{habit:Habit,
     if (isMyAcc === undefined) isMyAcc = true
         
     return(
-        <div className={`habit themeHabit-default ${id === habit.id ? "active" : ""}`} onClick={() => navigate(`/habit/${habit.id}`)} onContextMenu={(e) => {
+        <div className={`habit themeHabit-default ${id === habit.id && !isMobile ? "active" : ""}`} onClick={() => {
+            navigate(`/habit/${habit.id}`)
+            setShowSideMenu(false)
+        }} onContextMenu={(e) => {
             e.preventDefault()
             openMenu( e.clientX, e.clientY, "habit", {id:String(habit.id), name:habit.name, isMy:isMyAcc}, habit)
         }}>

@@ -77,7 +77,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [showArchived, setShowArchived] = useState<boolean>(false);
     const [showArchivedInAcc, setShowArchivedInAcc] = useState<boolean>(false);
     const [weekStart, setWeekStart] = useState<string | null>(null);
-    const [tab, setTab] = useState<string>('acc');
+    const [tab, setTab] = useState<string>('menu');
 
     const refetchSettings = useCallback(async () => {
         try {

@@ -1,5 +1,6 @@
 import type { TabProps } from "../../modules/Settings";
 import SelectList from "../SelectList";
+import { SpanMain } from "./SpanMain";
 
 export default function ChatTab({ tabRef, isUpdating, fadingOutSections, handleAnimationEnd }: TabProps) {
     const reactionsArr = [
@@ -7,7 +8,7 @@ export default function ChatTab({ tabRef, isUpdating, fadingOutSections, handleA
     ]
     return (
         <div className="tab" ref={tabRef}>
-            <span className="spanMain">Чаты</span>
+            <SpanMain text="Чаты"/>
             {fadingOutSections.includes("chat") && (
                 <span
                     className={`spanSave ${!isUpdating.includes("chat") ? "fade-out" : ""}`}

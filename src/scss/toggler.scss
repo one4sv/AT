@@ -28,3 +28,8 @@
     border: 1px solid var(--bgc);
     transition: background-color 0.3s ease, justify-content 0.3s ease;
 }
+@media (max-width:800px) {
+    .toggler {
+        width: 8vw;
+    }
+}

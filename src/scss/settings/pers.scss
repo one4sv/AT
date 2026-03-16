@@ -98,3 +98,30 @@
 .bgSpanChoosen {
     color: var(--acsent) !important;
 }
+@media (max-width:800px) {
+    .persTabDivDouble {
+        flex-direction: column;
+        max-height: max-content;
+        margin-bottom: 2vh;
+    }
+    .persDiv {
+        margin-bottom: 0;
+    }
+    .themeSelector {
+        flex: 1;
+    }
+    .persSL {
+        margin-bottom: 0;
+        > input {
+            width: 100%;
+        }
+    }
+    .bgPicker {
+        flex-wrap: wrap;
+        gap: 10vw;
+        justify-content: center;
+    }
+    .bgMini {
+        width: 100%;
+    }
+}

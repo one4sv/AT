@@ -4,6 +4,7 @@ import { useUpSettings } from "../../hooks/UpdateSettingsHook";
 import { type TabProps } from "../../modules/Settings";
 import Toggler from "../toggler";
 import DatePicker from "react-datepicker";
+import { SpanMain } from "./SpanMain";
 export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handleAnimationEnd }: TabProps) {
     const { orderHabits, showArchived, showArchivedInAcc, weekStart } = useSettings();
     const { setNewOrder, setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart } = useUpSettings();
@@ -67,7 +68,7 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
 
     return (
         <div className="tab" ref={tabRef}>
-            <span className="spanMain">Активности</span>
+            <SpanMain text="Активности"/>
             {fadingOutSections.includes("habits") && (
                 <span
                     className={`spanSave ${!isUpdating.includes("habits") ? "fade-out" : ""}`}

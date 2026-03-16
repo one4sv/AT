@@ -3,6 +3,7 @@ import SelectList, { type Option } from "../SelectList";
 import { useSettings } from "../../hooks/SettingsHook";
 import { useUpSettings } from "../../hooks/UpdateSettingsHook";
 import { type PrivateSettings } from "../../context/SettingsContext";
+import { SpanMain } from "./SpanMain";
 
 export default function PrivateTab({ tabRef, isUpdating, fadingOutSections, handleAnimationEnd }: TabProps) {
     const { privateShow } = useSettings();
@@ -26,7 +27,7 @@ export default function PrivateTab({ tabRef, isUpdating, fadingOutSections, hand
 
     return (
         <div className="tab" ref={tabRef}>
-            <span className="spanMain">Приватность</span>
+            <SpanMain text="Приватность"/>
             {fadingOutSections.includes("private") && (
                 <span
                     className={`spanSave ${!isUpdating.includes("private") ? "fade-out" : ""}`}

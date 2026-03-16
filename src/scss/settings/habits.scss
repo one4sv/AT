@@ -1,9 +1,5 @@
 @use "../global" as var;
 
-.settingSpan {
-    font-size: 20px;
-    margin-bottom: 1vh;
-}
 .settingsOrder {
     display: flex;
     flex-direction: column;
@@ -72,4 +68,17 @@
     padding-inline: 5px;
     width: 6vw;
     margin-left: 10px;
+}
+@media (max-width:800px) {
+    .settingsOrder {
+        width: 100%;
+        height: auto;
+        margin-bottom: 1vh;
+    }
+    .orderShown {
+        width: 100%;
+    }
+    .habitTabDP {
+        width: 30vw;
+    }
 }

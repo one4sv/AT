@@ -326,3 +326,9 @@
         cursor: default;
     }
 }
+@media (max-width:800px) {
+    .createChatDiv {
+        width: 90vw;
+        height: 90vh;
+    }
+}

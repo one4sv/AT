@@ -6,6 +6,7 @@ import { PlusCircle } from "@phosphor-icons/react";
 import defaultBg from "../../../assets/pics/defaultBg.png";
 import monoBg from "../../../assets/pics/monoBg.png";
 import { useBlackout } from "../../hooks/BlackoutHook";
+import { SpanMain } from "./SpanMain";
 
 interface TabProps {
     tabRef: RefObject<HTMLDivElement>;
@@ -49,8 +50,8 @@ export default function PersTab({ tabRef, isUpdating, fadingOutSections, handleA
 
     return (
         <div className="tab" ref={tabRef}>
-            <span className="spanMain">Персонализация</span>
-            {fadingOutSections.includes("habits") && (
+            <SpanMain text="Персонализация"/>
+            {fadingOutSections.includes("pers") && (
                 <span
                     className={`spanSave ${!isUpdating.includes("pers") ? "fade-out" : ""}`}
                     onAnimationEnd={() => handleAnimationEnd("pers")}
