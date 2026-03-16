@@ -25,6 +25,19 @@
 
     &.mobile {
         width: 90vw;
+        >.landingFormConfEmail {
+            width: 100%;
+            > .ConfEmailText {
+                width: 100%;
+                > span {
+                    width: 100%;
+                }
+                >.wtbgButt {
+                    margin: 10vh auto;
+                    width: fit-content;
+                }
+            }
+        }
     }
     
 }
