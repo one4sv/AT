@@ -9,15 +9,7 @@
     overflow: hidden;
     min-height: 40vh;
 }
-@media (max-width:800px) {
-    .calendarDiv {
-        min-height: 53vh;
-        width: 100%;
-    }
-    .calendarMain {
-        height: 100%;
-    }
-}
+
 .calendarMain {
     border-radius: 12px;
     display: flex;
@@ -28,6 +20,15 @@
     padding: 10px;
     min-height:39vh;
     height: fit-content;
+}
+@media (max-width:800px) {
+    .calendarDiv {
+        min-height: 51vh;
+        width: 100%;
+    }
+    .calendarMain {
+        height: 100%;
+    }
 }
 .calendarDates {
     width: 100%;
@@ -267,7 +268,11 @@
     z-index: 5;
     max-width: 15vw;
 }
-
+@media (max-width:800px) {
+    .hoverDayDiv {
+        display: none;
+    }
+}
 .hoverRow {
     display: flex;
     align-items: center;

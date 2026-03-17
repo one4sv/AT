@@ -9,6 +9,7 @@ import ScheduleBlock from "../../utils/ScheduleBlock"
 import type { ScheduleBlockType } from "../../../../components/context/ScheduleContext"
 import { isOddWeek } from "../../utils/isOddWeek"
 import { useSettings } from "../../../../components/hooks/SettingsHook"
+import { isMobile } from "react-device-detect"
 
 export type CountInpsType = {
     fullDate: string;
@@ -256,13 +257,16 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                     </div>
                 ))}
             </div>
-
             {weekSeparator && edit && id && <div className="scheduleWeekSign even">Чётная неделя:</div>}
-
             {id && weekSeparator && edit && (
                 <div className="schedule">
                     {secondWeek.map(d => (
                         <div className="scheduleWrapper" key={d.fullDate}>
+                            {isMobile && (
+                                <div className="scheduleInfo">
+                                    <span className="scheduleWeekDay">{d.label.toUpperCase()}</span>
+                                </div>
+                            )}
                             {isVisible(d.value) && habit && (
                                 <ScheduleBlock
                                     habit={habit}

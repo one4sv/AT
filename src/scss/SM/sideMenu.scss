@@ -63,6 +63,15 @@
         display: block;
     }
 }
+@media (max-width:800px) {
+    .SMmenuButt {
+        >svg {
+            aspect-ratio: 1/1;
+            height: 100%;
+            width: 100%;
+        }
+    }
+}
 .SMmenuButt.active {
     >svg {
         color: var(--tc);
@@ -295,7 +304,7 @@
 .SMnav {
     pointer-events: all;
     display: flex;
-    background-color: var(--buttBg);
+    background-color: var(--mc);
     width: 60%;
     height: 5vh;
     border-radius: 20px;

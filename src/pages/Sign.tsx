@@ -124,11 +124,13 @@ export default function Log() {
     <div className="landing">
       <div className={`landingDiv ${isMobile ? "mobile" : ""}`}>
         <div className="title">Achieve Together</div>
-        {/*<div
+        {/* Форма */}
+        <div
           className={`landingForm ${isMobile ? "mobile" : ""}`}
           ref={formRef}
           style={{ display: success || loadingAuth || loadingUser ? "none" : "flex" }}
         >
+          {/* Авторизация */}
           <form
             className="landingFormAuth"
             onSubmit={handleAuth}
@@ -162,6 +164,7 @@ export default function Log() {
             </div>
             <button type="button" onClick={() => swipeForm("reg")}>Создать аккаунт</button>
           </form>
+          {/* Регистрация */}
           <form
             className="landingFormReg"
             onSubmit={handleRegister}
@@ -227,7 +230,7 @@ export default function Log() {
             </div>
             <button type="button" onClick={() => swipeForm("auth")}>Войти в аккаунт</button>
           </form>
-        </div> */}
+        </div>
         {/* Загрузка */}
         {(loadingAuth || loadingUser) && (
           <div className="loading">
@@ -236,16 +239,15 @@ export default function Log() {
           </div>
         )}
         {/* Подтверждение почты */}
-        {/* {!isTwoAuth && !loadingAuth && ( */}
-          <div className="landingFormConfEmail" style={{ display: success ? "none" : "flex" }}>
-          {/* <div className="landingFormConfEmail" style={{ display: success ? "flex" : "none" }}> */}
+        {!isTwoAuth && !loadingAuth && (
+          <div className="landingFormConfEmail" style={{ display: success ? "flex" : "none" }}>
             <div className="ConfEmailText">
               <span>Проверьте почту.</span>
               <span>Мы отправили вам письмо с ссылкой для входа.</span>
               <button type="button" className="wtbgButt">Отправить письмо повторно.</button>
             </div>
           </div>
-        {/* )} */}
+        )}
       </div>
       <div className="landingFooter">
         <div>Achieve Together © 2025</div>

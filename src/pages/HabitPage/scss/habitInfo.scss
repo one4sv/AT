@@ -17,6 +17,11 @@
     overflow-y: auto;
     scrollbar-width: thin;
 }
+@media (max-width:800px) {
+    .StatsDivMain {
+        padding: 0.2vh 0.5vw;
+    }
+}
 .sdmwm {
     margin-top: 6vh;
 }
