@@ -5,6 +5,7 @@ import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { useEffect, useState } from "react";
 import { getStreakView } from "../../utils/getStreakView";
 import "../../scss/Streak.scss";
+import { dateToStrFormat } from "../../utils/dateToStr";
 
 export interface StreakType {
     habit: Habit;
@@ -23,9 +24,6 @@ export default function Streak({ habit, calendar }: StreakType) {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const formatDate = (d: Date) =>
-        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-
     const datesSet = new Set(calendar.map(d => d.isDone === true ? d.date : null));
     const startDate = habit.start_date ? new Date(habit.start_date) : new Date(0);
 
@@ -34,7 +32,7 @@ export default function Streak({ habit, calendar }: StreakType) {
         const checkDate = new Date(fromDate);
 
         if (habit.periodicity === "everyday") {
-            while (checkDate >= startDate && datesSet.has(formatDate(checkDate))) {
+            while (checkDate >= startDate && datesSet.has(dateToStrFormat(checkDate))) {
                 count++;
                 checkDate.setDate(checkDate.getDate() - 1);
             }
@@ -44,7 +42,7 @@ export default function Streak({ habit, calendar }: StreakType) {
             while (checkDate >= startDate) {
                 const dayOfWeek = checkDate.getDay();
                 if (habit.chosen_days.includes(dayOfWeek)) {
-                    if (datesSet.has(formatDate(checkDate))) {
+                    if (datesSet.has(dateToStrFormat(checkDate))) {
                         count++;
                         checkDate.setDate(checkDate.getDate() - 1);
                     } else break;
@@ -82,7 +80,7 @@ export default function Streak({ habit, calendar }: StreakType) {
             habit.periodicity === "everyday" ||
             (habit.periodicity === "weekly" && habit.chosen_days?.includes(yesterdayDayOfWeek));
 
-        if (isYesterdayChosen && datesSet.has(formatDate(yesterday)) && !datesSet.has(formatDate(today))) {
+        if (isYesterdayChosen && datesSet.has(dateToStrFormat(yesterday)) && !datesSet.has(dateToStrFormat(today))) {
             showYesterdayWarning = true;
         }
     }

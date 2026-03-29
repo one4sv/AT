@@ -3,23 +3,24 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../../../../scss/CompJurnal.scss";
 import { useCalendar } from "../../../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../../../components/hooks/TheHabitHook";
+import { Search, X } from "lucide-react";
+import { useState } from "react";
+import { formatDateFromString } from "../../../../utils/dateToStr";
 
 export default function CompJurnal() {
     const { calendar } = useCalendar()
     const { setDayComment, setIsDone, doable, habit } = useTheHabit()
     const { setChosenDay, setSelectedYear, setSelectedMonth } = useCalendar();
-
     const { habitId: id } = useParams<{ habitId?: string }>();
     const navigate = useNavigate();
 
-    const formatDate = (date: string) => {
-        const [y, m, d] = date.split("-");
-        return `${d}.${m}.${y}`;
-    };
+    const [ jurnalSearch, setJurnalSearch ] = useState("")
+
+
 
     const sortedCalendar = [...calendar]
-        .filter(c => c.isDone)
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        .filter(c => jurnalSearch.trim().length > 0 ? (c.comment?.includes(jurnalSearch) || formatDateFromString(c.date).includes(jurnalSearch)) && c.isDone : c.isDone)
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
     const jurnalHeight = () => {
         if (id && habit) {
@@ -31,6 +32,15 @@ export default function CompJurnal() {
 
     return (
         <div className={`compJurnalDiv ${jurnalHeight() || ""}`} >
+            <div className="compJurnalsearch">
+                <input type="text" onChange={(e) => setJurnalSearch(e.target.value)} value={jurnalSearch}/>
+                {jurnalSearch.trim().length > 0
+                    ? (
+                        <X className="deleteSearchText" onClick={() => setJurnalSearch("")}/>
+                    ) : (
+                        <Search/>
+                    )}
+            </div>
             <div className="compJurnalMain">
                 <Virtuoso
                     data={sortedCalendar}
@@ -63,7 +73,7 @@ export default function CompJurnal() {
                                 <div className="CJdates">
                                     <div className="CJdate">
                                         <div className="calendarDot comp"></div>
-                                        {formatDate(date)}
+                                        {formatDateFromString(date)}
                                     </div>
                                     <div className="CJcreated">отм. {created}</div>
                                 </div>

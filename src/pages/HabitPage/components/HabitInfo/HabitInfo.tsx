@@ -12,27 +12,36 @@ import { TagIcon } from "../../utils/TagIcon";
 
 interface RedHabitProps {
     habit: Habit;
-    readOnly:boolean;
+    readOnly: boolean;
 }
 
 export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     const {
         setNewName, setNewDescription, setNewStartDate, setNewEndDate,
         setNewOngoing, setNewPeriodicity, setNewDays, setNewStartTime,
-        setNewEndTime, setNewTag
+        setNewEndTime, setNewTag,
+        saveHabit,          // ← добавлено
+        localChanges,       // ← добавлено
+        isUpdating          // ← добавлено
     } = useUpHabit();
 
-    const [ name, setName ] = useState<string>("");
-    const [ desc, setDesc ] = useState<string | undefined>("");
-    const [ startTime, setStartTime ] = useState<string>("");
-    const [ endTime, setEndTime ] = useState<string>("");
-    const [ startDate, setStartDate ] = useState<Date | null>(null);
-    const [ endDate, setEndDate ] = useState<Date | null>(null);
-    const [ periodicity, setPeriodicity ] = useState<string>("")
-    const [ ongoing, setOngoing ] = useState<boolean>(false);
-    const [ archived, setArcvhieved ] = useState<boolean>(false);
-    const [ selectedTag, setSelectedTag ] = useState<string | undefined>()
-    const [ chosenDays, setChosenDays ] = useState<{ value: number; label: string; chosen: boolean }[]>(initialChosenDays);
+    const [name, setName] = useState<string>("");
+    const [desc, setDesc] = useState<string | undefined>("");
+    const [startTime, setStartTime] = useState<string>("");
+    const [endTime, setEndTime] = useState<string>("");
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
+    const [periodicity, setPeriodicity] = useState<string>("");
+    const [ongoing, setOngoing] = useState<boolean>(false);
+    const [archived, setArcvhieved] = useState<boolean>(false);
+    const [selectedTag, setSelectedTag] = useState<string | undefined>();
+    const [chosenDays, setChosenDays] = useState<{ value: number; label: string; chosen: boolean }[]>(initialChosenDays);
+
+    // Проверка, есть ли несохранённые изменения именно для этой привычки
+    const hasUnsavedChanges = Boolean(
+        localChanges?.[habit.id] && Object.keys(localChanges[habit.id]).length > 0
+    );
+    const isThisUpdating = isUpdating.includes(`habit_${habit.id}`);
 
     useEffect(() => {
         if (!habit) return;
@@ -64,7 +73,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             setChosenDays(initialChosenDays);
         }
     }, [habit]);
-
+    
     const periodicityArr = [
         { label: "каждый день", value: "everyday" },
         { label: "несколько дней в неделю", value: "weekly" },
@@ -85,7 +94,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     
     const toggleDay = (value: number) => {
         if (readOnly) return;
-        setPeriodicity("weekly"); // локально
+        setPeriodicity("weekly");
         setNewPeriodicity(habit.id, "weekly");
 
         setChosenDays(prev => {
@@ -96,8 +105,8 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     };
     
     useEffect(() => {
-        if (selectedTag !== habit.tag && selectedTag) setNewTag(habit.id, selectedTag)
-    }, [habit.id, habit.tag, selectedTag, setNewTag])
+        if (selectedTag !== habit.tag && selectedTag) setNewTag(habit.id, selectedTag);
+    }, [habit.id, habit.tag, selectedTag, setNewTag]);
 
     return (
         <div className="redHabit">
@@ -172,7 +181,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                 </div>
                 <div className="addHabitWrapper">
                     <label>Дата окончания</label>
-                    {ongoing || habit.ongoing  ? (
+                    {ongoing || habit.ongoing ? (
                         <input type="text" className="addHabitInput ongoingInput" readOnly value={"По настоящее время"} />
                     ) : (
                         <CalendarInput
@@ -254,6 +263,15 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         }}
                     />
                 </div>
+            </div>
+            <div
+                className={`habitSave ${readOnly || archived || !hasUnsavedChanges ? "disabled" : ""} ${isThisUpdating ? "saving" : ""}`}
+                onClick={async () => {
+                    if (readOnly || archived || !hasUnsavedChanges || isThisUpdating) return;
+                    await saveHabit(habit.id);
+                }}
+            >
+                {isThisUpdating ? "Сохраняется..." : "Сохранить"}
             </div>
         </div>
     );

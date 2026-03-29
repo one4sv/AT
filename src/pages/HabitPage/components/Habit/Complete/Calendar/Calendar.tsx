@@ -116,7 +116,7 @@ export default function Calendar() {
 
         const yearsArray = Array.from(yearsSet).sort((a, b) => a - b);
         setYears(yearsArray);
-    }, [habits, h, id]); // 🔹 убрали today
+    }, [habits, h, id]);
 
     useEffect(() => {
         if (selectedMonth === null || selectedYear === null) return

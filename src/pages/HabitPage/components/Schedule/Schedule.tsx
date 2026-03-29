@@ -28,11 +28,11 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
     const { weekStart } = useSettings()
     const { schedules, habitSchedule, loadHabitSchedule, saveHabitSchedule, loading, schedule_settings } = useSchedule()
     
-    const [edit, setEdit] = useState(false)
-    const [isWeek, setIsWeek] = useState(true)
+    const [ edit, setEdit ] = useState(false)
+    const [ isWeek, setIsWeek ] = useState(true)
     const [ oldWeekSet, setOldWeekSet ] = useState(true)
-    const [weekSeparator, setWeekSeparator] = useState(false)
-    const [countInps, setCountInps] = useState<CountInpsType[]>([])
+    const [ weekSeparator, setWeekSeparator] = useState(false)
+    const [ countInps, setCountInps ] = useState<CountInpsType[]>([])
     const hasAnySeparated = useMemo(() =>
         Object.values(schedule_settings).some(s => Boolean(s?.isSeparated)),
         [schedule_settings]
@@ -143,7 +143,6 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
         !habit.is_archived &&
         (habit.chosen_days?.includes(value) || habit.periodicity === "everyday")
 
-    console.log(isWeek)
     return (
         <div className="scheduleDiv">
             <div className="scheduleOptions">
@@ -166,7 +165,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                         </>
                     )}
                 </div>
-                {isMy && (
+                {(isMy && !id || (habit && id === String(habit.id) && !habit?.is_archived)) && (
                     <div className="scheduleOptionsButts">
                         {loading ? (
                             <div className="scheduleOpt">Загрузка</div>

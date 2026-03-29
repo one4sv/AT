@@ -30,10 +30,13 @@
     display: flex;
     gap: 0.5vw;
 }
-.StatsDivStats {
+.statsDivStats {
     width: 100%;
     display: flex;
-    gap: 0.5vw;
+    border-radius: 12px;
+    min-height: 50vh;
+    overflow: hidden;
+    background-color: var(--mc);
 }
 .statsCal {
     display: flex;
@@ -83,6 +86,32 @@
     &:hover {
         color: var(--tc);
     }
+}
+.habitSave {
+    width: 80%;
+    height: 4vh;
+    background-color: var(--acsent);
+    color: var(--tc);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1vh 0;
+    cursor: pointer;
+    border: 1px solid var(--tr);
+    &:hover {
+        background-color: var(--darkerAcsent);
+    }
+    &.disabled {
+        border: 1px solid var(--borderHabit);
+        color: var(--borderHabit);
+        background-color: var(--mc);
+        cursor: default;
+    }
+    &.saving {
+        background-color: var(--darkerAcsent);
+    }
+
 }
 @media (max-width: 800px) {
     .StatsDivMain {

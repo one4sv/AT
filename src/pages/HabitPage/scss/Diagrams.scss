@@ -3,8 +3,8 @@
 .diagramsDiv {
     position: relative;
     background-color: var(--mc);
-    width: 19.5vw;
-    display: inline-block;
+    width: 100%;
+    display: flex;
     height: 39vh;
     border-radius: 12px;
     align-self: start;
@@ -16,35 +16,66 @@
         margin: 0 auto;
     }
 }
-.diagram {
+.circleDiagramDiv {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
+    background-color: var(--mc);
     width: 100%;
-    > canvas {
-        width: 100% !important;
-        height: 100% !important;
-        z-index: 3;
-    }
+    display: inline-block;
+    height: 100%;
+    align-self: start;
+    padding: 0vh 0.5vw;
 }
-.diagramLegend {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.statsMenu {
     display: flex;
     flex-direction: column;
-    gap: 0.5vw;
-    cursor: pointer;
-    z-index: 2;
+    width: 15%;
+    border-right: 1px solid black;
 }
-.legendStr {
+.statsMenuButt {
     display: flex;
     align-items: center;
-    gap: 0.3vw;
-    > span {
-        min-width: 4ch;
+    padding: 1vh 1vw;
+    width: 100%;
+    color: var(--borderWh);
+    cursor: pointer;
+    font-size: 18px;
+    &:hover {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
     }
+    &.active {
+        background-color: var(--acsent);
+        color: var(--tc);
+        &:hover {
+            background-color: var(--darkerAcsent);
+        }
+    }
+}
+.statsDivWrapper {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    width: 85%;
+    overflow-y:hidden;
+    position: relative;
+}
+.statsDivFilters {
+    width: 100%;
+    height: 8%;
+    display: flex;
+    justify-content: space-around;
+}
+.statsDivSlider {
+    width: 100%;
+    height: 300%;
+    position: absolute;
+}
+.statsDivSlide {
+    position: relative;
+    height: calc(100% / 3);
+    padding: 1vh 1vw;
+}
+.doneDiagram {
+    width: 100%;
+    height: 92%;
 }

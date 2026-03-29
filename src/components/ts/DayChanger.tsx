@@ -12,13 +12,13 @@ export default function DayChanger({
     return (
         <div className="dayChanger">
             {chosenDays.map(({ value, label, chosen }) => {
-                const isChosen = chosenArr?.some(c => c === value) || chosen;
+                const wasChosen = chosenArr?.some(c => c === value);
                 return (
                     <button
                         key={value}
                         onClick={() => toggleDay(value)}
                         disabled={!!showOnly}
-                        className={isChosen ? "active" : ""}
+                        className={chosen ? "active" : wasChosen ? "was" : ""}
                     >
                         {label}
                     </button>

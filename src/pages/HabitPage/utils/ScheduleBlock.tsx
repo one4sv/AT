@@ -43,11 +43,12 @@ export default function ScheduleBlock({
     const today = new Date()
     const navigate = useNavigate()
     const tempIdRef = useRef(1)
-    // console.log(extraBlocks)
     const getTimeClass = (h: Habit, day: number, date:Date) => {
         const now = new Date()
 
         if (calendar.find(c => c.isDone && c.date === dateToCalendarFormat(date) && Number(c.habitId) === h.id)) return "done"
+
+        if (!h.start_time) return ""
 
         const [sh, sm] = h.start_time.split(":").map(Number)
         const start = new Date()
@@ -84,8 +85,6 @@ export default function ScheduleBlock({
         const [h, m] = normalized.split(":")
         return (Number(h) || 0) * 60 + (Number(m) || 0)
     }
-
-    console.log(countInps)
     return (
         <div className={`scheduleBlock ${!edit && getTimeClass(habit, d.value, d.date)}`} onClick={() => isGeneral && !edit && navigate(`/habit/${habit.id}`)}>
             {getTimeClass(habit, d.value, d.date) === "ongoing" && !edit &&

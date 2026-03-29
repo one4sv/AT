@@ -12,20 +12,21 @@ import GoalsChats from "./components/HabitInfo/GoalsChats";
 import HabitSettings from "./components/HabitInfo/HabitSettings";
 import HabitName from "./components/HabitInfo/HabitName";
 import Calendar from "./components/Habit/Complete/Calendar/Calendar";
-import Diagrams from "./components/Stats/Diagrams/Diagrams";
+import Diagrams from "./components/Stats/Diagrams";
 import DayComment from "./components/Habit/Comment/DayComment";
 import Complete from "./components/Habit/Complete/Complete";
 import CompJurnal from "./components/Habit/Complete/Calendar/CompJurnal";
 import Schedule from "./components/Schedule/Schedule";
 import ChosenDay from "./components/Habit/Complete/Calendar/ChosenDay";
+import { useDiagrams } from "../../components/hooks/DiagramHook";
 
 
 export default function Habit() {
-    const { fetchCalendarHabit, fetchCalendarWLoading, chosenDay } = useCalendar()
-    const { calendarLoading } = useCalendar()
+    const { fetchCalendarHabit, fetchCalendarWLoading, chosenDay, calendarLoading } = useCalendar()
     const { loadHabitWLoading, habit, isReadOnly, loadingHabit } = useTheHabit()
     const { habitId } = useParams<{ habitId: string }>();
     const { setTitle } = usePageTitle()
+    const { mainRef } = useDiagrams()
     const [ showHabitMenu, setShowHabitMenu ] = useState(false)
 
     useEffect(() => {
@@ -50,10 +51,12 @@ export default function Habit() {
     if (loadingHabit || calendarLoading) {
         return <Loader/>
     }
+    console.log(!habitId || (habit && habit.periodicity === "weekly"))
+    console.log(habitId)
     return (
         <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
             {habitId && <HabitName habit={habit} showHabitMenu={showHabitMenu} setShowHabitMenu={setShowHabitMenu} isReadOnly={isReadOnly}/>}
-            <div className={`StatsDivMain ${habitId ? "sdmwm" : ""}`} style={{top:habitId ? "6vh" : "0"}}>
+            <div className={`StatsDivMain ${habitId ? "sdmwm" : ""}`} style={{top:habitId ? "6vh" : "0"}} ref={mainRef}>
                 <div className="StatsDivHabit">
                     <Calendar/>
                     {habitId &&
@@ -65,10 +68,10 @@ export default function Habit() {
                     <CompJurnal/>
                     {!habitId && chosenDay && <ChosenDay/>}
                 </div>
-                <Schedule id={habitId} isMy={!isReadOnly}/>
-                <div className="StatsDivStats">
-                    <Diagrams/>
-                </div>
+                {(!habitId || (habit && habitId === String(habit.id) && habit.periodicity === "weekly")) && (
+                    <Schedule id={habitId} isMy={!isReadOnly}/>
+                )}
+                <Diagrams/>
             </div>
             {habitId && habit && (
                 <div className={`habitMenu ${isMobile ? "mobile" : ""}`} style={{right: showHabitMenu ? "0" : isMobile ? "-100vw" : "-25vw"}}>

@@ -14,3 +14,7 @@ export const timeToStr = (date: Date | string) => {
         d.getMinutes()
     ).padStart(2, "0")}`
 }
+export const formatDateFromString = (date: string) => {
+    const [y, m, d] = date.split("-");
+    return `${d}.${m}.${y}`;
+};

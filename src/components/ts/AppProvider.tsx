@@ -22,6 +22,7 @@ import { SendMessProvider } from '../context/SendMessContext';
 import { GroupProvider } from '../context/GroupContext';
 import { ScheduleProvider } from '../context/ScheduleContext';
 import { SideMenuProvider } from '../context/SideMenuContext';
+import { DiagramsProvider } from '../context/DiagramsContext';
 
 export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
     <NoteProvider>
@@ -47,7 +48,9 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                                                                                     <DropProvider>
                                                                                         <PageTitleProvider>
                                                                                             <SideMenuProvider>
-                                                                                                {children}
+                                                                                                <DiagramsProvider>
+                                                                                                    {children}
+                                                                                                </DiagramsProvider>
                                                                                             </SideMenuProvider>
                                                                                         </PageTitleProvider>
                                                                                     </DropProvider>

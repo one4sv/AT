@@ -1,0 +1,18 @@
+@use "../../../scss/global" as var;
+
+.statsDivSL {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.statsFilter {
+    @include var.selectList(10vw, 3vh, 2vh, 0.25vw, 0.25vh, var(--tc), var(--tc), var(--menuButtHover), 16px, 0.5vh, 0.5vw, 1%);
+    > div > div:hover {
+        background-color: var(--acsent)
+    }
+    > input {
+        @include var.input(var(--mc), var(--tc), var(--borderHabit), 3vh, 8px, var(--tc));
+        width: 100%;
+        cursor: pointer;
+    }
+}

@@ -30,7 +30,7 @@ export default function SelectList({
   readOnly?: boolean;
   extraFunction?: (value:string) => void;
   id?:string;
-  selected?: string | number| undefined;
+  selected?: string | number | undefined;
   showOnly?: boolean | undefined;
   showSelected?:boolean;
   onChange?: (value: string) => void;

@@ -21,6 +21,26 @@
     height: 100%;
     width: 100%;
 }
+.compJurnalsearch {
+    width: 100%;
+    > input {
+        @include var.input(var(--mc), var(--tc), var(--borderHabit), 3vh, 8px, var(--tc));
+        margin-bottom: 0.5vh;
+        width: 100%;
+    }
+    > svg {
+        @include var.svgInInput(2vh, 0.5vh, 0.25vw);
+        color: var(--borderHabit);
+        &.deleteSearchText {
+            cursor: pointer;
+        }
+    }
+    &:focus-within {
+        > svg {
+            color: var(--tc);
+        }
+    }
+}
 .CJrecord {
     width: 100%;
     padding: 1vh 0.5vw;
