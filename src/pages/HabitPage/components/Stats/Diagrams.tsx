@@ -1,57 +1,46 @@
-import StatsMenu from "./StatsMenu";
 import StatsFilters from "./StatsFilters";
 import "../../scss/Diagrams.scss"
-// import CircleDiagram from "./Diagrams/CircleDiagram";
-// import ColumnDiagram from "./Diagrams/ColumnDiagram";
 import LineDiagram from "./Diagrams/LineDiagram";
 import { useDiagrams } from "../../../../components/hooks/DiagramHook";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { slides } from "../../utils/filters";
+import OverallStats from "./Diagrams/OverallStats";
 
 export default function Diagrams() {
-    const { diagram, view } = useDiagrams()
-
-    const progRef = useRef<HTMLDivElement>(null!);
-    const streakRef = useRef<HTMLDivElement>(null!);
-    const timerRef = useRef<HTMLDivElement>(null!);
-
-    const refMap = useMemo<Record<string, React.RefObject<HTMLDivElement>>>(() => ({
-        comp: progRef,
-        streak: streakRef,
-        timer: timerRef,
-    }), []);
+    const { diagram, setDiagram, view } = useDiagrams();
+    const sliderRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (diagram) {
-            const ref = refMap[diagram];
-            if (ref?.current) {
-                ref.current.scrollIntoView({ behavior: "smooth" });
-            }
-        }
-    }, [diagram, refMap])
+        if (!sliderRef.current || !diagram) return;
+        const index = slides.findIndex(s => s.value === diagram) ?? 0;
+        const offset = index === -1 ? 0 : index * (100 / slides.length);
+
+        sliderRef.current.style.transform = `translateY(-${offset}%)`;
+    }, [diagram]);
 
     return (
         <div className="statsDivStats">
-            <StatsMenu/>
+            <div className="statsMenu">
+                {slides.map((s) => (
+                    <div className={`statsMenuButt ${diagram === s.value ? "active" : ""}`} onClick={() => setDiagram(s.value)} key={s.value}>
+                        {s.label}
+                    </div>      
+                ))}
+            </div>
             <div className="statsDivWrapper">
-                <div className="statsDivSlider">
-                    <div className="statsDivSlide" ref={progRef}>
+                <div className="statsDivSlider" ref={sliderRef}>
+                    <div className="statsDivSlide">
                         <StatsFilters/>
-                        {/* {view === "column" && (
-                            <ColumnDiagram/>
-                        )}
-                        {view === "circle" &&(
-                            <CircleDiagram/>
-                        )}                         */}
-                        {view === "line" &&(
-                            <LineDiagram/>
-                        )}
+                        {view === "line" && <LineDiagram/>}
                     </div>
-                    <div className="statsDivSlide" ref={streakRef}>
+                    <div className="statsDivSlide">
+                        <OverallStats/>
                     </div>
-                    <div className="statsDivSlide" ref={timerRef}>
+
+                    <div className="statsDivSlide">
                     </div>
                 </div>
             </div>
         </div>
-    )
-} 
+    );
+}

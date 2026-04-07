@@ -130,37 +130,37 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
     }, [events])
 
     const handleSend = async (circleTime: string, newText: string) => {
-    if (!habit || !currentTimer) return
+        if (!habit || !currentTimer) return
 
-    setHabitTimer(prev => {
-        if (!prev) return prev
-        const updatedCircles = prev.circles.map(c =>
-            c.time === circleTime ? { ...c, text: newText } : c 
-        )
-        return { ...prev, circles: updatedCircles }
-    })
-
-    try {
-        await api.post(`${API_URL}timer/circle/text`, {
-            habit_id: habit.id,
-            timer_id: currentTimer.id,
-            time: circleTime,
-            text: newText
+        setHabitTimer(prev => {
+            if (!prev) return prev
+            const updatedCircles = prev.circles.map(c =>
+                c.time === circleTime ? { ...c, text: newText } : c 
+            )
+            return { ...prev, circles: updatedCircles }
         })
 
-        setEditedTexts(prev => {
-            const updated = { ...prev }
-            delete updated[circleTime]
-            return updated
-        })
+        try {
+            await api.post(`${API_URL}timer/circle/text`, {
+                habit_id: habit.id,
+                timer_id: currentTimer.id,
+                time: circleTime,
+                text: newText
+            })
 
-        setEditingKeys(prev => prev.filter(k => k !== circleTime))
+            setEditedTexts(prev => {
+                const updated = { ...prev }
+                delete updated[circleTime]
+                return updated
+            })
 
-        loadTimer(habit.id)
-    } catch (err) {
-        console.error("Ошибка сохранения текста круга:", err)
+            setEditingKeys(prev => prev.filter(k => k !== circleTime))
+
+            loadTimer(habit.id)
+        } catch (err) {
+            console.error("Ошибка сохранения текста круга:", err)
+        }
     }
-}
 
     if (!currentTimer) {
         return (

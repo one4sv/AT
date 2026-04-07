@@ -1,13 +1,13 @@
 import { Plus } from "@phosphor-icons/react"
-import { formatHabitTime } from "../../../components/ts/utils/formatHabitTime"
-import type { Habit } from "../../../components/context/HabitsContext"
-import { useCalendar } from "../../../components/hooks/CalendarHook"
-import { dateToCalendarFormat } from "./dateToStr"
+import { formatHabitTime } from "../../../../components/ts/utils/formatHabitTime"
+import type { Habit } from "../../../../components/context/HabitsContext"
+import { useCalendar } from "../../../../components/hooks/CalendarHook"
 import { useRef, type SetStateAction } from "react"
 import { useNavigate } from "react-router-dom"
-import type { CountInpsType } from "../components/Schedule/Schedule"
-import { isOddWeek } from "./isOddWeek"
-import { useSettings } from "../../../components/hooks/SettingsHook"
+import type { CountInpsType } from "./Schedule"
+import { useSettings } from "../../../../components/hooks/SettingsHook"
+import { isOddWeek } from "../../utils/isOddWeek"
+import { dateToCalendarFormat } from "../../utils/dateToStr"
 
 export type ExtraScheduleBlock = {
     id: number;

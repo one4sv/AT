@@ -23,7 +23,7 @@ export default function CircleDiagram() {
     const { calendar } = useCalendar()
     const { habit } = useTheHabit()
     const { habits } = useHabits()
-    const { filter, metric } = useDiagrams()
+    const { metric } = useDiagrams()
     const { habitId:id } = useParams<{ habitId: string }>();
     const [showCounts, setShowCounts] = useState(false)
 

@@ -32,7 +32,7 @@ import {
     getMonthStart,
     groupDays,
 } from "../../../utils/DiagramDate"
-import { formatDateFromString } from "../../../utils/dateToStr"
+import { formatDateFromString, weekDay } from "../../../utils/dateToStr"
 import type { Calendar } from "../../../../../components/context/CalendarContext"
 import type { Habit } from "../../../../../components/context/HabitsContext"
 
@@ -90,7 +90,7 @@ function formatGroupLabel(groupType: string, day: string): string {
         return `${week} нед. ${month}.${year}`
     }
 
-    return formatDateFromString(day)
+    return `${formatDateFromString(day)} ${weekDay(day)}`
 }
 
 function buildCalendarIndex(calendar: Calendar[]) {
@@ -107,7 +107,7 @@ export default function LineDiagram() {
     const { calendar, setChosenDay, setSelectedMonth, setSelectedYear } = useCalendar()
     const { habit } = useTheHabit()
     const { habits } = useHabits()
-    const { filter, metric, group, mainRef } = useDiagrams()
+    const { period, metric, group, mainRef } = useDiagrams()
     const { habitId: id } = useParams<{ habitId: string }>()
 
     const { data, groupsDays, effectiveGroup, groupStats } = useMemo<ChartState>(() => {
@@ -122,7 +122,7 @@ export default function LineDiagram() {
                 .toISOString()
         }
 
-        const { start, end } = getDateRange(filter, startDate)
+        const { start, end } = getDateRange(period, startDate)
         const days = generateDays(start, end)
 
         const allowGrouping = days.length >= 90
@@ -274,7 +274,7 @@ export default function LineDiagram() {
             })
         }
 
-        if (metric === "all" || metric === "free") {
+        if (id && (metric === "all" || metric === "free")) {
             datasets.push({
                 label: "Свободно",
                 data: freePerDay,
@@ -297,7 +297,9 @@ export default function LineDiagram() {
             effectiveGroup,
             groupStats,
         }
-    }, [calendar, habit, habits, filter, metric, id, group])
+    }, [calendar, habit, habits, period, metric, id, group])
+
+    const maxValue = Math.max(2, ...data.datasets.flatMap(d => d.data)) + 1
 
     const options: ChartOptions<"line"> = {
         responsive: true,
@@ -365,6 +367,7 @@ export default function LineDiagram() {
         scales: {
             y: {
                 beginAtZero: true,
+                max: maxValue,
             },
         },
     }
@@ -372,7 +375,7 @@ export default function LineDiagram() {
     if (!data) return null
 
     return (
-        <div className="doneDiagram">
+        <div className="doneDiagram" >
             <Line data={data} options={options} />
         </div>
     )

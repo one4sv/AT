@@ -15,4 +15,13 @@
         width: 100%;
         cursor: pointer;
     }
+    &.showOnly {
+        > input {
+            color: var(--borderHabit);
+            border: 1px solid var(--borderHabit);
+        }
+        >svg {
+            color: var(--borderHabit);
+        }
+    }
 }

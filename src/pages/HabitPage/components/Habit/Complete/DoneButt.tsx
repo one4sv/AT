@@ -4,24 +4,23 @@ import { useEffect, useState } from "react";
 import { useDone } from "../../../../../components/hooks/DoneHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
-import { todayStrFunc } from "../../../utils/dateToStr";
 
 interface DoneButtonProps {
   habitId: number;
 }
 
 export default function DoneButton({ habitId }: DoneButtonProps) {
-  const { todayDone, isDone  } = useTheHabit()
+  const { todayDone, isDone, doable } = useTheHabit()
   const { markDoneWLoading, waitDoneAnswer } = useDone()
   const { chosenDay } = useCalendar()
   const [ done, setDone ] = useState(todayDone)
-
+  
   useEffect(() => {
     if (isDone !== null && chosenDay) setDone(isDone)
     else setDone(todayDone)
   }, [chosenDay, isDone, todayDone])
 
-  if (chosenDay > todayStrFunc()) return
+  if (!doable) return
 
   return (
     <button

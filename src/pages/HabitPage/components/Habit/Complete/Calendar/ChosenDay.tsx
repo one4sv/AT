@@ -20,10 +20,16 @@ export default function ChosenDay() {
     const [ y, m, d ] = day.split("-")
     const today = new Date();
     const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const order = {
+        everyday: 0,
+        weekly: 1,
+        sometimes: 2
+    }
 
+    const sortedHabits = habits?.slice().sort((a, b) => order[a.periodicity] - order[b.periodicity]) ?? null
     const { completedArr, skippedArr, willArr, nowArr } = useMemo(
-        () => getDayArrays(day, calendar, habits, id, ),
-        [day, calendar, habits, id]
+        () => getDayArrays(day, calendar, sortedHabits, id, undefined, true ),
+        [day, calendar, sortedHabits, id]
     )
 
     const doneButt = (cn:string, id:string) => {

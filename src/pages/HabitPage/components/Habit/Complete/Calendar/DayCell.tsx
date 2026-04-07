@@ -4,7 +4,6 @@ import HoverDay from "./HoverDay";
 import { useCalendar } from "../../../../../../components/hooks/CalendarHook";
 import { getDayArrays } from "../../../../../../components/ts/utils/getDayArrs";
 import { useParams } from "react-router-dom";
-import { useTheHabit } from "../../../../../../components/hooks/TheHabitHook";
 
 interface DayCellProps {
     habit: Habit | undefined;
@@ -14,14 +13,9 @@ interface DayCellProps {
     month: number;
     year: number;
 }
-const toDateStr = (d: Date | string) => {
-  const dateObj = typeof d === "string" ? new Date(d) : d;
-  return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")}`;
-};
 
 export default function DayCell({ habits, habit, day, month, year, type }: DayCellProps) {
-    const { setChosenDay, calendar, chosenDay, timers, counters } = useCalendar()
-    const { setDayComment, setIsDone, setDoable, setShowTimer, setShowCounter } = useTheHabit()
+    const { setChosenDay, calendar, chosenDay } = useCalendar()
     const [hovered, setHovered] = useState(false);
     const { habitId:id } = useParams<{ habitId: string }>();
     const cellRef = useRef<HTMLDivElement | null>(null);
@@ -49,31 +43,9 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
             onClick={() => {
                 if (chosenDay !== dateStr) {
                     setChosenDay(dateStr)
-                    setDayComment(comment || "")
-                    setShowTimer(timers?.find(t => toDateStr(t.end_at) === dateStr) || null)
-                    setShowCounter(counters?.find(t => toDateStr(t.started_at) === dateStr) || null)
-                    if (completedArr.length > 0) {
-                        setIsDone(true)
-                        setDoable(true)
-                    } else if (skippedArr.length > 0) {
-                        setIsDone(false)
-                        setDoable(true)
-                    } else if (nowArr.length > 0) {
-                        setIsDone(false)
-                        setDoable(true)
-                    }
-                    else {
-                        setIsDone(false)
-                        setDoable(false)
-                    }
                 }
                 else {
                     setChosenDay("")
-                    setDayComment(null)
-                    setIsDone(null)
-                    setDoable(true)
-                    setShowTimer(null)
-                    setShowCounter(null)
                 }
             }}
         >

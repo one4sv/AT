@@ -51,8 +51,7 @@ export default function Habit() {
     if (loadingHabit || calendarLoading) {
         return <Loader/>
     }
-    console.log(!habitId || (habit && habit.periodicity === "weekly"))
-    console.log(habitId)
+
     return (
         <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
             {habitId && <HabitName habit={habit} showHabitMenu={showHabitMenu} setShowHabitMenu={setShowHabitMenu} isReadOnly={isReadOnly}/>}
@@ -68,7 +67,7 @@ export default function Habit() {
                     <CompJurnal/>
                     {!habitId && chosenDay && <ChosenDay/>}
                 </div>
-                {(!habitId || (habit && habitId === String(habit.id) && habit.periodicity === "weekly")) && (
+                {(!habitId || (habit && habitId === String(habit.id) && habit.periodicity !== "sometimes")) && (
                     <Schedule id={habitId} isMy={!isReadOnly}/>
                 )}
                 <Diagrams/>

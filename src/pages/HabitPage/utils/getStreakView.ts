@@ -14,7 +14,6 @@ export const getStreakView = (
     showYesterdayWarning: boolean,
     isTodayChosenWeekly?: boolean
 ): StreakView | null => {
-
     if (habit.periodicity === "sometimes") {
         return {
             cl: "null",

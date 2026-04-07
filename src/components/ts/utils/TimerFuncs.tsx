@@ -1,7 +1,52 @@
-import type { Habit } from "../../../components/context/HabitsContext"
+import type { Habit } from "../../context/HabitsContext";
+import type { habitTimer } from "../../context/TheHabitContext"; // или где у тебя лежит тип
 
-export const calculateUntilTimer = (habit: Habit, isEnded: boolean): string => {
-    const now = new Date()
+/**
+ * Возвращает отформатированное время таймера (сколько уже прошло)
+ */
+export function calculateTimerElapsed(currentTimer: habitTimer | null, isHistorical: boolean = false): string {
+    if (!currentTimer) {
+        return "00:00:00";
+    }
+
+    const now = Date.now();
+    const started = currentTimer.started_at.getTime();
+
+    let effectiveEnd: number;
+
+    if (currentTimer.status === "ended" || isHistorical) {
+        effectiveEnd = currentTimer.end_at.getTime();
+    } else if (currentTimer.status === "paused") {
+        const openPause = currentTimer.pauses.find(p => p.end === null);
+        effectiveEnd = openPause ? new Date(openPause.start).getTime() : now;
+    } else {
+        effectiveEnd = now;
+    }
+
+    const total = effectiveEnd - started;
+
+    let sumPauses = 0;
+    currentTimer.pauses.forEach(p => {
+        if (p.end) {
+            sumPauses += new Date(p.end).getTime() - new Date(p.start).getTime();
+        }
+    });
+
+    const elapsedMs = Math.max(0, total - sumPauses);
+
+    const hours = Math.floor(elapsedMs / 3600000);
+    const minutes = Math.floor((elapsedMs % 3600000) / 60000);
+    const seconds = Math.floor((elapsedMs % 60000) / 1000);
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+/**
+ * Возвращает "until" — сколько осталось до конца привычки (для сегодняшнего дня)
+ */
+export function calculateUntilTimer(habit: Habit, isEnded: boolean): string {
+    if (isEnded) return "";
+        const now = new Date()
 
     const parseTime = (t?: string) => {
         if (!t) return { h: 0, m: 0 }

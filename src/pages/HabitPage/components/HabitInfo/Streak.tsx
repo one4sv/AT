@@ -5,7 +5,7 @@ import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { useEffect, useState } from "react";
 import { getStreakView } from "../../utils/getStreakView";
 import "../../scss/Streak.scss";
-import { dateToStrFormat } from "../../utils/dateToStr";
+import { dateToCalendarFormat } from "../../utils/dateToStr";
 
 export interface StreakType {
     habit: Habit;
@@ -32,7 +32,7 @@ export default function Streak({ habit, calendar }: StreakType) {
         const checkDate = new Date(fromDate);
 
         if (habit.periodicity === "everyday") {
-            while (checkDate >= startDate && datesSet.has(dateToStrFormat(checkDate))) {
+            while (checkDate >= startDate && datesSet.has(dateToCalendarFormat(checkDate))) {
                 count++;
                 checkDate.setDate(checkDate.getDate() - 1);
             }
@@ -42,7 +42,7 @@ export default function Streak({ habit, calendar }: StreakType) {
             while (checkDate >= startDate) {
                 const dayOfWeek = checkDate.getDay();
                 if (habit.chosen_days.includes(dayOfWeek)) {
-                    if (datesSet.has(dateToStrFormat(checkDate))) {
+                    if (datesSet.has(dateToCalendarFormat(checkDate))) {
                         count++;
                         checkDate.setDate(checkDate.getDate() - 1);
                     } else break;
@@ -80,7 +80,7 @@ export default function Streak({ habit, calendar }: StreakType) {
             habit.periodicity === "everyday" ||
             (habit.periodicity === "weekly" && habit.chosen_days?.includes(yesterdayDayOfWeek));
 
-        if (isYesterdayChosen && datesSet.has(dateToStrFormat(yesterday)) && !datesSet.has(dateToStrFormat(today))) {
+        if (isYesterdayChosen && datesSet.has(dateToCalendarFormat(yesterday)) && !datesSet.has(dateToCalendarFormat(today))) {
             showYesterdayWarning = true;
         }
     }
@@ -89,7 +89,7 @@ export default function Streak({ habit, calendar }: StreakType) {
     const { cl, text, showCount, count } = view || {};
 
     if (!view) return null
-
+    
     return (
         <div className={`streakStr ${cl}`}>
             <Fire weight="fill" size={16} />

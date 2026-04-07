@@ -1,12 +1,31 @@
+/**
+ * Возвращает сегодняшнюю дату в формате YYYY-MM-DD
+ */
 export const todayStrFunc = () => {
-    return `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
 }
-export const dateToStrFormat = (date:Date) => {
-    return `${String(new Date(date).getDate()).padStart(2, "0")}.${String(new Date(date).getMonth() + 1).padStart(2, "0")}.${new Date(date).getFullYear()}`
+
+/**
+ * Форматирует Date в строку DD.MM.YYYY
+ */
+export const dateToStrFormat = (date: Date) => {
+    const d = new Date(date)
+    return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear()}`
 }
-export const dateToCalendarFormat = (date:Date) => {
-    return `${new Date(date).getFullYear()}-${String(new Date(date).getMonth() + 1).padStart(2, "0")}-${String(new Date(date).getDate()).padStart(2, "0")}`
+
+/**
+ * Форматирует Date в формат календаря YYYY-MM-DD
+ */
+export const dateToCalendarFormat = (date: Date) => {
+    const d = new Date(date)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
 }
+
+/**
+ * Возвращает время HH:MM
+ * @param {Date} date Принимает дату
+ */
 export const timeToStr = (date: Date | string) => {
     const d = new Date(date)
 
@@ -14,7 +33,22 @@ export const timeToStr = (date: Date | string) => {
         d.getMinutes()
     ).padStart(2, "0")}`
 }
+
+/**
+ * Преобразует YYYY-MM-DD → DD.MM.YYYY
+ * @param {Date} date Принимает дату
+ */
 export const formatDateFromString = (date: string) => {
-    const [y, m, d] = date.split("-");
-    return `${d}.${m}.${y}`;
-};
+    const [y, m, d] = date.split("-")
+    return `${d}.${m}.${y}`
+}
+
+/**
+ * Возвращает сокращённый день недели (пн, вт, ср...)
+ * @param {string} day Принимает дату после преабразует в Date
+ */
+export const weekDay = (day: string) => {
+    return new Date(day)
+        .toLocaleDateString("ru-RU", { weekday: "short" })
+        .slice(0, 2)
+}

@@ -11,7 +11,7 @@ export interface Habit {
     start_date: string;
     end_date: string | "";
     ongoing: boolean;
-    periodicity: string;
+    periodicity: "everyday" | "weekly" | "sometimes";
     chosen_days: number[] | null;
     start_time:string | "";
     end_time:string | "";

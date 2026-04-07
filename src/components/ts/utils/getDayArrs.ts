@@ -9,14 +9,37 @@ interface DayArrays {
   nowArr: Calendar[]
 }
 
-// ===== main =====
-
+/**
+ * Формирует массивы состояний привычек для конкретного дня.
+ * Функция анализирует календарные записи и список привычек и
+ * распределяет их по четырём категориям:
+ * - completedArr — выполненные привычки
+ * - skippedArr — пропущенные привычки
+ * - willArr — запланированные на будущее
+ * - nowArr — доступные для выполнения прямо сейчас
+ *
+ * @param {string} dateStr Дата в формате строки (например `"2026-04-03"`), для которой вычисляется состояние привычек.
+ *
+ * @param {Calendar[]} calendar Массив записей календаря с отметками выполнения привычек.
+ *
+ * @param {Habit[] | null} habits Список всех привычек пользователя.
+ *
+ * @param {string | undefined} id Необязательный id привычки.  
+ * Если передан — расчёт выполняется только для одной привычки.
+ *
+ * @param {Habit} [habit] Объект привычки (используется как fallback, если привычка не найдена в `habits`).
+ *
+ * @param {boolean} [usest] Флаг, разрешающий учитывать привычки с периодичностью `"sometimes"`.
+ *
+ * @returns {DayArrays} Объект с 4 массивами привычек
+ */
 export function getDayArrays(
   dateStr: string,
   calendar: Calendar[],
   habits: Habit[] | null,
   id: string | undefined,
-  habit?: Habit
+  habit?: Habit,
+  usest?:boolean
 ): DayArrays {
 
   const date = parseLocalDate(dateStr)
@@ -35,7 +58,8 @@ export function getDayArrays(
 
     const match =
       h.periodicity === "everyday" ||
-      (h.periodicity === "weekly" && h.chosen_days?.includes(date.getDay()))
+      (h.periodicity === "weekly" && h.chosen_days?.includes(date.getDay())) ||
+      (usest && h.periodicity === "sometimes")
 
     if (!match) return
     if (completedArr.some(c => Number(c.habitId) === h.id)) return

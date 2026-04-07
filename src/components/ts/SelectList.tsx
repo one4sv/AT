@@ -49,14 +49,18 @@ export default function SelectList({
   useEffect(() => {
     if (selected !== undefined) {
       const idx = arr.findIndex(o => o.value === selected)
-      setSelectedLabel(arr[idx].label);
-      if (prop)
-      prop(prev => {
-        if (prev !== arr[idx].value) {
-          return arr[idx].value;
-        }
-        return prev;
-      });
+
+      if (idx !== -1) {
+        setSelectedLabel(arr[idx].label);
+
+        if (prop)
+          prop(prev => {
+            if (prev !== arr[idx].value) {
+              return arr[idx].value;
+            }
+            return prev;
+          });
+      }
     }
   }, [arr, prop, selected]);
 
@@ -87,7 +91,7 @@ export default function SelectList({
   }, [hide, showList]);
 
   return (
-    <div className={`selectListDiv ${className}`}>
+    <div className={`selectListDiv ${className} ${showOnly && "showOnly"}`}>
       <input
         id={id}
         type="text"
@@ -97,7 +101,7 @@ export default function SelectList({
         readOnly={readOnly}
       />
       {chevron && (
-        <ChevronDown style={{ transform: `rotate(${showList ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
+        <ChevronDown style={{ transform: `rotate(${showList && !showOnly ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
       )}
       <div className={`selectList ${showList ? "active" : ""}`} ref={listRef}>
         {showList &&

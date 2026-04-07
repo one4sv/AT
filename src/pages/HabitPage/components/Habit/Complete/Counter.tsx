@@ -46,10 +46,10 @@ export default function Counter() {
         if (totalVal === 0 || !habit?.id || isHistorical) return
         try {
             await api.post(`${API_URL}counter/value`, { habit_id: habit.id, val: totalVal })
-            if (loadHabit) loadHabit(String(habit.id))
         } catch (err) {
             console.error(err)
-            if (loadHabit) loadHabit(String(habit.id))
+        } finally {
+            loadHabit(String(habit.id))
         }
     }
 
@@ -70,7 +70,6 @@ export default function Counter() {
         }, 600)
     }
 
-    console.log(flyingNumbers)
     const handleClickWithFly = (val: number, side: "left" | "right") => {
         if (!counterRef.current || val === 0) return
 

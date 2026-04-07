@@ -59,23 +59,49 @@
     overflow-y:hidden;
     position: relative;
 }
+.statsDivSlider {
+    width: 100%;
+    height: 400%;
+    position: absolute;
+    transition: transform 0.3s ease-in-out;
+    will-change: transform;
+}
+.statsDivSlide {
+    position: relative;
+    height: calc(100% / 4);
+    padding: 1vh 1vw;
+}
 .statsDivFilters {
     width: 100%;
     height: 8%;
     display: flex;
     justify-content: space-around;
 }
-.statsDivSlider {
-    width: 100%;
-    height: 300%;
-    position: absolute;
-}
-.statsDivSlide {
-    position: relative;
-    height: calc(100% / 3);
-    padding: 1vh 1vw;
-}
 .doneDiagram {
     width: 100%;
     height: 92%;
+}
+.overallStats {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 12px;
+}
+.overallCard {
+    border-radius: 8px;
+    border: 1px solid var(--borderWh);
+    flex: 1;
+    padding: 1vh 1vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+.oveerallCardName {
+    font-size: 18px;
+}
+.overallPropSpan {
+    font-size: 14px;
+    color: var(--borderHabit);
 }
