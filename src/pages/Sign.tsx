@@ -37,7 +37,6 @@ export default function Log() {
   const swipeForm = (targetForm: "auth" | "reg") => {
     if (!formRef.current) return;
     if (isMobile) {
-      // На мобильных просто показываем одну форму, скрываем другую (используем state для переключения)
       setActiveForm(targetForm);
     } else {
       const scrollTarget = targetForm === "reg" ? 1 : 0;
