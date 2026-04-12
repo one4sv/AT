@@ -27,7 +27,7 @@
     position: relative;
     width: 80%;
     >label {
-        color: var(--borderHabit);
+        color: var(--borderWh);
         width: 100%;
         padding-left: 0.5vw;
         user-select: none;
@@ -79,7 +79,7 @@
     align-items: center;
     color: var(--borderHabit);
     background-color: var(--bgc);
-    padding: 0.5vh 0.5vw;
+    padding: 0.4vh 0.5vw;
     gap: 0.3rem;
     border-radius: 6px;
     border: 1px solid var(--borderWh);
@@ -162,11 +162,15 @@
     >.active {
         color: var(--acsent);
     }
+    >label {
+        color: var(--borderWh);
+    }
 }
 .inpWrapperAddHabit {
     color: var(--borderHabit);
     >label {
         padding-inline-start: 0.5vw;
+        color: var(--borderWh);
     }
     &:focus-within {
         color: var(--acsent)

@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useSettings } from "../../hooks/SettingsHook";
 import { useUpSettings } from "../../hooks/UpdateSettingsHook";
 import { type TabProps } from "../../modules/Settings";
-import Toggler from "../toggler";
+import Toggler from "../Toggler";
 import DatePicker from "react-datepicker";
 import { SpanMain } from "./SpanMain";
 export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handleAnimationEnd }: TabProps) {

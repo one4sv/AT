@@ -20,9 +20,6 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
         setNewName, setNewDescription, setNewStartDate, setNewEndDate,
         setNewOngoing, setNewPeriodicity, setNewDays, setNewStartTime,
         setNewEndTime, setNewTag,
-        saveHabit,          // ← добавлено
-        localChanges,       // ← добавлено
-        isUpdating          // ← добавлено
     } = useUpHabit();
 
     const [name, setName] = useState<string>("");
@@ -36,12 +33,6 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     const [archived, setArcvhieved] = useState<boolean>(false);
     const [selectedTag, setSelectedTag] = useState<string | undefined>();
     const [chosenDays, setChosenDays] = useState<{ value: number; label: string; chosen: boolean }[]>(initialChosenDays);
-
-    // Проверка, есть ли несохранённые изменения именно для этой привычки
-    const hasUnsavedChanges = Boolean(
-        localChanges?.[habit.id] && Object.keys(localChanges[habit.id]).length > 0
-    );
-    const isThisUpdating = isUpdating.includes(`habit_${habit.id}`);
 
     useEffect(() => {
         if (!habit) return;
@@ -227,11 +218,9 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     selected={periodicity || habit.periodicity}
                 />
             </div>
-
             {(periodicity || habit.periodicity) === "weekly" && (
                 <DayChanger toggleDay={toggleDay} chosenDays={chosenDays} showOnly={readOnly || archived} chosenArr={habit.chosen_days}/>
             )}
-
             <div className="addHabitTimeWrapper">
                 <div className="addHabitWrapper time">
                     <label>Время (начало)</label>
@@ -263,15 +252,6 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         }}
                     />
                 </div>
-            </div>
-            <div
-                className={`habitSave ${readOnly || archived || !hasUnsavedChanges ? "disabled" : ""} ${isThisUpdating ? "saving" : ""}`}
-                onClick={async () => {
-                    if (readOnly || archived || !hasUnsavedChanges || isThisUpdating) return;
-                    await saveHabit(habit.id);
-                }}
-            >
-                {isThisUpdating ? "Сохраняется..." : "Сохранить"}
             </div>
         </div>
     );

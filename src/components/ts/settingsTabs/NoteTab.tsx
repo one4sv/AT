@@ -1,7 +1,7 @@
 import { useSettings } from "../../hooks/SettingsHook";
 import { useUpSettings } from "../../hooks/UpdateSettingsHook";
 import type { TabProps } from "../../modules/Settings";
-import Toggler from "../toggler";
+import Toggler from "../Toggler";
 import { SpanMain } from "./SpanMain";
 
 export default function NoteTab({ tabRef, isUpdating, fadingOutSections, handleAnimationEnd }: TabProps) {

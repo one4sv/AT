@@ -16,24 +16,15 @@ interface DayCommentProps {
 
 export default function DayComment({ id, isMy }: DayCommentProps) {
   const { sendDayComment, waitComAnswer } = useDone()
-  const { dayComment, todayComment, habit, habitCounter, showCounter, showTimer, habitTimer, habitSettings } = useTheHabit()
+  const { dayComment, todayComment, habit, habitCounter, showCounter, habitSettings } = useTheHabit()
   const { chosenDay } = useCalendar()
 
   const [ comment, setComment ] = useState<string | null>(todayComment || "");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const todayStr = todayStrFunc()
   const isHistorical = chosenDay && chosenDay !== todayStr || false
-  const currentTimer = isHistorical ? showTimer : habitTimer
   const currentCounter = isHistorical ? showCounter : habitCounter
-  
-  let current = ""
-  if (currentTimer && currentCounter) {
-    if (habitSettings.metric_type === "timer") current = "timer"
-    else current = "counter"
-  }
-  else if (currentTimer && currentCounter === null) current = "timer"
-  else if (currentCounter && currentTimer === null) current = "counter"
-  else current = "none"
+  const currentComment = isHistorical ? dayComment : todayComment
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
@@ -53,13 +44,17 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   }, [comment]);
 
   useEffect(() => {
-    if (chosenDay) setComment(dayComment)
-    else setComment(todayComment || "")
-  }, [chosenDay, dayComment])
+    // if (chosenDay) setComment(dayComment)
+    // else setComment(todayComment || "")
+    if (currentComment) setComment(currentComment)
+  }, [chosenDay, currentComment, dayComment])
+
+  const cantSave = (comment?.trim() === "" && currentComment === "") || currentComment === comment || !isMy || waitComAnswer || habit?.is_archived
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      if (cantSave) return
       sendDayComment(id, comment, chosenDay);
     }
   };
@@ -82,7 +77,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
             <span>{comment?.length}/200</span>
             <button
               className="saveCommentButton"
-              disabled={comment?.trim() === "" || todayComment === comment || dayComment === comment || !isMy || waitComAnswer || habit?.is_archived}
+              disabled={cantSave}
               onClick={() => sendDayComment(id, comment, chosenDay)}
             >
               {waitComAnswer ? (
@@ -92,10 +87,8 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           </div>
         </div>
       </div>
-      {current === "timer"
-        ? <CompletionProgress currentTimer={currentTimer}  isHistorical={isHistorical}/>
-        : <CounterProgression currentCounter={currentCounter} isHistorical={isHistorical}/>
-      }
+      { habitSettings.metric_type === "timer" && <CompletionProgress/> }
+      { habitSettings.metric_type === "counter" && <CounterProgression currentCounter={currentCounter} isHistorical={isHistorical}/> }
     </div>
     
   );

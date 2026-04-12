@@ -6,19 +6,21 @@ import { calculateTimerElapsed, calculateUntilTimer } from "../../../../../compo
 import { SVGclock } from "../../../utils/SVGclock";
 import { FlagPennant, Pause, Play, Square } from "@phosphor-icons/react";
 import "../../../scss/Timer.scss";
+import { useWebSocket } from "../../../../../components/hooks/WebSocketHook";
 
 export default function Timer() {
-    const { habit, habitTimer, todayDone, showTimer } = useTheHabit();
+    const { habit, habitTimer, todayDone, showTimer, setHabitTimer, parseTimer } = useTheHabit();
     const { chosenDay } = useCalendar();
+    const { ws } = useWebSocket()
+    const { timerStart, timerPause, timerStop, timerCircle } = useHabitTimer();
+
     const [ untilDisplay, setUntilDisplay ] = useState("00:00:00");
     const [ timerDisplay, setTimerDisplay ] = useState("00:00:00");
-
-    const { timerStart, timerPause, timerStop, timerCircle } = useHabitTimer();
 
     const todayStr = new Date().toISOString().slice(0, 10);
     const isHistorical = Boolean(chosenDay && chosenDay !== todayStr);
 
-    const currentTimer = isHistorical ? showTimer : habitTimer;
+    const currentTimer = isHistorical ? showTimer : habitTimer ?? null;
     const canControl = !isHistorical;
 
     const isTimerActive = currentTimer !== null && canControl;
@@ -54,6 +56,35 @@ export default function Timer() {
         return () => clearInterval(interval);
     }, [currentTimer, isHistorical]);
 
+    useEffect(() => {
+        if (!ws || !habit?.id) return;
+
+        const handleTimer = (event: MessageEvent) => {
+            try {
+                const data = JSON.parse(event.data);
+
+                if (data.type === "TIMER_UPDATE" && data.habitId === habit.id) {
+                    const parsed = parseTimer(data.timer);
+                    if (parsed) {
+                        setHabitTimer(prev => {
+                            if (!prev) return parsed;
+                            if (new Date(parsed.started_at) < new Date(prev.started_at)) {
+                                return prev;
+                            }
+
+                            return parsed;
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error("WS TIMER_UPDATE error:", e);
+            }
+        };
+
+        ws.addEventListener("message", handleTimer);
+        return () => ws.removeEventListener("message", handleTimer);
+    }, [ws, habit?.id, parseTimer, setHabitTimer]);
+
     if (!habit) return null;
 
     const [hoursStr, minutesStr, secondsStr] = timerDisplay.split(':');
@@ -62,7 +93,7 @@ export default function Timer() {
     const seconds = parseInt(secondsStr, 10);
     
     return (
-        <div className="completeMain">
+        <>
             <SVGclock hours={hours} minutes={minutes} seconds={seconds} />
             <div className="timerNums">
                 <div className="untilNums">
@@ -101,6 +132,6 @@ export default function Timer() {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }

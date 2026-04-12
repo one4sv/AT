@@ -1,5 +1,5 @@
 import type { Habit } from "../context/HabitsContext";
-import type { habitTimer } from "../context/TheHabitContext"; // ← добавили импорт типа
+import type { habitTimer } from "../context/TheHabitContext";
 import { useNavigate } from "react-router";
 import { CheckCircle, PushPinIcon } from "@phosphor-icons/react";
 import { habitIcon } from "./habitIcon";
@@ -13,6 +13,7 @@ import { useSideMenu } from "../hooks/SideMenuHook";
 import { useTheHabit } from "../hooks/TheHabitHook";
 import { calculateTimerElapsed } from "./utils/TimerFuncs";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useWebSocket } from "../hooks/WebSocketHook";
 
 export default function HabitDiv({
     habit,
@@ -27,19 +28,20 @@ export default function HabitDiv({
 }) {
     const { openMenu } = useContextMenu();
     const { setShowSideMenu } = useSideMenu();
-    const { findHabit } = useTheHabit();
+    const { findHabit, parseTimer } = useTheHabit();
     const navigate = useNavigate();
     const { schedules } = useSchedule();
     const { weekStart } = useSettings();
+    const { ws } = useWebSocket();
 
     const [timerStatus, setTimerStatus] = useState<string>("");
-    const [timerLoading, setTimerLoading] = useState<boolean>(false);
-    const [currentTimer, setCurrentTimer] = useState<habitTimer | null>(null);
+    const [timerLoading, setTimerLoading] = useState<boolean>(true);
 
     const hasLoadedRef = useRef(false);
+    const tickIntervalRef = useRef<number | null>(null);
 
     const updateTimerDisplay = useCallback((timer: habitTimer) => {
-        const elapsed = calculateTimerElapsed(timer, false).slice(0, 5)
+        const elapsed = calculateTimerElapsed(timer, false);
         if (timer.status === "running") {
             setTimerStatus(`Выполняется: ${elapsed}`);
         } else if (timer.status === "paused") {
@@ -49,94 +51,95 @@ export default function HabitDiv({
         }
     }, []);
 
-    const loadTimerStatus = useCallback(async () => {
+    const startLocalTick = useCallback((timer: habitTimer) => {
+        if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
+        if (timer.status !== "running") return;
+
+        tickIntervalRef.current = setInterval(() => {
+            updateTimerDisplay(timer);
+        }, 1000);
+    }, [updateTimerDisplay]);
+
+    const loadInitialTimer = useCallback(async () => {
         if (!habit.id || hasLoadedRef.current) return;
-
+        setTimerLoading(true);
         try {
-            setTimerLoading(true);
             const res = await findHabit(String(habit.id));
-
-            if (!res?.success || !res.timer) {
-                setTimerStatus("");
-                setCurrentTimer(null);
-                return;
-            }
-
-            const { timer, settings } = res;
-
-            if (settings?.metric_type === "timer" && timer) {
-                setCurrentTimer(timer);
-                updateTimerDisplay(timer);
+            if (res?.success && res.timer && res.settings?.metric_type === "timer") {
+                updateTimerDisplay(res.timer);
+                startLocalTick(res.timer);
             } else {
                 setTimerStatus("");
-                setCurrentTimer(null);
             }
         } catch (e) {
-            console.error("Ошибка загрузки таймера в HabitDiv:", e);
-            setTimerStatus("");
-            setCurrentTimer(null);
+            console.error("Ошибка начальной загрузки таймера:", e);
         } finally {
             setTimerLoading(false);
             hasLoadedRef.current = true;
         }
-    }, [habit.id, findHabit, updateTimerDisplay]);
+    }, [habit.id, findHabit, updateTimerDisplay, startLocalTick]);
 
-    const refreshTimer = useCallback(async () => {
-        if (!habit.id || !currentTimer) return;
+    useEffect(() => {
+        if (!ws || !habit.id) return;
 
-        try {
-            const res = await findHabit(String(habit.id));
-            if (res?.success && res.timer) {
-                setCurrentTimer(res.timer);
-                updateTimerDisplay(res.timer);
+        const handleTimer = (event: MessageEvent) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === "TIMER_UPDATE" && data.habitId === habit.id) {
+                    const parsed = parseTimer(data.timer);
+                    if (parsed) {
+                        updateTimerDisplay(parsed);
+                        startLocalTick(parsed);
+                    }
+
+                }
+            } catch (e) {
+                console.error("Ошибка TIMER_UPDATE:", e);
             }
-        } catch (e) {
-            console.error(e);
-        }
-    }, [habit.id, currentTimer, findHabit, updateTimerDisplay]);
+        };
+
+        ws.addEventListener("message", handleTimer);
+        return () => ws.removeEventListener("message", handleTimer);
+    }, [ws, habit.id, parseTimer, updateTimerDisplay, startLocalTick]);
 
     useEffect(() => {
-        loadTimerStatus();
-    }, [loadTimerStatus]);
-
-    useEffect(() => {
-        if (!currentTimer) return;
-
-        const interval = setInterval(refreshTimer, 1000);
-        return () => clearInterval(interval);
-    }, [currentTimer, refreshTimer]);
+        loadInitialTimer();
+        return () => {
+            if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
+        };
+    }, [loadInitialTimer]);
 
     const ruPeriodicity = (habit: Habit): string => {
-        if (habit.is_archived) return "в архиве"
-        const { periodicity: per, chosen_days } = habit
-        const habitIdKey = String(habit.id)
-        const habitBlocks = schedules[habitIdKey] || []
+        if (habit.is_archived) return "в архиве";
+        const { periodicity: per, chosen_days } = habit;
+        const habitIdKey = String(habit.id);
+        const habitBlocks = schedules[habitIdKey] || [];
 
-        const todayNum = new Date().getDay()
-        let targetDayNum = todayNum
-        let dayLabel = "Сегодня"
-        let nearestDiff = 7
+        const todayNum = new Date().getDay();
+        let targetDayNum = todayNum;
+        let dayLabel = "Сегодня";
+        let nearestDiff = 7;
 
         if (per === "weekly" && chosen_days?.length) {
             for (const day of chosen_days) {
-                const diff = (day - todayNum + 7) % 7
-                if (diff < nearestDiff) nearestDiff = diff
+                const diff = (day - todayNum + 7) % 7;
+                if (diff < nearestDiff) nearestDiff = diff;
             }
 
-            targetDayNum = (todayNum + nearestDiff) % 7
+            targetDayNum = (todayNum + nearestDiff) % 7;
 
-            const targetDate = new Date()
-            targetDate.setDate(targetDate.getDate() + nearestDiff)
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + nearestDiff);
 
-            const targetIsOdd = isOddWeek(weekStart, targetDate)
-            const isInDateRange = habit.end_date ? new Date(habit.end_date) > new Date() : true
+            const targetIsOdd = isOddWeek(weekStart, targetDate);
+            const isInDateRange = habit.end_date ? new Date(habit.end_date) > new Date() : true;
 
-            if (nearestDiff === 0 && isInDateRange) dayLabel = "Сегодня"
-            else if (nearestDiff === 1 && isInDateRange) dayLabel = "Завтра"
+            if (nearestDiff === 0 && isInDateRange) dayLabel = "Сегодня";
+            else if (nearestDiff === 1 && isInDateRange) dayLabel = "Завтра";
             else if (isInDateRange) {
-                dayLabel = targetDate.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" })
+                dayLabel = targetDate.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" });
             } else {
-                dayLabel = ""
+                dayLabel = "";
             }
 
             const targetBlocks = habitBlocks.filter(block =>
@@ -144,72 +147,72 @@ export default function HabitDiv({
                 block.day_of_week === targetDayNum &&
                 block.start_time?.trim() &&
                 (block.isSeparator === !targetIsOdd)
-            )
+            );
 
-            let timePart = ""
+            let timePart = "";
 
             if (targetBlocks.length > 0) {
                 const timeToMinutes = (t: string) => {
-                    if (!t.trim()) return 9999
-                    const cleaned = t.trim().replace(".", ":")
-                    const [h = "0", m = "0"] = cleaned.split(":")
-                    return Number(h) * 60 + Number(m)
-                }
+                    if (!t.trim()) return 9999;
+                    const cleaned = t.trim().replace(".", ":");
+                    const [h = "0", m = "0"] = cleaned.split(":");
+                    return Number(h) * 60 + Number(m);
+                };
 
-                let minMin = 24 * 60
-                let maxMin = 0
+                let minMin = 24 * 60;
+                let maxMin = 0;
 
                 targetBlocks.forEach(b => {
-                    const s = timeToMinutes(b.start_time!)
-                    const e = b.end_time ? timeToMinutes(b.end_time) : 24 * 60
-                    if (s < minMin) minMin = s
-                    if (e > maxMin) maxMin = e
-                })
+                    const s = timeToMinutes(b.start_time!);
+                    const e = b.end_time ? timeToMinutes(b.end_time) : 24 * 60;
+                    if (s < minMin) minMin = s;
+                    if (e > maxMin) maxMin = e;
+                });
 
-                const earliest = formatScheduleTime(minMin)
-                const latest = formatScheduleTime(maxMin)
+                const earliest = formatScheduleTime(minMin);
+                const latest = formatScheduleTime(maxMin);
 
                 if (earliest && latest && earliest !== latest) {
-                    timePart = ` с ${earliest} до ${latest}`
+                    timePart = ` с ${earliest} до ${latest}`;
                 } else if (earliest) {
-                    timePart = ` в ${earliest}`
+                    timePart = ` в ${earliest}`;
                 } else if (latest) {
-                    timePart = ` до ${latest}`
+                    timePart = ` до ${latest}`;
                 }
             }
 
-            if (!timePart) timePart = formatHabitTime(habit)
+            if (!timePart) timePart = formatHabitTime(habit);
 
-            return `${dayLabel}${timePart}`.trim()
+            return `${dayLabel}${timePart}`.trim();
         }
 
-        const timePart = formatHabitTime(habit)
+        const timePart = formatHabitTime(habit);
 
-        if (per === "everyday") return `Каждый день${timePart}`
-        if (per === "sometimes") return `Иногда${timePart}`
+        if (per === "everyday") return `Каждый день${timePart}`;
+        if (per === "sometimes") return `Иногда${timePart}`;
 
-        return timePart.trim() || ""
-    }
+        return timePart.trim() || "";
+    };
 
-    if (isMyAcc === undefined) isMyAcc = true
-    const periodicityText = ruPeriodicity(habit)
+    if (isMyAcc === undefined) isMyAcc = true;
+    const periodicityText = ruPeriodicity(habit);
 
     return (
         <div
             className={`habit themeHabit-default ${id === habit.id && !isMobile ? "active" : ""}`}
             onClick={() => {
-                navigate(`/habit/${habit.id}`)
-                setShowSideMenu(false)
+                navigate(`/habit/${habit.id}`);
+                setShowSideMenu(false);
             }}
             onContextMenu={(e) => {
-                e.preventDefault()
+                e.preventDefault();
                 openMenu(
                     e.clientX,
                     e.clientY,
                     "habit",
                     { id: String(habit.id), name: habit.name, isMy: isMyAcc },
                     habit
-                )
+                );
             }}
         >
             {habit.tag && <div className="habitIcon">{habitIcon(habit)}</div>}
@@ -218,8 +221,8 @@ export default function HabitDiv({
                 <div className="habitName">{habit.name}</div>
                 <div className="habitPer">
                     {!is_archived && (
-                        timerLoading 
-                            ? "Загрузка..." 
+                        timerLoading
+                            ? "Загрузка..."
                             : timerStatus || periodicityText
                     )}
                     {habit.done && <CheckCircle className="habitHLStatus" weight="fill" />}
@@ -229,5 +232,5 @@ export default function HabitDiv({
                 )}
             </div>
         </div>
-    )
+    );
 }

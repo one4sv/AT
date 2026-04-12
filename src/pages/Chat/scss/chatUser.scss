@@ -10,6 +10,9 @@
     background-color: var(--mc);
     overflow-y: visible;
     border-bottom: 1px solid var(--bgc);
+    &.br {
+        border-radius: 0 0 0 8px;
+    }
 }
 .chatUserBack {
     height: 100%;

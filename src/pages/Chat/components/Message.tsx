@@ -166,7 +166,7 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                         )}
                     </div>
                     {isMy && chatWith &&
-                        (m.read_by.map.length > 0 ? (
+                        (m.read_by.length > 0 ? (
                             <div className="messageReadSign read"><CheckCheck/></div>
                         ) : (
                             <div className="messageReadSign unread"><Check/></div>

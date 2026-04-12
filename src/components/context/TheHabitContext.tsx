@@ -7,15 +7,19 @@ import { useCalendar } from "../hooks/CalendarHook";
 import axios from "axios";
 import { useNavigate } from "react-router";
 
+/**
+ * Контекст для работы с текущей привычкой
+ */
 const TheHabitContext = createContext<TheHabitContextType | null>(null);
 
 export interface TheHabitContextType {
     loadHabit: (id: string | null) => Promise<void>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    findHabit: (id: string | null) => Promise<any>; // можно уточнить позже
+    findHabit: (id: string | null) => Promise<any>;
     loadHabitWLoading: (id: string | null) => Promise<void>;
     loadTimer: (id: number) => void;
     loadCounter: (id: number) => void;
+    parseTimer: (timer: habitTimer | null) => habitTimer | null;
     loadingHabit: boolean;
     habit: Habit | undefined;
     isReadOnly: boolean;
@@ -63,25 +67,19 @@ export interface counterSettingsType {
     red_counter_left: number;
 }
 
+export type metricsType = "timer" | "counter" | "schedule"
+export type asctype = "one" | "all" | "none"
+
 export interface HabitSettings {
-    metric_type: "timer" | "counter";
+    metric_type: metricsType;
     schedule: boolean;
+    auto_schedule_completion:asctype
 }
-
-// ==================== ПАРСЕРЫ ====================
-
-const parseTimer = (timer: habitTimer): habitTimer | null => {
-    if (!timer) return null;
-    return {
-        id: timer.id,
-        started_at: new Date(timer.started_at),
-        end_at: new Date(timer.end_at),
-        status: timer.status,
-        pauses: timer.pauses || [],
-        circles: timer.circles || []
-    };
-};
-
+/**
+ * Парсит счётчик из API (строки → Date)
+ * @param counter Счётчик из API
+ * @returns Распарсенный счётчик или null
+ */
 const parseCounter = (counter: habitCounter): habitCounter | null => {
     if (!counter) return null;
     return {
@@ -98,8 +96,11 @@ const parseCounter = (counter: habitCounter): habitCounter | null => {
     };
 };
 
-// =================================================
-
+/**
+ * Провайдер контекста привычки
+ * @param children React-элементы
+ * @returns JSX провайдер
+ */
 export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
     const { fetchCalendarHabit } = useCalendar();
@@ -121,11 +122,33 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
     const [counterSettings, setCounterSettings] = useState<counterSettingsType | null>(null);
     const [habitSettings, setHabitSettings] = useState<HabitSettings>({
         metric_type: "timer",
-        schedule: false
+        schedule: false,
+        auto_schedule_completion:"none"
     });
 
-    /** Найти привычку (используется в списках) */
-    const findHabit = async (id: string | null) => {
+    /**
+     * Парсит таймер из API (строки → Date)
+     * @param timer Таймер из API
+     * @returns Распарсенный таймер или null
+     */
+    const parseTimer = useCallback((timer: habitTimer | null): habitTimer | null => {
+        if (timer === null) return null;
+        return {
+            id: timer.id,
+            started_at: new Date(timer.started_at),
+            end_at: new Date(timer.end_at),
+            status: timer.status,
+            pauses: timer.pauses || [],
+            circles: timer.circles || []
+        };
+    }, []);
+
+    /**
+     * Получает привычку с сервера
+     * @param id ID привычки
+     * @returns Ответ API с привычкой
+     */
+    const findHabit = useCallback(async (id: string | null) => {
         if (!id) return null;
         try {
             const res = await api.get(`${API_URL}habits/${id}`);
@@ -146,9 +169,14 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
             }
             throw err;
         }
-    };
+    }, [API_URL, parseTimer, showNotification]);
 
-    const loadHabit = async (id: string | null) => {
+    /**
+     * Загружает привычку и обновляет состояние
+     * @param id ID привычки
+     * @returns Promise<void>
+     */
+    const loadHabit = async (id: string | null): Promise<void> => {
         if (!id) return;
         try {
             const res = await findHabit(id);
@@ -175,7 +203,12 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const loadTimer = useCallback(async (habit_id: number) => {
+    /**
+     * Загружает таймер привычки
+     * @param habit_id ID привычки
+     * @returns Promise<void>
+     */
+    const loadTimer = useCallback(async (habit_id: number): Promise<void> => {
         try {
             const res = await api.get(`${API_URL}timer/${habit_id}`);
             if (res.data.success) {
@@ -186,7 +219,12 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [API_URL]);
 
-    const loadCounter = useCallback(async (habit_id: number) => {
+    /**
+     * Загружает счётчик привычки
+     * @param habit_id ID привычки
+     * @returns Promise<void>
+     */
+    const loadCounter = useCallback(async (habit_id: number): Promise<void> => {
         try {
             const res = await api.get(`${API_URL}counter/${habit_id}`);
             if (res.data.success) {
@@ -197,7 +235,12 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [API_URL]);
 
-    const loadHabitWLoading = async (id: string | null) => {
+    /**
+     * Загружает привычку с индикатором загрузки
+     * @param id ID привычки
+     * @returns Promise<void>
+     */
+    const loadHabitWLoading = async (id: string | null): Promise<void> => {
         setLoadingHabit(true);
         await loadHabit(id);
         setLoadingHabit(false);
@@ -232,6 +275,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                 showCounter,
                 setShowCounter,
                 counterSettings,
+                parseTimer
             }}
         >
             {children}

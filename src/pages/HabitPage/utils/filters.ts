@@ -35,7 +35,7 @@ export const slides = [
 export const overall = [
     {label: "Выполнено", value:"comp", props:["Кол-во", "В процнтах"]},
     {label: "Пропущено", value:"skip", props:["Кол-во", "В процентах"]},
-    {label: "Стрик (3+ выполненных дней подряд)", value:"streak", props:["Лучший", "Текущий"]},
+    {label: "Стрик (3+ выполненных дней подряд)", value:"streak", props:["Лучший"]},
     {label: "Перерыв", value:"break", props:["Наибольший"]},
     {label: "Средний стрик", value:"midd", props:["В среднем", "Средний перерыв"]},
     {label: "Всего", value:"alls", props:["Дней в трекинге", "Стриков"]},

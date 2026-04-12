@@ -42,7 +42,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu, isRea
     };
     
     return (
-        <div className="chatUser" ref={habitNameRef}>
+        <div className={`chatUser ${showHabitMenu ? "br" : ""}`} ref={habitNameRef}>
             {isMobile && (
                 <div className="chatUserBack" onClick={() => setShowSideMenu(!showSideMenu)}>
                     <List/>

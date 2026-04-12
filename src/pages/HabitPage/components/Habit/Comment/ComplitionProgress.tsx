@@ -1,9 +1,11 @@
 import { Send } from "lucide-react"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
-import { useEffect, useMemo, useReducer, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { api } from "../../../../../components/ts/api"
-import type { habitTimer } from "../../../../../components/context/TheHabitContext"
 import { placeholders } from "../../../utils/placeholders"
+import { useWebSocket } from "../../../../../components/hooks/WebSocketHook"
+import { todayStrFunc } from "../../../utils/dateToStr"
+import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 
 interface Event {
     type: "start" | "pause" | "circle" | "end"
@@ -18,38 +20,73 @@ const timeToSeconds = (time: string): number => {
     return h * 3600 + m * 60 + s
 }
 
-const formatElapsed = (ms: number): string => {
-    ms = Math.max(0, ms)
-    const hours = Math.floor(ms / 3600000)
-    const minutes = Math.floor((ms % 3600000) / 60000)
-    const seconds = Math.floor((ms % 60000) / 1000)
-    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-}
-
-const formatDuration = (ms: number): string => {
-    return formatElapsed(ms)
-}
-
 const formatTime = (iso: string): string => {
     return new Date(iso).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
 }
 
-export default function CompletionProgress({currentTimer, isHistorical}:{currentTimer:habitTimer | null, isHistorical:boolean}) {
-    const { habit, loadTimer, setHabitTimer } = useTheHabit()
+export default function CompletionProgress() {
+    const { habit, loadTimer, setHabitTimer, parseTimer, showTimer, habitTimer } = useTheHabit()
+    const { chosenDay } = useCalendar()
+    const { ws } = useWebSocket()
     const API_URL = import.meta.env.VITE_API_URL
 
-    const [editedTexts, setEditedTexts] = useState<Record<string, string>>({})
-    const [, forceUpdate] = useReducer(x => x + 1, 0)
-    const [placeholderMap, setPlaceholderMap] = useState<Record<string, string>>({})
-    const [editingKeys, setEditingKeys] = useState<string[]>([])
-    const hasOpenPause = currentTimer?.pauses.some(p => p.end === null)
-
+    const [ editedTexts, setEditedTexts ] = useState<Record<string, string>>({})
+    const [ placeholderMap, setPlaceholderMap ] = useState<Record<string, string>>({})
+    const [ editingKeys, setEditingKeys ] = useState<string[]>([])
+    
+    const todayStr = todayStrFunc()
+    const isHistorical = chosenDay && chosenDay !== todayStr || false
+    const currentTimer = isHistorical ? showTimer : habitTimer
+    // const hasOpenPause = currentTimer?.pauses.some(p => p.end === null)
 
     useEffect(() => {
-        if (!hasOpenPause) return
-        const interval = setInterval(forceUpdate, 1000)
-        return () => clearInterval(interval)
-    }, [hasOpenPause])
+        if (!ws || !habit?.id) return
+
+        const handleTimerEvents = (event: MessageEvent) => {
+            try {
+                const data = JSON.parse(event.data)
+
+                if (data.type === "TIMER_UPDATE" && data.habitId === habit.id) {
+                    const parsed = parseTimer(data.timer)
+
+                    if (!parsed) return
+
+                    setHabitTimer(prev => {
+                        if (!prev) return parsed
+                        if (new Date(parsed.started_at) < new Date(prev.started_at)) {
+                            return prev
+                        }
+
+                        return parsed
+                    })
+                }
+            } catch (e) {
+                console.error("WS TIMER_UPDATE error:", e)
+            }
+        }
+
+        ws.addEventListener("message", handleTimerEvents)
+        return () => ws.removeEventListener("message", handleTimerEvents)
+    }, [ws, habit?.id, parseTimer, setHabitTimer])
+
+    const elapsedFromDateString = (date: string, cumulativePauseMs?: number): string => {
+        if (!currentTimer) return ""
+
+        const pauseStartMs = new Date(date).getTime()
+        const startedMs = currentTimer.started_at.getTime()
+        const elapsedMs = pauseStartMs - startedMs - (cumulativePauseMs || 0)
+
+        return formatCurrentMs(elapsedMs)
+    }
+
+    const formatCurrentMs = (ms: number): string => {
+        const safe = Math.max(0, ms)
+        const hours = Math.floor(safe / 3600000)
+        const minutes = Math.floor((safe % 3600000) / 60000)
+        const seconds = Math.floor((safe % 60000) / 1000)
+
+        return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+    }
 
     const events: Event[] = useMemo(() => {
         if (!currentTimer) return []
@@ -64,20 +101,9 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
 
         let cumulativePauseMs = 0
         currentTimer.pauses.forEach(p => {
-            let pauseTime: string;
-
-            if (p.time) {
-                pauseTime = p.time;
-            } else {
-                const pauseStartMs = new Date(p.start).getTime();
-                const startedMs = currentTimer.started_at.getTime();
-                const elapsedMs = pauseStartMs - startedMs - cumulativePauseMs;
-                pauseTime = formatElapsed(elapsedMs);
-            }
-
             list.push({
                 type: "pause",
-                time: pauseTime,
+                time: elapsedFromDateString(p.time, cumulativePauseMs),
                 start: p.start,
                 end: p.end
             });
@@ -88,9 +114,19 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
         });
 
         currentTimer.circles.forEach(c => {
+            let pauseBeforeCircle = 0
+            currentTimer.pauses.forEach(p => {
+                const pauseStart = new Date(p.start).getTime()
+                const pauseEnd = p.end ? new Date(p.end).getTime() : Date.now()
+                const circleTime = new Date(c.time).getTime()
+
+                if (pauseStart < circleTime) {
+                    pauseBeforeCircle += Math.min(pauseEnd, circleTime) - pauseStart
+                }
+            })
             list.push({
                 type: "circle",
-                time: c.time,
+                time: elapsedFromDateString(c.time, pauseBeforeCircle),
                 text: c.text || ""
             })
         })
@@ -105,7 +141,7 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
             }, 0)
 
             const elapsedMs = effectiveEndMs - startedMs - totalPausedMs
-            const finalTime = formatElapsed(elapsedMs)
+            const finalTime = formatCurrentMs(elapsedMs)
 
             list.push({
                 type: "end",
@@ -136,7 +172,7 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
             if (!prev) return prev
             const updatedCircles = prev.circles.map(c =>
                 c.time === circleTime ? { ...c, text: newText } : c 
-            )
+                )
             return { ...prev, circles: updatedCircles }
         })
 
@@ -169,11 +205,6 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
             </div>
         )
     }
-
-    if (events.length === 0) {
-        return null
-    }
-
     return (
         <div className="completionProgress">
             {events.map((event, index) => {
@@ -203,15 +234,14 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
                         durationMs = new Date(event.end!).getTime() - new Date(event.start!).getTime();
                     }
 
-                    const duration = formatDuration(durationMs);
-
+                    const duration = formatCurrentMs(durationMs);
                     return (
                         <div key={key} className="eventStr pauseStr">
                             <span className="eventTime">{event.time}</span>: пауза с {startTime} до{" "}
-                            {isOpen 
+                            {isOpen
                                 ? (currentTimer.status === "ended" || isHistorical ? formatTime(currentTimer.end_at.toISOString()) : "сейчас") 
                                 : formatTime(event.end!)
-                            } (длительность {duration})
+                            } {event.end && `(длительность ${duration})`}
                         </div>
                     );
                 }
@@ -281,10 +311,10 @@ export default function CompletionProgress({currentTimer, isHistorical}:{current
                                 </div>
                             ) : event.text ? (
                                 <div className="circleText savedText" onClick={() => {
-                                    if (canEdit) {
-                                        setEditingKeys(prev => [...prev, event.time])
-                                        setEditedTexts(prev => ({ ...prev, [event.time]: event.text ?? "" }))
-                                    }
+                                        if (canEdit) {
+                                            setEditingKeys(prev => [...prev, event.time])
+                                            setEditedTexts(prev => ({ ...prev, [event.time]: event.text ?? "" }))
+                                        }
                                 }}>
                                     {event.text}
                                 </div>

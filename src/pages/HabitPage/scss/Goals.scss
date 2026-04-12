@@ -10,12 +10,28 @@
     gap: 0.2vh;
 }
 .addGoalButtDiv {
+    position: relative;
     @include var.longButt(100%, 5vh, 1vh, 1vw, var(--tr), var(--borderWh), var(--tr), var(--tr));
     display: flex;
     align-items: center;
     font-size: 18px;
+    gap: 5px;
     &:hover {
         color: var(--tc);
         background-color: var(--menuButtHover);
+        > .addGoalCaret {
+            color: var(--borderWh);
+        }
+        >.addGoalIcon {
+            color: var(--acsent);
+        }
     }
+}
+.addGoalIcon {
+    color: var(--borderWh);
+}
+.addGoalCaret {
+    position: absolute;
+    right: 0.5vw;
+    color: var(--borderHabit);
 }

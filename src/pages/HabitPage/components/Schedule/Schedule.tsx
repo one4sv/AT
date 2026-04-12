@@ -47,7 +47,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
         if (id) {
             loadHabitSchedule(id)
         }
-    }, [id])
+    }, [id, loadHabitSchedule])
 
     const createWeek = (startDate: Date) => {
         const result = []
@@ -71,10 +71,13 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
         return result
     }
 
-    const week = createWeek(new Date())
-    const secondWeekStart = new Date()
-    secondWeekStart.setDate(secondWeekStart.getDate() + 7)
-    const secondWeek = createWeek(secondWeekStart)
+    const week = useMemo(() => createWeek(new Date()), [isWeek]);
+    const secondWeekStart = useMemo(() => {
+        const d = new Date();
+        d.setDate(d.getDate() + 7);
+        return d;
+    }, []);
+    const secondWeek = useMemo(() => createWeek(secondWeekStart), [isWeek, secondWeekStart]);
 
     const sortHabits = (a: Habit, b: Habit) => {
         const getPriority = (h: Habit) => {
@@ -94,14 +97,13 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
     }
 
     useEffect(() => {
-        if (!edit || !id) return
+        if (!edit || !id) return;
 
-        const newCountInps: CountInpsType[] = []
+        const newCountInps: CountInpsType[] = [];
 
         currentHabitBlocks.forEach((b) => {
-            const targetWeek = b.isSeparator ? secondWeek : week
-
-            const dayEntry = targetWeek.find(d => d.value === b.day_of_week)
+            const targetWeek = b.isSeparator ? secondWeek : week;
+            const dayEntry = targetWeek.find(d => d.value === b.day_of_week);
             if (dayEntry) {
                 newCountInps.push({
                     id: b.id,
@@ -111,11 +113,11 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                     start_time: b.start_time || "",
                     end_time: b.end_time || "",
                     name: b.name || ""
-                })
+                });
             }
-        })
+        });
 
-        setCountInps(newCountInps)
+        setCountInps(newCountInps);
     }, [edit, id, currentHabitBlocks, week, secondWeek, weekSeparator])
 
     const handleSave = async () => {
@@ -168,7 +170,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                 {(isMy && !id || (habit && id === String(habit.id) && !habit?.is_archived)) && (
                     <div className="scheduleOptionsButts">
                         {loading ? (
-                            <div className="scheduleOpt">Загрузка</div>
+                            <div className="scheduleOpt loading">Загрузка</div>
                         ) : (
                             <>
                                 {edit && (

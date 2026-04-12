@@ -3,25 +3,54 @@ import { useHabits } from "../hooks/HabitsHook";
 import { useNote } from "../hooks/NoteHook";
 import { useTheHabit } from "../hooks/TheHabitHook";
 import { api } from "../ts/api";
+import type { asctype, metricsType } from "./TheHabitContext";
 
 export type UpdateHabitContextType = {
+    /** Изменить название привычки */
     setNewName: (habitId: number, val: string) => void;
+    /** Изменить описание */
     setNewDescription: (habitId: number, val: string) => void;
+    /** Установить дату начала */
     setNewStartDate: (habitId: number, val: Date | null) => void;
+    /** Установить дату окончания */
     setNewEndDate: (habitId: number, val: Date | null) => void;
+    /** Установить флаг "без окончания" */
     setNewOngoing: (habitId: number, val: boolean) => void;
+    /** Изменить периодичность (например: everyday, weekly) */
     setNewPeriodicity: (habitId: number, val: string | number | null) => void;
-    setNewDays: (habitId: number, val: { value: number; label: string; chosen: boolean }[] | null) => void;
+    /** Выбрать дни недели */
+    setNewDays: (
+        habitId: number,
+        val: { value: number; label: string; chosen: boolean }[] | null
+    ) => void;
+    /** Установить время начала */
     setNewStartTime: (habitId: number, val: string | null) => void;
+    /** Установить время окончания */
     setNewEndTime: (habitId: number, val: string | null) => void;
+    /** Закрепить привычку */
     setPin: (habitId: number, val: boolean) => void;
+    /** Отправить в архив */
     putInArchieve: (habitId: number, val: boolean) => void;
+    /** Установить тег */
     setNewTag: (habitId: number, val: string | null) => void;
-    setNewMetricType: (habitId: number, val: "timer" | "counter") => void;
+    /** Изменить тип метрики (timer, counter и т.д.) */
+    setNewMetricType: (habitId: number, val: metricsType) => void;
+    /** Включить/выключить расписание */
     setNewScheduleBool: (habitId: number, val: boolean) => void;
+    /** Автовыполнение по расписанию*/
+    setNewAutoScheduleCompletion: (habitId:number, val: asctype) => void
+    /** Список id привычек, которые сейчас сохраняются */
     isUpdating: string[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    /**
+     * Локальные изменения:
+     * ключ — habitId,
+     * значение — изменённые поля
+     */
     localChanges: { [key: number]: Partial<Record<string, unknown>> };
+    /**
+     * Сохранить изменения привычки на сервер
+     * @param habitId ID привычки
+     */
     saveHabit: (habitId: number) => Promise<void>;
 };
 
@@ -29,26 +58,59 @@ const UpdateHabitContext = createContext<UpdateHabitContextType | null>(null);
 
 export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     const { refetchHabits } = useHabits();
-    const { loadHabit } = useTheHabit();           // ← убрали habit и habitSettings
+    const { habit, habitSettings, loadHabit } = useTheHabit();
     const { showNotification } = useNote();
     const API_URL = import.meta.env.VITE_API_URL;
 
     const [localChanges, setLocalChanges] = useState<{ [key: number]: Partial<Record<string, unknown>> }>({});
     const [isUpdating, setIsUpdating] = useState<string[]>([]);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const normalize = (val: unknown) => {
+        if (Array.isArray(val)) {
+            return [...val].sort();
+        }
+        return val;
+    };
+
+    const isEqual = (a: unknown, b: unknown) => {
+        if (a instanceof Date && b instanceof Date) {
+            return a.getTime() === b.getTime();
+        }
+        return JSON.stringify(a) === JSON.stringify(b);
+    };
+
     const updateLocalChanges = useCallback((habitId: number, field: string, value: unknown) => {
         if (field === "name" && (!value || (typeof value === "string" && value.trim() === ""))) return;
         if (field === "start_date" && !value) return;
 
-        setLocalChanges(prev => ({
-            ...prev,
-            [habitId]: {
-                ...prev[habitId],
-                [field]: value,
+        let originalValue: unknown;
+
+        if (field === "metric_type" || field === "schedule") {
+            originalValue = habitSettings?.[field as keyof typeof habitSettings];
+        } else {
+            originalValue = habit?.[field as keyof typeof habit];
+        }
+
+        setLocalChanges(prev => {
+            const habitChanges = { ...(prev[habitId] || {}) };
+
+            if (isEqual(normalize(value), normalize(originalValue))) {
+                delete habitChanges[field];
+            } else {
+                habitChanges[field] = value;
             }
-        }));
-    }, []);
+
+            const updated = { ...prev };
+
+            if (Object.keys(habitChanges).length === 0) {
+                delete updated[habitId];
+            } else {
+                updated[habitId] = habitChanges;
+            }
+
+            return updated;
+        });
+    }, [habit, habitSettings]);
 
     const setNewName = useCallback((habitId: number, val: string) => updateLocalChanges(habitId, "name", val), [updateLocalChanges]);
     const setNewDescription = useCallback((habitId: number, val: string) => updateLocalChanges(habitId, "desc", val), [updateLocalChanges]);
@@ -68,9 +130,16 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     const putInArchieve = useCallback((habitId: number, val: boolean) => updateLocalChanges(habitId, "is_archived", val), [updateLocalChanges]);
     const setNewTag = useCallback((habitId: number, val: string | null) => updateLocalChanges(habitId, "tag", val), [updateLocalChanges]);
 
-    const setNewMetricType = useCallback((habitId: number, val: "timer" | "counter") => updateLocalChanges(habitId, "metric_type", val), [updateLocalChanges]);
+    const setNewMetricType = useCallback((habitId: number, val: metricsType) => updateLocalChanges(habitId, "metric_type", val), [updateLocalChanges]);
     const setNewScheduleBool = useCallback((habitId: number, val: boolean) => updateLocalChanges(habitId, "schedule", val), [updateLocalChanges]);
+    const setNewAutoScheduleCompletion = useCallback((habitId: number, val: asctype) => updateLocalChanges(habitId, "auto_schedule_completion", val), [updateLocalChanges]);
 
+    const SETTINGS_FIELDS = [
+        "metric_type",
+        "schedule",
+        "auto_schedule_completion"
+    ];
+    
     const saveHabit = useCallback(async (habitId: number) => {
         const changes = localChanges[habitId];
         if (!changes || Object.keys(changes).length === 0) return;
@@ -81,7 +150,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
         const settingsFields: Record<string, unknown> = {};
 
         Object.entries(changes).forEach(([field, value]) => {
-            if (field === "metric_type" || field === "schedule") {
+            if (SETTINGS_FIELDS.includes(field)) {
                 settingsFields[field] = value;
             } else {
                 habitFields[field] = value;
@@ -148,7 +217,8 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
                 putInArchieve,
                 setNewMetricType,
                 setNewScheduleBool,
-                saveHabit
+                saveHabit,
+                setNewAutoScheduleCompletion
             }}
         >
             {children}

@@ -1,0 +1,84 @@
+@use "../../../scss/global" as var;
+
+.habitSettings {
+    width: 85%;
+    height: 100%;
+    margin: 2vh auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25vh;
+}
+.habitSettingsHeader {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    padding: 1vh 0.5vw;
+    cursor: pointer;
+    border-radius: 8px;
+    &:hover {
+        background-color: var(--menuButtHover);
+    }
+}
+.redHabitBlock {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    padding: 1vh 0.5vw;
+    > span {
+        cursor: default;
+    }
+    &:hover {
+        background-color: var(--menuButtHover);
+    }
+}
+.redHabitStr {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    > span {
+        cursor: default;
+    }
+}
+.redHabitSpan {
+    color: var(--borderWhLight);
+    &.redHabitToggler {
+        display: flex;
+        justify-content: center;
+        > .toggler.disable {
+            border-color: var(--borderHabit);
+            > .togglerCircle {
+                background-color: var(--borderHabit);
+            }
+        }
+    }
+}
+.redHabitSettingSpan {
+    display: flex;
+    color: var(--borderWh);
+    cursor: pointer;
+    gap: 0.25vw;
+    &:hover {
+        color: var(--tc);
+    }
+    &.disabled {
+        color: var(--borderHabit);
+        cursor: default;
+    }
+}
+.habitSettingsSL {
+    > input {
+        font-size: 16px;
+    }
+}
+.settingHint {
+    color: var(--borderHabit);
+    font-size: 15px;
+    margin-top: 2px;
+    transition: transform 0.3s ease, color 0.2s, left 0.3s ease;
+    position: relative;
+    &:hover {
+        color: var(--borderWh);
+        transform: scale(1.05) translateX(2.5%);
+    }
+}

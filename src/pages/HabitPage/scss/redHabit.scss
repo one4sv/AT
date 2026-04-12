@@ -6,6 +6,7 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    padding-top: 2vh;
 }
 .habitWrapperIcon {
     display: flex;
@@ -69,6 +70,7 @@
     margin-bottom: 1vh;
     >label {
         padding-inline-start: 0.5vw;
+        color: var(--borderWh);
     }
     &:focus-within {
         color: var(--acsent)
@@ -96,9 +98,9 @@
     justify-content: center;
 }
 .redHabitSL {
-    @include var.selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 10%);
+    @include var.selectList(100%, 3vh, 9%, 0vw, 0.4vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 5%);
     >input {
-        @include var.input(var(--tr), var(--tc), var(--tr), 4vh, 0, var(--tr));
+        @include var.input(var(--tr), var(--tc), var(--tr), 3vh, 0, var(--tr));
         border-bottom: 2px solid var(--borderHabit);
         width: 100%;
         font-size: 18px;

@@ -1,4 +1,4 @@
-import { createContext, useState, useRef } from "react";
+import { createContext, useState, useRef, useCallback } from "react";
 import type { ReactNode } from "react";
 const NoteContext = createContext<NoteContextType | null>(null);
 
@@ -20,7 +20,7 @@ export const NoteProvider = ({children}:{children:ReactNode}) => {
     const timeoutRef = useRef<number | null>(null);
     const hideRef = useRef<number | null>(null);
 
-    const showNotification = ({newtype, newtxt} : {newtype:string, newtxt:string}) => {
+    const showNotification = useCallback(({newtype, newtxt} : {newtype:string, newtxt:string}) => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current)
         if (hideRef.current) clearTimeout(hideRef.current)
 
@@ -37,7 +37,7 @@ export const NoteProvider = ({children}:{children:ReactNode}) => {
                 setTxt('');
             },600);
         },3000);
-    };
+    },[])
     return(
         <NoteContext.Provider value={{type, txt, display, id, showNotification: (newtype, newtxt) => showNotification({ newtype, newtxt }), setDisplay}}>
             {children}

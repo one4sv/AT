@@ -9,7 +9,7 @@ import { useAcc } from "../hooks/AccHook";
 import { useState, useEffect } from "react";
 import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
-import Toggler from "../ts/toggler";
+import Toggler from "../ts/Toggler";
 import { useMessages } from "../hooks/MessagesHook";
 import { useGroup } from "../hooks/GroupHook";
 import axios from "axios";

@@ -77,6 +77,8 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
         return found ? found.comment : "";
     }, [calendar, chosenDay]);
 
+    console.log(counters)
+    
     useEffect(() => {
         if (chosenDay === "") {
             setDoable(true)
@@ -104,7 +106,7 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
         setDayComment(comment || "")
         const needTimer = timers?.find(t => dateToCalendarFormat(t.started_at) === chosenDay) || null
         setShowTimer(needTimer)
-        setShowCounter(counters?.find(t => dateToCalendarFormat(t.started_at) === chosenDay) || null)
+        setShowCounter(counters?.find(t => dateToCalendarFormat(new Date(t.started_at)) === chosenDay) || null)
     }, [chosenDay])
 
     return(

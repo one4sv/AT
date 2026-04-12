@@ -9,11 +9,10 @@ import DayCell from "./DayCell"
 import { useParams } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
-import { isTimePassed } from "../../../../../../components/ts/utils/dayArrHelpFuncs";
 
 export default function Calendar() {
     const { calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, setChosenDay } = useCalendar();
-    const { habit, setDoable, setDayComment, setIsDone } = useTheHabit();
+    const { habit, setDayComment, setIsDone } = useTheHabit();
     const { habits } = useHabits()
 
     const { habitId:id } = useParams<{habitId : string}>()
@@ -51,17 +50,6 @@ export default function Calendar() {
             setChosenDay("")
             setIsDone(null)
             setDayComment(null)
-            if ((h.start_time && h.end_time && !isTimePassed(h.end_time) && isTimePassed(h.start_time)) ||
-                (h.start_time && !h.end_time && isTimePassed(h.start_time)) ||
-                (h.end_time && !h.start_time && !isTimePassed(h.end_time)) ||
-                (!h.start_time && !h.end_time)) setDoable(true)
-            else setDoable(false)
-            if (h.is_archived) {
-                const m = new Date(h.end_date).getMonth()
-                setSelectedMonth(m)
-                const y = new Date(h.end_date).getFullYear()
-                setSelectedYear(y)
-            }
         }
     }, [id])
 

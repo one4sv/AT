@@ -18,10 +18,8 @@ export const dateToStrFormat = (date: Date) => {
  * Форматирует Date в формат календаря YYYY-MM-DD
  */
 export const dateToCalendarFormat = (date: Date) => {
-    const d = new Date(date)
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
 }
-
 /**
  * Возвращает время HH:MM
  * @param {Date} date Принимает дату

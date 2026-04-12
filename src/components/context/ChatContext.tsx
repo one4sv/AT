@@ -7,6 +7,7 @@ import { useSettings } from "../hooks/SettingsHook";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import { NotificationAggregator } from "../ts/utils/NotificationAggregator";
+import { useWebSocket } from "../hooks/WebSocketHook";
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
@@ -97,9 +98,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useUser();
     const { showNotification } = useNote();
     const { note, messNote } = useSettings();
+    const { ws, send } = useWebSocket()
     const navigate = useNavigate()
     const API_URL = import.meta.env.VITE_API_URL;
-    const API_WS = import.meta.env.VITE_API_WS;
 
     const [ chatWith, setChatWith ] = useState<chatWithType | null>(null);
     const [ messages, setMessages ] = useState<message[]>([]);
@@ -112,7 +113,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [ typingMap, setTypingMap ] = useState<Record<string, string[]>>({});
     
     const typingTimeout = useRef<number | null>(null);
-    const wsRef = useRef<WebSocket | null>(null);
     const chatWithRef = useRef<chatWithType | null>(chatWith);
     const notificationAggregator = new NotificationAggregator();
 
@@ -212,10 +212,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
 
     useEffect(() => {
-        if (!user?.id) return;
-        wsRef.current = new WebSocket(`${API_WS}ws?userId=${user.id}`);
-        wsRef.current.onmessage = (event) => {
+        if (!ws) return;
+
+        const handleMessage = (event: MessageEvent) => {
             const data = JSON.parse(event.data);
+
             if (data.type === "NEW_MESSAGE") {
                 const messageSenderId = String(data.message.sender_id);
                 if (chatWithRef.current && String(chatWithRef.current.chat_id) === String(data.chat_id)) {
@@ -304,7 +305,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     refetchGroupChat(data.group_id);
                 }
 
-                // Для страницы /room/
                 if (location.pathname.startsWith("/room/")) {
                     const currentGroupId = location.pathname.split("/room/")[1];
                     if (currentGroupId === String(data.group_id)) {
@@ -332,9 +332,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     }
                 }
 
-                // Обновляем список чатов (группа исчезнет из preview)
                 refetchContactsWTLoading();
-                }
+            }
             if (data.type === "TYPING") {
                 const chatKey = data.chat_id || data.from;
                 setTypingMap(prev => ({
@@ -362,8 +361,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 refetchContactsWTLoading();
             }
         };
-        return () => wsRef.current?.close();
-    }, [user.id, refetchContacts, API_WS, note, messNote, refetchContactsWTLoading, showNotification, navigate]);
+
+        ws.addEventListener("message", handleMessage);
+
+        return () => ws.removeEventListener("message", handleMessage);
+    }, [ws, user.id, note, messNote, showNotification, navigate]);
 
     const setReaction = async (mId: number, reaction: string) => {
         try {
@@ -379,9 +381,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, [search, refetchContacts]);
 
     const stopTyping = useCallback(() => {
-        if (!user?.id || !chatWithRef.current || !wsRef.current) return;
+        if (!user?.id || !chatWithRef.current || !ws) return;
 
-        wsRef.current.send(JSON.stringify({
+        send(JSON.stringify({
             type: "STOP_TYPING",
             to: chatWithRef.current.id,
             is_group: chatWithRef.current.is_group,
@@ -393,15 +395,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             clearTimeout(typingTimeout.current);
             typingTimeout.current = null;
         }
-    }, [user?.id]);
+    }, [user?.id, ws]);
 
-    // Также обнови handleTyping, чтобы он использовал stopTyping
     const handleTyping = (id: string) => {
         if (!user?.id || !chatWithRef.current) return;
 
-        // Отправляем TYPING только если ещё не печатаем
         if (!isTyping) {
-            wsRef.current?.send(JSON.stringify({
+            send(JSON.stringify({
                 type: "TYPING",
                 to: id,
                 is_group: chatWithRef.current.is_group,

@@ -74,6 +74,9 @@
             color: var(--tc);
         }
     }
+    &.loading {
+        animation: pulseBrightness 2s infinite ease-in-out;
+    }
 
 }
 .scheduleWeekSign {

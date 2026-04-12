@@ -5,7 +5,7 @@ interface checkboxProps {
     setState?:React.Dispatch<SetStateAction<boolean>>,
     func?:(val:boolean) => void,
     funcNoVal?:() => void,
-    disable:boolean
+    disable?:boolean
 }
 export default function Checkbox({state, setState, func, funcNoVal, disable}:checkboxProps) {
     return (
@@ -16,7 +16,7 @@ export default function Checkbox({state, setState, func, funcNoVal, disable}:che
             if (funcNoVal) funcNoVal()
         }}>
             {state && (
-                <div className={`checkboxTrue ${disable ? "disabled" : ""}`} style={{display:state ? "inline-block" : "none"}}></div>
+                <div className={`checkboxTrue ${disable ? "disabled" : ""}`}></div>
             )}
         </div>
     )
