@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from "react"
 import "../../scss/toggler.scss"
+
 export interface TogglerProps {
     state: boolean;
     disable?: boolean;
