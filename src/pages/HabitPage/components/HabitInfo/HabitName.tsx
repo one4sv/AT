@@ -5,8 +5,7 @@ import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook"
 import { TagIcon } from "../../utils/TagIcon"
 import Streak from "./Streak"
 import { useCalendar } from "../../../../components/hooks/CalendarHook"
-import { DotsThreeOutlineVertical, List } from "@phosphor-icons/react"
-import { useContextMenu } from "../../../../components/hooks/ContextMenuHook"
+import { List } from "@phosphor-icons/react"
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook"
 import { isMobile } from "react-device-detect"
 
@@ -16,30 +15,13 @@ interface HabitNameProps {
     setShowHabitMenu:React.Dispatch<SetStateAction<boolean>>,
     isReadOnly:boolean
 }
-export default function HabitName({habit, showHabitMenu, setShowHabitMenu, isReadOnly}:HabitNameProps) {
+export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:HabitNameProps) {
     const { isUpdating } = useUpHabit()
     const { calendar } = useCalendar()
-    const { menu, closeMenu, openMenu } = useContextMenu()
     const { setShowSideMenu, showSideMenu } = useSideMenu()
     const habitNameRef = useRef<HTMLDivElement | null>(null);
 
     if (!habit) return null
-
-    const handleMenuClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (!habitNameRef.current || !habit) return;
-
-        if (menu.visible) {
-            closeMenu()
-            return
-        }
-
-        const rect = habitNameRef.current.getBoundingClientRect();
-        const x = rect.left + rect.width * 0.86;
-        const y = window.innerHeight * 0.065;
-
-        openMenu(x, y, "habit", {id:String(habit.id), name:habit.name, isMy:!isReadOnly}, habit)
-    };
     
     return (
         <div className={`chatUser ${showHabitMenu ? "br" : ""}`} ref={habitNameRef}>
@@ -68,9 +50,6 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu, isRea
                 >
                     Сохранение...
                 </span>
-            </div>
-            <div className="userMenuCall" onClick={handleMenuClick}>
-                <DotsThreeOutlineVertical weight="fill"/>
             </div>
         </div>
     )

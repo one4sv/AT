@@ -114,7 +114,7 @@ export default function Counter() {
     if (!counterSettings || !habit) return null
 
     return (
-        <>
+        <div className="CounterDiv">
             <div className="counterScore" ref={counterRef}>
                 {paddedCount.split('').map((digit, index) => (
                     <div key={index} className="digitSquare">
@@ -286,6 +286,6 @@ export default function Counter() {
                     )}
                 </div>
             </div>
-        </>
+        </div>
     )
 }

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom"
 import type { CountInpsType } from "./Schedule"
 import { useSettings } from "../../../../components/hooks/SettingsHook"
 import { isOddWeek } from "../../utils/isOddWeek"
-import { dateToCalendarFormat } from "../../utils/dateToStr"
+import { dateToCalendarFormat, timeToMinutes } from "../../utils/dateToStr"
 
 export type ExtraScheduleBlock = {
     id: number;
@@ -79,12 +79,6 @@ export default function ScheduleBlock({
         return `${percent}%`
     }
 
-    const timeToMinutes = (t: string) => {
-        if (!t) return 0
-        const normalized = t.replace(".", ":")
-        const [h, m] = normalized.split(":")
-        return (Number(h) || 0) * 60 + (Number(m) || 0)
-    }
     return (
         <div className={`scheduleBlock ${!edit && getTimeClass(habit, d.value, d.date)}`} onClick={() => isGeneral && !edit && navigate(`/habit/${habit.id}`)}>
             {getTimeClass(habit, d.value, d.date) === "ongoing" && !edit &&

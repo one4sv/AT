@@ -76,8 +76,6 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
         const found = calendar.find(c => c.date === chosenDay);
         return found ? found.comment : "";
     }, [calendar, chosenDay]);
-
-    console.log(counters)
     
     useEffect(() => {
         if (chosenDay === "") {

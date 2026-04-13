@@ -10,6 +10,7 @@ import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 interface Event {
     type: "start" | "pause" | "circle" | "end"
     time: string
+    originalTime?: string
     start?: string
     end?: string | null
     text?: string
@@ -127,6 +128,7 @@ export default function CompletionProgress() {
             list.push({
                 type: "circle",
                 time: elapsedFromDateString(c.time, pauseBeforeCircle),
+                originalTime: c.time,
                 text: c.text || ""
             })
         })
@@ -157,21 +159,21 @@ export default function CompletionProgress() {
         setPlaceholderMap(prev => {
             const newMap = { ...prev }
             events.forEach(event => {
-                if (event.type === "circle" && !(event.time in newMap)) {
-                    newMap[event.time] = placeholders[Math.floor(Math.random() * placeholders.length)]
+                if (event.type === "circle" && event.originalTime && !(event.originalTime in newMap)) {
+                    newMap[event.originalTime] = placeholders[Math.floor(Math.random() * placeholders.length)]
                 }
             })
             return newMap
         })
     }, [events])
 
-    const handleSend = async (circleTime: string, newText: string) => {
+    const handleSend = async (originalTime: string, newText: string) => {
         if (!habit || !currentTimer) return
 
         setHabitTimer(prev => {
             if (!prev) return prev
             const updatedCircles = prev.circles.map(c =>
-                c.time === circleTime ? { ...c, text: newText } : c 
+                c.time === originalTime ? { ...c, text: newText } : c 
                 )
             return { ...prev, circles: updatedCircles }
         })
@@ -180,17 +182,17 @@ export default function CompletionProgress() {
             await api.post(`${API_URL}timer/circle/text`, {
                 habit_id: habit.id,
                 timer_id: currentTimer.id,
-                time: circleTime,
+                time: originalTime,
                 text: newText
             })
 
             setEditedTexts(prev => {
                 const updated = { ...prev }
-                delete updated[circleTime]
+                delete updated[originalTime]
                 return updated
             })
 
-            setEditingKeys(prev => prev.filter(k => k !== circleTime))
+            setEditingKeys(prev => prev.filter(k => k !== originalTime))
 
             loadTimer(habit.id)
         } catch (err) {
@@ -205,10 +207,11 @@ export default function CompletionProgress() {
             </div>
         )
     }
+
     return (
         <div className="completionProgress">
             {events.map((event, index) => {
-                const key = `${event.type}-${event.time}-${index}`
+                const key = event.originalTime ?? `${event.type}-${event.time}-${index}`
 
                 if (event.type === "start") {
                     return (
@@ -247,10 +250,11 @@ export default function CompletionProgress() {
                 }
 
                 if (event.type === "circle") {
-                    const currentValue = editedTexts[event.time] ?? event.text ?? ""
+                    const originalCircleTime = event.originalTime!;
+                    const currentValue = editedTexts[originalCircleTime] ?? event.text ?? ""
                     const hasChanged = currentValue.trim() !== (event.text ?? "").trim()
                     const canEdit = !isHistorical
-                    const isEditing = editingKeys.includes(event.time)
+                    const isEditing = editingKeys.includes(originalCircleTime)
 
                     return (
                         <div key={key} className="eventStr circleStr">
@@ -278,21 +282,21 @@ export default function CompletionProgress() {
                                             ta.style.height = `${ta.scrollHeight}px`;
                                             setEditedTexts(prev => ({
                                                 ...prev,
-                                                [event.time]: e.target.value
+                                                [originalCircleTime]: e.target.value
                                             }));
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter" && !e.shiftKey && hasChanged) {
                                                 e.preventDefault();
-                                                handleSend(event.time, currentValue.trim())
-                                                setEditingKeys(prev => prev.filter(k => k !== event.time))
+                                                handleSend(originalCircleTime, currentValue.trim())
+                                                setEditingKeys(prev => prev.filter(k => k !== originalCircleTime))
                                             }
                                         }}
                                         onBlur={() => {
                                             if (hasChanged) {
-                                                handleSend(event.time, currentValue.trim())
+                                                handleSend(originalCircleTime, currentValue.trim())
                                             }
-                                            setEditingKeys(prev => prev.filter(k => k !== event.time))
+                                            setEditingKeys(prev => prev.filter(k => k !== originalCircleTime))
                                         }}
                                         rows={1}
                                         autoFocus
@@ -302,7 +306,7 @@ export default function CompletionProgress() {
                                             className="sendCircle"
                                             onClick={() => {
                                                 handleSend(event.time, currentValue.trim())
-                                                setEditingKeys(prev => prev.filter(k => k !== event.time))
+                                                setEditingKeys(prev => prev.filter(k => k !== originalCircleTime))
                                             }}
                                         >
                                             <Send fill="currentColor"/>
@@ -312,14 +316,14 @@ export default function CompletionProgress() {
                             ) : event.text ? (
                                 <div className="circleText savedText" onClick={() => {
                                         if (canEdit) {
-                                            setEditingKeys(prev => [...prev, event.time])
-                                            setEditedTexts(prev => ({ ...prev, [event.time]: event.text ?? "" }))
+                                            setEditingKeys(prev => [...prev, originalCircleTime])
+                                            setEditedTexts(prev => ({ ...prev, [originalCircleTime]: event.text ?? "" }))
                                         }
                                 }}>
                                     {event.text}
                                 </div>
                             ) : canEdit ? (
-                                <div className="textPlus" onClick={() => setEditingKeys(prev => [...prev, event.time])}>
+                                <div className="textPlus" onClick={() => setEditingKeys(prev => [...prev, originalCircleTime])}>
                                     <div/>
                                     <span>+</span>
                                     <div/>

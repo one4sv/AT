@@ -24,7 +24,6 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   const todayStr = todayStrFunc()
   const isHistorical = chosenDay && chosenDay !== todayStr || false
   const currentCounter = isHistorical ? showCounter : habitCounter
-  const currentComment = isHistorical ? dayComment : todayComment
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
@@ -44,12 +43,27 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   }, [comment]);
 
   useEffect(() => {
-    // if (chosenDay) setComment(dayComment)
-    // else setComment(todayComment || "")
-    if (currentComment) setComment(currentComment)
-  }, [chosenDay, currentComment, dayComment])
+    if (chosenDay) setComment(dayComment)
+    else setComment(todayComment || "")
+  }, [chosenDay, dayComment, todayComment])
 
-  const cantSave = (comment?.trim() === "" && currentComment === "") || currentComment === comment || !isMy || waitComAnswer || habit?.is_archived
+  // Определяем предыдущий комментарий для выбранного дня
+  const previousComment = chosenDay 
+    ? (dayComment ?? "") 
+    : (todayComment ?? "");
+
+  const currentTrimmed = (comment ?? "").trim();
+
+  // Кнопка неактивна, если:
+  // - не мой habit
+  // - ждём ответ от сервера
+  // - привычка архивирована (!ongoing)
+  // - комментарий не изменился (включая случай "было пусто → осталось пусто")
+  const cantSave = 
+    !isMy || 
+    waitComAnswer || 
+    !habit?.ongoing || 
+    currentTrimmed === previousComment.trim();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -65,7 +79,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
         <textarea
           placeholder="Комментарий"
           ref={textareaRef}
-          readOnly={!isMy || (habit && habit.is_archived)}
+          readOnly={!isMy || (habit && !habit.ongoing)}
           onChange={handleTextareaChange}
           onKeyDown={handleKeyDown}
           value={comment || ""}

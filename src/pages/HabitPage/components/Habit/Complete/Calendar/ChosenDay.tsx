@@ -7,9 +7,10 @@ import { CheckCircle, Circle } from "@phosphor-icons/react";
 import { useDone } from "../../../../../../components/hooks/DoneHook";
 import { useHabits } from "../../../../../../components/hooks/HabitsHook";
 import { getDayArrays } from "../../../../../../components/ts/utils/getDayArrs";
+import { formatDateFromString, todayStrFunc } from "../../../../utils/dateToStr";
 
 export default function ChosenDay() {
-    const { chosenDay: day, calendar } = useCalendar()
+    const { chosenDay, calendar } = useCalendar()
     const { markDone } = useDone()
     const { habits } = useHabits()
     const { habitId:id } = useParams<{ habitId: string }>();
@@ -17,15 +18,12 @@ export default function ChosenDay() {
     const ChosenDayRef = useRef<HTMLDivElement | null>(null)
     const [ mouseOver, setMouseOver ] = useState("")
     
-    const [ y, m, d ] = day.split("-")
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
     const order = {
         everyday: 0,
         weekly: 1,
         sometimes: 2
     }
-
+    const day = chosenDay || todayStrFunc()
     const sortedHabits = habits?.slice().sort((a, b) => order[a.periodicity] - order[b.periodicity]) ?? null
     const { completedArr, skippedArr, willArr, nowArr } = useMemo(
         () => getDayArrays(day, calendar, sortedHabits, id, undefined, true ),
@@ -72,14 +70,14 @@ export default function ChosenDay() {
                             <div className="cdHabitName">
                                 <div className={`calendarDot ${cn}`}/><span className="cdHabitText">{c.habitName}</span>
                             </div>
-                            {day > todayStr ? (
+                            {day > todayStrFunc() ? (
                                 <div className="sdHabitTime">
                                     {getHabitTime(c.habitId)}
                                 </div>
                             ) : ""}
                             
                         </div>
-                        {!c.is_archived &&
+                        {c.ongoing &&
                             <div className="cdHabitDoneButt" onMouseOver={() => setMouseOver(c.habitId)} onMouseLeave={() => setMouseOver("")} onClick={() => markDone(Number(c.habitId), day)}>
                                 {doneButt(cn, c.habitId)}
                             </div>
@@ -91,9 +89,9 @@ export default function ChosenDay() {
     }
 
     return (
-        <div className={`chosenDayDiv ${day === "" ? "" : "active"}`} ref={ChosenDayRef}>
+        <div className="chosenDayDiv" ref={ChosenDayRef}>
             <div className="chosenDayDate">
-                {`${d}.${m}.${y}`}
+                {formatDateFromString(day)}
             </div>
             {(completedArr.length > 0 || skippedArr.length > 0 || willArr.length > 0 || nowArr.length > 0) && (
                 <div className="cdhabits">

@@ -1,5 +1,14 @@
 @use "../../../scss/global" as var;
 
+.TimerDiv {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 2vh;
+}
 .timerNums {
     height: 5vh;
     display: flex;
@@ -22,7 +31,7 @@
 }
 .launchButt {
     border-radius: 50%;
-    background-color: var(--darkerAcsent);
+    background-color: var(--acsent);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,7 +45,7 @@
         text-wrap-mode: nowrap;
     }
     &:hover {
-        background-color: var(--acsent);
+        box-shadow: 0 0 12px var(--acsent), 0 0 24px var(--acsent);
     }
     > svg {
         height: 50%;

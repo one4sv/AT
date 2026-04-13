@@ -2,12 +2,10 @@ import { useState, useEffect } from "react"
 import "../../scss/modules/addHabit.scss"
 import { forwardRef, useRef } from "react"
 import SelectList from "../ts/SelectList"
-import { SquareCheck, Square } from "lucide-react"
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios"
 import { useBlackout } from "../hooks/BlackoutHook"
 import { useNote } from "../hooks/NoteHook"
-import CalendarInput from "../ts/CalendarInput"
 import { useHabits } from "../hooks/HabitsHook"
 import TagSelector from "../ts/TagSelector"
 import DayChanger from "../ts/DayChanger"
@@ -23,9 +21,6 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     const [ name, setName ] = useState<string>("")
     const [ desc, setDescription ] = useState<string>("")
     const [ selectedperiodicity, setSelectedperiodicity ] = useState<string | number | undefined>()
-    const [ checkedPresent, setCheckedPresent ] = useState<boolean>(false)
-    const [ startDate, setStartDate ] = useState<Date | null>(null)
-    const [ endDate, setEndDate ] = useState<Date | null>(null)
     const [startTime, setStartTime] = useState<string>("")
     const [endTime, setEndTime] = useState<string>("") 
     const [selectedTag, setSelectedTag] = useState<string | undefined>()
@@ -60,35 +55,22 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
         setChosenDays(initialChosenDays);
     }
 
-    const handleStartDateChange = (date: Date | null) => {
-        setStartDate(date ?? null);
-    };
-    const handleEndDateChange = (date: Date | null) => {
-        setEndDate(date ?? null);
-    };
-
-    useEffect(() => {
-        if (startDate && endDate && endDate < startDate) {
-            setEndDate(null)
-        }
-    }, [startDate, endDate])
-
     const fetchAddHabit = async () => {
         const chosenValues = chosenDays.filter(d => d.chosen).map(d => d.value);
 
         const payload = {
             name,
             desc,
-            startDate:startDate,
-            endDate:checkedPresent ? null : endDate,
-            now:checkedPresent ? checkedPresent : null,
+            startDate:new Date(),
+            endDate:null,
+            now:true,
             periodicity: selectedperiodicity,
             chosenDays:chosenValues ? chosenValues : null,
             start_time:startTime||null,
             end_time:endTime||null,
             tag: selectedTag || null
         };
-        if (!name || !startDate || (!endDate && !checkedPresent) || !selectedperiodicity || (selectedperiodicity === "weekly" && !chosenDays)) {
+        if (!name || !selectedperiodicity || (selectedperiodicity === "weekly" && !chosenDays)) {
             showNotification("error", "Заполните все поля")
             return
         }
@@ -144,42 +126,6 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             </div>            
             <div className="addHabitWrapper">
                 <TagSelector selectedTag={selectedTag} setSelectedTag={setSelectedTag}/>
-            </div>
-            <div className="addHabitTimeWrapper">
-                <div className="addHabitWrapper">
-                    <label htmlFor="inputStartDate">дата начала</label>
-                    <CalendarInput
-                        id="inputStartDate"
-                        value={startDate}
-                        onChange={handleStartDateChange}
-                        maxDate={new Date()}
-                        minDate={undefined}
-                        className="addHabitInput"
-                    />
-                </div>
-                <div className="addHabitWrapper">
-                    <label htmlFor="inputEndDate">дата окончания</label>
-                    {checkedPresent ? (
-                        <input type="text" className="addHabitInput" readOnly value={"По настоящее время"}/>
-                    ) : (<CalendarInput
-                        id="inputEndDate"
-                        value={endDate}
-                        onChange={handleEndDateChange}
-                        maxDate={new Date()}
-                        minDate={startDate || undefined}
-                        className="addHabitInput"
-                    />)}
-                </div>
-            </div>
-            <div className="addHabbitCheckBox" onClick={() => setCheckedPresent(!checkedPresent)}>
-                {checkedPresent ? (
-                    <SquareCheck id="checkBoxPresent" className="active"/>
-                ) : (
-                    <Square id="checkBoxPresent" className="notactive"/>
-                )}
-                <label htmlFor="chekBoxPresent">
-                    по настоящее время
-                </label>
             </div>
             <div className="inpWrapperAddHabit">
                 <label htmlFor="addHabitSL">Переодичность</label>

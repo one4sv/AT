@@ -78,7 +78,7 @@
     transition: transform 0.3s ease;
 }
 
-.habitSlider.toSettings {
+.habitSlider.toSlide {
     transform: translateX(-50%);
 }
 
@@ -88,6 +88,7 @@
     height: 100%;
     overflow-y: auto;
     padding-bottom: 6vh; // чтобы кнопка Save не перекрывала
+    overflow-y: hidden;
 }
 .habitMenuShowButt {
     position: absolute;
@@ -125,7 +126,7 @@
 .habitSave {
     position: absolute;
     bottom: 0;
-    width: 80%;
+    width: 84%;
     height: 4vh;
     background-color: var(--acsent);
     color: var(--tc);
@@ -146,6 +147,14 @@
                         0 0 24px var(--darkerAcsent);
         }
     }
+}
+.habitInnerSlide {
+    width: 85%;
+    height: 100%;
+    margin: 2vh auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25vh;
 }
 @media (max-width: 800px) {
     .StatsDivMain {

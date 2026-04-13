@@ -2,11 +2,11 @@
 
 .addHabitDiv {
     @include var.centerTopModal;
-    width: 28vw;
+    width: 24vw;
     min-height: auto;
     padding: 3vh 0 4vh;
     background-color: var(--mc);
-    border-radius: 30px;
+    border-radius: 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -25,7 +25,7 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    width: 80%;
+    width: 85%;
     >label {
         color: var(--borderWh);
         width: 100%;
@@ -44,10 +44,16 @@
         font-size: 16px;
         color: var(--borderWh);
     }
+    &.date {
+        flex-direction: row;
+        gap: 5px;
+        margin-top: 0.5vh;
+        margin-bottom: 0.5vh;
+    }
 }
 .addHabitTimeWrapper {
     display: flex;
-    width: 80%;
+    width: 85%;
     justify-content: space-between;
     >.addHabitWrapper {
         width: 48%;
@@ -69,6 +75,10 @@
         border-bottom: 2px solid var(--acsent);
 
     }
+}
+.AddHabitDateSpan {
+    position: relative;
+    color: var(--borderWh);
 }
 .tegSelector {
     display: flex;
@@ -182,7 +192,7 @@
     >input {
         @include var.input(var(--tr), var(--tc), var(--tr), 4vh, 0, var(--tr));
         border-bottom: 2px solid var(--borderHabit);
-        width: 22vw;
+        width: 20vw;
         cursor: pointer;
         &:focus-visible {
             border-bottom: 2px solid var(--acsent);
@@ -195,15 +205,15 @@
     }
 }
 .addHabitGoal {
-    @include var.longButt(80%, 5vh, 0, 0, var(--tr), var(--borderHabit), var(--tr), var(--menuButtHover));
-    margin-top: 2vh;
+    @include var.longButt(85%, 4vh, 0, 0, var(--tr), var(--borderHabit), var(--tr), var(--menuButtHover));
+    margin-top: 3vh;
     font-size: 20px;
     &:hover {
         color: var(--tc);
     }
 }
 .addHabitSave {
-    @include var.longButt(80%, 5vh, 0, 0, var(--acsent), var(--tc), var(--tr), var(--darkerAcsent));
+    @include var.longButt(85%, 4vh, 0, 0, var(--acsent), var(--tc), var(--tr), var(--darkerAcsent));
     margin-top: 1vh;
     font-size: 20px;
 }

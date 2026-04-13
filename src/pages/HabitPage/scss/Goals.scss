@@ -24,10 +24,14 @@
         }
         >.addGoalIcon {
             color: var(--acsent);
+            &.danger {
+                color: var(--notValid);
+            }
         }
     }
 }
 .addGoalIcon {
+    font-size: 22px;
     color: var(--borderWh);
 }
 .addGoalCaret {

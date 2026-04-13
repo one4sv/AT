@@ -93,7 +93,7 @@ export default function Timer() {
     const seconds = parseInt(secondsStr, 10);
     
     return (
-        <>
+        <div className="TimerDiv">
             <SVGclock hours={hours} minutes={minutes} seconds={seconds} />
             <div className="timerNums">
                 <div className="untilNums">
@@ -132,6 +132,6 @@ export default function Timer() {
                     </div>
                 </div>
             )}
-        </>
+        </div>
     );
 }

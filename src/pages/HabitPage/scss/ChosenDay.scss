@@ -8,18 +8,12 @@
     width: 19.5vw;
     top: 0;
     position: relative;
-    opacity: 0;
     user-select: none;
-    pointer-events: none;
     max-height: 58vh;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--menuButtHover) transparent;
     overflow-x: hidden;
-    &.active {
-        opacity: 1;
-        pointer-events: all;
-    }
 }
 @media (max-width:800px) {
     .chosenDayDiv {

@@ -47,21 +47,72 @@ export type ScheduleCompletionType = {
 };
 
 type ScheduleContextType = {
+    /** 
+     * Общее расписание всех привычек пользователя.
+     * Ключ — ID привычки, значение — массив блоков расписания.
+     */
     schedules: SchedulesMap;
+
+    /** 
+     * Расписание конкретных привычек (кэш).
+     * Ключ — ID привычки.
+     */
     habitSchedule: SchedulesMap;
+
+    /** 
+     * Флаг загрузки (используется для UI).
+     */
     loading: boolean;
-    refreshSchedules: () => Promise<void>;
-    loadHabitSchedule: (habitId: string) => Promise<ScheduleBlockType[]>;
-    saveHabitSchedule: (habitId: string, blocksToSend: ScheduleBlockToSend[], isSeparated: boolean) => Promise<boolean>;
+
+    /**
+     * Загружает общее расписание всех привычек пользователя.
+     * Обновляет `schedules` и `schedule_settings`.
+     * @returns Promise<void>
+     */
+    refreshSchedules(): Promise<void>;
+
+    /**
+     * Загружает расписание одной привычки и её completion-данные.
+     * @param habitId ID привычки
+     * @returns Массив блоков расписания
+     */
+    loadHabitSchedule(habitId: string): Promise<ScheduleBlockType[]>;
+
+    /**
+     * Сохраняет изменения в расписании привычки.
+     * @param habitId ID привычки
+     * @param blocksToSend Массив блоков для сохранения
+     * @param isSeparated Флаг разделения по неделям
+     * @returns true если сохранение прошло успешно
+     */
+    saveHabitSchedule(
+        habitId: string,
+        blocksToSend: ScheduleBlockToSend[],
+        isSeparated: boolean
+    ): Promise<boolean>;
+
+    /**
+     * Настройки расписания для привычек.
+     * Ключ — ID привычки.
+     */
     schedule_settings: ScheduleSettingsMap;
-    scheduleComplete: (habitId: string, blockId: number, date: string) => Promise<void>;
+
+    /**
+     * Переключает (toggle) статус завершения блока расписания.
+     * Делает оптимистичное обновление UI и синхронизацию с сервером.
+     * @param habitId ID привычки
+     * @param blockId ID блока расписания
+     * @param date Дата в формате (YYYY-MM-DD)
+     * @returns Promise<void>
+     */
+    scheduleComplete(habitId: string, blockId: number, date: string): Promise<void>;
+
+    /**
+     * Список выполненных блоков расписания.
+     */
     scheduleCompletions: ScheduleCompletionType[];
 };
 
-/**
- * Контекст расписаний привычек.
- * Предоставляет данные о расписании, настройках и завершённых блоках.
- */
 const ScheduleContext = createContext<ScheduleContextType | null>(null);
 
 export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
@@ -73,10 +124,6 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
     const [schedule_settings, setSchedule_Settings] = useState<ScheduleSettingsMap>({});
     const [scheduleCompletions, setScheduleCompletions] = useState<ScheduleCompletionType[]>([]);
 
-    /**
-     * Загружает общее расписание для всех привычек текущего пользователя.
-     * Обновляет `schedules` и `schedule_settings`.
-     */
     const refreshSchedules = useCallback(async () => {
         setLoading(true);
         try {
@@ -110,11 +157,6 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [habitSettings.metric_type, habitSettings.schedule]);
 
-    /**
-     * Загружает расписание одной привычки + её завершённые блоки.
-     * @param habitId - ID привычки
-     * @returns Массив блоков расписания
-     */
     const loadHabitSchedule = useCallback(async (habitId: string): Promise<ScheduleBlockType[]> => {
         setLoading(true);
         try {
@@ -147,13 +189,6 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [scheduleGetCompletions]);
 
-    /**
-     * Сохраняет изменения в расписании привычки.
-     * @param habitId - ID привычки
-     * @param blocksToSend - Массив блоков для сохранения
-     * @param isSeparated - Флаг разделения по неделям
-     * @returns `true` если сохранение прошло успешно
-     */
     const saveHabitSchedule = useCallback(async (
         habitId: string,
         blocksToSend: ScheduleBlockToSend[],
@@ -175,14 +210,6 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [loadHabitSchedule]);
 
-    /**
-     * Переключает (toggle) статус завершения блока расписания.
-     * После успешного запроса обновляет список завершений.
-     * Оптимистичное обновление.
-     * @param habitId - ID привычки
-     * @param blockId - ID блока расписания
-     * @param date - Дата в формате строки (YYYY-MM-DD)
-     */
     const scheduleComplete = useCallback(async (
         habitId: string,
         blockId: number,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type SetStateAction } from "react";
 import { useParams } from "react-router";
 import { useTheHabit } from "../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../components/hooks/CalendarHook";
@@ -21,18 +21,27 @@ import { useDiagrams } from "../../components/hooks/DiagramHook";
 import HabitSave from "./components/HabitInfo/HabitSave";
 import { useSchedule } from "../../components/hooks/ScheduleHook";
 import HabitExtraButts from "./components/HabitInfo/HabitExtraButts";
+import { useHabits } from "../../components/hooks/HabitsHook";
 
+export interface HabitSlideProps {
+    id: number;
+    setShown: React.Dispatch<SetStateAction<boolean>>;
+    readOnly?: boolean;
+    isArchived?:boolean,
+    isMy?:boolean
+}
 
 export default function Habit() {
-    const { fetchCalendarHabit, fetchCalendarWLoading, chosenDay, calendarLoading } = useCalendar()
-    const { loadHabitWLoading, habit, isReadOnly, loadingHabit, habitSettings } = useTheHabit()
+    const { fetchCalendarHabit, fetchCalendarWLoading, calendarLoading } = useCalendar()
+    const { loadHabitWLoading, habit, loadingHabit, habitSettings } = useTheHabit()
     const { schedules } = useSchedule()
     const { habitId } = useParams<{ habitId: string }>();
     const { setTitle } = usePageTitle()
     const { mainRef } = useDiagrams()
-
+    const { habits } = useHabits()
     const [ showHabitMenu, setShowHabitMenu ] = useState(false)
     const [ showSettings, setShowSettings ] = useState(false)
+    const [ showJurnal, setShowJurnal ] = useState(false)
 
     useEffect(() => {
         if (!showHabitMenu) setShowSettings(false)
@@ -64,6 +73,10 @@ export default function Habit() {
         return <Loader/>
     }
 
+    const isMy = (habitId !== undefined && habits?.some(h => String(h.id) === habitId)) ?? false
+    const isArchived = !habit?.ongoing
+    const isReadOnly = !isMy || isArchived
+
     return (
         <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
             {habitId && <HabitName habit={habit} showHabitMenu={showHabitMenu} setShowHabitMenu={setShowHabitMenu} isReadOnly={isReadOnly}/>}
@@ -76,8 +89,7 @@ export default function Habit() {
                             <DayComment id={habitId} isMy={!isReadOnly}/>
                         </>
                     }
-                    <CompJurnal/>
-                    {!habitId && chosenDay && <ChosenDay/>}
+                    {!habitId && <ChosenDay/>}
                 </div>
                 {shouldShowSchedule && (
                     <Schedule id={habitId} isMy={!isReadOnly}/>
@@ -89,7 +101,7 @@ export default function Habit() {
                     className={`habitMenu ${isMobile ? "mobile" : ""}`}
                     style={{ right: showHabitMenu ? "0" : isMobile ? "-100vw" : "-25vw" }}
                 >
-                    <div className={`habitSlider ${showSettings ? "toSettings" : ""}`}>
+                    <div className={`habitSlider ${showSettings || showJurnal ? "toSlide" : ""}`}>
 
                         {/* Слайд 1 */}
                         <div className="habitSlide">
@@ -99,16 +111,24 @@ export default function Habit() {
                                 readOnly={isReadOnly}
                                 id={Number(habitId)}
                                 setShowSettings={setShowSettings}
+                                setShowJurnal={setShowJurnal}
                             />
                         </div>
 
                         {/* Слайд 2 */}
                         <div className="habitSlide">
-                            <HabitSettings
-                                readOnly={isReadOnly}
-                                id={habit.id}
-                                setShown={setShowSettings}
-                            />
+                            {showSettings && (
+                                <HabitSettings
+                                    readOnly={isReadOnly}
+                                    id={habit.id}
+                                    setShown={setShowSettings}
+                                    isArchived={isArchived}
+                                    isMy={isMy}
+                                />
+                            )}
+                            {showJurnal && (
+                                <CompJurnal id={habit.id} setShown={setShowJurnal}/>
+                            )}
                         </div>
 
                     </div>
@@ -117,7 +137,7 @@ export default function Habit() {
                     <HabitSave
                         readOnly={isReadOnly}
                         id={habit.id}
-                        archived={habit.is_archived}
+                        archived={!habit.ongoing}
                     />
                 </div>
             )}

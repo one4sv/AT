@@ -142,7 +142,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
     const isVisible = (value: number) =>
         habit &&
         habit.periodicity !== "sometimes" &&
-        !habit.is_archived &&
+        habit.ongoing &&
         (habit.chosen_days?.includes(value) || habit.periodicity === "everyday")
 
     return (
@@ -167,7 +167,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                         </>
                     )}
                 </div>
-                {(isMy && !id || (habit && id === String(habit.id) && !habit?.is_archived)) && (
+                {(isMy && !id || (habit && id === String(habit.id) && habit?.ongoing)) && (
                     <div className="scheduleOptionsButts">
                         {loading ? (
                             <div className="scheduleOpt loading">Загрузка</div>
@@ -237,7 +237,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                                 .filter(
                                     h =>
                                         h.periodicity !== "sometimes" &&
-                                        !h.is_archived &&
+                                        h.ongoing &&
                                         (h.chosen_days?.includes(d.value) || h.periodicity === "everyday")
                                 )
                                 .sort(sortHabits)

@@ -1,35 +1,33 @@
 import "../../scss/HabitSettings.scss";
-import { useState, useCallback, useEffect, type SetStateAction } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Toggler from "../../../../components/ts/Toggler";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import type { asctype, metricsType } from "../../../../components/context/TheHabitContext";
-import { CaretLeftIcon } from "@phosphor-icons/react";
+import { BoxArrowDownIcon, CaretLeftIcon, Trash } from "@phosphor-icons/react";
 import SelectList, { type Option } from "../../../../components/ts/SelectList";
-
-interface HabitSettingsProps {
-    id: number;
-    readOnly: boolean;
-    setShown: React.Dispatch<SetStateAction<boolean>>;
-}
+import type { HabitSlideProps } from "../../HabitPage";
+import { useDelete } from "../../../../components/hooks/DeleteHook";
+import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 
 function SettingHint({ text }: { text: string }) {
     return <div className="settingHint">{text}</div>;
 }
 
-export default function HabitSettings({ id, readOnly, setShown }: HabitSettingsProps) {
+export default function HabitSettings({ id, readOnly, setShown, isArchived, isMy }: HabitSlideProps) {
     const { habitSettings, habitTimer, habit } = useTheHabit();
-    const { setNewMetricType, setNewScheduleBool, setNewAutoScheduleCompletion } = useUpHabit();
-
-    const [metric_type, setMetric_type] = useState<metricsType>(habitSettings.metric_type);
-    const [scheduleToggle, setScheduleToggle] = useState(habitSettings.schedule);
-    const [autoCompleteMode, setAutoCompleteMode] = useState<string | number | undefined>(
+    const { setNewMetricType, setNewScheduleBool, setNewAutoScheduleCompletion, setNewOngoing } = useUpHabit();
+    const { setDeleteConfirm } = useDelete()
+    const { setBlackout } = useBlackout()
+    
+    const [ metric_type, setMetric_type ] = useState<metricsType>(habitSettings.metric_type);
+    const [ scheduleToggle, setScheduleToggle ] = useState(habitSettings.schedule);
+    const [ autoCompleteMode, setAutoCompleteMode ] = useState<string | number | undefined>(
         habitSettings.auto_schedule_completion ?? "none"
     );
 
     const isMetricDisabled = readOnly || (habitTimer !== null && habitTimer.status !== "ended");
 
-    // Синхронизация с контекстом
     useEffect(() => setMetric_type(habitSettings.metric_type), [habitSettings.metric_type]);
     useEffect(() => setScheduleToggle(habitSettings.schedule), [habitSettings.schedule]);
     useEffect(() => {
@@ -78,7 +76,7 @@ export default function HabitSettings({ id, readOnly, setShown }: HabitSettingsP
     if (!habit) return null;
 
     return (
-        <div className="habitSettings">
+        <div className="habitInnerSlide">
             {/* Расписание */}
             <div className="redHabitBlock" onClick={() => handleScheduleChange(!scheduleToggle)}>
                 <div className="redHabitStr">
@@ -147,8 +145,43 @@ export default function HabitSettings({ id, readOnly, setShown }: HabitSettingsP
                     />
                 </div>
             )}
+            {isMy && (
+                <>
+                    {/* Архивировать */}
+                        <div className="redHabitBlock but danger" onClick={() => isArchived && setNewOngoing(habit.id, isArchived)}>
+                            {!isArchived ? (
+                                <>
+                                    <span className="redHabitSpan but"> <BoxArrowDownIcon/> Завершить и архивировать</span>
+                                    <div className="settingHint">
+                                        Активность будет завершена и перемещена в архив. Статистика сохранится и будет доступна для просмотра, новые выполнения отмечать нельзя.
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="redHabitSpan but"> <BoxArrowDownIcon/> Разархивировать</span>
+                                    <div className="settingHint">
+                                        Активность снова станет выполнимой и вернётся в список текущих.
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    
+                    {/* Удалить */}
+                    <div className="redHabitBlock but danger" onClick={() => {
+                        setDeleteConfirm({goal:"habit", id:id, name:habit.name})
+                        setBlackout({seted:true, module:"Delete"})
+                    }}>
+                        <span className="redHabitSpan but"> 
+                            <Trash/> Удалить
+                        </span>
+                        <div className="settingHint">
+                            Активность и вся связанная статистика будут удалены без возможности восстановления.
+                        </div>
+                    </div>
+                </>
+            )}
 
-            <div className="habitSettingsHeader" onClick={() => setShown(false)}>
+            <div className="habitSlideBack" onClick={() => setShown(false)}>
                 <CaretLeftIcon /> Назад
             </div>
         </div>

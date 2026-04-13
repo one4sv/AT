@@ -107,7 +107,7 @@ export default function SideMenu() {
                 sometimes: "Иногда",
             }
 
-            const activeHabits = habits.filter(h => !h.is_archived)
+            const activeHabits = habits.filter(h => h.ongoing)
 
             newOrderHabits.forEach(order => {
                 if (order === "pinned") return
@@ -127,7 +127,7 @@ export default function SideMenu() {
                 }
             })
 
-            const hasArchived = habits.some(h => h.is_archived)
+            const hasArchived = habits.some(h => !h.ongoing)
             if (hasArchived) {
                 filters.push({ label: "Архив", value: "archived", new:"0" })
             }

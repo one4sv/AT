@@ -13,7 +13,7 @@ export interface Calendar {
     comment?: string;
     isDone?: boolean;
     created_at?: Date;
-    is_archived: boolean
+    ongoing: boolean
 }
 
 export interface CalendarContextType {

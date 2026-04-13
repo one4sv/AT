@@ -217,7 +217,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
         } catch (error) {
             console.error(error);
         }
-    }, [API_URL]);
+    }, [API_URL, parseTimer]);
 
     /**
      * Загружает счётчик привычки

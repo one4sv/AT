@@ -1,14 +1,6 @@
 @use "../../../scss/global" as var;
 
-.habitSettings {
-    width: 85%;
-    height: 100%;
-    margin: 2vh auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25vh;
-}
-.habitSettingsHeader {
+.habitSlideBack {
     font-size: 18px;
     display: flex;
     align-items: center;
@@ -27,8 +19,16 @@
     > span {
         cursor: default;
     }
+    &.but {
+        cursor: pointer;
+    }
     &:hover {
         background-color: var(--menuButtHover);
+        &.danger {
+            > span {
+                color: var(--notValid);
+            }
+        }
     }
 }
 .redHabitStr {
@@ -50,6 +50,15 @@
             > .togglerCircle {
                 background-color: var(--borderHabit);
             }
+        }
+    }
+    &.but {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        >svg {
+            font-size: 18px;
         }
     }
 }

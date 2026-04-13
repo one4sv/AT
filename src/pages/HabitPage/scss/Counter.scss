@@ -1,5 +1,14 @@
 @use "../../../scss/global" as var;
 
+.CounterDiv {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 2vh;
+}
 .counterScore {
     font-size: 20px;
     color: var(--acsent);
@@ -95,13 +104,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    &:hover {
-        background-color: var(--menuButtHover);
-        >.counterRedButt {
-            background-color: var(--menuButtHover);
-            display: flex;
-        }
-    }
 }
 .counterChange {
     width: 6vw;

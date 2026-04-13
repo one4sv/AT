@@ -50,3 +50,14 @@ export const weekDay = (day: string) => {
         .toLocaleDateString("ru-RU", { weekday: "short" })
         .slice(0, 2)
 }
+/**
+ * 
+ * @param {string} t время в формате чч:мм || чч.мм || чч
+ * @returns {number} число минут 
+ */
+export const timeToMinutes = (t: string) => {
+    if (!t) return 0
+    const normalized = t.replace(".", ":")
+    const [h, m] = normalized.split(":")
+    return (Number(h) || 0) * 60 + (Number(m) || 0)
+}

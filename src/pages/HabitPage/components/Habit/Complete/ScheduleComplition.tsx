@@ -6,7 +6,7 @@ import { useSettings } from "../../../../../components/hooks/SettingsHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import "../../../scss/scheduleComp.scss";
 import { CheckCircleIcon, Circle } from "@phosphor-icons/react";
-import { todayStrFunc } from "../../../utils/dateToStr";
+import { timeToMinutes, todayStrFunc } from "../../../utils/dateToStr";
 import type { ScheduleBlockType } from "../../../../../components/context/ScheduleContext";
 
 export default function ScheduleComplition() {
@@ -43,13 +43,13 @@ export default function ScheduleComplition() {
         return currentSchedule.map((s) => {
             const isCompleted = scheduleCompletions.some(
                 (c) => c.schedule_id === s.id && c.date === dateStr
-            );
+            )
 
             return {
                 ...s,
                 completed: isCompleted,
             };
-        });
+        }).sort((a, b) => timeToMinutes(a.start_time) - timeToMinutes(b.start_time))
     }, [id, habitSchedule, chosenDay, schedule_settings, weekStart, scheduleCompletions]);
 
     const date = chosenDay || todayStrFunc();

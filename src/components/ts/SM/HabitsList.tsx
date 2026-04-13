@@ -49,10 +49,10 @@ export default function HabitsList({ filter }: { filter?: string }) {
         let filteredHabits = habits;
 
         if (filter === "archived") {
-            filteredHabits = habits.filter(h => h.is_archived);
+            filteredHabits = habits.filter(h => !h.ongoing);
         } else {
             if (!showArchived) {
-                filteredHabits = filteredHabits.filter(h => !h.is_archived);
+                filteredHabits = filteredHabits.filter(h => h.ongoing);
             }
 
             const targetDate = getTargetDate(filter);

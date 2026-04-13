@@ -1,37 +1,28 @@
 import { Virtuoso } from "react-virtuoso";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../../../../scss/CompJurnal.scss";
 import { useCalendar } from "../../../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../../../components/hooks/TheHabitHook";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
 import { formatDateFromString } from "../../../../utils/dateToStr";
+import { CaretLeftIcon } from "@phosphor-icons/react";
+import type { HabitSlideProps } from "../../../../HabitPage";
 
-export default function CompJurnal() {
+export default function CompJurnal({setShown, id}:HabitSlideProps) {
     const { calendar } = useCalendar()
-    const { setDayComment, setIsDone, doable, habit } = useTheHabit()
+    const { setDayComment, setIsDone, } = useTheHabit()
     const { setChosenDay, setSelectedYear, setSelectedMonth } = useCalendar();
-    const { habitId: id } = useParams<{ habitId?: string }>();
     const navigate = useNavigate();
 
     const [ jurnalSearch, setJurnalSearch ] = useState("")
-
-
 
     const sortedCalendar = [...calendar]
         .filter(c => jurnalSearch.trim().length > 0 ? (c.comment?.includes(jurnalSearch) || formatDateFromString(c.date).includes(jurnalSearch)) && c.isDone : c.isDone)
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
-    const jurnalHeight = () => {
-        if (id && habit) {
-            if (habit?.is_archived) return "withArchivedHabit"
-            if (doable) return "withHabitnDone"
-            else return "withHabit"
-        }
-    }
-
     return (
-        <div className={`compJurnalDiv ${jurnalHeight() || ""}`} >
+        <div className="habitInnerSlide">
             <div className="compJurnalsearch">
                 <input type="text" onChange={(e) => setJurnalSearch(e.target.value)} value={jurnalSearch}/>
                 {jurnalSearch.trim().length > 0
@@ -84,6 +75,9 @@ export default function CompJurnal() {
                         );
                     }}
                 />
+            </div>
+            <div className="habitSlideBack" onClick={() => setShown(false)}>
+                <CaretLeftIcon /> Назад
             </div>
         </div>
     );

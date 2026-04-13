@@ -74,7 +74,7 @@ export function getDayArrays(
         habitName: h.name,
         date: dateStr,
         isDone: false,
-        is_archived:h.is_archived
+        ongoing:h.ongoing
       })
       return
     }
@@ -85,7 +85,7 @@ export function getDayArrays(
         habitName: h.name,
         date: dateStr,
         isDone: false,
-        is_archived:h.is_archived
+        ongoing:h.ongoing
       })
       return
     }
@@ -98,7 +98,7 @@ export function getDayArrays(
           habitName: h.name,
           date: dateStr,
           isDone: false,
-          is_archived:h.is_archived
+          ongoing:h.ongoing
         })
         return
       } else if (!h.end_time || isTimePassed(h.end_time)) {
@@ -107,7 +107,7 @@ export function getDayArrays(
           habitName: h.name,
           date: dateStr,
           isDone: false,
-          is_archived:h.is_archived
+          ongoing:h.ongoing
         })
       } else if (h.start_time && h.end_time && !isTimePassed(h.end_time) && isTimePassed(h.start_time)) {
         nowArr.push({
@@ -115,7 +115,7 @@ export function getDayArrays(
           habitName: h.name,
           date: dateStr,
           isDone: false,
-          is_archived:h.is_archived
+          ongoing:h.ongoing
         })
       }
     }

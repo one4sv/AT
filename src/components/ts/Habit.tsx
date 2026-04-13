@@ -19,12 +19,10 @@ export default function HabitDiv({
     habit,
     id,
     isMyAcc,
-    is_archived
 }: {
     habit: Habit;
     id?: number;
     isMyAcc?: boolean;
-    is_archived?: boolean;
 }) {
     const { openMenu } = useContextMenu();
     const { setShowSideMenu } = useSideMenu();
@@ -110,7 +108,7 @@ export default function HabitDiv({
     }, [loadInitialTimer]);
 
     const ruPeriodicity = (habit: Habit): string => {
-        if (habit.is_archived) return "в архиве";
+        if (!habit.ongoing) return "в архиве";
         const { periodicity: per, chosen_days } = habit;
         const habitIdKey = String(habit.id);
         const habitBlocks = schedules[habitIdKey] || [];
@@ -220,7 +218,7 @@ export default function HabitDiv({
             <div className="habitInfo">
                 <div className="habitName">{habit.name}</div>
                 <div className="habitPer">
-                    {!is_archived && (
+                    {habit.ongoing && (
                         timerLoading
                             ? "Загрузка..."
                             : timerStatus || periodicityText

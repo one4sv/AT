@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { SquareCheck, Square } from "lucide-react";
-import CalendarInput from "../../../../components/ts/CalendarInput";
 import SelectList from "../../../../components/ts/SelectList";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import type { Habit } from "../../../../components/context/HabitsContext";
@@ -9,6 +7,7 @@ import DayChanger from "../../../../components/ts/DayChanger";
 import { initialChosenDays } from "../../../../components/ts/initialChosenDays";
 import { WarningCircle } from "@phosphor-icons/react";
 import { TagIcon } from "../../utils/TagIcon";
+import { dateToStrFormat } from "../../utils/dateToStr";
 
 interface RedHabitProps {
     habit: Habit;
@@ -17,30 +16,27 @@ interface RedHabitProps {
 
 export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     const {
-        setNewName, setNewDescription, setNewStartDate, setNewEndDate,
-        setNewOngoing, setNewPeriodicity, setNewDays, setNewStartTime,
-        setNewEndTime, setNewTag,
+        setNewName, setNewDescription, setNewPeriodicity,
+        setNewDays, setNewStartTime, setNewEndTime, setNewTag,
     } = useUpHabit();
 
     const [name, setName] = useState<string>("");
     const [desc, setDesc] = useState<string | undefined>("");
     const [startTime, setStartTime] = useState<string>("");
     const [endTime, setEndTime] = useState<string>("");
-    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [periodicity, setPeriodicity] = useState<string>("");
     const [ongoing, setOngoing] = useState<boolean>(false);
-    const [archived, setArcvhieved] = useState<boolean>(false);
     const [selectedTag, setSelectedTag] = useState<string | undefined>();
     const [chosenDays, setChosenDays] = useState<{ value: number; label: string; chosen: boolean }[]>(initialChosenDays);
 
     useEffect(() => {
         if (!habit) return;
-        setStartDate(habit.start_date ? new Date(habit.start_date) : null);
+        setStartDate(new Date(habit.start_date));
         setEndDate(habit.end_date ? new Date(habit.end_date) : null);
         setPeriodicity(habit.periodicity ?? "");
         setOngoing(Boolean(habit.ongoing));
-        setArcvhieved(Boolean(habit.is_archived));
 
         if (name === "" || name === habit.name) {
             setName(habit.name ?? "");
@@ -101,7 +97,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
 
     return (
         <div className="redHabit">
-            {archived && (
+            {!ongoing && (
                 <div className="thisarchived">
                     <div className="thisarchivedSvg">
                         <WarningCircle />
@@ -125,7 +121,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         type="text"
                         className="addHabitInput"
                         maxLength={40}
-                        readOnly={readOnly || archived}
+                        readOnly={readOnly || !ongoing}
                         value={name}
                         minLength={1}
                         onChange={(e) => {
@@ -143,7 +139,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     className="addHabitInput"
                     maxLength={120}
                     value={desc || habit.desc}
-                    readOnly={readOnly || archived}
+                    readOnly={readOnly || !ongoing}
                     onChange={(e) => {
                         setDesc(e.currentTarget.value);
                         setNewDescription(habit.id, e.currentTarget.value);
@@ -152,56 +148,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                 <span>{desc?.length || 0}/120</span>
             </div>
             <div className="addHabitWrapper">
-                <TagSelector selectedTag={habit.tag || selectedTag} setSelectedTag={setSelectedTag} showOnly={readOnly || archived}/>
-            </div>
-            <div className="addHabitTimeWrapper">
-                <div className="addHabitWrapper">
-                    <label htmlFor="sdInput">Дата начала</label>
-                    <CalendarInput
-                        id="sdInput"
-                        value={startDate}
-                        readOnly={readOnly || archived}
-                        onChange={(date) => {
-                            setStartDate(date);
-                            setNewStartDate(habit.id, date);
-                        }}
-                        maxDate={new Date()}
-                        placeholder={"С дд.мм.гггг"}
-                        className="addHabitInput"
-                    />
-                </div>
-                <div className="addHabitWrapper">
-                    <label>Дата окончания</label>
-                    {ongoing || habit.ongoing ? (
-                        <input type="text" className="addHabitInput ongoingInput" readOnly value={"По настоящее время"} />
-                    ) : (
-                        <CalendarInput
-                            value={endDate}
-                            readOnly={readOnly || archived}
-                            onChange={(date) => {
-                                setEndDate(date);
-                                setNewEndDate(habit.id, date);
-                            }}
-                            minDate={startDate || undefined}
-                            placeholder={"По дд.мм.гггг"}
-                            className="addHabitInput"
-                        />
-                    )}
-                </div>
-            </div>
-
-            <div className="addHabbitCheckBox redHabitCheckbox" onClick={() => {
-                if (!readOnly && !archived) {
-                    setOngoing(!ongoing);
-                    setNewOngoing(habit.id, !ongoing);
-                }
-            }}>
-                {ongoing || habit.ongoing ? (
-                    <SquareCheck id="checkBoxPresent" className="active" />
-                ) : (
-                    <Square id="checkBoxPresent" className="notactive" />
-                )}
-                <label htmlFor="checkBoxPresent">по настоящее время</label>
+                <TagSelector selectedTag={habit.tag || selectedTag} setSelectedTag={setSelectedTag} showOnly={readOnly || !ongoing}/>
             </div>
 
             <div className="inpWrapperRedHabit">
@@ -209,7 +156,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                 <SelectList
                     placeholder=""
                     className="redHabitSL"
-                    showOnly={readOnly || archived}
+                    showOnly={readOnly || !ongoing}
                     arr={periodicityArr}
                     prop={(value) => {
                         setPeriodicity(value as string);
@@ -219,7 +166,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                 />
             </div>
             {(periodicity || habit.periodicity) === "weekly" && (
-                <DayChanger toggleDay={toggleDay} chosenDays={chosenDays} showOnly={readOnly || archived} chosenArr={habit.chosen_days}/>
+                <DayChanger toggleDay={toggleDay} chosenDays={chosenDays} showOnly={readOnly || !ongoing} chosenArr={habit.chosen_days}/>
             )}
             <div className="addHabitTimeWrapper">
                 <div className="addHabitWrapper time">
@@ -229,7 +176,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         placeholder="чч:мм"
                         className="addHabitInput"
                         value={startTime}
-                        readOnly={readOnly || archived}
+                        readOnly={readOnly || !ongoing}
                         onChange={(e) => {
                             const formattedTime = formatTimeInput(e.target.value);
                             setStartTime(formattedTime);
@@ -244,7 +191,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         placeholder="чч:мм"
                         className="addHabitInput"
                         value={endTime}
-                        readOnly={readOnly || archived}
+                        readOnly={readOnly || !ongoing}
                         onChange={(e) => {
                             const formattedTime = formatTimeInput(e.target.value);
                             setEndTime(formattedTime);
@@ -252,6 +199,18 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         }}
                     />
                 </div>
+            </div>
+            <div className="addHabitWrapper">
+                <div className="addHabitWrapper date">
+                    <div className="AddHabitDateSpan">Дата начала:</div>
+                    <div className="AddHabitDateSpan">{dateToStrFormat(startDate)}</div>
+                </div>
+                {endDate && (
+                    <div className="addHabitWrapper date">
+                        <div className="AddHabitDateSpan">Дата окончания:</div>
+                        <div className="AddHabitDateSpan">{dateToStrFormat(endDate)}</div>
+                    </div>
+                )}
             </div>
         </div>
     );

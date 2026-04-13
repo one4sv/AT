@@ -4,18 +4,15 @@ import { useNote } from "../hooks/NoteHook";
 import { useTheHabit } from "../hooks/TheHabitHook";
 import { api } from "../ts/api";
 import type { asctype, metricsType } from "./TheHabitContext";
+import { todayStrFunc } from "../../pages/HabitPage/utils/dateToStr";
 
 export type UpdateHabitContextType = {
     /** Изменить название привычки */
     setNewName: (habitId: number, val: string) => void;
     /** Изменить описание */
     setNewDescription: (habitId: number, val: string) => void;
-    /** Установить дату начала */
-    setNewStartDate: (habitId: number, val: Date | null) => void;
-    /** Установить дату окончания */
-    setNewEndDate: (habitId: number, val: Date | null) => void;
-    /** Установить флаг "без окончания" */
-    setNewOngoing: (habitId: number, val: boolean) => void;
+    /** Установить флаг "без окончания" — теперь сразу отправляется на сервер */
+    setNewOngoing: (habitId: number, val: boolean) => Promise<void>;
     /** Изменить периодичность (например: everyday, weekly) */
     setNewPeriodicity: (habitId: number, val: string | number | null) => void;
     /** Выбрать дни недели */
@@ -29,8 +26,6 @@ export type UpdateHabitContextType = {
     setNewEndTime: (habitId: number, val: string | null) => void;
     /** Закрепить привычку */
     setPin: (habitId: number, val: boolean) => void;
-    /** Отправить в архив */
-    putInArchieve: (habitId: number, val: boolean) => void;
     /** Установить тег */
     setNewTag: (habitId: number, val: string | null) => void;
     /** Изменить тип метрики (timer, counter и т.д.) */
@@ -114,9 +109,57 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
 
     const setNewName = useCallback((habitId: number, val: string) => updateLocalChanges(habitId, "name", val), [updateLocalChanges]);
     const setNewDescription = useCallback((habitId: number, val: string) => updateLocalChanges(habitId, "desc", val), [updateLocalChanges]);
-    const setNewStartDate = useCallback((habitId: number, val: Date | null) => updateLocalChanges(habitId, "start_date", val), [updateLocalChanges]);
-    const setNewEndDate = useCallback((habitId: number, val: Date | null) => updateLocalChanges(habitId, "end_date", val), [updateLocalChanges]);
-    const setNewOngoing = useCallback((habitId: number, val: boolean) => updateLocalChanges(habitId, "ongoing", val), [updateLocalChanges]);
+
+    const setNewOngoing = useCallback(async (habitId: number, val: boolean) => {
+        const endDateValue = val === false ? todayStrFunc() : null;
+
+        updateLocalChanges(habitId, "ongoing", val);
+        updateLocalChanges(habitId, "end_date", endDateValue);
+
+        setIsUpdating(prev => [...new Set([...prev, `habit_${habitId}`])]);
+
+        try {
+            const habitFields = {
+                ongoing: val,
+                end_date: endDateValue,
+            };
+
+            const res = await api.post(`${API_URL}updatehabit`, {
+                habit_id: habitId,
+                table: "habits",
+                ...habitFields
+            });
+
+            if (res.data.success) {
+                setLocalChanges(prev => {
+                    const updated = { ...prev };
+                    if (updated[habitId]) {
+                        const habitChanges = { ...updated[habitId] };
+                        delete habitChanges.ongoing;
+                        delete habitChanges.end_date;
+
+                        if (Object.keys(habitChanges).length === 0) {
+                            delete updated[habitId];
+                        } else {
+                            updated[habitId] = habitChanges;
+                        }
+                    }
+                    return updated;
+                });
+
+                refetchHabits();
+                loadHabit(String(habitId));
+            } else {
+                showNotification("error", "Не удалось сохранить ongoing");
+            }
+        } catch (err) {
+            console.error("❌ Ошибка при сохранении ongoing:", err);
+            showNotification("error", "Ошибка при сохранении ongoing");
+        } finally {
+            setIsUpdating(prev => prev.filter(item => item !== `habit_${habitId}`));
+        }
+    }, [updateLocalChanges, API_URL, refetchHabits, loadHabit, showNotification]);
+
     const setNewPeriodicity = useCallback((habitId: number, val: string | number | null) => {
         if (typeof val === "string") updateLocalChanges(habitId, "periodicity", val);
     }, [updateLocalChanges]);
@@ -127,7 +170,6 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     const setNewStartTime = useCallback((habitId: number, val: string | null) => updateLocalChanges(habitId, "start_time", val), [updateLocalChanges]);
     const setNewEndTime = useCallback((habitId: number, val: string | null) => updateLocalChanges(habitId, "end_time", val), [updateLocalChanges]);
     const setPin = useCallback((habitId: number, val: boolean) => updateLocalChanges(habitId, "pinned", val), [updateLocalChanges]);
-    const putInArchieve = useCallback((habitId: number, val: boolean) => updateLocalChanges(habitId, "is_archived", val), [updateLocalChanges]);
     const setNewTag = useCallback((habitId: number, val: string | null) => updateLocalChanges(habitId, "tag", val), [updateLocalChanges]);
 
     const setNewMetricType = useCallback((habitId: number, val: metricsType) => updateLocalChanges(habitId, "metric_type", val), [updateLocalChanges]);
@@ -139,7 +181,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
         "schedule",
         "auto_schedule_completion"
     ];
-    
+
     const saveHabit = useCallback(async (habitId: number) => {
         const changes = localChanges[habitId];
         if (!changes || Object.keys(changes).length === 0) return;
@@ -203,8 +245,6 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
             value={{
                 setNewName,
                 setNewDescription,
-                setNewStartDate,
-                setNewEndDate,
                 setNewOngoing,
                 setNewPeriodicity,
                 setNewDays,
@@ -214,7 +254,6 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
                 setNewTag,
                 isUpdating,
                 localChanges,
-                putInArchieve,
                 setNewMetricType,
                 setNewScheduleBool,
                 saveHabit,
