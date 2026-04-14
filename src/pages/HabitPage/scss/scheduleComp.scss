@@ -38,6 +38,8 @@
     height: 1.9vh;
     aspect-ratio: 1/1;
     color: var(--borderWh);
+    display: flex;
+    align-items: center;
     >svg {
         height: 100%;
         width: 100%;

@@ -8,13 +8,13 @@ import "../../../scss/scheduleComp.scss";
 import { CheckCircleIcon, Circle } from "@phosphor-icons/react";
 import { timeToMinutes, todayStrFunc } from "../../../utils/dateToStr";
 import type { ScheduleBlockType } from "../../../../../components/context/ScheduleContext";
+import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
 
 export default function ScheduleComplition() {
-    const { habitSchedule, schedule_settings, scheduleComplete, scheduleCompletions } = useSchedule();
+    const { habitSchedule, schedule_settings, scheduleComplete, scheduleCompletions, loadingComp, loading } = useSchedule();
     const { weekStart } = useSettings();
     const { chosenDay } = useCalendar();
     const { habitId: id } = useParams<{ habitId: string }>();
-
     const [ hover, setHover ] = useState<number>(0)
 
     const scheduleCompleted = useMemo(() => {
@@ -55,34 +55,39 @@ export default function ScheduleComplition() {
     const date = chosenDay || todayStrFunc();
 
     if (!id) return null;
-
+        
     return (
         <div className="scheduleCompilition">
-            {scheduleCompleted.map((s) => (
-                <div
-                    className="scheduleButt"
-                    key={s.id}
-                    onClick={() => scheduleComplete(id, s.id, date)}
-                    onMouseOver={() => setHover(s.id)}
-                    onMouseLeave={() => setHover(0)}
-                >
-                    <div className="scheduleButtInfo">
-                        <span className="scheduleButtSpan">
-                            {s.start_time} - {s.end_time}:
-                        </span>
-                        {s.name}
+            {loading && (<span className="scheduleRest">Загрузка</span>)}
+            {!loading && scheduleCompleted.length === 0 &&(<span className="scheduleRest">Выходной</span>)}
+            {scheduleCompleted.map((s) => {
+                const key = `${s.id} - ${date}`
+                console.log(key, loadingComp.some(l => l === key))
+                return (
+                    <div
+                        className="scheduleButt"
+                        key={key}
+                        onClick={() => scheduleComplete(id, s.id, date)}
+                        onMouseOver={() => setHover(s.id)}
+                        onMouseLeave={() => setHover(0)}
+                    >
+                        <div className="scheduleButtInfo">
+                            <span className="scheduleButtSpan">
+                                {s.start_time} - {s.end_time}:
+                            </span>
+                            {s.name}
+                        </div>
+                        <div className="scheduleButtSvg">
+                            {loadingComp.some(l => l === key) 
+                                ? <LoaderSmall/>
+                                : s.completed
+                                    ? <CheckCircleIcon weight="fill" className="scsvg"/>
+                                    : hover === s.id ? <CheckCircleIcon/> : <Circle/>
+                            }
+                        </div>
                     </div>
-                    <div className="scheduleButtSvg">
-                        {s.completed
-                            ? <CheckCircleIcon weight="fill" className="scsvg"/>
-                            : hover === s.id ? <CheckCircleIcon/> : <Circle/>
-                        }
-                    </div>
-                </div>
-            ))}
-            {scheduleCompleted.length === 0 &&  (<span className="scheduleRest">
-                Выходной
-            </span>)}
+                )
+            })}
         </div>
     );
 }

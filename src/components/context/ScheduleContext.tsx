@@ -1,6 +1,7 @@
 import { createContext, useState, useMemo, useCallback, type ReactNode } from "react";
 import { api } from "../ts/api";
 import { useTheHabit } from "../hooks/TheHabitHook";
+import { useHabits } from "../hooks/HabitsHook";
 
 export type ScheduleBlockType = {
     id: number;
@@ -111,19 +112,26 @@ type ScheduleContextType = {
      * Список выполненных блоков расписания.
      */
     scheduleCompletions: ScheduleCompletionType[];
+
+    /**
+     * Показатель Загрузки конкретного блока
+     */
+    loadingComp: string[];
 };
 
 const ScheduleContext = createContext<ScheduleContextType | null>(null);
 
 export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
     const { habitSettings, loadHabit } = useTheHabit();
+    const { refetchHabits } = useHabits()
 
-    const [schedules, setSchedules] = useState<SchedulesMap>({});
-    const [habitSchedule, setHabitSchedule] = useState<SchedulesMap>({});
-    const [loading, setLoading] = useState(true);
-    const [schedule_settings, setSchedule_Settings] = useState<ScheduleSettingsMap>({});
-    const [scheduleCompletions, setScheduleCompletions] = useState<ScheduleCompletionType[]>([]);
-
+    const [ schedules, setSchedules ] = useState<SchedulesMap>({});
+    const [ habitSchedule, setHabitSchedule ] = useState<SchedulesMap>({});
+    const [ loading, setLoading ] = useState(true);
+    const [ schedule_settings, setSchedule_Settings ] = useState<ScheduleSettingsMap>({});
+    const [ scheduleCompletions, setScheduleCompletions ] = useState<ScheduleCompletionType[]>([]);
+    const [ loadingComp, setLoadingComp ] = useState<string[]>([])
+    
     const refreshSchedules = useCallback(async () => {
         setLoading(true);
         try {
@@ -139,10 +147,6 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         }
     }, []);
 
-    /**
-     * Получает список завершённых блоков расписания для конкретной привычки.
-     * @param habitId - ID привычки
-     */
     const scheduleGetCompletions = useCallback(async (habitId: string) => {
         if (habitSettings.metric_type !== "schedule" && !habitSettings.schedule) return;
 
@@ -215,8 +219,9 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         blockId: number,
         date: string
     ) => {
-
-        // 1. мгновенно меняем UI
+        const key = `${blockId} - ${date}`
+        setLoadingComp(prev => [...prev, key])
+        console.log(loadingComp)
         setScheduleCompletions(prev => {
             const exists = prev.some(
                 c => c.schedule_id === blockId && c.date === date
@@ -246,12 +251,17 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
                 date
             });
             if (res.data.success) {
-                await loadHabit(habitId)
+                try {
+                    await loadHabit(habitId)
+                    await refetchHabits()
+                } catch (e) {
+                    console.log("Ошибка обновления в блоке", blockId, date, e)
+                }
             }
         } catch (e) {
             console.error(e);
         } finally {
-            await scheduleGetCompletions(habitId);
+            setLoadingComp(prev => prev.filter(l => l !== key))
         }
     }, [scheduleGetCompletions]);
 
@@ -264,7 +274,8 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         saveHabitSchedule,
         schedule_settings,
         scheduleComplete,
-        scheduleCompletions
+        scheduleCompletions,
+        loadingComp
     }), [
         schedules,
         habitSchedule,
@@ -274,7 +285,8 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         saveHabitSchedule,
         schedule_settings,
         scheduleComplete,
-        scheduleCompletions
+        scheduleCompletions,
+        loadingComp
     ]);
 
     return (
