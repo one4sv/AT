@@ -1,8 +1,10 @@
 import { api } from "../../../components/ts/api";
 import { useTheHabit } from "../../../components/hooks/TheHabitHook";
+import { useHabits } from "../HabitsHook";
 
 export const useHabitTimer = () => {
-    const { habit, habitTimer } = useTheHabit();
+    const { habit, habitTimer, loadHabit } = useTheHabit();
+    const { refetchHabits } = useHabits()
     const API_URL = import.meta.env.VITE_API_URL;
 
     const isTimer = habitTimer !== null;
@@ -30,11 +32,15 @@ export const useHabitTimer = () => {
     const timerStop = async () => {
         if (!habit) return;
 
-        await api.post(`${API_URL}timer/stop`, {
+        const res = await api.post(`${API_URL}timer/stop`, {
             habit_id: habit.id,
             time: new Date(),
             timer_id: habitTimer?.id
         });
+        if (res.data.success) {
+            await loadHabit(String(habit.id))
+            await refetchHabits()
+        }
     };
 
     const timerCircle = async () => {
