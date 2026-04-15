@@ -1,6 +1,5 @@
 import { CheckCircle, Circle } from "@phosphor-icons/react";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
-import { useEffect, useState } from "react";
 import { useDone } from "../../../../../components/hooks/DoneHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
@@ -10,27 +9,22 @@ interface DoneButtonProps {
 }
 
 export default function DoneButton({ habitId }: DoneButtonProps) {
-  const { todayDone, isDone, doable } = useTheHabit()
-  const { markDoneWLoading, waitDoneAnswer } = useDone()
-  const { chosenDay } = useCalendar()
-  const [ done, setDone ] = useState(todayDone)
-  
-  useEffect(() => {
-    if (isDone !== null && chosenDay) setDone(isDone)
-    else setDone(todayDone)
-  }, [chosenDay, isDone, todayDone])
+  const { todayDone, isDone, doable } = useTheHabit();
+  const { markDoneWLoading, waitDoneAnswer } = useDone();
+  const { chosenDay } = useCalendar();
 
-  if (!doable) return
+  // Прямо используем значение из контекста — больше нет локального состояния и лишнего эффекта
+  const displayDone = isDone !== null ? isDone : todayDone;
+
+  if (!doable) return null;
 
   return (
     <button
-      className={`doneButt ${done ? "dbComp" : "dbMark"}`}
+      className={`doneButt ${displayDone ? "dbComp" : "dbMark"}`}
       onClick={() => markDoneWLoading(habitId, chosenDay)}
     >
-      {done ? <CheckCircle weight="fill" /> : <Circle />}
-      {waitDoneAnswer ? (
-        <LoaderSmall />
-      ) : done ? "Выполнено" : "Выполнить"}
+      {displayDone ? <CheckCircle weight="fill" /> : <Circle />}
+      {waitDoneAnswer ? <LoaderSmall /> : displayDone ? "Выполнено" : "Выполнить"}
     </button>
   );
 }

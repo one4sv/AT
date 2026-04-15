@@ -55,10 +55,14 @@ export default function ScheduleComplition() {
     const date = chosenDay || todayStrFunc();
 
     if (!id) return null;
-        
+    if (loading) return (
+        <div className="scheduleCompilition">
+            <span className="scheduleRest">Загрузка</span>
+        </div>
+    )
+    
     return (
         <div className="scheduleCompilition">
-            {loading && (<span className="scheduleRest">Загрузка</span>)}
             {!loading && scheduleCompleted.length === 0 &&(<span className="scheduleRest">Выходной</span>)}
             {scheduleCompleted.map((s) => {
                 const key = `${s.id} - ${date}`

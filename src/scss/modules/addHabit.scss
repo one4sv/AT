@@ -29,7 +29,7 @@
     >label {
         color: var(--borderWh);
         width: 100%;
-        padding-left: 0.5vw;
+        padding-left: 0.25vw;
         user-select: none;
     }
     &:focus-within {
@@ -45,6 +45,7 @@
         color: var(--borderWh);
     }
     &.date {
+        padding-inline-start: 0.25vw;
         flex-direction: row;
         gap: 5px;
         margin-top: 0.5vh;
@@ -71,6 +72,9 @@
     padding-inline-start: 0.25vw;
     resize: none;
     overflow-y: hidden;
+    &.redHabitDesc {
+        font-size: 16px;
+    }
     &:focus-visible {
         border-bottom: 2px solid var(--acsent);
 
@@ -179,7 +183,7 @@
 .inpWrapperAddHabit {
     color: var(--borderHabit);
     >label {
-        padding-inline-start: 0.5vw;
+        padding-inline-start: 0.25vw;
         color: var(--borderWh);
     }
     &:focus-within {

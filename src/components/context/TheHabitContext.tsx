@@ -27,7 +27,6 @@ export interface TheHabitContextType {
     todayDone: boolean;
     setIsDone: Dispatch<SetStateAction<boolean | null>>;
     dayComment: string | null;
-    todayComment: string;
     setDayComment: Dispatch<SetStateAction<string | null>>;
     doable: boolean;
     setDoable: Dispatch<SetStateAction<boolean>>;
@@ -114,7 +113,6 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
     const [todayDone, setTodayDone] = useState(false);
     const [doable, setDoable] = useState(true);
     const [dayComment, setDayComment] = useState<string | null>(null);
-    const [todayComment, setTodayComment] = useState<string>("");
     const [habitTimer, setHabitTimer] = useState<habitTimer | null>(null);
     const [showTimer, setShowTimer] = useState<habitTimer | null>(null);
     const [habitCounter, setHabitCounter] = useState<habitCounter | null>(null);
@@ -182,13 +180,12 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
             const res = await findHabit(id);
             if (!res?.success) return;
 
-            const { habit: habitData, isRead, isDone: doneToday, comment, settings, counterSettings: cSettings } = res;
+            const { habit: habitData, isRead, isDone: doneToday, settings, counterSettings: cSettings } = res;
 
             fetchCalendarHabit(id);
             setHabit(habitData);
             setIsReadOnly(isRead);
             setTodayDone(doneToday);
-            setTodayComment(comment || "");
             setHabitSettings(settings);
             setCounterSettings(cSettings);
             setHabitCounter(res.counter);
@@ -260,7 +257,6 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                 isDone,
                 setIsDone,
                 dayComment,
-                todayComment,
                 setDayComment,
                 todayDone,
                 setDoable,

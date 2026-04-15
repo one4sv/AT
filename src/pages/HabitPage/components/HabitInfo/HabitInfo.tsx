@@ -136,7 +136,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                 <label htmlFor="redHabitDesc">Описание</label>
                 <textarea
                     id="redHabitDesc"
-                    className="addHabitInput"
+                    className="addHabitInput redHabitDesc"
                     maxLength={120}
                     value={desc || habit.desc}
                     readOnly={readOnly || !ongoing}

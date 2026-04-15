@@ -1,9 +1,10 @@
-import { useMemo, useRef, useState } from "react";
-import type { Habit } from "../../../../../../components/context/HabitsContext";
+import { useMemo, useRef, useState, memo } from "react";
+import type { Habit } from "../../../../components/context/HabitsContext";
 import HoverDay from "./HoverDay";
-import { useCalendar } from "../../../../../../components/hooks/CalendarHook";
-import { getDayArrays } from "../../../../../../components/ts/utils/getDayArrs";
+import { useCalendar } from "../../../../components/hooks/CalendarHook";
+import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
 import { useParams } from "react-router-dom";
+import { todayStrFunc } from "../../utils/dateToStr";
 
 interface DayCellProps {
     habit: Habit | undefined;
@@ -14,11 +15,12 @@ interface DayCellProps {
     year: number;
 }
 
-export default function DayCell({ habits, habit, day, month, year, type }: DayCellProps) {
-    const { setChosenDay, calendar, chosenDay } = useCalendar()
+const DayCell = ({ habits, habit, day, month, year, type }: DayCellProps) => {
+    const { setChosenDay, calendar, chosenDay } = useCalendar();
     const [hovered, setHovered] = useState(false);
-    const { habitId:id } = useParams<{ habitId: string }>();
+    const { habitId: id } = useParams<{ habitId: string }>();
     const cellRef = useRef<HTMLDivElement | null>(null);
+
     const today = new Date();
     const date = new Date(year, month, day);
     const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -27,7 +29,7 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
     const { completedArr, skippedArr, willArr, nowArr } = useMemo(
         () => getDayArrays(dateStr, calendar, habits, id, habit),
         [dateStr, calendar, habits, habit, id]
-    )
+    );
 
     const comment = useMemo(() => {
         const found = calendar.find(c => c.date === dateStr);
@@ -42,10 +44,9 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
             onMouseLeave={() => setHovered(false)}
             onClick={() => {
                 if (chosenDay !== dateStr) {
-                    setChosenDay(dateStr)
-                }
-                else {
-                    setChosenDay("")
+                    setChosenDay(dateStr);
+                } else {
+                    setChosenDay(todayStrFunc());
                 }
             }}
         >
@@ -67,6 +68,7 @@ export default function DayCell({ habits, habit, day, month, year, type }: DayCe
                 />
             )}
         </div>
-        
     );
-}
+};
+
+export default memo(DayCell);

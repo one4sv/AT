@@ -1,13 +1,13 @@
 import { Virtuoso } from "react-virtuoso";
 import { useNavigate } from "react-router-dom";
-import "../../../../scss/CompJurnal.scss";
-import { useCalendar } from "../../../../../../components/hooks/CalendarHook";
-import { useTheHabit } from "../../../../../../components/hooks/TheHabitHook";
+import "../../scss/CompJurnal.scss";
+import { useCalendar } from "../../../../components/hooks/CalendarHook";
+import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
-import { formatDateFromString } from "../../../../utils/dateToStr";
+import { formatDateFromString } from "../../utils/dateToStr";
 import { CaretLeftIcon } from "@phosphor-icons/react";
-import type { HabitSlideProps } from "../../../../HabitPage";
+import type { HabitSlideProps } from "../../HabitPage";
 
 export default function CompJurnal({setShown, id}:HabitSlideProps) {
     const { calendar } = useCalendar()

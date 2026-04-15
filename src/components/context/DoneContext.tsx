@@ -19,7 +19,7 @@ export interface DoneContextType {
     waitComAnswer:boolean;
 }
 export const DoneProvider = ({children} : {children : ReactNode}) => {
-    const { loadHabit, setIsDone, isDone, habit, habitTimer, setDayComment, setShowCounter, setShowTimer, setDoable } = useTheHabit()
+    const { loadHabit, setIsDone, habit, habitTimer, setDayComment, setShowCounter, setShowTimer, setDoable } = useTheHabit()
     const { fetchCalendarHabit, fetchCalendarUser, chosenDay, calendar, timers, counters } = useCalendar()
     const { refetchHabits, habits } = useHabits()
     const [ waitDoneAnswer, setWaitDoneAnswer ] = useState(false);
@@ -34,7 +34,6 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
                 if (habit && habit.id === id){
                     loadHabit(id.toString())
                     fetchCalendarHabit(id.toString())
-                    setIsDone(!isDone)
                 }
                 if (!habit || habit.id === id) fetchCalendarUser()
             }
@@ -66,7 +65,6 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
         }
     } 
 
-
     const { completedArr, skippedArr, willArr, nowArr } = useMemo(
         () => getDayArrays(chosenDay, calendar, habits, id, habit),
         [chosenDay, calendar, habits, habit, id]
@@ -76,13 +74,9 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
         const found = calendar.find(c => c.date === chosenDay);
         return found ? found.comment : "";
     }, [calendar, chosenDay]);
-    
+
     useEffect(() => {
-        if (chosenDay === "") {
-            setDoable(true)
-            return
-        }
-        else if (habit && new Date(chosenDay) < new Date(habit?.start_date)) {
+        if (habit && new Date(chosenDay) < new Date(habit?.start_date)) {
             setIsDone(false)
             setDoable(false)
             return
@@ -97,7 +91,7 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
             setIsDone(false)
             setDoable(true)
         }
-        else if (willArr) {
+        else if (willArr.length > 0) {
             setIsDone(false)
             setDoable(false)
         }
@@ -105,7 +99,7 @@ export const DoneProvider = ({children} : {children : ReactNode}) => {
         const needTimer = timers?.find(t => dateToCalendarFormat(t.started_at) === chosenDay) || null
         setShowTimer(needTimer)
         setShowCounter(counters?.find(t => dateToCalendarFormat(new Date(t.started_at)) === chosenDay) || null)
-    }, [chosenDay])
+    }, [chosenDay, comment, completedArr.length, counters, habit, nowArr.length, setDayComment, setDoable, setIsDone, setShowCounter, setShowTimer, skippedArr.length, timers, willArr])
 
     return(
         <DoneContext.Provider value={{ sendDayComment, markDone, waitDoneAnswer, waitComAnswer, markDoneWLoading }}>

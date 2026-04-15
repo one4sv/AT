@@ -16,10 +16,12 @@ interface DayCommentProps {
 
 export default function DayComment({ id, isMy }: DayCommentProps) {
   const { sendDayComment, waitComAnswer } = useDone()
-  const { dayComment, todayComment, habit, habitCounter, showCounter, habitSettings } = useTheHabit()
+  const { dayComment, habit, habitCounter, showCounter, habitSettings } = useTheHabit()
   const { chosenDay } = useCalendar()
 
-  const [ comment, setComment ] = useState<string | null>(todayComment || "");
+  const [ comment, setComment ] = useState<string>(dayComment || "");
+  const [isReady, setIsReady] = useState(false);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const todayStr = todayStrFunc()
   const isHistorical = chosenDay && chosenDay !== todayStr || false
@@ -43,27 +45,16 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   }, [comment]);
 
   useEffect(() => {
-    if (chosenDay) setComment(dayComment)
-    else setComment(todayComment || "")
-  }, [chosenDay, dayComment, todayComment])
+    if (dayComment) {
+      setComment(dayComment || "")
+      setIsReady(true)
+    }
+  }, [dayComment])
 
-  // Определяем предыдущий комментарий для выбранного дня
-  const previousComment = chosenDay 
-    ? (dayComment ?? "") 
-    : (todayComment ?? "");
-
-  const currentTrimmed = (comment ?? "").trim();
-
-  // Кнопка неактивна, если:
-  // - не мой habit
-  // - ждём ответ от сервера
-  // - привычка архивирована (!ongoing)
-  // - комментарий не изменился (включая случай "было пусто → осталось пусто")
-  const cantSave = 
-    !isMy || 
-    waitComAnswer || 
+  const cantSave = !isMy || 
+    !isReady ||
     !habit?.ongoing || 
-    currentTrimmed === previousComment.trim();
+    comment.trim() === (dayComment || "").trim();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -72,6 +63,8 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
       sendDayComment(id, comment, chosenDay);
     }
   };
+
+  console.log(dayComment, comment, chosenDay, cantSave)
 
   return (
     <div className="dayCommentDiv">
@@ -82,7 +75,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           readOnly={!isMy || (habit && !habit.ongoing)}
           onChange={handleTextareaChange}
           onKeyDown={handleKeyDown}
-          value={comment || ""}
+          value={comment}
           maxLength={200}
         />
         <div className="hdcTAExtra">

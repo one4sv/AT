@@ -3,6 +3,7 @@ import { type ReactNode } from "react"
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
 import { type habitCounter, type habitTimer } from "./TheHabitContext";
+import { todayStrFunc } from "../../pages/HabitPage/utils/dateToStr";
 
 const CalendarContext = createContext<CalendarContextType | null>(null);
 
@@ -41,7 +42,7 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     const [ timers, setTimers ] = useState<habitTimer[] | null>(null)
     const [ counters, setCounters ] = useState<habitCounter[] | null>(null)
     const [ calendarLoading, setCalendarLoading ] = useState(false)
-    const [ chosenDay, setChosenDay ] = useState<string>("")
+    const [ chosenDay, setChosenDay ] = useState<string>(todayStrFunc())
     const [ selectedMonth, setSelectedMonth ] = useState<number>(0)
     const [ selectedYear, setSelectedYear ] = useState<number>(0)
     const API_URL = import.meta.env.VITE_API_URL

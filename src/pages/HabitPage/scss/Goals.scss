@@ -11,7 +11,7 @@
 }
 .addGoalButtDiv {
     position: relative;
-    @include var.longButt(100%, 5vh, 1vh, 1vw, var(--tr), var(--borderWh), var(--tr), var(--tr));
+    @include var.longButt(100%, 5vh, 0.5vh, 0.75vw, var(--tr), var(--borderWh), var(--tr), var(--tr));
     display: flex;
     align-items: center;
     font-size: 18px;
