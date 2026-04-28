@@ -157,13 +157,18 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                 >
                     {edit && id ? (
                         <>
-                            <span className={!weekSeparator ? "white" : ""}>1 неделя</span> /{" "}
-                            <span className={weekSeparator ? "white" : ""}>Разделение недель</span>
+                            <span className={!weekSeparator ? "white" : ""}>Без чётности</span> /{" "}
+                            <span className={weekSeparator ? "white" : ""}>С чётностью</span>
                         </>
                     ) : (
                         <>
                             <span className={isWeek ? "white" : ""}>От сегодняшнего дня</span> /{" "}
-                            <span className={!isWeek ? "white" : ""}>Текущая неделя</span>
+                            <span className={!isWeek ? "white" : ""}>{
+                                hasAnySeparated === true ? (
+                                    isOddWeek(weekStart, week[0].date) ? "Нечётная " : "Чётная "
+                                ) : "Текущая "
+                            }
+                            неделя</span>
                         </>
                     )}
                 </div>
@@ -226,6 +231,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                                     habit={habit}
                                     d={d}
                                     edit={edit}
+                                    id={id}
                                     countInps={countInps}
                                     setCountInps={setCountInps}
                                     key={`${habit.id}-${d.fullDate}`}
@@ -273,6 +279,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                                     habit={habit}
                                     d={d}
                                     edit={edit}
+                                    id={id}
                                     countInps={countInps}
                                     setCountInps={setCountInps}
                                     key={d.fullDate}

@@ -152,16 +152,19 @@
     color: var(--borderHabit);
 }
 .scheduleBlock {
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 98%;
     min-height: fit-content;
     border-radius: 6px;
     margin-bottom: 0.5vh;
+    padding: 0.5vh 0;
     border: 1px solid var(--tr);
     cursor: pointer;
     transition: background 0.3s;
     overflow: hidden;
+    gap: 3px;
     &:hover {
         border: 1px solid var(--tc);
     }
@@ -187,9 +190,10 @@
     }
 }
 .scheduleBar {
-    position: relative;
+    top: 0;
+    position: absolute;
     width: 100%;
-    height: 5px;
+    height: 2px;
     background-color: var(--borderHabit);
 }
 .scheduleBarGoing {
@@ -200,15 +204,17 @@
     background-color: #129e12;
 }
 .scheduleBlockText {
-    padding: 0.5vh 0.4vw;
+    padding: 0 0.4vw;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 .scheduleHabitTime {
     color: var(--borderWh);
 }
 .scheduleHabitName {
     width: 100%;
+    min-width: 0;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;      
@@ -219,9 +225,10 @@
 }
 .scheduleExtraBlockWrapper {
     display: flex;
+    min-width: 0;
 }
 .scheduleExtraBlockLine {
-    margin: 0 0.3vw 0 0.4vw;
+    margin: 0 0 0 0.4vw;
     width: 1px;
     background-color: var(--borderHabit);
 }
@@ -229,7 +236,10 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
     gap:2px;
+    padding-left: 0.3vw;
+    min-width: 0;
 }
 .scheduleInpTime {
     display: flex;
@@ -240,7 +250,7 @@
 }
 .scheduleInp {
     width: 30%;
-    background-color: var(--borderHabit);
+    background-color: var(--scheduleInp);
     outline: none;
     border: none;
     color: var(--borderWhLight);
@@ -252,7 +262,7 @@
     }
 }
 .scheduleInpText {
-    @include var.input(var(--borderHabit), var(--tc), var(--tr), max-content, 4px, var(--tr));
+    @include var.input(var(--scheduleInp), var(--tc), var(--tr), max-content, 4px, var(--tr));
     font-size: 14px;
     width: 90%;
     margin-left: 5%;
@@ -276,4 +286,10 @@
     &:hover {
         color: var(--tc);
     }
+}
+.isScheduleBlockDone {
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    color: #129e12;
 }

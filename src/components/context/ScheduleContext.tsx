@@ -265,6 +265,8 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [scheduleGetCompletions]);
 
+    
+
     const value = useMemo(() => ({
         schedules,
         habitSchedule,

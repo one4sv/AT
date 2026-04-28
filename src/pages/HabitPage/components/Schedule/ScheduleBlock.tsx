@@ -1,4 +1,4 @@
-import { Plus } from "@phosphor-icons/react"
+import { CheckCircleIcon, Plus } from "@phosphor-icons/react"
 import { formatHabitTime } from "../../../../components/ts/utils/formatHabitTime"
 import type { Habit } from "../../../../components/context/HabitsContext"
 import { useCalendar } from "../../../../components/hooks/CalendarHook"
@@ -8,6 +8,7 @@ import type { CountInpsType } from "./Schedule"
 import { useSettings } from "../../../../components/hooks/SettingsHook"
 import { isOddWeek } from "../../utils/isOddWeek"
 import { dateToCalendarFormat, timeToMinutes } from "../../utils/dateToStr"
+import { useScheduleCompleted } from "../../../../components/hooks/utils/useScheduleCompleted"
 
 export type ExtraScheduleBlock = {
     id: number;
@@ -21,6 +22,7 @@ export type ScheduleBlock = {
     habit: Habit,
     d: {value:number, dateStr:string, label:string, fullDate:string, date:Date}
     edit: boolean,
+    id?:string,
     isGeneral?: boolean,
     countInps?: CountInpsType[],
     setCountInps?: React.Dispatch<SetStateAction<CountInpsType[]>>,
@@ -33,16 +35,20 @@ export default function ScheduleBlock({
     d, 
     edit, 
     isGeneral, 
+    id,
     countInps, 
     setCountInps,
     isSeparator = false,
-    extraBlocks = []
+    extraBlocks = [],
 }: ScheduleBlock) {
     const { weekStart } = useSettings()
     const { calendar } = useCalendar()
     const today = new Date()
     const navigate = useNavigate()
     const tempIdRef = useRef(1)
+    
+    const scheduleCompleted = useScheduleCompleted(id)
+
     const getTimeClass = (h: Habit, day: number, date:Date) => {
         const now = new Date()
 
@@ -79,36 +85,57 @@ export default function ScheduleBlock({
         return `${percent}%`
     }
 
+    const habitInfo = () => {
+        return (
+            <div className="scheduleBlockText">
+                <span className="scheduleHabitTime">{formatHabitTime(habit)}</span>
+                <span className="scheduleHabitName">{habit.name}</span>
+                {!edit && getTimeClass(habit, d.value, d.date) === "done" && <CheckCircleIcon className="isScheduleBlockDone" weight="fill"/>}
+            </div>
+        )
+    }
+
     return (
-        <div className={`scheduleBlock ${!edit && getTimeClass(habit, d.value, d.date)}`} onClick={() => isGeneral && !edit && navigate(`/habit/${habit.id}`)}>
+        <div className="scheduleBlock" onClick={() => isGeneral && !edit && navigate(`/habit/${habit.id}`)}>
             {getTimeClass(habit, d.value, d.date) === "ongoing" && !edit &&
                 <div className="scheduleBar">
                     <div className="scheduleBarGoing" style={{width:countProcents(habit)}}></div>
                 </div>
             }
-            <div className="scheduleBlockText">
-                <span className="scheduleHabitTime">{formatHabitTime(habit)}</span>
-                <span className="scheduleHabitName">{habit.name}</span>
-            </div>
+            {!id ? (
+                habitInfo()
+            ) : extraBlocks.length > 0 ? (
+                ""
+            ) : (
+                habitInfo()
+            )}
             {!edit && extraBlocks.length > 0 && (
                 <div className="scheduleExtraBlocks">
                     {extraBlocks
                         .filter(b => b.isSeparator !== isOddWeek(weekStart, d.date))
                         .sort((a, b) => timeToMinutes(a.start_time) - timeToMinutes(b.start_time))
-                        .map((block) => (
-                            <div className="scheduleExtraBlockWrapper" key={`${block.id}-${d.fullDate}`}>
-                                <div className="scheduleExtraBlockLine">
+                        .map((block) => {
+                            const isCompleted = id && scheduleCompleted.find(s => s.id === block.id)?.completed;
+
+                            return (
+                                <div className="scheduleExtraBlockWrapper" key={`${block.id}-${d.fullDate}`}>
+                                    {!id && extraBlocks.length > 0 && (
+                                        <div className="scheduleExtraBlockLine"></div>
+                                    )}
+                                    <div className="scheduleExtraBlock">
+                                        <span className="scheduleHabitTime">
+                                            {block.start_time && block.end_time 
+                                                ? `с ${block.start_time} до ${block.end_time}` 
+                                                : block.start_time || ""}
+                                        </span>
+                                        <span className="scheduleHabitName">{block.name}</span>
+                                        {isCompleted && (
+                                            <CheckCircleIcon className="isScheduleBlockDone" weight="fill" />
+                                        )}
+                                    </div>
                                 </div>
-                                <div  className="scheduleExtraBlock">
-                                    <span className="scheduleHabitTime">
-                                        {block.start_time && block.end_time 
-                                            ? `с ${block.start_time} до ${block.end_time}` 
-                                            : block.start_time || ""}
-                                    </span>
-                                    <span className="scheduleHabitName">{block.name}</span>
-                                </div>
-                            </div>
-                        ))
+                            );
+                        })
                     }
                 </div>
             )}
