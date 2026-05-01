@@ -244,7 +244,8 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                                     h =>
                                         h.periodicity !== "sometimes" &&
                                         h.ongoing &&
-                                        (h.chosen_days?.includes(d.value) || h.periodicity === "everyday")
+                                        (h.chosen_days?.includes(d.value) || h.periodicity === "everyday") &&
+                                        h.habits_settings?.schedule === true
                                 )
                                 .sort(sortHabits)
                                 .map(h => {

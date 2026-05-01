@@ -61,7 +61,6 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
         await markDone(id, date);
     };
 
-  // ==================== СОХРАНЕНИЕ КОММЕНТАРИЯ ====================
     const sendDayComment = async (id: string, text: string | null, date: string) => {
         setWaitComAnswer(true);
         try {
@@ -81,25 +80,19 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-  // ==================== ВЫЧИСЛЕНИЯ ДЛЯ ТЕКУЩЕГО ДНЯ ====================
     const { completedArr, skippedArr, willArr, nowArr } = useMemo(
         () => getDayArrays(chosenDay, calendar, habits, id, habit),
         [chosenDay, calendar, habits, habit, id]
     );
 
-    const comment = useMemo(() => {
-        const found = calendar.find((c) => c.date === chosenDay);
-        return found ? found.comment : "";
-    }, [calendar, chosenDay]);
+    const comment = calendar.find((c) => c.date === chosenDay)?.comment ?? "";
 
-  // ==================== ОСНОВНОЙ ЭФФЕКТ ====================
     useEffect(() => {
         if (!habit) return;
 
         if (new Date(chosenDay) < new Date(habit.start_date)) {
             setIsDone(false);
             setDoable(false);
-            setDayComment(comment || "");
             return;
         }
 

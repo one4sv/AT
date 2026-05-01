@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
 import { useSettings } from "../hooks/SettingsHook";
+import type { HabitSettings } from "./TheHabitContext";
 
 export interface Habit {
     id:number;
@@ -20,8 +21,8 @@ export interface Habit {
     pinned:boolean;
     done?:boolean;
     user_id:string;
+    habits_settings:HabitSettings;
 }
-
 interface HabitResponse {
     success: boolean;
     habitsArr?: Habit[];

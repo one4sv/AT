@@ -106,7 +106,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
     const API_URL = import.meta.env.VITE_API_URL;
 
-    const [loadingHabit, setLoadingHabit] = useState(false);
+    const [loadingHabit, setLoadingHabit] = useState(true);
     const [habit, setHabit] = useState<Habit | undefined>(undefined);
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [isDone, setIsDone] = useState<boolean | null>(null);

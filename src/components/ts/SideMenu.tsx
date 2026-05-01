@@ -7,7 +7,7 @@ import { useUser } from "../hooks/UserHook"
 import { useNote } from "../hooks/NoteHook"
 import { useBlackout } from "../hooks/BlackoutHook.ts"
 import ContactsList from "./SM/ContactsList.tsx"
-import { useNavigate } from "react-router"
+import { Link, useNavigate } from "react-router"
 import { useSettings } from "../hooks/SettingsHook.ts"
 import { useChat } from "../hooks/ChatHook.ts"
 import { useHabits } from "../hooks/HabitsHook.ts"
@@ -410,15 +410,15 @@ export default function SideMenu() {
                     </div>
                 </div>
                 <div className="SMnav">
-                    <div className="SMnavButt" onClick={() => navigate("/")}>
+                    <Link className="SMnavButt" to={"/"}>
                         <House />
-                    </div>
+                    </Link>
                     <div className="SMnavButt" onClick={()=> setShowPlusMenu(!showPlusMenu)} ref={plusRef}>
                         <Plus />
                     </div>
-                    <div className="SMnavButt" onClick={() => navigate("/habit")}>
+                    <Link className="SMnavButt" to={"/habit"}>
                         <ChartLine />
-                    </div>
+                    </Link>
                 </div>
             </div>
         </div>

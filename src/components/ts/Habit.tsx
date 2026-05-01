@@ -1,6 +1,5 @@
 import type { Habit } from "../context/HabitsContext";
 import type { habitTimer } from "../context/TheHabitContext";
-import { useNavigate } from "react-router";
 import { CheckCircle, PushPinIcon } from "@phosphor-icons/react";
 import { habitIcon } from "./habitIcon";
 import { useContextMenu } from "../hooks/ContextMenuHook";
@@ -14,6 +13,7 @@ import { useTheHabit } from "../hooks/TheHabitHook";
 import { calculateTimerElapsed } from "./utils/TimerFuncs";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useWebSocket } from "../hooks/WebSocketHook";
+import { Link } from "react-router-dom";
 
 export default function HabitDiv({
     habit,
@@ -27,7 +27,6 @@ export default function HabitDiv({
     const { openMenu } = useContextMenu();
     const { setShowSideMenu } = useSideMenu();
     const { findHabit, parseTimer } = useTheHabit();
-    const navigate = useNavigate();
     const { schedules } = useSchedule();
     const { weekStart } = useSettings();
     const { ws } = useWebSocket();
@@ -196,12 +195,12 @@ export default function HabitDiv({
     const periodicityText = ruPeriodicity(habit);
 
     return (
-        <div
+        <Link
             className={`habit themeHabit-default ${id === habit.id && !isMobile ? "active" : ""}`}
             onClick={() => {
-                navigate(`/habit/${habit.id}`);
                 setShowSideMenu(false);
             }}
+            to={`/habit/${habit.id}`}
             onContextMenu={(e) => {
                 e.preventDefault();
                 openMenu(
@@ -229,6 +228,6 @@ export default function HabitDiv({
                     <PushPinIcon className="pinnedHabitSign" weight="fill" />
                 )}
             </div>
-        </div>
+        </Link>
     );
 }

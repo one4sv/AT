@@ -12,16 +12,14 @@
 
 .calendarMain {
     border-radius: 12px;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
     background-color: var(--mc);
     width: 100%;
     padding: 10px;
-    min-height:39vh;
+    min-height: 39vh;
     height: fit-content;
 }
-@media (max-width:800px) {
+
+@media (max-width: 800px) {
     .calendarDiv {
         min-height: 51vh;
         width: 100%;
@@ -30,249 +28,242 @@
         height: 100%;
     }
 }
-.calendarDates {
-    width: 100%;
-    height: 100%;
-}
+
+/* ==================== НАВИГАЦИЯ ==================== */
 .DateChanger {
     width: 100%;
     height: 4vh;
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 1vh;
 }
+
 .setMonthButt {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
     width: 3vh;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     font-size: 20px;
     color: var(--borderHabit);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+
     &:hover {
         background-color: var(--menuButtHover);
         color: var(--tc);
     }
-    &.left {
-        border-radius: 12px 0 0 12px;
-    }
-    &.right {
-        border-radius: 0 12px 12px 0;
-    }
+
+    &.left  { border-radius: 12px 0 0 12px; }
+    &.right { border-radius: 0 12px 12px 0; }
 }
+
 .CalendarDateChanger {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     position: relative;
 }
+
 .selectedDate {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
+    gap: 0.1vw;
+    padding: 0.5vh 0.8vw;
     border-radius: 12px;
     font-size: 20px;
     cursor: pointer;
-    width: auto;
     height: 4vh;
-    padding: 0.5vh 0.6vw 0.5vh 0.8vw;
-    z-index: 2;
-    gap: 0.1vw;
-    justify-content: center;
+
     > svg {
         color: var(--borderHabit);
     }
+
     &:hover {
         background-color: var(--menuButtHover);
-        > svg {
-            color: var(--tc);
-        }
+        > svg { color: var(--tc); }
     }
+
     &.fixedWidth {
         width: 7vw;
     }
 }
-.monthsList {
+
+/* Выпадающие списки */
+.monthsList, .yearsList {
     position: absolute;
-    display: grid;
-    top: 2vh;
-    grid-template-columns: repeat(3,1fr);
-    gap: 0.5vh;
-    width: fit-content;
-    padding: 0.5vh 0.2vw;
-    border-radius: 8px;
-    border: 1px solid var(--borderHabit);
-    opacity: 0;
-    z-index: 4;
-    transform: translateY(0%);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    pointer-events: none;
-    overflow: hidden;
+    top: 4.5vh;
     background-color: var(--mc);
+    border: 1px solid var(--borderHabit);
+    border-radius: 8px;
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    &.active {
-        opacity: 1;
-        transform: translateY(10%);
-        pointer-events: auto;
-    }
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
 }
 
-.monthListElem {
-    aspect-ratio: 1/1;
-    height: 5vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 12px;
-    cursor: pointer;
-    &:hover {
-        background-color: var(--menuButtHover);
-    }
-    &.active {
-        background-color: var(--borderHabit);
-    }
+.monthsList.active, .yearsList.active {
+    opacity: 1;
+    pointer-events: auto;
 }
+
+.monthsList {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5vh;
+    padding: 0.5vh 0.2vw;
+    width: fit-content;
+}
+
 .yearsList {
-    position: absolute;
     display: flex;
-    top: 2vh;
     flex-direction: column;
     width: 100%;
     padding: 0.5vh 0.2vw;
-    border-radius: 8px;
-    border: 1px solid var(--borderHabit);
-    opacity: 0;
-    z-index: 4;
-    transition: opacity 0.3s ease, top 0.3s ease;
-    pointer-events: none;
-    overflow: hidden;
-    background-color: var(--bgc);
-    &.active {
-        opacity: 1;
-        top: 4.2vh;
-        pointer-events: auto;
-    }
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
 }
-.yearListElem {
-    font-size: 18px;
-    height: 3vh;
+
+.monthListElem, .yearListElem {
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    &:hover {
-        background-color: var(--menuButtHover);
-    }
-    &.active {
-        background-color: var(--borderHabit);
-    }
+    border-radius: 12px;
+    transition: background-color 0.2s ease;
+
+    &:hover { background-color: var(--menuButtHover); }
+    &.active { background-color: var(--borderHabit); }
 }
 
+.monthListElem { aspect-ratio: 1/1; height: 5vh; }
+.yearListElem { height: 3vh; font-size: 18px; }
+
+/* Дни недели */
 .weekPattern {
     display: flex;
-    gap: 0.5vw;
-    margin-bottom: 0.5vh;
+    gap: 0.35vw;
+    margin-bottom: 0.4vh;
+    width: 100%;
 }
+
 .weekDays {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    aspect-ratio: 1;
     flex: 1;
-    border-radius: 6px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: var(--menuButtHover);
+    border-radius: 6px;
+    font-size: 14px;
 }
+
+/* ==================== СЛАЙДЕР ==================== */
+.calendarSlider {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    // scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.calendarSlider::-webkit-scrollbar {
+    display: none;
+}
+
+.calendarSlidesWrapper {
+    display: flex;
+    width: 300%;
+    height: 100%;
+}
+
+.calendarSlide {
+    flex: 0 0 33.333%;
+    width: 33.333%;
+    height: 100%;
+    padding: 0 0.5vw;
+}
+
+/* Сетка дней */
 .calendarDays {
     width: 100%;
+    padding: 0 0.5vw;
     display: grid;
-    grid-template-columns: repeat(7,9fr);
-    gap: 0.2vh 0.5vw;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25vh 0.4vw;
 }
+
 .calDay {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     aspect-ratio: 1;
-    max-height: 100%;
-    border-radius: 6px;
-    box-sizing: border-box;
+    display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
     cursor: pointer;
     position: relative;
+    transition: background-color 0.2s ease;
+
     &:hover {
         background-color: var(--menuButtHover);
     }
-    &.prevDays {
-        > span {
-            color: var(--borderHabit);
-        }
+
+    &.prevDays, &.postDays {
+        color: var(--borderHabit);
     }
-    &.postDays {
-        > span {
-            color: var(--borderHabit);
-        }
-    }
+
     &.todayCD {
-        > span {
-            color: var(--acsent);
-        }
+        color: var(--acsent);
     }
+
     &.chosenDayCal {
         outline: 1px solid var(--acsent);
-        outline-offset: -1px; // чтобы не вылезала наружу
+        outline-offset: -1px;
     }
 }
+
+/* ==================== ТОЧКИ (calendarDots) ==================== */
 .calendarDots {
     position: absolute;
     bottom: 15%;
     display: flex;
     gap: 3px;
+    left: 50%;
+    transform: translateX(-50%);
 }
+
 .calendarDot {
     height: 0.5vh;
     aspect-ratio: 1/1;
     border-radius: 50%;
-    &.comp {
-        background-color: #11c011;
-    }
-    &.skip {
-        background-color: #646464;
-    }
-    &.will {
-        background-color: white;
-    }
-    &.nothing {
-        background-color: #111111;
-    }
-    &.now {
-        background-color: #4DA3FF;
-    }
+
+    &.comp   { background-color: #11c011; }
+    &.skip   { background-color: #646464; }
+    &.will   { background-color: white; }
+    &.nothing{ background-color: #111111; }
+    &.now    { background-color: #4DA3FF; }
 }
+
+/* Остальные стили (hover и loader) */
 .hoverDayDiv {
     position: fixed;
     background-color: var(--bgc);
     border: 1px solid var(--borderHabit);
     padding: 0.5vh 0.3vw;
     border-radius: 6px;
-    max-width: 10vh;
+    max-width: 15vw;
     display: flex;
     flex-direction: column;
     pointer-events: none;
     gap: 0.2vh;
     z-index: 5;
-    max-width: 15vw;
 }
-@media (max-width:800px) {
-    .hoverDayDiv {
-        display: none;
-    }
+
+@media (max-width: 800px) {
+    .hoverDayDiv { display: none; }
 }
+
 .hoverRow {
     display: flex;
     align-items: center;
@@ -280,10 +271,12 @@
     gap: 8px;
     color: var(--tc);
     font-size: 15px;
+
     &.hrEmpty {
         color: var(--borderHabit);
     }
 }
+
 .loaderSmall {
     display: flex;
     align-items: center;

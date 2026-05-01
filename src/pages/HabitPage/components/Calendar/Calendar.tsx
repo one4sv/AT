@@ -1,246 +1,282 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
+import { useHabits } from "../../../../components/hooks/HabitsHook";
 import "../../scss/calendar.scss";
 import { ChevronDown } from "lucide-react";
-import { useHabits } from "../../../../components/hooks/HabitsHook";
-import type { Calendar } from "../../../../components/context/CalendarContext";
-import DayCell from "./DayCell";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useParams } from "react-router-dom";
 import { isMobile } from "react-device-detect";
-import { CaretLeft, CaretRight } from "@phosphor-icons/react";
-import { todayStrFunc } from "../../utils/dateToStr";
+import DayCell from "./DayCell";
 
 const MONTHS = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+
 const DAY_WEEK = [
-    { value: 1, label: "пн" },
-    { value: 2, label: "вт" },
-    { value: 3, label: "ср" },
-    { value: 4, label: "чт" },
-    { value: 5, label: "пт" },
-    { value: 6, label: "сб" },
-    { value: 0, label: "вс" },
+    { value: 1, label: "пн" }, { value: 2, label: "вт" }, { value: 3, label: "ср" },
+    { value: 4, label: "чт" }, { value: 5, label: "пт" }, { value: 6, label: "сб" }, { value: 0, label: "вс" }
 ];
 
+type SlideData = {
+    month: number;
+    year: number;
+    days: {
+        prev: Array<{ day: number; month: number; year: number }>;
+        this: Array<{ day: number; month: number; year: number }>;
+        post: Array<{ day: number; month: number; year: number }>;
+    };
+};
+
+const buildSlide = (monthNum: number, yearNum: number): SlideData => {
+    const date = new Date(yearNum, monthNum, 1);
+    const firstDay = date.getDay();
+    const daysInMonth = new Date(yearNum, monthNum + 1, 0).getDate();
+    const prevDaysCount = firstDay === 0 ? 6 : firstDay - 1;
+    const nextDaysCount = (7 - (new Date(yearNum, monthNum + 1, 0).getDay())) % 7;
+
+    return {
+        month: monthNum,
+        year: yearNum,
+        days: {
+            prev: Array.from({ length: prevDaysCount }, (_, i) => {
+                const d = new Date(yearNum, monthNum, -prevDaysCount + i + 1);
+                return { day: d.getDate(), month: d.getMonth(), year: d.getFullYear() };
+            }),
+            this: Array.from({ length: daysInMonth }, (_, i) => ({
+                day: i + 1, month: monthNum, year: yearNum
+            })),
+            post: Array.from({ length: nextDaysCount }, (_, i) => {
+                const d = new Date(yearNum, monthNum + 1, i + 1);
+                return { day: d.getDate(), month: d.getMonth(), year: d.getFullYear() };
+            })
+        }
+    };
+};
+
 export default function Calendar() {
-    const { calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, setChosenDay } = useCalendar();
+    const { calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useCalendar();
     const { habit: h } = useTheHabit();
     const { habits } = useHabits();
     const { habitId: id } = useParams<{ habitId: string }>();
 
     const [showList, setShowList] = useState({ months: false, years: false });
+
     const monthsRef = useRef<HTMLDivElement>(null);
     const yearsRef = useRef<HTMLDivElement>(null);
+    const sliderRef = useRef<HTMLDivElement>(null);
 
-    const today = new Date();
-    const month = today.getMonth();
-    const year = today.getFullYear();
+    const isNavigating = useRef(false);
+    const scrollEndTimer = useRef<number | null>(null);
 
-    // === Вычисление доступных годов ===
-    const years = useMemo(() => {
+    const yearsList = useMemo(() => {
         if (!habits) return [];
-        const yearsSet = new Set<number>();
+        const set = new Set<number>();
         const now = new Date();
-
         if (id && h) {
-            const startYear = new Date(h.start_date).getFullYear();
-            for (let y = startYear; y <= now.getFullYear(); y++) yearsSet.add(y);
+            const start = new Date(h.start_date).getFullYear();
+            for (let y = start; y <= now.getFullYear(); y++) set.add(y);
         } else {
-            habits.forEach((habit) => {
+            habits.forEach(habit => {
                 const sd = new Date(habit.start_date).getFullYear();
-                yearsSet.add(sd);
-                if (habit.end_date) yearsSet.add(new Date(habit.end_date).getFullYear());
-                for (let y = sd; y <= now.getFullYear(); y++) yearsSet.add(y);
+                set.add(sd);
+                if (habit.end_date) set.add(new Date(habit.end_date).getFullYear());
+                for (let y = sd; y <= now.getFullYear(); y++) set.add(y);
             });
         }
-        return Array.from(yearsSet).sort((a, b) => a - b);
+        return Array.from(set).sort((a, b) => a - b);
     }, [habits, h, id]);
 
-    const { thisMonth, prevMonth, postMonth } = useMemo(() => {
-        if (selectedMonth === null || selectedYear === null) {
-            return { thisMonth: [], prevMonth: [], postMonth: [] };
-        }
-
-        const endDate = new Date(selectedYear, selectedMonth + 1, 0).getDate();
-        const thisMonthArr = Array.from({ length: endDate }, (_, i) => 1 + i);
-
-        const startDay = new Date(selectedYear, selectedMonth, 1).getDay();
-        const prevMonthArr: number[] = [];
-        const startOffset = startDay === 0 ? -5 : 2 - startDay;
-        for (let i = startOffset; i <= 0; i++) {
-            prevMonthArr.push(new Date(selectedYear, selectedMonth, i).getDate());
-        }
-
-        const endDay = new Date(selectedYear, selectedMonth + 1, 0).getDay();
-        const postMonthArr: number[] = [];
-        if (endDay !== 0) {
-            for (let i = 1; i <= 7 - endDay; i++) {
-                postMonthArr.push(new Date(selectedYear, selectedMonth + 1, i).getDate());
-            }
-        }
-
-        return { thisMonth: thisMonthArr, prevMonth: prevMonthArr, postMonth: postMonthArr };
+    const slidesData = useMemo(() => {
+        if (selectedMonth === null || selectedYear === null) return null;
+        return {
+            prev: buildSlide(selectedMonth === 0 ? 11 : selectedMonth - 1, selectedMonth === 0 ? selectedYear - 1 : selectedYear),
+            current: buildSlide(selectedMonth, selectedYear),
+            next: buildSlide(selectedMonth === 11 ? 0 : selectedMonth + 1, selectedMonth === 11 ? selectedYear + 1 : selectedYear)
+        };
     }, [selectedMonth, selectedYear]);
 
-    // === Эффекты ===
     useEffect(() => {
-        if (id && h) {
-            setChosenDay(todayStrFunc());
+        const today = new Date();
+        setSelectedMonth(today.getMonth());
+        setSelectedYear(today.getFullYear());
+    }, [setSelectedMonth, setSelectedYear]);
+
+    const goToPrevMonth = useCallback(() => {
+        if (isNavigating.current) return;
+        isNavigating.current = true;
+
+        if (selectedMonth === 0) {
+            setSelectedMonth(11);
+            setSelectedYear(y => y - 1);
+        } else {
+            setSelectedMonth(m => m - 1);
         }
-    }, [id, h, setChosenDay]);
+    }, [selectedMonth, setSelectedMonth, setSelectedYear]);
+    console.log(selectedMonth)
+    const goToNextMonth = useCallback(() => {
+        if (isNavigating.current) return;
+        isNavigating.current = true;
 
-    useEffect(() => {
-        setSelectedMonth(month);
-        setSelectedYear(year);
-    }, [month, year, setSelectedMonth, setSelectedYear]);
-
-    // === Обработчик клика вне списка (с useCallback для ESLint) ===
-    const handleClickOutside = useCallback((e: MouseEvent) => {
-        if (!showList.months && !showList.years) return;
-
-        const outsideMonths = monthsRef.current && !monthsRef.current.contains(e.target as Node);
-        const outsideYears = yearsRef.current && !yearsRef.current.contains(e.target as Node);
-
-        if (outsideMonths && outsideYears) {
-            setShowList({ months: false, years: false });
+        if (selectedMonth === 11) {
+            setSelectedMonth(0);
+            setSelectedYear(y => y + 1);
+        } else {
+            setSelectedMonth(m => m + 1);
         }
-    }, [showList]);
+    }, [selectedMonth, setSelectedMonth, setSelectedYear]);
 
-    useEffect(() => {
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [handleClickOutside]);
+    const handleScroll = useCallback(() => {
+        if (!sliderRef.current || isNavigating.current) return;
 
-    // === Рендер ячеек ===
-    const renderCells = (days: number[], type: "prev" | "this" | "post") => {
-        return days.map((day) => {
-        let cellMonth = selectedMonth;
-        let cellYear = selectedYear;
+        const slider = sliderRef.current;
+        const width = slider.offsetWidth;
+        const scrollLeft = slider.scrollLeft;
+        const center = width;
 
-        if (type === "prev") {
-            cellMonth = selectedMonth - 1;
-            if (cellMonth < 0) {
-                cellMonth = 11;
-                cellYear--;
+        if (scrollEndTimer.current) {
+            clearTimeout(scrollEndTimer.current);
+        }
+
+        if (scrollLeft < width * 0.5) {
+            goToPrevMonth();
+            return;
+        }
+        if (scrollLeft > width * 1.5) {
+            goToNextMonth();
+            return;
+        }
+
+        scrollEndTimer.current = setTimeout(() => {
+            if (!sliderRef.current || isNavigating.current) return;
+            
+            const current = sliderRef.current.scrollLeft;
+            if (Math.abs(current - center) > 10) {
+                sliderRef.current.removeEventListener('scroll', handleScroll);
+                isNavigating.current = true;
+                
+                sliderRef.current.scrollTo({
+                    left: center,
+                    behavior: "smooth"
+                });
+                
+                setTimeout(() => {
+                    isNavigating.current = false;
+                    sliderRef.current?.addEventListener('scroll', handleScroll, { passive: true });
+                }, 300);
             }
-        } else if (type === "post") {
-            cellMonth = selectedMonth + 1;
-            if (cellMonth > 11) {
-                cellMonth = 0;
-                cellYear++;
+        }, 150);
+    }, [goToPrevMonth, goToNextMonth]);
+
+    useEffect(() => {
+        if (!sliderRef.current) return;
+
+        const slider = sliderRef.current;
+        
+        slider.removeEventListener('scroll', handleScroll);
+        isNavigating.current = true;
+
+        slider.scrollTo({
+            left: slider.offsetWidth,
+            behavior: "auto"
+        });
+
+        requestAnimationFrame(() => {
+            isNavigating.current = false;
+            slider.addEventListener('scroll', handleScroll, { passive: true });
+        });
+
+    }, [selectedMonth, selectedYear, handleScroll]);
+
+    useEffect(() => {
+        return () => {
+            if (scrollEndTimer.current) {
+                clearTimeout(scrollEndTimer.current);
             }
-        }
+        };
+    }, []);
+
+    const renderSlide = (slide: SlideData | null, key: string) => {
+        if (!slide) return null;
+        const allDays = [...slide.days.prev, ...slide.days.this, ...slide.days.post];
 
         return (
-            <DayCell
-                key={`${type}-${day}-${cellMonth}-${cellYear}`}
-                habit={h}
-                habits={habits}
-                day={day}
-                month={cellMonth}
-                year={cellYear}
-                type={type}
-            />
+            <div key={key} className="calendarSlide">
+                <div className="calendarDays">
+                    {allDays.map((cell, idx) => {
+                        let type: "prev" | "this" | "post" = "this";
+                        if (idx < slide.days.prev.length) type = "prev";
+                        else if (idx >= slide.days.prev.length + slide.days.this.length) type = "post";
+
+                        return (
+                            <DayCell
+                                key={`${cell.year}-${cell.month}-${cell.day}`}
+                                habit={h}
+                                habits={habits}
+                                day={cell.day}
+                                month={cell.month}
+                                year={cell.year}
+                                type={type}
+                            />
+                        );
+                    })}
+                </div>
+            </div>
         );
-        });
     };
+
+    if (!slidesData) return null;
 
     return (
         <div className={`calendarDiv ${isMobile ? "mobile" : ""}`}>
             <div className="calendarMain" ref={calendarRef}>
                 <div className="DateChanger">
-                    {/* Кнопка "назад" */}
-                    <div
-                        className="setMonthButt left"
-                        onClick={() => {
-                        if (selectedMonth === 0) {
-                            setSelectedMonth(11);
-                            setSelectedYear((prev) => prev - 1);
-                        } else {
-                            setSelectedMonth((prev) => prev - 1);
-                        }
-                        }}
-                    >
-                        <CaretLeft />
-                    </div>
+                    <div className="setMonthButt left" onClick={goToPrevMonth}><CaretLeft /></div>
 
-                    {/* Выбор месяца */}
                     <div className="CalendarDateChanger" ref={monthsRef}>
-                        <div
-                            className="selectedDate fixedWidth"
-                            onClick={() => setShowList({ months: !showList.months, years: false })}
-                        >
+                        <div className="selectedDate fixedWidth" 
+                             onClick={() => setShowList({ months: !showList.months, years: false })}>
                             {MONTHS[selectedMonth]}
-                            <ChevronDown
-                                style={{
-                                transform: `rotate(${showList.months ? "180deg" : "0deg"})`,
-                                transition: "transform 0.2s",
-                                }}
-                            />
+                            <ChevronDown style={{ transform: `rotate(${showList.months ? "180deg" : "0deg"})`, transition: "transform 0.2s" }} />
                         </div>
                         <div className={`monthsList ${showList.months ? "active" : ""}`}>
-                            {MONTHS.map((monthName: string, idx: number) => (
-                                <div
-                                className={`monthListElem ${idx === selectedMonth ? "active" : ""}`}
-                                key={idx}
-                                onClick={() => setSelectedMonth(idx)}
-                                >
-                                {monthName.slice(0, 3)}.
+                            {MONTHS.map((monthName, idx) => (
+                                <div key={idx} className={`monthListElem ${idx === selectedMonth ? "active" : ""}`} 
+                                     onClick={() => setSelectedMonth(idx)}>
+                                    {monthName.slice(0, 3)}.
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    {/* Выбор года */}
                     <div className="CalendarDateChanger" ref={yearsRef}>
-                        <div className="selectedDate" onClick={() => setShowList({ months: false, years: !showList.years })}>
+                        <div className="selectedDate" 
+                             onClick={() => setShowList({ months: false, years: !showList.years })}>
                             {selectedYear}
-                            <ChevronDown
-                                style={{
-                                transform: `rotate(${showList.years ? "180deg" : "0deg"})`,
-                                transition: "transform 0.2s",
-                                }}
-                            />
+                            <ChevronDown style={{ transform: `rotate(${showList.years ? "180deg" : "0deg"})`, transition: "transform 0.2s" }} />
                         </div>
                         <div className={`yearsList ${showList.years ? "active" : ""}`}>
-                        {years?.map((yearNum: number, idx: number) => (
-                            <div
-                            className={`yearListElem ${yearNum === selectedYear ? "active" : ""}`}
-                            key={idx}
-                            onClick={() => setSelectedYear(yearNum)}
-                            >
-                                {yearNum}
-                            </div>
-                        ))}
+                            {yearsList.map((yearNum) => (
+                                <div key={yearNum} className={`yearListElem ${yearNum === selectedYear ? "active" : ""}`} 
+                                     onClick={() => setSelectedYear(yearNum)}>
+                                    {yearNum}
+                                </div>
+                            ))}
                         </div>
                     </div>
 
-                    {/* Кнопка "вперёд" */}
-                    <div className="setMonthButt right"
-                        onClick={() => {
-                        if (selectedMonth === 11) {
-                            setSelectedMonth(0);
-                            setSelectedYear((prev) => prev + 1);
-                        } else {
-                            setSelectedMonth((prev) => prev + 1);
-                        }
-                        }}
-                    >
-                        <CaretRight />
-                    </div>
+                    <div className="setMonthButt right" onClick={goToNextMonth}><CaretRight /></div>
                 </div>
-                <div className="calendarDates">
-                    <div className="weekPattern">
-                        {DAY_WEEK.map((day) => (
-                        <div className="weekDays" key={day.value}>
-                            {day.label}
-                        </div>
-                        ))}
-                    </div>
-                    <div className="calendarDays">
-                        {renderCells(prevMonth, "prev")}
-                        {renderCells(thisMonth, "this")}
-                        {renderCells(postMonth, "post")}
+
+                <div className="weekPattern">
+                    {DAY_WEEK.map((day) => (
+                        <div className="weekDays" key={day.value}>{day.label}</div>
+                    ))}
+                </div>
+
+                <div ref={sliderRef} className="calendarSlider">
+                    <div className="calendarSlidesWrapper">
+                        {renderSlide(slidesData.prev, "prev")}
+                        {renderSlide(slidesData.current, "current")}
+                        {renderSlide(slidesData.next, "next")}
                     </div>
                 </div>
             </div>

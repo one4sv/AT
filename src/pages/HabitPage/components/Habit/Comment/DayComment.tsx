@@ -20,6 +20,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   const { chosenDay } = useCalendar();
 
   const [comment, setComment] = useState<string>("");
+  const [syncing, setSyncing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const todayStr = todayStrFunc();
@@ -28,8 +29,15 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
 
   // Синхронизация с контекстом при смене дня или обновлении комментария
   useEffect(() => {
+    setSyncing(true);
     setComment(dayComment || "");
-  }, [dayComment]);
+
+    const t = setTimeout(() => {
+      setSyncing(false);
+    }, 50);
+
+    return () => clearTimeout(t);
+  }, [chosenDay, dayComment]);
 
   // Авторесайз textarea
   const resizeTextarea = useCallback(() => {
@@ -48,6 +56,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   };
 
   const cantSave =
+    syncing ||
     !isMy ||
     !habit?.ongoing ||
     comment.trim() === (dayComment || "").trim();

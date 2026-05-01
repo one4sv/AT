@@ -4,7 +4,7 @@ import { Check, CheckCheck, CircleUserRound } from "lucide-react"
 import { isMobile } from "react-device-detect"
 import { useChat } from "../hooks/ChatHook";
 import { useContextMenu } from "../hooks/ContextMenuHook";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDrop } from "../hooks/DropHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useMessages } from "../hooks/MessagesHook";
@@ -62,7 +62,7 @@ export default function Contact({ contact }: ContactType) {
         }
     };
 
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>, nick: string) => {
+    const handleDrop = (e: React.DragEvent<HTMLAnchorElement>, nick: string) => {
         e.preventDefault();
         const droppedFiles = Array.from(e.dataTransfer.files);
         if (droppedFiles.length > 0) {
@@ -79,16 +79,15 @@ export default function Contact({ contact }: ContactType) {
         : null;
 
     return (
-        <div
+        <Link
             className={`contactsUser ${(nick === contact.nick || id === contact.id) && !isMobile ? "active" : ""}`}
             key={contact.id}
             onClick={() => {
-                if (contact.is_group) navigate(`/chat/g/${contact.id}`)
-                else navigate(`/chat/${contact.nick}`)
                 setBlackout({ seted: false })
                 setIsChose(false)
                 setShowSideMenu(false)
             }}
+            to={contact.is_group ? `chat/g/${contact.id}` : `chat/${contact.nick}`}
             onContextMenu={(e) => {
                 e.preventDefault()
                 openMenu(e.clientX, e.clientY, "chat",
@@ -171,6 +170,6 @@ export default function Contact({ contact }: ContactType) {
                     )
                 }
             </div>
-        </div>
+        </Link>
     )
 }
