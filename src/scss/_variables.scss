@@ -14,7 +14,7 @@ $mess: #272727;
 // theme maps — перечисляем нужные токены (имена CSS‑переменных)
 $themes: (
     light: (
-        bgc: #ffffff,
+        bgc: #e2e2e2,
         tc: #111111,
         borderWh: #666666,
         borderWhLight: lighten(#666666, 20%),
@@ -23,7 +23,7 @@ $themes: (
         menuButtHoverLighter: lighten(#dfdfdf, 20%),
         notValid: #8a0000,
         borderHabit: #777777,
-        mess: #f0f0f0,
+        mess: #e6e6e6,
         chosing_mess:#00000036,
         on_con_menu_mess:#6464643a,
     ),
@@ -45,10 +45,10 @@ $themes: (
 $acsents: (
     poison: (
         light: (
-            acsent: #00cc44,
+            acsent: #21d42a,
             acsent_op: #00cc442a,
             acsent_hov: #00cc443a,
-            darkerAcsent: #00a738
+            darkerAcsent: #18ca21
         ),
         dark: (
             acsent: #129e12,
@@ -103,9 +103,9 @@ $acsents: (
 $decors: (
     default: (
         light: (
-            mc: #f5f5f5,
-            hbg: #ffffff99,
-            hbgh: #ffffff99,
+            mc: #dfdfdf,
+            hbg: #dfdfdf,
+            hbgh: #dfdfdf,
             buttBg:$mc,
             nodef:#00000000,
         ),
