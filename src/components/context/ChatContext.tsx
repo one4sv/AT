@@ -131,7 +131,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 setMessages(res.data.messages);
             } else {
                 showNotification("error", "Не удалось получить данные");
-                if (window.history.length > 0) {
+                if (window.history.length > 2) {
                     navigate(-1);
                 } else {
                     navigate("/");
@@ -139,7 +139,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             }
         } catch {
             showNotification("error", "Не удалось получить данные");
-            navigate('/');
+            if (window.history.length > 2) {
+                navigate(-1);
+            } else {
+                navigate("/");
+            }
         } finally { 
             setChatLoading(false);
         }

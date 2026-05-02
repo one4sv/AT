@@ -139,9 +139,17 @@ export default function Habit() {
                         id={habit.id}
                         archived={!habit.ongoing}
                     />
+
+                    {/* ВСЕГДА поверх */}
+                    <HabitSave
+                        readOnly={isReadOnly}
+                        id={habit.id}
+                        archived={!habit.ongoing}
+                    />
                 </div>
             )}
         </div>
     );
 }
+
 
