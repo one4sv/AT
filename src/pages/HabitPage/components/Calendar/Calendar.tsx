@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
@@ -7,7 +7,8 @@ import { ChevronDown } from "lucide-react";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useParams } from "react-router-dom";
 import { isMobile } from "react-device-detect";
-import DayCell from "./DayCell";
+import { buildSlide } from "../../utils/buildSlide";
+import { CalendarSlide } from "./CalendarSlide";
 
 const MONTHS = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 
@@ -15,42 +16,6 @@ const DAY_WEEK = [
     { value: 1, label: "пн" }, { value: 2, label: "вт" }, { value: 3, label: "ср" },
     { value: 4, label: "чт" }, { value: 5, label: "пт" }, { value: 6, label: "сб" }, { value: 0, label: "вс" }
 ];
-
-type SlideData = {
-    month: number;
-    year: number;
-    days: {
-        prev: Array<{ day: number; month: number; year: number }>;
-        this: Array<{ day: number; month: number; year: number }>;
-        post: Array<{ day: number; month: number; year: number }>;
-    };
-};
-
-const buildSlide = (monthNum: number, yearNum: number): SlideData => {
-    const date = new Date(yearNum, monthNum, 1);
-    const firstDay = date.getDay();
-    const daysInMonth = new Date(yearNum, monthNum + 1, 0).getDate();
-    const prevDaysCount = firstDay === 0 ? 6 : firstDay - 1;
-    const nextDaysCount = (7 - (new Date(yearNum, monthNum + 1, 0).getDay())) % 7;
-
-    return {
-        month: monthNum,
-        year: yearNum,
-        days: {
-            prev: Array.from({ length: prevDaysCount }, (_, i) => {
-                const d = new Date(yearNum, monthNum, -prevDaysCount + i + 1);
-                return { day: d.getDate(), month: d.getMonth(), year: d.getFullYear() };
-            }),
-            this: Array.from({ length: daysInMonth }, (_, i) => ({
-                day: i + 1, month: monthNum, year: yearNum
-            })),
-            post: Array.from({ length: nextDaysCount }, (_, i) => {
-                const d = new Date(yearNum, monthNum + 1, i + 1);
-                return { day: d.getDate(), month: d.getMonth(), year: d.getFullYear() };
-            })
-        }
-    };
-};
 
 export default function Calendar() {
     const { calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useCalendar();
@@ -60,12 +25,10 @@ export default function Calendar() {
 
     const [showList, setShowList] = useState({ months: false, years: false });
 
+    const isNavigating = useRef(false);
     const monthsRef = useRef<HTMLDivElement>(null);
     const yearsRef = useRef<HTMLDivElement>(null);
     const sliderRef = useRef<HTMLDivElement>(null);
-
-    const isNavigating = useRef(false);
-    const scrollEndTimer = useRef<number | null>(null);
 
     const yearsList = useMemo(() => {
         if (!habits) return [];
@@ -94,6 +57,14 @@ export default function Calendar() {
         };
     }, [selectedMonth, selectedYear]);
 
+    console.log(selectedMonth, isNavigating.current)
+
+    useEffect(() => {
+        if (!sliderRef.current) return;
+
+        sliderRef.current.scrollLeft = sliderRef.current.clientWidth;
+    }, [selectedMonth, selectedYear]);
+
     useEffect(() => {
         const today = new Date();
         setSelectedMonth(today.getMonth());
@@ -101,9 +72,6 @@ export default function Calendar() {
     }, [setSelectedMonth, setSelectedYear]);
 
     const goToPrevMonth = useCallback(() => {
-        if (isNavigating.current) return;
-        isNavigating.current = true;
-
         if (selectedMonth === 0) {
             setSelectedMonth(11);
             setSelectedYear(y => y - 1);
@@ -111,11 +79,8 @@ export default function Calendar() {
             setSelectedMonth(m => m - 1);
         }
     }, [selectedMonth, setSelectedMonth, setSelectedYear]);
-    console.log(selectedMonth)
+    
     const goToNextMonth = useCallback(() => {
-        if (isNavigating.current) return;
-        isNavigating.current = true;
-
         if (selectedMonth === 11) {
             setSelectedMonth(0);
             setSelectedYear(y => y + 1);
@@ -124,105 +89,6 @@ export default function Calendar() {
         }
     }, [selectedMonth, setSelectedMonth, setSelectedYear]);
 
-    const handleScroll = useCallback(() => {
-        if (!sliderRef.current || isNavigating.current) return;
-
-        const slider = sliderRef.current;
-        const width = slider.offsetWidth;
-        const scrollLeft = slider.scrollLeft;
-        const center = width;
-
-        if (scrollEndTimer.current) {
-            clearTimeout(scrollEndTimer.current);
-        }
-
-        if (scrollLeft < width * 0.5) {
-            goToPrevMonth();
-            return;
-        }
-        if (scrollLeft > width * 1.5) {
-            goToNextMonth();
-            return;
-        }
-
-        scrollEndTimer.current = setTimeout(() => {
-            if (!sliderRef.current || isNavigating.current) return;
-            
-            const current = sliderRef.current.scrollLeft;
-            if (Math.abs(current - center) > 10) {
-                sliderRef.current.removeEventListener('scroll', handleScroll);
-                isNavigating.current = true;
-                
-                sliderRef.current.scrollTo({
-                    left: center,
-                    behavior: "smooth"
-                });
-                
-                setTimeout(() => {
-                    isNavigating.current = false;
-                    sliderRef.current?.addEventListener('scroll', handleScroll, { passive: true });
-                }, 300);
-            }
-        }, 150);
-    }, [goToPrevMonth, goToNextMonth]);
-
-    useEffect(() => {
-        if (!sliderRef.current) return;
-
-        const slider = sliderRef.current;
-        
-        slider.removeEventListener('scroll', handleScroll);
-        isNavigating.current = true;
-
-        slider.scrollTo({
-            left: slider.offsetWidth,
-            behavior: "auto"
-        });
-
-        requestAnimationFrame(() => {
-            isNavigating.current = false;
-            slider.addEventListener('scroll', handleScroll, { passive: true });
-        });
-
-    }, [selectedMonth, selectedYear, handleScroll]);
-
-    useEffect(() => {
-        return () => {
-            if (scrollEndTimer.current) {
-                clearTimeout(scrollEndTimer.current);
-            }
-        };
-    }, []);
-
-    const renderSlide = (slide: SlideData | null, key: string) => {
-        if (!slide) return null;
-        const allDays = [...slide.days.prev, ...slide.days.this, ...slide.days.post];
-
-        return (
-            <div key={key} className="calendarSlide">
-                <div className="calendarDays">
-                    {allDays.map((cell, idx) => {
-                        let type: "prev" | "this" | "post" = "this";
-                        if (idx < slide.days.prev.length) type = "prev";
-                        else if (idx >= slide.days.prev.length + slide.days.this.length) type = "post";
-
-                        return (
-                            <DayCell
-                                key={`${cell.year}-${cell.month}-${cell.day}`}
-                                habit={h}
-                                habits={habits}
-                                day={cell.day}
-                                month={cell.month}
-                                year={cell.year}
-                                type={type}
-                            />
-                        );
-                    })}
-                </div>
-            </div>
-        );
-    };
-
     if (!slidesData) return null;
 
     return (
@@ -230,7 +96,6 @@ export default function Calendar() {
             <div className="calendarMain" ref={calendarRef}>
                 <div className="DateChanger">
                     <div className="setMonthButt left" onClick={goToPrevMonth}><CaretLeft /></div>
-
                     <div className="CalendarDateChanger" ref={monthsRef}>
                         <div className="selectedDate fixedWidth" 
                              onClick={() => setShowList({ months: !showList.months, years: false })}>
@@ -274,9 +139,9 @@ export default function Calendar() {
 
                 <div ref={sliderRef} className="calendarSlider">
                     <div className="calendarSlidesWrapper">
-                        {renderSlide(slidesData.prev, "prev")}
-                        {renderSlide(slidesData.current, "current")}
-                        {renderSlide(slidesData.next, "next")}
+                        <CalendarSlide slide={slidesData.prev} key={"prev"}/>
+                        <CalendarSlide slide={slidesData.current} key={"current"}/>
+                        <CalendarSlide slide={slidesData.next} key={"next"}/>
                     </div>
                 </div>
             </div>
