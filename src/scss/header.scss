@@ -4,12 +4,15 @@
     position: sticky;
     top: 0;
     left: 0;
-    height: 5vh;
+    height: 6vh;
     width: 100%;
     background-color: var(--mc);
     display: flex;
     z-index: 8;
     justify-content: center;
+    border-radius: 0 0 8px 8px;
+    border-bottom: 1px solid var(--bgc);
+    overflow-y: visible;
 }
 .menuShowButt {
     position: absolute;

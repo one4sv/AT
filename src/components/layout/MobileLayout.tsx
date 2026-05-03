@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import { useLocation } from "react-router-dom";
 import { Background } from "../ts/utils/background";
 import { useSettings } from "../hooks/SettingsHook";
 import Header from "../ts/Header";
 import SideMenu from "../ts/SideMenu";
 import { useSideMenu } from "../hooks/SideMenuHook";
+import { useLocation } from "react-router-dom";
 
 interface LayoutProps {
     children?: ReactNode;

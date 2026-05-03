@@ -17,7 +17,7 @@ export default function Feed() {
     const { setTitle } = usePageTitle()
 
     useEffect(() => {
-        setTitle("Главная")
+        setTitle("Посты")
     }, [setTitle])
 
     const postFor = async () => {

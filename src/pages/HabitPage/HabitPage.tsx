@@ -58,10 +58,10 @@ export default function Habit() {
     }, [habitId]);
 
     useEffect(() => {
-        if (habit && Number(habitId) === habit.id && habit?.name && !loadingHabit) {
+        if (habitId && habit) {
             setTitle(habit.name)
         } else if (!habitId) {
-            document.title = "Активности";
+            setTitle("Активности")
         }
     }, [habitId, habit, habit?.name, loadingHabit, setTitle]);
 

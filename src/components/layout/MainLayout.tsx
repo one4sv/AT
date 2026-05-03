@@ -5,6 +5,7 @@ import { useSettings } from "../hooks/SettingsHook";
 import { useDrop } from "../hooks/DropHook";
 import { File } from "@phosphor-icons/react"
 import { useLocation } from "react-router";
+import Header from "../ts/Header";
 
 interface LayoutProps {
   children?: ReactNode;
@@ -15,7 +16,8 @@ export default function MainLayout({ children }: LayoutProps) {
   const { handleDrop, handleDragOver, handleDragEnter, handleDragLeave, isDragging } = useDrop()
   const location = useLocation()
   const needDrag = location.pathname === "/" || location.pathname.startsWith("/chat")
-  
+  const hideHeader = location.pathname.startsWith("/chat") || location.pathname.startsWith("/habit/")
+
   return (
     <div className="app-layout">
       <SideMenu />
@@ -32,6 +34,7 @@ export default function MainLayout({ children }: LayoutProps) {
             </div>
           </div>
         )}
+        {!hideHeader && <Header />}
         {children}
       </div>
     </div>

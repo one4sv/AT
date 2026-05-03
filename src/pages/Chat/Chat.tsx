@@ -178,7 +178,7 @@ export default function Chat() {
     }, [chatLoading, chatWith, id, nick, setTitle]);
 
     if (chatLoading) return <Loader />;
-    console.log("rer chat")
+    
     return (
         <div className={`chatDiv ${isMobile ? "mobile" : ""}`}>
             <ChatUser
