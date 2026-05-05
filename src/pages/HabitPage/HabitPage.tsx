@@ -1,4 +1,4 @@
-import { useEffect, useState, type SetStateAction } from "react";
+import { useEffect, useState} from "react";
 import { useParams } from "react-router";
 import { useTheHabit } from "../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../components/hooks/CalendarHook";
@@ -25,7 +25,6 @@ import { useHabits } from "../../components/hooks/HabitsHook";
 
 export interface HabitSlideProps {
     id: number;
-    setShown: React.Dispatch<SetStateAction<boolean>>;
     readOnly?: boolean;
     isArchived?:boolean,
     isMy?:boolean
@@ -43,8 +42,13 @@ export default function Habit() {
     const [ showSettings, setShowSettings ] = useState(false)
     const [ showJurnal, setShowJurnal ] = useState(false)
 
+    const isSlided = showJurnal || showSettings
+    
     useEffect(() => {
-        if (!showHabitMenu) setShowSettings(false)
+        if (!showHabitMenu) {
+            setShowSettings(false)
+            setShowJurnal(false)
+        }
     }, [showHabitMenu])
 
     useEffect(() => {
@@ -58,10 +62,10 @@ export default function Habit() {
     }, [habitId]);
 
     useEffect(() => {
-        if (habit && Number(habitId) === habit.id && habit?.name && !loadingHabit) {
+        if (habitId && habit) {
             setTitle(habit.name)
         } else if (!habitId) {
-            document.title = "Активности";
+            setTitle("Активности")
         }
     }, [habitId, habit, habit?.name, loadingHabit, setTitle]);
 
@@ -76,6 +80,12 @@ export default function Habit() {
     const isMy = (habitId !== undefined && habits?.some(h => String(h.id) === habitId)) ?? false
     const isArchived = !habit?.ongoing
     const isReadOnly = !isMy || isArchived
+
+    const returnSlide = () => {
+        if (showJurnal) setShowJurnal(false)
+        else if (showSettings) setShowSettings(false)
+        else setShowHabitMenu(false)
+    }
 
     return (
         <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
@@ -121,23 +131,22 @@ export default function Habit() {
                                 <HabitSettings
                                     readOnly={isReadOnly}
                                     id={habit.id}
-                                    setShown={setShowSettings}
                                     isArchived={isArchived}
                                     isMy={isMy}
                                 />
                             )}
                             {showJurnal && (
-                                <CompJurnal id={habit.id} setShown={setShowJurnal}/>
+                                <CompJurnal id={habit.id}/>
                             )}
                         </div>
 
                     </div>
-
-                    {/* ВСЕГДА поверх */}
                     <HabitSave
                         readOnly={isReadOnly}
                         id={habit.id}
                         archived={!habit.ongoing}
+                        returnSlide={returnSlide}
+                        isSlided={isSlided}
                     />
                 </div>
             )}

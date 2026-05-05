@@ -1,6 +1,6 @@
 @use "./_variables.scss" as *;
 
-@mixin input($bg, $c, $bor, $h, $br, $bh) {
+@mixin input($bg, $c, $bor, $h, $br, $bh, $w:null) {
     background-color: $bg;
     border: 1px solid $bor;
     color: $c;
@@ -8,7 +8,9 @@
     outline: none;
     height: $h;
     border-radius: $br;
-
+    @if $w != null {
+      width: $w;
+    }
     &:focus-visible {
       border: 1px solid $bh;
     }

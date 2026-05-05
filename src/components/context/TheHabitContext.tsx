@@ -40,6 +40,7 @@ export interface TheHabitContextType {
     showCounter: habitCounter | null;
     setShowCounter: React.Dispatch<SetStateAction<habitCounter | null>>;
     counterSettings: counterSettingsType | null;
+    checklist:DoneCompletion[],
 }
 
 export interface habitTimer {
@@ -66,13 +67,22 @@ export interface counterSettingsType {
     red_counter_left: number;
 }
 
-export type metricsType = "timer" | "counter" | "schedule"
+export type metricsType = "timer" | "counter" | "schedule" | "checklist" | "done"
 export type asctype = "one" | "all" | "none"
 
 export interface HabitSettings {
     metric_type: metricsType;
     schedule: boolean;
     auto_schedule_completion:asctype
+}
+export type DoneCompletion = { 
+    id:number, 
+    start_time:string, 
+    end_time:string, 
+    name:string,
+    date:string,
+    habit_id:number,
+    isNew?: boolean
 }
 /**
  * Парсит счётчик из API (строки → Date)
@@ -118,6 +128,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
     const [habitCounter, setHabitCounter] = useState<habitCounter | null>(null);
     const [showCounter, setShowCounter] = useState<habitCounter | null>(null);
     const [counterSettings, setCounterSettings] = useState<counterSettingsType | null>(null);
+    const [checklist, setChecklist] = useState<DoneCompletion[]>([]);
     const [habitSettings, setHabitSettings] = useState<HabitSettings>({
         metric_type: "timer",
         schedule: false,
@@ -180,7 +191,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
             const res = await findHabit(id);
             if (!res?.success) return;
 
-            const { habit: habitData, isRead, isDone: doneToday, settings, counterSettings: cSettings } = res;
+            const { habit: habitData, isRead, isDone: doneToday, settings, counterSettings: cSettings, counter, timer, checklist } = res;
 
             fetchCalendarHabit(id);
             setHabit(habitData);
@@ -188,8 +199,14 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
             setTodayDone(doneToday);
             setHabitSettings(settings);
             setCounterSettings(cSettings);
-            setHabitCounter(res.counter);
-            setHabitTimer(res.timer);
+            setHabitCounter(counter);
+            setHabitTimer(timer);
+            setChecklist(
+                (checklist || []).map((c: DoneCompletion) => ({
+                    ...c,
+                    isNew: false
+                }))
+            )
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 showNotification("error", err.response?.data?.error);
@@ -271,7 +288,8 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                 showCounter,
                 setShowCounter,
                 counterSettings,
-                parseTimer
+                parseTimer,
+                checklist
             }}
         >
             {children}

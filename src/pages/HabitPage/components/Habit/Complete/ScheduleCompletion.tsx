@@ -8,7 +8,7 @@ import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
 import { todayStrFunc } from "../../../utils/dateToStr";
 import { useScheduleCompleted } from "../../../../../components/hooks/utils/useScheduleCompleted";
 
-export default function ScheduleComplition() {
+export default function ScheduleCompletion({ isMy }:{ isMy:boolean }) {
     const { scheduleComplete, loadingComp, loading } = useSchedule();
     const { chosenDay } = useCalendar();
     const { habitId: id } = useParams<{ habitId: string }>();
@@ -26,7 +26,7 @@ export default function ScheduleComplition() {
     
     return (
         <div className="scheduleCompilition">
-            {!loading && scheduleCompleted.length === 0 &&(<span className="scheduleRest">Выходной</span>)}
+            {!loading && scheduleCompleted.length === 0 && (<span className="scheduleRest">Выходной</span>)}
             {scheduleCompleted.map((s) => {
                 const key = `${s.id} - ${date}`
                 console.log(key, loadingComp.some(l => l === key))
@@ -34,9 +34,18 @@ export default function ScheduleComplition() {
                     <div
                         className="scheduleButt"
                         key={key}
-                        onClick={() => scheduleComplete(id, s.id, date)}
-                        onMouseOver={() => setHover(s.id)}
-                        onMouseLeave={() => setHover(0)}
+                        onClick={() => {
+                            if (!isMy) return
+                            scheduleComplete(id, s.id, date)
+                        }}
+                        onMouseOver={() => {
+                            if (!isMy) return
+                            setHover(s.id)
+                        }}
+                        onMouseLeave={() => {
+                            if (!isMy) return
+                            setHover(0)
+                        }}
                     >
                         <div className="scheduleButtInfo">
                             <span className="scheduleButtSpan">

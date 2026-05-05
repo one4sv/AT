@@ -7,21 +7,20 @@ import { SVGclock } from "../../../utils/SVGclock";
 import { FlagPennant, Pause, Play, Square } from "@phosphor-icons/react";
 import "../../../scss/Timer.scss";
 import { useWebSocket } from "../../../../../components/hooks/WebSocketHook";
+import { todayStrFunc } from "../../../utils/dateToStr";
 
-export default function Timer() {
+export default function Timer({ isMy }:{ isMy:boolean }) {
     const { habit, habitTimer, todayDone, showTimer, setHabitTimer, parseTimer } = useTheHabit();
     const { chosenDay } = useCalendar();
     const { ws } = useWebSocket()
     const { timerStart, timerPause, timerStop, timerCircle } = useHabitTimer();
-
     const [ untilDisplay, setUntilDisplay ] = useState("00:00:00");
     const [ timerDisplay, setTimerDisplay ] = useState("00:00:00");
 
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const isHistorical = Boolean(chosenDay && chosenDay !== todayStr);
+    const isHistorical = Boolean(chosenDay !== todayStrFunc());
 
     const currentTimer = isHistorical ? showTimer : habitTimer ?? null;
-    const canControl = !isHistorical;
+    const canControl = !isHistorical && isMy
 
     const isTimerActive = currentTimer !== null && canControl;
     const isPaused = canControl && currentTimer?.status === "paused";

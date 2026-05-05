@@ -114,7 +114,6 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
 
         const needTimer = timers?.find((t) => dateToCalendarFormat(t.started_at) === chosenDay) || null;
         setShowTimer(needTimer);
-
         const needCounter = counters?.find((t) => dateToCalendarFormat(new Date(t.started_at)) === chosenDay) || null;
         setShowCounter(needCounter);
     }, [

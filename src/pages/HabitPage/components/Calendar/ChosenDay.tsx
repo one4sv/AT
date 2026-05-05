@@ -7,7 +7,8 @@ import { CheckCircle, Circle } from "@phosphor-icons/react";
 import { useDone } from "../../../../components/hooks/DoneHook";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
-import { formatDateFromString, todayStrFunc } from "../../utils/dateToStr";
+import { todayStrFunc } from "../../utils/dateToStr";
+import ChosenDayDate from "../../utils/ChosenDayDate";
 
 export default function ChosenDay() {
     const { chosenDay, calendar } = useCalendar()
@@ -90,9 +91,7 @@ export default function ChosenDay() {
 
     return (
         <div className="chosenDayDiv" ref={ChosenDayRef}>
-            <div className="chosenDayDate">
-                {formatDateFromString(day)}
-            </div>
+            <ChosenDayDate/>
             {(completedArr.length > 0 || skippedArr.length > 0 || willArr.length > 0 || nowArr.length > 0) && (
                 <div className="cdhabits">
                     {mappingHabits(completedArr, "comp")}

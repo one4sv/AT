@@ -6,10 +6,9 @@ import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
 import { formatDateFromString } from "../../utils/dateToStr";
-import { CaretLeftIcon } from "@phosphor-icons/react";
 import type { HabitSlideProps } from "../../HabitPage";
 
-export default function CompJurnal({setShown, id}:HabitSlideProps) {
+export default function CompJurnal({ id }:HabitSlideProps) {
     const { calendar } = useCalendar()
     const { setDayComment, setIsDone, } = useTheHabit()
     const { setChosenDay, setSelectedYear, setSelectedMonth } = useCalendar();
@@ -75,9 +74,6 @@ export default function CompJurnal({setShown, id}:HabitSlideProps) {
                         );
                     }}
                 />
-            </div>
-            <div className="habitSlideBack" onClick={() => setShown(false)}>
-                <CaretLeftIcon /> Назад
             </div>
         </div>
     );

@@ -133,23 +133,6 @@
     flex-direction: column;
     position: relative;
 }
-.accInfoRedButt {
-    right: 0;
-    height: 4vh;
-    padding: 1vh 0;
-    width: 12vw;
-    color: var(--borderWh);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    background-color: var(--buttBg);
-    cursor: pointer;
-    &:hover {
-        background-color: var(--menuButtHover);
-        color: var(--tc);
-    }
-}
 
 .accExtraInfoWrapper {
     margin-top: 1vh;

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
 import { useSettings } from "../hooks/SettingsHook";
 import type { HabitSettings } from "./TheHabitContext";
+import { useUser } from "../hooks/UserHook";
 
 export interface Habit {
     id:number;
@@ -43,6 +44,7 @@ const HabitsContext = createContext<HabitContextType | null>(null);
 export const HabitsProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
     const { orderHabits } = useSettings();
+    const { user } = useUser()
     const API_URL = import.meta.env.VITE_API_URL
 
     const [ habits, setHabits ] = useState<Habit[] | null>(null);
@@ -50,6 +52,7 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
     const [ newOrderHabits, setNewOrderHabits ] = useState<string[] | undefined>()
 
     const refetchHabits = useCallback(async () => {
+        // if (!user.id) return
         try {
             const res = await axios.get<HabitResponse>(`${API_URL}habits`, {
                 withCredentials: true,
@@ -71,7 +74,7 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
             setLoadingHabits(false);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [user]);
 
     const refetchHabitsWLoading = async() => {
         setLoadingHabits(true);

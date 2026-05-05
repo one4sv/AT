@@ -18,6 +18,26 @@
         }
     }
 }
+.sideMenuUnAthorised {
+    height: 100%;
+    width: 100%;
+    font-size: 20px;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5vh;
+    >span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    >.whiteButt {
+        width: fit-content;
+        height: fit-content;
+        padding: 0.3vh 0.8vw;
+    }
+}
 .SMsearchDiv {
     padding-top: 1vh;
     display: flex;
@@ -103,17 +123,19 @@
 .SMprofileButt {
     flex: 1;
     z-index: 6;
-    padding: 1vh 0.5vw;
+    padding: 0.7vh 0.5vw;
     cursor: pointer;
+    display: flex;
+    align-items: center;
     &:hover {
         background-color: var(--menuButtHover);
     }
+    >svg {
+        width: 1vw;
+        height: 1vw;
+        margin-right: 0.1vw;
+    }
     &.exit {
-        display: flex;
-        align-items: center;
-        >svg {
-            height: 1rem;
-        }
         &:hover {
             color: var(--notValid);
         }

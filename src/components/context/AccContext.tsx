@@ -6,7 +6,7 @@ import type { PrivateSettings } from "./SettingsContext";
 import type { Media } from "./ChatContext";
 import type { User } from "./UserContext";
 import type { Habit } from "./HabitsContext";
-import { useNavigate } from "react-router";
+import axios from "axios";
 
 const AccContext = createContext<AccContextType | null>(null);
 
@@ -30,25 +30,26 @@ export interface AccContextType {
     setPosts:Dispatch<SetStateAction<PostType[]>>
     media:Media[] | undefined,
     privateRules: PrivateSettings,
+    isMyAcc:boolean,
+    setIsMyAcc:React.Dispatch<SetStateAction<boolean>>
 
 }
 export const AccProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
 
-    const navigate = useNavigate()
-
-    const [acc, setAcc] = useState<User>();
-    const [habits, setHabits] = useState<Habit[]>();
-    const [posts, setPosts] = useState<PostType[]>([]);
-    const [media, setMedia] = useState<Media[]>([]);
-    const [privateRules, setPrivateRules] = useState<PrivateSettings>({
+    const [ acc, setAcc ] = useState<User>();
+    const [ habits, setHabits ] = useState<Habit[]>();
+    const [ posts, setPosts ] = useState<PostType[]>([]);
+    const [ media, setMedia ] = useState<Media[]>([]);
+    const [ privateRules, setPrivateRules ] = useState<PrivateSettings>({
         number: "",
         mail: "",
         habits: "",
         posts: "",
     });
-    const [accLoading, setAccLoading] = useState<boolean>(true);
-    const [postsLoading, setPostsLoading] = useState<boolean>(true);
+    const [ accLoading, setAccLoading ] = useState<boolean>(true);
+    const [ postsLoading, setPostsLoading ] = useState<boolean>(true);
+    const [ isMyAcc, setIsMyAcc ] = useState<boolean>(false);
 
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -62,21 +63,12 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
                 setHabits(res.data.habits);
                 setPrivateRules(res.data.privateRules);
                 setMedia(res.data.media);
-            } else {
-                showNotification("error", "Не удалось найти пользователя");
-                if (window.history.length > 1) {
-                    navigate(-1);
-                } else {
-                    navigate("/"); // заменить на нужный маршрут списка чатов
-                }
             }
-        } catch {
-            showNotification("error", "Не удалось найти пользователя");
-            if (window.history.length > 1) {
-                navigate(-1);
-            } else {
-                navigate("/"); // заменить на нужный маршрут списка чатов
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (err.response?.status === 401) return;
             }
+            console.log(err)
         } finally {
             setAccLoading(false);
         }
@@ -90,14 +82,16 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
             if (res.data.success) {
                 setPosts(res.data.posts);
             }
-        } catch {
-            showNotification("error", "Не удалось найти посты");
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (err.response?.status === 401) return;
+            }
+            console.log(err)
         } finally {
             setPostsLoading(false);
         }
-    }, [API_URL, showNotification]);
+    }, [API_URL]);
 
-    // общий loading: true, если хотя бы один из подзагрузчиков активен
     const loading = accLoading || postsLoading;
 
     return (
@@ -112,6 +106,8 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
                 privateRules,
                 setPosts,
                 refetchPosts,
+                isMyAcc,
+                setIsMyAcc
             }}
         >
             {children}

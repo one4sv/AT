@@ -14,11 +14,13 @@ import { useHabits } from "../hooks/HabitsHook.ts"
 import MinLoader from "./MinLoader.tsx"
 import { useLocation } from "react-router"
 import { isMobile } from "react-device-detect"
-import { SortAscending } from "@phosphor-icons/react"
+import { GearIcon, SortAscending, UserIcon } from "@phosphor-icons/react"
 import { filterHabitsByOrder } from "./utils/filteredHabitsByOrder.tsx"
 import { useSchedule } from "../hooks/ScheduleHook.ts"
+import SideMenuUnAunthificated from "./sideMenuUnSideMenuUnAunthificated.tsx"
 
 export default function SideMenu() {
+    const { isAuthenticated, loadingUser } = useUser()
     const { setSearch, loadingList, list } = useChat()
     const { loadingHabits, habits, newOrderHabits } = useHabits()
     const { refreshSchedules } = useSchedule()
@@ -246,6 +248,8 @@ export default function SideMenu() {
         }
     }, [])
 
+    if (!isAuthenticated && !loadingUser) return <SideMenuUnAunthificated/>
+
     return (
         <div className={`sideMenu ${isMobile ? "mobileSM" : ""}`}>
             <div className="SMsearchDiv">
@@ -262,6 +266,7 @@ export default function SideMenu() {
                             setShowList(false)
                             navigate(`/acc/${user.nick}`)
                         }}>
+                            <UserIcon size={20}/>
                             {user.username || user.nick}
                         </div>
                         <div
@@ -273,10 +278,12 @@ export default function SideMenu() {
                                 setBlackout({ seted: true, module: "Settings" })
                             }}
                         >
+                            <GearIcon/>
                             Настройки
                         </div>
                         <div className="SMprofileButt exit" onClick={logOut}>
-                            Выйти <LogOut />
+                            <LogOut />
+                            Выйти 
                         </div>
                     </div>
                 </div>

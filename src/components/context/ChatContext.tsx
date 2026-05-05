@@ -95,7 +95,7 @@ export interface Contact {
 }
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
-    const { user } = useUser();
+    const { user, isAuthenticated } = useUser();
     const { showNotification } = useNote();
     const { note, messNote } = useSettings();
     const { ws, send } = useWebSocket()
@@ -121,6 +121,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, [chatWith]);
 
     const refetchChat = async (nick: string) => {
+        if (!isAuthenticated) return;
         try {
             const res = await api.get(`${API_URL}chat/${nick}`);
             if (res.data.success) {
@@ -150,6 +151,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const refetchGroupChat = async (id: string) => {
+        if (!isAuthenticated) return;
         try {
             const res = await api.get(`${API_URL}chat/group/${id}`);
             if (res.data.success) {
@@ -181,7 +183,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const refetchContactsWTLoading = useCallback(async () => {
-        if (user.nick === null) return;
+        if (!isAuthenticated) return;
         try {
             const res = await api.post(`${API_URL}contacts`, { search });
             if (res.data.success) {
@@ -197,9 +199,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 });
                 setList(sortedList);
             }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-            showNotification("error", error?.response?.data?.error);
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (err.response?.status === 401) return;
+                console.log("error", err?.response?.data?.error);
+            }
         } finally {
             setLoadingList(false);
         }

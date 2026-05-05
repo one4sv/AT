@@ -4,7 +4,7 @@ import Toggler from "../../../../components/ts/Toggler";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import type { asctype, metricsType } from "../../../../components/context/TheHabitContext";
-import { BoxArrowDownIcon, CaretLeftIcon, Trash } from "@phosphor-icons/react";
+import { BoxArrowDownIcon, Trash } from "@phosphor-icons/react";
 import SelectList, { type Option } from "../../../../components/ts/SelectList";
 import type { HabitSlideProps } from "../../HabitPage";
 import { useDelete } from "../../../../components/hooks/DeleteHook";
@@ -14,7 +14,7 @@ function SettingHint({ text }: { text: string }) {
     return <div className="settingHint">{text}</div>;
 }
 
-export default function HabitSettings({ id, readOnly, setShown, isArchived, isMy }: HabitSlideProps) {
+export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitSlideProps) {
     const { habitSettings, habitTimer, habit } = useTheHabit();
     const { setNewMetricType, setNewScheduleBool, setNewAutoScheduleCompletion, setNewOngoing } = useUpHabit();
     const { setDeleteConfirm } = useDelete()
@@ -35,9 +35,11 @@ export default function HabitSettings({ id, readOnly, setShown, isArchived, isMy
     }, [habitSettings.auto_schedule_completion]);
 
     const metrics: Option[] = [
-        { label: "Таймер", value: "timer" },
-        { label: "Счётчик", value: "counter" },
-        { label: "Расписание", value: "schedule" },
+        { label: "Таймер", value: "timer"},
+        { label: "Счётчик", value: "counter"},
+        { label: "Расписание", value: "schedule"},
+        { label: "Список задач", value: "checklist"},
+        { label: "Нет", value: "done"},
     ];
 
     const availableMetrics = metrics.filter((m) => {
@@ -71,6 +73,13 @@ export default function HabitSettings({ id, readOnly, setShown, isArchived, isMy
         const val = value as asctype;
         setAutoCompleteMode(value);
         setNewAutoScheduleCompletion(id, val);
+    };
+    const metricText: Record<metricsType, string> = {
+        timer: "Фиксирует продолжительность выполнения.",
+        counter: "Подходит для количественных привычек.",
+        schedule: "Выполнение заданных в расписании блоков.",
+        checklist: "Фиксированный список задач.",
+        done: "Без измерения."
     };
 
     if (!habit) return null;
@@ -111,13 +120,7 @@ export default function HabitSettings({ id, readOnly, setShown, isArchived, isMy
                     <SettingHint text="Нельзя изменить пока запущен таймер." />
                 ) : (
                     <SettingHint
-                        text={
-                            metric_type === "timer"
-                                ? "Отслеживание по времени. Запусти таймер и фиксируй длительность."
-                                : metric_type === "counter"
-                                ? "Подходит для количественных привычек: отжимания, страницы, шаги."
-                                : "Связано с расписанием. Выполнение зависит от заданных блоков."
-                        }
+                        text={metricText[metric_type] ?? metricText.done}
                     />
                 )}
             </div>
@@ -180,10 +183,6 @@ export default function HabitSettings({ id, readOnly, setShown, isArchived, isMy
                     </div>
                 </>
             )}
-
-            <div className="habitSlideBack" onClick={() => setShown(false)}>
-                <CaretLeftIcon /> Назад
-            </div>
         </div>
     );
 }

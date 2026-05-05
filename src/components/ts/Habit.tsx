@@ -215,7 +215,12 @@ export default function HabitDiv({
             {habit.tag && <div className="habitIcon">{habitIcon(habit)}</div>}
 
             <div className="habitInfo">
-                <div className="habitName">{habit.name}</div>
+                <div className="habitName">
+                    {habit.name}
+                    {habit.pinned && isMyAcc && (
+                        <PushPinIcon className="pinnedHabitSign" weight="fill" size={14}/>
+                    )}
+                </div>
                 <div className="habitPer">
                     {habit.ongoing && (
                         timerLoading
@@ -224,9 +229,6 @@ export default function HabitDiv({
                     )}
                     {habit.done && <CheckCircle className="habitHLStatus" weight="fill" />}
                 </div>
-                {habit.pinned && isMyAcc && (
-                    <PushPinIcon className="pinnedHabitSign" weight="fill" />
-                )}
             </div>
         </Link>
     );

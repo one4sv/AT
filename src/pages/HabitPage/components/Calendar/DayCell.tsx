@@ -4,7 +4,7 @@ import HoverDay from "./HoverDay";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
 import { useParams } from "react-router-dom";
-import { todayStrFunc } from "../../utils/dateToStr";
+import { dateToCalendarFormat, todayStrFunc } from "../../utils/dateToStr";
 
 interface DayCellProps {
     habit: Habit | undefined;
@@ -21,10 +21,9 @@ const DayCell = ({ habits, habit, day, month, year, type }: DayCellProps) => {
     const { habitId: id } = useParams<{ habitId: string }>();
     const cellRef = useRef<HTMLDivElement | null>(null);
 
-    const today = new Date();
     const date = new Date(year, month, day);
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    const todayStr = todayStrFunc()
+    const dateStr = dateToCalendarFormat(date);
 
     const { completedArr, skippedArr, willArr, nowArr } = useMemo(
         () => getDayArrays(dateStr, calendar, habits, id, habit),

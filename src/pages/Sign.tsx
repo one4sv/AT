@@ -117,8 +117,8 @@ export default function Log() {
   useEffect(() => {
     if (isAuthenticated) navigate("/");
     else navigate("/sign");
-  }, [isAuthenticated]);
-
+  }, [isAuthenticated, navigate]);
+  console.log(isAuthenticated)
   return (
     <div className="landing">
       <div className={`landingDiv ${isMobile ? "mobile" : ""}`}>

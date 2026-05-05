@@ -3,23 +3,18 @@ import { useUpUser } from "../../../components/hooks/UpdateUserHook";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useChat } from "../../../components/hooks/ChatHook";
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
-import type { User } from "../../../components/context/UserContext";
-import { useNavigate } from "react-router";
+import { useEffect, useRef, useState} from "react";
 import { isMobile } from "react-device-detect";
+import { useAcc } from "../../../components/hooks/AccHook";
+import { useSideMenu } from "../../../components/hooks/SideMenuHook";
+import type { User } from "../../../components/context/UserContext";
 
-interface AccInfoProps {
-    acc: User | undefined,
-    red:boolean,
-    setRed:Dispatch<SetStateAction<boolean>>,
-    isMyAcc:boolean
-}
-
-export default function AccInfo({acc, red, setRed, isMyAcc} : AccInfoProps) {
+export default function AccInfo({acc}:{acc?:User}) {
     const { setBlackout } = useBlackout();
-    const { newName, setNewName, newNick, setNewNick, handleSave, newPick } = useUpUser()
+    const { newName, setNewName, newNick, setNewNick, newPick } = useUpUser()
     const { onlineMap } = useChat();
-    const navigate = useNavigate()
+    const { isMyAcc } = useAcc()
+    const { red } = useSideMenu()
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -34,14 +29,6 @@ export default function AccInfo({acc, red, setRed, isMyAcc} : AccInfoProps) {
         }
     }, [newPick]);
 
-    const accInfoButt = () => {
-        if (isMyAcc) {
-            if (red) handleSave();
-            setRed(!red);
-        } else {
-            navigate(`/chat/${acc?.nick}`);
-        }
-    };
     return (
         <div className="accInfo">
             <div
@@ -85,9 +72,6 @@ export default function AccInfo({acc, red, setRed, isMyAcc} : AccInfoProps) {
                 </div>
             </div>
             <div className="accInfoWrapper">
-                <div className="accInfoRedButt" onClick={accInfoButt}>
-                    {isMyAcc ? (red ? "Сохранить" : "Редактировать профиль") : "Написать сообщение"}
-                </div>
                 <div className={`accOnlineStauts ${onlineMap[acc?.id || ""] ? "online" : "offline"}`}>
                     {onlineMap[acc?.id || ""] 
                         ? "В сети" 

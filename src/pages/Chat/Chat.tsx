@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useChat } from "../../components/hooks/ChatHook";
 import { useMessages } from "../../components/hooks/MessagesHook";
 import { useUser } from "../../components/hooks/UserHook";
@@ -21,13 +21,13 @@ import getCornerType from "./components/getCornet";
 import SystemMessage from "./components/SystemMessage";
 
 export default function Chat() {
-    const { user } = useUser();
+    const { user, isAuthenticated } = useUser();
     const { refetchChatWLoading, chatLoading, messages, chatWith, refetchGroupChatWLoading } = useChat();
     const { chosenMess, setChosenMess, isChose, setIsChose, pendingScrollId, setPendingScrollId } = useMessages();
     const { setTitle } = usePageTitle()
 
     const { nick, id } = useParams();
-
+    const navigate = useNavigate()
     const [search, setSearch] = useState("");
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [highlightedId, setHighlightedId] = useState<number | null>(null);
@@ -53,8 +53,10 @@ export default function Chat() {
     }, [nick, id]);
 
     useEffect(() => {
-        if (!user?.id) return;
+        if (!isAuthenticated) navigate(`/acc/${nick}`)
+    }, [isAuthenticated, navigate, nick])
 
+    useEffect(() => {
         const unread = messages.filter(
             m => !m.read_by.includes(user.id!) && m.sender_id !== user.id
         );
@@ -78,7 +80,6 @@ export default function Chat() {
         scrollToMessage(target.id)
     };
 
-    // Поиск сообщений
     const searchedMessages = useMemo(() => {
         if (!search.trim()) return [];
         return messages
@@ -178,7 +179,7 @@ export default function Chat() {
     }, [chatLoading, chatWith, id, nick, setTitle]);
 
     if (chatLoading) return <Loader />;
-    console.log("rer chat")
+
     return (
         <div className={`chatDiv ${isMobile ? "mobile" : ""}`}>
             <ChatUser

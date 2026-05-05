@@ -1,10 +1,13 @@
+import { CaretLeftIcon, XIcon } from "@phosphor-icons/react";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 interface HabitSaveType {
     readOnly:boolean,
     archived:boolean,
-    id:number
+    id:number,
+    returnSlide:() => void,
+    isSlided:boolean,
 }
-export default function HabitSave ({readOnly, archived, id}:HabitSaveType) {
+export default function HabitSave ({readOnly, archived, id, returnSlide, isSlided}:HabitSaveType) {
     const { saveHabit, localChanges, isUpdating } = useUpHabit()
 
     const hasUnsavedChanges = !!localChanges[id];
@@ -19,6 +22,9 @@ export default function HabitSave ({readOnly, archived, id}:HabitSaveType) {
                     Не забудьте сохранить!
                 </div>
             )}
+            <div className="habitSlideBack" onClick={() => returnSlide()}>
+                {isSlided  ? <CaretLeftIcon size={24}/> : <XIcon size={24}/>} {isSlided ? 'Назад' : 'Закрыть'}
+            </div>
             <div
                 className={`habitSave ${isThisUpdating ? "saving" : ""}`}
                 onClick={async () => {

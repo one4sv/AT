@@ -100,9 +100,10 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setWeekStart(res.data.week_start ?? null);
             }
         } catch (err) {
+            if (axios.isAxiosError(err) && err.response?.status === 401) return
             console.error("Ошибка загрузки настроек:", err);
         }
-    }, []);
+    }, [API_URL]);
 
     useEffect(() => {
         if (user) refetchSettings();

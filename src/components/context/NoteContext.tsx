@@ -7,12 +7,13 @@ export interface NoteContextType {
     txt: string;
     display: boolean;
     id: number;
-    showNotification: (newtype: string, newtxt: string) => void;
+    showNotification: (newtype: noteType, newtxt: string) => void;
     setDisplay: (display: boolean) => void;
 }
+export type noteType = 'error' | 'success' | 'info' | 'false'
 
 export const NoteProvider = ({children}:{children:ReactNode}) => {
-    const [type,setType] = useState('false');
+    const [type,setType] = useState<noteType>('false');
     const [txt, setTxt] = useState('');
     const [display, setDisplay] = useState(false);
     const [id, setId] = useState(0);
@@ -20,7 +21,7 @@ export const NoteProvider = ({children}:{children:ReactNode}) => {
     const timeoutRef = useRef<number | null>(null);
     const hideRef = useRef<number | null>(null);
 
-    const showNotification = useCallback(({newtype, newtxt} : {newtype:string, newtxt:string}) => {
+    const showNotification = useCallback(({newtype, newtxt} : {newtype:noteType, newtxt:string}) => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current)
         if (hideRef.current) clearTimeout(hideRef.current)
 

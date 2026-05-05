@@ -1,20 +1,28 @@
 @use "../../../scss/global" as var;
 
 .completeDiv {
-    width: 19.5vw;
     display: flex;
     position: relative;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
-    height: 100%;
+    flex: 1;
+    height: 40vh;
     background-color: var(--mc);
     border-radius: 12px;
 }
+.completeDate {
+    border-bottom: 1px solid var(--borderHabit);
+    font-size: 20px;
+    padding: 0.5vh 0.5vw 0.25vh;
+    width: 90%;
+    text-align: center;
+}
 .completeMain {
+    position: relative;
     width: 100%;
     padding: 0.5vh 0.25vw;
-    height: 100%;
+    flex: 1;
+    height: calc(100% - 9vh);
 }
 @media (max-width:800px) {
     .completeDiv {
@@ -22,14 +30,23 @@
         width: 100%;
     }
 }
-.doneButt {
-    @include var.longButt(95%, 5vh, 1vh, 1vw, var(--acsent), var(--tc), var(--tr), var(--acsent));
-    display: inline-flex;
+.doneButtDiv {
+    width: 100%;
+    height: 5vh;
+    display: flex;
+    justify-content: center;
     align-items: center;
+    position: relative;
+}
+.doneButt {
+    @include var.longButt(17vw, 3.7vh, 1vh, 1vw, var(--acsent), var(--tc), var(--tr), var(--acsent));
+    user-select: none;
     font-size: 20px;
     position: relative;
+    display: flex;
+    align-items: center;
     margin-bottom: 1vh;
-    border-radius: 12px;
+    border-radius: 8px;
     >svg {
         margin-right: 0.3vw;
     }
@@ -50,5 +67,10 @@
                 color: var(--tc);
             }
         }
+    }
+}
+@media (max-width:800px) {
+    .doneButt {
+        width: 95%;
     }
 }

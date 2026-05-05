@@ -1,4 +1,5 @@
 @use "./_variables" as vars;
+
 @forward "./utils.scss";
 @forward "./reset.scss";
 @forward "./animations.scss";
@@ -10,16 +11,16 @@
   --borderWh: #{vars.$borderWh};
   --mc: #{vars.$mc};
   --menuButtHover: #{vars.$menuButtHover};
-  --acsent: #{vars.$acsent};
-  --darkerAcsent: #{vars.$darkerAcsent};
   --borderHabit: #{vars.$borderHabit};
   --mess: #{vars.$mess};
   --greenGrad: #{vars.$greenGrad};
   --font: #{vars.$font};
   --tr: #{vars.$tr};
+
+  /* ❌ УБРАЛИ acsent отсюда полностью */
 }
 
-/* Генерируем theme/acsent vars ПОСЛЕ :root чтобы они имели приоритет */
+/* динамические темы */
 @include vars.generate-theme-vars();
 @include vars.generate-acsent-vars();
 @include vars.generate-decor-vars();

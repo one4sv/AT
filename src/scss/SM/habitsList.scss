@@ -103,6 +103,8 @@
 .habitName {
     display: flex;
     width: 100%;
+    align-items: center;
+    gap: 3px;
 }
 .habitPer {
     color: var(--darkerAcsent);
@@ -111,10 +113,8 @@
     color: var(--borderHabit);
 }
 .pinnedHabitSign {
-    position: absolute;
-    top: 0.5vh;
-    right: 0.2vw;
     fill: currentColor;
+    color: var(--borderHabit);
 }
 .habit.active {
     background-color: var(--acsent);
@@ -134,4 +134,5 @@
     right: 0.2vw;
     bottom: 0.4vh;
     border-radius: 50%;
+    // color: var(--borderHabit);
 }

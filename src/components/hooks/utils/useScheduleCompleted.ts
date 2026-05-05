@@ -49,7 +49,6 @@ export function useScheduleCompleted(id?: string) {
                     timeToMinutes(b.start_time)
             );
 
-        console.log(c)
         return(c)
     }, [
         id,

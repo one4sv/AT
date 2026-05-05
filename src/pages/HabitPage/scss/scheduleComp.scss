@@ -13,7 +13,7 @@
     align-items: center;
     display: flex;
     border-radius: 8px;
-    padding: 0.75vh 0.5vw;
+    padding: 0.5vh 0.5vw;
     cursor: pointer;
     &:hover {
         background-color: var(--menuButtHover);
@@ -30,9 +30,14 @@
     width: 100%;
     justify-content: start;
     flex-direction: column;
+    gap: 2px;
 }
 .scheduleButtSpan {
     color: var(--borderWh);
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 .scheduleButtSvg {
     height: 1.9vh;

@@ -13,18 +13,19 @@ export default function DoneButton({ habitId }: DoneButtonProps) {
   const { markDoneWLoading, waitDoneAnswer } = useDone();
   const { chosenDay } = useCalendar();
 
-  // Прямо используем значение из контекста — больше нет локального состояния и лишнего эффекта
   const displayDone = isDone !== null ? isDone : todayDone;
 
   if (!doable) return null;
 
   return (
-    <button
-      className={`doneButt ${displayDone ? "dbComp" : "dbMark"}`}
-      onClick={() => markDoneWLoading(habitId, chosenDay)}
-    >
-      {displayDone ? <CheckCircle weight="fill" /> : <Circle />}
-      {waitDoneAnswer ? <LoaderSmall /> : displayDone ? "Выполнено" : "Выполнить"}
-    </button>
+    <div className="doneButtDiv">
+      <button
+        className={`doneButt ${displayDone ? "dbComp" : "dbMark"}`}
+        onClick={() => markDoneWLoading(habitId, chosenDay)}
+      >
+        {displayDone ? <CheckCircle weight="fill" /> : <Circle />}
+        {waitDoneAnswer ? <LoaderSmall /> : displayDone ? "Выполнено" : "Выполнить"}
+      </button>
+    </div>
   );
 }

@@ -9,15 +9,21 @@ import { api } from "../../components/ts/api.ts";
 import Post from "../../components/ts/Post.tsx";
 import { isMobile } from "react-device-detect";
 import { usePageTitle } from "../../components/hooks/PageContextHook.tsx";
+import { useNavigate } from "react-router";
 
 export default function Feed() {
     const { initialLoading, user } = useUser();
     const [ postLoading, setPostLoading ] = useState(true)
     const [ posts, setPosts ] = useState<PostType[]>([])
     const { setTitle } = usePageTitle()
+    const navigate = useNavigate()
+    
+    useEffect(() => {
+        if (!user.id) navigate(`sign`)
+    }, [navigate, user.id])
 
     useEffect(() => {
-        setTitle("Главная")
+        setTitle("Посты")
     }, [setTitle])
 
     const postFor = async () => {

@@ -12,18 +12,17 @@ import AccMedia from "./components/AccMedia";
 import { useAcc } from "../../components/hooks/AccHook";
 import { isMobile } from "react-device-detect";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
+import { useSideMenu } from "../../components/hooks/SideMenuHook";
 
 export default function Acc() {
     const { user } = useUser();
-    const { refetchAcc, loading, media, posts, habits, acc, privateRules, refetchPosts } = useAcc()
+    const { refetchAcc, loading, media, posts, habits, acc, privateRules, refetchPosts, isMyAcc, setIsMyAcc } = useAcc()
     const { newBio, setNewBio, newMail, setNewMail } = useUpUser();
     const { nick, id } = useParams();
     const { setTitle } = usePageTitle()
-
+    const { red } = useSideMenu()
     const navigate = useNavigate();
     const [ selector, setSelector ] = useState<string>("sended");
-    const [ isMyAcc, setIsMyAcc ] = useState<boolean>(false);
-    const [ red, setRed ] = useState<boolean>(false);
 
     const canView = useCallback(
         (field: keyof PrivateSettings) => isMyAcc || privateRules[field] !== "nobody",
@@ -31,14 +30,13 @@ export default function Acc() {
     );
 
     useEffect(() => {
-        if (!user?.id) return;
         if (!nick) {
             navigate(`/acc/${user.nick}`, { replace: true });
             return;
         }
         const my = nick === user.nick;
         setIsMyAcc(my);
-        if (my) setSelector("habits");
+        if (my || user.id === null) setSelector("habits");
 
         (async () => {
             await Promise.all([
@@ -59,7 +57,7 @@ export default function Acc() {
 
     return (
         <div className={`accDiv ${isMobile ? "mobile" : ""}`}>
-            <AccInfo red={red} setRed={setRed} acc={acc} isMyAcc={isMyAcc}/>
+            <AccInfo acc={acc}/>
             <div className="accExtraInfoWrapper" style={{ display: acc?.bio || red ? "flex" : "none" }}>
                 <label htmlFor="bioTA">Статус</label>
                 <textarea
@@ -109,7 +107,7 @@ export default function Acc() {
                     } ${isMyAcc ? 'myAccCL' : ''}`}
                 >
                     {["sended", "habits", "posts"].map((sel) => {
-                        if (sel === "sended" && isMyAcc) return null
+                        if (sel === "sended" && (isMyAcc || user.id === null)) return null
                         return (
                             <div
                                 key={sel}
@@ -122,7 +120,7 @@ export default function Acc() {
                     })}
                 </div>
                 <div className="accContentLine">
-                    <div className={`${selector}Line ${isMyAcc ? "myAccCL" : ""}`}></div>
+                    <div className={`${selector}Line ${isMyAcc || user.id === null ? "myAccCL" : ""}`}></div>
                 </div>
             </div>
 

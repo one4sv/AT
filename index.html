@@ -3,27 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/public/favicon.png" type="image/x-icon">
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
     <title>Achieve Together</title>
 
     <script>
-      (function() {
+      (function () {
         try {
-          const saved = localStorage.getItem("theme");
-          let theme;
-          if (saved === "light" || saved === "dark") {
-            theme = saved;
-          } else {
-            // system
-            theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-          }
+          const savedTheme = localStorage.getItem("theme");
+          const savedAcsent = localStorage.getItem("acsent");
+
+          const theme =
+            savedTheme === "light" || savedTheme === "dark"
+              ? savedTheme
+              : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+
+          const acsent = savedAcsent || "poison";
+
           document.documentElement.setAttribute("data-theme", theme);
+          document.documentElement.setAttribute("data-acsent", acsent);
         } catch (e) {
           console.error("Theme init error:", e);
         }
       })();
     </script>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

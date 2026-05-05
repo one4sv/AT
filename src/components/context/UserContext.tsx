@@ -2,7 +2,6 @@ import { createContext, useState, useEffect, useCallback, useRef } from "react";
 import { type ReactNode } from "react";
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
-import { useNavigate, useLocation } from "react-router";
 import { requestNotificationPermission } from "../ts/utils/NoteRequest";
 
 export interface User {
@@ -39,13 +38,11 @@ export interface UserContextType {
 const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-    const navigate = useNavigate();
-    const location = useLocation();
     const { showNotification } = useNote();
     const API_URL = import.meta.env.VITE_API_URL
     const API_WS = import.meta.env.VITE_API_WS
     const [user, setUser] = useState<User>({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null });
-    const [loadingUser, setLoadingUser] = useState(false);
+    const [loadingUser, setLoadingUser] = useState(true);
     const [initialLoading, setInitialLoading] = useState(true);
 
     const wsRef = useRef<WebSocket | null>(null);
@@ -94,27 +91,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }, [initialLoading, refetchUser, user.nick]);
 
     useEffect(() => {
-        if (initialLoading || loadingUser) return;
-
-        if (!isAuthenticated && location.pathname !== "/confirm" && location.pathname !== "/admin" && !initialLoading) {
-            navigate("/sign");
-        }
-    }, [isAuthenticated, loadingUser, navigate, location.pathname, initialLoading]);
-
-    useEffect(() => {
         if (!user?.id) return;
 
         wsRef.current = new WebSocket(`${API_WS}ws?userId=${user.id}`);
-
-        // wsRef.current.onmessage = (event) => {
-        //     const data = JSON.parse(event.data);
-
-        //     if (data.type === "USER_STATUS") {
-        //         console.log(
-        //             `Пользователь ${data.userId} ${data.isOnline ? "в сети" : "вышел"}`
-        //         );
-        //     }
-        // };
 
         return () => {
             wsRef.current?.close();

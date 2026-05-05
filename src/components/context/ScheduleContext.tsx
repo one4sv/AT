@@ -2,6 +2,8 @@ import { createContext, useState, useMemo, useCallback, type ReactNode } from "r
 import { api } from "../ts/api";
 import { useTheHabit } from "../hooks/TheHabitHook";
 import { useHabits } from "../hooks/HabitsHook";
+import axios from "axios";
+import { useUser } from "../hooks/UserHook";
 
 export type ScheduleBlockType = {
     id: number;
@@ -47,7 +49,7 @@ export type ScheduleCompletionType = {
     date: string;
 };
 
-type ScheduleContextType = {
+export type ScheduleContextType = {
     /** 
      * Общее расписание всех привычек пользователя.
      * Ключ — ID привычки, значение — массив блоков расписания.
@@ -124,7 +126,7 @@ const ScheduleContext = createContext<ScheduleContextType | null>(null);
 export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
     const { habitSettings, loadHabit } = useTheHabit();
     const { refetchHabits } = useHabits()
-
+    const { user } = useUser()
     const [ schedules, setSchedules ] = useState<SchedulesMap>({});
     const [ habitSchedule, setHabitSchedule ] = useState<SchedulesMap>({});
     const [ loading, setLoading ] = useState(true);
@@ -133,6 +135,7 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
     const [ loadingComp, setLoadingComp ] = useState<string[]>([])
     
     const refreshSchedules = useCallback(async () => {
+        if (!user.id) return
         setLoading(true);
         try {
             const res = await api.get("/schedule");
@@ -141,6 +144,9 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
                 setSchedule_Settings(res.data.settings || {});
             }
         } catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (err.response?.status === 401) return;
+            }
             console.error("Ошибка загрузки общего расписания:", err);
         } finally {
             setLoading(false);
