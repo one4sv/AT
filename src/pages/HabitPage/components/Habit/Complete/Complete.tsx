@@ -6,7 +6,7 @@ import "../../../scss/Complete.scss"
 import ScheduleCompletion from "./ScheduleCompletion";
 import ChosenDayDate from "../../../utils/ChosenDayDate";
 import DoneCompletion from "./DoneCompletion";
-import Checklist from "../../../../../components/ts/chern/Checklist";
+// import Checklist from "../../../../../components/ts/chern/Checklist";
 
 export default function Complete({isMy} : {isMy:boolean}) {
     const { habit, habitSettings } = useTheHabit()
@@ -20,7 +20,7 @@ export default function Complete({isMy} : {isMy:boolean}) {
                 {habitSettings.metric_type === "counter" && <Counter isMy={isMy}/>}
                 {habitSettings.metric_type === "schedule" && <ScheduleCompletion isMy={isMy}/>}
                 {habitSettings.metric_type === "done" && <DoneCompletion isMy={isMy}/>}
-                {habitSettings.metric_type === "checklist" && <Checklist isMy={isMy}/>}
+                {habitSettings.metric_type === "checklist" && <DoneCompletion isMy={isMy}/>}
             </div>
             {isMy && <DoneButton habitId={habit.id}/>}
         </div>
