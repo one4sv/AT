@@ -2,16 +2,20 @@
 
 .chatUser {
     border-radius: 0 0 8px 8px;
-    height: 6vh;
-    position: absolute;
+    height: 5vh;
+    position: fixed;
     width: 100%;
     z-index: 4;
     display: flex;
     background-color: var(--mc);
     overflow-y: visible;
     border-bottom: 1px solid var(--bgc);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     &.br {
         border-radius: 0 0 0 8px;
+        @media (max-width: 800px) {
+            border-radius: 0;
+        }
     }
 }
 .chatUserBack {
@@ -53,11 +57,11 @@
     align-items: center;
     padding-left: 0.5vw;
     >svg {
-        height: 90%;
-        width: 90%;
+        height: 95%;
+        width: 95%;
     }
     >img.chatUserAvatar {
-        height: 90%;
+        height: 95%;
         width: auto;
         aspect-ratio: 1/1;
         border-radius: 50%;

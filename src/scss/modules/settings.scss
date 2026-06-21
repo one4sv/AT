@@ -145,8 +145,8 @@
 }
 @media (max-width: 800px) {
     .settingsDiv {
-        height: 100vh;
-        width: 100vw;
+        height: 100dvh;
+        width: 100dvw;
         border-radius: 0;
         overflow: hidden;
     }
@@ -154,8 +154,8 @@
     .settingsDiv.mobile-menu-view {
         .settingsSideMenu {
             flex: 0 0 100vw !important;
-            width: 100vw;
-            min-width: 100vw;
+            width: 100dvw;
+            min-width: 100dvw;
             border-right: none;
         }
         .settingsMainWrapper {
@@ -169,8 +169,8 @@
         }
         .settingsMainWrapper {
             flex: 0 0 100vw !important;
-            width: 100vw;
-            min-width: 100vw;
+            width: 100dvw;
+            min-width: 100dvw;
             overflow-y: auto;
             overflow-x: hidden;
             scroll-behavior: smooth;

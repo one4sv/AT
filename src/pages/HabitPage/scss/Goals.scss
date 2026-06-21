@@ -3,6 +3,9 @@
 .habitPlusDiv {
     width: 21vw;
     margin: 0 auto;
+    @media (max-width: 800px) {
+        width: 90vw;
+    }
 }
 .habitPlusButts {
     display: flex;

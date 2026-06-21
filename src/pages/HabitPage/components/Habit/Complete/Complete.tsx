@@ -6,6 +6,7 @@ import "../../../scss/Complete.scss"
 import ScheduleCompletion from "./ScheduleCompletion";
 import ChosenDayDate from "../../../utils/ChosenDayDate";
 import DoneCompletion from "./DoneCompletion";
+import { isMobile } from "react-device-detect";
 // import Checklist from "../../../../../components/ts/chern/Checklist";
 
 export default function Complete({isMy} : {isMy:boolean}) {
@@ -22,7 +23,7 @@ export default function Complete({isMy} : {isMy:boolean}) {
                 {habitSettings.metric_type === "done" && <DoneCompletion isMy={isMy}/>}
                 {habitSettings.metric_type === "checklist" && <DoneCompletion isMy={isMy}/>}
             </div>
-            {isMy && <DoneButton habitId={habit.id}/>}
+            {isMy && !isMobile && <DoneButton habitId={habit.id}/>}
         </div>
     )
 }

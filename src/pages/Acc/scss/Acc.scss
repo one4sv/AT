@@ -15,7 +15,7 @@
 @media (max-width: 800px) {
     .accDiv {
         width: 100%;
-        height: 100%;
+        height: calc(100% - 5vh);
     }
 }
 .acc {
@@ -55,7 +55,7 @@
         margin .4s ease;
 
     @media (max-width: 800px) {
-        margin: 1vh 1vw 0;
+        margin: 1vh 2vw 0;
     }
 }
 .accInfoMain {
@@ -185,12 +185,12 @@
     -webkit-backdrop-filter: blur(12px);
     min-height: 0;
     @media (max-width: 800px) {
-        margin: 1vh 1vw;
+        margin: 1vh 2vw;
     }
 }
 .accContentSelect {
     display: flex;
-    height: 5vh;
+    height: 4.5vh;
 }
 .accContentButt {
     display: flex;
@@ -277,6 +277,6 @@
 @media (max-width: 800px) {
     .accContentSlide {
         width: 100%;
-        padding: 0 1vw;
+        padding: 0 2vw;
     }
 }

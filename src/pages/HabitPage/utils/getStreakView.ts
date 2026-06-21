@@ -17,7 +17,7 @@ export const getStreakView = (
     if (habit.periodicity === "sometimes") {
         return {
             cl: "null",
-            text: "Стрик для этой активности недоступен.",
+            text: "Стрик недоступен",
             showCount: false,
             count:0
         };

@@ -9,6 +9,13 @@
     height: 40vh;
     background-color: var(--mc);
     border-radius: 12px;
+    @media (max-width:800px) {
+        border-radius: 12px 12px 0 0;
+        height: fit-content;
+        flex: auto;
+        width: 100%;
+        min-height: 30vh;
+    }
 }
 .completeDate {
     border-bottom: 1px solid var(--borderHabit);
@@ -23,12 +30,6 @@
     padding: 0.5vh 0.25vw;
     flex: 1;
     height: calc(100% - 9vh);
-}
-@media (max-width:800px) {
-    .completeDiv {
-        min-height: 40vh;
-        width: 100%;
-    }
 }
 .doneButtDiv {
     width: 100%;
@@ -70,5 +71,7 @@
 @media (max-width:800px) {
     .doneButt {
         width: 95%;
+        height: 4.2vh;
+        padding-left: 2vw;
     }
 }

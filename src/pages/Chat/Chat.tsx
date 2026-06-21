@@ -2,10 +2,10 @@ import { useNavigate, useParams } from "react-router";
 import { useChat } from "../../components/hooks/ChatHook";
 import { useMessages } from "../../components/hooks/MessagesHook";
 import { useUser } from "../../components/hooks/UserHook";
-import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
+import { GroupedVirtuoso, type VirtuosoHandle } from "react-virtuoso";
 import "./scss/Chat.scss"
 
-import { useEffect, useMemo, useRef, useState, Fragment } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import DateDivider from "./components/DateDivider";
 import Message from "./components/Message";
 import ChatUser from "./components/ChatUser";
@@ -128,36 +128,6 @@ export default function Chat() {
     };
 
     useEffect(() => {
-        if (pendingScrollId === null) return;
-
-        const index = messages.findIndex(m => m.id === pendingScrollId);
-
-        if (highlightTimeoutRef.current) {
-            clearTimeout(highlightTimeoutRef.current);
-        }
-
-        const timeoutId = window.setTimeout(() => {
-            virtuosoRef.current?.scrollToIndex({
-                index,
-                behavior: "smooth",
-                align: "start",
-            });
-            const timeBefScroll = window.setTimeout(() => {
-                scrollToMessage(pendingScrollId)
-                window.clearTimeout(timeBefScroll);
-            }, 400)
-        }, 100);
-
-        return () => {
-            if (highlightTimeoutRef.current) {
-                clearTimeout(highlightTimeoutRef.current);
-                highlightTimeoutRef.current = null;
-            }
-            window.clearTimeout(timeoutId);
-        }
-    }, [pendingScrollId, messages]);
-
-    useEffect(() => {
         if (!chatLoading && chatWith && (chatWith.nick === nick || String(chatWith.id) === id)) {
             setTitle(chatWith.name || chatWith.nick);
         }
@@ -202,6 +172,53 @@ export default function Chat() {
         };
     }, [setMess]);
 
+    const grouped = useMemo(() => {
+        const groups: message[][] = [];
+
+        messages.forEach((msg) => {
+            const lastGroup = groups[groups.length - 1];
+
+            if (
+                !lastGroup ||
+                !isSameDay(
+                    new Date(lastGroup[0].created_at),
+                    new Date(msg.created_at)
+                )
+            ) {
+                groups.push([msg]);
+            } else {
+                lastGroup.push(msg);
+            }
+        });
+
+        return groups;
+    }, [messages]);
+
+    const groupCounts = grouped.map(g => g.length);
+    const flatMessages = grouped.flat();
+    
+    useEffect(() => {
+        if (pendingScrollId === null) return;
+
+        const index = flatMessages.findIndex(
+            m => m.id === pendingScrollId
+        );
+
+        if (index === -1) return;
+
+        virtuosoRef.current?.scrollToIndex({
+            index,
+            behavior: "smooth",
+            align: "center",
+        });
+
+        const timeout = setTimeout(() => {
+            setPendingScrollId(null);
+        }, 600);
+
+        return () => clearTimeout(timeout);
+    }, [pendingScrollId, flatMessages, setPendingScrollId]);
+
     if (chatLoading) return <Loader />;
 
     return (
@@ -222,72 +239,82 @@ export default function Chat() {
                 setChosenMess={setChosenMess}
                 searchInputRef={searchInputRef}
             />
-            <Virtuoso
+            <GroupedVirtuoso
                 className="chat"
                 ref={virtuosoRef}
-                data={messages}
+                groupCounts={groupCounts}
                 followOutput="smooth"
                 overscan={20}
-                initialTopMostItemIndex={messages.length - 1}
+                initialTopMostItemIndex={flatMessages.length - 1}
                 atBottomStateChange={(bottom:boolean) => setShowGoDown(!bottom)}
-                rangeChanged={(range: { startIndex: number; endIndex: number }) => {
-                    if (pendingScrollId === null) return;
+                groupContent={(groupIndex) => (
+                    <DateDivider
+                        currDate={
+                            new Date(grouped[groupIndex][0].created_at)
+                        }
+                    />
+                )}
+                itemContent={(index) => {
+                    const m = flatMessages[index];
 
-                    const index = messages.findIndex(m => m.id === pendingScrollId);
-                    if (index === -1) return;
+                    const find = messages.find(
+                        mess => mess.id === m.answer_id
+                    );
 
-                    if (index >= range.startIndex && index <= range.endIndex) {
-                        setPendingScrollId(null);
-                    }
-                }}
-                itemContent={(index: number, m: message) => {
-                    const currDate = new Date(m.created_at);
-                    const prev = messages[index - 1];
-                    const needDivider = !prev || !isSameDay(new Date(prev.created_at), currDate);
-                    const find = messages.find(mess => mess.id === m.answer_id)
-                    const name = find?.sender_name
                     const answer = find
                         ? {
                             id: find.id,
-                            name: name!,
-                            text: find.content
-                                ? find.content
-                                : m.files?.length
-                                    ? `${m.files.length} mediafile`
-                                    : "Пересланное сообщение",
+                            name: find.sender_name,
+                            text:
+                                find.content ||
+                                (find.files?.length
+                                    ? `${find.files.length} mediafile`
+                                    : "Пересланное сообщение"),
                         }
                         : undefined;
 
-                    const redir_find = messages.find(mess => mess.id === m.redirected_answer || mess.redirected_id === m.redirected_answer)
-                    const redir_name = redir_find?.redirected_name
-                    const redir_answer = redir_find 
+                    const redir_find = messages.find(
+                        mess =>
+                            mess.id === m.redirected_answer ||
+                            mess.redirected_id === m.redirected_answer
+                    );
+
+                    const redir_answer = redir_find
                         ? {
-                            id:redir_find.id, 
-                            name:redir_name || "", 
-                            text:redir_find.content
-                                ? redir_find.content 
-                                : redir_find.files?.length
+                            id: redir_find.id,
+                            name: redir_find.redirected_name || "",
+                            text:
+                                redir_find.content ||
+                                (redir_find.files?.length
                                     ? `${redir_find.files.length} mediafile`
-                                    : "Пересланное сообщение",
+                                    : "Пересланное сообщение"),
                         }
-                        : undefined
-                    return (
-                        <Fragment key={m.id}>
-                            {needDivider && <DateDivider currDate={currDate} />}
-                            {m.is_system ? (
-                                <SystemMessage m={m} answer={answer} scrollToMessage={answer ? scrollToMessage : undefined}/>
-                            ) : (
-                                <Message
-                                    message={m}
-                                    highlightedId={highlightedId}
-                                    messageRefs={messageRefs}
-                                    answer={answer}
-                                    redir_answer={redir_answer}
-                                    scrollToMessage={answer ? scrollToMessage : undefined}
-                                    cornerType={getCornerType(m.id, messages.map(msg => msg.id), chosenMess.map(cm => cm.id))}
-                                />
+                        : undefined;
+
+                    return m.is_system ? (
+                        <SystemMessage
+                            m={m}
+                            answer={answer}
+                            scrollToMessage={
+                                answer ? scrollToMessage : undefined
+                            }
+                        />
+                    ) : (
+                        <Message
+                            message={m}
+                            highlightedId={highlightedId}
+                            messageRefs={messageRefs}
+                            answer={answer}
+                            redir_answer={redir_answer}
+                            scrollToMessage={
+                                answer ? scrollToMessage : undefined
+                            }
+                            cornerType={getCornerType(
+                                m.id,
+                                messages.map(msg => msg.id),
+                                chosenMess.map(cm => cm.id)
                             )}
-                        </Fragment>
+                        />
                     );
                 }}
             />

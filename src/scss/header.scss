@@ -52,4 +52,8 @@
         background-color: var(--darkerAcsent);
         color: var(--tc);
     }
+    @media (max-width: 800px) {
+        right: 2vw;
+        padding: 0.75vh 4vw;
+    }
 }

@@ -1,4 +1,4 @@
-import { useEffect} from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { useTheHabit } from "../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../components/hooks/CalendarHook";
@@ -23,12 +23,24 @@ import { useSchedule } from "../../components/hooks/ScheduleHook";
 import HabitExtraButts from "./components/HabitInfo/HabitExtraButts";
 import { useHabits } from "../../components/hooks/HabitsHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
+import DoneButton from "./components/Habit/Complete/DoneButt";
+import SvgRain from "../../components/modules/components/SvgRain";
 
 export interface HabitSlideProps {
     id: number;
     readOnly?: boolean;
     isArchived?:boolean,
     isMy?:boolean
+}
+
+const params={
+    count: 50,
+    durMin: 15,
+    durMax: 32,
+    sizeMin: 16,
+    sizeMax: 38,
+    refreshInterval: 2000,
+    refreshCount: 10
 }
 
 export default function Habit() {
@@ -41,9 +53,12 @@ export default function Habit() {
     const { mainRef } = useDiagrams()
     const { habits } = useHabits()
 
+    const [isExpanded, setIsExpanded] = useState(false);
+    const startY = useRef<number | null>(null);
+    const pulling = useRef(false);
 
     const isSlided = showJurnal || showSettings
-
+    
     useEffect(() => {
         if (!showHabitMenu) {
             setShowSettings(false)
@@ -83,17 +98,67 @@ export default function Habit() {
 
     return (
         <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
-            {habitId && <HabitName habit={habit} showHabitMenu={showHabitMenu} setShowHabitMenu={setShowHabitMenu} isReadOnly={isReadOnly}/>}
-            <div className={`StatsDivMain ${habitId ? "sdmwm" : ""}`} style={{top:habitId ? "6vh" : "0"}} ref={mainRef}>
+            {habitId && <HabitName habit={habit} showHabitMenu={showHabitMenu} setShowHabitMenu={setShowHabitMenu} isReadOnly={isReadOnly} isExp={isExpanded}/>}
+            <div className={`StatsDivMain ${habitId && !isExpanded? "sdmwm" : ""}`} style={{top:habitId ? "6vh" : "0", overflow:isExpanded ? "hidden" : "auto"}} ref={mainRef}>
                 <div className="StatsDivHabit">
-                    <Calendar/>
-                    {habitId &&
+                    {isMobile ? (
                         <>
-                            <Complete isMy={!isReadOnly}/>
-                            <DayComment id={habitId} isMy={!isReadOnly}/>
+                            {habitId && (
+                                <>
+                                    <div
+                                        className={`mobileHabitLayout ${isExpanded ? "expanded" : ""}`}
+                                        style={{
+                                            maxHeight: isExpanded ? '100vh' : '78.5vh'
+                                        }}
+                                        onTouchStart={(e) => {
+                                            if (window.scrollY !== 0) return;
+
+                                            startY.current = e.touches[0].clientY;
+                                            pulling.current = true;
+                                        }}
+                                        onTouchMove={(e) => {
+                                            if (!pulling.current || startY.current === null) return;
+
+                                            const delta = e.touches[0].clientY - startY.current;
+
+                                            if (delta > 80 && !isExpanded) {
+                                                setIsExpanded(true);
+                                                pulling.current = false;
+                                            }
+
+                                            if (delta < -100 && isExpanded) {
+                                                pulling.current = false;
+                                                setIsExpanded(false);
+                                            }
+                                        }}
+                                        onTouchEnd={() => {
+                                            startY.current = null;
+                                            pulling.current = false;
+                                        }}
+                                    >
+                                        <Complete isMy={!isReadOnly}/>
+                                        <DayComment id={habitId!} isMy={!isReadOnly}/>
+                                        <DoneButton habitId={Number(habitId)}/>
+                                        {isExpanded && <SvgRain className="svgRainInHabit" icons={1} params={params}/>}
+                                    </div>
+                                </>
+                            )}
+                            <Calendar/>
+                            {!habitId && <ChosenDay/>}
                         </>
-                    }
-                    {!habitId && <ChosenDay/>}
+                    ) : (
+                        <>
+                        <Calendar/>
+                            {habitId ? (
+                                <>
+                                    <Complete isMy={!isReadOnly}/>
+                                    <DayComment id={habitId!} isMy={!isReadOnly}/>
+                                </>
+                            ) : (
+                                <ChosenDay/>
+                            )}
+                        </>
+                    )}
                 </div>
                 {shouldShowSchedule && (
                     <Schedule id={habitId} isMy={!isReadOnly}/>

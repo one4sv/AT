@@ -19,6 +19,9 @@
             }
         }
     }
+    @media (max-width:800px) {
+        padding: 1vh 2vw;
+    }
 }
 .redHabitStr {
     display: flex;

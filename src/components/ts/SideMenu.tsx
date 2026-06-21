@@ -279,7 +279,7 @@ export default function SideMenu() {
                         {user?.avatar_url ? <img className="SMmenuAvatar" src={user.avatar_url} alt={(user.username ?? user.nick) || undefined} /> : <CircleUserRound />}
                     </div>
                     <div className={`SMprofileMenu ${showList ? "active" : ""} ${isMobile ? "mobile" : ""}`} ref={menuRef}>
-                        <div className="SMprofileButt" onClick={() => {
+                        <div className="ContextMenuButt" onClick={() => {
                             setShowList(false)
                             navigate(`/acc/${user.nick}`)
                             setShowSideMenu(false)
@@ -288,7 +288,7 @@ export default function SideMenu() {
                             {user.username || user.nick}
                         </div>
                         <div
-                            className="SMprofileButt"
+                            className="ContextMenuButt"
                             onClick={() => {
                                 setShowList(false)
                                 if (!isMobile) setTab("pers")
@@ -300,7 +300,7 @@ export default function SideMenu() {
                             <GearIcon/>
                             Настройки
                         </div>
-                        <div className="SMprofileButt exit" onClick={() => {
+                        <div className="ContextMenuButt delete" onClick={() => {
                             logOut()
                             setShowSideMenu(false)
 

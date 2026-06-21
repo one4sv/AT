@@ -8,6 +8,14 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    @media (max-width: 800px) {
+        min-height: 40vh;
+        width: 95%;
+        margin: 0 auto;
+        border-radius: 0 0 12px 12px;
+        flex-direction: column-reverse;
+        margin-bottom: 2vh;
+    }
 }
 .habitDayComment {
     position: relative;
@@ -15,6 +23,7 @@
     flex-direction: column;
     width: 100%;
     border-radius: 12px;
+    outline: none;
     align-items:end;
     border: 1px solid var(--borderHabit);
     padding: 1vh 0.5vw;
@@ -33,12 +42,22 @@
         overflow: hidden;
         field-sizing: content;
     }
+    @media (max-width: 800px) {
+        padding: 1vh 2vw;
+        >textarea {
+            min-height: 45px;
+        }
+        &:focus-within {
+            border-color: var(--borderHabit);
+        }
+    }
 }
 .hdcTAExtra {
     width: 100%;
     justify-content: space-between;
     display: flex;
     align-items: center;
+    height: 3vh;
     >span {
         color: var(--borderHabit);
         display: flex;
@@ -47,12 +66,16 @@
         >svg {
             margin-right: 0.2vw;
         }
+        @media (max-width: 800px) {
+            align-items: end;
+            align-self: flex-end;
+        }
     }
     >div {
         color: var(--borderHabit);
         display: flex;
         align-items: end;
-        gap: 0.5vw;
+        gap: 2vw;
     }
 }
 .saveCommentButton {
@@ -74,6 +97,12 @@
         background-color: var(--tr);
         border: 1px solid var(--borderHabit);
         cursor: default;
+    }
+    @media (max-width: 800px) {
+        padding: 0.75vh 1vw;
+        height: auto;
+        width: 35vw;
+        border-radius: 8px;
     }
 }
 .completionProgress {
@@ -184,17 +213,5 @@
     min-height: 2vh;
     &:hover {
         color: var(--acsent);
-    }
-}
-@media (max-width:800px) {
-    .dayCommentDiv {
-        min-height: 40vh;
-        width: 100%;
-    }
-    .saveCommentButton {
-        width: fit-content;
-    }
-    .hdcTAExtra > div {
-        margin-right: 2vw;
     }
 }

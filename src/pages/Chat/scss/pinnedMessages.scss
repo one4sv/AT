@@ -1,17 +1,16 @@
 .pinnedMessages {
-    height: 6vh;
+    height: 5vh;
     flex: 1;
     position: relative;
     max-width: 30%;
 }
 .pmsMain {
-    height: 6vh;
+    height: 100%;
     user-select: none;
     background-color: var(--mc);
     z-index: 4;
     position: relative;
     border-radius: 8px;
-    // cursor: pointer;
     display: flex;
     &:hover {
         background-color: var(--menuButtHover);
@@ -25,7 +24,8 @@
     flex-direction: column;
     width: 90%;
     position: relative;
-    padding: 1vh 1vw;
+    padding: 0 1vw;
+    justify-content: center;
 }
 .pmsCount {
     color: var(--borderHabit);
@@ -84,7 +84,7 @@
 .pmsList.open {
     opacity: 1;
     pointer-events: auto;
-    top: 6vh;
+    top: 5vh;
 }
 .pmsList.close {
     opacity: 0;

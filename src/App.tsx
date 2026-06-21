@@ -8,14 +8,14 @@ import Chat from './pages/Chat/Chat';
 import Acc from './pages/Acc/Acc';
 import Admin from './pages/Admin';
 import HabitPage from './pages/HabitPage/HabitPage';
-
+import Group from './pages/Group/Group';
+import Join from './pages/Join';
 import Notification from "./components/ts/Notification";
 import Blackout from './components/ts/Blackout';
 import ThemeHandler from './components/hooks/themeHook';
 import ResponsiveLayout from './components/layout/ResponsiveLayout';
 import ContextMenu from './components/ts/ContextMenu';
-import Group from './pages/Group/Group';
-import Join from './pages/Join';
+
 
 function App() {
   return (
@@ -26,12 +26,12 @@ function App() {
         <Blackout />
         <ContextMenu/>
         <Routes>
-          <Route path="/sign" element={<Sign />} />
-          {window.location.hostname === "localhost" && (
-            <Route path="/admin" element={<Admin />} />
-          )}
-          <Route path="/confirm" element={<Confirm />} />
           <Route path="/" element={<ResponsiveLayout />}>
+            <Route path="/sign" element={<Sign />} />
+            {window.location.hostname === "localhost" && (
+              <Route path="/admin" element={<Admin />} />
+            )}
+            <Route path="/confirm" element={<Confirm />} />
             <Route index element={<Main />} />
             <Route path="habit" element={<HabitPage />} />
             <Route path="habit/:habitId" element={<HabitPage />} />

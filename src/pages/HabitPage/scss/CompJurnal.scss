@@ -3,6 +3,9 @@
 .compJurnalMain {
     height: 80%;
     width: 100%;
+    @media (max-width: 800px) {
+        height: 92%;
+    }
 }
 .compJurnalsearch {
     width: 100%;

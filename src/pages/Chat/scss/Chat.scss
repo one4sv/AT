@@ -15,18 +15,18 @@
 }
 
 .chat {
-    top: 6vh;
+    top: 5vh;
     display: flex;
     flex-direction: column;
     scrollbar-width: thin;
     scrollbar-color: var(--menuButtHover) var(--tr);
     width: 60%;
-    margin: 0 auto 6vh;
+    margin: 0 auto 4.5vh;
 }
 @media (max-width: 800px) {
     .chat {
         width: calc(100% - 2vw);
-        margin: 0 1vw 6vh;
+        margin: 0 1vw 4.5vh;
     }
 }
 .goDown {

@@ -7,14 +7,14 @@
 }
 .Post {
     background-color: var(--mc);
-    border-radius: 12px;
-    padding: 1vh 0.5vw;
+    border-radius: 10px;
+    padding: 0.5vh 0.5vw;
     max-height: 50vh;
     position: relative;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    &.mobile {
-        padding: 0.5vh 1vw;
+    @media (max-width: 800px) {
+        padding: 0.2vh 1.5vw;
     }
 }
 .PostHabit {
