@@ -80,7 +80,7 @@ export default function Contact({ contact }: ContactType) {
 
     return (
         <Link
-            className={`contactsUser ${(nick === contact.nick || id === contact.id) && !isMobile ? "active" : ""}`}
+            className={`contactsUser ${(nick === contact.nick || id === contact.id) ? "active" : ""}`}
             key={contact.id}
             onClick={() => {
                 setBlackout({ seted: false })

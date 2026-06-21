@@ -10,12 +10,12 @@ export default function formatLastOnline(lastOnline: string | null | undefined) 
   const diffMin = Math.floor(diffSec / 60);
   const diffHour = Math.floor(diffMin / 60);
 
-  if (diffSec < 60) return "В сети только что";
-  if (diffMin < 2) return "В сети минуту назад";
-  if (diffMin < 60) return `В сети ${diffMin} минут назад`;
-  if (diffHour < 2) return "В сети час назад";
-  if (diffHour < 5) return `В сети ${diffHour} часа назад`;
-  if (diffHour < 24) return `В сети ${diffHour} часов назад`;
+  if (diffSec < 60) return "в сети только что";
+  if (diffMin < 2) return "в сети минуту назад";
+  if (diffMin < 60) return `в сети ${diffMin} минут назад`;
+  if (diffHour < 2) return "в сети час назад";
+  if (diffHour < 5) return `в сети ${diffHour} часа назад`;
+  if (diffHour < 24) return `в сети ${diffHour} часов назад`;
 
   const yesterday = new Date();
   yesterday.setDate(now.getDate() - 1);

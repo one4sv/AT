@@ -280,8 +280,9 @@
     scrollbar-width: thin;
     scrollbar-color: var(--menuButtHover) var(--tr);
     scrollbar-gutter: stable both-edges;
-    &.mobileSlide {
-        padding: 0 5vw;
+    @media (max-width: 800px) {
+        padding: 0 3vw;
+
     }
 }
 

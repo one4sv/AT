@@ -152,7 +152,7 @@ export default function ChatUser({
                                 : typingText
                                     ? typingText
                                     : onlineMap[chatWith?.id || ""]
-                                        ? "В сети"
+                                        ? "онлайн"
                                         : formatLastOnline(chatWith?.last_online)}
                     </span>
                 </div>

@@ -7,7 +7,6 @@ import { formatHabitTime, formatScheduleTime } from "./utils/formatHabitTime";
 import { useSchedule } from "../hooks/ScheduleHook";
 import { isOddWeek } from "../../pages/HabitPage/utils/isOddWeek";
 import { useSettings } from "../hooks/SettingsHook";
-import { isMobile } from "react-device-detect";
 import { useSideMenu } from "../hooks/SideMenuHook";
 import { useTheHabit } from "../hooks/TheHabitHook";
 import { calculateTimerElapsed } from "./utils/TimerFuncs";
@@ -197,7 +196,7 @@ export default function HabitDiv({
 
     return (
         <Link
-            className={`habit themeHabit-default ${id === habit.id && !isMobile ? "active" : ""}`}
+            className={`habit themeHabit-default ${id === habit.id ? "active" : ""}`}
             onClick={() => {
                 setShowSideMenu(false);
             }}
