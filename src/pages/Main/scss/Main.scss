@@ -2,7 +2,6 @@
 
 .MainDiv {
     width: 60%;
-    // height: 100vh;
     height: 100%;
     position: relative;
     margin: 0 auto;
@@ -25,8 +24,11 @@
     scrollbar-width: thin;
     padding: 1vh 0;
     overflow-y: auto;
-    &.mobile {
+}
+@media (max-width: 800px) {
+    .postFeed {
         width: 95%;
+        height: 100%;
     }
 }
 .feedNothing {

@@ -7,7 +7,7 @@ import DayChanger from "../../../../components/ts/DayChanger";
 import { initialChosenDays } from "../../../../components/ts/initialChosenDays";
 import { WarningCircle } from "@phosphor-icons/react";
 import { TagIcon } from "../../utils/TagIcon";
-import { dateToStrFormat } from "../../utils/dateToStr";
+import { dateToStrFormat } from "../../../../components/ts/utils/dateToStr";
 
 interface RedHabitProps {
     habit: Habit;

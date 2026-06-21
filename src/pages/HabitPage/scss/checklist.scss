@@ -1,0 +1,17 @@
+@use "../../../scss/global" as var;
+
+.doneCompSettings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: var(--borderWh);
+    cursor: pointer;
+    height: 3.5vh;
+    width: 17vw;
+    border-radius: 8px;
+    &:hover {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
+    }
+}

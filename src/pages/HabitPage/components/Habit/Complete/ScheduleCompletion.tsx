@@ -5,7 +5,7 @@ import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import "../../../scss/scheduleComp.scss";
 import { CheckCircleIcon, Circle } from "@phosphor-icons/react";
 import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
-import { todayStrFunc } from "../../../utils/dateToStr";
+import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 import { useScheduleCompleted } from "../../../../../components/hooks/utils/useScheduleCompleted";
 
 export default function ScheduleCompletion({ isMy }:{ isMy:boolean }) {

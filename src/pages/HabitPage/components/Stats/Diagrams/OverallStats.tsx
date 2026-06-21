@@ -5,7 +5,7 @@ import { useParams } from "react-router"
 import { useHabits } from "../../../../../components/hooks/HabitsHook"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
 import { generateDays, getDateRange } from "../../../utils/DiagramDate"
-import { formatDateFromString } from "../../../utils/dateToStr"
+import { formatDateFromString } from "../../../../../components/ts/utils/dateToStr"
 
 type StatKey = "comp" | "skip" | "streak" | "break" | "midd" | "alls"
 

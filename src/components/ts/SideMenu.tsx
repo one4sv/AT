@@ -18,16 +18,19 @@ import { GearIcon, SortAscending, UserIcon } from "@phosphor-icons/react"
 import { filterHabitsByOrder } from "./utils/filteredHabitsByOrder.tsx"
 import { useSchedule } from "../hooks/ScheduleHook.ts"
 import SideMenuUnAunthificated from "./sideMenuUnSideMenuUnAunthificated.tsx"
+import { useSideMenu } from "../hooks/SideMenuHook.ts"
 
 export default function SideMenu() {
     const { isAuthenticated, loadingUser } = useUser()
-    const { setSearch, loadingList, list } = useChat()
+    const { setSearch, loadingList, list, mainSearchRef, search } = useChat()
     const { loadingHabits, habits, newOrderHabits } = useHabits()
     const { refreshSchedules } = useSchedule()
     const { user, refetchUser } = useUser()
     const { setTab, showArchived } = useSettings()
     const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
+    const { setShowSideMenu } = useSideMenu()
+
     const API_URL = import.meta.env.VITE_API_URL
     const location = useLocation()
     const navigate = useNavigate()
@@ -248,10 +251,24 @@ export default function SideMenu() {
         }
     }, [])
 
+    const touchStartX = useRef(0);
+
+    const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+        touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+        const deltaX = touchStartX.current - e.changedTouches[0].clientX;
+
+        if (deltaX > 50) {
+            setShowSideMenu(false);
+        }
+    };
+
     if (!isAuthenticated && !loadingUser) return <SideMenuUnAunthificated/>
 
     return (
-        <div className={`sideMenu ${isMobile ? "mobileSM" : ""}`}>
+        <div className={`sideMenu ${isMobile ? "mobileSM" : ""}`} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
             <div className="SMsearchDiv">
                 <div className="SMmenuWrapper">
                     <div
@@ -265,6 +282,7 @@ export default function SideMenu() {
                         <div className="SMprofileButt" onClick={() => {
                             setShowList(false)
                             navigate(`/acc/${user.nick}`)
+                            setShowSideMenu(false)
                         }}>
                             <UserIcon size={20}/>
                             {user.username || user.nick}
@@ -276,19 +294,24 @@ export default function SideMenu() {
                                 if (!isMobile) setTab("pers")
                                 else setTab("menu")
                                 setBlackout({ seted: true, module: "Settings" })
+                                setShowSideMenu(false)
                             }}
                         >
                             <GearIcon/>
                             Настройки
                         </div>
-                        <div className="SMprofileButt exit" onClick={logOut}>
+                        <div className="SMprofileButt exit" onClick={() => {
+                            logOut()
+                            setShowSideMenu(false)
+
+                        }}>
                             <LogOut />
                             Выйти 
                         </div>
                     </div>
                 </div>
                 <div className="SMsearch">
-                    <input type="text" className="SMsearchInput" onChange={(e) => setSearch(e.currentTarget.value)} placeholder="Поиск..." />
+                    <input type="text" className="SMsearchInput" ref={mainSearchRef} onChange={(e) => setSearch(e.currentTarget.value)} placeholder="Поиск..." value={search}/>
                     <Search />
                 </div>
             </div>

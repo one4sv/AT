@@ -114,7 +114,8 @@ $acsents: (
 $decors: (
     default: (
         light: (
-            mc: #dfdfdf,
+            mc: #ececec,
+            interact:#d6d6d6,
             hbg: #dfdfdf,
             hbgh: #dfdfdf,
             buttBg:$mc,
@@ -122,7 +123,8 @@ $decors: (
             systemMessBg: #ffffff57,
         ),
         dark: (
-            mc: #222222,
+            mc: #202020,
+            interact:#2c2c2c,
             hbg: #222222,
             hbgh: #222222,
             buttBg:$mc,
@@ -133,6 +135,7 @@ $decors: (
     glass: (
         light: (
             mc: #ffffff99,
+            interact:#ffffff99,
             hbg: #ffffff00,
             hbgh: #ffffff00,
             buttBg:#00000000,
@@ -141,6 +144,7 @@ $decors: (
         ),
         dark: (
             mc: #22222257,
+            interact:#22222257,
             hbg: #22222200,
             hbgh: #22222200,
             buttBg:#00000000,

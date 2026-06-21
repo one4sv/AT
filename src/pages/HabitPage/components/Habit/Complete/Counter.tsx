@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react"
 import { Pen, Send } from "lucide-react"
 import { ArrowClockwise, Minus, Plus } from "@phosphor-icons/react"
 import { api } from "../../../../../components/ts/api"
-import { todayStrFunc } from "../../../utils/dateToStr"
+import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr"
 
 interface FlyingNumber {
   id: number,

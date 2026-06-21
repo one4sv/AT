@@ -1,5 +1,5 @@
 import { CalendarSync } from "lucide-react";
-import { formatDateLabel, todayStrFunc } from "./dateToStr";
+import { formatDateLabel, todayStrFunc } from "../../../components/ts/utils/dateToStr";
 import { useCalendar } from "../../../components/hooks/CalendarHook";
 
 export default function ChosenDayDate () {

@@ -32,7 +32,7 @@ import {
     getMonthStart,
     groupDays,
 } from "../../../utils/DiagramDate"
-import { formatDateFromString, weekDay } from "../../../utils/dateToStr"
+import { formatDateFromString, weekDay } from "../../../../../components/ts/utils/dateToStr"
 import type { Calendar } from "../../../../../components/context/CalendarContext"
 import type { Habit } from "../../../../../components/context/HabitsContext"
 

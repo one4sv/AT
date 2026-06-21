@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react";
+import { useEffect} from "react";
 import { useParams } from "react-router";
 import { useTheHabit } from "../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../components/hooks/CalendarHook";
@@ -22,6 +22,7 @@ import HabitSave from "./components/HabitInfo/HabitSave";
 import { useSchedule } from "../../components/hooks/ScheduleHook";
 import HabitExtraButts from "./components/HabitInfo/HabitExtraButts";
 import { useHabits } from "../../components/hooks/HabitsHook";
+import { useSideMenu } from "../../components/hooks/SideMenuHook";
 
 export interface HabitSlideProps {
     id: number;
@@ -33,17 +34,16 @@ export interface HabitSlideProps {
 export default function Habit() {
     const { fetchCalendarHabit, fetchCalendarWLoading, calendarLoading } = useCalendar()
     const { loadHabitWLoading, habit, loadingHabit, habitSettings } = useTheHabit()
+    const { showHabitMenu, setShowHabitMenu, showJurnal, setShowJurnal, showSettings, setShowSettings} = useSideMenu()
     const { schedules } = useSchedule()
     const { habitId } = useParams<{ habitId: string }>();
     const { setTitle } = usePageTitle()
     const { mainRef } = useDiagrams()
     const { habits } = useHabits()
-    const [ showHabitMenu, setShowHabitMenu ] = useState(false)
-    const [ showSettings, setShowSettings ] = useState(false)
-    const [ showJurnal, setShowJurnal ] = useState(false)
+
 
     const isSlided = showJurnal || showSettings
-    
+
     useEffect(() => {
         if (!showHabitMenu) {
             setShowSettings(false)
@@ -80,12 +80,6 @@ export default function Habit() {
     const isMy = (habitId !== undefined && habits?.some(h => String(h.id) === habitId)) ?? false
     const isArchived = !habit?.ongoing
     const isReadOnly = !isMy || isArchived
-
-    const returnSlide = () => {
-        if (showJurnal) setShowJurnal(false)
-        else if (showSettings) setShowSettings(false)
-        else setShowHabitMenu(false)
-    }
 
     return (
         <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
@@ -145,7 +139,6 @@ export default function Habit() {
                         readOnly={isReadOnly}
                         id={habit.id}
                         archived={!habit.ongoing}
-                        returnSlide={returnSlide}
                         isSlided={isSlided}
                     />
                 </div>

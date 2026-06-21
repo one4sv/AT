@@ -5,7 +5,7 @@
     flex-direction: column;
     width: 100%;
     position: relative;
-    margin-bottom: 1vh;
+    margin-bottom: 5.5vh;
     &.PWTAWFS {
         position: absolute;
         top: 1vh;
@@ -14,8 +14,11 @@
         height: 98vh;
         width: 100%;
     }
-    &.mobile {
-        margin-bottom: 1vh;
+
+}
+@media (max-width: 800px) {
+    .postWriteWrapper {
+        margin-bottom: 5vh;
     }
 }
 .postWriteBar {
@@ -49,6 +52,9 @@
     padding: 0.5vh 0.5vw;
     scrollbar-width:thin;
     box-sizing: border-box;
+    padding-inline-start: 4px;
+    border: none;
+    outline: none;
     &.PWTAwFiles {
         border-radius: 0 0 12px 12px;
     }
@@ -58,6 +64,9 @@
     }
     &.mobile.PWTAwFiles {
         border-radius: 0;
+    }
+    &::placeholder {
+
     }
 }
 .postWriteSvgButt {

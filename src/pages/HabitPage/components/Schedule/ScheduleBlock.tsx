@@ -7,8 +7,7 @@ import { useNavigate } from "react-router-dom"
 import type { CountInpsType } from "./Schedule"
 import { useSettings } from "../../../../components/hooks/SettingsHook"
 import { isOddWeek } from "../../utils/isOddWeek"
-import { dateToCalendarFormat, timeToMinutes } from "../../utils/dateToStr"
-import { useScheduleCompleted } from "../../../../components/hooks/utils/useScheduleCompleted"
+import { dateToCalendarFormat, timeToMinutes } from "../../../../components/ts/utils/dateToStr"
 
 export type ExtraScheduleBlock = {
     id: number;
@@ -47,7 +46,6 @@ export default function ScheduleBlock({
     const navigate = useNavigate()
     const tempIdRef = useRef(1)
     
-    const scheduleCompleted = useScheduleCompleted(id)
 
     const getTimeClass = (h: Habit, day: number, date:Date) => {
         const now = new Date()
@@ -115,8 +113,6 @@ export default function ScheduleBlock({
                         .filter(b => b.isSeparator !== isOddWeek(weekStart, d.date))
                         .sort((a, b) => timeToMinutes(a.start_time) - timeToMinutes(b.start_time))
                         .map((block) => {
-                            const isCompleted = id && scheduleCompleted.find(s => s.id === block.id)?.completed;
-
                             return (
                                 <div className="scheduleExtraBlockWrapper" key={`${block.id}-${d.fullDate}`}>
                                     {!id && extraBlocks.length > 0 && (
@@ -129,9 +125,6 @@ export default function ScheduleBlock({
                                                 : block.start_time || ""}
                                         </span>
                                         <span className="scheduleHabitName">{block.name}</span>
-                                        {isCompleted && (
-                                            <CheckCircleIcon className="isScheduleBlockDone" weight="fill" />
-                                        )}
                                     </div>
                                 </div>
                             );

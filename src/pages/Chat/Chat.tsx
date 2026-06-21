@@ -22,24 +22,24 @@ import SystemMessage from "./components/SystemMessage";
 
 export default function Chat() {
     const { user, isAuthenticated } = useUser();
-    const { refetchChatWLoading, chatLoading, messages, chatWith, refetchGroupChatWLoading } = useChat();
+    const { refetchChatWLoading, chatLoading, messages, chatWith, refetchGroupChatWLoading, searchMess:search, setSearchMess:setSearch, searchInputRef } = useChat();
     const { chosenMess, setChosenMess, isChose, setIsChose, pendingScrollId, setPendingScrollId } = useMessages();
     const { setTitle } = usePageTitle()
-
     const { nick, id } = useParams();
     const navigate = useNavigate()
-    const [search, setSearch] = useState("");
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    const [highlightedId, setHighlightedId] = useState<number | null>(null);
-    const [showGoDown, setShowGoDown] = useState(false);
+
+    const [ selectedIndex, setSelectedIndex ] = useState(0);
+    const [ highlightedId, setHighlightedId ] = useState<number | null>(null);
+    const [ showGoDown, setShowGoDown ] = useState(false);
+    const [ mess, setMess ] = useState<string>("")
 
     const searchItemRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
     const virtuosoRef = useRef<VirtuosoHandle | null>(null);
     const messageRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
     const highlightTimeoutRef = useRef<number | null>(null);
-
+    const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
     const API_URL = import.meta.env.VITE_API_URL
-    
+
     useEffect(() => {
         setIsChose(false);
         setChosenMess([]);
@@ -53,8 +53,8 @@ export default function Chat() {
     }, [nick, id]);
 
     useEffect(() => {
-        if (!isAuthenticated) navigate(`/acc/${nick}`)
-    }, [isAuthenticated, navigate, nick])
+        if (!isAuthenticated && !user) navigate(`/acc/${nick}`)
+    }, [isAuthenticated, navigate, nick, user])
 
     useEffect(() => {
         const unread = messages.filter(
@@ -158,25 +158,49 @@ export default function Chat() {
     }, [pendingScrollId, messages]);
 
     useEffect(() => {
-        const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === "Escape") {
-                setIsChose(false);
-                setChosenMess([]);
-            }
-        };
-
-        window.addEventListener("keydown", handleEsc);
-
-        return () => {
-            window.removeEventListener("keydown", handleEsc);
-        };
-    }, [setIsChose, setChosenMess]);
-
-    useEffect(() => {
         if (!chatLoading && chatWith && (chatWith.nick === nick || String(chatWith.id) === id)) {
             setTitle(chatWith.name || chatWith.nick);
         }
     }, [chatLoading, chatWith, id, nick, setTitle]);
+
+
+    useEffect(() => {
+        if (location.pathname.startsWith("/chat") && !isMobile) {
+            textAreaRef.current?.focus();
+        }
+    }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (
+                document.activeElement === searchInputRef.current ||
+                document.activeElement instanceof HTMLInputElement ||
+                document.activeElement instanceof HTMLTextAreaElement ||
+                e.ctrlKey ||
+                e.altKey ||
+                e.metaKey ||
+                e.key === "Escape"
+            ) {
+                return;
+            }
+
+            const selection = window.getSelection();
+            if (selection?.toString()) return;
+
+            textAreaRef.current?.focus();
+
+            if (e.key.length === 1) {
+                e.preventDefault();
+                setMess(prev => prev + e.key);
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [setMess]);
 
     if (chatLoading) return <Loader />;
 
@@ -196,13 +220,14 @@ export default function Chat() {
                 setIsChose={setIsChose}
                 chosenMess={chosenMess}
                 setChosenMess={setChosenMess}
+                searchInputRef={searchInputRef}
             />
             <Virtuoso
                 className="chat"
                 ref={virtuosoRef}
                 data={messages}
                 followOutput="smooth"
-                overscan={10}
+                overscan={20}
                 initialTopMostItemIndex={messages.length - 1}
                 atBottomStateChange={(bottom:boolean) => setShowGoDown(!bottom)}
                 rangeChanged={(range: { startIndex: number; endIndex: number }) => {
@@ -267,7 +292,7 @@ export default function Chat() {
                 }}
             />
 
-            <ChatTAWrapper showGoDown={showGoDown} handleGoDown={() => virtuosoRef.current?.scrollToIndex({ index: "LAST", behavior: "smooth" })} scrollToMessage={scrollToMessage}/>
+            <ChatTAWrapper showGoDown={showGoDown} handleGoDown={() => virtuosoRef.current?.scrollToIndex({ index: "LAST", behavior: "smooth" })} scrollToMessage={scrollToMessage} textAreaRef={textAreaRef} mess={mess} setMess={setMess}/>
         </div>
     );
 }

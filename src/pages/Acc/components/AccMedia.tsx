@@ -10,7 +10,7 @@ export default function AccMedia({ media }: { media: Media[] | undefined}) {
     const { nick, id } = useParams()
 
     return (
-        <div className="accMedia">
+        <div className="accMedia ">
             <div className="accMediaGrid">
                 {media?.map((file, i) => {
                     const isImage = file.type.startsWith("image/");

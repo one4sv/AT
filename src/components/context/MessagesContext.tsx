@@ -25,7 +25,7 @@ export interface MessagesContextType {
 
 export const MessagesProvider = ({ children }: { children: ReactNode }) => {
     const [ chosenMess, setChosenMess ] = useState<{ id: number; text: string }[]>([])
-    const [  isChose, setIsChose ] = useState(false)
+    const [ isChose, setIsChose ] = useState(false)
     const [ pendingScrollId, setPendingScrollId ] = useState<number | null>(null)
     const [ answerState, setAnswerState ] = useState<{
         id: string

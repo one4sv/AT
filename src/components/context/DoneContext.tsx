@@ -5,7 +5,7 @@ import { useTheHabit } from "../hooks/TheHabitHook";
 import { useCalendar } from "../hooks/CalendarHook";
 import { useHabits } from "../hooks/HabitsHook";
 import { api } from "../ts/api";
-import { dateToCalendarFormat } from "../../pages/HabitPage/utils/dateToStr";
+import { dateToCalendarFormat } from "../ts/utils/dateToStr";
 import { getDayArrays } from "../ts/utils/getDayArrs";
 import { useParams } from "react-router-dom";
 

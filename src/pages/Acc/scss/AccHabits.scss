@@ -5,9 +5,6 @@
     flex-direction: column;
     width: 100%;
     // gap: 0.8vh;
-    overflow-y:auto;
-    scrollbar-width: thin;
-    
 }
 .accHabitsInfo {
     display: flex;
@@ -15,7 +12,7 @@
 .accHabitsList {
     display: flex;
     flex-direction: column;
-    width: 50%;
+    width: 80%;
     justify-content: center;
     background-color: var(--mc);
     border-radius: 12px;

@@ -52,7 +52,6 @@
     display: flex;
     align-items: center;
     padding-left: 0.5vw;
-    margin-right: 0.5vw;
     >svg {
         height: 90%;
         width: 90%;
@@ -70,6 +69,7 @@
     flex-direction: column;
     justify-content: center;
     gap: 0.5vh;
+    margin-left: 0.5vw;
     text-wrap: nowrap;
 }
 .chatOnlineStauts {
@@ -79,7 +79,7 @@
     }
 }
 .userMenuCall {
-    margin: 0.7vh 0.5vw 0.7vh 0;
+    margin: 0.7vh 0.5vw 0.7vh 0.25vw;
     cursor: pointer;
     aspect-ratio: 1/1;
     display: flex;

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useSchedule } from "../ScheduleHook";
 import { useSettings } from "../SettingsHook";
 import { useCalendar } from "../CalendarHook";
-import { timeToMinutes, todayStrFunc } from "../../../pages/HabitPage/utils/dateToStr";
+import { timeToMinutes, todayStrFunc } from "../../ts/utils/dateToStr";
 import { isOddWeek } from "../../../pages/HabitPage/utils/isOddWeek";
 import type { ScheduleBlockType } from "../../context/ScheduleContext";
 

@@ -1,7 +1,8 @@
 import type { SetStateAction } from "react";
 import type { Habit } from "../../../../components/context/HabitsContext";
 import "../../scss/Goals.scss"
-import { CaretRightIcon, Chats, GearSix, NotebookIcon, Target } from "@phosphor-icons/react";
+import { CaretRightIcon, GearSix, NotebookIcon, Target } from "@phosphor-icons/react";
+import { UserRoundPlus } from "lucide-react";
 interface GoalsProps {
     habit: Habit | undefined;
     readOnly:boolean;
@@ -16,8 +17,8 @@ export default function HabitExtraButts ({habit, readOnly, setShowSettings, setS
         <div className="habitPlusDiv">
             <div className="habitPlusButts">
                 <div className="addGoalButtDiv">
-                    <Chats weight="fill" className="addGoalIcon chats"/>
-                    Добавить в чат
+                    <UserRoundPlus className="addGoalIcon chats"/>
+                    Добавить людей
                     <CaretRightIcon className="addGoalCaret"/>
                 </div>
                 <div className="addGoalButtDiv" onClick={() => setShowSettings(true)}>

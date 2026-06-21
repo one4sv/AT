@@ -7,7 +7,7 @@ import { SVGclock } from "../../../utils/SVGclock";
 import { FlagPennant, Pause, Play, Square } from "@phosphor-icons/react";
 import "../../../scss/Timer.scss";
 import { useWebSocket } from "../../../../../components/hooks/WebSocketHook";
-import { todayStrFunc } from "../../../utils/dateToStr";
+import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 
 export default function Timer({ isMy }:{ isMy:boolean }) {
     const { habit, habitTimer, todayDone, showTimer, setHabitTimer, parseTimer } = useTheHabit();

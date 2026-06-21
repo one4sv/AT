@@ -48,7 +48,7 @@ export default function PostWrite() {
 
         // иначе — авторасширение
         ta.style.height = "auto";
-        ta.style.minHeight = "10vh";
+        ta.style.minHeight = "1vh";
 
         const newHeight = ta.scrollHeight;
         ta.style.height = newHeight + "px";
@@ -182,6 +182,7 @@ export default function PostWrite() {
                 onFocus={()=>setShowPWbar(true)}
                 placeholder="Расскажите что-нибудь..."
                 onPaste={handlePaste}
+                id="postWriteTA"
                 onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();  // предотвращаем добавление новой строки

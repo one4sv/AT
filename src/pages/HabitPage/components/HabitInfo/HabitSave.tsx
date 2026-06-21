@@ -1,15 +1,15 @@
 import { CaretLeftIcon, XIcon } from "@phosphor-icons/react";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
+import { useSideMenu } from "../../../../components/hooks/SideMenuHook";
 interface HabitSaveType {
     readOnly:boolean,
     archived:boolean,
     id:number,
-    returnSlide:() => void,
     isSlided:boolean,
 }
-export default function HabitSave ({readOnly, archived, id, returnSlide, isSlided}:HabitSaveType) {
+export default function HabitSave ({readOnly, archived, id, isSlided}:HabitSaveType) {
     const { saveHabit, localChanges, isUpdating } = useUpHabit()
-
+    const { returnSlide } = useSideMenu()
     const hasUnsavedChanges = !!localChanges[id];
     const isThisUpdating = isUpdating.includes(`habit_${id}`);
 

@@ -17,7 +17,7 @@ export default function Group() {
     const { id } = useParams<{id:string}>()
     const [ selector, setSelector ] = useState<string>("sended");
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         if (!id) {
             navigate(`/`, { replace: true });

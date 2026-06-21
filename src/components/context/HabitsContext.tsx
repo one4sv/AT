@@ -52,7 +52,6 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
     const [ newOrderHabits, setNewOrderHabits ] = useState<string[] | undefined>()
 
     const refetchHabits = useCallback(async () => {
-        // if (!user.id) return
         try {
             const res = await axios.get<HabitResponse>(`${API_URL}habits`, {
                 withCredentials: true,
@@ -69,8 +68,9 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
                 if (err.response?.status !== 401 && err.response?.status !== 403) {
                 showNotification("error", err.response?.data?.error || "Ошибка запроса");
                 }
+                
             }
-            } finally {
+        } finally {
             setLoadingHabits(false);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps

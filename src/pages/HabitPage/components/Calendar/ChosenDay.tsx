@@ -7,7 +7,7 @@ import { CheckCircle, Circle } from "@phosphor-icons/react";
 import { useDone } from "../../../../components/hooks/DoneHook";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
-import { todayStrFunc } from "../../utils/dateToStr";
+import { todayStrFunc } from "../../../../components/ts/utils/dateToStr";
 import ChosenDayDate from "../../utils/ChosenDayDate";
 
 export default function ChosenDay() {

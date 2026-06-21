@@ -20,12 +20,16 @@
     scrollbar-width: thin;
     position: relative;
     overflow-y: auto;
+    &.dnh {
+        height: 100%;
+    }
 }
 .doneCompAdd {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 2px;
     font-size: 18px;
     cursor: pointer;
     border-radius: 8px;
@@ -40,6 +44,10 @@
         background-color: var(--menuButtHover);
     }
 }
+.doneCompContolers {
+    display: flex;
+    height: 80%;
+}
 .doneComp {
     position: relative;
     width: 100%;
@@ -48,6 +56,12 @@
     display: flex;
     min-height: 5.5vh;
     justify-content: center;
+    &.doneCompSmall {
+        min-height: calc(5.5vh * 0.8);
+        >.doneCompContolers {
+            height: 100%;
+        }
+    }
 }
 .doneButtInfo {
     display: flex;
@@ -77,10 +91,6 @@
     &:focus-visible {
         border-bottom: 1px solid var(--acsent);
     }
-}
-.doneCompContolers {
-    display: flex;
-    height: 80%;
 }
 .doneCompControler {
     height: 100%;

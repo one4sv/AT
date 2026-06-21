@@ -14,6 +14,7 @@ import { calculateTimerElapsed } from "./utils/TimerFuncs";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useWebSocket } from "../hooks/WebSocketHook";
 import { Link } from "react-router-dom";
+import { formatDateFromString } from "./utils/dateToStr";
 
 export default function HabitDiv({
     habit,
@@ -170,7 +171,7 @@ export default function HabitDiv({
                 const latest = formatScheduleTime(maxMin);
 
                 if (earliest && latest && earliest !== latest) {
-                    timePart = ` с ${earliest} до ${latest}`;
+                    timePart = ` ${earliest} - ${latest}`;
                 } else if (earliest) {
                     timePart = ` в ${earliest}`;
                 } else if (latest) {
@@ -185,7 +186,7 @@ export default function HabitDiv({
 
         const timePart = formatHabitTime(habit);
 
-        if (per === "everyday") return `Каждый день${timePart}`;
+        if (per === "everyday") return `${timePart}`;
         if (per === "sometimes") return `Иногда${timePart}`;
 
         return timePart.trim() || "";
@@ -222,10 +223,12 @@ export default function HabitDiv({
                     )}
                 </div>
                 <div className="habitPer">
-                    {habit.ongoing && (
+                    {habit.ongoing ? (
                         timerLoading
                             ? "Загрузка..."
                             : timerStatus || periodicityText
+                    ) : (
+                        `${formatDateFromString(habit.start_date)} - ${formatDateFromString(habit.end_date)}`
                     )}
                     {habit.done && <CheckCircle className="habitHLStatus" weight="fill" />}
                 </div>

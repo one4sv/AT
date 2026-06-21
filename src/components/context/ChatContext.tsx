@@ -47,7 +47,9 @@ export interface ChatContextType {
     messages: message[],
     list: Contact[],
     search: string,
+    searchMess: string,
     setSearch: React.Dispatch<React.SetStateAction<string>>,
+    setSearchMess: React.Dispatch<React.SetStateAction<string>>,
     refetchContacts: () => Promise<void>,
     refetchContactsWTLoading: () => Promise<void>,
     onlineMap: Record<string, boolean>,
@@ -55,7 +57,9 @@ export interface ChatContextType {
     handleTyping: (id:string) => void,
     typingMap: Record<string, string[]>,
     loadingList: boolean,
-    stopTyping:()=> void
+    stopTyping:()=> void,
+    mainSearchRef: React.RefObject<HTMLInputElement | null>,
+    searchInputRef: React.RefObject<HTMLInputElement | null>,
 }
 
 export interface message {
@@ -111,10 +115,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [ onlineMap, setOnlineMap ] = useState<Record<string, boolean>>({});
     const [ isTyping, setIsTyping ] = useState(false);
     const [ typingMap, setTypingMap ] = useState<Record<string, string[]>>({});
+    const [ searchMess, setSearchMess ] = useState("");
     
     const typingTimeout = useRef<number | null>(null);
     const chatWithRef = useRef<chatWithType | null>(chatWith);
     const notificationAggregator = new NotificationAggregator();
+    const mainSearchRef = useRef<HTMLInputElement | null>(null)
+    const searchInputRef = useRef<HTMLInputElement | null>(null)
 
     useEffect(() => {
         chatWithRef.current = chatWith;
@@ -434,7 +441,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     return (
         <ChatContext.Provider value={{ chatWith, refetchChat, refetchChatWLoading, chatLoading, messages, list, setSearch, search,
             refetchContacts, onlineMap, setReaction, handleTyping, typingMap, loadingList, refetchContactsWTLoading, refetchGroupChat, refetchGroupChatWLoading,
-            stopTyping}}>
+            stopTyping, mainSearchRef, searchInputRef, searchMess, setSearchMess}}>
             {children}
         </ChatContext.Provider>
     );

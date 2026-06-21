@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import { api } from "../../../../../components/ts/api"
 import { placeholders } from "../../../utils/placeholders"
 import { useWebSocket } from "../../../../../components/hooks/WebSocketHook"
-import { todayStrFunc } from "../../../utils/dateToStr"
+import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 
 interface Event {

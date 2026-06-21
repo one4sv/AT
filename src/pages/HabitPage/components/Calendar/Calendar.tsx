@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { buildSlide } from "../../utils/buildSlide";
 import { CalendarSlide } from "./CalendarSlide";
-import { todayStrFunc } from "../../utils/dateToStr";
+import { todayStrFunc } from "../../../../components/ts/utils/dateToStr";
 
 const MONTHS = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 

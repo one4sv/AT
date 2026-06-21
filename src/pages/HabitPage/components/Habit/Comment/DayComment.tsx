@@ -7,7 +7,7 @@ import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
 import "../../../scss/DayComment.scss";
 import CompletionProgress from "./ComplitionProgress";
 import CounterProgression from "./CounterProgression";
-import { todayStrFunc } from "../../../utils/dateToStr";
+import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 
 interface DayCommentProps {
   id: string;
@@ -20,14 +20,13 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   const { chosenDay } = useCalendar();
 
   const [comment, setComment] = useState<string>("");
-  const [syncing, setSyncing] = useState(false);
+  const [syncing, setSyncing] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const todayStr = todayStrFunc();
   const isHistorical = chosenDay !== todayStr;
   const currentCounter = isHistorical ? showCounter : habitCounter;
 
-  // Синхронизация с контекстом при смене дня или обновлении комментария
   useEffect(() => {
     setSyncing(true);
     setComment(dayComment || "");

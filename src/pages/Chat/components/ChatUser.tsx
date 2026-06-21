@@ -2,7 +2,7 @@ import { ChevronDown, ChevronUp, CircleUserRound, X, Search } from "lucide-react
 import { useNavigate } from "react-router";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useChat } from "../../../components/hooks/ChatHook";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import type { message } from "../../../components/context/ChatContext";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
@@ -28,6 +28,7 @@ interface ChatUserProps {
     setIsChose:React.Dispatch<React.SetStateAction<boolean>>,
     chosenMess:{id:number, text:string}[],
     setChosenMess:React.Dispatch<React.SetStateAction<{id:number, text:string}[]>>,
+    searchInputRef: RefObject<HTMLInputElement | null>
 }
 
 export default function ChatUser({
@@ -40,6 +41,7 @@ export default function ChatUser({
     handleArrowClick,
     scrollToMessage,
     searchItemRefs,
+    searchInputRef
 }: ChatUserProps) {
     const { chatWith, onlineMap, typingMap, messages } = useChat();
     const { openMenu, menu, closeMenu } = useContextMenu();
@@ -114,7 +116,7 @@ export default function ChatUser({
     return (
         <div className="chatUser" ref={chatUserRef}>
             {isMobile && (
-                <div className="chatUserBack" onClick={() => setShowSideMenu(!showSideMenu)}>
+                <div className="menuShowButt" onClick={() => setShowSideMenu(!showSideMenu)}>
                     <List />
                 </div>
             )}
@@ -171,6 +173,7 @@ export default function ChatUser({
                         onChange={(e) => { setSearch(e.target.value); setSelectedIndex(0) }}
                         onFocus={() => setIsSearchOpen(true)}
                         onKeyDown={handleSearchKeyDown}
+                        ref={searchInputRef}
                     />
                     {search.length > 0 ? (
                         <X color="white" cursor="pointer" onClick={() => { setSearch(""); setSelectedIndex(0); setIsSearchOpen(false); }}/>
@@ -201,7 +204,6 @@ export default function ChatUser({
                                     >
                                         <UserInChatUserList m={m}/>
                                     </div>
-
                                 )
                             })}
                         </div>

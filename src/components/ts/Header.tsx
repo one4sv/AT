@@ -28,7 +28,7 @@ export default function Header() {
             navigate(`/chat/${acc?.nick}`);
         }
     };
-    console.log(isAcc)
+
     return (
         <>
             <div className="header">

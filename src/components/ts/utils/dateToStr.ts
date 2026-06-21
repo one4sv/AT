@@ -95,3 +95,17 @@ export const formatDateLabel = (dateStr: string) => {
 
     return `${prefix ? prefix + ", " : ""}${dd}.${mm}.${yyyy}, ${weekDay}`;
 };
+
+/**
+ * возвращает строку ввида чч:мм - чч:мм без преобразований, получает время в формате чстроки
+ * @param start_time стартовое время
+ * @param end_time время окончания
+ * @returns строку ввида чч:мм - чч:мм, с чч:мм, до чч:мм
+ */
+export const formatTime = (start_time: string, end_time: string ) => {
+    if (start_time && end_time)
+        return `${start_time} - ${end_time}:`
+    if (start_time) return `с ${start_time}:`
+    if (end_time) return `до ${end_time}:`
+    return ""
+}

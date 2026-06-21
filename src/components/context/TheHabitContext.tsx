@@ -41,6 +41,7 @@ export interface TheHabitContextType {
     setShowCounter: React.Dispatch<SetStateAction<habitCounter | null>>;
     counterSettings: counterSettingsType | null;
     checklist:DoneCompletion[],
+    pattern:ChecklistPattern[],
 }
 
 export interface habitTimer {
@@ -81,6 +82,14 @@ export type DoneCompletion = {
     end_time:string, 
     name:string,
     date:string,
+    habit_id:number,
+    isNew?: boolean
+}
+export type ChecklistPattern = { 
+    id:number, 
+    start_time:string, 
+    end_time:string, 
+    name:string,
     habit_id:number,
     isNew?: boolean
 }
@@ -129,6 +138,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
     const [showCounter, setShowCounter] = useState<habitCounter | null>(null);
     const [counterSettings, setCounterSettings] = useState<counterSettingsType | null>(null);
     const [checklist, setChecklist] = useState<DoneCompletion[]>([]);
+    const [pattern, setPattern] = useState<ChecklistPattern[]>([]);
     const [habitSettings, setHabitSettings] = useState<HabitSettings>({
         metric_type: "timer",
         schedule: false,
@@ -191,7 +201,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
             const res = await findHabit(id);
             if (!res?.success) return;
 
-            const { habit: habitData, isRead, isDone: doneToday, settings, counterSettings: cSettings, counter, timer, checklist } = res;
+            const { habit: habitData, isRead, isDone: doneToday, settings, counterSettings: cSettings, counter, timer, checklist, pattern } = res;
 
             fetchCalendarHabit(id);
             setHabit(habitData);
@@ -207,12 +217,17 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                     isNew: false
                 }))
             )
+            setPattern(pattern || [])
         } catch (err) {
             if (axios.isAxiosError(err)) {
-                showNotification("error", err.response?.data?.error);
-                if (err.response?.status === 403) {
-                    navigate(-1);
+                if (err.response?.status === 403 || err.response?.status === 404) {
+                    if (window.history.length > 1) {
+                        navigate(-1);
+                    } else {
+                        navigate("/habit");
+                    }
                 }
+                showNotification("error", err.response?.data?.error);
             }
         }
     };
@@ -289,7 +304,8 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                 setShowCounter,
                 counterSettings,
                 parseTimer,
-                checklist
+                checklist,
+                pattern
             }}
         >
             {children}

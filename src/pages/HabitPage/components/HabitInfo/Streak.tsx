@@ -5,7 +5,7 @@ import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { useEffect, useState } from "react";
 import { getStreakView } from "../../utils/getStreakView";
 import "../../scss/Streak.scss";
-import { dateToCalendarFormat } from "../../utils/dateToStr";
+import { dateToCalendarFormat } from "../../../../components/ts/utils/dateToStr";
 
 export interface StreakType {
     habit: Habit;
@@ -89,7 +89,12 @@ export default function Streak({ habit, calendar }: StreakType) {
     const { cl, text, showCount, count } = view || {};
 
     if (!view) return null
-    
+    if (!habit.ongoing) return (
+        <div className="streakStr">
+            В архиве
+        </div>
+    )
+
     return (
         <div className={`streakStr ${cl}`}>
             <Fire weight="fill" size={16} />

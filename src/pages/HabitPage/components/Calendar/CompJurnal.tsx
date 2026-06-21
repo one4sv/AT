@@ -5,7 +5,7 @@ import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
-import { formatDateFromString } from "../../utils/dateToStr";
+import { formatDateFromString } from "../../../../components/ts/utils/dateToStr";
 import type { HabitSlideProps } from "../../HabitPage";
 
 export default function CompJurnal({ id }:HabitSlideProps) {

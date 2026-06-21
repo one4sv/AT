@@ -12,7 +12,7 @@
         width: 100%;
     }
     > svg {
-        @include var.svgInInput(2vh, 2.5vh, 2vw);
+        @include var.svgInInput(2vh, 0.5vh, 0.2vw);
         color: var(--borderHabit);
         &.deleteSearchText {
             cursor: pointer;

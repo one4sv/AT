@@ -79,7 +79,7 @@ export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitS
         counter: "Подходит для количественных привычек.",
         schedule: "Выполнение заданных в расписании блоков.",
         checklist: "Фиксированный список задач.",
-        done: "Без измерения."
+        done: "Без измерения. Возможность создавать список задач на день."
     };
 
     if (!habit) return null;
@@ -93,7 +93,7 @@ export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitS
                     <span className="redHabitToggler">
                         <Toggler
                             state={scheduleToggle}
-                            disable={readOnly}
+                            disable={readOnly || habit?.periodicity === "sometimes"}
                             setState={handleScheduleChange}
                         />
                     </span>
@@ -151,7 +151,7 @@ export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitS
             {isMy && (
                 <>
                     {/* Архивировать */}
-                        <div className="redHabitBlock but danger" onClick={() => isArchived && setNewOngoing(habit.id, isArchived)}>
+                        <div className="redHabitBlock but danger" onClick={() => isArchived !== undefined && setNewOngoing(habit.id, isArchived)}>
                             {!isArchived ? (
                                 <>
                                     <span className="redHabitSpan but"> <BoxArrowDownIcon/> Завершить и архивировать</span>

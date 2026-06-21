@@ -12,7 +12,7 @@ interface AccPostsProps {
 }
 export default function AccPosts({ posts, isMy }: AccPostsProps) {
     return (
-        <div className={`accPosts ${isMobile ? "mobile" : ""}`}>
+        <div className={`accPosts ${isMobile ? "mobile" : ""}` } onScroll={() => console.log("POSTS")}>
             {posts?.map((post) => {
                 return (
                     <Post isMy={isMy} post={post} key={post.id}/>

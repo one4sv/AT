@@ -16,8 +16,9 @@ export default function MobileLayout({ children }: LayoutProps) {
     const location = useLocation();
 
     const hideHeader = 
-        location.pathname.startsWith("/chat") && !showSideMenu|| 
-        location.pathname.startsWith("/habit/") && !showSideMenu
+        location.pathname.startsWith("/chat") && !showSideMenu || 
+        location.pathname.startsWith("/habit/") && !showSideMenu ||
+        showSideMenu
 
     return (
         <div className="mobile-layout">

@@ -3,7 +3,7 @@ import { type ReactNode } from "react"
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
 import { type habitCounter, type habitTimer } from "./TheHabitContext";
-import { todayStrFunc } from "../../pages/HabitPage/utils/dateToStr";
+import { todayStrFunc } from "../ts/utils/dateToStr";
 
 const CalendarContext = createContext<CalendarContextType | null>(null);
 

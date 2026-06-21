@@ -4,7 +4,8 @@ import { useNote } from "../hooks/NoteHook";
 import { useTheHabit } from "../hooks/TheHabitHook";
 import { api } from "../ts/api";
 import type { asctype, metricsType } from "./TheHabitContext";
-import { todayStrFunc } from "../../pages/HabitPage/utils/dateToStr";
+import { todayStrFunc } from "../ts/utils/dateToStr";
+import axios from "axios";
 
 export type UpdateHabitContextType = {
     /** Изменить название привычки */
@@ -169,12 +170,34 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     }, [updateLocalChanges]);
     const setNewStartTime = useCallback((habitId: number, val: string | null) => updateLocalChanges(habitId, "start_time", val), [updateLocalChanges]);
     const setNewEndTime = useCallback((habitId: number, val: string | null) => updateLocalChanges(habitId, "end_time", val), [updateLocalChanges]);
-    const setPin = useCallback((habitId: number, val: boolean) => updateLocalChanges(habitId, "pinned", val), [updateLocalChanges]);
     const setNewTag = useCallback((habitId: number, val: string | null) => updateLocalChanges(habitId, "tag", val), [updateLocalChanges]);
 
     const setNewMetricType = useCallback((habitId: number, val: metricsType) => updateLocalChanges(habitId, "metric_type", val), [updateLocalChanges]);
     const setNewScheduleBool = useCallback((habitId: number, val: boolean) => updateLocalChanges(habitId, "schedule", val), [updateLocalChanges]);
     const setNewAutoScheduleCompletion = useCallback((habitId: number, val: asctype) => updateLocalChanges(habitId, "auto_schedule_completion", val), [updateLocalChanges]);
+
+    const setPin = useCallback(async (habitId: number, val: boolean) => {
+        updateLocalChanges(habitId, "pinned", val);
+
+        try {
+            const res = await api.post(`${API_URL}updatehabit`, {
+                habit_id: habitId,
+                table: "habits",
+                pinned: val
+            });
+
+            if (res.data.success) {
+                refetchHabits();
+                loadHabit(String(habitId));
+            } else {
+                showNotification("error", "Не удалось закрепить привычку");
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                showNotification("error", error.response?.data?.error || "Ошибка закрепления");
+            }
+        }
+    }, [API_URL, loadHabit, refetchHabits, showNotification, updateLocalChanges]);
 
     const SETTINGS_FIELDS = [
         "metric_type",

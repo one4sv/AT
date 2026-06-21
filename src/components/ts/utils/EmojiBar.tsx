@@ -7,9 +7,10 @@ interface emojiBarProps {
     setShowEmojiBar: Dispatch<SetStateAction<boolean>>;
     showEmojiBar: boolean,
     cn?:string,
-    emojiPos?:{top: number, left: number}
+    emojiPos?:{top: number, left: number},
+    emojiRef?:React.RefObject<HTMLDivElement | null>
 }
-export default function EmojiBar({taRef, setText, showEmojiBar, setShowEmojiBar, cn, emojiPos} : emojiBarProps) {
+export default function EmojiBar({taRef, setText, showEmojiBar, setShowEmojiBar, cn, emojiPos, emojiRef} : emojiBarProps) {
     const emojiBarRef = useRef<HTMLDivElement | null>(null);
     
     useEffect(() => {
@@ -17,6 +18,8 @@ export default function EmojiBar({taRef, setText, showEmojiBar, setShowEmojiBar,
             if (
                 emojiBarRef.current &&
                 !emojiBarRef.current.contains(e.target as Node) &&
+                emojiRef?.current &&
+                !emojiRef.current.contains(e.target as Node) &&
                 showEmojiBar
             ) {
                 setShowEmojiBar(false);

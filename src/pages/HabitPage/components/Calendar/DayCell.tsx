@@ -4,7 +4,7 @@ import HoverDay from "./HoverDay";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
 import { useParams } from "react-router-dom";
-import { dateToCalendarFormat, todayStrFunc } from "../../utils/dateToStr";
+import { dateToCalendarFormat, todayStrFunc } from "../../../../components/ts/utils/dateToStr";
 
 interface DayCellProps {
     habit: Habit | undefined;

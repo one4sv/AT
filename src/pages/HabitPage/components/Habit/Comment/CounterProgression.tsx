@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { habitCounter } from "../../../../../components/context/TheHabitContext";
-import { timeToStr } from "../../../utils/dateToStr";
+import { timeToStr } from "../../../../../components/ts/utils/dateToStr";
 import { placeholders } from "../../../utils/placeholders";
 import { Send } from "lucide-react";
 import { api } from "../../../../../components/ts/api";

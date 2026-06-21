@@ -26,13 +26,14 @@
 .chatTAWrapper {
     display: flex;
     flex-direction: column;
-    width: 70%;
+    width: 60%;
     position: relative;
     border-radius: 12px;
-    margin: 0 auto 1vh;
+    margin: 1vh auto 1vh;
     &.mobile {
         margin-bottom: 0;
         width: 100%;
+        border-radius: 12px 12px 0 0;
     }
 }
 .chatWriteBar {
@@ -40,7 +41,7 @@
     border-radius: 12px 12px 0 0;
     background-color: var(--mc);
     color: var(--tc);
-    height: 6vh;
+    height: 4vh;
     display: flex;
     padding-left: 0.5vw;
     gap: 0.5vw;
@@ -48,7 +49,7 @@
     &.chatBarwFiles::after {
         content: "";
         position: absolute;
-        margin-top: 6vh;
+        margin-top: 4.5vh;
         left: 2.5%;
         width: 95%;
         height: 1px;
@@ -128,8 +129,8 @@
     border-radius: 12px;
     overflow: hidden;
     > svg {
-        font-size: 1.6rem;
-        margin-bottom: 0.3vh;
+        font-size: 1rem;
+        margin-bottom: 0.2vh;
         color: var(--acsent); // Акцент для иконок
     }
     > span {
@@ -139,13 +140,13 @@
     }
 }
 .emojiBar {
+    user-select: none;
     display: flex;
     flex-direction: column;
     background-color: var(--mc);
     width: 50%;
     height: 30vh;
     position: absolute;
-    left: 50%;
     bottom: 110%;
     border-radius: 12px 12px 0 12px;
     overflow-y: scroll;
@@ -191,23 +192,18 @@
     font-size: 16px;
     height: 9vh;
     max-height: 50vh;
-    border-radius: 12px;
     padding: 0.5vh 0.5vw;
     box-sizing: border-box;
     scrollbar-width:thin;
-    &.chatTAwFiles {
-        border-radius: 0 0 12px 12px;
-    }
-    &.mobile {
-        border-radius: 12px 12px 0 0;
-        outline: none;
-    }
-    &.mobile.chatTAwFiles {
+    outline: none;
+    border: none;
+    border-radius: 0 0 12px 12px;
+    @media (max-width: 800px) {
         border-radius: 0;
     }
 }
 .chatWriteSvgButt {
-    height: 4vh;
+    height: 3.2vh;
     aspect-ratio: 1/1;
     cursor: pointer;
     color: var(--borderWh);
@@ -215,7 +211,6 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    top: 0.1vh;
     border-radius: 6px;
     >svg {
         width: 70%;
@@ -229,7 +224,7 @@
 }
 .chatWriteTAButt {
     border-radius: 50%;
-    height: 4vh;
+    height: 3.5vh;
     aspect-ratio: 1/1;
     display: flex;
     align-items: center;
@@ -250,7 +245,7 @@
     justify-content: space-between;
     width: 74%;
     cursor: pointer;
-    height: 70%;
+    height: 90%;
     &.mobile {
         width: 64%;
     }
