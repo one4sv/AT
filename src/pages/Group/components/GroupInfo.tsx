@@ -12,9 +12,10 @@ import { useChat } from "../../../components/hooks/ChatHook";
 
 interface GroupInfoProps {
     group: Group | undefined,
+    collapsed:number
 }
 
-export default function GroupInfo({group} : GroupInfoProps) {
+export default function GroupInfo({group, collapsed} : GroupInfoProps) {
     const { setBlackout } = useBlackout();
     const { user } = useUser()
     const { refetchGroup, members, newAva } = useGroup()
@@ -89,7 +90,15 @@ export default function GroupInfo({group} : GroupInfoProps) {
     }
 
     return (
-        <div className="groupInfo">
+        <div className="accInfo"
+            style={{
+            maxHeight: `${500 * (1 - collapsed)}px`,
+            opacity: 1 - collapsed,
+            marginTop: `${(1 - collapsed)}vh`,
+            paddingTop: `${0.5 * (1 - collapsed)}vh`,
+            paddingBottom: `${0.5 * (1 - collapsed)}vh`,
+        }}
+        >
             <div className="groupInfoWrapper">
                 <div
                     className="accPic"
