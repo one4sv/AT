@@ -297,7 +297,9 @@ export default function SideMenu() {
         }
     }, [showSideMenu]);
 
-    if (!isAuthenticated && !loadingUser) return <SideMenuUnAunthificated/>
+    if (!isAuthenticated && !loadingUser) return <SideMenuUnAunthificated ref={sideMenuRef}
+        onTouchS={handleTouchStart} onTouchM={handleTouchMove} onTouchE={handleTouchEnd} translateX={translateX} isDragging={isDragging}
+    />
 
     return (
         <div className={`sideMenu ${isMobile ? "mobileSM" : ""} ${showSideMenu ? "open" : ""}`} 

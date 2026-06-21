@@ -108,7 +108,7 @@ export default function Habit() {
                                     <div
                                         className={`mobileHabitLayout ${isExpanded ? "expanded" : ""}`}
                                         style={{
-                                            height: isExpanded ? '98vh' : '77.5vh'
+                                            height: isExpanded ? '95vh' : '77.5vh'
                                         }}
                                         onTouchStart={(e) => {
                                             if (window.scrollY !== 0) return;
