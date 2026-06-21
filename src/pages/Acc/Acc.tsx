@@ -10,6 +10,7 @@ import AccPosts from "./components/AccPosts";
 import AccMedia from "./components/AccMedia";
 import { useAcc } from "../../components/hooks/AccHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
+import { useSideMenu } from "../../components/hooks/SideMenuHook";
 
 export default function Acc() {
     const { user } = useUser();
@@ -28,6 +29,7 @@ export default function Acc() {
 
     const { nick } = useParams();
     const { setTitle } = usePageTitle();
+    const { setDontHandle, dontHandleOther } = useSideMenu()
     const navigate = useNavigate();
 
     const [collapsed, setCollapsed] = useState(0);
@@ -70,18 +72,19 @@ export default function Acc() {
     }, [acc, loading, nick]);
 
     const handleScroll = () => {
+        setDontHandle(true)
         if (!line.current || !contentRef.current) return
         const elScroll = contentRef.current.scrollLeft
         const elWidth = contentRef.current.clientWidth
         const proc = (elScroll / elWidth) * 100
         line.current.style.transform = `translateX(${proc}%)`
-
         if (proc > 150) setSelector("posts")
         else if (proc > 50) setSelector("habits")
         else setSelector("sended")
     }
 
     const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+        setDontHandle(true)
         const scrollTop = e.currentTarget.scrollTop;
 
         if (e.deltaY > 0) setCollapsed(1);
@@ -89,10 +92,15 @@ export default function Acc() {
     }
 
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+        setDontHandle(true)
+        if (dontHandleOther) return
         touchStartY.current = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+        setDontHandle(true)
+        console.log(dontHandleOther)
+        if (dontHandleOther) return
         const currentY = e.touches[0].clientY;
         const delta = touchStartY.current - currentY;
         const scrollTop = e.currentTarget.scrollTop;
@@ -103,7 +111,6 @@ export default function Acc() {
             }
 
             const next = prev + delta * 0.01;
-            console.log(next)
             return Math.max(0, Math.min(1, next));
         });
 
@@ -111,6 +118,7 @@ export default function Acc() {
     };
 
     const handleTouchEnd = () => {
+        setDontHandle(false)
         setCollapsed(prev => prev > 0.5 ? 1 : 0);
     };
 
@@ -141,7 +149,7 @@ export default function Acc() {
                     </div>
                 </div>
 
-                <div className="accContent" ref={contentRef} onScroll={() => handleScroll()}>
+                <div className="accContent" ref={contentRef} onScroll={() => handleScroll()} onScrollEnd={() => setDontHandle(false)}>
                     <div className="accSlide">
                         <div
                             className="accContentSlide accMedia"

@@ -46,7 +46,7 @@ const params={
 export default function Habit() {
     const { fetchCalendarHabit, fetchCalendarWLoading, calendarLoading } = useCalendar()
     const { loadHabitWLoading, habit, loadingHabit, habitSettings } = useTheHabit()
-    const { showHabitMenu, setShowHabitMenu, showJurnal, setShowJurnal, showSettings, setShowSettings} = useSideMenu()
+    const { showHabitMenu, setShowHabitMenu, showJurnal, setShowJurnal, showSettings, setShowSettings, setDontHandle, dontHandleOther} = useSideMenu()
     const { schedules } = useSchedule()
     const { habitId } = useParams<{ habitId: string }>();
     const { setTitle } = usePageTitle()
@@ -56,7 +56,11 @@ export default function Habit() {
     const [isExpanded, setIsExpanded] = useState(false);
     const startY = useRef<number | null>(null);
     const pulling = useRef(false);
+    const [menuTranslate, setMenuTranslate] = useState(100);
+    const [dragging, setDragging] = useState(false);
 
+    const startX = useRef(0);
+    const startTranslate = useRef(100);
     const isSlided = showJurnal || showSettings
     
     useEffect(() => {
@@ -88,6 +92,80 @@ export default function Habit() {
         (!habitId && Object.values(schedules).some(arr => arr.length > 0)) ||
         (habit && habitId === String(habit.id) && habit.periodicity !== "sometimes" && habitSettings.schedule);
 
+    useEffect(() => {
+        setMenuTranslate(showHabitMenu ? 0 : 100);
+    }, [showHabitMenu]);
+
+    const handleContentTouchStart = (e: React.TouchEvent) => {
+        if (showHabitMenu || dontHandleOther) return;
+        startX.current = e.touches[0].clientX;
+        startTranslate.current = 100;
+        setDragging(true);
+    };
+
+    const handleContentTouchMove = (e: React.TouchEvent) => {
+        if (!dragging || showHabitMenu || dontHandleOther) return;
+        setDontHandle(true)
+
+        const diff = startX.current - e.touches[0].clientX;
+
+        if (diff < 0) return;
+
+        const translate =
+            100 - Math.min(100, (diff / window.innerWidth) * 100);
+
+        setMenuTranslate(translate);
+    };
+
+    const handleContentTouchEnd = () => {
+        if (!dragging || showHabitMenu) return;
+        setDontHandle(false)
+
+        setDragging(false);
+
+        if (menuTranslate < 60) {
+            setShowHabitMenu(true);
+            setMenuTranslate(0);
+        } else {
+            setMenuTranslate(100);
+        }
+    };
+
+    const handleMenuTouchStart = (e: React.TouchEvent) => {
+        if (dontHandleOther) return
+        startX.current = e.touches[0].clientX;
+        startTranslate.current = menuTranslate;
+        setDragging(true);
+    };
+
+    const handleMenuTouchMove = (e: React.TouchEvent) => {
+        if (!dragging || dontHandleOther) return;
+        setDontHandle(true)
+        const diff = e.touches[0].clientX - startX.current;
+
+        if (diff < 0) return;
+
+        const translate = Math.min(
+            100,
+            startTranslate.current + (diff / window.innerWidth) * 100
+        );
+
+        setMenuTranslate(translate);
+    };
+
+    const handleMenuTouchEnd = () => {
+        if (!dragging) return;
+        setDontHandle(false)
+        setDragging(false);
+
+        if (menuTranslate > 40) {
+            setShowHabitMenu(false);
+            setMenuTranslate(100);
+        } else {
+            setMenuTranslate(0);
+        }
+    };
+
     if (loadingHabit || calendarLoading) {
         return <Loader/>
     }
@@ -99,7 +177,13 @@ export default function Habit() {
     return (
         <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
             {habitId && <HabitName habit={habit} showHabitMenu={showHabitMenu} setShowHabitMenu={setShowHabitMenu} isReadOnly={isReadOnly} isExp={isExpanded}/>}
-            <div className={`StatsDivMain ${habitId && !isExpanded? "sdmwm" : ""}`} style={{top:habitId ? "6vh" : "0", overflow:isExpanded ? "hidden" : "auto"}} ref={mainRef}>
+            <div className={`StatsDivMain ${habitId && !isExpanded? "sdmwm" : ""}`} 
+                style={{top:habitId ? "6vh" : "0", overflow:isExpanded ? "hidden" : "auto"}} 
+                ref={mainRef}
+                onTouchStart={isMobile ? handleContentTouchStart : undefined}
+                onTouchMove={isMobile ? handleContentTouchMove : undefined}
+                onTouchEnd={isMobile ? handleContentTouchEnd : undefined}
+            >
                 <div className="StatsDivHabit">
                     {isMobile ? (
                         <>
@@ -108,7 +192,7 @@ export default function Habit() {
                                     <div
                                         className={`mobileHabitLayout ${isExpanded ? "expanded" : ""}`}
                                         style={{
-                                            height: isExpanded ? '95vh' : '77.5vh'
+                                            height: isExpanded ? '92vh' : '77.5vh'
                                         }}
                                         onTouchStart={(e) => {
                                             if (window.scrollY !== 0) return;
@@ -168,7 +252,13 @@ export default function Habit() {
             {habitId && habit && (
                 <div
                     className={`habitMenu ${isMobile ? "mobile" : ""}`}
-                    style={{ right: showHabitMenu ? "0" : isMobile ? "-100vw" : "-25vw" }}
+                    onTouchStart={isMobile ? handleMenuTouchStart : undefined}
+                    onTouchMove={isMobile ? handleMenuTouchMove : undefined}
+                    onTouchEnd={isMobile ? handleMenuTouchEnd : undefined}
+                    style={{
+                        transform: `translateX(${menuTranslate}%)`,
+                        transition: dragging ? "none" : "transform .3s ease"
+                    }}
                 >
                     <div className={`habitSlider ${showSettings || showJurnal ? "toSlide" : ""}`}>
 

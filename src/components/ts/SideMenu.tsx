@@ -28,7 +28,7 @@ export default function SideMenu() {
     const { setTab, showArchived } = useSettings()
     const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
-    const { setShowSideMenu, setActiveTab, activeTab, showSideMenu } = useSideMenu()
+    const { setShowSideMenu, setActiveTab, activeTab, showSideMenu, setIsDragging, isDragging, translateX, setTranslateX } = useSideMenu()
 
     const API_URL = import.meta.env.VITE_API_URL
     const navigate = useNavigate()
@@ -44,8 +44,6 @@ export default function SideMenu() {
     const [habitsFilters, setHabitsFilters] = useState<{label: string, value: string, new: string}[]>([])
     const [messageSelected, setMessageSelected] = useState<{label: string, value: string, new: string}>({ label: "Сообщения", value: "all", new: "0" })
     const [habitsSelected, setHabitsSelected] = useState<{label: string, value: string, new: string}>({label: "Активности", value: "all", new:"0"})
-    const [isDragging, setIsDragging] = useState(false);
-    const [translateX, setTranslateX] = useState(-100);
 
     const startX = useRef(0);
     const startTranslate = useRef(0);
@@ -203,6 +201,7 @@ export default function SideMenu() {
         document.addEventListener("mousedown", handleClickOutside)
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
+
     const startLongPress = (openFn: () => void) => {
         longPressTriggered.current = false
 
@@ -261,6 +260,9 @@ export default function SideMenu() {
 
     const handleTouchStart = (e: React.TouchEvent) => {
         startX.current = e.touches[0].clientX;
+
+        startTranslate.current = translateX;
+
         setIsDragging(true);
     };
 
@@ -268,9 +270,12 @@ export default function SideMenu() {
         if (!isDragging) return;
 
         const clientX = e.touches[0].clientX;
-        const diff = clientX - startX.current;
+        const diffPx = clientX - startX.current;
 
-        let newTranslate = startTranslate.current + diff * 0.5
+        const diffPercent = (diffPx / window.innerWidth) * 100;
+
+        let newTranslate = startTranslate.current + diffPercent;
+
         newTranslate = Math.max(-100, Math.min(0, newTranslate));
 
         setTranslateX(newTranslate);
@@ -288,14 +293,6 @@ export default function SideMenu() {
             setTranslateX(0);
         }
     };
-
-    useEffect(() => {
-        if (showSideMenu) {
-            setTranslateX(0);
-        } else {
-            setTranslateX(-100);
-        }
-    }, [showSideMenu]);
 
     if (!isAuthenticated && !loadingUser) return <SideMenuUnAunthificated ref={sideMenuRef}
         onTouchS={handleTouchStart} onTouchM={handleTouchMove} onTouchE={handleTouchEnd} translateX={translateX} isDragging={isDragging}

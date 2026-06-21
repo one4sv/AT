@@ -9,7 +9,7 @@ import { useAcc } from "../hooks/AccHook";
 import { useUser } from "../hooks/UserHook";
 
 export default function Header() {
-    const { showSideMenu, setShowSideMenu } = useSideMenu();
+    const { setTranslateX, setShowSideMenu } = useSideMenu();
     const { isAuthenticated } = useUser()
     const { nick } = useParams()
     const { title } = usePageTitle()
@@ -33,7 +33,10 @@ export default function Header() {
         <>
             <div className="header">
                 {isMobile && (
-                <div className="menuShowButt" onClick={() => setShowSideMenu(!showSideMenu)}>
+                <div className="menuShowButt" onClick={() => {
+                    setShowSideMenu(true);
+                    setTranslateX(0);
+                }}>
                     <List/>
                 </div>
                 )}

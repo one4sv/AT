@@ -43,6 +43,9 @@
     &.info {
         background-color: var(--bgc);
     }
+    @media (max-width:800px) {
+        min-width: 90vw;
+    }
 }
 
 .notificationActive {

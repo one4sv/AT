@@ -19,7 +19,7 @@ interface HabitNameProps {
 export default function HabitName({habit, showHabitMenu, setShowHabitMenu, isExp}:HabitNameProps) {
     const { isUpdating } = useUpHabit()
     const { calendar } = useCalendar()
-    const { setShowSideMenu, showSideMenu } = useSideMenu()
+    const { setShowSideMenu, setTranslateX } = useSideMenu()
     const habitNameRef = useRef<HTMLDivElement | null>(null);
 
     if (!habit) return null
@@ -27,7 +27,10 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu, isExp
     return (
         <div className={`chatUser ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} style={{transform:isExp ? "translateY(-5vh)" : ""}}>
             {isMobile && (
-                <div className="menuShowButt" onClick={() => setShowSideMenu(!showSideMenu)}>
+                <div className="menuShowButt" onClick={() => {
+                    setShowSideMenu(true)
+                    setTranslateX(0)
+                    }}>
                     <List/>
                 </div>
             )}

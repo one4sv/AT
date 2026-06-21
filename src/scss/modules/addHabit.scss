@@ -159,7 +159,14 @@
         color: var(--acsent);
     }
 }
-
+@media (max-width:800px) {
+    .addTeg {
+        padding: 0.4vh 2vw;
+    }
+    .tag.active {
+        padding: 0.6vh 2vw;
+    }
+}
 .addHabbitCheckBox {
     margin-bottom: 1vh;
     color: var(--borderHabit);

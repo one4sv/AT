@@ -48,7 +48,7 @@ export default function ChatUser({
     const { setDeleteConfirm, setDeleteMess } = useDelete()
     const { setChosenMess, chosenMess, setIsChose, isChose, setRedirect } = useMessages()
     const { setBlackout } = useBlackout()
-    const { setShowSideMenu, showSideMenu } = useSideMenu()
+    const { setShowSideMenu, setTranslateX } = useSideMenu()
     const navigate = useNavigate();
     
     const [ isSearchOpen, setIsSearchOpen ] = useState(false);
@@ -116,7 +116,10 @@ export default function ChatUser({
     return (
         <div className="chatUser" ref={chatUserRef}>
             {isMobile && (
-                <div className="menuShowButt" onClick={() => setShowSideMenu(!showSideMenu)}>
+                <div className="menuShowButt" onClick={() => {
+                    setShowSideMenu(true)
+                    setTranslateX(0)
+                }}>
                     <List />
                 </div>
             )}
