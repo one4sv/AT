@@ -75,6 +75,10 @@
     gap: 0.15vh;
     margin-left: 0.5vw;
     text-wrap: nowrap;
+    @media (max-width: 800px) {
+        gap: 0.1vh;
+        margin-left: 1vw;
+    }
 }
 .chatOnlineStauts {
     color: var(--borderWh);

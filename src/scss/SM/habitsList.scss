@@ -87,6 +87,9 @@
 .habitIcon {
     aspect-ratio: 1/1;
     position: relative;
+    @media (max-width: 800px) {
+        margin-left: 1vw;
+    }
 }
 .habitIconSvg {
     height: 100%;
@@ -100,6 +103,9 @@
     justify-content: space-evenly;
     position: relative;
     min-width: 0;
+    @media (max-width: 800px) {
+        margin-left: 1vw;
+    }
 }
 .habitName {
     display: flex;

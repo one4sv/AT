@@ -27,10 +27,10 @@ export default function formatLastOnline(lastOnline: string | null | undefined) 
     lastDate.getMonth() === yesterday.getMonth() &&
     lastDate.getFullYear() === yesterday.getFullYear()
   ) {
-    return `В сети вчера в ${timeStr}`;
+    return `в сети вчера в ${timeStr}`;
   }
 
   const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short" };
   const dateStr = lastDate.toLocaleDateString("ru-RU", options);
-  return `В сети ${dateStr} в ${timeStr}`;
+  return `в сети ${dateStr} в ${timeStr}`;
 }
