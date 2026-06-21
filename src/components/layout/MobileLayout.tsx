@@ -3,7 +3,6 @@ import { Background } from "../ts/utils/background";
 import { useSettings } from "../hooks/SettingsHook";
 import Header from "../ts/Header";
 import SideMenu from "../ts/SideMenu";
-import { useSideMenu } from "../hooks/SideMenuHook";
 import { useLocation } from "react-router-dom";
 
 interface LayoutProps {
@@ -12,20 +11,17 @@ interface LayoutProps {
 
 export default function MobileLayout({ children }: LayoutProps) {
     const { decor } = useSettings();
-    const { showSideMenu } = useSideMenu()
     const location = useLocation();
 
     const hideHeader = 
-        location.pathname.startsWith("/chat") && !showSideMenu || 
-        location.pathname.startsWith("/habit/") && !showSideMenu ||
-        showSideMenu
+        location.pathname.startsWith("/chat") || 
+        location.pathname.startsWith("/habit/")
 
     return (
         <div className="mobile-layout">
             {!hideHeader && <Header />}
-            {showSideMenu && <SideMenu/>}
+            <SideMenu/>
             {decor === "glass" && <Background />}
-
             <div className="page-content">
                 {decor === "default" && <Background />}
                 {children}

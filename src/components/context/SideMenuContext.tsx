@@ -13,8 +13,8 @@ interface SideMenuContextType {
     showJurnal:boolean,
     setShowJurnal:React.Dispatch<SetStateAction<boolean>>,
     returnSlide:() => void,
-    setNoEsc: React.Dispatch<SetStateAction<boolean>>,
-    noEsc:boolean
+    activeTab: string,
+    setActiveTab: React.Dispatch<SetStateAction<string>>
 }
 
 const SideMenuContext = createContext<SideMenuContextType | undefined>(undefined);
@@ -25,12 +25,16 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [ showHabitMenu, setShowHabitMenu ] = useState(false)
     const [ showSettings, setShowSettings ] = useState(false)
     const [ showJurnal, setShowJurnal ] = useState(false)
-    const [ noEsc, setNoEsc ] = useState(false)
+    const [ activeTab, setActiveTab ] = useState<string>("messages")
     const location = useLocation();
 
     useEffect(() => {
         setShowSideMenu(false);
     }, [location.pathname]);
+
+    useEffect(() => {
+        if (location.pathname.includes("/habit")) setActiveTab("habits")
+    }, [location.pathname])
 
     const returnSlide = () => {
         if (showJurnal) setShowJurnal(false)
@@ -39,7 +43,8 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <SideMenuContext.Provider value={{ showSideMenu, setShowSideMenu, red, setRed, showHabitMenu, setShowHabitMenu, showSettings, setShowSettings, showJurnal, setShowJurnal, returnSlide, setNoEsc, noEsc }}>
+        <SideMenuContext.Provider value={{ showSideMenu, setShowSideMenu, red, setRed, showHabitMenu, setShowHabitMenu, showSettings, setShowSettings, 
+        showJurnal, setShowJurnal, returnSlide, activeTab, setActiveTab }}>
             {children}
         </SideMenuContext.Provider>
     );

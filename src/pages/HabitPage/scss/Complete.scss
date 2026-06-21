@@ -11,10 +11,9 @@
     border-radius: 12px;
     @media (max-width:800px) {
         border-radius: 12px 12px 0 0;
-        height: fit-content;
         flex: auto;
         width: 100%;
-        min-height: 30vh;
+        height: 30vh;
     }
 }
 .completeDate {

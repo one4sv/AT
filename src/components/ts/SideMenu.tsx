@@ -12,7 +12,6 @@ import { useSettings } from "../hooks/SettingsHook.ts"
 import { useChat } from "../hooks/ChatHook.ts"
 import { useHabits } from "../hooks/HabitsHook.ts"
 import MinLoader from "./MinLoader.tsx"
-import { useLocation } from "react-router"
 import { isMobile } from "react-device-detect"
 import { GearIcon, SortAscending, UserIcon } from "@phosphor-icons/react"
 import { filterHabitsByOrder } from "./utils/filteredHabitsByOrder.tsx"
@@ -29,23 +28,28 @@ export default function SideMenu() {
     const { setTab, showArchived } = useSettings()
     const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
-    const { setShowSideMenu } = useSideMenu()
+    const { setShowSideMenu, setActiveTab, activeTab, showSideMenu } = useSideMenu()
 
     const API_URL = import.meta.env.VITE_API_URL
-    const location = useLocation()
     const navigate = useNavigate()
 
     const [filterType, setFilterType] = useState<"messages" | "habits">("messages")
     const [isFilterOpen, setIsFilterOpen] = useState(false)
 
     const [showList, setShowList] = useState(false)
-    const [activeTab, setActiveTab] = useState<string>("messages")
+
     const [showPlusMenu, setShowPlusMenu] = useState<boolean>(false)
     
     const [messagesFilters, setMessagesFilters] = useState<{label: string, value: string, new: string}[]>([])
     const [habitsFilters, setHabitsFilters] = useState<{label: string, value: string, new: string}[]>([])
     const [messageSelected, setMessageSelected] = useState<{label: string, value: string, new: string}>({ label: "Сообщения", value: "all", new: "0" })
     const [habitsSelected, setHabitsSelected] = useState<{label: string, value: string, new: string}>({label: "Активности", value: "all", new:"0"})
+    const [isDragging, setIsDragging] = useState(false);
+    const [translateX, setTranslateX] = useState(-100);
+
+    const startX = useRef(0);
+    const startTranslate = useRef(0);
+    const sideMenuRef = useRef<HTMLDivElement>(null);
 
     const tabsRef = useRef<HTMLDivElement>(null)
     const menuRef = useRef<HTMLDivElement>(null)
@@ -62,10 +66,6 @@ export default function SideMenu() {
     useEffect(() => {
         refreshSchedules()
     }, [])
-    
-    useEffect(() => {
-        if (location.pathname.includes("/habit")) setActiveTab("habits")
-    }, [location.pathname])
 
     useEffect(() => {
         const filters: {label: string, value: string, new: string}[] = []
@@ -251,24 +251,64 @@ export default function SideMenu() {
         }
     }, [])
 
-    const touchStartX = useRef(0);
-
-    const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-        touchStartX.current = e.touches[0].clientX;
+    const closeMenu = () => {
+        setTranslateX(-100);
+        setTimeout(() => {
+            setShowSideMenu(false);
+            setTranslateX(-100);
+        }, 280);
     };
 
-    const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
-        const deltaX = touchStartX.current - e.changedTouches[0].clientX;
+    const handleTouchStart = (e: React.TouchEvent) => {
+        startX.current = e.touches[0].clientX;
+        setIsDragging(true);
+    };
 
-        if (deltaX > 50) {
-            setShowSideMenu(false);
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (!isDragging) return;
+
+        const clientX = e.touches[0].clientX;
+        const diff = clientX - startX.current;
+
+        let newTranslate = startTranslate.current + diff * 0.5
+        newTranslate = Math.max(-100, Math.min(0, newTranslate));
+
+        setTranslateX(newTranslate);
+    };
+
+    const handleTouchEnd = () => {
+        if (!isDragging) return;
+        setIsDragging(false);
+
+        const threshold = -40;
+
+        if (translateX < threshold) {
+            closeMenu();
+        } else {
+            setTranslateX(0);
         }
     };
+
+    useEffect(() => {
+        if (showSideMenu) {
+            setTranslateX(0);
+        } else {
+            setTranslateX(-100);
+        }
+    }, [showSideMenu]);
 
     if (!isAuthenticated && !loadingUser) return <SideMenuUnAunthificated/>
 
     return (
-        <div className={`sideMenu ${isMobile ? "mobileSM" : ""}`} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+        <div className={`sideMenu ${isMobile ? "mobileSM" : ""} ${showSideMenu ? "open" : ""}`} 
+            ref={sideMenuRef}
+            onTouchStart={isMobile ? handleTouchStart : undefined}
+            onTouchMove={isMobile ? handleTouchMove : undefined}
+            onTouchEnd={isMobile ? handleTouchEnd : undefined} style={{
+                transform: isMobile ? `translateX(${translateX}%)` : "none",
+                transition: isDragging ? "none" : "transform 0.4s ease"
+            }}
+        >
             <div className="SMsearchDiv">
                 <div className="SMmenuWrapper">
                     <div
