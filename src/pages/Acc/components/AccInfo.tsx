@@ -49,7 +49,7 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
                 style={{
                     maxHeight: `${500 * (1 - collapsed)}px`,
                     opacity: 1 - collapsed,
-                    marginTop: `${(1 - collapsed)}vh`,
+                    marginTop: `${(0 - collapsed)}vh`,
                     paddingTop: `${0.5 * (1 - collapsed)}vh`,
                     paddingBottom: `${0.5 * (1 - collapsed)}vh`,
                 }}

@@ -332,7 +332,7 @@ export default function SideMenu() {
                                 setShowList(false)
                                 if (!isMobile) setTab("pers")
                                 else setTab("menu")
-                                setBlackout({ seted: true, module: "Settings" })
+                                navigate('/settings')
                                 setShowSideMenu(false)
                             }}
                         >

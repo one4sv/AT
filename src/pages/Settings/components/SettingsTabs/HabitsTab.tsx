@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-import { useSettings } from "../../hooks/SettingsHook";
-import { useUpSettings } from "../../hooks/UpdateSettingsHook";
-import { type TabProps } from "../../modules/Settings";
-import Toggler from "../Toggler";
+import { useSettings } from "../../../../components/hooks/SettingsHook";
+import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
+import Toggler from "../../../../components/ts/Toggler";
 import DatePicker from "react-datepicker";
-import { SpanMain } from "./SpanMain";
-export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handleAnimationEnd }: TabProps) {
+
+export default function HabitsTab() {
     const { orderHabits, showArchived, showArchivedInAcc, weekStart } = useSettings();
     const { setNewOrder, setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart } = useUpSettings();
 
@@ -67,58 +66,33 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
     };
 
     return (
-        <div className="tab" ref={tabRef}>
-            <SpanMain text="Активности"/>
-            {fadingOutSections.includes("habits") && (
-                <span
-                    className={`spanSave ${!isUpdating.includes("habits") ? "fade-out" : ""}`}
-                    onAnimationEnd={() => handleAnimationEnd("habits")}
-                >
-                    Сохранение...
-                </span>
-            )}
-            <div className="settingsTab">
-                <div className="persTabDivDouble">
-                    <div className="settingsOrder">
-                        <div className="settingSpan">
-                            Порядок отображения
-                        </div>
-                        <div className="orderShown">
-                            {displayOrder.map((type, index) => (
-                                <div
-                                    key={type}
-                                    className={`orderSetDiv 
-                                        ${draggingIndex === index ? "dragging" : ""} 
-                                        ${dragOverIndex === index ? "drag-over" : ""}`}
-                                    draggable
-                                    onDragStart={(e) => handleDragStart(e, index)}
-                                    onDragOver={(e) => handleDragOver(e, index)}
-                                    onDrop={(e) => handleDrop(e, index)}
-                                    onDragEnd={handleDragEnd}
-                                >
-                                    {getHabitLabel(type)}
-                                </div>
-                            ))}
-                        </div>
+        <div className="settingTab"> 
+            <div className="settingInnerDiv">
+                <div className="settingHeader">
+                    Архив
+                </div>
+                <div className="settingInnerList">
+                    <div className="settingTogglerDiv" onClick={() => setNewShowArchived(!showArchived)}>
+                        Архивные в боковом меню
+                        <Toggler state={showArchived}/>
                     </div>
-                    <div className="archiveSettings">
-                        <div className="settingSpan">
-                            Архив привычек
-                        </div>
-                        <div className="archiveSettingToggler">
-                            Показывать архивные в боковом меню
-                            <Toggler state={showArchived} funcToggle={setNewShowArchived}/>
-                        </div>
-                        <div className="archiveSettingToggler">
-                            Показывать архивные в моём профиле
-                            <Toggler state={showArchivedInAcc} funcToggle={setNewShowArchivedInAcc}/>
-                        </div>
+                    <div className="settingHint">
+                        Показывать архивированные активности в боковом меню
+                    </div>
+                    <div className="settingTogglerDiv" onClick={() => setNewShowArchivedInAcc(!showArchivedInAcc)}>
+                        Архивные в моём профиле
+                        <Toggler state={showArchivedInAcc}/>
+                    </div>
+                    <div className="settingHint">
+                        Показывать архивированные активности вместе активными другим пользователям в моём профиле (если активности скрыты, архивные также не будут отображаться)
                     </div>
                 </div>
+            </div>
+            <div className="settingInnerDiv">
+                <div className="settingHeader">
+                    Расписание
+                </div>
                 <div className="habitTabDiv">
-                    <div className="settingSpan">
-                        Расписание
-                    </div>
                     Ввести отчёт недель с
                     <DatePicker
                         className="habitTabDP"
@@ -132,6 +106,28 @@ export default function HabitsTab({ tabRef, isUpdating, fadingOutSections, handl
                             setNewWeekStart(formatted)
                         }}
                     />
+                </div>
+            </div>
+            <div className="settingInnerDiv">
+                <div className="settingHeader">
+                    Порядок отображения
+                </div>
+                <div className="orderShown">
+                    {displayOrder.map((type, index) => (
+                        <div
+                            key={type}
+                            className={`orderSetDiv 
+                                ${draggingIndex === index ? "dragging" : ""} 
+                                ${dragOverIndex === index ? "drag-over" : ""}`}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, index)}
+                            onDragOver={(e) => handleDragOver(e, index)}
+                            onDrop={(e) => handleDrop(e, index)}
+                            onDragEnd={handleDragEnd}
+                        >
+                            {getHabitLabel(type)}
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

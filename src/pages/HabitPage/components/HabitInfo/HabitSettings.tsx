@@ -11,7 +11,7 @@ import { useDelete } from "../../../../components/hooks/DeleteHook";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 
 function SettingHint({ text }: { text: string }) {
-    return <div className="settingHint">{text}</div>;
+    return <div className="habitSettingHint">{text}</div>;
 }
 
 export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitSlideProps) {
@@ -155,14 +155,14 @@ export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitS
                             {!isArchived ? (
                                 <>
                                     <span className="redHabitSpan but"> <BoxArrowDownIcon/> Завершить и архивировать</span>
-                                    <div className="settingHint">
+                                    <div className="habitSettingHint">
                                         Активность будет завершена и перемещена в архив. Статистика сохранится и будет доступна для просмотра, новые выполнения отмечать нельзя.
                                     </div>
                                 </>
                             ) : (
                                 <>
                                     <span className="redHabitSpan but"> <BoxArrowDownIcon/> Разархивировать</span>
-                                    <div className="settingHint">
+                                    <div className="habitSettingHint">
                                         Активность снова станет выполнимой и вернётся в список текущих.
                                     </div>
                                 </>
@@ -177,7 +177,7 @@ export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitS
                         <span className="redHabitSpan but"> 
                             <Trash/> Удалить
                         </span>
-                        <div className="settingHint">
+                        <div className="habitSettingHint">
                             Активность и вся связанная статистика будут удалены без возможности восстановления.
                         </div>
                     </div>

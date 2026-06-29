@@ -1,0 +1,26 @@
+@use "./global" as var;
+
+.radioGroup {
+    background-color: var(--bgc);
+    padding: 0.5vh 0.25vw;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vh;
+    border-radius: 12px;
+}
+.radiobutt {
+    display: flex;
+    align-items: center;
+    padding: 1vh 0.5vw;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--borderHabit);
+    gap: 5px;
+    &:hover {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
+    }
+    &.active {
+        color: var(--acsent);
+    }
+}

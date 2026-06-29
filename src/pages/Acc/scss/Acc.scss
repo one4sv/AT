@@ -26,6 +26,7 @@
     flex-direction: column;
     min-height: 0;
     position: relative;
+    margin-top: 1vh;
 }
 @media (max-width: 800px) {
     .acc {
@@ -36,7 +37,6 @@
     border-radius: 12px;
     display: flex;
     flex-direction: column;
-    margin-top: 1vh;
     position: relative;
     padding: 1vh 0.5vw;
     min-height: 0;

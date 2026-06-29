@@ -15,6 +15,7 @@ import Blackout from './components/ts/Blackout';
 import ThemeHandler from './components/hooks/themeHook';
 import ResponsiveLayout from './components/layout/ResponsiveLayout';
 import ContextMenu from './components/ts/ContextMenu';
+import Settings from './pages/Settings/Settings';
 
 
 function App() {
@@ -26,12 +27,12 @@ function App() {
         <Blackout />
         <ContextMenu/>
         <Routes>
+          <Route path="/sign" element={<Sign />} />
+          <Route path="/confirm" element={<Confirm />} />
           <Route path="/" element={<ResponsiveLayout />}>
-            <Route path="/sign" element={<Sign />} />
             {window.location.hostname === "localhost" && (
               <Route path="/admin" element={<Admin />} />
             )}
-            <Route path="/confirm" element={<Confirm />} />
             <Route index element={<Main />} />
             <Route path="habit" element={<HabitPage />} />
             <Route path="habit/:habitId" element={<HabitPage />} />
@@ -41,6 +42,7 @@ function App() {
             <Route path="room/:id" element={<Group />} />
             <Route path="join/:token" element={<Join />} />
             <Route path="acc" element={<Acc />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
       </AppProvider>

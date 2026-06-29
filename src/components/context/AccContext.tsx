@@ -1,4 +1,4 @@
-import { createContext, useCallback, useState, type Dispatch, type SetStateAction } from "react";
+import { createContext, useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { type ReactNode } from "react"
 import { api } from "../ts/api";
 import { useNote } from "../hooks/NoteHook";
@@ -93,6 +93,10 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
     }, [API_URL]);
 
     const loading = accLoading || postsLoading;
+
+    useEffect(() => {
+        setIsMyAcc(false)
+    }, [])
 
     return (
         <AccContext.Provider

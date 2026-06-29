@@ -1,16 +1,5 @@
-@use "../global" as var;
+@use "../../../scss/global" as var;
 
-.persTabDivDouble {
-    display: flex;
-    gap: 1vw;
-    height: fit-content;
-    max-height: 17vh;
-}
-.persDiv {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 2vh;
-}
 .themeChanger {
     display: flex;
     background-color: var(--bgc);
@@ -18,7 +7,7 @@
     border-radius: 8px;
 }
 .themeSelector {
-    font-size: 20px;
+    font-size: 16px;
     color: var(--tc);
     padding: 1vh 1vw;
     cursor: pointer;
@@ -34,7 +23,6 @@
 }
 .persSL {
     @include var.selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 0.8vh, 0.8vw, 5%);
-    margin-bottom: 2vh;
     >input {
         @include var.input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
         width: 20vw;
@@ -42,6 +30,7 @@
     }
 }
 .bgPicker {
+    padding: 0 0.5vw;
     display: flex;
     align-items: center;
     width: 100%;

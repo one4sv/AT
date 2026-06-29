@@ -1,0 +1,75 @@
+@use "../../../scss/global" as var;
+
+.seekBarWrapper {
+    background-color: var(--bgc);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    width: 100%;
+    padding: 2vh 0.5vw;
+    user-select: none;
+    // justify-content: center;
+    // align-items: center;
+}
+.seekBarValue {
+    color: var(--acsent);
+}
+.seekBarLine {
+    position: relative;
+    margin: 0 auto;
+    height: 4px;
+    background: var(--menuButtHover);
+    border-radius: 999px;
+    width: 96%;
+    cursor: pointer;
+}
+.seekBarFill {
+    position: absolute;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--acsent);
+}
+
+.seekBarDot {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--acsent);
+}
+
+.seekBarCurrent {
+    position: absolute;
+    top: calc(100% + 10px);
+    transform: translateX(-50%);
+    white-space: nowrap;
+    color: var(--acsent);
+    font-size: 14px;
+}
+
+.seekBarBottom {
+    display: flex;
+    justify-content: space-between;
+    color: var(--borderHabit);
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    >.currentValue {
+        color: var(--acsent);
+    }
+}
+.seekBarHoverValue {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    transform: translateX(-50%);
+    background: var(--mc);
+    color: var(--tc);
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    pointer-events: none;
+    white-space: nowrap;
+}

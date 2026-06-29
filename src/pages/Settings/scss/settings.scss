@@ -1,0 +1,250 @@
+@use "../../../scss/global" as var;
+@use "./pers.scss";
+@use "./habits.scss";
+@use "./security.scss";
+@use "./seekbar.scss";
+
+.settingsDiv {
+    width: 100%;
+    height: 95vh;
+    display:flex;
+    position: relative;
+    justify-content: center;
+    scrollbar-width: none;
+    top: 1vh;
+}
+.settingsSliderWrapper {
+    width: 50%;
+    overflow-x: hidden;
+    @media (max-width:800px) {
+        width: 98%;
+    }
+}
+
+.settingsSlider {
+    display: flex;
+    width: 200%;
+    height: 100%;
+    transition: transform .35s ease;
+}
+.settingsPage {
+    width: 50%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+.settingsButtsWrapper {
+    margin-top: 1vh;
+    width: 100%;
+    gap: 1vh;
+    display: flex;
+    flex-direction: column;
+}
+.settingButt {
+    background-color: var(--mc);
+    border-radius: 12px;
+    width: 100%;
+    padding: 1vh 0.65vw;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 1vh;
+    >span {
+        font-size: 18px;
+    }
+    &:hover {
+        background-color: var(--menuButtHover);
+        >.settingName {
+            color: var(--tc);
+            >svg {
+                color: var(--acsent);
+            }
+        }
+        >.settingDesc {
+            color: var(--borderWh);
+        }
+    }
+    @media (max-width:800px) {
+        padding: 1vh 2vw;
+    }
+}
+.settingName {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--msbd);
+    >svg {
+        color: var(--borderHabit);
+    }
+}
+.settingUserName {
+    font-size: 20px;
+}
+.settingUserNick {
+    font-size: 18px;
+    color: var(--acsent);
+}
+.settingAvatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--menuButtHover);
+
+    > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    > svg {
+        color: var(--borderHabit);
+    }
+}
+.settingDesc {
+    color: var(--borderHabit);
+}
+.settingBack {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: var(--mc);
+    border-radius: 12px;
+    height: 5vh;
+    padding: 1vh 0.5vw;
+    cursor: pointer;
+    color: var(--borderWh);
+    &:hover {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    }
+}
+.settingSearch {
+    background-color: var(--mc);
+    border-radius: 12px;
+    margin-bottom: 1vh;
+    padding: 1vh 0.5vw;
+    position: relative;
+    >svg {
+        position: absolute;
+        right: 0.75vw;
+        margin-top: 0.35vh;
+        color: var(--borderWh);
+    }
+    &:focus-within {
+        >svg {
+            color: var(--acsent)
+        }
+    }
+    @media (max-width:800px) {
+        padding: 1vh 2vw;
+        >svg {
+            right: 1.75vh;
+        }
+    }
+}
+.settingSearchInput {
+    @include var.input(var(--bgc), var(--tc), var(--borderWh), fit-content, 8px, var(--acsent));
+    width:100%;
+    padding: 0.4vh 0.25vw;
+}
+
+.settingTab {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    margin-top: 1vh;
+    padding-bottom: 2vh;
+}
+.settingHeader {
+    color: var(--acsent);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.settingInnerDiv {
+    background-color: var(--mc);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 1vh 0.75vw 1.3vh;
+    gap: 1vh;
+    @media (max-width:800px) {
+        padding: 1vh 2vw 1.3vh;
+    }
+}
+.settingSpan {
+    font-size: 16px;
+    margin-bottom: 1vh;
+    padding-inline-start: 0.5vw;
+    color: var(--tc);
+    @media (max-width:800px) {
+        padding-inline-start: 1vw;
+    }
+}
+.settingInnerList {
+    padding: 0.5vh 0.25vw;
+    background-color: var(--bgc);
+    border-radius: 12px;
+    gap: 0.5vh;
+    display: flex;
+    flex-direction: column;
+    @media (max-width:800px) {
+        padding: 0.5vh 1.25vw;
+    }
+}
+.settingTogglerDiv {
+    display: flex;
+    gap: 0.5vw;
+    height: 4vh;
+    justify-content: space-between;
+    flex: 1;
+    align-items: center;
+    padding: 1vh 0.5vw;
+    border-radius: 12px;
+    cursor: pointer;
+    @media (max-width:800px) {
+        padding: 1vh 2vw;
+    }
+    &:hover {
+        background-color: var(--menuButtHover);
+    }
+}
+.settingHint {
+    width: 100%;
+    padding-inline-start: 0.5vw;
+    color: var(--borderHabit);
+    &:hover {
+        color: var(--borderWh);
+    }
+}
+.settingSL {
+    @include var.selectList(100%, fit-content, fit-content, 0.3vw, 0.9vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 0.5vw, 5%);
+    &:focus-within {
+        >svg {
+            color: var(--acsent)
+        }
+    }
+    >input {
+        @include var.input(var(--mc), var(--tc), var(--tc), fit-content, 8px, var(--acsent));
+        width: 100%;
+        cursor: pointer;
+        padding: 1vh 0.5vw;
+    }
+    >div {
+        border: 1px solid var(--tc);
+    }
+}

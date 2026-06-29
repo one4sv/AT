@@ -1,0 +1,14 @@
+@use "../../../scss/global" as var;
+
+.safetyButt {
+    @include var.longButt(fit-content, fit-content, 0vh, 1vw, var(--acsent), var(--tc), var(--bgc), var(--darkerAcsent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 16px;
+    padding: 0.5vh 1vw;
+    &.inactive {
+        background-color: var(--borderHabit);
+    }
+}

@@ -45,14 +45,9 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         setTranslateX(-100)
     }, [location.pathname]);
 
-    // useEffect(() => {
-    //     if (dontHandle) {
-    //         console.log(dontHandle)
-    //         setShowSideMenu(false)
-    //         setIsDragging(false)
-    //         setTranslateX(-100)
-    //     }
-    // }, [dontHandle])
+    useEffect(() => {
+        setRed(false)
+    }, [])
 
     useEffect(() => {
         if (location.pathname.includes("/habit")) setActiveTab("habits")
