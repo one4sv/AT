@@ -8,6 +8,7 @@ import { initialChosenDays } from "../../../../components/ts/initialChosenDays";
 import { WarningCircle } from "@phosphor-icons/react";
 import { TagIcon } from "../../utils/TagIcon";
 import { dateToStrFormat } from "../../../../components/ts/utils/dateToStr";
+import { perHint } from "../../../../components/ts/utils/perHont";
 
 interface RedHabitProps {
     habit: Habit;
@@ -18,6 +19,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     const {
         setNewName, setNewDescription, setNewPeriodicity,
         setNewDays, setNewStartTime, setNewEndTime, setNewTag,
+        setNewCycleDaysActive, setNewCycleDaysRest
     } = useUpHabit();
 
     const [name, setName] = useState<string>("");
@@ -27,6 +29,8 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [periodicity, setPeriodicity] = useState<string>("");
+    const [cycle_days_active, setCycleDaysActive] = useState<string>("");
+    const [cycle_days_rest, setCycleDaysRest] = useState<string>("");
     const [ongoing, setOngoing] = useState<boolean>(false);
     const [selectedTag, setSelectedTag] = useState<string | undefined>();
     const [chosenDays, setChosenDays] = useState<{ value: number; label: string; chosen: boolean }[]>(initialChosenDays);
@@ -50,7 +54,10 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
         if (!endTime || endTime === habit.end_time) {
             setEndTime(habit.end_time ?? "");
         }
-
+        if (!periodicity || periodicity === habit.periodicity) {
+            setCycleDaysActive(String(habit.cycle_days_active ?? ""));
+            setCycleDaysRest(String(habit.cycle_days_rest ?? ""));
+        }
         if (Array.isArray(habit.chosen_days)) {
             setChosenDays(initialChosenDays.map(day => ({
                 ...day,
@@ -64,6 +71,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     const periodicityArr = [
         { label: "каждый день", value: "everyday" },
         { label: "несколько дней в неделю", value: "weekly" },
+        { label: "циклическая", value: "cycle"},
         { label: "иногда", value: "sometimes" },
     ];
 
@@ -164,7 +172,47 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     }}
                     selected={periodicity || habit.periodicity}
                 />
+                <div className="settingHint">
+                    {perHint[(periodicity || habit.periodicity) as keyof typeof perHint]}
+                </div>
             </div>
+            {(periodicity || habit.periodicity) === "cycle" && (
+                <div className="addHabitTimeWrapper">
+                    <div className="addHabitWrapper time">
+                        <label htmlFor="inputActive">Активных дней</label>
+                        <input
+                            type="number"
+                            id="inputActive"
+                            className="addHabitInput"
+                            pattern="[1-9]\d*"
+                            min={1}
+                            max={365}
+                            onChange={(e) => {
+                                setCycleDaysActive(e.target.value)
+                                setNewCycleDaysActive(habit.id, Number(e.target.value))
+                            }}
+                            value={cycle_days_active || habit.cycle_days_active}
+                        />
+                    </div>
+
+                    <div className="addHabitWrapper time">
+                        <label htmlFor="inputRest">Дней отдыха</label>
+                        <input
+                            type="number"
+                            id="inputRest"
+                            className="addHabitInput"
+                            pattern="[1-9]\d*"
+                            min={1}
+                            max={365}
+                            onChange={(e) => {
+                                setCycleDaysRest(e.target.value)
+                                setNewCycleDaysRest(habit.id, Number(e.target.value))
+                            }}
+                            value={cycle_days_rest || habit.cycle_days_rest}
+                        />
+                    </div>
+                </div>
+            )}
             {(periodicity || habit.periodicity) === "weekly" && (
                 <DayChanger toggleDay={toggleDay} chosenDays={chosenDays} showOnly={readOnly || !ongoing} chosenArr={habit.chosen_days}/>
             )}

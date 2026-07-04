@@ -92,7 +92,6 @@
     flex-direction: column;
     background-color: var(--mc);
     border-left: 1px solid #1b1b1b;
-    padding-top: 1vh;
     height: 100vh;
     overflow: hidden;
     transition: right 0.3s ease;
@@ -123,10 +122,10 @@
     width: 50%;
     flex-shrink: 0;
     height: 95%;
+    padding: 2vh 2vw;
     position: relative;
-    overflow-y: auto;
     padding-bottom: 6vh;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 .habitMenuShowButt {
     position: absolute;
@@ -151,12 +150,13 @@
 .habitSaveDiv {
     position: absolute;
     width: 100%;
-    top: 80%;
+    top: 85%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: end;
     height: 12vh;
+    padding: 0 2vw;
     gap: 4px;
     @media (max-width: 800px) {
         top: 85%;
@@ -166,7 +166,7 @@
     color: var(--borderWh);
 }
 .habitSlideBack {
-    width: 84%;
+    width: 100%;
     font-size: 18px;
     display: flex;
     align-items: center;
@@ -180,7 +180,7 @@
 }
 .habitSave {
     bottom: 0;
-    width: 84%;
+    width: 100%;
     height: 4vh;
     background-color: var(--acsent);
     color: var(--tc);
@@ -204,7 +204,7 @@
     }
 }
 .habitInnerSlide {
-    width: 85%;
+    width: 100%;
     height: 100%;
     margin: 2vh auto;
     display: flex;

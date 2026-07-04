@@ -111,7 +111,7 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
                         display: acc?.bio || red ? "flex" : "none"
                     }}
                 >
-                    <label>Описание</label>
+                    <label>О себе</label>
                     <textarea
                         className="bioTA extraInfoInput"
                         value={(isMyAcc ? newBio : acc?.bio) ?? ""}

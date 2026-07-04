@@ -10,7 +10,7 @@
 }
 .habitWrapperIcon {
     display: flex;
-    width: 85%;
+    width: 100%;
     height: 6vh;
     >.addHabitWrapper {
         flex: 1;
@@ -64,7 +64,7 @@
     }
 }
 .inpWrapperRedHabit {
-    width: 85%;
+    width: 100%;
     color: var(--borderHabit);
     margin-bottom: 1vh;
     >label {
@@ -97,7 +97,8 @@
     justify-content: center;
 }
 .redHabitSL {
-    @include var.selectList(100%, 3vh, 9%, 0vw, 0.4vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 5%);
+    @include var.selectList(100%, 3vh, 9%, 0vw, 0.4vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 1%);
+    margin-bottom: 1vh;
     >input {
         @include var.input(var(--tr), var(--tc), var(--tr), 3vh, 0, var(--tr));
         border-bottom: 2px solid var(--borderHabit);

@@ -13,7 +13,7 @@ export interface Habit {
     start_date: string;
     end_date: string | "";
     ongoing: boolean;
-    periodicity: "everyday" | "weekly" | "sometimes";
+    periodicity: "everyday" | "weekly" | "sometimes" | "cycle";
     chosen_days: number[] | null;
     start_time:string | "";
     end_time:string | "";
@@ -23,6 +23,8 @@ export interface Habit {
     done?:boolean;
     user_id:string;
     habits_settings:HabitSettings;
+    cycle_days_active:number,
+    cycle_days_rest:number
 }
 interface HabitResponse {
     success: boolean;

@@ -11,6 +11,7 @@ import TagSelector from "../ts/TagSelector"
 import DayChanger from "../ts/DayChanger"
 import { initialChosenDays } from "../ts/initialChosenDays"
 import { isMobile } from "react-device-detect"
+import { perHint } from "../ts/utils/perHont";
 
 const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     const { refetchHabits } = useHabits()
@@ -21,16 +22,18 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     const [ name, setName ] = useState<string>("")
     const [ desc, setDescription ] = useState<string>("")
     const [ selectedperiodicity, setSelectedperiodicity ] = useState<string | number | undefined>()
-    const [startTime, setStartTime] = useState<string>("")
-    const [endTime, setEndTime] = useState<string>("") 
-    const [selectedTag, setSelectedTag] = useState<string | undefined>()
-
-    const [chosenDays, setChosenDays] = useState(initialChosenDays)
+    const [ startTime, setStartTime ] = useState<string>("")
+    const [ endTime, setEndTime ] = useState<string>("") 
+    const [ selectedTag, setSelectedTag ] = useState<string | undefined>()
+    const [ cycle_days_active, setCycleDaysActive ] = useState("");
+    const [ cycle_days_rest, setCycleDaysRest ] = useState("");
+    const [ chosenDays, setChosenDays ] = useState(initialChosenDays)
 
     const periodicityArr = [
         { label: "каждый день", value: "everyday" },
         { label: "несколько дней в неделю", value: "weekly" },
-        { label: "иногда", value: "sometimes" }
+        { label: "циклическая", value: "cycle"},
+        { label: "иногда", value: "sometimes" },
     ];
 
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -65,10 +68,12 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             endDate:null,
             now:true,
             periodicity: selectedperiodicity,
-            chosenDays:chosenValues ? chosenValues : null,
+            chosenDays:chosenValues.length ? chosenValues : null,
             start_time:startTime||null,
             end_time:endTime||null,
-            tag: selectedTag || null
+            tag: selectedTag || null,
+            cycle_days_active:Number(cycle_days_active) || null,
+            cycle_days_rest:Number(cycle_days_rest) || null,
         };
         if (!name || !selectedperiodicity || (selectedperiodicity === "weekly" && !chosenDays)) {
             showNotification("error", "Заполните все поля")
@@ -84,6 +89,12 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
         }
         if (!startTime && endTime) {
             showNotification("error", "Заполните время начала");
+            return;
+        }
+        if (
+            selectedperiodicity === "cycle" && (!cycle_days_active || !cycle_days_rest)
+        ) {
+            showNotification("error", "Укажите дни активности и отдыха");
             return;
         }
         try {
@@ -112,6 +123,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px"; // выставляем по контенту
         }
     }, [desc]);
+
     return (
         <div className={`addHabitDiv ${isMobile ? "mobile" : ""}`} ref={ref}>
             <div className="addHabitWrapper">
@@ -130,7 +142,41 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             <div className="inpWrapperAddHabit">
                 <label htmlFor="addHabitSL">Переодичность</label>
                 <SelectList id="addHabitSL" placeholder="" className="addHabitSL" chevron={true} arr={periodicityArr} hide={true} prop={setSelectedperiodicity} readOnly={true} extraFunction={clearInputPer} selected={undefined}/>
+                <div className="settingHint">
+                    {perHint[selectedperiodicity as keyof typeof perHint]}
+                </div>
             </div>
+            {selectedperiodicity === "cycle" && (
+                <div className="addHabitTimeWrapper">
+                    <div className="addHabitWrapper time">
+                        <label htmlFor="inputActive">Активных дней</label>
+                        <input
+                            type="number"
+                            id="inputActive"
+                            className="addHabitInput"
+                            pattern="[1-9]\d*"
+                            min={1}
+                            max={365}
+                            onChange={(e) => setCycleDaysActive(e.target.value)}
+                            value={cycle_days_active ?? undefined}
+                        />
+                    </div>
+
+                    <div className="addHabitWrapper time">
+                        <label htmlFor="inputRest">Дней отдыха</label>
+                        <input
+                            type="number"
+                            id="inputRest"
+                            className="addHabitInput"
+                            pattern="[1-9]\d*"
+                            min={1}
+                            max={365}
+                            onChange={(e) => setCycleDaysRest(e.target.value)}
+                            value={cycle_days_rest ?? undefined}
+                        />
+                    </div>
+                </div>
+            )}
             {selectedperiodicity === "weekly" && (
                 <DayChanger toggleDay={toggleDay} chosenDays={chosenDays}/>
             )}

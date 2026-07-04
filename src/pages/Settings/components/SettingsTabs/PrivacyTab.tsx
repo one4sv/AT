@@ -40,7 +40,7 @@ export default function PrivacyTab() {
                 </div>
 
                 <div className="privateSLWrapper">
-                    <div className="settingSpan">Кто видит ваши привычки</div>
+                    <div className="settingSpan">Кто видит ваши активности</div>
                     <RadioGroup list={privateArrFull} val={privateShow.habits} newVal={(value) => applyNewPrivate("habits", value || "nobody")}/>
                 </div>
 

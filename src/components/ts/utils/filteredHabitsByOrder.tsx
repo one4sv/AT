@@ -15,6 +15,7 @@ export const filterHabitsByOrder = (order: string, habits: Habit[], search: stri
         filtered = habits.filter(h => {
             if (h.periodicity === "sometimes" && !h.pinned) return true;
             if (h.periodicity === "weekly" && (!h.chosen_days || h.chosen_days.length === 0) && !h.pinned) return true;
+            if (h.periodicity === "cycle") return true;
             return false;
         });
     }
