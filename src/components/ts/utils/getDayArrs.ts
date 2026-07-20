@@ -7,6 +7,7 @@ interface DayArrays {
   skippedArr: Calendar[]
   willArr: Calendar[]
   nowArr: Calendar[]
+  plannedArr: Calendar[]
 }
 
 /**
@@ -48,6 +49,9 @@ export function getDayArrays(
   const completedArr = calendar.filter(
     c => c.date === dateStr && c.isDone && (id ? c.habitId === id : true)
   )
+  const plannedArr = calendar.filter(
+    c => c.date === dateStr && c.isPlanned && (id ? c.habitId === id : true)
+  )
 
   const skippedArr: Calendar[] = []
   const willArr: Calendar[] = []
@@ -63,7 +67,8 @@ export function getDayArrays(
 
     if (!match) return
     if (completedArr.some(c => Number(c.habitId) === h.id)) return
-
+    if (plannedArr.some(c => Number(c.habitId) === h.id)) return
+    
     const isPast = date < today
     const isFuture = date > today
     const isToday = date.getTime() === today.getTime()
@@ -128,5 +133,5 @@ export function getDayArrays(
     habits?.forEach(processHabit)
   }
 
-  return { completedArr, skippedArr, willArr, nowArr }
+  return { completedArr, skippedArr, willArr, nowArr, plannedArr }
 }

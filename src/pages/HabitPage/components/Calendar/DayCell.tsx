@@ -25,7 +25,7 @@ const DayCell = ({ habits, habit, day, month, year, type }: DayCellProps) => {
     const todayStr = todayStrFunc()
     const dateStr = dateToCalendarFormat(date);
 
-    const { completedArr, skippedArr, willArr, nowArr } = useMemo(
+    const { completedArr, skippedArr, willArr, nowArr, plannedArr } = useMemo(
         () => getDayArrays(dateStr, calendar, habits, id, habit),
         [dateStr, calendar, habits, habit, id]
     );
@@ -53,14 +53,16 @@ const DayCell = ({ habits, habit, day, month, year, type }: DayCellProps) => {
             <div className="calendarDots">
                 {completedArr.length > 0 && <div className="calendarDot comp"></div>}
                 {nowArr.length > 0 && <div className="calendarDot now"></div>}
-                {willArr.length > 0 && <div className="calendarDot will"></div>}
+                {(plannedArr.length > 0 || willArr.length > 0) && (
+                    <div className="calendarDot will"></div>
+                )}
                 {skippedArr.length > 0 && <div className="calendarDot skip"></div>}
             </div>
             {hovered && (
                 <HoverDay
                     completed={completedArr.length}
                     missed={skippedArr.length}
-                    planned={willArr.length}
+                    planned={willArr.length + plannedArr.length}
                     ongoing={nowArr.length}
                     targetRef={cellRef}
                     comment={comment}

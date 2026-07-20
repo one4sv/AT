@@ -20,7 +20,7 @@ export interface DoneContextType {
 }
 
 export const DoneProvider = ({ children }: { children: ReactNode }) => {
-    const { loadHabit, setIsDone, habit, habitTimer, setDayComment, setShowCounter, setShowTimer, setDoable } = useTheHabit();
+    const { loadHabit, setIsDone, habit, habitTimer, setDayComment, setShowCounter, setShowTimer, setDoable, setPlanable, setIsPlanned } = useTheHabit();
     const { fetchCalendarHabit, fetchCalendarUser, chosenDay, calendar, timers, counters } = useCalendar();
     const { refetchHabits, habits } = useHabits();
 
@@ -80,7 +80,9 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const { completedArr, skippedArr, willArr, nowArr } = useMemo(
+    
+
+    const { completedArr, skippedArr, willArr, nowArr, plannedArr } = useMemo(
         () => getDayArrays(chosenDay, calendar, habits, id, habit),
         [chosenDay, calendar, habits, habit, id]
     );
@@ -93,23 +95,36 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
         if (new Date(chosenDay) < new Date(habit.start_date)) {
             setIsDone(false);
             setDoable(false);
+            setPlanable(false)
             return;
         }
 
         if (completedArr.length > 0) {
             setIsDone(true);
             setDoable(true);
+            setPlanable(false);
+            setIsPlanned(false);
         } else if (skippedArr.length > 0) {
             setIsDone(false);
             setDoable(true);
+            setPlanable(false);
+            setIsPlanned(false);
         } else if (nowArr.length > 0) {
             setIsDone(false);
             setDoable(true);
+            setPlanable(false);
+            setIsPlanned(false);
         } else if (willArr.length > 0) {
             setIsDone(false);
             setDoable(false);
+            setPlanable(habit.periodicity === "sometimes");
+            setIsPlanned(plannedArr.length > 0 && habit.periodicity === "sometimes");
+        } else {
+            setIsDone(false);
+            setDoable(false);
+            setPlanable(false);
+            setIsPlanned(false);
         }
-
         setDayComment(comment || "");
 
         const needTimer = timers?.find((t) => dateToCalendarFormat(t.started_at) === chosenDay) || null;
@@ -123,6 +138,7 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
         skippedArr.length,
         willArr.length,
         nowArr.length,
+        plannedArr.length,
         habit,
         timers,
         counters,
@@ -131,6 +147,8 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
         setDayComment,
         setShowTimer,
         setShowCounter,
+        setPlanable,
+        setIsPlanned,
     ]);
 
     return (

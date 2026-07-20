@@ -14,7 +14,8 @@ export interface Calendar {
     comment?: string;
     isDone?: boolean;
     created_at?: Date;
-    ongoing: boolean
+    ongoing: boolean,   
+    isPlanned?:boolean,
 }
 
 export interface CalendarContextType {

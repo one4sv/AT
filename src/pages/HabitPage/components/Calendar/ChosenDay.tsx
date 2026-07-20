@@ -22,7 +22,8 @@ export default function ChosenDay() {
     const order = {
         everyday: 0,
         weekly: 1,
-        sometimes: 2
+        cycle: 2,
+        sometimes: 3
     }
     const day = chosenDay || todayStrFunc()
     const sortedHabits = habits?.slice().sort((a, b) => order[a.periodicity] - order[b.periodicity]) ?? null
@@ -98,6 +99,7 @@ export default function ChosenDay() {
                     {mappingHabits(nowArr, "now")}
                     {mappingHabits(willArr, "will")}
                     {mappingHabits(skippedArr, "skip")}
+                    {/* {mappingHabits(plannedArr, "will")} */}
                 </div>
             )}
             

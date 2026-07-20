@@ -24,12 +24,16 @@ export interface TheHabitContextType {
     habit: Habit | undefined;
     isReadOnly: boolean;
     isDone: boolean | null;
+    isPlanned: boolean | null;
     todayDone: boolean;
     setIsDone: Dispatch<SetStateAction<boolean | null>>;
+    setIsPlanned: Dispatch<SetStateAction<boolean | null>>;
     dayComment: string | null;
     setDayComment: Dispatch<SetStateAction<string | null>>;
     doable: boolean;
     setDoable: Dispatch<SetStateAction<boolean>>;
+    planable: boolean;
+    setPlanable: Dispatch<SetStateAction<boolean>>;
     habitSettings: HabitSettings;
     habitTimer: habitTimer | null;
     setHabitTimer: React.Dispatch<SetStateAction<habitTimer | null>>;
@@ -129,8 +133,10 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
     const [habit, setHabit] = useState<Habit | undefined>(undefined);
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [isDone, setIsDone] = useState<boolean | null>(null);
+    const [isPlanned, setIsPlanned] = useState<boolean | null>(null);
     const [todayDone, setTodayDone] = useState(false);
     const [doable, setDoable] = useState(true);
+    const [planable, setPlanable] = useState(false);
     const [dayComment, setDayComment] = useState<string | null>(null);
     const [habitTimer, setHabitTimer] = useState<habitTimer | null>(null);
     const [showTimer, setShowTimer] = useState<habitTimer | null>(null);
@@ -293,6 +299,8 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                 todayDone,
                 setDoable,
                 doable,
+                planable,
+                setPlanable,
                 habitSettings,
                 habitTimer,
                 setHabitTimer,
@@ -305,7 +313,9 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                 counterSettings,
                 parseTimer,
                 checklist,
-                pattern
+                pattern,
+                isPlanned,
+                setIsPlanned
             }}
         >
             {children}

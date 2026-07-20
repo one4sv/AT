@@ -53,6 +53,23 @@
             color: var(--tc);
         }
     }
+    &.planButt {
+        background-color: #fff;
+        color: #000;
+        &:hover {
+        box-shadow: 0 0 12px #fff, 0 0 24px #fff;
+        &.dbComp {
+            > svg {
+                color: #000;
+            }
+        }        
+        &.dbMark {
+            > svg {
+                color: #000;
+            }
+        }
+    }
+    }
     &:hover {
         box-shadow: 0 0 12px var(--acsent), 0 0 24px var(--acsent);
         &.dbComp {
