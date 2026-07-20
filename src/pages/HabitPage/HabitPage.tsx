@@ -195,13 +195,25 @@ export default function Habit() {
                                             height: isExpanded ? '92vh' : '77.5vh'
                                         }}
                                         onTouchStart={(e) => {
-                                            if (window.scrollY !== 0) return;
+                                            const container = mainRef.current;
+
+                                            if (!container) return;
+                                            if (container.scrollTop > 0) return;
 
                                             startY.current = e.touches[0].clientY;
                                             pulling.current = true;
                                         }}
                                         onTouchMove={(e) => {
-                                            if (!pulling.current || startY.current === null) return;
+                                            const container = mainRef.current;
+
+                                            if (
+                                                !pulling.current ||
+                                                startY.current === null ||
+                                                !container ||
+                                                container.scrollTop > 0
+                                            ) {
+                                                return;
+                                            }
 
                                             const delta = e.touches[0].clientY - startY.current;
 
@@ -211,8 +223,8 @@ export default function Habit() {
                                             }
 
                                             if (delta < -100 && isExpanded) {
-                                                pulling.current = false;
                                                 setIsExpanded(false);
+                                                pulling.current = false;
                                             }
                                         }}
                                         onTouchEnd={() => {
