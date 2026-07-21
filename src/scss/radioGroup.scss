@@ -16,6 +16,10 @@
     cursor: pointer;
     color: var(--borderHabit);
     gap: 5px;
+    &.emojiNetButt {
+        justify-content: center;
+        font-size: 20px;
+    }
     &:hover {
         background-color: var(--menuButtHover);
         color: var(--tc);

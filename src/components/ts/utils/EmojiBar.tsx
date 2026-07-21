@@ -1,6 +1,7 @@
 import { useEffect, useRef, type Dispatch, type RefObject, type SetStateAction } from "react";
 import { Emojies, EmojiesGroups } from "./emojies";
 import { isMobile } from "react-device-detect";
+
 interface emojiBarProps {
     taRef:RefObject<HTMLTextAreaElement | null>
     setText: Dispatch<SetStateAction<string>>;

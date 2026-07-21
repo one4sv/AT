@@ -137,3 +137,22 @@ export const Emojies: Emoji[] = [
   { pic: "🔔", group: "symbols" },
   { pic: "💤", group: "symbols" },
 ];
+
+export const reactionsArr = [
+  { label: "❤️", value: "Heart" },
+  { label: "👍", value: "Like" },
+  { label: "😂", value: "Laugh" },
+  { label: "😮", value: "Wow" },
+  { label: "🔥", value: "Fire" },
+  { label: "🎉", value: "Party" },
+  { label: "👏", value: "Clap" },
+  { label: "🙏", value: "Thanks" },
+  { label: "💯", value: "Hundred" },
+  { label: "👎", value: "Dislike" },
+  { label: "😭", value: "Cry" },
+  { label: "😡", value: "Angry" },
+  { label: "🤔", value: "Thinking" },
+  { label: "🥳", value: "Celebrate" },
+  { label: "🤯", value: "MindBlown" },
+  { label: "😍", value: "LoveEyes" },
+];

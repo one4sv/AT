@@ -11,6 +11,7 @@ import EmojiBar from "../../../components/ts/utils/EmojiBar"
 import { isMobile } from "react-device-detect"
 import { useDrop } from "../../../components/hooks/DropHook"
 import { useLocation } from "react-router-dom"
+import Twemoji from "react-twemoji"
 
 export default function PostWrite() {
     const { habits } = useHabits()
@@ -174,23 +175,25 @@ export default function PostWrite() {
                     })}
                 </div>
             )}
-            <textarea
-                value={text} 
-                className={`postWriteTA ${showPWbar || files.length > 0 ? "PWTAwFiles" : ""} ${isMobile ? "mobile" : ""}`} 
-                ref={textAreaRef} 
-                onChange={(e) => setText(e.target.value)} 
-                onFocus={()=>setShowPWbar(true)}
-                placeholder="Расскажите что-нибудь..."
-                onPaste={handlePaste}
-                id="postWriteTA"
-                onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();  // предотвращаем добавление новой строки
-                        handleSend();
-                    }
-                }}
-            >
-            </textarea>
+            
+                <textarea
+                    value={text} 
+                    className={`postWriteTA ${showPWbar || files.length > 0 ? "PWTAwFiles" : ""} ${isMobile ? "mobile" : ""}`} 
+                    ref={textAreaRef} 
+                    onChange={(e) => setText(e.target.value)} 
+                    onFocus={()=>setShowPWbar(true)}
+                    placeholder="Расскажите что-нибудь..."
+                    onPaste={handlePaste}
+                    id="postWriteTA"
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();  // предотвращаем добавление новой строки
+                            handleSend();
+                        }
+                    }}
+                >
+                </textarea>
+            
             <input
                 type="file"
                 multiple

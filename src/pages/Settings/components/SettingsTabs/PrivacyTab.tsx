@@ -28,7 +28,7 @@ export default function PrivacyTab() {
         <div className="settingTab">
             <div className="settingInnerDiv">
                 <div className="settingHeader">
-                    Чипинкос
+                    Информация об аккаунте
                 </div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan">Кто видит ваш номер телефона</div>
@@ -38,12 +38,15 @@ export default function PrivacyTab() {
                     <div className="settingSpan">Кто видит вашу электронную почту</div>
                     <RadioGroup list={privateArr} val={privateShow.mail} newVal={(value) => applyNewPrivate("mail", value || "nobody")}/>
                 </div>
-
+            </div>
+            <div className="settingInnerDiv">
+                <div className="settingHeader">
+                    Видимость контента
+                </div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan">Кто видит ваши активности</div>
                     <RadioGroup list={privateArrFull} val={privateShow.habits} newVal={(value) => applyNewPrivate("habits", value || "nobody")}/>
                 </div>
-
                 <div className="privateSLWrapper">
                     <div className="settingSpan">Кто видит ваши посты</div>
                     <RadioGroup list={privateArrFull} val={privateShow.posts} newVal={(value) => applyNewPrivate("posts", value || "nobody")}/>

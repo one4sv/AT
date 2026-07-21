@@ -1,5 +1,4 @@
-import { Heart, CheckCircle, ShareFat, PushPin } from "@phosphor-icons/react";
-import { reactionIcons } from "./ReactionsIcons"
+import { CheckCircle, ShareFat, PushPin } from "@phosphor-icons/react";
 import { useChat } from "../../../components/hooks/ChatHook";
 import React, { useState } from "react";
 import type { message } from "../../../components/context/ChatContext";
@@ -12,6 +11,9 @@ import { Check, CheckCheck } from "lucide-react";
 import { useNavigate } from "react-router";
 import AnswerMess from "./AnswerMess";
 import MessageFiles from "./MessageFiles";
+import { useSettings } from "../../../components/hooks/SettingsHook";
+import { reactionsArr } from "../../../components/ts/utils/emojies";
+
 
 type MessageComponentType = {
     highlightedId?: number | null,
@@ -25,9 +27,11 @@ type MessageComponentType = {
 }
 export default function Message ({ highlightedId, message:m, messageRefs, answer, scrollToMessage, showNames, redir_answer, cornerType } : MessageComponentType) {
     const { setReaction, chatWith } = useChat()
-    const { chosenMess, setChosenMess, isChose } = useMessages()
+    const { chosenMess, setChosenMess, isChose, setAnswer, setIsChose } = useMessages()
     const { user } = useUser()
     const { openMenu, menu } = useContextMenu()
+    const { emote, messdb } = useSettings()
+
     const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
 
     const navigate = useNavigate()
@@ -79,7 +83,16 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
             onDoubleClick={(e) => {
                 if (isChose) return;
                 e.preventDefault()
-                setReaction(m.id, "Heart")
+                if (messdb === "reaction") {
+                    setReaction(m.id, emote)
+                } else if (messdb === "answer") {
+                    setAnswer({id:m.id.toString(), sender:m.sender_name, text:m.content, previewText: m.content || (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : "Пересланное сообщение")})
+                } else if (messdb === "select") {
+                    setIsChose(true)
+                    if (!isChose) {
+                        setChosenMess((prev) => [...prev, { id:m.id, text:m.content}]);
+                    }
+                }
             }}
         >
             {isChose && (
@@ -102,9 +115,17 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                     </div>
                 }
                 {answer && scrollToMessage && (
-                    <AnswerMess answer={answer} scrollToMessage={scrollToMessage}/>
+                    
+                        <AnswerMess answer={answer} scrollToMessage={scrollToMessage}/>
+                    
                 )}
-                <div className={`messageText ${isMobile ? "mobile" : ""}`}><Linkify>{m.content}</Linkify></div>
+                <div className={`messageText ${isMobile ? "mobile" : ""}`}>
+                    <Linkify>
+                        
+                            {m.content}
+                        
+                    </Linkify>
+                </div>
                 {m.files && m.files.length > 0 && (
                     <MessageFiles files={m.files} m={m}/>
                 )}
@@ -139,7 +160,9 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                                     }, {} as Record<string, string[]>)
                                 ).map(([reaction, users]) => (
                                     <div key={reaction} className={`reactionItem ${isMy ? "myR" : "urR"}`}>
-                                        {reactionIcons[reaction]}
+                                        
+                                            {reactionsArr.find(r => r.value === reaction)?.label}
+                                        
                                         <div className="reactionUsers">
                                             {users.slice(0, 2).map((userId) => {
                                                 if (!chatWith) return null;
@@ -173,22 +196,22 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                         ))
                     }
                 </div>
-                {highlightedId === m.id && m.reactions && m.reactions.length === 0 ? (
+                {highlightedId === m.id && m.reactions && m.reactions.length === 0 ? 
+                    (
                         <div 
                             className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
                             style={{opacity: showReactionButt === m.id ? "1" : "0"}}
-                            onClick={() => setReaction(m.id, "Heart")}
+                            onClick={() => setReaction(m.id, emote)}
                         >
-                            <Heart weight="fill" />
+                            {reactionsArr.find(r => r.value === emote)?.label}
                         </div>
                     
-                    )
-                    : (!isMobile && showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && !isChose && (
+                    ) : ( !isMobile && showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && !isChose && (
                         <div 
                             className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
-                            onClick={() => setReaction(m.id, "Heart")}
+                            onClick={() => setReaction(m.id, emote)}
                         >
-                            <Heart weight="fill" />
+                            {reactionsArr.find(r => r.value === emote)?.label}
                         </div>
                     ))
                 }

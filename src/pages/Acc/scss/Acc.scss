@@ -38,7 +38,6 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    padding: 1vh 0.5vw;
     min-height: 0;
     background-color: var(--mc);
     backdrop-filter: blur(12px);
@@ -56,6 +55,7 @@
 
     @media (max-width: 800px) {
         margin: 1vh 2vw 0;
+        padding: 1vh 0.5vw;
     }
 }
 .accInfoMain {

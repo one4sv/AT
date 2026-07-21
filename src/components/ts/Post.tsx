@@ -20,6 +20,7 @@ import "../../scss/Post.scss"
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../hooks/ContextMenuHook";
 
+
 interface PostProps {
     post: PostType
     isMy: boolean
@@ -220,7 +221,11 @@ export default function Post({ post, isMy }: PostProps) {
                     ></textarea>
                 ) : (
                     <div className="PostText" style={{display:red ? "none" : "block"}} ref={divRef}>
-                        <Linkify>{newText || post.text}</Linkify>
+                        <Linkify>
+                            
+                                {newText || post.text}
+                            
+                        </Linkify>
                     </div>
                 )}
                 {post.habit && (

@@ -10,6 +10,8 @@ export type UpdateSettingsContextType = {
     setNewTheme: (val:string)=> void;
     setNewAcsent: (val:string)=> void;
     setNewBg: (val:string)=> void;
+    setNewMessdb: (val:string)=> void;
+    setNewEmote: (val:string)=> void;
     setNewDecor: (val:string)=> void;
     setBgUrl:(val:File) => void;
     setNewNote:(val:boolean) => void;
@@ -29,7 +31,7 @@ type UpdateQueueItem = {
 const UpdateSettingsContext = createContext<UpdateSettingsContextType | null>(null);
 
 export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchSettings, orderHabits, theme, acsent, bg, decor, showArchived, showArchivedInAcc, setTheme, setAcsent, setBg, setDecor } = useSettings();
+    const { refetchSettings, orderHabits, theme, acsent, bg, decor, showArchived, showArchivedInAcc, setTheme, setAcsent, setBg, setDecor, setMessdb, setEmote } = useSettings();
     const { refetchUser, user } = useUser();
     const { showNotification } = useNote();
     const API_URL = import.meta.env.VITE_API_URL
@@ -80,7 +82,15 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
     const setNewDecor = useCallback((val: string) => {
         setDecor(val);
-    }, [setDecor]);  
+    }, [setDecor]);    
+
+    const setNewEmote = useCallback((val: string) => {
+        setEmote(val);
+    }, [setDecor]);    
+
+    const setNewMessdb = useCallback((val: string) => {
+        setMessdb(val);
+    }, [setDecor]);
 
     const setNewNote = useCallback((val: boolean) => {
         setUpdateQueue((prev) => [
@@ -192,7 +202,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
     return (
         <UpdateSettingsContext.Provider
             value={{ setNewOrder, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote, 
-                setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart }}
+                setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart, setNewEmote, setNewMessdb }}
         >
             {children}
         </UpdateSettingsContext.Provider>

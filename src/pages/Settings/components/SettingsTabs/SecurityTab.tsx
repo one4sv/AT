@@ -33,7 +33,7 @@ export default function SecurityTab() {
             </div>
             <div className="settingInnerDiv">
                 <div className="settingHeader">
-                    Сменить пароля
+                    Смена пароля
                 </div>
             </div>
             <div className="settingInnerDiv">
