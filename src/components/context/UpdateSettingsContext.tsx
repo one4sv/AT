@@ -29,7 +29,7 @@ type UpdateQueueItem = {
 const UpdateSettingsContext = createContext<UpdateSettingsContextType | null>(null);
 
 export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchSettings, orderHabits, theme, acsent, bg, decor, showArchived, showArchivedInAcc } = useSettings();
+    const { refetchSettings, orderHabits, theme, acsent, bg, decor, showArchived, showArchivedInAcc, setTheme, setAcsent, setBg, setDecor } = useSettings();
     const { refetchUser, user } = useUser();
     const { showNotification } = useNote();
     const API_URL = import.meta.env.VITE_API_URL
@@ -67,23 +67,20 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
     }, []);
 
     const setNewTheme = useCallback((val: string) => {
-        setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "theme"), {setting:"theme", value:val}]);
-        setIsUpdating((prev) => [...new Set([...prev, "pers"])])
-    },[])
+        setTheme(val);
+    }, [setTheme]);
 
     const setNewAcsent = useCallback((val: string) => {
-        setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "acsent"), {setting:"acsent", value:val}]);
-        setIsUpdating((prev) => [...new Set([...prev, "pers"])])
-    },[])       
-    const setNewDecor = useCallback((val: string) => {
-        setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "decor"), {setting:"decor", value:val}]);
-        setIsUpdating((prev) => [...new Set([...prev, "pers"])])
-    },[])    
+        setAcsent(val);
+    }, [setAcsent]);
 
     const setNewBg = useCallback((val: string) => {
-        setUpdateQueue((prev) => [...prev.filter((item) => item.setting !== "bg"), {setting:"bg", value:val}]);
-        setIsUpdating((prev) => [...new Set([...prev, "pers"])])
-    },[])    
+        setBg(val);
+    }, [setBg]);
+
+    const setNewDecor = useCallback((val: string) => {
+        setDecor(val);
+    }, [setDecor]);  
 
     const setNewNote = useCallback((val: boolean) => {
         setUpdateQueue((prev) => [

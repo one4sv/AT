@@ -7,6 +7,9 @@
     align-items: center;
     width: 100%;
     padding-top: 2vh;
+    @media (max-width: 800px) {
+        padding: 2vh 5vw 0;
+    }
 }
 .habitWrapperIcon {
     display: flex;

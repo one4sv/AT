@@ -43,6 +43,9 @@
         bottom: -2vh;
         font-size: 16px;
         color: var(--borderWh);
+        @media (max-width: 800px) {
+            bottom: -2.5vh;
+        }
     }
     &.date {
         padding-inline-start: 0.25vw;
