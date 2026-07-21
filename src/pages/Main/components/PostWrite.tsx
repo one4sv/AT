@@ -11,7 +11,6 @@ import EmojiBar from "../../../components/ts/utils/EmojiBar"
 import { isMobile } from "react-device-detect"
 import { useDrop } from "../../../components/hooks/DropHook"
 import { useLocation } from "react-router-dom"
-import Twemoji from "react-twemoji"
 
 export default function PostWrite() {
     const { habits } = useHabits()
