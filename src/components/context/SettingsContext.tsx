@@ -78,7 +78,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ acsent, setAcsent ] = useLocalStorage(LOCAL_KEYS.acsent, "poison");
     const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "default");
     const [ decor, setDecor ] = useLocalStorage(LOCAL_KEYS.decor, "default");
-    const [ emote, setEmote ] = useLocalStorage(LOCAL_KEYS.emote, "❤️")
+    const [ emote, setEmote ] = useLocalStorage(LOCAL_KEYS.emote, "Heart")
     const [ messdb, setMessdb ] = useLocalStorage(LOCAL_KEYS.messdb, "reaction")
 
     const [ orderHabits, setOrderHabits ] = useState<string[  ] | null>(null);
