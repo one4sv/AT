@@ -166,20 +166,6 @@
     color: var(--notValid);
 }
 
-.greenButt, .whiteButt {
-    user-select: none;
-    font-size: 20px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1vh;
-    border-radius: 8px;
-    gap: 2px;
-    @media (max-width: 800px) {
-        width: 70vw;
-    }
-}
 .greenButt {
     @include var.longButt(15vw, 4vh, 2px, 4px, var(--acsent), var(--tc), var(--tr), var(--acsent));
     &:hover {
@@ -202,6 +188,20 @@
         &:hover {
             background-color: var(--menuButtHover);
         }
+    }
+}
+.greenButt, .whiteButt {
+    user-select: none;
+    font-size: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1vh;
+    border-radius: 8px;
+    gap: 2px;
+    @media (max-width: 800px) {
+        width: 70vw;
     }
 }
 
