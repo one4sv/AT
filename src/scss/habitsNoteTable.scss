@@ -1,0 +1,103 @@
+@use "./global.scss" as var;
+
+.habitsNoteTable {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 2px;
+    overflow-y: auto;
+    max-height: 50dvh;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable both-edges;
+}
+.habitNoteRow {
+    display: flex;
+    width: 100%;
+    padding: 0.5vh 0.5vw;
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    &:hover {
+        background-color: var(--menuButtHover);
+    }
+}
+.habitNoteMain {
+    position: relative;
+    display: flex;
+    width: 60%;
+    align-items: center;
+    gap: 10px;
+}
+.habitNoteName {
+    flex: 1;
+    min-width: 0;
+    max-width: 50%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.habitNoteTime {
+    flex: 1;
+    color: var(--borderWh);
+    white-space: nowrap;
+}
+.habitNoteMainIcon {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    >svg {
+        height: 100%;
+        width: 100%;
+    }
+}
+.habitNoteCounter {
+    display: flex;
+    align-items: center;
+    color: var(--borderWh);
+}
+.habitNoteIsShown {
+    display: flex;
+    margin-top: 3px;
+    align-items: center;
+    position: absolute;
+    right: 0.5vw;
+    >svg {
+        transition: transform .2s ease;
+    }
+}
+.habitNoteArray {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+        max-height .2s ease,
+        opacity .2s ease;
+
+    &.opened {
+        max-height: 300px;
+        opacity: 1;
+    }
+}
+.habitNoteTitle {
+    color: var(--borderWh);
+    padding-inline-start: 10px;
+    margin-top: 0.5vh;
+}
+.habitNoteArrayNote {
+    margin-top: 0.5vh;
+    display: flex;
+    justify-content: space-evenly;
+}
+.habitNoteArrayButton {
+    width: 22%;
+    text-align: center;
+    padding: 0.75vh 0;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--tr);
+    &:hover {
+        border: 1px solid var(--tc);
+        background-color: var(--menuButtHover);
+    }
+
+}

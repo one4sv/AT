@@ -14,7 +14,7 @@ import {
     UserIcon,
     VaultIcon,
 } from "@phosphor-icons/react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import AccSettingsTab from "./components/SettingsTabs/AccSettingsTab";
 import PersSettingsTab from "./components/SettingsTabs/PersSettingTab";
 import HabitsTab from "./components/SettingsTabs/HabitsTab";
@@ -36,12 +36,15 @@ export default function Settings() {
     const { user, isAuthenticated, loadingUser } = useUser();
     const { setIsMyAcc } = useAcc()
 
-    const [activeTab, setActiveTab] = useState<setting | null>(null);
-
+    const { tab } = useParams();
     const navigate = useNavigate();
-
+    
+    const [activeTab, setActiveTab] = useState<setting | null>(null);
+    
     useEffect(() => {
-        if (!user && !loadingUser) navigate("/sign");
+        if (!user.id && !loadingUser) { 
+            navigate("/sign");
+        }
     }, [isAuthenticated, loadingUser, navigate, user]);
 
     useEffect(() => {
@@ -64,7 +67,7 @@ export default function Settings() {
         },
         {
             name: "Активности",
-            tab: "habits",
+            tab: "activites",
             desc: "Порядок отображения активностей, архив и расписание недель",
             icon: SneakerMoveIcon,
         },
@@ -105,7 +108,7 @@ export default function Settings() {
         gen: <GeneralTab />,
         acc: <AccSettingsTab />,
         pers: <PersSettingsTab />,
-        habits: <HabitsTab />,
+        activites: <HabitsTab />,
         chats: <ChatsTab />,
         notes: <NotificationsTab />,
         safety: <SecurityTab />,
@@ -118,7 +121,7 @@ export default function Settings() {
                 <div
                     className="settingsSlider"
                     style={{
-                        transform: activeTab ? "translateX(-50%)" : "translateX(0)",
+                        transform: tab ? "translateX(-50%)" : "translateX(0)",
                     }}
                 >
                     <div className="settingsPage">
@@ -129,7 +132,8 @@ export default function Settings() {
                         <div
                             className="settingButt"
                             onClick={() => {
-                                setActiveTab(accTab);
+                                navigate(`/settings/${accTab}`);
+                                setActiveTab(accTab)
                             }}
                         >
                             <span className="settingName">
@@ -158,7 +162,10 @@ export default function Settings() {
                                 <div
                                     key={s.tab}
                                     className="settingButt"
-                                    onClick={() => setActiveTab(s)}
+                                    onClick={() => {
+                                        setActiveTab(s)
+                                        navigate(`/settings/${s.tab}`)
+                                    }}
                                 >
                                     <span className="settingName">
                                         <s.icon size={24} weight="fill" />
@@ -172,7 +179,10 @@ export default function Settings() {
                     <div className="settingsPage">
                         {activeTab && (
                             <>
-                                <div className="settingBack" onClick={() => setActiveTab(null)}>
+                                <div className="settingBack" onClick={() => {
+                                    navigate(`/settings`)
+                                    setActiveTab(null)
+                                }}>
                                 <CaretLeftIcon size={24} />
                                 <h2>{activeTab.name}</h2>
                                 </div>

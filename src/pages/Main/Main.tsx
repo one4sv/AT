@@ -12,15 +12,17 @@ import { usePageTitle } from "../../components/hooks/PageContextHook.tsx";
 import { useNavigate } from "react-router";
 
 export default function Feed() {
-    const { initialLoading, user } = useUser();
+    const { initialLoading, user, loadingUser, isAuthenticated } = useUser();
     const [ postLoading, setPostLoading ] = useState(true)
     const [ posts, setPosts ] = useState<PostType[]>([])
     const { setTitle } = usePageTitle()
     const navigate = useNavigate()
     
     useEffect(() => {
-        if (!user.id) navigate(`sign`)
-    }, [navigate, user.id])
+        if (!user.id && !loadingUser) { 
+            navigate("/sign");
+        }
+    }, [isAuthenticated, loadingUser, navigate, user]);
 
     useEffect(() => {
         setTitle("Посты")

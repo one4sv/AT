@@ -25,6 +25,8 @@ import { useHabits } from "../../components/hooks/HabitsHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
 import DoneButton from "./components/Habit/Complete/DoneButt";
 import SvgRain from "../../components/modules/components/SvgRain";
+import { BoxArrowDownIcon } from "@phosphor-icons/react";
+import { useUpHabit } from "../../components/hooks/UpdateHabitHook";
 
 export interface HabitSlideProps {
     id: number;
@@ -52,6 +54,7 @@ export default function Habit() {
     const { setTitle } = usePageTitle()
     const { mainRef } = useDiagrams()
     const { habits } = useHabits()
+    const { setNewOngoing } = useUpHabit()
 
     const [isExpanded, setIsExpanded] = useState(false);
     const startY = useRef<number | null>(null);
@@ -277,13 +280,21 @@ export default function Habit() {
                         {/* Слайд 1 */}
                         <div className="habitSlide">
                             <HabitInfo habit={habit} readOnly={isReadOnly}/>
-                            <HabitExtraButts
-                                habit={habit}
-                                readOnly={isReadOnly}
-                                id={Number(habitId)}
-                                setShowSettings={setShowSettings}
-                                setShowJurnal={setShowJurnal}
-                            />
+                            {!isReadOnly && (
+                                <HabitExtraButts
+                                    id={Number(habitId)}
+                                    setShowSettings={setShowSettings}
+                                    setShowJurnal={setShowJurnal}
+                                />
+                            )}
+                            {isMy && isArchived && (
+                                <div className="redHabitBlock but danger" onClick={() => isArchived !== undefined && setNewOngoing(habit.id, isArchived)}>
+                                    <span className="redHabitSpan but"><BoxArrowDownIcon/> Разархивировать</span>
+                                    <div className="habitSettingHint">
+                                        Активность снова станет выполнимой и вернётся в список текущих.
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Слайд 2 */}

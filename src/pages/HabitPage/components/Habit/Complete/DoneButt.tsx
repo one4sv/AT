@@ -1,4 +1,4 @@
-import { CalendarBlankIcon, CalendarDotIcon, CheckCircle, Circle } from "@phosphor-icons/react";
+import { CalendarBlankIcon, CalendarCheckIcon, CheckCircle, Circle } from "@phosphor-icons/react";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 import { useDone } from "../../../../../components/hooks/DoneHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
@@ -28,7 +28,7 @@ export default function DoneButton({ habitId }: DoneButtonProps) {
         className={`doneButt planButt ${displayDone ? "dbComp" : "dbMark"}`}
         onClick={() => markPlanWLoading(habitId, chosenDay)}
       >
-        {displayPlan ? <CalendarDotIcon /> : <CalendarBlankIcon />}
+        {displayPlan ? <CalendarCheckIcon /> : <CalendarBlankIcon />}
         {waitPlanAnswer ? <LoaderSmall /> : displayPlan ? "Запланировано" : "Запланировать"}
       </button>
     </div>

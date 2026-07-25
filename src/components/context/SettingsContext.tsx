@@ -24,7 +24,9 @@ export interface SettingsContextType {
     twoAuth: boolean | null;
     setTwoAuth: React.Dispatch<React.SetStateAction<boolean | null>>;
     note: boolean;
-    setNote: React.Dispatch<React.SetStateAction<boolean>>;
+    setNote: React.Dispatch<React.SetStateAction<boolean>>;    
+    habitsNote: boolean;
+    setHabitsNote: React.Dispatch<React.SetStateAction<boolean>>;
     messNote: boolean;
     setMessNote: React.Dispatch<React.SetStateAction<boolean>>;
     bgUrl: string;
@@ -67,7 +69,10 @@ const LOCAL_KEYS = {
     bg: "settings_bg",
     decor: "settings_decor",
     emote:"settings_emote",
-    messdb:"settings_messdb"
+    messdb:"settings_messdb",
+    note:"settings_note",
+    messnote:"settings_messnote",
+    habitsnote:"settings_habitsnote"
 };
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
@@ -80,12 +85,13 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ decor, setDecor ] = useLocalStorage(LOCAL_KEYS.decor, "default");
     const [ emote, setEmote ] = useLocalStorage(LOCAL_KEYS.emote, "Heart")
     const [ messdb, setMessdb ] = useLocalStorage(LOCAL_KEYS.messdb, "reaction")
+    const [ note, setNote ] = useLocalStorage(LOCAL_KEYS.note, true);
+    const [ messNote, setMessNote ] = useLocalStorage(LOCAL_KEYS.messnote, true);
+    const [ habitsNote, setHabitsNote ] = useLocalStorage(LOCAL_KEYS.habitsnote, true);
 
     const [ orderHabits, setOrderHabits ] = useState<string[  ] | null>(null);
     const [ bgUrl, setBgUrl ] = useState<string>("");
     const [ twoAuth, setTwoAuth ] = useState<boolean | null>(null);
-    const [ note, setNote ] = useState<boolean>(true);
-    const [ messNote, setMessNote ] = useState<boolean>(true);
     const [ privateShow, setPrivate ] = useState<PrivateSettings>({ number: "", mail: "", habits: "", posts: "" });
     const [ showArchived, setShowArchived ] = useState<boolean>(false);
     const [ showArchivedInAcc, setShowArchivedInAcc ] = useState<boolean>(false);
@@ -134,7 +140,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             showArchived, setShowArchived,
             showArchivedInAcc, setShowArchivedInAcc,
             weekStart, setWeekStart,
-            setEmote, emote, setMessdb, messdb
+            setEmote, emote, setMessdb, messdb,
+            habitsNote, setHabitsNote
         }}>
             {children}
         </SettingsContext.Provider>

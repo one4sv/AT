@@ -1,18 +1,14 @@
 import type { SetStateAction } from "react";
-import type { Habit } from "../../../../components/context/HabitsContext";
 import "../../scss/Goals.scss"
 import { CaretRightIcon, GearSix, NotebookIcon, Target } from "@phosphor-icons/react";
 import { UserRoundPlus } from "lucide-react";
 interface GoalsProps {
-    habit: Habit | undefined;
-    readOnly:boolean;
     id:number;
     setShowSettings: React.Dispatch<SetStateAction<boolean>>,
     setShowJurnal: React.Dispatch<SetStateAction<boolean>>
 }
 
-export default function HabitExtraButts ({habit, readOnly, setShowSettings, setShowJurnal}:GoalsProps) {
-    if (!habit || readOnly) return null
+export default function HabitExtraButts ({ setShowSettings, setShowJurnal}:GoalsProps) {
     return (
         <div className="habitPlusDiv">
             <div className="habitPlusButts">

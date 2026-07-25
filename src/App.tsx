@@ -1,7 +1,6 @@
 import './scss/App.scss';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppProvider } from './components/ts/AppProvider';
-import Sign from './pages/Sign';
 import Main from './pages/Main/Main';
 import Confirm from './pages/Confirm';
 import Chat from './pages/Chat/Chat';
@@ -15,7 +14,8 @@ import Blackout from './components/ts/Blackout';
 import ThemeHandler from './components/hooks/themeHook';
 import ResponsiveLayout from './components/layout/ResponsiveLayout';
 import ContextMenu from './components/ts/ContextMenu';
-import Settings from './pages/Settings/Settings';
+import Settings from './pages/Settings/Settings'; 
+import Landing from './pages/Landing/Landing';
 
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
         <Blackout />
         <ContextMenu/>
         <Routes>
-          <Route path="/sign" element={<Sign />} />
+          <Route path="/sign" element={<Landing />} />
           <Route path="/confirm" element={<Confirm />} />
           <Route path="/" element={<ResponsiveLayout />}>
             {window.location.hostname === "localhost" && (
@@ -42,7 +42,7 @@ function App() {
             <Route path="room/:id" element={<Group />} />
             <Route path="join/:token" element={<Join />} />
             <Route path="acc" element={<Acc />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="settings/:tab?" element={<Settings />} />
           </Route>
         </Routes>
       </AppProvider>

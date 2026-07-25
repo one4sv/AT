@@ -244,6 +244,9 @@
         color: var(--borderWh);
     }
 }
+.settingInactive {
+    color: var(--borderHabit) !important;
+}
 .settingSL {
     @include var.selectList(
         100%,
