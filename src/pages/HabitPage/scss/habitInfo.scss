@@ -80,7 +80,8 @@
         background-color: var(--mhl);
         > .completeDiv {
             > .chosenDayDate {
-                margin-bottom: 20.5dvh;
+                flex: 1;
+                align-items: self-start;
             }
         }
     }
