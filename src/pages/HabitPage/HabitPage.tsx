@@ -103,27 +103,29 @@ export default function Habit() {
         if (showHabitMenu || dontHandleOther) return;
         startX.current = e.touches[0].clientX;
         startTranslate.current = 100;
-        setDragging(true);
     };
 
     const handleContentTouchMove = (e: React.TouchEvent) => {
-        if (!dragging || showHabitMenu || dontHandleOther) return;
-        setDontHandle(true)
+        if (showHabitMenu || dontHandleOther) return;
 
         const diff = startX.current - e.touches[0].clientX;
 
-        if (diff < 0) return;
+        if (diff > 10) {
+            setDragging(true);
+            setDontHandle(true);
 
-        const translate =
-            100 - Math.min(100, (diff / window.innerWidth) * 100);
-
-        setMenuTranslate(translate);
+            const translate = 100 - Math.min(100, (diff / window.innerWidth) * 100);
+            setMenuTranslate(translate);
+        }
     };
 
     const handleContentTouchEnd = () => {
-        if (!dragging || showHabitMenu) return;
-        setDontHandle(false)
+        if (!dragging || showHabitMenu) {
+            setDragging(false);
+            return;
+        }
 
+        setDontHandle(false);
         setDragging(false);
 
         if (menuTranslate < 60) {

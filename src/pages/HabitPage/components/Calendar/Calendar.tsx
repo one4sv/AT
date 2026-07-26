@@ -187,7 +187,12 @@ export default function Calendar() {
     if (!slidesData) return null;
 
     return (
-        <div className={`calendarDiv ${isMobile ? "mobile" : ""}`}>
+        <div 
+            className={`calendarDiv ${isMobile ? "mobile" : ""}`}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
+        >
             <div className="calendarMain" ref={calendarRef}>
 
                 <div className="DateChanger">
