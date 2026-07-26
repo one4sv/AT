@@ -23,7 +23,7 @@
     }
 }
 .chosenDayDate {
-    padding: 0 0.5vw 0 1vw;
+    padding: 1vh 0.5vw 0 1vw;
     display: flex;
     height: 4vh;
     align-items: center;
@@ -31,11 +31,12 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     box-sizing: border-box;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
         background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-        margin 0.35s cubic-bezier(.4,0,.2,1);
+        margin 0.35s cubic-bezier(.4,0,.2,1),
+        flex-grow 0.3s ease;
     @media (max-width:800px) {
         padding-left: 3vw;
     }
