@@ -197,7 +197,7 @@ export default function Habit() {
                                     <div
                                         className={`mobileHabitLayout ${isExpanded ? "expanded" : ""}`}
                                         style={{
-                                            height: isExpanded ? '92vh' : '77.5vh'
+                                            height: isExpanded ? '98dvh' : '77.5vh'
                                         }}
                                         onTouchStart={(e) => {
                                             const container = mainRef.current;

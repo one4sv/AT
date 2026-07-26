@@ -67,9 +67,11 @@
     flex-direction: column;
     > .completeDiv {
         background-color: var(--tr);
+        height: fit-content;
     }
     > .dayCommentDiv {
         background-color: var(--tr);
+        margin-bottom: 1vh;
     }
     >.doneButtDiv {
         align-self: flex-end;
