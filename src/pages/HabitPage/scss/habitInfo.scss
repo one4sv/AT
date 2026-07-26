@@ -71,7 +71,7 @@
     }
     > .dayCommentDiv {
         background-color: var(--tr);
-        margin-bottom: 1vh;
+        margin-bottom: 1dvh;
     }
     >.doneButtDiv {
         align-self: flex-end;
@@ -80,7 +80,7 @@
         background-color: var(--mhl);
         > .completeDiv {
             > .chosenDayDate {
-                margin-bottom: 20.5vh;
+                margin-bottom: 20.5dvh;
             }
         }
     }
