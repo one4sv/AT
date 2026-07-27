@@ -12,8 +12,7 @@ export default function HabitSave ({readOnly, archived, id, isSlided}:HabitSaveT
     const { returnSlide } = useSideMenu()
     const hasUnsavedChanges = !!localChanges[id];
     const isThisUpdating = isUpdating.includes(`habit_${id}`);
-
-    if (readOnly || archived) return
+    console.log(readOnly, archived)
 
     return (
         <div className="habitSaveDiv">
@@ -25,15 +24,17 @@ export default function HabitSave ({readOnly, archived, id, isSlided}:HabitSaveT
             <div className="habitSlideBack" onClick={() => returnSlide()}>
                 {isSlided  ? <CaretLeftIcon size={24}/> : <XIcon size={24}/>} {isSlided ? 'Назад' : 'Закрыть'}
             </div>
-            <div
-                className={`habitSave ${isThisUpdating ? "saving" : ""}`}
-                onClick={async () => {
-                    if (readOnly || archived || !hasUnsavedChanges || isThisUpdating) return;
-                    await saveHabit(id);
-                }}
-            >
-                {isThisUpdating ? "Сохраняется..." : "Сохранить"}
-            </div>
+            {!readOnly && !archived && (
+                <div
+                    className={`habitSave ${isThisUpdating ? "saving" : ""}`}
+                    onClick={async () => {
+                        if (readOnly || archived || !hasUnsavedChanges || isThisUpdating) return;
+                        await saveHabit(id);
+                    }}
+                >
+                    {isThisUpdating ? "Сохраняется..." : "Сохранить"}
+                </div>
+            )}
         </div>
     )
 }

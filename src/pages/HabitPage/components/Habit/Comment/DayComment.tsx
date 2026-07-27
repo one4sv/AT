@@ -92,13 +92,15 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           </span>
           <div>
             <span>{comment.length}/200</span>
-            <button
-              className="saveCommentButton"
-              disabled={cantSave}
-              onClick={handleSave}
-            >
-              {waitComAnswer ? <LoaderSmall /> : "Сохранить"}
-            </button>
+            {waitComAnswer ? <LoaderSmall /> : (
+              <button
+                className="saveCommentButton"
+                disabled={cantSave}
+                onClick={handleSave}
+              >
+                Сохранить
+              </button>
+            )}
           </div>
         </div>
       </div>
