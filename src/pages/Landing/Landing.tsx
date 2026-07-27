@@ -8,10 +8,15 @@ import BodyMail from "./Components/BodyMail";
 import Loader from "../../components/ts/Loader";
 import RegistrationForm from "./Components/RegistrationForm";
 import AuthForm from "./Components/AuthForm";
+import { useSettings } from "../../components/hooks/SettingsHook";
+import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
+import { MoonStarsIcon, SunDimIcon } from "@phosphor-icons/react";
 
 export default function Landing() {
     const { loadingAuth, response } = useAuth();
     const { loadingUser, user } = useUser();
+    const { setNewTheme } = useUpSettings()
+    const { theme } = useSettings()
 
     const navigate = useNavigate();
     const [ body, setBody ] = useState<"sign" | "loading" | "mail">("sign")
@@ -20,19 +25,23 @@ export default function Landing() {
         reg: false,
         conf: false,
     });
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark =
+        theme === "dark" ||
+        (theme === "system" && systemDark);
 
     const formRef = useRef<HTMLDivElement>(null);
     const isTwoAuth = response.success === true && response.form === "auth" && response.two_auth
     const notTwoAuth = response.success === true && response.form === "auth" && !response.two_auth
-
+    const regSuccess = response.success === true && response.form === "reg"
+    
     useEffect(() => {
-        if (loadingAuth || loadingUser || notTwoAuth) setBody("loading")
-        else if (isTwoAuth && !loadingAuth) setBody("mail")
+        if (isTwoAuth && !loadingAuth || regSuccess) setBody("mail")
         else setBody("sign")
-    }, [isTwoAuth, loadingAuth, loadingUser, notTwoAuth])
+    }, [isTwoAuth, loadingAuth, regSuccess])
 
     const swipeForm = (targetForm: "auth" | "reg") => {
-        if (!formRef.current) return;
+        if (!formRef.current || loadingAuth || loadingUser || notTwoAuth) return;
 
         formRef.current.scrollTo({
             left: targetForm === "reg" ? formRef.current.clientWidth : 0,
@@ -68,6 +77,14 @@ export default function Landing() {
     
     return (
         <div className="landing">
+            <div className="changeSignTheme" onClick={()=>setNewTheme(isDark ? "light" : "dark")}>
+                    {isDark && (
+                        <MoonStarsIcon />
+                    )}            
+                    {!isDark && (
+                        <SunDimIcon  />
+                    )}
+                </div>
             <div className="landingDiv">
                 <div className="title">Achieve Together</div>
                 {selectBody()}

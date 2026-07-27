@@ -64,9 +64,15 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
+    @media (max-width:800px) {
+        padding-right: 1.5vw;
+    }
 }
 
 .notificationBody {
     font-size: 16px;
     padding: 0.5vh 0.35vw;
+    @media (max-width:800px) {
+        padding-left: 1.5vw;
+    }
 }

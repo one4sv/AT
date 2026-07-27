@@ -1,31 +1,14 @@
-import { MoonStarsIcon, SunDimIcon } from "@phosphor-icons/react";
-import { useSettings } from "../../../components/hooks/SettingsHook";
-import { useUpSettings } from "../../../components/hooks/UpdateSettingsHook";
-
-export default function LandingFooter() {
-    const { setNewTheme } = useUpSettings()
-    const { theme } = useSettings()
-    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark =
-        theme === "dark" ||
-        (theme === "system" && systemDark);
-        
+export default function LandingFooter() {        
     return (
         <div className="landingFooter">
             <div>Achieve Together © 2025</div>
             <div>
-                <a href="">О нас</a>
-                <a href="">Условия</a>
-                <a href="">Конфиденциальность</a>
+                <a href="">О one4sv studio</a>
+                <a href="">Пользовательское соглашение</a>
+                <a href="">Политика конфиденциальности</a>
+                <a href="/contacts">Контакты</a>
                 <span>Русский</span>
-                <div className="changeSignTheme" onClick={()=>setNewTheme(isDark ? "light" : "dark")}>
-                    {isDark && (
-                        <MoonStarsIcon />
-                    )}            
-                    {!isDark && (
-                        <SunDimIcon  />
-                    )}
-                </div>
+                
             </div>
         </div>
     )

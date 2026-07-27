@@ -16,7 +16,7 @@ import { isMobile } from "react-device-detect"
 import { GearIcon, SortAscending, UserIcon } from "@phosphor-icons/react"
 import { filterHabitsByOrder } from "./utils/filteredHabitsByOrder.tsx"
 import { useSchedule } from "../hooks/ScheduleHook.ts"
-import SideMenuUnAunthificated from "./sideMenuUnSideMenuUnAunthificated.tsx"
+import SideMenuUnAunthificated from "./SideMenuUnAunthificated.tsx"
 import { useSideMenu } from "../hooks/SideMenuHook.ts"
 
 export default function SideMenu() {

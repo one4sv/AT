@@ -1,34 +1,180 @@
 import { Eye, EyeOff } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../../components/hooks/AuthHook";
+import { CheckIcon, CheckSquareIcon, CircleNotchIcon, DotOutlineIcon, SquareIcon, XIcon } from "@phosphor-icons/react";
+import { LoaderSmall } from "../../../components/ts/LoaderSmall";
 
-export default function RegistrationForm({showPass, showedPass, swipeForm}:{showPass: (value: "auth" | "reg" | "conf") => void,showedPass:{auth:boolean, reg:boolean, conf:boolean}, swipeForm: (targetForm: "auth" | "reg") => void}) {
-    const { register } = useAuth()
+type validationResponse = {
+    valid: boolean;
+    error?: string;
+};
 
-    const [ nick, setNick ] = useState("");
-    const [ mail, setMail ] = useState("");
-    const [ pass, setPass ] = useState("");
-    const [ confPass, setConfPass ] = useState("");
-    const [ showRules, setShowRules ] = useState(false);
-    const [ isValidNick, setIsValidNick ] = useState(true);
-    const [ isValidMail, setIsValidMail ] = useState(true);
-    const [ isValidPass, setIsValidPass ] = useState(true);
-    const [ isValidConf, setIsValidConf ] = useState(true); 
-    
-    const regRef = useRef<HTMLInputElement>(null);
+export default function RegistrationForm({
+    showPass,
+    showedPass,
+    swipeForm,
+}: {
+    showPass: (value: "auth" | "reg" | "conf") => void;
+    showedPass: { auth: boolean; reg: boolean; conf: boolean };
+    swipeForm: (targetForm: "auth" | "reg") => void;
+}) {
+    const { register, response, setResponse, checkRegister, loadingAuth } = useAuth();
+
+    const [nick, setNick] = useState("");
+    const [mail, setMail] = useState("");
+    const [pass, setPass] = useState("");
+    const [confPass, setConfPass] = useState("");
+    const [isValidNick, setIsValidNick] = useState<validationResponse>({ valid: false });
+    const [isValidMail, setIsValidMail] = useState<validationResponse>({ valid: false });
+    const [isValidPass, setIsValidPass] = useState(false);
+    const [isValidConf, setIsValidConf] = useState(false);
+    const [acceptTerms, setAcceptTerms] = useState(false);
+    const [acceptPol, setAcceptPol] = useState(false);
+    const [loadingNick, setLoadingNick] = useState(false);
+    const [loadingMail, setLoadingMail] = useState(false);
+
+    const nickTimeout = useRef<number | undefined>(undefined);
+    const mailTimeout = useRef<number | undefined>(undefined);
+    const nickAbort = useRef<AbortController | null>(null);
+    const mailAbort = useRef<AbortController | null>(null);
+    const nickReqId = useRef(0);
+    const mailReqId = useRef(0);
+    const nickRef = useRef<HTMLInputElement>(null);
+    const mailRef = useRef<HTMLInputElement>(null);
+    const passRef = useRef<HTMLInputElement>(null);
     const confRef = useRef<HTMLInputElement>(null);
-    const hideTimeout = useRef<number | null>(null);
+    const termsRef = useRef<HTMLDivElement>(null);
+    const polRef = useRef<HTMLDivElement>(null);
+
+    const success = response.success;
+    const form = "form" in response && response.form === "reg" ? response.form : null;
+    const field = "field" in response ? response.field : null;
+    const error = "error" in response ? response.error : "";
+
+    const notPol = (success === false && form && field === "accepts") || field === "pol";
+    const notTerms = (success === false && form && field === "accepts") || field === "terms";
+    const wrongNick = success === false && form && field === "nick"
+    const wrongMail = success === false && form && field === "email"
+    const wrongPass = success === false && form && field === "pass"
+    const wrongConf = success === false && form && field === "confirm"
 
     const validateNick = (value: string) => {
+        clearTimeout(nickTimeout.current);
+        nickAbort.current?.abort();
+        nickAbort.current = null;
+        if (wrongNick) {
+            setResponse({ success: null });
+        }
         setNick(value);
-        setIsValidNick(value.trim().length >= 3);
+
+        if (!value.trim()) {
+            setIsValidNick({ valid: false, error: "" });
+            setLoadingNick(false);
+            return;
+        }
+
+        const regex = /^[A-Za-z0-9_]+$/;
+        const valid = regex.test(value);
+
+        if (!valid) {
+            setIsValidNick({ valid: false, error: "Недопустимые символы" });
+            setLoadingNick(false);
+            return;
+        }
+
+        if (value.trim().length < 4 || value.trim().length > 16) {
+            setIsValidNick({ valid: false, error: "От 4 до 16 символов" });
+            setLoadingNick(false);
+            return;
+        }
+
+        const currentReqId = ++nickReqId.current;
+
+        nickTimeout.current = window.setTimeout(async () => {
+            const controller = new AbortController();
+            nickAbort.current = controller;
+            setLoadingNick(true);
+            try {
+                const res = await checkRegister({ nick: value, signal:controller.signal});
+                if (currentReqId !== nickReqId.current) return;
+                if (!res.success) {
+                    setIsValidNick({ valid: false, error: "Этот ник уже занят" });
+                } else {
+                    setIsValidNick({ valid: true });
+                }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } catch (e: any) {
+                if (e?.name === "AbortError") return;
+                console.log(e);
+            } finally {
+                if (currentReqId === nickReqId.current) {
+                    setLoadingNick(false);
+                }
+            }
+        }, 500);
     };
+
     const validateMail = (value: string) => {
+        clearTimeout(mailTimeout.current);
+        mailAbort.current?.abort();
+        mailAbort.current = null;
+        if (wrongMail) {
+            setResponse({ success: null });
+        }
         setMail(value);
+
+        if (!value.trim()) {
+            setIsValidMail({ valid: false, error: "" });
+            setLoadingMail(false);
+            return;
+        }
+
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        setIsValidMail(regex.test(value));
+        const valid = regex.test(value);
+
+        if (!valid) {
+            setIsValidMail({ valid: false, error: "Введена неверная почта" });
+            setLoadingMail(false);
+            return;
+        }
+
+        const currentReqId = ++mailReqId.current;
+
+        mailTimeout.current = window.setTimeout(async () => {
+            const controller = new AbortController();
+            mailAbort.current = controller;
+
+            setLoadingMail(true);
+
+            try {
+                const res = await checkRegister({ mail: value, signal:controller.signal});
+
+                if (currentReqId !== mailReqId.current) return;
+
+                if (!res.success) {
+                    setIsValidMail({
+                        valid: false,
+                        error: "Данная почта принадлежит другому аккаунту",
+                    });
+                } else {
+                    setIsValidMail({ valid: true });
+                }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } catch (e: any) {
+                if (e?.name === "AbortError") return;
+                console.log(e);
+            } finally {
+                if (currentReqId === mailReqId.current) {
+                    setLoadingMail(false);
+                }
+            }
+        }, 500);
     };
+
     const validatePass = (value: string) => {
+        if (wrongPass) {
+            setResponse({ success: null });
+        }
         setPass(value);
         const lengthV = value.length >= 8 && value.length <= 30;
         const type = /^[A-Za-z\d]+$/.test(value);
@@ -36,61 +182,183 @@ export default function RegistrationForm({showPass, showedPass, swipeForm}:{show
         setIsValidPass(lengthV && type && min);
         setIsValidConf(value === confPass);
     };
+
     const validateConf = (value: string) => {
+        if (wrongConf) {
+            setResponse({ success: null });
+        }
         setConfPass(value);
         setIsValidConf(value === pass && value.length > 0);
     };
 
-    const handleFocus = () => {
-        if (hideTimeout.current) {
-        clearTimeout(hideTimeout.current);
-        hideTimeout.current = null;
+    const handleRegister = async () => {
+        if (loadingNick || loadingMail) return;
+        if (!isValidNick.valid) {
+            if (nick.trim() === "") {
+                setResponse({success:false, form:"reg", field:"nick", error:"Nickname не может быть пустым"})
+            } else setResponse({success:false, form:"reg", field:"nick", error:"Nickname неверно заполнен"})
+            return
+        } else if (!isValidMail.valid) {
+            if (mail.trim() === "") {
+                setResponse({success:false, form:"reg", field:"email", error:"Email не может быть пустым"})
+            } else setResponse({success:false, form:"reg", field:"email", error:"Email неверно заполнен"})
+            return
+        } else if (!isValidPass) {
+            if (pass.trim() === "") {
+                setResponse({success:false, form:"reg", field:"pass", error:"Пароль не может быть пустым"})
+            } else if (pass.length < 8 || pass.length > 30) {
+                setResponse({success:false, form:"reg", field:"pass", error:"length"})
+            } else if (/^[A-Za-z\d]+$/.test(pass) === false) {
+                setResponse({success:false, form:"reg", field:"pass", error:"regex"})
+            } else if (/[A-Za-z]/.test(pass) === false || /\d/.test(pass) === false) {
+                setResponse({success:false, form:"reg", field:"pass", error:"symbols"})
+            }
+            return
+        } else if (!isValidConf) {
+            if (confPass.trim() === "") {
+                setResponse({success:false, form:"reg", field:"confirm", error:"Необходимо повторить пароль"})
+            } else setResponse({success:false, form:"reg", field:"confirm", error:"Пароли не совпадают"})
+            return
         }
-        setShowRules(true);
-    };
-    const handleBlur = () => {
-        hideTimeout.current = window.setTimeout(() => {
-        setShowRules(false);
-        hideTimeout.current = null;
-        }, 200);
+        if (!acceptPol && acceptTerms) {
+            setResponse({ success: false, form: "reg", field: "pol", error: "unaccepted" });
+            return;
+        } else if (!acceptTerms && acceptPol) {
+            setResponse({ success: false, form: "reg", field: "terms", error: "unaccepted" });
+            return;
+        } else if (!acceptPol && !acceptTerms) {
+            setResponse({ success: false, form: "reg", field: "accepts", error: "unaccepted" });
+            return;
+        }
+        await register({ mail, pass, nick });
     };
 
-    const handleRegister = async () => {
-        if (isValidNick && isValidMail && isValidPass && isValidConf) {
-        await register({ mail, pass, nick });
+    useEffect(() => {
+        if (acceptPol && notPol) {
+            if (field === "pol") {
+                setResponse({ success: null });
+            } else if (field === "accepts") {
+                setResponse({ success: false, form: "reg", field: "terms", error: "unaccepted" });
+            }
         }
-    };
+        if (acceptTerms && notTerms) {
+            if (field === "terms") {
+                setResponse({ success: null });
+            } else if (field === "accepts") {
+                setResponse({ success: false, form: "reg", field: "pol", error: "unaccepted" });
+            }
+        }
+    }, [acceptPol, acceptTerms, field, notPol, notTerms]);
+
+    useEffect(() => {
+        return () => {
+            clearTimeout(nickTimeout.current);
+            clearTimeout(mailTimeout.current);
+            nickAbort.current?.abort();
+            mailAbort.current?.abort();
+        };
+    }, []);
+
+    useEffect(() => {
+        if (success !== false || form !== "reg") return;
+
+        switch (field) {
+            case "nick":
+                nickRef.current?.focus();
+                nickRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                break;
+
+            case "email":
+                mailRef.current?.focus();
+                mailRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                break;
+
+            case "pass":
+                passRef.current?.focus();
+                passRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                break;
+
+            case "confirm":
+                confRef.current?.focus();
+                confRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                break;
+            case "terms":
+                termsRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                break;
+            case "pol":
+                polRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                break;
+            case "accepts":
+                termsRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                break;
+        }
+    }, [success, form, field]);
+
     return (
-        <div
-            className="landingForm"
-        >
+        <div className="landingForm">
             <input
                 type="text"
-                className={`landingInput ${!isValidNick ? "inputNotValid" : ""}`}
-                placeholder="Nickname:"
+                className={`landingInput ${wrongNick ? "invalid" : ""}`}
+                placeholder={wrongNick ? error : "Nickname:"}
                 required
-                onInput={(e) => validateNick(e.currentTarget.value)}
+                minLength={4}
+                maxLength={16}
+                ref={nickRef}
+                onChange={(e) => validateNick(e.currentTarget.value)}
             />
+            {nick.trim() !== "" &&
+                (loadingNick ? (
+                    <span className="inpExtraSpan loading">
+                        <CircleNotchIcon weight="bold" />
+                        Проверяем ник
+                    </span>
+                ) : !isValidNick.valid ? (
+                    <span className="inpExtraSpan invalid">
+                        <XIcon weight="bold" />
+                        {isValidNick.error}
+                    </span>
+                ) : (
+                    <span className="inpExtraSpan valid">
+                        <CheckIcon weight="bold" />
+                        Ник доступен
+                    </span>
+                ))}
+
             <input
-                type="text"
-                className={`landingInput ${!isValidMail ? "inputNotValid" : ""}`}
-                placeholder="Email:"
+                type="email"
+                className={`landingInput ${wrongMail ? "invalid" : ""}`}
+                placeholder={wrongMail ? error : "Email:"}
                 required
-                onInput={(e) => validateMail(e.currentTarget.value)}
+                ref={mailRef}
+                onChange={(e) => validateMail(e.currentTarget.value)}
             />
+            {mail.trim() !== "" &&
+                (loadingMail ? (
+                    <span className="inpExtraSpan loading">
+                        <CircleNotchIcon weight="bold" />
+                        Проверяем email
+                    </span>
+                ) : !isValidMail.valid ? (
+                    <span className="inpExtraSpan invalid">
+                        <XIcon weight="bold" />
+                        {isValidMail.error}
+                    </span>
+                ) : (
+                    <span className="inpExtraSpan valid">
+                        <CheckIcon weight="bold" />
+                        Пришлём электронное письмо
+                    </span>
+                ))}
+
             <div
-                className={`passWrap ${showRules ? "showRules" : ""}`}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
+                className="passWrap"
             >
                 <input
                     type={showedPass.reg ? "text" : "password"}
-                    className={`landingInput landingInputPass ${!isValidPass ? "inputNotValid" : ""}`}
-                    placeholder="Пароль:"
-                    ref={regRef}
+                    className={`landingInput landingInputPass ${wrongPass ? "invalid" : ""}`}
+                    placeholder={wrongPass ? error : "Пароль:"}
                     required
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
+                    ref={passRef}
                     onChange={(e) => validatePass(e.target.value)}
                 />
                 {showedPass.reg ? (
@@ -98,19 +366,46 @@ export default function RegistrationForm({showPass, showedPass, swipeForm}:{show
                 ) : (
                     <EyeOff onClick={() => showPass("reg")} onMouseDown={(e) => e.preventDefault()} />
                 )}
-                <ul className={`passRules ${showRules ? "active" : ""}`}>
-                    <li style={{ color: pass.length >= 8 && pass.length <= 30 ? "#14b314" : "#a1a1a1" }}>От 8 до 30 символов</li>
-                    <li style={{ color: /^[A-Za-z\d]+$/.test(pass) ? "#14b314" : "#a1a1a1" }}>Цифры и буквы латинского алфавита</li>
-                    <li style={{ color: /[A-Za-z]/.test(pass) && /\d/.test(pass) ? "#14b314" : "#a1a1a1" }}>Минимум 1 цифра и буква</li>
-                </ul>
+            </div>
+            <div className="passRules">
+                <span className={`${pass.length >= 8 && pass.length <= 30 ? "valid" : ""} ${wrongPass && field === "pass" && error === "length" ? "invalid" : ""}`}>
+                    {pass.length >= 8 && pass.length <= 30 ? (
+                        <CheckIcon weight="bold" />
+                    ) : wrongPass && field === "pass" && error === "length" ? (
+                        <XIcon weight="bold" />
+                    ) : (
+                        <DotOutlineIcon weight="fill" />
+                    )}
+                    От 8 до 30 символов
+                </span>
+                <span className={`${/^[A-Za-z\d]+$/.test(pass) ? "valid" : ""} ${wrongPass && field === "pass" && error === "regex" ? "invalid" : ""}`}>
+                    {/^[A-Za-z\d]+$/.test(pass) ? (
+                        <CheckIcon weight="bold" />
+                    ) : wrongPass && field === "pass" && error === "regex" ? (
+                        <XIcon weight="bold" />
+                    ) : (
+                        <DotOutlineIcon weight="fill" />
+                    )}
+                    Цифры и буквы латинского алфавита
+                </span>
+                <span className={`${/[A-Za-z]/.test(pass) && /\d/.test(pass) ? "valid" : ""} ${wrongPass && field === "pass" && error === "symbols" ? "invalid" : ""}`}>
+                    {/[A-Za-z]/.test(pass) && /\d/.test(pass) ? (
+                        <CheckIcon weight="bold" />
+                    ) : wrongPass && field === "pass" && error === "symbols" ? (
+                        <XIcon weight="bold" />
+                    ) : (
+                        <DotOutlineIcon weight="fill" />
+                    )}
+                    Минимум 1 цифра и буква
+                </span>
             </div>
             <div className="passWrap">
                 <input
                     type={showedPass.conf ? "text" : "password"}
-                    className={`landingInput landingInputPass ${!isValidConf ? "inputNotValid" : ""}`}
-                    placeholder="Повторите пароль:"
-                    ref={confRef}
+                    className={`landingInput landingInputPass ${wrongConf ? "invalid" : ""}`}
+                    placeholder={wrongConf ? error : "Повторите пароль:"}
                     required
+                    ref={confRef}
                     onChange={(e) => validateConf(e.target.value)}
                 />
                 {showedPass.conf ? (
@@ -119,10 +414,51 @@ export default function RegistrationForm({showPass, showedPass, swipeForm}:{show
                     <EyeOff onClick={() => showPass("conf")} />
                 )}
             </div>
-            <div className="landingButts">
-                <button type="submit" className="greenButt" onClick={()=>handleRegister()}>Создать аккаунт</button>
+
+            <div
+                className={`checkString ${notTerms && "notAccepted"}`}
+                onClick={() => setAcceptTerms(!acceptTerms)}
+                ref={termsRef}
+            >
+                {acceptTerms ? <CheckSquareIcon weight="fill" /> : <SquareIcon />}
+                я принимаю
+                <span
+                    className="acceptSpan"
+                    onClick={(e) => {
+                        e.preventDefault();
+                    }}
+                >
+                    Пользовательское соглашение
+                </span>
             </div>
-            <button type="button" onClick={() => swipeForm("auth")}>Войти в аккаунт</button>
+
+            <div
+                className={`checkString ${notPol && "notAccepted"}`}
+                onClick={() => setAcceptPol(!acceptPol)}
+                ref={polRef}
+            >
+                {acceptPol ? <CheckSquareIcon weight="fill" /> : <SquareIcon />}
+                я принимаю
+                <span
+                    className="acceptSpan"
+                    onClick={(e) => {
+                        e.preventDefault();
+                    }}
+                >
+                    Политику конфиденциальности
+                </span>
+            </div>
+
+            <div className="landingButts">
+            {loadingAuth
+                ? <LoaderSmall/>
+                : <button type="submit" className="greenButt" onClick={() => handleRegister()}>Создать аккаунт</button>
+            }
+                
+            </div>
+            <button type="button" onClick={() => swipeForm("auth")}>
+                Войти в аккаунт
+            </button>
         </div>
-    )
+    );
 }

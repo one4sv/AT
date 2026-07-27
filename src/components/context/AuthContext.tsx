@@ -20,7 +20,12 @@ type ResponseType =
         success: false;
         form: "auth" | "reg";
         error: string;
-        field: "login" | "pass" | "confirm" | "email" | "all";
+        field: "login" | "pass" | "all";
+    } | {        
+        success: false;
+        form: "reg";
+        error: string;
+        field: "nick" | "pass" | "confirm" | "email" | "all" | "terms" | "pol" | "accepts";
     } | {
         success:null
     }
@@ -28,9 +33,12 @@ type ResponseType =
 export interface AuthContextType {
     register: (data: { mail: string; pass: string; nick: string }) => Promise<void>;
     auth: (data: { pass: string, login:string }) => Promise<void>;
+    checkRegister: (data: { nick?: string, mail?: string, signal?:AbortSignal  }) => Promise<{
+        success: boolean;
+    }>;
     loadingAuth: boolean;
     response: ResponseType;
-    setResponse:Dispatch<React.SetStateAction<ResponseType>>
+    setResponse:Dispatch<React.SetStateAction<ResponseType>>;
 }
 
 export const AuthProvider = ({ children }: { children : ReactNode }) => {
@@ -72,14 +80,6 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
     };
 
     const auth = async({ login, pass }: { login:string, pass:string }) => {
-        if (login.trim() === "") {
-            setResponse({success:false, error:"Поле не может быть пустым", field:"login", form:"auth"})
-            return
-        }        
-        if (pass.trim() === "") {
-            setResponse({success:false, error:"Поле не может быть пустым", field:"pass", form:"auth"})
-            return
-        }
         setLoadingAuth(true);
         try {
             const res = await axios.post(
@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
                 }
             } else {
                 showNotification('error', res.data.error);;
-                setResponse({success:false, form:"auth", error:"Неверные данные для входа", field:"all"})
+                setResponse({success:false, form:"auth", error:res.data.error, field:"all"})
             }  
             console.log(res.data)
         } catch (error) {
@@ -115,8 +115,33 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
             setLoadingAuth(false);
         }
     };
+
+    const checkRegister = async ({
+        nick,
+        mail,
+        signal
+    }: {
+        nick?: string;
+        mail?: string;
+        signal?: AbortSignal
+    }) => {
+        try {
+            const res = await axios.post(
+                `${API_URL}register/check`,
+                { nick, mail, signal },
+                {
+                    withCredentials: true,
+                }
+            );
+
+            return res.data;
+        } catch {
+            return { success: false };
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ loadingAuth, auth, register, response, setResponse}}>
+        <AuthContext.Provider value={{ loadingAuth, auth, register, response, setResponse, checkRegister}}>
             {children}
         </AuthContext.Provider>
     );
