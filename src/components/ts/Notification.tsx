@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../../scss/Notification.scss";
 import { useNote } from "../hooks/NoteHook";
-import { Bell, CircleCheck, CircleX } from "lucide-react";
+import { Bell, CircleCheck, CircleX, InfoIcon } from "lucide-react";
 
 function Notification() {
     const { display, type, txt, id, setDisplay } = useNote();
@@ -32,6 +32,7 @@ function Notification() {
                 {type === 'error' && <CircleX size={22}/>}
                 {type === 'success' && <CircleCheck size={22}/>}
                 {type === 'note' && <Bell size={22}/>}
+                {type === 'info' && <InfoIcon size={22}/>}
                 {/* {type === "success" ? "Успешно!" : type === "info" ? "Уведомление" : "Ошибка!"} */}
             </span>
             <span className="notificationBody">{txt}</span>

@@ -32,6 +32,7 @@ $themes: (
         msbd: #303030,
         noteErr:#ff0000,
         noteSuc:#129e12,
+        noteInfo:#1478dd77,
     ),
     dark: (
         bgc: #1d1d1d,
@@ -53,20 +54,21 @@ $themes: (
         msbd: #dfdfdf,
         noteErr:#e00000,
         noteSuc:#129e12,
+        noteInfo:#1478dd77,
     )
 );
 $acsents: (
     poison: (
         light: (
-            acsent: #21d42a,
-            acsent_op: #00cc442a,
-            acsent_hov: #00cc443a,
+            acsent: #00ad09,
+            acsent_op: #21d42a2a,
+            acsent_hov: #21d42a3a,
             darkerAcsent: #18ca21
         ),
         dark: (
             acsent: #14b314,
-            acsent_op: #00ff002a,
-            acsent_hov: #129e123a,
+            acsent_op: #14b3142a,
+            acsent_hov: #14b3143a,
             darkerAcsent: #168616
         )
     ),

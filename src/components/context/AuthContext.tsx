@@ -10,11 +10,17 @@ type ResponseType =
     | {
         success: true;
         form: "auth";
-        two_auth:boolean
+        two_auth:false;
+    } | {
+        success: true;
+        form: "auth";
+        two_auth:true;
+        email:string
     }
     | {
         success: true;
         form: "reg";
+        email:string
     }
     | {
         success: false;
@@ -59,7 +65,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
 
             if (res.data.response) {
                 showNotification('info', 'Письмо с подтверждением отправлено!');
-                setResponse({success:true, form:"reg"})
+                setResponse({success:true, form:"reg", email:mail})
             } else {
                 showNotification('error', res.data.error || 'Ошибка регистрации');
                 setResponse({success:false, form:"reg", error:"", field:"all"})
@@ -94,7 +100,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
             )
             if (res.data.success) {
                 console.log(res.data.success)
-                if (res.data.two_auth) setResponse({success:true, form:"auth", two_auth:true})
+                if (res.data.two_auth) setResponse({success:true, form:"auth", two_auth:true, email:res.data.email})
                 else {
                     setResponse({success:true, form:"auth", two_auth:false})
                     refetchUser()

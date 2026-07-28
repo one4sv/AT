@@ -3,17 +3,17 @@ import type { ReactNode } from "react";
 const NoteContext = createContext<NoteContextType | null>(null);
 
 export interface NoteContextType {
-    type: string;
+    type: noteType;
     txt: string;
     display: boolean;
     id: number;
     showNotification: (newtype: noteType, newtxt: string) => void;
     setDisplay: (display: boolean) => void;
 }
-export type noteType = 'error' | 'success' | 'info' | 'false'
+export type noteType = 'error' | 'success' | 'info' | 'note' | 'false'
 
 export const NoteProvider = ({children}:{children:ReactNode}) => {
-    const [type,setType] = useState<noteType>('false');
+    const [type, setType] = useState<noteType>('false');
     const [txt, setTxt] = useState('');
     const [display, setDisplay] = useState(false);
     const [id, setId] = useState(0);

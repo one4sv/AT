@@ -5,7 +5,6 @@ import { useUser } from "../../components/hooks/UserHook";
 import { useNavigate } from "react-router-dom";
 import LandingFooter from "./Components/LandingFooter";
 import BodyMail from "./Components/BodyMail";
-import Loader from "../../components/ts/Loader";
 import RegistrationForm from "./Components/RegistrationForm";
 import AuthForm from "./Components/AuthForm";
 import { useSettings } from "../../components/hooks/SettingsHook";
@@ -19,7 +18,7 @@ export default function Landing() {
     const { theme } = useSettings()
 
     const navigate = useNavigate();
-    const [ body, setBody ] = useState<"sign" | "loading" | "mail">("sign")
+    const [ body, setBody ] = useState<"sign" | "mail">("sign")
     const [ showedPass, setShowedPass ] = useState({
         auth: false,
         reg: false,
@@ -72,7 +71,6 @@ export default function Landing() {
             </div>    
         )
         else if (body === "mail") return <BodyMail/>
-        else if (body === "loading") return <Loader/>
     }
     
     return (
