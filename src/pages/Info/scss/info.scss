@@ -1,0 +1,146 @@
+@use "../../../scss/global" as var;
+
+.InfoDiv {
+    width: 100%;
+    height: 95dvh;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    scrollbar-width: none;
+    top: 1vh;
+}
+.infoSliderWrapper {
+    width: 50%;
+    overflow-x: hidden;
+    @media (max-width: 800px) {
+        width: 98%;
+    }
+}
+.infoSlider {
+    display: flex;
+    width: 200%;
+    height: 100%;
+    transition: transform 0.35s ease;
+}
+.infoPage {
+    width: 50%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 2vh);
+    min-height: 0;
+}
+.infoButtsWrapper {
+    width: 100%;
+    gap: 1vh;
+    display: flex;
+    flex-direction: column;
+}
+.infoButt {
+    background-color: var(--mc);
+    border-radius: 12px;
+    width: 100%;
+    padding: 1vh 0.65vw;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 1vh;
+    > span {
+        font-size: 18px;
+    }
+    &:hover {
+        background-color: var(--menuButtHover);
+        > .infoName {
+            color: var(--tc);
+        }
+        > .infoDesc {
+            color: var(--borderWh);
+        }
+    }
+    @media (max-width: 800px) {
+        padding: 1vh 2vw;
+    }
+
+}
+.infoName {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--msbd);
+    > svg {
+        color: var(--acsent);
+    }
+}
+.infoUserName {
+    font-size: 20px;
+}
+.infoUserNick {
+    font-size: 18px;
+    color: var(--acsent);
+}
+.infoAvatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--menuButtHover);
+
+    > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    > svg {
+        color: var(--borderHabit);
+    }
+}
+.infoDesc {
+    color: var(--borderHabit);
+}
+.infoBack {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: var(--mc);
+    border-radius: 12px;
+    height: 5vh;
+    padding: 1vh 0.5vw;
+    cursor: pointer;
+    color: var(--borderWh);
+    &:hover {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    }
+}
+
+.infoTab {
+    min-height: 0;
+    background-color: var(--mc);
+    padding: 1vh 1vw;
+    border-radius: 12px;
+    font-size: 18px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    display: flex;
+    flex-direction: column;
+    margin-top: 1vh;
+    line-height: 1.5;
+
+    height: fit-content;
+    .acsent {
+        color: var(--acsent);
+    }
+    a {
+        color: var(--acsent);
+        text-decoration: underline;
+    }
+    p {
+    }
+}

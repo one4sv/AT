@@ -1,12 +1,15 @@
+import { Link } from "react-router-dom";
+
 export default function LandingFooter() {        
     return (
         <div className="landingFooter">
-            <div>Achieve Together © 2025</div>
+            <div>Achieve Together</div>
             <div>
-                <a href="">О one4sv studio</a>
-                <a href="">Пользовательское соглашение</a>
-                <a href="">Политика конфиденциальности</a>
-                <a href="/contacts">Контакты</a>
+                <Link to="/info/about">О проекте</Link>
+                <Link to="/info/terms">Пользовательское соглашение</Link>
+                <Link to="/info/policy">Политика конфиденциальности</Link>
+                <Link to="/info/contacts">Контакты</Link>
+                <Link to="/info/faq">FAQ</Link>
                 <span>Русский</span>
                 
             </div>

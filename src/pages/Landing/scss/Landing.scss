@@ -9,7 +9,7 @@
 }
 .landingDiv {
     position: relative;
-    margin: 16.5vh auto 13vh;
+    margin: 16.5vh auto 12vh;
     width: 25vw;
     display: flex;
     flex-direction: column;
@@ -31,6 +31,22 @@
     top: 1vh;
     font-weight: 700;
     text-align: center;
+    height: 40px;
+    >span {
+        color: var(--acsent);
+        font-size: 20px;
+        position: absolute;
+        left: 101%;
+        top: 55%;
+    }
+    @media (max-width:800px) {
+        margin-bottom: 1vh;
+        >span {
+            left: 94%;
+            top: 100%;
+            margin-left: 4px;
+        }
+    }
 }
 .landingFormWrapper {
     position: relative;
@@ -123,6 +139,7 @@
     }
 }
 .passRules {
+    margin-top: 0.5vh;
     display: flex;
     flex-direction: column;
     margin-block-end: 0;

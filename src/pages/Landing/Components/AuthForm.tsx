@@ -8,7 +8,7 @@ export default function AuthForm({showPass, showedPass, swipeForm}:{showPass: (v
     const { auth, response, setResponse, loadingAuth } = useAuth()
     const [ pass, setPass ] = useState("");
     const [ login, setLogin ] = useState("");
-    const [ isCookie, setIsCookie ] = useState(false)
+    const [ isRemember, setIsRemember ] = useState(false)
 
     const success = response.success;
     const form = "form" in response && response.form === "auth" ? response.form : null;
@@ -24,7 +24,7 @@ export default function AuthForm({showPass, showedPass, swipeForm}:{showPass: (v
             setResponse({success:false, error:"Пароль не может быть пустым", field:"pass", form:"auth"})
             return
         }
-        await auth({ login, pass })
+        await auth({ login, pass, isRemember })
     };
 
     const wrongLogin = success === false && (field === "login" || field === "all") && form
@@ -32,7 +32,7 @@ export default function AuthForm({showPass, showedPass, swipeForm}:{showPass: (v
 
     const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
-            await auth({ login, pass });
+            handleAuth()
         }
     };
 
@@ -72,8 +72,8 @@ export default function AuthForm({showPass, showedPass, swipeForm}:{showPass: (v
                     <EyeOff onClick={() => showPass("auth")} />
                 )}
             </div>
-            <div className="checkString" onClick={() => setIsCookie(!isCookie)}>
-                {isCookie ? <CheckSquareIcon weight="fill"/> : <SquareIcon/>}
+            <div className="checkString" onClick={() => setIsRemember(!isRemember)}>
+                {isRemember ? <CheckSquareIcon weight="fill"/> : <SquareIcon/>}
                 не выходить из системы
             </div>
             <div className="landingButts">

@@ -38,10 +38,11 @@ type ResponseType =
 
 export interface AuthContextType {
     register: (data: { mail: string; pass: string; nick: string }) => Promise<void>;
-    auth: (data: { pass: string, login:string }) => Promise<void>;
+    auth: (data: { pass: string, login:string, isRemember:boolean }) => Promise<void>;
     checkRegister: (data: { nick?: string, mail?: string, signal?:AbortSignal  }) => Promise<{
         success: boolean;
     }>;
+    checkCode: (data:{code:string, email:string, signal?:AbortSignal}) => Promise<{success:boolean}>
     loadingAuth: boolean;
     response: ResponseType;
     setResponse:Dispatch<React.SetStateAction<ResponseType>>;
@@ -63,8 +64,8 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
                 withCredentials: true,
             });
 
-            if (res.data.response) {
-                showNotification('info', 'Письмо с подтверждением отправлено!');
+            if (res.data.success) {
+                showNotification('info', 'Письмо с кодом отправлено');
                 setResponse({success:true, form:"reg", email:mail})
             } else {
                 showNotification('error', res.data.error || 'Ошибка регистрации');
@@ -85,12 +86,12 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
         }
     };
 
-    const auth = async({ login, pass }: { login:string, pass:string }) => {
+    const auth = async({ login, pass, isRemember }: { login:string, pass:string, isRemember:boolean }) => {
         setLoadingAuth(true);
         try {
             const res = await axios.post(
                 `${API_URL}auth`,
-                { login, pass },
+                { login, pass, isRemember },
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -145,9 +146,32 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
             return { success: false };
         }
     };
+    const checkCode = async ({
+        code,
+        email,
+        signal
+    } : {
+        code:string,
+        email:string,
+        signal?:AbortSignal
+    }) => {
+        try {
+            const res = await axios.post(
+                `${API_URL}confirm`,
+                {code, email, signal }
+            )
+            if (res.data.success) {
+                refetchUser()
+                showNotification('success', "Аккаунт подтверждён");;
+            }
+            return res.data
+        } catch {
+            return { success: false };
+        }
+    }
 
     return (
-        <AuthContext.Provider value={{ loadingAuth, auth, register, response, setResponse, checkRegister}}>
+        <AuthContext.Provider value={{ loadingAuth, auth, register, response, setResponse, checkRegister, checkCode}}>
             {children}
         </AuthContext.Provider>
     );

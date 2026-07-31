@@ -10,9 +10,11 @@ import AuthForm from "./Components/AuthForm";
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
 import { MoonStarsIcon, SunDimIcon } from "@phosphor-icons/react";
+import { usePageTitle } from "../../components/hooks/PageContextHook";
 
 export default function Landing() {
     const { loadingAuth, response } = useAuth();
+    const { setTitle } = usePageTitle()
     const { loadingUser, user } = useUser();
     const { setNewTheme } = useUpSettings()
     const { theme } = useSettings()
@@ -58,6 +60,10 @@ export default function Landing() {
         if (user.id) navigate("/");
     }, [user.id]);
 
+    useEffect(() => {   
+        setTitle("Achieve Together")
+    }, []);
+
     const selectBody = () => {
         if (body === "sign") return (
             <div
@@ -84,7 +90,10 @@ export default function Landing() {
                     )}
                 </div>
             <div className="landingDiv">
-                <div className="title">Achieve Together</div>
+                <div className="title">
+                    Achieve Together
+                    <span>beta</span>
+                </div>
                 {selectBody()}
             </div>
             <LandingFooter />

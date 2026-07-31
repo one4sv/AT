@@ -294,8 +294,14 @@ export default function RegistrationForm({
         }
     }, [success, form, field]);
 
+    const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            handleRegister()
+        }
+    };
+
     return (
-        <div className="landingForm">
+        <div className="landingForm" onKeyDown={handleKeyDown}>
             <input
                 type="text"
                 className={`landingInput ${wrongNick ? "invalid" : ""}`}

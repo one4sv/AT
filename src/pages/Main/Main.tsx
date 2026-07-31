@@ -8,7 +8,7 @@ import type { PostType } from "../../components/context/AccContext.tsx";
 import { api } from "../../components/ts/api.ts";
 import Post from "../../components/ts/Post.tsx";
 import { isMobile } from "react-device-detect";
-import { usePageTitle } from "../../components/hooks/PageContextHook.tsx";
+import { usePageTitle } from "../../components/hooks/PageContextHook.ts";
 import { useNavigate } from "react-router";
 
 export default function Feed() {

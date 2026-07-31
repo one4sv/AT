@@ -2,7 +2,6 @@ import './scss/App.scss';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppProvider } from './components/ts/AppProvider';
 import Main from './pages/Main/Main';
-import Confirm from './pages/Confirm';
 import Chat from './pages/Chat/Chat';
 import Acc from './pages/Acc/Acc';
 import Admin from './pages/Admin';
@@ -16,6 +15,7 @@ import ResponsiveLayout from './components/layout/ResponsiveLayout';
 import ContextMenu from './components/ts/ContextMenu';
 import Settings from './pages/Settings/Settings'; 
 import Landing from './pages/Landing/Landing';
+import Info from './pages/Info/Info';
 
 
 function App() {
@@ -28,7 +28,6 @@ function App() {
         <ContextMenu/>
         <Routes>
           <Route path="/sign" element={<Landing />} />
-          <Route path="/confirm" element={<Confirm />} />
           <Route path="/" element={<ResponsiveLayout />}>
             {window.location.hostname === "localhost" && (
               <Route path="/admin" element={<Admin />} />
@@ -43,6 +42,7 @@ function App() {
             <Route path="join/:token" element={<Join />} />
             <Route path="acc" element={<Acc />} />
             <Route path="settings/:tab?" element={<Settings />} />
+            <Route path="info/:tab?" element={<Info />} />
           </Route>
         </Routes>
       </AppProvider>

@@ -14,6 +14,11 @@
     flex-direction: column;
     align-items: center;
     gap: 1vh;
+    >.inpExtraSpan {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+    }
 }
 .emailSendedText {
     width: 100%;
@@ -24,7 +29,7 @@
 .codeWrapper {
     position: relative;
     display: flex;
-    gap: 10px;
+    gap: 8px;
     cursor: text;
 }
 
@@ -47,6 +52,9 @@
     font-weight: 600;
     &.active {
         border: 1px solid var(--acsent);
+    }
+    &.invalid {
+        border: 1px solid var(--notValid);
     }
 }
 
