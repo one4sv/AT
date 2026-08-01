@@ -1,3 +1,5 @@
+import "../../scss/Extra.scss"
+
 export default function Loader() {
     return(
         <div className="pageLoader">

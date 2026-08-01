@@ -21,7 +21,7 @@ import getCornerType from "./components/getCornet";
 import SystemMessage from "./components/SystemMessage";
 
 export default function Chat() {
-    const { user, isAuthenticated } = useUser();
+    const { user, loadingUser } = useUser();
     const { refetchChatWLoading, chatLoading, messages, chatWith, refetchGroupChatWLoading, searchMess:search, setSearchMess:setSearch, searchInputRef } = useChat();
     const { chosenMess, setChosenMess, isChose, setIsChose, pendingScrollId, setPendingScrollId } = useMessages();
     const { setTitle } = usePageTitle()
@@ -53,8 +53,8 @@ export default function Chat() {
     }, [nick, id]);
 
     useEffect(() => {
-        if (!isAuthenticated && !user) navigate(`/acc/${nick}`)
-    }, [isAuthenticated, navigate, nick, user])
+        if (!user.id && !loadingUser) navigate(`/acc/${nick}`)
+    }, [loadingUser, navigate, nick, user])
 
     useEffect(() => {
         const unread = messages.filter(

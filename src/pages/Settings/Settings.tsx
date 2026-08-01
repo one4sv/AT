@@ -7,6 +7,7 @@ import {
     CaretLeftIcon,
     ChatsTeardropIcon,
     GearIcon,
+    InfoIcon,
     LockKeyIcon,
     MagnifyingGlassIcon,
     PaintBucketIcon,
@@ -174,6 +175,18 @@ export default function Settings() {
                                     <div className="settingDesc">{s.desc}</div>
                                 </div>
                             ))}
+                            <div
+                                className="settingButt"
+                                onClick={() => {
+                                    navigate("/info")
+                                }}
+                            >
+                                <span className="settingName">
+                                    <InfoIcon size={24} weight="fill" />
+                                    Информация
+                                </span>
+                                <div className="settingDesc">О проекте, политика конфиденциальности, Пользовательское соглашение, контакты, FAQ</div>
+                            </div>
                         </div>
                     </div>
                     <div className="settingsPage">

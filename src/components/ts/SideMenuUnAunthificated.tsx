@@ -2,6 +2,9 @@ import { Ghost } from "lucide-react";
 import { isMobile } from "react-device-detect";
 import { Link } from "react-router-dom";
 import { useSideMenu } from "../hooks/SideMenuHook";
+import { MoonStarsIcon, SunDimIcon } from "@phosphor-icons/react";
+import { useUpSettings } from "../hooks/UpdateSettingsHook";
+import { useSettings } from "../hooks/SettingsHook";
 interface SMUA {
     ref:React.RefObject<HTMLDivElement | null>,
     onTouchS: (e: React.TouchEvent<Element>) => void,
@@ -12,6 +15,12 @@ interface SMUA {
 }
 export default function SideMenuUnAunthificated ({ref, onTouchS, onTouchM, onTouchE, translateX, isDragging}:SMUA) {
     const { showSideMenu } = useSideMenu()
+    const { setNewTheme } = useUpSettings()
+    const { theme } = useSettings()
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark =
+        theme === "dark" ||
+        (theme === "system" && systemDark);
 
     return (
         <div className={`sideMenu ${isMobile ? "mobileSM" : ""} ${showSideMenu ? "open" : ""}`} 
@@ -26,8 +35,18 @@ export default function SideMenuUnAunthificated ({ref, onTouchS, onTouchM, onTou
             <div className="sideMenuUnAthorised">
                 
                 <span><Ghost /> Вы не вошли в аккаунт</span>
-                <Link to={'/sign'} className="whiteButt">войти</Link>
+                <Link to={'/sign'} className="greenButt">войти</Link>
             </div>
+                {/* <div className="SMnav"> */}
+                    <div className="changeSignTheme" onClick={()=>setNewTheme(isDark ? "light" : "dark")}>
+                        {isDark && (
+                            <MoonStarsIcon />
+                        )}            
+                        {!isDark && (
+                            <SunDimIcon  />
+                        )}
+                    </div>
+                {/* </div> */}
         </div>
     )
 }

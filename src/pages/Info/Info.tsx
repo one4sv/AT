@@ -52,7 +52,7 @@ export default function Info() {
     ];
 
     useEffect(() => {
-        setTitle("Информация");
+        setTitle("информация");
     }, []);
 
     useEffect(() => {
@@ -87,6 +87,16 @@ export default function Info() {
                 >
                     <div className="infoPage">
                         <div className="infoButtsWrapper">
+                            <div
+                                className="infoBack"
+                                onClick={() => {
+                                    navigate(-1);
+                                    setActiveTab(null);
+                                }}
+                            >
+                                <CaretLeftIcon size={24} />
+                                <h2>Информация</h2>
+                            </div>
                             {sections.map((s) => (
                                 <div
                                     key={s.tab}
