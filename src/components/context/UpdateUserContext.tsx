@@ -14,7 +14,9 @@ export interface UpdateUserContextType {
     setNewBio:React.Dispatch<React.SetStateAction<string>>
     // setNewNum:React.Dispatch<React.SetStateAction<string>>
     newMail:string
-    setNewMail:React.Dispatch<React.SetStateAction<string>>
+    setNewMail:React.Dispatch<React.SetStateAction<string>>    
+    newBirth:string
+    setNewBirth:React.Dispatch<React.SetStateAction<string>>
     // setNewPass:React.Dispatch<React.SetStateAction<string>>
     newPick:File | undefined
     setNewPick:React.Dispatch<React.SetStateAction<File | undefined>>
@@ -30,6 +32,7 @@ export const UpdateUserProvider = ({children}:{children:ReactNode}) => {
     const [ newNick, setNewNick ] = useState<string>("")
     const [ newBio, setNewBio ] = useState<string>("")
     const [ newMail, setNewMail ] = useState<string>("")
+    const [ newBirth, setNewBirth ] = useState<string>("")
     const [ newPick, setNewPick ] = useState<File | undefined>()
 
     useEffect(() => {
@@ -38,6 +41,7 @@ export const UpdateUserProvider = ({children}:{children:ReactNode}) => {
         setNewNick(user.nick ?? "");
         setNewBio(user.bio ?? "");
         setNewMail(user.mail ?? "");
+        setNewBirth(user.date_of_birth ?? "");
     }, [user]);
 
     const handleSave = async() => {
@@ -70,6 +74,7 @@ export const UpdateUserProvider = ({children}:{children:ReactNode}) => {
         if (newNick !== "" && newNick !== user.nick) payload.push({row:"nick", value:newNick});
         if (newBio !== user.bio) payload.push({row:"bio", value:newBio});
         if (newMail !== "" && newMail !== user.mail) payload.push({row:"mail", value:newMail});
+        if (newBirth !== "" && newBirth !== user.date_of_birth) payload.push({row:"date_of_birth", value:newBirth});
 
         if (payload.length < 1) return
 
@@ -86,7 +91,7 @@ export const UpdateUserProvider = ({children}:{children:ReactNode}) => {
         }
     }
     return(
-        <UpdateUserContext.Provider value={{newName, setNewName, newNick, setNewNick, newBio, setNewBio, newMail, setNewMail, newPick, setNewPick, handleSave }}>
+        <UpdateUserContext.Provider value={{newName, setNewName, newNick, setNewNick, newBio, setNewBio, newMail, setNewMail, newPick, setNewPick, handleSave, newBirth, setNewBirth }}>
             {children}
         </UpdateUserContext.Provider>
     )

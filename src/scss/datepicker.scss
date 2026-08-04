@@ -22,25 +22,25 @@
   color: var(--tc) !important;
 }
 .react-datepicker__day {
-    box-sizing: border-box;
-    border: 1px solid transparent;
+  box-sizing: border-box;
+  border: 1px solid transparent;
   color: var(--tc) !important;
+  border-radius: 6px;
   &:hover {
     background-color: var(--menuButtHover) !important;
     border: 1px solid var(--borderWh) !important;
-    border-radius: 6px;
   }
 }
 
 .react-datepicker__day--selected,
 .react-datepicker__day--keyboard-selected {
-  background-color: #27c827 !important;
+  background-color: var(--acsent) !important;
   color: white;
   border-radius: 6px;
 }
 
 .react-datepicker__day--today {
-  border: 1px solid #a8e63f;
+  border: 1px solid var(--acsent);
   border-radius: 6px;
 }
 .react-datepicker__day--outside-month {
@@ -48,4 +48,135 @@
 }
 .react-datepicker__day--disabled {
     color: var(--menuButtHover) !important;
+}
+.react-datepicker__month-select,
+.react-datepicker__year-select {
+  background-color: var(--bgc);
+  color: var(--tc);
+  border: 1px solid var(--borderWh);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+  appearance: none; // убираем стандартную стрелку (опционально)
+
+  &:hover {
+    background-color: var(--menuButtHover);
+    border-color: var(--borderWh);
+  }
+
+  &:focus {
+    border-color: var(--acsent);
+  }
+}
+
+.react-datepicker__month-dropdown-container,
+.react-datepicker__year-dropdown-container {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 4px;
+}
+.react-datepicker__day-names {
+  justify-content: center;
+  display: flex;
+}
+.react-datepicker__month-select,
+.react-datepicker__year-select {
+    height: 32px;
+    min-width: 60px;
+    text-align: center;
+
+    background: var(--bgc);
+    color: var(--tc);
+
+    border: 1px solid var(--borderWh);
+    border-radius: 8px;
+
+    padding: 0 10px;
+
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    outline: none;
+    cursor: pointer;
+
+    transition: .15s;
+
+    &:hover {
+        background: var(--menuButtHover);
+        border-color: var(--borderWh);
+    }
+
+    &:focus {
+        border-color: var(--acsent);
+    }
+}
+.datePickerHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    gap: 8px;
+
+    > button {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--borderWh);
+        background: var(--bgc);
+        color: var(--tc);
+        cursor: pointer;
+
+        &:hover {
+            background: var(--menuButtHover);
+        }
+    }
+}
+
+.datePickerSelects {
+    display: flex;
+    gap: 8px;
+}
+
+.datePickerDropdown {
+    position: relative;
+
+    > button {
+        min-width: 110px;
+        height: 32px;
+        padding: 0 12px;
+
+        border-radius: 8px;
+        border: 1px solid var(--borderWh);
+
+        background: var(--bgc);
+        color: var(--tc);
+
+        cursor: pointer;
+    }
+}
+
+.datePickerDropdownMenu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    max-height: 320px;
+    overflow-y: auto;
+    border-radius: 8px;
+    border: 1px solid var(--borderWh);
+    background: var(--bgc);
+    scrollbar-width: thin;
+    z-index: 9999;
+}
+
+.datePickerDropdownItem {
+    padding: 8px 12px;
+    cursor: pointer;
+    &:hover {
+        background: var(--menuButtHover);
+    }
 }

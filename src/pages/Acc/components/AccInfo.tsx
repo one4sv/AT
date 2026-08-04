@@ -9,14 +9,16 @@ import { useAcc } from "../../../components/hooks/AccHook";
 import { useSideMenu } from "../../../components/hooks/SideMenuHook";
 import type { User } from "../../../components/context/UserContext";
 import type { PrivateSettings } from "../../../components/context/SettingsContext";
+import DatePicker from "react-datepicker";
+import DatePickerHeader from "../../../components/ts/DatePickerHeader";
 
 export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (field:keyof PrivateSettings) => boolean, collapsed:number}) {
     const { setBlackout } = useBlackout();
-    const { newName, setNewName, newNick, setNewNick, newPick, newBio, setNewBio, newMail, setNewMail } = useUpUser()
+    const { newName, setNewName, newNick, setNewNick, newPick, newBio, setNewBio, newMail, setNewMail, newBirth, setNewBirth } = useUpUser()
     const { onlineMap } = useChat();
     const { isMyAcc } = useAcc()
     const { red } = useSideMenu()
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [ previewUrl, setPreviewUrl ] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -42,6 +44,16 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
             el.style.height = el.scrollHeight + 1 + "px";
         });
     }, [acc?.bio, newBio]);
+
+    const birthDate = (isMyAcc ? newBirth : acc?.date_of_birth)
+    ? (() => {
+        const [year, month, day] = (isMyAcc ? newBirth : acc?.date_of_birth)!
+            .split("-")
+            .map(Number);
+
+        return new Date(year, month - 1, day);
+    })()
+    : null;
 
     return (
             <div
@@ -111,9 +123,10 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
                         display: acc?.bio || red ? "flex" : "none"
                     }}
                 >
-                    <label>О себе</label>
+                    <label htmlFor="extraInfoInputBio">О себе</label>
                     <textarea
                         className="bioTA extraInfoInput"
+                        id="extraInfoInputBio"
                         value={(isMyAcc ? newBio : acc?.bio) ?? ""}
                         readOnly={!red}
                         onChange={(e) =>
@@ -127,8 +140,9 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
                         <span>Скрыто</span>
                     ) : (
                         <>
-                            <label>Телефон</label>
+                            <label htmlFor="extraInfoInputPhone">Телефон</label>
                             <input
+                                id="extraInfoInputPhone"
                                 className="extraInfoInput"
                                 value="—"
                                 readOnly
@@ -142,14 +156,49 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
                         <span>Скрыто</span>
                     ) : (
                         <>
-                            <label>Email</label>
+                            <label htmlFor="extraInfoInputEmail">Email</label>
                             <input
+                                id="extraInfoInputEmail"
                                 className="extraInfoInput"
                                 value={(isMyAcc ? newMail : acc?.mail) ?? ""}
                                 onChange={(e) =>
                                     setNewMail(e.currentTarget.value)
                                 }
                                 readOnly={!red}
+                            />
+                        </>
+                    )}
+                </div>
+                <div className="accExtraInfoWrapper">
+                    {!canView("mail") ? (
+                        <span>Скрыто</span>
+                    ) : (
+                        <>
+                            <label htmlFor="extraInfoInputBirth">День рождения</label>
+                            <DatePicker
+                                className="extraInfoInput"
+                                id="extraInfoInputBirth"
+                                selected={birthDate}
+                                onChange={(date) =>
+                                    setNewBirth(
+                                        date
+                                            ? date.toISOString().split("T")[0]
+                                            : ""
+                                    )
+                                }
+                                maxDate={new Date()}
+                                readOnly={!red}
+                                dateFormat="dd.MM.yyyy"
+                                showMonthDropdown
+                                showYearDropdown
+                                dropdownMode="select"
+                                yearDropdownItemNumber={100}
+                                scrollableYearDropdown
+                                popperPlacement="bottom-start"
+                                portalId="root"
+                                renderCustomHeader={(props) => (
+                                    <DatePickerHeader {...props} />
+                                )}
                             />
                         </>
                     )}

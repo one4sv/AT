@@ -157,6 +157,7 @@
     outline: none;
     overflow: hidden;
     border-bottom: 1px solid var(--tr);
+    width: 100%;
     &:focus-visible {
         border-bottom: 1px solid var(--acsent);
     }
