@@ -97,14 +97,22 @@
     @include var.selectList(10vw, 3.5vh, 9%, 0.3vw, 0.4vh, var(--tc), var(--tc), var(--bgc), 16px, 0.8vh, 0.4vw, 5%, true);
     >input {
         @include var.input(var(--darkerAcsent), var(--tc), var(--tr), 3.5vh, 6px, var(--tc));
-        width: 10vw;
+        width: 100%;
         cursor: pointer;
+        padding-inline-start: 0.5vw;
     }
     >div {
         border-radius: 6px;
         font-weight: 100;
         >div {
             color: var(--borderWh);
+        }
+    }
+    @media (max-width:800px) {
+        @include var.selectList(35vw, 3.5vh, 9%, 0.3vw, 0.4vh, var(--tc), var(--tc), var(--bgc), 16px, 0.8vh, 0.4vw, 3%, true);
+        margin-left: 2vw;
+        >div {
+            padding-inline-start: 0.5vw;
         }
     }
 }

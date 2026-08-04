@@ -13,7 +13,7 @@ import { useChat } from "../hooks/ChatHook.ts"
 import { useHabits } from "../hooks/HabitsHook.ts"
 import MinLoader from "./MinLoader.tsx"
 import { isMobile } from "react-device-detect"
-import { GearIcon, SortAscending, UserIcon } from "@phosphor-icons/react"
+import { CalendarPlusIcon, ChatsIcon, GearIcon, SortAscending, UserIcon } from "@phosphor-icons/react"
 import { filterHabitsByOrder } from "./utils/filteredHabitsByOrder.tsx"
 import { useSchedule } from "../hooks/ScheduleHook.ts"
 import SideMenuUnAunthificated from "./SideMenuUnAunthificated.tsx"
@@ -472,10 +472,10 @@ export default function SideMenu() {
             <div className="SMnavDiv">
                 <div className={`plusMenu ${showPlusMenu ? "active" : ""}`} ref={plusMenuRef}>
                     <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"AddHabit"})}>
-                        Добавить активность
+                        <CalendarPlusIcon weight="fill" size={24}/>Добавить активность
                     </div>
                     <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"CreateChat"})}>
-                        Создать чат
+                        <ChatsIcon weight="fill" size={24}/>Создать чат
                     </div>
                 </div>
                 <div className="SMnav">

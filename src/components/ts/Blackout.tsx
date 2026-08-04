@@ -112,7 +112,7 @@ export default function Blackout() {
           }
         }}
       >
-        {isMobile && <div className="mobileBar" />}
+        {isMobile && !blackout.img && <div className="mobileBar" />}
         <Component />
       </div>
     </div>
