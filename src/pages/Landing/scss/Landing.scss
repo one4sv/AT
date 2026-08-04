@@ -9,7 +9,7 @@
 }
 .landingDiv {
     position: relative;
-    margin: 16.5vh auto 12vh;
+    margin: 16.5vh auto 11vh;
     width: 25vw;
     display: flex;
     flex-direction: column;
@@ -280,7 +280,6 @@
     position: relative;
     font-size: 16px;
     width: 100%;
-    // top: 100%;
     display: flex;
     align-items: center;
     gap: 1vh;
@@ -323,6 +322,13 @@
                 background-color: var(--menuButtHover);
             }
         }
+    }
+    >.o4studio {
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        align-items: center;
+        height: 6vh;
     }
 }
 

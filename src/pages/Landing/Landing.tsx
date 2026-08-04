@@ -96,7 +96,7 @@ export default function Landing() {
                 </div>
                 {selectBody()}
             </div>
-            <LandingFooter />
+            <LandingFooter isDark={isDark}/>
         </div>
     )
 }

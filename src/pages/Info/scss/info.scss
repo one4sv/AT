@@ -143,6 +143,9 @@
         color: var(--acsent);
         text-decoration: underline;
     }
+    @media (max-width: 800px) {
+        padding: 1vh 3vw;
+    }
 }
 
 .contact {
