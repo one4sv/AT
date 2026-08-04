@@ -122,6 +122,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const notificationAggregator = new NotificationAggregator();
     const mainSearchRef = useRef<HTMLInputElement | null>(null)
     const searchInputRef = useRef<HTMLInputElement | null>(null)
+    const abortRef = useRef<AbortController | null>(null);
 
     useEffect(() => {
         chatWithRef.current = chatWith;
@@ -191,30 +192,52 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     const refetchContactsWTLoading = useCallback(async () => {
         if (!isAuthenticated) return;
+
+        abortRef.current?.abort();
+
+        const controller = new AbortController();
+        abortRef.current = controller;
+
         try {
-            const res = await api.post(`${API_URL}contacts`, { search });
+            const res = await api.post(
+                `${API_URL}contacts`,
+                { search },
+                { signal: controller.signal }
+            );
+
+            if (controller.signal.aborted) return;
+
             if (res.data.success) {
-                const sortedList = res.data.friendsArr.slice().sort((a:Contact, b:Contact) => {
+                const sortedList = res.data.friendsArr.slice().sort((a: Contact, b: Contact) => {
                     if (a.pinned !== b.pinned) {
-                        return a.pinned ? -1 : 1; 
+                        return a.pinned ? -1 : 1;
                     }
 
-                    const timeA = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;
-                    const timeB = b.lastMessage ? new Date(b.lastMessage.created_at).getTime() : 0;
+                    const timeA = a.lastMessage
+                        ? new Date(a.lastMessage.created_at).getTime()
+                        : 0;
+
+                    const timeB = b.lastMessage
+                        ? new Date(b.lastMessage.created_at).getTime()
+                        : 0;
 
                     return timeB - timeA;
                 });
+
                 setList(sortedList);
             }
         } catch (err) {
+            if (axios.isCancel(err)) return;
             if (axios.isAxiosError(err)) {
                 if (err.response?.status === 401) return;
-                console.log("error", err?.response?.data?.error);
+                console.log("error", err.response?.data?.error);
             }
         } finally {
-            setLoadingList(false);
+            if (!controller.signal.aborted) {
+                setLoadingList(false);
+            }
         }
-    }, [API_URL, search, showNotification, user.nick]);
+    }, [API_URL, search, isAuthenticated]);
 
     const refetchContacts = useCallback(async () => {
         setLoadingList(true);

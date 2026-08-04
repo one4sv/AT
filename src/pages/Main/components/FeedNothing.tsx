@@ -1,10 +1,12 @@
-import { Ghost } from "lucide-react";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useNote } from "../../../components/hooks/NoteHook";
+import { useChat } from "../../../components/hooks/ChatHook";
+import { GhostIcon } from "@phosphor-icons/react";
 
 export default function FeedNothing() {
     const { showNotification } = useNote()
     const { setBlackout } = useBlackout()
+    const { mainSearchRef } = useChat()
     const LINK = import.meta.env.VITE_LINK
 
     const copyLink = () => {
@@ -14,14 +16,14 @@ export default function FeedNothing() {
     return (
         <div className="feedNothing">
             <span className="feedNothingTitle">
-                <Ghost size={50} strokeWidth={1.5} />Упс! А здесь ничего нет!
+                <GhostIcon size={50} strokeWidth={1.5} />Упс! А здесь ничего нет!
             </span>
             <span className="feedNothingInstr">
                 Чтобы что-то появилось попробуйте:
             </span>
             <div className="feedNothingAdvices">
-                <span className="feedNothingAdvice">1. Найти друзей в AchieveTogether и начать общаться</span>
-                <span className="feedNothingAdvice">2. <a onClick={() => setBlackout({seted:true, module:"AddHabit"})}>Завести первую привычку</a>, начать можно с малого</span>
+                <span className="feedNothingAdvice">1. <a onClick={() => mainSearchRef.current?.focus()}>Найти друзей</a> в AchieveTogether и начать общаться</span>
+                <span className="feedNothingAdvice">2. <a onClick={() => setBlackout({seted:true, module:"AddHabit"})}>Создать первую активность</a>, начать можно с малого</span>
                 <span className="feedNothingAdvice">3. <a onClick={() => copyLink()}>Пригласите друзей в Achieve Together</a>, вместе веселей</span>
             </div>
         </div>   

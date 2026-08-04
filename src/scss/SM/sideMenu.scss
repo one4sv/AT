@@ -295,6 +295,16 @@
     transition: max-height 0.35s ease;
     padding-bottom: 6vh;
     margin-top: 0.25vh;
+    &.nothing {
+        color: var(--borderWh);
+        align-items: center;
+        justify-content: center;
+        margin-top: 3vh;
+        cursor: pointer;
+        > a {
+            color: var(--acsent);
+        }
+    }
 }
 .SMnavDiv {
     position: absolute;

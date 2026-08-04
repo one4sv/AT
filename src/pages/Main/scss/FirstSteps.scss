@@ -1,0 +1,90 @@
+@use "../../../scss/global" as var;
+
+.firstStepsDiv {
+    background-color: var(--mc);
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.firstStepsTitle {
+    font-size: 20px;
+    height: 4vh;
+    display: flex;
+    align-items: center;
+    padding-inline-start: 0.6rem;
+    position: relative;
+    cursor: pointer;
+}
+.firstStepsProgress {
+    width: 50%;
+    height: 8px;
+    background-color: var(--borderHabit);
+    border-radius: 999px;
+    margin-left: auto;
+    margin-right: 2.5rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.firstStepsProgressFill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background-color: var(--acsent);
+    border-radius: inherit;
+    transition: width .3s;
+}
+
+.firstStepsMark {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--mess);
+    background-color: var(--borderWh);
+    z-index: 1;
+    transition: .3s;
+    &.done {
+        background-color: var(--acsent);
+        border-color: var(--darkerAcsent);
+    }
+}
+
+.firstStepsWrapper {
+    padding-bottom: 0.5vh;
+}
+.firstStep {
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5vh 0.5vw;
+    align-items: center;
+    &.completed {
+        >div {
+            color: var(--acsent);
+        }
+    }
+    >svg {
+        color: var(--acsent);
+    }
+}
+.fstext {
+    color: var(--borderWhLight);
+    > span {
+        color: var(--borderHabit);
+    }
+}
+
+.firstStepSvg {
+    position: absolute;
+    right: 0.5vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    &.opened {
+        transform: rotate(180deg);
+    }
+}

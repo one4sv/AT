@@ -456,14 +456,14 @@ export default function SideMenu() {
                         {loadingList ? (
                             <div className="menuLoader"><MinLoader /></div>
                         ) : (
-                            <ContactsList filter={messageSelected.value} />
+                            <ContactsList filter={messageSelected.value} searchRef={mainSearchRef}/>
                         )}
                     </div>
                     <div className={`slide ${isMobile ? "mobileSlide" : ""}`}>
                         {loadingHabits ? (
                             <div className="menuLoader"><MinLoader /></div>
                         ) : (
-                            <HabitsList filter={habitsSelected.value} />
+                            <HabitsList filter={habitsSelected.value}/>
                         )}
                     </div>
                 </div>

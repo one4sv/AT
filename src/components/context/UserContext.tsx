@@ -12,6 +12,9 @@ export interface User {
     bio:string | null;
     avatar_url: string | null;
     last_online: string | null;
+    reg_date:Date | null,
+    sex:string | null,
+    date_of_birth:string | null
 }
 
 interface UserResponse {
@@ -25,6 +28,9 @@ interface UserResponse {
     last_online: string;
     error?: string;
     cookie?: boolean;
+    reg_date?:Date,
+    sex?:string,
+    date_of_birth?:string
 }
 
 export interface UserContextType {
@@ -41,7 +47,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
     const API_URL = import.meta.env.VITE_API_URL
     const API_WS = import.meta.env.VITE_API_WS
-    const [user, setUser] = useState<User>({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null });
+    const [user, setUser] = useState<User>({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null, reg_date:null, sex:null, date_of_birth:null });
     const [loadingUser, setLoadingUser] = useState(true);
     const [initialLoading, setInitialLoading] = useState(true);
 
@@ -65,15 +71,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     id: res.data.id ?? null,
                     avatar_url: res.data.avatar_url ?? null,
                     last_online:res.data.last_online ?? null,
+                    reg_date:res.data.reg_date  ?? null,
+                    sex:res.data.sex ?? null,
+                    date_of_birth:res.data.date_of_birth ?? null
                 });
             } else {
-                setUser({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null });
+                setUser({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null, reg_date:null, sex:null, date_of_birth:null });
                 if (!res.data.cookie) {
                     showNotification("error", res.data.error || "Ошибка авторизации");
                 }
             }
         } catch (err) {
-            setUser({ nick: null, mail: null, username: null, id: null, bio:null, avatar_url:null, last_online:null });
+            setUser({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null, reg_date:null, sex:null, date_of_birth:null });
             if (axios.isAxiosError(err)) {
                 if (err.response?.status !== 401 && err.response?.status !== 403) {
                     showNotification("error", err.response?.data?.error || "Ошибка авторизации");

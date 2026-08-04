@@ -10,6 +10,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    @media (max-width: 800px) {
+        width: 100%;
+        height: 90vh;
+        border-radius: 12px 12px 0 0;
+    }
 }
 .createChatInfo {
     margin-top: 1vh;
@@ -324,11 +329,5 @@
     &:disabled {
         background-color: var(--borderHabit);
         cursor: default;
-    }
-}
-@media (max-width:800px) {
-    .createChatDiv {
-        width: 90vw;
-        height: 90vh;
     }
 }

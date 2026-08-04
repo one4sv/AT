@@ -12,8 +12,10 @@
     align-items: center;
     z-index: 11;
 
-    &.mobile {
-        width: 90%;
+    @media (max-width: 800px) {
+        width: 100%;
+        padding: 4vh 10% 2vh;
+        border-radius: 12px 12px 0 0;
     }
 }
 .titleAddHabit {

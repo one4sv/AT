@@ -1,8 +1,7 @@
-import { Ghost } from "lucide-react";
 import { isMobile } from "react-device-detect";
 import { Link } from "react-router-dom";
 import { useSideMenu } from "../hooks/SideMenuHook";
-import { MoonStarsIcon, SunDimIcon } from "@phosphor-icons/react";
+import { GhostIcon, MoonStarsIcon, SunDimIcon } from "@phosphor-icons/react";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
 import { useSettings } from "../hooks/SettingsHook";
 interface SMUA {
@@ -34,7 +33,7 @@ export default function SideMenuUnAunthificated ({ref, onTouchS, onTouchM, onTou
         >
             <div className="sideMenuUnAthorised">
                 
-                <span><Ghost /> Вы не вошли в аккаунт</span>
+                <span><GhostIcon /> Вы не вошли в аккаунт</span>
                 <Link to={'/sign'} className="greenButt">войти</Link>
             </div>
                 {/* <div className="SMnav"> */}

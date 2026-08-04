@@ -12,7 +12,10 @@
     border-radius: 12px;
     padding: 2vh 2vw;
     @media (max-width:800px) {
-        width: 85vw;
+        width: 100vw;
+        border-radius: 12px 12px 0 0;
+        min-height: 25dvh;
+        max-height: 30dvh;
     }
 }
 .deleteSpan {
@@ -46,6 +49,7 @@
         font-size: 20px;
     }
     @media (max-width:800px) {
+        flex-direction: column;
         width: 90%;
     }
 }

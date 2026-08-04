@@ -1,28 +1,33 @@
-import { useEffect, useState } from "react"
+import { type RefObject } from "react"
 import "../../../scss/SM/contactsList.scss"
 import { useChat } from "../../hooks/ChatHook"
 import Contact from "../Contact"
+import { GhostIcon, MagnifyingGlassMinusIcon } from "@phosphor-icons/react"
 
-export default function ContactsList({filter} : {filter: string}) {
-    const { list } = useChat()
-    const [ filtered, setFilterd ] = useState(list)
+export default function ContactsList({filter, searchRef} : {filter: string, searchRef:RefObject<HTMLInputElement | null>}) {
+    const { list, search } = useChat()
 
-    useEffect(() => {
-        if (filter === "messages") setFilterd(list)
-        else if (filter === "new") setFilterd(list.filter(c => c.unread_count > 0))
-        else if (filter === "private") setFilterd(list.filter(c => !c.is_group))
-        else if (filter === "group") setFilterd(list.filter(c => c.is_group))
-    }, [filter, list])
-
+    const filtered = list.filter(contact => {
+        if (filter === "new") return contact.unread_count > 0
+        if (filter === "private") return !contact.is_group
+        if (filter === "group") return contact.is_group
+        return true
+    })
+    console.log(list, search)
     return (
         <div className="contactsList SMlist">
-            {filtered ? (
-                filtered.map((contact) => (
-                    <Contact contact={contact} key={contact.id}/>
-                ))
+            {filtered.length > 0 ? filtered.map((contact) => (
+                <Contact contact={contact} key={contact.id}/>
+            )) : search.length > 0 ? (
+                <div className="habitsList SMlist nothing" onClick={() => searchRef.current?.focus()}>
+                    <MagnifyingGlassMinusIcon size={50} strokeWidth={1.5}/>
+                    Пользователи не найдены
+                </div>
             ) : (
-                <div className="contactsNothing">
-                    Упс! Здесь никого нет.
+                <div className="habitsList SMlist nothing" onClick={() => searchRef.current?.focus()}>
+                    <GhostIcon size={50} strokeWidth={1.5} />
+                    Упс! А здесь никого нет!
+                    <a>Найти собеседника</a>
                 </div>
             )}
         </div>

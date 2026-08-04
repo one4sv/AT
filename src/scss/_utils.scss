@@ -78,16 +78,26 @@
     }
 }
 @mixin centerTopModal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -60%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  @media (max-width: 800px) {
+    top: 0;
+    position: relative;
+    transform: translate(-50%, 0);
+  }
 }
 @mixin centerModal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  @media (max-width: 800px) {
+    top: 0;
+    position: relative;
+    transform: translate(-50%, 0);
+  }
 }
 @mixin selectList(
   $w, $h, $wI, $r, $t, $c, $ac, $bg, $fs, $ph, $pw, $tY,

@@ -33,7 +33,7 @@
 }
 .feedNothing {
     position: absolute;
-    margin: 25vh auto;
+    top: 28vh;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -44,9 +44,18 @@
     > span {
         margin-bottom: 1vh;
     }
+    @media (max-width: 800px) {
+        font-size: 18px;
+        >.feedNothingTitle {
+            font-size: 26px;
+        }
+        >.feedNothingAdvices {
+            font-size: 16px;
+        }
+    }
 }
 .feedNothingTitle {
-    font-size: 36px !important;
+    font-size: 36px;
     margin-bottom: 3vh !important;
     display: flex;
     flex-direction: row;

@@ -65,13 +65,35 @@
     inset: 0;
     z-index: 11;
     background-color: #00000080;
-    object-fit: cover;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+}
+
+.blackoutModule {
+    position: relative;
+    will-change: transform;
+    width: 100dvw;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    z-index: 15;
+}
+.mobileBar {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 44px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--tc);
+    top: 2vh;
+    opacity: 0.55;
+    z-index: 20;
 }
 .imgPrevDiv {
     display: flex;

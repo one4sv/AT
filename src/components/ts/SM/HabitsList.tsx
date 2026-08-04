@@ -8,12 +8,16 @@ import { filterHabitsByOrder } from "../utils/filteredHabitsByOrder";
 import { useEffect, useState } from "react";
 import type { Habit } from "../../context/HabitsContext";
 import { isIsoDate } from "../utils/isIsoDate";
+import { GhostIcon } from "@phosphor-icons/react";
+import { useBlackout } from "../../hooks/BlackoutHook";
 
 export default function HabitsList({ filter }: { filter?: string }) {
     const { search } = useChat();
     const { habits, newOrderHabits } = useHabits();
     const { showArchived } = useSettings();
     const { habitId } = useParams();
+    const { setBlackout } = useBlackout()
+
     const [filtered, setFiltered] = useState(habits);
     const shownHabits = new Set<number>();
 
@@ -67,6 +71,14 @@ export default function HabitsList({ filter }: { filter?: string }) {
 
         setFiltered(filteredHabits);
     }, [filter, showArchived, habits]);
+
+    if (filtered?.length === 0) return (
+        <div className="habitsList SMlist nothing" onClick={() => setBlackout({seted:true, module:"AddHabit"})}>
+            <GhostIcon size={50} strokeWidth={1.5} />
+            Упс! А здесь ничего нет!
+            <a>Создать первую активность</a>
+        </div>
+    )
 
     return (
         <div className="habitsList SMlist">

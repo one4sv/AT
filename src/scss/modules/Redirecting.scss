@@ -7,19 +7,31 @@
     width: 25%;
     border-radius: 12px;
     padding: 1vh 0.5vw;
+    @media (max-width: 800px) {
+        width: 100%;
+        padding: 4vh 2vw 0;
+        height: 90vh;
+    }
 }
 .redirectBar {
     display: flex;
     align-items: center;
     height: 4vh;
     gap: 5px;
+    @media (max-width: 800px) {
+        >.SMsearch {
+            width: 90%;
+        }
+    }
 }
 .cancelRedirect {
     height: 100%;
     width: 18%;
     display: flex;
     justify-content: center;
-    
+    @media (max-width: 800px) {
+        width: 10%;
+    }
 }
 .cancelRedirectButt {
     cursor: pointer;
@@ -35,11 +47,5 @@
         >svg {
             color: var(--tc);
         }
-    }
-}
-@media (max-width:800px) {
-    .contactListModule {
-        width: 90vw;
-        height: 90vh;
     }
 }
