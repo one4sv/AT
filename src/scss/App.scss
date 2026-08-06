@@ -1,5 +1,4 @@
 @use "./global.scss" as var;
-@use "./habitThemes.scss";
 @use "./datepicker.scss";
 
 html, body {
@@ -42,7 +41,7 @@ body {
   position: absolute;
   z-index: 0;
   overflow: hidden;
-  color: var(--darkerAcsent);
+  color: var(--darker_accent);
   >div {
     position: absolute;
   }

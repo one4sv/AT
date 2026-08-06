@@ -3,26 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/favicon.png" type="image/x-icon">
+    <link rel="icon" href="/favicon.png" type="image/x-icon" />
     <title>Achieve Together</title>
 
     <script>
       (function () {
         try {
-          const savedTheme = localStorage.getItem("theme");
-          const savedAcsent = localStorage.getItem("acsent");
+          const savedTheme = localStorage.getItem("setting_theme");
+          const savedAccent = localStorage.getItem("settings_accent");
+          const savedGrad = localStorage.getItem("settings_grad");
 
           const theme =
             savedTheme === "light" || savedTheme === "dark"
               ? savedTheme
               : window.matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light";
+                ? "dark"
+                : "light";
 
-          const acsent = savedAcsent || "poison";
+          const accent = savedAccent || "poison";
+          const grad = savedGrad || "meadow";
 
           document.documentElement.setAttribute("data-theme", theme);
-          document.documentElement.setAttribute("data-acsent", acsent);
+          document.documentElement.setAttribute("data-accent", accent);
+          document.documentElement.setAttribute("data-grad", grad);
         } catch (e) {
           console.error("Theme init error:", e);
         }

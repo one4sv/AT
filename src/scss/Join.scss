@@ -35,5 +35,5 @@
     text-align: center;
 }
 .joinAcceptButt {
-    @include var.gradButt(18vw, 5vh, 0, 0, (135deg, var(--acsent), var(--darkerAcsent)), (135deg, var(--acsent), var(--darkerAcsent)), white, 20px var(--acsent));
+    @include var.gradButt(18vw, 5vh, 0, 0, (135deg, var(--accent), var(--darker_accent)), (135deg, var(--accent), var(--darker_accent)), white, 20px var(--accent));
 }

@@ -33,7 +33,7 @@
     left: 0;
     top: 0;
     height: 100%;
-    background-color: var(--acsent);
+    background-color: var(--accent_text);
     border-radius: inherit;
     transition: width .3s;
 }
@@ -47,8 +47,8 @@
     z-index: 1;
     transition: .3s;
     &.done {
-        background-color: var(--acsent);
-        border-color: var(--darkerAcsent);
+        background-color: var(--accent_text);
+        border-color: var(--darker_accent);
     }
 }
 
@@ -63,11 +63,11 @@
     align-items: center;
     &.completed {
         >div {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
     >svg {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
 }
 .fstext {

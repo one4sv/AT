@@ -7,7 +7,7 @@
 .pmsMain {
     height: 100%;
     user-select: none;
-    background-color: var(--mc);
+    background-color: var(--tr);
     z-index: 4;
     position: relative;
     border-radius: 8px;
@@ -37,7 +37,7 @@
     position: relative;
 }
 .pmsSender {
-    color: var(--acsent);
+    color: var(--accent_text);
     width: fit-content;
 }
 .pmsText {
@@ -56,7 +56,7 @@
     align-items: center;
     padding: 0 0.5vw;
     &:hover {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
     > svg {
         width: 80%;

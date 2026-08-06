@@ -105,6 +105,13 @@ export default function Settings() {
         tab: "acc",
     };
 
+    useEffect(() => {
+        if (tab) {
+            if (tab === "acc") setActiveTab(accTab)
+            else setActiveTab(settings.find(s => s.tab === tab) ?? null)
+        }
+    }, [tab])
+
     const tabs = {
         gen: <GeneralTab />,
         acc: <AccSettingsTab />,
@@ -133,7 +140,7 @@ export default function Settings() {
                         <div
                             className="settingButt"
                             onClick={() => {
-                                navigate(`/settings/${accTab}`);
+                                navigate(`/settings/${accTab.tab}`);
                                 setActiveTab(accTab)
                             }}
                         >

@@ -33,7 +33,7 @@
     text-align: center;
     height: 40px;
     >span {
-        color: var(--acsent);
+        color: var(--accent_text);
         font-size: 20px;
         position: absolute;
         left: 101%;
@@ -202,7 +202,7 @@
     justify-content: center;
     white-space: nowrap;
     >svg {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
     &.notAccepted {
         >svg {
@@ -211,10 +211,10 @@
     }
 }
 .acceptSpan {
-    color: var(--acsent);
+    color: var(--accent_text);
     text-decoration: underline;
     &:hover {
-        color: var(--darkerAcsent);
+        color: var(--darker_accent);
     }
 }
 
@@ -235,9 +235,9 @@
     }
 }
 .greenButt {
-    @include var.longButt(15vw, 4vh, 2px, 4px, var(--acsent), var(--tc), var(--tr), var(--acsent));
+    @include var.longButt(15vw, 4vh, 2px, 4px, var(--accent), var(--tc), var(--tr), var(--accent));
     &:hover {
-        box-shadow: 0 0 12px var(--acsent), 0 0 24px var(--acsent);
+        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
     }
 }
 .whiteButt {

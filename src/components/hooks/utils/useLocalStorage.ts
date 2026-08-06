@@ -1,22 +1,36 @@
 import { useEffect, useState } from "react";
+import { useUser } from "../UserHook";
 
-export default function useLocalStorage<T>(key: string, defaultValue: T) {
-    const [value, setValue] = useState<T>(() => {
-        try {
-            const stored = localStorage.getItem(key);
-            return stored ? JSON.parse(stored) : defaultValue;
-        } catch {
-            return defaultValue;
-        }
-    });
+export default function useLocalStorage<T>(
+    key: string,
+    defaultValue: T
+) {
+    const { user } = useUser();
+
+    const storageKey = `${user.nick ?? "guest"}_${key}`;
+
+    const [value, setValue] = useState(defaultValue);
 
     useEffect(() => {
         try {
-            localStorage.setItem(key, JSON.stringify(value));
-        } catch (e) {
-            console.error("Ошибка записи в localStorage:", e);
+            const stored = localStorage.getItem(storageKey);
+
+            setValue(
+                stored
+                    ? JSON.parse(stored)
+                    : defaultValue
+            );
+        } catch {
+            setValue(defaultValue);
         }
-    }, [key, value]);
+    }, [storageKey, defaultValue]);
+
+    useEffect(() => {
+        localStorage.setItem(
+            storageKey,
+            JSON.stringify(value)
+        );
+    }, [storageKey, value]);
 
     return [value, setValue] as const;
 }

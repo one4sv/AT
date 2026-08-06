@@ -13,7 +13,7 @@
     flex-direction: row;
     gap: 5px; 
     font-size: 20px;
-    color: var(--acsent);
+    color: var(--accent_text);
 }
 
 .digitSquare {
@@ -117,7 +117,7 @@
     width: 4vw;
     border-bottom: 1px solid var(--borderHabit);
     &:focus {
-        border-bottom: 1px solid var(--acsent);
+        border-bottom: 1px solid var(--accent);
     }
 }
 .counterRedButt {
@@ -131,7 +131,7 @@
     color: var(--borderHabit);
     display: none;
     &:hover {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
     >svg {
         height: 70%;

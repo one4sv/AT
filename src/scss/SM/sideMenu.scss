@@ -51,7 +51,7 @@
     width: 100%;
     height: 5vh;
     z-index: 4;
-    background-color: var(--mc);
+    background-color: var(--tr);
 }
 .SMmenuWrapper {
     height: 4vh;
@@ -101,7 +101,7 @@
     >svg {
         color: var(--tc);
         > circle:nth-of-type(2) {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
 }
@@ -140,7 +140,7 @@
         }
     }
     >input {
-        @include var.input(var(--bgc), var(--tc), var(--borderHabit), 4vh, 12px, var(--acsent));
+        @include var.input(var(--bgc), var(--tc), var(--borderHabit), 4vh, 12px, var(--accent));
         font-size: 18px;
         width:100%;
         padding-inline-start: 0.4vw;
@@ -152,11 +152,11 @@
         @include var.svgInInput(4vh, 0,0.5vw);
     }
     &:focus-within {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
 }
 .SMtabs {
-    background-color: var(--mc);
+    background-color: var(--tr);
     padding-top: 0.5vh;
     display: flex;
     align-items: center;
@@ -184,7 +184,7 @@
 }
 .SMtab.active {
     border-radius: 8px 8px 0 0;
-    color: var(--acsent);
+    color: var(--accent_text);
    
 }
 .SMfilter {
@@ -207,7 +207,7 @@
     width: 50%;
     height: 2px;
     transition: left 0.2s ease;
-    background-color: var(--acsent);
+    background:linear-gradient(135deg, var(--accent), var(--grad));
 }
 .SMline.habits {
     left: 50%;
@@ -302,7 +302,7 @@
         margin-top: 3vh;
         cursor: pointer;
         > a {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
 }
@@ -319,11 +319,14 @@
 .SMnav {
     pointer-events: all;
     display: flex;
-    background-color: var(--mc);
-    width: 60%;
-    height: 5vh;
-    border-radius: 20px;
+    background-color: var(--buttBg);
+    width: 70%;
+    height: 5.5vh;
+    border-radius: 14px;
     overflow: hidden;
+    @media (max-width:800px) {
+        width: 80%;
+    }
 }
 .SMnavButt {
     display: flex;
@@ -332,12 +335,18 @@
     flex: 1;
     color: var(--borderWh);
     cursor: pointer;
+    flex-direction: column;
+    font-size: 14px;
+    padding: 0.5vh 0.5vw;
     &:hover {
         background-color: var(--menuButtHover);
         color: var(--tc);
     }
+    &.active {
+        color: var(--accent_text);
+    }
     >svg {
-        width: 40%;
+        width: 35%;
         height: 100%;
     }
 }
@@ -364,7 +373,7 @@
     align-items: center;
     gap: 0.5vw;
     >svg {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
     &:hover {
         color: var(--tc);

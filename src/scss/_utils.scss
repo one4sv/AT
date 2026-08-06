@@ -182,35 +182,6 @@
     top: $t;
 }
 
-@mixin themeHabit($br, $bg, $hover, $cPer, $shad, $cSvg, $cHn, $bH, $cShad, $HovHN, $HovPer) {
-    box-sizing: border-box;
-    border: 1px solid $br;
-    background-color: $bg;
-    &:hover {
-        background-color: $hover;
-        box-shadow: 0 0 $shad $cShad;
-        border: 1px solid $bH;
-        > .habitInfo {
-            > .habitName {
-                color: $HovHN
-            }
-            > .habitPer {
-                color: $HovPer
-            }
-        }
-    }
-    > .habitInfo {
-        > .habitName {
-            color: $cHn;
-        }
-        > .habitPer {
-            color: $cPer;
-        }
-        > .pinnedHabitSign {
-            color: $cSvg;
-        }
-    }
-}
 @mixin TA($w, $h, $bg, $c) {
   resize: none;
   font-family: $font;

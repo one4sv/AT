@@ -57,61 +57,194 @@ $themes: (
         noteInfo:#1478dd77,
     )
 );
-$acsents: (
+$accents: (
     poison: (
         light: (
-            acsent: #00ad09,
-            acsent_op: #21d42a2a,
-            acsent_hov: #21d42a3a,
-            darkerAcsent: #18ca21
+            accent: #00ad09,
+            accent_text:#00ad09,
+            accent_op: #21d42a2a,
+            accent_hov: #21d42a3a,
+            darker_accent: #18ca21,
+            inner_text:#fff
         ),
         dark: (
-            acsent: #14b314,
-            acsent_op: #14b3142a,
-            acsent_hov: #14b3143a,
-            darkerAcsent: #168616
+            accent: #14b314,
+            accent_text: #14b314,
+            accent_op: #14b3142a,
+            accent_hov: #14b3143a,
+            darker_accent: #168616,
+            inner_text:#fff
         )
     ),
     apple: (
         light: (
-            acsent: #ff3333,
-            acsent_op: #ff33332a,
-            acsent_hov: #ff33333a,
-            darkerAcsent: #cc0000
+            accent: #ff3333,
+            accent_text: #ff3333,
+            accent_op: #ff33332a,
+            accent_hov: #ff33333a,
+            darker_accent: #cc0000,
+            inner_text:#fff
         ),
         dark: (
-            acsent: #ff3b3b,
-            acsent_op: #ff00002a,
-            acsent_hov: #ff3b3b3a,
-            darkerAcsent: #cc2f2f
+            accent: #ff3b3b,
+            accent_text: #ff3b3b,
+            accent_op: #ff00002a,
+            accent_hov: #ff3b3b3a,
+            darker_accent: #cc2f2f,
+            inner_text:#fff
+
         )
     ),
     sky: (
         light: (
-            acsent: #3399ff,
-            acsent_op: #3399ff2a,
-            acsent_hov: #3399ff3a,
-            darkerAcsent: #0066cc
+            accent: #3399ff,
+            accent_text: #3399ff,
+            accent_op: #3399ff2a,
+            accent_hov: #3399ff3a,
+            darker_accent: #0066cc,
+            inner_text:#fff
         ),
         dark: (
-            acsent: #007bff,
-            acsent_op: #007bff2a,
-            acsent_hov: #007bff3a,
-            darkerAcsent: #0056b3
+            accent: #007bff,
+            accent_text: #007bff,
+            accent_op: #007bff2a,
+            accent_hov: #007bff3a,
+            darker_accent: #0056b3,
+            inner_text:#fff
+
         )
     ),
     space: (
         light: (
-            acsent: #a066ff,
-            acsent_op: #a066ff2a,
-            acsent_hov: #a066ff3a,
-            darkerAcsent: #6a1b9a
+            accent: #8b12ee,
+            accent_text: #8b12ee,
+            accent_op: #8c00ff2a,
+            accent_hov: #8c00ff3a,
+            darker_accent: #4a148c,
+            inner_text:#fff
+
         ),
         dark: (
-            acsent: #8b12ee,
-            acsent_op: #8c00ff2a,
-            acsent_hov: #8c00ff3a,
-            darkerAcsent: #4a148c
+            accent: #8b12ee,
+            accent_text: #8b12ee,
+            accent_op: #8c00ff2a,
+            accent_hov: #8c00ff3a,
+            darker_accent: #4a148c,
+            inner_text:#fff
+
+        )
+    ),    
+    orange: (
+        light: (
+            accent: #FF6B00,
+            accent_text: #FF6B00,
+            accent_op: #FF6B002a,
+            accent_hov: #FF6B003a,
+            darker_accent: #FF6B00,
+            inner_text:#fff
+
+        ),
+        dark: (
+            accent: #FF6B00,
+            accent_text: #FF6B00,
+            accent_op: #FF6B002a,
+            accent_hov: #FF6B003a,
+            darker_accent: #FF6B00,
+            inner_text:#fff
+        )
+    ),
+    inversion: (
+        light: (
+            accent: #fff,
+            accent_text: #000,
+            accent_op: #fff,
+            accent_hov: #fff,
+            darker_accent: #fff,
+            inner_text:#000
+        ),
+        dark: (
+            accent: #fff,
+            accent_text: #fff,
+            accent_op: #fff,
+            accent_hov: #fff,
+            darker_accent: #fff,
+            inner_text:#000
+        )
+    ),
+    abyss: (
+        light: (
+            accent: #000,
+            accent_text: #000,
+            accent_op: #000,
+            accent_hov: #000,
+            darker_accent: #000,
+            inner_text:#fff
+        ),
+        dark: (
+            accent: #000,
+            accent_text: #fff,
+            accent_op: #000,
+            accent_hov: #000,
+            darker_accent: #000,
+            inner_text:#fff
+        )
+    ),
+);
+$grads: (
+    meadow: (
+        light: (
+            grad: #00ad09
+        ),
+        dark: (
+            grad: #14b314
+        )
+    ),
+    rubin: (
+        light: (
+            grad: #ff3333
+        ),
+        dark: (
+            grad: #ff3b3b
+        )
+    ),
+    ocean: (
+        light: (
+            grad: #3399ff
+        ),
+        dark: (
+            grad: #007bff
+        )
+    ),
+    violet: (
+        light: (
+            grad: #a066ff
+        ),
+        dark: (
+            grad: #8b12ee
+        )
+    ),    
+    ginger: (
+        light: (
+            grad: #FF6B00
+        ),
+        dark: (
+            grad: #FF6B00
+        )
+    ),
+    mono: (
+        light: (
+            grad: #e9e9e9
+        ),
+        dark: (
+            grad: #e9e9e9
+        )
+    ),
+    void: (
+        light: (
+            grad: #000
+        ),
+        dark: (
+            grad: #000
         )
     )
 );
@@ -122,7 +255,7 @@ $decors: (
             interact:#d6d6d6,
             hbg: #dfdfdf,
             hbgh: #dfdfdf,
-            buttBg:$mc,
+            buttBg:#dfdfdf,
             nodef:#00000000,
             systemMessBg: #ffffff57,
             mhl:#ffffff99,
@@ -132,7 +265,7 @@ $decors: (
             interact:#2c2c2c,
             hbg: #222222,
             hbgh: #222222,
-            buttBg:$mc,
+            buttBg:#1b1b1b,
             nodef:#00000000,
             systemMessBg: #44444457,
             mhl:#22222257,
@@ -173,17 +306,28 @@ $decors: (
   }
 }
 
-@mixin generate-acsent-vars {
-  @each $ac-name, $themes-map in $acsents {
+@mixin generate-accent-vars {
+  @each $ac-name, $themes-map in $accents {
     @each $theme-name, $map in $themes-map {
-      [data-theme="#{$theme-name}"][data-acsent="#{$ac-name}"] {
-        --acsent: #{map-get($map, acsent)};
-        --acsent_op: #{map-get($map, acsent_op)};
-        --acsent_hov: #{map-get($map, acsent_hov)};
-        --darkerAcsent: #{map-get($map, darkerAcsent)};
+      [data-theme="#{$theme-name}"][data-accent="#{$ac-name}"] {
+        --accent: #{map-get($map, accent)};
+        --accent_text: #{map-get($map, accent_text)};
+        --accent_op: #{map-get($map, accent_op)};
+        --accent_hov: #{map-get($map, accent_hov)};
+        --darker_accent: #{map-get($map, darker_accent)};
+        --inner_text: #{map-get($map, inner_text)};
       }
     }
   }
+}
+@mixin generate-grad-vars {
+    @each $grad-name, $themes-map in $grads {
+        @each $theme-name, $map in $themes-map {
+            [data-theme="#{$theme-name}"][data-grad="#{$grad-name}"] {
+                --grad: #{map-get($map, grad)};
+            }
+        }
+    }
 }
 @mixin generate-decor-vars {
   @each $decor-name, $themes-map in $decors {
@@ -199,13 +343,16 @@ $decors: (
 
 /* генерация */
 @include generate-theme-vars();
-@include generate-acsent-vars();
+@include generate-accent-vars();
+@include generate-grad-vars();
 @include generate-decor-vars();
 
 /* fallback (ВАЖНО) */
 :root {
-  --acsent: #21d42a;
-  --acsent_hov: #00cc443a;
-  --acsent_op: #00cc442a;
-  --darkerAcsent: #18ca21;
+    --accent: #000,
+    --accent_text: #000,
+    --accent_op: #000,
+    --accent_hov: #000,
+    --darker_accent: #000,
+    --grad: #000;
 }

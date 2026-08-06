@@ -56,7 +56,7 @@
     border-bottom: 1px solid var(--borderHabit);
     outline: none;
     &:focus-visible {
-        border-bottom: 1px solid var(--acsent);
+        border-bottom: 1px solid var(--accent);
     }
 }
 @media (max-width:800px) {

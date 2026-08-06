@@ -13,7 +13,7 @@
     // align-items: center;
 }
 .seekBarValue {
-    color: var(--acsent);
+    color: var(--accent_text);
 }
 .seekBarLine {
     position: relative;
@@ -28,7 +28,7 @@
     position: absolute;
     height: 100%;
     border-radius: inherit;
-    background: var(--acsent);
+    background: var(--accent);
 }
 
 .seekBarDot {
@@ -38,7 +38,7 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: var(--acsent);
+    background: var(--accent);
 }
 
 .seekBarCurrent {
@@ -46,7 +46,7 @@
     top: calc(100% + 10px);
     transform: translateX(-50%);
     white-space: nowrap;
-    color: var(--acsent);
+    color: var(--accent_text);
     font-size: 14px;
 }
 
@@ -58,7 +58,7 @@
     display: flex;
     justify-content: space-between;
     >.currentValue {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
 }
 .seekBarHoverValue {

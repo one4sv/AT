@@ -7,11 +7,8 @@ import { useSettings } from "../../../components/hooks/SettingsHook";
 import one4svlogo from "../../../assets/pics/one4svlogo.png"
 
 export default function ContactsTab() {
-    const { theme } = useSettings()
-    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark =
-        theme === "dark" ||
-        (theme === "system" && systemDark);
+    const { isDark } = useSettings()
+    
     return (
         <div className="infoTab">
             <div className="one4svlogo">
@@ -20,14 +17,14 @@ export default function ContactsTab() {
                 />
             </div>
 
-            <h3 className="acsent">Разработка</h3>
+            <h3 className="accent">Разработка</h3>
 
             <p>
                 Achieve Together разрабатывается студией{" "}
-                <span className="acsent">one4sv studio</span>.
+                <span className="accent">one4sv studio</span>.
             </p>
 
-            <h3 className="acsent">Социальные сети</h3>
+            <h3 className="accent">Социальные сети</h3>
 
             <div className="contactsWrapper">
                 <Link className="contact" to="https://github.com/one4sv">
@@ -52,7 +49,7 @@ export default function ContactsTab() {
                 </Link>
             </div>
 
-            <h3 className="acsent">Поддержка</h3>
+            <h3 className="accent">Поддержка</h3>
 
             <p>
                 Если у вас есть вопросы, предложения, замечания или вы нашли
@@ -70,7 +67,7 @@ export default function ContactsTab() {
                 Мы открыты к обратной связи и предложениям по развитию проекта.
             </p>
 
-            <h3 className="acsent">О проекте</h3>
+            <h3 className="accent">О проекте</h3>
 
             <p>
                 Achieve Together находится в стадии бета-тестирования.

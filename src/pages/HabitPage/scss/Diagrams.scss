@@ -44,10 +44,10 @@
         color: var(--tc);
     }
     &.active {
-        background-color: var(--acsent);
-        color: var(--tc);
+        background:linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
         &:hover {
-            background-color: var(--darkerAcsent);
+            background-color: var(--darker_accent);
         }
     }
 }

@@ -136,7 +136,7 @@
     transition: background-color 0.2s ease;
 
     &:hover { background-color: var(--menuButtHover); }
-    &.active { background-color: var(--acsent); }
+    &.active { background:linear-gradient(135deg, var(--accent), var(--grad)); }
 }
 
 .monthListElem { aspect-ratio: 1/1; height: 5vh; }
@@ -219,11 +219,11 @@
     }
 
     &.todayCD {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
 
     &.chosenDayCal {
-        outline: 1px solid var(--acsent);
+        outline: 1px solid var(--accent);
         outline-offset: -1px;
     }
 }

@@ -22,12 +22,12 @@
         width: 22vw;
         cursor: pointer;
         &:focus-visible {
-            border-bottom: 2px solid var(--acsent);
+            border-bottom: 2px solid var(--accent);
         }
     }
     &:focus-within {
         >svg {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
 }

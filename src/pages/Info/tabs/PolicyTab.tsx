@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 export default function PolicyTab() {
     return (
         <div className="infoTab">
-            <h2 className="acsent">
+            <h2 className="accent">
                 Политика конфиденциальности Achieve Together (AT)
             </h2>
 
             <p>Дата вступления в силу: 01.08.2026</p>
 
-            <h3 className="acsent">1. Общие положения</h3>
+            <h3 className="accent">1. Общие положения</h3>
 
             <p>
                 Настоящая Политика конфиденциальности определяет порядок
@@ -22,7 +22,7 @@ export default function PolicyTab() {
                 настоящей Политики.
             </p>
 
-            <h3 className="acsent">2. Какие данные мы собираем</h3>
+            <h3 className="accent">2. Какие данные мы собираем</h3>
 
             <p>
                 В рамках работы Сервиса могут обрабатываться следующие данные:
@@ -39,7 +39,7 @@ export default function PolicyTab() {
                 <li>журналы работы сервера.</li>
             </ul>
 
-            <h3 className="acsent">3. Использование данных</h3>
+            <h3 className="accent">3. Использование данных</h3>
 
             <p>
                 Собранные данные используются для:
@@ -54,7 +54,7 @@ export default function PolicyTab() {
                 <li>обеспечения безопасности и предотвращения злоупотреблений.</li>
             </ul>
 
-            <h3 className="acsent">4. Публикуемая информация</h3>
+            <h3 className="accent">4. Публикуемая информация</h3>
 
             <p>
                 Пользователь самостоятельно определяет, какую информацию
@@ -71,7 +71,7 @@ export default function PolicyTab() {
                 которые делает общедоступными.
             </p>
 
-            <h3 className="acsent">5. Сообщения и коммуникации</h3>
+            <h3 className="accent">5. Сообщения и коммуникации</h3>
 
             <p>
                 Сообщения пользователей могут храниться на серверах Сервиса
@@ -85,7 +85,7 @@ export default function PolicyTab() {
                 обеспечения безопасности Сервиса.
             </p>
 
-            <h3 className="acsent">6. Сторонние сервисы</h3>
+            <h3 className="accent">6. Сторонние сервисы</h3>
 
             <p>
                 Для работы AT могут использоваться сторонние сервисы, включая:
@@ -104,7 +104,7 @@ export default function PolicyTab() {
                 необходимый для предоставления своих услуг.
             </p>
 
-            <h3 className="acsent">7. Хранение данных</h3>
+            <h3 className="accent">7. Хранение данных</h3>
 
             <p>
                 Данные хранятся в течение периода, необходимого для работы
@@ -116,7 +116,7 @@ export default function PolicyTab() {
                 либо временно сохраняться в резервных копиях.
             </p>
 
-            <h3 className="acsent">8. Безопасность данных</h3>
+            <h3 className="accent">8. Безопасность данных</h3>
 
             <p>
                 Администрация принимает разумные меры для защиты данных
@@ -133,7 +133,7 @@ export default function PolicyTab() {
                 документы, банковские данные и другую конфиденциальную информацию.
             </p>
 
-            <h3 className="acsent">9. Права пользователя</h3>
+            <h3 className="accent">9. Права пользователя</h3>
 
             <p>Пользователь имеет право:</p>
 
@@ -144,7 +144,7 @@ export default function PolicyTab() {
                 <li>запросить удаление аккаунта.</li>
             </ul>
 
-            <h3 className="acsent">10. Изменение Политики</h3>
+            <h3 className="accent">10. Изменение Политики</h3>
 
             <p>
                 Администрация вправе изменять настоящую Политику
@@ -155,7 +155,7 @@ export default function PolicyTab() {
                 Актуальная версия всегда публикуется в Сервисе.
             </p>
 
-            <h3 className="acsent">11. Контакты</h3>
+            <h3 className="accent">11. Контакты</h3>
 
             <p>
                 По вопросам конфиденциальности, обработки данных или

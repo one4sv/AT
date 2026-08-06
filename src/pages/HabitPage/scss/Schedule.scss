@@ -54,9 +54,9 @@
     &.save {
         padding: 0.5vh 0.5vw;
         color: var(--tc);
-        background-color: var(--acsent);
+        background:linear-gradient(135deg, var(--accent), var(--grad));
         &:hover {
-            background-color: var(--darkerAcsent);
+            background-color: var(--darker_accent);
         }
     }
     &.edit {

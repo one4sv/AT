@@ -73,7 +73,7 @@
     gap: 6px;
     color: var(--msbd);
     > svg {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
 }
 .settingUserName {
@@ -81,7 +81,7 @@
 }
 .settingUserNick {
     font-size: 18px;
-    color: var(--acsent);
+    color: var(--accent_text);
 }
 .settingAvatar {
     width: 44px;
@@ -138,7 +138,7 @@
     }
     &:focus-within {
         > svg {
-        color: var(--acsent);
+        color: var(--accent_text);
         }
     }
     @media (max-width: 800px) {
@@ -155,7 +155,7 @@
         var(--borderWh),
         fit-content,
         8px,
-        var(--acsent)
+        var(--accent)
     );
     width: 100%;
     padding: 0.4vh 0.25vw;
@@ -179,7 +179,7 @@
     }
 }
 .settingHeader {
-    color: var(--acsent);
+    color: var(--accent_text);
     font-size: 18px;
     display: flex;
     align-items: center;
@@ -261,7 +261,7 @@
     );
     &:focus-within {
         > svg {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
     > input {
@@ -271,7 +271,7 @@
             var(--borderHabit),
             fit-content,
             8px,
-            var(--acsent)
+            var(--accent)
         );
         width: 100%;
         cursor: pointer;

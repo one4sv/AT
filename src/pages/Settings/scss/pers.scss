@@ -1,32 +1,96 @@
 @use "../../../scss/global" as var;
 
-.themeChanger {
+.accentSpan {
+    padding-inline-start: 0.5vw;
+    color: var(--accent_text)
+}
+.previewAccent {
+    margin: 0.5vh 0 0;
+    width: 100%;
     display: flex;
-    background-color: var(--bgc);
-    overflow: hidden;
-    border-radius: 8px;
+    flex-direction: column;
+    gap: 0.5vh;
+    padding: 1vh 0.25vw 0.5vh;
+    border-radius: 12px;
+    background-color:var(--bgc) ;
+    >.previewAccentSM {
+        display: flex;
+        gap: 1vw;
+        padding-inline: 0.35vw;
+        > div {
+            width: 50%;
+        }
+        @media (max-width:800px) {
+            flex-direction: column;
+            > div {
+                width: 90%;
+            }
+        }
+    }
+    @media (max-width:800px) {
+        .message {
+            max-width: 70%;
+            >.answerMess {
+                max-width: 100%;
+            }
+            >.messageText {
+                padding: 0.25vh 2vw;
+            }
+            >.messageStatusBarDiv {
+                padding: 0.25vh 2vw;
+            }
+            >.senderName {
+                padding: 0.1vh 2vw 0.25vh;
+            }
+        }
+    }
+    
 }
-.themeSelector {
-    font-size: 16px;
+.accentSelector {
+    width: 100%;
+    height: 10vh;
+    background-color: var(--bgc);
+    padding: 1vh .5vw;
+    margin-top: 1vh;
+    display: flex;
+    gap: .5vw;
+    border-radius: 12px;
+    color: var(--accent_text);
+    flex-direction: column;
+    @media (max-width:800px) {
+        gap: 2vw;
+    }
+}
+.colorTitle {
     color: var(--tc);
-    padding: 1vh 1vw;
-    cursor: pointer;
-    outline: none;
-    border: none;
-    background-color: var(--bgc);
-    &:hover {
-        background-color: var(--menuButtHover);
-    }
-    &.active {
-        background-color: var(--darkerAcsent);
+}
+.accentSelectorWrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    gap: .5vw;
+    @media (max-width:800px) {
+        padding-left: 2vw;
     }
 }
-.persSL {
-    @include var.selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 0.8vh, 0.8vw, 5%);
-    >input {
-        @include var.input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
-        width: 20vw;
-        cursor: pointer;
+.accentPicker {
+    height: 100%;
+    width: 4vw;
+    gap: 8px;
+    border-radius: 8px;
+    background-color: var(--mc);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    @media (max-width:800px) {
+        width: 12vw;
+    }
+    > svg {
+        font-size: 24px;
     }
 }
 .bgPicker {
@@ -36,6 +100,14 @@
     width: 100%;
     gap: 1vw;
     overflow-x: auto;
+}
+.persSL {
+    @include var.selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 0.8vh, 0.8vw, 5%);
+    >input {
+        @include var.input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
+        width: 20vw;
+        cursor: pointer;
+    }
 }
 .bgPick {
     display: flex;
@@ -67,7 +139,7 @@
     border-radius: 12px;
     overflow: hidden;
     &.choosen {
-        border: 1px solid var(--acsent) !important;
+        border: 1px solid var(--accent) !important;
     }
 }
 .bgCustom {
@@ -85,7 +157,7 @@
     }
 }
 .bgSpanChoosen {
-    color: var(--acsent) !important;
+    color: var(--accent_text) !important;
 }
 @media (max-width:800px) {
     .persTabDivDouble {

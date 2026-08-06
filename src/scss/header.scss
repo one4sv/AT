@@ -41,15 +41,15 @@
     position: absolute;
     right: 0.5vw;
     padding: 0.75vh 0.5vw;
-    color: var(--tc);
+    color: var(--inner_text);
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 6px;
-    background-color: var(--acsent);
+    background:linear-gradient(135deg, var(--accent), var(--grad));
     cursor: pointer;
     &:hover {
-        background-color: var(--darkerAcsent);
+        background-color: var(--darker_accent);
         color: var(--tc);
     }
     @media (max-width: 800px) {

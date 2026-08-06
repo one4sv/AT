@@ -34,7 +34,7 @@
         width: 60%;
     }
     &:hover {
-        background-color: var(--acsent);
+        background:linear-gradient(135deg, var(--accent), var(--grad));
     }
 }
 .AccPostCommentBar {

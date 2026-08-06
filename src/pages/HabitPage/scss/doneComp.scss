@@ -89,7 +89,7 @@
         width: 100%;
     }
     &:focus-visible {
-        border-bottom: 1px solid var(--acsent);
+        border-bottom: 1px solid var(--accent);
     }
 }
 .doneCompControler {
@@ -107,7 +107,7 @@
             color: var(--tc);
         }
         >.doneCompControlerReady {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
         >.doneCompControlerEdit {
             color: var(--tc);

@@ -18,7 +18,7 @@
         align-items: center;
         padding: 0 0.5vw;
         >input {
-            @include var.input(var(--bgc), var(--tc), var(--borderHabit), 55%, 8px, var(--acsent));
+            @include var.input(var(--bgc), var(--tc), var(--borderHabit), 55%, 8px, var(--accent));
             width: 100%;
             padding-inline-start: 0.5vw;
             padding-inline-end: 2vw;
@@ -30,7 +30,7 @@
         }
         &:focus-within {
             >svg {
-                color: var(--acsent);
+                color: var(--accent_text);
             }
         }
         &:hover {

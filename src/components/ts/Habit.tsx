@@ -196,7 +196,7 @@ export default function HabitDiv({
 
     return (
         <Link
-            className={`habit themeHabit-default ${id === habit.id ? "active" : ""}`}
+            className={`habit ${id === habit.id ? "active" : ""}`}
             onClick={() => {
                 setShowSideMenu(false);
             }}

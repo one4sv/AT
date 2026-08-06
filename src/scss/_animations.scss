@@ -14,7 +14,7 @@
 		background-color: var(--tr);
 	}
     50% { 
-		background-color: var(--acsent_op); 
+		background-color: var(--accent_op); 
 	}
     100% { 
 		background-color: var(--tr);
@@ -22,27 +22,27 @@
 }
 @keyframes highlightFadeMessage {
     0% {
-		background-color: var(--darkerAcsent);
-		box-shadow: 0 0 1px var(--darkerAcsent); 
+		background-color: var(--darker_accent);
+		box-shadow: 0 0 1px var(--darker_accent); 
 	}
     50% { 
-		background-color: var(--acsent); 
-		box-shadow: 0 0 5px var(--acsent)
+		background-color: var(--accent_text); 
+		box-shadow: 0 0 5px var(--accent)
 	}
     100% { 
-		background-color: var(--darkerAcsent);
-		box-shadow: 0 0 1px var(--darkerAcsent)
+		background-color: var(--darker_accent);
+		box-shadow: 0 0 1px var(--darker_accent)
 	}
 }
 @keyframes highlightFadeReaction {
 	0% {
-		background-color: var(--darkerAcsent);
+		background-color: var(--darker_accent);
 	}
 	50% {
-		background-color: var(--acsent);
+		background-color: var(--accent_text);
 	}
 	100% {
-		background-color: var(--darkerAcsent);
+		background-color: var(--darker_accent);
 	}
 }
 @keyframes loaderSmallAnim {

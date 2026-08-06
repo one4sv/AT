@@ -34,13 +34,13 @@
 
 .react-datepicker__day--selected,
 .react-datepicker__day--keyboard-selected {
-  background-color: var(--acsent) !important;
+  background-color: var(--accent_text) !important;
   color: white;
   border-radius: 6px;
 }
 
 .react-datepicker__day--today {
-  border: 1px solid var(--acsent);
+  border: 1px solid var(--accent);
   border-radius: 6px;
 }
 .react-datepicker__day--outside-month {
@@ -68,7 +68,7 @@
   }
 
   &:focus {
-    border-color: var(--acsent);
+    border-color: var(--accent_text);
   }
 }
 
@@ -111,7 +111,7 @@
     }
 
     &:focus {
-        border-color: var(--acsent);
+        border-color: var(--accent_text);
     }
 }
 .datePickerHeader {

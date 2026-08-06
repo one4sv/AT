@@ -36,7 +36,7 @@
     }
     &:focus-within {
         >label {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
     >span {
@@ -81,7 +81,7 @@
         font-size: 16px;
     }
     &:focus-visible {
-        border-bottom: 2px solid var(--acsent);
+        border-bottom: 2px solid var(--accent);
 
     }
 }
@@ -160,8 +160,8 @@
         flex-shrink: 0;
     }
     &.active {
-        border: 1px solid var(--acsent);
-        color: var(--acsent);
+        border: 1px solid var(--accent);
+        color: var(--accent_text);
     }
 }
 @media (max-width:800px) {
@@ -186,7 +186,7 @@
         height: 22px;
     }
     >.active {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
     >label {
         color: var(--borderWh);
@@ -205,7 +205,7 @@
         user-select: none;
     }
     &:focus-within {
-        color: var(--acsent)
+        color: var(--accent_text)
     }
 }
 .addHabitSL {
@@ -217,12 +217,12 @@
         width: 100%;
         cursor: pointer;
         &:focus-visible {
-            border-bottom: 2px solid var(--acsent);
+            border-bottom: 2px solid var(--accent);
         }
     }
     &:focus-within {
         >svg {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
 }
@@ -235,7 +235,7 @@
     }
 }
 .addHabitSave {
-    @include var.longButt(85%, 4vh, 0, 0, var(--acsent), var(--tc), var(--tr), var(--darkerAcsent));
+    @include var.longButt(85%, 4vh, 0, 0, var(--accent), var(--tc), var(--tr), var(--darker_accent));
     margin-top: 1vh;
     font-size: 20px;
 }
@@ -254,10 +254,10 @@
         color: var(--borderWh);
         aspect-ratio: 1/1;
         &.active {
-            background-color: var(--acsent);
+            background:linear-gradient(135deg, var(--accent), var(--grad));
             color: var(--tc);
             &:hover {
-                background-color: var(--darkerAcsent);
+                background-color: var(--darker_accent);
                 color: var(--tc);
             }
         }

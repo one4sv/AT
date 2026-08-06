@@ -39,7 +39,7 @@
     position: relative;
 }
 .doneButt {
-    @include var.longButt(17vw, 3.7vh, 1vh, 1vw, var(--acsent), var(--tc), var(--tr), var(--acsent));
+    @include var.longButt(17vw, 3.7vh, 1vh, 1vw, var(--accent), var(--inner_text), var(--tr), var(--accent));
     user-select: none;
     font-size: 20px;
     position: relative;
@@ -50,7 +50,7 @@
     gap: 2px;
     &.dbComp {
         >svg {
-            color: var(--tc);
+            color: var(--inner_text);
         }
     }
     &.planButt {
@@ -71,15 +71,15 @@
         }
     }
     &:hover {
-        box-shadow: 0 0 12px var(--acsent), 0 0 24px var(--acsent);
+        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
         &.dbComp {
             > svg {
-                color: var(--tc);
+                color: var(--inner_text);
             }
         }        
         &.dbMark {
             > svg {
-                color: var(--tc);
+                color: var(--inner_text);
             }
         }
     }

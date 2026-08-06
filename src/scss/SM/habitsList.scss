@@ -74,14 +74,20 @@
     background-color: var(--tr);
     display: flex;
     position: relative;
-    border: 1px solid var(--tr);
-    background-color: var(--mc);
     box-sizing: border-box;
     overflow: hidden;
     box-sizing: border-box;
     &:hover {
-        background-color: var(--hbgh);
-        border: 1px solid var(--tc);
+        background-color: var(--menuButtHover);
+        outline: 1px solid var(--tc);
+    }
+    &.active {
+        .habitName {
+            color: var(--inner_text);
+        }
+        svg {
+            color: var(--inner_text);
+        }
     }
 }
 .habitIcon {
@@ -112,9 +118,10 @@
     width: 100%;
     align-items: center;
     gap: 3px;
+    color: var(--tc);
 }
 .habitPer {
-    color: var(--darkerAcsent);
+    color: var(--borderWh);
 }
 .moreHabits {
     color: var(--borderHabit);
@@ -124,9 +131,9 @@
     color: var(--borderHabit);
 }
 .habit.active {
-    background-color: var(--acsent);
+    background:linear-gradient(135deg, var(--accent), var(--grad));
     .habitPer {
-        color: var(--tc) !important;
+        color: var(--inner_text) !important;
     }
     .pinnedHabitSign {
         color: white;
@@ -141,5 +148,4 @@
     right: 0.2vw;
     bottom: 0.4vh;
     border-radius: 50%;
-    // color: var(--borderHabit);
 }

@@ -19,7 +19,7 @@
     user-select: none;
 }
 .timerLeft {
-    color: var(--acsent);
+    color: var(--accent_text);
     font-size: 20px;
 }
 .timerButts {
@@ -30,13 +30,14 @@
 }
 .launchButt {
     border-radius: 50%;
-    background-color: var(--acsent);
+    background:linear-gradient(135deg, var(--accent), var(--grad));
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     height: 5vh;
     aspect-ratio: 1/1;
+    color: var(--inner_text);
     > span {
         outline: none;
         white-space: nowrap;
@@ -44,7 +45,7 @@
         text-wrap-mode: nowrap;
     }
     &:hover {
-        box-shadow: 0 0 12px var(--acsent), 0 0 24px var(--acsent);
+        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
     }
     > svg {
         height: 50%;

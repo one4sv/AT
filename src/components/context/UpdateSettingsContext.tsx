@@ -8,7 +8,8 @@ import type { PrivateSettings } from "./SettingsContext";
 export type UpdateSettingsContextType = {
     setNewOrder: (val: string[]) => void;
     setNewTheme: (val:string)=> void;
-    setNewAcsent: (val:string)=> void;
+    setNewAccent: (val:string)=> void;
+    setNewGrad: (val:string)=> void;
     setNewBg: (val:string)=> void;
     setNewMessdb: (val:string)=> void;
     setNewEmote: (val:string)=> void;
@@ -32,7 +33,7 @@ type UpdateQueueItem = {
 const UpdateSettingsContext = createContext<UpdateSettingsContextType | null>(null);
 
 export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchSettings, orderHabits, showArchived, showArchivedInAcc, setTheme, setAcsent, setBg, setDecor, setMessdb, setEmote, setNote, setMessNote, setHabitsNote } = useSettings();
+    const { refetchSettings, orderHabits, showArchived, showArchivedInAcc, setTheme, setAccent, setBg, setDecor, setMessdb, setEmote, setNote, setMessNote, setHabitsNote, setGrad } = useSettings();
     const { refetchUser, user } = useUser();
     const { showNotification } = useNote();
     const API_URL = import.meta.env.VITE_API_URL
@@ -73,9 +74,13 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         setTheme(val);
     }, [setTheme]);
 
-    const setNewAcsent = useCallback((val: string) => {
-        setAcsent(val);
-    }, [setAcsent]);
+    const setNewAccent = useCallback((val: string) => {
+        setAccent(val);
+    }, [setAccent]);    
+
+    const setNewGrad = useCallback((val: string) => {
+        setGrad(val);
+    }, [setGrad]);
 
     const setNewBg = useCallback((val: string) => {
         setBg(val);
@@ -193,8 +198,8 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
     return (
         <UpdateSettingsContext.Provider
-            value={{ setNewOrder, isUpdating, setNewTheme, setNewPrivateShow, setNewAcsent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote, 
-                setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart, setNewEmote, setNewMessdb, setNewHabitsNote }}
+            value={{ setNewOrder, isUpdating, setNewTheme, setNewPrivateShow, setNewAccent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote, 
+                setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart, setNewEmote, setNewMessdb, setNewHabitsNote, setNewGrad }}
         >
             {children}
         </UpdateSettingsContext.Provider>

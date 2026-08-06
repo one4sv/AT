@@ -23,13 +23,14 @@
     max-width: 70%;
     display: flex;
     align-items: center;
-    background-color: var(--acsent);
+    background:linear-gradient(135deg, var(--accent), var(--grad));
     border-radius: 6px;
     cursor: pointer;
     margin-top: 0.6vh;
     height: 3vh;
     padding: 0 0.4vw;
     position: relative;
+    color: var(--inner_text);
     @media (max-width:800px) {
         padding: 0 1.5vw;
     }
@@ -67,7 +68,7 @@
     display: block;
     field-sizing: content;
     >a {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
 }
 .PostBottom {
@@ -135,7 +136,7 @@
 .PostComment {
     &:hover {
         >svg {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
 }
@@ -167,14 +168,16 @@
         text-align: center;
         font-size: 0.8rem;
         padding: 0.5vh 0;
-        background-color: var(--acsent);
+        background:linear-gradient(135deg, var(--accent), var(--grad));
         border-radius: 6px;
         gap: 0.2vh;
+        color: var(--inner_text);
         .postFileName {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             width: 90%;
+            color: var(--inner_text);
         }
     }
     &:hover .chatTAFileOverlay {

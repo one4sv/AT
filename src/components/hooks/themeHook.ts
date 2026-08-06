@@ -2,34 +2,34 @@ import { useEffect } from "react";
 import { useSettings } from "./SettingsHook"; // путь твой
 
 export default function ThemeHandler() {
-  const { theme, acsent, decor } = useSettings();
+  const { theme, accent, decor } = useSettings();
 
   function getSystemTheme(): "light" | "dark" {
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   }
 
   useEffect(() => {
-    if (!theme || !acsent) return;
+    if (!theme || !accent) return;
 
-    document.documentElement.setAttribute("data-acsent", acsent);
+    document.documentElement.setAttribute("data-accent", accent);
     document.documentElement.setAttribute("data-decor", decor);
 
     // custom: если нужно — брать из настроек/localStorage и выставлять инлайн-переменные
-    if (acsent === "custom") {
+    if (accent === "custom") {
       try {
-        const stored = localStorage.getItem("customAcsent"); // { acsent: "#...", darkerAcsent: "#..." }
+        const stored = localStorage.getItem("customAccent"); // { accent: "#...", darkerAccent: "#..." }
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (parsed.acsent) document.documentElement.style.setProperty("--acsent", parsed.acsent);
-          if (parsed.darkerAcsent) document.documentElement.style.setProperty("--darkerAcsent", parsed.darkerAcsent);
+          if (parsed.accent) document.documentElement.style.setProperty("--accent", parsed.accent);
+          if (parsed.darkerAccent) document.documentElement.style.setProperty("--darkerAccent", parsed.darkerAccent);
         }
       } catch (e) {
-        console.error("custom acsent parse error", e);
+        console.error("custom accent parse error", e);
       }
     } else {
       // при смене предустановленного акцента можно удалить инлайн если были ранее установлены
-      document.documentElement.style.removeProperty("--acsent");
-      document.documentElement.style.removeProperty("--darkerAcsent");
+      document.documentElement.style.removeProperty("--accent");
+      document.documentElement.style.removeProperty("--darkerAccent");
     }
 
     if (theme === "system") {
@@ -45,7 +45,7 @@ export default function ThemeHandler() {
     } else {
       document.documentElement.setAttribute("data-theme", theme);
     }
-  }, [acsent, theme, decor]);
+  }, [accent, theme, decor]);
 
   return null;
 }

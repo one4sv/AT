@@ -93,12 +93,10 @@
     border-radius: 4px;
     border: none;
     outline: none;
-    color: var(--tc);
-    background-color: var(--acsent);
-    border: 1px solid var(--acsent);
+    color: var(--inner_text);
+    background-color: var(--accent_text);
     &:hover {
-        background-color: var(--darkerAcsent);
-        border: 1px solid var(--darkerAcsent);
+        background-color: var(--darker_accent);
     }
     &:disabled {
         color: var(--borderHabit);
@@ -162,7 +160,7 @@
     padding-inline-start: 2px;
     padding-inline-end: 2vw;
     &:focus {
-        border-bottom: 1px solid var(--acsent);
+        border-bottom: 1px solid var(--accent);
         color: var(--tc);
     }
     &::placeholder {
@@ -173,7 +171,7 @@
     position: absolute;
     color: var(--tc);
     display: flex;
-    background-color: var(--acsent);
+    background:linear-gradient(135deg, var(--accent), var(--grad));
     border-radius: 4px;
     align-items: center;
     justify-content: center;
@@ -197,7 +195,7 @@
     align-items: center;
     &:hover {
         > span {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
         > div {
             background-color: var(--borderWh);
@@ -220,6 +218,6 @@
     padding-inline-start: 2px;
     min-height: 2vh;
     &:hover {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
 }

@@ -186,7 +186,7 @@
     bottom: 0;
     width: 100%;
     height: 4vh;
-    background-color: var(--acsent);
+    background:linear-gradient(135deg, var(--accent), var(--grad));
     color: var(--tc);
     border-radius: 8px;
     display: flex;
@@ -196,14 +196,14 @@
     border: 1px solid var(--tr);
     font-size: 18px;
     &:hover {
-        box-shadow: 0 0 12px var(--acsent),
-                    0 0 24px var(--acsent);
+        box-shadow: 0 0 12px var(--accent),
+                    0 0 24px var(--accent);
     }
     &.saving {
-        background-color: var(--darkerAcsent);
+        background-color: var(--darker_accent);
         &:hover {
-            box-shadow: 0 0 12px var(--darkerAcsent),
-                        0 0 24px var(--darkerAcsent);
+            box-shadow: 0 0 12px var(--darker_accent),
+                        0 0 24px var(--darker_accent);
         }
     }
 }

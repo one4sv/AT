@@ -143,7 +143,7 @@
         padding-left: 0.35vw;
     }
     &:focus-within {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
 }
 .extraInfoInput {
@@ -159,7 +159,7 @@
     border-bottom: 1px solid var(--tr);
     width: 100%;
     &:focus-visible {
-        border-bottom: 1px solid var(--acsent);
+        border-bottom: 1px solid var(--accent);
     }
 }
 .accExtraInfo {
@@ -207,7 +207,7 @@
         color: var(--tc);
     }
     &.acbActive {
-        color: var(--acsent);
+        color: var(--accent_text);
     }    
 }
 .accContentLine {
@@ -221,7 +221,7 @@
     left: 0;
     width: calc(100% / 3);
     height: 100%;
-    background: var(--acsent);
+    background:linear-gradient(135deg, var(--accent), var(--grad));
     transition: transform 0.1s ease;
     will-change: transform;
 }

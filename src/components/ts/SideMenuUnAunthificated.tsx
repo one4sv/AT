@@ -15,11 +15,7 @@ interface SMUA {
 export default function SideMenuUnAunthificated ({ref, onTouchS, onTouchM, onTouchE, translateX, isDragging}:SMUA) {
     const { showSideMenu } = useSideMenu()
     const { setNewTheme } = useUpSettings()
-    const { theme } = useSettings()
-    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark =
-        theme === "dark" ||
-        (theme === "system" && systemDark);
+    const { isDark } = useSettings()
 
     return (
         <div className={`sideMenu ${isMobile ? "mobileSM" : ""} ${showSideMenu ? "open" : ""}`} 

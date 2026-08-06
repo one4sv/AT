@@ -20,5 +20,6 @@
 
 /* динамические темы */
 @include vars.generate-theme-vars();
-@include vars.generate-acsent-vars();
+@include vars.generate-accent-vars();
+@include vars.generate-grad-vars();
 @include vars.generate-decor-vars();

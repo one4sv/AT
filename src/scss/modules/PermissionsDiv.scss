@@ -61,7 +61,7 @@
 .permissionsLength {
     display: flex;
     gap: 0.5vw;
-    color: var(--acsent);
+    color: var(--accent_text);
     >svg {
         width: 50%;
         height: 100%;
@@ -99,7 +99,7 @@
 .roleName1str {
     font-size: 18px;
     &.isMy {
-        color: var(--acsent);
+        color: var(--accent_text);
     }
     &.addRole {
         font-size: 16px;
@@ -210,8 +210,8 @@
 
         background: radial-gradient(
             ellipse at center,
-            color-mix(in srgb, var(--acsent) 60%, transparent) 0%,
-            color-mix(in srgb, var(--acsent) 40%, transparent) 30%,
+            color-mix(in srgb, var(--accent) 60%, transparent) 0%,
+            color-mix(in srgb, var(--accent) 40%, transparent) 30%,
             transparent 70%
         );
 
@@ -283,12 +283,12 @@
         padding-inline: 0.5vw;
         border-bottom: 2px solid var(--tr);
         &:focus-visible {
-            border-bottom: 2px solid var(--acsent);
+            border-bottom: 2px solid var(--accent);
         }
     }
     &:focus-within {
         > svg {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
 }
@@ -333,11 +333,11 @@
         background-color: var(--borderWh);
     }
     &.permSave {
-        background-color: var(--acsent);
+        background:linear-gradient(135deg, var(--accent), var(--grad));
         color: var(--tc);
         &:hover {
             color: var(--tc);
-            background-color: var(--darkerAcsent);
+            background-color: var(--darker_accent);
         }
     }
 }
@@ -350,7 +350,7 @@
     padding-inline-start: 0.5vw;
     > .roleName {
         font-size: 15px;
-        color: var(--acsent);
+        color: var(--accent_text);
     }
     > .selectListDiv {
         width: fit-content;
@@ -358,7 +358,7 @@
             padding-inline-start: 0;
             border: none;
             font-size: 14px !important;
-            color: var(--acsent);
+            color: var(--accent_text);
         }
         > svg {
             width: 0;

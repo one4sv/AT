@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import axios, { isAxiosError } from "axios"
 import "../../scss/SM/sideMenu.scss"
-import { CircleUserRound, Search, LogOut, House, ChartLine, Plus } from "lucide-react"
+import { CircleUserRound, Search, LogOut, House, Plus, Calendar } from "lucide-react"
 import HabitsList from "./SM/HabitsList.tsx"
 import { useUser } from "../hooks/UserHook"
 import { useNote } from "../hooks/NoteHook"
@@ -479,14 +479,17 @@ export default function SideMenu() {
                     </div>
                 </div>
                 <div className="SMnav">
-                    <Link className="SMnavButt" to={"/"}>
+                    <Link className={`SMnavButt ${location.pathname === "/" ? "active" : ""}`} to={"/"}>
                         <House />
+                        Главная
                     </Link>
-                    <div className="SMnavButt" onClick={()=> setShowPlusMenu(!showPlusMenu)} ref={plusRef}>
+                    <div className={`SMnavButt ${showPlusMenu ? "active" : ""}`} onClick={()=> setShowPlusMenu(!showPlusMenu)} ref={plusRef}>
                         <Plus />
+                        Добавить
                     </div>
-                    <Link className="SMnavButt" to={"/habit"}>
-                        <ChartLine />
+                    <Link className={`SMnavButt ${location.pathname.includes("/habit") ? "active" : ""}`} to={"/habit"}>
+                        <Calendar />
+                        Активности
                     </Link>
                 </div>
             </div>

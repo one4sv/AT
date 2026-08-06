@@ -131,7 +131,7 @@
     > svg {
         font-size: 1rem;
         margin-bottom: 0.2vh;
-        color: var(--acsent); // Акцент для иконок
+        color: var(--accent_text); // Акцент для иконок
     }
     > span {
         font-size: 0.75rem;
@@ -220,7 +220,7 @@
     }
     &:hover {
         color: var(--tc);
-        background-color: var(--acsent_hov);
+        background-color: var(--accent_hov);
     }
 }
 .chatWriteTAButt {
@@ -234,7 +234,7 @@
     position: absolute;
     right: 0.5vw;
     &:hover {
-        background-color: var(--acsent);
+        background:linear-gradient(135deg, var(--accent), var(--grad));
     }
 }
 .chatSend {
@@ -253,7 +253,7 @@
     >div {
         border-radius: 8px;
         &:hover {
-            background-color: var(--acsent_hov);
+            background-color: var(--accent_hov);
         }
     }
 }
@@ -288,7 +288,7 @@
     }
 }
 .answer2str {
-    color: var(--acsent);
+    color: var(--accent_text);
     width: 100%;
     white-space: nowrap;
     overflow: hidden;

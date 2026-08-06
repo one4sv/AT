@@ -25,7 +25,7 @@
     >svg {
         height: 100%;
         width: 100%;
-        color: var(--acsent);
+        color: var(--accent_text);
     }
 }
 .addHabbitCheckBox.redHabitCheckbox {
@@ -75,7 +75,7 @@
         color: var(--borderWh);
     }
     &:focus-within {
-        color: var(--acsent)
+        color: var(--accent_text)
     }
 }
 .thisarchived {
@@ -110,12 +110,12 @@
         cursor: pointer;
         padding-inline-start: 0.25vw;
         &:focus-visible {
-            border-bottom: 2px solid var(--acsent);
+            border-bottom: 2px solid var(--accent);
         }
     }
     &:focus-within {
         >svg {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
 }

@@ -14,27 +14,27 @@ export default function FirstSteps() {
     const { list } = useChat()
 
     const [opened, setOpened] = useLocalStorage(
-        `${user.nick}_first_steps_opened`,
+        `$first_steps_opened`,
         true
     );
     const [fsprofile, setFsProfile] = useLocalStorage(
-        `${user.nick}_first_steps_profile`,
+        `$first_steps_profile`,
         false
     );
     const [fspost, setFsPost] = useLocalStorage(
-        `${user.nick}_first_steps_post`,
+        `$first_steps_post`,
         false
     );
     const [fsmess, setFsMess] = useLocalStorage(
-        `${user.nick}_first_steps_mess`,
+        `$first_steps_mess`,
         false
     );
     const [fshabit, setFsHabit] = useLocalStorage(
-        `${user.nick}_first_steps_habit`,
+        `$first_steps_habit`,
         false
     );
     const [fsgroup, setFsGroup] = useLocalStorage(
-        `${user.nick}_first_steps_group`,
+        `$first_steps_group`,
         false
     );
 

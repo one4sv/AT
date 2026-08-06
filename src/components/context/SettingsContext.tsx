@@ -11,8 +11,10 @@ export interface SettingsContextType {
     setOrderHabits: React.Dispatch<React.SetStateAction<string[  ] | null>>;
     theme: string;
     setTheme: React.Dispatch<React.SetStateAction<string>>;
-    acsent: string;
-    setAcsent: React.Dispatch<React.SetStateAction<string>>;
+    accent: string;
+    setAccent: React.Dispatch<React.SetStateAction<string>>;    
+    grad: string;
+    setGrad: React.Dispatch<React.SetStateAction<string>>;
     bg: string;
     setBg: React.Dispatch<React.SetStateAction<string>>;
     decor: string;
@@ -41,6 +43,7 @@ export interface SettingsContextType {
     weekStart: string | null;
     setWeekStart: React.Dispatch<React.SetStateAction<string | null>>;
     refetchSettings: () => Promise<void>;
+    isDark:boolean
 }
 
 interface SettingsResponse {
@@ -65,7 +68,8 @@ export interface PrivateSettings {
 
 const LOCAL_KEYS = {
     theme: "settings_theme",
-    acsent: "settings_acsent",
+    accent: "settings_accent",
+    grad: "settings_grad",
     bg: "settings_bg",
     decor: "settings_decor",
     emote:"settings_emote",
@@ -80,7 +84,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const API_URL = import.meta.env.VITE_API_URL;
 
     const [ theme, setTheme ] = useLocalStorage(LOCAL_KEYS.theme, "system");
-    const [ acsent, setAcsent ] = useLocalStorage(LOCAL_KEYS.acsent, "poison");
+    const [ accent, setAccent ] = useLocalStorage(LOCAL_KEYS.accent, "poison");
+    const [ grad, setGrad ] = useLocalStorage(LOCAL_KEYS.grad, "meadow");
     const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "default");
     const [ decor, setDecor ] = useLocalStorage(LOCAL_KEYS.decor, "default");
     const [ emote, setEmote ] = useLocalStorage(LOCAL_KEYS.emote, "Heart")
@@ -88,6 +93,11 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ note, setNote ] = useLocalStorage(LOCAL_KEYS.note, true);
     const [ messNote, setMessNote ] = useLocalStorage(LOCAL_KEYS.messnote, true);
     const [ habitsNote, setHabitsNote ] = useLocalStorage(LOCAL_KEYS.habitsnote, true);
+
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark =
+        theme === "dark" ||
+        (theme === "system" && systemDark);
 
     const [ orderHabits, setOrderHabits ] = useState<string[  ] | null>(null);
     const [ bgUrl, setBgUrl ] = useState<string>("");
@@ -125,11 +135,19 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         if (user) refetchSettings();
     }, [ refetchSettings, user ]);
 
+    useEffect(() => {
+        document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+        document.documentElement.setAttribute("data-accent", accent);
+        document.documentElement.setAttribute("data-grad", grad);
+        document.documentElement.setAttribute("data-decor", decor);
+    }, [isDark, accent, grad, decor]);
+
     return (
         <SettingsContext.Provider value={{
             orderHabits, setOrderHabits, tab, setTab, refetchSettings,
             theme, setTheme,
-            acsent, setAcsent,
+            accent, setAccent,
+            grad, setGrad,
             bg, setBg,
             decor, setDecor,
             bgUrl,
@@ -141,7 +159,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             showArchivedInAcc, setShowArchivedInAcc,
             weekStart, setWeekStart,
             setEmote, emote, setMessdb, messdb,
-            habitsNote, setHabitsNote
+            habitsNote, setHabitsNote, isDark
         }}>
             {children}
         </SettingsContext.Provider>

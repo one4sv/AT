@@ -70,7 +70,7 @@
     }
     &:focus-within {
         > label {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
     > span {
@@ -91,7 +91,7 @@
     background-color: var(--tr);
     color: var(--tc);
     &:focus {
-        border-bottom: 2px solid var(--acsent);
+        border-bottom: 2px solid var(--accent);
     }
 }
 .createChatDesc {
@@ -108,7 +108,7 @@
     scrollbar-width:thin;
     height: 7vh;
     &:focus {
-        border-bottom: 2px solid var(--acsent);
+        border-bottom: 2px solid var(--accent);
     }
 }
 .inviteUser {
@@ -149,7 +149,7 @@
         border: none;
         outline: none;
         color: var(--tc);
-        background-color: var(--acsent);
+        background:linear-gradient(135deg, var(--accent), var(--grad));
         >svg {
             width: 100%;
             height: 100%;
@@ -217,7 +217,7 @@
         }
     }
     >input {
-        @include var.input(var(--tr), var(--tc), var(--borderHabit), 3.5vh, 12px, var(--acsent));
+        @include var.input(var(--tr), var(--tc), var(--borderHabit), 3.5vh, 12px, var(--accent));
         width: 100%;
         padding-inline-start: 0.5vw;
         padding-inline-end: 2vw;
@@ -230,7 +230,7 @@
     }
     &:focus-within {
         >svg {
-            color: var(--acsent);
+            color: var(--accent_text);
         }
     }
 }
@@ -253,7 +253,7 @@
     padding-inline-end: 0.4vw;
     cursor: pointer;
     &:hover {
-        background-color: var(--darkerAcsent);
+        background-color: var(--darker_accent);
         >.createChatConRemove {
             visibility: visible;
         }
@@ -319,12 +319,12 @@
     height: 6vh;
     border: none;
     border-radius: 12px;
-    background-color: var(--acsent);
+    background:linear-gradient(135deg, var(--accent), var(--grad));
     color: var(--tc);
     font-size: 20px;
     cursor: pointer;
     &:hover {
-        background-color: var(--darkerAcsent);
+        background-color: var(--darker_accent);
     }
     &:disabled {
         background-color: var(--borderHabit);
