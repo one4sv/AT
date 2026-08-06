@@ -193,11 +193,11 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border: 1px solid var(--tr);
     font-size: 18px;
     &:hover {
         box-shadow: 0 0 12px var(--accent),
                     0 0 24px var(--accent);
+        outline: 1px solid var(--tc);
     }
     &.saving {
         background-color: var(--darker_accent);
