@@ -23,11 +23,12 @@
         @media (max-width:800px) {
             flex-direction: column;
             > div {
-                width: 90%;
+                width: 100%;
             }
         }
     }
     @media (max-width:800px) {
+        padding: 1vh 2vw 1vh;
         .message {
             max-width: 70%;
             >.answerMess {
