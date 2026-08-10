@@ -3,7 +3,7 @@ import { useUpUser } from "../../../components/hooks/UpdateUserHook";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useChat } from "../../../components/hooks/ChatHook";
-import { useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { useAcc } from "../../../components/hooks/AccHook";
 import { useSideMenu } from "../../../components/hooks/SideMenuHook";
@@ -11,14 +11,16 @@ import type { User } from "../../../components/context/UserContext";
 import type { PrivateSettings } from "../../../components/context/SettingsContext";
 import DatePicker from "react-datepicker";
 import DatePickerHeader from "../../../components/ts/DatePickerHeader";
+import { useTranslation } from "react-i18next";
 
-export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (field:keyof PrivateSettings) => boolean, collapsed:number}) {
+export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canView: (field: keyof PrivateSettings) => boolean, collapsed: number }) {
+    const { t } = useTranslation("acc");
     const { setBlackout } = useBlackout();
-    const { newName, setNewName, newNick, setNewNick, newPick, newBio, setNewBio, newMail, setNewMail, newBirth, setNewBirth } = useUpUser()
+    const { newName, setNewName, newNick, setNewNick, newPick, newBio, setNewBio, newMail, setNewMail, newBirth, setNewBirth } = useUpUser();
     const { onlineMap } = useChat();
-    const { isMyAcc } = useAcc()
-    const { red } = useSideMenu()
-    const [ previewUrl, setPreviewUrl ] = useState<string | null>(null);
+    const { isMyAcc } = useAcc();
+    const { red } = useSideMenu();
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -46,26 +48,26 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
     }, [acc?.bio, newBio]);
 
     const birthDate = (isMyAcc ? newBirth : acc?.date_of_birth)
-    ? (() => {
-        const [year, month, day] = (isMyAcc ? newBirth : acc?.date_of_birth)!
-            .split("-")
-            .map(Number);
+        ? (() => {
+            const [year, month, day] = (isMyAcc ? newBirth : acc?.date_of_birth)!
+                .split("-")
+                .map(Number);
 
-        return new Date(year, month - 1, day);
-    })()
-    : null;
+            return new Date(year, month - 1, day);
+        })()
+        : null;
 
     return (
-            <div
-                className="accInfo"
-                style={{
-                    maxHeight: `${500 * (1 - collapsed)}px`,
-                    opacity: 1 - collapsed,
-                    marginTop: `${(0 - collapsed)}vh`,
-                    paddingTop: `${0.5 * (1 - collapsed)}vh`,
-                    paddingBottom: `${0.5 * (1 - collapsed)}vh`,
-                }}
-            >
+        <div
+            className="accInfo"
+            style={{
+                maxHeight: `${500 * (1 - collapsed)}px`,
+                opacity: 1 - collapsed,
+                marginTop: `${(0 - collapsed)}vh`,
+                paddingTop: `${0.5 * (1 - collapsed)}vh`,
+                paddingBottom: `${0.5 * (1 - collapsed)}vh`,
+            }}
+        >
             <div className="accInfoMain">
                 <div
                     className="accPic"
@@ -79,9 +81,9 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
                         onChange={(e) => e.target.files && setBlackout({ seted: true, module: "PickHandler", pick: e.target.files[0] })}
                     />
                     {previewUrl ? (
-                        <img src={previewUrl} alt="avatar preview" className="avatarImg"/>
+                        <img src={previewUrl} alt="avatar preview" className="avatarImg" />
                     ) : acc?.avatar_url && acc.avatar_url !== null ? (
-                        <img src={acc.avatar_url} alt="avatar" className="avatarImg" onClick={() => {if (!red) setBlackout({seted:true, module:"ImgPrev", img:acc.avatar_url ?? undefined})}}/>
+                        <img src={acc.avatar_url} alt="avatar" className="avatarImg" onClick={() => { if (!red) setBlackout({ seted: true, module: "ImgPrev", img: acc.avatar_url ?? undefined }) }} />
                     ) : red ? (
                         <Camera size={256} />
                     ) : (
@@ -109,13 +111,13 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
                 </div>
                 <div className="accInfoWrapper">
                     <div className={`accOnlineStauts ${onlineMap[acc?.id || ""] ? "online" : "offline"}`}>
-                        {onlineMap[acc?.id || ""] 
-                            ? "В сети" 
+                        {onlineMap[acc?.id || ""]
+                            ? t("online")
                             : formatLastOnline(acc?.last_online)}
                     </div>
                 </div>
             </div>
-            
+
             <div className="accInfoWrapper">
                 <div
                     className="accExtraInfoWrapper"
@@ -123,7 +125,7 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
                         display: acc?.bio || red ? "flex" : "none"
                     }}
                 >
-                    <label htmlFor="extraInfoInputBio">О себе</label>
+                    <label htmlFor="extraInfoInputBio">{t("about")}</label>
                     <textarea
                         className="bioTA extraInfoInput"
                         id="extraInfoInputBio"
@@ -137,10 +139,10 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
 
                 <div className="accExtraInfoWrapper">
                     {!canView("number") ? (
-                        <span>Скрыто</span>
+                        <span>{t("hidden")}</span>
                     ) : (
                         <>
-                            <label htmlFor="extraInfoInputPhone">Телефон</label>
+                            <label htmlFor="extraInfoInputPhone">{t("phone")}</label>
                             <input
                                 id="extraInfoInputPhone"
                                 className="extraInfoInput"
@@ -153,10 +155,10 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
 
                 <div className="accExtraInfoWrapper">
                     {!canView("mail") ? (
-                        <span>Скрыто</span>
+                        <span>{t("hidden")}</span>
                     ) : (
                         <>
-                            <label htmlFor="extraInfoInputEmail">Email</label>
+                            <label htmlFor="extraInfoInputEmail">{t("email")}</label>
                             <input
                                 id="extraInfoInputEmail"
                                 className="extraInfoInput"
@@ -171,10 +173,10 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
                 </div>
                 <div className="accExtraInfoWrapper">
                     {!canView("mail") ? (
-                        <span>Скрыто</span>
+                        <span>{t("hidden")}</span>
                     ) : (
                         <>
-                            <label htmlFor="extraInfoInputBirth">День рождения</label>
+                            <label htmlFor="extraInfoInputBirth">{t("birthday")}</label>
                             <DatePicker
                                 className="extraInfoInput"
                                 id="extraInfoInputBirth"
@@ -205,5 +207,5 @@ export default function AccInfo({acc, canView, collapsed}:{acc?:User, canView: (
                 </div>
             </div>
         </div>
-    )
+    );
 }

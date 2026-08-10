@@ -3,8 +3,10 @@ import "../../../scss/SM/contactsList.scss"
 import { useChat } from "../../hooks/ChatHook"
 import Contact from "../Contact"
 import { GhostIcon, MagnifyingGlassMinusIcon } from "@phosphor-icons/react"
+import { useTranslation } from "react-i18next"
 
-export default function ContactsList({filter, searchRef} : {filter: string, searchRef:RefObject<HTMLInputElement | null>}) {
+export default function ContactsList({filter, searchRef} : {filter: string, searchRef: RefObject<HTMLInputElement | null>}) {
+    const { t } = useTranslation("common")
     const { list, search } = useChat()
 
     const filtered = list.filter(contact => {
@@ -13,7 +15,7 @@ export default function ContactsList({filter, searchRef} : {filter: string, sear
         if (filter === "group") return contact.is_group
         return true
     })
-    console.log(list, search)
+
     return (
         <div className="contactsList SMlist">
             {filtered.length > 0 ? filtered.map((contact) => (
@@ -21,13 +23,13 @@ export default function ContactsList({filter, searchRef} : {filter: string, sear
             )) : search.length > 0 ? (
                 <div className="habitsList SMlist nothing" onClick={() => searchRef.current?.focus()}>
                     <MagnifyingGlassMinusIcon size={50} strokeWidth={1.5}/>
-                    Пользователи не найдены
+                    {t("contactsList.usersNotFound")}
                 </div>
             ) : (
                 <div className="habitsList SMlist nothing" onClick={() => searchRef.current?.focus()}>
                     <GhostIcon size={50} strokeWidth={1.5} />
-                    Упс! А здесь никого нет!
-                    <a>Найти собеседника</a>
+                    {t("contactsList.noOneHere")}
+                    <a>{t("contactsList.findInterlocutor")}</a>
                 </div>
             )}
         </div>

@@ -1,79 +1,60 @@
 import { Link } from "react-router-dom";
-import TelegramLogoSvg from "../../../assets/icons/telegramlogo.svg"
-import GithubLogo from "../../../assets/icons/git.png"
-import GithubWhite from "../../../assets/icons/gitwhite.png"
-import Inst from "../../../assets/icons/inst.svg"
+import { useTranslation } from "react-i18next";
+import TelegramLogoSvg from "../../../assets/icons/telegramlogo.svg";
+import GithubLogo from "../../../assets/icons/git.png";
+import GithubWhite from "../../../assets/icons/gitwhite.png";
+import Inst from "../../../assets/icons/inst.svg";
 import { useSettings } from "../../../components/hooks/SettingsHook";
-import one4svlogo from "../../../assets/pics/one4svlogo.png"
+import one4svlogo from "../../../assets/pics/one4svlogo.png";
 
 export default function ContactsTab() {
-    const { isDark } = useSettings()
-    
+    const { t } = useTranslation("info");
+    const { isDark } = useSettings();
+
     return (
         <div className="infoTab">
             <div className="one4svlogo">
-                <img
-                    src={one4svlogo}
-                />
+                <img src={one4svlogo} />
             </div>
 
-            <h3 className="accent">Разработка</h3>
+            <h3 className="accent">{t("contacts.development")}</h3>
 
             <p>
-                Achieve Together разрабатывается студией{" "}
-                <span className="accent">one4sv studio</span>.
+                {t("contacts.developedBy")}{" "}
+                <span className="accent">{t("contacts.studio")}</span>.
             </p>
 
-            <h3 className="accent">Социальные сети</h3>
+            <h3 className="accent">{t("contacts.social")}</h3>
 
             <div className="contactsWrapper">
                 <Link className="contact" to="https://github.com/one4sv">
-                    <img
-                        src={isDark ? GithubWhite : GithubLogo}
-                    />
+                    <img src={isDark ? GithubWhite : GithubLogo} />
                     GitHub
-                </Link>                
+                </Link>
                 <Link className="contact" to="https://t.me/one4sv">
-                    <img 
-                        src={TelegramLogoSvg} 
-                        className="telegramIcon"
-                    />
+                    <img src={TelegramLogoSvg} className="telegramIcon" />
                     Telegram
-                </Link>                
+                </Link>
                 <Link className="contact" to="https://www.instagram.com/one4sv/">
-                    <img 
-                        src={Inst} 
-                        className="telegramIcon"
-                    />
+                    <img src={Inst} className="telegramIcon" />
                     Instagram
                 </Link>
             </div>
 
-            <h3 className="accent">Поддержка</h3>
+            <h3 className="accent">{t("contacts.support")}</h3>
+
+            <p>{t("contacts.supportText1")}</p>
 
             <p>
-                Если у вас есть вопросы, предложения, замечания или вы нашли
-                ошибку в работе Achieve Together, вы можете связаться с нами.
+                {t("contacts.email")}:{" "}
+                <a href="mailto:kutenko18@gmail.com">kutenko18@gmail.com</a>
             </p>
 
-            <p>
-                Email:{" "}
-                <a href="mailto:kutenko18@gmail.com">
-                    kutenko18@gmail.com
-                </a>
-            </p>
+            <p>{t("contacts.supportText2")}</p>
 
-            <p>
-                Мы открыты к обратной связи и предложениям по развитию проекта.
-            </p>
+            <h3 className="accent">{t("contacts.aboutProject")}</h3>
 
-            <h3 className="accent">О проекте</h3>
-
-            <p>
-                Achieve Together находится в стадии бета-тестирования.
-                Мы продолжаем развивать сервис, добавляя новые возможности
-                для общения, публикаций и совместного достижения целей.
-            </p>
+            <p>{t("contacts.aboutProjectText")}</p>
         </div>
-    )
+    );
 }

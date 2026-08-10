@@ -12,12 +12,14 @@ import { useUser } from "../hooks/UserHook";
 import { useIdentify } from  "../hooks/utils/useIdentify"
 import { useMemo } from "react";
 import { useSideMenu } from "../hooks/SideMenuHook";
+import { useTranslation } from "react-i18next";
 
 export interface ContactType {
     contact: Contact
 }
 
 export default function Contact({ contact }: ContactType) {
+    const { t, i18n } = useTranslation("common")
     const { onlineMap, typingMap } = useChat()
     const { setBlackout } = useBlackout()
     const { openMenu } = useContextMenu()
@@ -55,7 +57,7 @@ export default function Contact({ contact }: ContactType) {
         if (diff < oneDay) {
             return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         } else {
-            return d.toLocaleDateString('ru-RU', {
+            return d.toLocaleDateString(i18n.language === "ru" ? "ru-RU" : undefined, {
                 day: 'numeric',
                 month: 'short',
             });
@@ -75,7 +77,9 @@ export default function Contact({ contact }: ContactType) {
 
     const typingNames = typingMap[contact.id] || [];
     const typingText = typingNames.length > 0 
-        ? (contact.is_group ? `${typingNames.join(', ')} печатает...` : 'Печатает...')
+        ? (contact.is_group 
+            ? t("contact.typingGroup", { names: typingNames.join(', ') }) 
+            : t("contact.typing"))
         : null;
 
     return (
@@ -147,7 +151,7 @@ export default function Contact({ contact }: ContactType) {
                                     )
                                     : (
                                         contact.lastMessage.sender_id === user.id
-                                            ? <span>Вы:</span>
+                                            ? <span>{t("contact.you")}</span>
                                             : contact.is_group && <span>{contact.lastMessage.sender_name}:</span>
                                     )}
                                 <span className={`lmc ${!contact.lastMessage.content || contact.lastMessage.is_system ? "lmcExtra" : ""}`}>
@@ -155,13 +159,16 @@ export default function Contact({ contact }: ContactType) {
                                         partsLast && targetForLast ? (
                                                 `${partsLast.before}${targetForLast.name || targetForLast.nick}${partsLast.after}`
                                         ) : (
-                                            // Обычный текст (или пока грузится имя)
                                             `${contact.lastMessage.content}`
                                         )
                                     ) : contact.lastMessage.files?.length ?
-                                        (`${contact.lastMessage.files.length} mediafile${contact.lastMessage.files.length > 1 ? "s" : ""}`)
+                                        (`${contact.lastMessage.files.length} ${
+                                            contact.lastMessage.files.length > 1 
+                                                ? t("contact.mediafiles") 
+                                                : t("contact.mediafile")
+                                        }`)
                                         : (
-                                            "Пересланное сообщение"
+                                            t("contact.forwardedMessage")
                                         )}
                                 </span>
                             </div>

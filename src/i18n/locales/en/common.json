@@ -1,0 +1,50 @@
+{
+    "profile": "Profile",
+    "settings": "Settings",
+    "footer": {
+        "about": "About project",
+        "terms": "User Agreement",
+        "policy": "Privacy Policy",
+        "contacts": "Contacts",
+        "faq": "FAQ",
+        "russian": "Russian",
+        "english": "English"
+    },
+    "sideMenu": {
+        "searchPlaceholder": "Search...",
+        "messages": "Messages",
+        "new": "New",
+        "private": "Private",
+        "groups": "Groups",
+        "all": "All",
+        "activities": "Activities",
+        "everyday": "Everyday",
+        "today": "Today",
+        "tomorrow": "Tomorrow",
+        "sometimes": "Sometimes",
+        "archive": "Archive",
+        "settings": "Settings",
+        "logOut": "Log out",
+        "logOutError": "Failed to log out",
+        "logOutErrorGeneric": "Something went wrong",
+        "addActivity": "Add activity",
+        "createChat": "Create chat",
+        "home": "Home",
+        "add": "Add",
+        "notLoggedIn": "You are not logged in",
+        "signIn": "Sign in"
+    },
+    "contactsList": {
+        "usersNotFound": "Users not found",
+        "noOneHere": "Oops! There's no one here!",
+        "findInterlocutor": "Find an interlocutor"
+    },
+    "contact": {
+        "typing": "Typing...",
+        "typingGroup": "{{names}} is typing...",
+        "you": "You:",
+        "mediafile": "mediafile",
+        "mediafiles": "mediafiles",
+        "forwardedMessage": "Forwarded message"
+    }
+}

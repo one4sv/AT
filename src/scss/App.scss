@@ -11,6 +11,7 @@ html, body {
 }
 body {
   background-color: var(--bgc);
+  transition: background-color 0s ease !important;
   margin: 0;
   color: var(--tc);
 }

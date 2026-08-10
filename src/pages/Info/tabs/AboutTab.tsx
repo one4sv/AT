@@ -1,93 +1,75 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next"
 
 export default function AboutTab() {
-return ( 
-    <div className="infoTab"> 
-        <h2 className="accent">Achieve Together</h2>
+    const { t } = useTranslation("info")
 
-        <p>
-            <span className="accent">Achieve Together</span> — социальный сервис для
-            создания и отслеживания активностей, обмена достижениями и общения с другими
-            пользователями. Сервис помогает показывать свои результаты, находить
-            единомышленников и развиваться вместе.
-        </p>
+    return ( 
+        <div className="infoTab"> 
+            <h1>{t("about.title")}</h1>
 
-        <p>
-            <span className="accent">Три ключевых направления </span> проекта:
-            активности, публикации и общение. На их пересечении строится основной
-            функционал сервиса: обмен достижениями в личных сообщениях и постах,
-            совместное ведение активностей в группе или вдвоём, распространение
-            контента других пользователей, возможность показать себя, свои интересы
-            и результаты.
-        </p>
+            <p>
+                <span className="accent">{t("about.intro1Accent")}</span>{" "}
+                {t("about.intro1Text")}
+            </p>
 
-        <p>
-            <span className="accent">Главная цель </span> проекта —
-            помогать людям находить единомышленников, делиться своими достижениями,
-            замечать успехи других пользователей, объединяться вокруг общих интересов
-            и поддерживать друг друга на пути к поставленным целям.
-        </p>
+            <p>
+                <span className="accent">{t("about.intro2Accent")}</span>{" "}
+                {t("about.intro2Text")}
+            </p>
 
-        <h3 className="accent">О проекте</h3>
+            <p>
+                <span className="accent">{t("about.intro3Accent")}</span>{" "}
+                {t("about.intro3Text")}
+            </p>
 
-        <p>
-            Проект находится в стадии активной разработки и
-            бета-тестирования. Некоторые функции могут изменяться,
-            дорабатываться или временно работать нестабильно.
-        </p>
+            <h3 className="accent">{t("about.aboutProject")}</h3>
+            <p>{t("about.aboutProjectText")}</p>
 
-        <h3 className="accent">Важное предупреждение.</h3>
+            <h3 className="accent">{t("about.warning")}</h3>
+            <p>{t("about.warningText")}</p>
 
-        <p>Проект находится на ранней стадии разработки. Несмотря на то что автор
-        уделяет внимание безопасности, текущая версия сервиса не гарантирует
-        абсолютную защиту данных. Не рекомендуется публиковать или передавать
-        через сервис конфиденциальную информацию, пароли и другие важные данные.</p>        
+            <h3 className="accent">{t("about.features")}</h3>
 
-        <h3 className="accent">Основные возможности</h3>
+            <ul>
+                <li>{t("about.feature1")}</li>
+                <li>{t("about.feature2")}</li>
+                <li>{t("about.feature3")}</li>
+                <li>{t("about.feature4")}</li>
+                <li>{t("about.feature5")}</li>
+            </ul>
 
-        <ul>
-            <li>Создание и отслеживание активностей</li>
-            <li>Настройка профиля и персонализация сервиса</li>
-            <li>Публикация постов и обмен достижениями</li>
-            <li>Просмотр активностей других пользователей</li>
-            <li>Личные сообщения и общение в чатах</li>
-        </ul>
+            <h3 className="accent">{t("about.feedback")}</h3>
 
-        <h3 className="accent">Обратная связь</h3>
+            <p>
+                {t("about.feedbackText1")}{" "}
+                <Link to="/info/contacts"> {t("about.contacts")}</Link>
+                {t("about.feedbackText2")}
+            </p>
 
-        <p>
-            Если вы нашли ошибку, столкнулись с проблемой или хотите
-            предложить новую функцию, воспользуйтесь разделом{" "}
-            <Link to="/info/contacts">Контакты</Link>.
-        </p>
+            <h3 className="accent">{t("about.future")}</h3>
 
-        <h3 className="accent">Будущие обновления</h3>
+            <p>{t("about.futureText")}</p>
 
-        <p> В будущих версиях планируется расширение социальной составляющей сервиса и улучшение существующих возможностей. </p>
+            <ul>
+                <li>{t("about.future1")}</li>
+                <li>{t("about.future2")}</li>
+                <li>{t("about.future3")}</li>
+                <li>{t("about.future4")}</li>
+                <li>{t("about.future5")}</li>
+                <li>{t("about.future6")}</li>
+                <li>{t("about.future7")}</li>
+                <li>{t("about.future8")}</li>
+            </ul>
 
-        <ul>
-            <li>Полноценный текстовый редактор для создания постов с поддержкой форматирования текста </li> 
-            <li>Возможность использовать жирный текст, курсив, заголовки, списки и другие элементы оформления </li> 
-            <li>Добавление изображений непосредственно внутрь содержимого постов </li> 
-            <li>Отдельные страницы для публикаций с удобным просмотром контента </li> 
-            <li>Система каналов и подписок</li> 
-            <li>Улучшение мессенджера и расширение его функционала</li>
-            <li>Расширение возможностей активностей и их отслеживания</li>
-            <li>Новые инструменты для взаимодействия между пользователями</li>
-        </ul>
+            <h3 className="accent">{t("about.commercial")}</h3>
 
-        <h3 className="accent">О коммерческом статусе.</h3>
+            <p>{t("about.commercialText")}</p>
 
-        <p>
-            На данный момент Achieve Together является некоммерческим проектом
-            и развивается как независимая разработка.
-        </p>
-
-        <p>
-            Текущая версия: <span className="accent">beta 0.5</span>
-        </p>
-
-    </div>
-);
-
+            <p>
+                {t("about.version")}:{" "}
+                <span className="accent">beta 0.5</span>
+            </p>
+        </div>
+    );
 }

@@ -324,6 +324,7 @@
     height: 5.5vh;
     border-radius: 14px;
     overflow: hidden;
+    user-select: none;
     @media (max-width:800px) {
         width: 80%;
     }
@@ -359,6 +360,7 @@
     overflow: hidden;
     opacity: 0;
     transition: opacity 0.2s ease, transform 0.2s ease;
+    user-select: none;
     &.active {
         transform: translateY(-90%);
         opacity: 1;

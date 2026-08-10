@@ -1,0 +1,50 @@
+{
+    "auth": {
+        "emailOrNickname": "Email or nickname",
+        "password": "Password",
+        "rememberMe": "remember me",
+        "signIn": "Sign in",
+        "forgotPassword": "Forgot the password?",
+        "createAccount":"Create account"
+    },
+    "reg": {
+        "nickname": "Nickname",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Repeat password",
+
+        "checkingNick": "Checking nickname",
+        "nickAvailable": "Nickname available",
+
+        "checkingEmail": "Checking email",
+        "emailAvailable": "We will send an email",
+
+        "invalidSymbols": "Invalid characters",
+        "nickLength": "4 to 16 characters",
+        "nickTaken": "This nickname is already taken",
+
+        "invalidEmail": "Invalid email address",
+        "emailTaken": "This email belongs to another account",
+
+        "passwordLengthRule": "8 to 30 characters",
+        "passwordLatinRule": "Latin letters and numbers only",
+        "passwordSymbolsRule": "At least 1 letter and 1 number",
+
+        "acceptTerms": "I accept",
+        "userAgreement": "User Agreement",
+        "privacyPolicy": "Privacy Policy",
+
+        "nickEmpty": "Nickname cannot be empty",
+        "nickInvalid": "Invalid nickname",
+
+        "emailEmpty": "Email cannot be empty",
+        "emailInvalid": "Invalid email",
+
+        "passwordEmpty": "Password cannot be empty",
+        "confirmRequired": "Please repeat your password",
+        "passwordMismatch": "Passwords do not match",
+
+        "createAccount": "Create account",
+        "signIn": "Sign in"
+    }
+}

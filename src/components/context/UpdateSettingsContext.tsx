@@ -11,6 +11,7 @@ export type UpdateSettingsContextType = {
     setNewAccent: (val:string)=> void;
     setNewGrad: (val:string)=> void;
     setNewBg: (val:string)=> void;
+    setNewLang:(val:string) => void;
     setNewMessdb: (val:string)=> void;
     setNewEmote: (val:string)=> void;
     setNewDecor: (val:string)=> void;
@@ -33,7 +34,7 @@ type UpdateQueueItem = {
 const UpdateSettingsContext = createContext<UpdateSettingsContextType | null>(null);
 
 export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchSettings, orderHabits, showArchived, showArchivedInAcc, setTheme, setAccent, setBg, setDecor, setMessdb, setEmote, setNote, setMessNote, setHabitsNote, setGrad } = useSettings();
+    const { refetchSettings, orderHabits, showArchived, showArchivedInAcc, setTheme, setAccent, setBg, setDecor, setMessdb, setEmote, setNote, setMessNote, setHabitsNote, setGrad, setLang } = useSettings();
     const { refetchUser, user } = useUser();
     const { showNotification } = useNote();
     const API_URL = import.meta.env.VITE_API_URL
@@ -108,7 +109,10 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
     const setNewHabitsNote = useCallback((val: boolean) => {
         setHabitsNote(val);
-    }, [setHabitsNote]);
+    }, [setHabitsNote]);    
+    const setNewLang = useCallback((val: string) => {
+        setLang(val);
+    }, [setLang]);
 
 
     const setBgUrl = async(val: File) => {
@@ -199,7 +203,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
     return (
         <UpdateSettingsContext.Provider
             value={{ setNewOrder, isUpdating, setNewTheme, setNewPrivateShow, setNewAccent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote, 
-                setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart, setNewEmote, setNewMessdb, setNewHabitsNote, setNewGrad }}
+                setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart, setNewEmote, setNewMessdb, setNewHabitsNote, setNewGrad, setNewLang }}
         >
             {children}
         </UpdateSettingsContext.Provider>

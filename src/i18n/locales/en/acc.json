@@ -1,0 +1,14 @@
+{
+    "tabs": {
+        "files": "Files",
+        "favorites": "Favorites",
+        "activities": "Activities",
+        "posts": "Posts"
+    },
+    "online": "Online",
+    "about": "About",
+    "hidden": "Hidden",
+    "phone": "Phone",
+    "email": "Email",
+    "birthday": "Birthday"
+}

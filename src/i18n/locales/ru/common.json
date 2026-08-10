@@ -1,0 +1,50 @@
+{
+    "profile": "Профиль",
+    "settings": "Настройки",
+    "footer": {
+        "about": "О проекте",
+        "terms": "Пользовательское соглашение",
+        "policy": "Политика конфиденциальности",
+        "contacts": "Контакты",
+        "faq": "FAQ",
+        "russian": "Русский",
+        "english": "Английский"
+    },
+    "sideMenu": {
+        "searchPlaceholder": "Поиск...",
+        "messages": "Сообщения",
+        "new": "Новые",
+        "private": "Личные",
+        "groups": "Беседы",
+        "all": "Все",
+        "activities": "Активности",
+        "everyday": "Ежедневные",
+        "today": "Сегодня",
+        "tomorrow": "Завтра",
+        "sometimes": "Иногда",
+        "archive": "Архив",
+        "settings": "Настройки",
+        "logOut": "Выйти",
+        "logOutError": "Не удалось выйти",
+        "logOutErrorGeneric": "Что-то пошло не так",
+        "addActivity": "Добавить активность",
+        "createChat": "Создать чат",
+        "home": "Главная",
+        "add": "Добавить",
+        "notLoggedIn": "Вы не вошли в аккаунт",
+        "signIn": "войти"
+    },
+    "contactsList": {
+        "usersNotFound": "Пользователи не найдены",
+        "noOneHere": "Упс! А здесь никого нет!",
+        "findInterlocutor": "Найти собеседника"
+    },
+    "contact": {
+        "typing": "Печатает...",
+        "typingGroup": "{{names}} печатает...",
+        "you": "Вы:",
+        "mediafile": "медиафайл",
+        "mediafiles": "медиафайла",
+        "forwardedMessage": "Пересланное сообщение"
+    }
+}

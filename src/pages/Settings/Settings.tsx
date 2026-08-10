@@ -25,6 +25,7 @@ import PrivacyTab from "./components/SettingsTabs/PrivacyTab";
 import SecurityTab from "./components/SettingsTabs/SecurityTab";
 import GeneralTab from "./components/SettingsTabs/GeneralTab";
 import { useAcc } from "../../components/hooks/AccHook";
+import { useTranslation } from "react-i18next";
 
 export interface setting {
     name: string;
@@ -32,10 +33,12 @@ export interface setting {
     desc: string;
     icon: ElementType;
 }
+
 export default function Settings() {
+    const { t } = useTranslation("settings");
     const { setTitle } = usePageTitle();
     const { user, isAuthenticated, loadingUser } = useUser();
-    const { setIsMyAcc } = useAcc()
+    const { setIsMyAcc } = useAcc();
 
     const { tab } = useParams();
     const navigate = useNavigate();
@@ -49,68 +52,68 @@ export default function Settings() {
     }, [isAuthenticated, loadingUser, navigate, user]);
 
     useEffect(() => {
-        setTitle(`настройки`);
-        setIsMyAcc(true)
-    }, [setIsMyAcc, setTitle, user.nick]);
+        setTitle(t("settings.title"));
+        setIsMyAcc(true);
+    }, [setIsMyAcc, setTitle, user.nick, t]);
 
     const settings: setting[] = [
         {
-            name: "Общие",
+            name: t("settings.general"),
             tab: "gen",
-            desc: "Смена языка, экономия трафика и размер текста",
+            desc: t("settings.generalDesc"),
             icon: GearIcon,
         },
         {
-            name: "Персонализация",
+            name: t("settings.personalization"),
             tab: "pers",
-            desc: "Тема, внешний вид и оформление приложения",
+            desc: t("settings.personalizationDesc"),
             icon: PaintBucketIcon,
         },
         {
-            name: "Активности",
+            name: t("settings.activities"),
             tab: "activites",
-            desc: "Порядок отображения активностей, архив и расписание недель",
+            desc: t("settings.activitiesDesc"),
             icon: SneakerMoveIcon,
         },
         {
-            name: "Чаты",
+            name: t("settings.chats"),
             tab: "chats",
-            desc: "Сообщения, группы и параметры общения",
+            desc: t("settings.chatsDesc"),
             icon: ChatsTeardropIcon,
         },
         {
-            name: "Уведомления",
+            name: t("settings.notifications"),
             tab: "notes",
-            desc: "Настройка push-уведомлений и напоминаний",
+            desc: t("settings.notificationsDesc"),
             icon: BellRingingIcon,
         },
         {
-            name: "Безопасность",
+            name: t("settings.security"),
             tab: "safety",
-            desc: "Пароль, 2FA, вход в аккаунт и защита данных",
+            desc: t("settings.securityDesc"),
             icon: VaultIcon,
         },
         {
-            name: "Приватность",
+            name: t("settings.privacy"),
             tab: "private",
-            desc: "Управление видимостью профиля и личных данных",
+            desc: t("settings.privacyDesc"),
             icon: LockKeyIcon,
         },
     ];
 
     const accTab = {
-        name: user.username ?? user.nick ?? "Аккаунт",
-        desc: "",
+        name: user.username ?? user.nick ?? t("settings.account"),
+        desc: t("settings.accountDesc"),
         icon: UserIcon,
         tab: "acc",
     };
 
     useEffect(() => {
         if (tab) {
-            if (tab === "acc") setActiveTab(accTab)
-            else setActiveTab(settings.find(s => s.tab === tab) ?? null)
+            if (tab === "acc") setActiveTab(accTab);
+            else setActiveTab(settings.find(s => s.tab === tab) ?? null);
         }
-    }, [tab])
+    }, [tab, t]);
 
     const tabs = {
         gen: <GeneralTab />,
@@ -123,7 +126,7 @@ export default function Settings() {
         private: <PrivacyTab />,
     };
 
-  return (
+    return (
         <div className="settingsDiv">
             <div className="settingsSliderWrapper">
                 <div
@@ -134,35 +137,39 @@ export default function Settings() {
                 >
                     <div className="settingsPage">
                         <div className="settingSearch">
-                            <input type="text" className="settingSearchInput" />
+                            <input 
+                                type="text" 
+                                className="settingSearchInput" 
+                                placeholder={t("settings.searchPlaceholder")}
+                            />
                             <MagnifyingGlassIcon size={20} />
                         </div>
                         <div
                             className="settingButt"
                             onClick={() => {
                                 navigate(`/settings/${accTab.tab}`);
-                                setActiveTab(accTab)
+                                setActiveTab(accTab);
                             }}
                         >
                             <span className="settingName">
                                 {user.avatar_url ? (
                                     <img className="settingAvatar" src={user.avatar_url} />
-                                    ) : (
+                                ) : (
                                     <div className="settingAvatar">
                                         <UserIcon size={28} weight="fill" />
                                     </div>
                                 )}
                                 {user.username ? (
-                                <>
-                                    <span className="settingUserName">{user.username}</span>{" "}
-                                    <span className="settingUserNick">| @{user.nick}</span>
-                                </>
+                                    <>
+                                        <span className="settingUserName">{user.username}</span>{" "}
+                                        <span className="settingUserNick">| @{user.nick}</span>
+                                    </>
                                 ) : (
                                     <>@{user.nick}</>
                                 )}
                             </span>
                             <div className="settingDesc">
-                                Управление профилем и личными данными
+                                {t("settings.accountDesc")}
                             </div>
                         </div>
                         <div className="settingsButtsWrapper">
@@ -171,8 +178,8 @@ export default function Settings() {
                                     key={s.tab}
                                     className="settingButt"
                                     onClick={() => {
-                                        setActiveTab(s)
-                                        navigate(`/settings/${s.tab}`)
+                                        setActiveTab(s);
+                                        navigate(`/settings/${s.tab}`);
                                     }}
                                 >
                                     <span className="settingName">
@@ -185,14 +192,14 @@ export default function Settings() {
                             <div
                                 className="settingButt"
                                 onClick={() => {
-                                    navigate("/info")
+                                    navigate("/info");
                                 }}
                             >
                                 <span className="settingName">
                                     <InfoIcon size={24} weight="fill" />
-                                    Информация
+                                    {t("settings.info")}
                                 </span>
-                                <div className="settingDesc">О проекте, политика конфиденциальности, Пользовательское соглашение, контакты, FAQ</div>
+                                <div className="settingDesc">{t("settings.infoDesc")}</div>
                             </div>
                         </div>
                     </div>
@@ -200,11 +207,11 @@ export default function Settings() {
                         {activeTab && (
                             <>
                                 <div className="settingBack" onClick={() => {
-                                    navigate(`/settings`)
-                                    setActiveTab(null)
+                                    navigate(`/settings`);
+                                    setActiveTab(null);
                                 }}>
-                                <CaretLeftIcon size={24} />
-                                <h2>{activeTab.name}</h2>
+                                    <CaretLeftIcon size={24} />
+                                    <h2>{activeTab.name}</h2>
                                 </div>
                                 {tabs[activeTab.tab as keyof typeof tabs]}
                             </>

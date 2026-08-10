@@ -39,7 +39,9 @@
     position: relative;
 }
 .doneButt {
-    @include var.longButt(17vw, 3.7vh, 1vh, 1vw, var(--accent), var(--inner_text), var(--tr), var(--accent));
+    @include var.longButt(17vw, 3.7vh, 1vh, 1vw, none, var(--inner_text), var(--tr), var(--accent));
+    background:linear-gradient(135deg, var(--accent), var(--grad));
+    border: none;
     user-select: none;
     font-size: 20px;
     position: relative;

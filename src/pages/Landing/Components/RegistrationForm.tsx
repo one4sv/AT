@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../../components/hooks/AuthHook";
 import { CheckIcon, CheckSquareIcon, CircleNotchIcon, DotOutlineIcon, SquareIcon, XIcon } from "@phosphor-icons/react";
 import { LoaderSmall } from "../../../components/ts/LoaderSmall";
+import { useTranslation } from "react-i18next";
 
 type validationResponse = {
     valid: boolean;
@@ -19,6 +20,7 @@ export default function RegistrationForm({
     swipeForm: (targetForm: "auth" | "reg") => void;
 }) {
     const { register, response, setResponse, checkRegister, loadingAuth } = useAuth();
+    const { t } = useTranslation("sign");
 
     const [nick, setNick] = useState("");
     const [mail, setMail] = useState("");
@@ -77,13 +79,13 @@ export default function RegistrationForm({
         const valid = regex.test(value);
 
         if (!valid) {
-            setIsValidNick({ valid: false, error: "Недопустимые символы" });
+            setIsValidNick({ valid: false, error: t("reg.invalidSymbols") });
             setLoadingNick(false);
             return;
         }
 
         if (value.trim().length < 4 || value.trim().length > 16) {
-            setIsValidNick({ valid: false, error: "От 4 до 16 символов" });
+            setIsValidNick({ valid: false, error: t("reg.nickLength") });
             setLoadingNick(false);
             return;
         }
@@ -98,7 +100,7 @@ export default function RegistrationForm({
                 const res = await checkRegister({ nick: value, signal:controller.signal});
                 if (currentReqId !== nickReqId.current) return;
                 if (!res.success) {
-                    setIsValidNick({ valid: false, error: "Этот ник уже занят" });
+                    setIsValidNick({ valid: false, error: t("reg.nickTaken") });
                 } else {
                     setIsValidNick({ valid: true });
                 }
@@ -133,7 +135,7 @@ export default function RegistrationForm({
         const valid = regex.test(value);
 
         if (!valid) {
-            setIsValidMail({ valid: false, error: "Введена неверная почта" });
+            setIsValidMail({ valid: false, error: t("reg.invalidEmail") });
             setLoadingMail(false);
             return;
         }
@@ -154,7 +156,7 @@ export default function RegistrationForm({
                 if (!res.success) {
                     setIsValidMail({
                         valid: false,
-                        error: "Данная почта принадлежит другому аккаунту",
+                        error: t("reg.emailTaken"),
                     });
                 } else {
                     setIsValidMail({ valid: true });
@@ -195,17 +197,17 @@ export default function RegistrationForm({
         if (loadingNick || loadingMail) return;
         if (!isValidNick.valid) {
             if (nick.trim() === "") {
-                setResponse({success:false, form:"reg", field:"nick", error:"Nickname не может быть пустым"})
-            } else setResponse({success:false, form:"reg", field:"nick", error:"Nickname неверно заполнен"})
+                setResponse({success:false, form:"reg", field:"nick", error: t("reg.nickEmpty")})
+            } else setResponse({success:false, form:"reg", field:"nick", error: t("reg.nickInvalid")})
             return
         } else if (!isValidMail.valid) {
             if (mail.trim() === "") {
-                setResponse({success:false, form:"reg", field:"email", error:"Email не может быть пустым"})
-            } else setResponse({success:false, form:"reg", field:"email", error:"Email неверно заполнен"})
+                setResponse({success:false, form:"reg", field:"email", error: t("reg.emailEmpty")})
+            } else setResponse({success:false, form:"reg", field:"email", error: t("reg.emailInvalid")})
             return
         } else if (!isValidPass) {
             if (pass.trim() === "") {
-                setResponse({success:false, form:"reg", field:"pass", error:"Пароль не может быть пустым"})
+                setResponse({success:false, form:"reg", field:"pass", error: t("reg.passwordEmpty")})
             } else if (pass.length < 8 || pass.length > 30) {
                 setResponse({success:false, form:"reg", field:"pass", error:"length"})
             } else if (/^[A-Za-z\d]+$/.test(pass) === false) {
@@ -216,8 +218,8 @@ export default function RegistrationForm({
             return
         } else if (!isValidConf) {
             if (confPass.trim() === "") {
-                setResponse({success:false, form:"reg", field:"confirm", error:"Необходимо повторить пароль"})
-            } else setResponse({success:false, form:"reg", field:"confirm", error:"Пароли не совпадают"})
+                setResponse({success:false, form:"reg", field:"confirm", error: t("reg.confirmRequired")})
+            } else setResponse({success:false, form:"reg", field:"confirm", error: t("reg.passwordMismatch")})
             return
         }
         if (!acceptPol && acceptTerms) {
@@ -305,7 +307,7 @@ export default function RegistrationForm({
             <input
                 type="text"
                 className={`landingInput ${wrongNick ? "invalid" : ""}`}
-                placeholder={wrongNick ? error : "Nickname:"}
+                placeholder={wrongNick ? error : t("reg.nickname")}
                 required
                 minLength={4}
                 maxLength={16}
@@ -316,7 +318,7 @@ export default function RegistrationForm({
                 (loadingNick ? (
                     <span className="inpExtraSpan loading">
                         <CircleNotchIcon weight="bold" />
-                        Проверяем ник
+                        {t("reg.checkingNick")}
                     </span>
                 ) : !isValidNick.valid ? (
                     <span className="inpExtraSpan invalid">
@@ -326,14 +328,14 @@ export default function RegistrationForm({
                 ) : (
                     <span className="inpExtraSpan valid">
                         <CheckIcon weight="bold" />
-                        Ник доступен
+                        {t("reg.nickAvailable")}   
                     </span>
                 ))}
 
             <input
                 type="email"
                 className={`landingInput ${wrongMail ? "invalid" : ""}`}
-                placeholder={wrongMail ? error : "Email:"}
+                placeholder={wrongMail ? error : t("reg.email")}
                 required
                 ref={mailRef}
                 onChange={(e) => validateMail(e.currentTarget.value)}
@@ -342,7 +344,7 @@ export default function RegistrationForm({
                 (loadingMail ? (
                     <span className="inpExtraSpan loading">
                         <CircleNotchIcon weight="bold" />
-                        Проверяем email
+                        {t("reg.checkingEmail")}
                     </span>
                 ) : !isValidMail.valid ? (
                     <span className="inpExtraSpan invalid">
@@ -352,7 +354,7 @@ export default function RegistrationForm({
                 ) : (
                     <span className="inpExtraSpan valid">
                         <CheckIcon weight="bold" />
-                        Пришлём электронное письмо
+                        {t("reg.emailAvailable")}   
                     </span>
                 ))}
 
@@ -362,7 +364,7 @@ export default function RegistrationForm({
                 <input
                     type={showedPass.reg ? "text" : "password"}
                     className={`landingInput landingInputPass ${wrongPass ? "invalid" : ""}`}
-                    placeholder={wrongPass ? error : "Пароль:"}
+                    placeholder={wrongPass ? error : t("reg.password")}
                     required
                     ref={passRef}
                     onChange={(e) => validatePass(e.target.value)}
@@ -382,7 +384,7 @@ export default function RegistrationForm({
                     ) : (
                         <DotOutlineIcon weight="fill" />
                     )}
-                    От 8 до 30 символов
+                    {t("reg.passwordLengthRule")}
                 </span>
                 <span className={`${/^[A-Za-z\d]+$/.test(pass) ? "valid" : ""} ${wrongPass && field === "pass" && error === "regex" ? "invalid" : ""}`}>
                     {/^[A-Za-z\d]+$/.test(pass) ? (
@@ -392,7 +394,7 @@ export default function RegistrationForm({
                     ) : (
                         <DotOutlineIcon weight="fill" />
                     )}
-                    Цифры и буквы латинского алфавита
+                    {t("reg.passwordLatinRule")}
                 </span>
                 <span className={`${/[A-Za-z]/.test(pass) && /\d/.test(pass) ? "valid" : ""} ${wrongPass && field === "pass" && error === "symbols" ? "invalid" : ""}`}>
                     {/[A-Za-z]/.test(pass) && /\d/.test(pass) ? (
@@ -402,14 +404,14 @@ export default function RegistrationForm({
                     ) : (
                         <DotOutlineIcon weight="fill" />
                     )}
-                    Минимум 1 цифра и буква
+                    {t("reg.passwordSymbolsRule")}
                 </span>
             </div>
             <div className="passWrap">
                 <input
                     type={showedPass.conf ? "text" : "password"}
                     className={`landingInput landingInputPass ${wrongConf ? "invalid" : ""}`}
-                    placeholder={wrongConf ? error : "Повторите пароль:"}
+                    placeholder={wrongConf ? error : t("reg.confirmPassword")}
                     required
                     ref={confRef}
                     onChange={(e) => validateConf(e.target.value)}
@@ -427,14 +429,14 @@ export default function RegistrationForm({
                 ref={termsRef}
             >
                 {acceptTerms ? <CheckSquareIcon weight="fill" /> : <SquareIcon />}
-                я принимаю
+                {t("reg.acceptTerms")}
                 <span
                     className="acceptSpan"
                     onClick={(e) => {
                         e.preventDefault();
                     }}
                 >
-                    Пользовательское соглашение
+                    {t("reg.userAgreement")}
                 </span>
             </div>
 
@@ -444,26 +446,26 @@ export default function RegistrationForm({
                 ref={polRef}
             >
                 {acceptPol ? <CheckSquareIcon weight="fill" /> : <SquareIcon />}
-                я принимаю
+                {t("reg.acceptTerms")}
                 <span
                     className="acceptSpan"
                     onClick={(e) => {
                         e.preventDefault();
                     }}
                 >
-                    Политику конфиденциальности
+                    {t("reg.privacyPolicy")}
                 </span>
             </div>
 
             <div className="landingButts">
             {loadingAuth
                 ? <LoaderSmall/>
-                : <button type="submit" className="greenButt" onClick={() => handleRegister()}>Создать аккаунт</button>
+                : <button type="submit" className="greenButt" onClick={() => handleRegister()}>{t("reg.createAccount")}</button>
             }
                 
             </div>
             <button type="button" onClick={() => swipeForm("auth")}>
-                Войти в аккаунт
+                {t("reg.signIn")}
             </button>
         </div>
     );

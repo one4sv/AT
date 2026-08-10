@@ -4,15 +4,19 @@ import { useSideMenu } from "../hooks/SideMenuHook";
 import { GhostIcon, MoonStarsIcon, SunDimIcon } from "@phosphor-icons/react";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
 import { useSettings } from "../hooks/SettingsHook";
+import { useTranslation } from "react-i18next";
+
 interface SMUA {
-    ref:React.RefObject<HTMLDivElement | null>,
+    ref: React.RefObject<HTMLDivElement | null>,
     onTouchS: (e: React.TouchEvent<Element>) => void,
     onTouchM: (e: React.TouchEvent<Element>) => void,
     onTouchE: (e: React.TouchEvent<Element>) => void,
-    translateX:number,
-    isDragging:boolean
+    translateX: number,
+    isDragging: boolean
 }
-export default function SideMenuUnAunthificated ({ref, onTouchS, onTouchM, onTouchE, translateX, isDragging}:SMUA) {
+
+export default function SideMenuUnAunthificated ({ref, onTouchS, onTouchM, onTouchE, translateX, isDragging}: SMUA) {
+    const { t } = useTranslation("common")
     const { showSideMenu } = useSideMenu()
     const { setNewTheme } = useUpSettings()
     const { isDark } = useSettings()
@@ -28,20 +32,17 @@ export default function SideMenuUnAunthificated ({ref, onTouchS, onTouchM, onTou
             }}
         >
             <div className="sideMenuUnAthorised">
-                
-                <span><GhostIcon /> Вы не вошли в аккаунт</span>
-                <Link to={'/sign'} className="greenButt">войти</Link>
+                <span><GhostIcon /> {t("sideMenu.notLoggedIn")}</span>
+                <Link to={'/sign'} className="greenButt">{t("sideMenu.signIn")}</Link>
             </div>
-                {/* <div className="SMnav"> */}
-                    <div className="changeSignTheme" onClick={()=>setNewTheme(isDark ? "light" : "dark")}>
-                        {isDark && (
-                            <MoonStarsIcon />
-                        )}            
-                        {!isDark && (
-                            <SunDimIcon  />
-                        )}
-                    </div>
-                {/* </div> */}
+            <div className="changeSignTheme" onClick={() => setNewTheme(isDark ? "light" : "dark")}>
+                {isDark && (
+                    <MoonStarsIcon />
+                )}            
+                {!isDark && (
+                    <SunDimIcon />
+                )}
+            </div>
         </div>
     )
 }

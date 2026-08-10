@@ -235,7 +235,9 @@
     }
 }
 .greenButt {
-    @include var.longButt(15vw, 4vh, 2px, 4px, var(--accent), var(--tc), var(--tr), var(--accent));
+    @include var.longButt(15vw, 4vh, 2px, 4px, none, var(--inner_text), var(--tr), var(--accent));
+    background:linear-gradient(135deg, var(--accent), var(--grad));
+    border: none;
     &:hover {
         box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
     }
@@ -350,5 +352,43 @@
     &:hover {
         color: var(--tc);
         background-color: var(--menuButtHover);
+    }
+}
+.landingSL {
+    @include var.selectList(10vw, 100%, 9%, 0vw, 0.4vh, var(--borderWh), var(--tc), var(--mc), 18px, .75vh, .75vw, 1%, true);
+    display: flex;
+    align-items: center;
+    >input {
+        @include var.input(var(--tr), var(--borderWh), var(--tr), 3vh, 0, var(--tr));
+        width: 100%;
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0.75vh 1vw;
+        text-align: center;
+        font-weight: 400;
+        &:hover {
+            background-color: var(--menuButtHover);
+            color: var(--tc);
+        }
+        &:focus-visible {
+            background-color: var(--menuButtHover);
+            color: var(--tc);
+        }
+    }
+    &:focus-within {
+        >svg {
+            color: var(--accent_text);
+        }
+    }
+    > div {
+        width: 100%;
+        > div {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    @media (max-width: 800px) {
+        width: 20vw;
     }
 }

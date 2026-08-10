@@ -3,17 +3,17 @@ import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import Toggler from "../../../../components/ts/Toggler";
 import DatePicker from "react-datepicker";
+import { useTranslation } from "react-i18next";
 
 export default function HabitsTab() {
+    const { t } = useTranslation("settings");
     const { orderHabits, showArchived, showArchivedInAcc, weekStart } = useSettings();
     const { setNewOrder, setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart } = useUpSettings();
 
     const [isInitialOrderSync, setIsInitialOrderSync] = useState(true);
-    
     const [displayOrder, setDisplayOrder] = useState<string[]>([]);
     const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-
 
     const dragItem = useRef<number | null>(null);
 
@@ -55,62 +55,62 @@ export default function HabitsTab() {
     const getHabitLabel = (type: string) => {
         switch (type) {
             case "everyday":
-                return "Ежедневные";
+                return t("habits.everyday");
             case "weekly":
-                return "По дате";
+                return t("habits.weekly");
             case "sometimes":
-                return "Иногда";
+                return t("habits.sometimes");
             default:
                 return type;
         }
     };
 
     return (
-        <div className="settingTab"> 
+        <div className="settingTab">
             <div className="settingInnerDiv">
                 <div className="settingHeader">
-                    Архив
+                    {t("habits.archive")}
                 </div>
                 <div className="settingInnerList">
                     <div className="settingTogglerDiv" onClick={() => setNewShowArchived(!showArchived)}>
-                        Архивные в боковом меню
-                        <Toggler state={showArchived}/>
+                        {t("habits.archivedInSideMenu")}
+                        <Toggler state={showArchived} />
                     </div>
                     <div className="settingHint">
-                        Показывать архивированные активности в боковом меню
+                        {t("habits.archivedInSideMenuHint")}
                     </div>
                     <div className="settingTogglerDiv" onClick={() => setNewShowArchivedInAcc(!showArchivedInAcc)}>
-                        Архивные в моём профиле
-                        <Toggler state={showArchivedInAcc}/>
+                        {t("habits.archivedInProfile")}
+                        <Toggler state={showArchivedInAcc} />
                     </div>
                     <div className="settingHint">
-                        Показывать архивированные активности вместе с активными другим пользователям в моём профиле (если активности скрыты, архивные также не будут отображаться)
+                        {t("habits.archivedInProfileHint")}
                     </div>
                 </div>
             </div>
             <div className="settingInnerDiv">
                 <div className="settingHeader">
-                    Расписание
+                    {t("habits.schedule")}
                 </div>
                 <div className="habitTabDiv">
-                    Ввести отчёт недель с
+                    {t("habits.weekStartFrom")}
                     <DatePicker
                         className="habitTabDP"
                         selected={weekStart ? new Date(weekStart) : null}
                         maxDate={new Date()}
                         dateFormat="dd.MM.yyyy"
-                        minDate={new Date(2000,0,1)}
-                        onChange={(date)=> {
-                            if(!date) return
-                            const formatted = date.toISOString().split("T")[0]
-                            setNewWeekStart(formatted)
+                        minDate={new Date(2000, 0, 1)}
+                        onChange={(date) => {
+                            if (!date) return;
+                            const formatted = date.toISOString().split("T")[0];
+                            setNewWeekStart(formatted);
                         }}
                     />
                 </div>
             </div>
             <div className="settingInnerDiv">
                 <div className="settingHeader">
-                    Порядок отображения
+                    {t("habits.displayOrder")}
                 </div>
                 <div className="orderShown">
                     {displayOrder.map((type, index) => (

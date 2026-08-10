@@ -3,19 +3,21 @@ import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import { type PrivateSettings } from "../../../../components/context/SettingsContext";
 import RadioGroup from "../../../../components/ts/RadioGroup";
+import { useTranslation } from "react-i18next";
 
 export default function PrivacyTab() {
+    const { t } = useTranslation("settings");
     const { privateShow } = useSettings();
-    const { setNewPrivateShow } = useUpSettings()
+    const { setNewPrivateShow } = useUpSettings();
 
     const privateArr: Option[] = [
-        { label: "Никто", value: "nobody" },
-        { label: "Контакты", value: "contacts" },
+        { label: t("privacy.nobody"), value: "nobody" },
+        { label: t("privacy.contacts"), value: "contacts" },
     ];
 
     const privateArrFull: Option[] = [
         ...privateArr,
-        { label: "Все", value: "all" },
+        { label: t("privacy.all"), value: "all" },
     ];
 
     const applyNewPrivate = (setting: keyof PrivateSettings, value: string) => {
@@ -28,28 +30,28 @@ export default function PrivacyTab() {
         <div className="settingTab">
             <div className="settingInnerDiv">
                 <div className="settingHeader">
-                    Информация об аккаунте
+                    {t("privacy.accountInfo")}
                 </div>
                 <div className="privateSLWrapper">
-                    <div className="settingSpan">Кто видит ваш номер телефона</div>
-                    <RadioGroup list={privateArr} val={privateShow.number} newVal={(value) => applyNewPrivate("number", value || "nobody")}/>
+                    <div className="settingSpan">{t("privacy.whoSeesPhone")}</div>
+                    <RadioGroup list={privateArr} val={privateShow.number} newVal={(value) => applyNewPrivate("number", value || "nobody")} />
                 </div>
                 <div className="privateSLWrapper">
-                    <div className="settingSpan">Кто видит вашу электронную почту</div>
-                    <RadioGroup list={privateArr} val={privateShow.mail} newVal={(value) => applyNewPrivate("mail", value || "nobody")}/>
+                    <div className="settingSpan">{t("privacy.whoSeesEmail")}</div>
+                    <RadioGroup list={privateArr} val={privateShow.mail} newVal={(value) => applyNewPrivate("mail", value || "nobody")} />
                 </div>
             </div>
             <div className="settingInnerDiv">
                 <div className="settingHeader">
-                    Видимость контента
+                    {t("privacy.contentVisibility")}
                 </div>
                 <div className="privateSLWrapper">
-                    <div className="settingSpan">Кто видит ваши активности</div>
-                    <RadioGroup list={privateArrFull} val={privateShow.habits} newVal={(value) => applyNewPrivate("habits", value || "nobody")}/>
+                    <div className="settingSpan">{t("privacy.whoSeesActivities")}</div>
+                    <RadioGroup list={privateArrFull} val={privateShow.habits} newVal={(value) => applyNewPrivate("habits", value || "nobody")} />
                 </div>
                 <div className="privateSLWrapper">
-                    <div className="settingSpan">Кто видит ваши посты</div>
-                    <RadioGroup list={privateArrFull} val={privateShow.posts} newVal={(value) => applyNewPrivate("posts", value || "nobody")}/>
+                    <div className="settingSpan">{t("privacy.whoSeesPosts")}</div>
+                    <RadioGroup list={privateArrFull} val={privateShow.posts} newVal={(value) => applyNewPrivate("posts", value || "nobody")} />
                 </div>
             </div>
         </div>

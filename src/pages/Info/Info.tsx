@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { usePageTitle } from "../../components/hooks/PageContextHook"
 import "./scss/info.scss"
 import type { setting } from "../Settings/Settings"
@@ -9,64 +9,52 @@ import TermsTab from "./tabs/TermsTab"
 import PolicyTab from "./tabs/PolicyTab"
 import ContactsTab from "./tabs/ContactsTab"
 import FaqTab from "./tabs/FaqTab"
+import { useTranslation } from "react-i18next"
 
 export default function Info() {
     const { setTitle } = usePageTitle()
-
+    const { t } = useTranslation("info");
     const { tab } = useParams();
     const navigate = useNavigate();
-    
-    const [activeTab, setActiveTab] = useState<setting | null>(null);
 
     const sections: setting[] = [
         {
-            name: "О проекте",
+            name: t("info.about.name"),
             tab: "about",
-            desc: "Информация о сервисе и бета тесте",
-            icon: InfoIcon ,
+            desc: t("info.about.desc"),
+            icon: InfoIcon,
         },
         {
-            name: "Пользовательское соглашение",
+            name: t("info.terms.name"),
             tab: "terms",
-            desc: "Правила использования сервиса",
+            desc: t("info.terms.desc"),
             icon: HandshakeIcon,
         },
         {
-            name: "Политика конфиденциальности",
+            name: t("info.policy.name"),
             tab: "policy",
-            desc: "Обработка и хранение данных",
+            desc: t("info.policy.desc"),
             icon: DetectiveIcon,
         },
         {
-            name: "Контакты",
+            name: t("info.contacts.name"),
             tab: "contacts",
-            desc: "Связь с разработчиком",
+            desc: t("info.contacts.desc"),
             icon: AddressBookIcon,
         },
         {
-            name: "FAQ",
+            name: t("info.faq.name"),
             tab: "faq",
-            desc: "Часто задаваемые вопросы и ответы на них",
+            desc: t("info.faq.desc"),
             icon: QuestionIcon,
         },
     ];
 
-    useEffect(() => {
-        setTitle("информация");
-    }, []);
+    const currentTab = sections.find((s) => s.tab === tab);
 
     useEffect(() => {
-        if (!tab) {
-            setActiveTab(null);
-            return;
-        }
-
-        const currentTab = sections.find((s) => s.tab === tab);
-
-        if (currentTab) {
-            setActiveTab(currentTab);
-        }
-    }, [tab]);
+        setTitle(t("info.title"));
+    }, [t, setTitle]);
 
     const tabs = {
         about: <AboutTab />,
@@ -91,18 +79,16 @@ export default function Info() {
                                 className="infoBack"
                                 onClick={() => {
                                     navigate(-1);
-                                    setActiveTab(null);
                                 }}
                             >
                                 <CaretLeftIcon size={24} />
-                                <h2>Информация</h2>
+                                <h2>{t("info.title")}</h2>
                             </div>
                             {sections.map((s) => (
                                 <div
                                     key={s.tab}
                                     className="infoButt"
                                     onClick={() => {
-                                        setActiveTab(s);
                                         navigate(`/info/${s.tab}`);
                                     }}
                                 >
@@ -120,20 +106,19 @@ export default function Info() {
                     </div>
 
                     <div className="infoPage">
-                        {activeTab && (
+                        {currentTab && (
                             <>
                                 <div
                                     className="infoBack"
                                     onClick={() => {
                                         navigate(-1);
-                                        setActiveTab(null);
                                     }}
                                 >
                                     <CaretLeftIcon size={24} />
-                                    <h2>{activeTab.name}</h2>
+                                    <h2>{currentTab?.name}</h2>
                                 </div>
 
-                                {tabs[activeTab.tab as keyof typeof tabs]}
+                                {currentTab && tabs[currentTab.tab as keyof typeof tabs]}
                             </>
                         )}
                     </div>

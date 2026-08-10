@@ -1,0 +1,36 @@
+{
+    "auth": {
+        "emailOrNickname": "Email или nickname",
+        "password": "Пароль",
+        "rememberMe": "Не выходить из системы",
+        "signIn": "Войти",
+        "forgotPassword": "Забыли пароль?",
+        "createAccount":"Создать аккаунт"
+    },
+    "reg": {
+        "invalidSymbols": "Недопустимые символы",
+        "nickLength": "От 4 до 16 символов",
+        "nickTaken": "Этот ник уже занят",
+
+        "invalidEmail": "Введена неверная почта",
+        "emailTaken": "Данная почта принадлежит другому аккаунту",
+
+        "passwordLengthRule": "От 8 до 30 символов",
+        "passwordLatinRule": "Цифры и буквы латинского алфавита",
+        "passwordSymbolsRule": "Минимум 1 цифра и буква",
+
+        "acceptTerms": "я принимаю",
+        "userAgreement": "Пользовательское соглашение",
+        "privacyPolicy": "Политику конфиденциальности",
+
+        "nickEmpty": "Nickname не может быть пустым",
+        "nickInvalid": "Nickname неверно заполнен",
+
+        "emailEmpty": "Email не может быть пустым",
+        "emailInvalid": "Email неверно заполнен",
+
+        "passwordEmpty": "Пароль не может быть пустым",
+        "confirmRequired": "Необходимо повторить пароль",
+        "passwordMismatch": "Пароли не совпадают"
+    }
+}

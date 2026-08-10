@@ -3,6 +3,7 @@ import type { ReactNode, SetStateAction } from "react";
 import axios from "axios";
 import { useUser } from "../hooks/UserHook";
 import useLocalStorage from "../hooks/utils/useLocalStorage";
+import i18n from "../../i18n/i18n";
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
@@ -19,6 +20,8 @@ export interface SettingsContextType {
     setBg: React.Dispatch<React.SetStateAction<string>>;
     decor: string;
     setDecor: React.Dispatch<React.SetStateAction<string>>;    
+    lang:string,
+    setLang: React.Dispatch<React.SetStateAction<string>>;    
     emote: string;
     setEmote: React.Dispatch<React.SetStateAction<string>>;    
     messdb: string;
@@ -76,7 +79,8 @@ const LOCAL_KEYS = {
     messdb:"settings_messdb",
     note:"settings_note",
     messnote:"settings_messnote",
-    habitsnote:"settings_habitsnote"
+    habitsnote:"settings_habitsnote",
+    lang:"settings_lang"
 };
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
@@ -88,6 +92,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ grad, setGrad ] = useLocalStorage(LOCAL_KEYS.grad, "meadow");
     const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "default");
     const [ decor, setDecor ] = useLocalStorage(LOCAL_KEYS.decor, "default");
+    const [ lang, setLang ] = useLocalStorage(LOCAL_KEYS.lang, "ru");
     const [ emote, setEmote ] = useLocalStorage(LOCAL_KEYS.emote, "Heart")
     const [ messdb, setMessdb ] = useLocalStorage(LOCAL_KEYS.messdb, "reaction")
     const [ note, setNote ] = useLocalStorage(LOCAL_KEYS.note, true);
@@ -107,6 +112,10 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ showArchivedInAcc, setShowArchivedInAcc ] = useState<boolean>(false);
     const [ weekStart, setWeekStart ] = useState<string | null>(null);
     const [ tab, setTab ] = useState<string>('menu');
+
+    useEffect(() => {
+        i18n.changeLanguage(lang);
+    }, [lang]);
 
     const refetchSettings = useCallback(async () => {
         try {
@@ -150,7 +159,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             grad, setGrad,
             bg, setBg,
             decor, setDecor,
-            bgUrl,
+            bgUrl, lang, setLang,
             privateShow, setPrivate,
             twoAuth, setTwoAuth,
             note, setNote,

@@ -1,0 +1,14 @@
+{
+  "tabs": {
+    "files": "Файлы",
+    "favorites": "Избранное",
+    "activities": "Активности",
+    "posts": "Посты"
+  },
+  "online": "В сети",
+  "about": "О себе",
+  "hidden": "Скрыто",
+  "phone": "Телефон",
+  "email": "Email",
+  "birthday": "День рождения"
+}
