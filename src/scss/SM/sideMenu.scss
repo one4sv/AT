@@ -121,22 +121,19 @@
     pointer-events: none;
     transform: translateY(-25%);
     .ContextMenuButt {
-        padding: 1vh 0.5vw;
-        @media (max-width: 800px) {
-            padding: 1vh 2vw;
-            &.delete {
+        padding: 0.75vh 0.5vw;
+        &.delete {
+            color: var(--notValid);
+            > svg {
                 color: var(--notValid);
-                > svg {
-                    color: var(--notValid);
-                }
             }
+        }
+        @media (max-width: 800px) {
+            padding: 0.75vh 2vw;
         }
     }
     svg {
         color: var(--accent);
-    }
-    .delete:hover > svg {
-        color: var(--notValid);
     }
     @media (max-width: 800px) {
         min-width: 40vw;
