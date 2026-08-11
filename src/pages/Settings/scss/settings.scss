@@ -33,7 +33,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    // overflow: hidden;
+    overflow: hidden;
 }
 .settingsButtsWrapper {
     margin-top: 1vh;
@@ -42,6 +42,7 @@
     display: flex;
     flex-direction: column;
     padding-bottom: 2vh;
+    overflow-y: auto;
 }
 .settingButt {
     background-color: var(--mc);
