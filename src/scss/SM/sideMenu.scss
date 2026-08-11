@@ -344,14 +344,14 @@
     pointer-events: all;
     display: flex;
     background-color: var(--buttBg);
-    width: 70%;
-    height: 5.5vh;
+    width: 80%;
+    height: 6vh;
     border-radius: 14px;
     overflow: hidden;
     user-select: none;
     @media (max-width:800px) {
+        height: 6.5vh;
         width: 75%;
-        height: 6vh;
     }
 }
 .SMnavButt {
@@ -359,17 +359,20 @@
     justify-content: center;
     align-items: center;
     flex: 1;
-    color: var(--borderWh);
+    color: var(--borderWhLight);
     cursor: pointer;
     flex-direction: column;
     font-size: 14px;
-    padding: 0.5vh 0.5vw;
+    padding: 0.75vh 0.75vw;
     &:hover {
         background-color: var(--menuButtHover);
         color: var(--tc);
     }
     &.active {
         color: var(--accent_text);
+    }
+    @media (max-width:800px) {
+        font-size: 12px;
     }
     >svg {
         width: 35%;
