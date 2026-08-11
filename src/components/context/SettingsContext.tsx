@@ -46,7 +46,8 @@ export interface SettingsContextType {
     weekStart: string | null;
     setWeekStart: React.Dispatch<React.SetStateAction<string | null>>;
     refetchSettings: () => Promise<void>;
-    isDark:boolean
+    isDark:boolean,
+    settingsLoaded: boolean;
 }
 
 interface SettingsResponse {
@@ -84,7 +85,7 @@ const LOCAL_KEYS = {
 };
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
-    const { user } = useUser();
+    const { user, initialLoading } = useUser();
     const API_URL = import.meta.env.VITE_API_URL;
 
     const [ theme, setTheme ] = useLocalStorage(LOCAL_KEYS.theme, "system");
@@ -105,13 +106,22 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         (theme === "system" && systemDark);
 
     const [ orderHabits, setOrderHabits ] = useState<string[  ] | null>(null);
-    const [ bgUrl, setBgUrl ] = useState<string>("");
+    const [bgUrl, setBgUrl] = useState<string>(() => {
+        try {
+            return JSON.parse(
+                localStorage.getItem("settings_bg_url") ?? '""'
+            );
+        } catch {
+            return "";
+        }
+    });
     const [ twoAuth, setTwoAuth ] = useState<boolean | null>(null);
     const [ privateShow, setPrivate ] = useState<PrivateSettings>({ number: "", mail: "", habits: "", posts: "" });
     const [ showArchived, setShowArchived ] = useState<boolean>(false);
     const [ showArchivedInAcc, setShowArchivedInAcc ] = useState<boolean>(false);
     const [ weekStart, setWeekStart ] = useState<string | null>(null);
     const [ tab, setTab ] = useState<string>('menu');
+    const [ settingsLoaded, setSettingsLoaded ] = useState(false);
 
     useEffect(() => {
         i18n.changeLanguage(lang);
@@ -133,6 +143,10 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setShowArchivedInAcc(res.data.show_archived_in_acc ?? false);
                 setWeekStart(res.data.week_start ?? null);
                 setBgUrl(res.data.bg_url ?? "");
+                localStorage.setItem(
+                    "settings_bg_url",
+                    JSON.stringify(res.data.bg_url ?? "")
+                );
             }
         } catch (err) {
             if (axios.isAxiosError(err) && err.response?.status === 401) return;
@@ -141,8 +155,23 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     }, [ API_URL ]);
 
     useEffect(() => {
-        if (user) refetchSettings();
-    }, [ refetchSettings, user ]);
+        if (initialLoading) return;
+
+        if (!user.nick) {
+            setSettingsLoaded(true);
+            return;
+        }
+
+        const init = async () => {
+            try {
+                await refetchSettings();
+            } finally {
+                setSettingsLoaded(true);
+            }
+        };
+
+        init();
+    }, [initialLoading, user.nick, refetchSettings]);
 
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
@@ -168,7 +197,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             showArchivedInAcc, setShowArchivedInAcc,
             weekStart, setWeekStart,
             setEmote, emote, setMessdb, messdb,
-            habitsNote, setHabitsNote, isDark
+            habitsNote, setHabitsNote, isDark,
+            settingsLoaded
         }}>
             {children}
         </SettingsContext.Provider>

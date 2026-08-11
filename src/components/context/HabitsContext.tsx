@@ -46,7 +46,7 @@ const HabitsContext = createContext<HabitContextType | null>(null);
 export const HabitsProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
     const { orderHabits } = useSettings();
-    const { user } = useUser()
+    const { user, initialLoading } = useUser()
     const API_URL = import.meta.env.VITE_API_URL
 
     const [ habits, setHabits ] = useState<Habit[] | null>(null);
@@ -83,9 +83,19 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
         await refetchHabits()
     }
     useEffect(() => {
-        refetchHabitsWLoading();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        if (initialLoading) {
+            setHabits(null);
+            return;
+        }
+
+        if (!user.nick) {
+            setHabits(null);
+            return;
+        }
+
+        refetchHabits();
+
+    }, [initialLoading, user.nick, refetchHabits]);
     
     useEffect(() => {
         const weekOrder: string[] = [];

@@ -5,6 +5,7 @@ import SelectList from "../../../../components/ts/SelectList";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
+import Toggler from "../../../../components/ts/Toggler";
 
 export default function GeneralTab() {
     const { t } = useTranslation("settings");
@@ -19,10 +20,6 @@ export default function GeneralTab() {
     const dateChanger = [
         { label: t("general.dateStandard"), value: "standart" },
         { label: t("general.dateAmerican"), value: "american" },
-    ];
-    const trafficEconomy = [
-        { label: t("general.on"), value: "on" },
-        { label: t("general.off"), value: "off" },
     ];
     const langArr = [
         { label: t("general.russian"), value: "ru" },
@@ -41,25 +38,21 @@ export default function GeneralTab() {
                 <div className="settingHeader">
                     {t("general.traffic")}
                 </div>
-                <div className="settingInnerWrapper">
-                    <div className="settingSpan">
+                <div className="settingInnerList">
+                    <div className="settingTogglerDiv">
                         {t("general.autoLoadImages")}
+                        <Toggler state={true} />
                     </div>
-                    <RadioGroup list={trafficEconomy} val="on" />
-                </div>
-                <div className="settingInnerWrapper">
-                    <div className="settingSpan">
+                    <div className="settingTogglerDiv">
                         {t("general.autoPlayGif")}
+                        <Toggler state={true} />
                     </div>
-                    <RadioGroup list={trafficEconomy} val="on" />
-                </div>
-                <div className="settingInnerWrapper">
-                    <div className="settingSpan">
+                    <div className="settingTogglerDiv">
                         {t("general.useImageCache")}
+                        <Toggler state={true} />
                     </div>
-                    <RadioGroup list={trafficEconomy} val="on" />
                 </div>
-            </div>
+                </div>
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     {t("general.text")}

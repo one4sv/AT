@@ -13,7 +13,7 @@ import { useBlackout } from "../../hooks/BlackoutHook";
 
 export default function HabitsList({ filter }: { filter?: string }) {
     const { search } = useChat();
-    const { habits, newOrderHabits } = useHabits();
+    const { habits, newOrderHabits, refetchHabitsWLoading } = useHabits();
     const { showArchived } = useSettings();
     const { habitId } = useParams();
     const { setBlackout } = useBlackout()
@@ -73,10 +73,15 @@ export default function HabitsList({ filter }: { filter?: string }) {
     }, [filter, showArchived, habits]);
 
     if (filtered?.length === 0) return (
-        <div className="habitsList SMlist nothing" onClick={() => setBlackout({seted:true, module:"AddHabit"})}>
-            <GhostIcon size={50} strokeWidth={1.5} />
-            Упс! А здесь ничего нет!
-            <a>Создать первую активность</a>
+        <div className="habitsList SMlist nothing">
+            <div className="hbListNothingAction" onClick={() => setBlackout({seted:true, module:"AddHabit"})}>
+                <GhostIcon size={50} strokeWidth={1.5} />
+                Упс! А здесь ничего нет!
+                <a>Создать первую активность</a>
+            </div>
+            <div className="wtbgButt" onClick={() => refetchHabitsWLoading()}>
+                Обновить
+            </div>
         </div>
     )
 

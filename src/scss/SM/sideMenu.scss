@@ -109,7 +109,7 @@
     top: 100%;
     position: absolute;
     background-color: var(--bgc);
-    color: var(--borderWh);
+    color: var(--borderWhLight);
     z-index: 6;
     display: flex;
     flex-direction: column;
@@ -120,6 +120,24 @@
     opacity: 0;
     pointer-events: none;
     transform: translateY(-25%);
+    .ContextMenuButt {
+        padding: 1vh 0.5vw;
+        @media (max-width: 800px) {
+            padding: 1vh 2vw;
+            &.delete {
+                color: var(--notValid);
+                > svg {
+                    color: var(--notValid);
+                }
+            }
+        }
+    }
+    svg {
+        color: var(--accent);
+    }
+    .delete:hover > svg {
+        color: var(--notValid);
+    }
     @media (max-width: 800px) {
         min-width: 40vw;
     }
@@ -300,10 +318,18 @@
         align-items: center;
         justify-content: center;
         margin-top: 3vh;
-        cursor: pointer;
-        > a {
-            color: var(--accent_text);
-        }
+    }
+}
+.hbListNothingAction {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+    margin: 2vh 0;
+    > a {
+        color: var(--accent_text);
     }
 }
 .SMnavDiv {

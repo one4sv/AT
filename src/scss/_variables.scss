@@ -349,10 +349,11 @@ $decors: (
 
 /* fallback (ВАЖНО) */
 :root {
-    --accent: #000,
-    --accent_text: #000,
-    --accent_op: #000,
-    --accent_hov: #000,
-    --darker_accent: #000,
-    --grad: #000;
+    --accent: #00ad09;
+    --accent_text:#00ad09;
+    --accent_op: #21d42a2a;
+    --accent_hov: #21d42a3a;
+    --darker_accent: #18ca21;
+    --inner_text:#fff;
+    --grad: #00ad09;
 }

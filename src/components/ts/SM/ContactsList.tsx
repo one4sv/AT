@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next"
 
 export default function ContactsList({filter, searchRef} : {filter: string, searchRef: RefObject<HTMLInputElement | null>}) {
     const { t } = useTranslation("common")
-    const { list, search } = useChat()
+    const { list, search, refetchContacts } = useChat()
 
     const filtered = list.filter(contact => {
         if (filter === "new") return contact.unread_count > 0
@@ -26,10 +26,15 @@ export default function ContactsList({filter, searchRef} : {filter: string, sear
                     {t("contactsList.usersNotFound")}
                 </div>
             ) : (
-                <div className="habitsList SMlist nothing" onClick={() => searchRef.current?.focus()}>
-                    <GhostIcon size={50} strokeWidth={1.5} />
-                    {t("contactsList.noOneHere")}
-                    <a>{t("contactsList.findInterlocutor")}</a>
+                <div className="habitsList SMlist nothing" >
+                    <div className="hbListNothingAction" onClick={() => searchRef.current?.focus()}>
+                        <GhostIcon size={50} strokeWidth={1.5} />
+                        {t("contactsList.noOneHere")}
+                        <a>{t("contactsList.findInterlocutor")}</a>
+                    </div>
+                    <div className="wtbgButt" onClick={() => refetchContacts()}>
+                        Обновить
+                    </div>
                 </div>
             )}
         </div>

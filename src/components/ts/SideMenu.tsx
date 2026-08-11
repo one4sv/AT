@@ -334,7 +334,7 @@ export default function SideMenu() {
                             navigate(`/acc/${user.nick}`)
                             setShowSideMenu(false)
                         }}>
-                            <UserIcon size={20}/>
+                            <UserIcon size={20} weight="fill"/>
                             {user.username || user.nick}
                         </div>
                         <div
@@ -347,7 +347,7 @@ export default function SideMenu() {
                                 setShowSideMenu(false)
                             }}
                         >
-                            <GearIcon/>
+                            <GearIcon weight="fill"/>
                             {t("sideMenu.settings")}
                         </div>
                         <div className="ContextMenuButt delete" onClick={() => {

@@ -50,13 +50,14 @@
     margin-bottom: 1vh;
     border-radius: 8px;
     gap: 2px;
+    transition: all 0s ease;
     &.dbComp {
         >svg {
             color: var(--inner_text);
         }
     }
     &.planButt {
-        background-color: #fff;
+        background: #fff;
         color: #000;
         &:hover {
             box-shadow: 0 0 12px #fff, 0 0 24px #fff;
