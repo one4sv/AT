@@ -33,7 +33,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    overflow: hidden;
+    // overflow: hidden;
 }
 .settingsButtsWrapper {
     margin-top: 1vh;
@@ -41,6 +41,7 @@
     gap: 1vh;
     display: flex;
     flex-direction: column;
+    padding-bottom: 2vh;
 }
 .settingButt {
     background-color: var(--mc);
@@ -159,6 +160,9 @@
     );
     width: 100%;
     padding: 0.4vh 0.25vw;
+    @media (max-width:800px) {
+        padding-inline-start: 1.5vw;
+    }
 }
 
 .settingTab {

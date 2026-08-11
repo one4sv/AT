@@ -160,7 +160,7 @@
         width:100%;
         padding-inline-start: 0.4vw;
         @media (max-width:800px) {
-            padding-inline-start: 1vw;
+            padding-inline-start: 1.5vw;
         }
     }
     >svg {
@@ -333,6 +333,7 @@
     position: absolute;
     width: 100%;
     height: 8vh;
+    padding-bottom: 2vh;
     bottom: 0;
     display: flex;
     justify-content: center;
@@ -349,7 +350,8 @@
     overflow: hidden;
     user-select: none;
     @media (max-width:800px) {
-        width: 80%;
+        width: 75%;
+        height: 6vh;
     }
 }
 .SMnavButt {
@@ -372,7 +374,11 @@
     >svg {
         width: 35%;
         height: 100%;
+        @media (max-width:800px) {
+            width: 25%;
+        }
     }
+
 }
 .plusMenu {
     display: flex;
