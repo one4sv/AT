@@ -104,7 +104,9 @@
     max-height: 100%;
     padding: 1vh 1vw;
     @media (max-width:800px) {
-        transform: translate(-50%, -125%);
+        position: absolute;
+        transform: translate(-50%, -50%);
+        top: 50%;
     }
     >img {
         max-width: 100vw;
