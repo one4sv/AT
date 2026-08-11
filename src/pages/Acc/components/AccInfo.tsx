@@ -119,23 +119,20 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
             </div>
 
             <div className="accInfoWrapper">
-                <div
-                    className="accExtraInfoWrapper"
-                    style={{
-                        display: acc?.bio || red ? "flex" : "none"
-                    }}
-                >
-                    <label htmlFor="extraInfoInputBio">{t("about")}</label>
-                    <textarea
-                        className="bioTA extraInfoInput"
-                        id="extraInfoInputBio"
-                        value={(isMyAcc ? newBio : acc?.bio) ?? ""}
-                        readOnly={!red}
-                        onChange={(e) =>
-                            setNewBio(e.currentTarget.value)
-                        }
-                    />
-                </div>
+                {acc?.bio || red ? (
+                    <div className="accExtraInfoWrapper">
+                        <label htmlFor="extraInfoInputBio">{t("about")}</label>
+                        <textarea
+                            className="bioTA extraInfoInput"
+                            id="extraInfoInputBio"
+                            value={(isMyAcc ? newBio : acc?.bio) ?? ""}
+                            readOnly={!red}
+                            onChange={(e) =>
+                                setNewBio(e.currentTarget.value)
+                            }
+                        />
+                    </div>
+                ) : ""}
 
                 <div className="accExtraInfoWrapper">
                     {!canView("number") ? (
@@ -171,40 +168,36 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                         </>
                     )}
                 </div>
-                <div className="accExtraInfoWrapper">
-                    {!canView("mail") ? (
-                        <span>{t("hidden")}</span>
-                    ) : (
-                        <>
-                            <label htmlFor="extraInfoInputBirth">{t("birthday")}</label>
-                            <DatePicker
-                                className="extraInfoInput"
-                                id="extraInfoInputBirth"
-                                selected={birthDate}
-                                onChange={(date) =>
-                                    setNewBirth(
-                                        date
-                                            ? date.toISOString().split("T")[0]
-                                            : ""
-                                    )
-                                }
-                                maxDate={new Date()}
-                                readOnly={!red}
-                                dateFormat="dd.MM.yyyy"
-                                showMonthDropdown
-                                showYearDropdown
-                                dropdownMode="select"
-                                yearDropdownItemNumber={100}
-                                scrollableYearDropdown
-                                popperPlacement="bottom-start"
-                                portalId="root"
-                                renderCustomHeader={(props) => (
-                                    <DatePickerHeader {...props} />
-                                )}
-                            />
-                        </>
-                    )}
-                </div>
+                {acc?.date_of_birth || red ? (
+                    <div className="accExtraInfoWrapper" >
+                        <label htmlFor="extraInfoInputBirth">{t("birthday")}</label>
+                        <DatePicker
+                            className="extraInfoInput"
+                            id="extraInfoInputBirth"
+                            selected={birthDate}
+                            onChange={(date) =>
+                                setNewBirth(
+                                    date
+                                        ? date.toISOString().split("T")[0]
+                                        : ""
+                                )
+                            }
+                            maxDate={new Date()}
+                            readOnly={!red}
+                            dateFormat="dd.MM.yyyy"
+                            showMonthDropdown
+                            showYearDropdown
+                            dropdownMode="select"
+                            yearDropdownItemNumber={100}
+                            scrollableYearDropdown
+                            popperPlacement="bottom-start"
+                            portalId="root"
+                            renderCustomHeader={(props) => (
+                                <DatePickerHeader {...props} />
+                            )}
+                        />
+                    </div>
+                ) : ""}
             </div>
         </div>
     );
