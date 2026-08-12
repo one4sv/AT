@@ -53,7 +53,7 @@ export default function Habit() {
     const { habitId } = useParams<{ habitId: string }>();
     const { setTitle } = usePageTitle()
     const { mainRef } = useDiagrams()
-    const { habits } = useHabits()
+    const { habits, loadingHabits } = useHabits()
     const { setNewOngoing } = useUpHabit()
 
     const [isExpanded, setIsExpanded] = useState(false);
@@ -170,8 +170,8 @@ export default function Habit() {
             setMenuTranslate(0);
         }
     };
-
-    if (loadingHabit || calendarLoading) {
+    
+    if ((loadingHabit || loadingHabits) || calendarLoading) {
         return <Loader/>
     }
 

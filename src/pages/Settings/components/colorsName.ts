@@ -228,7 +228,7 @@ export const colorsName = (accent: string, grad: string): string => {
             grad: "mono"
         },        
         {
-            label: "Полночная мгла",
+            label: "Полуночная мгла",
             accent: "abyss",
             grad: "ocean"
         },        

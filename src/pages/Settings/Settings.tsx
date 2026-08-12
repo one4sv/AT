@@ -208,7 +208,6 @@ export default function Settings() {
                             <>
                                 <div className="settingBack" onClick={() => {
                                     navigate(`/settings`);
-                                    setActiveTab(null);
                                 }}>
                                     <CaretLeftIcon size={24} />
                                     <h2>{activeTab.name}</h2>

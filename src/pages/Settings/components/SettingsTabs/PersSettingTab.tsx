@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { MoonStarsIcon, PlusCircle, RadioButtonIcon, SunIcon } from "@phosphor-icons/react";
+import { MoonStarsIcon, PlusCircle, SunIcon } from "@phosphor-icons/react";
 import defaultBg from "../../../../assets/pics/defaultBg.png";
 import monoBg from "../../../../assets/pics/monoBg.png";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
@@ -68,8 +68,19 @@ export default function PersSettingTab() {
                         <span className="colorTitle">{t("personalization.mainColor")}</span>
                         <div className="accentSelectorWrapper">
                             {accentArr.map((a) => (
-                                <div className="accentPicker" key={a.value} onClick={() => setNewAccent(a.value)}>
-                                    <RadioButtonIcon color={isDark ? a.dark : a.light} weight={accent === a.value ? "fill" : "regular"} />
+                                <div 
+                                    className={`accentPicker ${accent === a.value ? "active" : ""}`} 
+                                    key={a.value} 
+                                    onClick={() => setNewAccent(a.value)} 
+                                    style={{ 
+                                        backgroundColor: isDark ? a.dark : a.light,
+                                        borderColor: accent === a.value 
+                                            ? isDark 
+                                                ? a.dark 
+                                                : a.light 
+                                            : "none"
+                                    }}
+                                >
                                 </div>
                             ))}
                         </div>
@@ -78,8 +89,19 @@ export default function PersSettingTab() {
                         <span className="colorTitle">{t("personalization.gradient")}</span>
                         <div className="accentSelectorWrapper">
                             {gradArr.map((a) => (
-                                <div className="accentPicker" key={a.value} onClick={() => setNewGrad(a.value)}>
-                                    <RadioButtonIcon color={isDark ? a.dark : a.light} weight={grad === a.value ? "fill" : "regular"} />
+                                <div 
+                                    className={`accentPicker ${grad === a.value ? "active" : ""}`} 
+                                    key={a.value} 
+                                    onClick={() => setNewGrad(a.value)} 
+                                    style={{ 
+                                        backgroundColor: isDark ? a.dark : a.light,
+                                        borderColor: grad === a.value 
+                                            ? isDark 
+                                                ? a.dark 
+                                                : a.light 
+                                            : "none"
+                                    }}
+                                >
                                 </div>
                             ))}
                         </div>

@@ -496,7 +496,7 @@ export default function SideMenu() {
                         <Plus />
                         {t("sideMenu.add")}
                     </div>
-                    <Link className={`SMnavButt ${location.pathname.includes("/habit") ? "active" : ""}`} to={"/habit"}>
+                    <Link className={`SMnavButt ${location.pathname === ("/habit") || location.pathname === ("/habit/") ? "active" : ""}`} to={"/habit"}>
                         <Calendar />
                         {t("sideMenu.activities")}
                     </Link>
