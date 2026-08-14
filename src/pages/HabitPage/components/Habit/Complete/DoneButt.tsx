@@ -20,8 +20,6 @@ export default function DoneButton({ habitId }: DoneButtonProps) {
 
   if (!doable && !planable) return null;
 
-  console.log(planable, isPlanned)
-
   if (planable) return (
     <div className="doneButtDiv">
       <button

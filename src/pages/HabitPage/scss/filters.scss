@@ -1,12 +1,7 @@
 @use "../../../scss/global" as var;
 
-.statsDivSL {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
 .statsFilter {
-    @include var.selectList(10vw, 3vh, 2vh, 0.25vw, 0.25vh, var(--tc), var(--tc), var(--menuButtHover), 16px, 0.5vh, 0.5vw, 1%);
+    @include var.selectList(20vw, 3vh, 2vh, 0.25vw, 0.25vh, var(--tc), var(--tc), var(--menuButtHover), 16px, 0.5vh, 0.5vw, 1%);
     > div > div:hover {
         background-color: var(--accent_text)
     }
@@ -22,6 +17,17 @@
         }
         >svg {
             color: var(--borderHabit);
+        }
+    }
+    @media (max-width:800px) {
+        width: 31%;
+        height: 4vh;
+        >input {
+            padding-inline-start: 1.5vw;
+        }
+        >div {
+            width: 100%;
+            padding-inline-start: 1.5vw;
         }
     }
 }

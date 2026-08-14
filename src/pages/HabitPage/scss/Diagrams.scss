@@ -1,81 +1,58 @@
 @use "../../../scss/global" as var;
 
-.diagramsDiv {
-    position: relative;
-    background-color: var(--mc);
+.statsDivStats {
     width: 100%;
-    display: flex;
-    height: 39vh;
-    border-radius: 12px;
-    align-self: start;
-    padding: 0vh 0.5vw;
-
-    &.mobile {
-        width: 100%;
-        align-self: center;
-        margin: 0 auto;
-    }
-}
-.circleDiagramDiv {
-    position: relative;
-    background-color: var(--mc);
-    width: 100%;
-    display: inline-block;
-    height: 100%;
-    align-self: start;
-    padding: 0vh 0.5vw;
-}
-.statsMenu {
     display: flex;
     flex-direction: column;
-    width: 15%;
-    border-right: 1px solid black;
-}
-.statsMenuButt {
-    display: flex;
-    align-items: center;
-    padding: 1vh 1vw;
-    width: 100%;
-    color: var(--borderWh);
-    cursor: pointer;
-    font-size: 18px;
-    &:hover {
-        background-color: var(--menuButtHover);
-        color: var(--tc);
-    }
-    &.active {
-        background:linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--inner_text);
-        &:hover {
-            background-color: var(--darker_accent);
-        }
+    border-radius: 12px;
+    min-height: 52vh;
+    overflow: hidden;
+    background-color: var(--mc);
+    @media (max-width: 800px) {
+        margin-top: 1vh;
+        min-height: 70vh;
+        padding: 0.5vh 2vw;
+        margin-bottom: 1vh;
     }
 }
 .statsDivWrapper {
     display: flex;
     height: 100%;
     flex-direction: column;
-    width: 85%;
+    width: 100%;
     overflow-y:hidden;
     position: relative;
+    scrollbar-width: none;
+    touch-action: pan-y;
 }
 .statsDivSlider {
-    width: 100%;
-    height: 400%;
-    position: absolute;
+    width: 200%;
+    height: 100%;
+    display: flex;
     transition: transform 0.3s ease-in-out;
     will-change: transform;
 }
 .statsDivSlide {
-    position: relative;
-    height: calc(100% / 4);
-    padding: 1vh 1vw;
+    height: 100%;
+    padding: 0 0.5vw 1vh;
+    width: 50%;
+}
+.statsTitle {
+    padding: 1vh 0.5vw;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    height: 4vh;
+    cursor: pointer;
 }
 .statsDivFilters {
     width: 100%;
     height: 8%;
     display: flex;
     justify-content: space-around;
+    @media (max-width:800px) {
+        justify-content: space-between;
+    }
 }
 .doneDiagram {
     width: 100%;
@@ -88,6 +65,12 @@
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
     gap: 12px;
+    @media (max-width:800px) {
+        grid-template-columns: none;
+        grid-template-rows: none;
+        display: flex;
+        flex-direction: column;
+    }
 }
 .overallCard {
     border-radius: 8px;
@@ -95,13 +78,55 @@
     flex: 1;
     padding: 1vh 1vw;
     display: flex;
-    flex-direction: column;
     gap: 1vh;
-}
-.oveerallCardName {
-    font-size: 18px;
+    cursor: pointer;
+    @media (max-width:800px) {
+        padding: 1vh 2vw;
+    }
 }
 .overallPropSpan {
     font-size: 14px;
     color: var(--borderHabit);
+}
+.overallProp {
+    color: var(--borderWh);
+}
+.overallPropGroup {
+    width: fit-content;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.PropValueSpan {
+    display: inline-block;
+    min-width: 30px;
+    padding: 2px 6px;
+    border-radius: 7px;
+    text-align: center;
+    font-weight: 500;
+
+    &.comp {
+        color: #166534;
+        background: #bbf7d0;
+    }
+
+    &.streak {
+        color: #9a3412;
+        background: #fed7aa;
+    }
+
+    &.break {
+        color: #991b1b;
+        background: #fecaca;
+    }
+
+    &.skip {
+        color: #374151;
+        background: #d1d5db;
+    }
+
+    &.all {
+        color: #6b21a8;
+        background: #e9d5ff;
+    }
 }

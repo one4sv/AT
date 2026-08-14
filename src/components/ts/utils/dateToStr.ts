@@ -41,6 +41,14 @@ export const formatDateFromString = (date: string) => {
     const [y, m, d] = date.split("-")
     return `${d}.${m}.${y}`
 }
+/**
+ * Преобразует YYYY-MM-DD → DD.MM.YYYY
+ * @param {string} date Принимает дату в виде строки
+ */
+export const formatShortDateFromString = (date: string) => {
+    const [, m, d] = date.split("-")
+    return `${d}.${m}`
+}
 
 /**
  * Возвращает сокращённый день недели (пн, вт, ср...)

@@ -24,10 +24,14 @@
 @media (max-width:800px) {
     .StatsDivMain {
         padding: 1vh 2vw;
+        margin-bottom: 5vh;
     }
 }
 .sdmwm {
     margin-top: 5vh;
+    @media (max-width:800px) {
+        margin-bottom: 0;
+    }
 }
 .StatsDivHabit {
     height: 40vh;
@@ -35,17 +39,6 @@
     gap: 0.5vw;
     @media (max-width: 800px) {
         gap: 1vh;
-    }
-}
-.statsDivStats {
-    width: 100%;
-    display: flex;
-    border-radius: 12px;
-    min-height: 50vh;
-    overflow: hidden;
-    background-color: var(--mc);
-    @media (max-width: 800px) {
-        margin-top: 1vh;
     }
 }
 .statsCal {

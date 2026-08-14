@@ -12,7 +12,6 @@ export default function HabitSave ({readOnly, archived, id, isSlided}:HabitSaveT
     const { returnSlide } = useSideMenu()
     const hasUnsavedChanges = !!localChanges[id];
     const isThisUpdating = isUpdating.includes(`habit_${id}`);
-    console.log(readOnly, archived)
 
     return (
         <div className="habitSaveDiv">

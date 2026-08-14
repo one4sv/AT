@@ -17,7 +17,6 @@ import Complete from "./components/Habit/Complete/Complete";
 import CompJurnal from "./components/Calendar/CompJurnal";
 import Schedule from "./components/Schedule/Schedule";
 import ChosenDay from "./components/Calendar/ChosenDay";
-import { useDiagrams } from "../../components/hooks/DiagramHook";
 import HabitSave from "./components/HabitInfo/HabitSave";
 import { useSchedule } from "../../components/hooks/ScheduleHook";
 import HabitExtraButts from "./components/HabitInfo/HabitExtraButts";
@@ -52,7 +51,6 @@ export default function Habit() {
     const { schedules } = useSchedule()
     const { habitId } = useParams<{ habitId: string }>();
     const { setTitle } = usePageTitle()
-    const { mainRef } = useDiagrams()
     const { habits, loadingHabits } = useHabits()
     const { setNewOngoing } = useUpHabit()
 
@@ -64,6 +62,7 @@ export default function Habit() {
 
     const startX = useRef(0);
     const startTranslate = useRef(100);
+    const mainRef = useRef<HTMLDivElement | null>(null);
     const isSlided = showJurnal || showSettings
     
     useEffect(() => {
@@ -264,7 +263,7 @@ export default function Habit() {
                 {shouldShowSchedule && (
                     <Schedule id={habitId} isMy={!isReadOnly}/>
                 )}
-                <Diagrams/>
+                <Diagrams mainRef={mainRef}/>
             </div>
             {habitId && habit && (
                 <div

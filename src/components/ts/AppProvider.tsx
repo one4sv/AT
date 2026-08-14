@@ -22,7 +22,6 @@ import { SendMessProvider } from '../context/SendMessContext';
 import { GroupProvider } from '../context/GroupContext';
 import { ScheduleProvider } from '../context/ScheduleContext';
 import { SideMenuProvider } from '../context/SideMenuContext';
-import { DiagramsProvider } from '../context/DiagramsContext';
 import { WebSocketProvider } from '../context/WebSocketContext';
 import { PlannedProvider } from '../context/PlannedContext';
 
@@ -52,9 +51,7 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                                                                                             <DropProvider>
                                                                                                 <PageTitleProvider>
                                                                                                     <SideMenuProvider>
-                                                                                                        <DiagramsProvider>
                                                                                                             {children}
-                                                                                                        </DiagramsProvider>
                                                                                                     </SideMenuProvider>
                                                                                                 </PageTitleProvider>
                                                                                             </DropProvider>

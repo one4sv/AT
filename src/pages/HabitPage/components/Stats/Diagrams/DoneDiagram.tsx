@@ -22,8 +22,7 @@ import type {
     TooltipItem,
 } from "chart.js"
 
-import { useMemo } from "react"
-import { useDiagrams } from "../../../../../components/hooks/DiagramHook"
+import React, { useMemo } from "react"
 import { useParams } from "react-router-dom"
 import {
     generateDays,
@@ -32,9 +31,10 @@ import {
     getMonthStart,
     groupDays,
 } from "../../../utils/DiagramDate"
-import { formatDateFromString, weekDay } from "../../../../../components/ts/utils/dateToStr"
+import { formatShortDateFromString, weekDay } from "../../../../../components/ts/utils/dateToStr"
 import type { Calendar } from "../../../../../components/context/CalendarContext"
 import type { Habit } from "../../../../../components/context/HabitsContext"
+import { isMobile } from "react-device-detect"
 
 ChartJS.register(
     CategoryScale,
@@ -87,10 +87,10 @@ function formatGroupLabel(groupType: string, day: string): string {
 
     if (groupType === "week") {
         const week = Math.ceil(date.getDate() / 7)
-        return `${week} нед. ${month}.${year}`
+        return `${week} нед. ${month}`
     }
 
-    return `${formatDateFromString(day)} ${weekDay(day)}`
+    return `${formatShortDateFromString(day)} ${weekDay(day)}`
 }
 
 function buildCalendarIndex(calendar: Calendar[]) {
@@ -103,11 +103,10 @@ function buildCalendarIndex(calendar: Calendar[]) {
     return map
 }
 
-export default function LineDiagram() {
+export default function DoneDiagram({ group, period, metric, mainRef} : {group: string, period:string, metric: string, mainRef:React.RefObject<HTMLDivElement | null> }) {
     const { calendar, setChosenDay, setSelectedMonth, setSelectedYear } = useCalendar()
     const { habit } = useTheHabit()
     const { habits } = useHabits()
-    const { period, metric, group, mainRef } = useDiagrams()
     const { habitId: id } = useParams<{ habitId: string }>()
 
     const { data, groupsDays, effectiveGroup, groupStats } = useMemo<ChartState>(() => {
@@ -366,6 +365,7 @@ export default function LineDiagram() {
         },
         scales: {
             y: {
+                display: !isMobile,
                 beginAtZero: true,
                 max: maxValue,
             },
@@ -375,7 +375,7 @@ export default function LineDiagram() {
     if (!data) return null
 
     return (
-        <div className="doneDiagram" >
+        <div className="doneDiagram" onContextMenu={(e) => e.stopPropagation()}>
             <Line data={data} options={options} />
         </div>
     )

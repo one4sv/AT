@@ -209,6 +209,9 @@
     cursor: pointer;
     position: relative;
     transition: background-color 0.2s ease;
+    >span {
+        transition: color 0s ease;
+    }
 
     &:hover {
         background-color: var(--menuButtHover);

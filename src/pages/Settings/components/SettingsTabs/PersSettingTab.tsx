@@ -80,8 +80,7 @@ export default function PersSettingTab() {
                                                 : a.light 
                                             : "none"
                                     }}
-                                >
-                                </div>
+                                />
                             ))}
                         </div>
                     </div>
@@ -101,8 +100,7 @@ export default function PersSettingTab() {
                                                 : a.light 
                                             : "none"
                                     }}
-                                >
-                                </div>
+                                />
                             ))}
                         </div>
                     </div>

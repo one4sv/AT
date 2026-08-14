@@ -5,11 +5,6 @@ export const periods = [
     { label:"365 дней", value:"year" },
     { label:"всё время", value:"all" }
 ]
-export const views = [
-    {label:"линейная", value:"line"},
-    {label:"столбчатая", value:"column"},
-    {label:"круговая", value:"circle"},
-]
 export const metricsWid = [
     { label:"выполнения", value:"comp"},
     { label:"все", value:"all"},
@@ -32,12 +27,59 @@ export const slides = [
     {label: "Стрик", value:"streak"},
     {label: "Повторения", value:"count"},
 ]
-export const overall = [
-    {label: "Выполнено", value:"comp", props:["Кол-во", "В процнтах"]},
-    {label: "Пропущено", value:"skip", props:["Кол-во", "В процентах"]},
-    {label: "Стрик (3+ выполненных дней подряд)", value:"streak", props:["Лучший"]},
-    {label: "Перерыв", value:"break", props:["Наибольший"]},
-    {label: "Средний стрик", value:"midd", props:["В среднем", "Средний перерыв"]},
-    {label: "Всего", value:"alls", props:["Дней в трекинге", "Стриков"]},
-    
-]
+export const cards = [
+    {
+        value:"comp",
+        label:"Выполнения",
+        props:[
+            {
+                label: "Выполнено", value:"comp", props:[
+                    {label:"Кол-во", value:"compCount"},
+                    {label:"В процнтах", value:"compProcent"}
+                ]
+            },
+            {
+                label: "Пропущено", value:"skip", props:[
+                    {label:"Кол-во", value:"skipCount"},
+                    {label:"В процентах", value:"skipProcent"}
+                ]
+            },
+        ],
+    },        
+    {
+        value:"streak",
+        label:"Стрики",
+        props:[
+            {
+                label: "Стрик (3+ дней подряд)", value:"streak", props:[
+                    {label:"Кол-во", value:"streakCount"},
+                    {label:"Максмальный", value:"streakMax"},
+                    {label:"В среднем", value:"streakMiddle"}
+                ]
+            },
+        ],
+    },
+    {
+        value:"break",
+        label:"Перерывы",
+        props: [
+            {
+                label: "Перерывы", value:"break", props:[
+                    {label:"Максимальный",value:"breakMax"},
+                    {label: "В среднем", value: "breakMiddle"}
+                ]
+            }
+        ]
+    },
+    {
+        value: "all",
+        label: "Всего",
+        props: [
+            {
+                label: "Всего дней в трекинге", value:"all", props:[
+                    {label:"Дней в трекинге", value:"allCount"}
+                ]
+            },
+        ]
+    }
+] 
