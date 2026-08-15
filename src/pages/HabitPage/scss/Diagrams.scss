@@ -10,7 +10,7 @@
     background-color: var(--mc);
     @media (max-width: 800px) {
         margin-top: 1vh;
-        min-height: 70vh;
+        min-height: 90vh;
         padding: 0.5vh 2vw;
         margin-bottom: 1vh;
     }
@@ -43,7 +43,9 @@
     display: flex;
     align-items: center;
     height: 4vh;
-    cursor: pointer;
+    &.slided {
+        cursor: pointer;
+    }
 }
 .statsDivFilters {
     width: 100%;
@@ -78,11 +80,16 @@
     flex: 1;
     padding: 1vh 1vw;
     display: flex;
+    flex-direction: column;
     gap: 1vh;
+    position: relative;
     cursor: pointer;
     @media (max-width:800px) {
         padding: 1vh 2vw;
     }
+}
+.overallPropText {
+    display: flex;
 }
 .overallPropSpan {
     font-size: 14px;
@@ -90,6 +97,7 @@
 }
 .overallProp {
     color: var(--borderWh);
+    height: 26px;
 }
 .overallPropGroup {
     width: fit-content;
@@ -104,7 +112,7 @@
     border-radius: 7px;
     text-align: center;
     font-weight: 500;
-
+    flex: 0;
     &.comp {
         color: #166534;
         background: #bbf7d0;
@@ -128,5 +136,20 @@
     &.all {
         color: #6b21a8;
         background: #e9d5ff;
+    }    
+    &.timer, 
+    &.counter, 
+    &.schedules {
+        color: #1e40af;
+        background: #dbeafe;
     }
+}
+.miniChart {
+    height: 28%;
+    width: 100%;
+    position: absolute;
+    bottom: 6%;
+    left: 0;
+    right: 0;
+    pointer-events: none;
 }

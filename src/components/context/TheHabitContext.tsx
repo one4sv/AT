@@ -46,6 +46,8 @@ export interface TheHabitContextType {
     counterSettings: counterSettingsType | null;
     checklist:DoneCompletion[],
     pattern:ChecklistPattern[],
+    overallStats: OverallStatsData | null
+    loadOverallStats: (habitId: number) => Promise<void>
 }
 
 export interface habitTimer {
@@ -97,6 +99,43 @@ export type ChecklistPattern = {
     habit_id:number,
     isNew?: boolean
 }
+export interface OverallStats {
+    compCount: number
+    compProcent: string
+    skipCount: number
+    skipProcent: string
+
+    streakCount: number
+    streakMax: number
+    streakMiddle: number
+
+    breakMax: number
+    breakMiddle: number
+
+    allCount: number
+
+    fullCounter?: number
+    maxCounter?: number
+    middleCounter?: number
+
+    fullTimer?: number
+    maxTimer?: number
+    middleTimer?: number
+
+    fullSchedule?: number
+    maxSchedule?: number
+    middleSchedule?: number
+}
+
+export interface OverallStatsExtras {
+    streakMax: string
+    breakMax: string
+}
+
+export interface OverallStatsData {
+    stats: OverallStats
+    extras: OverallStatsExtras
+}
 /**
  * Парсит счётчик из API (строки → Date)
  * @param counter Счётчик из API
@@ -145,6 +184,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
     const [counterSettings, setCounterSettings] = useState<counterSettingsType | null>(null);
     const [checklist, setChecklist] = useState<DoneCompletion[]>([]);
     const [pattern, setPattern] = useState<ChecklistPattern[]>([]);
+    const [overallStats, setOverallStats] = useState<OverallStatsData | null>(null)
     const [habitSettings, setHabitSettings] = useState<HabitSettings>({
         metric_type: "timer",
         schedule: false,
@@ -224,6 +264,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                 }))
             )
             setPattern(pattern || [])
+            await loadOverallStats(Number(id))
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 if (err.response?.status === 403 || err.response?.status === 404) {
@@ -270,6 +311,23 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [API_URL]);
 
+    const loadOverallStats = useCallback(
+        async (habitId: number): Promise<void> => {
+            try {
+                const res = await api.get(
+                    `${API_URL}habits/${habitId}/stats`
+                )
+
+                if (res.data.success) {
+                    setOverallStats(res.data)
+                }
+            } catch (error) {
+                console.error("Ошибка загрузки общей статистики:", error)
+            }
+        },
+        [API_URL]
+    )
+
     /**
      * Загружает привычку с индикатором загрузки
      * @param id ID привычки
@@ -280,6 +338,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
         await loadHabit(id);
         setLoadingHabit(false);
     };
+    
 
     return (
         <TheHabitContext.Provider
@@ -315,7 +374,9 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                 checklist,
                 pattern,
                 isPlanned,
-                setIsPlanned
+                setIsPlanned,
+                overallStats,
+                loadOverallStats,
             }}
         >
             {children}

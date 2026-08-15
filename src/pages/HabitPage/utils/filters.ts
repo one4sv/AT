@@ -34,13 +34,13 @@ export const cards = [
         props:[
             {
                 label: "Выполнено", value:"comp", props:[
-                    {label:"Кол-во", value:"compCount"},
+                    {label:"Дней", value:"compCount"},
                     {label:"В процнтах", value:"compProcent"}
                 ]
             },
             {
                 label: "Пропущено", value:"skip", props:[
-                    {label:"Кол-во", value:"skipCount"},
+                    {label:"Дней", value:"skipCount"},
                     {label:"В процентах", value:"skipProcent"}
                 ]
             },
@@ -52,7 +52,7 @@ export const cards = [
         props:[
             {
                 label: "Стрик (3+ дней подряд)", value:"streak", props:[
-                    {label:"Кол-во", value:"streakCount"},
+                    {label:"Дней", value:"streakCount"},
                     {label:"Максмальный", value:"streakMax"},
                     {label:"В среднем", value:"streakMiddle"}
                 ]
@@ -78,6 +78,45 @@ export const cards = [
             {
                 label: "Всего дней в трекинге", value:"all", props:[
                     {label:"Дней в трекинге", value:"allCount"}
+                ]
+            },
+        ]
+    },
+    {
+        value: "counter",
+        label: "Счётчик",
+        props: [
+            {
+                label: "Счётчик", value:"counter", props:[
+                    {label:"Всего", value:"fullCounter"},
+                    {label:"Максимальный", value:"maxCounter"},
+                    {label:"Средний", value:"middleCounter"},
+                ]
+            },
+        ]
+    },
+    {
+        value: "timer",
+        label: "Таймер",
+        props: [
+            {
+                label: "Таймер", value:"timer", props:[
+                    {label:"Всего", value:"fullTimer"},
+                    {label:"Максимальный", value:"maxTimer"},
+                    {label:"Средний", value:"middleTimer"},
+                ]
+            },
+        ]
+    },
+    {
+        value: "schedule",
+        label: "Расписание",
+        props: [
+            {
+                label: "Расписание", value:"schedules", props:[
+                    {label:"Всего", value:"fullSchedule"},
+                    {label:"Максимальный", value:"maxSchedule"},
+                    {label:"Средний", value:"middleSchedule"},
                 ]
             },
         ]

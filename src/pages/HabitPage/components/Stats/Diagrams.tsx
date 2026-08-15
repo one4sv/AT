@@ -6,6 +6,8 @@ import { groups, metrics, periods } from "../../utils/filters";
 import { CaretLeftIcon } from "@phosphor-icons/react";
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook";
 import DoneDiagram from "./Diagrams/DoneDiagram";
+import StreakDiagram from "./Diagrams/StreakDiagram";
+import BreakDiagram from "./Diagrams/BreakDiagram";
 
 export default function Diagrams({
     mainRef
@@ -190,7 +192,7 @@ export default function Diagrams({
     return (
         <div className="statsDivStats">
             <div
-                className="statsTitle"
+                className={`statsTitle ${slide.slide ? "slided" : ""}`}
                 onClick={goBack}
             >
                 {slide.slide ? (
@@ -227,16 +229,33 @@ export default function Diagrams({
                             setMetric={setMetric}
                             group={group}
                             setGroup={setGroup}
+                            slide={slide.value}
                         />
 
-                        {slide.value === "comp" ? (
+                        {slide.value === "comp" && (
                             <DoneDiagram
                                 mainRef={mainRef}
                                 period={period}
                                 metric={metric}
                                 group={group}
                             />
-                        ) : ""}
+                        )}
+
+                        {slide.value === "streak" && (
+                            <StreakDiagram
+                                mainRef={mainRef}
+                                period={period}
+                                group={group}
+                            />
+                        )}
+
+                        {slide.value === "break" && (
+                            <BreakDiagram
+                                mainRef={mainRef}
+                                period={period}
+                                group={group}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

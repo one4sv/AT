@@ -255,7 +255,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
                 data: donePerDay,
                 borderColor: "#129e12",
                 backgroundColor: "#129e12",
-                tension: 0.3,
+                tension: 0.1,
                 pointRadius: 4,
                 pointHoverRadius: 7,
             })
@@ -267,7 +267,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
                 data: skipPerDay,
                 borderColor: "#646464",
                 backgroundColor: "#646464",
-                tension: 0.3,
+                tension: 0.1,
                 pointRadius: 4,
                 pointHoverRadius: 7,
             })
@@ -279,7 +279,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
                 data: freePerDay,
                 borderColor: "#111111",
                 backgroundColor: "#111111",
-                tension: 0.3,
+                tension: 0.1,
                 pointRadius: 4,
                 pointHoverRadius: 7,
             })
