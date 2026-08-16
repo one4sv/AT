@@ -1,8 +1,8 @@
 .habitNameMain {
     height: 100%;
     display: flex;
-    border-radius: 8px;
-    width: 30%;
+    border-radius: 0 0 8px 8px;
+    width: 100%;
     align-items: center;
     cursor: pointer;
     &:hover {
@@ -10,7 +10,7 @@
     }
 }
 .habitNameTag {
-    color: var(--borderWh);
+    color: var(--accent);
 }
 .saveHabit {
     flex: 1;
@@ -26,7 +26,8 @@
 }
 @media (max-width: 800px) {
     .habitNameMain {
-        width: 70%;
+        width: 90%;
+        padding-left: .75vw;
     }
     .saveHabit {
         width: 10%;

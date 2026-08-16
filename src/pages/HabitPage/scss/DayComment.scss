@@ -94,12 +94,14 @@
     border: none;
     outline: none;
     color: var(--inner_text);
-    background-color: var(--accent_text);
+    background:linear-gradient(135deg, var(--accent), var(--grad));
+    transition: none;
     &:hover {
         background-color: var(--darker_accent);
     }
     &:disabled {
         color: var(--borderHabit);
+        background: var(--tr);
         background-color: var(--tr);
         border: 1px solid var(--borderHabit);
         cursor: default;

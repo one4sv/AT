@@ -68,7 +68,7 @@ export default function AboutTab() {
 
             <p>
                 {t("about.version")}:{" "}
-                <span className="accent">beta 0.5.7</span>
+                <span className="accent">beta 0.5.9</span>
             </p>
         </div>
     );

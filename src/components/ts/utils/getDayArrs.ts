@@ -50,7 +50,7 @@ export function getDayArrays(
     c => c.date === dateStr && c.isDone && (id ? c.habitId === id : true)
   )
   const plannedArr = calendar.filter(
-    c => c.date === dateStr && c.isPlanned && (id ? c.habitId === id : true)
+    c => c.date === dateStr && c.isPlanned && (id ? c.habitId === id : true) && habit?.periodicity === "sometimes"
   )
 
   const skippedArr: Calendar[] = []
@@ -58,17 +58,57 @@ export function getDayArrays(
   const nowArr: Calendar[] = []
 
   const processHabit = (h: Habit) => {
-    if (parseLocalDate(h.start_date) > date || ( h.end_date && parseLocalDate(h.end_date) < date)) return
+    if (
+      parseLocalDate(h.start_date) > date ||
+      (h.end_date && parseLocalDate(h.end_date) < date)
+    ) {
+      return
+    }
 
-    const match =
-      h.periodicity === "everyday" ||
-      (h.periodicity === "weekly" && h.chosen_days?.includes(date.getDay())) ||
-      (usest && h.periodicity === "sometimes")
+    let match = false
+
+    if (h.periodicity === "everyday") {
+      match = true
+    }
+
+    if (
+      h.periodicity === "weekly" &&
+      h.chosen_days?.includes(date.getDay())
+    ) {
+      match = true
+    }
+
+    if (usest && h.periodicity === "sometimes") {
+      match = true
+    }
+
+    if (h.periodicity === "cycle") {
+      const startDate = parseLocalDate(h.start_date)
+
+      const diffMs = date.getTime() - startDate.getTime()
+      const diffDays = Math.floor(
+        diffMs / (1000 * 60 * 60 * 24)
+      )
+
+      const cycleLength =
+        h.cycle_days_active + h.cycle_days_rest
+
+      if (
+        cycleLength > 0 &&
+        h.cycle_days_active > 0 &&
+        diffDays >= 0
+      ) {
+        const dayInCycle = diffDays % cycleLength
+
+        match = dayInCycle < h.cycle_days_active
+      }
+    }
 
     if (!match) return
+
     if (completedArr.some(c => Number(c.habitId) === h.id)) return
     if (plannedArr.some(c => Number(c.habitId) === h.id)) return
-    
+
     const isPast = date < today
     const isFuture = date > today
     const isToday = date.getTime() === today.getTime()
@@ -79,7 +119,7 @@ export function getDayArrays(
         habitName: h.name,
         date: dateStr,
         isDone: false,
-        ongoing:h.ongoing
+        ongoing: h.ongoing
       })
       return
     }
@@ -90,7 +130,7 @@ export function getDayArrays(
         habitName: h.name,
         date: dateStr,
         isDone: false,
-        ongoing:h.ongoing
+        ongoing: h.ongoing
       })
       return
     }
@@ -103,24 +143,31 @@ export function getDayArrays(
           habitName: h.name,
           date: dateStr,
           isDone: false,
-          ongoing:h.ongoing
+          ongoing: h.ongoing
         })
         return
-      } else if (!h.end_time || isTimePassed(h.end_time)) {
+      }
+
+      if (!h.end_time || isTimePassed(h.end_time)) {
         skippedArr.push({
           habitId: h.id.toString(),
           habitName: h.name,
           date: dateStr,
           isDone: false,
-          ongoing:h.ongoing
+          ongoing: h.ongoing
         })
-      } else if (h.start_time && h.end_time && !isTimePassed(h.end_time) && isTimePassed(h.start_time)) {
+      } else if (
+        h.start_time &&
+        h.end_time &&
+        !isTimePassed(h.end_time) &&
+        isTimePassed(h.start_time)
+      ) {
         nowArr.push({
           habitId: h.id.toString(),
           habitName: h.name,
           date: dateStr,
           isDone: false,
-          ongoing:h.ongoing
+          ongoing: h.ongoing
         })
       }
     }

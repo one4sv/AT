@@ -184,6 +184,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                             type="number"
                             id="inputActive"
                             className="addHabitInput"
+                            placeholder="1"
                             pattern="[1-9]\d*"
                             min={1}
                             max={365}
@@ -191,7 +192,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                                 setCycleDaysActive(e.target.value)
                                 setNewCycleDaysActive(habit.id, Number(e.target.value))
                             }}
-                            value={cycle_days_active || habit.cycle_days_active}
+                            value={cycle_days_active}
                         />
                     </div>
 
@@ -201,6 +202,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                             type="number"
                             id="inputRest"
                             className="addHabitInput"
+                            placeholder="1"
                             pattern="[1-9]\d*"
                             min={1}
                             max={365}
@@ -208,7 +210,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                                 setCycleDaysRest(e.target.value)
                                 setNewCycleDaysRest(habit.id, Number(e.target.value))
                             }}
-                            value={cycle_days_rest || habit.cycle_days_rest}
+                            value={cycle_days_rest}
                         />
                     </div>
                 </div>

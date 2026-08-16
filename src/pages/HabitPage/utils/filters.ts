@@ -52,7 +52,7 @@ export const cards = [
         props:[
             {
                 label: "Стрик (3+ дней подряд)", value:"streak", props:[
-                    {label:"Дней", value:"streakCount"},
+                    {label:"Всего серий", value:"streakCount"},
                     {label:"Максмальный", value:"streakMax"},
                     {label:"В среднем", value:"streakMiddle"}
                 ]

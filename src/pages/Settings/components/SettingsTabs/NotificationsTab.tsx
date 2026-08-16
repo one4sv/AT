@@ -7,12 +7,14 @@ import "../../../../scss/habitsNoteTable.scss";
 import { TagIcon } from "../../../HabitPage/utils/TagIcon";
 import { CaretDownIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
+import { useNote } from "../../../../components/hooks/NoteHook";
 
 export default function NotificationsTab() {
     const { t } = useTranslation("settings");
     const { note, messNote, habitsNote } = useSettings();
     const { setNewNote, setNewMessNote, setNewHabitsNote } = useUpSettings();
     const { habits } = useHabits();
+    const { showDevNote } = useNote()
     const [showNoteList, setShowNoteList] = useState<number>(0);
 
     const habitNoteArray = [
@@ -59,7 +61,7 @@ export default function NotificationsTab() {
                     </div>
                 </div>
             </div>
-            <div className="settingInnerDiv">
+            <div className="settingInnerDiv" onClick={() => showDevNote()}>
                 <div className="settingHeader">
                     {t("notifications.reminders")}
                 </div>

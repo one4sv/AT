@@ -2,6 +2,7 @@ import type { SetStateAction } from "react";
 import "../../scss/Goals.scss"
 import { CaretRightIcon, GearSix, NotebookIcon, Target } from "@phosphor-icons/react";
 import { UserRoundPlus } from "lucide-react";
+import { useNote } from "../../../../components/hooks/NoteHook";
 interface GoalsProps {
     id:number;
     setShowSettings: React.Dispatch<SetStateAction<boolean>>,
@@ -9,10 +10,12 @@ interface GoalsProps {
 }
 
 export default function HabitExtraButts ({ setShowSettings, setShowJurnal}:GoalsProps) {
+    const { showDevNote } = useNote()
+
     return (
         <div className="habitPlusDiv">
             <div className="habitPlusButts">
-                <div className="addGoalButtDiv">
+                <div className="addGoalButtDiv" onClick={() => showDevNote()}>
                     <UserRoundPlus className="addGoalIcon chats"/>
                     Добавить людей
                     <CaretRightIcon className="addGoalCaret"/>
@@ -22,7 +25,7 @@ export default function HabitExtraButts ({ setShowSettings, setShowJurnal}:Goals
                     Настройки
                     <CaretRightIcon className="addGoalCaret"/>
                 </div>
-                <div className="addGoalButtDiv">
+                <div className="addGoalButtDiv" onClick={() => showDevNote()}>
                     <Target weight="fill" className="addGoalIcon goal"/>
                     Добавить цель
                     <CaretRightIcon className="addGoalCaret"/>

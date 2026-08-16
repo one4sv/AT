@@ -6,11 +6,13 @@ import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import Toggler from "../../../../components/ts/Toggler";
+import { useNote } from "../../../../components/hooks/NoteHook";
 
 export default function GeneralTab() {
     const { t } = useTranslation("settings");
     const { lang } = useSettings()
     const { setNewLang } = useUpSettings()
+    const { showDevNote } = useNote()
     const [ fontSize, setFontSize ] = useState<number>(16);
 
     const timeChanger = [
@@ -39,15 +41,15 @@ export default function GeneralTab() {
                     {t("general.traffic")}
                 </div>
                 <div className="settingInnerList">
-                    <div className="settingTogglerDiv">
+                    <div className="settingTogglerDiv" onClick={() => showDevNote()}>
                         {t("general.autoLoadImages")}
                         <Toggler state={true} />
                     </div>
-                    <div className="settingTogglerDiv">
+                    <div className="settingTogglerDiv" onClick={() => showDevNote()}>
                         {t("general.autoPlayGif")}
                         <Toggler state={true} />
                     </div>
-                    <div className="settingTogglerDiv">
+                    <div className="settingTogglerDiv" onClick={() => showDevNote()}>
                         {t("general.useImageCache")}
                         <Toggler state={true} />
                     </div>
@@ -57,19 +59,19 @@ export default function GeneralTab() {
                 <div className="settingHeader">
                     {t("general.text")}
                 </div>
-                <div className="settingInnerWrapper">
+                <div className="settingInnerWrapper" onClick={() => showDevNote()}>
                     <div className="settingSpan">
                         {t("general.fontSize")}
                     </div>
                     <SeekBar min={12} max={22} value={fontSize} unit="px" step={1} onChange={setFontSize} />
                 </div>
-                <div className="settingInnerWrapper">
+                <div className="settingInnerWrapper" onClick={() => showDevNote()}>
                     <div className="settingSpan">
                         {t("general.dateFormat")}
                     </div>
                     <RadioGroup list={dateChanger} val={"standart"} />
                 </div>
-                <div className="settingInnerWrapper">
+                <div className="settingInnerWrapper" onClick={() => showDevNote()}>
                     <div className="settingSpan">
                         {t("general.timeFormat")}
                     </div>

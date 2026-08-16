@@ -9,6 +9,7 @@ export interface NoteContextType {
     id: number;
     showNotification: (newtype: noteType, newtxt: string) => void;
     setDisplay: (display: boolean) => void;
+    showDevNote: () => void
 }
 export type noteType = 'error' | 'success' | 'info' | 'note' | 'false'
 
@@ -39,8 +40,12 @@ export const NoteProvider = ({children}:{children:ReactNode}) => {
             },600);
         },3000);
     },[])
+
+    const showDevNote =() => {
+        showNotification({newtype:"info", newtxt:"В разработке"})
+    }
     return(
-        <NoteContext.Provider value={{type, txt, display, id, showNotification: (newtype, newtxt) => showNotification({ newtype, newtxt }), setDisplay}}>
+        <NoteContext.Provider value={{type, txt, display, id, showNotification: (newtype, newtxt) => showNotification({ newtype, newtxt }), setDisplay, showDevNote}}>
             {children}
         </NoteContext.Provider>
     )

@@ -179,8 +179,8 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     const setNewMetricType = useCallback((habitId: number, val: metricsType) => updateLocalChanges(habitId, "metric_type", val), [updateLocalChanges]);
     const setNewScheduleBool = useCallback((habitId: number, val: boolean) => updateLocalChanges(habitId, "schedule", val), [updateLocalChanges]);
     const setNewAutoScheduleCompletion = useCallback((habitId: number, val: asctype) => updateLocalChanges(habitId, "auto_schedule_completion", val), [updateLocalChanges]);
-    const setNewCycleDaysActive = useCallback((habitId:number,val:number) => updateLocalChanges(habitId, "cycle_days_active", val), [updateLocalChanges])
-    const setNewCycleDaysRest = useCallback((habitId:number,val:number) => updateLocalChanges(habitId, "cycle_days_rest", val), [updateLocalChanges])
+    const setNewCycleDaysActive = useCallback((habitId:number,val:number) => updateLocalChanges(habitId, "cycle_days_active", val || 1), [updateLocalChanges])
+    const setNewCycleDaysRest = useCallback((habitId:number,val:number) => updateLocalChanges(habitId, "cycle_days_rest", val || 1), [updateLocalChanges])
     const setPin = useCallback(async (habitId: number, val: boolean) => {
         updateLocalChanges(habitId, "pinned", val);
 

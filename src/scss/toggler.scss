@@ -11,7 +11,7 @@
     padding: 1px;
     &.true {
         >.togglerCircle {
-            background:linear-gradient(135deg, var(--accent), var(--grad));
+            background-color: var(--accent);
             left: calc(2vw - 1.8vh);
         }
     }

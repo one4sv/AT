@@ -25,7 +25,7 @@ export default function OverallStats({
     const { habitId: id } = useParams()
     const { habits } = useHabits()
     const { habitSettings, overallStats, habit } = useTheHabit()
-    const { showNotification } = useNote()
+    const { showDevNote } = useNote()
 
     let startDate = ""
 
@@ -108,7 +108,7 @@ export default function OverallStats({
                         key={c.value}
                         onClick={() => {
                             if (specialCards.includes(c.value) || c.value === "all") {
-                                showNotification("info", "В разработке")
+                                showDevNote()
                                 return
                             }
                             setSlide({

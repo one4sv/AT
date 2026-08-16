@@ -28,10 +28,10 @@ function App() {
         <ContextMenu/>
         <Routes>
           <Route path="/sign" element={<Landing />} />
+          {window.location.hostname === "localhost" && (
+            <Route path="/admin" element={<Admin />} />
+          )}
           <Route path="/" element={<ResponsiveLayout />}>
-            {window.location.hostname === "localhost" && (
-              <Route path="/admin" element={<Admin />} />
-            )}
             <Route index element={<Main />} />
             <Route path="habit" element={<HabitPage />} />
             <Route path="habit/:habitId" element={<HabitPage />} />
