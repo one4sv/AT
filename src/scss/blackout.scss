@@ -4,13 +4,21 @@
     position: fixed;
     inset: 0;
     z-index: 11;
-    background-color: #00000080;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(var(--blackout-blur, 12px));
+    -webkit-backdrop-filter: blur(var(--blackout-blur, 12px));
+}
+
+.blackoutBackground {
+    position: absolute;
+    inset: 0;
+    background-color: #00000080;
+    opacity: 1;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .blackoutModule {

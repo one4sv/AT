@@ -10,6 +10,7 @@ export default function Blackout() {
   const { blackout, setBlackout } = useBlackout();
   const { redirect, setRedirect, chosenMess, setIsChose, setChosenMess } = useMessages();
   const blackoutRef = useRef<HTMLDivElement>(null);
+  const blackoutBackgroundRef = useRef<HTMLDivElement>(null);
   const moduleRef = useRef<HTMLDivElement>(null);
   const startY = useRef(0);
   const currentY = useRef(0);
@@ -54,32 +55,51 @@ export default function Blackout() {
     dragging.current = true;
 
     if (moduleRef.current) {
-      moduleRef.current.style.transition = "none";
+        moduleRef.current.style.transition = "none";
     }
 
     if (blackoutRef.current) {
-      blackoutRef.current.style.transition = "none";
+        blackoutRef.current.style.transition = "none";
+    }
+
+    if (blackoutBackgroundRef.current) {
+        blackoutBackgroundRef.current.style.transition = "none";
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!dragging.current || !moduleRef.current) return;
+      if (!dragging.current || !moduleRef.current) return;
 
-    currentY.current = e.touches[0].clientY;
-    const diff = currentY.current - startY.current;
+      currentY.current = e.touches[0].clientY;
+      const diff = currentY.current - startY.current;
 
-    if (diff > 0) {
-      moduleRef.current.style.transform = `translateY(${diff}px)`;
+      if (diff > 0) {
+          moduleRef.current.style.transform = `translateY(${diff}px)`;
 
-      if (blackoutRef.current) {
-        const opacity = Math.max(0, 1 - diff / 300);
-        blackoutRef.current.style.opacity = String(opacity);
+          const progress = Math.min(diff / 400, 1);
+
+          const opacity = 1 - progress * 0.65;
+          const blur = 12 - progress * 11.2;
+
+          // Только затемнение
+          if (blackoutBackgroundRef.current) {
+              blackoutBackgroundRef.current.style.opacity =
+                  String(opacity);
+          }
+
+          // Только blur
+          if (blackoutRef.current) {
+              blackoutRef.current.style.setProperty(
+                  "--blackout-blur",
+                  `${blur}px`
+              );
+          }
       }
-    }
   };
 
   const handleTouchEnd = () => {
     if (!dragging.current || !moduleRef.current) return;
+
     dragging.current = false;
 
     const diff = currentY.current - startY.current;
@@ -87,30 +107,56 @@ export default function Blackout() {
     if (diff > 100) {
       moduleRef.current.style.transition = "transform 0.25s ease";
 
+      if (blackoutBackgroundRef.current) {
+        blackoutBackgroundRef.current.style.transition =
+            "opacity 0.25s ease";
+        blackoutBackgroundRef.current.style.opacity = "0";
+      }
+
       if (blackoutRef.current) {
-        blackoutRef.current.style.transition = "opacity 0.25s ease";
-        blackoutRef.current.style.opacity = "0";
+        blackoutRef.current.style.transition =
+            "backdrop-filter 0.25s ease";
+        blackoutRef.current.style.setProperty(
+            "--blackout-blur",
+            "0px"
+        );
       }
 
       moduleRef.current.style.transform = "translateY(100%)";
 
       setTimeout(closeModal, 250);
-    } else {
-      moduleRef.current.style.transition = "transform 0.25s ease";
-      moduleRef.current.style.transform = "translateY(0)";
+  } else {
+      moduleRef.current.style.transition =
+          "transform 0.25s ease";
+
+      if (blackoutBackgroundRef.current) {
+        blackoutBackgroundRef.current.style.transition =
+            "opacity 0.25s ease";
+        blackoutBackgroundRef.current.style.opacity = "1";
+      }
 
       if (blackoutRef.current) {
-        blackoutRef.current.style.transition = "opacity 0.25s ease";
-        blackoutRef.current.style.opacity = "1";
+        blackoutRef.current.style.transition =
+            "backdrop-filter 0.25s ease";
+        blackoutRef.current.style.setProperty(
+            "--blackout-blur",
+            "12px"
+        );
       }
+
+      moduleRef.current.style.transform = "translateY(0)";
 
       setTimeout(() => {
         if (moduleRef.current) {
-          moduleRef.current.style.transition = "";
+            moduleRef.current.style.transition = "";
         }
 
         if (blackoutRef.current) {
-          blackoutRef.current.style.transition = "";
+            blackoutRef.current.style.transition = "";
+        }
+
+        if (blackoutBackgroundRef.current) {
+            blackoutBackgroundRef.current.style.transition = "";
         }
       }, 250);
     }
@@ -120,9 +166,13 @@ export default function Blackout() {
 
   return (
     <div
-      ref={blackoutRef}
       className="blackout"
+      ref={blackoutRef}
     >
+      <div
+          ref={blackoutBackgroundRef}
+          className="blackoutBackground"
+      />
       {blackout.img && (
         <div className="imgPrevCross" onClick={() => setBlackout({seted:false})}>
           <XIcon size={32}/>
