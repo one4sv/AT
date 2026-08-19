@@ -1,4 +1,4 @@
-import { createContext, useCallback, useState, type Dispatch, type SetStateAction } from "react";
+import { createContext, useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { type ReactNode } from "react";
 import type { Habit } from "./HabitsContext";
 import { useNote } from "../hooks/NoteHook";
@@ -191,6 +191,8 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
         auto_schedule_completion:"none"
     });
 
+    const habitAbortRef = useRef<AbortController | null>(null);
+    
     /**
      * Парсит таймер из API (строки → Date)
      * @param timer Таймер из API
@@ -213,28 +215,49 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
      * @param id ID привычки
      * @returns Ответ API с привычкой
      */
-    const findHabit = useCallback(async (id: string | null) => {
-        if (!id) return null;
-        try {
-            const res = await api.get(`${API_URL}habits/${id}`);
-            const data = res.data;
+    const findHabit = useCallback(
+        async (
+            id: string | null,
+            signal?: AbortSignal
+        ) => {
+            if (!id) return null;
 
-            if (data.success) {
-                return {
-                    ...data,
-                    timer: parseTimer(data.timer),
-                    counter: parseCounter(data.counter)
-                };
+            try {
+                const res = await api.get(
+                    `${API_URL}habits/${id}`,
+                    { signal }
+                );
+
+                const data = res.data;
+
+                if (data.success) {
+                    return {
+                        ...data,
+                        timer: parseTimer(data.timer),
+                        counter: parseCounter(data.counter)
+                    };
+                }
+
+                return data;
+            } catch (err) {
+                if (axios.isCancel(err)) {
+                    throw err;
+                }
+
+                console.error(err);
+
+                if (axios.isAxiosError(err)) {
+                    showNotification(
+                        "error",
+                        err.response?.data?.error
+                    );
+                }
+
+                throw err;
             }
-            return data;
-        } catch (err) {
-            console.error(err);
-            if (axios.isAxiosError(err)) {
-                showNotification("error", err.response?.data?.error);
-            }
-            throw err;
-        }
-    }, [API_URL, parseTimer, showNotification]);
+        },
+        [API_URL, parseTimer, showNotification]
+    );
 
     /**
      * Загружает привычку и обновляет состояние
@@ -243,13 +266,32 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
      */
     const loadHabit = async (id: string | null): Promise<void> => {
         if (!id) return;
+
+        habitAbortRef.current?.abort();
+
+        const controller = new AbortController();
+        habitAbortRef.current = controller;
+
         try {
-            const res = await findHabit(id);
+            const res = await findHabit(id, controller.signal);
+
+            if (controller.signal.aborted) return;
             if (!res?.success) return;
 
-            const { habit: habitData, isRead, isDone: doneToday, settings, counterSettings: cSettings, counter, timer, checklist, pattern } = res;
+            const {
+                habit: habitData,
+                isRead,
+                isDone: doneToday,
+                settings,
+                counterSettings: cSettings,
+                counter,
+                timer,
+                checklist,
+                pattern
+            } = res;
 
             fetchCalendarHabit(id);
+
             setHabit(habitData);
             setIsReadOnly(isRead);
             setTodayDone(doneToday);
@@ -257,15 +299,20 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
             setCounterSettings(cSettings);
             setHabitCounter(counter);
             setHabitTimer(timer);
+
             setChecklist(
                 (checklist || []).map((c: DoneCompletion) => ({
                     ...c,
                     isNew: false
                 }))
-            )
-            setPattern(pattern || [])
-            await loadOverallStats(Number(id))
+            );
+
+            setPattern(pattern || []);
+
+            await loadOverallStats(Number(id), controller.signal);
         } catch (err) {
+            if (axios.isCancel(err)) return;
+
             if (axios.isAxiosError(err)) {
                 if (err.response?.status === 403 || err.response?.status === 404) {
                     if (window.history.length > 1) {
@@ -274,7 +321,12 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                         navigate("/habit");
                     }
                 }
+
                 showNotification("error", err.response?.data?.error);
+            }
+        } finally {
+            if (!controller.signal.aborted) {
+                setLoadingHabit(false);
             }
         }
     };
@@ -312,21 +364,32 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
     }, [API_URL]);
 
     const loadOverallStats = useCallback(
-        async (habitId: number): Promise<void> => {
+        async (
+            habitId: number,
+            signal?: AbortSignal
+        ): Promise<void> => {
             try {
                 const res = await api.get(
-                    `${API_URL}habits/${habitId}/stats`
-                )
+                    `${API_URL}habits/${habitId}/stats`,
+                    { signal }
+                );
+
+                if (signal?.aborted) return;
 
                 if (res.data.success) {
-                    setOverallStats(res.data)
+                    setOverallStats(res.data);
                 }
             } catch (error) {
-                console.error("Ошибка загрузки общей статистики:", error)
+                if (axios.isCancel(error)) return;
+
+                console.error(
+                    "Ошибка загрузки общей статистики:",
+                    error
+                );
             }
         },
         [API_URL]
-    )
+    );
 
     /**
      * Загружает привычку с индикатором загрузки
@@ -336,9 +399,13 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
     const loadHabitWLoading = async (id: string | null): Promise<void> => {
         setLoadingHabit(true);
         await loadHabit(id);
-        setLoadingHabit(false);
     };
-    
+
+    useEffect(() => {
+        return () => {
+            habitAbortRef.current?.abort();
+        };
+    }, []);
 
     return (
         <TheHabitContext.Provider

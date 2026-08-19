@@ -47,7 +47,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         setRed(false)
-    }, [])
+    }, [location.pathname])
 
     useEffect(() => {
         if (location.pathname.includes("/habit")) setActiveTab("habits")

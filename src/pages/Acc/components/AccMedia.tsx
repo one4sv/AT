@@ -27,7 +27,7 @@ export default function AccMedia({ media }: { media: Media[] | undefined}) {
                                     alt={file.name}
                                     className="accMediaPreview"
                                     onClick={() =>
-                                        setBlackout({ seted: true, module:"ImgPrev", img: file.url })
+                                        setBlackout({ seted: true, module:"ImgPrev", img: file.url, options:{nick:nick ? nick : `g/${id}`, id:file.message_id, name:file.name, url:file.url} })
                                     }
                                 />
                             ) : isVideo ? (

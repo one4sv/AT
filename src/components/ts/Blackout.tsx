@@ -3,6 +3,8 @@ import { useBlackout } from "../hooks/BlackoutHook";
 import ModuleMap from "../modules/ModuleMap";
 import { useMessages } from "../hooks/MessagesHook";
 import { isMobile } from "react-device-detect";
+import { XIcon } from "@phosphor-icons/react";
+import "../../scss/blackout.scss"
 
 export default function Blackout() {
   const { blackout, setBlackout } = useBlackout();
@@ -46,7 +48,6 @@ export default function Blackout() {
     return () => document.removeEventListener("mousedown", handleMouseDown);
   }, [blackout.module]);
 
-  // ——— Свайп вниз ———
   const handleTouchStart = (e: React.TouchEvent) => {
     startY.current = e.touches[0].clientY;
     currentY.current = startY.current;
@@ -54,6 +55,10 @@ export default function Blackout() {
 
     if (moduleRef.current) {
       moduleRef.current.style.transition = "none";
+    }
+
+    if (blackoutRef.current) {
+      blackoutRef.current.style.transition = "none";
     }
   };
 
@@ -63,9 +68,13 @@ export default function Blackout() {
     currentY.current = e.touches[0].clientY;
     const diff = currentY.current - startY.current;
 
-    // Только вниз
     if (diff > 0) {
       moduleRef.current.style.transform = `translateY(${diff}px)`;
+
+      if (blackoutRef.current) {
+        const opacity = Math.max(0, 1 - diff / 300);
+        blackoutRef.current.style.opacity = String(opacity);
+      }
     }
   };
 
@@ -76,18 +85,32 @@ export default function Blackout() {
     const diff = currentY.current - startY.current;
 
     if (diff > 100) {
-      // Закрываем
       moduleRef.current.style.transition = "transform 0.25s ease";
+
+      if (blackoutRef.current) {
+        blackoutRef.current.style.transition = "opacity 0.25s ease";
+        blackoutRef.current.style.opacity = "0";
+      }
+
       moduleRef.current.style.transform = "translateY(100%)";
+
       setTimeout(closeModal, 250);
     } else {
-      // Возвращаем на место
       moduleRef.current.style.transition = "transform 0.25s ease";
       moduleRef.current.style.transform = "translateY(0)";
+
+      if (blackoutRef.current) {
+        blackoutRef.current.style.transition = "opacity 0.25s ease";
+        blackoutRef.current.style.opacity = "1";
+      }
 
       setTimeout(() => {
         if (moduleRef.current) {
           moduleRef.current.style.transition = "";
+        }
+
+        if (blackoutRef.current) {
+          blackoutRef.current.style.transition = "";
         }
       }, 250);
     }
@@ -97,8 +120,14 @@ export default function Blackout() {
 
   return (
     <div
+      ref={blackoutRef}
       className="blackout"
     >
+      {blackout.img && (
+        <div className="imgPrevCross" onClick={() => setBlackout({seted:false})}>
+          <XIcon size={32}/>
+        </div>
+      )}
       <div
         ref={moduleRef}
         className="blackoutModule"

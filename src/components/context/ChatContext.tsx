@@ -122,35 +122,65 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const notificationAggregator = new NotificationAggregator();
     const mainSearchRef = useRef<HTMLInputElement | null>(null)
     const searchInputRef = useRef<HTMLInputElement | null>(null)
-    const abortRef = useRef<AbortController | null>(null);
-
+    const contactsAbortRef = useRef<AbortController | null>(null);
+    const chatAbortRef = useRef<AbortController | null>(null);
     useEffect(() => {
         chatWithRef.current = chatWith;
     }, [chatWith]);
 
     const refetchChat = async (nick: string) => {
         if (!isAuthenticated) return;
+
+        chatAbortRef.current?.abort();
+
+        const controller = new AbortController();
+        chatAbortRef.current = controller;
+
         try {
-            const res = await api.get(`${API_URL}chat/${nick}`);
+            const res = await api.get(
+                `${API_URL}chat/${nick}`,
+                { signal: controller.signal }
+            );
+
+            if (controller.signal.aborted) return;
+
             if (res.data.success) {
-                const user = res.data.user
-                setChatWith({ name: user.username, nick: user.nick, id: user.id, avatar_url: user.avatar_url,
-                    last_online: user.last_online, note:user.note, is_blocked:user.is_blocked, pinned:user.pinned, am_i_blocked:user.am_i_blocked,
-                    is_group:false, members: [], chat_id:res.data.chat_id });
+                const user = res.data.user;
+
+                setChatWith({
+                    name: user.username,
+                    nick: user.nick,
+                    id: user.id,
+                    avatar_url: user.avatar_url,
+                    last_online: user.last_online,
+                    note: user.note,
+                    is_blocked: user.is_blocked,
+                    pinned: user.pinned,
+                    am_i_blocked: user.am_i_blocked,
+                    is_group: false,
+                    members: [],
+                    chat_id: res.data.chat_id
+                });
+
                 setMessages(res.data.messages);
             } else {
                 showNotification("error", "Не удалось получить данные");
+
                 if (window.history.length > 0) {
                     navigate(-1);
                 } else {
                     navigate("/");
                 }
             }
-        } catch {
+        } catch (error) {
+            if (axios.isCancel(error)) return;
+
             showNotification("error", "Не удалось получить данные");
-            navigate('/');
-        } finally { 
-            setChatLoading(false);
+            navigate("/");
+        } finally {
+            if (!controller.signal.aborted) {
+                setChatLoading(false);
+            }
         }
     };
     const refetchChatWLoading = async (nick: string) => {
@@ -160,31 +190,59 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     const refetchGroupChat = async (id: string) => {
         if (!isAuthenticated) return;
+
+        chatAbortRef.current?.abort();
+
+        const controller = new AbortController();
+        chatAbortRef.current = controller;
+
         try {
-            const res = await api.get(`${API_URL}chat/group/${id}`);
+            const res = await api.get(
+                `${API_URL}chat/group/${id}`,
+                { signal: controller.signal }
+            );
+
+            if (controller.signal.aborted) return;
+
             if (res.data.success) {
                 setChatWith({
                     ...res.data.chat,
                     is_group: true,
                     last_online: "",
                     nick: `group_${id}`,
-                    chat_id:res.data.chat.id
-                })
+                    chat_id: res.data.chat.id
+                });
+
                 setMessages(res.data.messages);
             } else {
-                showNotification("error", res.data.message || "Не удалось получить данные группы");
+                showNotification(
+                    "error",
+                    res.data.message || "Не удалось получить данные группы"
+                );
+
                 navigate("/");
             }
         } catch (error) {
+            if (axios.isCancel(error)) return;
+
             console.error(error);
+
             if (axios.isAxiosError(error)) {
-                showNotification("error", error.response?.data?.error || "Не удалось получить данные группы");
+                showNotification(
+                    "error",
+                    error.response?.data?.error ||
+                    "Не удалось получить данные группы"
+                );
             }
+
             navigate("/");
         } finally {
-            setChatLoading(false);
+            if (!controller.signal.aborted) {
+                setChatLoading(false);
+            }
         }
     };
+
     const refetchGroupChatWLoading = async (id: string) => {
         setChatLoading(true);
         await refetchGroupChat(id);
@@ -193,10 +251,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const refetchContactsWTLoading = useCallback(async () => {
         if (!isAuthenticated) return;
 
-        abortRef.current?.abort();
+        contactsAbortRef.current?.abort();
 
         const controller = new AbortController();
-        abortRef.current = controller;
+        contactsAbortRef.current = controller;
 
         try {
             const res = await api.post(
@@ -408,6 +466,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             console.error("Ошибка при отправке реакции", err);
         }
     };
+
+    useEffect(() => {
+        return () => {
+            chatAbortRef.current?.abort();
+        };
+    }, []);
 
     useEffect(() => {
         const timer = setTimeout(refetchContacts, 100);

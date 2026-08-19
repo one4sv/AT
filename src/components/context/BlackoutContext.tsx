@@ -8,7 +8,8 @@ export interface Blackout {
     pick?:File;
     bg?:File;
     img?:string,
-    point?:string
+    point?:string,
+    options?:{id?:string, nick?:string, name:string, url:string}
 }
 export interface BlackoutContextType {
     blackout:Blackout
