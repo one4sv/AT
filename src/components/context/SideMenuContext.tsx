@@ -11,7 +11,9 @@ interface SideMenuContextType {
     showSettings: boolean,
     setShowSettings:React.Dispatch<SetStateAction<boolean>>,
     showJurnal:boolean,
-    setShowJurnal:React.Dispatch<SetStateAction<boolean>>,
+    setShowJurnal:React.Dispatch<SetStateAction<boolean>>,    
+    showChatMenu:boolean,
+    setShowChatMenu:React.Dispatch<SetStateAction<boolean>>,
     returnSlide:() => void,
     activeTab: string,
     setActiveTab: React.Dispatch<SetStateAction<string>>
@@ -33,11 +35,13 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [ showHabitMenu, setShowHabitMenu ] = useState(false)
     const [ showSettings, setShowSettings ] = useState(false)
     const [ showJurnal, setShowJurnal ] = useState(false)
+    const [ showChatMenu, setShowChatMenu ] = useState(false)
     const [ activeTab, setActiveTab ] = useState<string>("messages")
     const [ translateX, setTranslateX ] = useState(-100);
     const [ isDragging, setIsDragging ] = useState(false);
     const [ dontHandle, setDontHandle ] = useState(false)
     const [ dontHandleOther, setDontHandleOther ] = useState(false)
+
     const location = useLocation();
 
     useEffect(() => {
@@ -56,11 +60,12 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const returnSlide = () => {
         if (showJurnal) setShowJurnal(false)
         else if (showSettings) setShowSettings(false)
+        else if (showChatMenu) setShowChatMenu(false)
         else setShowHabitMenu(false)
     }
 
     return (
-        <SideMenuContext.Provider value={{ showSideMenu, setShowSideMenu, red, setRed, showHabitMenu, setShowHabitMenu, showSettings, setShowSettings, 
+        <SideMenuContext.Provider value={{ showSideMenu, setShowSideMenu, red, setRed, showHabitMenu, setShowHabitMenu, showSettings, setShowSettings, showChatMenu, setShowChatMenu,
         showJurnal, setShowJurnal, returnSlide, activeTab, setActiveTab, setTranslateX, translateX, setIsDragging, isDragging, dontHandle, setDontHandle, setDontHandleOther, dontHandleOther }}>
             {children}
         </SideMenuContext.Provider>

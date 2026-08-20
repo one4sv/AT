@@ -2,7 +2,6 @@ import { Camera, UserRound } from "lucide-react";
 import { useUpUser } from "../../../components/hooks/UpdateUserHook";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
-import { useChat } from "../../../components/hooks/ChatHook";
 import { useEffect, useRef, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { useAcc } from "../../../components/hooks/AccHook";
@@ -12,12 +11,13 @@ import type { PrivateSettings } from "../../../components/context/SettingsContex
 import DatePicker from "react-datepicker";
 import DatePickerHeader from "../../../components/ts/DatePickerHeader";
 import { useTranslation } from "react-i18next";
+import { useContacts } from "../../../components/hooks/ContactsHook";
 
 export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canView: (field: keyof PrivateSettings) => boolean, collapsed: number }) {
     const { t } = useTranslation("acc");
     const { setBlackout } = useBlackout();
     const { newName, setNewName, newNick, setNewNick, newPick, newBio, setNewBio, newMail, setNewMail, newBirth, setNewBirth } = useUpUser();
-    const { onlineMap } = useChat();
+    const { onlineMap } = useContacts();
     const { isMyAcc } = useAcc();
     const { red } = useSideMenu();
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);

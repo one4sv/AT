@@ -14,7 +14,7 @@ import Calendar from "./components/Calendar/Calendar";
 import Diagrams from "./components/Stats/Diagrams";
 import DayComment from "./components/Habit/Comment/DayComment";
 import Complete from "./components/Habit/Complete/Complete";
-import CompJurnal from "./components/Calendar/CompJurnal";
+import CompJurnal from "./components/HabitInfo/CompJurnal";
 import Schedule from "./components/Schedule/Schedule";
 import ChosenDay from "./components/Calendar/ChosenDay";
 import HabitSave from "./components/HabitInfo/HabitSave";
@@ -26,6 +26,7 @@ import DoneButton from "./components/Habit/Complete/DoneButt";
 import SvgRain from "../../components/modules/components/SvgRain";
 import { BoxArrowDownIcon } from "@phosphor-icons/react";
 import { useUpHabit } from "../../components/hooks/UpdateHabitHook";
+import HabitChatMenu from "./components/HabitInfo/HabitChatMenu";
 
 export interface HabitSlideProps {
     id: number;
@@ -47,7 +48,7 @@ const params={
 export default function Habit() {
     const { fetchCalendarHabit, fetchCalendarWLoading, calendarLoading } = useCalendar()
     const { loadHabitWLoading, habit, loadingHabit, habitSettings } = useTheHabit()
-    const { showHabitMenu, setShowHabitMenu, showJurnal, setShowJurnal, showSettings, setShowSettings, setDontHandle, dontHandleOther} = useSideMenu()
+    const { showHabitMenu, setShowHabitMenu, showJurnal, setShowJurnal, showSettings, setShowSettings, setDontHandle, dontHandleOther, setShowChatMenu, showChatMenu } = useSideMenu()
     const { schedules } = useSchedule()
     const { habitId } = useParams<{ habitId: string }>();
     const { setTitle } = usePageTitle()
@@ -63,14 +64,15 @@ export default function Habit() {
     const startX = useRef(0);
     const startTranslate = useRef(100);
     const mainRef = useRef<HTMLDivElement | null>(null);
-    const isSlided = showJurnal || showSettings
+    const isSlided = showJurnal || showSettings || showChatMenu
     
     useEffect(() => {
         if (!showHabitMenu) {
             setShowSettings(false)
             setShowJurnal(false)
+            setShowChatMenu(false)
         }
-    }, [showHabitMenu])
+    }, [setShowChatMenu, setShowJurnal, setShowSettings, showHabitMenu])
 
     useEffect(() => {
         if (habitId) {
@@ -276,7 +278,7 @@ export default function Habit() {
                         transition: dragging ? "none" : "transform .3s ease"
                     }}
                 >
-                    <div className={`habitSlider ${showSettings || showJurnal ? "toSlide" : ""}`}>
+                    <div className={`habitSlider ${showSettings || showJurnal || showChatMenu ? "toSlide" : ""}`}>
 
                         {/* Слайд 1 */}
                         <div className="habitSlide">
@@ -286,6 +288,7 @@ export default function Habit() {
                                     id={Number(habitId)}
                                     setShowSettings={setShowSettings}
                                     setShowJurnal={setShowJurnal}
+                                    setShowChatMenu={setShowChatMenu}
                                 />
                             )}
                             {isMy && isArchived && (
@@ -310,6 +313,14 @@ export default function Habit() {
                             )}
                             {showJurnal && (
                                 <CompJurnal id={habit.id}/>
+                            )}
+                            {showChatMenu && (
+                                <HabitChatMenu
+                                    readOnly={isReadOnly}
+                                    id={habit.id}
+                                    isArchived={isArchived}
+                                    isMy={isMy}
+                                />
                             )}
                         </div>
 

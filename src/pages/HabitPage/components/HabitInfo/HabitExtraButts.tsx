@@ -6,18 +6,19 @@ import { useNote } from "../../../../components/hooks/NoteHook";
 interface GoalsProps {
     id:number;
     setShowSettings: React.Dispatch<SetStateAction<boolean>>,
-    setShowJurnal: React.Dispatch<SetStateAction<boolean>>
+    setShowJurnal: React.Dispatch<SetStateAction<boolean>>,
+    setShowChatMenu: React.Dispatch<SetStateAction<boolean>>,
 }
 
-export default function HabitExtraButts ({ setShowSettings, setShowJurnal}:GoalsProps) {
+export default function HabitExtraButts ({ setShowSettings, setShowJurnal, setShowChatMenu }:GoalsProps) {
     const { showDevNote } = useNote()
 
     return (
         <div className="habitPlusDiv">
             <div className="habitPlusButts">
-                <div className="addGoalButtDiv" onClick={() => showDevNote()}>
+                <div className="addGoalButtDiv" onClick={() => setShowChatMenu(true)}>
                     <UserRoundPlus className="addGoalIcon chats"/>
-                    Добавить людей
+                    Добавить в чат
                     <CaretRightIcon className="addGoalCaret"/>
                 </div>
                 <div className="addGoalButtDiv" onClick={() => setShowSettings(true)}>

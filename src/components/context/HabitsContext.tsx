@@ -24,7 +24,8 @@ export interface Habit {
     user_id:string;
     habits_settings:HabitSettings;
     cycle_days_active:number,
-    cycle_days_rest:number
+    cycle_days_rest:number,
+    chat_id:number | null
 }
 interface HabitResponse {
     success: boolean;

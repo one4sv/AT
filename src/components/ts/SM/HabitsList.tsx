@@ -2,7 +2,6 @@ import "../../../scss/SM/habitsList.scss";
 import { useHabits } from "../../hooks/HabitsHook";
 import { useSettings } from "../../hooks/SettingsHook";
 import HabitDiv from "../Habit";
-import { useChat } from "../../hooks/ChatHook";
 import { useParams } from "react-router";
 import { filterHabitsByOrder } from "../utils/filteredHabitsByOrder";
 import { useEffect, useState } from "react";
@@ -10,9 +9,10 @@ import type { Habit } from "../../context/HabitsContext";
 import { isIsoDate } from "../utils/isIsoDate";
 import { GhostIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../../hooks/BlackoutHook";
+import { useContacts } from "../../hooks/ContactsHook";
 
 export default function HabitsList({ filter }: { filter?: string }) {
-    const { search } = useChat();
+    const { search } = useContacts();
     const { habits, newOrderHabits, refetchHabitsWLoading } = useHabits();
     const { showArchived } = useSettings();
     const { habitId } = useParams();

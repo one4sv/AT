@@ -1,12 +1,12 @@
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useNote } from "../../../components/hooks/NoteHook";
-import { useChat } from "../../../components/hooks/ChatHook";
 import { GhostIcon } from "@phosphor-icons/react";
+import { useContacts } from "../../../components/hooks/ContactsHook";
 
 export default function FeedNothing() {
     const { showNotification } = useNote()
     const { setBlackout } = useBlackout()
-    const { mainSearchRef } = useChat()
+    const { mainSearchRef } = useContacts()
     const LINK = import.meta.env.VITE_LINK
 
     const copyLink = () => {

@@ -1,10 +1,10 @@
 import { Bell, BellSlash } from "@phosphor-icons/react"
-import { useChat } from "../../../hooks/ChatHook"
 import { api } from "../../api"
 import type { CMFuncsType } from "./CMFuncsType"
+import { useContacts } from "../../../hooks/ContactsHook"
 
 export const OffSound = ({ id, bool} : CMFuncsType) => {
-    const { refetchContactsWTLoading } = useChat()
+    const { refetchContactsWTLoading } = useContacts()
     
     const offSound = async() => {
         try{

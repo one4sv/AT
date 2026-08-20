@@ -1,13 +1,13 @@
 import { type RefObject } from "react"
 import "../../../scss/SM/contactsList.scss"
-import { useChat } from "../../hooks/ChatHook"
 import Contact from "../Contact"
 import { GhostIcon, MagnifyingGlassMinusIcon } from "@phosphor-icons/react"
 import { useTranslation } from "react-i18next"
+import { useContacts } from "../../hooks/ContactsHook"
 
 export default function ContactsList({filter, searchRef} : {filter: string, searchRef: RefObject<HTMLInputElement | null>}) {
     const { t } = useTranslation("common")
-    const { list, search, refetchContacts } = useChat()
+    const { list, search, refetchContacts } = useContacts()
 
     const filtered = list.filter(contact => {
         if (filter === "new") return contact.unread_count > 0

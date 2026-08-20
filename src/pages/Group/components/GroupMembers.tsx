@@ -5,13 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useUser } from "../../../components/hooks/UserHook";
-import { useChat } from "../../../components/hooks/ChatHook";
+import { useContacts } from "../../../components/hooks/ContactsHook";
 
 export default function GroupMembers({members, myPerms}: {members:Member[], myPerms:Perms | null}) {
     const { openMenu } = useContextMenu()
     const { setBlackout } = useBlackout();
     const { user } = useUser();
-    const { onlineMap } = useChat()
+    const { onlineMap } = useContacts()
     const navigate = useNavigate();
     
     return (

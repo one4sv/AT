@@ -7,6 +7,12 @@
     flex-direction: column;
     gap: 0.5vh;
     border-radius: 12px;
+    &.disabled {
+        pointer-events: none;
+        >.radiobutt {
+            color: var(--borderHabit);
+        }
+    }
 }
 .radiobutt {
     display: flex;

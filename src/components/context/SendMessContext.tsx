@@ -1,8 +1,8 @@
 import { createContext, type ReactNode } from "react";
 import { api } from "../ts/api";
 import type { message } from "./ChatContext";
-import { useChat } from "../hooks/ChatHook";
 import { useNote } from "../hooks/NoteHook";
+import { useContacts } from "../hooks/ContactsHook";
 
 const SendMessContext = createContext<SendMessContextType | null>(null);
 
@@ -13,7 +13,7 @@ export interface SendMessContextType {
 } 
 
 export const SendMessProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchContactsWTLoading } = useChat()
+    const { refetchContactsWTLoading } = useContacts()
     const { showNotification } = useNote()
     const API_URL = import.meta.env.VITE_API_URL;
 

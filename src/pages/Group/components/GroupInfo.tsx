@@ -8,7 +8,7 @@ import { useUser } from "../../../components/hooks/UserHook";
 import { api } from "../../../components/ts/api";
 import { useParams } from "react-router";
 import { useNote } from "../../../components/hooks/NoteHook";
-import { useChat } from "../../../components/hooks/ChatHook";
+import { useContacts } from "../../../components/hooks/ContactsHook";
 
 interface GroupInfoProps {
     group: Group | undefined,
@@ -20,7 +20,7 @@ export default function GroupInfo({group, collapsed} : GroupInfoProps) {
     const { user } = useUser()
     const { refetchGroup, members, newAva } = useGroup()
     const { showNotification } = useNote()
-    const { refetchContactsWTLoading } = useChat()
+    const { refetchContactsWTLoading } = useContacts()
     const navigate = useNavigate()
     const API_URL = import.meta.env.VITE_API_URL;
     const { id }  = useParams()

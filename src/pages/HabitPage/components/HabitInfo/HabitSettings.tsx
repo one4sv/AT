@@ -86,6 +86,9 @@ export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitS
 
     return (
         <div className="habitInnerSlide">
+            <div className="habitInnerSlideTitle">
+                Настройи: {habit.name}
+            </div>
             {/* Расписание */}
             <div className="redHabitBlock" onClick={() => handleScheduleChange(!scheduleToggle)}>
                 <div className="redHabitStr">

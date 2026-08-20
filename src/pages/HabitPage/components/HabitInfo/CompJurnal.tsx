@@ -22,6 +22,9 @@ export default function CompJurnal({ id }:HabitSlideProps) {
 
     return (
         <div className="habitInnerSlide">
+            <div className="habitInnerSlideTitle">
+                Журнал активности
+            </div>
             <div className="compJurnalsearch">
                 <input type="text" onChange={(e) => setJurnalSearch(e.target.value)} value={jurnalSearch}/>
                 {jurnalSearch.trim().length > 0

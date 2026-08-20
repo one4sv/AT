@@ -1,7 +1,6 @@
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useDelete } from "../hooks/DeleteHook";
 import { useHabits } from "../hooks/HabitsHook";
-import { useChat } from "../hooks/ChatHook";
 import { useNavigate} from "react-router";
 import { useNote } from "../hooks/NoteHook";
 import "../../scss/modules/deleteConfirm.scss";
@@ -13,11 +12,12 @@ import Toggler from "../ts/Toggler";
 import { useMessages } from "../hooks/MessagesHook";
 import { useGroup } from "../hooks/GroupHook";
 import axios from "axios";
+import { useContacts } from "../hooks/ContactsHook";
 
 export default function DeleteConfirm() {
     const { user } = useUser()
     const { refetchHabits } = useHabits();
-    const { refetchContacts, refetchContactsWTLoading } = useChat();
+    const { refetchContacts, refetchContactsWTLoading } = useContacts();
     const { deleteConfirm, deleteMess } = useDelete();
     const { setChosenMess, setIsChose } = useMessages()
     const { setBlackout } = useBlackout();

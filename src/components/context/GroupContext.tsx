@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useNote } from "../hooks/NoteHook";
 import type { Media } from "./ChatContext";
 import axios from "axios";
-import { useChat } from "../hooks/ChatHook";
+import { useContacts } from "../hooks/ContactsHook";
 
 const GroupContext = createContext<GroupContextType | null>(null);
 
@@ -52,7 +52,7 @@ export interface Perms {
 }
 export const GroupProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
-    const { onlineMap } = useChat()
+    const { onlineMap } = useContacts()
     const navigate = useNavigate();
     const API_URL = import.meta.env.VITE_API_URL;
 

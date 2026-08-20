@@ -5,13 +5,13 @@ import { useEffect } from "react";
 import { useUser } from "../../../components/hooks/UserHook";
 import { useAcc } from "../../../components/hooks/AccHook";
 import { useHabits } from "../../../components/hooks/HabitsHook";
-import { useChat } from "../../../components/hooks/ChatHook";
+import { useContacts } from "../../../components/hooks/ContactsHook";
 
 export default function FirstSteps() {
     const { user } = useUser()
     const { refetchPosts, posts } = useAcc()
     const { habits } = useHabits()
-    const { list } = useChat()
+    const { list } = useContacts()
 
     const [opened, setOpened] = useLocalStorage(
         `$first_steps_opened`,

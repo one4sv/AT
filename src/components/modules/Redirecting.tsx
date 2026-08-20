@@ -1,14 +1,14 @@
 import ContactsList from "../ts/SM/ContactsList"
 import "../../scss/modules/Redirecting.scss";
 import { Search } from "lucide-react";
-import { useChat } from "../hooks/ChatHook";
 import { X } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useMessages } from "../hooks/MessagesHook";
 import { useRef } from "react";
+import { useContacts } from "../hooks/ContactsHook";
 
 export default function Redirecting() {
-    const { setSearch } = useChat()
+    const { setSearch } = useContacts()
     const { setBlackout } = useBlackout()
     const { setRedirect } = useMessages()
     const searchRef = useRef<HTMLInputElement | null>(null)

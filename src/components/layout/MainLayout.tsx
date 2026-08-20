@@ -10,6 +10,7 @@ import { useBlackout } from "../hooks/BlackoutHook";
 import { useMessages } from "../hooks/MessagesHook";
 import { useSideMenu } from "../hooks/SideMenuHook";
 import { useChat } from "../hooks/ChatHook";
+import { useContacts } from "../hooks/ContactsHook";
 
 interface LayoutProps {
   children?: ReactNode;
@@ -21,7 +22,8 @@ export default function MainLayout({ children }: LayoutProps) {
   const { isChose, setIsChose, setChosenMess, setAnswer, answer, editing, redirect, setEditing, setRedirect } = useMessages()
   const { handleDrop, handleDragOver, handleDragEnter, handleDragLeave, isDragging } = useDrop()
   const { showHabitMenu, returnSlide} = useSideMenu()
-  const { mainSearchRef, search, setSearch, searchInputRef, searchMess, setSearchMess } = useChat()
+  const { searchInputRef, searchMess, setSearchMess } = useChat()
+  const { mainSearchRef, search, setSearch } = useContacts()
 
   const navigate = useNavigate()
   const location = useLocation()

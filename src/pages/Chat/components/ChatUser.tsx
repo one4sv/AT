@@ -13,6 +13,7 @@ import { useMessages } from "../../../components/hooks/MessagesHook";
 import PinnedMessages from "./PinnedMessages";
 import UserInChatUserList from "./UserInChatUserList";
 import { useSideMenu } from "../../../components/hooks/SideMenuHook";
+import { useContacts } from "../../../components/hooks/ContactsHook";
 
 interface ChatUserProps {
     search: string;
@@ -43,7 +44,8 @@ export default function ChatUser({
     searchItemRefs,
     searchInputRef
 }: ChatUserProps) {
-    const { chatWith, onlineMap, typingMap, messages } = useChat();
+    const { chatWith, typingMap, messages } = useChat();
+    const { onlineMap } = useContacts()
     const { openMenu, menu, closeMenu } = useContextMenu();
     const { setDeleteConfirm, setDeleteMess } = useDelete()
     const { setChosenMess, chosenMess, setIsChose, isChose, setRedirect } = useMessages()

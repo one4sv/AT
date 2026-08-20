@@ -9,7 +9,6 @@ import { useBlackout } from "../hooks/BlackoutHook.ts"
 import ContactsList from "./SM/ContactsList.tsx"
 import { Link, useNavigate } from "react-router"
 import { useSettings } from "../hooks/SettingsHook.ts"
-import { useChat } from "../hooks/ChatHook.ts"
 import { useHabits } from "../hooks/HabitsHook.ts"
 import MinLoader from "./MinLoader.tsx"
 import { isMobile } from "react-device-detect"
@@ -19,11 +18,12 @@ import { useSchedule } from "../hooks/ScheduleHook.ts"
 import SideMenuUnAunthificated from "./SideMenuUnAunthificated.tsx"
 import { useSideMenu } from "../hooks/SideMenuHook.ts"
 import { useTranslation } from "react-i18next"
+import { useContacts } from "../hooks/ContactsHook.ts"
 
 export default function SideMenu() {
     const { t, i18n } = useTranslation("common")
     const { isAuthenticated, loadingUser } = useUser()
-    const { setSearch, loadingList, list, mainSearchRef, search } = useChat()
+    const { setSearch, loadingList, list, mainSearchRef, search } = useContacts()
     const { loadingHabits, habits, newOrderHabits } = useHabits()
     const { refreshSchedules } = useSchedule()
     const { user, refetchUser } = useUser()

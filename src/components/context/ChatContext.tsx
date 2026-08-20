@@ -9,121 +9,97 @@ import axios from "axios";
 import { NotificationAggregator } from "../ts/utils/NotificationAggregator";
 import { useWebSocket } from "../hooks/WebSocketHook";
 
-const ChatContext = createContext<ChatContextType | null>(null);
-
 export interface chatWithType {
-    name?: string | null,
-    nick: string,
-    id: string,
-    avatar_url?: string | null,
-    note:boolean,
-    is_blocked:boolean,
-    pinned:boolean,
-    am_i_blocked:boolean,
-    is_group:boolean,
-    members: { id:string, nick:string, avatar_url:string }[],
-    last_online: string,
-    chat_id:string,
+    name?: string | null;
+    nick: string;
+    id: string;
+    avatar_url?: string | null;
+    note: boolean;
+    is_blocked: boolean;
+    pinned: boolean;
+    am_i_blocked: boolean;
+    is_group: boolean;
+    members: { id: string; nick: string; avatar_url: string }[];
+    last_online: string;
+    chat_id: string;
 }
+
 export interface ReactionsType {
-    user_id: string,
-    reaction: string,
+    user_id: string;
+    reaction: string;
 }
 
 export interface Media {
-    url: string,
-    name: string,
-    type: string,
-    message_id:string
-}
-
-export interface ChatContextType {
-    chatWith: chatWithType | null,
-    refetchChat: (nick: string) => Promise<void>,
-    refetchChatWLoading: (nick: string) => Promise<void>,
-    refetchGroupChat: (id: string) => Promise<void>,
-    refetchGroupChatWLoading: (id: string) => Promise<void>,
-    chatLoading: boolean,
-    messages: message[],
-    list: Contact[],
-    search: string,
-    searchMess: string,
-    setSearch: React.Dispatch<React.SetStateAction<string>>,
-    setSearchMess: React.Dispatch<React.SetStateAction<string>>,
-    refetchContacts: () => Promise<void>,
-    refetchContactsWTLoading: () => Promise<void>,
-    onlineMap: Record<string, boolean>,
-    setReaction: (mId: number, reaction: string) => Promise<void>,
-    handleTyping: (id:string) => void,
-    typingMap: Record<string, string[]>,
-    loadingList: boolean,
-    stopTyping:()=> void,
-    mainSearchRef: React.RefObject<HTMLInputElement | null>,
-    searchInputRef: React.RefObject<HTMLInputElement | null>,
+    url: string;
+    name: string;
+    type: string;
+    message_id: string;
 }
 
 export interface message {
-    id: number,
-    sender_id: string,
-    sender_name: string,
-    sender_nick: string,
-    content: string,
-    created_at: Date,
-    files?: Media[],
-    read_by: string[],
-    reactions: ReactionsType[],
-    answer_id: number | null,
-    edited: boolean,
-    redirected_id: number | null,  
-    redirected_name?: string | null,  
-    redirected_nick?: string | null,  
-    redirected_content?: string | null, 
-    redirected_files?: Media[] | null,  
-    redirected_answer?: number | null,
-    is_system: boolean,
-    is_pinned:boolean,
-    target_id:string | null,
+    id: number;
+    sender_id: string;
+    sender_name: string;
+    sender_nick: string;
+    content: string;
+    created_at: Date;
+    files?: Media[];
+    read_by: string[];
+    reactions: ReactionsType[];
+    answer_id: number | null;
+    edited: boolean;
+    redirected_id: number | null;
+    redirected_name?: string | null;
+    redirected_nick?: string | null;
+    redirected_content?: string | null;
+    redirected_files?: Media[] | null;
+    redirected_answer?: number | null;
+    is_system: boolean;
+    is_pinned: boolean;
+    target_id: string | null;
 }
 
-export interface Contact {
-    id: string,
-    name: string | null,
-    nick: string,
-    avatar_url?: string | null,
-    lastMessage: message | null,
-    unread_count: number,
-    note:boolean,
-    is_blocked:boolean,
-    pinned:boolean,
-    is_group:boolean,
+export interface ChatContextType {
+    chatWith: chatWithType | null;
+    refetchChat: (nick: string) => Promise<void>;
+    refetchChatWLoading: (nick: string) => Promise<void>;
+    refetchGroupChat: (id: string) => Promise<void>;
+    refetchGroupChatWLoading: (id: string) => Promise<void>;
+    chatLoading: boolean;
+    messages: message[];
+    searchMess: string;
+    setSearchMess: React.Dispatch<React.SetStateAction<string>>;
+    setReaction: (mId: number, reaction: string) => Promise<void>;
+    handleTyping: (id: string) => void;
+    typingMap: Record<string, string[]>;
+    stopTyping: () => void;
+    searchInputRef: React.RefObject<HTMLInputElement | null>;
 }
+
+const ChatContext = createContext<ChatContextType | null>(null);
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const { user, isAuthenticated } = useUser();
     const { showNotification } = useNote();
     const { note, messNote } = useSettings();
-    const { ws, send } = useWebSocket()
-    const navigate = useNavigate()
+    const { ws, send } = useWebSocket();
+    const navigate = useNavigate();
+
     const API_URL = import.meta.env.VITE_API_URL;
 
-    const [ chatWith, setChatWith ] = useState<chatWithType | null>(null);
-    const [ messages, setMessages ] = useState<message[]>([]);
-    const [ chatLoading, setChatLoading ] = useState<boolean>(true);
-    const [ list, setList ] = useState<Contact[]>([]);
-    const [ loadingList, setLoadingList ] = useState(true);
-    const [ search, setSearch ] = useState<string>("");
-    const [ onlineMap, setOnlineMap ] = useState<Record<string, boolean>>({});
-    const [ isTyping, setIsTyping ] = useState(false);
-    const [ typingMap, setTypingMap ] = useState<Record<string, string[]>>({});
-    const [ searchMess, setSearchMess ] = useState("");
-    
+    const [chatWith, setChatWith] = useState<chatWithType | null>(null);
+    const [messages, setMessages] = useState<message[]>([]);
+    const [chatLoading, setChatLoading] = useState<boolean>(true);
+    const [isTyping, setIsTyping] = useState(false);
+    const [typingMap, setTypingMap] = useState<Record<string, string[]>>({});
+    const [searchMess, setSearchMess] = useState("");
+
     const typingTimeout = useRef<number | null>(null);
     const chatWithRef = useRef<chatWithType | null>(chatWith);
     const notificationAggregator = new NotificationAggregator();
-    const mainSearchRef = useRef<HTMLInputElement | null>(null)
-    const searchInputRef = useRef<HTMLInputElement | null>(null)
-    const contactsAbortRef = useRef<AbortController | null>(null);
+    const searchInputRef = useRef<HTMLInputElement | null>(null);
     const chatAbortRef = useRef<AbortController | null>(null);
+
     useEffect(() => {
         chatWithRef.current = chatWith;
     }, [chatWith]);
@@ -132,21 +108,17 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         if (!isAuthenticated) return;
 
         chatAbortRef.current?.abort();
-
         const controller = new AbortController();
         chatAbortRef.current = controller;
 
         try {
-            const res = await api.get(
-                `${API_URL}chat/${nick}`,
-                { signal: controller.signal }
-            );
-
+            const res = await api.get(`${API_URL}chat/${nick}`, {
+                signal: controller.signal,
+            });
             if (controller.signal.aborted) return;
 
             if (res.data.success) {
                 const user = res.data.user;
-
                 setChatWith({
                     name: user.username,
                     nick: user.nick,
@@ -159,13 +131,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     am_i_blocked: user.am_i_blocked,
                     is_group: false,
                     members: [],
-                    chat_id: res.data.chat_id
+                    chat_id: res.data.chat_id,
                 });
-
                 setMessages(res.data.messages);
             } else {
                 showNotification("error", "Не удалось получить данные");
-
                 if (window.history.length > 0) {
                     navigate(-1);
                 } else {
@@ -174,7 +144,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             }
         } catch (error) {
             if (axios.isCancel(error)) return;
-
             showNotification("error", "Не удалось получить данные");
             navigate("/");
         } finally {
@@ -183,25 +152,23 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             }
         }
     };
+
     const refetchChatWLoading = async (nick: string) => {
         setChatLoading(true);
         await refetchChat(nick);
-    }
+    };
 
     const refetchGroupChat = async (id: string) => {
         if (!isAuthenticated) return;
 
         chatAbortRef.current?.abort();
-
         const controller = new AbortController();
         chatAbortRef.current = controller;
 
         try {
-            const res = await api.get(
-                `${API_URL}chat/group/${id}`,
-                { signal: controller.signal }
-            );
-
+            const res = await api.get(`${API_URL}chat/group/${id}`, {
+                signal: controller.signal,
+            });
             if (controller.signal.aborted) return;
 
             if (res.data.success) {
@@ -210,31 +177,25 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     is_group: true,
                     last_online: "",
                     nick: `group_${id}`,
-                    chat_id: res.data.chat.id
+                    chat_id: res.data.chat.id,
                 });
-
                 setMessages(res.data.messages);
             } else {
                 showNotification(
                     "error",
                     res.data.message || "Не удалось получить данные группы"
                 );
-
                 navigate("/");
             }
         } catch (error) {
             if (axios.isCancel(error)) return;
-
             console.error(error);
-
             if (axios.isAxiosError(error)) {
                 showNotification(
                     "error",
-                    error.response?.data?.error ||
-                    "Не удалось получить данные группы"
+                    error.response?.data?.error || "Не удалось получить данные группы"
                 );
             }
-
             navigate("/");
         } finally {
             if (!controller.signal.aborted) {
@@ -246,63 +207,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const refetchGroupChatWLoading = async (id: string) => {
         setChatLoading(true);
         await refetchGroupChat(id);
-    }
+    };
 
-    const refetchContactsWTLoading = useCallback(async () => {
-        if (!isAuthenticated) return;
-
-        contactsAbortRef.current?.abort();
-
-        const controller = new AbortController();
-        contactsAbortRef.current = controller;
-
-        try {
-            const res = await api.post(
-                `${API_URL}contacts`,
-                { search },
-                { signal: controller.signal }
-            );
-
-            if (controller.signal.aborted) return;
-
-            if (res.data.success) {
-                const sortedList = res.data.friendsArr.slice().sort((a: Contact, b: Contact) => {
-                    if (a.pinned !== b.pinned) {
-                        return a.pinned ? -1 : 1;
-                    }
-
-                    const timeA = a.lastMessage
-                        ? new Date(a.lastMessage.created_at).getTime()
-                        : 0;
-
-                    const timeB = b.lastMessage
-                        ? new Date(b.lastMessage.created_at).getTime()
-                        : 0;
-
-                    return timeB - timeA;
-                });
-
-                setList(sortedList);
-            }
-        } catch (err) {
-            if (axios.isCancel(err)) return;
-            if (axios.isAxiosError(err)) {
-                if (err.response?.status === 401) return;
-                console.log("error", err.response?.data?.error);
-            }
-        } finally {
-            if (!controller.signal.aborted) {
-                setLoadingList(false);
-            }
-        }
-    }, [API_URL, search, isAuthenticated]);
-
-    const refetchContacts = useCallback(async () => {
-        setLoadingList(true);
-        await refetchContactsWTLoading();
-    }, [refetchContactsWTLoading]);
-
-
+    // WebSocket — сообщения текущего чата + typing + уведомления
     useEffect(() => {
         if (!ws) return;
 
@@ -311,14 +218,26 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
             if (data.type === "NEW_MESSAGE") {
                 const messageSenderId = String(data.message.sender_id);
-                if (chatWithRef.current && String(chatWithRef.current.chat_id) === String(data.chat_id)) {
-                    setMessages(prev => [...prev, data.message]);
+
+                if (
+                    chatWithRef.current &&
+                    String(chatWithRef.current.chat_id) === String(data.chat_id)
+                ) {
+                    setMessages((prev) => [...prev, data.message]);
                 }
-                refetchContactsWTLoading();
 
-                if (document.visibilityState === "hidden" && messageSenderId !== user.id && note && messNote && data.is_note) {
-                    const chatKey = data.is_group ? `g_${data.chat_id}` : `p_${data.nick ?? data.message.sender_id}`;
+                // обновление списка контактов уже происходит в ContactsContext
 
+                if (
+                    document.visibilityState === "hidden" &&
+                    messageSenderId !== user.id &&
+                    note &&
+                    messNote &&
+                    data.is_note
+                ) {
+                    const chatKey = data.is_group
+                        ? `g_${data.chat_id}`
+                        : `p_${data.nick ?? data.message.sender_id}`;
                     notificationAggregator.enqueueMessage(chatKey, {
                         content: data.message.content,
                         files: data.message.files,
@@ -330,132 +249,158 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                     });
                 }
             }
+
             if (data.type === "USER_STATUS") {
-                setOnlineMap(prev => ({
-                    ...prev,
-                    [data.userId]: data.isOnline
-                }));
                 if (
                     chatWithRef.current &&
                     chatWithRef.current.id === data.userId &&
                     !chatWithRef.current.is_group
                 ) {
-                    setChatWith(prev => {
+                    setChatWith((prev) => {
                         if (!prev) return prev;
                         return {
                             ...prev,
-                            last_online: data.isOnline ? "" : (data.last_online || prev.last_online)
-                        }
-                    })
+                            last_online: data.isOnline
+                                ? ""
+                                : data.last_online || prev.last_online,
+                        };
+                    });
                 }
             }
+
             if (data.type === "MESSAGE_READ") {
-                setMessages(prev =>
-                    prev.map(m =>
+                setMessages((prev) =>
+                    prev.map((m) =>
                         m.id === data.messageId
-                        ? { ...m, read_by: [...m.read_by, data.userId] }
-                        : m
+                            ? { ...m, read_by: [...m.read_by, data.userId] }
+                            : m
                     )
                 );
-                refetchContactsWTLoading()
             }
+
             if (data.type === "MESSAGE_PIN_TOGGLED") {
-                setMessages(prev =>
-                    prev.map(m =>
-                    m.id === data.message_id
-                        ? { ...m, is_pinned: data.is_pinned }
-                        : m
+                setMessages((prev) =>
+                    prev.map((m) =>
+                        m.id === data.message_id
+                            ? { ...m, is_pinned: data.is_pinned }
+                            : m
                     )
                 );
             }
+
             if (data.type === "MESSAGE_REACTION") {
-                setMessages(prev =>
-                    prev.map(m => {
+                setMessages((prev) =>
+                    prev.map((m) => {
                         if (m.id !== data.messageId) return m;
                         const reactions = m.reactions || [];
                         if (data.removed) {
                             return {
                                 ...m,
-                                reactions: reactions.filter(r => !(r.user_id === data.user_id && r.reaction === data.reaction))
+                                reactions: reactions.filter(
+                                    (r) =>
+                                        !(
+                                            r.user_id === data.user_id &&
+                                            r.reaction === data.reaction
+                                        )
+                                ),
                             };
                         } else {
                             return {
                                 ...m,
                                 reactions: [
-                                    ...reactions.filter(r => !(r.user_id === data.user_id && r.reaction === data.reaction)),
-                                    { user_id: data.user_id, reaction: data.reaction }
-                                ]
+                                    ...reactions.filter(
+                                        (r) =>
+                                            !(
+                                                r.user_id === data.user_id &&
+                                                r.reaction === data.reaction
+                                            )
+                                    ),
+                                    { user_id: data.user_id, reaction: data.reaction },
+                                ],
                             };
                         }
                     })
                 );
             }
-            if (data.type === "GROUP_UPDATED") {
-                refetchContactsWTLoading();
 
-                if (chatWithRef.current?.is_group && chatWithRef.current.id === data.group_id) {
+            if (data.type === "GROUP_UPDATED") {
+                if (
+                    chatWithRef.current?.is_group &&
+                    chatWithRef.current.id === data.group_id
+                ) {
                     refetchGroupChat(data.group_id);
                 }
-
                 if (location.pathname.startsWith("/room/")) {
                     const currentGroupId = location.pathname.split("/room/")[1];
                     if (currentGroupId === String(data.group_id)) {
-                        window.dispatchEvent(new CustomEvent("groupUpdated", { detail: data.group_id }));
+                        window.dispatchEvent(
+                            new CustomEvent("groupUpdated", { detail: data.group_id })
+                        );
                     }
                 }
             }
-            if (data.type === "KICKED_FROM_GROUP") {
-                const kickedGroupId:string = data.group_id;
 
-                showNotification("info", 
-                    data.reason === "kicked" 
-                    ? `Вы были исключены из группы "${data.group_name}"`
-                    : `Вы покинули группу "${data.group_name}"`
+            if (data.type === "KICKED_FROM_GROUP") {
+                const kickedGroupId: string = data.group_id;
+                showNotification(
+                    "info",
+                    data.reason === "kicked"
+                        ? `Вы были исключены из группы "${data.group_name}"`
+                        : `Вы покинули группу "${data.group_name}"`
                 );
 
-                if (chatWithRef.current?.is_group && String(chatWithRef.current?.id) === String(kickedGroupId)) {
+                if (
+                    chatWithRef.current?.is_group &&
+                    String(chatWithRef.current?.id) === String(kickedGroupId)
+                ) {
                     navigate("/");
                 }
-
                 if (location.pathname.startsWith("/room/")) {
-                    const currentId:string = location.pathname.split("/room/")[1];
+                    const currentId: string = location.pathname.split("/room/")[1];
                     if (currentId === kickedGroupId) {
                         navigate("/");
                     }
                 }
-
-                refetchContactsWTLoading();
             }
+
             if (data.type === "TYPING") {
                 const chatKey = data.chat_id || data.from;
-                setTypingMap(prev => ({
+                setTypingMap((prev) => ({
                     ...prev,
-                    [chatKey]: [...new Set([...(prev[chatKey] || []), data.sender_name])]
+                    [chatKey]: [
+                        ...new Set([...(prev[chatKey] || []), data.sender_name]),
+                    ],
                 }));
             }
+
             if (data.type === "STOP_TYPING") {
                 const chatKey = data.chat_id || data.from;
-                setTypingMap(prev => ({
+                setTypingMap((prev) => ({
                     ...prev,
-                    [chatKey]: (prev[chatKey] || []).filter(name => name !== data.sender_name)
+                    [chatKey]: (prev[chatKey] || []).filter(
+                        (name) => name !== data.sender_name
+                    ),
                 }));
             }
+
             if (data.type === "MESSAGE_DELETED") {
-                setMessages(prev =>
-                    prev.filter(m => String(m.id) !== String(data.messageId))
+                setMessages((prev) =>
+                    prev.filter((m) => String(m.id) !== String(data.messageId))
                 );
-                refetchContactsWTLoading()
             }
+
             if (data.type === "MESSAGE_EDITED") {
-                setMessages(prev =>
-                    prev.map(m => m.id === data.message.id ? { ...data.message, edited: true } : m)
+                setMessages((prev) =>
+                    prev.map((m) =>
+                        m.id === data.message.id
+                            ? { ...data.message, edited: true }
+                            : m
+                    )
                 );
-                refetchContactsWTLoading();
             }
         };
 
         ws.addEventListener("message", handleMessage);
-
         return () => ws.removeEventListener("message", handleMessage);
     }, [ws, user.id, note, messNote, showNotification, navigate]);
 
@@ -473,41 +418,38 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         };
     }, []);
 
-    useEffect(() => {
-        const timer = setTimeout(refetchContacts, 100);
-        return () => clearTimeout(timer);
-    }, [search, refetchContacts]);
-
     const stopTyping = useCallback(() => {
         if (!user?.id || !chatWithRef.current || !ws) return;
 
-        send(JSON.stringify({
-            type: "STOP_TYPING",
-            to: chatWithRef.current.id,
-            is_group: chatWithRef.current.is_group,
-        }));
-
+        send(
+            JSON.stringify({
+                type: "STOP_TYPING",
+                to: chatWithRef.current.id,
+                is_group: chatWithRef.current.is_group,
+            })
+        );
         setIsTyping(false);
-        
+
         if (typingTimeout.current) {
             clearTimeout(typingTimeout.current);
             typingTimeout.current = null;
         }
-    }, [user?.id, ws]);
+    }, [user?.id, ws, send]);
 
     const handleTyping = (id: string) => {
         if (!user?.id || !chatWithRef.current) return;
 
         if (!isTyping) {
-            send(JSON.stringify({
-                type: "TYPING",
-                to: id,
-                is_group: chatWithRef.current.is_group,
-            }));
+            send(
+                JSON.stringify({
+                    type: "TYPING",
+                    to: id,
+                    is_group: chatWithRef.current.is_group,
+                })
+            );
             setIsTyping(true);
         }
 
-        // Сбрасываем таймер
         if (typingTimeout.current) {
             clearTimeout(typingTimeout.current);
         }
@@ -526,9 +468,24 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     return (
-        <ChatContext.Provider value={{ chatWith, refetchChat, refetchChatWLoading, chatLoading, messages, list, setSearch, search,
-            refetchContacts, onlineMap, setReaction, handleTyping, typingMap, loadingList, refetchContactsWTLoading, refetchGroupChat, refetchGroupChatWLoading,
-            stopTyping, mainSearchRef, searchInputRef, searchMess, setSearchMess}}>
+        <ChatContext.Provider
+            value={{
+                chatWith,
+                refetchChat,
+                refetchChatWLoading,
+                chatLoading,
+                messages,
+                setReaction,
+                handleTyping,
+                typingMap,
+                stopTyping,
+                searchInputRef,
+                searchMess,
+                setSearchMess,
+                refetchGroupChat,
+                refetchGroupChatWLoading,
+            }}
+        >
             {children}
         </ChatContext.Provider>
     );

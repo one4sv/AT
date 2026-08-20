@@ -1,4 +1,4 @@
-import type { Contact } from "../context/ChatContext";
+import type { Contact } from "../context/ContactsContext";
 import { PushPin, SpeakerSimpleX } from "@phosphor-icons/react"
 import { Check, CheckCheck, CircleUserRound } from "lucide-react"
 import { isMobile } from "react-device-detect"
@@ -13,6 +13,7 @@ import { useIdentify } from  "../hooks/utils/useIdentify"
 import { useMemo } from "react";
 import { useSideMenu } from "../hooks/SideMenuHook";
 import { useTranslation } from "react-i18next";
+import { useContacts } from "../hooks/ContactsHook";
 
 export interface ContactType {
     contact: Contact
@@ -20,7 +21,8 @@ export interface ContactType {
 
 export default function Contact({ contact }: ContactType) {
     const { t, i18n } = useTranslation("common")
-    const { onlineMap, typingMap } = useChat()
+    const { typingMap } = useChat()
+    const { onlineMap } = useContacts()
     const { setBlackout } = useBlackout()
     const { openMenu } = useContextMenu()
     const { setDroppedFiles } = useDrop()

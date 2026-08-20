@@ -5,14 +5,16 @@ import type { ElementType } from "react";
 export default function RadioGroup({
     list,
     val,
-    newVal
+    newVal,
+    disabled
 }: {
     list: { label: string; value: string; icon?:ElementType }[];
     val: string;
-    newVal?:(val:string) => void
+    newVal?:(val:string) => void;
+    disabled?:boolean
 }) {
     return (
-        <div className="radioGroup">
+        <div className={`radioGroup ${disabled ? "disabled" : ""}`}>
             {list.map((el) => {
                 const active = el.value === val
                 return (

@@ -202,7 +202,7 @@
 }
 .habitInnerSlide {
     width: 100%;
-    height: 100%;
+    height: 93%;
     margin: 2vh auto;
     display: flex;
     flex-direction: column;
@@ -217,5 +217,25 @@
     .StatsDivHabit {
         height: auto;
         flex-direction: column;
+    }
+}
+.habitInnerSlideTitle {
+    font-size: 20px;
+    margin-bottom: 1vh;
+}
+.chatMenuSpan {
+    margin: 1vh 0;
+}
+.habitChatList {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.2vh;
+    flex: 1;
+    background-color: var(--bgc);
+    border-radius: 12px;
+    overflow-y: auto;
+    >.loaderSmall {
+        margin-top: 2vh;
     }
 }

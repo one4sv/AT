@@ -3,9 +3,11 @@ import { useChat } from "../../../hooks/ChatHook"
 import { api } from "../../api"
 import type { CMFuncsType } from "./CMFuncsType"
 import { useLocation } from "react-router-dom"
+import { useContacts } from "../../../hooks/ContactsHook"
 
 export const ToggleBlocked = ({nick, id, bool} : CMFuncsType) => {
-    const { refetchContactsWTLoading, refetchChat } = useChat()
+    const { refetchChat } = useChat()
+    const { refetchContactsWTLoading } = useContacts()
     const location = useLocation()
 
     const toggleBlocked = async() => {
