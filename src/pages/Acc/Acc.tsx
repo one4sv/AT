@@ -128,7 +128,7 @@ export default function Acc() {
     return (
         <div className="accDiv">
             <div className="acc">
-                <AccInfo acc={acc} canView={canView} collapsed={collapsed} />
+                <AccInfo acc={acc} canView={canView} collapsed={collapsed}/>
                 <div className="accContentSelector">
                     <div className="accContentSelect">
                         {tabs.map((tab, i) => (

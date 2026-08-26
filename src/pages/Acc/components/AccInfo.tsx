@@ -12,16 +12,22 @@ import DatePicker from "react-datepicker";
 import DatePickerHeader from "../../../components/ts/DatePickerHeader";
 import { useTranslation } from "react-i18next";
 import { useContacts } from "../../../components/hooks/ContactsHook";
+import { ChatTeardropTextIcon, FloppyDiskBackIcon, PencilSimpleIcon } from "@phosphor-icons/react";
+import { useNavigate } from "react-router";
 
 export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canView: (field: keyof PrivateSettings) => boolean, collapsed: number }) {
     const { t } = useTranslation("acc");
     const { setBlackout } = useBlackout();
-    const { newName, setNewName, newNick, setNewNick, newPick, newBio, setNewBio, newMail, setNewMail, newBirth, setNewBirth } = useUpUser();
+    const { newName, setNewName, newNick, setNewNick, newPick, newBio, setNewBio, newBirth, setNewBirth } = useUpUser();
     const { onlineMap } = useContacts();
     const { isMyAcc } = useAcc();
-    const { red } = useSideMenu();
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const { red, setRed } = useSideMenu();
+    const [ previewUrl, setPreviewUrl ] = useState<string | null>(null);
 
+    const navigate = useNavigate()
+
+    const page = location.pathname.split("/")[1]
+    console.log(page)
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -134,40 +140,6 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                     </div>
                 ) : ""}
 
-                <div className="accExtraInfoWrapper">
-                    {!canView("number") ? (
-                        <span>{t("hidden")}</span>
-                    ) : (
-                        <>
-                            <label htmlFor="extraInfoInputPhone">{t("phone")}</label>
-                            <input
-                                id="extraInfoInputPhone"
-                                className="extraInfoInput"
-                                value="—"
-                                readOnly
-                            />
-                        </>
-                    )}
-                </div>
-
-                <div className="accExtraInfoWrapper">
-                    {!canView("mail") ? (
-                        <span>{t("hidden")}</span>
-                    ) : (
-                        <>
-                            <label htmlFor="extraInfoInputEmail">{t("email")}</label>
-                            <input
-                                id="extraInfoInputEmail"
-                                className="extraInfoInput"
-                                value={(isMyAcc ? newMail : acc?.mail) ?? ""}
-                                onChange={(e) =>
-                                    setNewMail(e.currentTarget.value)
-                                }
-                                readOnly={!red}
-                            />
-                        </>
-                    )}
-                </div>
                 {acc?.date_of_birth || red ? (
                     <div className="accExtraInfoWrapper" >
                         <label htmlFor="extraInfoInputBirth">{t("birthday")}</label>
@@ -198,6 +170,53 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                         />
                     </div>
                 ) : ""}
+                <div className={`accExtraInfoWrapper ${red ? "disabled" : ""}`}>
+                    {!canView("number") ? (
+                        <span>{t("hidden")}</span>
+                    ) : (
+                        <>
+                            <label htmlFor="extraInfoInputPhone">{t("phone")}</label>
+                            <input
+                                id="extraInfoInputPhone"
+                                className={`extraInfoInput ${red ? "disabled" : ""}`}
+                                value="—"
+                                readOnly
+                            />
+                        </>
+                    )}
+                </div>
+                    <div className="accExtraInfoWrapper">
+                        <div className="settingInnerList">
+                            <div className="settingInnerButt" onClick={() => {
+                                if (isMyAcc) {
+                                    if (red === true) setRed(false);
+                                    else setRed(true);
+                                } else {
+                                    navigate(`/chat/${acc?.nick}`)
+                                }
+
+                            }}>
+                            {isMyAcc 
+                                ? red
+                                    ? (
+                                        <>
+                                            <FloppyDiskBackIcon weight="fill" size={20}/>{t("save")}
+                                        </>
+                                    )
+                                    : (
+                                        <>
+                                            <PencilSimpleIcon size={20}/>{t("edit")}
+                                        </>
+                                    )
+                                : (
+                                    <>
+                                        <ChatTeardropTextIcon size={20}/>Написать сообщение
+                                    </>
+                                )
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

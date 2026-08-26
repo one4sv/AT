@@ -10,5 +10,7 @@
     "hidden": "Hidden",
     "phone": "Phone",
     "email": "Email",
-    "birthday": "Birthday"
+    "birthday": "Birthday",
+    "save":"Save",
+    "edit":"Edit"
 }

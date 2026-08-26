@@ -297,8 +297,98 @@
     &:hover {
         background-color: var(--menuButtHover);
         color: var(--tc);
-        &.delete {
-            color: var(--notValid);
+    }
+    &.delete {
+        color: var(--notValid);
+    }
+}
+.settingInnerAccDiv {
+    padding: 0;
+    gap: 0;
+    >.settingInnerList {
+        margin: 0 0.5vw 1vh;
+    }
+}
+.settingsLabel {
+    width: 100%;
+    padding: 0 0.35vw 0.5vh;
+    color: var(--borderHabit);
+}
+.settingsInputDiv {
+    display: flex;
+    flex-direction: column;
+}
+.settingInputInnerList {
+    padding: 0.5vh 0.25vw;
+    background-color: var(--bgc);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    @media (max-width: 800px) {
+        padding: 0.5vh 1.25vw;
+    }
+}
+.settingAccordion {
+    background-color: var(--mc);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // важно
+
+    @media (max-width: 800px) {
+        // если нужно
+    }
+}
+
+.settingHeaderCollapsible {
+    cursor: pointer;
+    user-select: none;
+    padding: 1vh 0.75vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.2s ease;
+
+    @media (max-width: 800px) {
+        padding: 1vh 2vw;
+    }
+
+    &:hover {
+        background-color: var(--menuButtHover);
+    }
+}
+
+.settingCaret {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    color: var(--tc);
+    &.open {
+        transform: rotate(180deg);
+    }
+}
+
+.settingCollapsible {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+    &.open {
+        grid-template-rows: 1fr;
+        >.settingCollapsibleInner {
+            padding: 0.25vh 0.75vw 1vh;
         }
+    }
+}
+
+.settingCollapsibleInner {
+    overflow: hidden;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    padding: 0 0.75vw;
+    transition: padding 0.2s ease;
+
+    @media (max-width: 800px) {
+        padding: 0 2vw 1.3vh;
     }
 }

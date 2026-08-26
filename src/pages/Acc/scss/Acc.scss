@@ -145,6 +145,9 @@
     &:focus-within {
         color: var(--accent_text);
     }
+    &.disabled:focus-within {
+        color: var(--borderHabit);
+    }
 }
 .extraInfoInput {
     height: 25px;
@@ -160,6 +163,10 @@
     width: 100%;
     &:focus-visible {
         border-bottom: 1px solid var(--accent);
+    }
+    &.disabled {
+        color: var(--borderWh);
+        border-bottom: 1px solid var(--tr);
     }
 }
 .accExtraInfo {
