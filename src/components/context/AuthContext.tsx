@@ -3,6 +3,7 @@ import { type ReactNode } from "react";
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
 import { useUser } from "../hooks/UserHook";
+import { api } from "../ts/api";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -59,11 +60,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
     const register = async ({ mail, pass, nick }:{mail:string, pass:string, nick:string }) => {
         setLoadingAuth(true);
         try {
-            const res = await axios.post(`${API_URL}register`, { mail, pass, nick }, {
-                headers: { "Content-Type": "application/json" },
-                withCredentials: true,
-            });
-
+            const res = await api.post(`${API_URL}register`, { mail, pass, nick });
             if (res.data.success) {
                 showNotification('info', 'Письмо с кодом отправлено');
                 setResponse({success:true, form:"reg", email:mail})
@@ -89,15 +86,9 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
     const auth = async({ login, pass, isRemember }: { login:string, pass:string, isRemember:boolean }) => {
         setLoadingAuth(true);
         try {
-            const res = await axios.post(
+            const res = await api.post(
                 `${API_URL}auth`,
                 { login, pass, isRemember },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    withCredentials: true
-                }
             )
             if (res.data.success) {
                 console.log(res.data.success)
@@ -133,12 +124,9 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
         signal?: AbortSignal
     }) => {
         try {
-            const res = await axios.post(
+            const res = await api.post(
                 `${API_URL}register/check`,
-                { nick, mail, signal },
-                {
-                    withCredentials: true,
-                }
+                { nick, mail, signal }
             );
 
             return res.data;
@@ -156,7 +144,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
         signal?:AbortSignal
     }) => {
         try {
-            const res = await axios.post(
+            const res = await api.post(
                 `${API_URL}confirm`,
                 {code, email, signal }
             )
