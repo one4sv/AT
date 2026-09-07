@@ -29,7 +29,6 @@ export default function CompletionProgress() {
     const { habit, loadTimer, setHabitTimer, parseTimer, showTimer, habitTimer } = useTheHabit()
     const { chosenDay } = useCalendar()
     const { ws } = useWebSocket()
-    const API_URL = import.meta.env.VITE_API_URL
 
     const [ editedTexts, setEditedTexts ] = useState<Record<string, string>>({})
     const [ placeholderMap, setPlaceholderMap ] = useState<Record<string, string>>({})
@@ -179,7 +178,7 @@ export default function CompletionProgress() {
         })
 
         try {
-            await api.post(`${API_URL}timer/circle/text`, {
+            await api.post(`timer/circle/text`, {
                 habit_id: habit.id,
                 timer_id: currentTimer.id,
                 time: originalTime,

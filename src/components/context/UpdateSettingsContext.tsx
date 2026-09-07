@@ -4,6 +4,7 @@ import { useSettings } from "../hooks/SettingsHook";
 import { useUser } from "../hooks/UserHook";
 import { useNote } from "../hooks/NoteHook";
 import type { PrivateSettings } from "./SettingsContext";
+import { api } from "../ts/api";
 
 export type UpdateSettingsContextType = {
     setNewOrder: (val: string[]) => void;
@@ -119,8 +120,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         try {
             const bg = new FormData();
             bg.append("bg", val);
-            const upRes = await axios.post(`${API_URL}uploadbg`, bg, {
-                withCredentials: true,
+            const upRes = await api.post(`uploadbg`, bg, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             if (upRes.data?.success) {
@@ -167,9 +167,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
         console.log("Отправляю на сервер", setting, value);
 
         try {
-            const res = await axios.post(`${API_URL}updatesettings`, payload, {
-                withCredentials: true,
-            });
+            const res = await api.post(`updatesettings`, payload);
             if (res.data.success) {
                 console.log("✅ Успешно обновлено:", setting);
                 refetchSettings();

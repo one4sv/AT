@@ -85,8 +85,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const { ws, send } = useWebSocket();
     const navigate = useNavigate();
 
-    const API_URL = import.meta.env.VITE_API_URL;
-
     const [chatWith, setChatWith] = useState<chatWithType | null>(null);
     const [messages, setMessages] = useState<message[]>([]);
     const [chatLoading, setChatLoading] = useState<boolean>(true);
@@ -112,7 +110,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         chatAbortRef.current = controller;
 
         try {
-            const res = await api.get(`${API_URL}chat/${nick}`, {
+            const res = await api.get(`chat/${nick}`, {
                 signal: controller.signal,
             });
             if (controller.signal.aborted) return;
@@ -166,7 +164,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         chatAbortRef.current = controller;
 
         try {
-            const res = await api.get(`${API_URL}chat/group/${id}`, {
+            const res = await api.get(`chat/group/${id}`, {
                 signal: controller.signal,
             });
             if (controller.signal.aborted) return;

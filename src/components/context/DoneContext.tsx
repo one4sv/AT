@@ -1,4 +1,3 @@
-import axios from "axios";
 import { createContext, useEffect, useMemo, useState } from "react";
 import { type ReactNode } from "react";
 import { useTheHabit } from "../hooks/TheHabitHook";
@@ -27,13 +26,12 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
     const [waitDoneAnswer, setWaitDoneAnswer] = useState(false);
     const [waitComAnswer, setWaitComAnswer] = useState(false);
 
-    const API_URL = import.meta.env.VITE_API_URL;
     const { habitId: id } = useParams<{ habitId: string }>();
 
   // ==================== МАРКИРОВКА ВЫПОЛНЕНИЯ ====================
     const markDone = async (id: number, date: string) => {
         try {
-            const res = await api.post(`${API_URL}markdone`, { habit_id: id, date });
+            const res = await api.post(`markdone`, { habit_id: id, date });
             if (res.data.success) {
                 if (habit && habit.id === Number(id)) {
                     loadHabit(id.toString());
@@ -42,7 +40,7 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
                 if (!habit || habit.id === Number(id)) fetchCalendarUser();
             }
             if (habitTimer && habitTimer.status !== "ended") {
-                await api.post(`${API_URL}timer/stop`, {
+                await api.post(`timer/stop`, {
                     habit_id: id,
                     time: new Date(),
                     timer_id: habitTimer.id,
@@ -64,10 +62,9 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
     const sendDayComment = async (id: string, text: string | null, date: string) => {
         setWaitComAnswer(true);
         try {
-            const res = await axios.post(
-                `${API_URL}daycomment`,
+            const res = await api.post(
+                `daycomment`,
                 { habit_id: id, text, date },
-                { withCredentials: true }
             );
             if (res.data.success) {
                 fetchCalendarHabit(id);

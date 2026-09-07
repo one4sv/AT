@@ -18,12 +18,10 @@ export const PlannedProvider = ( { children } : { children:ReactNode } ) => {
     const { refetchHabits } = useHabits()
     const [ waitPlanAnswer, setWaitPlanAnswer ] = useState(false)
 
-    const API_URL = import.meta.env.VITE_API_URL;
-
     const markPlan = async (id: number, date: string) => {
         setWaitPlanAnswer(true)
         try {
-            const res = await api.post(`${API_URL}markplan`, {habit_id:id, date})
+            const res = await api.post(`markplan`, {habit_id:id, date})
             if (res.data.success) {
                 if (habit && habit.id === Number(id)) {
                     loadHabit(id.toString());

@@ -16,7 +16,6 @@ interface FlyingNumber {
 export default function Counter({ isMy }: { isMy:boolean }) {
     const { habit, showCounter, habitCounter, counterSettings, loadHabit } = useTheHabit()
     const { chosenDay } = useCalendar()
-    const API_URL = import.meta.env.VITE_API_URL;
 
     const counterRef = useRef<HTMLDivElement>(null)
 
@@ -45,7 +44,7 @@ export default function Counter({ isMy }: { isMy:boolean }) {
     const sendDelta = async (totalVal: number) => {
         if (totalVal === 0 || !habit?.id || isHistorical) return
         try {
-            await api.post(`${API_URL}counter/value`, { habit_id: habit.id, val: totalVal })
+            await api.post(`counter/value`, { habit_id: habit.id, val: totalVal })
         } catch (err) {
             console.error(err)
         } finally {
@@ -85,7 +84,7 @@ export default function Counter({ isMy }: { isMy:boolean }) {
     const restoreCounter = async () => {
         if (isHistorical || !habit?.id) return
         try {
-            const res = await api.post(`${API_URL}counter/restore`, { habit_id: habit.id })
+            const res = await api.post(`counter/restore`, { habit_id: habit.id })
             if (res.data.success) loadHabit(String(habit.id))
         } catch (err) {
             console.error(err)
@@ -95,7 +94,7 @@ export default function Counter({ isMy }: { isMy:boolean }) {
     const updateCounterSetting = async (field: "min_counter" | "red_counter_right" | "red_counter_left", value: number) => {
         if (!habit?.id || isHistorical || !isMy) return
         try {
-            const res = await api.post(`${API_URL}counter/settings`, {
+            const res = await api.post(`counter/settings`, {
                 habit_id: habit.id,
                 [field]: value
             })

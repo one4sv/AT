@@ -55,12 +55,10 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
     const [ loadingAuth, setLoadingAuth ] = useState(false);
     const [ response, setResponse ] = useState<ResponseType>({success:null})
 
-    const API_URL = import.meta.env.VITE_API_URL
-
     const register = async ({ mail, pass, nick }:{mail:string, pass:string, nick:string }) => {
         setLoadingAuth(true);
         try {
-            const res = await api.post(`${API_URL}register`, { mail, pass, nick });
+            const res = await api.post(`register`, { mail, pass, nick });
             if (res.data.success) {
                 showNotification('info', 'Письмо с кодом отправлено');
                 setResponse({success:true, form:"reg", email:mail})
@@ -87,7 +85,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
         setLoadingAuth(true);
         try {
             const res = await api.post(
-                `${API_URL}auth`,
+                `auth`,
                 { login, pass, isRemember },
             )
             if (res.data.success) {
@@ -125,7 +123,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
     }) => {
         try {
             const res = await api.post(
-                `${API_URL}register/check`,
+                `register/check`,
                 { nick, mail, signal }
             );
 
@@ -145,7 +143,7 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
     }) => {
         try {
             const res = await api.post(
-                `${API_URL}confirm`,
+                `confirm`,
                 {code, email, signal }
             )
             if (res.data.success) {

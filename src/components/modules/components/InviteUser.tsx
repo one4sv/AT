@@ -10,8 +10,6 @@ export default function InviteUser() {
     const { group, refetchGroup } = useGroup();
     const { showNotification } = useNote();
 
-    const API_URL = import.meta.env.VITE_API_URL;
-
     const [ loading, setLoading ] = useState<boolean>(false);
     const [ showCopied, setShowCopied ] = useState<boolean>(false);
 
@@ -29,7 +27,7 @@ export default function InviteUser() {
         } else {
             setLoading(true);
             try {
-                const res = await api.post(`${API_URL}group/generate_link`, { group_id: group.id })
+                const res = await api.post(`group/generate_link`, { group_id: group.id })
                 if (res.data.success) {
                     navigator.clipboard.writeText(res.data.link);
                     setShowCopied(true);

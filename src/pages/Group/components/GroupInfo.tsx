@@ -22,7 +22,6 @@ export default function GroupInfo({group, collapsed} : GroupInfoProps) {
     const { showNotification } = useNote()
     const { refetchContactsWTLoading } = useContacts()
     const navigate = useNavigate()
-    const API_URL = import.meta.env.VITE_API_URL;
     const { id }  = useParams()
 
     const [ red, setRed ] = useState<boolean>(false);
@@ -53,7 +52,7 @@ export default function GroupInfo({group, collapsed} : GroupInfoProps) {
                 const fd = new FormData();
                 fd.append("avatar", newAva);
                 fd.append("group", id);
-                const upRes = await api.post(`${API_URL}uploadavatar`, fd );
+                const upRes = await api.post(`uploadavatar`, fd );
                 if (upRes.data?.success) {
                     if (updates.length === 0) {
                         await refetchContactsWTLoading()
@@ -71,7 +70,7 @@ export default function GroupInfo({group, collapsed} : GroupInfoProps) {
 
         if (updates.length > 0) {
             try {
-                const res = await api.post(`${API_URL}updategroup`, {
+                const res = await api.post(`updategroup`, {
                     group: id,        // ← добавляем ID группы
                     updates           // ← массив изменений
                 });

@@ -66,7 +66,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
 
     const refetchGroup = useCallback(async (id: string) => {
         try {
-            const res = await api.get(`${API_URL}group/${id}`);
+            const res = await api.get(`group/${id}`);
             if (res.data.success) {
                 setGroup(res.data.group);
                 setHabits(res.data.habits);

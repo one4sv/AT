@@ -27,7 +27,6 @@ export default function DeleteConfirm() {
 
     const navigate = useNavigate();
 
-    const API_URL = import.meta.env.VITE_API_URL;
     const [ delThing, setDelThing] = useState("");
     const [ delForAll, setDelForAll ] = useState(false)
     
@@ -47,7 +46,7 @@ export default function DeleteConfirm() {
         const { goal, id } = deleteConfirm;
         try {
             const res = await api.post(
-                `${API_URL}delete`,
+                `delete`,
                 { goal: goal === "mess" && delForAll ? "messForAll" : goal, delete_id: deleteMess && deleteMess.length > 0 ? deleteMess : id, group_id: group?.id || id || null}
             );
 

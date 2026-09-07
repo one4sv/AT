@@ -15,7 +15,6 @@ export interface SendMessContextType {
 export const SendMessProvider = ({ children }: { children: ReactNode }) => {
     const { refetchContactsWTLoading } = useContacts()
     const { showNotification } = useNote()
-    const API_URL = import.meta.env.VITE_API_URL;
 
     const sendMess = async (receiver:{ nick?: string, id?: string }, text: string, files: File[] = [], answer_id?:string, redirect?:message[], showNames?:boolean) => {
         if (!text.trim() && files.length === 0 && !redirect) return;
@@ -32,7 +31,7 @@ export const SendMessProvider = ({ children }: { children: ReactNode }) => {
             else if (receiver.nick) formData.append("receiver_nick", receiver.nick)
             files.forEach(file => formData.append("files", file));
 
-            const res = await api.post(`${API_URL}chat`, formData)
+            const res = await api.post(`chat`, formData)
             if (res.data.success) {
                 refetchContactsWTLoading();
                 return true;
@@ -51,7 +50,7 @@ export const SendMessProvider = ({ children }: { children: ReactNode }) => {
             if (answer_id) formData.append("answer_id", answer_id);
             formData.append("kept_urls", JSON.stringify(keptUrls));
             newFiles.forEach(file => formData.append("files", file));
-            const res = await api.patch(`${API_URL}messages/${messageId}`, formData)
+            const res = await api.patch(`messages/${messageId}`, formData)
             if (res.data.success) {
                 refetchContactsWTLoading();
                 return true;
@@ -65,7 +64,7 @@ export const SendMessProvider = ({ children }: { children: ReactNode }) => {
     
     const pinMess = async (messageId: string) => {
         try {
-            const res = await api.post(`${API_URL}pinmess`, { message_id: messageId });
+            const res = await api.post(`pinmess`, { message_id: messageId });
             if (res.data.success) {
                 refetchContactsWTLoading();
                 return true;

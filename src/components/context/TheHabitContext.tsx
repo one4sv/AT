@@ -224,7 +224,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
 
             try {
                 const res = await api.get(
-                    `${API_URL}habits/${id}`,
+                    `habits/${id}`,
                     { signal }
                 );
 
@@ -338,7 +338,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
      */
     const loadTimer = useCallback(async (habit_id: number): Promise<void> => {
         try {
-            const res = await api.get(`${API_URL}timer/${habit_id}`);
+            const res = await api.get(`timer/${habit_id}`);
             if (res.data.success) {
                 setHabitTimer(parseTimer(res.data.timer));
             }
@@ -354,7 +354,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
      */
     const loadCounter = useCallback(async (habit_id: number): Promise<void> => {
         try {
-            const res = await api.get(`${API_URL}counter/${habit_id}`);
+            const res = await api.get(`counter/${habit_id}`);
             if (res.data.success) {
                 setHabitCounter(parseCounter(res.data.counter));
             }
@@ -370,7 +370,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
         ): Promise<void> => {
             try {
                 const res = await api.get(
-                    `${API_URL}habits/${habitId}/stats`,
+                    `habits/${habitId}/stats`,
                     { signal }
                 );
 

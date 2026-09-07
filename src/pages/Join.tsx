@@ -30,7 +30,7 @@ export default function Join() {
     useEffect(() => {
         const fetchGroup = async () => {
             try {
-                const res = await api.get(`${API_URL}group/invite/${token}`);
+                const res = await api.get(`group/invite/${token}`);
                 if (res.data.success) {
                     setGroup(res.data.group);
                 } else {
@@ -55,7 +55,7 @@ export default function Join() {
 
         setJoining(true);
         try {
-            const res = await api.post(`${API_URL}group/join`, { token });
+            const res = await api.post(`group/join`, { token });
             if (res.data.success) {
                 showNotification("success", res.data.already_member ? "Вы уже в беседе" : "Вы вступили в беседу!");
                 navigate(`/chat/g/${res.data.chat_id}`);

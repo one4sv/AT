@@ -17,7 +17,6 @@ export default function CreateChat() {
     const { setBlackout, blackout } = useBlackout();
     const { members, refetchGroup, group } = useGroup();
     const { showNotification } = useNote();
-    const API_URL = import.meta.env.VITE_API_URL;
 
     const [name, setName] = useState<string>("");
     const [desc, setDesc] = useState<string>("");
@@ -99,7 +98,7 @@ export default function CreateChat() {
         }
 
         try {
-            const res = await api.post(`${API_URL}${path}`, formData);
+            const res = await api.post(`${path}`, formData);
             if (res.data.success) {
                 if (blackout.point === "InviteUser") {
                     await refetchGroup(group.id);

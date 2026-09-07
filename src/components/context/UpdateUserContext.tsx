@@ -1,8 +1,8 @@
 import { createContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { useUser } from "../hooks/UserHook";
-import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
+import { api } from "../ts/api";
 const UpdateUserContext = createContext<UpdateUserContextType | null>(null);
 
 export interface UpdateUserContextType {
@@ -26,7 +26,6 @@ export interface UpdateUserContextType {
 export const UpdateUserProvider = ({children}:{children:ReactNode}) => {
     const {user, refetchUser} = useUser()
     const { showNotification } = useNote()
-    const API_URL = import.meta.env.VITE_API_URL
 
     const [ newName, setNewName ] = useState<string>("")
     const [ newNick, setNewNick ] = useState<string>("")
@@ -52,8 +51,7 @@ export const UpdateUserProvider = ({children}:{children:ReactNode}) => {
             try {
                 const fd = new FormData();
                 fd.append("avatar", newPick);
-                const upRes = await axios.post(`${API_URL}uploadavatar`, fd, {
-                    withCredentials: true,
+                const upRes = await api.post(`uploadavatar`, fd, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
                 if (upRes.data?.success) {
@@ -79,7 +77,7 @@ export const UpdateUserProvider = ({children}:{children:ReactNode}) => {
         if (payload.length < 1) return
 
         try {
-            const res = await axios.post(`${API_URL}updateuser`, payload, {withCredentials:true});
+            const res = await api.post(`updateuser`, payload);
             if (res.data.success) {
                 await refetchUser();
                 showNotification("success", "Данные обновлены");

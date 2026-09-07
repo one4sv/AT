@@ -3,6 +3,7 @@ import { type ReactNode } from "react";
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
 import { requestNotificationPermission } from "../ts/utils/NoteRequest";
+import { api } from "../ts/api";
 
 export interface User {
     id: string | null;
@@ -45,7 +46,6 @@ const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
-    const API_URL = import.meta.env.VITE_API_URL
     const API_WS = import.meta.env.VITE_API_WS
     const [user, setUser] = useState<User>({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null, reg_date:null, sex:null, date_of_birth:null });
     const [loadingUser, setLoadingUser] = useState(true);
@@ -59,9 +59,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         if (initialLoading) setLoadingUser(true);
 
         try {
-            const res = await axios.get<UserResponse>(`${API_URL}user`, {
-                withCredentials: true,
-            });
+            const res = await api.get<UserResponse>(`user`);
             if (res.data.success) {
                 setUser({
                     nick: res.data.nick ?? null,

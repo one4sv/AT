@@ -1,9 +1,9 @@
 import { createContext, useRef, useState, type RefObject} from "react";
 import { type ReactNode } from "react"
-import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
 import { type habitCounter, type habitTimer } from "./TheHabitContext";
 import { todayStrFunc } from "../ts/utils/dateToStr";
+import { api } from "../ts/api";
 
 const CalendarContext = createContext<CalendarContextType | null>(null);
 
@@ -46,14 +46,13 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     const [ chosenDay, setChosenDay ] = useState<string>(todayStrFunc())
     const [ selectedMonth, setSelectedMonth ] = useState<number>(0)
     const [ selectedYear, setSelectedYear ] = useState<number>(0)
-    const API_URL = import.meta.env.VITE_API_URL
 
     const calendarRef = useRef<HTMLDivElement | null>(null)
 
     const fetchCalendarHabit = async (id: string) => {
         if (!id) return;
         try {
-            const res = await axios.get(`${API_URL}calendar/${id}`, { withCredentials: true })
+            const res = await api.get(`calendar/${id}`)
             if (res.data.success) {
                 setCalendar(res.data.calendar)
 
@@ -82,7 +81,7 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchCalendarUser = async () => {
         try {
-            const res = await axios.get(`${API_URL}calendar`, { withCredentials: true })
+            const res = await api.get(`calendar`)
             if (res.data.success) setCalendar(res.data.calendar)
         } catch {
             showNotification("error", "Ошибка получения общего календаря")

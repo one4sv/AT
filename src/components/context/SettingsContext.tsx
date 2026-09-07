@@ -4,6 +4,7 @@ import axios from "axios";
 import { useUser } from "../hooks/UserHook";
 import useLocalStorage from "../hooks/utils/useLocalStorage";
 import i18n from "../../i18n/i18n";
+import { api } from "../ts/api";
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
@@ -129,9 +130,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
     const refetchSettings = useCallback(async () => {
         try {
-            const res = await axios.get<SettingsResponse>(`${API_URL}settings`, {
-                withCredentials: true,
-            });
+            const res = await api.get<SettingsResponse>(`settings`);
 
             if (res.data.success) {
                 setOrderHabits(res.data.order ?? [ "everyday", "weekly", "sometimes" ]);

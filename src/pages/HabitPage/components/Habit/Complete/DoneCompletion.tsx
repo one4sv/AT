@@ -40,8 +40,6 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
         cancelDelete,
     } = useDelayedDelete()
 
-    const API_URL = import.meta.env.VITE_API_URL
-
     const [editing, setEditing] = useState<Set<number>>(new Set())
     const [loading, setLoading] = useState<Set<number>>(new Set())
 
@@ -78,7 +76,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
             const path = b.isNew ? "save" : "update"
 
             const res = await api.post(
-                `${API_URL}checklist/${path}`,
+                `checklist/${path}`,
                 b
             )
 

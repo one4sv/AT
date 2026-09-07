@@ -63,7 +63,7 @@ export default function Chat() {
 
         if (unread.length) {
             unread.forEach(m =>
-                api.post(`${API_URL}chat/read`, { messageId: m.id }, { withCredentials: true })
+                api.post(`chat/read`, { messageId: m.id }, { withCredentials: true })
             );
         }
     }, [API_URL, messages, user.id]);

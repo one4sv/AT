@@ -89,7 +89,7 @@ export default function PermissionsSettings() {
         if (!group) return
         setLoadingPermissions(true)
         try {
-            const res = await api.get(`${API_URL}getpermissions/${group.id}`)
+            const res = await api.get(`getpermissions/${group.id}`)
             if (res.data.success) {
                 const members = res.data.members as MemberPermType[];
                 const roles = res.data.roles as RoleType[];
@@ -126,7 +126,7 @@ export default function PermissionsSettings() {
         if (!group || changes.length === 0) return
         setLoadingPermissions(true)
         try {
-            const res = await api.post(`${API_URL}editpermissions/${group.id}`, changes)
+            const res = await api.post(`editpermissions/${group.id}`, changes)
             if (res.data.success) {
                 setBlackout({seted:false})
                 await refetchGroup(group.id)

@@ -5,6 +5,7 @@ import { useNote } from "../hooks/NoteHook";
 import { useSettings } from "../hooks/SettingsHook";
 import type { HabitSettings } from "./TheHabitContext";
 import { useUser } from "../hooks/UserHook";
+import { api } from "../ts/api";
 
 export interface Habit {
     id:number;
@@ -48,7 +49,6 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote();
     const { orderHabits } = useSettings();
     const { user, initialLoading } = useUser()
-    const API_URL = import.meta.env.VITE_API_URL
 
     const [ habits, setHabits ] = useState<Habit[] | null>(null);
     const [ loadingHabits, setLoadingHabits ] = useState(true);
@@ -56,9 +56,7 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
 
     const refetchHabits = useCallback(async () => {
         try {
-            const res = await axios.get<HabitResponse>(`${API_URL}habits`, {
-                withCredentials: true,
-            });
+            const res = await api.get<HabitResponse>(`habits`);
 
             if (res.data.success && res.data.habitsArr) {
                 setHabits(res.data.habitsArr);

@@ -3,7 +3,6 @@ import "../../scss/modules/addHabit.scss"
 import { forwardRef, useRef } from "react"
 import SelectList from "../ts/SelectList"
 import "react-datepicker/dist/react-datepicker.css";
-import axios from "axios"
 import { useBlackout } from "../hooks/BlackoutHook"
 import { useNote } from "../hooks/NoteHook"
 import { useHabits } from "../hooks/HabitsHook"
@@ -12,12 +11,12 @@ import DayChanger from "../ts/DayChanger"
 import { initialChosenDays } from "../ts/initialChosenDays"
 import { isMobile } from "react-device-detect"
 import { perHint } from "../ts/utils/perHont";
+import { api } from "../ts/api";
 
 const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     const { refetchHabits } = useHabits()
     const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
-    const API_URL = import.meta.env.VITE_API_URL
 
     const [ name, setName ] = useState<string>("")
     const [ desc, setDescription ] = useState<string>("")
@@ -98,7 +97,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             return;
         }
         try {
-            const res = await axios.post(`${API_URL}addhabit`, payload, {withCredentials:true});
+            const res = await api.post(`addhabit`, payload);
             if (res.data.success) {
                 setBlackout({ seted: false, module: undefined });
                 showNotification("success", "Успешно добавлено")

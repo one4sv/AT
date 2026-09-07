@@ -97,7 +97,7 @@ export const ContactsProvider = ({ children }: { children: ReactNode }) => {
     ): Promise<Contact[] | undefined> => {
         try {
             const res = await api.post(
-                `${API_URL}contacts`,
+                `contacts`,
                 { search, filter },
                 { signal: controller.signal }
             );

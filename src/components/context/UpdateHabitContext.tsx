@@ -129,7 +129,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
                 end_date: endDateValue,
             };
 
-            const res = await api.post(`${API_URL}updatehabit`, {
+            const res = await api.post(`updatehabit`, {
                 habit_id: habitId,
                 table: "habits",
                 ...habitFields
@@ -185,7 +185,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
         updateLocalChanges(habitId, "pinned", val);
 
         try {
-            const res = await api.post(`${API_URL}updatehabit`, {
+            const res = await api.post(`updatehabit`, {
                 habit_id: habitId,
                 table: "habits",
                 pinned: val
@@ -231,7 +231,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
 
         try {
             if (Object.keys(habitFields).length > 0) {
-                const res = await api.post(`${API_URL}updatehabit`, {
+                const res = await api.post(`updatehabit`, {
                     habit_id: habitId,
                     table: "habits",
                     ...habitFields
@@ -240,7 +240,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
             }
 
             if (Object.keys(settingsFields).length > 0) {
-                const res = await api.post(`${API_URL}updatehabit`, {
+                const res = await api.post(`updatehabit`, {
                     habit_id: habitId,
                     table: "habits_settings",
                     ...settingsFields

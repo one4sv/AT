@@ -57,7 +57,7 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
         if (!nick) return;
         setAccLoading(true);
         try {
-            const res = await api.get(`${API_URL}acc/${nick}`);
+            const res = await api.get(`acc/${nick}`);
             if (res.data.success) {
                 setAcc(res.data.acc);
                 setHabits(res.data.habits);
@@ -78,7 +78,7 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
         if (!nick) return;
         setPostsLoading(true);
         try {
-            const res = await api.get(`${API_URL}posts/${nick}`);
+            const res = await api.get(`posts/${nick}`);
             if (res.data.success) {
                 setPosts(res.data.posts);
             }

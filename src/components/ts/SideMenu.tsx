@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import axios, { isAxiosError } from "axios"
+import { isAxiosError } from "axios"
 import "../../scss/SM/sideMenu.scss"
 import { CircleUserRound, Search, LogOut, House, Plus, Calendar } from "lucide-react"
 import HabitsList from "./SM/HabitsList.tsx"
@@ -19,6 +19,7 @@ import SideMenuUnAunthificated from "./SideMenuUnAunthificated.tsx"
 import { useSideMenu } from "../hooks/SideMenuHook.ts"
 import { useTranslation } from "react-i18next"
 import { useContacts } from "../hooks/ContactsHook.ts"
+import { api } from "./api.ts"
 
 export default function SideMenu() {
     const { t, i18n } = useTranslation("common")
@@ -32,7 +33,6 @@ export default function SideMenu() {
     const { showNotification } = useNote()
     const { setShowSideMenu, setActiveTab, activeTab, showSideMenu, setIsDragging, isDragging, translateX, setTranslateX } = useSideMenu()
 
-    const API_URL = import.meta.env.VITE_API_URL
     const navigate = useNavigate()
 
     const [filterType, setFilterType] = useState<"messages" | "habits">("messages")
@@ -158,7 +158,7 @@ export default function SideMenu() {
 
     const logOut = async () => {
         try {
-            const res = await axios.get(`${API_URL}logout`, { withCredentials: true })
+            const res = await api.get(`logout`)
             if (res.data.success) {
                 refetchUser()
             } else {

@@ -12,7 +12,6 @@ export default function CounterProgression({currentCounter}:{currentCounter:habi
     const [ editingIndices, setEditingIndices ] = useState<number[]>([])
     const [ placeholderMap, setPlaceholderMap ] = useState<Record<string, string>>({})
     const [ editedTexts, setEditedTexts ] = useState<Record<string, string>>({})
-    const API_URL = import.meta.env.VITE_API_URL
     
     useEffect(() => {
         if (!events) return
@@ -40,7 +39,7 @@ export default function CounterProgression({currentCounter}:{currentCounter:habi
         })
 
         try {
-            await api.post(`${API_URL}counter/text`, {
+            await api.post(`counter/text`, {
                 habit_id: habit.id,
                 counter_id: currentCounter.id,
                 time: time,

@@ -206,7 +206,7 @@
     justify-content: center;
     white-space: nowrap;
     @media (max-width:800px) {
-        margin-top: 1vh;
+        margin-top: 0.25vh;
         flex-wrap: wrap;
         height: fit-content;
     }
@@ -408,6 +408,6 @@
         }
     }
     @media (max-width: 800px) {
-        width: 20vw;
+        width: 40vw;
     }
 }
