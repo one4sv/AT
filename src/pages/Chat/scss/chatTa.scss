@@ -1,38 +1,48 @@
 .chatIsBlocked {
     display: flex;
     flex-direction: column;
-    width: 70%;
-    position: relative;
+    width: 100%;
+    position: absolute;
     background-color: var(--mc);
     align-items: center;
+    bottom: 0;
     color: var(--borderWh);
     border-radius: 12px;
-    font-size: 20px;
-    height: 10vh;
+    font-size: 18px;
+    height: 12vh;
     padding: 1vh 0.5vw;
     margin: 0 auto 1vh;
+    z-index: 4;
 
     >svg {
         font-size: 3rem;
         margin-bottom: 0.5vh;
     }
 
-    &.mobile {
-        margin-bottom: 0;
+    @media (max-width: 800px) {
         width: 100%;
+        margin-bottom: 0;
+        border-radius: 12px 12px 0 0;
     }
 }
 
 .chatTAWrapper {
     display: flex;
     flex-direction: column;
-    width: 60%;
-    position: relative;
+    width: 59%;
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    z-index: 4;
+    backdrop-filter: blur(var(--backdropTA));
+    -webkit-backdrop-filter: blur(var(--backdropTA));
+    margin-bottom: 1vh;
     border-radius: 12px;
-    margin: 1vh auto 1vh;
-    &.mobile {
-        margin-bottom: 0;
+    @media (max-width:800px) {
+        left: 0;
         width: 100%;
+        margin-bottom: 0;
+        padding: 0 1% 0.5vh;
         border-radius: 12px 12px 0 0;
     }
 }
@@ -199,8 +209,10 @@
     outline: none;
     border: none;
     border-radius: 0 0 12px 12px;
+    padding-inline-start: 0.5vw;
+    border: none;
     @media (max-width: 800px) {
-        border-radius: 0;
+        padding-inline-start: 2vw;
     }
 }
 .chatWriteSvgButt {

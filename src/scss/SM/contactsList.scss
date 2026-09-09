@@ -16,6 +16,10 @@
     }
     overflow: hidden;
     box-sizing: border-box;
+    @media (max-width: 800px) {
+        height: 6.5vh;
+        padding: 0.5vh 1.5vw;
+    }
 }
 .contactsUserPic {
     aspect-ratio: 1/1;

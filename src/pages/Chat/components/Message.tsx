@@ -1,6 +1,6 @@
 import { CheckCircle, ShareFat, PushPin } from "@phosphor-icons/react";
 import { useChat } from "../../../components/hooks/ChatHook";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import type { message } from "../../../components/context/ChatContext";
 import { useUser } from "../../../components/hooks/UserHook";
 import Linkify from "linkify-react";
@@ -34,12 +34,65 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
 
     const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
 
+    const touchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const navigate = useNavigate()
     const messageGetTime = (date: Date | string) => {
         const d = new Date(date);
         return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
     const isMy = m.sender_id === user.id ? true : false
+
+    const openContext = (x: number, y: number) => {
+        const reaction = m.reactions.find(r => r.user_id === user.id);
+        const isReacted = reaction ? reaction.reaction : "none";
+
+        openMenu(
+            x,
+            y,
+            "mess",
+            { id: String(m.id) },
+            undefined,
+            undefined,
+            {
+                isReacted,
+                isMy: m.sender_id === user.id,
+                text: m.content,
+                previewText: m.content || (
+                    m.files && m.files.length > 0
+                        ? `${m.files.length} mediafile`
+                        : "Пересланное сообщение"
+                ),
+                sender: m.sender_name,
+                files: m.files || undefined,
+                is_pinned: m.is_pinned
+            }
+        );
+    };
+    const handleTouchStart = (e: React.TouchEvent) => {
+        if (!isMobile) return;
+
+        const touch = e.touches[0];
+
+        touchTimer.current = setTimeout(() => {
+            openContext(touch.clientX, touch.clientY);
+            touchTimer.current = null;
+        }, 400);
+    };
+
+    const handleTouchEnd = () => {
+        if (touchTimer.current) {
+            clearTimeout(touchTimer.current);
+            touchTimer.current = null;
+        }
+    };
+
+    const handleTouchMove = () => {
+        if (touchTimer.current) {
+            clearTimeout(touchTimer.current);
+            touchTimer.current = null;
+        }
+    };
 
     return (
         <div
@@ -66,20 +119,13 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                 }
             }}
             onContextMenu={(e) => {
-                e.preventDefault()
-                const isReacted = (() => {
-                    const reaction = m.reactions.find(r => r.user_id === user.id);
-                    return reaction ? reaction.reaction : "none";
-                })();
-                openMenu(e.clientX, e.clientY, "mess", { id:String(m.id)}, undefined, undefined,
-                    {
-                        isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content || (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : "Пересланное сообщение"),
-                        sender:m.sender_name,
-                        files:m.files || undefined,
-                        is_pinned:m.is_pinned
-                    }
-                )
+                e.preventDefault();
+                openContext(e.clientX, e.clientY);
             }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchEnd}
+            onTouchMove={handleTouchMove}
             onDoubleClick={(e) => {
                 if (isChose) return;
                 e.preventDefault()

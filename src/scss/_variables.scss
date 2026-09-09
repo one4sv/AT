@@ -259,6 +259,7 @@ $decors: (
             nodef:#00000000,
             systemMessBg: #ffffff57,
             mhl:#ffffff99,
+            backdropTA:2px,
         ),
         dark: (
             mc: #181818,
@@ -269,6 +270,7 @@ $decors: (
             nodef:#00000000,
             systemMessBg: #44444457,
             mhl:#22222257,
+            backdropTA:2px,
         )
     ),
     glass: (
@@ -281,7 +283,7 @@ $decors: (
             nodef:#ffffff99,
             systemMessBg: #ffffff57,
             mhl:#ffffff99,
-
+            backdropTA:12px,
         ),
         dark: (
             mc: #22222257,
@@ -292,6 +294,7 @@ $decors: (
             nodef:#22222257,
             systemMessBg: #44444457,
             mhl:#22222257,
+            backdropTA:12px,
         )
     )
 );

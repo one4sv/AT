@@ -3,18 +3,28 @@
 .postWriteWrapper {
     display: flex;
     flex-direction: column;
+    position: absolute;
     width: 100%;
-    position: relative;
-    margin-bottom: 5.5vh;
+    bottom: 5vh;
+    z-index: 4;
+    backdrop-filter: blur(var(--backdropTA));
+    -webkit-backdrop-filter: blur(var(--backdropTA));
+    margin-bottom: 1vh;
+    border-radius: 12px;
     &.PWTAWFS {
-        position: absolute;
         top: 1vh;
         left: 0;
         z-index: 9;
         height: 98vh;
         width: 100%;
     }
-
+    @media (max-width:800px) {
+        left: 0;
+        width: 100%;
+        margin-bottom: 0;
+        bottom: 1vh;
+        padding: 0 1% 0.5vh;
+    }
 }
 @media (max-width: 800px) {
     .postWriteWrapper {
@@ -57,12 +67,14 @@
     &.PWTAwFiles {
         border-radius: 0 0 12px 12px;
     }
-    &.mobile {
-        border-radius: 12px 12px 0 0;
-        outline: none;
-    }
     &.mobile.PWTAwFiles {
         border-radius: 0;
+    }
+    padding-inline-start: 0.5vw;
+    @media (max-width: 800px) {
+        padding-inline-start: 1.5vw;
+        border-radius: 12px;
+        outline: none;
     }
 }
 .postWriteSvgButt {
