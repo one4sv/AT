@@ -62,7 +62,7 @@
         left: 0;
         width: 100%;
         margin-bottom: 0;
-        padding: 0 2vw 2vh;
+        padding: 0 3.5vw 2vh;
         border-radius: 12px 12px 0 0;
     }
 }
@@ -264,7 +264,7 @@
     justify-content: center;
     cursor: pointer;
     position: absolute;
-    right: 2vw;
+    right: 4vw;
     &:hover {
         background:linear-gradient(135deg, var(--accent), var(--grad));
     }
