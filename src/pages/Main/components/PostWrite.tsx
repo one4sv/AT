@@ -51,7 +51,7 @@ export default function PostWrite() {
         ta.style.minHeight = "1vh";
 
         const newHeight = ta.scrollHeight;
-        ta.style.height = newHeight + "px";
+        ta.style.height = newHeight + 15 + "px";
 
         if (newHeight > window.innerHeight * 0.5) {
             ta.style.overflowY = "auto";

@@ -108,10 +108,13 @@
         width: 100%;
         font-size: 18px;
         cursor: pointer;
-        padding-inline-start: 0.25vw;
+        padding-inline-start: 0.5vw;
         &:focus-visible {
             border-bottom: 2px solid var(--accent);
         }
+    }
+    > div {
+        padding-inline-start: 0.5vw;
     }
     &:focus-within {
         >svg {

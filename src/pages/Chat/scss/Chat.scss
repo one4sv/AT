@@ -22,9 +22,8 @@
     scrollbar-color: var(--menuButtHover) var(--tr);
     width: 60%;
     margin: 0 auto 4.5vh;
-}
-@media (max-width: 800px) {
-    .chat {
+    @media (max-width: 800px) {
+        top: 7vh;
         width: calc(100% - 2vw);
         margin: 0 1vw 4.5vh;
     }

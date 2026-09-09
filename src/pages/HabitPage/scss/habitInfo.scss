@@ -30,6 +30,7 @@
 .sdmwm {
     margin-top: 5vh;
     @media (max-width:800px) {
+        margin-top: 6.5vh;
         margin-bottom: 0;
     }
 }
@@ -85,13 +86,10 @@
     z-index: 7;
     display: flex;
     flex-direction: column;
-    background-color: var(--mc);
     border-left: 1px solid #1b1b1b;
     height: 100vh;
     overflow: hidden;
     transition: right 0.3s ease;
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
 
     &.mobile {
         position: fixed;
@@ -104,8 +102,11 @@
 .habitSlider {
     display: flex;
     width: 200%;
-    height: 100%;
+    height: 84%;
     transition: transform 0.3s ease;
+    background-color: var(--mc);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
 }
 
 .habitSlider.toSlide {
@@ -119,7 +120,7 @@
     padding: 2vh 2vw;
     position: relative;
     padding-bottom: 6vh;
-    overflow: hidden;
+    overflow-x: hidden;
     @media (max-width:800px) {
         padding-top: 0;
     }
@@ -145,19 +146,18 @@
     }
 }
 .habitSaveDiv {
-    position: absolute;
+    position: relative;
     width: 100%;
-    top: 85%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: end;
-    height: 12vh;
-    padding: 0 2vw;
+    height: 16vh;
+    padding: 0 6vw 4vh;
     gap: 4px;
-    @media (max-width: 800px) {
-        top: 85%;
-    }
+    background-color: var(--mc);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
 }
 .habitSaveHint {
     color: var(--borderWh);

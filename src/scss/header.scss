@@ -13,13 +13,16 @@
     border-radius: 0 0 8px 8px;
     padding: 0.5vw;
     align-items: center;
+    @media (max-width: 800px) {
+        height: 7vh;
+    }
 }
 .menuShowButt {
     position: relative;
     left: 0;
     height: 100%;
-    aspect-ratio: 1/1;
     display: flex;
+    padding: 0 1vw 0 2vw;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -27,6 +30,9 @@
         height: 3vh;
         width: auto;
         color: var(--borderHabit);
+        @media (max-width: 800px) {
+            height: 4vh;
+        }
     }
     &:active >svg {
         color: var(--borderWh);

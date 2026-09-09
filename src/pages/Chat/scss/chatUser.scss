@@ -17,23 +17,8 @@
             border-radius: 0;
         }
     }
-}
-.chatUserBack {
-    height: 100%;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    &:hover {
-        background-color: var(--menuButtHover);
-    }
-    >svg {
-        color: var(--borderHabit);
-        position: relative;
-        right: 0.1vw;
-        height: 60%;
-        width: 100%;
+    @media (max-width: 800px) {
+        height: 7vh;
     }
 }
 .chatUserInfo {
@@ -55,7 +40,7 @@
     width: auto;
     display: flex;
     align-items: center;
-    padding-left: 0.5vw;
+    padding:0 0.5vw;
     >svg {
         height: 95%;
         width: 95%;
@@ -66,7 +51,11 @@
         aspect-ratio: 1/1;
         border-radius: 50%;
         object-fit: cover;
+        @media (max-width: 800px) {
+            height: 80%;
+        }
     }
+
 }
 .chatUserName {
     display: flex;

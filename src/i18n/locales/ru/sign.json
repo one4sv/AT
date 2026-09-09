@@ -1,36 +1,50 @@
 {
     "auth": {
-        "emailOrNickname": "Email или nickname",
+        "emailOrNickname": "Email или никнейм",
         "password": "Пароль",
-        "rememberMe": "Не выходить из системы",
+        "rememberMe": "Запомнить меня",
         "signIn": "Войти",
         "forgotPassword": "Забыли пароль?",
-        "createAccount":"Создать аккаунт"
+        "createAccount": "Создать аккаунт"
     },
     "reg": {
+        "nickname": "Никнейм",
+        "email": "Email",
+        "password": "Пароль",
+        "confirmPassword": "Повторите пароль",
+
+        "checkingNick": "Проверяем никнейм",
+        "nickAvailable": "Никнейм доступен",
+
+        "checkingEmail": "Проверяем email",
+        "emailAvailable": "Мы отправим письмо на этот адрес",
+
         "invalidSymbols": "Недопустимые символы",
         "nickLength": "От 4 до 16 символов",
-        "nickTaken": "Этот ник уже занят",
+        "nickTaken": "Этот никнейм уже занят",
 
-        "invalidEmail": "Введена неверная почта",
-        "emailTaken": "Данная почта принадлежит другому аккаунту",
+        "invalidEmail": "Некорректный email-адрес",
+        "emailTaken": "Этот email уже привязан к другому аккаунту",
 
         "passwordLengthRule": "От 8 до 30 символов",
-        "passwordLatinRule": "Цифры и буквы латинского алфавита",
-        "passwordSymbolsRule": "Минимум 1 цифра и буква",
+        "passwordLatinRule": "Только латинские буквы и цифры",
+        "passwordSymbolsRule": "Минимум 1 буква и 1 цифра",
 
-        "acceptTerms": "я принимаю",
+        "acceptTerms": "Я принимаю",
         "userAgreement": "Пользовательское соглашение",
         "privacyPolicy": "Политику конфиденциальности",
 
-        "nickEmpty": "Nickname не может быть пустым",
-        "nickInvalid": "Nickname неверно заполнен",
+        "nickEmpty": "Никнейм не может быть пустым",
+        "nickInvalid": "Некорректный никнейм",
 
         "emailEmpty": "Email не может быть пустым",
-        "emailInvalid": "Email неверно заполнен",
+        "emailInvalid": "Некорректный email",
 
         "passwordEmpty": "Пароль не может быть пустым",
-        "confirmRequired": "Необходимо повторить пароль",
-        "passwordMismatch": "Пароли не совпадают"
+        "confirmRequired": "Повторите пароль",
+        "passwordMismatch": "Пароли не совпадают",
+
+        "createAccount": "Создать аккаунт",
+        "signIn": "Войти"
     }
 }

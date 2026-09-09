@@ -236,7 +236,7 @@
     user-select: none;
     >.loaderSmall {
         width: 15vw;
-        height: 4vh;
+        height: 5vh;
         margin-bottom: 1vh;
         @media (max-width: 800px) {
             width: 70vw;
@@ -244,7 +244,7 @@
     }
 }
 .greenButt {
-    @include var.longButt(15vw, 4vh, 2px, 4px, none, var(--inner_text), var(--tr), var(--accent));
+    @include var.longButt(15vw, 5vh, 2px, 4px, none, var(--inner_text), var(--tr), var(--accent));
     background:linear-gradient(135deg, var(--accent), var(--grad));
     border: none;
     &:hover {

@@ -108,7 +108,7 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, scrollToMessage, textA
         ta.style.minHeight = "2vh";
 
         const newHeight = ta.scrollHeight;
-        ta.style.height = newHeight + "px";
+        ta.style.height = newHeight + 15 + "px";
 
         if (newHeight > window.innerHeight * 0.5) {
             ta.style.overflowY = "auto";
