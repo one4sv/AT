@@ -24,7 +24,7 @@
 @media (max-width:800px) {
     .StatsDivMain {
         padding: 1vh 2vw;
-        margin-bottom: 5vh;
+        padding-bottom: 5vh;
     }
 }
 .sdmwm {
@@ -59,6 +59,8 @@
     flex: 1 1 1;
     display: flex;
     flex-direction: column;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     > .completeDiv {
         background-color: var(--tr);
         height: fit-content;
@@ -90,6 +92,9 @@
     height: 100vh;
     overflow: hidden;
     transition: right 0.3s ease;
+    background-color: var(--mc);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
 
     &.mobile {
         position: fixed;
@@ -102,11 +107,9 @@
 .habitSlider {
     display: flex;
     width: 200%;
-    height: 84%;
+    height: 100%;
     transition: transform 0.3s ease;
-    background-color: var(--mc);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    padding-bottom:16dvh;
 }
 
 .habitSlider.toSlide {
@@ -116,10 +119,9 @@
 .habitSlide {
     width: 50%;
     flex-shrink: 0;
-    height: 95%;
+    height: 100%;
     padding: 2vh 2vw;
     position: relative;
-    padding-bottom: 6vh;
     overflow-x: hidden;
     @media (max-width:800px) {
         padding-top: 0;
@@ -146,7 +148,7 @@
     }
 }
 .habitSaveDiv {
-    position: relative;
+    position: absolute;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -155,11 +157,10 @@
     height: 16vh;
     padding: 0 6vw 4vh;
     gap: 4px;
-    background-color: var(--mc);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    bottom: 0;
 }
 .habitSaveHint {
+    padding-top: 1dvh;
     color: var(--borderWh);
 }
 .habitSlideBack {
@@ -198,6 +199,9 @@
             box-shadow: 0 0 12px var(--darker_accent),
                         0 0 24px var(--darker_accent);
         }
+    }
+    @media (max-width:800) {
+        height: 5dvh;
     }
 }
 .habitInnerSlide {

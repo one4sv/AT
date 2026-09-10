@@ -10,6 +10,7 @@
     background-color: var(--tr);
     display: flex;
     position: relative;
+    transition: all 0s;
     &:hover {
         background-color: var(--menuButtHover);
         outline: 1px solid var(--tc);
@@ -33,11 +34,15 @@
         width: 85%;
     }
     >img.contactsUserAvatar {
-        height: 85%;
-        width: 85%;
+        height: 100%;
+        width: 100%;
         object-fit: cover;
         border-radius: 50%;
         display: block;
+        @media (max-width:800px) {
+            height: 85%;
+            width: 85%;
+        }
     }
 }
 .contactOnlineStauts {

@@ -8,6 +8,8 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     @media (max-width: 800px) {
         min-height: 40vh;
         width: 95%;
@@ -15,6 +17,8 @@
         border-radius: 0 0 12px 12px;
         flex-direction: column-reverse;
         margin-bottom: 2vh;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 }
 .habitDayComment {

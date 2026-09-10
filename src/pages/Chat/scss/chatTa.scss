@@ -37,35 +37,40 @@
     margin-bottom: 1vh;
     border-radius: 24px;
 
-    &::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        backdrop-filter: blur(var(--backdropTA));
-        -webkit-backdrop-filter: blur(var(--backdropTA));
-        background:linear-gradient(135deg, var(--tr), #0000009a);
-
-        mask-image: linear-gradient(
-            to bottom,
-            transparent 0%,
-            black 100%
-        );
-        -webkit-mask-image: linear-gradient(
-            to bottom,
-            transparent 0%,
-            black 100%
-        );
-    }
-
     @media (max-width: 800px) {
         left: 0;
         width: 100%;
         margin-bottom: 0;
         padding: 0 2.5vw 4vh;
-        border-radius: 24px 24px 0 0;
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            backdrop-filter: blur(var(--backdropTA));
+            -webkit-backdrop-filter: blur(var(--backdropTA));
+            background:linear-gradient(135deg, var(--tr), #0000009a);
+
+            mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 100%
+            );
+            -webkit-mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 100%
+            );
+        }
     }
+}
+.chatTAbg {
+    display: flex;
+    flex-direction: column;
+    border-radius: 24px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 }
 .chatWriteBar {
     width: 100%;
@@ -183,6 +188,8 @@
     overflow-y: scroll;
     padding: 0.5vh 0.5vw;
     scrollbar-width: thin;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     >.emjojiGroup {
         width: 100%;
         height: fit-content;
@@ -221,7 +228,6 @@
     background-color: var(--mc);
     color: var(--tc);
     font-size: 16px;
-    height: 12vh;
     max-height: 50vh;
     padding: 0.5vh 0.5vw;
     box-sizing: border-box;
@@ -234,12 +240,15 @@
     @media (max-width: 800px) {
         padding-inline-start: 2vw;
     }
+    &::placeholder {
+        color: var(--borderWhLight);
+    }
 }
 .chatWriteSvgButt {
     height: 3.5vh;
     aspect-ratio: 1/1;
     cursor: pointer;
-    color: var(--borderWh);
+    color: var(--borderWhLight);
     display: flex;
     align-items: center;
     justify-content: center;

@@ -53,6 +53,8 @@
     flex-direction: column;
     cursor: pointer;
     gap: 1vh;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     > span {
         font-size: 18px;
     }
@@ -121,6 +123,8 @@
     padding: 1vh 0.5vw;
     cursor: pointer;
     color: var(--borderWh);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     &:hover {
         color: var(--tc);
         background-color: var(--menuButtHover);
@@ -132,6 +136,8 @@
     margin-bottom: 1vh;
     padding: 1vh 0.5vw;
     position: relative;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     > svg {
         position: absolute;
         right: 0.75vw;
@@ -197,6 +203,8 @@
     flex-direction: column;
     padding: 1vh 0.75vw 1.3vh;
     gap: 1vh;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     @media (max-width: 800px) {
         padding: 1vh 2vw 1.3vh;
     }
@@ -305,6 +313,10 @@
 .settingInnerAccDiv {
     padding: 0;
     gap: 0;
+    > .accInfo {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
     >.settingInnerList {
         margin: 0 0.5vw 1vh;
     }
@@ -333,11 +345,9 @@
     border-radius: 12px;
     display: flex;
     flex-direction: column;
-    overflow: hidden; // важно
-
-    @media (max-width: 800px) {
-        // если нужно
-    }
+    overflow: hidden;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 }
 
 .settingHeaderCollapsible {

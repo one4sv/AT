@@ -46,6 +46,8 @@
     flex-direction: column;
     cursor: pointer;
     gap: 1vh;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     > span {
         font-size: 18px;
     }
@@ -115,6 +117,8 @@
     padding: 1vh 0.5vw;
     cursor: pointer;
     color: var(--borderWh);
+    backdrop-filter: blur(6px); 
+    -webkit-backdrop-filter: blur(6px);
     &:hover {
         color: var(--tc);
         background-color: var(--menuButtHover);
@@ -134,7 +138,8 @@
     margin-top: 1vh;
     line-height: 1.5;
     overflow-x: hidden;
-
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     height: fit-content;
     .accent {
         color: var(--accent_text);

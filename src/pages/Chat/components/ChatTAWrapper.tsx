@@ -171,108 +171,110 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, scrollToMessage, textA
                 </div>
             )}
             <EmojiBar setText={setMess} setShowEmojiBar={setShowEmojiBar} taRef={textAreaRef} showEmojiBar={showEmojiBar} emojiRef={emojiButtRef}/>
-            <div className={`chatWriteBar ${files.length > 0 ? "chatBarwFiles" : ""}`}>
-                <div className="chatWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
-                    <Paperclip className="chatSvg"/>
-                </div>                    
-                <div className="chatWriteSvgButt" ref={emojiButtRef} onClick={(e) => {
-                    e.stopPropagation();
-                    setShowEmojiBar(prev => !prev)}
-                }>
-                    <SmileySticker className="chatSvg"/>
-                </div>
-                <div className="chatWriteSvgButt">
-                    <Sticker className="chatSvg"/>
-                </div>
-                {answer !== null && (
-                    <MessBarBlock object={answer} scrollToMessage={scrollToMessage} />
-                )}
-                {editing !== null && (
-                    <MessBarBlock object={editing} scrollToMessage={scrollToMessage} />
-                )}
-                {redirect !== undefined && (
-                    <MessBarBlock object={redirect?.length === 1 ? 
-                        { id:String(redirect[0].id) , sender:redirect[0].sender_name, 
-                            previewText:redirect[0].content.length > 0
-                                ? redirect[0].content
-                                : redirect[0].files?.length 
-                                    ? `${redirect[0].files?.length} mediafile`
-                                    :"Пересланное сообщение"} 
-                        : { id:"0", sender:[...new Set(redirect.filter(m => m.sender_name === m.sender_name).map(m => m.sender_name))].join(',  '), previewText:`${redirect.length} сообщения`}} 
-                    scrollToMessage={scrollToMessage} />
-                )}
-                <div className="chatWriteTAButt" onClick={handleSend}>
-                    {sending ? (
-                        <ClockCountdown className="chatSend"/>
-                    ) : (
-                        <SendHorizontal className="chatSend" fill="currenColor"/>
+            <div className="chatTAbg">
+                <div className={`chatWriteBar ${files.length > 0 ? "chatBarwFiles" : ""}`}>
+                    <div className="chatWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
+                        <Paperclip className="chatSvg"/>
+                    </div>                    
+                    <div className="chatWriteSvgButt" ref={emojiButtRef} onClick={(e) => {
+                        e.stopPropagation();
+                        setShowEmojiBar(prev => !prev)}
+                    }>
+                        <SmileySticker className="chatSvg"/>
+                    </div>
+                    <div className="chatWriteSvgButt">
+                        <Sticker className="chatSvg"/>
+                    </div>
+                    {answer !== null && (
+                        <MessBarBlock object={answer} scrollToMessage={scrollToMessage} />
                     )}
+                    {editing !== null && (
+                        <MessBarBlock object={editing} scrollToMessage={scrollToMessage} />
+                    )}
+                    {redirect !== undefined && (
+                        <MessBarBlock object={redirect?.length === 1 ? 
+                            { id:String(redirect[0].id) , sender:redirect[0].sender_name, 
+                                previewText:redirect[0].content.length > 0
+                                    ? redirect[0].content
+                                    : redirect[0].files?.length 
+                                        ? `${redirect[0].files?.length} mediafile`
+                                        :"Пересланное сообщение"} 
+                            : { id:"0", sender:[...new Set(redirect.filter(m => m.sender_name === m.sender_name).map(m => m.sender_name))].join(',  '), previewText:`${redirect.length} сообщения`}} 
+                        scrollToMessage={scrollToMessage} />
+                    )}
+                    <div className="chatWriteTAButt" onClick={handleSend}>
+                        {sending ? (
+                            <ClockCountdown className="chatSend"/>
+                        ) : (
+                            <SendHorizontal className="chatSend" fill="currenColor"/>
+                        )}
+                    </div>
                 </div>
-            </div>
-            {allFilesForDisplay.length > 0 && (
-                <div className="chatTAFiles chatTAFileswBar">
-                    {allFilesForDisplay.map((item, i) => {
-                        const { file } = item;
-                        const isImage = isOldMedia(item)
-                            ? (file as Media).url?.match(/\.(png|jpe?g|gif|webp)$/i)
-                            : (file as File).type?.startsWith("image/") ?? false;
-                        const isVideo = isOldMedia(item)
-                            ? (file as Media).url?.match(/\.(mp4|webm|ogg)$/i)
-                            : (file as File).type?.startsWith("video/") ?? false;
-                        const name = file.name ?? 'unknown';
+                {allFilesForDisplay.length > 0 && (
+                    <div className="chatTAFiles chatTAFileswBar">
+                        {allFilesForDisplay.map((item, i) => {
+                            const { file } = item;
+                            const isImage = isOldMedia(item)
+                                ? (file as Media).url?.match(/\.(png|jpe?g|gif|webp)$/i)
+                                : (file as File).type?.startsWith("image/") ?? false;
+                            const isVideo = isOldMedia(item)
+                                ? (file as Media).url?.match(/\.(mp4|webm|ogg)$/i)
+                                : (file as File).type?.startsWith("video/") ?? false;
+                            const name = file.name ?? 'unknown';
 
-                        let previewUrl: string | undefined;
-                        if (isImage || isVideo) {
-                            previewUrl = isOldMedia(item)
-                                ? (file as Media).url
-                                : URL.createObjectURL(file as File);
-                        }
+                            let previewUrl: string | undefined;
+                            if (isImage || isVideo) {
+                                previewUrl = isOldMedia(item)
+                                    ? (file as Media).url
+                                    : URL.createObjectURL(file as File);
+                            }
 
-                        return (
-                            <div key={i} className="chatTAFile">
-                                <div className="chatTAFileOverlay" onClick={() => handleRemoveFile(i)}>
-                                    <X />
-                                </div>
-                                {isImage ? (
-                                    <img src={previewUrl} alt={name} className="chatTAFilePreview" />
-                                ) : isVideo ? (
-                                    <video src={previewUrl} className="chatTAFilePreview" controls />
-                                ) : (
-                                    <div className="chatTAFileOther">
-                                        {GetIconByType(name, (file as Media | File).type ?? '')}
-                                        <span className="chatTAFileName">{name}</span>
+                            return (
+                                <div key={i} className="chatTAFile">
+                                    <div className="chatTAFileOverlay" onClick={() => handleRemoveFile(i)}>
+                                        <X />
                                     </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
-            <textarea
-                name="chatTA"
-                id="chatTA"
-                className="chatTA chatTAwFiles"
-                value={mess}
-                ref={textAreaRef}
-                onChange={(e) => {
-                    setMess(e.currentTarget.value)
-                    if (!editing) handleTyping(chatWith ? chatWith.id : "")
-                }}
-                onKeyDown={handleKeyDown}
-                placeholder="Напишите сообщение..."
-                onPaste={handlePaste}
-            />
-            <input
-                type="file"
-                multiple
-                style={{ display: "none" }}
-                ref={inputFileRef}
-                onChange={(e) => {
-                    if (!e.target.files) return;
-                    const selectedFiles = Array.from(e.target.files).filter(f => f instanceof File && typeof f.type === 'string');
-                    setFiles(prev => [...prev, ...selectedFiles]);
-                }}
-            />
+                                    {isImage ? (
+                                        <img src={previewUrl} alt={name} className="chatTAFilePreview" />
+                                    ) : isVideo ? (
+                                        <video src={previewUrl} className="chatTAFilePreview" controls />
+                                    ) : (
+                                        <div className="chatTAFileOther">
+                                            {GetIconByType(name, (file as Media | File).type ?? '')}
+                                            <span className="chatTAFileName">{name}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+                <textarea
+                    name="chatTA"
+                    id="chatTA"
+                    className="chatTA chatTAwFiles"
+                    value={mess}
+                    ref={textAreaRef}
+                    onChange={(e) => {
+                        setMess(e.currentTarget.value)
+                        if (!editing) handleTyping(chatWith ? chatWith.id : "")
+                    }}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Напишите сообщение..."
+                    onPaste={handlePaste}
+                />
+                <input
+                    type="file"
+                    multiple
+                    style={{ display: "none" }}
+                    ref={inputFileRef}
+                    onChange={(e) => {
+                        if (!e.target.files) return;
+                        const selectedFiles = Array.from(e.target.files).filter(f => f instanceof File && typeof f.type === 'string');
+                        setFiles(prev => [...prev, ...selectedFiles]);
+                    }}
+                />
+            </div>
         </div>
     )
 }

@@ -8,6 +8,8 @@
     min-height: 52vh;
     overflow: hidden;
     background-color: var(--mc);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     @media (max-width: 800px) {
         margin-top: 1vh;
         min-height: 90vh;

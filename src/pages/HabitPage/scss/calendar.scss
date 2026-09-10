@@ -17,6 +17,8 @@
     padding: 5px;
     min-height: 40vh;
     height: fit-content;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 }
 
 @media (max-width: 800px) {

@@ -35,7 +35,7 @@ export const cards = [
             {
                 label: "Выполнено", value:"comp", props:[
                     {label:"Дней", value:"compCount"},
-                    {label:"В процнтах", value:"compProcent"}
+                    {label:"В процентах", value:"compProcent"}
                 ]
             },
             {

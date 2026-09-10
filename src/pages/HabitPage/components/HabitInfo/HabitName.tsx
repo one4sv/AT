@@ -25,7 +25,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu, isExp
     if (!habit) return null
     
     return (
-        <div className={`chatUser ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} style={{transform:isExp ? "translateY(-5vh)" : ""}}>
+        <div className={`chatUser ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} style={{transform:isExp ? "translateY(-6vh)" : ""}}>
             {isMobile && (
                 <div className="menuShowButt" onClick={() => {
                     setShowSideMenu(true)

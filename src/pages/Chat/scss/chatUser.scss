@@ -9,8 +9,10 @@
     display: flex;
     background-color: var(--mc);
     overflow-y: visible;
-    border-bottom: 1px solid var(--bgc);
+    border-bottom: 1px solid var(--mc);
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     &.br {
         border-radius: 0 0 0 8px;
         @media (max-width: 800px) {

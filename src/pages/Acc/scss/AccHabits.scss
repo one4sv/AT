@@ -19,7 +19,8 @@
     margin: 0 auto;
     box-sizing: border-box;
     gap: 0.2vh;
-
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     &.mobile {
         width: 90%;
     }

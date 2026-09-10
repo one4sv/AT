@@ -7,7 +7,6 @@ import ScheduleCompletion from "./ScheduleCompletion";
 import ChosenDayDate from "../../../utils/ChosenDayDate";
 import DoneCompletion from "./DoneCompletion";
 import { isMobile } from "react-device-detect";
-// import Checklist from "../../../../../components/ts/chern/Checklist";
 
 export default function Complete({isMy} : {isMy:boolean}) {
     const { habit, habitSettings } = useTheHabit()

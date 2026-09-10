@@ -9,11 +9,15 @@
     height: 40vh;
     background-color: var(--mc);
     border-radius: 12px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     @media (max-width:800px) {
         border-radius: 12px 12px 0 0;
         flex: auto;
         width: 100%;
         height: 30vh;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 }
 .completeDate {
