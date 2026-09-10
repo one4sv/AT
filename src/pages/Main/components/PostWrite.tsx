@@ -108,78 +108,79 @@ export default function PostWrite() {
     return (
         <div className={`postWriteWrapper ${fs ? "PWTAWFS" : ""} ${isMobile ? "mobile" : ""}`} ref={postWriteRef} >
             <EmojiBar setText={setText} cn={"pwEmojiBar"} setShowEmojiBar={setShowEmojiBar} showEmojiBar={showEmojiBar} taRef={textAreaRef}/>
-            <div className={`postWriteBar ${files.length > 0 ? "pwBarwFiles" : ""}`}>
-                <SelectList arr={habitsArr} className="postWriteSL" selected={"none"} prop={setHabit}/>
-                {!fs && (
-                    <>
-                    <div className="postWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
-                        <Paperclip className="pwSvg"/>
-                    </div>                    
-                    <div className="postWriteSvgButt" onClick={() => setShowEmojiBar(!showEmojiBar)}>
-                        <SmileySticker className="pwSvg"/>
+            <div className="chatTAbg">
+                <div className={`postWriteBar ${files.length > 0 ? "pwBarwFiles" : ""}`}>
+                    <SelectList arr={habitsArr} className="postWriteSL" selected={"none"} prop={setHabit}/>
+                    {!fs && (
+                        <>
+                        <div className="postWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
+                            <Paperclip className="pwSvg"/>
+                        </div>                    
+                        <div className="postWriteSvgButt" onClick={() => setShowEmojiBar(!showEmojiBar)}>
+                            <SmileySticker className="pwSvg"/>
+                        </div>
+                        </>
+                    )}
+                    <div className="postWriteTAButt" onClick={handleSend}>
+                        <SendHorizontal className="chatSend" fill="currenColor"/>
                     </div>
-                    </>
-                )}
-                <div className="postWriteTAButt" onClick={handleSend}>
-                    <SendHorizontal className="chatSend" fill="currenColor"/>
                 </div>
-            </div>
-            {files.length > 0 && !fs && (
-                <div className="chatTAFiles">
-                    {files.map((file, i) => {
-                        const isImage = file.type.startsWith("image/");
-                        const isVideo = file.type.startsWith("video/");
-                        const previewUrl = URL.createObjectURL(file);
-                        return (
-                            <div key={i} className="chatTAFile">
-                                <div className="chatTAFileOverlay" onClick={() => {
-                                    setFiles(prev => prev.filter((_, idx) => idx !== i));
-                                }}>
-                                    <X/>
-                                </div>
-                                {isImage ? (
-                                    <img src={previewUrl} alt={file.name} className="chatTAFilePreview" />
-                                ) : isVideo ? (
-                                    <video src={previewUrl} className="chatTAFilePreview" controls />
-                                ) : (
-                                    <div className="chatTAFileOther">
-                                    {GetIconByType(file.name, file.type)}
-                                    <span className="chatTAFileName">{file.name}</span>
+                {files.length > 0 && !fs && (
+                    <div className="chatTAFiles">
+                        {files.map((file, i) => {
+                            const isImage = file.type.startsWith("image/");
+                            const isVideo = file.type.startsWith("video/");
+                            const previewUrl = URL.createObjectURL(file);
+                            return (
+                                <div key={i} className="chatTAFile">
+                                    <div className="chatTAFileOverlay" onClick={() => {
+                                        setFiles(prev => prev.filter((_, idx) => idx !== i));
+                                    }}>
+                                        <X/>
                                     </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
-            
-                <textarea
-                    value={text} 
-                    className="postWriteTA" 
-                    ref={textAreaRef} 
-                    onChange={(e) => setText(e.target.value)} 
-                    placeholder="Расскажите что-нибудь..."
-                    onPaste={handlePaste}
-                    id="postWriteTA"
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();  // предотвращаем добавление новой строки
-                            handleSend();
-                        }
+                                    {isImage ? (
+                                        <img src={previewUrl} alt={file.name} className="chatTAFilePreview" />
+                                    ) : isVideo ? (
+                                        <video src={previewUrl} className="chatTAFilePreview" controls />
+                                    ) : (
+                                        <div className="chatTAFileOther">
+                                        {GetIconByType(file.name, file.type)}
+                                        <span className="chatTAFileName">{file.name}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+                
+                    <textarea
+                        value={text} 
+                        className="postWriteTA" 
+                        ref={textAreaRef} 
+                        onChange={(e) => setText(e.target.value)} 
+                        placeholder="Расскажите что-нибудь..."
+                        onPaste={handlePaste}
+                        id="postWriteTA"
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();  // предотвращаем добавление новой строки
+                                handleSend();
+                            }
+                        }}
+                    >
+                    </textarea>
+                <input
+                    type="file"
+                    multiple
+                    style={{ display: "none" }}
+                    ref={inputFileRef}
+                    onChange={(e) => {
+                        if (!e.target.files) return;
+                        setFiles(prev => [...prev, ...(e.target.files ? Array.from(e.target.files) : [])]);
                     }}
-                >
-                </textarea>
-            
-            <input
-                type="file"
-                multiple
-                style={{ display: "none" }}
-                ref={inputFileRef}
-                onChange={(e) => {
-                    if (!e.target.files) return;
-                    setFiles(prev => [...prev, ...(e.target.files ? Array.from(e.target.files) : [])]);
-                }}
-            />
+                />
+            </div>
         </div>
     )
 }

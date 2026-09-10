@@ -109,7 +109,7 @@
     width: 200%;
     height: 100%;
     transition: transform 0.3s ease;
-    padding-bottom:16dvh;
+    padding-bottom:20dvh;
 }
 
 .habitSlider.toSlide {
@@ -154,7 +154,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: end;
-    height: 16vh;
+    height: 20vh;
     padding: 0 6vw 4vh;
     gap: 4px;
     bottom: 0;
@@ -179,7 +179,7 @@
 .habitSave {
     bottom: 0;
     width: 100%;
-    height: 4vh;
+    height: 5vh;
     background:linear-gradient(135deg, var(--accent), var(--grad));
     color: var(--tc);
     border-radius: 8px;
@@ -199,9 +199,6 @@
             box-shadow: 0 0 12px var(--darker_accent),
                         0 0 24px var(--darker_accent);
         }
-    }
-    @media (max-width:800) {
-        height: 5dvh;
     }
 }
 .habitInnerSlide {
