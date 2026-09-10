@@ -22,7 +22,7 @@
     @media (max-width: 800px) {
         width: 100%;
         margin-bottom: 0;
-        border-radius: 12px 12px 0 0;
+        border-radius: 24px 24px 0 0;
     }
 }
 
@@ -35,7 +35,7 @@
     left: 20%;
     z-index: 4;
     margin-bottom: 1vh;
-    border-radius: 12px;
+    border-radius: 24px;
 
     &::before {
         content: "";
@@ -45,6 +45,7 @@
         pointer-events: none;
         backdrop-filter: blur(var(--backdropTA));
         -webkit-backdrop-filter: blur(var(--backdropTA));
+        background:linear-gradient(135deg, var(--tr), #0000009a);
 
         mask-image: linear-gradient(
             to bottom,
@@ -62,16 +63,16 @@
         left: 0;
         width: 100%;
         margin-bottom: 0;
-        padding: 0 3.5vw 2vh;
-        border-radius: 12px 12px 0 0;
+        padding: 0 2.5vw 4vh;
+        border-radius: 24px 24px 0 0;
     }
 }
 .chatWriteBar {
     width: 100%;
-    border-radius: 12px 12px 0 0;
+    border-radius: 24px 24px 0 0;
     background-color: var(--mc);
     color: var(--tc);
-    height: 4vh;
+    height: 5vh;
     display: flex;
     padding-left: 0.5vw;
     gap: 0.5vw;
@@ -82,7 +83,6 @@
         margin-top: 4.5vh;
         left: 2.5%;
         width: 95%;
-        height: 1px;
         background-color: var(--borderHabit);
     }
 }
@@ -228,7 +228,7 @@
     scrollbar-width:thin;
     outline: none;
     border: none;
-    border-radius: 0 0 12px 12px;
+    border-radius: 0 0 24px 24px;
     padding-inline-start: 0.5vw;
     border: none;
     @media (max-width: 800px) {
@@ -236,7 +236,7 @@
     }
 }
 .chatWriteSvgButt {
-    height: 3.2vh;
+    height: 3.5vh;
     aspect-ratio: 1/1;
     cursor: pointer;
     color: var(--borderWh);
@@ -244,7 +244,8 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    border-radius: 6px;
+    border-radius: 50%;
+    transition: all 0s;
     >svg {
         width: 70%;
         height: 70%;
@@ -252,21 +253,24 @@
     }
     &:hover {
         color: var(--tc);
-        background-color: var(--accent_hov);
+        background:linear-gradient(135deg, var(--accent), var(--grad));
     }
 }
 .chatWriteTAButt {
     border-radius: 50%;
-    height: 3.5vh;
+    height: 4vh;
     aspect-ratio: 1/1;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     position: absolute;
-    right: 4vw;
+    right: 0.5vw;
     &:hover {
         background:linear-gradient(135deg, var(--accent), var(--grad));
+    }
+    @media (max-width:800px) {
+        right: 4vw;
     }
 }
 .chatSend {

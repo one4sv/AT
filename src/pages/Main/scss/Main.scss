@@ -2,16 +2,16 @@
 
 .MainDiv {
     width: 60%;
-    height: 100%;
+    height: 95dvh;
     position: relative;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     
-    &.mobile {
+    @media (max-width:800px) {
         width: 100%;
-        height: 100%;
+        height: 95dvh;
     }
 }
 .postFeed {
@@ -24,13 +24,12 @@
     scrollbar-width: thin;
     padding: 1vh 0;
     overflow-y: auto;
-}
-@media (max-width: 800px) {
-    .postFeed {
+    @media (max-width: 800px) {
         width: 95%;
         height: 100%;
     }
 }
+
 .feedNothing {
     position: absolute;
     top: 28vh;

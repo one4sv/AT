@@ -24,15 +24,15 @@
     overflow-y: scroll;
     width: 60%;
     margin: 0 auto;
-    height: calc(100% - 7vh);
+    height: calc(100% - 8vh);
     padding-bottom:10vh;
     @media (max-width: 800px) {
         top: 6vh;
         width: 99%;
         padding-right: 1vw;
         margin: 0 1vw;
-        padding-bottom:13vh;
-        height: calc(100% - 7vh);
+        padding-bottom:17vh;
+        height: calc(100% - 6vh);
     }
 }
 .goDown {

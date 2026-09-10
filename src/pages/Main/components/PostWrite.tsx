@@ -20,7 +20,6 @@ export default function PostWrite() {
     const location = useLocation();
 
     const [ text, setText ] = useState("")
-    const [ showPWbar, setShowPWbar ] = useState(false)
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false)
     const [ files, setFiles ] = useState<File[]>([]) 
     const [ fs, setFS ] = useState<boolean>(false) 
@@ -60,22 +59,6 @@ export default function PostWrite() {
         }
     }, [text, fs]);
 
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (
-                !fs &&
-                postWriteRef.current &&
-                !postWriteRef.current.contains(e.target as Node) &&
-                showPWbar
-            ) {
-                setShowPWbar(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [fs, showPWbar]);
-
     const handleSend = async () => {
         if (text.trim().length > 0 || files.length > 0) {
             try {
@@ -94,7 +77,6 @@ export default function PostWrite() {
                     showNotification("success", "Опубликовано");
                     setText("");
                     setFiles([]);
-                    setShowPWbar(false);
                     setHabit("none");
                 }
             } catch (err) {
@@ -113,13 +95,11 @@ export default function PostWrite() {
         if (pastedFiles.length > 0) {
             e.preventDefault();
             setFiles(prev => [...prev, ...pastedFiles]);
-            setShowPWbar(true);
         }
     }
 
     useEffect(() => {
         if (location.pathname === "/" && droppedFiles?.length > 0) {
-            setShowPWbar(true)
             setFiles((prev) => [ ...prev, ...droppedFiles])
             setDroppedFiles([])
         }
@@ -128,26 +108,24 @@ export default function PostWrite() {
     return (
         <div className={`postWriteWrapper ${fs ? "PWTAWFS" : ""} ${isMobile ? "mobile" : ""}`} ref={postWriteRef} >
             <EmojiBar setText={setText} cn={"pwEmojiBar"} setShowEmojiBar={setShowEmojiBar} showEmojiBar={showEmojiBar} taRef={textAreaRef}/>
-            {showPWbar && (
-                <div className={`postWriteBar ${files.length > 0 ? "pwBarwFiles" : ""}`}>
-                    <SelectList arr={habitsArr} className="postWriteSL" selected={"none"} prop={setHabit}/>
-                    {!fs && (
-                        <>
-                        <div className="postWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
-                            <Paperclip className="pwSvg"/>
-                        </div>                    
-                        <div className="postWriteSvgButt" onClick={() => setShowEmojiBar(!showEmojiBar)}>
-                            <SmileySticker className="pwSvg"/>
-                        </div>
-                        </>
-                    )}
-                    <div className="postWriteTAButt" onClick={handleSend}>
-                        <SendHorizontal className="chatSend" fill="currenColor"/>
+            <div className={`postWriteBar ${files.length > 0 ? "pwBarwFiles" : ""}`}>
+                <SelectList arr={habitsArr} className="postWriteSL" selected={"none"} prop={setHabit}/>
+                {!fs && (
+                    <>
+                    <div className="postWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
+                        <Paperclip className="pwSvg"/>
+                    </div>                    
+                    <div className="postWriteSvgButt" onClick={() => setShowEmojiBar(!showEmojiBar)}>
+                        <SmileySticker className="pwSvg"/>
                     </div>
+                    </>
+                )}
+                <div className="postWriteTAButt" onClick={handleSend}>
+                    <SendHorizontal className="chatSend" fill="currenColor"/>
                 </div>
-            )}
+            </div>
             {files.length > 0 && !fs && (
-                <div className={`chatTAFiles ${showPWbar ? "pwTAFileswBar" : ""}`}>
+                <div className="chatTAFiles">
                     {files.map((file, i) => {
                         const isImage = file.type.startsWith("image/");
                         const isVideo = file.type.startsWith("video/");
@@ -177,10 +155,9 @@ export default function PostWrite() {
             
                 <textarea
                     value={text} 
-                    className={`postWriteTA ${showPWbar || files.length > 0 ? "PWTAwFiles" : ""} ${isMobile ? "mobile" : ""}`} 
+                    className="postWriteTA" 
                     ref={textAreaRef} 
                     onChange={(e) => setText(e.target.value)} 
-                    onFocus={()=>setShowPWbar(true)}
                     placeholder="Расскажите что-нибудь..."
                     onPaste={handlePaste}
                     id="postWriteTA"

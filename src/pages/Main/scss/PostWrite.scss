@@ -5,38 +5,47 @@
     flex-direction: column;
     position: absolute;
     width: 100%;
-    bottom: 5vh;
+    bottom: 0;
     z-index: 4;
     backdrop-filter: blur(var(--backdropTA));
     -webkit-backdrop-filter: blur(var(--backdropTA));
+    border-radius: 24px;
     margin-bottom: 1vh;
-    border-radius: 12px;
-    &.PWTAWFS {
-        top: 1vh;
-        left: 0;
-        z-index: 9;
-        height: 98vh;
-        width: 100%;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        backdrop-filter: blur(var(--backdropTA));
+        -webkit-backdrop-filter: blur(var(--backdropTA));
+        background:linear-gradient(135deg, var(--tr), #0000009a);
+
+        mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 100%
+        );
+        -webkit-mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 100%
+        );
     }
+
     @media (max-width:800px) {
         left: 0;
         width: 100%;
-        margin-bottom: 0;
-        bottom: 1vh;
-        padding: 0 1% 0.5vh;
-    }
-}
-@media (max-width: 800px) {
-    .postWriteWrapper {
-        margin-bottom: 5vh;
+        padding: 0 2.5vw 4vh;
     }
 }
 .postWriteBar {
     width: 100%;
-    border-radius: 12px 12px 0 0;
+    border-radius: 24px 24px 0 0;
     background-color: var(--mc);
     color: var(--tc);
-    height: 6vh;
+    height: 5vh;
     display: flex;
     padding-left: 0.5vw;
     gap: 0.5vw;
@@ -56,7 +65,7 @@
     background-color: var(--mc);
     resize: none;
     color: var(--tc);
-    border-radius: 12px;
+    border-radius: 0 0 24px 24px;
     font-family: var(--font);
     font-size: 16px;
     padding: 0.5vh 0.5vw;
@@ -64,21 +73,14 @@
     box-sizing: border-box;
     border: none;
     outline: none;
-    &.PWTAwFiles {
-        border-radius: 0 0 12px 12px;
-    }
-    &.mobile.PWTAwFiles {
-        border-radius: 0;
-    }
     padding-inline-start: 0.5vw;
     @media (max-width: 800px) {
-        padding-inline-start: 1.5vw;
-        border-radius: 12px;
+        padding-inline-start: 2vw;
         outline: none;
     }
 }
 .postWriteSvgButt {
-    height: 3vh;
+    height: 3.5vh;
     aspect-ratio: 1/1;
     cursor: pointer;
     color: var(--borderWh);
@@ -86,42 +88,47 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    top: 0.1vh;
+    border-radius: 50%;
+    transition: all 0s;
     >svg {
-        width: 80%;
-        height: 80%;
-    }
-    &.pwFSButt {
-        >svg {
-            width: 100%;
-            height: 100%;
-        }
+        width: 70%;
+        height: 70%;
+        stroke-width: 2.5px;
     }
     &:hover {
         color: var(--tc);
+        background:linear-gradient(135deg, var(--accent), var(--grad));
     }
 }
 .postWriteSL {
     position: relative;
-    @include var.selectList(10vw, 3.5vh, 9%, 0.3vw, 0.4vh, var(--inner_text), var(--tc), var(--bgc), 16px, 0.8vh, 0.4vw, 5%, true);
-    >input {
-        @include var.input(var(--darker_accent), var(--inner_text), var(--tr), 3.5vh, 6px, var(--inner_text));
+    @include var.selectList(10vw, 3.5vh, 9%, 0.3vw, 0.5vh, var(--inner_text), var(--tc), var(--bgc), 16px, 0.8vh, 0.4vw, 3%, true);
+    > input {
+        @include var.input(var(--darker_accent), var(--inner_text), var(--tr), 3.5vh, 24px, var(--inner_text));
         width: 100%;
         cursor: pointer;
         padding-inline-start: 0.5vw;
+        @media (max-width:800px) {
+            padding-left: 2vw;
+        }
     }
-    >div {
-        border-radius: 6px;
+    > div {
+        border-radius: 12px;
         font-weight: 100;
+        text-overflow: ellipsis;
         >div {
             color: var(--borderWh);
         }
     }
     @media (max-width:800px) {
-        @include var.selectList(35vw, 3.5vh, 9%, 0.3vw, 0.4vh, var(--tc), var(--tc), var(--bgc), 16px, 0.8vh, 0.4vw, 3%, true);
-        margin-left: 2vw;
-        >div {
-            padding-inline-start: 0.5vw;
+        width: 50vw;
+        padding-left: 2vw;
+        > div {
+            width: 50vw;
+            padding-left: 1.5vw;
+        }
+        >svg {
+            right: 2vw;
         }
     }
 }
@@ -149,11 +156,11 @@
         background:linear-gradient(135deg, var(--accent), var(--grad));
         color: var(--inner_text);
     }
+    @media (max-width:800px) {
+        right: 4vw;
+    }
 }
 .pwEmojiBar {
     left: 0 !important;
     border-radius: 12px !important;
-}
-.pwTAFileswBar {
-    border-radius: 0 !important;
 }
