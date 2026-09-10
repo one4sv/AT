@@ -72,6 +72,9 @@
     border: none;
     outline: none;
     padding-inline-start: 0.5vw;
+    &::placeholder {
+        color: var(--borderHabit);
+    }
     @media (max-width: 800px) {
         padding-inline-start: 2vw;
         outline: none;

@@ -1,25 +1,22 @@
 import { useState, useRef, useEffect } from "react"
-import { isAxiosError } from "axios"
 import "../../scss/SM/sideMenu.scss"
-import { CircleUserRound, Search, LogOut, House, Plus, Calendar } from "lucide-react"
+import { CircleUserRound, Search, House, Plus, Calendar } from "lucide-react"
 import HabitsList from "./SM/HabitsList.tsx"
 import { useUser } from "../hooks/UserHook"
-import { useNote } from "../hooks/NoteHook"
 import { useBlackout } from "../hooks/BlackoutHook.ts"
 import ContactsList from "./SM/ContactsList.tsx"
-import { Link, useNavigate } from "react-router"
+import { Link } from "react-router"
 import { useSettings } from "../hooks/SettingsHook.ts"
 import { useHabits } from "../hooks/HabitsHook.ts"
 import MinLoader from "./MinLoader.tsx"
 import { isMobile } from "react-device-detect"
-import { CalendarPlusIcon, ChatsIcon, GearIcon, SortAscending, UserIcon } from "@phosphor-icons/react"
+import { CalendarPlusIcon, ChatsIcon, SortAscending } from "@phosphor-icons/react"
 import { filterHabitsByOrder } from "./utils/filteredHabitsByOrder.tsx"
 import { useSchedule } from "../hooks/ScheduleHook.ts"
 import SideMenuUnAunthificated from "./SideMenuUnAunthificated.tsx"
 import { useSideMenu } from "../hooks/SideMenuHook.ts"
 import { useTranslation } from "react-i18next"
 import { useContacts } from "../hooks/ContactsHook.ts"
-import { api } from "./api.ts"
 
 export default function SideMenu() {
     const { t, i18n } = useTranslation("common")
@@ -27,13 +24,11 @@ export default function SideMenu() {
     const { setSearch, loadingList, list, mainSearchRef, search } = useContacts()
     const { loadingHabits, habits, newOrderHabits } = useHabits()
     const { refreshSchedules } = useSchedule()
-    const { user, refetchUser } = useUser()
-    const { setTab, showArchived } = useSettings()
+    const { user } = useUser()
+    const { showArchived } = useSettings()
     const { setBlackout } = useBlackout()
-    const { showNotification } = useNote()
     const { setShowSideMenu, setActiveTab, activeTab, showSideMenu, setIsDragging, isDragging, translateX, setTranslateX } = useSideMenu()
 
-    const navigate = useNavigate()
 
     const [filterType, setFilterType] = useState<"messages" | "habits">("messages")
     const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -41,7 +36,6 @@ export default function SideMenu() {
     const [showList, setShowList] = useState(false)
     const [showPlusMenu, setShowPlusMenu] = useState<boolean>(false)
     
-    // Храним только value, label берём через t()
     const [messageSelectedValue, setMessageSelectedValue] = useState("messages")
     const [habitsSelectedValue, setHabitsSelectedValue] = useState("all")
 
@@ -64,7 +58,6 @@ export default function SideMenu() {
 
     const newLength = list.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
 
-    // Текущие выбранные фильтры с актуальным переводом
     const messageSelected = messagesFilters.find(f => f.value === messageSelectedValue) 
         ?? { label: t("sideMenu.messages"), value: "messages", new: "" }
     
@@ -155,25 +148,6 @@ export default function SideMenu() {
             setHabitsSelectedValue(filters[0]?.value ?? "all")
         }
     }, [habits, newOrderHabits, showArchived, t, i18n.language])
-
-    const logOut = async () => {
-        try {
-            const res = await api.get(`logout`)
-            if (res.data.success) {
-                refetchUser()
-            } else {
-                showNotification("error", t("sideMenu.logOutError"))
-            }
-        } catch (error: unknown) {
-            if (isAxiosError(error)) {
-                showNotification("error", error.response?.data?.messages || t("sideMenu.logOutError"))
-            } else {
-                showNotification("error", t("sideMenu.logOutErrorGeneric"))
-            }
-        }
-    }
-
-    // ... остальные useEffect для click outside и long press без изменений ...
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -320,42 +294,17 @@ export default function SideMenu() {
                 <div className="SMmenuWrapper">
                     <div
                         className={`SMmenuButt ${showList ? "active" : ""}`}
-                        onClick={() => setShowList(!showList)}
-                        ref={buttonRef}
+                        onClick={() => setShowPlusMenu(!showPlusMenu)}
+                        ref={plusRef}
                     >
-                        {user?.avatar_url 
-                            ? <img className="SMmenuAvatar" src={user.avatar_url} alt={(user.username ?? user.nick) || undefined} /> 
-                            : <CircleUserRound />
-                        }
+                        <Plus/>
                     </div>
-                    <div className={`SMprofileMenu ${showList ? "active" : ""} ${isMobile ? "mobile" : ""}`} ref={menuRef}>
-                        <div className="ContextMenuButt" onClick={() => {
-                            setShowList(false)
-                            navigate(`/acc/${user.nick}`)
-                            setShowSideMenu(false)
-                        }}>
-                            <UserIcon size={20} />
-                            {user.username || user.nick}
+                    <div className={`plusMenu ${showPlusMenu ? "active" : ""}`} ref={plusMenuRef}>
+                        <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"AddHabit"})}>
+                            <CalendarPlusIcon weight="fill" size={24}/>{t("sideMenu.addActivity")}
                         </div>
-                        <div
-                            className="ContextMenuButt"
-                            onClick={() => {
-                                setShowList(false)
-                                if (!isMobile) setTab("pers")
-                                else setTab("menu")
-                                navigate('/settings')
-                                setShowSideMenu(false)
-                            }}
-                        >
-                            <GearIcon />
-                            {t("sideMenu.settings")}
-                        </div>
-                        <div className="ContextMenuButt delete" onClick={() => {
-                            logOut()
-                            setShowSideMenu(false)
-                        }}>
-                            <LogOut />
-                            {t("sideMenu.logOut")}
+                        <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"CreateChat"})}>
+                            <ChatsIcon weight="fill" size={24}/>{t("sideMenu.createChat")}
                         </div>
                     </div>
                 </div>
@@ -479,26 +428,35 @@ export default function SideMenu() {
             </div>
 
             <div className="SMnavDiv">
-                <div className={`plusMenu ${showPlusMenu ? "active" : ""}`} ref={plusMenuRef}>
-                    <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"AddHabit"})}>
-                        <CalendarPlusIcon weight="fill" size={24}/>{t("sideMenu.addActivity")}
-                    </div>
-                    <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"CreateChat"})}>
-                        <ChatsIcon weight="fill" size={24}/>{t("sideMenu.createChat")}
-                    </div>
-                </div>
                 <div className="SMnav">
-                    <Link className={`SMnavButt ${location.pathname === "/" ? "active" : ""}`} to={"/"}>
+                    <Link className={`SMnavButt ${location.pathname === "/" ? "active" : ""}`} to={"/"} onClick={() => {
+                        if (location.pathname === "/")closeMenu()
+                    }}>
                         <House />
-                        {t("sideMenu.home")}
+                        <span>{t("sideMenu.home")}</span>
                     </Link>
-                    <div className={`SMnavButt ${showPlusMenu ? "active" : ""}`} onClick={() => setShowPlusMenu(!showPlusMenu)} ref={plusRef}>
-                        <Plus />
-                        {t("sideMenu.add")}
-                    </div>
-                    <Link className={`SMnavButt ${location.pathname === ("/habit") || location.pathname === ("/habit/") ? "active" : ""}`} to={"/habit"}>
+                    <Link
+                        className={`SMnavButt SMnavAvatar ${location.pathname.includes("/settings") ? "active" : ""}`}
+                        onClick={() => {
+                            if (location.pathname.includes("/settings"))closeMenu()
+                        }}
+                        to={"/settings"}
+                    >
+                        {user?.avatar_url ? (
+                            <img
+                                src={user.avatar_url}
+                                alt={user.username ?? user.nick ?? "фото"}
+                            />
+                        ) : (
+                            <CircleUserRound />
+                        )}
+                        <span>{user.nick}</span>
+                    </Link>
+                    <Link className={`SMnavButt ${location.pathname === ("/habit") || location.pathname === ("/habit/") ? "active" : ""}`} to={"/habit"} onClick={() => {
+                        if (location.pathname === ("/habit") || location.pathname === ("/habit/")) closeMenu()
+                    }}>
                         <Calendar />
-                        {t("sideMenu.activities")}
+                        <span>{t("sideMenu.activities")}</span>
                     </Link>
                 </div>
             </div>

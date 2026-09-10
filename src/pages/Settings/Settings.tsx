@@ -5,6 +5,7 @@ import "./scss/settings.scss";
 import {
     BellRingingIcon,
     CaretLeftIcon,
+    CaretRightIcon,
     ChatsTeardropIcon,
     GearIcon,
     InfoIcon,
@@ -173,6 +174,13 @@ export default function Settings() {
                             </div>
                         </div>
                         <div className="settingsButtsWrapper">
+                            <div className="settingButt fastButt" onClick={() => navigate(`/acc/${user.nick}`)}>
+                                <span className="settingName">
+                                    <UserIcon weight="fill"/> 
+                                    Перейти в профиль
+                                </span>
+                                <CaretRightIcon className="fastButtCaret"/>
+                            </div>
                             {settings.map((s) => (
                                 <div
                                     key={s.tab}

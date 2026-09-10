@@ -71,21 +71,13 @@
     border-radius: 50%;
     cursor: pointer;
     &:hover {
-        color: var(--borderWh);
-        background-color: var(--menuButtHover);
+        color: var(--tc);
     }
     >svg {
         position: absolute;
         aspect-ratio: 1/1;
         height: 5vh;
         width: 2vw;
-    }
-    >img.SMmenuAvatar {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        border-radius: 50%;
-        display: block;
     }
 }
 @media (max-width:800px) {
@@ -96,53 +88,6 @@
             width: 100%;
         }
     }
-}
-.SMmenuButt.active {
-    >svg {
-        color: var(--tc);
-        > circle:nth-of-type(2) {
-            color: var(--accent_text);
-        }
-    }
-}
-.SMprofileMenu {
-    top: 100%;
-    position: absolute;
-    background-color: var(--bgc);
-    color: var(--borderWhLight);
-    z-index: 6;
-    display: flex;
-    flex-direction: column;
-    min-width: 8vw;
-    overflow: hidden;
-    border-radius: 12px;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-25%);
-    .ContextMenuButt {
-        padding: 0.75vh 0.5vw;
-        &.delete {
-            color: var(--notValid);
-            > svg {
-                color: var(--notValid);
-            }
-        }
-        @media (max-width: 800px) {
-            padding: 0.75vh 2vw;
-        }
-    }
-    svg {
-        color: var(--accent_text);
-    }
-    @media (max-width: 800px) {
-        min-width: 40vw;
-    }
-}
-.SMprofileMenu.active {
-    opacity: 1;
-    pointer-events: all;
-    transform: translateY(0);
 }
 .SMsearch {
     position: relative;
@@ -339,49 +284,81 @@
     justify-content: center;
     align-items: center;
     pointer-events: none;
+    @media (max-width:800px) {
+        padding-bottom: 5vh;
+    }
 }
 .SMnav {
     pointer-events: all;
     display: flex;
-    background-color: var(--buttBg);
-    width: 80%;
+    width: 90%;
     height: 6vh;
-    border-radius: 14px;
     overflow: hidden;
     user-select: none;
+    gap: 0.25vw;
     @media (max-width:800px) {
         height: 7vh;
-        width: 70%;
+        gap: 1vw;
     }
 }
 .SMnavButt {
     display: flex;
-    justify-content: center;
+    justify-content: end;
     align-items: center;
     flex: 1;
-    color: var(--borderWhLight);
+    color: var(--borderHabit);
     cursor: pointer;
     flex-direction: column;
     font-size: 14px;
-    padding: 0.75vh 0.75vw;
+    height: 100%;
+    border-radius: 12px;
+    padding-bottom: 0.35vh;
     &:hover {
-        background-color: var(--menuButtHover);
+        background-color: var(--on_con_menu_mess);
         color: var(--tc);
     }
+
     &.active {
-        color: var(--accent_text);
+        color: var(--tc);
+        background-color: var(--accent_hov);
+    }
+    >span {
+        width: 100%;
+        text-overflow: ellipsis;
+        text-align: center;
+        justify-self: end;
     }
     @media (max-width:800px) {
         font-size: 12px;
     }
-    >svg {
-        width: 35%;
-        height: 100%;
-        @media (max-width:800px) {
-            width: 25%;
+    img, svg {
+        width: 3.25vh;
+        height: 3.25vh;
+        min-width: 3.25vh;
+        min-height: 3.25vh;
+        flex-shrink: 0;
+        object-fit: cover;
+        display: block;
+        @media (max-width: 800px) {
+            width: 4vh;
+            height: 4vh;
+            min-width: 4vh;
+            min-height: 4vh;
         }
     }
-
+    img {
+        border-radius: 50%;
+        width: 3.5vh;
+        height: 3.5vh;
+        min-width: 3.5vh;
+        min-height: 3.5vh;
+        @media (max-width: 800px) {
+            width: 4.25vh;
+            height: 4.25vh;
+            min-width: 4.25vh;
+            min-height: 4.25vh;
+        }
+    }
 }
 .plusMenu {
     display: flex;
@@ -392,14 +369,15 @@
     overflow: hidden;
     opacity: 0;
     transition: opacity 0.2s ease, transform 0.2s ease;
-    user-select: none;
+    pointer-events: none;
     &.active {
-        transform: translateY(-90%);
+        transform: translateY(50%);
         opacity: 1;
         pointer-events: all;
     }
 }
 .plusMenuButt {
+    width: 12vw;
     cursor: pointer;
     padding: 1vh 1vw;
     color: var(--borderWhLight);
@@ -411,10 +389,10 @@
     }
     &:hover {
         color: var(--tc);
-        background-color: var(--menuButtHover);
     }
     @media (max-width:800px) {
         padding: 1vh 2vw;
         gap: 1vw;
+        width: 60vw;
     }
 }

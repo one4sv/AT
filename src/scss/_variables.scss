@@ -15,12 +15,10 @@ $themes: (
     light: (
         bgc: #e2e2e2,
         tc: #111111,
-        borderWh: #666666,
         borderWhLight: #818181,
         menuButtHover: #d3d3d3,
         notValid: #8a0000,
         valid:#14b314,
-        borderHabit: #777777,
         mess: #cacaca,
         chosing_mess:#00000036,
         on_con_menu_mess:#6464643a,
@@ -37,12 +35,10 @@ $themes: (
     dark: (
         bgc: #131313,
         tc: #ffffff,
-        borderWh: #a1a1a1,
         borderWhLight: #d4d4d4,
         menuButtHover: #2c2c2c,
         notValid: #f44336,
         valid:#14b314,
-        borderHabit: #646464,
         mess: #272727,
         chosing_mess:#e4e4e436,
         on_con_menu_mess:#6464643a,
@@ -260,6 +256,8 @@ $decors: (
             systemMessBg: #ffffff57,
             mhl:#ffffff99,
             backdropTA:2px,
+            borderWh: #666666,
+            borderHabit: #777777,
         ),
         dark: (
             mc: #181818,
@@ -271,6 +269,8 @@ $decors: (
             systemMessBg: #44444457,
             mhl:#22222257,
             backdropTA:2px,
+            borderWh: #a1a1a1,
+            borderHabit: #646464,
         )
     ),
     glass: (
@@ -284,6 +284,8 @@ $decors: (
             systemMessBg: #ffffff57,
             mhl:#ffffff99,
             backdropTA:12px,
+            borderWh: #3a3a3a,
+            borderHabit: #545454,
         ),
         dark: (
             mc: #22222257,
@@ -295,6 +297,8 @@ $decors: (
             systemMessBg: #44444457,
             mhl:#22222257,
             backdropTA:12px,
+            borderWh: #e7e7e7,
+            borderHabit: #bdbdbd,
         )
     )
 );

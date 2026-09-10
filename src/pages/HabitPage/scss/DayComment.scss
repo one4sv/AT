@@ -45,6 +45,9 @@
         outline: none;
         overflow: hidden;
         field-sizing: content;
+        &::placeholder {
+            color: var(--borderHabit);
+        }
     }
     @media (max-width: 800px) {
         padding: 1vh 2vw;
