@@ -106,6 +106,9 @@
     width: 100%;
     gap: 1vw;
     overflow-x: auto;
+    flex-wrap: wrap;
+    row-gap: 1vh;
+    justify-content: space-evenly;
 }
 .persSL {
     @include var.selectList(100%, 4vh, 9%, 0.3vw, 0.8vh, var(--borderWh), var(--tc), var(--bgc), 18px, 0.8vh, 0.8vw, 5%);
@@ -125,6 +128,9 @@
     height: 12vh;
     >span {
         color: var(--borderWh);
+    }
+    @media (max-width: 800px) {
+        width: 38vw;
     }
     &:hover {
         >.bgMini {
@@ -155,10 +161,11 @@
     &.choosen {
         border: 1px solid var(--accent) !important;
     }
+    @media (max-width: 800px) {
+        width: 100%;
+    }
 }
 .bgCustom {
-    width: 8vw;
-    height: 8vh;
     background-color: var(--borderHabit);
     display: flex;
     align-items: center;
@@ -190,13 +197,5 @@
         > input {
             width: 100%;
         }
-    }
-    .bgPicker {
-        flex-wrap: wrap;
-        gap: 10vw;
-        justify-content: center;
-    }
-    .bgMini {
-        width: 100%;
     }
 }
