@@ -138,6 +138,7 @@ export default function Habit() {
     };
 
     const handleMenuTouchStart = (e: React.TouchEvent) => {
+        setDontHandle(true);
         if (dontHandleOther) return
         startX.current = e.touches[0].clientX;
         startTranslate.current = menuTranslate;

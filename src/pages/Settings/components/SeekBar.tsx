@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
 
+import { useSideMenu } from "../../../components/hooks/SideMenuHook";
+
 export interface SeekBarInterface {
     min: number;
     max: number;
@@ -17,35 +19,16 @@ export default function SeekBar({
     step = 1,
     onChange,
 }: SeekBarInterface) {
+
+    const { setDontHandle, dontHandleOther } = useSideMenu();
+
     const lineRef = useRef<HTMLDivElement>(null);
+
     const [dragging, setDragging] = useState(false);
     const [hoverValue, setHoverValue] = useState<number | null>(null);
     const [hoverPercent, setHoverPercent] = useState(0);
 
     const percent = ((value - min) / (max - min)) * 100;
-
-    const updateValue = (clientX: number) => {
-        const data = getValue(clientX);
-        if (!data) return;
-
-        onChange?.(data.value);
-    };
-
-    const handleMouseDown = (e: React.MouseEvent) => {
-        setDragging(true);
-        updateValue(e.clientX);
-
-        const move = (e: MouseEvent) => updateValue(e.clientX);
-
-        const up = () => {
-            setDragging(false);
-            window.removeEventListener("mousemove", move);
-            window.removeEventListener("mouseup", up);
-        };
-
-        window.addEventListener("mousemove", move);
-        window.addEventListener("mouseup", up);
-    };
 
     const getValue = (clientX: number) => {
         if (!lineRef.current) return null;
@@ -56,6 +39,7 @@ export default function SeekBar({
         p = Math.max(0, Math.min(1, p));
 
         let newValue = min + p * (max - min);
+
         newValue = Math.round(newValue / step) * step;
         newValue = Math.max(min, Math.min(max, newValue));
 
@@ -64,25 +48,71 @@ export default function SeekBar({
             percent: p * 100,
         };
     };
-    
+
+    const updateValue = (clientX: number) => {
+        const data = getValue(clientX);
+
+        if (!data) return;
+
+        onChange?.(data.value);
+    };
+
+    const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (dontHandleOther) return;
+
+        setDontHandle(true);
+        setDragging(true);
+
+        e.currentTarget.setPointerCapture(e.pointerId);
+
+        updateValue(e.clientX);
+    };
+
+    const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (dragging) {
+            updateValue(e.clientX);
+            return;
+        }
+
+        if (e.pointerType === "mouse") {
+            const data = getValue(e.clientX);
+
+            if (!data) return;
+
+            setHoverValue(data.value);
+            setHoverPercent(data.percent);
+        }
+    };
+
+    const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+        setDragging(false);
+        setDontHandle(false);
+
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+        }
+    };
+
+    const handlePointerCancel = () => {
+        setDragging(false);
+        setDontHandle(false);
+    };
 
     return (
         <div className="seekBarWrapper">
             <div
                 className="seekBarLine"
                 ref={lineRef}
-                onMouseDown={handleMouseDown}
-                onMouseMove={(e) => {
-                    const data = getValue(e.clientX);
-                    if (!data) return;
-
-                    setHoverValue(data.value);
-                    setHoverPercent(data.percent);
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerCancel}
+                onPointerLeave={() => {
+                    if (!dragging) {
+                        setHoverValue(null);
+                    }
                 }}
-
-                onMouseLeave={() => setHoverValue(null)}
             >
-
                 {hoverValue !== null && (
                     <div
                         className="seekBarHoverValue"
@@ -92,6 +122,7 @@ export default function SeekBar({
                         {unit}
                     </div>
                 )}
+
                 <div
                     className="seekBarFill"
                     style={{ width: `${percent}%` }}
@@ -106,8 +137,8 @@ export default function SeekBar({
                     className="seekBarCurrent"
                     style={{ left: `${percent}%` }}
                 >
-                    {(value === min || value === max) ? "" : value}
-                    {(value === min || value === max) ? "" : unit}
+                    {value === min || value === max ? "" : value}
+                    {value === min || value === max ? "" : unit}
                 </div>
             </div>
 
