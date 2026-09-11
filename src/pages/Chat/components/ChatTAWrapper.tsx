@@ -133,14 +133,16 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, scrollToMessage, textA
 
     if (chatWith && (chatWith.am_i_blocked || chatWith.is_blocked)) return (
         <div className={`chatTAWrapper ${isMobile ? "mobile" : ""}`} ref={chatTARef}>
-            <div className="chatIsBlocked">
-                {showGoDown && (
-                    <div className="goDown" onClick={handleGoDown}>
-                        <CaretDoubleDown />
-                    </div>
-                )}
-                <Prohibit/>
-                {chatWith.am_i_blocked ? <span>Данный пользователь заблокировал вас</span> : <span>Вы заблокировали данного пользователя</span>}
+            <div className="chatTAbg">
+                <div className="chatIsBlocked">
+                    {showGoDown && (
+                        <div className="goDown" onClick={handleGoDown}>
+                            <CaretDoubleDown />
+                        </div>
+                    )}
+                    <Prohibit/>
+                    {chatWith.am_i_blocked ? <span>Данный пользователь заблокировал вас</span> : <span>Вы заблокировали данного пользователя</span>}
+                </div>
             </div>
         </div>
     )
