@@ -13,18 +13,18 @@ export default function Header() {
     const { title } = usePageTitle()
     const location = useLocation()
     const isAcc = location.pathname.startsWith("/acc")
-
+    console.log(layout)
     return (
         <>
             <div className="header">
-                {isMobile || layout === "hidden" && (
+                {isMobile || layout === "hidden" ? (
                 <div className="menuShowButt" onClick={() => {
                     setShowSideMenu(true);
                     setTranslateX(0);
                 }}>
                     <List/>
                 </div>
-                )}
+                ) : ""}
                 <div className="titleHeader">
                     { isAcc ? nick : title }
                 </div>
