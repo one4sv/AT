@@ -87,8 +87,13 @@ export default function PostWrite() {
             }
         } else {
             return
-        }
-        
+        }  
+    };
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey && !isMobile) {
+        e.preventDefault();
+        handleSend();
+    }
     };
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
@@ -183,12 +188,7 @@ export default function PostWrite() {
                         placeholder="Расскажите что-нибудь..."
                         onPaste={handlePaste}
                         id="postWriteTA"
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" && !e.shiftKey) {
-                                e.preventDefault();  // предотвращаем добавление новой строки
-                                handleSend();
-                            }
-                        }}
+                        onKeyDown={(e) => handleKeyDown(e)}
                     >
                     </textarea>
                 <input

@@ -63,13 +63,9 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, scrollToMessage, textA
     ] as { file: Media | File; isOld: boolean }[];
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter") {
-            if (e.ctrlKey) {
-                setMess(prev => prev + "\n")
-            } else {
-                e.preventDefault()
-                handleSend()
-            }
+        if (e.key === "Enter" && !e.shiftKey && !isMobile) {
+            e.preventDefault()
+            handleSend()
         }
     }
     const handleSend = async () => {

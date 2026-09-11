@@ -64,7 +64,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
     comment.trim() === (dayComment || "").trim();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey && !isMobile) {
       e.preventDefault();
       if (cantSave) return;
       sendDayComment(id, comment, chosenDay);
