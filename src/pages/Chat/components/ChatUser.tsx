@@ -120,14 +120,14 @@ export default function ChatUser({
 
     return (
         <div className="chatUser" ref={chatUserRef}>
-            {isMobile || layout === "hidden" && (
+            {isMobile || layout === "hidden" ? (
                 <div className="menuShowButt" onClick={() => {
                     setShowSideMenu(true)
                     setTranslateX(0)
                 }}>
                     <List />
                 </div>
-            )}
+            ) : ""}
             <div className={`chatUserInfo ${isMobile ? "mobile" : ""}`}
                 onClick={() => {
                     if (!chatWith) return;
