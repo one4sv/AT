@@ -59,14 +59,14 @@ export default function PersSettingTab() {
     return (
         <div className="settingTab">
             <div className="settingInnerDiv">
+                <div className="settingHeader">{t("personalization.theme")}</div>
                 <div className="settingInnerWrapper">
-                    <div className="settingHeader">{t("personalization.theme")}</div>
                     <RadioGroup list={themeArr} val={isDark ? "dark" : "light"} newVal={setNewTheme} />
                 </div>
             </div>
             <div className="settingInnerDiv">
+                <div className="settingHeader">{t("personalization.accentColors")}</div>    
                 <div className="settingInnerWrapper">
-                    <div className="settingHeader">{t("personalization.accentColors")}</div>
                     <PreviewAccent />
                     <div className="accentSelector">
                         <span className="colorTitle">{t("personalization.mainColor")}</span>
@@ -111,8 +111,8 @@ export default function PersSettingTab() {
                 </div>
             </div>
             <div className="settingInnerDiv">
+                <div className="settingHeader">{t("personalization.decor")}</div>
                 <div className="settingInnerWrapper">
-                    <div className="settingHeader">{t("personalization.decor")}</div>
                     <RadioGroup list={decorArr} val={decor} newVal={setNewDecor} />
                 </div>
                 {decor === "glass" ? (
@@ -125,8 +125,8 @@ export default function PersSettingTab() {
                 ) : ""}
             </div>
             <div className="settingInnerDiv">
+                <div className="settingHeader">{t("personalization.background")}</div>
                 <div className="settingInnerWrapper">
-                    <div className="settingHeader">{t("personalization.background")}</div>
                     <div className="bgPicker">
                         <div className="bgPick">
                             <div className="bgCustom bgMini" onClick={() => fileInputRef.current?.click()}>
@@ -165,10 +165,10 @@ export default function PersSettingTab() {
             </div>
             {!isMobile ? (
                 <div className="settingInnerDiv">
+                    <div className="settingHeader">
+                        Боковое меню
+                    </div>
                     <div className="settingInnerWrapper">
-                        <div className="settingHeader">
-                            Боковое меню
-                        </div>
                         <RadioGroup list={layoutArr} val={layout} newVal={setNewLayout} />
                     </div>
                 </div>

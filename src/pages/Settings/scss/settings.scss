@@ -238,7 +238,6 @@
 .settingHeader {
     color: var(--accent_text);
     font-size: 18px;
-    margin-bottom: 1vh;
     padding-inline-start: 0.5vw;
     display: flex;
     align-items: center;
@@ -256,6 +255,7 @@
     gap: 1vh;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
+    z-index: 2;
     @media (max-width: 800px) {
         padding: 1vh 2vw 1.3vh;
     }
@@ -309,6 +309,8 @@
     color: var(--borderHabit) !important;
 }
 .settingSL {
+    position: relative;
+    z-index: 3;
     @include var.selectList(
         100%,
         fit-content,
@@ -343,6 +345,7 @@
     }
     > div {
         border: 1px solid var(--tc);
+        z-index: 4;
     }
 }
 .settingInnerButt {

@@ -32,12 +32,6 @@ export default function GeneralTab() {
         <div className="settingTab">
             <div className="settingInnerDiv">
                 <div className="settingHeader">
-                    {t("general.language")}
-                </div>
-                <SelectList arr={langArr} className="settingSL" selected={lang} extraFunction={setNewLang}/>
-            </div>
-            <div className="settingInnerDiv">
-                <div className="settingHeader">
                     {t("general.traffic")}
                 </div>
                 <div className="settingInnerList">
@@ -77,6 +71,12 @@ export default function GeneralTab() {
                     </div>
                     <RadioGroup list={timeChanger} val={"twentyFour"} />
                 </div>
+            </div>
+            <div className="settingInnerDiv">
+                <div className="settingHeader">
+                    {t("general.language")}
+                </div>
+                <SelectList arr={langArr} className="settingSL" selected={lang} extraFunction={setNewLang}/>
             </div>
         </div>
     );
