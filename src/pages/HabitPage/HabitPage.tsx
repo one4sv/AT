@@ -48,7 +48,7 @@ const params={
 export default function Habit() {
     const { fetchCalendarHabit, fetchCalendarWLoading, calendarLoading } = useCalendar()
     const { loadHabitWLoading, habit, loadingHabit, habitSettings } = useTheHabit()
-    const { showHabitMenu, setShowHabitMenu, showJurnal, setShowJurnal, showSettings, setShowSettings, setDontHandle, dontHandleOther, setShowChatMenu, showChatMenu } = useSideMenu()
+    const { showHabitMenu, setShowHabitMenu, showJurnal, setShowJurnal, showSettings, setShowSettings, setDontHandle, dontHandleOther, setShowChatMenu, showChatMenu, setDontHandleOther } = useSideMenu()
     const { schedules } = useSchedule()
     const { habitId } = useParams<{ habitId: string }>();
     const { setTitle } = usePageTitle()
@@ -203,16 +203,13 @@ export default function Habit() {
                                         }}
                                         onTouchStart={(e) => {
                                             const container = mainRef.current;
-
                                             if (!container) return;
                                             if (container.scrollTop > 0) return;
-
                                             startY.current = e.touches[0].clientY;
                                             pulling.current = true;
                                         }}
                                         onTouchMove={(e) => {
                                             const container = mainRef.current;
-
                                             if (
                                                 !pulling.current ||
                                                 startY.current === null ||
@@ -235,6 +232,8 @@ export default function Habit() {
                                             }
                                         }}
                                         onTouchEnd={() => {
+                                            setDontHandle(false)
+                                            setDontHandleOther(false)
                                             startY.current = null;
                                             pulling.current = false;
                                         }}

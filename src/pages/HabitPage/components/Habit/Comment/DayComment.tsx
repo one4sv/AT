@@ -8,6 +8,8 @@ import "../../../scss/DayComment.scss";
 import CompletionProgress from "./ComplitionProgress";
 import CounterProgression from "./CounterProgression";
 import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
+import { isMobile } from "react-device-detect";
+import { useSideMenu } from "../../../../../components/hooks/SideMenuHook";
 
 interface DayCommentProps {
   id: string;
@@ -18,6 +20,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   const { sendDayComment, waitComAnswer } = useDone();
   const { dayComment, habit, habitCounter, showCounter, habitSettings } = useTheHabit();
   const { chosenDay } = useCalendar();
+  const { setDontHandle, setDontHandleOther } = useSideMenu()
 
   const [comment, setComment] = useState<string>("");
   const [syncing, setSyncing] = useState(true);
@@ -74,9 +77,29 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
     }
   };
 
+  const handleTextareaTouchStart = () => {
+    setDontHandle(true);
+    setDontHandleOther(true)
+  };
+
+  const handleTextareaTouchMove = () => {
+    setDontHandle(true);
+    setDontHandleOther(true)
+  };
+
+  const handleTextareaTouchEnd = () => {
+    setDontHandle(false);
+    setDontHandleOther(false)
+  };
+
   return (
     <div className="dayCommentDiv">
-      <div className="habitDayComment">
+      <div className="habitDayComment"
+        onTouchStart={handleTextareaTouchStart}
+        onTouchMove={handleTextareaTouchMove}
+        onTouchEnd={handleTextareaTouchEnd}
+        onTouchCancel={handleTextareaTouchEnd}
+      >
         <textarea
           placeholder="Комментарий"
           ref={textareaRef}
@@ -86,10 +109,13 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           value={comment}
           maxLength={200}
         />
-        <div className="hdcTAExtra">
-          <span>
-            <ArrowBendDownLeftIcon /> shift+enter
-          </span>
+        <div className="hdcTAExtra"
+        >
+          {!isMobile ? (
+            <span>
+              <ArrowBendDownLeftIcon /> shift+enter
+            </span>
+          ) : ""}
           <div>
             <span>{comment.length}/200</span>
             {waitComAnswer ? <LoaderSmall /> : (

@@ -11,12 +11,13 @@ import EmojiBar from "../../../components/ts/utils/EmojiBar"
 import { isMobile } from "react-device-detect"
 import { useDrop } from "../../../components/hooks/DropHook"
 import { useLocation } from "react-router-dom"
+import { useSideMenu } from "../../../components/hooks/SideMenuHook"
 
 export default function PostWrite() {
     const { habits } = useHabits()
     const { showNotification } = useNote()
     const { droppedFiles, setDroppedFiles } = useDrop()
-    
+    const { setDontHandle, setDontHandleOther } = useSideMenu()
     const location = useLocation();
 
     const [ text, setText ] = useState("")
@@ -105,10 +106,30 @@ export default function PostWrite() {
         }
     }, [droppedFiles, location.pathname, setDroppedFiles])
 
+    const handleTextareaTouchStart = () => {
+        setDontHandle(true);
+        setDontHandleOther(true)
+    };
+
+    const handleTextareaTouchMove = () => {
+        setDontHandle(true);
+        setDontHandleOther(true)
+    };
+
+    const handleTextareaTouchEnd = () => {
+        setDontHandle(false);
+        setDontHandleOther(false)
+    };
+
     return (
         <div className={`postWriteWrapper ${fs ? "PWTAWFS" : ""} ${isMobile ? "mobile" : ""}`} ref={postWriteRef} >
             <EmojiBar setText={setText} cn={"pwEmojiBar"} setShowEmojiBar={setShowEmojiBar} showEmojiBar={showEmojiBar} taRef={textAreaRef}/>
-            <div className="chatTAbg">
+            <div className="chatTAbg"
+                onTouchStart={handleTextareaTouchStart}
+                onTouchMove={handleTextareaTouchMove}
+                onTouchEnd={handleTextareaTouchEnd}
+                onTouchCancel={handleTextareaTouchEnd}
+            >
                 <div className={`postWriteBar ${files.length > 0 ? "pwBarwFiles" : ""}`}>
                     <SelectList arr={habitsArr} className="postWriteSL" selected={"none"} prop={setHabit}/>
                     {!fs && (

@@ -11,6 +11,7 @@ import type { User } from "../../../components/context/UserContext";
 import formatCreated from "./formatCreated";
 import AccPostMedia from "./AccPostMedia";
 import { useUser } from "../../../components/hooks/UserHook";
+import { useSideMenu } from "../../../components/hooks/SideMenuHook";
 
 interface Comments {
     id:number,
@@ -21,8 +22,10 @@ interface Comments {
     created_at:string
 }
 export default function AccPostComment({id}:{id:number}) {
-    const navigate = useNavigate()
     const { user } = useUser()
+    const { setDontHandle, setDontHandleOther } = useSideMenu()
+    const navigate = useNavigate()
+    
     const [ comment, setComment] = useState("");
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false)
     const [ emojiPos, setEmojiPos ] = useState<{top: number, left: number}>({top: 0, left: 0});
@@ -118,8 +121,6 @@ export default function AccPostComment({id}:{id:number}) {
         }
     };
 
-
-
     const getComms = async() => {
         setLoadingComms(true)
         try {
@@ -135,10 +136,30 @@ export default function AccPostComment({id}:{id:number}) {
         if (id) getComms()
     }, [id])
 
+    const handleTextareaTouchStart = () => {
+        setDontHandle(true);
+        setDontHandleOther(true)
+    };
+
+    const handleTextareaTouchMove = () => {
+        setDontHandle(true);
+        setDontHandleOther(true)
+    };
+
+    const handleTextareaTouchEnd = () => {
+        setDontHandle(false);
+        setDontHandleOther(false)
+    };
+
     return (
         <div className="AccPostComments">
             <EmojiBar setText={setComment} cn={"apEmojiBar"} setShowEmojiBar={setShowEmojiBar} showEmojiBar={showEmojiBar} taRef={taRef} emojiPos={emojiPos}/>
-            <div className="AccPostCommentWrite">
+            <div className="AccPostCommentWrite"
+                onTouchStart={handleTextareaTouchStart}
+                onTouchMove={handleTextareaTouchMove}
+                onTouchEnd={handleTextareaTouchEnd}
+                onTouchCancel={handleTextareaTouchEnd}
+            >
                 <div className="sendCommentTAButt">
                     <SendHorizontal className="sctabSvg" fill="currentColor" onClick={() => sendComment()}/>
                 </div>

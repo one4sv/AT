@@ -13,11 +13,21 @@ interface LayoutProps {
 export default function MobileLayout({ children }: LayoutProps) {
     const { decor } = useSettings();
     const location = useLocation();
-    const { setShowSideMenu, translateX, isDragging, setIsDragging, setTranslateX, dontHandle, setDontHandleOther } = useSideMenu();
+    const { setShowSideMenu, translateX, isDragging, setIsDragging, setTranslateX, dontHandle, setDontHandleOther, dontHandleOther, setDontHandle } = useSideMenu();
 
     const startX = useRef(0);
     const startTranslate = useRef(0);
     const handleTouchStart = (e: React.TouchEvent) => {
+        const target = e.target as HTMLElement;
+        console.log(target.tagName, isDragging, dontHandle, dontHandleOther)
+        if (
+            target.tagName === "INPUT" ||
+            target.tagName === "TEXTAREA"
+        ) {
+            setDontHandleOther(true);
+            setIsDragging(false)
+            setDontHandle(true)
+        }
         if (dontHandle) return
         startX.current = e.touches[0].clientX;
         startTranslate.current = translateX;
@@ -25,6 +35,7 @@ export default function MobileLayout({ children }: LayoutProps) {
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
+
         if (!isDragging || dontHandle) return;
 
         const clientX = e.touches[0].clientX;
@@ -75,6 +86,7 @@ export default function MobileLayout({ children }: LayoutProps) {
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
                 onTouchMove={handleTouchMove}
+                onTouchCancel={handleTouchEnd}
             >
                 {decor === "default" && <Background />}
                 {children}

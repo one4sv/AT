@@ -11,6 +11,7 @@ import { useMessages } from "../../../components/hooks/MessagesHook";
 import { MessBarBlock } from "../utils/MessBarBlock";
 import type { Media } from "../../../components/context/ChatContext";
 import { useSendMess } from "../../../components/hooks/SendMessHook";
+import { useSideMenu } from "../../../components/hooks/SideMenuHook";
 
 
 interface ChatTAProps {
@@ -27,6 +28,7 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, scrollToMessage, textA
     const { nick, id } = useParams()
     const { droppedFiles, setDroppedFiles } = useDrop()
     const { answer, editing, setEditing, redirect, setRedirect, showNames, setShowNames, setChosenMess } = useMessages()
+    const { setDontHandle, setDontHandleOther } = useSideMenu()
 
     const [ oldMess, setOldMess ] = useState<string>("") //сохранить текст до редактирования
     const [ files, setFiles ] = useState<File[]>([]) 
@@ -166,6 +168,20 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, scrollToMessage, textA
         return item.isOld === true;
     }
 
+    const handleTextareaTouchStart = () => {
+        setDontHandle(true);
+        setDontHandleOther(true)
+    };
+
+    const handleTextareaTouchMove = () => {
+        setDontHandle(true);
+        setDontHandleOther(true)
+    };
+
+    const handleTextareaTouchEnd = () => {
+        setDontHandle(false);
+        setDontHandleOther(false)
+    };
 
     return (
         <div className={`chatTAWrapper ${isMobile ? "mobile" : ""}`} ref={chatTARef}>
@@ -175,7 +191,12 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, scrollToMessage, textA
                 </div>
             )}
             <EmojiBar setText={setMess} setShowEmojiBar={setShowEmojiBar} taRef={textAreaRef} showEmojiBar={showEmojiBar} emojiRef={emojiButtRef}/>
-            <div className="chatTAbg">
+            <div className="chatTAbg"
+                onTouchStart={handleTextareaTouchStart}
+                onTouchMove={handleTextareaTouchMove}
+                onTouchEnd={handleTextareaTouchEnd}
+                onTouchCancel={handleTextareaTouchEnd}
+            >
                 <div className={`chatWriteBar ${files.length > 0 ? "chatBarwFiles" : ""}`}>
                     <div className="chatWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
                         <Paperclip className="chatSvg"/>

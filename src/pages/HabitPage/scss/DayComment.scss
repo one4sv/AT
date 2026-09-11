@@ -92,6 +92,10 @@
             }
         }
     }
+    @media (max-width:800px) {
+        justify-content: end;
+        align-items: center;
+    }
 }
 .saveCommentButton {
     width: 6vw;
@@ -115,7 +119,7 @@
     }
     @media (max-width: 800px) {
         padding: 0.75vh 1vw;
-        height: 3.6vh;
+        height: 4vh;
         width: 35vw;
         border-radius: 8px;
     }
