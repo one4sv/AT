@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .chatSearchWrapeer {
     flex: 1;
@@ -38,7 +38,7 @@
         }
     }
 
-    &.mobile {
+    @media (max-width:800px) {
         display: none;
     }
 }

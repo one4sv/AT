@@ -4,9 +4,11 @@ import { useSideMenu } from "../hooks/SideMenuHook";
 import { usePageTitle } from "../hooks/PageContextHook";
 import { isMobile } from "react-device-detect";
 import { useLocation, useParams } from "react-router";
+import { useSettings } from "../hooks/SettingsHook";
 
 export default function Header() {
     const { setTranslateX, setShowSideMenu } = useSideMenu();
+    const { layout } = useSettings()
     const { nick } = useParams()
     const { title } = usePageTitle()
     const location = useLocation()
@@ -15,7 +17,7 @@ export default function Header() {
     return (
         <>
             <div className="header">
-                {isMobile && (
+                {isMobile || layout === "hidden" && (
                 <div className="menuShowButt" onClick={() => {
                     setShowSideMenu(true);
                     setTranslateX(0);

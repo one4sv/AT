@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .dayCommentDiv {
     height: 40vh;
@@ -8,8 +8,8 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     @media (max-width: 800px) {
         min-height: 40vh;
         width: 95%;
@@ -82,7 +82,7 @@
         color: var(--borderHabit);
         display: flex;
         align-items: end;
-        gap: 2vw;
+        gap: 1vw;
         >.loaderSmall {
             width: 6vw;
             height: 3vh;

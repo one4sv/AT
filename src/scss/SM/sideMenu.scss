@@ -1,4 +1,4 @@
-@use "../global" as var;
+@use "../mixins" as var;
 
 .sideMenu {
     position: fixed;
@@ -8,8 +8,8 @@
     background-color: var(--mc);
     display: flex;
     flex-direction: column;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     z-index: 8;
     transition: transform 0.4s ease;
     will-change: transform;
@@ -319,7 +319,7 @@
     }
 
     &.active {
-        color: var(--tc);
+        color: var(--inner_text);
         background-color: var(--accent_hov);
     }
     >span {

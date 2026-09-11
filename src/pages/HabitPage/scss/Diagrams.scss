@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .statsDivStats {
     width: 100%;
@@ -8,8 +8,8 @@
     min-height: 52vh;
     overflow: hidden;
     background-color: var(--mc);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     @media (max-width: 800px) {
         margin-top: 1vh;
         min-height: 90vh;

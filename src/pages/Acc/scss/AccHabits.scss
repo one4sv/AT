@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .accHabits {
     display: flex;
@@ -18,9 +18,9 @@
     margin: 0 auto;
     box-sizing: border-box;
     gap: 0.2vh;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    &.mobile {
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    @media (max-width:800px) {
         width: 90%;
     }
 }

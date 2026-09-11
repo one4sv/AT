@@ -44,12 +44,12 @@
     padding: 0.7vh 1.8vw;
     flex-wrap: nowrap;
     white-space: nowrap;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     > div {
         margin-left: 3px;
     }
-    &.mobile {
+    @media (max-width:800px) {
         width: fit-content;
         margin: 0.8vh auto;
         padding: 0.5vh 3vw;
@@ -113,8 +113,8 @@
     padding: 0.3vh 0.8vw;
     border-radius: 6px;
     opacity: 0.95;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     @media (max-width:800px) {
         padding: 0.5vh 3vw;
     }
@@ -156,7 +156,7 @@
             border-left: 3px solid var(--inner_text);
         }
     }
-    &.mobile {
+    @media (max-width:800px) {
         max-width: 70vw;
         padding: 0.5vh 2vw;
     }
@@ -197,7 +197,7 @@
     > a {
         text-decoration: underline;
     }
-    &.mobile {
+    @media (max-width:800px) {
         max-width: 100%;
     }
 }
@@ -319,7 +319,7 @@
     > a {
         text-decoration: underline;
     }
-    &.mobile {
+    @media (max-width:800px) {
         max-width: 100%;
     }
 }

@@ -25,10 +25,9 @@ export default function SideMenu() {
     const { loadingHabits, habits, newOrderHabits } = useHabits()
     const { refreshSchedules } = useSchedule()
     const { user } = useUser()
-    const { showArchived } = useSettings()
+    const { showArchived, layout } = useSettings()
     const { setBlackout } = useBlackout()
     const { setShowSideMenu, setActiveTab, activeTab, showSideMenu, setIsDragging, isDragging, translateX, setTranslateX } = useSideMenu()
-
 
     const [filterType, setFilterType] = useState<"messages" | "habits">("messages")
     const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -267,6 +266,27 @@ export default function SideMenu() {
             setTranslateX(0);
         }
     };
+    
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+            if (layout !== "hidden" || !showSideMenu) return;
+
+            if (
+                sideMenuRef.current &&
+                !sideMenuRef.current.contains(event.target as Node)
+            ) {
+                closeMenu();
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("touchstart", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("touchstart", handleClickOutside);
+        };
+    }, [layout, showSideMenu, translateX]);
 
     if (!isAuthenticated && !loadingUser) return (
         <SideMenuUnAunthificated 
@@ -286,7 +306,7 @@ export default function SideMenu() {
             onTouchMove={isMobile ? handleTouchMove : undefined}
             onTouchEnd={isMobile ? handleTouchEnd : undefined} 
             style={{
-                transform: isMobile ? `translateX(${translateX}%)` : "none",
+                transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none",
                 transition: isDragging ? "none" : "transform 0.4s ease"
             }}
         >

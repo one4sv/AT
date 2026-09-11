@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 @use "./AccHabits.scss";
 @use "./AccPosts.scss";
 @use "./AccMedia.scss";
@@ -40,8 +40,8 @@
     position: relative;
     min-height: 0;
     background-color: var(--mc);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     padding: 0.5vh 0.5vw;
     overflow: hidden;
     max-height: 500px;
@@ -176,7 +176,7 @@
     >div {
         flex: 1;
     }
-    &.mobile {
+    @media (max-width:800px) {
         flex-direction: column;
     }
 }
@@ -189,8 +189,8 @@
     overflow: hidden;
     position: sticky;
     background-color: var(--mc);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     min-height: 0;
     @media (max-width: 800px) {
         margin: 1vh 2vw;

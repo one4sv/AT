@@ -132,14 +132,16 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, scrollToMessage, textA
     }, [chatLoading, droppedFiles, location.pathname, nick, setDroppedFiles])
 
     if (chatWith && (chatWith.am_i_blocked || chatWith.is_blocked)) return (
-        <div className="chatIsBlocked">
-            {showGoDown && (
-                <div className="goDown" onClick={handleGoDown}>
-                    <CaretDoubleDown />
-                </div>
-            )}
-            <Prohibit/>
-            {chatWith.am_i_blocked ? <span>Данный пользователь заблокировал вас</span> : <span>Вы заблокировали данного пользователя</span>}
+        <div className={`chatTAWrapper ${isMobile ? "mobile" : ""}`} ref={chatTARef}>
+            <div className="chatIsBlocked">
+                {showGoDown && (
+                    <div className="goDown" onClick={handleGoDown}>
+                        <CaretDoubleDown />
+                    </div>
+                )}
+                <Prohibit/>
+                {chatWith.am_i_blocked ? <span>Данный пользователь заблокировал вас</span> : <span>Вы заблокировали данного пользователя</span>}
+            </div>
         </div>
     )
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {

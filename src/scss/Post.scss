@@ -1,4 +1,4 @@
-@use "./global" as var;
+@use "./mixins" as var;
 
 .PostDiv {
     display: flex;
@@ -11,8 +11,8 @@
     padding: 0.5vh 0.5vw;
     max-height: 50vh;
     position: relative;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     @media (max-width: 800px) {
         padding: 0.2vh 1.5vw;
     }

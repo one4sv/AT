@@ -11,6 +11,8 @@ export type UpdateSettingsContextType = {
     setNewTheme: (val:string)=> void;
     setNewAccent: (val:string)=> void;
     setNewGrad: (val:string)=> void;
+    setNewBlur: (val:number)=> void;
+    setNewLayout: (val:string)=> void;
     setNewBg: (val:string)=> void;
     setNewLang:(val:string) => void;
     setNewMessdb: (val:string)=> void;
@@ -35,10 +37,11 @@ type UpdateQueueItem = {
 const UpdateSettingsContext = createContext<UpdateSettingsContextType | null>(null);
 
 export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchSettings, orderHabits, showArchived, showArchivedInAcc, setTheme, setAccent, setBg, setDecor, setMessdb, setEmote, setNote, setMessNote, setHabitsNote, setGrad, setLang } = useSettings();
+    const { refetchSettings, orderHabits, showArchived, showArchivedInAcc, setTheme, setAccent, setBg, 
+        setDecor, setMessdb, setEmote, setNote, setMessNote, setHabitsNote, setGrad, setLang, setBlur, setLayout 
+    } = useSettings();
     const { refetchUser, user } = useUser();
     const { showNotification } = useNote();
-    const API_URL = import.meta.env.VITE_API_URL
 
     const [ updateQueue, setUpdateQueue ] = useState<UpdateQueueItem[]>([]);
     const [ isUpdating, setIsUpdating ] = useState<string[]>([]);
@@ -82,7 +85,15 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
     const setNewGrad = useCallback((val: string) => {
         setGrad(val);
-    }, [setGrad]);
+    }, [setGrad]);    
+
+    const setNewLayout = useCallback((val: string) => {
+        setLayout(val);
+    }, [setLayout]);    
+    
+    const setNewBlur = useCallback((val: number) => {
+        setBlur(val);
+    }, [setBlur]);
 
     const setNewBg = useCallback((val: string) => {
         setBg(val);
@@ -111,6 +122,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
     const setNewHabitsNote = useCallback((val: boolean) => {
         setHabitsNote(val);
     }, [setHabitsNote]);    
+
     const setNewLang = useCallback((val: string) => {
         setLang(val);
     }, [setLang]);
@@ -189,7 +201,7 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
             setIsUpdating((prev) => prev.filter((item) => item !== updatingKey(setting)));
             setIsProcessing(false);
         }
-    }, [isProcessing, updateQueue, orderHabits, showArchived, showArchivedInAcc, user.username, user.nick, user.mail, API_URL, refetchSettings, refetchUser, showNotification]);
+    }, [isProcessing, updateQueue, orderHabits, showArchived, showArchivedInAcc, user.username, user.nick, user.mail, refetchSettings, refetchUser, showNotification]);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -200,8 +212,8 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
 
     return (
         <UpdateSettingsContext.Provider
-            value={{ setNewOrder, isUpdating, setNewTheme, setNewPrivateShow, setNewAccent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote, 
-                setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart, setNewEmote, setNewMessdb, setNewHabitsNote, setNewGrad, setNewLang }}
+            value={{ setNewOrder, isUpdating, setNewTheme, setNewPrivateShow, setNewAccent, setNewBg, setBgUrl, setNewDecor, setNewMessNote, setNewNote, setNewLayout,
+                setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart, setNewEmote, setNewMessdb, setNewHabitsNote, setNewGrad, setNewLang, setNewBlur }}
         >
             {children}
         </UpdateSettingsContext.Provider>

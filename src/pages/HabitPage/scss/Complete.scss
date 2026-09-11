@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .completeDiv {
     display: flex;
@@ -9,8 +9,8 @@
     height: 40vh;
     background-color: var(--mc);
     border-radius: 12px;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     @media (max-width:800px) {
         border-radius: 12px 12px 0 0;
         flex: auto;

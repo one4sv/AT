@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useSettings } from "./SettingsHook"; // путь твой
 
 export default function ThemeHandler() {
-  const { theme, accent, decor } = useSettings();
+  const { theme, accent, decor, blur } = useSettings();
 
   function getSystemTheme(): "light" | "dark" {
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -14,6 +14,10 @@ export default function ThemeHandler() {
     document.documentElement.setAttribute("data-accent", accent);
     document.documentElement.setAttribute("data-decor", decor);
 
+    document.documentElement.style.setProperty(
+      "--blur",
+      `${blur}px`
+  );
     // custom: если нужно — брать из настроек/localStorage и выставлять инлайн-переменные
     if (accent === "custom") {
       try {
@@ -45,7 +49,7 @@ export default function ThemeHandler() {
     } else {
       document.documentElement.setAttribute("data-theme", theme);
     }
-  }, [accent, theme, decor]);
+  }, [accent, theme, decor, blur]);
 
   return null;
 }

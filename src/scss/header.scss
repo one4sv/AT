@@ -1,4 +1,4 @@
-@use "./global.scss" as var;
+@use "./mixins.scss" as var;
 
 .header {
     position: sticky;
@@ -13,8 +13,8 @@
     border-radius: 0 0 8px 8px;
     padding: 0.5vw;
     align-items: center;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     @media (max-width: 800px) {
         height: 6vh;
     }
@@ -24,11 +24,11 @@
     left: 0;
     height: 100%;
     display: flex;
-    padding: 0 1vw 0 2vw;
+    padding: 0 0.5vw 0 0.5vw;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    >svg {
+    > svg {
         height: 3vh;
         width: auto;
         color: var(--borderHabit);
@@ -36,8 +36,17 @@
             height: 4vh;
         }
     }
-    &:active >svg {
+    &:active > svg {
         color: var(--borderWh);
+    }
+    &:hover {
+        background-color: var(--menuButtHover);
+        > svg {
+            color: var(--tc);
+        }
+    }
+    @media (max-width:800px) {
+        padding: 0 1vw 0 2vw;
     }
 }
 .titleHeader {

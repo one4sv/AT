@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .InfoDiv {
     width: 100%;
@@ -46,8 +46,8 @@
     flex-direction: column;
     cursor: pointer;
     gap: 1vh;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     > span {
         font-size: 18px;
     }
@@ -117,8 +117,8 @@
     padding: 1vh 0.5vw;
     cursor: pointer;
     color: var(--borderWh);
-    backdrop-filter: blur(6px); 
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(var(--blur)); 
+    -webkit-backdrop-filter: blur(var(--blur));
     font-size: clamp(14px, 3vw, 20px);
     &:hover {
         color: var(--tc);
@@ -139,8 +139,8 @@
     margin-top: 1vh;
     line-height: 1.5;
     overflow-x: hidden;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     height: fit-content;
     .accent {
         color: var(--accent_text);

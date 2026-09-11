@@ -6,13 +6,12 @@ import Loader from "../ts/Loader";
 import { useSettings } from "../hooks/SettingsHook";
 
 export default function ResponsiveLayout() {
-    const { settingsLoaded } = useSettings();
-
+    const { settingsLoaded, layout } = useSettings();
     if (!settingsLoaded) {
         return <Loader />;
     }
 
-    if (isMobile) {
+    if (isMobile || layout === "hidden") {
         return (
             <MobileLayout>
                 <Outlet />

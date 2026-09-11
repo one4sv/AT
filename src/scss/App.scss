@@ -1,56 +1,21 @@
-@use "./global.scss" as var;
-@use "./datepicker.scss";
+@use "./variables" as vars;
+@use "./mixins";
+@use "./reset";
+@use "./animations";
+@use "./datepicker";
+@use "./global";
 
-html, body {
-  height: 100%;
-  width: 100%;
-  font-family: var(--font);
-  scrollbar-width: thin;
-  scrollbar-color: var(--menuButtHover) transparent;
-  overflow: hidden;
+:root {
+  --accent: #00ad09;
+  --accent_text:#00ad09;
+  --accent_op: #21d42a2a;
+  --accent_hov: #21d42a3a;
+  --darker_accent: #18ca21;
+  --inner_text:#fff;
+  --grad: #00ad09;
 }
-body {
-  background-color: var(--bgc);
-  transition: background-color 0s ease !important;
-  margin: 0;
-  color: var(--tc);
-}
-#root {
-  width: 100%;
-  height: 100dvh;
-  display: flex;
-}
-.mobile-layout {
-  width: 100%;
-  height: 100%;
-}
-.mobile-layout .page-content {
-  width: 100%;
-  height: 100%;
-}
-.app-layout .page-content {
-  width: 80.5vw;
-  position: relative;
-  left: 19.5vw;
-  height: 100%;
-  > * {
-    z-index: 1;
-  }
-}
-.background {
-  inset: 0;
-  position: absolute;
-  z-index: 0;
-  overflow: hidden;
-  color: var(--accent);
-  >div {
-    position: absolute;
-  }
-}
-.bgImg {
-  background-repeat: no-repeat;
-  background-size: cover;
-  @media (max-width: 800px) {
-    background-position: center center;
-  }
-}
+
+@include vars.generate-theme-vars();
+@include vars.generate-accent-vars();
+@include vars.generate-grad-vars();
+@include vars.generate-decor-vars();

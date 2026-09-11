@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .chatUser {
     border-radius: 0 0 8px 8px;
@@ -11,8 +11,8 @@
     overflow-y: visible;
     border-bottom: 1px solid var(--mc);
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     &.br {
         border-radius: 0 0 0 8px;
         @media (max-width: 800px) {
@@ -33,7 +33,7 @@
         background-color: var(--menuButtHover);
     }
     
-    &.mobile {
+    @media (max-width:800px) {
         width: 100%;
     }
 }

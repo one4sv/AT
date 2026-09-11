@@ -26,6 +26,9 @@ export interface CalendarContextType {
     fetchCalendarUser: () => void;
     fetchCalendarWLoading: () => void;
     calendarLoading: boolean
+    /**
+     * YYYY-MM-DD
+     */
     chosenDay: string;
     setChosenDay: React.Dispatch<React.SetStateAction<string>>
     calendarRef: RefObject<HTMLDivElement | null>

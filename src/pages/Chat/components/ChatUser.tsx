@@ -14,6 +14,7 @@ import PinnedMessages from "./PinnedMessages";
 import UserInChatUserList from "./UserInChatUserList";
 import { useSideMenu } from "../../../components/hooks/SideMenuHook";
 import { useContacts } from "../../../components/hooks/ContactsHook";
+import { useSettings } from "../../../components/hooks/SettingsHook";
 
 interface ChatUserProps {
     search: string;
@@ -51,6 +52,8 @@ export default function ChatUser({
     const { setChosenMess, chosenMess, setIsChose, isChose, setRedirect } = useMessages()
     const { setBlackout } = useBlackout()
     const { setShowSideMenu, setTranslateX } = useSideMenu()
+    const { layout } = useSettings()
+
     const navigate = useNavigate();
     
     const [ isSearchOpen, setIsSearchOpen ] = useState(false);
@@ -117,7 +120,7 @@ export default function ChatUser({
 
     return (
         <div className="chatUser" ref={chatUserRef}>
-            {isMobile && (
+            {isMobile || layout === "hidden" && (
                 <div className="menuShowButt" onClick={() => {
                     setShowSideMenu(true)
                     setTranslateX(0)

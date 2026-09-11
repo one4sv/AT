@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .statsDiv {
     position: relative;
@@ -59,8 +59,8 @@
     flex: 1 1 1;
     display: flex;
     flex-direction: column;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     > .completeDiv {
         background-color: var(--tr);
         height: fit-content;
@@ -93,10 +93,10 @@
     overflow: hidden;
     transition: right 0.3s ease;
     background-color: var(--mc);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 
-    &.mobile {
+    @media (max-width:800px) {
         position: fixed;
         width: 100%;
         height: 100%;

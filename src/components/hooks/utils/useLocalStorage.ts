@@ -6,9 +6,6 @@ type SetValue<T> = React.Dispatch<React.SetStateAction<T>>;
 const GLOBAL_KEYS = [
     "settings_theme",
     "settings_lang",
-    // "settings_accent",
-    // "settings_grad",
-    // "settings_decor"
 ];
 
 export default function useLocalStorage<T>(
@@ -45,7 +42,7 @@ export default function useLocalStorage<T>(
         } catch {
             setValue(defaultValue);
         }
-    }, [storageKey]);
+    }, [defaultValue, storageKey]);
 
     useEffect(() => {
         try {

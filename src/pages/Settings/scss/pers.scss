@@ -1,8 +1,8 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .accentSpan {
     padding-inline-start: 0.5vw;
-    color: var(--accent_text)
+    color: var(--inner_text)
 }
 .previewAccent {
     margin: 0.5vh 0 0;
@@ -63,6 +63,9 @@
 }
 .colorTitle {
     color: var(--tc);
+    @media (max-width:800px) {
+        padding-left: 2vw;
+    }
 }
 .accentSelectorWrapper {
     height: 100%;
@@ -118,6 +121,8 @@
     align-items: center;
     gap: 0.5vh;
     cursor: pointer;
+    width: 8vw;
+    height: 12vh;
     >span {
         color: var(--borderWh);
     }
@@ -141,6 +146,12 @@
     justify-content: center;
     border-radius: 12px;
     overflow: hidden;
+    background-color: var(--bgc);
+    overflow: hidden;
+    position: relative;
+    > div > svg {
+        color: var(--accent);
+    }
     &.choosen {
         border: 1px solid var(--accent) !important;
     }

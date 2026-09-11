@@ -1,4 +1,4 @@
-@use "./global.scss" as var;
+@use "./mixins.scss" as var;
 
 .joinDiv {
     width: 60%;
@@ -12,7 +12,7 @@
         pointer-events: none;
     }
     
-    &.mobile {
+    @media (max-width:800px) {
         width: 90%;
         height: 100%;
     }

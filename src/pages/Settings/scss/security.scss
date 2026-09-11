@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .safetyButt {
     @include var.longButt(fit-content, fit-content, 0vh, 1vw, var(--accent), var(--tc), var(--bgc), var(--darker_accent));

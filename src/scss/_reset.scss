@@ -4,6 +4,7 @@
   font-family: var(--font);
 }
 input[type=number] {
+  appearance: textfield;
   -moz-appearance: textfield; /* Firefox */
 }
 
@@ -30,4 +31,11 @@ a {
         background 0.3s ease,
         color 0.3s ease,
         border-color 0.3s ease;
+}
+button {
+    cursor: pointer;
+}
+a {
+    color: var(--tc);
+    text-decoration: none;
 }

@@ -1,4 +1,4 @@
-@use "../global" as var;
+@use "../mixins" as var;
 
 .contactsUser {
     cursor: pointer;
@@ -137,7 +137,7 @@
             flex-shrink: 0;
             white-space: nowrap;
         }
-        &.mobile {
+        @media (max-width:800px) {
             >.lmc {
                 max-width: 60vw;
             }

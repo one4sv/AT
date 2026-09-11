@@ -3,34 +3,12 @@ import { useUser } from "../../../../components/hooks/UserHook";
 import AccInfo from "../../../Acc/components/AccInfo";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { api } from "../../../../components/ts/api";
-import { isAxiosError } from "axios";
-import { useNote } from "../../../../components/hooks/NoteHook";
-import { LogOutIcon } from "lucide-react";
 
 export default function AccSettingsTab() {
     const { t } = useTranslation("settings");
-    const { user, refetchUser } = useUser();
-    const { showNotification } = useNote()
+    const { user } = useUser();
     const [openPhone, setOpenPhone] = useState(false);
     const [openEmail, setOpenEmail] = useState(false);
-
-    const logOut = async () => {
-        try {
-            const res = await api.get(`logout`)
-            if (res.data.success) {
-                refetchUser()
-            } else {
-                showNotification("error", t("sideMenu.logOutError"))
-            }
-        } catch (error: unknown) {
-            if (isAxiosError(error)) {
-                showNotification("error", error.response?.data?.messages || t("sideMenu.logOutError"))
-            } else {
-                showNotification("error", t("sideMenu.logOutErrorGeneric"))
-            }
-        }
-    }
     
     return (
         <div className="settingTab">
@@ -124,9 +102,6 @@ export default function AccSettingsTab() {
                     {t("acc.header")}
                 </div>
                 <div className="settingInnerList">
-                    <div className="settingInnerButt logout" onClick={() => logOut()}>
-                        <LogOutIcon/> Выйти из аккаунта
-                    </div>
                     <div className="settingInnerButt delete">
                         <TrashIcon size={20}/> {t("acc.deleteAccount")}
                     </div>

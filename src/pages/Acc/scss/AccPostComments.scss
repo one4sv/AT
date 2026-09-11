@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .AccPostComments {
     width: 100%;
@@ -10,12 +10,17 @@
     background-color: var(--mc);
     border-radius: 6px;
     position: relative;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 .AccPostCommentTA {
     @include var.TA(100%, 6vh, var(--tr), var(--tc));
     font-size: 14px;
     border-radius: 6px;
     padding-inline: 0.3vw;
+    &::placeholder {
+        color: var(--borderHabit);
+    }
 }
 .sendCommentTAButt {
     position: absolute;
@@ -68,6 +73,8 @@
     display: flex;
     flex-direction: column;
     gap: 0.2vh;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 .commentInfo {
     display: flex;

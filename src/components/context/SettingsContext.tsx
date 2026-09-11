@@ -16,7 +16,11 @@ export interface SettingsContextType {
     accent: string;
     setAccent: React.Dispatch<React.SetStateAction<string>>;    
     grad: string;
-    setGrad: React.Dispatch<React.SetStateAction<string>>;
+    setGrad: React.Dispatch<React.SetStateAction<string>>;    
+    blur: number;
+    setBlur: React.Dispatch<React.SetStateAction<number>>;    
+    layout: string;
+    setLayout: React.Dispatch<React.SetStateAction<string>>;
     bg: string;
     setBg: React.Dispatch<React.SetStateAction<string>>;
     decor: string;
@@ -75,6 +79,8 @@ const LOCAL_KEYS = {
     theme: "settings_theme",
     accent: "settings_accent",
     grad: "settings_grad",
+    blur: "settings_blur",
+    layout: "settings_layout",
     bg: "settings_bg",
     decor: "settings_decor",
     emote:"settings_emote",
@@ -87,11 +93,12 @@ const LOCAL_KEYS = {
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const { user, initialLoading } = useUser();
-    const API_URL = import.meta.env.VITE_API_URL;
 
     const [ theme, setTheme ] = useLocalStorage(LOCAL_KEYS.theme, "system");
     const [ accent, setAccent ] = useLocalStorage(LOCAL_KEYS.accent, "poison");
     const [ grad, setGrad ] = useLocalStorage(LOCAL_KEYS.grad, "meadow");
+    const [ blur, setBlur ] = useLocalStorage(LOCAL_KEYS.blur, 6);
+    const [ layout, setLayout ] = useLocalStorage(LOCAL_KEYS.layout, "always");
     const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "default");
     const [ decor, setDecor ] = useLocalStorage(LOCAL_KEYS.decor, "default");
     const [ lang, setLang ] = useLocalStorage(LOCAL_KEYS.lang, "ru");
@@ -151,7 +158,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             if (axios.isAxiosError(err) && err.response?.status === 401) return;
             console.error("Ошибка загрузки настроек:", err);
         }
-    }, [ API_URL ]);
+    }, [setMessNote, setNote]);
 
     useEffect(() => {
         if (initialLoading) return;
@@ -185,6 +192,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             theme, setTheme,
             accent, setAccent,
             grad, setGrad,
+            blur, setBlur,
+            layout, setLayout,
             bg, setBg,
             decor, setDecor,
             bgUrl, lang, setLang,

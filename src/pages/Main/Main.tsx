@@ -26,7 +26,7 @@ export default function Feed() {
     }, [isAuthenticated, loadingUser, navigate, user]);
 
     useEffect(() => {
-        setTitle("Посты")
+        setTitle("Achieve Together")
     }, [setTitle])
 
     const postFor = async () => {

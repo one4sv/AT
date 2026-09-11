@@ -1,4 +1,3 @@
-// цвета по умолчанию (оставляем как запасные значения для сборки)
 $bgc: #1d1d1d;
 $tc: white;
 $borderWh: #a1a1a1;
@@ -16,7 +15,6 @@ $themes: (
         bgc: #e2e2e2,
         tc: #111111,
         borderWhLight: #818181,
-        menuButtHover: #d3d3d3,
         notValid: #8a0000,
         valid:#14b314,
         mess: #cacaca,
@@ -36,7 +34,6 @@ $themes: (
         bgc: #131313,
         tc: #ffffff,
         borderWhLight: #d4d4d4,
-        menuButtHover: #2c2c2c,
         notValid: #f44336,
         valid:#14b314,
         mess: #272727,
@@ -153,16 +150,16 @@ $accents: (
         light: (
             accent: #fff,
             accent_text: #000,
-            accent_op: #fff,
-            accent_hov: #fff,
+            accent_op: #ffffff69,
+            accent_hov: #ffffff81,
             darker_accent: #fff,
             inner_text:#000
         ),
         dark: (
             accent: #fff,
             accent_text: #fff,
-            accent_op: #fff,
-            accent_hov: #fff,
+            accent_op: #ffffff69,
+            accent_hov: #ffffff81,
             darker_accent: #fff,
             inner_text:#000
         )
@@ -171,16 +168,16 @@ $accents: (
         light: (
             accent: #000,
             accent_text: #000,
-            accent_op: #000,
-            accent_hov: #000,
+            accent_op: #00000069,
+            accent_hov: #00000081,
             darker_accent: #000,
             inner_text:#fff
         ),
         dark: (
             accent: #000,
             accent_text: #fff,
-            accent_op: #000,
-            accent_hov: #000,
+            accent_op: #00000069,
+            accent_hov: #00000081,
             darker_accent: #000,
             inner_text:#fff
         )
@@ -258,6 +255,7 @@ $decors: (
             backdropTA:2px,
             borderWh: #666666,
             borderHabit: #777777,
+            menuButtHover: #d3d3d3,
         ),
         dark: (
             mc: #181818,
@@ -271,11 +269,12 @@ $decors: (
             backdropTA:2px,
             borderWh: #a1a1a1,
             borderHabit: #646464,
+            menuButtHover: #2c2c2c,
         )
     ),
     glass: (
         light: (
-            mc: #ffffff99,
+            mc: #ffffff57,
             interact:#ffffff99,
             hbg: #ffffff00,
             hbgh: #ffffff00,
@@ -286,6 +285,7 @@ $decors: (
             backdropTA:12px,
             borderWh: #3a3a3a,
             borderHabit: #545454,
+            menuButtHover: #d3d3d3bd,
         ),
         dark: (
             mc: #22222257,
@@ -299,6 +299,7 @@ $decors: (
             backdropTA:12px,
             borderWh: #e7e7e7,
             borderHabit: #bdbdbd,
+            menuButtHover: #2c2c2c8c,
         )
     )
 );
@@ -348,19 +349,4 @@ $decors: (
   }
 }
 
-/* генерация */
-@include generate-theme-vars();
-@include generate-accent-vars();
-@include generate-grad-vars();
-@include generate-decor-vars();
-
 /* fallback (ВАЖНО) */
-:root {
-    --accent: #00ad09;
-    --accent_text:#00ad09;
-    --accent_op: #21d42a2a;
-    --accent_hov: #21d42a3a;
-    --darker_accent: #18ca21;
-    --inner_text:#fff;
-    --grad: #00ad09;
-}

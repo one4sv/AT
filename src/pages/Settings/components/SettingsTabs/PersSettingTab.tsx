@@ -1,20 +1,26 @@
 import { useRef } from "react";
 import { MoonStarsIcon, PlusCircle, SunIcon } from "@phosphor-icons/react";
-import defaultBg from "../../../../assets/pics/defaultBg.png";
-import monoBg from "../../../../assets/pics/monoBg.png";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import RadioGroup from "../../../../components/ts/RadioGroup";
 import PreviewAccent from "../PreviewAccent.tsx";
 import { useTranslation } from "react-i18next";
+import { useBackIconsPattern } from "../../../../components/hooks/utils/useBackIconsPattern.tsx";
+import SeekBar from "../SeekBar.tsx";
+import { isMobile } from "react-device-detect";
 
 export default function PersSettingTab() {
     const { t } = useTranslation("settings");
     const { setBlackout } = useBlackout();
-    const { isDark, accent, bg, bgUrl, decor, grad } = useSettings();
-    const { setNewTheme, setNewAccent, setNewBg, setNewDecor, setNewGrad } = useUpSettings();
-
+    const { isDark, accent, bg, bgUrl, decor, grad, blur, layout } = useSettings();
+    const { setNewTheme, setNewAccent, setNewBg, setNewDecor, setNewGrad, setNewBlur, setNewLayout } = useUpSettings();
+    const backIconsPattern = useBackIconsPattern({
+        width: window.innerWidth * 0.08,
+        height: window.innerHeight * 0.08,
+        minSize: 40,
+        maxSize: 80,
+    });
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const themeArr = [
@@ -25,6 +31,10 @@ export default function PersSettingTab() {
     const decorArr = [
         { label: t("personalization.default"), value: "default" },
         { label: t("personalization.glass"), value: "glass" },
+    ];    
+    const layoutArr = [
+        { label: "Всегда", value: "always" },
+        { label: "По нажатию кнопки", value: "hidden" },
     ];
 
     const accentArr = [
@@ -45,24 +55,18 @@ export default function PersSettingTab() {
         { value: "mono", dark: "#fff", light: "#fff" },
         { value: "void", dark: "#000", light: "#000" },
     ];
-
-    const bgArr = [
-        { label: t("personalization.contourShapes"), value: "default", pick: defaultBg },
-        { label: t("personalization.solidColor"), value: "color", pick: monoBg },
-    ];
-
+    console.log(blur)
     return (
         <div className="settingTab">
             <div className="settingInnerDiv">
-                <div className="settingHeader">
-                    {t("personalization.appearance")}
-                </div>
                 <div className="settingInnerWrapper">
-                    <div className="settingSpan">{t("personalization.theme")}</div>
+                    <div className="settingHeader">{t("personalization.theme")}</div>
                     <RadioGroup list={themeArr} val={isDark ? "dark" : "light"} newVal={setNewTheme} />
                 </div>
+            </div>
+            <div className="settingInnerDiv">
                 <div className="settingInnerWrapper">
-                    <div className="settingSpan">{t("personalization.accentColors")}</div>
+                    <div className="settingHeader">{t("personalization.accentColors")}</div>
                     <PreviewAccent />
                     <div className="accentSelector">
                         <span className="colorTitle">{t("personalization.mainColor")}</span>
@@ -105,12 +109,24 @@ export default function PersSettingTab() {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div className="settingInnerDiv">
                 <div className="settingInnerWrapper">
-                    <div className="settingSpan">{t("personalization.decor")}</div>
+                    <div className="settingHeader">{t("personalization.decor")}</div>
                     <RadioGroup list={decorArr} val={decor} newVal={setNewDecor} />
                 </div>
+                {decor === "glass" ? (
+                    <div className="settingInnerWrapper">
+                        <div className="settingSpan">
+                            Степень размытия
+                        </div>
+                        <SeekBar min={2} max={36} value={blur} unit="px" step={1} onChange={setNewBlur} />
+                    </div>
+                ) : ""}
+            </div>
+            <div className="settingInnerDiv">
                 <div className="settingInnerWrapper">
-                    <div className="settingSpan">{t("personalization.background")}</div>
+                    <div className="settingHeader">{t("personalization.background")}</div>
                     <div className="bgPicker">
                         <div className="bgPick">
                             <div className="bgCustom bgMini" onClick={() => fileInputRef.current?.click()}>
@@ -128,12 +144,16 @@ export default function PersSettingTab() {
                             </div>
                             <span>{t("personalization.addCustom")}</span>
                         </div>
-                        {bgArr.map((b, i) => (
-                            <div className="bgPick" key={i} onClick={() => setNewBg(b.value)}>
-                                <img src={b.pick} className={`bgImg bgMini ${b.value === bg ? "choosen" : ""}`} />
-                                <span className={b.value === bg ? "bgSpanChoosen" : ""}>{b.label}</span>
+                        <div className="bgPick" onClick={() => setNewBg("default")}>
+                            <div className={`bgImg bgMini ${bg === "default" ? "choosen" : ""}`}>
+                                {backIconsPattern}
                             </div>
-                        ))}
+                            <span className={bg === "default" ? "bgSpanChoosen" : ""}>{t("personalization.contourShapes")}</span>
+                        </div>                        
+                        <div className="bgPick" onClick={() => setNewBg("color")}>
+                            <div className={`bgImg bgMini ${bg === "color" ? "choosen" : ""}`} />
+                            <span className={bg === "color" ? "bgSpanChoosen" : ""}>{t("personalization.solidColor")}</span>
+                        </div>
                         {bgUrl ? (
                             <div className="bgPick" onClick={() => setNewBg("custom")}>
                                 <img src={bgUrl} className={`bgImg bgMini ${bg === "custom" ? "choosen" : ""}`} />
@@ -143,6 +163,17 @@ export default function PersSettingTab() {
                     </div>
                 </div>
             </div>
+            {!isMobile ? (
+                <div className="settingInnerDiv">
+                    <div className="settingInnerWrapper">
+                        <div className="settingHeader">
+                            Боковое меню
+                        </div>
+                        <RadioGroup list={layoutArr} val={layout} newVal={setNewLayout} />
+                    </div>
+                </div>
+            ) : ""}
+            
         </div>
     );
 }

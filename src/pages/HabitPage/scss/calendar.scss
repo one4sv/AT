@@ -1,4 +1,4 @@
-@use "../../../scss/global" as var;
+@use "../../../scss/mixins" as var;
 
 .calendarDiv {
     width: 19.5vw;
@@ -17,8 +17,8 @@
     padding: 5px;
     min-height: 40vh;
     height: fit-content;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
 }
 
 @media (max-width: 800px) {
