@@ -57,7 +57,7 @@ export default function GeneralTab() {
                     <div className="settingSpan">
                         {t("general.fontSize")}
                     </div>
-                    <SeekBar min={12} max={22} value={fontSize} unit="px" step={1} onChange={setFontSize} />
+                    <SeekBar min={12} max={22} value={fontSize} unit="px" step={1} onChange={setFontSize} disabled={false}/>
                 </div>
                 <div className="settingInnerWrapper" onClick={() => showDevNote()}>
                     <div className="settingSpan">
