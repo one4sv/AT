@@ -1,0 +1,45 @@
+@use "./mixins" as var;
+
+.selector {
+    display: flex;
+    height: 4vh;
+    width: 100%;
+    position: relative;
+    overflow-x: hidden;
+    border-radius: 12px;
+    background-color: var(--interact);
+}
+.selectedItem {
+    position: absolute;
+    border-radius: 12px;
+    background: linear-gradient(134deg, var(--accent), var(--grad));
+    height: 100%;
+    transition: left 0.3s ease;
+    cursor: pointer;
+}
+.selectorElement {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 12px;
+    color: var(--tc);
+    >span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+        gap: 4px;
+        height: 20px;
+        &.chosen {
+            color: var(--inner_text);
+            pointer-events: none;
+        }
+    }
+    @media (hover:hover) {
+        &:hover {
+            background-color: var(--menuButtHover);
+            color: var(--tc);
+        }
+    }    
+}

@@ -23,8 +23,19 @@
     user-select: none;
     border-radius: 12px;
     transition: transform 0.3s ease;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         transform: scale(1.05);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        transform: scale(1.05);
+    
+        
+        }
     }
 }
 

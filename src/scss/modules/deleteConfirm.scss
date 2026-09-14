@@ -57,17 +57,41 @@
     background-color: var(--tr);
     border: none;
     color: var(--tc);
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         color: var(--accent_text);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        color: var(--accent_text);
+    
+        
+        }
     }
 }
 .deleteConfirm {
     background-color: var(--tc);
     border: 1px solid black;
     color: black;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: #a10f0f;
         background-color: #e9e9e9;
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: #a10f0f;
+        background-color: #e9e9e9;
+    
+        
+        }
     }
 }

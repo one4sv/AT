@@ -1,5 +1,5 @@
 import {  useEffect, type ReactNode } from "react";
-import SideMenu from "../ts/SideMenu";
+import SideMenu from "../ts/SM/SideMenu";
 import { Background } from "../ts/utils/background";
 import { useSettings } from "../hooks/SettingsHook";
 import { useDrop } from "../hooks/DropHook";

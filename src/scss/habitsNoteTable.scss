@@ -17,8 +17,19 @@
     border-radius: 8px;
     cursor: pointer;
     position: relative;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .habitNoteMain {
@@ -95,9 +106,21 @@
     border-radius: 8px;
     cursor: pointer;
     border: 1px solid var(--tr);
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         border: 1px solid var(--tc);
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        border: 1px solid var(--tc);
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 
 }

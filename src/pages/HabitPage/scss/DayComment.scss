@@ -107,8 +107,19 @@
     color: var(--inner_text);
     background:linear-gradient(135deg, var(--accent), var(--grad));
     transition: none;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--darker_accent);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--darker_accent);
+    
+        
+        }
     }
     &:disabled {
         color: var(--borderHabit);
@@ -139,9 +150,22 @@
     &.emptyEvents {
         text-align: center;
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         >.textPlus {
-            display: flex;
+        display: flex;
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        >.textPlus {
+        display: flex;
+        }
+    
+        
         }
     }
 }
@@ -206,12 +230,28 @@
     width: 100%;
     text-align: center;
     align-items: center;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         > span {
-            color: var(--accent_text);
+        color: var(--accent_text);
         }
         > div {
-            background-color: var(--borderWh);
+        background-color: var(--borderWh);
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        > span {
+        color: var(--accent_text);
+        }
+        > div {
+        background-color: var(--borderWh);
+        }
+    
+        
         }
     }
     >div {
@@ -230,7 +270,18 @@
     border-bottom: 1px solid var(--tr);
     padding-inline-start: 2px;
     min-height: 2vh;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--accent_text);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--accent_text);
+    
+        
+        }
     }
 }

@@ -77,9 +77,21 @@
     }
 }
 .systemMessageSender {
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         text-decoration: underline;
         cursor: pointer;
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        text-decoration: underline;
+        cursor: pointer;
+    
+        
+        }
     }
 }
 .messChoseButt {
@@ -96,8 +108,19 @@
         height: 100%;
         width: 100%;
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: #e0e0e08f;
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: #e0e0e08f;
+    
+        
+        }
     }
 }
 .dateDivider {
@@ -175,8 +198,19 @@
     margin: 0.2vh 0 0.4vh;
     border-radius: 0 4px 4px 0;
     background-color: var(--on_con_menu_mess);
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--chosing_mess);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--chosing_mess);
+    
+        
+        }
     }
     > div {
         width: 100%;
@@ -236,15 +270,37 @@
     &.myRB {
         right: 95%;
         background-color: var(--darker_accent);
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--accent_text);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--accent_text);
+        
+            
+            }
         }
     }    
     &.urRB {
         left: 95%;
         background-color: var(--mess);
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--borderHabit);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--borderHabit);
+        
+            
+            }
         }
     }
 }
@@ -263,14 +319,36 @@
     padding-left: 0.3vw;
     &.myR {
         margin-right: 0.5vw;
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--accent_text);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--accent_text);
+        
+            
+            }
         }
     }
     &.urR {
         margin-left: 0.5vw;
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--borderHabit);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--borderHabit);
+        
+            
+            }
         }
     }
     .reactionUsers {
@@ -306,8 +384,19 @@
     >span {
         color: var(--inner_text);
         cursor: pointer;
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             text-decoration: underline;
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            text-decoration: underline;
+        
+            
+            }
         }
     }
 }
@@ -358,9 +447,21 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
     
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         transform: scale(1.01);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        transform: scale(1.01);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    
+        
+        }
     }
 }
 
@@ -395,8 +496,19 @@
         color: var(--borderWh);
     }
 
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .messageWrapper.highlight {

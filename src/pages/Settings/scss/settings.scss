@@ -20,7 +20,6 @@
         width: 98%;
     }
 }
-
 .settingsSlider {
     display: flex;
     width: 200%;
@@ -59,21 +58,51 @@
     > span {
         font-size: 18px;
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         > .settingName {
-            color: var(--tc);
+        color: var(--tc);
         }
         > .settingDesc {
-            color: var(--borderWh);
+        color: var(--borderWh);
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        > .settingName {
+        color: var(--tc);
+        }
+        > .settingDesc {
+        color: var(--borderWh);
+        }
+    
+        
         }
     }
     &.settingButtAcc {
         position: sticky;
         background:linear-gradient(135deg, var(--accent), var(--grad));
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             div, span {
-                color: var(--inner_text);
+            color: var(--inner_text);
+            }
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            div, span {
+            color: var(--inner_text);
+            }
+        
+            
             }
         }
         div, span {
@@ -171,9 +200,21 @@
     color: var(--borderWh);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .settingSearch {
@@ -204,7 +245,7 @@
 }
 .settingSearchInput {
     @include var.input(
-        var(--bgc),
+        var(--interact),
         var(--tc),
         var(--borderWh),
         fit-content,
@@ -265,13 +306,16 @@
     margin-bottom: 1vh;
     padding-inline-start: 0.5vw;
     color: var(--tc);
+    &.disabled {
+        color: var(--borderHabit);
+    }
     @media (max-width: 800px) {
         padding-inline-start: 1vw;
     }
 }
 .settingInnerList {
     padding: 0.5vh 0.25vw;
-    background-color: var(--bgc);
+    background-color: var(--interact);
     border-radius: 12px;
     gap: 0.5vh;
     display: flex;
@@ -293,16 +337,38 @@
     @media (max-width: 800px) {
         padding: 1vh 2vw;
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .settingHint {
     width: 100%;
     padding-inline-start: 0.5vw;
     color: var(--borderHabit);
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--borderWh);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--borderWh);
+    
+        
+        }
     }
 }
 .settingInactive {
@@ -319,7 +385,7 @@
         0.9vh,
         var(--borderWh),
         var(--tc),
-        var(--bgc),
+        var(--interact),
         18px,
         1vh,
         0.5vw,
@@ -356,9 +422,21 @@
     border-radius: 8px;
     cursor: pointer;
     gap: 4px;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         color: var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
+    
+        
+        }
     }
     &.delete {
         color: var(--notValid);
@@ -387,7 +465,7 @@
 }
 .settingInputInnerList {
     padding: 0.5vh 0.25vw;
-    background-color: var(--bgc);
+    background-color: var(--interact);
     border-radius: 12px;
     display: flex;
     flex-direction: column;
@@ -421,8 +499,19 @@
         padding: 1vh 2vw;
     }
 
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 

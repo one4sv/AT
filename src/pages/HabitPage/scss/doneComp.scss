@@ -39,9 +39,21 @@
     > svg {
         font-size: 20px;
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .doneCompContolers {
@@ -72,13 +84,30 @@
     padding: 0 0.5vw;
     gap: 2px;
     height: 100%;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         > .scheduleButtSvg {
-            color: var(--tc);
-            > .scsvg {
-                color: var(--tc);
-            }
+        color: var(--tc);
+        > .scsvg {
+        color: var(--tc);
+        }
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        > .scheduleButtSvg {
+        color: var(--tc);
+        > .scsvg {
+        color: var(--tc);
+        }
+        }
+    
+        
         }
     }
 }
@@ -101,16 +130,36 @@
     border-radius: 6px;
     cursor: pointer;
     color: var(--borderWh);
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         >.doneCompControlerSaving {
-            color: var(--tc);
+        color: var(--tc);
         }
         >.doneCompControlerReady {
-            color: var(--accent_text);
+        color: var(--accent_text);
         }
         >.doneCompControlerEdit {
-            color: var(--tc);
+        color: var(--tc);
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        >.doneCompControlerSaving {
+        color: var(--tc);
+        }
+        >.doneCompControlerReady {
+        color: var(--accent_text);
+        }
+        >.doneCompControlerEdit {
+        color: var(--tc);
+        }
+    
+        
         }
     }
 }
@@ -122,7 +171,18 @@
         height: 100%;
         width: 100%;
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--notValid);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--notValid);
+    
+        
+        }
     }
 }

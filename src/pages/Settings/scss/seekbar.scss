@@ -1,7 +1,7 @@
 @use "../../../scss/mixins" as var;
 
 .seekBarWrapper {
-    background-color: var(--bgc);
+    background-color: var(--interact);
     border-radius: 12px;
     display: flex;
     flex-direction: column;
@@ -9,8 +9,23 @@
     width: 100%;
     padding: 2vh 0.5vw;
     user-select: none;
-    // justify-content: center;
-    // align-items: center;
+    &.disabled {
+        pointer-events: none;
+        > .seekBarLine {
+            > .seekBarFill {
+                background: var(--borderHabit);
+            }
+            >.seekBarDot {
+                background: var(--borderHabit);
+            }
+            >.seekBarCurrent {
+                color: var(--borderHabit);
+            }
+        }
+        >.seekBarBottom >.currentValue {
+            color: var(--borderHabit);
+        }
+    }
 }
 .seekBarValue {
     color: var(--accent_text);

@@ -51,13 +51,30 @@
     > span {
         font-size: 18px;
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         > .infoName {
-            color: var(--tc);
+        color: var(--tc);
         }
         > .infoDesc {
-            color: var(--borderWh);
+        color: var(--borderWh);
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        > .infoName {
+        color: var(--tc);
+        }
+        > .infoDesc {
+        color: var(--borderWh);
+        }
+    
+        
         }
     }
     @media (max-width: 800px) {
@@ -120,9 +137,21 @@
     backdrop-filter: blur(var(--blur)); 
     -webkit-backdrop-filter: blur(var(--blur));
     font-size: clamp(14px, 3vw, 20px);
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 

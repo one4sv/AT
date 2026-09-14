@@ -11,12 +11,28 @@
     &.but {
         cursor: pointer;
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         &.danger {
-            > span {
-                color: var(--notValid);
-            }
+        > span {
+        color: var(--notValid);
+        }
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        &.danger {
+        > span {
+        color: var(--notValid);
+        }
+        }
+    
+        
         }
     }
     @media (max-width:800px) {
@@ -59,8 +75,19 @@
     color: var(--borderWh);
     cursor: pointer;
     gap: 0.25vw;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+    
+        
+        }
     }
     &.disabled {
         color: var(--borderHabit);
@@ -78,7 +105,18 @@
     margin-top: 2px;
     transition: transform 0.3s ease, color 0.2s, left 0.3s ease;
     position: relative;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--borderWh);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--borderWh);
+    
+        
+        }
     }
 }

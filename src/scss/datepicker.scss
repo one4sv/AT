@@ -26,9 +26,21 @@
   border: 1px solid transparent;
   color: var(--tc) !important;
   border-radius: 6px;
-  &:hover {
-    background-color: var(--menuButtHover) !important;
-    border: 1px solid var(--borderWh) !important;
+  @media (hover: hover) {
+      &:hover {
+      background-color: var(--menuButtHover) !important;
+      border: 1px solid var(--borderWh) !important;
+  
+      }
+  }
+
+  @media (hover: none) {
+      &:active {
+      background-color: var(--menuButtHover) !important;
+      border: 1px solid var(--borderWh) !important;
+  
+      
+      }
   }
 }
 
@@ -62,9 +74,21 @@
   cursor: pointer;
   appearance: none; // убираем стандартную стрелку (опционально)
 
-  &:hover {
-    background-color: var(--menuButtHover);
-    border-color: var(--borderWh);
+  @media (hover: hover) {
+      &:hover {
+      background-color: var(--menuButtHover);
+      border-color: var(--borderWh);
+  
+      }
+  }
+
+  @media (hover: none) {
+      &:active {
+      background-color: var(--menuButtHover);
+      border-color: var(--borderWh);
+  
+      
+      }
   }
 
   &:focus {
@@ -105,9 +129,21 @@
 
     transition: .15s;
 
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background: var(--menuButtHover);
         border-color: var(--borderWh);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background: var(--menuButtHover);
+        border-color: var(--borderWh);
+    
+        
+        }
     }
 
     &:focus {
@@ -130,8 +166,19 @@
         color: var(--tc);
         cursor: pointer;
 
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background: var(--menuButtHover);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background: var(--menuButtHover);
+        
+            
+            }
         }
     }
 }
@@ -176,7 +223,18 @@
 .datePickerDropdownItem {
     padding: 8px 12px;
     cursor: pointer;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background: var(--menuButtHover);
+    
+        
+        }
     }
 }

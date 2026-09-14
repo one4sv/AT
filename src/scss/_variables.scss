@@ -118,8 +118,8 @@ $accents: (
 
         ),
         dark: (
-            accent: #8b12ee,
-            accent_text: #8b12ee,
+            accent: #a332ff,
+            accent_text: #a332ff,
             accent_op: #8c00ff2a,
             accent_hov: #8c00ff3a,
             darker_accent: #4a148c,
@@ -210,10 +210,10 @@ $grads: (
     ),
     violet: (
         light: (
-            grad: #a066ff
+            grad: #8712e7
         ),
         dark: (
-            grad: #8b12ee
+            grad: #8712e7
         )
     ),    
     ginger: (
@@ -245,7 +245,6 @@ $decors: (
     default: (
         light: (
             mc: #ececec,
-            interact:#d6d6d6,
             hbg: #dfdfdf,
             hbgh: #dfdfdf,
             buttBg:#dfdfdf,
@@ -256,10 +255,11 @@ $decors: (
             borderWh: #666666,
             borderHabit: #777777,
             menuButtHover: #d3d3d3,
+            weekDays:#d6d6d6,
         ),
         dark: (
             mc: #181818,
-            interact:#2c2c2c,
+            interact:#1f1f1f,
             hbg: #222222,
             hbgh: #222222,
             buttBg:#242424,
@@ -270,12 +270,13 @@ $decors: (
             borderWh: #a1a1a1,
             borderHabit: #646464,
             menuButtHover: #2c2c2c,
+            weekDays:#252525,
         )
     ),
     glass: (
         light: (
-            mc: #ffffff57,
-            interact:#ffffff99,
+            mc: #ffffff33,
+            interact:#f0efef52,
             hbg: #ffffff00,
             hbgh: #ffffff00,
             buttBg:#00000000,
@@ -284,12 +285,13 @@ $decors: (
             mhl:#ffffff99,
             backdropTA:12px,
             borderWh: #3a3a3a,
-            borderHabit: #545454,
-            menuButtHover: #d3d3d3bd,
+            borderHabit: #2e2e2e,
+            menuButtHover: #d3d3d38c,
+            weekDays:#ffffff99,
         ),
         dark: (
             mc: #22222257,
-            interact:#22222257,
+            interact:#22222281,
             hbg: #22222200,
             hbgh: #22222200,
             buttBg:#00000000,
@@ -300,6 +302,7 @@ $decors: (
             borderWh: #e7e7e7,
             borderHabit: #bdbdbd,
             menuButtHover: #2c2c2c8c,
+            weekDays:#22222280,
         )
     )
 );

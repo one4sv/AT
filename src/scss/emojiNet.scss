@@ -1,7 +1,7 @@
 @use "./mixins" as var;
 
 .emojiNet {
-    background-color: var(--bgc);
+    background-color: var(--interact);
     padding: 0.5vh 0.25vw;
     display: grid;
     grid-template-columns: repeat(8, 1fr);

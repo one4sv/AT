@@ -50,12 +50,27 @@
   cursor: pointer;
   outline: none;
 
-  &:hover {
-    @if $hov != null {
+  @media (hover: hover) {
+      &:hover {
+      @if $hov != null {
       background-color: $hov;
-    } @else {
+      } @else {
       background-color: darken($bg, 10%);
-    }
+      }
+  
+      }
+  }
+
+  @media (hover: none) {
+      &:active {
+      @if $hov != null {
+      background-color: $hov;
+      } @else {
+      background-color: darken($bg, 10%);
+      }
+  
+      
+      }
   }
 }
 
@@ -72,9 +87,21 @@
     outline: none;
     transition: background 0.3s ease, box-shadow 0.1s ease;
 
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background: linear-gradient($gradH);
         box-shadow: 0 0 $shad;
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background: linear-gradient($gradH);
+        box-shadow: 0 0 $shad;
+    
+        
+        }
     }
 }
 @mixin centerTopModal {
@@ -166,9 +193,21 @@
       flex-direction: row;
       align-items: center;
       white-space: nowrap;
-      &:hover {
-        background-color: var(--menuButtHover);
-        color: $ac;
+      @media (hover: hover) {
+          &:hover {
+          background-color: var(--menuButtHover);
+          color: $ac;
+      
+          }
+      }
+
+      @media (hover: none) {
+          &:active {
+          background-color: var(--menuButtHover);
+          color: $ac;
+      
+          
+          }
       }
     }
   }

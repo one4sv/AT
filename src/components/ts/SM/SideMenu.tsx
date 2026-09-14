@@ -1,22 +1,22 @@
 import { useState, useRef, useEffect } from "react"
-import "../../scss/SM/sideMenu.scss"
-import { CircleUserRound, Search, House, Plus, Calendar } from "lucide-react"
-import HabitsList from "./SM/HabitsList.tsx"
-import { useUser } from "../hooks/UserHook"
-import { useBlackout } from "../hooks/BlackoutHook.ts"
-import ContactsList from "./SM/ContactsList.tsx"
-import { Link } from "react-router"
-import { useSettings } from "../hooks/SettingsHook.ts"
-import { useHabits } from "../hooks/HabitsHook.ts"
-import MinLoader from "./MinLoader.tsx"
+import "../../../scss/SM/sideMenu.scss"
+import { Search, Plus } from "lucide-react"
+import HabitsList from "./HabitsList.tsx"
+import { useUser } from "../../hooks/UserHook.ts"
+import { useBlackout } from "../../hooks/BlackoutHook.ts"
+import ContactsList from "./ContactsList.tsx"
+import { useSettings } from "../../hooks/SettingsHook.ts"
+import { useHabits } from "../../hooks/HabitsHook.ts"
+import MinLoader from "../MinLoader.tsx"
 import { isMobile } from "react-device-detect"
 import { CalendarPlusIcon, ChatsIcon, SortAscending } from "@phosphor-icons/react"
-import { filterHabitsByOrder } from "./utils/filteredHabitsByOrder.tsx"
-import { useSchedule } from "../hooks/ScheduleHook.ts"
-import SideMenuUnAunthificated from "./SideMenuUnAunthificated.tsx"
-import { useSideMenu } from "../hooks/SideMenuHook.ts"
+import { filterHabitsByOrder } from "../utils/filteredHabitsByOrder.tsx"
+import { useSchedule } from "../../hooks/ScheduleHook.ts"
+import SideMenuUnAunthificated from "../SideMenuUnAunthificated.tsx"
+import { useSideMenu } from "../../hooks/SideMenuHook.ts"
 import { useTranslation } from "react-i18next"
-import { useContacts } from "../hooks/ContactsHook.ts"
+import { useContacts } from "../../hooks/ContactsHook.ts"
+import SMnav from "./SMnav.tsx"
 
 export default function SideMenu() {
     const { t, i18n } = useTranslation("common")
@@ -24,7 +24,6 @@ export default function SideMenu() {
     const { setSearch, loadingList, list, mainSearchRef, search } = useContacts()
     const { loadingHabits, habits, newOrderHabits } = useHabits()
     const { refreshSchedules } = useSchedule()
-    const { user } = useUser()
     const { showArchived, layout } = useSettings()
     const { setBlackout } = useBlackout()
     const { setShowSideMenu, setActiveTab, activeTab, showSideMenu, setIsDragging, isDragging, translateX, setTranslateX } = useSideMenu()
@@ -446,40 +445,7 @@ export default function SideMenu() {
                     </div>
                 </div>
             </div>
-
-            <div className="SMnavDiv">
-                <div className="SMnav">
-                    <Link className={`SMnavButt ${location.pathname === "/" ? "active" : ""}`} to={"/"} onClick={() => {
-                        if (location.pathname === "/")closeMenu()
-                    }}>
-                        <House />
-                        <span>{t("sideMenu.home")}</span>
-                    </Link>
-                    <Link
-                        className={`SMnavButt SMnavAvatar ${location.pathname.includes("/settings") ? "active" : ""}`}
-                        onClick={() => {
-                            if (location.pathname.includes("/settings"))closeMenu()
-                        }}
-                        to={"/settings"}
-                    >
-                        {user?.avatar_url ? (
-                            <img
-                                src={user.avatar_url}
-                                alt={user.username ?? user.nick ?? "фото"}
-                            />
-                        ) : (
-                            <CircleUserRound />
-                        )}
-                        <span>{user.nick}</span>
-                    </Link>
-                    <Link className={`SMnavButt ${location.pathname === ("/habit") || location.pathname === ("/habit/") ? "active" : ""}`} to={"/habit"} onClick={() => {
-                        if (location.pathname === ("/habit") || location.pathname === ("/habit/")) closeMenu()
-                    }}>
-                        <Calendar />
-                        <span>{t("sideMenu.activities")}</span>
-                    </Link>
-                </div>
-            </div>
+            <SMnav closeMenu={closeMenu}/>
         </div>
     )
 }

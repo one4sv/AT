@@ -12,10 +12,24 @@
     position: relative;
     border-radius: 8px;
     display: flex;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         > .pmsCount {
-            color: var(--borderWh);
+        color: var(--borderWh);
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        > .pmsCount {
+        color: var(--borderWh);
+        }
+    
+        
         }
     }
 }
@@ -55,8 +69,19 @@
     justify-content: center;
     align-items: center;
     padding: 0 0.5vw;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--accent_text);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--accent_text);
+    
+        
+        }
     }
     > svg {
         width: 80%;
@@ -100,7 +125,18 @@
     width: 100%;
     padding: 0.5vh 0.5vw 0.5vh 0.5vw;
     // cursor: pointer;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }

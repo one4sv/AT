@@ -63,31 +63,73 @@
     &.planButt {
         background: #fff;
         color: #000;
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             box-shadow: 0 0 12px #fff, 0 0 24px #fff;
             &.dbComp {
-                > svg {
-                    color: #000;
-                }
+            > svg {
+            color: #000;
+            }
             }        
             &.dbMark {
-                > svg {
-                    color: #000;
-                }
+            > svg {
+            color: #000;
+            }
+            }
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            box-shadow: 0 0 12px #fff, 0 0 24px #fff;
+            &.dbComp {
+            > svg {
+            color: #000;
+            }
+            }        
+            &.dbMark {
+            > svg {
+            color: #000;
+            }
+            }
+        
+            
             }
         }
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
         &.dbComp {
-            > svg {
-                color: var(--inner_text);
-            }
+        > svg {
+        color: var(--inner_text);
+        }
         }        
         &.dbMark {
-            > svg {
-                color: var(--inner_text);
-            }
+        > svg {
+        color: var(--inner_text);
+        }
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
+        &.dbComp {
+        > svg {
+        color: var(--inner_text);
+        }
+        }        
+        &.dbMark {
+        > svg {
+        color: var(--inner_text);
+        }
+        }
+    
+        
         }
     }
 }

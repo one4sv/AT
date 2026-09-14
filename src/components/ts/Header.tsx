@@ -13,7 +13,7 @@ export default function Header() {
     const { title } = usePageTitle()
     const location = useLocation()
     const isAcc = location.pathname.startsWith("/acc")
-    console.log(layout)
+    
     return (
         <>
             <div className="header">

@@ -55,13 +55,30 @@
             color: var(--borderHabit);
             font-size: 30px;
         }
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--menuButtHover);
             >.pinHabit {
-                color: var(--tc);
+            color: var(--tc);
             }    
             >.delHabit {
-                color: #c40000;
+            color: #c40000;
+            }
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--menuButtHover);
+            >.pinHabit {
+            color: var(--tc);
+            }    
+            >.delHabit {
+            color: #c40000;
+            }
+        
+            
             }
         }
     }

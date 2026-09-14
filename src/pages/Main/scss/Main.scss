@@ -93,8 +93,19 @@
         right: 0vw;
         z-index: 2;
         color: var(--borderWh);
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             color: var(--tc);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            color: var(--tc);
+        
+            
+            }
         }
     }
 }

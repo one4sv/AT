@@ -72,9 +72,22 @@
     gap: 0.25vw;
     user-select: none;
     left: 0.5vw;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         >svg {
-            visibility: visible;
+        visibility: visible;
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        >svg {
+        visibility: visible;
+        }
+    
+        
         }
     }
     > span {
@@ -130,8 +143,19 @@
     cursor: pointer;
     color: var(--borderHabit);
     display: none;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--accent_text);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--accent_text);
+    
+        
+        }
     }
     >svg {
         height: 70%;

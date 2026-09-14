@@ -16,7 +16,7 @@
     "i18next": "^26.3.6",
     "linkify-react": "^4.3.2",
     "linkifyjs": "^4.3.2",
-    "lucide-react": "^0.525.0",
+    "lucide-react": "^1.45.0",
     "react": "^19.1.0",
     "react-chartjs-2": "^5.3.0",
     "react-datepicker": "^8.7.0",

@@ -63,8 +63,19 @@
     cursor: pointer;
     color: var(--borderHabit);
     z-index: 5;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+    
+        
+        }
     }
     > svg {
         width: 100%;

@@ -33,8 +33,19 @@
                 color: var(--accent_text);
             }
         }
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--menuButtHover);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--menuButtHover);
+        
+            
+            }
         }
     }
 
@@ -101,8 +112,19 @@
                 position: relative;
                 height: 100%;
             }
-            &:hover {
+            @media (hover: hover) {
+                &:hover {
                 background-color: var(--menuButtHover);
+            
+                }
+            }
+
+            @media (hover: none) {
+                &:active {
+                background-color: var(--menuButtHover);
+            
+                
+                }
             }
         }
     }
@@ -117,8 +139,19 @@
     width: 100%;
     padding: 0.5vh 0.5vw 0.5vh 0.5vw;
     cursor: pointer;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .chatSearchPic {

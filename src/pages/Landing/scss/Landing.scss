@@ -86,9 +86,21 @@
         text-decoration: none;
         border-radius: 12px;
         padding: 1.25vh 1.35vw;
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             color: var(--tc);
             background-color: var(--menuButtHover);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            color: var(--tc);
+            background-color: var(--menuButtHover);
+        
+            
+            }
         }
     }
 }
@@ -131,8 +143,19 @@
         right: 0.2vw;
         z-index: 2;
         color: var(--borderWh);
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             color: var(--tc);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            color: var(--tc);
+        
+            
+            }
         }
     }
     @media (max-width: 800px) {
@@ -222,8 +245,19 @@
 .acceptSpan {
     color: var(--accent_text);
     text-decoration: underline;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--darker_accent);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--darker_accent);
+    
+        
+        }
     }
 }
 
@@ -247,14 +281,36 @@
     @include var.longButt(15vw, 5vh, 2px, 4px, none, var(--inner_text), var(--tr), var(--accent));
     background:linear-gradient(135deg, var(--accent), var(--grad));
     border: none;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
+    
+        
+        }
     }
 }
 .whiteButt {
     @include var.longButt(15vw, 4vh, 2px, 4px, #fff, #000, var(--tr), #fff);
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         box-shadow: 0 0 12px #fff, 0 0 24px #fff;
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        box-shadow: 0 0 12px #fff, 0 0 24px #fff;
+    
+        
+        }
     }
 }
 .wtbgButt {
@@ -263,12 +319,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
         text-decoration: none;
         border-radius: 8px;
         &:hover {
-            background-color: var(--menuButtHover);
+        background-color: var(--menuButtHover);
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+        text-decoration: none;
+        border-radius: 8px;
+        &:hover {
+        background-color: var(--menuButtHover);
+        }
+    
+        
         }
     }
 }
@@ -316,9 +388,21 @@
             padding: 0.75vh 1vw;
             border-radius: 8px;
             color: var(--borderWh);
-            &:hover {
+            @media (hover: hover) {
+                &:hover {
                 color: var(--tc);
                 background-color: var(--menuButtHover);
+            
+                }
+            }
+
+            @media (hover: none) {
+                &:active {
+                color: var(--tc);
+                background-color: var(--menuButtHover);
+            
+                
+                }
             }
         }
         >span {
@@ -328,9 +412,21 @@
             padding: 0.75vh 1vw;
             border-radius: 8px;
             color: var(--borderWh);
-            &:hover {
+            @media (hover: hover) {
+                &:hover {
                 color: var(--tc);
                 background-color: var(--menuButtHover);
+            
+                }
+            }
+
+            @media (hover: none) {
+                &:active {
+                color: var(--tc);
+                background-color: var(--menuButtHover);
+            
+                
+                }
             }
         }
     }
@@ -368,9 +464,21 @@
             height: 100%;
         }
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .landingSL {
@@ -386,9 +494,21 @@
         padding: 0.75vh 1vw;
         text-align: center;
         font-weight: 400;
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--menuButtHover);
             color: var(--tc);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--menuButtHover);
+            color: var(--tc);
+        
+            
+            }
         }
         &:focus-visible {
             background-color: var(--menuButtHover);

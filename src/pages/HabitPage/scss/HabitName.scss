@@ -5,8 +5,19 @@
     width: 100%;
     align-items: center;
     cursor: pointer;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .habitNameTag {

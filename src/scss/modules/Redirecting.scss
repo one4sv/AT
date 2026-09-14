@@ -42,10 +42,24 @@
         width: 100%;
         color: var(--borderHabit);
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         >svg {
-            color: var(--tc);
+        color: var(--tc);
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        >svg {
+        color: var(--tc);
+        }
+    
+        
         }
     }
 }

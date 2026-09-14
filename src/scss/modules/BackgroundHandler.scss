@@ -96,9 +96,21 @@
     background-color: var(--tr);
     color: var(--borderWh);
 
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         color: var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
+    
+        
+        }
     }
 }
 
@@ -106,8 +118,20 @@
     background-color: var(--tr);
     color: var(--tc);
 
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         color: var(--accent_text);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        color: var(--accent_text);
+    
+        
+        }
     }
 }

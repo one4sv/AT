@@ -50,8 +50,20 @@
     border-radius: 8px;
     background-color: var(--systemMessBg);
     cursor: pointer;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         color: var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
+    
+        
+        }
     }
 }

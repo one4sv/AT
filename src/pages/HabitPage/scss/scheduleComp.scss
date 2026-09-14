@@ -16,13 +16,30 @@
     padding: 0.75vh 0.5vw;
     cursor: pointer;
     // background-color: var(--interact);
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         > .scheduleButtSvg {
-            color: var(--tc);
-            > .scsvg {
-                color: var(--tc);
-            }
+        color: var(--tc);
+        > .scsvg {
+        color: var(--tc);
+        }
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        > .scheduleButtSvg {
+        color: var(--tc);
+        > .scsvg {
+        color: var(--tc);
+        }
+        }
+    
+        
         }
     }
 }

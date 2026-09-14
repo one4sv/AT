@@ -29,8 +29,19 @@
     border-radius: 8px;
     flex: 1;
     transition: width 0.2s ease;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
     
     @media (max-width:800px) {
@@ -86,9 +97,21 @@
     align-items: center;
     justify-content: center;
     border-radius: 20%;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
     >svg {
         height: 60%;
@@ -124,9 +147,21 @@
     gap: 2px;
     padding: 1vh;
     color: var(--borderWh);
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
     &.delete {
         color: var(--notValid);

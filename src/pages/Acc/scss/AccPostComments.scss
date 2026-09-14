@@ -38,8 +38,19 @@
         height: 60%;
         width: 60%;
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background:linear-gradient(135deg, var(--accent), var(--grad));
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background:linear-gradient(135deg, var(--accent), var(--grad));
+    
+        
+        }
     }
 }
 .AccPostCommentBar {
@@ -88,9 +99,21 @@
     color: var(--borderHabit);
     cursor: pointer;
     width: fit-content;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         text-decoration: underline;
         color: var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        text-decoration: underline;
+        color: var(--tc);
+    
+        
+        }
     }
 }
 .commentAvatar {

@@ -101,9 +101,21 @@
     padding: 0.5vh 0.3vw;
     cursor: pointer;
     border-radius: 8px;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         color: var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        color: var(--tc);
+    
+        
+        }
     }
 }
 .PostInteract {
@@ -119,8 +131,19 @@
         cursor: pointer;
         border-radius: 8px;
         gap: 0.2vw;
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--menuButtHover);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--menuButtHover);
+        
+            
+            }
         }
         >svg {
             font-size: 24px;
@@ -128,16 +151,42 @@
     }
 }
 .PostLikes {
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         >svg {
-            color: #d60000;
+        color: #d60000;
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        >svg {
+        color: #d60000;
+        }
+    
+        
         }
     }
 }
 .PostComment {
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         >svg {
-            color: var(--accent_text);
+        color: var(--accent_text);
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        >svg {
+        color: var(--accent_text);
+        }
+    
+        
         }
     }
 }
@@ -181,9 +230,21 @@
             color: var(--inner_text);
         }
     }
-    &:hover .chatTAFileOverlay {
+    @media (hover: hover) {
+        &:hover {
         opacity: 1;
         margin: 0;
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        opacity: 1;
+        margin: 0;
+    
+        
+        }
     }
 }
 .postUser {
@@ -194,8 +255,19 @@
     width: fit-content;
     margin-bottom: 0.6vh;
     color: var(--tc);
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         text-decoration: underline;
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        text-decoration: underline;
+    
+        
+        }
     }
 }
 .postAvatar {

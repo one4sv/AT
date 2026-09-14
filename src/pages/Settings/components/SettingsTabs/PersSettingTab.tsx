@@ -3,12 +3,13 @@ import { MoonStarsIcon, PlusCircle, SunIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
-import RadioGroup from "../../../../components/ts/RadioGroup";
 import PreviewAccent from "../PreviewAccent.tsx";
 import { useTranslation } from "react-i18next";
 import { useBackIconsPattern } from "../../../../components/hooks/utils/useBackIconsPattern.tsx";
 import SeekBar from "../SeekBar.tsx";
 import { isMobile } from "react-device-detect";
+import Selector from "../../../../components/ts/Selector.tsx";
+import { MirrorRectangular, PaintBucket, PanelLeft, PanelLeftClose } from "lucide-react";
 
 export default function PersSettingTab() {
     const { t } = useTranslation("settings");
@@ -24,17 +25,17 @@ export default function PersSettingTab() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const themeArr = [
-        { label: t("personalization.dark"), value: "dark", icon: MoonStarsIcon },
-        { label: t("personalization.light"), value: "light", icon: SunIcon },
+        { label: t("personalization.dark"), value: "dark", icon: MoonStarsIcon, func:setNewTheme },
+        { label: t("personalization.light"), value: "light", icon: SunIcon, func:setNewTheme },
     ];
 
     const decorArr = [
-        { label: t("personalization.default"), value: "default" },
-        { label: t("personalization.glass"), value: "glass" },
+        { label: t("personalization.default"), value: "default", icon:PaintBucket, func:setNewDecor },
+        { label: t("personalization.glass"), value: "glass", icon: MirrorRectangular, func:setNewDecor },
     ];    
     const layoutArr = [
-        { label: "Всегда", value: "always" },
-        { label: "По нажатию кнопки", value: "hidden" },
+        { label: "Всегда", value: "always", func:setNewLayout, icon:PanelLeft },
+        { label: "По нажатию кнопки", value: "hidden", func:setNewLayout, icon:PanelLeftClose },
     ];
 
     const accentArr = [
@@ -61,7 +62,8 @@ export default function PersSettingTab() {
             <div className="settingInnerDiv">
                 <div className="settingHeader">{t("personalization.theme")}</div>
                 <div className="settingInnerWrapper">
-                    <RadioGroup list={themeArr} val={isDark ? "dark" : "light"} newVal={setNewTheme} />
+                    {/* <RadioGroup list={themeArr} val={isDark ? "dark" : "light"} newVal={setNewTheme} /> */}
+                    <Selector arr={themeArr} selected={isDark ? "dark" : "light"}/>
                 </div>
             </div>
             <div className="settingInnerDiv">
@@ -113,16 +115,14 @@ export default function PersSettingTab() {
             <div className="settingInnerDiv">
                 <div className="settingHeader">{t("personalization.decor")}</div>
                 <div className="settingInnerWrapper">
-                    <RadioGroup list={decorArr} val={decor} newVal={setNewDecor} />
+                        <Selector arr={decorArr} selected={decor}/>
                 </div>
-                {decor === "glass" ? (
                     <div className="settingInnerWrapper">
-                        <div className="settingSpan">
+                        <div className={`settingSpan ${decor !== "glass" ? "disabled" : ""}`}>
                             Степень размытия
                         </div>
-                        <SeekBar min={2} max={36} value={blur} unit="px" step={1} onChange={setNewBlur} />
+                        <SeekBar min={2} max={36} value={blur} unit="px" step={1} onChange={setNewBlur} disabled={decor !== "glass"}/>
                     </div>
-                ) : ""}
             </div>
             <div className="settingInnerDiv">
                 <div className="settingHeader">{t("personalization.background")}</div>
@@ -169,7 +169,7 @@ export default function PersSettingTab() {
                         Боковое меню
                     </div>
                     <div className="settingInnerWrapper">
-                        <RadioGroup list={layoutArr} val={layout} newVal={setNewLayout} />
+                        <Selector arr={layoutArr} selected={layout}/>
                     </div>
                 </div>
             ) : ""}

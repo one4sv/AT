@@ -79,8 +79,19 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--accent_hov)
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--accent_hov)
+    
+        
+        }
     }
 }
 .emailEditInput {

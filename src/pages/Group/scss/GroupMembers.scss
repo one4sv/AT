@@ -49,10 +49,24 @@
     &.rights {
         color: var(--accent_text);
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         &.add {
-            color: var(--tc);
+        color: var(--tc);
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        &.add {
+        color: var(--tc);
+        }
+    
+        
         }
     }
 }
@@ -73,9 +87,21 @@
     position: relative;
     border: 1px solid var(--tr);
     align-items: center;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         border: 1px solid var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        border: 1px solid var(--tc);
+    
+        
+        }
     }
     overflow: hidden;
     box-sizing: border-box;

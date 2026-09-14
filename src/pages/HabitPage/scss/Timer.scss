@@ -44,8 +44,19 @@
         word-wrap: none;
         text-wrap-mode: nowrap;
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
+    
+        
+        }
     }
     > svg {
         height: 50%;

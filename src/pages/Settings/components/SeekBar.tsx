@@ -9,6 +9,7 @@ export interface SeekBarInterface {
     unit?: string;
     step?: number;
     onChange?: (value: number) => void;
+    disabled:boolean
 }
 
 export default function SeekBar({
@@ -18,6 +19,7 @@ export default function SeekBar({
     unit,
     step = 1,
     onChange,
+    disabled
 }: SeekBarInterface) {
 
     const { setDontHandle, dontHandleOther } = useSideMenu();
@@ -99,7 +101,7 @@ export default function SeekBar({
     };
 
     return (
-        <div className="seekBarWrapper">
+        <div className={`seekBarWrapper ${disabled ? "disabled" : ""}`}>
             <div
                 className="seekBarLine"
                 ref={lineRef}

@@ -11,9 +11,21 @@
     display: flex;
     position: relative;
     transition: all 0s;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         outline: 1px solid var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        outline: 1px solid var(--tc);
+    
+        
+        }
     }
     overflow: hidden;
     box-sizing: border-box;

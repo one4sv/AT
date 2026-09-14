@@ -54,8 +54,19 @@
     justify-content: space-between;
     display: flex;
     cursor: pointer;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .permissionsLength {
@@ -85,8 +96,19 @@
     padding-inline: 0.5vw;
     justify-content: space-between;
     cursor: pointer;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .roleName {
@@ -139,8 +161,19 @@
             background-color: var(--borderHabit);
         }
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .permDiv {
@@ -158,8 +191,19 @@
     cursor: pointer;
     gap: 0.2vw;
     position: relative;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 .memberImg {
@@ -325,8 +369,19 @@
     border: none;
     &.permBack{
         width: 5vw;
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--menuButtHover);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--menuButtHover);
+        
+            
+            }
         }
     }
     &.permCancel:hover {
@@ -335,9 +390,21 @@
     &.permSave {
         background:linear-gradient(135deg, var(--accent), var(--grad));
         color: var(--tc);
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             color: var(--tc);
             background-color: var(--darker_accent);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            color: var(--tc);
+            background-color: var(--darker_accent);
+        
+            
+            }
         }
     }
 }

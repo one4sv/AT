@@ -39,10 +39,24 @@
     &:active > svg {
         color: var(--borderWh);
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--menuButtHover);
         > svg {
-            color: var(--tc);
+        color: var(--tc);
+        }
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+        > svg {
+        color: var(--tc);
+        }
+    
+        
         }
     }
     @media (max-width:800px) {
@@ -65,9 +79,21 @@
     border-radius: 6px;
     background:linear-gradient(135deg, var(--accent), var(--grad));
     cursor: pointer;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         background-color: var(--darker_accent);
         color: var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--darker_accent);
+        color: var(--tc);
+    
+        
+        }
     }
     @media (max-width: 800px) {
         right: 2vw;

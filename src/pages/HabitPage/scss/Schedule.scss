@@ -55,23 +55,58 @@
         padding: 0.5vh 0.5vw;
         color: var(--tc);
         background:linear-gradient(135deg, var(--accent), var(--grad));
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--darker_accent);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--darker_accent);
+        
+            
+            }
         }
     }
     &.edit {
         color: var(--borderWh);
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--menuButtHover);
             color: var(--tc);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--menuButtHover);
+            color: var(--tc);
+        
+            
+            }
         }
     }
     &.restore {
         padding: 0.5vh 0.5vw;
         color: var(--borderWh);
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--menuButtHover);
             color: var(--tc);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--menuButtHover);
+            color: var(--tc);
+        
+            
+            }
         }
     }
     &.loading {
@@ -165,8 +200,19 @@
     transition: background 0.3s;
     overflow: hidden;
     gap: 3px;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         border: 1px solid var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        border: 1px solid var(--tc);
+    
+        
+        }
     }
     &.done {
         background-color: #129e12;
@@ -175,8 +221,19 @@
         }
         > .scheduleBlockAdd {
             color: var(--borderWhLight);
-            &:hover {
+            @media (hover: hover) {
+                &:hover {
                 color: var(--tc);
+            
+                }
+            }
+
+            @media (hover: none) {
+                &:active {
+                color: var(--tc);
+            
+                
+                }
             }
         }
         >.scheduleExtraBlocks > .scheduleExtraBlockWrapper {
@@ -283,8 +340,19 @@
     border: none;
     color: var(--borderHabit);
     font-size: 14px;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+    
+        
+        }
     }
 }
 .isScheduleBlockDone {

@@ -28,9 +28,21 @@
     &.delete:hover {
         color: var(--notValid);
     }
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
         background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+        background-color: var(--menuButtHover);
+    
+        
+        }
     }
 }
 @media (max-width: 767px) {

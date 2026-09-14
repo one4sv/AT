@@ -103,9 +103,21 @@
     border-radius: 6px;
     border: 1px solid var(--borderWh);
     outline: none;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
         cursor: pointer;
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+        cursor: pointer;
+    
+        
+        }
     }
 }
 .tagList {
@@ -152,9 +164,21 @@
     overflow: hidden;
     text-overflow: ellipsis;
     height: 3.5vh;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
         cursor: pointer;
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+        cursor: pointer;
+    
+        
+        }
     }
     svg {
         flex-shrink: 0;
@@ -230,8 +254,19 @@
     @include var.longButt(85%, 4vh, 0, 0, var(--tr), var(--borderHabit), var(--tr), var(--menuButtHover));
     margin-top: 3vh;
     font-size: 20px;
-    &:hover {
+    @media (hover: hover) {
+        &:hover {
         color: var(--tc);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        color: var(--tc);
+    
+        
+        }
     }
 }
 .addHabitSave {
@@ -256,18 +291,42 @@
         &.active {
             background:linear-gradient(135deg, var(--accent), var(--grad));
             color: var(--tc);
-            &:hover {
+            @media (hover: hover) {
+                &:hover {
                 background-color: var(--darker_accent);
                 color: var(--tc);
+            
+                }
+            }
+
+            @media (hover: none) {
+                &:active {
+                background-color: var(--darker_accent);
+                color: var(--tc);
+            
+                
+                }
             }
         }
         &.was {
             background-color: var(--borderHabit);
             color: var(--tc);
         }
-        &:hover {
+        @media (hover: hover) {
+            &:hover {
             background-color: var(--menuButtHover);
             color: var(--tc);
+        
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+            background-color: var(--menuButtHover);
+            color: var(--tc);
+        
+            
+            }
         }
     }
 }
