@@ -67,7 +67,7 @@ export const HabitsProvider = ({ children }: { children: ReactNode }) => {
             setHabits(null);
             if (axios.isAxiosError(err)) {
                 if (err.response?.status !== 401 && err.response?.status !== 403) {
-                showNotification("error", err.response?.data?.error || "Ошибка запроса");
+                    showNotification("error", err.response?.data?.error || "Ошибка запроса");
                 }
                 
             }

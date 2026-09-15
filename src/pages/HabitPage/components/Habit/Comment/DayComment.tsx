@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { ArrowBendDownLeftIcon } from "@phosphor-icons/react";
+import { ArrowBendDownLeftIcon, ClockCountdownIcon } from "@phosphor-icons/react";
 import { useDone } from "../../../../../components/hooks/DoneHook";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
-import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
 import "../../../scss/DayComment.scss";
 import CompletionProgress from "./ComplitionProgress";
 import CounterProgression from "./CounterProgression";
 import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 import { isMobile } from "react-device-detect";
 import { useSideMenu } from "../../../../../components/hooks/SideMenuHook";
+import { Check } from "lucide-react";
 
 interface DayCommentProps {
   id: string;
@@ -41,7 +41,6 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
     return () => clearTimeout(t);
   }, [chosenDay, dayComment]);
 
-  // Авторесайз textarea
   const resizeTextarea = useCallback(() => {
     const el = textareaRef.current;
     if (!el) return;
@@ -91,7 +90,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
     setDontHandle(false);
     setDontHandleOther(false)
   };
-
+  console.log(comment, dayComment, cantSave, waitComAnswer)
   return (
     <div className="dayCommentDiv">
       <div className="habitDayComment"
@@ -118,15 +117,16 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           ) : ""}
           <div>
             <span>{comment.length}/200</span>
-            {waitComAnswer ? <LoaderSmall /> : (
-              <button
-                className="saveCommentButton"
-                disabled={cantSave}
-                onClick={handleSave}
-              >
-                Сохранить
+            <button
+              className="saveCommentButton"
+              disabled={cantSave  || waitComAnswer}
+              onClick={handleSave}
+            >
+            {waitComAnswer
+              ? <ClockCountdownIcon size={24}/>
+              : <Check/>
+            }
               </button>
-            )}
           </div>
         </div>
       </div>

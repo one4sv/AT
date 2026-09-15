@@ -137,28 +137,27 @@
     @media (hover: hover) {
         &:hover {
         >.bgMini {
-        border: 1px solid var(--tc);
+            border: 1px solid var(--tc);
         }
         >span {
-        color: var(--tc);
+            color: var(--tc);
         }
         >.bgCustom {
-        color: var(--tc);
+            color: var(--tc);
         }
-    
         }
     }
 
     @media (hover: none) {
         &:active {
         >.bgMini {
-        border: 1px solid var(--tc);
+            border: 1px solid var(--tc);
         }
         >span {
-        color: var(--tc);
+            color: var(--tc);
         }
         >.bgCustom {
-        color: var(--tc);
+            color: var(--tc);
         }
     
         

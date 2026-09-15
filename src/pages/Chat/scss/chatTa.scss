@@ -282,18 +282,15 @@
     }
     @media (hover: hover) {
         &:hover {
-        color: var(--tc);
-        background:linear-gradient(135deg, var(--accent), var(--grad));
-    
+            color: var(--tc);
+            background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }
 
     @media (hover: none) {
         &:active {
-        color: var(--tc);
-        background:linear-gradient(135deg, var(--accent), var(--grad));
-    
-        
+            color: var(--tc);
+            background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }
 }
@@ -309,16 +306,13 @@
     right: 0.5vw;
     @media (hover: hover) {
         &:hover {
-        background:linear-gradient(135deg, var(--accent), var(--grad));
-    
+            background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }
 
     @media (hover: none) {
         &:active {
-        background:linear-gradient(135deg, var(--accent), var(--grad));
-    
-        
+            background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }
     @media (max-width:800px) {
