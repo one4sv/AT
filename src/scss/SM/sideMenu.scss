@@ -99,8 +99,11 @@
 }
 .SMsearch {
     position: relative;
-    width: 80%;
+    width: 95%;
     color:var(--borderHabit);
+    @media (max-width: 800px) {
+        width: 92%;
+    }
     @media (hover: hover) {
         &:hover {
             color: var(--borderWh);
@@ -119,61 +122,23 @@
         }
     }
     >input {
-        @include var.input(var(--bgc), var(--tc), var(--borderHabit), 4vh, 12px, var(--accent));
+        @include var.input(var(--interact), var(--tc), var(--borderHabit), 4vh, 12px, var(--accent));
         font-size: 18px;
         width:100%;
         padding-inline-start: 0.4vw;
+        &::placeholder {
+            color: var(--borderHabit);
+        }
         @media (max-width:800px) {
             padding-inline-start: 1.5vw;
         }
     }
     >svg {
-        @include var.svgInInput(4vh, 0,0.5vw);
+        @include var.svgInInput(4vh, 0, 0.25vw);
     }
     &:focus-within {
         color: var(--accent_text);
     }
-}
-.SMtabs {
-    background-color: var(--tr);
-    padding-top: 0.5vh;
-    display: flex;
-    align-items: center;
-    font-size: 18px;
-    width: 100%;
-    justify-content: space-around;
-    z-index: 3;
-    user-select: none;
-
-}
-.SMtab {
-    text-align: center;
-    border-radius: 8px;
-    padding: 0.8vh 0;
-    color: var(--borderHabit);
-    width: 50%;
-    cursor: pointer;
-    position: relative;
-    z-index: 3;
-
-    @media (hover: hover) {
-        &:hover {
-        color: var(--tc);
-            background-color: var(--menuButtHover);
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-            color: var(--tc);
-            background-color: var(--menuButtHover);
-        }
-    }
-}
-.SMtab.active {
-    border-radius: 8px 8px 0 0;
-    color: var(--accent_text);
-   
 }
 .SMfilter {
     position: absolute;
@@ -190,23 +155,6 @@
             color: var(--borderWh);
         }
     }
-}
-.newMessagesLength {
-    position: absolute;
-    margin-left: 0.2vw;
-    font-size: 14px;
-    aspect-ratio: 1/1;
-}
-.SMline {
-    position: relative;
-    left: 0;
-    width: 50%;
-    height: 2px;
-    transition: left 0.2s ease;
-    background:linear-gradient(135deg, var(--accent), var(--grad));
-}
-.SMline.habits {
-    left: 50%;
 }
 .SMfiltersDiv {
     position: absolute;
@@ -274,11 +222,10 @@
 
 .slider {
     display: flex;
-    width: 200%;
+    width: 400%;
     transition: transform 0.3s ease-in-out;
     height: 100%;
 }
-
 .slide {
     width: 50%;
     height: 100%;
@@ -291,20 +238,19 @@
 
     }
 }
-
 .SMlist {
     position: relative;
     width: 100%;
     display: flex;
     flex-direction: column;
     transition: max-height 0.35s ease;
+    padding-top: 1vh;
     padding-bottom: 6vh;
     margin-top: 0.25vh;
     &.nothing {
         color: var(--borderWh);
         align-items: center;
         justify-content: center;
-        margin-top: 3vh;
     }
 }
 .hbListNothingAction {
@@ -421,53 +367,165 @@
     position: absolute;
     height: 100%;
     border-radius: 24px;
-    width: calc(100% / 3);
+    width: 25%;
     background: linear-gradient(135deg, var(--accent), var(--grad));
     transition: left 0.3s ease;
     border: 3px solid var(--tr);
     box-sizing: border-box;
 }
-.plusMenu {
+.SMaccount {
+    height: 16vh;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    position: absolute;
-    background-color: var(--bgc);
-    border-radius: 12px;
-    overflow: hidden;
-    opacity: 0;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    pointer-events: none;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1vh;
+    background: var(--mc);
+    border-radius: 24px;
+    padding: 1vh 1vw;
+    cursor: pointer;
+    @media (hover: hover) {
+        &.SMaccount:hover {
+            background-color: var(--menuButtHover);
+        }
+    }
     &.active {
-        transform: translateY(50%);
-        opacity: 1;
-        pointer-events: all;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        .SMaccDescText {
+            color: var(--inner_text);
+        }
+        .settingUserNick {
+            color: var(--inner_text);
+        }        
+        .settingUserName {
+            color: var(--inner_text);
+        }
     }
 }
-.plusMenuButt {
-    width: 12vw;
-    cursor: pointer;
-    padding: 1vh 1vw;
-    color: var(--borderWhLight);
+.SMaccDesc {
+    display: flex;
+    flex-direction: column;
+}
+.SMaccDescText {
+    color: var(--borderHabit);
     display: flex;
     align-items: center;
-    gap: 0.5vw;
-    >svg {
-        color: var(--accent_text);
+    justify-content: center;
+}
+.SMAvatar {
+    height: 10vh;
+    width: 10vh;
+    border-radius: 50%;
+    overflow: hidden;
+    >img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+}
+.SMaccountButtsWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vh;
+    overflow: hidden;
+}
+.SMaccountButt {
+    background: var(--interact);
+    border-radius: 24px;
+    width: 100%;
+    padding: 1vh 0.65vw;
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    align-items: center;
+    height: 5vh;
+    gap: 1vh;
+    > span {
+        font-size: 18px;
+    }
+    @media (max-width: 800px) {
+        height: 6vh;
+        padding: 1vh 2vw;
+    }
+    &.active {
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        > .settingName {
+            color: var(--tc);
+            > svg {
+                color: var(--tc);
+            }
+        }
+    }
+    &.logout:hover {
+        >.settingName {
+            color: var(--notValid);
+            > svg {
+                color: var(--notValid);
+            }
+        }
     }
     @media (hover: hover) {
         &:hover {
-            color: var(--tc);
+            background-color: var(--menuButtHover);
+            > .settingName {
+                color: var(--tc);
+            }
+            > .settingDesc {
+                color: var(--borderWh);
+            }
         }
     }
 
     @media (hover: none) {
         &:active {
-            color: var(--tc);
+            background-color: var(--menuButtHover);
+            > .settingName {
+                color: var(--tc);
+            }
+            > .settingDesc {
+                color: var(--borderWh);
+            }
         }
     }
-    @media (max-width:800px) {
-        padding: 1vh 2vw;
-        gap: 1vw;
-        width: 60vw;
+}
+.SMmainButtName {
+    color: var(--borderWhLight);
+}
+.SMmainButtDesc {
+    color: var(--borderWh);
+}
+.SMmainButt {
+    background-color: var(--interact);
+    border-radius: 18px;
+    padding: 1vh 1vw;
+    cursor: pointer;
+    .SMmainButtName {
+        color: var(--tc);
+        display: flex;
+        align-items: center;
+        >svg {
+            margin-right: 6px;
+        }
+    }
+    @media (hover: hover) {
+        &:hover {
+            background-color: var(--menuButtHover);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background-color: var(--menuButtHover);
+        }
+    }
+    &.active {
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        .SMmainButtName {
+            color: var(--inner_text);
+        }
+        .SMmainButtDesc {
+            color: var(--inner_text);
+        }
     }
 }

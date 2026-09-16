@@ -5,9 +5,7 @@ import "./scss/settings.scss";
 import {
     BellRingingIcon,
     CaretLeftIcon,
-    CaretRightIcon,
     ChatsTeardropIcon,
-    GearIcon,
     InfoIcon,
     LockKeyIcon,
     MagnifyingGlassIcon,
@@ -15,6 +13,7 @@ import {
     SneakerMoveIcon,
     UserIcon,
     VaultIcon,
+    WrenchIcon,
 } from "@phosphor-icons/react";
 import { useNavigate, useParams } from "react-router";
 import AccSettingsTab from "./components/SettingsTabs/AccSettingsTab";
@@ -27,10 +26,6 @@ import SecurityTab from "./components/SettingsTabs/SecurityTab";
 import GeneralTab from "./components/SettingsTabs/GeneralTab";
 import { useAcc } from "../../components/hooks/AccHook";
 import { useTranslation } from "react-i18next";
-import { LogOutIcon } from "lucide-react";
-import { isAxiosError } from "axios";
-import { useNote } from "../../components/hooks/NoteHook";
-import { api } from "../../components/ts/api";
 
 export interface setting {
     name: string;
@@ -42,31 +37,13 @@ export interface setting {
 export default function Settings() {
     const { t } = useTranslation("settings");
     const { setTitle } = usePageTitle();
-    const { user, isAuthenticated, loadingUser, refetchUser } = useUser();
+    const { user, isAuthenticated, loadingUser,  } = useUser();
     const { setIsMyAcc } = useAcc();
-    const { showNotification } = useNote()
 
     const { tab } = useParams();
     const navigate = useNavigate();
     
     const [activeTab, setActiveTab] = useState<setting | null>(null);
-    
-    const logOut = async () => {
-        try {
-            const res = await api.get(`logout`)
-            if (res.data.success) {
-                refetchUser()
-            } else {
-                showNotification("error", t("sideMenu.logOutError"))
-            }
-        } catch (error: unknown) {
-            if (isAxiosError(error)) {
-                showNotification("error", error.response?.data?.messages || t("sideMenu.logOutError"))
-            } else {
-                showNotification("error", t("sideMenu.logOutErrorGeneric"))
-            }
-        }
-    }
 
     useEffect(() => {
         if (!user.id && !loadingUser) { 
@@ -84,7 +61,7 @@ export default function Settings() {
             name: t("settings.general"),
             tab: "gen",
             desc: t("settings.generalDesc"),
-            icon: GearIcon,
+            icon: WrenchIcon,
         },
         {
             name: t("settings.personalization"),
@@ -194,23 +171,6 @@ export default function Settings() {
                                 </span>
                                 <div className="settingDesc">
                                     {t("settings.accountDesc")}
-                                </div>
-                            </div>
-                            <div className="settingsFastButtsWrapper">
-                                <div className="settingHeader">
-                                    Быстрые действия
-                                </div>
-                                <div className="settingButt fastButt" onClick={() => navigate(`/acc/${user.nick}`)}>
-                                    <span className="settingName">
-                                        <UserIcon weight="fill"/> 
-                                        Перейти в профиль
-                                    </span>
-                                    <CaretRightIcon className="fastButtCaret"/>
-                                </div>
-                                <div className="settingButt fastButt logout" onClick={() => logOut()}>
-                                    <span className="settingName">
-                                        <LogOutIcon size={21}/> Выйти из аккаунта
-                                    </span>
                                 </div>
                             </div>
                             {settings.map((s) => (

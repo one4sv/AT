@@ -1,234 +1,44 @@
-import { useState, useRef, useEffect } from "react"
+import { useRef, useEffect } from "react"
 import "../../../scss/SM/sideMenu.scss"
-import { Search, Plus } from "lucide-react"
 import HabitsList from "./HabitsList.tsx"
 import { useUser } from "../../hooks/UserHook.ts"
-import { useBlackout } from "../../hooks/BlackoutHook.ts"
 import ContactsList from "./ContactsList.tsx"
 import { useSettings } from "../../hooks/SettingsHook.ts"
 import { useHabits } from "../../hooks/HabitsHook.ts"
 import MinLoader from "../MinLoader.tsx"
 import { isMobile } from "react-device-detect"
-import { CalendarPlusIcon, ChatsIcon, SortAscending } from "@phosphor-icons/react"
-import { filterHabitsByOrder } from "../utils/filteredHabitsByOrder.tsx"
 import { useSchedule } from "../../hooks/ScheduleHook.ts"
 import SideMenuUnAunthificated from "../SideMenuUnAunthificated.tsx"
 import { useSideMenu } from "../../hooks/SideMenuHook.ts"
 import { useTranslation } from "react-i18next"
 import { useContacts } from "../../hooks/ContactsHook.ts"
 import SMnav from "./SMnav.tsx"
+import AccountList from "./AccountList.tsx"
+import SpotsList from "./SpotsList.tsx"
+import { MagnifyingGlassIcon } from "@phosphor-icons/react"
 
 export default function SideMenu() {
-    const { t, i18n } = useTranslation("common")
+    const { t } = useTranslation("common")
     const { isAuthenticated, loadingUser } = useUser()
-    const { setSearch, loadingList, list, mainSearchRef, search } = useContacts()
-    const { loadingHabits, habits, newOrderHabits } = useHabits()
+    const { setSearch, loadingList, mainSearchRef, search } = useContacts()
+    const { loadingHabits } = useHabits()
     const { refreshSchedules } = useSchedule()
-    const { showArchived, layout } = useSettings()
-    const { setBlackout } = useBlackout()
-    const { setShowSideMenu, setActiveTab, activeTab, showSideMenu, setIsDragging, isDragging, translateX, setTranslateX } = useSideMenu()
-
-    const [filterType, setFilterType] = useState<"messages" | "habits">("messages")
-    const [isFilterOpen, setIsFilterOpen] = useState(false)
-
-    const [showList, setShowList] = useState(false)
-    const [showPlusMenu, setShowPlusMenu] = useState<boolean>(false)
+    const { layout } = useSettings()
+    const { setShowSideMenu, activeTab, showSideMenu, setIsDragging, isDragging, translateX, setTranslateX, messageSelectedValue, habitsSelectedValue } = useSideMenu()
     
-    const [messageSelectedValue, setMessageSelectedValue] = useState("messages")
-    const [habitsSelectedValue, setHabitsSelectedValue] = useState("all")
-
-    const [messagesFilters, setMessagesFilters] = useState<{label: string, value: string, new: string}[]>([])
-    const [habitsFilters, setHabitsFilters] = useState<{label: string, value: string, new: string}[]>([])
+    const translateSlider =
+        activeTab === "chats" ? 0 :
+        activeTab === "habits" ? -25 :
+        activeTab === "spots" ? -50 :
+        activeTab === "user" ? -75 :
+        0;
 
     const startX = useRef(0);
     const startTranslate = useRef(0);
     const sideMenuRef = useRef<HTMLDivElement>(null);
-
-    const tabsRef = useRef<HTMLDivElement>(null)
-    const menuRef = useRef<HTMLDivElement>(null)
-    const buttonRef = useRef<HTMLDivElement>(null)
-    const plusRef = useRef<HTMLDivElement>(null)
-    const plusMenuRef = useRef<HTMLDivElement>(null)
-    const filtersRef = useRef<HTMLDivElement>(null)
-
-    const timerRef = useRef<number | null>(null)
-    const longPressTriggered = useRef(false)
-
-    const newLength = list.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
-
-    const messageSelected = messagesFilters.find(f => f.value === messageSelectedValue) 
-        ?? { label: t("sideMenu.messages"), value: "messages", new: "" }
-    
-    const habitsSelected = habitsFilters.find(f => f.value === habitsSelectedValue) 
-        ?? { label: t("sideMenu.activities"), value: "all", new: "0" }
     
     useEffect(() => {
         refreshSchedules()
-    }, [])
-
-    useEffect(() => {
-        const filters: {label: string, value: string, new: string}[] = []
-        
-        const totalNew = newLength > 99 ? "99+" : newLength > 0 ? String(newLength) : ""
-        filters.push({ label: t("sideMenu.messages"), value: "messages", new: totalNew })
-
-        if (newLength > 0) {
-            filters.push({ label: t("sideMenu.new"), value: "new", new: totalNew })
-        }
-
-        const privateChats = list.filter(c => !c.is_group)
-        if (privateChats.length > 0) {
-            const privateNewCount = privateChats.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
-            const privateNew = privateNewCount > 99 ? "99+" : privateNewCount > 0 ? String(privateNewCount) : ""
-            filters.push({ label: t("sideMenu.private"), value: "private", new: privateNew })
-        }
-
-        const groupChats = list.filter(c => c.is_group)
-        if (groupChats.length > 0) {
-            const groupNewCount = groupChats.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
-            const groupNew = groupNewCount > 99 ? "99+" : groupNewCount > 0 ? String(groupNewCount) : ""
-            filters.push({ label: t("sideMenu.groups"), value: "group", new: groupNew })
-        }
-
-        setMessagesFilters(filters)
-        
-        // Если текущий value пропал из списка — сбрасываем
-        if (!filters.some(f => f.value === messageSelectedValue)) {
-            setMessageSelectedValue(filters[0]?.value ?? "messages")
-        }
-    }, [list, newLength, t, i18n.language])
-
-    useEffect(() => {
-        const filters: { label: string; value: string, new: string }[] = []
-        filters.push({ label: t("sideMenu.activities"), value: "all", new: "0" })
-
-        if (newOrderHabits && habits) {
-            const groupLabels: Record<string, string> = {
-                everyday: t("sideMenu.everyday"),
-                today: t("sideMenu.today"),
-                tomorrow: t("sideMenu.tomorrow"),
-                sometimes: t("sideMenu.sometimes"),
-            }
-
-            const activeHabits = habits.filter(h => h.ongoing)
-
-            newOrderHabits.forEach(order => {
-                if (order === "pinned") return
-
-                const groupHabits = filterHabitsByOrder(order, activeHabits, "")
-                if (groupHabits.length > 0) {
-                    let label = groupLabels[order]
-                    if (!label) {
-                        const date = new Date(order)
-                        if (!isNaN(date.getTime())) {
-                            label = date.toLocaleDateString(i18n.language === "ru" ? "ru-RU" : undefined, { 
-                                weekday: "short", 
-                                day: "numeric", 
-                                month: "numeric" 
-                            })
-                        } else {
-                            return
-                        }
-                    }
-                    filters.push({ label, value: order, new: "0" })
-                }
-            })
-
-            const hasArchived = habits.some(h => !h.ongoing)
-            if (hasArchived) {
-                filters.push({ label: t("sideMenu.archive"), value: "archived", new: "0" })
-            }
-        }
-
-        setHabitsFilters(filters)
-        
-        if (!filters.some(f => f.value === habitsSelectedValue)) {
-            setHabitsSelectedValue(filters[0]?.value ?? "all")
-        }
-    }, [habits, newOrderHabits, showArchived, t, i18n.language])
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                menuRef.current && !menuRef.current.contains(event.target as Node) &&
-                buttonRef.current && !buttonRef.current.contains(event.target as Node)
-            ) {
-                setShowList(false)
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                plusRef.current &&
-                !plusRef.current.contains(event.target as Node) &&
-                plusMenuRef.current &&
-                !plusMenuRef.current.contains(event.target as Node)
-            ) {
-                setShowPlusMenu(false)
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                filtersRef.current && 
-                !filtersRef.current.contains(event.target as Node) && 
-                tabsRef.current && 
-                !tabsRef.current.contains(event.target as Node)
-            ) {
-                setIsFilterOpen(false)
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
-
-    const startLongPress = (openFn: () => void) => {
-        longPressTriggered.current = false
-        if (timerRef.current) clearTimeout(timerRef.current)
-        timerRef.current = window.setTimeout(() => {
-            longPressTriggered.current = true
-            openFn()
-        }, 350)
-    }
-
-    const cancelLongPress = () => {
-        if (timerRef.current) {
-            clearTimeout(timerRef.current)
-            timerRef.current = null
-        }
-    }
-
-    useEffect(() => {
-        const onUp = () => cancelLongPress()
-        document.addEventListener("mouseup", onUp)
-        document.addEventListener("touchend", onUp)
-        return () => {
-            document.removeEventListener("mouseup", onUp)
-            document.removeEventListener("touchend", onUp)
-        }
-    }, [])
-
-    useEffect(() => {
-        const handleUp = (event: MouseEvent | TouchEvent) => {
-            cancelLongPress()
-            if (tabsRef.current && !tabsRef.current.contains(event.target as Node)) {
-                setIsFilterOpen(false)
-            }
-        }
-        document.addEventListener("mouseup", handleUp)
-        document.addEventListener("touchend", handleUp)
-        return () => {
-            document.removeEventListener("mouseup", handleUp)
-            document.removeEventListener("touchend", handleUp)
-        }
     }, [])
 
     const closeMenu = () => {
@@ -290,10 +100,10 @@ export default function SideMenu() {
     if (!isAuthenticated && !loadingUser) return (
         <SideMenuUnAunthificated 
             ref={sideMenuRef}
-            onTouchS={handleTouchStart} 
-            onTouchM={handleTouchMove} 
-            onTouchE={handleTouchEnd} 
-            translateX={translateX} 
+            onTouchS={handleTouchStart}
+            onTouchM={handleTouchMove}
+            onTouchE={handleTouchEnd}
+            translateX={translateX}
             isDragging={isDragging}
         />
     )
@@ -310,23 +120,6 @@ export default function SideMenu() {
             }}
         >
             <div className="SMsearchDiv">
-                <div className="SMmenuWrapper">
-                    <div
-                        className={`SMmenuButt ${showList ? "active" : ""}`}
-                        onClick={() => setShowPlusMenu(!showPlusMenu)}
-                        ref={plusRef}
-                    >
-                        <Plus/>
-                    </div>
-                    <div className={`plusMenu ${showPlusMenu ? "active" : ""}`} ref={plusMenuRef}>
-                        <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"AddHabit"})}>
-                            <CalendarPlusIcon weight="fill" size={24}/>{t("sideMenu.addActivity")}
-                        </div>
-                        <div className="plusMenuButt" onClick={() => setBlackout({seted:true, module:"CreateChat"})}>
-                            <ChatsIcon weight="fill" size={24}/>{t("sideMenu.createChat")}
-                        </div>
-                    </div>
-                </div>
                 <div className="SMsearch">
                     <input 
                         type="text" 
@@ -336,116 +129,43 @@ export default function SideMenu() {
                         placeholder={t("sideMenu.searchPlaceholder")} 
                         value={search}
                     />
-                    <Search />
+                    <MagnifyingGlassIcon size={22}/>
                 </div>
-            </div>
-
-            <div className="SMtabs" ref={tabsRef}>
-                <div className={`SMtab ${activeTab === "messages" ? "active" : ""}`}
-                    onMouseDown={() => startLongPress(() => {
-                        setFilterType("messages")
-                        setIsFilterOpen(true)
-                    })}
-                    onTouchStart={() => startLongPress(() => {
-                        setFilterType("messages")
-                        setIsFilterOpen(true)
-                    })}
-                    onMouseUp={() => {
-                        setFilterType("messages")
-                        if (activeTab === "messages") {
-                            setIsFilterOpen(prev => !prev)
-                        } else {
-                            setActiveTab("messages")
-                        }
-                    }}
-                >
-                    {activeTab === "messages" && <div className="SMfilter"><SortAscending /></div>}
-                    {messageSelected.label}
-                    {messageSelected.new !== "" && <span className="newMessagesLength">{messageSelected.new}</span>}
-                </div>
-
-                <div className={`SMtab ${activeTab === "habits" ? "active" : ""}`}
-                    onMouseDown={() => startLongPress(() => {
-                        setFilterType("habits")
-                        setIsFilterOpen(true)
-                    })}
-                    onTouchStart={() => startLongPress(() => {
-                        setFilterType("habits")
-                        setIsFilterOpen(true)
-                    })}
-                    onMouseUp={() => {
-                        setFilterType("habits")
-                        if (activeTab === "habits") {
-                            setIsFilterOpen(prev => !prev)
-                        } else {
-                            setActiveTab("habits")
-                        }
-                    }}
-                >
-                    {activeTab === "habits" && <div className="SMfilter"><SortAscending /></div>}
-                    {habitsSelected.label}
-                </div>
-            </div>
-
-            <div className={`SMline ${activeTab === "messages" ? "mess" : "habits"}`} />
-
-            <div className={`SMfiltersDiv ${isFilterOpen ? "open" : ""} ${filterType || ""}`} ref={filtersRef}>
-                {(filterType === "messages" ? messagesFilters : habitsFilters).map(filter => (
-                    <div 
-                        className={`filterItem ${
-                            (filterType === "messages" ? messageSelectedValue : habitsSelectedValue) === filter.value 
-                                ? "selected" 
-                                : ""
-                        }`} 
-                        key={filter.value}
-                        onMouseUp={() => {
-                            if (filterType === "messages") {
-                                setMessageSelectedValue(filter.value)
-                                setActiveTab("messages")
-                            }
-                            if (filterType === "habits") {
-                                setHabitsSelectedValue(filter.value)
-                                setActiveTab("habits")
-                            }
-                            setIsFilterOpen(false)
-                        }}
-                        onTouchEnd={() => {
-                            if (filterType === "messages") {
-                                setMessageSelectedValue(filter.value)
-                                setActiveTab("messages")
-                            }
-                            if (filterType === "habits") {
-                                setHabitsSelectedValue(filter.value)
-                                setActiveTab("habits")
-                            }
-                            setIsFilterOpen(false)
-                        }}
-                    >
-                        {filter.label}
-                        {filterType === "messages" && filter.new && <span className="new">{` ${filter.new}`}</span>}
-                    </div>
-                ))}
             </div>
 
             <div className="ListWrapper">
-                <div className="slider" style={{ transform: `translateX(${activeTab === "messages" ? 0 : -50}%)` }}>
-                    <div className={`slide ${isMobile ? "mobileSlide" : ""}`}>
+                <div className="slider" style={{ transform: `translateX(${translateSlider}%)` }}>
+                    <div className="slide">
                         {loadingList ? (
                             <div className="menuLoader"><MinLoader /></div>
                         ) : (
                             <ContactsList filter={messageSelectedValue} searchRef={mainSearchRef}/>
                         )}
-                    </div>
-                    <div className={`slide ${isMobile ? "mobileSlide" : ""}`}>
+                    </div>                  
+                    <div className="slide">
                         {loadingHabits ? (
                             <div className="menuLoader"><MinLoader /></div>
                         ) : (
                             <HabitsList filter={habitsSelectedValue}/>
                         )}
+                    </div>  
+                    <div className="slide">
+                        {loadingList ? (
+                            <div className="menuLoader"><MinLoader /></div>
+                        ) : (
+                            <SpotsList/>
+                        )}
+                    </div>                    
+                    <div className="slide">
+                        {loadingList ? (
+                            <div className="menuLoader"><MinLoader /></div>
+                        ) : (
+                            <AccountList/>
+                        )}
                     </div>
                 </div>
             </div>
-            <SMnav closeMenu={closeMenu}/>
+            <SMnav/>
         </div>
     )
 }

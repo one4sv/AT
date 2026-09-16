@@ -113,39 +113,6 @@
         padding: 1vh 2vw;
     }
 }
-.settingsFastButtsWrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--mc);
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
-    padding: 1.2vh 0.65vw;
-    border-radius: 12px;
-    gap: 0.5vh;
-    @media (max-width: 800px) {
-        padding: 1vh 2vw;
-    }
-}
-.fastButt {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    background-color: var(--tr);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    > svg {
-        color: var(--accent);
-    }
-    &.logout:hover {
-        >.settingName {
-            color: var(--notValid);
-            > svg {
-                color: var(--notValid);
-            }
-        }
-    }
-}
 .settingName {
     display: flex;
     align-items: center;
@@ -225,10 +192,12 @@
     position: relative;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
+    display: flex;
+    align-items: center;
     > svg {
         position: absolute;
         right: 0.75vw;
-        margin-top: 0.35vh;
+        font-size: 24px;
         color: var(--borderWh);
     }
     &:focus-within {
@@ -248,12 +217,15 @@
         var(--interact),
         var(--tc),
         var(--borderWh),
-        fit-content,
-        8px,
+        4vh,
+        12px,
         var(--accent)
     );
     width: 100%;
     padding: 0.4vh 0.25vw;
+    &::placeholder {
+        color: var(--borderHabit);
+    }
     @media (max-width:800px) {
         padding-inline-start: 1.5vw;
     }

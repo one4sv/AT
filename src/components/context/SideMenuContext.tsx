@@ -16,7 +16,11 @@ interface SideMenuContextType {
     setShowChatMenu:React.Dispatch<SetStateAction<boolean>>,
     returnSlide:() => void,
     activeTab: string,
-    setActiveTab: React.Dispatch<SetStateAction<string>>
+    setActiveTab: React.Dispatch<SetStateAction<string>>,
+    messageSelectedValue: string,
+    setMessageSelectedValue: React.Dispatch<SetStateAction<string>>,
+    habitsSelectedValue: string,
+    setHabitsSelectedValue: React.Dispatch<SetStateAction<string>>
     translateX: number,
     setTranslateX: React.Dispatch<SetStateAction<number>>
     isDragging: boolean,
@@ -36,11 +40,13 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [ showSettings, setShowSettings ] = useState(false)
     const [ showJurnal, setShowJurnal ] = useState(false)
     const [ showChatMenu, setShowChatMenu ] = useState(false)
-    const [ activeTab, setActiveTab ] = useState<string>("messages")
+    const [ activeTab, setActiveTab ] = useState<string>("chats")
     const [ translateX, setTranslateX ] = useState(-100);
     const [ isDragging, setIsDragging ] = useState(false);
     const [ dontHandle, setDontHandle ] = useState(false)
     const [ dontHandleOther, setDontHandleOther ] = useState(false)
+    const [ messageSelectedValue, setMessageSelectedValue ] = useState("")
+    const [ habitsSelectedValue, setHabitsSelectedValue ] = useState("")
 
     const location = useLocation();
 
@@ -53,10 +59,6 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         setRed(false)
     }, [location.pathname])
 
-    useEffect(() => {
-        if (location.pathname.includes("/habit")) setActiveTab("habits")
-    }, [location.pathname])
-
     const returnSlide = () => {
         if (showJurnal) setShowJurnal(false)
         else if (showSettings) setShowSettings(false)
@@ -66,7 +68,8 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
 
     return (
         <SideMenuContext.Provider value={{ showSideMenu, setShowSideMenu, red, setRed, showHabitMenu, setShowHabitMenu, showSettings, setShowSettings, showChatMenu, setShowChatMenu,
-        showJurnal, setShowJurnal, returnSlide, activeTab, setActiveTab, setTranslateX, translateX, setIsDragging, isDragging, dontHandle, setDontHandle, setDontHandleOther, dontHandleOther }}>
+        showJurnal, setShowJurnal, returnSlide, activeTab, setActiveTab, setTranslateX, translateX, setIsDragging, isDragging, dontHandle, setDontHandle, setDontHandleOther, dontHandleOther,
+        messageSelectedValue, setMessageSelectedValue, habitsSelectedValue, setHabitsSelectedValue }}>
             {children}
         </SideMenuContext.Provider>
     );
