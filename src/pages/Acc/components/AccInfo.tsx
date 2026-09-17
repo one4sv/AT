@@ -26,8 +26,6 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
 
     const navigate = useNavigate()
 
-    const page = location.pathname.split("/")[1]
-    console.log(page)
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {

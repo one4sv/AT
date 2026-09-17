@@ -248,6 +248,7 @@
     padding-bottom: 6vh;
     margin-top: 0.25vh;
     &.nothing {
+        margin-top: 2vh;
         color: var(--borderWh);
         align-items: center;
         justify-content: center;
@@ -374,14 +375,14 @@
     box-sizing: border-box;
 }
 .SMaccount {
-    height: 16vh;
+    height: 40vh;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-evenly;
     margin-bottom: 1vh;
-    background: var(--mc);
+    background: var(--tr);
     border-radius: 24px;
     padding: 1vh 1vw;
     cursor: pointer;
@@ -390,32 +391,19 @@
             background-color: var(--menuButtHover);
         }
     }
-    &.active {
-        background: linear-gradient(135deg, var(--accent), var(--grad));
-        .SMaccDescText {
-            color: var(--inner_text);
-        }
-        .settingUserNick {
-            color: var(--inner_text);
-        }        
-        .settingUserName {
-            color: var(--inner_text);
-        }
-    }
 }
 .SMaccDesc {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 .SMaccDescText {
     color: var(--borderHabit);
     display: flex;
-    align-items: center;
-    justify-content: center;
 }
 .SMAvatar {
-    height: 10vh;
-    width: 10vh;
+    height: 20vh;
+    width: 20vh;
     border-radius: 50%;
     overflow: hidden;
     >img {
@@ -431,7 +419,7 @@
     overflow: hidden;
 }
 .SMaccountButt {
-    background: var(--interact);
+    background: var(--mc);
     border-radius: 24px;
     width: 100%;
     padding: 1vh 0.65vw;
@@ -439,14 +427,14 @@
     flex-direction: row;
     cursor: pointer;
     align-items: center;
-    height: 5vh;
+    height: 4vh;
     gap: 1vh;
     > span {
         font-size: 18px;
     }
     @media (max-width: 800px) {
         height: 6vh;
-        padding: 1vh 2vw;
+        padding: 1vh 3vw;
     }
     &.active {
         background: linear-gradient(135deg, var(--accent), var(--grad));
@@ -496,7 +484,7 @@
     color: var(--borderWh);
 }
 .SMmainButt {
-    background-color: var(--interact);
+    background-color: var(--mc);
     border-radius: 18px;
     padding: 1vh 1vw;
     cursor: pointer;
@@ -504,8 +492,9 @@
         color: var(--tc);
         display: flex;
         align-items: center;
-        >svg {
+        >.SMmainButtSvg {
             margin-right: 6px;
+            color: var(--accent);
         }
     }
     @media (hover: hover) {
@@ -519,12 +508,18 @@
             background-color: var(--menuButtHover);
         }
     }
+    @media (max-width: 800px) {
+        padding: 1vh 3vw;
+    }
     &.active {
         background: linear-gradient(135deg, var(--accent), var(--grad));
         .SMmainButtName {
             color: var(--inner_text);
         }
         .SMmainButtDesc {
+            color: var(--inner_text);
+        }
+        .SMmainButtSvg {
             color: var(--inner_text);
         }
     }

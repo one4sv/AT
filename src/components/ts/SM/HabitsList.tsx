@@ -2,12 +2,12 @@ import "../../../scss/SM/habitsList.scss";
 import { useHabits } from "../../hooks/HabitsHook";
 import { useSettings } from "../../hooks/SettingsHook";
 import HabitDiv from "../Habit";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { filterHabitsByOrder } from "../utils/filteredHabitsByOrder";
 import { useEffect, useState } from "react";
 import type { Habit } from "../../context/HabitsContext";
 import { isIsoDate } from "../utils/isIsoDate";
-import { CaretRightIcon, GhostIcon, PersonSimpleRunIcon } from "@phosphor-icons/react";
+import { GhostIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../../hooks/BlackoutHook";
 import { useContacts } from "../../hooks/ContactsHook";
 
@@ -18,8 +18,7 @@ export default function HabitsList({ filter }: { filter?: string }) {
     const { habitId } = useParams();
     const { setBlackout } = useBlackout()
 
-    const navigate = useNavigate()
-    
+
     const [filtered, setFiltered] = useState(habits);
     const shownHabits = new Set<number>();
 
@@ -76,12 +75,6 @@ export default function HabitsList({ filter }: { filter?: string }) {
 
     if (filtered?.length === 0) return (
         <div className="habitsList SMlist nothing">
-            <div className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} onClick={() => navigate("/habit")}>
-                <span className="SMmainButtName">
-                    <PersonSimpleRunIcon weight="fill" size={30}/> Активности <CaretRightIcon/>
-                </span>
-                <div className="SMmainButtDesc">Следите за активностями, стройте планы, отметьте достижения и проверьте календарь</div>
-            </div>
             <div className="hbListNothingAction" onClick={() => setBlackout({seted:true, module:"AddHabit"})}>
                 <GhostIcon size={50} strokeWidth={1.5} />
                 Упс! А здесь ничего нет!
@@ -95,12 +88,6 @@ export default function HabitsList({ filter }: { filter?: string }) {
 
     return (
         <div className="habitsList SMlist">
-            <div className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} onClick={() => navigate("/habit")}>
-                <span className="SMmainButtName">
-                    <PersonSimpleRunIcon weight="fill" size={30}/> Активности <CaretRightIcon/>
-                </span>
-                <div className="SMmainButtDesc">Следите за активностями, стройте планы, отметьте достижения и посмотрите статистику</div>
-            </div>
             {filtered && newOrderHabits?.map(order => {
                 const filteredByOrder = filterHabitsByOrder(order, filtered, search);
                 const unique = filteredByOrder.filter(h => !shownHabits.has(h.id));

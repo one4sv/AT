@@ -4,7 +4,7 @@ import { LogOutIcon } from "lucide-react";
 import { isAxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import { useNote } from "../../hooks/NoteHook";
-import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, UserIcon } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, PersonSimpleRunIcon, UserIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 
 export default function AccountList() {
@@ -30,7 +30,7 @@ export default function AccountList() {
             }
         }
     }
-    console.log(location.pathname)
+
     return (
         <div className="accountList SMlist">
             <div
@@ -53,25 +53,30 @@ export default function AccountList() {
                         {user.username ? (
                             <>
                                 <span className="settingUserName">{user.username}</span>{" "}
-                                <span className="settingUserNick">| @{user.nick}</span>
+                                <span className="settingUserNick">| {user.nick}</span>
                             </>
                         ) : (
-                            <>@{user.nick}</>
+                            <>{user.nick}</>
                         )}
                     </span>
-                        <div className="SMaccDescText">
-                            {location.pathname === `/acc/${user.nick}` ? (
-                                "Мой профиль"
-                            ) : (
-                                <>
-                                    Перейти в профиль
-                                    <CaretRightIcon />
-                                </>
-                            )}
-                        </div>
+                    <div className="SMaccDescText">
+                        {user.mail}
+                    </div>
                 </div>
             </div>
             <div className="SMaccountButtsWrapper">
+                <div className={`SMmainButt ${location.pathname === "/" ? "active" : ""}`} onClick={() => navigate("/")}>
+                    <span className="SMmainButtName">
+                        <NewspaperIcon weight="fill" size={30} className="SMmainButtSvg"/> Лента <CaretRightIcon className="fastButtCaret"/>
+                    </span>
+                    <div className="SMmainButtDesc">Просматривайте единую лену постов из спотов и от друзей, рекомендации, ближайшие активности и планы друзей</div>
+                </div>
+                <div className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} onClick={() => navigate("/habit")}>
+                    <span className="SMmainButtName">
+                        <PersonSimpleRunIcon weight="fill" size={30} className="SMmainButtSvg"/> Активности <CaretRightIcon className="fastButtCaret"/>
+                    </span>
+                    <div className="SMmainButtDesc">Следите за активностями, стройте планы, отметьте достижения и проверьте календарь</div>
+                </div>
                 <div className={`SMaccountButt ${location.pathname === "/settings" ? "active" : "" }`} onClick={() => navigate("/settings")}>
                     <span className="settingName">
                         <GearIcon size={21} weight="fill"/> 

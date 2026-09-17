@@ -1,15 +1,13 @@
 import { type RefObject } from "react"
 import "../../../scss/SM/contactsList.scss"
 import Contact from "../Contact"
-import { CaretRightIcon, GhostIcon, MagnifyingGlassMinusIcon, UsersIcon } from "@phosphor-icons/react"
+import { GhostIcon, MagnifyingGlassMinusIcon } from "@phosphor-icons/react"
 import { useTranslation } from "react-i18next"
 import { useContacts } from "../../hooks/ContactsHook"
-import { useNavigate } from "react-router"
 
 export default function ContactsList({filter, searchRef} : {filter: string, searchRef: RefObject<HTMLInputElement | null>}) {
     const { t } = useTranslation("common")
     const { list, search, refetchContacts } = useContacts()
-    const navigate = useNavigate()
     const filtered = list.filter(contact => {
         if (filter === "new") return contact.unread_count > 0
         if (filter === "private") return !contact.is_group
@@ -19,12 +17,6 @@ export default function ContactsList({filter, searchRef} : {filter: string, sear
 
     return (
         <div className="contactsList SMlist">
-            <div className={`SMmainButt ${location.pathname === "/" ? "active" : ""}`} onClick={() => navigate("/")}>
-                <span className="SMmainButtName">
-                    <UsersIcon size={30} weight="fill"/> Лента <CaretRightIcon/>
-                </span>
-                <div className="SMmainButtDesc">Просматривайте посты из спотов и от друзей, рекомендации, ближайшие активности и планы друзей</div>
-            </div>
             {filtered.length > 0 ? filtered.map((contact) => (
                 <Contact contact={contact} key={contact.id}/>
             )) : search.length > 0 ? (
