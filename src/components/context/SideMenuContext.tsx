@@ -35,14 +35,14 @@ interface SideMenuContextType {
 const SideMenuContext = createContext<SideMenuContextType | undefined>(undefined);
 
 export function SideMenuProvider({ children }: { children: ReactNode }) {
-    const [ showSideMenu, setShowSideMenu  ] = useState(false);
+    const [ showSideMenu, setShowSideMenu  ] = useState(true);
     const [ red, setRed ] = useState<boolean>(false);
     const [ showHabitMenu, setShowHabitMenu ] = useState(false)
     const [ showSettings, setShowSettings ] = useState(false)
     const [ showJurnal, setShowJurnal ] = useState(false)
     const [ showChatMenu, setShowChatMenu ] = useState(false)
     const [ activeTab, setActiveTab ] = useState<tab>("chats")
-    const [ translateX, setTranslateX ] = useState(-100);
+    const [ translateX, setTranslateX ] = useState(0);
     const [ isDragging, setIsDragging ] = useState(false);
     const [ dontHandle, setDontHandle ] = useState(false)
     const [ dontHandleOther, setDontHandleOther ] = useState(false)

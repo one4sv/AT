@@ -162,12 +162,7 @@
     z-index: 10;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    transition: left 0.3s ease, height 0.3s ease, width 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
-    &.open {
-        opacity: 1;
-        pointer-events: all;
-        transform: translateY(0);
-    }
+    transition: left 0.3s ease, height 0.3s ease, width 0.3s ease, opacity 0.5s ease, transform 0.3s ease;
     &.chats {
         left: 3%;
     }
@@ -181,7 +176,10 @@
         left: 56%;
         width: 40%;
     }
-
+    &.open {
+        opacity: 1;
+        pointer-events: all;
+    }
     > div {
         width: 100%;
         text-align: start;
@@ -191,26 +189,26 @@
         justify-content: start;
         color: var(--borderWh);
         cursor: pointer;
-
         > svg {
             font-size: 20px;
             margin-right: 4px;
         }
-
         @media (hover: hover) {
             &:hover {
                 background-color: var(--accent_hov);
                 color: var(--tc);
             }
         }
-
         @media (hover: none) {
             &:active {
                 background-color: var(--accent_hov);
                 color: var(--tc);
             }
         }
-
+        &.touchHover {
+            background-color: var(--accent_hov);
+            color: var(--tc);
+        }
         &.selected {
             color: var(--accent);
         }
@@ -218,11 +216,8 @@
             color: var(--notValid);
         }
         @media (max-width: 800px) {
-            padding-left: 3vw;
+            padding: 1.5vh 2vw 1.5vh 3vw;
         }
-    }
-    @media (max-width: 800px) {
-        padding: 1vh 0;
     }
 }
 .SMextraSeparator {

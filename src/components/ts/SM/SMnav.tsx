@@ -12,6 +12,7 @@ import type { tab } from "../../context/SideMenuContext"
 import { useBlackout } from "../../hooks/BlackoutHook"
 import { useNote } from "../../hooks/NoteHook"
 import { useNavigate } from "react-router"
+import { isMobile } from "react-device-detect"
 
 export default function SMnav() {
     const { t, i18n } = useTranslation("common")
@@ -24,12 +25,15 @@ export default function SMnav() {
         habitsSelectedValue,
         setHabitsSelectedValue,
         setDontHandle,
-        setDontHandleOther
+        setDontHandleOther,
+        isDragging,
+        translateX,
+        showSideMenu
     } = useSideMenu()
     const { setBlackout } = useBlackout()
     const { list } = useContacts()
     const { habits, newOrderHabits } = useHabits()
-    const { showArchived } = useSettings()
+    const { showArchived, layout } = useSettings()
     const { showNotification } = useNote()
 
     const navigate = useNavigate()
@@ -46,6 +50,7 @@ export default function SMnav() {
     const touchStartPos = useRef<{ x: number; y: number } | null>(null)
     const tabsRef = useRef<HTMLDivElement>(null)
     const filtersRef = useRef<HTMLDivElement>(null)
+    const touchHoverRef = useRef<HTMLElement | null>(null)
 
     const newLength = list.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
 
@@ -179,10 +184,13 @@ export default function SMnav() {
     }
 
     const handlePointerUp = (e: MouseEvent | TouchEvent) => {
+        const wasLongPressNow = wasLongPress.current
+
         isPointerDown.current = false
 
-        if (!wasLongPress.current) {
+        if (!wasLongPressNow) {
             cancelLongPress()
+            wasLongPress.current = false
             return
         }
 
@@ -190,44 +198,114 @@ export default function SMnav() {
         let clientY: number
 
         if ("changedTouches" in e) {
-            clientX = e.changedTouches[0].clientX
-            clientY = e.changedTouches[0].clientY
+            const touch = e.changedTouches[0]
+
+            if (!touch) {
+                setTouchHover(null)
+                setIsExtraOpen(false)
+                cancelLongPress()
+                wasLongPress.current = false
+                return
+            }
+
+            clientX = touch.clientX
+            clientY = touch.clientY
         } else {
-            clientX = (e as MouseEvent).clientX
-            clientY = (e as MouseEvent).clientY
+            clientX = e.clientX
+            clientY = e.clientY
         }
 
-        const element = document.elementFromPoint(clientX, clientY) as HTMLElement | null
-        const extraTarget = element?.closest(".SMextraMenuButt, .filterItem") as HTMLElement | null
-        const navTarget = element?.closest(".SMnavButt") as HTMLElement | null
+        const element = document.elementFromPoint(clientX, clientY)
+
+        const extraTarget = element?.closest(
+            ".SMextraMenuButt"
+        ) as HTMLElement | null
+
+        const filterTarget = element?.closest(
+            ".filterItem"
+        ) as HTMLElement | null
+
+        const navTarget = element?.closest(
+            ".SMnavButt"
+        ) as HTMLElement | null
 
         if (extraTarget) {
+            const action = extraTarget.dataset.action
+
+            if (action === "create-chat") {
+                setBlackout({ seted: true, module: "CreateChat" })
+            }
+
+            if (action === "add-habit") {
+                setBlackout({ seted: true, module: "AddHabit" })
+            }
+
+            if (action === "new-spot") {
+                showNotification("info", "В разработке")
+            }
+
+            if (action === "profile") {
+                navigate(`/acc/${user.nick}`)
+            }
+
+            if (action === "settings") {
+                navigate(`/settings`)
+            }
+
+            if (action === "logout") {
+                showNotification("info", "В разработке")
+            }
+
+            setTouchHover(null)
+            setIsExtraOpen(false)
             cancelLongPress()
-            setTimeout(() => {
-                wasLongPress.current = false
-            }, 0)
+            wasLongPress.current = false
+
+            return
+        }
+
+        if (filterTarget) {
+            const value = filterTarget.dataset.value
+            const type = filterTarget.dataset.type
+
+            if (value && type === "chats") {
+                setMessageSelectedValue(value)
+                setActiveTab("chats")
+            }
+
+            if (value && type === "habits") {
+                setHabitsSelectedValue(value)
+                setActiveTab("habits")
+            }
+
+            setTouchHover(null)
+            setIsExtraOpen(false)
+            cancelLongPress()
+            wasLongPress.current = false
+
             return
         }
 
         if (navTarget) {
             const tab = navTarget.dataset.tab as tab | undefined
+
             if (tab) {
                 setActiveTab(tab)
                 setExtraMenu(tab)
             }
+
+            setTouchHover(null)
             setIsExtraOpen(false)
             cancelLongPress()
-            setTimeout(() => {
-                wasLongPress.current = false
-            }, 0)
+            wasLongPress.current = false
+
             return
         }
 
+        setTouchHover(null)
         setIsExtraOpen(false)
         cancelLongPress()
-        setTimeout(() => {
-            wasLongPress.current = false
-        }, 0)
+        wasLongPress.current = false
     }
 
     useEffect(() => {
@@ -248,21 +326,55 @@ export default function SMnav() {
         if (!longPressTriggered.current && touchStartPos.current) {
             const dx = Math.abs(touch.clientX - touchStartPos.current.x)
             const dy = Math.abs(touch.clientY - touchStartPos.current.y)
+
             if (dx > 12 || dy > 12) {
                 cancelLongPress()
+                setTouchHover(null)
                 return
             }
         }
 
         if (!longPressTriggered.current) return
 
-        const element = document.elementFromPoint(touch.clientX, touch.clientY)
-        const nav = element?.closest(".SMnavButt") as HTMLElement | null
-        const tab = nav?.dataset.tab as tab | undefined
+        const element = document.elementFromPoint(
+            touch.clientX,
+            touch.clientY
+        )
 
-        if (tab) {
-            setExtraMenu(tab)
+        const extraButton = element?.closest(
+            ".SMextraMenuButt"
+        ) as HTMLElement | null
+
+        const filter = element?.closest(
+            ".filterItem"
+        ) as HTMLElement | null
+
+        const nav = element?.closest(
+            ".SMnavButt"
+        ) as HTMLElement | null
+
+        if (extraButton) {
+            setTouchHover(extraButton)
+            return
         }
+
+        if (filter) {
+            setTouchHover(filter)
+            return
+        }
+
+        if (nav) {
+            const tab = nav.dataset.tab as tab | undefined
+
+            if (tab) {
+                setExtraMenu(tab)
+            }
+
+            setTouchHover(nav)
+            return
+        }
+
+        setTouchHover(null)
     }
 
     const handleNavEnter = (tab: tab) => {
@@ -282,6 +394,17 @@ export default function SMnav() {
             setIsExtraOpen(prev => !prev)
         }
     }
+    const setTouchHover = (element: HTMLElement | null) => {
+        if (touchHoverRef.current === element) return
+
+        touchHoverRef.current?.classList.remove("touchHover")
+
+        if (element) {
+            element.classList.add("touchHover")
+        }
+
+        touchHoverRef.current = element
+    }
 
     const messageSelected = chatsFilters.find(f => f.value === messageSelectedValue)
         ?? { label: "Чаты", value: "chats", new: "" }
@@ -295,12 +418,8 @@ export default function SMnav() {
                 return (
                     <div
                         className="SMextraMenuButt"
+                        data-action="create-chat"
                         onMouseUp={() => {
-                            setBlackout({ seted: true, module: "CreateChat" })
-                            setIsExtraOpen(false)
-                        }}
-                        onTouchEnd={(e) => {
-                            e.preventDefault()
                             setBlackout({ seted: true, module: "CreateChat" })
                             setIsExtraOpen(false)
                         }}
@@ -316,11 +435,7 @@ export default function SMnav() {
                             setBlackout({ seted: true, module: "AddHabit" })
                             setIsExtraOpen(false)
                         }}
-                        onTouchEnd={(e) => {
-                            e.preventDefault()
-                            setBlackout({ seted: true, module: "AddHabit" })
-                            setIsExtraOpen(false)
-                        }}
+                        data-action="add-habit"
                     >
                         <PlusIcon size={20} /> Новая активность
                     </div>
@@ -333,11 +448,7 @@ export default function SMnav() {
                             showNotification("info", "В разработке")
                             setIsExtraOpen(false)
                         }}
-                        onTouchEnd={(e) => {
-                            e.preventDefault()
-                            showNotification("info", "В разработке")
-                            setIsExtraOpen(false)
-                        }}
+                        data-action="new-spot"
                     >
                         <PlusIcon size={20} /> Новый спот
                     </div>
@@ -351,11 +462,7 @@ export default function SMnav() {
                                 navigate(`/acc/${user.nick}`)
                                 setIsExtraOpen(false)
                             }}
-                            onTouchEnd={(e) => {
-                                e.preventDefault()
-                                navigate(`/acc/${user.nick}`)
-                                setIsExtraOpen(false)
-                            }}
+                            data-action="profile"
                         >
                             <UserIcon weight="fill" size={20} /> В профиль
                         </div>
@@ -365,11 +472,7 @@ export default function SMnav() {
                                 navigate(`/settings`)
                                 setIsExtraOpen(false)
                             }}
-                            onTouchEnd={(e) => {
-                                e.preventDefault()
-                                navigate(`/settings`)
-                                setIsExtraOpen(false)
-                            }}
+                            data-action="settings"
                         >
                             <GearIcon weight="fill" size={20} /> Настройки
                         </div>
@@ -379,11 +482,7 @@ export default function SMnav() {
                                 showNotification("info", "В разработке")
                                 setIsExtraOpen(false)
                             }}
-                            onTouchEnd={(e) => {
-                                e.preventDefault()
-                                showNotification("info", "В разработке")
-                                setIsExtraOpen(false)
-                            }}
+                            data-action="logout"
                         >
                             <SignOutIcon weight="fill" size={20} /> Выйти
                         </div>
@@ -393,7 +492,12 @@ export default function SMnav() {
     }
 
     return (
-        <div className="SMnavDiv">
+        <div className={`SMnavDiv ${showSideMenu ? "open" : ""}`}
+            style={{
+                transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none",
+                transition: isDragging ? "none" : "transform 0.4s ease"
+            }}
+        >
             <div className={`SMnavExtraDiv ${isExtraOpen ? "open" : ""} ${extraMenu || ""}`} ref={filtersRef}>
                 {extraButts()}
                 {(extraMenu === "chats" || extraMenu === "habits") && <span className="SMextraSeparator" />}
@@ -406,23 +510,14 @@ export default function SMnav() {
                                     : ""
                             }`}
                             key={filter.value}
+                            data-value={filter.value}
+                            data-type={extraMenu}
                             onMouseUp={() => {
                                 if (extraMenu === "chats") {
                                     setMessageSelectedValue(filter.value)
                                     setActiveTab("chats")
                                 }
-                                if (extraMenu === "habits") {
-                                    setHabitsSelectedValue(filter.value)
-                                    setActiveTab("habits")
-                                }
-                                setIsExtraOpen(false)
-                            }}
-                            onTouchEnd={(e) => {
-                                e.preventDefault()
-                                if (extraMenu === "chats") {
-                                    setMessageSelectedValue(filter.value)
-                                    setActiveTab("chats")
-                                }
+
                                 if (extraMenu === "habits") {
                                     setHabitsSelectedValue(filter.value)
                                     setActiveTab("habits")
@@ -431,7 +526,9 @@ export default function SMnav() {
                             }}
                         >
                             <SortAscendingIcon />
+
                             {filter.label}
+
                             {extraMenu === "chats" && filter.new && (
                                 <span className="new">{` ${filter.new}`}</span>
                             )}
@@ -454,7 +551,6 @@ export default function SMnav() {
                         startLongPress("chats", touch.clientX, touch.clientY)
                     }}
                     onTouchMove={handleTouchMove}
-                    onTouchEnd={() => navFunc("chats")}
                 >
                     <ChatTeardropIcon weight="fill" />
                     <span>{messageSelected.label}</span>
@@ -472,7 +568,6 @@ export default function SMnav() {
                         startLongPress("habits", touch.clientX, touch.clientY)
                     }}
                     onTouchMove={handleTouchMove}
-                    onTouchEnd={() => navFunc("habits")}
                 >
                     <CalendarCheckIcon weight="fill" />
                     <span>{habitsSelected.label}</span>
@@ -490,7 +585,6 @@ export default function SMnav() {
                         startLongPress("spots", touch.clientX, touch.clientY)
                     }}
                     onTouchMove={handleTouchMove}
-                    onTouchEnd={() => navFunc("spots")}
                 >
                     <Megaphone fill="currentColor" />
                     <span>Споты</span>
@@ -508,7 +602,6 @@ export default function SMnav() {
                         startLongPress("user", touch.clientX, touch.clientY)
                     }}
                     onTouchMove={handleTouchMove}
-                    onTouchEnd={() => navFunc("user")}
                 >
                     {user?.avatar_url ? (
                         <img
