@@ -123,27 +123,28 @@
         }
     }
     >input {
-        @include var.input(var(--interact), var(--tc), var(--borderHabit), 4vh, 12px, var(--accent));
+        @include var.input(var(--interact), var(--tc), var(--borderHabit), 4vh, 24px, var(--accent));
         font-size: 18px;
         width:100%;
-        padding-inline-start: 0.4vw;
+        padding-inline-start: 0.5vw;
         &::placeholder {
             color: var(--borderHabit);
         }
         @media (max-width:800px) {
-            padding-inline-start: 1.5vw;
+            padding-right: 8vw;
+            padding-inline-start: 2vw;
             height: 5vh;
         }
     }
     >svg {
         position: absolute;
-        right: 0.25vw;
+        right: 0.5vw;
     }
     @media (max-width: 800px) {
         width: 92%;
         >svg {
             position: absolute;
-            right: 1vw;
+            right: 2vw;
         }
     }
     &:focus-within {

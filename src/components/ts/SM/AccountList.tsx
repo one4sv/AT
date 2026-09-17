@@ -68,7 +68,7 @@ export default function AccountList() {
                     <span className="SMmainButtName">
                         <NewspaperIcon weight="fill" size={30} className="SMmainButtSvg"/> Лента <CaretRightIcon className="fastButtCaret"/>
                     </span>
-                    <div className="SMmainButtDesc">Просматривайте единую лену постов из спотов и от друзей, рекомендации, ближайшие активности и планы друзей</div>
+                    <div className="SMmainButtDesc">Просматривайте единую ленту постов из спотов и от друзей, рекомендации, ближайшие активности и планы друзей</div>
                 </div>
                 <div className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} onClick={() => navigate("/habit")}>
                     <span className="SMmainButtName">

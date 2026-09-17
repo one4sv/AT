@@ -186,9 +186,9 @@
 }
 .settingSearch {
     background-color: var(--mc);
-    border-radius: 12px;
+    border-radius: 24px;
     margin-bottom: 1vh;
-    padding: 1vh 0.5vw;
+    padding: 0.5vh 0.25vw;
     position: relative;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
@@ -202,13 +202,13 @@
     }
     &:focus-within {
         > svg {
-        color: var(--accent_text);
+            color: var(--accent_text);
         }
     }
     @media (max-width: 800px) {
-        padding: 1vh 2vw;
+        padding: 0;
         > svg {
-        right: 1.75vh;
+            right: 2vw;
         }
     }
 }
@@ -218,16 +218,18 @@
         var(--tc),
         var(--borderWh),
         4vh,
-        12px,
+        24px,
         var(--accent)
     );
     width: 100%;
-    padding: 0.4vh 0.25vw;
+    padding: 0.4vh 0.5vw;
     &::placeholder {
         color: var(--borderHabit);
     }
     @media (max-width:800px) {
-        padding-inline-start: 1.5vw;
+        height: 5vh;
+        padding-right: 8vw;
+        padding-inline-start: 2vw;
     }
 }
 
