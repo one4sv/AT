@@ -2,7 +2,7 @@
 
 .ContextMenuWrapper {
     position: fixed;
-    background-color: var(--bgc);
+    background-color: var(--interact);
     color: var(--borderWh);
     border-radius: 12px;
     z-index: 1000;
@@ -11,6 +11,8 @@
     min-width: 8vw;
     max-width: fit-content;
     overflow: hidden;
+    backdrop-filter: blur(12px);
+    -weblit-backdrop-filter: blur(12px);
     @media (max-width: 800px) {
         min-width: 40vw;
         max-width: 90vw;

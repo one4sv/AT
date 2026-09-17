@@ -1,7 +1,7 @@
 import { Prohibit } from "@phosphor-icons/react"
 import { useChat } from "../../../hooks/ChatHook"
 import { api } from "../../api"
-import type { CMFuncsType } from "./CMFuncsType"
+import type { CMFuncsType } from "../funcs/CMFuncsType"
 import { useLocation } from "react-router-dom"
 import { useContacts } from "../../../hooks/ContactsHook"
 

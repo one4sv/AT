@@ -173,12 +173,7 @@ export default function SMnav() {
 
     console.log(longPressTriggered.current)
     
-    const handleNavEnter = (tab: tab) => {
-        if (longPressTriggered.current) {
-            setExtraMenu(tab)
-            setIsExtraOpen(true)
-        }
-    }
+
 
     const messageSelected = chatsFilters.find(f => f.value === messageSelectedValue) 
         ?? { label: "Чаты", value: "chats", new: "" }
@@ -194,6 +189,26 @@ export default function SMnav() {
             setExtraMenu(tab)
             setIsExtraOpen(!isExtraOpen)
         }
+    }
+    const handleNavEnter = (tab: tab) => {
+        if (!longPressTriggered.current) return
+        setExtraMenu(tab)
+        setIsExtraOpen(true)
+    }
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (!longPressTriggered.current) return
+
+        const touch = e.touches[0]
+        const element = document.elementFromPoint(touch.clientX, touch.clientY)
+
+        const nav = element?.closest(".SMnavButt") as HTMLElement | null
+        const tab = nav?.dataset.tab as tab | undefined
+
+        if (!tab) return
+
+        setExtraMenu(tab)
+        setIsExtraOpen(true)
     }
 
     const extraButts = () => {
@@ -332,38 +347,51 @@ export default function SMnav() {
             <div className="SMnav" ref={tabsRef}>
                 <div className={`SMnavActive ${activeTab}`}/>             
                 <div className={`SMnavButt ${activeTab === "chats" ? "active" : ""}`}
+                    onContextMenu={(e) => {e.preventDefault()}}
                     onMouseDown={() => startLongPress("chats")}
-                    onTouchStart={() => startLongPress("chats")}
                     onMouseUp={() => navFunc("chats")}
                     onMouseEnter={() => handleNavEnter("chats")}
+                    onTouchStart={() => startLongPress("chats")}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={() => navFunc("chats")}
                 >
                     <ChatTeardropIcon weight="fill"/>
                     <span>{messageSelected.label}</span>
                 </div>
                 <div className={`SMnavButt ${activeTab === "habits" ? "active" : ""}`} 
+                    onContextMenu={(e) => {e.preventDefault()}}
                     onMouseDown={() => startLongPress("habits")}
-                    onTouchStart={() => startLongPress("habits")}
                     onMouseUp={() => navFunc("habits")}
                     onMouseEnter={() => handleNavEnter("habits")}
+                    onTouchStart={() => startLongPress("habits")}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={() => navFunc("habits")}
+
                 >
                     <CalendarCheckIcon weight="fill"/>
                     <span>{habitsSelected.label}</span>
                 </div>
                 <div className={`SMnavButt ${activeTab === "spots" ? "active" : ""}`}
+                    onContextMenu={(e) => {e.preventDefault()}}
                     onMouseDown={() => startLongPress("spots")}
-                    onTouchStart={() => startLongPress("spots")}
                     onMouseUp={() => navFunc("spots")}
                     onMouseEnter={() => handleNavEnter("spots")}
+                    onTouchStart={() => startLongPress("spots")}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={() => navFunc("spots")}
                 >
                     <Megaphone fill="currentColor"/>
                     <span>Споты</span>
                 </div>   
                 <div
                     className={`SMnavButt SMnavAvatar ${activeTab === "user" ? "active" : ""}`}
+                    onContextMenu={(e) => {e.preventDefault()}}
                     onMouseDown={() => startLongPress("user")}
-                    onTouchStart={() => startLongPress("user")}
                     onMouseUp={() => navFunc("user")}
                     onMouseEnter={() => handleNavEnter("user")}
+                    onTouchStart={() => startLongPress("user")}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={() => navFunc("user")}
                 >
                     {user?.avatar_url ? (
                         <img

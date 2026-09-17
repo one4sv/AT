@@ -47,7 +47,7 @@
     height: 100%;
     user-select: none;
     border-radius: 24px;
-    background-color: var(--mc);
+    background-color: var(--interact);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     @media (max-width:800px) {
@@ -82,7 +82,7 @@
     }
     &.active {
         color: var(--inner_text);
-            @media (hover: hover) {
+        @media (hover: hover) {
             &:hover {
                 background-color: var(--tr);
             }
@@ -145,7 +145,7 @@
 .SMnavExtraDiv {
     position: absolute;
     width: 45%;
-    background-color: var(--mc);
+    background-color: var(--interact);
     display: flex;
     flex-direction: column;
     border-radius: 24px;
@@ -184,7 +184,7 @@
         display: flex;
         align-items: center;
         justify-content: start;
-        color: var(--borderHabit);
+        color: var(--borderWh);
         cursor: pointer;
 
         > svg {
@@ -215,6 +215,9 @@
         @media (max-width: 800px) {
             padding-left: 3vw;
         }
+    }
+    @media (max-width: 800px) {
+        padding: 1vh 0;
     }
 }
 .SMextraSeparator {

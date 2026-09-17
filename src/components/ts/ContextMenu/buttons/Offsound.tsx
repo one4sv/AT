@@ -1,6 +1,6 @@
 import { Bell, BellSlash } from "@phosphor-icons/react"
 import { api } from "../../api"
-import type { CMFuncsType } from "./CMFuncsType"
+import type { CMFuncsType } from "../funcs/CMFuncsType"
 import { useContacts } from "../../../hooks/ContactsHook"
 
 export const OffSound = ({ id, bool} : CMFuncsType) => {
