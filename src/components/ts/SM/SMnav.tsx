@@ -1,6 +1,6 @@
 import { useUser } from "../../hooks/UserHook"
 import { CircleUserRound, Megaphone } from "lucide-react"
-import { CalendarCheckIcon, ChatTeardropIcon } from "@phosphor-icons/react"
+import { CalendarCheckIcon, ChatTeardropIcon, GearIcon, PlusIcon, SignOutIcon, SortAscendingIcon, UserIcon } from "@phosphor-icons/react"
 import { useSideMenu } from "../../hooks/SideMenuHook"
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -8,27 +8,30 @@ import { useContacts } from "../../hooks/ContactsHook"
 import { useSettings } from "../../hooks/SettingsHook"
 import { useHabits } from "../../hooks/HabitsHook"
 import { filterHabitsByOrder } from "../utils/filteredHabitsByOrder"
+import type { tab } from "../../context/SideMenuContext"
+import { useBlackout } from "../../hooks/BlackoutHook"
+import { useNote } from "../../hooks/NoteHook"
+import { useNavigate } from "react-router"
 
 export default function SMnav() {
     const { t, i18n } = useTranslation("common")
     const { user } = useUser()
-    const { setActiveTab, activeTab, messageSelectedValue, setMessageSelectedValue, habitsSelectedValue, setHabitsSelectedValue } = useSideMenu()
+    const { setActiveTab, activeTab, messageSelectedValue, setMessageSelectedValue, habitsSelectedValue, setHabitsSelectedValue, setDontHandle, setDontHandleOther  } = useSideMenu()
+    const { setBlackout } = useBlackout()
     const { list } = useContacts()
     const { habits, newOrderHabits } = useHabits()
     const { showArchived } = useSettings()
+    const { showNotification } = useNote()
 
-    const [filterType, setFilterType] = useState<"chats" | "habits" | "spots">("chats")
-    const [isFilterOpen, setIsFilterOpen] = useState(false)
+    const navigate = useNavigate()
+
+    const [extraMenu, setExtraMenu] = useState<tab>()
+    const [isExtraOpen, setIsExtraOpen] = useState(false)
     const [chatsFilters, setMessagesFilters] = useState<{label: string, value: string, new: string}[]>([])
     const [habitsFilters, setHabitsFilters] = useState<{label: string, value: string, new: string}[]>([])
-    const translateSelector =
-        activeTab === "chats" ? 0 :
-        activeTab === "habits" ? 25 :
-        activeTab === "spots" ? 50 :
-        activeTab === "user" ? 75 :
-        0;
+
     const timerRef = useRef<number | null>(null)
-    // const longPressTriggered = useRef(false)
+    const longPressTriggered = useRef(false)
     const tabsRef = useRef<HTMLDivElement>(null)
     const filtersRef = useRef<HTMLDivElement>(null)
     
@@ -117,33 +120,44 @@ export default function SMnav() {
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as Node
+
             if (
-                filtersRef.current && 
-                !filtersRef.current.contains(event.target as Node) && 
-                tabsRef.current && 
-                !tabsRef.current.contains(event.target as Node)
+                filtersRef.current?.contains(target) ||
+                tabsRef.current?.contains(target)
             ) {
-                setIsFilterOpen(false)
+                return
             }
+
+            setIsExtraOpen(false)
         }
+
         document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+        }
     }, [])
 
-    // const startLongPress = (openFn: () => void) => {
-    //     longPressTriggered.current = false
-    //     if (timerRef.current) clearTimeout(timerRef.current)
-    //     timerRef.current = window.setTimeout(() => {
-    //         longPressTriggered.current = true
-    //         openFn()
-    //     }, 350)
-    // }
+    const startLongPress = (tab:tab) => {
+        longPressTriggered.current = false
+        if (timerRef.current) clearTimeout(timerRef.current)
+        timerRef.current = window.setTimeout(() => {
+            longPressTriggered.current = true
+            setDontHandle(true)
+            setDontHandleOther(true)
+            setExtraMenu(tab)
+            setIsExtraOpen(true)
+        }, 350)
+    }
 
     const cancelLongPress = () => {
-        setFilterType("chats")
         if (timerRef.current) {
+            longPressTriggered.current = false
             clearTimeout(timerRef.current)
             timerRef.current = null
+            setDontHandle(false)
+            setDontHandleOther(false)
         }
     }
 
@@ -157,20 +171,14 @@ export default function SMnav() {
         }
     }, [])
 
-    useEffect(() => {
-        const handleUp = (event: MouseEvent | TouchEvent) => {
-            cancelLongPress()
-            if (tabsRef.current && !tabsRef.current.contains(event.target as Node)) {
-                setIsFilterOpen(false)
-            }
+    console.log(longPressTriggered.current)
+    
+    const handleNavEnter = (tab: tab) => {
+        if (longPressTriggered.current) {
+            setExtraMenu(tab)
+            setIsExtraOpen(true)
         }
-        document.addEventListener("mouseup", handleUp)
-        document.addEventListener("touchend", handleUp)
-        return () => {
-            document.removeEventListener("mouseup", handleUp)
-            document.removeEventListener("touchend", handleUp)
-        }
-    }, [])
+    }
 
     const messageSelected = chatsFilters.find(f => f.value === messageSelectedValue) 
         ?? { label: "Чаты", value: "chats", new: "" }
@@ -178,67 +186,184 @@ export default function SMnav() {
     const habitsSelected = habitsFilters.find(f => f.value === habitsSelectedValue) 
         ?? { label: "Актив", value: "all", new: "0" }
 
-    return (
-        <div className="SMnavDiv">
-            <div className={`SMfiltersDiv ${isFilterOpen ? "open" : ""} ${filterType || ""}`} ref={filtersRef}>
-                {(filterType === "chats" ? chatsFilters : habitsFilters).map(filter => (
-                    <div 
-                        className={`filterItem ${
-                            (filterType === "chats" ? messageSelectedValue : habitsSelectedValue) === filter.value 
-                                ? "selected" 
-                                : ""
-                        }`} 
-                        key={filter.value}
+    const navFunc = (tab: tab) => {
+        if (tab !== activeTab) {
+            setExtraMenu(tab)
+            setActiveTab(tab)
+        } else {
+            setExtraMenu(tab)
+            setIsExtraOpen(!isExtraOpen)
+        }
+    }
+
+    const extraButts = () => {
+        switch (extraMenu) {
+            case "chats":
+                return (
+                    <div className="SMextraMenuButt"
                         onMouseUp={() => {
-                            if (filterType === "chats") {
-                                setMessageSelectedValue(filter.value)
-                                setActiveTab("chats")
-                            }
-                            if (filterType === "habits") {
-                                setHabitsSelectedValue(filter.value)
-                                setActiveTab("habits")
-                            }
-                            setIsFilterOpen(false)
+                            setBlackout({seted:true, module:"CreateChat"})
+                            setIsExtraOpen(false)
                         }}
                         onTouchEnd={() => {
-                            if (filterType === "chats") {
-                                setMessageSelectedValue(filter.value)
-                                setActiveTab("chats")
-                            }
-                            if (filterType === "habits") {
-                                setHabitsSelectedValue(filter.value)
-                                setActiveTab("habits")
-                            }
-                            setIsFilterOpen(false)
+                            setBlackout({seted:true, module:"CreateChat"})
+                            setIsExtraOpen(false)
                         }}
                     >
-                        {filter.label}
-                        {filterType === "chats" && filter.new && <span className="new">{` ${filter.new}`}</span>}
+                        <PlusIcon size={20}/> Новая беседа
                     </div>
-                ))}
-            </div>
-            <div className="SMnav">
-                <div className="SMnavActive"
-                    style={{left:`${translateSelector}%`}}
-                />             
-                <div className={`SMnavButt ${activeTab === "chats" ? "active" : ""}`} onClick={() => setActiveTab("chats")}>
+                )            
+            case "habits":
+                return (
+                    <div className="SMextraMenuButt"
+                        onMouseUp={() => {
+                            setBlackout({seted:true, module:"AddHabit"})
+                            setIsExtraOpen(false)
+                        }}
+                        onTouchEnd={() => {
+                            setBlackout({seted:true, module:"AddHabit"})
+                            setIsExtraOpen(false)
+                        }}
+                    >
+                        <PlusIcon size={20}/> Новая активность
+                    </div>
+                )            
+            case "spots":
+                return (
+                    <div className="SMextraMenuButt"
+                        onMouseUp={() => {
+                            showNotification("info", "В разработке")
+                            setIsExtraOpen(false)
+                        }}
+                        onTouchEnd={() => {
+                            showNotification("info", "В разработке")
+                            setIsExtraOpen(false)
+                        }}
+                    >
+                        <PlusIcon size={20}/> Новый спот
+                    </div>
+                )            
+            case "user":
+                return (
+                    <>
+                        <div className="SMextraMenuButt user"
+                            onMouseUp={() => {
+                                navigate(`/acc/${user.nick}`)
+                                setIsExtraOpen(false)
+                            }}
+                            onTouchEnd={() => {
+                                navigate(`/acc/${user.nick}`)
+                                setIsExtraOpen(false)
+                            }}
+                        >
+                            <UserIcon weight="fill" size={20}/> В профиль
+                        </div>                        
+                        <div className="SMextraMenuButt user"
+                            onMouseUp={() => {
+                                navigate(`/settings`)
+                                setIsExtraOpen(false)
+                            }}
+                            onTouchEnd={() => {
+                                navigate(`/settings`)
+                                setIsExtraOpen(false)
+                            }}
+                        >
+                            <GearIcon weight="fill" size={20}/> Настройки
+                        </div>                            
+                        <div className="SMextraMenuButt logout user"
+                            onMouseUp={() => {
+                                showNotification("info", "В разработке")
+                                setIsExtraOpen(false)
+                            }}
+                            onTouchEnd={() => {
+                                showNotification("info", "В разработке")
+                                setIsExtraOpen(false)
+                            }}
+                        >
+                            <SignOutIcon weight="fill" size={20}/> Выйти
+                        </div>
+                    </>
+                )
+        }
+    }
+
+    return (
+        <div className="SMnavDiv">
+            <div className={`SMnavExtraDiv ${isExtraOpen ? "open" : ""} ${extraMenu || ""}`} ref={filtersRef}>
+                    {extraButts()}
+                    {extraMenu === "chats" || extraMenu === "habits" ? <span className="SMextraSeparator"/> : ""}
+                    {(extraMenu === "chats" || extraMenu === "habits") && (extraMenu === "chats" ? chatsFilters : habitsFilters).map(filter => (
+                        <div 
+                            className={`filterItem ${
+                                (extraMenu === "chats" ? messageSelectedValue : habitsSelectedValue) === filter.value 
+                                    ? "selected" 
+                                    : ""
+                            }`} 
+                            key={filter.value}
+                            onMouseUp={() => {
+                                if (extraMenu === "chats") {
+                                    setMessageSelectedValue(filter.value)
+                                    setActiveTab("chats")
+                                }
+                                if (extraMenu === "habits") {
+                                    setHabitsSelectedValue(filter.value)
+                                    setActiveTab("habits")
+                                }
+                                setIsExtraOpen(false)
+                            }}
+                            onTouchEnd={() => {
+                                if (extraMenu === "chats") {
+                                    setMessageSelectedValue(filter.value)
+                                    setActiveTab("chats")
+                                }
+                                if (extraMenu === "habits") {
+                                    setHabitsSelectedValue(filter.value)
+                                    setActiveTab("habits")
+                                }
+                                setIsExtraOpen(false)
+                            }}
+                        >
+                            <SortAscendingIcon/>
+                            {filter.label}
+                            {extraMenu === "chats" && filter.new && <span className="new">{` ${filter.new}`}</span>}
+                        </div>
+                    ))}
+                </div>
+            <div className="SMnav" ref={tabsRef}>
+                <div className={`SMnavActive ${activeTab}`}/>             
+                <div className={`SMnavButt ${activeTab === "chats" ? "active" : ""}`}
+                    onMouseDown={() => startLongPress("chats")}
+                    onTouchStart={() => startLongPress("chats")}
+                    onMouseUp={() => navFunc("chats")}
+                    onMouseEnter={() => handleNavEnter("chats")}
+                >
                     <ChatTeardropIcon weight="fill"/>
                     <span>{messageSelected.label}</span>
                 </div>
-                <div className={`SMnavButt ${activeTab === "habits" ? "active" : ""}`} onClick={() => setActiveTab("habits")
-                }>
+                <div className={`SMnavButt ${activeTab === "habits" ? "active" : ""}`} 
+                    onMouseDown={() => startLongPress("habits")}
+                    onTouchStart={() => startLongPress("habits")}
+                    onMouseUp={() => navFunc("habits")}
+                    onMouseEnter={() => handleNavEnter("habits")}
+                >
                     <CalendarCheckIcon weight="fill"/>
                     <span>{habitsSelected.label}</span>
                 </div>
-                <div className={`SMnavButt ${activeTab === "spots" ? "active" : ""}`} onClick={() => setActiveTab("spots")}>
+                <div className={`SMnavButt ${activeTab === "spots" ? "active" : ""}`}
+                    onMouseDown={() => startLongPress("spots")}
+                    onTouchStart={() => startLongPress("spots")}
+                    onMouseUp={() => navFunc("spots")}
+                    onMouseEnter={() => handleNavEnter("spots")}
+                >
                     <Megaphone fill="currentColor"/>
                     <span>Споты</span>
                 </div>   
                 <div
                     className={`SMnavButt SMnavAvatar ${activeTab === "user" ? "active" : ""}`}
-                    onClick={() => {
-                        setActiveTab("user")
-                    }}
+                    onMouseDown={() => startLongPress("user")}
+                    onTouchStart={() => startLongPress("user")}
+                    onMouseUp={() => navFunc("user")}
+                    onMouseEnter={() => handleNavEnter("user")}
                 >
                     {user?.avatar_url ? (
                         <img

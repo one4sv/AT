@@ -303,16 +303,17 @@
     justify-content: center;
     cursor: pointer;
     position: absolute;
-    right: 0.5vw;
+    right: 0.3vw;
+    background:linear-gradient(135deg, var(--accent), var(--grad));
     @media (hover: hover) {
         &:hover {
-            background:linear-gradient(135deg, var(--accent), var(--grad));
+            background:linear-gradient(105deg, var(--accent), var(--grad));
         }
     }
 
     @media (hover: none) {
         &:active {
-            background:linear-gradient(135deg, var(--accent), var(--grad));
+            background:linear-gradient(105deg, var(--accent), var(--grad));
         }
     }
     @media (max-width:800px) {

@@ -12,7 +12,6 @@ import SideMenuUnAunthificated from "../SideMenuUnAunthificated.tsx"
 import { useSideMenu } from "../../hooks/SideMenuHook.ts"
 import { useTranslation } from "react-i18next"
 import { useContacts } from "../../hooks/ContactsHook.ts"
-import SMnav from "./SMnav.tsx"
 import AccountList from "./AccountList.tsx"
 import SpotsList from "./SpotsList.tsx"
 import { MagnifyingGlassIcon } from "@phosphor-icons/react"
@@ -165,7 +164,6 @@ export default function SideMenu() {
                     </div>
                 </div>
             </div>
-            <SMnav/>
         </div>
     )
 }

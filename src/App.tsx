@@ -12,7 +12,7 @@ import Notification from "./components/ts/Notification";
 import Blackout from './components/ts/Blackout';
 import ThemeHandler from './components/hooks/themeHook';
 import ResponsiveLayout from './components/layout/ResponsiveLayout';
-import ContextMenu from './components/ts/ContextMenu';
+import ContextMenu from './components/ts/ContextMenu/ContextMenu';
 import Settings from './pages/Settings/Settings'; 
 import Landing from './pages/Landing/Landing';
 import Info from './pages/Info/Info';

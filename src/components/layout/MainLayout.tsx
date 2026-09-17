@@ -14,6 +14,7 @@ import { useContacts } from "../hooks/ContactsHook";
 import { useUser } from "../hooks/UserHook";
 import { useCalendar } from "../hooks/CalendarHook";
 import { todayStrFunc } from "../ts/utils/dateToStr";
+import SMnav from "../ts/SM/SMnav";
 
 interface LayoutProps {
   children?: ReactNode;
@@ -129,6 +130,7 @@ export default function MainLayout({ children }: LayoutProps) {
   return (
     <div className="app-layout">
       <SideMenu />
+      <SMnav/>
       {decor === "glass" && <Background />}
       <div className="page-content" onDragOver={needDrag ? handleDragOver : undefined} onDrop={needDrag ? handleDrop : undefined}
         onDragEnter={needDrag ? handleDragEnter : undefined} onDragLeave={needDrag ? handleDragLeave : undefined

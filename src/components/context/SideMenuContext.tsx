@@ -1,6 +1,8 @@
 import { createContext, useState, useEffect, type ReactNode, type SetStateAction } from "react";
 import { useLocation } from "react-router-dom";
 
+export type tab = "chats" | "habits" | "spots" | "user"
+
 interface SideMenuContextType {
     showSideMenu: boolean;
     setShowSideMenu:React.Dispatch<SetStateAction<boolean>>,
@@ -15,8 +17,8 @@ interface SideMenuContextType {
     showChatMenu:boolean,
     setShowChatMenu:React.Dispatch<SetStateAction<boolean>>,
     returnSlide:() => void,
-    activeTab: string,
-    setActiveTab: React.Dispatch<SetStateAction<string>>,
+    activeTab: tab,
+    setActiveTab: React.Dispatch<SetStateAction<tab>>,
     messageSelectedValue: string,
     setMessageSelectedValue: React.Dispatch<SetStateAction<string>>,
     habitsSelectedValue: string,
@@ -30,7 +32,6 @@ interface SideMenuContextType {
     dontHandleOther: boolean,
     setDontHandleOther: React.Dispatch<SetStateAction<boolean>>
 }
-
 const SideMenuContext = createContext<SideMenuContextType | undefined>(undefined);
 
 export function SideMenuProvider({ children }: { children: ReactNode }) {
@@ -40,7 +41,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [ showSettings, setShowSettings ] = useState(false)
     const [ showJurnal, setShowJurnal ] = useState(false)
     const [ showChatMenu, setShowChatMenu ] = useState(false)
-    const [ activeTab, setActiveTab ] = useState<string>("chats")
+    const [ activeTab, setActiveTab ] = useState<tab>("chats")
     const [ translateX, setTranslateX ] = useState(-100);
     const [ isDragging, setIsDragging ] = useState(false);
     const [ dontHandle, setDontHandle ] = useState(false)

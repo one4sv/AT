@@ -1,0 +1,150 @@
+.SMaccount {
+    height: 40vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-bottom: 1vh;
+    background: var(--tr);
+    border-radius: 24px;
+    padding: 1vh 1vw;
+    cursor: pointer;
+    @media (hover: hover) {
+        &.SMaccount:hover {
+            background-color: var(--menuButtHover);
+        }
+    }
+}
+.SMaccDesc {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.SMaccDescText {
+    color: var(--borderHabit);
+    display: flex;
+}
+.SMAvatar {
+    height: 20vh;
+    width: 20vh;
+    border-radius: 50%;
+    overflow: hidden;
+    >img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+}
+.SMaccountButtsWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vh;
+    overflow: hidden;
+}
+.SMaccountButt {
+    background: var(--mc);
+    border-radius: 24px;
+    width: 100%;
+    padding: 1vh 0.65vw;
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    align-items: center;
+    height: 4vh;
+    gap: 1vh;
+    > span {
+        font-size: 18px;
+    }
+    @media (max-width: 800px) {
+        height: 6vh;
+        padding: 1vh 3vw;
+    }
+    &.active {
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        > .settingName {
+            color: var(--tc);
+            > svg {
+                color: var(--tc);
+            }
+        }
+    }
+    &.logout:hover {
+        >.settingName {
+            color: var(--notValid);
+            > svg {
+                color: var(--notValid);
+            }
+        }
+    }
+    @media (hover: hover) {
+        &:hover {
+            background-color: var(--menuButtHover);
+            > .settingName {
+                color: var(--tc);
+            }
+            > .settingDesc {
+                color: var(--borderWh);
+            }
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background-color: var(--menuButtHover);
+            > .settingName {
+                color: var(--tc);
+            }
+            > .settingDesc {
+                color: var(--borderWh);
+            }
+        }
+    }
+}
+.SMmainButtName {
+    color: var(--borderWhLight);
+}
+.SMmainButtDesc {
+    color: var(--borderWh);
+}
+.SMmainButt {
+    background-color: var(--mc);
+    border-radius: 18px;
+    padding: 1vh 1vw;
+    cursor: pointer;
+    .SMmainButtName {
+        color: var(--tc);
+        display: flex;
+        align-items: center;
+        >.SMmainButtSvg {
+            margin-right: 6px;
+            color: var(--accent);
+        }
+    }
+    @media (hover: hover) {
+        &:hover {
+            background-color: var(--menuButtHover);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background-color: var(--menuButtHover);
+        }
+    }
+    @media (max-width: 800px) {
+        padding: 1vh 3vw;
+    }
+    &.active {
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        .SMmainButtName {
+            color: var(--inner_text);
+        }
+        .SMmainButtDesc {
+            color: var(--inner_text);
+        }
+        .SMmainButtSvg {
+            color: var(--inner_text);
+        }
+    }
+}

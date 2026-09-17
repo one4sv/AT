@@ -1,10 +1,9 @@
 import { useUser } from "../../hooks/UserHook"
 import { api } from "../api"
-import { LogOutIcon } from "lucide-react";
 import { isAxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import { useNote } from "../../hooks/NoteHook";
-import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, PersonSimpleRunIcon, UserIcon } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, PersonSimpleRunIcon, SignOutIcon, UserIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 
 export default function AccountList() {
@@ -93,7 +92,7 @@ export default function AccountList() {
                 </div>
                 <div className="SMaccountButt logout" onClick={() => logOut()}>
                     <span className="settingName">
-                        <LogOutIcon size={21}/> Выйти из аккаунта
+                        <SignOutIcon weight="fill" size={21}/> Выйти из аккаунта
                     </span>
                 </div>
             </div>

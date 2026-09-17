@@ -1,0 +1,225 @@
+.SMnavDiv {
+    position: absolute;
+    width: 19.5vw;
+    height: 8vh;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    padding: 0 0 2vh;
+    background-color: var(--tr);
+    z-index: 9;
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        background:linear-gradient(135deg, var(--tr), #0000009a);
+
+        mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 100%
+        );
+        -webkit-mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 100%
+        );
+    }
+    @media (max-width:800px) {
+        width: 100%;
+        height: 11vh;
+        padding-bottom: 4vh;
+    }
+}
+.SMnav {
+    pointer-events: all;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    width: 95%;
+    height: 100%;
+    user-select: none;
+    border-radius: 24px;
+    background-color: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    @media (max-width:800px) {
+        height: 100%;
+    }
+}
+.SMnavButt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    width: 0;
+    color: var(--borderHabit);
+    cursor: pointer;
+    flex-direction: column;
+    font-size: 14px;
+    height: 100%;
+    border-radius: 24px;
+    z-index: 3;
+    @media (hover: hover) {
+        &:hover {
+            background-color: var(--on_con_menu_mess);
+            color: var(--tc);
+        }
+    }
+    @media (hover: none) {
+        &:active {
+            background-color: var(--on_con_menu_mess);
+            color: var(--tc);
+        }
+    }
+    &.active {
+        color: var(--inner_text);
+            @media (hover: hover) {
+            &:hover {
+                background-color: var(--tr);
+            }
+        }
+        @media (hover: none) {
+            &:active {
+                background-color: var(--tr);
+            }
+        }
+    }
+    >span {
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: center;
+        padding: 0 14px;
+        box-sizing: border-box;
+    }
+    @media (max-width:800px) {
+        font-size: 12px;
+    }
+    img, svg {
+        width: 3.25vh;
+        height: 3.25vh;
+        min-width: 3.25vh;
+        min-height: 3.25vh;
+        flex-shrink: 0;
+        object-fit: cover;
+        display: block;
+    }
+    img {
+        border-radius: 50%;
+    }
+}
+.SMnavActive {
+    z-index: 2;
+    position: absolute;
+    height: calc(100% - 2px);
+    border-radius: 24px;
+    width: calc(25% - 2px);
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    transition: left 0.3s ease;
+    border: 3px solid var(--tr);
+    box-sizing: border-box;
+    &.chats {
+        left: 1px;
+    }
+    &.habits {
+        left:calc(25% + 1px)
+    }    
+    &.spots {
+        left:calc(50% + 1px)
+    }    
+    &.user {
+        left:calc(75% + 1px)
+    }
+}
+.SMnavExtraDiv {
+    position: absolute;
+    width: 45%;
+    background-color: var(--mc);
+    display: flex;
+    flex-direction: column;
+    border-radius: 24px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+    bottom: 105%;
+    z-index: 10;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: left 0.3s ease, height 0.3s ease, width 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    &.open {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+    }
+    &.chats {
+        left: 3%;
+    }
+    &.habits {
+        left: 25%;
+    }
+    &.spots {
+        left: 50%;
+    }
+    &.user {
+        left: 56%;
+        width: 40%;
+    }
+
+    > div {
+        width: 100%;
+        text-align: start;
+        padding: 0.75vh 1vw;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        color: var(--borderHabit);
+        cursor: pointer;
+
+        > svg {
+            font-size: 20px;
+            margin-right: 4px;
+        }
+
+        @media (hover: hover) {
+            &:hover {
+                background-color: var(--accent_hov);
+                color: var(--tc);
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+                background-color: var(--accent_hov);
+                color: var(--tc);
+            }
+        }
+
+        &.selected {
+            color: var(--accent);
+        }
+        &.logout {
+            color: var(--notValid);
+        }
+        @media (max-width: 800px) {
+            padding-left: 3vw;
+        }
+    }
+}
+.SMextraSeparator {
+    height: 1px;
+    width: 90%;
+    margin-left: 5%;
+    background-color: var(--borderHabit);
+}

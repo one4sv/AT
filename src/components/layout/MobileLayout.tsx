@@ -5,6 +5,7 @@ import Header from "../ts/Header";
 import SideMenu from "../ts/SM/SideMenu";
 import { useLocation } from "react-router-dom";
 import { useSideMenu } from "../hooks/SideMenuHook";
+import SMnav from "../ts/SM/SMnav";
 
 interface LayoutProps {
     children?: ReactNode;
@@ -78,6 +79,7 @@ export default function MobileLayout({ children }: LayoutProps) {
         <div className="mobile-layout">
             {!hideHeader && <Header />}
             <SideMenu />
+            <SMnav/>
 
             {decor === "glass" && <Background />}
 
