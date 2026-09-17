@@ -10,6 +10,8 @@
     padding: 0 0 2vh;
     background-color: var(--tr);
     z-index: 9;
+    transition: transform 0.4s ease;
+    will-change: transform;
     &::before {
         content: "";
         position: absolute;
@@ -30,6 +32,9 @@
             transparent 0%,
             black 100%
         );
+    }
+    &.open {
+        transform: translateX(0);
     }
     @media (max-width:800px) {
         width: 100%;
