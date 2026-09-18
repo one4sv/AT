@@ -54,18 +54,20 @@ export default function Habit() {
     const { setTitle } = usePageTitle()
     const { habits, loadingHabits } = useHabits()
     const { setNewOngoing } = useUpHabit()
-
-    const [isExpanded, setIsExpanded] = useState(false);
-    const startY = useRef<number | null>(null);
-    const pulling = useRef(false);
-    const [menuTranslate, setMenuTranslate] = useState(100);
-    const [dragging, setDragging] = useState(false);
+    const [ handleMenu, setHandleMenu ] = useState(true)
+    const [ handleDelta, setHandleDelta ] = useState(true)
+    const [ isExpanded, setIsExpanded ] = useState(false);
+    const [ menuTranslate, setMenuTranslate ] = useState(100);
+    const [ dragging, setDragging ] = useState(false);
 
     const startX = useRef(0);
     const startTranslate = useRef(100);
     const mainRef = useRef<HTMLDivElement | null>(null);
     const isSlided = showJurnal || showSettings || showChatMenu
-    
+    const startY = useRef<number | null>(null);
+    const pulling = useRef(false);
+
+
     useEffect(() => {
         if (!showHabitMenu) {
             setShowSettings(false)
@@ -107,17 +109,20 @@ export default function Habit() {
     };
 
     const handleContentTouchMove = (e: React.TouchEvent) => {
-        if (showHabitMenu || dontHandleOther) return;
+        if (!handleMenu || showHabitMenu || dontHandleOther) return;
 
         const diff = startX.current - e.touches[0].clientX;
-
-        if (diff > 10) {
-            setDragging(true);
-            setDontHandle(true);
-
-            const translate = 100 - Math.min(100, (diff / window.innerWidth) * 100);
-            setMenuTranslate(translate);
+        console.log("menuTranslate:", menuTranslate, "handleNenu:", handleMenu)
+        setDragging(true);
+        console.log("diff:", diff)
+        if (diff < 5) {
+            setMenuTranslate(100)
+            return
         }
+        setHandleDelta(false)
+        setDontHandle(true)
+        const translate = 100 - Math.min(100, ((diff - 5) / window.innerWidth) * 100);
+        setMenuTranslate(translate);
     };
 
     const handleContentTouchEnd = () => {
@@ -125,7 +130,7 @@ export default function Habit() {
             setDragging(false);
             return;
         }
-
+        setHandleDelta(true)
         setDontHandle(false);
         setDragging(false);
 
@@ -136,17 +141,17 @@ export default function Habit() {
             setMenuTranslate(100);
         }
     };
-
     const handleMenuTouchStart = (e: React.TouchEvent) => {
+        if (!setHandleMenu || dontHandleOther) return
         setDontHandle(true);
-        if (dontHandleOther) return
         startX.current = e.touches[0].clientX;
         startTranslate.current = menuTranslate;
         setDragging(true);
     };
 
     const handleMenuTouchMove = (e: React.TouchEvent) => {
-        if (!dragging || dontHandleOther) return;
+        if ( dontHandleOther) return
+        setHandleDelta(false)
         setDontHandle(true)
         const diff = e.touches[0].clientX - startX.current;
 
@@ -187,9 +192,9 @@ export default function Habit() {
             <div className={`StatsDivMain ${habitId && !isExpanded? "sdmwm" : ""}`} 
                 style={{top:habitId ? "6vh" : "0", overflow:isExpanded ? "hidden" : "auto"}} 
                 ref={mainRef}
-                onTouchStart={isMobile ? handleContentTouchStart : undefined}
-                onTouchMove={isMobile ? handleContentTouchMove : undefined}
-                onTouchEnd={isMobile ? handleContentTouchEnd : undefined}
+                onTouchStart={handleContentTouchStart}
+                onTouchMove={handleContentTouchMove}
+                onTouchEnd={handleContentTouchEnd}
             >
                 <div className="StatsDivHabit">
                     {isMobile ? (
@@ -200,12 +205,12 @@ export default function Habit() {
                                         className={`mobileHabitLayout ${isExpanded ? "expanded" : ""}`}
                                         onTouchStart={(e) => {
                                             const container = mainRef.current;
-                                            if (!container) return;
-                                            if (container.scrollTop > 0) return;
+                                            if (!container || container.scrollTop > 0 || dontHandleOther || !handleDelta) return;
                                             startY.current = e.touches[0].clientY;
                                             pulling.current = true;
                                         }}
                                         onTouchMove={(e) => {
+                                            if (!handleDelta || dontHandleOther) return
                                             const container = mainRef.current;
                                             if (
                                                 !pulling.current ||
@@ -216,23 +221,30 @@ export default function Habit() {
                                                 return;
                                             }
 
-                                            const delta = e.touches[0].clientY - startY.current;
-
+                                            let delta = e.touches[0].clientY - startY.current;
+                                            if (delta > 3 || delta < -3) {
+                                                setDontHandle(true)
+                                                setHandleMenu(false)
+                                            }
                                             if (delta > 80 && !isExpanded) {
                                                 setIsExpanded(true);
-                                                pulling.current = false;
+                                                delta = 0
+                                                startY.current = e.touches[0].clientY
                                             }
 
-                                            if (delta < -100 && isExpanded) {
+                                            if (delta < -80 && isExpanded) {
                                                 setIsExpanded(false);
-                                                pulling.current = false;
+                                                delta = 0
+                                                startY.current = e.touches[0].clientY
                                             }
+                                            console.log("delta:", delta, "startY.current:", startY.current)
                                         }}
                                         onTouchEnd={() => {
+                                            setHandleMenu(true)
                                             setDontHandle(false)
                                             setDontHandleOther(false)
-                                            startY.current = null;
-                                            pulling.current = false;
+                                            pulling.current = false
+                                            startY.current = null
                                         }}
                                     >
                                         <Complete isMy={!isReadOnly}/>
@@ -267,12 +279,12 @@ export default function Habit() {
             {habitId && habit && (
                 <div
                     className={`habitMenu ${isMobile ? "mobile" : ""}`}
-                    onTouchStart={isMobile ? handleMenuTouchStart : undefined}
-                    onTouchMove={isMobile ? handleMenuTouchMove : undefined}
-                    onTouchEnd={isMobile ? handleMenuTouchEnd : undefined}
+                    onTouchStart={handleMenuTouchStart}
+                    onTouchMove={handleMenuTouchMove}
+                    onTouchEnd={handleMenuTouchEnd}
                     style={{
                         transform: `translateX(${menuTranslate}%)`,
-                        transition: dragging ? "none" : "transform .3s ease"
+                        transition: dragging ? "none" : "transform .1s ease"
                     }}
                 >
                     <div className={`habitSlider ${showSettings || showJurnal || showChatMenu ? "toSlide" : ""}`}>

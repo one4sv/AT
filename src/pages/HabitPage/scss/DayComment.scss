@@ -125,13 +125,6 @@
         
         }
     }
-    &:disabled {
-        color: var(--borderHabit);
-        background: var(--tr);
-        background-color: var(--tr);
-        border: 1px solid var(--borderHabit);
-        cursor: default;
-    }
     @media (max-width: 800px) {
         height: 5vh;
         width: 5vh;

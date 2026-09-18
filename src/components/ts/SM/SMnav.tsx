@@ -1,6 +1,6 @@
 import { useUser } from "../../hooks/UserHook"
 import { CircleUserRound, Megaphone } from "lucide-react"
-import { CalendarCheckIcon, ChatTeardropIcon, GearIcon, PlusIcon, SignOutIcon, SortAscendingIcon, UserIcon } from "@phosphor-icons/react"
+import { CalendarCheckIcon, ChatTeardropIcon, GearIcon, NewspaperIcon, PersonSimpleRunIcon, PlusIcon, SignOutIcon, SortAscendingIcon, UserIcon } from "@phosphor-icons/react"
 import { useSideMenu } from "../../hooks/SideMenuHook"
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -235,23 +235,24 @@ export default function SMnav() {
             if (action === "create-chat") {
                 setBlackout({ seted: true, module: "CreateChat" })
             }
-
             if (action === "add-habit") {
                 setBlackout({ seted: true, module: "AddHabit" })
             }
-
             if (action === "new-spot") {
                 showNotification("info", "В разработке")
             }
-
+            if (action === "posts") {
+                navigate("/")
+            }            
+            if (action === "habits") {
+                navigate("/habit")
+            }            
             if (action === "profile") {
                 navigate(`/acc/${user.nick}`)
             }
-
             if (action === "settings") {
                 navigate(`/settings`)
             }
-
             if (action === "logout") {
                 showNotification("info", "В разработке")
             }
@@ -457,6 +458,23 @@ export default function SMnav() {
                 return (
                     <>
                         <div
+                            className="SMextraMenuButt user"
+                            onMouseUp={() => {
+                                navigate("/")
+                            }}
+                            data-action="posts"
+                        >
+                            <NewspaperIcon weight="fill" size={20} /> Лента
+                        </div>                        
+                        <div
+                            className="SMextraMenuButt user"
+                            onMouseUp={() => {
+                                navigate("/habit")
+                            }}
+                            data-action="habits"
+                        >
+                            <PersonSimpleRunIcon weight="fill" size={20} /> Активности
+                        </div>                        <div
                             className="SMextraMenuButt user"
                             onMouseUp={() => {
                                 navigate(`/acc/${user.nick}`)

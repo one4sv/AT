@@ -14,7 +14,7 @@
         left: 0;
         width: 100%;
         margin-bottom: 0;
-        padding: 0 2.5vw 4vh;
+        padding: 0 2vw 4vh;
         &::before {
             content: "";
             position: absolute;
@@ -98,18 +98,15 @@
     }
     @media (hover: hover) {
         &:hover {
-        color: var(--tc);
-        background:linear-gradient(135deg, var(--accent), var(--grad));
-    
+            color: var(--tc);
+            background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }
 
     @media (hover: none) {
         &:active {
-        color: var(--tc);
-        background:linear-gradient(135deg, var(--accent), var(--grad));
-    
-        
+            color: var(--tc);
+            background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }
 }
@@ -165,24 +162,10 @@
     cursor: pointer;
     position: absolute;
     right: 0.5vw;
-    @media (hover: hover) {
-        &:hover {
-        background:linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--inner_text);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        background:linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--inner_text);
-    
-        
-        }
-    }
+    background:linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--inner_text);
     @media (max-width:800px) {
-        right: 4vw;
+        right: 2vw;
     }
 }
 .pwEmojiBar {

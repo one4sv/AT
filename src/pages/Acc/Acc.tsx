@@ -31,7 +31,7 @@ export default function Acc() {
 
     const { nick } = useParams();
     const { setTitle } = usePageTitle();
-    const { setDontHandle, dontHandleOther } = useSideMenu();
+    const { setDontHandle, dontHandleOther} = useSideMenu();
     const navigate = useNavigate();
 
     const [collapsed, setCollapsed] = useState(0);
@@ -74,33 +74,31 @@ export default function Acc() {
     }, [acc, loading, nick]);
 
     const handleScroll = () => {
-        setDontHandle(true);
         if (!line.current || !contentRef.current) return;
         const elScroll = contentRef.current.scrollLeft;
         const elWidth = contentRef.current.clientWidth;
         const proc = (elScroll / elWidth) * 100;
         line.current.style.transform = `translateX(${proc}%)`;
+        if (proc > 0) setDontHandle(true)
         if (proc > 150) setSelector("posts");
         else if (proc > 50) setSelector("habits");
         else setSelector("sended");
     };
 
     const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-        setDontHandle(true);
         const scrollTop = e.currentTarget.scrollTop;
-
         if (e.deltaY > 0) setCollapsed(1);
         if (e.deltaY < 0 && scrollTop === 0) setCollapsed(0);
     };
-
+    
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-        setDontHandle(true);
+        if (selector !== "sended") setDontHandle(true);
         if (dontHandleOther) return;
         touchStartY.current = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-        setDontHandle(true);
+        if (selector !== "sended") setDontHandle(true);
         if (dontHandleOther) return;
         const currentY = e.touches[0].clientY;
         const delta = touchStartY.current - currentY;
@@ -119,7 +117,6 @@ export default function Acc() {
     };
 
     const handleTouchEnd = () => {
-        setDontHandle(false);
         setCollapsed(prev => prev > 0.5 ? 1 : 0);
     };
 
@@ -149,7 +146,7 @@ export default function Acc() {
                     </div>
                 </div>
 
-                <div className="accContent" ref={contentRef} onScroll={() => handleScroll()} onScrollEnd={() => setDontHandle(false)}>
+                <div className="accContent" ref={contentRef} onScroll={() => handleScroll()}>
                     <div className="accSlide">
                         <div
                             className="accContentSlide accMedia"

@@ -13,7 +13,7 @@ export interface DropContextType {
 }
 export const DropProvider = ({children} : {children : ReactNode}) => {
     const [ droppedFiles, setDroppedFiles ] = useState<File[]>([])
-    const [isDragging, setIsDragging] = useState(false);
+    const [ isDragging, setIsDragging ] = useState(false);
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();

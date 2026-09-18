@@ -39,3 +39,9 @@ a {
     color: var(--tc);
     text-decoration: none;
 }
+input,
+textarea {
+  &::placeholder {
+    user-select: none;
+  }
+}
