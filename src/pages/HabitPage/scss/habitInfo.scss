@@ -61,6 +61,7 @@
     flex-direction: column;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
+    height: 85.5dvh;
     > .completeDiv {
         background-color: var(--tr);
         height: fit-content;
@@ -74,6 +75,7 @@
     }
     &.expanded {
         background-color: var(--mhl);
+        height: 98dvh;
         > .completeDiv {
             > .chosenDayDate {
                 flex: 1;
