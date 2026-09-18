@@ -8,7 +8,6 @@ import CompletionProgress from "./ComplitionProgress";
 import CounterProgression from "./CounterProgression";
 import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 import { isMobile } from "react-device-detect";
-import { useSideMenu } from "../../../../../components/hooks/SideMenuHook";
 import { Check } from "lucide-react";
 
 interface DayCommentProps {
@@ -20,7 +19,6 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   const { sendDayComment, waitComAnswer } = useDone();
   const { dayComment, habit, habitCounter, showCounter, habitSettings } = useTheHabit();
   const { chosenDay } = useCalendar();
-  const { setDontHandle, setDontHandleOther } = useSideMenu()
 
   const [comment, setComment] = useState<string>("");
   const [syncing, setSyncing] = useState(true);
@@ -76,29 +74,9 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
     }
   };
 
-  const handleTextareaTouchStart = () => {
-    setDontHandle(true);
-    setDontHandleOther(true)
-  };
-
-  const handleTextareaTouchMove = () => {
-    setDontHandle(true);
-    setDontHandleOther(true)
-  };
-
-  const handleTextareaTouchEnd = () => {
-    setDontHandle(false);
-    setDontHandleOther(false)
-  };
-  console.log(comment, dayComment, cantSave, waitComAnswer)
   return (
     <div className="dayCommentDiv">
-      <div className="habitDayComment"
-        onTouchStart={handleTextareaTouchStart}
-        onTouchMove={handleTextareaTouchMove}
-        onTouchEnd={handleTextareaTouchEnd}
-        onTouchCancel={handleTextareaTouchEnd}
-      >
+      <div className="habitDayComment">
         <textarea
           placeholder="Комментарий"
           ref={textareaRef}

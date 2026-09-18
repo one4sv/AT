@@ -95,12 +95,13 @@
     @media (max-width:800px) {
         justify-content: end;
         align-items: center;
+        height: 5vh;
     }
 }
 .saveCommentButton {
     height: 4vh;
+    width: 4vh;
     font-size: 30px;
-    aspect-ratio: 1/1;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -132,8 +133,8 @@
         cursor: default;
     }
     @media (max-width: 800px) {
-        padding: 0.75vh 1vw;
-        height: 4vh;
+        height: 5vh;
+        width: 5vh;
     }
 }
 .completionProgress {
