@@ -51,7 +51,9 @@
 .mobileHabitLayout {
     overflow: hidden;
     transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 12px;
     background-color: var(--mc);
     width: 100%;
@@ -76,6 +78,10 @@
     &.expanded {
         background-color: var(--mhl);
         height: 98dvh;
+        backdrop-filter: blur(1px);
+        -webkit-backdrop-filter: blur(1px);
+        border-radius: 24px;
+        padding-bottom: 1vh;
         > .completeDiv {
             > .chosenDayDate {
                 flex: 1;
