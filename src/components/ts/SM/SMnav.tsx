@@ -165,8 +165,6 @@ export default function SMnav() {
         timerRef.current = window.setTimeout(() => {
             longPressTriggered.current = true
             wasLongPress.current = true
-            setDontHandle(true)
-            setDontHandleOther(true)
             setExtraMenu(tab)
             setIsExtraOpen(true)
         }, 350)
