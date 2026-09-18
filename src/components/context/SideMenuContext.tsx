@@ -69,8 +69,9 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
 
     return (
         <SideMenuContext.Provider value={{ showSideMenu, setShowSideMenu, red, setRed, showHabitMenu, setShowHabitMenu, showSettings, setShowSettings, showChatMenu, setShowChatMenu,
-        showJurnal, setShowJurnal, returnSlide, activeTab, setActiveTab, setTranslateX, translateX, setIsDragging, isDragging, dontHandle, setDontHandle, setDontHandleOther, dontHandleOther,
-        messageSelectedValue, setMessageSelectedValue, habitsSelectedValue, setHabitsSelectedValue }}>
+            showJurnal, setShowJurnal, returnSlide, activeTab, setActiveTab, setTranslateX, translateX, setIsDragging, isDragging, dontHandle, setDontHandle, setDontHandleOther, dontHandleOther,
+            messageSelectedValue, setMessageSelectedValue, habitsSelectedValue, setHabitsSelectedValue 
+        }}>
             {children}
         </SideMenuContext.Provider>
     );

@@ -43,6 +43,7 @@
     }
 }
 .SMnav {
+    user-select: none;
     pointer-events: all;
     position: relative;
     display: flex;
@@ -119,6 +120,8 @@
         flex-shrink: 0;
         object-fit: cover;
         display: block;
+        user-select: none;
+        pointer-events: none;
     }
     img {
         border-radius: 50%;

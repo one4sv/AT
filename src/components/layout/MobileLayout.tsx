@@ -14,29 +14,31 @@ interface LayoutProps {
 export default function MobileLayout({ children }: LayoutProps) {
     const { decor } = useSettings();
     const location = useLocation();
-    const { setShowSideMenu, translateX, isDragging, setIsDragging, setTranslateX, dontHandle, setDontHandleOther, dontHandleOther, setDontHandle } = useSideMenu();
+    const { setShowSideMenu, translateX, isDragging, setIsDragging, setTranslateX, dontHandle, setDontHandleOther, setDontHandle } = useSideMenu();
 
     const startX = useRef(0);
     const startTranslate = useRef(0);
+
     const handleTouchStart = (e: React.TouchEvent) => {
-        const target = e.target as HTMLElement;
-        console.log(target.tagName, isDragging, dontHandle, dontHandleOther)
-        if (
-            target.tagName === "INPUT" ||
-            target.tagName === "TEXTAREA"
-        ) {
+        const activeElement = document.activeElement;
+
+        const isInputFocused =
+            activeElement?.tagName === "INPUT" ||
+            activeElement?.tagName === "TEXTAREA";
+
+        if (isInputFocused) {
             setDontHandleOther(true);
-            setIsDragging(false)
-            setDontHandle(true)
+            setIsDragging(false);
+            setDontHandle(true);
+            return;
         }
-        if (dontHandle) return
+
         startX.current = e.touches[0].clientX;
         startTranslate.current = translateX;
         setIsDragging(true);
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
-
         if (!isDragging || dontHandle) return;
 
         const clientX = e.touches[0].clientX;
