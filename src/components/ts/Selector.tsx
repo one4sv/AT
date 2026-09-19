@@ -1,4 +1,4 @@
-import { useRef, useState, type ElementType } from "react"
+import { useEffect, useRef, useState, type ElementType } from "react"
 
 import "../../scss/selector.scss"
 
@@ -32,8 +32,6 @@ export default function Selector<T extends string | number>({
     const longPress = useRef(false)
     const dragging = useRef(false)
 
-    const startX = useRef(0)
-
     const getItemWidth = () => {
         const selector = selectorRef.current
 
@@ -50,12 +48,17 @@ export default function Selector<T extends string | number>({
         }
     }
 
+    useEffect(() => {
+        setSelectedPosition()
+    }, [selectedIndex, arr.length])
+
     const changeByPosition = (x: number) => {
         const selector = selectorRef.current
 
         if (!selector) return
 
         const rect = selector.getBoundingClientRect()
+
         const itemWidth = rect.width / arr.length
 
         let position = x - rect.left - itemWidth / 2
@@ -80,8 +83,6 @@ export default function Selector<T extends string | number>({
     }
 
     const startLongPress = (x: number) => {
-        startX.current = x
-
         longPress.current = false
         dragging.current = false
 
@@ -142,11 +143,9 @@ export default function Selector<T extends string | number>({
                         width: `${width}%`
                     }}
                     key={n}
-
                     onMouseDown={(e) => {
                         startLongPress(e.clientX)
                     }}
-
                     onMouseUp={() => {
                         if (!longPress.current) {
                             i.func(i.value)
@@ -154,19 +153,16 @@ export default function Selector<T extends string | number>({
 
                         end()
                     }}
-
                     onTouchStart={(e) => {
                         const touch = e.touches[0]
 
                         startLongPress(touch.clientX)
                     }}
-
                     onTouchMove={(e) => {
                         const touch = e.touches[0]
 
                         move(touch.clientX)
                     }}
-
                     onTouchEnd={() => {
                         if (!longPress.current) {
                             i.func(i.value)
@@ -174,7 +170,6 @@ export default function Selector<T extends string | number>({
 
                         end()
                     }}
-
                     onContextMenu={(e) => e.preventDefault()}
                 >
                     <span
