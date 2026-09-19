@@ -3,7 +3,7 @@ import { api } from "../api"
 import { isAxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import { useNote } from "../../hooks/NoteHook";
-import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, PersonSimpleRunIcon, SignOutIcon, UserIcon } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon , SignOutIcon, UserIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 
 export default function AccountList() {
@@ -72,11 +72,11 @@ export default function AccountList() {
                 </div>
                 <div className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} onClick={() => navigate("/habit")}>
                     <span className="SMmainButtName">
-                        <PersonSimpleRunIcon weight="fill" size={30} className="SMmainButtSvg"/> Активности <CaretRightIcon className="fastButtCaret"/>
+                        <SneakerMoveIcon weight="fill" size={30} className="SMmainButtSvg"/> Активности <CaretRightIcon className="fastButtCaret"/>
                     </span>
                     <div className="SMmainButtDesc">Следите за активностями, стройте планы, отметьте достижения и проверьте календарь</div>
                 </div>
-                <div className={`SMaccountButt ${location.pathname === "/settings" ? "active" : "" }`} onClick={() => navigate("/settings")}>
+                <div className={`SMaccountButt ${location.pathname.includes("/settings") ? "active" : "" }`} onClick={() => navigate("/settings")}>
                     <span className="settingName">
                         <GearIcon size={21} weight="fill"/> 
                         Настройки

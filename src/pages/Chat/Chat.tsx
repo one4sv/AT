@@ -66,7 +66,6 @@ export default function Chat() {
 
     const API_URL = import.meta.env.VITE_API_URL;
 
-    // ========== Инициализация чата ==========
     useEffect(() => {
         setIsChose(false);
         setChosenMess([]);
@@ -84,7 +83,6 @@ export default function Chat() {
         if (!user.id && !loadingUser) navigate(`/acc/${nick}`);
     }, [loadingUser, navigate, nick, user]);
 
-    // ========== Отметка прочитанных ==========
     useEffect(() => {
         const unread = messages.filter(
         (m) => !m.read_by.includes(user.id!) && m.sender_id !== user.id
@@ -97,7 +95,6 @@ export default function Chat() {
         }
     }, [API_URL, messages, user.id]);
 
-    // ========== Поиск ==========
     const searchedMessages = useMemo(() => {
         if (!search.trim()) return [];
         return messages
@@ -124,7 +121,6 @@ export default function Chat() {
         scrollToMessage(target.id);
     };
 
-    // ========== Переход к сообщению ==========
     const scrollToMessage = useCallback(
         async (targetId: number) => {
             const existingEl = messageRefs.current.get(targetId);
@@ -142,11 +138,9 @@ export default function Chat() {
                 return;
             }
 
-            // Нет — загружаем вокруг
             const success = await loadAroundMessage(targetId);
             if (!success) return;
 
-            // Ждём рендер
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     const el = messageRefs.current.get(targetId);
@@ -186,7 +180,6 @@ export default function Chat() {
         }
     };
 
-    // ========== Title ==========
     useEffect(() => {
         if (
         !chatLoading &&
@@ -197,14 +190,12 @@ export default function Chat() {
         }
     }, [chatLoading, chatWith, id, nick, setTitle]);
 
-    // ========== Фокус на textarea ==========
     useEffect(() => {
         if (location.pathname.startsWith("/chat") && !isMobile) {
         textAreaRef.current?.focus();
         }
     }, []);
 
-    // ========== Горячие клавиши ==========
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
         if (
@@ -234,7 +225,6 @@ export default function Chat() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [setMess, searchInputRef]);
 
-    // ========== Группировка по дням ==========
     const grouped = useMemo(() => {
         const groups: message[][] = [];
 
@@ -257,7 +247,6 @@ export default function Chat() {
         return groups;
     }, [messages]);
 
-    // ========== pendingScrollId ==========
     useEffect(() => {
         if (pendingScrollId === null) return;
 
@@ -266,7 +255,6 @@ export default function Chat() {
         });
     }, [pendingScrollId, scrollToMessage, setPendingScrollId]);
 
-    // ========== Infinite scroll + кнопка "вниз" ==========
     useEffect(() => {
         const el = chatContainerRef.current;
         if (!el) return;
@@ -276,7 +264,6 @@ export default function Chat() {
             el.scrollHeight - el.scrollTop - el.clientHeight;
         setShowGoDown(distanceFromBottom > 250);
 
-        // Подгрузка старых сообщений
         if (
             el.scrollTop < 150 &&
             hasMore &&
@@ -303,7 +290,6 @@ export default function Chat() {
         return () => el.removeEventListener("scroll", onScroll);
     }, [hasMore, loadingMore, loadOlderMessages]);
 
-    // ========== Скролл вниз после первой загрузки ==========
     useEffect(() => {
         if (
         !chatLoading &&
@@ -389,25 +375,25 @@ export default function Chat() {
 
                 return m.is_system ? (
                     <SystemMessage
-                    key={m.id}
-                    m={m}
-                    answer={answer}
-                    scrollToMessage={answer ? scrollToMessage : undefined}
+                        key={m.id}
+                        m={m}
+                        answer={answer}
+                        scrollToMessage={answer ? scrollToMessage : undefined}
                     />
                 ) : (
                     <Message
-                    key={m.id}
-                    message={m}
-                    highlightedId={highlightedId}
-                    messageRefs={messageRefs}
-                    answer={answer}
-                    redir_answer={redir_answer}
-                    scrollToMessage={answer ? scrollToMessage : undefined}
-                    cornerType={getCornerType(
-                        m.id,
-                        messages.map((msg) => msg.id),
-                        chosenMess.map((cm) => cm.id)
-                    )}
+                        key={m.id}
+                        message={m}
+                        highlightedId={highlightedId}
+                        messageRefs={messageRefs}
+                        answer={answer}
+                        redir_answer={redir_answer}
+                        scrollToMessage={answer ? scrollToMessage : undefined}
+                        cornerType={getCornerType(
+                            m.id,
+                            messages.map((msg) => msg.id),
+                            chosenMess.map((cm) => cm.id)
+                        )}
                     />
                 );
                 })}
@@ -418,10 +404,10 @@ export default function Chat() {
         <ChatTAWrapper
             showGoDown={showGoDown}
             handleGoDown={() => {
-            chatContainerRef.current?.scrollTo({
-                top: chatContainerRef.current.scrollHeight,
-                behavior: "smooth",
-            });
+                chatContainerRef.current?.scrollTo({
+                    top: chatContainerRef.current.scrollHeight,
+                    behavior: "smooth",
+                });
             }}
             scrollToMessage={scrollToMessage}
             textAreaRef={textAreaRef}

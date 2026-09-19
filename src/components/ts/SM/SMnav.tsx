@@ -1,6 +1,6 @@
 import { useUser } from "../../hooks/UserHook"
 import { CircleUserRound, Megaphone } from "lucide-react"
-import { CalendarCheckIcon, ChatTeardropIcon, GearIcon, NewspaperIcon, PersonSimpleRunIcon, PlusIcon, SignOutIcon, SortAscendingIcon, UserIcon } from "@phosphor-icons/react"
+import { CalendarCheckIcon, ChatTeardropIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, PlusIcon, SignOutIcon, SortAscendingIcon, UserIcon, CheckIcon } from "@phosphor-icons/react"
 import { useSideMenu } from "../../hooks/SideMenuHook"
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -16,7 +16,7 @@ import { isMobile } from "react-device-detect"
 
 export default function SMnav() {
     const { t, i18n } = useTranslation("common")
-    const { user } = useUser()
+    const { user, logOut } = useUser()
     const {
         setActiveTab,
         activeTab,
@@ -38,10 +38,11 @@ export default function SMnav() {
 
     const navigate = useNavigate()
 
-    const [extraMenu, setExtraMenu] = useState<tab>()
-    const [isExtraOpen, setIsExtraOpen] = useState(false)
-    const [chatsFilters, setMessagesFilters] = useState<{ label: string; value: string; new: string }[]>([])
-    const [habitsFilters, setHabitsFilters] = useState<{ label: string; value: string; new: string }[]>([])
+    const [ extraMenu, setExtraMenu ] = useState<tab>()
+    const [ isExtraOpen, setIsExtraOpen ] = useState(true)
+    const [ confirmLogout, setConfirmLogout ] = useState(false)
+    const [ chatsFilters, setMessagesFilters ] = useState<{ label: string; value: string; new: string }[]>([])
+    const [ habitsFilters, setHabitsFilters ] = useState<{ label: string; value: string; new: string }[]>([])
 
     const timerRef = useRef<number | null>(null)
     const longPressTriggered = useRef(false)
@@ -252,7 +253,14 @@ export default function SMnav() {
                 navigate(`/settings`)
             }
             if (action === "logout") {
-                showNotification("info", "В разработке")
+                if (!confirmLogout) {
+                    setConfirmLogout(true)
+                    setTouchHover(null)
+                    cancelLongPress()
+                    wasLongPress.current = false
+                    return
+                }
+                else logOut()
             }
 
             setTouchHover(null)
@@ -411,6 +419,22 @@ export default function SMnav() {
     const habitsSelected = habitsFilters.find(f => f.value === habitsSelectedValue)
         ?? { label: "Актив", value: "all", new: "0" }
 
+    useEffect(() => {
+        let timer: number | null = null
+
+        if (!isExtraOpen) {
+            timer = window.setTimeout(() => {
+                setConfirmLogout(false)
+            }, 300)
+        }
+
+        return () => {
+            if (timer !== null) {
+                clearTimeout(timer)
+            }
+        }
+    }, [isExtraOpen])
+
     const extraButts = () => {
         switch (extraMenu) {
             case "chats":
@@ -456,34 +480,37 @@ export default function SMnav() {
                 return (
                     <>
                         <div
-                            className="SMextraMenuButt user"
-                            onMouseUp={() => {
-                                navigate("/")
-                            }}
-                            data-action="posts"
-                        >
-                            <NewspaperIcon weight="fill" size={20} /> Лента
-                        </div>                        
-                        <div
-                            className="SMextraMenuButt user"
-                            onMouseUp={() => {
-                                navigate("/habit")
-                            }}
-                            data-action="habits"
-                        >
-                            <PersonSimpleRunIcon weight="fill" size={20} /> Активности
-                        </div>                        <div
-                            className="SMextraMenuButt user"
+                            className={`SMextraMenuButt user ${location.pathname === `/acc/${user.nick}` ? "selected" : ""}`}
                             onMouseUp={() => {
                                 navigate(`/acc/${user.nick}`)
                                 setIsExtraOpen(false)
                             }}
                             data-action="profile"
                         >
-                            <UserIcon weight="fill" size={20} /> В профиль
+                            <UserIcon weight="fill" size={20} /> Профиль
                         </div>
                         <div
-                            className="SMextraMenuButt user"
+                            className={`SMextraMenuButt user ${location.pathname === "/" ? "selected" : ""}`}
+                            onMouseUp={() => {
+                                navigate("/")
+                                setIsExtraOpen(false)
+                            }}
+                            data-action="posts"
+                        >
+                            <NewspaperIcon weight="fill" size={20} /> Лента
+                        </div>                        
+                        <div
+                            className={`SMextraMenuButt user ${location.pathname === "/habit" ? "selected" : ""}`}
+                            onMouseUp={() => {
+                                navigate("/habit")
+                                setIsExtraOpen(false)
+                            }}
+                            data-action="habits"
+                        >
+                            <SneakerMoveIcon  weight="fill" size={20} /> Активности
+                        </div>
+                        <div
+                            className={`SMextraMenuButt user ${location.pathname.includes("/settings") ? "selected" : ""}`}
                             onMouseUp={() => {
                                 navigate(`/settings`)
                                 setIsExtraOpen(false)
@@ -492,20 +519,33 @@ export default function SMnav() {
                         >
                             <GearIcon weight="fill" size={20} /> Настройки
                         </div>
+                        <span className="SMextraSeparator" />
                         <div
-                            className="SMextraMenuButt logout user"
+                            className={`SMextraMenuButt logout user ${confirmLogout ? "confirm" : ""}`}
                             onMouseUp={() => {
-                                showNotification("info", "В разработке")
-                                setIsExtraOpen(false)
+                                if (!confirmLogout) setConfirmLogout(true)
+                                else {
+                                    logOut()
+                                    setIsExtraOpen(false)
+                                }
                             }}
                             data-action="logout"
                         >
-                            <SignOutIcon weight="fill" size={20} /> Выйти
+                            {!confirmLogout
+                                ? <>
+                                    <SignOutIcon weight="fill" size={20} /> Выйти
+                                </> 
+                                : <>
+                                    <CheckIcon size={20} /> Да, выйти
+                                </>
+                            }
                         </div>
                     </>
                 )
         }
     }
+
+    if (!user.id) return null
 
     return (
         <div className={`SMnavDiv ${showSideMenu ? "open" : ""}`}
@@ -562,6 +602,7 @@ export default function SMnav() {
                     onMouseDown={() => startLongPress("chats")}
                     onMouseUp={() => navFunc("chats")}
                     onMouseEnter={() => handleNavEnter("chats")}
+                    key={messageSelected.value}
                     onTouchStart={(e) => {
                         const touch = e.touches[0]
                         startLongPress("chats", touch.clientX, touch.clientY)
@@ -579,6 +620,7 @@ export default function SMnav() {
                     onMouseDown={() => startLongPress("habits")}
                     onMouseUp={() => navFunc("habits")}
                     onMouseEnter={() => handleNavEnter("habits")}
+                    key={habitsSelected.value}
                     onTouchStart={(e) => {
                         const touch = e.touches[0]
                         startLongPress("habits", touch.clientX, touch.clientY)

@@ -6,7 +6,6 @@
     height: 80%;
     background-color: var(--mc);
     border-radius: 12px;
-    padding-top: 1vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15,6 +14,7 @@
         width: 100%;
         height: 90vh;
         border-radius: 12px 12px 0 0;
+        padding: 1vh 3vw;
     }
 }
 .createChatInfo {
@@ -223,7 +223,7 @@
     width: 100%;
     gap: 0.2vh;
     height: 100%;
-    background-color: var(--bgc);
+    background-color: var(--interact);
     border-radius: 12px;
     >.loaderSmall {
         margin-top: 2vh;

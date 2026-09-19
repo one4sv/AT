@@ -108,6 +108,7 @@
         text-align: center;
         padding: 0 14px;
         box-sizing: border-box;
+        animation: buttonTextIn 0.3s ease;
     }
     @media (max-width:800px) {
         font-size: 12px;
@@ -217,6 +218,19 @@
         }
         &.logout {
             color: var(--notValid);
+            @media (hover: hover) {
+                &:hover {
+                    background-color: var(--notValidBg);
+                }
+            }
+            @media (hover: none) {
+                &:active {
+                    background-color: var(--notValidBg);
+                }
+            }
+        }
+        &.confirm {
+            animation: buttonTextIn 0.3s ease;
         }
         @media (max-width: 800px) {
             padding: 1.5vh 2vw 1.5vh 3vw;

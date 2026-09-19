@@ -28,8 +28,8 @@
     display: flex;
     min-width: 50vw;
     max-width: 65vw;
-    padding: 0.25vh 0.25vw;
-    border-radius: 6px;
+    padding: 0.25vh 0.5vw;
+    border-radius: 24px;
     z-index: 15;
     box-shadow: 0 4px 8px #00000033;
     align-items: center;
@@ -44,7 +44,10 @@
         background-color: var(--noteInfo);
     }
     @media (max-width:800px) {
-        min-width: 90vw;
+        min-width: 92vw;
+        padding: 1vh 3vw;
+        height: 5vh;
+        top: 0.5vh;
     }
 }
 

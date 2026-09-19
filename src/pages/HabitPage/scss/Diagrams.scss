@@ -85,6 +85,7 @@
     flex-direction: column;
     gap: 1vh;
     position: relative;
+    background-color: var(--interact);
     cursor: pointer;
     @media (max-width:800px) {
         padding: 1vh 2vw;

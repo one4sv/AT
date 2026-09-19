@@ -80,9 +80,6 @@ export default function MobileLayout({ children }: LayoutProps) {
         }
     }, [setDontHandleOther, translateX])
 
-    useEffect(() => {
-        if (dontHandle) setTranslateX(-100)
-    }, [dontHandle, setTranslateX])
     const hideHeader =
         location.pathname.startsWith("/chat") ||
         location.pathname.startsWith("/habit/");

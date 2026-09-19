@@ -1,9 +1,10 @@
 import { createContext, useState, useEffect, useCallback, useRef } from "react";
 import { type ReactNode } from "react";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useNote } from "../hooks/NoteHook";
 import { requestNotificationPermission } from "../ts/utils/NoteRequest";
 import { api } from "../ts/api";
+import { useTranslation } from "react-i18next";
 
 export interface User {
     id: string | null;
@@ -40,11 +41,13 @@ export interface UserContextType {
     initialLoading: boolean;
     isAuthenticated: boolean;
     refetchUser: () => Promise<void>;
+    logOut: () => Promise<void>
 }
 
 const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
+    const { t } = useTranslation("common")
     const { showNotification } = useNote();
     const API_WS = import.meta.env.VITE_API_WS
     const [user, setUser] = useState<User>({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null, reg_date:null, sex:null, date_of_birth:null });
@@ -112,8 +115,25 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         requestNotificationPermission();
     }, [user.id]);
 
+    const logOut = async () => {
+        try {
+            const res = await api.get(`logout`)
+            if (res.data.success) {
+                refetchUser()
+            } else {
+                showNotification("error", t("sideMenu.logOutError"))
+            }
+        } catch (error: unknown) {
+            if (isAxiosError(error)) {
+                showNotification("error", error.response?.data?.messages || t("sideMenu.logOutError"))
+            } else {
+                showNotification("error", t("sideMenu.logOutErrorGeneric"))
+            }
+        }
+    }
+
     return (
-        <UserContext.Provider value={{ isAuthenticated, user, loadingUser, initialLoading, refetchUser }}>
+        <UserContext.Provider value={{ isAuthenticated, user, loadingUser, initialLoading, refetchUser, logOut }}>
             {children}
         </UserContext.Provider>
     );
