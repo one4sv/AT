@@ -55,6 +55,7 @@
     gap: 1vh;
     > span {
         font-size: 18px;
+        animation: buttonTextIn .3s ease;
     }
     @media (max-width: 800px) {
         height: 6vh;
@@ -69,9 +70,18 @@
             }
         }
     }
-    &.logout:hover {
+    &.logout {
         >.settingName {
             color: var(--notValid);
+        }
+        svg {
+            color: var(--notValid);
+        }
+        &:hover {
+            background-color: var(--notValidBg);
+            >.settingName {
+                color: var(--notValid);
+            }
             > svg {
                 color: var(--notValid);
             }

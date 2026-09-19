@@ -1,34 +1,36 @@
 import { useUser } from "../../hooks/UserHook"
-import { api } from "../api"
-import { isAxiosError } from "axios";
-import { useTranslation } from "react-i18next";
 import { useNote } from "../../hooks/NoteHook";
-import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon , SignOutIcon, UserIcon } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon , SignOutIcon, UserIcon, CheckIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
+import { useEffect, useRef, useState } from "react";
+import { useSideMenu } from "../../hooks/SideMenuHook";
 
 export default function AccountList() {
-    const { t } = useTranslation("settings");
-    const { refetchUser, user } = useUser()
+    const { logOut, user } = useUser()
     const { showNotification } = useNote()
-
+    const { activeTab } = useSideMenu()
     const navigate = useNavigate()
 
-    const logOut = async () => {
-        try {
-            const res = await api.get(`logout`)
-            if (res.data.success) {
-                refetchUser()
-            } else {
-                showNotification("error", t("sideMenu.logOutError"))
+    const [ logoutConfirm, setLogoutConfirm ] = useState(false)
+    
+    const logoutRef = useRef<HTMLDivElement | null>(null)
+    useEffect(() => {
+        const handleMouseDown = (event: MouseEvent) => {
+            if (
+                logoutRef.current &&
+                !logoutRef.current.contains(event.target as Node)
+            ) {
+                if (activeTab !== "user") {
+                    setTimeout(() => {
+                        setLogoutConfirm(false)
+                    }, 300)
+                }
+                else setLogoutConfirm(false)
             }
-        } catch (error: unknown) {
-            if (isAxiosError(error)) {
-                showNotification("error", error.response?.data?.messages || t("sideMenu.logOutError"))
-            } else {
-                showNotification("error", t("sideMenu.logOutErrorGeneric"))
-            }
-        }
-    }
+        };
+        document.addEventListener("mousedown", handleMouseDown);
+        return () => document.removeEventListener("mousedown", handleMouseDown);
+    }, []);
 
     return (
         <div className="accountList SMlist">
@@ -90,9 +92,9 @@ export default function AccountList() {
                     </span>
                     <CaretRightIcon className="fastButtCaret"/>
                 </div>
-                <div className="SMaccountButt logout" onClick={() => logOut()}>
-                    <span className="settingName">
-                        <SignOutIcon weight="fill" size={21}/> Выйти из аккаунта
+                <div className="SMaccountButt logout" onClick={() => logoutConfirm ? logOut() : setLogoutConfirm(true)} ref={logoutRef}>
+                    <span className="settingName" key={logoutConfirm ? "confirm" : "default"}>
+                        {logoutConfirm ? <><CheckIcon size={21}/> Подтвердить выход</> : <><SignOutIcon weight="fill" size={21}/> Выйти из аккаунта</>}
                     </span>
                 </div>
             </div>
