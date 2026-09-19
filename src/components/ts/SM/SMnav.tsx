@@ -422,7 +422,7 @@ export default function SMnav() {
     useEffect(() => {
         let timer: number | null = null
 
-        if (!isExtraOpen) {
+        if (!isExtraOpen || extraMenu !== "user") {
             timer = window.setTimeout(() => {
                 setConfirmLogout(false)
             }, 300)
@@ -433,7 +433,7 @@ export default function SMnav() {
                 clearTimeout(timer)
             }
         }
-    }, [isExtraOpen])
+    }, [extraMenu, isExtraOpen])
 
     const extraButts = () => {
         switch (extraMenu) {
