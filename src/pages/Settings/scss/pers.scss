@@ -166,3 +166,98 @@
         }
     }
 }
+
+@use "../../../scss/mixins" as var;
+
+.colorSelector {
+    width: 100%;
+    height: 9vh;
+    background-color: var(--interact);
+    padding: 1vh .5vw;
+    margin-top: 1vh;
+    display: flex;
+    border-radius: 12px;
+    color: var(--accent_text);
+    flex-direction: column;
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+        height: 10vh;
+    }
+}
+
+.colorTitle {
+    color: var(--tc);
+
+    @media (max-width: 800px) {
+        padding-left: 2vw;
+    }
+}
+
+.colorSelectorWrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    gap: .5vw;
+    position: relative;
+    touch-action: pan-y;
+    align-items: center;
+    margin-left: 1vh;
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+    }
+}
+
+.colorSelected {
+    position: absolute;
+    top: 10%;
+    height: 80%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    background-position: center;
+    mask-image: radial-gradient(
+        circle at center,
+        transparent 0 45%,
+        #000 46% 100%
+    );
+    -webkit-mask-image: radial-gradient(
+        circle at center,
+        transparent 0 45%,
+        #000 46% 100%
+    );
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+}
+
+.colorButt {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @media (hover: hover) {
+        &:hover {
+            background-color: var(--menuButtHover);
+        }
+    }
+}
+
+.colorPicker {
+    height: 60%;
+    z-index: 2;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    border: 2px solid var(--mc);
+}
