@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react"
-
+import { useEffect, useRef, useState, useCallback } from "react"
 import { useSettings } from "../../../components/hooks/SettingsHook"
+import { useSideMenu } from "../../../components/hooks/SideMenuHook"
+import { isMobile } from "react-device-detect"
 
 interface ColorItem {
     value: string
@@ -18,95 +19,144 @@ export default function ColorSelector({
     setNew: (val: string) => void
 }) {
     const { isDark } = useSettings()
-
+    const { setDontHandle } = useSideMenu()
+    
     const wrapperRef = useRef<HTMLDivElement | null>(null)
-
+    const itemsRef = useRef<(HTMLDivElement | null)[]>([])
     const index = arr.findIndex(i => i.value === value)
-
+    
     const [indicator, setIndicator] = useState(0)
-
+    const [gradientObj, setGradientObj] = useState({
+        bgImage: "none",
+        bgSize: "0px 100%"
+    })
+    
+    // Добавляем ref для отслеживания первоначальной загрузки
+    const isInitial = useRef(true)
+    
     const timerRef = useRef<number | null>(null)
-
     const dragging = useRef(false)
-
     const longPress = useRef(false)
-
     const clickBlocked = useRef(false)
+    const gradientWidth = isMobile ? 18 : 20
 
-
-    const getItemStep = () => {
+    const updateLayout = useCallback(() => {
+        if (!wrapperRef.current || !itemsRef.current.length) return
         const wrapper = wrapperRef.current
+        const selectedEl = wrapper.querySelector(".colorSelected") as HTMLElement
 
-        if (!wrapper) return 0
+        if (!selectedEl) return
+        const selWidth = selectedEl.offsetWidth
+        
+        if (!dragging.current) {
+            const activeItem = itemsRef.current[index]
+            if (activeItem) {
+                const pos =
+                    activeItem.offsetLeft +
+                    (activeItem.offsetWidth - selWidth) / 2
 
-        const item = wrapper.querySelector(".colorButt") as HTMLElement
-
-        if (!item) return 0
-
-        const style = getComputedStyle(wrapper)
-
-        const gap = parseFloat(style.gap)
-
-        return item.offsetWidth + gap
-    }
-
-
-    const setSelectedPosition = () => {
-        const step = getItemStep()
-
-        if (step) {
-            setIndicator(index * step + 2)
+                setIndicator(pos)
+            }
         }
-    }
 
+        const centers = arr
+            .map((_, i) => {
+                const item = itemsRef.current[i]
+                if (!item) return null
+                return item.offsetLeft + item.offsetWidth / 2
+            })
+            .filter((value): value is number => value !== null)
+
+        if (centers.length === 0) return
+
+        const stops: string[] = []
+
+        arr.forEach((a, i) => {
+            const center = centers[i]
+            if (center === undefined) return
+            const color = isDark ? a.dark : a.light
+            
+            if (i === 0) {
+                stops.push(`${color} 0px`)
+            }
+            if (i > 0) {
+                const previousCenter = centers[i - 1]
+                if (previousCenter === undefined) return
+                const transitionCenter = (previousCenter + center) / 2
+                stops.push(
+                    `${isDark ? arr[i - 1].dark : arr[i - 1].light} ${transitionCenter - gradientWidth / 2}px`,
+                    `${color} ${transitionCenter + gradientWidth / 2}px`
+                )
+            }
+            if (i === arr.length - 1) {
+                stops.push(`${color} ${wrapper.scrollWidth}px`)
+            }
+        })
+
+        setGradientObj({
+            bgImage: `linear-gradient(to right, ${stops.join(", ")})`,
+            bgSize: `${wrapper.scrollWidth}px 100%`
+        })
+    }, [index, arr, isDark, gradientWidth])
 
     useEffect(() => {
-        setSelectedPosition()
-    }, [index, arr.length])
+        updateLayout()
+        
+        // Снимаем флаг первой загрузки после применения верстки (даем браузеру 50мс на отрисовку без анимации)
+        const initTimer = setTimeout(() => {
+            isInitial.current = false
+        }, 50)
+        
+        window.addEventListener("resize", updateLayout)
 
+        return () => {
+            clearTimeout(initTimer)
+            window.removeEventListener("resize", updateLayout)
+        }
+    }, [updateLayout])
 
     const changeByPosition = (x: number) => {
         const wrapper = wrapperRef.current
-
         if (!wrapper) return
-
         const rect = wrapper.getBoundingClientRect()
+        const contentX = x - rect.left + wrapper.scrollLeft
 
-        const step = getItemStep()
+        const selectedEl = wrapper.querySelector(".colorSelected") as HTMLElement
+        const selWidth = selectedEl ? selectedEl.offsetWidth : 0
+        
+        let pos = contentX - selWidth / 2
 
-        if (!step) return
+        if (pos < 0) pos = 0
+        const max = wrapper.scrollWidth - selWidth
+        if (pos > max) pos = max
+        
+        setIndicator(pos)
+        
+        let closestIndex = index
+        let minDiff = Infinity
+        
+        itemsRef.current.forEach((item, i) => {
+            if (!item) return
+            const center = item.offsetLeft + item.offsetWidth / 2
+            const diff = Math.abs(contentX - center)
 
-        const item = wrapper.querySelector(".colorButt") as HTMLElement
+            if (diff < minDiff) {
+                minDiff = diff
+                closestIndex = i
+            }
+        })
 
-        const itemWidth = item.offsetWidth
-
-        let position = x - rect.left - itemWidth / 2
-
-        const max = (arr.length - 1) * step
-
-        if (position < 0) {
-            position = 0
-        }
-
-        if (position > max) {
-            position = max
-        }
-
-        setIndicator(position)
-
-        const newIndex = Math.round(position / step)
-
-        if (arr[newIndex]) {
-            setNew(arr[newIndex].value)
+        if (arr[closestIndex] && arr[closestIndex].value !== value) {
+            setNew(arr[closestIndex].value)
         }
     }
-
 
     const startLongPress = (x: number) => {
         longPress.current = false
         dragging.current = false
         clickBlocked.current = false
-
+        setDontHandle(true)
+        
         if (timerRef.current) {
             clearTimeout(timerRef.current)
         }
@@ -115,25 +165,19 @@ export default function ColorSelector({
             longPress.current = true
             dragging.current = true
             clickBlocked.current = true
-
             changeByPosition(x)
         }, 350)
     }
 
-
     const move = (x: number) => {
         if (!dragging.current) return
-
         changeByPosition(x)
     }
 
-
     const click = (val: string) => {
         if (clickBlocked.current) return
-
         setNew(val)
     }
-
 
     const end = () => {
         if (timerRef.current) {
@@ -142,77 +186,61 @@ export default function ColorSelector({
         }
 
         if (dragging.current) {
-            setSelectedPosition()
+            dragging.current = false
+            updateLayout()
         }
 
-        dragging.current = false
         longPress.current = false
-    }
 
+        setTimeout(() => {
+            clickBlocked.current = false
+        }, 50)
+    }
 
     return (
         <div
             className="colorSelectorWrapper"
             ref={wrapperRef}
-
-            onMouseMove={(e) => {
-                move(e.clientX)
-            }}
-
+            onMouseMove={e => move(e.clientX)}
             onMouseUp={end}
-
             onMouseLeave={end}
         >
-            <div
-                className="colorSelected"
-                style={{
-                    transform: `translateX(${indicator}px)`
-                }}
-            />
-
-            {arr.map(a => (
+            {arr.map((a, i) => (
                 <div
                     className="colorButt"
                     key={a.value}
-
-                    onClick={() => {
-                        click(a.value)
+                    ref={el => {
+                        itemsRef.current[i] = el
                     }}
-
-                    onMouseDown={(e) => {
-                        startLongPress(e.clientX)
-                    }}
-
+                    onClick={() => click(a.value)}
+                    onMouseDown={e => startLongPress(e.clientX)}
                     onMouseUp={end}
-
-                    onTouchStart={(e) => {
-                        const touch = e.touches[0]
-
-                        startLongPress(touch.clientX)
-                    }}
-
-                    onTouchMove={(e) => {
-                        const touch = e.touches[0]
-
-                        move(touch.clientX)
-                    }}
-
+                    onTouchStart={e => startLongPress(e.touches[0].clientX)}
+                    onTouchMove={e => move(e.touches[0].clientX)}
                     onTouchEnd={end}
-
-                    onContextMenu={(e) => {
-                        e.preventDefault()
-                    }}
+                    onContextMenu={e => e.preventDefault()}
                 >
                     <div
                         className="colorPicker"
                         style={{
-                            backgroundColor: isDark
-                                ? a.dark
-                                : a.light
+                            backgroundColor: isDark ? a.dark : a.light
                         }}
                     />
                 </div>
             ))}
+
+            <div
+                className="colorSelected"
+                style={{
+                    transform: `translateX(${indicator}px)`,
+                    backgroundPosition: `${-indicator}px center`,
+                    backgroundImage: gradientObj.bgImage,
+                    backgroundSize: gradientObj.bgSize,
+                    transition: isInitial.current
+                        ? "none"
+                        : "transform 0.3s ease, background-position 0.3s ease"
+                }}
+            />
         </div>
     )
 }

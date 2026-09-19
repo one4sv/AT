@@ -13,18 +13,15 @@
         color: var(--borderWh);
         @media (hover: hover) {
             &:hover {
-            background-color: var(--menuButtHover);
-            color: var(--tc);
-        
+                background-color: var(--menuButtHover);
+                color: var(--tc);
             }
         }
 
         @media (hover: none) {
             &:active {
-            background-color: var(--menuButtHover);
-            color: var(--tc);
-        
-            
+                background-color: var(--menuButtHover);
+                color: var(--tc);
             }
         }
         &:active {

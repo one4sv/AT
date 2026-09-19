@@ -11,7 +11,7 @@
     color: var(--accent_text);
     flex-direction: column;
 
-    @media (max-width:800px) {
+    @media (max-width: 800px) {
         gap: 2vw;
         height: 10vh;
     }
@@ -20,7 +20,7 @@
 .colorTitle {
     color: var(--tc);
 
-    @media (max-width:800px) {
+    @media (max-width: 800px) {
         padding-left: 2vw;
     }
 }
@@ -33,39 +33,62 @@
     scrollbar-width: thin;
     gap: .5vw;
     position: relative;
+    touch-action: pan-y;
+    align-items: center;
+    margin-left: 1vh;
 
-    @media (max-width:800px) {
-        padding-left: 2vw;
+    @media (max-width: 800px) {
         gap: 2vw;
     }
 }
 
 .colorSelected {
     position: absolute;
-    top: 5%;
-    height: 90%;
+    top: 10%;
+    height: 80%;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     pointer-events: none;
-    border: 3px solid var(--accent_text);
-    transition: transform .2s ease;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    background-position: center;
+    mask-image: radial-gradient(
+        circle at center,
+        transparent 0 45%,
+        #000 46% 100%
+    );
+    -webkit-mask-image: radial-gradient(
+        circle at center,
+        transparent 0 45%,
+        #000 46% 100%
+    );
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
 }
+
 .colorButt {
     height: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 8px;
     cursor: pointer;
     flex-shrink: 0;
-    transition: transform .2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    &:hover {
-        background-color: var(--menuButtHover);
-    } 
+
+    @media (hover: hover) {
+        &:hover {
+            background-color: var(--menuButtHover);
+        }
+    }
 }
+
 .colorPicker {
-    height: 70%;
+    height: 60%;
+    z-index: 2;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
+    border: 2px solid var(--mc);
 }
