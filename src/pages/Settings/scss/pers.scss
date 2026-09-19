@@ -46,60 +46,6 @@
         }
     }
 }
-.accentSelector {
-    width: 100%;
-    height: 9vh;
-    background-color: var(--interact);
-    padding: 1vh .5vw;
-    margin-top: 1vh;
-    display: flex;
-    gap: .5vw;
-    border-radius: 12px;
-    color: var(--accent_text);
-    flex-direction: column;
-    @media (max-width:800px) {
-        gap: 2vw;
-        height: 10vh;
-    }
-}
-.colorTitle {
-    color: var(--tc);
-    @media (max-width:800px) {
-        padding-left: 2vw;
-    }
-}
-.accentSelectorWrapper {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    gap: .5vw;
-    @media (max-width:800px) {
-        padding-left: 2vw;
-    }
-}
-.accentPicker {
-    height: 100%;
-    aspect-ratio: 1/1;
-    gap: 8px;
-    border-radius: 50%;
-    background-color: var(--mc);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: none;
-    padding: 6px;
-    background-clip: content-box;
-    &.active {
-        padding: 3px;
-        border-width: 3px;
-        border-style: solid;
-
-    }
-}
 .bgPicker {
     padding: 0 0.5vw;
     display: flex;

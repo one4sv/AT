@@ -10,6 +10,7 @@ import SeekBar from "../SeekBar.tsx";
 import { isMobile } from "react-device-detect";
 import Selector from "../../../../components/ts/Selector.tsx";
 import { MirrorRectangular, PaintBucket, PanelLeft, PanelLeftClose } from "lucide-react";
+import ColorSelector from "../ColorSelector.tsx";
 
 export default function PersSettingTab() {
     const { t } = useTranslation("settings");
@@ -56,7 +57,7 @@ export default function PersSettingTab() {
         { value: "mono", dark: "#fff", light: "#fff" },
         { value: "void", dark: "#000", light: "#000" },
     ];
-    
+
     return (
         <div className="settingTab">
             <div className="settingInnerDiv">
@@ -70,45 +71,13 @@ export default function PersSettingTab() {
                 <div className="settingHeader">{t("personalization.accentColors")}</div>    
                 <div className="settingInnerWrapper">
                     <PreviewAccent />
-                    <div className="accentSelector">
+                    <div className="colorSelector">
                         <span className="colorTitle">{t("personalization.mainColor")}</span>
-                        <div className="accentSelectorWrapper">
-                            {accentArr.map((a) => (
-                                <div 
-                                    className={`accentPicker ${accent === a.value ? "active" : ""}`} 
-                                    key={a.value} 
-                                    onClick={() => setNewAccent(a.value)} 
-                                    style={{ 
-                                        backgroundColor: isDark ? a.dark : a.light,
-                                        borderColor: accent === a.value 
-                                            ? isDark 
-                                                ? a.dark 
-                                                : a.light 
-                                            : "none"
-                                    }}
-                                />
-                            ))}
-                        </div>
+                        <ColorSelector arr={accentArr} value={accent} setNew={setNewAccent}/>
                     </div>
-                    <div className="accentSelector">
+                    <div className="colorSelector">
                         <span className="colorTitle">{t("personalization.gradient")}</span>
-                        <div className="accentSelectorWrapper">
-                            {gradArr.map((a) => (
-                                <div 
-                                    className={`accentPicker ${grad === a.value ? "active" : ""}`} 
-                                    key={a.value} 
-                                    onClick={() => setNewGrad(a.value)} 
-                                    style={{ 
-                                        backgroundColor: isDark ? a.dark : a.light,
-                                        borderColor: grad === a.value 
-                                            ? isDark 
-                                                ? a.dark 
-                                                : a.light 
-                                            : "none"
-                                    }}
-                                />
-                            ))}
-                        </div>
+                        <ColorSelector arr={gradArr} value={grad} setNew={setNewGrad}/>
                     </div>
                 </div>
             </div>

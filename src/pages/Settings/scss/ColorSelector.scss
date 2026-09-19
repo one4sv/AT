@@ -1,0 +1,71 @@
+@use "../../../scss/mixins" as var;
+
+.colorSelector {
+    width: 100%;
+    height: 9vh;
+    background-color: var(--interact);
+    padding: 1vh .5vw;
+    margin-top: 1vh;
+    display: flex;
+    border-radius: 12px;
+    color: var(--accent_text);
+    flex-direction: column;
+
+    @media (max-width:800px) {
+        gap: 2vw;
+        height: 10vh;
+    }
+}
+
+.colorTitle {
+    color: var(--tc);
+
+    @media (max-width:800px) {
+        padding-left: 2vw;
+    }
+}
+
+.colorSelectorWrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    gap: .5vw;
+    position: relative;
+
+    @media (max-width:800px) {
+        padding-left: 2vw;
+        gap: 2vw;
+    }
+}
+
+.colorSelected {
+    position: absolute;
+    top: 5%;
+    height: 90%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    pointer-events: none;
+    border: 3px solid var(--accent_text);
+    transition: transform .2s ease;
+}
+.colorButt {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform .2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+        background-color: var(--menuButtHover);
+    } 
+}
+.colorPicker {
+    height: 70%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+}

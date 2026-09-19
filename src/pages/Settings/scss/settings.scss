@@ -3,6 +3,7 @@
 @use "./habits.scss";
 @use "./security.scss";
 @use "./seekbar.scss";
+@use "./colorSelector.scss";
 
 .settingsDiv {
     width: 100%;
@@ -182,6 +183,8 @@
     @media (max-width: 800px) {
         margin-bottom: 2vh;
         border-radius: 24px;
+        width: 90%;
+        margin: 0 auto 2vh;
     }
 }
 .settingSearch {
@@ -242,7 +245,6 @@
     flex-direction: column;
     gap: 1vh;
     margin-top: 1vh;
-    padding-bottom: 2vh;
     >.accInfo {
         @media (max-width: 800px) {
             margin: 1vh 0 0;
@@ -251,6 +253,7 @@
     }
     @media (max-width: 800px) {
         margin-top: 0;
+        margin-bottom: 1vh;
     }
 }
 .settingHeader {
