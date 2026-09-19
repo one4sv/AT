@@ -16,6 +16,8 @@
     height: 100%;
     transition: left 0.3s ease;
     cursor: pointer;
+    transition: transform .3s ease;
+    pointer-events: none;
 }
 .selectorElement {
     display: flex;
@@ -24,6 +26,7 @@
     cursor: pointer;
     border-radius: 12px;
     color: var(--tc);
+    user-select: none;
     >span {
         display: flex;
         align-items: center;

@@ -169,19 +169,19 @@
     -webkit-backdrop-filter: blur(var(--blur));
     @media (hover: hover) {
         &:hover {
-        color: var(--tc);
-        background-color: var(--menuButtHover);
-    
+            color: var(--tc);
+            background-color: var(--menuButtHover);
         }
     }
-
     @media (hover: none) {
         &:active {
-        color: var(--tc);
-        background-color: var(--menuButtHover);
-    
-        
+            color: var(--tc);
+            background-color: var(--menuButtHover);
         }
+    }
+    @media (max-width: 800px) {
+        margin-bottom: 2vh;
+        border-radius: 24px;
     }
 }
 .settingSearch {
@@ -248,6 +248,9 @@
             margin: 1vh 0 0;
             padding: 1vh 0.5vw;
         }
+    }
+    @media (max-width: 800px) {
+        margin-top: 0;
     }
 }
 .settingHeader {

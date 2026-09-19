@@ -26,6 +26,7 @@ import SecurityTab from "./components/SettingsTabs/SecurityTab";
 import GeneralTab from "./components/SettingsTabs/GeneralTab";
 import { useAcc } from "../../components/hooks/AccHook";
 import { useTranslation } from "react-i18next";
+import { isMobile } from "react-device-detect";
 
 export interface setting {
     name: string;
@@ -206,13 +207,23 @@ export default function Settings() {
                     <div className="settingsPage">
                         {activeTab && (
                             <>
-                                <div className="settingBack" onClick={() => {
-                                    navigate(`/settings`);
-                                }}>
-                                    <CaretLeftIcon size={24} />
-                                    <h2>{activeTab.name}</h2>
-                                </div>
+                                {!isMobile ? 
+                                    <div className="settingBack" onClick={() => {
+                                        navigate(`/settings`);
+                                    }}>
+                                        <CaretLeftIcon size={24} />
+                                        <h2>{activeTab.name}</h2>
+                                    </div>
+                                 : ""}
                                 {tabs[activeTab.tab as keyof typeof tabs]}
+                                {isMobile ? 
+                                    <div className="settingBack" onClick={() => {
+                                        navigate(`/settings`);
+                                    }}>
+                                        <CaretLeftIcon size={24} />
+                                        <h2>{activeTab.name}</h2>
+                                    </div>
+                                 : ""}
                             </>
                         )}
                     </div>

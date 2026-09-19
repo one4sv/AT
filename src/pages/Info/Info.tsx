@@ -10,6 +10,7 @@ import PolicyTab from "./tabs/PolicyTab"
 import ContactsTab from "./tabs/ContactsTab"
 import FaqTab from "./tabs/FaqTab"
 import { useTranslation } from "react-i18next"
+import { isMobile } from "react-device-detect"
 
 export default function Info() {
     const { setTitle } = usePageTitle()
@@ -75,15 +76,17 @@ export default function Info() {
                 >
                     <div className="infoPage">
                         <div className="infoButtsWrapper">
-                            <div
-                                className="infoBack"
-                                onClick={() => {
-                                    navigate(-1);
-                                }}
-                            >
-                                <CaretLeftIcon size={24} />
-                                <h2>{t("info.title")}</h2>
-                            </div>
+                            {!isMobile ? (
+                                <div
+                                    className="infoBack"
+                                    onClick={() => {
+                                        navigate(-1);
+                                    }}
+                                >
+                                    <CaretLeftIcon size={24} />
+                                    <h2>{t("info.title")}</h2>
+                                </div>
+                            ) : ""}
                             {sections.map((s) => (
                                 <div
                                     key={s.tab}
@@ -103,22 +106,45 @@ export default function Info() {
                                 </div>
                             ))}
                         </div>
+                        {isMobile ? (
+                            <div
+                                className="infoBack"
+                                onClick={() => {
+                                    navigate(-1);
+                                }}
+                            >
+                                <CaretLeftIcon size={24} />
+                                <h2>{t("info.title")}</h2>
+                            </div>
+                        ) : ""}
                     </div>
 
                     <div className="infoPage">
                         {currentTab && (
                             <>
-                                <div
-                                    className="infoBack"
-                                    onClick={() => {
-                                        navigate(-1);
-                                    }}
-                                >
-                                    <CaretLeftIcon size={24} />
-                                    <h2>{currentTab?.name}</h2>
-                                </div>
-
+                                {!isMobile ? (
+                                    <div
+                                        className="infoBack"
+                                        onClick={() => {
+                                            navigate(-1);
+                                        }}
+                                    >
+                                        <CaretLeftIcon size={24} />
+                                        <h2>{currentTab?.name}</h2>
+                                    </div>
+                                ) : "" }
                                 {currentTab && tabs[currentTab.tab as keyof typeof tabs]}
+                                {isMobile ? (
+                                    <div
+                                        className="infoBack"
+                                        onClick={() => {
+                                            navigate(-1);
+                                        }}
+                                    >
+                                        <CaretLeftIcon size={24} />
+                                        <h2>{currentTab?.name}</h2>
+                                    </div>
+                                ) : "" }
                             </>
                         )}
                     </div>

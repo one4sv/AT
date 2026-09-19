@@ -56,7 +56,7 @@ export default function PersSettingTab() {
         { value: "mono", dark: "#fff", light: "#fff" },
         { value: "void", dark: "#000", light: "#000" },
     ];
-    console.log(blur)
+    
     return (
         <div className="settingTab">
             <div className="settingInnerDiv">
