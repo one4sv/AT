@@ -98,7 +98,7 @@ export default function SelectList({
         placeholder={placeholder}
         onClick={() => setShowList(!showList)}
         value={selectedLabel}
-        readOnly={readOnly}
+        disabled={readOnly}
       />
       {chevron && (
         <ChevronDown style={{ transform: `rotate(${showList && !showOnly ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>

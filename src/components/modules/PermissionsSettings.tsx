@@ -288,7 +288,7 @@ export default function PermissionsSettings() {
                                     <input
                                         type="text"
                                         className="permInp"
-                                        readOnly={!isEditable}
+                                        disabled={!isEditable}
                                         value={editedName}
                                         onChange={(e) => {
                                             const val = e.target.value
@@ -311,7 +311,7 @@ export default function PermissionsSettings() {
                                         min={1}
                                         max={99}
                                         className="permInp"
-                                        readOnly={!isEditable}
+                                        disabled={!isEditable}
                                         value={editedRank}
                                         onChange={(e) => {
                                             const val = Number(e.target.value)

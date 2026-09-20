@@ -53,7 +53,7 @@ export default function CalendarInput({
       className={className}
       selected={value}
       onChange={handleDateChange}
-      readOnly={readOnly ?? false}
+      disabled={readOnly ?? false}
       onChangeRaw={handleChangeRaw}
       dateFormat="dd.MM.yyyy"
       maxDate={maxDate}

@@ -39,7 +39,7 @@ export default function AutoDesc({
         <textarea
             ref={textareaRef}
             value={displayValue}           // контролируемое значение
-            readOnly={readOnly}
+            disabled={readOnly}
             className={className}
             onInput={adjustHeight}         // на всякий случай (для быстрого ввода)
             onChange={handleChange}
