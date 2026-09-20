@@ -12,6 +12,7 @@ import { useAcc } from "../../components/hooks/AccHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
 import { useTranslation } from "react-i18next";
+import { isMobile } from "react-device-detect";
 
 export default function Acc() {
     const { t } = useTranslation("acc");
@@ -244,20 +245,20 @@ export default function Acc() {
                     onScrollEnd={() => setDontHandle(false)}
                     style={{overflowX: `${dontHandleOther ? "hidden" : "scroll"}`}}
                 >
-                    <div className="accSlide" onClick={handleSlideClick}>
+                    <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined}>
                         <div
                             className="accContentSlide accMedia"
                             ref={el => { slideRefs.current[0] = el; }}
-                            style={{pointerEvents:`${collapsed === 0 ? "none" : "all"}`}}
+                            style={{pointerEvents:`${isMobile && collapsed === 0 ? "none" : "all"}`}}
                         >
                             {!isMyAcc && <AccMedia media={media} />}
                         </div>
                     </div>
-                    <div className="accSlide" onClick={handleSlideClick} >
+                    <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined} >
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[1] = el; }}
-                            style={{pointerEvents:`${collapsed === 0 ? "none" : "all"}`}}
+                            style={{pointerEvents:`${isMobile && collapsed === 0 ? "none" : "all"}`}}
                         >
                             <AccHabits
                                 isMyAcc={isMyAcc}
@@ -266,11 +267,11 @@ export default function Acc() {
                             />
                         </div>
                     </div>
-                    <div className="accSlide" onClick={handleSlideClick} >
+                    <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined} >
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[2] = el; }}
-                            style={{pointerEvents:`${collapsed === 0 ? "none" : "all"}`}}
+                            style={{pointerEvents:`${isMobile && collapsed === 0 ? "none" : "all"}`}}
                         >
                             <AccPosts
                                 posts={posts}

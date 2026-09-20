@@ -71,14 +71,12 @@
         @media (hover: none) {
             &:active {
             background-color: var(--menuButtHover);
-            >.pinHabit {
-            color: var(--tc);
-            }    
-            >.delHabit {
-            color: #c40000;
-            }
-        
-            
+                >.pinHabit {
+                    color: var(--tc);
+                }    
+                >.delHabit {
+                    color: #c40000;
+                }
             }
         }
     }

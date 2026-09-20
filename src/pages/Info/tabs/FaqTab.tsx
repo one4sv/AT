@@ -5,7 +5,7 @@ export default function FaqTab() {
     const { t } = useTranslation("info");
 
     return (
-        <div className="infoTab">
+        <div className="infoText">
             <h2 className="accent">{t("faq.title")}</h2>
 
             <h3 className="accent">{t("faq.q1")}</h3>

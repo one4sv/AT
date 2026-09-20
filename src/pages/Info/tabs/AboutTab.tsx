@@ -5,7 +5,7 @@ export default function AboutTab() {
     const { t } = useTranslation("info")
 
     return ( 
-        <div className="infoTab"> 
+        <div className="infoText"> 
             <h1>{t("about.title")}</h1>
 
             <p>

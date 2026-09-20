@@ -124,7 +124,7 @@ export default function Info() {
                             <>
                                 {!isMobile ? (
                                     <div
-                                        className="infoBack"
+                                        className="settingBack"
                                         onClick={() => {
                                             navigate(-1);
                                         }}
@@ -133,16 +133,20 @@ export default function Info() {
                                         <h2>{currentTab?.name}</h2>
                                     </div>
                                 ) : "" }
-                                {currentTab && tabs[currentTab.tab as keyof typeof tabs]}
+                                <div className="infoTab">
+                                    {currentTab && tabs[currentTab.tab as keyof typeof tabs]}
+                                </div>
                                 {isMobile ? (
-                                    <div
-                                        className="infoBack"
-                                        onClick={() => {
-                                            navigate(-1);
-                                        }}
-                                    >
-                                        <CaretLeftIcon size={24} />
-                                        <h2>{currentTab?.name}</h2>
+                                    <div className="settingBackWrapper">
+                                        <div
+                                            className="settingBack"
+                                            onClick={() => {
+                                                navigate(-1);
+                                            }}
+                                        >
+                                            <CaretLeftIcon size={24} />
+                                            <h2>{currentTab?.name}</h2>
+                                        </div>
                                     </div>
                                 ) : "" }
                             </>

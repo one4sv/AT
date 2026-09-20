@@ -162,7 +162,7 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, scrollToMessage, textA
     }
 
     return (
-        <div className={`chatTAWrapper ${isMobile ? "mobile" : ""}`} ref={chatTARef}>
+        <div className="chatTAWrapper" ref={chatTARef}>
             {showGoDown && (
                 <div className="goDown" onClick={handleGoDown}>
                     <CaretDoubleDown />

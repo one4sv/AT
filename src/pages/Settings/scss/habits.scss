@@ -2,7 +2,7 @@
 
 .orderShown {
     background-color: var(--interact);
-    border-radius: 12px;
+    border-radius: 24px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -11,6 +11,9 @@
         padding: 1vh 0.5vw;
         cursor: grab;
         color: var(--borderWh);
+        @media (max-width: 800px) {
+            padding: 2vh 4vw;
+        }
         @media (hover: hover) {
             &:hover {
                 background-color: var(--menuButtHover);
@@ -32,7 +35,6 @@
             opacity: 1;
             background-color: var(--menuButtHoverLight);
         }
-
         &.drag-over {
             border: 2px dashed var(--menuButtHover);
             background-color: var(--menuButtHoverLighter);

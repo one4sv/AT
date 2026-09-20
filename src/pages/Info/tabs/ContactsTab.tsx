@@ -12,7 +12,7 @@ export default function ContactsTab() {
     const { isDark } = useSettings();
 
     return (
-        <div className="infoTab">
+        <div className="infoText">
             <div className="one4svlogo">
                 <img src={one4svlogo} />
             </div>

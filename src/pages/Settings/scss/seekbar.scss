@@ -2,7 +2,7 @@
 
 .seekBarWrapper {
     background-color: var(--interact);
-    border-radius: 12px;
+    border-radius: 18px;
     display: flex;
     flex-direction: column;
     gap: .5rem;
@@ -25,6 +25,9 @@
         >.seekBarBottom >.currentValue {
             color: var(--borderHabit);
         }
+    }
+    @media (max-width: 800px) {
+        padding: 2vh 3vw;
     }
 }
 .seekBarValue {

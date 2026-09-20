@@ -195,18 +195,15 @@
       white-space: nowrap;
       @media (hover: hover) {
           &:hover {
-          background-color: var(--menuButtHover);
-          color: $ac;
-      
+            background-color: var(--menuButtHover);
+            color: $ac;
           }
       }
 
       @media (hover: none) {
           &:active {
-          background-color: var(--menuButtHover);
-          color: $ac;
-      
-          
+            background-color: var(--menuButtHover);
+            color: $ac;
           }
       }
     }

@@ -217,11 +217,13 @@ export default function Settings() {
                                  : ""}
                                 {tabs[activeTab.tab as keyof typeof tabs]}
                                 {isMobile ? 
-                                    <div className="settingBack" onClick={() => {
-                                        navigate(`/settings`);
-                                    }}>
-                                        <CaretLeftIcon size={24} />
-                                        <h2>{activeTab.name}</h2>
+                                    <div className="settingBackWrapper">
+                                        <div className="settingBack" onClick={() => {
+                                            navigate(`/settings`);
+                                        }}>
+                                            <CaretLeftIcon size={24} />
+                                            <h2>{activeTab.name}</h2>
+                                        </div>
                                     </div>
                                  : ""}
                             </>

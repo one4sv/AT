@@ -5,7 +5,7 @@ export default function PolicyTab() {
     const { t } = useTranslation("info");
 
     return (
-        <div className="infoTab">
+        <div className="infoText">
             <h2 className="accent">{t("policy.title")}</h2>
 
             <p>{t("policy.effectiveDate")}</p>

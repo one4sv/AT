@@ -4,7 +4,7 @@ export default function TermsTab() {
     const { t } = useTranslation("info");
 
     return (
-        <div className="infoTab">
+        <div className="infoText">
             <h2 className="accent">{t("terms.title")}</h2>
 
             <p>{t("terms.effectiveDate")}</p>
