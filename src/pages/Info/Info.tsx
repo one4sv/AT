@@ -66,19 +66,19 @@ export default function Info() {
     };
 
     return (
-        <div className="InfoDiv">
-            <div className="infoSliderWrapper">
+        <div className="settingsDiv">
+            <div className="settingsSliderWrapper">
                 <div
-                    className="infoSlider"
+                    className="settingsSlider"
                     style={{
                         transform: tab ? "translateX(-50%)" : "translateX(0)",
                     }}
                 >
-                    <div className="infoPage">
-                        <div className="infoButtsWrapper">
+                    <div className="settingsPage">
+                        <div className="settingsButtsWrapper">
                             {!isMobile ? (
                                 <div
-                                    className="infoBack"
+                                    className="settingBack"
                                     onClick={() => {
                                         navigate(-1);
                                     }}
@@ -90,36 +90,38 @@ export default function Info() {
                             {sections.map((s) => (
                                 <div
                                     key={s.tab}
-                                    className="infoButt"
+                                    className="settingButt"
                                     onClick={() => {
                                         navigate(`/info/${s.tab}`);
                                     }}
                                 >
-                                    <span className="infoName">
+                                    <span className="settingName">
                                         <s.icon size={24} weight="fill" />
                                         {s.name}
                                     </span>
 
-                                    <div className="infoDesc">
+                                    <div className="settingDesc">
                                         {s.desc}
                                     </div>
                                 </div>
                             ))}
                         </div>
                         {isMobile ? (
-                            <div
-                                className="infoBack"
-                                onClick={() => {
-                                    navigate(-1);
-                                }}
-                            >
-                                <CaretLeftIcon size={24} />
-                                <h2>{t("info.title")}</h2>
+                            <div className="settingBackWrapper">
+                                <div
+                                    className="settingBack"
+                                    onClick={() => {
+                                        navigate(-1);
+                                    }}
+                                >
+                                    <CaretLeftIcon size={24} />
+                                    <h2>{t("info.title")}</h2>
+                                </div>
                             </div>
                         ) : ""}
                     </div>
 
-                    <div className="infoPage">
+                    <div className="settingsPage">
                         {currentTab && (
                             <>
                                 {!isMobile ? (
@@ -133,7 +135,7 @@ export default function Info() {
                                         <h2>{currentTab?.name}</h2>
                                     </div>
                                 ) : "" }
-                                <div className="infoTab">
+                                <div className="settingTab">
                                     {currentTab && tabs[currentTab.tab as keyof typeof tabs]}
                                 </div>
                                 {isMobile ? (
