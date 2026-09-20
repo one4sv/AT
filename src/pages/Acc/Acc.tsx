@@ -32,7 +32,7 @@ export default function Acc() {
 
     const { nick } = useParams();
     const { setTitle } = usePageTitle();
-    const { setDontHandle, dontHandleOther} = useSideMenu();
+    const { setDontHandle, dontHandleOther } = useSideMenu();
     const navigate = useNavigate();
 
     const [collapsed, setCollapsed] = useState(0);
@@ -44,6 +44,7 @@ export default function Acc() {
     const expanded = useRef(false);
     const isHorizontal = useRef(false);
     const canExpand = useRef(true);
+    const isCollapsingGesture = useRef(false);
     const line = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const slideRefs = useRef<(HTMLDivElement | null)[]>([null, null, null]);
@@ -84,7 +85,8 @@ export default function Acc() {
         const elWidth = contentRef.current.clientWidth;
         const idx = Math.round(contentRef.current.scrollLeft / elWidth);
         const slide = slideRefs.current[idx];
-        return slide ? slide.scrollTop : 0;
+        // на iOS при bounce scrollTop может быть отрицательным
+        return slide ? Math.max(0, slide.scrollTop) : 0;
     };
 
     const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
@@ -100,32 +102,34 @@ export default function Acc() {
         const elWidth = contentRef.current.clientWidth;
         const proc = (elScroll / elWidth) * 100;
         line.current.style.transform = `translateX(${proc}%)`;
-        if (proc > 0) setDontHandle(true)
+        if (proc > 0) setDontHandle(true);
         if (proc > 150) setSelector("posts");
         else if (proc > 50) setSelector("habits");
         else setSelector("sended");
     };
-    
+
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
         touchStartY.current = e.touches[0].clientY;
         touchStartX.current = e.touches[0].clientX;
         expanded.current = false;
         isHorizontal.current = false;
         canExpand.current = true;
+        isCollapsingGesture.current = false;
     };
 
     const touchSliderStart = () => {
         if (selector !== "sended") {
-            setDontHandle(true)
+            setDontHandle(true);
         }
-    }
+    };
 
     const touchSliderMove = () => {
-        if (collapsed === 1) return
-    }
+        if (collapsed === 1) return;
+    };
 
     const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
         if (dontHandleOther) return;
+
         const currentY = e.touches[0].clientY;
         const currentX = e.touches[0].clientX;
         const deltaY = touchStartY.current - currentY;
@@ -149,35 +153,46 @@ export default function Acc() {
 
         const scrollTop = getActiveSlideScrollTop();
 
-        // Если слайд проскроллен — не взаимодействуем с collapsed
-        if (scrollTop > 0) return;
+        // Ключевое изменение: разрешаем управлять collapsed,
+        // если мы наверху ИЛИ уже в процессе жеста сворачивания/разворачивания
+        const atTop = scrollTop <= 2; // небольшой допуск под iOS bounce
+        if (!atTop && !isCollapsingGesture.current) return;
 
-        if (Math.abs(deltaY) > 5) setDontHandle(true)
+        if (Math.abs(deltaY) > 5) {
+            setDontHandle(true);
+            isCollapsingGesture.current = true;
+        }
 
         setCollapsed(prev => {
-            // Свайп вверх (сворачиваем)
+            // Свайп вверх → сворачиваем
             if (deltaY > 0) {
-                canExpand.current = false; // после сворачивания в этом жесте развернуть нельзя
-                const next = prev + deltaY * 0.01;
+                canExpand.current = false;
+                const next = prev + deltaY * 0.012;
                 return Math.max(0, Math.min(1, next));
             }
 
-            // Свайп вниз (разворачиваем) — только если canExpand и слайд наверху
-            if (deltaY < 0 && canExpand.current && scrollTop === 0) {
-                const next = prev + deltaY * 0.01;
+            // Свайп вниз → разворачиваем
+            // Разрешаем всегда, если collapsed > 0 и мы в жесте
+            if (deltaY < 0 && (canExpand.current || prev > 0)) {
+                const next = prev + deltaY * 0.012;
                 return Math.max(0, Math.min(1, next));
             }
 
             return prev;
         });
 
+        // Блокируем нативный скролл, пока идёт жест
+        if (isCollapsingGesture.current && e.cancelable) {
+            e.preventDefault();
+        }
+
         touchStartY.current = currentY;
     };
 
-
     const handleTouchEnd = () => {
         isHorizontal.current = false;
-        setCollapsed(prev => prev > 0.5 ? 1 : 0);
+        isCollapsingGesture.current = false;
+        setCollapsed(prev => (prev > 0.45 ? 1 : 0));
     };
 
     const handleSlideClick = () => {
@@ -213,13 +228,14 @@ export default function Acc() {
 
     return (
         <div className="accDiv">
-            <div className="acc"
+            <div
+                className="acc"
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onWheel={handleWheel}
                 onTouchEnd={handleTouchEnd}
             >
-                <AccInfo acc={acc} canView={canView} collapsed={collapsed}/>
+                <AccInfo acc={acc} canView={canView} collapsed={collapsed} />
                 <div className="accContentSelector">
                     <div className="accContentSelect">
                         {tabs.map((tab, i) => (
@@ -237,28 +253,29 @@ export default function Acc() {
                     </div>
                 </div>
 
-                <div className="accContent" 
-                    ref={contentRef} 
-                    onScroll={() => handleScroll()} 
+                <div
+                    className="accContent"
+                    ref={contentRef}
+                    onScroll={() => handleScroll()}
                     onTouchStart={() => touchSliderStart()}
                     onTouchMove={() => touchSliderMove()}
                     onScrollEnd={() => setDontHandle(false)}
-                    style={{overflowX: `${dontHandleOther ? "hidden" : "scroll"}`}}
+                    style={{ overflowX: `${dontHandleOther ? "hidden" : "scroll"}` }}
                 >
                     <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined}>
                         <div
                             className="accContentSlide accMedia"
                             ref={el => { slideRefs.current[0] = el; }}
-                            style={{pointerEvents:`${isMobile && collapsed === 0 ? "none" : "all"}`}}
+                            style={{ pointerEvents: `${isMobile && collapsed === 0 ? "none" : "all"}` }}
                         >
                             {!isMyAcc && <AccMedia media={media} />}
                         </div>
                     </div>
-                    <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined} >
+                    <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined}>
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[1] = el; }}
-                            style={{pointerEvents:`${isMobile && collapsed === 0 ? "none" : "all"}`}}
+                            style={{ pointerEvents: `${isMobile && collapsed === 0 ? "none" : "all"}` }}
                         >
                             <AccHabits
                                 isMyAcc={isMyAcc}
@@ -267,11 +284,11 @@ export default function Acc() {
                             />
                         </div>
                     </div>
-                    <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined} >
+                    <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined}>
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[2] = el; }}
-                            style={{pointerEvents:`${isMobile && collapsed === 0 ? "none" : "all"}`}}
+                            style={{ pointerEvents: `${isMobile && collapsed === 0 ? "none" : "all"}` }}
                         >
                             <AccPosts
                                 posts={posts}
