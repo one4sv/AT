@@ -1,5 +1,4 @@
 import { useUser } from "../../hooks/UserHook"
-import { useNote } from "../../hooks/NoteHook";
 import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon , SignOutIcon, UserIcon, CheckIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 import { useEffect, useRef, useState } from "react";
@@ -7,7 +6,6 @@ import { useSideMenu } from "../../hooks/SideMenuHook";
 
 export default function AccountList() {
     const { logOut, user } = useUser()
-    const { showNotification } = useNote()
     const { activeTab, closeMenu } = useSideMenu()
     const navigate = useNavigate()
 
@@ -102,7 +100,7 @@ export default function AccountList() {
                 </div>
                 <div className="SMaccountButt" 
                     onClick={() => {
-                        showNotification("info", "В разработке")
+                        navigate(`/chat/${user.nick}`)
                         closeMenu()
                     }}
                 >

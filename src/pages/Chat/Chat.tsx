@@ -49,7 +49,6 @@ export default function Chat() {
     const { setTitle } = usePageTitle();
     const { nick, id } = useParams();
     const navigate = useNavigate();
-
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [highlightedId, setHighlightedId] = useState<number | null>(null);
     const [showGoDown, setShowGoDown] = useState(false);
@@ -292,14 +291,14 @@ export default function Chat() {
 
     useEffect(() => {
         if (
-        !chatLoading &&
-        messages.length > 0 &&
-        chatContainerRef.current &&
-        !initialScrolledRef.current
+            !chatLoading &&
+            messages.length > 0 &&
+            chatContainerRef.current &&
+            !initialScrolledRef.current
         ) {
-        chatContainerRef.current.scrollTop =
-            chatContainerRef.current.scrollHeight;
-        initialScrolledRef.current = true;
+            chatContainerRef.current.scrollTop =
+                chatContainerRef.current.scrollHeight;
+            initialScrolledRef.current = true;
         }
     }, [chatLoading, messages.length]);
 

@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import type { message } from "../../../components/context/ChatContext";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
-import { CopySimple, DotsThreeOutlineVertical, List, ShareFat, Trash } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, CopySimple, DotsThreeOutlineVertical, List, ShareFat, Trash } from "@phosphor-icons/react";
 import { useDelete } from "../../../components/hooks/DeleteHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
@@ -15,6 +15,7 @@ import UserInChatUserList from "./UserInChatUserList";
 import { useSideMenu } from "../../../components/hooks/SideMenuHook";
 import { useContacts } from "../../../components/hooks/ContactsHook";
 import { useSettings } from "../../../components/hooks/SettingsHook";
+import { useUser } from "../../../components/hooks/UserHook";
 
 interface ChatUserProps {
     search: string;
@@ -45,6 +46,7 @@ export default function ChatUser({
     searchItemRefs,
     searchInputRef
 }: ChatUserProps) {
+    const { user } = useUser()
     const { chatWith, typingMap, messages } = useChat();
     const { onlineMap } = useContacts()
     const { openMenu, menu, closeMenu } = useContextMenu();
@@ -63,7 +65,8 @@ export default function ChatUser({
     const searchRef = useRef<HTMLDivElement | null>(null);
     const searchDivRef = useRef<HTMLDivElement | null>(null);
     const chatUserRef = useRef<HTMLDivElement | null>(null);
-
+    const isFavorite = chatWith?.id === user.id
+    
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (
@@ -118,6 +121,49 @@ export default function ChatUser({
 
     const curOnline = chatWith ? chatWith.members.filter(m => onlineMap[m.id]).length - 1 : 0
 
+    const name = () => {
+        if (isFavorite) return "Избранное"
+        else if (chatWith) return chatWith.name || chatWith.nick
+        else return ""
+    }
+
+    const img = () => {
+        if (isFavorite) return <BookmarkSimpleIcon weight="fill" className="favoriteIcon"/>
+        else if (chatWith && chatWith.avatar_url) {
+            return (
+                <img
+                    className="chatUserAvatar"
+                    src={chatWith.avatar_url}
+                    alt={chatWith.name ?? chatWith.nick}
+                />
+            )
+        } else {
+            return <CircleUserRound />
+        }
+    }
+
+    const status = () => {
+        if (isFavorite) return user.nick
+
+        if (!chatWith) return ""
+
+        if (chatWith.is_group) {
+            if (typingText) return typingText
+
+            return `${chatWith.members.length} ${
+                chatWith.members.length > 5
+                    ? "участников"
+                    : "участника"
+            }${curOnline > 0 ? `, ${curOnline} в сети` : ""}`
+        }
+
+        if (typingText) return typingText
+
+        return onlineMap[chatWith.id || ""]
+            ? "онлайн"
+            : formatLastOnline(chatWith.last_online)
+    }
+
     return (
         <div className="chatUser" ref={chatUserRef}>
             {isMobile || layout === "hidden" ? (
@@ -144,24 +190,12 @@ export default function ChatUser({
                 }}
             >
                 <div className="chatUserPick">
-                    {chatWith && chatWith.avatar_url ? (
-                        <img className="chatUserAvatar" src={chatWith.avatar_url} alt={chatWith.name ?? chatWith.nick} />
-                    ) : (
-                        <CircleUserRound/>
-                    )}
+                    {img()}
                 </div>
                 <div className="chatUserName">
-                    <span>{chatWith ? chatWith.name || chatWith.nick : ""}</span>
+                    <span>{name()}</span>
                     <span className={`chatOnlineStauts ${typingText ? "chatTyping" : "chatStopTyping"}`}>
-                        {chatWith?.is_group
-                            ? typingText
-                                ? typingText
-                                : `${chatWith.members.length} ${chatWith.members.length > 5 ? "участников" : "участника"}${curOnline > 0 ? `, ${curOnline} в сети`  : ""} `
-                                : typingText
-                                    ? typingText
-                                    : onlineMap[chatWith?.id || ""]
-                                        ? "онлайн"
-                                        : formatLastOnline(chatWith?.last_online)}
+                        {status()}
                     </span>
                 </div>
             </div>

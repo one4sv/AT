@@ -110,7 +110,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     chatWithRef.current = chatWith;
   }, [chatWith]);
 
-  // ========== ПРИВАТНЫЙ ЧАТ ==========
   const refetchChat = async (nick: string) => {
     if (!isAuthenticated) return;
 
@@ -166,7 +165,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     await refetchChat(nick);
   };
 
-  // ========== ГРУППОВОЙ ЧАТ ==========
   const refetchGroupChat = async (id: string) => {
     if (!isAuthenticated) return;
 
@@ -222,7 +220,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     await refetchGroupChat(id);
   };
 
-  // ========== ПОДГРУЗКА СТАРЫХ СООБЩЕНИЙ ==========
   const loadOlderMessages = useCallback(async () => {
     if (!chatWith || loadingMore || !hasMore || messages.length === 0) return;
 
@@ -253,7 +250,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [chatWith, loadingMore, hasMore, messages]);
 
-  // ========== ЗАГРУЗКА ВОКРУГ СООБЩЕНИЯ (для перехода) ==========
   const loadAroundMessage = useCallback(
     async (messageId: number): Promise<boolean> => {
       if (!chatWith) return false;
@@ -281,7 +277,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     [chatWith]
   );
 
-  // ========== WEBSOCKET ==========
   useEffect(() => {
     if (!ws) return;
 
