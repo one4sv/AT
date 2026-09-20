@@ -61,7 +61,13 @@
 .accInput.disabled,
 .extraInfoInput.disabled,
 .bioTA.disabled {
+    opacity: 1 !important;
+    -webkit-text-fill-color: inherit !important;
+    color: inherit !important;
+    background-color: inherit !important;
+    border-color: inherit !important;
     pointer-events: none;
+    user-select: none;
     cursor: default;
 }
 .accInfoMain {
