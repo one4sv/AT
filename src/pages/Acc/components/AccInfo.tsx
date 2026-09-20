@@ -97,7 +97,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                 <div className="accInfoNames">
                     <div className="accMainInfoStr">
                         <input
-                            className={`accInput nameInput ${!red ? "disabled" : ""}`}
+                            className={`accInput nameInput ${!red ? "dis" : ""}`}
                             value={(isMyAcc ? newName : acc?.username) ?? ""}
                             readOnly={!red}
                             onChange={(e) => setNewName(e.currentTarget.value)}
@@ -106,7 +106,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                     <div>
                         {!isMobile && "@"}
                         <input
-                            className={`accInput nickInput ${!red ? "disabled" : ""}`}
+                            className={`accInput nickInput ${!red ? "dis" : ""}`}
                             value={(isMyAcc ? newNick : acc?.nick) ?? ""}
                             readOnly={!red}
                             onChange={(e) => setNewNick(e.currentTarget.value)}
@@ -127,7 +127,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                     <div className="accExtraInfoWrapper">
                         <label htmlFor="extraInfoInputBio">{t("about")}</label>
                         <textarea
-                            className={`bioTA extraInfoInput ${!red ? "disabled" : ""}`}
+                            className={`bioTA extraInfoInput ${!red ? "dis" : ""}`}
                             id="extraInfoInputBio"
                             value={(isMyAcc ? newBio : acc?.bio) ?? ""}
                             readOnly={!red}
@@ -142,7 +142,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                     <div className="accExtraInfoWrapper">
                         <label htmlFor="extraInfoInputBirth">{t("birthday")}</label>
                         <DatePicker
-                            className={`extraInfoInput ${!red ? "disabled" : ""}`}
+                            className={`extraInfoInput ${!red ? "dis" : ""}`}
                             id="extraInfoInputBirth"
                             selected={birthDate}
                             onChange={(date) =>
@@ -168,7 +168,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                         />
                     </div>
                 ) : ""}
-                <div className={`accExtraInfoWrapper ${!red ? "disabled" : ""}`}>
+                <div className={`accExtraInfoWrapper ${!red ? "dis" : ""}`}>
                     {!canView("number") ? (
                         <span>{t("hidden")}</span>
                     ) : (
@@ -176,7 +176,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                             <label htmlFor="extraInfoInputPhone">{t("phone")}</label>
                             <input
                                 id="extraInfoInputPhone"
-                                className="extraInfoInput disabled"
+                                className="extraInfoInput dis"
                                 value="—"
                                 readOnly
                             />

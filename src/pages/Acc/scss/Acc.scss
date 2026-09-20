@@ -58,14 +58,9 @@
         padding: 1vh 3vw;
     }
 }
-.accInput.disabled,
-.extraInfoInput.disabled,
-.bioTA.disabled {
-    opacity: 1 !important;
-    -webkit-text-fill-color: inherit !important;
-    color: inherit !important;
-    background-color: inherit !important;
-    border-color: inherit !important;
+.accInput.dis,
+.extraInfoInput.dis,
+.bioTA.dis {
     pointer-events: none;
     user-select: none;
     cursor: default;
