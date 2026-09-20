@@ -50,39 +50,43 @@
 }
 .mobileHabitLayout {
     overflow: hidden;
-    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 12px;
+    transition:
+        height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    border-radius: calc(12px + 12px * var(--expand-progress));
     background-color: var(--mc);
     width: 100%;
-    will-change: max-height;
-    flex: 1 1 1;
+    will-change: height;
+    flex: 0 0 auto;
     display: flex;
     flex-direction: column;
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
-    height: 85.5dvh;
+    backdrop-filter: blur(calc(var(--blur) - (var(--blur) - 1px) * var(--expand-progress)));
+    -webkit-backdrop-filter: blur(calc(var(--blur) - (var(--blur) - 1px) * var(--expand-progress)));
+    padding-bottom: calc(1vh * var(--expand-progress));
+
     > .completeDiv {
         background-color: var(--tr);
         height: fit-content;
     }
+
     > .dayCommentDiv {
         background-color: var(--tr);
         margin-bottom: 1dvh;
     }
-    >.doneButtDiv {
+
+    > .doneButtDiv {
         align-self: flex-end;
     }
+
     &.expanded {
-        background-color: var(--mhl);
-        height: 98dvh;
-        backdrop-filter: blur(1px);
-        -webkit-backdrop-filter: blur(1px);
+        background-color: var(--mc);
         border-radius: 24px;
         padding-bottom: 1vh;
+
         > .completeDiv {
             > .chosenDayDate {
                 flex: 1;

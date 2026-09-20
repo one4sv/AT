@@ -36,6 +36,7 @@ export default function AccountList() {
                 className={`SMaccount ${location.pathname === `/acc/${user.nick}` ? "active" : "" }`}
                 onClick={() => {
                     navigate(`/acc/${user.nick}`);
+                    closeMenu()
                 }}
             >
                 {user.avatar_url ? (
@@ -106,7 +107,7 @@ export default function AccountList() {
                 >
                     <span className="settingName">
                         <BookmarkSimpleIcon weight="fill"/> 
-                        Перейти в избранное
+                        Избранное
                     </span>
                     <CaretRightIcon className="fastButtCaret"/>
                 </div>

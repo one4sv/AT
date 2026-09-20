@@ -15,7 +15,7 @@
         border-radius: 12px 12px 0 0;
         flex: auto;
         width: 100%;
-        height: 30vh;
+        height: calc(30vh + (10vh * var(--expand-progress)));
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
     }
@@ -65,18 +65,17 @@
         color: #000;
         @media (hover: hover) {
             &:hover {
-            box-shadow: 0 0 12px #fff, 0 0 24px #fff;
-            &.dbComp {
-            > svg {
-            color: #000;
-            }
-            }        
-            &.dbMark {
-            > svg {
-            color: #000;
-            }
-            }
-        
+                box-shadow: 0 0 12px #fff, 0 0 24px #fff;
+                &.dbComp {
+                    > svg {
+                        color: #000;
+                    }
+                }        
+                &.dbMark {
+                    > svg {
+                        color: #000;
+                    }
+                }
             }
         }
 

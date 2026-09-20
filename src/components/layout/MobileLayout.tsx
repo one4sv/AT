@@ -43,12 +43,13 @@ export default function MobileLayout({ children }: LayoutProps) {
         const clientX = e.touches[0].clientX;
         const diff = clientX - startX.current;
         const percent = ((diff - 5) / window.innerWidth) * 100;
-        if (diff < 5) {
+        if (diff < 1) {
             setTranslateX(-100)
             return
         }
         let next = -100 + percent;
         next = Math.max(-100, Math.min(0, next));
+        setDontHandleOther(true)
         setTranslateX(next);
     };
 

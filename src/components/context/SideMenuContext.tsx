@@ -66,6 +66,14 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         setTranslateX(-100)
     }
 
+    // useEffect(() => {
+    //     if (dontHandle !== undefined) console.log("dontHandle:", dontHandle)
+    // }, [dontHandle])    
+
+    // useEffect(() => {
+    //     if (dontHandleOther !== undefined) console.log("dontHandleOther:", dontHandleOther)
+    // }, [dontHandleOther])
+
     const returnSlide = () => {
         if (showJurnal) setShowJurnal(false)
         else if (showSettings) setShowSettings(false)

@@ -14,9 +14,10 @@ interface HabitNameProps {
     showHabitMenu:boolean,
     setShowHabitMenu:React.Dispatch<SetStateAction<boolean>>,
     isReadOnly:boolean,
-    isExp:boolean
+    expandProgress:number,
+    pulling:boolean
 }
-export default function HabitName({habit, showHabitMenu, setShowHabitMenu, isExp}:HabitNameProps) {
+export default function HabitName({habit, showHabitMenu, setShowHabitMenu, expandProgress, pulling}:HabitNameProps) {
     const { isUpdating } = useUpHabit()
     const { calendar } = useCalendar()
     const { setShowSideMenu, setTranslateX } = useSideMenu()
@@ -25,7 +26,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu, isExp
     if (!habit) return null
     
     return (
-        <div className={`chatUser ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} style={{transform:isExp ? "translateY(-6vh)" : ""}}>
+        <div className={`chatUser ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} style={{transform:`translateY(${-6 * expandProgress}vh)`, transition:pulling ? "none" : "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)"}}>
             {isMobile && (
                 <div className="menuShowButt" onClick={() => {
                     setShowSideMenu(true)

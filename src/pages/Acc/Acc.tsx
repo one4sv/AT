@@ -39,8 +39,10 @@ export default function Acc() {
         useState<"sended" | "habits" | "posts">("sended");
 
     const touchStartY = useRef(0);
+    const expanded = useRef(false);
     const line = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
+    const slideRefs = useRef<(HTMLDivElement | null)[]>([null, null, null]);
 
     const tabs: { tab: "sended" | "habits" | "posts", name: string, nameMy?: string }[] = [
         { tab: "sended", name: t("tabs.files"), nameMy: t("tabs.favorites") },
@@ -73,6 +75,12 @@ export default function Acc() {
         }
     }, [acc, loading, nick]);
 
+    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+        const scrollTop = e.currentTarget.scrollTop;
+        if (e.deltaY > 0) setCollapsed(1);
+        if (e.deltaY < 0 && scrollTop === 0) setCollapsed(0);
+    };
+
     const handleScroll = () => {
         if (!line.current || !contentRef.current) return;
         const elScroll = contentRef.current.scrollLeft;
@@ -84,24 +92,33 @@ export default function Acc() {
         else if (proc > 50) setSelector("habits");
         else setSelector("sended");
     };
-
-    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-        const scrollTop = e.currentTarget.scrollTop;
-        if (e.deltaY > 0) setCollapsed(1);
-        if (e.deltaY < 0 && scrollTop === 0) setCollapsed(0);
-    };
     
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-        if (selector !== "sended") setDontHandle(true);
-        if (dontHandleOther) return;
         touchStartY.current = e.touches[0].clientY;
+        expanded.current = false;
     };
 
+    const touchSliderStart = () => {
+        if (selector !== "sended") {
+            setDontHandle(true)
+        }
+    }
+
+    const touchSliderMove = () => {
+        if (collapsed === 1) return
+    }
+
     const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-        if (selector !== "sended") setDontHandle(true);
         if (dontHandleOther) return;
         const currentY = e.touches[0].clientY;
         const delta = touchStartY.current - currentY;
+        if (!expanded.current) {
+            if (Math.abs(delta) <= 5) return;
+            expanded.current = true;
+            touchStartY.current = currentY;
+            return;
+        }
+        if (Math.abs(delta) > 5) setDontHandle(true)
         const scrollTop = e.currentTarget.scrollTop;
 
         setCollapsed(prev => {
@@ -110,21 +127,50 @@ export default function Acc() {
             }
 
             const next = prev + delta * 0.01;
+            console.log(next)
             return Math.max(0, Math.min(1, next));
         });
 
         touchStartY.current = currentY;
     };
 
+
     const handleTouchEnd = () => {
         setCollapsed(prev => prev > 0.5 ? 1 : 0);
+    };
+
+    const handleSelectorClick = (i: number) => {
+        if (!contentRef.current) return;
+
+        const elWidth = contentRef.current.clientWidth;
+        const currentIdx = Math.round(contentRef.current.scrollLeft / elWidth);
+        const activeSlide = slideRefs.current[currentIdx];
+
+        if (currentIdx === i) {
+            if (activeSlide && activeSlide.scrollTop > 0) {
+                activeSlide.scrollTo({ top: 0, behavior: "smooth" });
+            } else {
+                setCollapsed(prev => (prev === 0 ? 1 : 0));
+            }
+            return;
+        }
+
+        contentRef.current.scrollTo({
+            left: elWidth * i,
+            behavior: "smooth",
+        });
     };
 
     if (loading) return <Loader />;
 
     return (
         <div className="accDiv">
-            <div className="acc">
+            <div className="acc"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onWheel={handleWheel}
+                onTouchEnd={handleTouchEnd}
+            >
                 <AccInfo acc={acc} canView={canView} collapsed={collapsed}/>
                 <div className="accContentSelector">
                     <div className="accContentSelect">
@@ -132,10 +178,7 @@ export default function Acc() {
                             <div
                                 key={tab.name}
                                 className={`accContentButt ${selector === tab.tab && "acbActive"}`}
-                                onClick={() => contentRef.current && contentRef.current.scrollTo({
-                                    left: contentRef.current.clientWidth * i,
-                                    behavior: "smooth",
-                                })}
+                                onClick={() => handleSelectorClick(i)}
                             >
                                 {tab.nameMy && isMyAcc ? tab.nameMy : tab.name}
                             </div>
@@ -146,14 +189,18 @@ export default function Acc() {
                     </div>
                 </div>
 
-                <div className="accContent" ref={contentRef} onScroll={() => handleScroll()}>
+                <div className="accContent" 
+                    ref={contentRef} 
+                    onScroll={() => handleScroll()} 
+                    onTouchStart={() => touchSliderStart()}
+                    onTouchMove={() => touchSliderMove()}
+                    onScrollEnd={() => setDontHandle(false)}
+                    style={{overflowX: `${dontHandleOther ? "hidden" : "scroll"}`}}
+                >
                     <div className="accSlide">
                         <div
                             className="accContentSlide accMedia"
-                            onTouchStart={handleTouchStart}
-                            onTouchMove={handleTouchMove}
-                            onWheel={handleWheel}
-                            onTouchEnd={handleTouchEnd}
+                            ref={el => { slideRefs.current[0] = el; }}
                         >
                             {!isMyAcc && <AccMedia media={media} />}
                         </div>
@@ -161,10 +208,7 @@ export default function Acc() {
                     <div className="accSlide">
                         <div
                             className="accContentSlide"
-                            onTouchStart={handleTouchStart}
-                            onTouchMove={handleTouchMove}
-                            onWheel={handleWheel}
-                            onTouchEnd={handleTouchEnd}
+                            ref={el => { slideRefs.current[1] = el; }}
                         >
                             <AccHabits
                                 isMyAcc={isMyAcc}
@@ -176,10 +220,7 @@ export default function Acc() {
                     <div className="accSlide">
                         <div
                             className="accContentSlide"
-                            onTouchStart={handleTouchStart}
-                            onTouchMove={handleTouchMove}
-                            onWheel={handleWheel}
-                            onTouchEnd={handleTouchEnd}
+                            ref={el => { slideRefs.current[2] = el; }}
                         >
                             <AccPosts
                                 posts={posts}

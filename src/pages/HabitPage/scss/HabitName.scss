@@ -7,16 +7,12 @@
     cursor: pointer;
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-    
+            background-color: var(--menuButtHover);
         }
     }
-
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-    
-        
+            background-color: var(--menuButtHover);
         }
     }
 }

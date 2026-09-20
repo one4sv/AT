@@ -23,143 +23,214 @@ export default function SideMenu() {
     const { loadingHabits } = useHabits()
     const { refreshSchedules } = useSchedule()
     const { layout } = useSettings()
-    const { setShowSideMenu, activeTab, showSideMenu, setIsDragging, isDragging, translateX, setTranslateX, messageSelectedValue, habitsSelectedValue } = useSideMenu()
-    
+
+    const {
+        closeMenu,
+        activeTab,
+        showSideMenu,
+        setIsDragging,
+        isDragging,
+        translateX,
+        setTranslateX,
+        messageSelectedValue,
+        habitsSelectedValue,
+        setDontHandle
+    } = useSideMenu()
+
     const translateSlider =
         activeTab === "chats" ? 0 :
         activeTab === "habits" ? -25 :
         activeTab === "spots" ? -50 :
         activeTab === "user" ? -75 :
-        0;
+        0
 
-    const startX = useRef(0);
-    const startTranslate = useRef(0);
-    const sideMenuRef = useRef<HTMLDivElement>(null);
-    
+    const startX = useRef(0)
+    const startY = useRef(0)
+    const startTranslate = useRef(0)
+    const horizontalSwipe = useRef(false)
+    const verticalScroll = useRef(false)
+    const sideMenuRef = useRef<HTMLDivElement>(null)
+
     useEffect(() => {
         refreshSchedules()
     }, [])
 
-    const closeMenu = () => {
-        setTranslateX(-100);
-        setTimeout(() => {
-            setShowSideMenu(false);
-            setTranslateX(-100);
-        }, 280);
-    };
-
     const handleTouchStart = (e: React.TouchEvent) => {
-        startX.current = e.touches[0].clientX;
-        startTranslate.current = translateX;
-        setIsDragging(true);
-    };
+        startX.current = e.touches[0].clientX
+        startY.current = e.touches[0].clientY
+        startTranslate.current = translateX
+        horizontalSwipe.current = false
+        verticalScroll.current = false
+    }
 
     const handleTouchMove = (e: React.TouchEvent) => {
-        if (!isDragging) return;
-        const clientX = e.touches[0].clientX;
-        const diffPx = clientX - startX.current;
-        const diffPercent = (diffPx / window.innerWidth) * 100;
-        let newTranslate = startTranslate.current + diffPercent;
-        newTranslate = Math.max(-100, Math.min(0, newTranslate));
-        setTranslateX(newTranslate);
-    };
+        const clientX = e.touches[0].clientX
+        const clientY = e.touches[0].clientY
+
+        const diffPx = clientX - startX.current
+        const diffPy = clientY - startY.current
+
+        if (!horizontalSwipe.current && !verticalScroll.current) {
+            if (Math.abs(diffPy) > 5 || Math.abs(diffPx) > 5) {
+                if (Math.abs(diffPy) > Math.abs(diffPx)) {
+                    verticalScroll.current = true
+                    setDontHandle(true)
+                    return
+                }
+
+                horizontalSwipe.current = true
+                setIsDragging(true)
+                setDontHandle(false)
+            }
+        }
+
+        if (!horizontalSwipe.current) return
+
+        const diffPercent = (diffPx / window.innerWidth) * 100
+
+        let newTranslate = startTranslate.current + diffPercent
+        newTranslate = Math.max(-100, Math.min(0, newTranslate))
+
+        setTranslateX(newTranslate)
+    }
 
     const handleTouchEnd = () => {
-        if (!isDragging) return;
-        setIsDragging(false);
-        const threshold = -40;
-        if (translateX < threshold) {
-            closeMenu();
-        } else {
-            setTranslateX(0);
+        if (!horizontalSwipe.current) {
+            setDontHandle(false)
+            verticalScroll.current = false
+            horizontalSwipe.current = false
+            return
         }
-    };
-    
+
+        setIsDragging(false)
+        setDontHandle(false)
+
+        const threshold = -40
+
+        if (translateX < threshold) {
+            closeMenu()
+        } else {
+            setTranslateX(0)
+        }
+
+        horizontalSwipe.current = false
+        verticalScroll.current = false
+    }
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-            if (layout !== "hidden" || !showSideMenu) return;
+            if (layout !== "hidden" || !showSideMenu) return
 
             if (
                 sideMenuRef.current &&
                 !sideMenuRef.current.contains(event.target as Node)
             ) {
-                closeMenu();
+                closeMenu()
             }
-        };
+        }
 
-        document.addEventListener("mousedown", handleClickOutside);
-        document.addEventListener("touchstart", handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside)
+        document.addEventListener("touchstart", handleClickOutside)
 
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-            document.removeEventListener("touchstart", handleClickOutside);
-        };
-    }, [layout, showSideMenu, translateX]);
+            document.removeEventListener("mousedown", handleClickOutside)
+            document.removeEventListener("touchstart", handleClickOutside)
+        }
+    }, [layout, showSideMenu])
 
-    if (!isAuthenticated && !loadingUser) return (
-        <SideMenuUnAunthificated 
-            ref={sideMenuRef}
-            onTouchS={handleTouchStart}
-            onTouchM={handleTouchMove}
-            onTouchE={handleTouchEnd}
-            translateX={translateX}
-            isDragging={isDragging}
-        />
-    )
+    if (!isAuthenticated && !loadingUser) {
+        return (
+            <SideMenuUnAunthificated
+                ref={sideMenuRef}
+                onTouchS={handleTouchStart}
+                onTouchM={handleTouchMove}
+                onTouchE={handleTouchEnd}
+                translateX={translateX}
+                isDragging={isDragging}
+            />
+        )
+    }
 
     return (
-        <div className={`sideMenu ${isMobile ? "mobileSM" : ""} ${showSideMenu ? "open" : ""}`} 
+        <div
+            className={`sideMenu ${isMobile ? "mobileSM" : ""} ${showSideMenu ? "open" : ""}`}
             ref={sideMenuRef}
             onTouchStart={isMobile ? handleTouchStart : undefined}
             onTouchMove={isMobile ? handleTouchMove : undefined}
-            onTouchEnd={isMobile ? handleTouchEnd : undefined} 
+            onTouchEnd={isMobile ? handleTouchEnd : undefined}
             style={{
-                transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none",
-                transition: isDragging ? "none" : "transform 0.4s ease"
+                transform:
+                    isMobile || layout === "hidden"
+                        ? `translateX(${translateX}%)`
+                        : "none",
+                transition: isDragging
+                    ? "none"
+                    : "transform 0.4s ease"
             }}
         >
             <div className="SMsearchDiv">
                 <div className="SMsearch">
-                    <input 
-                        type="text" 
-                        className="SMsearchInput" 
-                        ref={mainSearchRef} 
-                        onChange={(e) => setSearch(e.currentTarget.value)} 
-                        placeholder={t("sideMenu.searchPlaceholder")} 
+                    <input
+                        type="text"
+                        className="SMsearchInput"
+                        ref={mainSearchRef}
+                        onChange={(e) => setSearch(e.currentTarget.value)}
+                        placeholder={t("sideMenu.searchPlaceholder")}
                         value={search}
                     />
-                    <MagnifyingGlassIcon size={22}/>
+                    <MagnifyingGlassIcon size={22} />
                 </div>
             </div>
 
             <div className="ListWrapper">
-                <div className="slider" style={{ transform: `translateX(${translateSlider}%)` }}>
+                <div
+                    className="slider"
+                    style={{
+                        transform: `translateX(${translateSlider}%)`
+                    }}
+                >
                     <div className="slide">
                         {loadingList ? (
-                            <div className="menuLoader"><MinLoader /></div>
+                            <div className="menuLoader">
+                                <MinLoader />
+                            </div>
                         ) : (
-                            <ContactsList filter={messageSelectedValue} searchRef={mainSearchRef}/>
+                            <ContactsList
+                                filter={messageSelectedValue}
+                                searchRef={mainSearchRef}
+                            />
                         )}
-                    </div>                  
+                    </div>
+
                     <div className="slide">
                         {loadingHabits ? (
-                            <div className="menuLoader"><MinLoader /></div>
+                            <div className="menuLoader">
+                                <MinLoader />
+                            </div>
                         ) : (
-                            <HabitsList filter={habitsSelectedValue}/>
+                            <HabitsList
+                                filter={habitsSelectedValue}
+                            />
                         )}
-                    </div>  
+                    </div>
+
                     <div className="slide">
                         {loadingList ? (
-                            <div className="menuLoader"><MinLoader /></div>
+                            <div className="menuLoader">
+                                <MinLoader />
+                            </div>
                         ) : (
-                            <SpotsList/>
+                            <SpotsList />
                         )}
-                    </div>                    
+                    </div>
+
                     <div className="slide">
                         {loadingList ? (
-                            <div className="menuLoader"><MinLoader /></div>
+                            <div className="menuLoader">
+                                <MinLoader />
+                            </div>
                         ) : (
-                            <AccountList/>
+                            <AccountList />
                         )}
                     </div>
                 </div>
@@ -167,3 +238,4 @@ export default function SideMenu() {
         </div>
     )
 }
+
