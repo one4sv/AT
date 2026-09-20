@@ -58,6 +58,12 @@
         padding: 1vh 3vw;
     }
 }
+.accInput.disabled,
+.extraInfoInput.disabled,
+.bioTA.disabled {
+    pointer-events: none;
+    cursor: default;
+}
 .accInfoMain {
     display: flex;
     @media (max-width: 800px) {

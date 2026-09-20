@@ -24,7 +24,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
     const { red, setRed } = useSideMenu();
     const [ previewUrl, setPreviewUrl ] = useState<string | null>(null);
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -97,18 +97,18 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                 <div className="accInfoNames">
                     <div className="accMainInfoStr">
                         <input
-                            className="accInput nameInput"
+                            className={`accInput nameInput ${!red ? "disabled" : ""}`}
                             value={(isMyAcc ? newName : acc?.username) ?? ""}
-                            disabled={!red}
+                            readOnly={!red}
                             onChange={(e) => setNewName(e.currentTarget.value)}
                         />
                     </div>
                     <div>
                         {!isMobile && "@"}
                         <input
-                            className="accInput nickInput"
+                            className={`accInput nickInput ${!red ? "disabled" : ""}`}
                             value={(isMyAcc ? newNick : acc?.nick) ?? ""}
-                            disabled={!red}
+                            readOnly={!red}
                             onChange={(e) => setNewNick(e.currentTarget.value)}
                         />
                     </div>
@@ -127,10 +127,10 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                     <div className="accExtraInfoWrapper">
                         <label htmlFor="extraInfoInputBio">{t("about")}</label>
                         <textarea
-                            className="bioTA extraInfoInput"
+                            className={`bioTA extraInfoInput ${!red ? "disabled" : ""}`}
                             id="extraInfoInputBio"
                             value={(isMyAcc ? newBio : acc?.bio) ?? ""}
-                            disabled={!red}
+                            readOnly={!red}
                             onChange={(e) =>
                                 setNewBio(e.currentTarget.value)
                             }
@@ -139,10 +139,10 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                 ) : ""}
 
                 {acc?.date_of_birth || red ? (
-                    <div className="accExtraInfoWrapper" >
+                    <div className="accExtraInfoWrapper">
                         <label htmlFor="extraInfoInputBirth">{t("birthday")}</label>
                         <DatePicker
-                            className="extraInfoInput"
+                            className={`extraInfoInput ${!red ? "disabled" : ""}`}
                             id="extraInfoInputBirth"
                             selected={birthDate}
                             onChange={(date) =>
@@ -153,7 +153,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                                 )
                             }
                             maxDate={new Date()}
-                            disabled={!red}
+                            readOnly={!red}
                             dateFormat="dd.MM.yyyy"
                             showMonthDropdown
                             showYearDropdown
@@ -168,7 +168,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                         />
                     </div>
                 ) : ""}
-                <div className={`accExtraInfoWrapper ${red ? "disabled" : ""}`}>
+                <div className={`accExtraInfoWrapper ${!red ? "disabled" : ""}`}>
                     {!canView("number") ? (
                         <span>{t("hidden")}</span>
                     ) : (
@@ -176,25 +176,24 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                             <label htmlFor="extraInfoInputPhone">{t("phone")}</label>
                             <input
                                 id="extraInfoInputPhone"
-                                className={`extraInfoInput ${red ? "disabled" : ""}`}
+                                className="extraInfoInput disabled"
                                 value="—"
-                                disabled
+                                readOnly
                             />
                         </>
                     )}
                 </div>
-                    <div className="accExtraInfoWrapper">
-                        <div className="settingInnerList">
-                            <div className="settingInnerButt" onClick={() => {
-                                if (isMyAcc) {
-                                    if (red === true) setRed(false);
-                                    else setRed(true);
-                                } else {
-                                    navigate(`/chat/${acc?.nick}`)
-                                }
-
-                            }}>
-                            {isMyAcc 
+                <div className="accExtraInfoWrapper">
+                    <div className="settingInnerList">
+                        <div className="settingInnerButt" onClick={() => {
+                            if (isMyAcc) {
+                                if (red === true) setRed(false);
+                                else setRed(true);
+                            } else {
+                                navigate(`/chat/${acc?.nick}`);
+                            }
+                        }}>
+                            {isMyAcc
                                 ? red
                                     ? (
                                         <>
