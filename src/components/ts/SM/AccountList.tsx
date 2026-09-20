@@ -8,7 +8,7 @@ import { useSideMenu } from "../../hooks/SideMenuHook";
 export default function AccountList() {
     const { logOut, user } = useUser()
     const { showNotification } = useNote()
-    const { activeTab } = useSideMenu()
+    const { activeTab, closeMenu } = useSideMenu()
     const navigate = useNavigate()
 
     const [ logoutConfirm, setLogoutConfirm ] = useState(false)
@@ -66,26 +66,46 @@ export default function AccountList() {
                 </div>
             </div>
             <div className="SMaccountButtsWrapper">
-                <div className={`SMmainButt ${location.pathname === "/" ? "active" : ""}`} onClick={() => navigate("/")}>
+                <div className={`SMmainButt ${location.pathname === "/" ? "active" : ""}`} 
+                    onClick={() => { 
+                        navigate("/") 
+                        closeMenu()
+                    }}
+                >
                     <span className="SMmainButtName">
                         <NewspaperIcon weight="fill" size={30} className="SMmainButtSvg"/> Лента <CaretRightIcon className="fastButtCaret"/>
                     </span>
                     <div className="SMmainButtDesc">Просматривайте единую ленту постов из спотов и от друзей, рекомендации, ближайшие активности и планы друзей</div>
                 </div>
-                <div className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} onClick={() => navigate("/habit")}>
+                <div className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} 
+                    onClick={() => {
+                        navigate("/habit")
+                        closeMenu()
+                    }}
+                >
                     <span className="SMmainButtName">
                         <SneakerMoveIcon weight="fill" size={30} className="SMmainButtSvg"/> Активности <CaretRightIcon className="fastButtCaret"/>
                     </span>
                     <div className="SMmainButtDesc">Следите за активностями, стройте планы, отметьте достижения и проверьте календарь</div>
                 </div>
-                <div className={`SMaccountButt ${location.pathname.includes("/settings") ? "active" : "" }`} onClick={() => navigate("/settings")}>
+                <div className={`SMaccountButt ${location.pathname.includes("/settings") ? "active" : "" }`} 
+                    onClick={() => {
+                        navigate("/settings")
+                        closeMenu()
+                    }}
+                >
                     <span className="settingName">
                         <GearIcon size={21} weight="fill"/> 
                         Настройки
                     </span>
                         <CaretRightIcon className="fastButtCaret"/>
                 </div>
-                <div className="SMaccountButt" onClick={() => showNotification("info", "В разработке")}>
+                <div className="SMaccountButt" 
+                    onClick={() => {
+                        showNotification("info", "В разработке")
+                        closeMenu()
+                    }}
+                >
                     <span className="settingName">
                         <BookmarkSimpleIcon weight="fill"/> 
                         Перейти в избранное

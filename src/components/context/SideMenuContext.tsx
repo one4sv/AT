@@ -30,7 +30,8 @@ interface SideMenuContextType {
     dontHandle: boolean,
     setDontHandle: React.Dispatch<SetStateAction<boolean>>
     dontHandleOther: boolean,
-    setDontHandleOther: React.Dispatch<SetStateAction<boolean>>
+    setDontHandleOther: React.Dispatch<SetStateAction<boolean>>,
+    closeMenu: () => void
 }
 const SideMenuContext = createContext<SideMenuContextType | undefined>(undefined);
 
@@ -60,6 +61,11 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         setRed(false)
     }, [location.pathname])
 
+    const closeMenu = () => {
+        setShowSideMenu(false)
+        setTranslateX(-100)
+    }
+
     const returnSlide = () => {
         if (showJurnal) setShowJurnal(false)
         else if (showSettings) setShowSettings(false)
@@ -70,7 +76,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     return (
         <SideMenuContext.Provider value={{ showSideMenu, setShowSideMenu, red, setRed, showHabitMenu, setShowHabitMenu, showSettings, setShowSettings, showChatMenu, setShowChatMenu,
             showJurnal, setShowJurnal, returnSlide, activeTab, setActiveTab, setTranslateX, translateX, setIsDragging, isDragging, dontHandle, setDontHandle, setDontHandleOther, dontHandleOther,
-            messageSelectedValue, setMessageSelectedValue, habitsSelectedValue, setHabitsSelectedValue 
+            messageSelectedValue, setMessageSelectedValue, habitsSelectedValue, setHabitsSelectedValue , closeMenu
         }}>
             {children}
         </SideMenuContext.Provider>

@@ -28,7 +28,7 @@ export default function Contact({ contact }: ContactType) {
     const { setDroppedFiles } = useDrop()
     const { setIsChose } = useMessages()
     const { user } = useUser()
-    const { setShowSideMenu } = useSideMenu()
+    const { closeMenu } = useSideMenu()
     const { nick, id } = useParams<{ nick: string, id:string }>()
     const navigate = useNavigate()
 
@@ -91,7 +91,7 @@ export default function Contact({ contact }: ContactType) {
             onClick={() => {
                 setBlackout({ seted: false })
                 setIsChose(false)
-                setShowSideMenu(false)
+                closeMenu()
             }}
             to={contact.is_group ? `chat/g/${contact.id}` : `chat/${contact.nick}`}
             onContextMenu={(e) => {

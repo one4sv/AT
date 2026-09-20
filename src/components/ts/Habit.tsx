@@ -25,7 +25,7 @@ export default function HabitDiv({
     isMyAcc?: boolean;
 }) {
     const { openMenu } = useContextMenu();
-    const { setShowSideMenu } = useSideMenu();
+    const { closeMenu } = useSideMenu();
     const { findHabit, parseTimer } = useTheHabit();
     const { schedules } = useSchedule();
     const { weekStart } = useSettings();
@@ -198,7 +198,7 @@ export default function HabitDiv({
         <Link
             className={`habit ${id === habit.id ? "active" : ""}`}
             onClick={() => {
-                setShowSideMenu(false);
+                closeMenu();
             }}
             to={`/habit/${habit.id}`}
             onContextMenu={(e) => {
