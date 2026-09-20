@@ -39,7 +39,10 @@ export default function Acc() {
         useState<"sended" | "habits" | "posts">("sended");
 
     const touchStartY = useRef(0);
+    const touchStartX = useRef(0);
     const expanded = useRef(false);
+    const isHorizontal = useRef(false);
+    const canExpand = useRef(true);
     const line = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const slideRefs = useRef<(HTMLDivElement | null)[]>([null, null, null]);
@@ -75,8 +78,17 @@ export default function Acc() {
         }
     }, [acc, loading, nick]);
 
+    const getActiveSlideScrollTop = () => {
+        if (!contentRef.current) return 0;
+        const elWidth = contentRef.current.clientWidth;
+        const idx = Math.round(contentRef.current.scrollLeft / elWidth);
+        const slide = slideRefs.current[idx];
+        return slide ? slide.scrollTop : 0;
+    };
+
     const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-        const scrollTop = e.currentTarget.scrollTop;
+        const scrollTop = getActiveSlideScrollTop();
+        if (scrollTop > 0) return;
         if (e.deltaY > 0) setCollapsed(1);
         if (e.deltaY < 0 && scrollTop === 0) setCollapsed(0);
     };
@@ -95,7 +107,10 @@ export default function Acc() {
     
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
         touchStartY.current = e.touches[0].clientY;
+        touchStartX.current = e.touches[0].clientX;
         expanded.current = false;
+        isHorizontal.current = false;
+        canExpand.current = true;
     };
 
     const touchSliderStart = () => {
@@ -111,24 +126,48 @@ export default function Acc() {
     const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
         if (dontHandleOther) return;
         const currentY = e.touches[0].clientY;
-        const delta = touchStartY.current - currentY;
+        const currentX = e.touches[0].clientX;
+        const deltaY = touchStartY.current - currentY;
+        const deltaX = currentX - touchStartX.current;
+
         if (!expanded.current) {
-            if (Math.abs(delta) <= 5) return;
+            if (Math.abs(deltaY) <= 5 && Math.abs(deltaX) <= 5) return;
+
+            // Определяем направление после порога 5px
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                isHorizontal.current = true;
+            }
             expanded.current = true;
             touchStartY.current = currentY;
+            touchStartX.current = currentX;
             return;
         }
-        if (Math.abs(delta) > 5) setDontHandle(true)
-        const scrollTop = e.currentTarget.scrollTop;
+
+        // Если уже определили горизонтальный свайп — коллапс не трогаем
+        if (isHorizontal.current) return;
+
+        const scrollTop = getActiveSlideScrollTop();
+
+        // Если слайд проскроллен — не взаимодействуем с collapsed
+        if (scrollTop > 0) return;
+
+        if (Math.abs(deltaY) > 5) setDontHandle(true)
 
         setCollapsed(prev => {
-            if (delta < 0 && scrollTop > 0) {
-                return prev;
+            // Свайп вверх (сворачиваем)
+            if (deltaY > 0) {
+                canExpand.current = false; // после сворачивания в этом жесте развернуть нельзя
+                const next = prev + deltaY * 0.01;
+                return Math.max(0, Math.min(1, next));
             }
 
-            const next = prev + delta * 0.01;
-            console.log(next)
-            return Math.max(0, Math.min(1, next));
+            // Свайп вниз (разворачиваем) — только если canExpand и слайд наверху
+            if (deltaY < 0 && canExpand.current && scrollTop === 0) {
+                const next = prev + deltaY * 0.01;
+                return Math.max(0, Math.min(1, next));
+            }
+
+            return prev;
         });
 
         touchStartY.current = currentY;
@@ -136,7 +175,15 @@ export default function Acc() {
 
 
     const handleTouchEnd = () => {
+        isHorizontal.current = false;
         setCollapsed(prev => prev > 0.5 ? 1 : 0);
+    };
+
+    const handleSlideClick = () => {
+        if (collapsed === 0) {
+            setCollapsed(1);
+        }
+        // если уже collapsed — клик просто проходит дальше
     };
 
     const handleSelectorClick = (i: number) => {
@@ -197,18 +244,20 @@ export default function Acc() {
                     onScrollEnd={() => setDontHandle(false)}
                     style={{overflowX: `${dontHandleOther ? "hidden" : "scroll"}`}}
                 >
-                    <div className="accSlide">
+                    <div className="accSlide" onClick={handleSlideClick}>
                         <div
                             className="accContentSlide accMedia"
                             ref={el => { slideRefs.current[0] = el; }}
+                            style={{pointerEvents:`${collapsed === 0 ? "none" : "all"}`}}
                         >
                             {!isMyAcc && <AccMedia media={media} />}
                         </div>
                     </div>
-                    <div className="accSlide">
+                    <div className="accSlide" onClick={handleSlideClick} >
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[1] = el; }}
+                            style={{pointerEvents:`${collapsed === 0 ? "none" : "all"}`}}
                         >
                             <AccHabits
                                 isMyAcc={isMyAcc}
@@ -217,10 +266,11 @@ export default function Acc() {
                             />
                         </div>
                     </div>
-                    <div className="accSlide">
+                    <div className="accSlide" onClick={handleSlideClick} >
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[2] = el; }}
+                            style={{pointerEvents:`${collapsed === 0 ? "none" : "all"}`}}
                         >
                             <AccPosts
                                 posts={posts}
