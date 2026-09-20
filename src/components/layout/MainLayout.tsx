@@ -125,7 +125,7 @@ export default function MainLayout({ children }: LayoutProps) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [answer, blackout.seted, editing, isChose, location.pathname, mainSearchRef, navigate, redirect, returnSlide, search.length, searchInputRef, searchMess.length, setAnswer, setBlackout, setChosenMess, setEditing, setIsChose, setRedirect, setSearch, setSearchMess, showHabitMenu, user.id]);
+  }, [answer, blackout.seted, chosenDay, editing, isChose, location.pathname, mainSearchRef, navigate, redirect, returnSlide, search.length, searchInputRef, searchMess.length, setAnswer, setBlackout, setChosenDay, setChosenMess, setEditing, setIsChose, setRedirect, setSearch, setSearchMess, showHabitMenu, user.id, user.nick]);
 
   return (
     <div className="app-layout">

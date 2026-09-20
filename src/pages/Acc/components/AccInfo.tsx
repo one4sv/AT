@@ -99,7 +99,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                         <input
                             className="accInput nameInput"
                             value={(isMyAcc ? newName : acc?.username) ?? ""}
-                            readOnly={!red}
+                            disabled={!red}
                             onChange={(e) => setNewName(e.currentTarget.value)}
                         />
                     </div>
@@ -108,7 +108,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                         <input
                             className="accInput nickInput"
                             value={(isMyAcc ? newNick : acc?.nick) ?? ""}
-                            readOnly={!red}
+                            disabled={!red}
                             onChange={(e) => setNewNick(e.currentTarget.value)}
                         />
                     </div>
@@ -130,7 +130,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                             className="bioTA extraInfoInput"
                             id="extraInfoInputBio"
                             value={(isMyAcc ? newBio : acc?.bio) ?? ""}
-                            readOnly={!red}
+                            disabled={!red}
                             onChange={(e) =>
                                 setNewBio(e.currentTarget.value)
                             }
@@ -153,7 +153,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                                 )
                             }
                             maxDate={new Date()}
-                            readOnly={!red}
+                            disabled={!red}
                             dateFormat="dd.MM.yyyy"
                             showMonthDropdown
                             showYearDropdown
@@ -178,7 +178,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                                 id="extraInfoInputPhone"
                                 className={`extraInfoInput ${red ? "disabled" : ""}`}
                                 value="—"
-                                readOnly
+                                disabled
                             />
                         </>
                     )}
