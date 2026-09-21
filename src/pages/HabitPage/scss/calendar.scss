@@ -11,7 +11,7 @@
 }
 
 .calendarMain {
-    border-radius: 12px;
+    border-radius: 24px;
     background-color: var(--mc);
     width: 100%;
     padding: 5px;
@@ -39,6 +39,10 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.5vh;
+    @media (max-width: 800px) {
+        padding: 0 1vw;
+        height: 5vh;
+    }
 }
 
 .setMonthButt {
@@ -50,28 +54,29 @@
     cursor: pointer;
     font-size: 20px;
     color: var(--borderHabit);
-    border-radius: 12px;
     transition: all 0.2s ease;
-
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-        color: var(--tc);
-    
+            background-color: var(--menuButtHover);
+            color: var(--tc);
         }
     }
-
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-        color: var(--tc);
-    
-        
+            background-color: var(--menuButtHover);
+            color: var(--tc);
         }
     }
 
-    &.left  { border-radius: 12px 0 0 12px; }
-    &.right { border-radius: 0 12px 12px 0; }
+    &.left  { 
+        border-radius: 24px 0 0 24px; 
+    }
+    &.right { 
+        border-radius: 0 24px 24px 0; 
+    }
+    @media (max-width: 800px) {
+        width: 5vh;
+    }
 }
 
 .CalendarDateChanger {
@@ -95,18 +100,19 @@
 
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-        > svg { color: var(--tc); }
-    
+            background-color: var(--menuButtHover);
+            > svg { 
+                color: var(--tc); 
+            }
         }
     }
 
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-        > svg { color: var(--tc); }
-    
-        
+            background-color: var(--menuButtHover);
+            > svg { 
+                color: var(--tc);
+            }
         }
     }
 }
@@ -115,7 +121,7 @@
 .monthsList, .yearsList {
     position: absolute;
     top: 4.5vh;
-    background-color: var(--mc);
+    background-color: var(--interact);
     border: 1px solid var(--borderHabit);
     border-radius: 8px;
     backdrop-filter: blur(12px);
@@ -160,18 +166,19 @@
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.2s ease;
-
     @media (hover: hover) {
-        &:hover {        background-color: var(--menuButtHover); 
+        &:hover {
+            background-color: var(--menuButtHover); 
         }
     }
-
     @media (hover: none) {
-        &:active {        background-color: var(--menuButtHover); 
-        
+        &:active {
+            background-color: var(--menuButtHover); 
         }
     }
-    &.active { background:linear-gradient(135deg, var(--accent), var(--grad)); }
+    &.active { 
+        background:linear-gradient(135deg, var(--accent), var(--grad));
+    }
 }
 
 .monthListElem { aspect-ratio: 1/1; height: 5vh; }
@@ -193,7 +200,7 @@
     align-items: center;
     justify-content: center;
     background-color: var(--weekDays);
-    border-radius: 6px;
+    border-radius: 12px;
     font-size: 14px;
 }
 
@@ -202,7 +209,6 @@
     width: 100%;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    // scroll-behavior: smooth;
     display: flex;
     scrollbar-width: none;
 }
@@ -240,7 +246,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    border-radius: 12px;
     cursor: pointer;
     position: relative;
     transition: background-color 0.2s ease;
@@ -250,16 +256,13 @@
 
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-    
+            background-color: var(--menuButtHover);
         }
     }
 
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-    
-        
+            background-color: var(--menuButtHover);
         }
     }
 
@@ -272,8 +275,9 @@
     }
 
     &.chosenDayCal {
-        outline: 1px solid var(--accent);
         outline-offset: -1px;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
     }
 }
 

@@ -46,7 +46,7 @@ const params = {
 };
 
 const MIN_HABIT_HEIGHT = 85.5;
-const MAX_HABIT_HEIGHT = 98;
+const MAX_HABIT_HEIGHT = 96;
 
 export default function Habit() {
     const { fetchCalendarHabit, fetchCalendarWLoading, calendarLoading } = useCalendar();
@@ -344,7 +344,7 @@ export default function Habit() {
                                         "--expand-progress": expandProgress,
                                         transition: pullingState
                                             ? "none"
-                                            : undefined
+                                            : undefined,
                                     } as React.CSSProperties}
                                     onTouchStart={handleHabitTouchStart}
                                     onTouchMove={handleHabitTouchMove}

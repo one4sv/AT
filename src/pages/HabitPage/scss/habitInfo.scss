@@ -24,7 +24,7 @@
 @media (max-width:800px) {
     .StatsDivMain {
         padding: 1vh 2vw;
-        padding-bottom: 5vh;
+        padding-bottom: 2vh;
     }
 }
 .sdmwm {
@@ -55,9 +55,12 @@
         background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
         backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1),
         border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        margin 0.4s cubic-bezier(0.4, 0, 0.2, 1),
         padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-    border-radius: calc(12px + 12px * var(--expand-progress));
+    border-radius: 24px;
+    margin-bottom: calc(2vh * var(--expand-progress));
+    padding: .5vh 0;
     background-color: var(--mc);
     width: 100%;
     will-change: height;
@@ -66,27 +69,25 @@
     flex-direction: column;
     backdrop-filter: blur(calc(var(--blur) - (var(--blur) - 1px) * var(--expand-progress)));
     -webkit-backdrop-filter: blur(calc(var(--blur) - (var(--blur) - 1px) * var(--expand-progress)));
-    padding-bottom: calc(1vh * var(--expand-progress));
 
     > .completeDiv {
         background-color: var(--tr);
         height: fit-content;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     > .dayCommentDiv {
         background-color: var(--tr);
         margin-bottom: 1dvh;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     > .doneButtDiv {
         align-self: flex-end;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     &.expanded {
-        background-color: var(--mc);
-        border-radius: 24px;
-        padding-bottom: 1vh;
-
         > .completeDiv {
             > .chosenDayDate {
                 flex: 1;

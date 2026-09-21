@@ -1,4 +1,4 @@
-import { CalendarBlankIcon, CalendarCheckIcon, CheckCircle, Circle } from "@phosphor-icons/react";
+import { CalendarBlankIcon, CalendarCheckIcon, CheckCircle, Circle, ClockIcon } from "@phosphor-icons/react";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 import { useDone } from "../../../../../components/hooks/DoneHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
@@ -18,7 +18,17 @@ export default function DoneButton({ habitId }: DoneButtonProps) {
   const displayDone = isDone !== null ? isDone : todayDone;
   const displayPlan = isPlanned
 
-  if (!doable && !planable) return null;
+  if (!doable && !planable) return (
+    <div className="doneButtDiv">
+      <button
+        className="doneButt disabled"
+        onClick={() => undefined}
+      >
+        <ClockIcon/>
+        Ожидаем
+      </button>
+    </div>
+  )
 
   if (planable) return (
     <div className="doneButtDiv">

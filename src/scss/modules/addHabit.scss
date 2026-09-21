@@ -92,31 +92,29 @@
 .tegSelector {
     display: flex;
     margin-top: 0.5vh;
+    gap: 1vw;
 }
 .addTeg {
     display: flex;
     align-items: center;
     color: var(--borderHabit);
-    background-color: var(--bgc);
+    background-color: var(--interact);
     padding: 0.4vh 0.5vw;
     gap: 0.3rem;
-    border-radius: 6px;
+    border-radius: 12px;
     border: 1px solid var(--borderWh);
     outline: none;
+    height: 4vh;
+    cursor: pointer;
     @media (hover: hover) {
         &:hover {
-        color: var(--tc);
-        cursor: pointer;
-    
+            color: var(--tc);
         }
     }
 
     @media (hover: none) {
         &:active {
-        color: var(--tc);
-        cursor: pointer;
-    
-        
+            color: var(--tc);
         }
     }
 }
@@ -128,7 +126,7 @@
     background-color: var(--bgc);
     display: flex;
     flex-direction: column;
-    border-radius: 6px;
+    border-radius: 12px;
     max-height: 20vh;
     overflow-y: scroll;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -137,6 +135,12 @@
     max-height: 20vh;
     scrollbar-width: thin;
     padding: 0.5vh 0.5vw;
+    gap: 1vh;
+    user-select: none;
+    @media (max-width: 800px) {
+        padding: 1vh 3vw;
+        max-height: 26vh;
+    }
     &.active {
         pointer-events: all;
         opacity: 1;
@@ -148,40 +152,37 @@
     gap: 0.5rem;
 }
 .tagGroupTitle {
-    margin-top: 1vh;
     width: 100%;
 }
 .tag {
     display: flex;
     align-items: center;
     color: var(--borderHabit);
-    background-color: var(--bgc);
+    background-color: var(--interact);
     padding: 0.5vh 0.5vw;
     gap: 0.3rem;
-    border-radius: 6px;
+    height: 4vh;
+    border-radius: 12px;
     border: 1px solid var(--borderWh);
     white-space: nowrap;    
     overflow: hidden;
     text-overflow: ellipsis;
-    height: 3.5vh;
+    cursor: pointer;
     @media (hover: hover) {
         &:hover {
-        color: var(--tc);
-        cursor: pointer;
-    
+            color: var(--tc);
         }
     }
-
     @media (hover: none) {
         &:active {
-        color: var(--tc);
-        cursor: pointer;
-    
-        
+            color: var(--tc);
         }
     }
     svg {
         flex-shrink: 0;
+    }
+    @media (max-width: 800px) {
+        padding: 0.5vh 2vw 0.5vh 1vw;
     }
     &.active {
         border: 1px solid var(--accent);
