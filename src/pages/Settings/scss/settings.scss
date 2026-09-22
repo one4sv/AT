@@ -13,6 +13,9 @@
     scrollbar-width: none;
     top: 1vh;
     gap: 1vw;
+    @media (max-width: 800px) {
+        top: 0;
+    }
 }
 .settingsSliderWrapper {
     width: 50%;
@@ -276,6 +279,7 @@
     padding: 0 1%;
     @media (max-width: 800px) {
         margin-top: 0;
+        padding-top:1vh;
         padding-bottom: 9vh;
     }
 }
