@@ -55,12 +55,12 @@
 
     @media (max-width: 800px) {
         margin: 1vh 2vw 0;
-        padding: 1vh 3vw;
+        padding: 1vh 2vw;
     }
 }
 .accInput.dis,
 .extraInfoInput.dis,
-.bioTA.dis {
+.accExtraInfoWrapper.dis {
     pointer-events: none;
     user-select: none;
     cursor: default;

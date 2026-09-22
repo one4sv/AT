@@ -105,6 +105,7 @@ export default function SeekBar({
             <div
                 className="seekBarLine"
                 ref={lineRef}
+                onContextMenu={(e) => e.preventDefault()}
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
@@ -137,14 +138,14 @@ export default function SeekBar({
 
                 <div
                     className="seekBarCurrent"
-                    style={{ left: `${percent}%` }}
+                    style={{ left: `${percent}%`, opacity:dragging ? "1" : "0" }}
                 >
-                    {value === min || value === max ? "" : value}
-                    {value === min || value === max ? "" : unit}
+                    {value}
+                    {unit}
                 </div>
             </div>
 
-            <div className="seekBarBottom">
+            {/* <div className="seekBarBottom">
                 <span className={value === min ? "currentValue" : ""}>
                     {min}
                     {unit}
@@ -154,7 +155,7 @@ export default function SeekBar({
                     {max}
                     {unit}
                 </span>
-            </div>
+            </div> */}
         </div>
     );
 }

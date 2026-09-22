@@ -56,14 +56,14 @@
     display: flex;
     flex-direction: column;
     border-radius: 24px;
-    background-color: var(--mc);
+    background-color: var(--interact);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
 }
 .chatWriteBar {
     width: 100%;
     border-radius: 24px 24px 0 0;
-    background-color: var(--mc);
+    background-color: var(--tr);
     color: var(--tc);
     height: 5vh;
     display: flex;
@@ -82,7 +82,7 @@
 .chatTAFiles {
     width: 100%;
     border-radius: 12px 12px 0 0;
-    background-color: var(--mc);
+    background-color: var(--tr);
     color: var(--tc);
     height: 8vh;
     display: flex;
@@ -246,7 +246,7 @@
 .chatTA {
     resize: none;
     width: 100%;
-    background-color: var(--mc);
+    background-color: var(--tr);
     color: var(--tc);
     font-size: 16px;
     max-height: 50vh;
@@ -318,7 +318,7 @@
         }
     }
     @media (max-width:800px) {
-        right: 4vw;
+        right: 2vw;
     }
 }
 .chatSend {

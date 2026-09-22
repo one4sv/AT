@@ -25,6 +25,27 @@
         }
     }
 }
+.sideMenuBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    overflow: hidden;
+    z-index: 7;
+    pointer-events: none;
+    will-change: width;
+
+    > .background {
+        position: absolute;
+        inset: 0;
+        width: 100vw;
+        height: 100%;
+    }
+
+    @media (min-width: 801px) {
+        display: none;
+    }
+}
 .sideMenuUnAthorised {
     height: 100%;
     width: 100%;

@@ -39,7 +39,7 @@ export default function SMnav() {
     const navigate = useNavigate()
 
     const [ extraMenu, setExtraMenu ] = useState<tab>()
-    const [ isExtraOpen, setIsExtraOpen ] = useState(true)
+    const [ isExtraOpen, setIsExtraOpen ] = useState(false)
     const [ confirmLogout, setConfirmLogout ] = useState(false)
     const [ chatsFilters, setMessagesFilters ] = useState<{ label: string; value: string; new: string }[]>([])
     const [ habitsFilters, setHabitsFilters ] = useState<{ label: string; value: string; new: string }[]>([])
@@ -392,7 +392,6 @@ export default function SMnav() {
 
     const navFunc = (tab: tab) => {
         if (wasLongPress.current) return
-
         if (tab !== activeTab) {
             setExtraMenu(tab)
             setActiveTab(tab)

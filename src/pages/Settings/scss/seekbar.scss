@@ -62,11 +62,15 @@
 
 .seekBarCurrent {
     position: absolute;
-    top: calc(100% + 10px);
+    bottom: calc(100% + 10px);
     transform: translateX(-50%);
     white-space: nowrap;
     color: var(--accent_text);
     font-size: 14px;
+    background-color: var(--bgc);
+    padding: 5px 7px;
+    border-radius: 12px;
+    transition: opacity .3s ease;
 }
 
 .seekBarBottom {

@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, type ReactNode, type SetStateAction } from "react";
+import { createContext, useState, useEffect, type ReactNode, type SetStateAction, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 export type tab = "chats" | "habits" | "spots" | "user"
@@ -50,29 +50,30 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [ messageSelectedValue, setMessageSelectedValue ] = useState("")
     const [ habitsSelectedValue, setHabitsSelectedValue ] = useState("")
 
+    const isInitial = useRef(true)
     const location = useLocation();
-
-    useEffect(() => {
-        setShowSideMenu(false);
-        setTranslateX(-100)
-    }, [location.pathname]);
 
     useEffect(() => {
         setRed(false)
     }, [location.pathname])
 
     const closeMenu = () => {
+        if (isInitial.current === true) isInitial.current = false
         setShowSideMenu(false)
         setTranslateX(-100)
     }
-
+    
     useEffect(() => {
-        if (dontHandle !== undefined) console.log("dontHandle:", dontHandle)
-    }, [dontHandle])    
+        if (isInitial.current === false) closeMenu()
+    }, [location.pathname]);
 
-    useEffect(() => {
-        if (dontHandleOther !== undefined) console.log("dontHandleOther:", dontHandleOther)
-    }, [dontHandleOther])
+    // useEffect(() => {
+    //     if (dontHandle !== undefined) console.log("dontHandle:", dontHandle)
+    // }, [dontHandle])    
+
+    // useEffect(() => {
+    //     if (dontHandleOther !== undefined) console.log("dontHandleOther:", dontHandleOther)
+    // }, [dontHandleOther])
 
     const returnSlide = () => {
         if (showJurnal) setShowJurnal(false)

@@ -41,7 +41,7 @@
 .postWriteBar {
     width: 100%;
     border-radius: 24px 24px 0 0;
-    background-color: var(--mc);
+    background-color: var(--tr);
     color: var(--tc);
     height: 5vh;
     display: flex;
@@ -60,7 +60,7 @@
 }
 .postWriteTA {
     width: 100%;
-    background-color: var(--mc);
+    background-color: var(--tr);
     resize: none;
     color: var(--tc);
     border-radius: 0 0 24px 24px;

@@ -124,10 +124,10 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
 
             <div className="accInfoWrapper">
                 {acc?.bio || red ? (
-                    <div className="accExtraInfoWrapper">
+                    <div className={`accExtraInfoWrapper ${!red ? "dis" : ""}`}>
                         <label htmlFor="extraInfoInputBio">{t("about")}</label>
                         <textarea
-                            className={`bioTA extraInfoInput ${!red ? "dis" : ""}`}
+                            className="bioTA extraInfoInput"
                             id="extraInfoInputBio"
                             value={(isMyAcc ? newBio : acc?.bio) ?? ""}
                             readOnly={!red}
@@ -139,10 +139,10 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                 ) : ""}
 
                 {acc?.date_of_birth || red ? (
-                    <div className="accExtraInfoWrapper">
+                    <div className={`accExtraInfoWrapper ${!red ? "dis" : ""}`}>
                         <label htmlFor="extraInfoInputBirth">{t("birthday")}</label>
                         <DatePicker
-                            className={`extraInfoInput ${!red ? "dis" : ""}`}
+                            className="extraInfoInput"
                             id="extraInfoInputBirth"
                             selected={birthDate}
                             onChange={(date) =>

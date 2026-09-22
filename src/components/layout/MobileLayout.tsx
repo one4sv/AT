@@ -17,7 +17,6 @@ export default function MobileLayout({ children }: LayoutProps) {
     const { setShowSideMenu, translateX, isDragging, setIsDragging, setTranslateX, dontHandle, setDontHandleOther, setDontHandle } = useSideMenu();
 
     const startX = useRef(0);
-    const startTranslate = useRef(0);
 
     const handleTouchStart = (e: React.TouchEvent) => {
         const activeElement = document.activeElement;
@@ -34,7 +33,6 @@ export default function MobileLayout({ children }: LayoutProps) {
         }
 
         startX.current = e.touches[0].clientX;
-        startTranslate.current = translateX;
         setIsDragging(true);
     };
 
@@ -80,9 +78,24 @@ export default function MobileLayout({ children }: LayoutProps) {
         location.pathname.startsWith("/chat") ||
         location.pathname.startsWith("/habit/");
 
+    const backgroundWidth = 100 + translateX;
+
     return (
         <div className="mobile-layout">
             {!hideHeader && <Header />}
+
+            <div
+                className="sideMenuBackground"
+                style={{
+                    width: `${backgroundWidth}%`,
+                    transition: isDragging
+                        ? "none"
+                        : "width 0.4s ease"
+                }}
+            >
+                <Background />
+            </div>
+
             <SideMenu />
             <SMnav/>
 
