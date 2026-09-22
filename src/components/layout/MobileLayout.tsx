@@ -91,8 +91,11 @@ export default function MobileLayout({ children }: LayoutProps) {
         location.pathname.startsWith("/chat") ||
         location.pathname.startsWith("/habit/");
 
-    const backgroundWidth = (100 + translateX - 2) < 0 ? 0 : 100 + translateX - 2;
+const backgroundWidth = decor === "glass"
+    ? `calc(${Math.max(0, 100 + translateX)}% - ${15 * Math.pow(Math.max(0, 100 - Math.max(0, 100 + translateX)) / 100, 0.25)}px)`
+    : (100 - translateX);
     
+    console.log(translateX, backgroundWidth)
     return (
         <div className="mobile-layout">
             {!hideHeader && <Header />}
@@ -100,7 +103,7 @@ export default function MobileLayout({ children }: LayoutProps) {
             <div
                 className="sideMenuBackground"
                 style={{
-                    width: `${backgroundWidth}%`,
+                    width: backgroundWidth,
                 }}
             >
                 <Background />
