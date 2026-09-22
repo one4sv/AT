@@ -7,7 +7,7 @@ import { useLocation, useParams } from "react-router";
 import { useSettings } from "../hooks/SettingsHook";
 
 export default function Header() {
-    const { setTranslateX, setShowSideMenu } = useSideMenu();
+    const { openMenu } = useSideMenu();
     const { layout } = useSettings()
     const { nick } = useParams()
     const { title } = usePageTitle()
@@ -18,10 +18,12 @@ export default function Header() {
         <>
             <div className="header">
                 {isMobile || layout === "hidden" ? (
-                <div className="menuShowButt" onClick={() => {
-                    setShowSideMenu(true);
-                    setTranslateX(0);
-                }}>
+                <div
+                    className="menuShowButt"
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onTouchStart={(e) => e.stopPropagation()}
+                    onClick={() => openMenu()}
+                >
                     <List/>
                 </div>
                 ) : ""}

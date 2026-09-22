@@ -31,7 +31,10 @@ interface SideMenuContextType {
     setDontHandle: React.Dispatch<SetStateAction<boolean>>
     dontHandleOther: boolean,
     setDontHandleOther: React.Dispatch<SetStateAction<boolean>>,
-    closeMenu: () => void
+    closeMenu: () => void,
+    toggleMenu: () => void,
+    openMenu: () => void,
+
 }
 const SideMenuContext = createContext<SideMenuContextType | undefined>(undefined);
 
@@ -49,6 +52,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [ dontHandleOther, setDontHandleOther ] = useState(false)
     const [ messageSelectedValue, setMessageSelectedValue ] = useState("")
     const [ habitsSelectedValue, setHabitsSelectedValue ] = useState("")
+    const animationFrame = useRef<number | null>(null);
 
     const isInitial = useRef(true)
     const location = useLocation();
@@ -58,23 +62,112 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     }, [location.pathname])
 
     const closeMenu = () => {
-        if (isInitial.current === true) isInitial.current = false
-        setShowSideMenu(false)
-        setTranslateX(-100)
-    }
+        if (isInitial.current === true) isInitial.current = false;
+
+        setIsDragging(false);
+        setDontHandle(false);
+        setDontHandleOther(false);
+
+        const start = translateX;
+        const target = -100;
+        const duration = 400;
+        const startTime = performance.now();
+
+        if (animationFrame.current !== null) {
+            cancelAnimationFrame(animationFrame.current);
+        }
+
+        const animate = (time: number) => {
+            const progress = Math.min((time - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const next = start + (target - start) * eased;
+
+            setTranslateX(next);
+
+            if (progress < 1) {
+                animationFrame.current = requestAnimationFrame(animate);
+            } else {
+                animationFrame.current = null;
+                setShowSideMenu(false); // только после завершения анимации
+            }
+        };
+
+        animationFrame.current = requestAnimationFrame(animate);
+    };
     
     useEffect(() => {
         if (isInitial.current === false) closeMenu()
     }, [location.pathname]);
 
-    // useEffect(() => {
-    //     if (dontHandle !== undefined) console.log("dontHandle:", dontHandle)
-    // }, [dontHandle])    
+    const openMenu = () => {
+        setShowSideMenu(true);
+        setIsDragging(false);
+        setDontHandle(false);
+        setDontHandleOther(false);
 
-    // useEffect(() => {
-    //     if (dontHandleOther !== undefined) console.log("dontHandleOther:", dontHandleOther)
-    // }, [dontHandleOther])
+        const start = translateX;
+        const target = 0;
+        const duration = 400;
+        const startTime = performance.now();
 
+        if (animationFrame.current !== null) {
+            cancelAnimationFrame(animationFrame.current);
+        }
+
+        const animate = (time: number) => {
+            const progress = Math.min((time - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const next = start + (target - start) * eased;
+
+            setTranslateX(next);
+
+            if (progress < 1) {
+                animationFrame.current = requestAnimationFrame(animate);
+            } else {
+                animationFrame.current = null;
+            }
+        };
+
+        animationFrame.current = requestAnimationFrame(animate);
+    };
+
+    const toggleMenu = () => {
+        if (!isDragging) return;
+
+        setDontHandleOther(false);
+        setIsDragging(false);
+
+        const target = translateX > -50 ? 0 : -100;
+        const start = translateX;
+        const duration = 400;
+        const startTime = performance.now();
+
+        if (animationFrame.current !== null) {
+            cancelAnimationFrame(animationFrame.current);
+        }
+
+        const animate = (time: number) => {
+            const progress = Math.min((time - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const next = start + (target - start) * eased;
+
+            setTranslateX(next);
+
+            if (progress < 1) {
+                animationFrame.current = requestAnimationFrame(animate);
+            } else {
+                animationFrame.current = null;
+                if (target === -100) {
+                    setShowSideMenu(false);
+                } else {
+                    setShowSideMenu(true);
+                }
+            }
+        };
+
+        animationFrame.current = requestAnimationFrame(animate);
+    };
+        
     const returnSlide = () => {
         if (showJurnal) setShowJurnal(false)
         else if (showSettings) setShowSettings(false)
@@ -85,7 +178,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     return (
         <SideMenuContext.Provider value={{ showSideMenu, setShowSideMenu, red, setRed, showHabitMenu, setShowHabitMenu, showSettings, setShowSettings, showChatMenu, setShowChatMenu,
             showJurnal, setShowJurnal, returnSlide, activeTab, setActiveTab, setTranslateX, translateX, setIsDragging, isDragging, dontHandle, setDontHandle, setDontHandleOther, dontHandleOther,
-            messageSelectedValue, setMessageSelectedValue, habitsSelectedValue, setHabitsSelectedValue , closeMenu
+            messageSelectedValue, setMessageSelectedValue, habitsSelectedValue, setHabitsSelectedValue , closeMenu, toggleMenu, openMenu
         }}>
             {children}
         </SideMenuContext.Provider>
