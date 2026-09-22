@@ -26,7 +26,6 @@ export default function SMnav() {
         setHabitsSelectedValue,
         setDontHandle,
         setDontHandleOther,
-        isDragging,
         translateX,
         showSideMenu
     } = useSideMenu()
@@ -550,7 +549,6 @@ export default function SMnav() {
         <div className={`SMnavDiv ${showSideMenu ? "open" : ""}`}
             style={{
                 transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none",
-                transition: isDragging ? "none" : "transform 0.4s ease"
             }}
         >
             <div className={`SMnavExtraDiv ${isExtraOpen ? "open" : ""} ${extraMenu || ""}`} ref={filtersRef}>

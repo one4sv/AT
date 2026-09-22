@@ -54,18 +54,31 @@ export default function MobileLayout({ children }: LayoutProps) {
 
     const handleTouchEnd = () => {
         if (!isDragging) return;
+
         setDontHandleOther(false)
         setIsDragging(false);
 
-        if (translateX > -50) {
-            setTranslateX(0);
-        } else {
-            setTranslateX(-100);
+        const target = translateX > -50 ? 0 : -100;
+        const start = translateX;
+        const duration = 400;
+        const startTime = performance.now();
 
-            setTimeout(() => {
+        const animate = (time: number) => {
+            const progress = Math.min((time - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+
+            const next = start + (target - start) * eased;
+
+            setTranslateX(next);
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else if (target === -100) {
                 setShowSideMenu(false);
-            }, 300);
-        }
+            }
+        };
+
+        requestAnimationFrame(animate);
     };
 
     useEffect(() => {
@@ -78,8 +91,8 @@ export default function MobileLayout({ children }: LayoutProps) {
         location.pathname.startsWith("/chat") ||
         location.pathname.startsWith("/habit/");
 
-    const backgroundWidth = 100 + translateX;
-
+    const backgroundWidth = (100 + translateX - 2) < 0 ? 0 : 100 + translateX - 2;
+    
     return (
         <div className="mobile-layout">
             {!hideHeader && <Header />}
@@ -88,9 +101,6 @@ export default function MobileLayout({ children }: LayoutProps) {
                 className="sideMenuBackground"
                 style={{
                     width: `${backgroundWidth}%`,
-                    transition: isDragging
-                        ? "none"
-                        : "width 0.4s ease"
                 }}
             >
                 <Background />

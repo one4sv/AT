@@ -10,7 +10,6 @@
     padding: 0 0 2vh;
     background-color: var(--tr);
     z-index: 9;
-    transition: transform 0.4s ease;
     will-change: transform;
     &::before {
         content: "";

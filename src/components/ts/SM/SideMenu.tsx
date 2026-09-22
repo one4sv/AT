@@ -105,13 +105,27 @@ export default function SideMenu() {
         setIsDragging(false)
         setDontHandle(false)
 
-        const threshold = -40
+        const target = translateX < -40 ? -100 : 0
+        const start = translateX
+        const duration = 400
+        const startTime = performance.now()
 
-        if (translateX < threshold) {
-            closeMenu()
-        } else {
-            setTranslateX(0)
+        const animate = (time: number) => {
+            const progress = Math.min((time - startTime) / duration, 1)
+            const eased = 1 - Math.pow(1 - progress, 3)
+
+            const next = start + (target - start) * eased
+
+            setTranslateX(next)
+
+            if (progress < 1) {
+                requestAnimationFrame(animate)
+            } else if (target === -100) {
+                closeMenu()
+            }
         }
+
+        requestAnimationFrame(animate)
 
         horizontalSwipe.current = false
         verticalScroll.current = false
@@ -163,9 +177,6 @@ export default function SideMenu() {
                     isMobile || layout === "hidden"
                         ? `translateX(${translateX}%)`
                         : "none",
-                transition: isDragging
-                    ? "none"
-                    : "transform 0.4s ease"
             }}
         >
             <div className="SMsearchDiv">
