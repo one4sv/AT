@@ -152,7 +152,7 @@
 }
 .SMnavExtraDiv {
     position: absolute;
-    width: 45%;
+    width: 47%;
     background-color: var(--interact);
     display: flex;
     flex-direction: column;
@@ -176,8 +176,8 @@
         left: 50%;
     }
     &.user {
-        left: 56%;
-        width: 40%;
+        left: 3%;
+        width: 94%;
     }
     &.open {
         opacity: 1;

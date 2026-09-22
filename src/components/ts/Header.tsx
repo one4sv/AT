@@ -7,7 +7,7 @@ import { useLocation, useParams } from "react-router";
 import { useSettings } from "../hooks/SettingsHook";
 
 export default function Header() {
-    const { openMenu } = useSideMenu();
+    const { openSideMenu } = useSideMenu();
     const { layout } = useSettings()
     const { nick } = useParams()
     const { title } = usePageTitle()
@@ -22,7 +22,7 @@ export default function Header() {
                     className="menuShowButt"
                     onMouseDown={(e) => e.stopPropagation()}
                     onTouchStart={(e) => e.stopPropagation()}
-                    onClick={() => openMenu()}
+                    onClick={() => openSideMenu()}
                 >
                     <List/>
                 </div>

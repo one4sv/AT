@@ -20,7 +20,7 @@ interface HabitNameProps {
 export default function HabitName({habit, showHabitMenu, setShowHabitMenu, expandProgress, pulling}:HabitNameProps) {
     const { isUpdating } = useUpHabit()
     const { calendar } = useCalendar()
-    const { setShowSideMenu, setTranslateX } = useSideMenu()
+    const { openSideMenu } = useSideMenu()
     const habitNameRef = useRef<HTMLDivElement | null>(null);
 
     if (!habit) return null
@@ -28,10 +28,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu, expan
     return (
         <div className={`chatUser ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} style={{transform:`translateY(${-6 * expandProgress}vh)`, transition:pulling ? "none" : "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)"}}>
             {isMobile && (
-                <div className="menuShowButt" onClick={() => {
-                    setShowSideMenu(true)
-                    setTranslateX(0)
-                    }}>
+                <div className="menuShowButt" onClick={() => openSideMenu()}>
                     <List/>
                 </div>
             )}

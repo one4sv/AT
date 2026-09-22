@@ -19,7 +19,7 @@ export default function ColorSelector({
     setNew: (val: string) => void
 }) {
     const { isDark } = useSettings()
-    const { setDontHandle } = useSideMenu()
+    const { setDontHandle, dontHandleOther } = useSideMenu()
     
     const wrapperRef = useRef<HTMLDivElement | null>(null)
     const itemsRef = useRef<(HTMLDivElement | null)[]>([])
@@ -152,6 +152,7 @@ export default function ColorSelector({
     }
 
     const startLongPress = (x: number) => {
+        if (dontHandleOther) return
         longPress.current = false
         dragging.current = false
         clickBlocked.current = false

@@ -29,7 +29,6 @@ export default function Calendar() {
     const monthsRef = useRef<HTMLDivElement>(null);
     const yearsRef = useRef<HTMLDivElement>(null);
     const sliderRef = useRef<HTMLDivElement>(null);
-
     const isAnimatingRef = useRef(false);
 
     const yearsList = useMemo(() => {
@@ -51,13 +50,15 @@ export default function Calendar() {
 
         return Array.from(set).sort((a, b) => a - b);
     }, [habits, h, id]);
+
     useEffect(() => {
         if (chosenDay === todayStrFunc()) {
-            const date = new Date(chosenDay)
-            setSelectedMonth(date.getMonth())
-            setSelectedYear(date.getFullYear())
+            const date = new Date(chosenDay);
+            setSelectedMonth(date.getMonth());
+            setSelectedYear(date.getFullYear());
         }
-    }, [chosenDay, setSelectedMonth, setSelectedYear])
+    }, [chosenDay, setSelectedMonth, setSelectedYear]);
+
     const slidesData = useMemo(() => {
         if (selectedMonth === null || selectedYear === null) return null;
 
@@ -101,31 +102,10 @@ export default function Calendar() {
     }, [showList.months, showList.years]);
 
     useEffect(() => {
-        const el = sliderRef.current;
-        if (!el) return;
-
-        requestAnimationFrame(() => {
-            el.scrollTo({ left: el.clientWidth, behavior: "auto" });
-        });
-    }, [selectedMonth, selectedYear]);
-
-    useEffect(() => {
         const today = new Date();
         setSelectedMonth(today.getMonth());
         setSelectedYear(today.getFullYear());
     }, [setSelectedMonth, setSelectedYear]);
-
-    const slideTo = (direction: "prev" | "next") => {
-        const el = sliderRef.current;
-        if (!el) return;
-
-        const width = el.clientWidth;
-
-        el.scrollTo({
-            left: direction === "next" ? width * 2 : 0,
-            behavior: "smooth"
-        });
-    };
 
     const goToPrevMonth = useCallback(() => {
         if (selectedMonth === 0) {
@@ -149,6 +129,19 @@ export default function Calendar() {
         const el = sliderRef.current;
         if (!el) return;
 
+        isAnimatingRef.current = true;
+        requestAnimationFrame(() => {
+            el.scrollTo({ left: el.clientWidth, behavior: "auto" });
+            requestAnimationFrame(() => {
+                isAnimatingRef.current = false;
+            });
+        });
+    }, [selectedMonth, selectedYear]);
+
+    useEffect(() => {
+        const el = sliderRef.current;
+        if (!el) return;
+
         let timeout: number;
 
         const handleScroll = () => {
@@ -157,46 +150,51 @@ export default function Calendar() {
             clearTimeout(timeout);
 
             timeout = window.setTimeout(() => {
+                if (isAnimatingRef.current) return;
+
                 const width = el.clientWidth;
+                if (width === 0) return;
+
                 const index = Math.round(el.scrollLeft / width);
 
                 if (index === 0) {
                     isAnimatingRef.current = true;
                     goToPrevMonth();
-                }
-
-                if (index === 2) {
+                } else if (index === 2) {
                     isAnimatingRef.current = true;
                     goToNextMonth();
                 }
-            }, 80);
+            }, 50);
         };
 
-        el.addEventListener("scroll", handleScroll);
+        el.addEventListener("scroll", handleScroll, { passive: true });
 
         return () => {
+            clearTimeout(timeout);
             el.removeEventListener("scroll", handleScroll);
         };
     }, [goToPrevMonth, goToNextMonth]);
 
-    // сбрасываем флаг после смены
-    useEffect(() => {
-        isAnimatingRef.current = false;
-    }, [selectedMonth, selectedYear]);
+    const slideTo = (direction: "prev" | "next") => {
+        const el = sliderRef.current;
+        if (!el || isAnimatingRef.current) return;
+
+        const width = el.clientWidth;
+        isAnimatingRef.current = true;
+
+        el.scrollTo({
+            left: direction === "next" ? width * 2 : 0,
+            behavior: "smooth"
+        });
+    };
 
     if (!slidesData) return null;
 
     return (
-        <div 
-            className={`calendarDiv ${isMobile ? "mobile" : ""}`}
-            onTouchStart={(e) => e.stopPropagation()}
-            onTouchMove={(e) => e.stopPropagation()}
-            onTouchEnd={(e) => e.stopPropagation()}
-        >
+        <div className={`calendarDiv ${isMobile ? "mobile" : ""}`}>
             <div className="calendarMain" ref={calendarRef}>
-
                 <div className="DateChanger">
-                    <div className="setMonthButt left" onClick={() => slideTo('prev')}>
+                    <div className="setMonthButt left" onClick={() => slideTo("prev")}>
                         <CaretLeft />
                     </div>
 
@@ -206,10 +204,12 @@ export default function Calendar() {
                             onClick={() => setShowList({ months: !showList.months, years: false })}
                         >
                             {MONTHS[selectedMonth]}
-                            <ChevronDown style={{
-                                transform: `rotate(${showList.months ? "180deg" : "0deg"})`,
-                                transition: "transform 0.2s"
-                            }} />
+                            <ChevronDown
+                                style={{
+                                    transform: `rotate(${showList.months ? "180deg" : "0deg"})`,
+                                    transition: "transform 0.2s"
+                                }}
+                            />
                         </div>
 
                         <div className={`monthsList ${showList.months ? "active" : ""}`}>
@@ -231,10 +231,12 @@ export default function Calendar() {
                             onClick={() => setShowList({ months: false, years: !showList.years })}
                         >
                             {selectedYear}
-                            <ChevronDown style={{
-                                transform: `rotate(${showList.years ? "180deg" : "0deg"})`,
-                                transition: "transform 0.2s"
-                            }} />
+                            <ChevronDown
+                                style={{
+                                    transform: `rotate(${showList.years ? "180deg" : "0deg"})`,
+                                    transition: "transform 0.2s"
+                                }}
+                            />
                         </div>
 
                         <div className={`yearsList ${showList.years ? "active" : ""}`}>
@@ -250,25 +252,32 @@ export default function Calendar() {
                         </div>
                     </div>
 
-                    <div className="setMonthButt right" onClick={() => slideTo('next')}>
+                    <div className="setMonthButt right" onClick={() => slideTo("next")}>
                         <CaretRight />
                     </div>
                 </div>
 
                 <div className="weekPattern">
                     {DAY_WEEK.map((day) => (
-                        <div className="weekDays" key={day.value}>{day.label}</div>
+                        <div className="weekDays" key={day.value}>
+                            {day.label}
+                        </div>
                     ))}
                 </div>
 
-                <div ref={sliderRef} className="calendarSlider">
+                <div
+                    ref={sliderRef}
+                    className="calendarSlider"
+                    onTouchStart={(e) => e.stopPropagation()}
+                    onTouchMove={(e) => e.stopPropagation()}
+                    onTouchEnd={(e) => e.stopPropagation()}
+                >
                     <div className="calendarSlidesWrapper">
                         <CalendarSlide slide={slidesData.prev} />
                         <CalendarSlide slide={slidesData.current} />
                         <CalendarSlide slide={slidesData.next} />
                     </div>
                 </div>
-
             </div>
         </div>
     );

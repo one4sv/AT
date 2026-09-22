@@ -1,6 +1,17 @@
 import { useUser } from "../../hooks/UserHook"
 import { CircleUserRound, Megaphone } from "lucide-react"
-import { CalendarCheckIcon, ChatTeardropIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, PlusIcon, SignOutIcon, SortAscendingIcon, UserIcon, CheckIcon } from "@phosphor-icons/react"
+import {
+    CalendarCheckIcon,
+    ChatTeardropIcon,
+    GearIcon,
+    NewspaperIcon,
+    SneakerMoveIcon,
+    PlusIcon,
+    SignOutIcon,
+    SortAscendingIcon,
+    UserIcon,
+    CheckIcon,
+} from "@phosphor-icons/react"
 import { useSideMenu } from "../../hooks/SideMenuHook"
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -27,7 +38,11 @@ export default function SMnav() {
         setDontHandle,
         setDontHandleOther,
         translateX,
-        showSideMenu
+        setTranslateX,
+        setIsDragging,
+        showSideMenu,
+        closeMenu,
+        toggleMenu,
     } = useSideMenu()
     const { setBlackout } = useBlackout()
     const { list } = useContacts()
@@ -37,11 +52,15 @@ export default function SMnav() {
 
     const navigate = useNavigate()
 
-    const [ extraMenu, setExtraMenu ] = useState<tab>()
-    const [ isExtraOpen, setIsExtraOpen ] = useState(false)
-    const [ confirmLogout, setConfirmLogout ] = useState(false)
-    const [ chatsFilters, setMessagesFilters ] = useState<{ label: string; value: string; new: string }[]>([])
-    const [ habitsFilters, setHabitsFilters ] = useState<{ label: string; value: string; new: string }[]>([])
+    const [extraMenu, setExtraMenu] = useState<tab>()
+    const [isExtraOpen, setIsExtraOpen] = useState(false)
+    const [confirmLogout, setConfirmLogout] = useState(false)
+    const [chatsFilters, setMessagesFilters] = useState<
+        { label: string; value: string; new: string }[]
+    >([])
+    const [habitsFilters, setHabitsFilters] = useState<
+        { label: string; value: string; new: string }[]
+    >([])
 
     const timerRef = useRef<number | null>(null)
     const longPressTriggered = useRef(false)
@@ -52,7 +71,15 @@ export default function SMnav() {
     const filtersRef = useRef<HTMLDivElement>(null)
     const touchHoverRef = useRef<HTMLElement | null>(null)
 
-    const newLength = list.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
+    // === Свайп меню до long-press ===
+    const swipeStartX = useRef(0)
+    const swipeStartY = useRef(0)
+    const swipeStartTranslate = useRef(0)
+    const gesture = useRef<"none" | "menu" | "scroll" | "longpress">("none")
+
+    const newLength = list.filter(
+        (c) => c.unread_count > 0 && !c.is_blocked && c.note
+    ).length
 
     useEffect(() => {
         const filters: { label: string; value: string; new: string }[] = []
@@ -138,7 +165,11 @@ export default function SMnav() {
             if (isPointerDown.current || wasLongPress.current) return
 
             const target = event.target as Node
-            if (filtersRef.current?.contains(target) || tabsRef.current?.contains(target)) return
+            if (
+                filtersRef.current?.contains(target) ||
+                tabsRef.current?.contains(target)
+            )
+                return
             setIsExtraOpen(false)
         }
 
@@ -155,16 +186,23 @@ export default function SMnav() {
         isPointerDown.current = true
         longPressTriggered.current = false
         wasLongPress.current = false
+        gesture.current = "none"
 
         if (timerRef.current) clearTimeout(timerRef.current)
 
         if (clientX !== undefined && clientY !== undefined) {
             touchStartPos.current = { x: clientX, y: clientY }
+            swipeStartX.current = clientX
+            swipeStartY.current = clientY
+            swipeStartTranslate.current = translateX
         }
 
         timerRef.current = window.setTimeout(() => {
+            // Long-press сработал — свайп меню больше не трогаем
             longPressTriggered.current = true
             wasLongPress.current = true
+            gesture.current = "longpress"
+            setDontHandle(true)
             setExtraMenu(tab)
             setIsExtraOpen(true)
         }, 350)
@@ -181,12 +219,106 @@ export default function SMnav() {
         setDontHandleOther(false)
     }
 
+    // === Touch handlers для свайпа + long-press ===
+    const handleNavTouchStart = (tab: tab, e: React.TouchEvent) => {
+        const touch = e.touches[0]
+        startLongPress(tab, touch.clientX, touch.clientY)
+    }
+
+    const handleNavTouchMove = (e: React.TouchEvent) => {
+        const touch = e.touches[0]
+
+        // Уже long-press — только hover по extra/filter
+        if (longPressTriggered.current || gesture.current === "longpress") {
+            const element = document.elementFromPoint(touch.clientX, touch.clientY)
+
+            const extraButton = element?.closest(
+                ".SMextraMenuButt"
+            ) as HTMLElement | null
+            const filter = element?.closest(".filterItem") as HTMLElement | null
+            const nav = element?.closest(".SMnavButt") as HTMLElement | null
+
+            if (extraButton) {
+                setTouchHover(extraButton)
+                return
+            }
+            if (filter) {
+                setTouchHover(filter)
+                return
+            }
+            if (nav) {
+                const tab = nav.dataset.tab as tab | undefined
+                if (tab) setExtraMenu(tab)
+                setTouchHover(nav)
+                return
+            }
+            setTouchHover(null)
+            return
+        }
+
+        const dx = touch.clientX - swipeStartX.current
+        const dy = touch.clientY - swipeStartY.current
+        const absX = Math.abs(dx)
+        const absY = Math.abs(dy)
+
+        // Ещё не решили тип жеста
+        if (gesture.current === "none") {
+            if (absX < 10 && absY < 10) return
+
+            if (absY > absX) {
+                // Вертикаль → отменяем long-press, скролл
+                gesture.current = "scroll"
+                cancelLongPress()
+                setTouchHover(null)
+                return
+            }
+
+            // Горизонталь → свайп меню, long-press отменяем
+            gesture.current = "menu"
+            cancelLongPress()
+            setIsDragging(true)
+            setDontHandle(false)
+            setDontHandleOther(true)
+        }
+
+        if (gesture.current !== "menu") return
+
+        // Тянем меню
+        const diffPercent = (dx / window.innerWidth) * 100
+        let next = swipeStartTranslate.current + diffPercent
+        next = Math.max(-100, Math.min(0, next))
+        setTranslateX(next)
+    }
+
+    const handleNavTouchEnd = () => {
+        if (gesture.current === "menu") {
+            setIsDragging(false)
+            // Доводим до края
+            const target = translateX < -40 ? -100 : 0
+            if (target === -100) {
+                closeMenu()
+            } else {
+                // можно вызвать openSideMenu или toggleMenu
+                toggleMenu()
+            }
+        }
+
+        // Сброс
+        if (!wasLongPress.current) {
+            cancelLongPress()
+        }
+        gesture.current = "none"
+        isPointerDown.current = false
+    }
+
+    // Глобальный pointer up (для long-press выбора) — оставляем как был
     const handlePointerUp = (e: MouseEvent | TouchEvent) => {
         const wasLongPressNow = wasLongPress.current
 
         isPointerDown.current = false
 
         if (!wasLongPressNow) {
+            // Если это был свайп — уже обработали в handleNavTouchEnd
             cancelLongPress()
             wasLongPress.current = false
             return
@@ -197,7 +329,6 @@ export default function SMnav() {
 
         if ("changedTouches" in e) {
             const touch = e.changedTouches[0]
-
             if (!touch) {
                 setTouchHover(null)
                 setIsExtraOpen(false)
@@ -205,7 +336,6 @@ export default function SMnav() {
                 wasLongPress.current = false
                 return
             }
-
             clientX = touch.clientX
             clientY = touch.clientY
         } else {
@@ -218,18 +348,11 @@ export default function SMnav() {
         const extraTarget = element?.closest(
             ".SMextraMenuButt"
         ) as HTMLElement | null
-
-        const filterTarget = element?.closest(
-            ".filterItem"
-        ) as HTMLElement | null
-
-        const navTarget = element?.closest(
-            ".SMnavButt"
-        ) as HTMLElement | null
+        const filterTarget = element?.closest(".filterItem") as HTMLElement | null
+        const navTarget = element?.closest(".SMnavButt") as HTMLElement | null
 
         if (extraTarget) {
             const action = extraTarget.dataset.action
-
             if (action === "create-chat") {
                 setBlackout({ seted: true, module: "CreateChat" })
             }
@@ -240,15 +363,19 @@ export default function SMnav() {
                 showNotification("info", "В разработке")
             }
             if (action === "posts") {
+                closeMenu()
                 navigate("/")
-            }            
+            }
             if (action === "habits") {
+                closeMenu()
                 navigate("/habit")
-            }            
+            }
             if (action === "profile") {
+                closeMenu()
                 navigate(`/acc/${user.nick}`)
             }
             if (action === "settings") {
+                closeMenu()
                 navigate(`/settings`)
             }
             if (action === "logout") {
@@ -258,15 +385,13 @@ export default function SMnav() {
                     cancelLongPress()
                     wasLongPress.current = false
                     return
-                }
-                else logOut()
+                } else logOut()
             }
 
             setTouchHover(null)
             setIsExtraOpen(false)
             cancelLongPress()
             wasLongPress.current = false
-
             return
         }
 
@@ -278,7 +403,6 @@ export default function SMnav() {
                 setMessageSelectedValue(value)
                 setActiveTab("chats")
             }
-
             if (value && type === "habits") {
                 setHabitsSelectedValue(value)
                 setActiveTab("habits")
@@ -288,23 +412,19 @@ export default function SMnav() {
             setIsExtraOpen(false)
             cancelLongPress()
             wasLongPress.current = false
-
             return
         }
 
         if (navTarget) {
             const tab = navTarget.dataset.tab as tab | undefined
-
             if (tab) {
                 setActiveTab(tab)
                 setExtraMenu(tab)
             }
-
             setTouchHover(null)
             setIsExtraOpen(false)
             cancelLongPress()
             wasLongPress.current = false
-
             return
         }
 
@@ -326,63 +446,6 @@ export default function SMnav() {
         }
     }, [])
 
-    const handleTouchMove = (e: React.TouchEvent) => {
-        const touch = e.touches[0]
-
-        if (!longPressTriggered.current && touchStartPos.current) {
-            const dx = Math.abs(touch.clientX - touchStartPos.current.x)
-            const dy = Math.abs(touch.clientY - touchStartPos.current.y)
-
-            if (dx > 12 || dy > 12) {
-                cancelLongPress()
-                setTouchHover(null)
-                return
-            }
-        }
-
-        if (!longPressTriggered.current) return
-
-        const element = document.elementFromPoint(
-            touch.clientX,
-            touch.clientY
-        )
-
-        const extraButton = element?.closest(
-            ".SMextraMenuButt"
-        ) as HTMLElement | null
-
-        const filter = element?.closest(
-            ".filterItem"
-        ) as HTMLElement | null
-
-        const nav = element?.closest(
-            ".SMnavButt"
-        ) as HTMLElement | null
-
-        if (extraButton) {
-            setTouchHover(extraButton)
-            return
-        }
-
-        if (filter) {
-            setTouchHover(filter)
-            return
-        }
-
-        if (nav) {
-            const tab = nav.dataset.tab as tab | undefined
-
-            if (tab) {
-                setExtraMenu(tab)
-            }
-
-            setTouchHover(nav)
-            return
-        }
-
-        setTouchHover(null)
-    }
-
     const handleNavEnter = (tab: tab) => {
         if (longPressTriggered.current) {
             setExtraMenu(tab)
@@ -396,18 +459,14 @@ export default function SMnav() {
             setActiveTab(tab)
         } else {
             setExtraMenu(tab)
-            setIsExtraOpen(prev => !prev)
+            setIsExtraOpen((prev) => !prev)
         }
     }
+
     const setTouchHover = (element: HTMLElement | null) => {
         if (touchHoverRef.current === element) return
-
         touchHoverRef.current?.classList.remove("touchHover")
-
-        if (element) {
-            element.classList.add("touchHover")
-        }
-
+        if (element) element.classList.add("touchHover")
         touchHoverRef.current = element
     }
 
@@ -546,10 +605,16 @@ export default function SMnav() {
     if (!user.id) return null
 
     return (
-        <div className={`SMnavDiv ${showSideMenu ? "open" : ""}`}
+        <div
+            className={`SMnavDiv ${showSideMenu ? "open" : ""}`}
             style={{
-                transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none",
+                transform:
+                    isMobile || layout === "hidden"
+                        ? `translateX(${translateX}%)`
+                        : "none",
             }}
+            onTouchEnd={handleNavTouchEnd}
+            onTouchCancel={handleNavTouchEnd}
         >
             <div className={`SMnavExtraDiv ${isExtraOpen ? "open" : ""} ${extraMenu || ""}`} ref={filtersRef}>
                 {extraButts()}
@@ -600,11 +665,8 @@ export default function SMnav() {
                     onMouseUp={() => navFunc("chats")}
                     onMouseEnter={() => handleNavEnter("chats")}
                     key={messageSelected.value}
-                    onTouchStart={(e) => {
-                        const touch = e.touches[0]
-                        startLongPress("chats", touch.clientX, touch.clientY)
-                    }}
-                    onTouchMove={handleTouchMove}
+                    onTouchStart={(e) => handleNavTouchStart("chats", e)}
+                    onTouchMove={handleNavTouchMove}
                 >
                     <ChatTeardropIcon weight="fill" />
                     <span>{messageSelected.label}</span>
@@ -618,11 +680,8 @@ export default function SMnav() {
                     onMouseUp={() => navFunc("habits")}
                     onMouseEnter={() => handleNavEnter("habits")}
                     key={habitsSelected.value}
-                    onTouchStart={(e) => {
-                        const touch = e.touches[0]
-                        startLongPress("habits", touch.clientX, touch.clientY)
-                    }}
-                    onTouchMove={handleTouchMove}
+                    onTouchStart={(e) => handleNavTouchStart("habits", e)}
+                    onTouchMove={handleNavTouchMove}
                 >
                     <CalendarCheckIcon weight="fill" />
                     <span>{habitsSelected.label}</span>
@@ -635,11 +694,8 @@ export default function SMnav() {
                     onMouseDown={() => startLongPress("spots")}
                     onMouseUp={() => navFunc("spots")}
                     onMouseEnter={() => handleNavEnter("spots")}
-                    onTouchStart={(e) => {
-                        const touch = e.touches[0]
-                        startLongPress("spots", touch.clientX, touch.clientY)
-                    }}
-                    onTouchMove={handleTouchMove}
+                    onTouchStart={(e) => handleNavTouchStart("spots", e)}
+                    onTouchMove={handleNavTouchMove}
                 >
                     <Megaphone fill="currentColor" />
                     <span>Споты</span>
@@ -652,11 +708,8 @@ export default function SMnav() {
                     onMouseDown={() => startLongPress("user")}
                     onMouseUp={() => navFunc("user")}
                     onMouseEnter={() => handleNavEnter("user")}
-                    onTouchStart={(e) => {
-                        const touch = e.touches[0]
-                        startLongPress("user", touch.clientX, touch.clientY)
-                    }}
-                    onTouchMove={handleTouchMove}
+                    onTouchStart={(e) => handleNavTouchStart("user", e)}
+                    onTouchMove={handleNavTouchMove}
                 >
                     {user?.avatar_url ? (
                         <img

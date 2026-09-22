@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-
 import { useSideMenu } from "../../../components/hooks/SideMenuHook";
 
 export interface SeekBarInterface {
@@ -9,7 +8,7 @@ export interface SeekBarInterface {
     unit?: string;
     step?: number;
     onChange?: (value: number) => void;
-    disabled:boolean
+    disabled: boolean;
 }
 
 export default function SeekBar({
@@ -19,9 +18,8 @@ export default function SeekBar({
     unit,
     step = 1,
     onChange,
-    disabled
+    disabled,
 }: SeekBarInterface) {
-
     const { setDontHandle, dontHandleOther } = useSideMenu();
 
     const lineRef = useRef<HTMLDivElement>(null);
@@ -36,12 +34,10 @@ export default function SeekBar({
         if (!lineRef.current) return null;
 
         const rect = lineRef.current.getBoundingClientRect();
-
         let p = (clientX - rect.left) / rect.width;
         p = Math.max(0, Math.min(1, p));
 
         let newValue = min + p * (max - min);
-
         newValue = Math.round(newValue / step) * step;
         newValue = Math.max(min, Math.min(max, newValue));
 
@@ -53,40 +49,42 @@ export default function SeekBar({
 
     const updateValue = (clientX: number) => {
         const data = getValue(clientX);
-
         if (!data) return;
-
         onChange?.(data.value);
     };
 
+    // === Pointer ===
     const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-        if (dontHandleOther) return;
+        if (dontHandleOther || disabled) return;
 
+        e.stopPropagation();          // важно
         setDontHandle(true);
         setDragging(true);
-
         e.currentTarget.setPointerCapture(e.pointerId);
-
         updateValue(e.clientX);
     };
 
     const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (dontHandleOther || disabled) return;
+
         if (dragging) {
+            e.stopPropagation();
             updateValue(e.clientX);
             return;
         }
 
         if (e.pointerType === "mouse") {
             const data = getValue(e.clientX);
-
             if (!data) return;
-
             setHoverValue(data.value);
             setHoverPercent(data.percent);
         }
     };
 
     const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (dontHandleOther) return;
+
+        e.stopPropagation();
         setDragging(false);
         setDontHandle(false);
 
@@ -95,9 +93,31 @@ export default function SeekBar({
         }
     };
 
-    const handlePointerCancel = () => {
+    const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (dontHandleOther) return;
+        e.stopPropagation();
         setDragging(false);
         setDontHandle(false);
+    };
+
+    // === Touch (критично для мобильного меню) ===
+    const handleTouchStart = (e: React.TouchEvent) => {
+        if (dontHandleOther || disabled) return;
+
+        e.stopPropagation();          // блокируем touchstart у page-content
+        setDontHandle(true);
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (dontHandleOther || disabled) return;
+        e.stopPropagation();
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        if (dontHandleOther) return;
+        e.stopPropagation();
+        setDontHandle(false);
+        setDragging(false);
     };
 
     return (
@@ -106,15 +126,19 @@ export default function SeekBar({
                 className="seekBarLine"
                 ref={lineRef}
                 onContextMenu={(e) => e.preventDefault()}
+                // Pointer
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
                 onPointerCancel={handlePointerCancel}
                 onPointerLeave={() => {
-                    if (!dragging) {
-                        setHoverValue(null);
-                    }
+                    if (!dragging) setHoverValue(null);
                 }}
+                // Touch — чтобы меню не открывалось
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                onTouchCancel={handleTouchEnd}
             >
                 {hoverValue !== null && (
                     <div
@@ -126,10 +150,7 @@ export default function SeekBar({
                     </div>
                 )}
 
-                <div
-                    className="seekBarFill"
-                    style={{ width: `${percent}%` }}
-                />
+                <div className="seekBarFill" style={{ width: `${percent}%` }} />
 
                 <div
                     className={`seekBarDot ${dragging ? "dragging" : ""}`}
@@ -138,24 +159,13 @@ export default function SeekBar({
 
                 <div
                     className="seekBarCurrent"
-                    style={{ left: `${percent}%`, opacity:dragging ? "1" : "0" }}
+                    style={{ left: `${percent}%`, opacity: dragging ? "1" : "0" }}
+                    onPointerDown={handlePointerDown}
                 >
                     {value}
                     {unit}
                 </div>
             </div>
-
-            {/* <div className="seekBarBottom">
-                <span className={value === min ? "currentValue" : ""}>
-                    {min}
-                    {unit}
-                </span>
-
-                <span className={value === max ? "currentValue" : ""}>
-                    {max}
-                    {unit}
-                </span>
-            </div> */}
         </div>
     );
 }

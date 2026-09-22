@@ -16,7 +16,7 @@ export default function Selector<T extends string | number>({
     arr: selectorArr<T>[],
     selected: T
 }) {
-    const { setDontHandle } = useSideMenu()
+    const { setDontHandle, dontHandleOther } = useSideMenu()
 
     const selectorRef = useRef<HTMLDivElement | null>(null)
     const timerRef = useRef<number | null>(null)
@@ -29,7 +29,7 @@ export default function Selector<T extends string | number>({
     const [indicator, setIndicator] = useState(0)
 
     const setSelectedPosition = useCallback(() => {
-        if (dragging.current) return; 
+        if (dragging.current) return
 
         const selector = selectorRef.current
         if (!selector) return
@@ -46,6 +46,7 @@ export default function Selector<T extends string | number>({
     }, [setSelectedPosition])
 
     const changeByPosition = (x: number) => {
+        if (dontHandleOther) return
         const selector = selectorRef.current
         if (!selector) return
 
@@ -60,7 +61,6 @@ export default function Selector<T extends string | number>({
         setIndicator(position)
 
         let index = Math.floor((x - rect.left) / itemWidth)
-        
         index = Math.max(0, Math.min(index, arr.length - 1))
 
         if (arr[index] && arr[index].value !== selected) {
@@ -69,6 +69,8 @@ export default function Selector<T extends string | number>({
     }
 
     const startLongPress = (x: number) => {
+        if (dontHandleOther) return
+
         longPress.current = false
         dragging.current = false
 
@@ -76,34 +78,39 @@ export default function Selector<T extends string | number>({
             clearTimeout(timerRef.current)
         }
 
+        // Сразу блокируем меню (ещё до long-press)
+        setDontHandle(true)
+
         timerRef.current = window.setTimeout(() => {
             longPress.current = true
             dragging.current = true
-
-            setDontHandle(true)
             changeByPosition(x)
         }, 350)
     }
 
     const move = (x: number) => {
+        if (dontHandleOther) return
         if (!dragging.current) return
         changeByPosition(x)
     }
 
     const end = () => {
+        if (dontHandleOther) return
+
         if (timerRef.current) {
             clearTimeout(timerRef.current)
             timerRef.current = null
         }
 
         longPress.current = false
-        
+
         if (dragging.current) {
             dragging.current = false
-            setDontHandle(false)
-            
-            setSelectedPosition() 
+            setSelectedPosition()
         }
+
+        // Всегда снимаем блокировку
+        setDontHandle(false)
     }
 
     return (
@@ -113,9 +120,19 @@ export default function Selector<T extends string | number>({
             onMouseMove={(e) => move(e.clientX)}
             onMouseUp={end}
             onMouseLeave={end}
-            onTouchMove={(e) => move(e.touches[0].clientX)}
-            onTouchEnd={end}
-            onTouchCancel={end}
+            onTouchMove={(e) => {
+                if (dontHandleOther) return
+                e.stopPropagation()          // ← важно
+                move(e.touches[0].clientX)
+            }}
+            onTouchEnd={(e) => {
+                e.stopPropagation()
+                end()
+            }}
+            onTouchCancel={(e) => {
+                e.stopPropagation()
+                end()
+            }}
         >
             <div
                 className="selectedItem"
@@ -130,17 +147,24 @@ export default function Selector<T extends string | number>({
                     className="selectorElement"
                     style={{ width: `${width}%` }}
                     key={n}
-                    onMouseDown={(e) => startLongPress(e.clientX)}
+                    onMouseDown={(e) => {
+                        e.stopPropagation()
+                        startLongPress(e.clientX)
+                    }}
                     onMouseUp={() => {
                         if (!longPress.current) {
                             i.func(i.value)
                         }
                     }}
                     onTouchStart={(e) => {
+                        if (dontHandleOther) return
+                        e.stopPropagation()      // ← критично: не даём событию уйти в MobileLayout
                         const touch = e.touches[0]
                         startLongPress(touch.clientX)
                     }}
-                    onTouchEnd={() => {
+                    onTouchEnd={(e) => {
+                        if (dontHandleOther) return
+                        e.stopPropagation()
                         if (!longPress.current) {
                             i.func(i.value)
                         }

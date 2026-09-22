@@ -53,7 +53,7 @@ export default function ChatUser({
     const { setDeleteConfirm, setDeleteMess } = useDelete()
     const { setChosenMess, chosenMess, setIsChose, isChose, setRedirect } = useMessages()
     const { setBlackout } = useBlackout()
-    const { toggleMenu } = useSideMenu()
+    const { openSideMenu } = useSideMenu()
     const { layout } = useSettings()
 
     const navigate = useNavigate();
@@ -170,7 +170,7 @@ export default function ChatUser({
                 <div className="menuShowButt"
                     onMouseDown={(e) => e.stopPropagation()}
                     onTouchStart={(e) => e.stopPropagation()}
-                    onClick={() => toggleMenu()}
+                    onClick={() => openSideMenu()}
                 >
                     <List />
                 </div>

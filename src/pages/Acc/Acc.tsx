@@ -96,13 +96,20 @@ export default function Acc() {
         if (e.deltaY < 0 && scrollTop === 0) setCollapsed(0);
     };
 
-    const handleScroll = () => {
+    const handleScroll = (e:React.UIEvent) => {
+        e.preventDefault()
         if (!line.current || !contentRef.current) return;
+
         const elScroll = contentRef.current.scrollLeft;
         const elWidth = contentRef.current.clientWidth;
         const proc = (elScroll / elWidth) * 100;
+
         line.current.style.transform = `translateX(${proc}%)`;
-        if (proc > 0) setDontHandle(true);
+
+        if (proc > 0) {
+            setDontHandle(true);
+        }
+
         if (proc > 150) setSelector("posts");
         else if (proc > 50) setSelector("habits");
         else setSelector("sended");
@@ -124,6 +131,8 @@ export default function Acc() {
     };
 
     const touchSliderMove = () => {
+        if (dontHandleOther) return;
+
         if (collapsed === 1) return;
     };
 
@@ -138,7 +147,6 @@ export default function Acc() {
         if (!expanded.current) {
             if (Math.abs(deltaY) <= 5 && Math.abs(deltaX) <= 5) return;
 
-            // Определяем направление после порога 5px
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
                 isHorizontal.current = true;
             }
@@ -148,13 +156,10 @@ export default function Acc() {
             return;
         }
 
-        // Если уже определили горизонтальный свайп — коллапс не трогаем
         if (isHorizontal.current) return;
 
         const scrollTop = getActiveSlideScrollTop();
 
-        // Ключевое изменение: разрешаем управлять collapsed,
-        // если мы наверху ИЛИ уже в процессе жеста сворачивания/разворачивания
         const atTop = scrollTop <= 2; // небольшой допуск под iOS bounce
         if (!atTop && !isCollapsingGesture.current) return;
 
@@ -164,15 +169,12 @@ export default function Acc() {
         }
 
         setCollapsed(prev => {
-            // Свайп вверх → сворачиваем
             if (deltaY > 0) {
                 canExpand.current = false;
                 const next = prev + deltaY * 0.012;
                 return Math.max(0, Math.min(1, next));
             }
 
-            // Свайп вниз → разворачиваем
-            // Разрешаем всегда, если collapsed > 0 и мы в жесте
             if (deltaY < 0 && (canExpand.current || prev > 0)) {
                 const next = prev + deltaY * 0.012;
                 return Math.max(0, Math.min(1, next));
@@ -181,7 +183,6 @@ export default function Acc() {
             return prev;
         });
 
-        // Блокируем нативный скролл, пока идёт жест
         if (isCollapsingGesture.current && e.cancelable) {
             e.preventDefault();
         }
@@ -199,7 +200,6 @@ export default function Acc() {
         if (collapsed === 0) {
             setCollapsed(1);
         }
-        // если уже collapsed — клик просто проходит дальше
     };
 
     const handleSelectorClick = (i: number) => {
@@ -256,11 +256,10 @@ export default function Acc() {
                 <div
                     className="accContent"
                     ref={contentRef}
-                    onScroll={() => handleScroll()}
-                    onTouchStart={() => touchSliderStart()}
-                    onTouchMove={() => touchSliderMove()}
+                    onScroll={(e) => handleScroll(e)}
+                    onTouchStart={touchSliderStart}
+                    onTouchMove={touchSliderMove}
                     onScrollEnd={() => setDontHandle(false)}
-                    style={{ overflowX: `${dontHandleOther ? "hidden" : "scroll"}` }}
                 >
                     <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined}>
                         <div

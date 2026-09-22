@@ -20,18 +20,16 @@
     transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
         background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
         margin 0.35s cubic-bezier(.4,0,.2,1);
-}
-@media (max-width:800px) {
-    .StatsDivMain {
-        padding: 1vh 2vw;
-        padding-bottom: 2vh;
+    @media (max-width:800px) {
+        padding: 1vh 2vw 7vh;
     }
 }
+
 .sdmwm {
     margin-top: 5vh;
     @media (max-width:800px) {
         margin-top: 5.5vh;
-        margin-bottom: 0;
+        padding-bottom: 1vh;
     }
 }
 .StatsDivHabit {

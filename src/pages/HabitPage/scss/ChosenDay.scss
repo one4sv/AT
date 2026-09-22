@@ -2,7 +2,7 @@
 
 .chosenDayDiv {
     background-color: var(--mc);
-    border-radius: 8px;
+    border-radius: 24px;
     display: flex;
     flex-direction: column;
     width: 19.5vw;
@@ -16,12 +16,11 @@
     overflow-x: hidden;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-}
-@media (max-width:800px) {
-    .chosenDayDiv {
+    @media (max-width:800px) {
         min-height: 0;
         height: fit-content;
         width: 100%;
+        padding: 0.5vh 2vw;
     }
 }
 .chosenDayDate {
@@ -82,21 +81,20 @@
     position: relative;
     @media (hover: hover) {
         &:hover {
-        .cdHabitInfo {
-        background-color: var(--menuButtHover);
-        }
-    
+            .cdHabitInfo {
+                background-color: var(--menuButtHover);
+            }
         }
     }
-
     @media (hover: none) {
         &:active {
-        .cdHabitInfo {
-        background-color: var(--menuButtHover);
+            .cdHabitInfo {
+                background-color: var(--menuButtHover);
+            }
         }
-    
-        
-        }
+    }
+    @media (max-width: 800px) {
+        height: 5vh;
     }
 }
 .cdHabitInfo {
@@ -104,12 +102,12 @@
     align-items: center;
     gap: 0.5vw;
     width: 100%;
-    border-radius: 8px;
+    border-radius: 24px;
     justify-content: space-between;
     padding:0 0.5vw;
     cursor: pointer;
     @media (max-width: 800px) {
-        padding: 0 1.5vw;
+        padding: 0 2vw;
     }
 }
 .cdHabitName {
@@ -146,5 +144,9 @@
         cursor: pointer;
         pointer-events: all;
         color: var(--borderWh);
+        @media (max-width: 800px) {
+            height: 60%;
+            width: 60%;
+        }
     }
 }
