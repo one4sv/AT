@@ -2,7 +2,7 @@
 
 .MainDiv {
     width: 60%;
-    height: 95dvh;
+    height: 100vh;
     position: relative;
     margin: 0 auto;
     display: flex;
@@ -11,7 +11,6 @@
     
     @media (max-width:800px) {
         width: 100%;
-        height: 95dvh;
     }
 }
 .postFeed {
@@ -22,7 +21,7 @@
     width: 70%;
     gap: 0.8vh;
     scrollbar-width: thin;
-    padding: 1vh 0;
+    padding: 7vh 0 0;
     overflow-y: auto;
     @media (max-width: 800px) {
         width: 95%;
@@ -95,16 +94,13 @@
         color: var(--borderWh);
         @media (hover: hover) {
             &:hover {
-            color: var(--tc);
-        
+                color: var(--tc);
             }
         }
 
         @media (hover: none) {
             &:active {
-            color: var(--tc);
-        
-            
+                color: var(--tc);
             }
         }
     }

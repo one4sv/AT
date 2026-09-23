@@ -5,7 +5,7 @@ import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook"
 import { TagIcon } from "../../utils/TagIcon"
 import Streak from "./Streak"
 import { useCalendar } from "../../../../components/hooks/CalendarHook"
-import { List } from "@phosphor-icons/react"
+import { TextIndentIcon } from "@phosphor-icons/react"
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook"
 import { isMobile } from "react-device-detect"
 
@@ -29,7 +29,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu, expan
         <div className={`headerDiv ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} style={{transform:`translateY(${-6 * expandProgress}vh)`, transition:pulling ? "none" : "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)"}}>
             {isMobile && (
                 <div className="headerButt" onClick={() => openSideMenu()}>
-                    <List/>
+                    <TextIndentIcon />
                 </div>
             )}
             <div className="header habitNameMain" onClick={() => setShowHabitMenu(!showHabitMenu)}>

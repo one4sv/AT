@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useUser } from "../../components/hooks/UserHook.ts";
 import Loader from "../../components/ts/Loader.tsx";
 import FeedNothing from "./components/FeedNothing.tsx";
-import PostWrite from "./components/PostWrite.tsx";
 import "./scss/Main.scss"
 import type { PostType } from "../../components/context/AccContext.tsx";
 import { api } from "../../components/ts/api.ts";
@@ -69,7 +68,7 @@ export default function Feed() {
                     </>
                 )}
             </div>
-            <PostWrite/>
+            {/* <PostWrite/> */}
         </div>
     );
 }

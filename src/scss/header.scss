@@ -13,10 +13,14 @@
     padding: 1vh 2vw 0;
     gap: 1vw;
     position: fixed;
+    left: 33.5vw;
+    width: 33vw;
     @media (max-width: 800px) {
         left: 0;
         width: 100%;
         margin-bottom: 0;
+        height: 6vh;
+        width: 100%;
         &::before {
             content: "";
             position: absolute;
@@ -38,10 +42,7 @@
                 black 100%
             );
         }
-    }
-    @media (max-width: 800px) {
-        height: 6vh;
-    }
+    }  
 }
 .headerButt {
     position: relative;
