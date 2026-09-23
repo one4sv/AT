@@ -39,14 +39,14 @@
 }
 .settingsButtsWrapper {
     width: 100%;
-    padding: 0 1%;
+    padding: 6vh 1%;
     gap: 1vh;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     scrollbar-width: thin;
     @media (max-width: 800px) {
-        padding-top: 7vh;
+        padding-top: 8vh;
         padding-bottom: 2vh;
     }
 }
@@ -157,7 +157,7 @@
 }
 .settingBackWrapper {
     width: 50%;
-    padding-bottom: 2vh;
+    padding-bottom: 1vh;
     position: absolute;
     bottom: 0;
     display: flex;
@@ -279,10 +279,10 @@
     display: flex;
     flex-direction: column;
     gap: 1vh;
-    padding: 0 1%;
+    padding: 6vh 1%;
     @media (max-width: 800px) {
-        padding-top:7vh;
-        padding-bottom: 11vh;
+        padding-top: 8vh;
+        padding-bottom: 10vh;
     }
 }
 .settingHeader {

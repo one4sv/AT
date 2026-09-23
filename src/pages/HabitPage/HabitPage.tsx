@@ -321,7 +321,7 @@ export default function Habit() {
                 style={{
                     overflow: isExpanded ? "hidden" : "auto",
                     ...(isMobile && habitId ? {
-                        paddingTop: `${6 * (1 - expandProgress) + 1}vh`,
+                        paddingTop: `${6 * (1 - expandProgress) + 2}vh`,
                         transition: pullingState ? "none" : undefined
                     } : {})
                 }}

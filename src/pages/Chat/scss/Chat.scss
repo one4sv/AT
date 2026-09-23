@@ -26,9 +26,10 @@
     margin: 0 auto;
     height: calc(100% - 8vh);
     padding-bottom:10vh;
+    padding-top: 6vh;
     @media (max-width: 800px) {
-        padding-top: 6vh;
         width: 99%;
+        padding-top: 8vh;
         padding-right: 1vw;
         margin: 0 1vw;
         padding-bottom:17vh;
