@@ -1,101 +1,99 @@
 @use "./mixins.scss" as var;
-
-.header {
+.headerDiv {
     position: sticky;
     top: 0;
     left: 0;
     height: 5vh;
     width: 100%;
-    background-color: var(--mc);
     display: flex;
-    z-index: 8;
+    z-index: 6;
     justify-content: start;
     padding: 0.5vw;
     align-items: center;
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
+    padding: 1vh 2vw 0;
+    gap: 1vw;
+    position: fixed;
+    @media (max-width: 800px) {
+        left: 0;
+        width: 100%;
+        margin-bottom: 0;
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            backdrop-filter: blur(var(--backdropTA));
+            -webkit-backdrop-filter: blur(var(--backdropTA));
+            background:linear-gradient(135deg, var(--tr), #0000009a);
+
+            mask-image: linear-gradient(
+                to top,
+                transparent 0%,
+                black 100%
+            );
+            -webkit-mask-image: linear-gradient(
+                to top,
+                transparent 0%,
+                black 100%
+            );
+        }
+    }
     @media (max-width: 800px) {
         height: 6vh;
     }
 }
-.menuShowButt {
+.headerButt {
     position: relative;
     left: 0;
     height: 100%;
+    aspect-ratio: 1/1;
     display: flex;
-    padding: 0 0.5vw 0 0.5vw;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    border-radius: 50%;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    background-color: var(--mc);
     > svg {
         height: 3vh;
         width: auto;
         color: var(--borderHabit);
-        @media (max-width: 800px) {
-            height: 4vh;
-        }
     }
     &:active > svg {
         color: var(--borderWh);
     }
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-        > svg {
-        color: var(--tc);
-        }
-    
+            background-color: var(--menuButtHover);
+            > svg {
+                color: var(--tc);
+            }
         }
     }
 
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-        > svg {
-        color: var(--tc);
+            background-color: var(--menuButtHover);
+            > svg {
+                color: var(--tc);
+            }
         }
-    
-        
-        }
-    }
-    @media (max-width:800px) {
-        padding: 0 1vw 0 2vw;
     }
 }
-.titleHeader {
+.header {
+    border-radius: 24px;
+    width: 100%;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    background-color: var(--mc);
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+.headerTitle {
+    padding: 0 3vw;
     font-size: 22px;
     font-weight: 600;
-    align-self: center;
-}
-.accInfoRedButt {
-    position: absolute;
-    right: 0.5vw;
-    padding: 0.75vh 0.5vw;
-    color: var(--inner_text);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 6px;
-    background:linear-gradient(135deg, var(--accent), var(--grad));
-    cursor: pointer;
-    @media (hover: hover) {
-        &:hover {
-        background-color: var(--darker_accent);
-        color: var(--tc);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        background-color: var(--darker_accent);
-        color: var(--tc);
-    
-        
-        }
-    }
-    @media (max-width: 800px) {
-        right: 2vw;
-        padding: 0.75vh 4vw;
-    }
 }

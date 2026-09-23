@@ -1,33 +1,13 @@
 @use "../../../scss/mixins" as var;
 
-.chatUser {
-    height: 5vh;
-    position: absolute;
-    width: 100%;
-    z-index: 4;
-    display: flex;
-    background-color: var(--mc);
-    overflow-y: visible;
-    border-bottom: 1px solid var(--mc);
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
-    &.br {
-        border-radius: 0 0 0 8px;
-        @media (max-width: 800px) {
-            border-radius: 0;
-        }
-    }
-    @media (max-width: 800px) {
-        height: 6vh;
-    }
-}
 .chatUserInfo {
     cursor: pointer;
     display: flex;
-    border-radius: 8px;
+    border-radius: 24px;
     flex: 1;
     transition: width 0.2s ease;
+    height: 100%;
+    padding-left: 1vw;
     @media (hover: hover) {
         &:hover {
         background-color: var(--menuButtHover);

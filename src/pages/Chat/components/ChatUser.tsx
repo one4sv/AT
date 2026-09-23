@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import type { message } from "../../../components/context/ChatContext";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
-import { BookmarkSimpleIcon, CopySimple, DotsThreeOutlineVertical, List, ShareFat, Trash } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, CopySimple, DotsThreeOutlineVertical, ShareFat, TextIndentIcon, Trash } from "@phosphor-icons/react";
 import { useDelete } from "../../../components/hooks/DeleteHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
@@ -96,8 +96,8 @@ export default function ChatUser({
         }
 
         const rect = chatUserRef.current.getBoundingClientRect();
-        const x = rect.left + rect.width * 0.86; // 95% от ширины .chatUser
-        const y = window.innerHeight * 0.065; // 6.5vh от верха viewport
+        const x = rect.left + rect.width * 0.52;
+        const y = window.innerHeight * 0.065;
 
         openMenu(x, y, "acc", {
             id: chatWith.id,
@@ -165,17 +165,17 @@ export default function ChatUser({
     }
 
     return (
-        <div className="chatUser" ref={chatUserRef}>
+        <div className="headerDiv" ref={chatUserRef}>
             {isMobile || layout === "hidden" ? (
-                <div className="menuShowButt"
+                <div className="headerButt"
                     onMouseDown={(e) => e.stopPropagation()}
                     onTouchStart={(e) => e.stopPropagation()}
                     onClick={() => openSideMenu()}
                 >
-                    <List />
+                    <TextIndentIcon />
                 </div>
             ) : ""}
-            <div className={`chatUserInfo ${isMobile ? "mobile" : ""}`}
+            <div className="header chatUserInfo"
                 onClick={() => {
                     if (!chatWith) return;
                     if (chatWith.is_group) navigate(`/room/${chatWith.id}`)
@@ -253,7 +253,7 @@ export default function ChatUser({
                     </div>
                 )}
             </div>
-            <div className="userMenuCall" onClick={handleMenuClick}>
+            <div className="headerButt" onClick={handleMenuClick}>
                 <DotsThreeOutlineVertical weight="fill"/>
             </div>
             {isChose && ! isMobile && (

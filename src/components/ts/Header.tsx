@@ -1,10 +1,10 @@
-import { List } from "@phosphor-icons/react"
 import "../../scss/header.scss"
 import { useSideMenu } from "../hooks/SideMenuHook";
 import { usePageTitle } from "../hooks/PageContextHook";
 import { isMobile } from "react-device-detect";
 import { useLocation, useParams } from "react-router";
 import { useSettings } from "../hooks/SettingsHook";
+import { TextIndentIcon } from "@phosphor-icons/react";
 
 export default function Header() {
     const { openSideMenu } = useSideMenu();
@@ -16,18 +16,18 @@ export default function Header() {
     
     return (
         <>
-            <div className="header">
+            <div className="headerDiv">
                 {isMobile || layout === "hidden" ? (
                 <div
-                    className="menuShowButt"
+                    className="headerButt"
                     onMouseDown={(e) => e.stopPropagation()}
                     onTouchStart={(e) => e.stopPropagation()}
                     onClick={() => openSideMenu()}
                 >
-                    <List/>
+                    <TextIndentIcon />
                 </div>
                 ) : ""}
-                <div className="titleHeader">
+                <div className="header headerTitle">
                     { isAcc ? nick : title }
                 </div>
             </div>

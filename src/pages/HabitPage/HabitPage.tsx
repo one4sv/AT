@@ -319,10 +319,9 @@ export default function Habit() {
                     habitId && !isExpanded ? "sdmwm" : ""
                 }`}
                 style={{
-                    top: habitId ? "6vh" : "0",
                     overflow: isExpanded ? "hidden" : "auto",
                     ...(isMobile && habitId ? {
-                        marginTop: `${5.5 * (1 - expandProgress)}vh`,
+                        paddingTop: `${6 * (1 - expandProgress) + 1}vh`,
                         transition: pullingState ? "none" : undefined
                     } : {})
                 }}

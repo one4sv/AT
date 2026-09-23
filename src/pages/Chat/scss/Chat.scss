@@ -16,7 +16,7 @@
 
 .chat {
     position: relative;
-    top: 5vh;
+    padding-top: 5vh;
     display: flex;
     flex-direction: column;
     scrollbar-width: thin;
@@ -27,12 +27,12 @@
     height: calc(100% - 8vh);
     padding-bottom:10vh;
     @media (max-width: 800px) {
-        top: 6vh;
+        padding-top: 6vh;
         width: 99%;
         padding-right: 1vw;
         margin: 0 1vw;
         padding-bottom:17vh;
-        height: calc(100% - 6vh);
+        height: 100dvh;
     }
 }
 .goDown {

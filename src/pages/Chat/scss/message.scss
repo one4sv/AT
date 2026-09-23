@@ -3,30 +3,44 @@
     position: relative;
     height: fit-content;
     display: flex;
-    border-radius: 12px;
+    border-radius: 24px;
     padding: 0.5vh 0.4vw;
-    &.choosing:hover {
-        background-color: var(--accent_hov);
+    user-select:contain;
+    @media (hover: hover) {
+        &:hover {
+            background-color: var(--accent_hov);
+        }
+    }
+    @media (hover: none) {
+        &:active {
+            background-color: var(--accent_hov);
+        }
     }
     &.chosen {
         background-color: var(--on_con_menu_mess);
     }
     &.onContextMenu {
         background-color: var(--chosing_mess);
+        @media (max-width: 800px) {
+            user-select:contain;
+        }
     }
     &.corner-single {
-        border-radius: 12px;
+        border-radius: 24px;
     }
     &.corner-first {
-        border-radius: 12px 12px 0 0; // скругление только сверху
+        border-radius: 24px 24px 0 0; // скругление только сверху
     }
-
     &.corner-last {
-        border-radius: 0 0 12px 12px; // скругление только снизу
+        border-radius: 0 0 24px 24px; // скругление только снизу
     }
 
     &.corner-middle {
         border-radius: 0; // без скруглений
+    }
+    @media (max-width: 800px) {
+        padding: .75vh 1.5vw;
+        user-select: none;
     }
 }
 .systemMessage {
@@ -37,7 +51,7 @@
     align-items: center;
     background-color: var(--systemMessBg);
     color: var(--borderWhLight);
-    border-radius: 12px;
+    border-radius: 24px;
     min-height: 3.2vh;
     cursor: default;
     gap: 6px;
@@ -79,18 +93,15 @@
 .systemMessageSender {
     @media (hover: hover) {
         &:hover {
-        text-decoration: underline;
-        cursor: pointer;
-    
+            text-decoration: underline;
+            cursor: pointer;
         }
     }
 
     @media (hover: none) {
         &:active {
-        text-decoration: underline;
-        cursor: pointer;
-    
-        
+            text-decoration: underline;
+            cursor: pointer;
         }
     }
 }
@@ -110,16 +121,13 @@
     }
     @media (hover: hover) {
         &:hover {
-        background-color: #e0e0e08f;
-    
+            background-color: #e0e0e08f;
         }
     }
 
     @media (hover: none) {
         &:active {
-        background-color: #e0e0e08f;
-    
-        
+            background-color: #e0e0e08f;
         }
     }
 }

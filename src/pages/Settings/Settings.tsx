@@ -8,7 +8,6 @@ import {
     ChatsTeardropIcon,
     InfoIcon,
     LockKeyIcon,
-    MagnifyingGlassIcon,
     PaintBucketIcon,
     SneakerMoveIcon,
     UserIcon,
@@ -137,14 +136,6 @@ export default function Settings() {
                     }}
                 >
                     <div className="settingsPage">
-                        <div className="settingSearch">
-                            <input 
-                                type="text" 
-                                className="settingSearchInput" 
-                                placeholder={t("settings.searchPlaceholder")}
-                            />
-                            <MagnifyingGlassIcon size={20} />
-                        </div>
                         <div className="settingsButtsWrapper">
                             <div
                                 className="settingButt settingButtAcc"
