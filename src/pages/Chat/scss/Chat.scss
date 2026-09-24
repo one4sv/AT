@@ -16,7 +16,6 @@
 
 .chat {
     position: relative;
-    padding-top: 5vh;
     display: flex;
     flex-direction: column;
     scrollbar-width: thin;
@@ -24,21 +23,21 @@
     overflow-y: scroll;
     width: 60%;
     margin: 0 auto;
-    height: calc(100% - 8vh);
-    padding-bottom:10vh;
+    height: 100%;
+    padding-bottom:12vh;
     padding-top: 6vh;
     @media (max-width: 800px) {
         width: 99%;
-        padding-top: 8vh;
+        padding-top: 6.5vh;
         padding-right: 1vw;
         margin: 0 1vw;
-        padding-bottom:17vh;
+        padding-bottom:16vh;
         height: 100dvh;
     }
 }
 .goDown {
     position: absolute;
-    background-color: var(--mc);
+    background-color: var(--interact);
     height: 4vh;
     width: 4vh;
     z-index: 3;

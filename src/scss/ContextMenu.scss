@@ -20,7 +20,7 @@
     }
 }
 .ContextMenuButt {
-    padding: 0.7vh 0.5vw;
+    padding: 1vh 0.5vw;
     cursor: pointer;
     user-select: none;
     display: flex;
@@ -47,7 +47,7 @@
         }
     }
     @media (max-width:800px) {
-        padding: 1.5vh 3vw;
+        padding: 1vh 3vw;
         gap: 2vw;
         font-size: 3.7vw;
         > svg {

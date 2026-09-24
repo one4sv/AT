@@ -1,21 +1,22 @@
-import { ChevronDown, ChevronUp, CircleUserRound, X, Search } from "lucide-react";
+import { ChevronDown, ChevronUp, CircleUserRound, X } from "lucide-react";
 import { useNavigate } from "react-router";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useChat } from "../../../components/hooks/ChatHook";
-import { useEffect, useRef, useState, type RefObject } from "react";
-import type { message } from "../../../components/context/ChatContext";
+import { useEffect, useRef, useState, type RefObject, type SetStateAction } from "react";
+import type { activeHeaderType, message } from "../../../components/context/ChatContext";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
-import { BookmarkSimpleIcon, CopySimple, DotsThreeOutlineVertical, ShareFat, TextIndentIcon, Trash } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, CalendarCheckIcon, CopySimple, DotsThreeOutlineVerticalIcon, List, MagnifyingGlassIcon, PushPinIcon, ShareFat, TextIndentIcon, Trash } from "@phosphor-icons/react";
 import { useDelete } from "../../../components/hooks/DeleteHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
-import PinnedMessages from "./PinnedMessages";
+import { usePinnedMessages } from "../../../components/hooks/PinnedMessagesHook";
 import UserInChatUserList from "./UserInChatUserList";
 import { useSideMenu } from "../../../components/hooks/SideMenuHook";
 import { useContacts } from "../../../components/hooks/ContactsHook";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import { useUser } from "../../../components/hooks/UserHook";
+import { useNote } from "../../../components/hooks/NoteHook";
 
 interface ChatUserProps {
     search: string;
@@ -31,7 +32,9 @@ interface ChatUserProps {
     setIsChose:React.Dispatch<React.SetStateAction<boolean>>,
     chosenMess:{id:number, text:string}[],
     setChosenMess:React.Dispatch<React.SetStateAction<{id:number, text:string}[]>>,
-    searchInputRef: RefObject<HTMLInputElement | null>
+    searchInputRef: RefObject<HTMLInputElement | null>,
+    activeHeader: activeHeaderType,
+    setActiveHeader: React.Dispatch<SetStateAction<activeHeaderType>>
 }
 
 export default function ChatUser({
@@ -44,7 +47,9 @@ export default function ChatUser({
     handleArrowClick,
     scrollToMessage,
     searchItemRefs,
-    searchInputRef
+    searchInputRef,
+    activeHeader,
+    setActiveHeader
 }: ChatUserProps) {
     const { user } = useUser()
     const { chatWith, typingMap, messages } = useChat();
@@ -55,12 +60,30 @@ export default function ChatUser({
     const { setBlackout } = useBlackout()
     const { openSideMenu } = useSideMenu()
     const { layout } = useSettings()
+    const { showNotification } = useNote()
+    const {
+        pms,
+        currentpm,
+        showNow,
+        showList,
+        isHolding,
+        longPressTriggered,
+        pmRef,
+        listRef,
+        setShowList,
+        mouseDown,
+        mouseUp,
+        scrollToPin,
+    } = usePinnedMessages(
+        messages.filter(m => m.is_pinned),
+        scrollToMessage
+    )
 
     const navigate = useNavigate();
     
     const [ isSearchOpen, setIsSearchOpen ] = useState(false);
     const [ hovered, setHovered ] = useState(false);
-   
+
     const nameRef = useRef<HTMLDivElement | null>(null);
     const searchRef = useRef<HTMLDivElement | null>(null);
     const searchDivRef = useRef<HTMLDivElement | null>(null);
@@ -96,8 +119,8 @@ export default function ChatUser({
         }
 
         const rect = chatUserRef.current.getBoundingClientRect();
-        const x = rect.left + rect.width * 0.52;
-        const y = window.innerHeight * 0.065;
+        const x = isMobile ? (rect.left + rect.width * 0.42) : (rect.left + rect.width * 0.865);
+        const y = isMobile ? (window.innerHeight * 0.075) : (window.innerHeight * 0.055);
 
         openMenu(x, y, "acc", {
             id: chatWith.id,
@@ -107,7 +130,9 @@ export default function ChatUser({
             note: chatWith.note,
             is_blocked: chatWith.is_blocked,
             pinned: chatWith.pinned,
-            is_group: chatWith.is_group
+            is_group: chatWith.is_group,
+            activeHeader:activeHeader,
+            setActiveHeader:setActiveHeader
         });
     };
 
@@ -186,75 +211,113 @@ export default function ChatUser({
                     if (!chatWith) return;
                     e.preventDefault()
                     openMenu(e.clientX, e.clientY, "acc", {id:chatWith.id, name:chatWith.name ? chatWith.name : chatWith.nick, nick:chatWith.is_group ? `g/${chatWith.id}` : chatWith.nick}, undefined,
-                        {note:chatWith.note, is_blocked:chatWith.is_blocked, pinned:chatWith.pinned, is_group:chatWith.is_group}
+                        {note:chatWith.note, is_blocked:chatWith.is_blocked, pinned:chatWith.pinned, is_group:chatWith.is_group, activeHeader:activeHeader, setActiveHeader:setActiveHeader}
                     )
                 }}
             >
-                <div className="chatUserPick">
-                    {img()}
+                <div className={`chatUserMain ${activeHeader === "user" ? "active" : ""}`}>
+                    <div className="chatUserPick">
+                        {img()}
+                    </div>
+                    <div className="chatUserName">
+                        <span>{name()}</span>
+                        <span className={`chatOnlineStauts ${typingText ? "chatTyping" : "chatStopTyping"}`}>
+                            {status()}
+                        </span>
+                    </div>
                 </div>
-                <div className="chatUserName">
-                    <span>{name()}</span>
-                    <span className={`chatOnlineStauts ${typingText ? "chatTyping" : "chatStopTyping"}`}>
-                        {status()}
-                    </span>
+                <div className={`chatSearchWrapper ${activeHeader === "search" ? "active" : ""}`}
+                    ref={searchRef}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="chatSearch">
+                        <input
+                            type="text"
+                            placeholder="Поиск по сообщениям"
+                            value={search}
+                            onChange={(e) => { setSearch(e.target.value); setSelectedIndex(0) }}
+                            onFocus={() => setIsSearchOpen(true)}
+                            onKeyDown={handleSearchKeyDown}
+                            ref={searchInputRef}
+                        />
+                        {search.length > 0 ? (
+                            <X color="white" cursor="pointer" onClick={() => { setSearch(""); setSelectedIndex(0); setIsSearchOpen(false); }}/>
+                        ): (
+                            <MagnifyingGlassIcon/>
+                        )}
+                    </div>
                 </div>
-            </div>
-            
-            {messages.find(m => m.is_pinned) && !isMobile && (
-                <PinnedMessages pms={messages.filter(m => m.is_pinned)} scrollToMessage={scrollToMessage}/>
-            )}
-            <div className={`chatSearchWrapeer ${isMobile ? "mobile" : ""}`}
-                style={{position: search.length > 0 ? "absolute" : "relative", marginLeft:search.length > 0 ? "4.5%" : "0"}} 
-                ref={searchRef}
-            >
-                <div className="chatSearch">
-                    <input
-                        type="text"
-                        placeholder="Поиск по сообщениям"
-                        value={search}
-                        onChange={(e) => { setSearch(e.target.value); setSelectedIndex(0) }}
-                        onFocus={() => setIsSearchOpen(true)}
-                        onKeyDown={handleSearchKeyDown}
-                        ref={searchInputRef}
-                    />
-                    {search.length > 0 ? (
-                        <X color="white" cursor="pointer" onClick={() => { setSearch(""); setSelectedIndex(0); setIsSearchOpen(false); }}/>
-                    ): (
-                        <Search/>
-                    )}
-                </div>
-                {search.trim().length > 0 && (
-                    <div
-                        ref={searchDivRef}
-                        className={`chatSearchDiv ${isSearchOpen ? "open" : "closed"}`}
-                    >
-                        <div className="chatSearchInfo">
-                            <span>{searchedMessages.length} результатов</span>
-                            <div>
-                                <button onClick={() => handleArrowClick("up")} disabled={!searchedMessages.length}><ChevronUp/></button>
-                                <button onClick={() => handleArrowClick("down")} disabled={!searchedMessages.length}><ChevronDown/></button>
+                <div className={`pinnedMessages ${activeHeader === "pinned" ? "active" : ""}`} ref={pmRef} style={{cursor:isHolding ? "grabbing" : "pointer"}} onClick={(e) => e.stopPropagation()}>
+                    <div className="pmsMain">
+                        <div className="pmShowInfo" onMouseDown={mouseDown}
+                            onMouseUp={mouseUp}
+                            onClick={() => {
+                                if (longPressTriggered.current) return
+                                scrollToPin(currentpm, showNow)
+                            }}
+                        >
+                            <span className="pmsCount">
+                                {showNow + 1}/{pms.length} закреплённое сообщение
+                            </span>
+                            <div className="pmsShowNow">
+                                <span className="pmsSender">
+                                    {currentpm?.sender_id === user.id ? "Вы" : currentpm?.sender_name || currentpm?.sender_nick}: 
+                                </span>
+                                &nbsp;
+                                <span className="pmsText">
+                                    {currentpm?.content
+                                        ? currentpm?.content
+                                        : currentpm?.files && currentpm?.files.length > 0
+                                            ? `${currentpm.files?.length} mediafiles`
+                                            : "Пересланное сообщение"}
+                                </span>
                             </div>
                         </div>
-                        <div className="chatSearchList">
-                            {searchedMessages.map((m, i) => {
-                                return (
-                                    <div
-                                        key={m.id}
-                                        className={`chatSearchItem ${selectedIndex === i ? "active" : ""}`}
-                                        onClick={() => { setSelectedIndex(i); scrollToMessage(m.id); }}
-                                        ref={(el) => { searchItemRefs.current.set(m.id, el) }}
-                                    >
-                                        <UserInChatUserList m={m}/>
-                                    </div>
-                                )
-                            })}
+                        <div className="showList" onClick={(e) => {
+                            e.preventDefault()
+                            setShowList(!showList)
+                        }}>
+                            <List/>
                         </div>
                     </div>
-                )}
+                </div>
+                {!isMobile ? (
+                    <div className="chatUserMenu" onClick={(e) => e.stopPropagation()}>
+                        {messages.find(m => m.is_pinned) ? (
+                            <div
+                                className="chatUserMenuButt"
+                                onClick={() => {
+                                    if (activeHeader !== "pinned") setActiveHeader("pinned")
+                                    else setActiveHeader("user")
+                                }}
+                            >
+                                <PushPinIcon weight="fill" size={22}/>
+                            </div>
+                        ) : ""}
+                        <div 
+                            className="chatUserMenuButt"
+                            onClick={() => {
+                                if (activeHeader !== "search") setActiveHeader("search")
+                                else setActiveHeader("user")
+                            }}
+                        >
+                            <MagnifyingGlassIcon size={22}/>
+                        </div>                        
+                        <div 
+                            className="chatUserMenuButt" 
+                            onClick={() => {
+                                if (activeHeader !== "habit") setActiveHeader("habit")
+                                else setActiveHeader("user")
+                                showNotification("info", "В разработке")
+                            }}
+                        >
+                            <CalendarCheckIcon weight="fill" size={22}/>
+                        </div>
+                    </div>
+                ): ""}
             </div>
             <div className="headerButt" onClick={handleMenuClick}>
-                <DotsThreeOutlineVertical weight="fill"/>
+                <DotsThreeOutlineVerticalIcon weight="fill"/>
             </div>
             {isChose && ! isMobile && (
                 <div className="ChosenCountDiv">
@@ -295,6 +358,48 @@ export default function ChatUser({
                         <Trash/>
                         Удалить выбранное
                     </div>
+                </div>
+            )}
+            {search.trim().length > 0 && activeHeader === "search" && (
+                <div
+                    ref={searchDivRef}
+                    className={`chatSearchDiv ${isSearchOpen ? "open" : "closed"}`}
+                >
+                    <div className="chatSearchInfo">
+                        <span>{searchedMessages.length} результатов</span>
+                        <div>
+                            <button onClick={() => handleArrowClick("up")} disabled={!searchedMessages.length}><ChevronUp/></button>
+                            <button onClick={() => handleArrowClick("down")} disabled={!searchedMessages.length}><ChevronDown/></button>
+                        </div>
+                    </div>
+                    <div className="chatSearchList">
+                        {searchedMessages.map((m, i) => {
+                            return (
+                                <div
+                                    key={m.id}
+                                    className={`chatSearchItem ${selectedIndex === i ? "active" : ""}`}
+                                    onClick={() => { setSelectedIndex(i); scrollToMessage(m.id); }}
+                                    ref={(el) => { searchItemRefs.current.set(m.id, el) }}
+                                >
+                                    <UserInChatUserList m={m}/>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+            )}
+            {messages.find(m => m.is_pinned) && (
+                <div className={`pmsList ${showList ? "open" : "close"}`} ref={listRef} onMouseUp={mouseUp}>
+                    {pms.map((pm, i) => (
+                        <div className="pm" key={pm.id} onClick={() => scrollToPin(pm, i)} onMouseUp={() => {
+                            scrollToPin(pm, i)
+                            setShowList(false)
+                            mouseUp()
+                        }}
+                        >
+                            <UserInChatUserList m={pm}/>
+                        </div>
+                    ))}
                 </div>
             )}
         </div>

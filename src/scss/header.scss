@@ -1,6 +1,5 @@
 @use "./mixins.scss" as var;
 .headerDiv {
-    position: sticky;
     top: 0;
     left: 0;
     height: 5vh;
@@ -8,46 +7,46 @@
     display: flex;
     z-index: 6;
     justify-content: start;
-    padding: 0.5vw;
     align-items: center;
-    padding: 1vh 2vw 0;
-    gap: 1vw;
-    position: fixed;
-    left: 33.5vw;
-    width: 33vw;
+    padding: .5vh 0.5vw 0;
+    gap: .25vw;
+    position: absolute;
+    width: 100%;
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        backdrop-filter: blur(var(--backdropTA));
+        -webkit-backdrop-filter: blur(var(--backdropTA));
+        background:linear-gradient(135deg, var(--tr), #0000009a);
+
+        mask-image: linear-gradient(
+            to top,
+            transparent 0%,
+            black 100%
+        );
+        -webkit-mask-image: linear-gradient(
+            to top,
+            transparent 0%,
+            black 100%
+        );
+    }
     @media (max-width: 800px) {
+        padding: 1vh 2vw 0;
         left: 0;
         width: 100%;
         margin-bottom: 0;
         height: 7vh;
+        gap: 1vw;
         width: 100%;
-        &::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            z-index: -1;
-            pointer-events: none;
-            backdrop-filter: blur(var(--backdropTA));
-            -webkit-backdrop-filter: blur(var(--backdropTA));
-            background:linear-gradient(135deg, var(--tr), #0000009a);
-
-            mask-image: linear-gradient(
-                to top,
-                transparent 0%,
-                black 100%
-            );
-            -webkit-mask-image: linear-gradient(
-                to top,
-                transparent 0%,
-                black 100%
-            );
-        }
     }  
 }
 .headerButt {
     position: relative;
     left: 0;
-    height: 5vh;
+    height: 4vh;
     aspect-ratio: 1/1;
     display: flex;
     align-items: center;
@@ -73,7 +72,6 @@
             }
         }
     }
-
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);
@@ -81,6 +79,9 @@
                 color: var(--tc);
             }
         }
+    }
+    @media (max-width: 800px) {
+        height: 5vh;
     }
 }
 .header {
@@ -92,9 +93,13 @@
     height: 100%;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 .headerTitle {
-    padding: 0 3vw;
     font-size: 22px;
     font-weight: 600;
+    padding: 0 1vw;
+    @media (max-width: 800px) {
+        padding: 0 3vw;
+    }
 }

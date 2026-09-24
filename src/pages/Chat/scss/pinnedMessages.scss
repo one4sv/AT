@@ -1,8 +1,20 @@
 .pinnedMessages {
-    height: 5vh;
-    flex: 1;
-    position: relative;
-    max-width: 30%;
+    height: 4.5vh;
+    width: 0;
+    transition: width .3s ease;
+    position: absolute;
+    left: 25%;
+    @media (max-width:800px) {
+        position: relative;
+        left: 0;
+
+    }
+    &.active {
+        width: 50%;
+        @media (max-width: 800px) {
+            width: 100%;
+        }
+    }
 }
 .pmsMain {
     height: 100%;
@@ -10,26 +22,24 @@
     background-color: var(--tr);
     z-index: 4;
     position: relative;
-    border-radius: 8px;
+    border-radius: 24px;
+    overflow: hidden;
     display: flex;
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-        > .pmsCount {
-        color: var(--borderWh);
-        }
-    
+            background-color: var(--menuButtHover);
+            > .pmsCount {
+                color: var(--borderWh);
+            }
         }
     }
 
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-        > .pmsCount {
-        color: var(--borderWh);
-        }
-    
-        
+            background-color: var(--menuButtHover);
+            > .pmsCount {
+                color: var(--borderWh);
+            }
         }
     }
 }
@@ -38,11 +48,13 @@
     flex-direction: column;
     width: 90%;
     position: relative;
-    padding: 0 1vw;
+    padding: 0 .75vw;
     justify-content: center;
 }
 .pmsCount {
     color: var(--borderHabit);
+    word-wrap: none;
+    white-space: nowrap;
 }
 .pmsShowNow {
     white-space: nowrap;
@@ -71,16 +83,13 @@
     padding: 0 0.5vw;
     @media (hover: hover) {
         &:hover {
-        color: var(--accent_text);
-    
+            color: var(--accent_text);
         }
     }
 
     @media (hover: none) {
         &:active {
-        color: var(--accent_text);
-    
-        
+            color: var(--accent_text);
         }
     }
     > svg {
@@ -90,53 +99,58 @@
 }
 .pmsList {
     position: absolute;
-    padding: 0.5vh 1% 0.5vh 1%;
+    padding: 0.5vh;
     background-color: var(--mc);
-    width: 100%;
+    width: 47%;
     transition: height 0.2s ease;
     overflow-x: hidden;
-    border-radius: 8px;
+    border-radius: 24px;
     transition: max-height 0.3s ease, opacity 0.3s ease;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    max-height: 22vh;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     scrollbar-width: thin;
     z-index: 1;
     opacity: 0;
     pointer-events: none;
     transition: top 0.5s ease;
+    top: 5.5vh;
+    left: 25%;
+    @media (max-width: 800px) {
+        width: 98%;
+        left: 1%;
+        top: 7.5vh;
+    }
 }
 .pmsList.open {
     opacity: 1;
     pointer-events: auto;
-    top: 5vh;
+    max-height: 30vh;
+    @media (max-width: 800px) {
+        max-height: 90vh;
+    }
 }
 .pmsList.close {
+    max-height: 0;
     opacity: 0;
     pointer-events: none;
-    top: -20vh;
 }
 .pm {
     display: flex;
     height: 5vh;
-    border-radius: 8px;
+    border-radius: 24px;
     gap: 0.5vw;
     position: relative;
     width: 100%;
-    padding: 0.5vh 0.5vw 0.5vh 0.5vw;
-    // cursor: pointer;
+    padding: 0.5vh 0.25vw 0.5vh 0.25vw;
+    cursor: pointer;
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-    
+            background-color: var(--menuButtHover);
         }
     }
-
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-    
-        
+            background-color: var(--menuButtHover);
         }
     }
 }

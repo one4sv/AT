@@ -6,16 +6,6 @@
     border-radius: 24px;
     padding: 0.5vh 0.4vw;
     user-select:contain;
-    @media (hover: hover) {
-        &:hover {
-            background-color: var(--accent_hov);
-        }
-    }
-    @media (hover: none) {
-        &:active {
-            background-color: var(--accent_hov);
-        }
-    }
     &.chosen {
         background-color: var(--on_con_menu_mess);
     }
@@ -29,14 +19,13 @@
         border-radius: 24px;
     }
     &.corner-first {
-        border-radius: 24px 24px 0 0; // скругление только сверху
+        border-radius: 24px 24px 0 0;
     }
     &.corner-last {
-        border-radius: 0 0 24px 24px; // скругление только снизу
+        border-radius: 0 0 24px 24px;
     }
-
     &.corner-middle {
-        border-radius: 0; // без скруглений
+        border-radius: 0;
     }
     @media (max-width: 800px) {
         padding: .75vh 1.5vw;
@@ -50,7 +39,7 @@
     justify-content: center;
     align-items: center;
     background-color: var(--systemMessBg);
-    color: var(--borderWhLight);
+    color: var(--tc);
     border-radius: 24px;
     min-height: 3.2vh;
     cursor: default;
@@ -60,8 +49,12 @@
     white-space: nowrap;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
+    user-select: none;
     > div {
         margin-left: 3px;
+        .systemMessageSender {
+            white-space: nowrap;
+        }
     }
     @media (max-width:800px) {
         width: fit-content;
@@ -82,11 +75,6 @@
             white-space: nowrap;
             font-size: 13px;
             color: var(--borderWhLight);
-        }
-
-        .systemMessageSender {
-            font-size: 14px;
-            white-space: nowrap;
         }
     }
 }
@@ -139,10 +127,10 @@
     width: fit-content;
     margin: 1vh auto;
     text-align: center;
-    color: var(--borderWhLight);
+    color: var(--tc);
     font-size: 1rem;
     padding: 0.3vh 0.8vw;
-    border-radius: 6px;
+    border-radius: 24px;
     opacity: 0.95;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
@@ -447,28 +435,24 @@
 }
 
 .messageFile {
-    flex: 1 1 calc(33.33% - 0.5vw); // Делим место: 3 файла в ряд
+    flex: 1 1 calc(33.33% - 0.5vw);
     aspect-ratio: 1/1;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
-    
     @media (hover: hover) {
         &:hover {
-        transform: scale(1.01);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    
+            transform: scale(1.01);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
     }
 
     @media (hover: none) {
         &:active {
-        transform: scale(1.01);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    
-        
+            transform: scale(1.01);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
     }
 }
@@ -492,9 +476,9 @@
     padding: 0.5vh;
 
     > svg {
-        font-size: 2rem; // Больший икон для видимости
+        font-size: 2rem;
         margin-bottom: 0.3vh;
-        color: var(--accent_text); // Акцентный цвет для иконок
+        color: var(--accent_text);
     }
 
     > span {
@@ -523,6 +507,9 @@
     animation: highlightFadeWrapper 3s ease;
     > .message {
         animation: highlightFadeMessage 3s ease;
+        div {
+            color: var(--tc);
+        }
         >.messageDate {
             color: var(--tc);
             > .reactionButt {

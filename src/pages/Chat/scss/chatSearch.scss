@@ -1,79 +1,115 @@
 @use "../../../scss/mixins" as var;
 
-.chatSearchWrapeer {
-    flex: 1;
+.chatSearchWrapper {
     display: flex;
     align-items: center;
     height: 100%;
-    width: 92%;
+    width: 0;
+    overflow: hidden;
     z-index: 4;
-    >.chatSearch {
-        background-color: var(--tr);
-        width: 100%;
-        border-radius: 8px;
-        transition: width 0.2s ease;
-        height: 100%;
-        display: flex;
+    border-radius: 24px;
+    transition: width .3s ease;
+    position: absolute;
+    right: 25%;
+    @media (max-width:800px) {
         position: relative;
-        align-items: center;
-        padding: 0 0.5vw;
-        >input {
-            @include var.input(var(--bgc), var(--tc), var(--borderHabit), 55%, 8px, var(--accent));
+        right: 0;
+        left: 0;
+        padding: 0;
+    }
+    &.active {
+        width: 50%;
+        @media (max-width: 800px) {
             width: 100%;
-            padding-inline-start: 0.5vw;
-            padding-inline-end: 2vw;
         }
-        >svg {
-            position: absolute;
-            right: 0.8vw;
+    }
+}
+.chatSearch {
+    background-color: var(--tr);
+    width: 100%;
+    border-radius: 24px;
+    transition: width 0.2s ease;
+    height: 100%;
+    display: flex;
+    position: relative;
+    align-items: center;
+    padding: 0 0.5vw;
+    >input {
+        @include var.input(var(--interact), var(--tc), var(--borderHabit), 70%, 24px, var(--accent));
+        width: 100%;
+        padding-inline-start: 0.75vw;
+        padding-inline-end: 2vw;
+        &::placeholder {
             color: var(--borderHabit);
         }
-        &:focus-within {
-            >svg {
-                color: var(--accent_text);
-            }
+        @media (max-width:800px) {
+            padding-inline-start: 2vw;
         }
         @media (hover: hover) {
             &:hover {
-            background-color: var(--menuButtHover);
-        
+                border-color: var(--tc);
+                > svg {
+                    color: var(--tc);
+                }
             }
         }
-
         @media (hover: none) {
             &:active {
-            background-color: var(--menuButtHover);
-        
-            
+                border-color: var(--tc);
+                > svg {
+                    color: var(--tc);
+                }
             }
         }
     }
-
-    @media (max-width:800px) {
-        display: none;
+    >svg {
+        position: absolute;
+        font-size: 20px;
+        right: 0.8vw;
+        color: var(--borderHabit);
+        @media (max-width:800px) {
+            right: 2vw;
+        }
+    }
+    &:focus-within {
+        > input {
+            border-color: var(--accent);
+        }
+        > svg {
+            color: var(--accent_text);
+        }
     }
 }
 .chatSearchDiv {
     position: absolute;
-    top: 6vh;
-    padding: 0.5vh 0 0.5vh 0.5vw;
+    top: 5.5vh;
+    padding: 0.5vh 0.5vw;
+    left: 25%;
     z-index: 2;
     background-color: var(--mc);
-    width: 50%;
-    transform: translateX(50%);
-    transition: height 0.2s ease;
-    overflow-x: hidden;
-    border-radius: 8px;
+    width: 47%;
     transition: max-height 0.3s ease, opacity 0.3s ease;
-    // max-height: 0;
+    overflow-x: hidden;
+    border-radius: 24px;
     opacity: 0;
     pointer-events: none;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    @media (max-width: 800px) {
+        padding: 1vh 3vw;
+        top: 7.5vh;
+        width: 98%;
+        left: 1%;
+    }
 }
 .chatSearchDiv.open {
     opacity: 1;
     pointer-events: auto;
+    max-height: 30vh;
+    overflow: hidden;
+    @media (max-width: 800px) {
+        max-height: 90vh;
+    }
 }
 .chatSearchDiv.closed {
     max-height: 0;
@@ -88,6 +124,9 @@
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+    @media (max-width: 800px) {
+        max-height: 82vh;
+    }
 }
 .chatSearchInfo {
     display: flex;
@@ -97,12 +136,11 @@
     justify-content: space-between;
     >div {
         position: relative;
-        right: 1vw;
         > button {
             color: var(--tc);
             outline: none;
             border: none;
-            border-radius: 6px;
+            border-radius: 12px;
             background-color: var(--hbg);
             width: 2vw;
             aspect-ratio: 1/1;
@@ -121,9 +159,7 @@
 
             @media (hover: none) {
                 &:active {
-                background-color: var(--menuButtHover);
-            
-                
+                    background-color: var(--menuButtHover);
                 }
             }
         }
@@ -133,24 +169,21 @@
     display: flex;
     height: 5vh;
     margin-bottom: 0.2vh;
-    border-radius: 8px;
+    border-radius: 24px;
     gap: 0.5vw;
     position: relative;
     width: 100%;
-    padding: 0.5vh 0.5vw 0.5vh 0.5vw;
+    padding: 0.5vh 0.25vw 0.5vh 0.25vw;
     cursor: pointer;
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-    
+            background-color: var(--menuButtHover);
         }
     }
 
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-    
-        
+            background-color: var(--menuButtHover);
         }
     }
 }
@@ -182,7 +215,7 @@
     font-size: 14px;
     color: var(--borderWh);
     position: absolute;
-    right: 0.3vw;
+    right: 1vw;
 }
 .chatSearchText {
     display: flex;

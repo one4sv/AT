@@ -44,14 +44,14 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu, expan
                         <Streak habit={habit} calendar={calendar}/>
                     </span>
                 </div>
-            </div>
-            <div className="saveHabit">
-                <span
-                    className="spanSaveHabit"
-                    style={{ display: isUpdating.includes(`habit_${habit.id}`) ? "block" : "none" }}
-                >
-                    Сохранение...
-                </span>
+                <div className="saveHabit">
+                    <span
+                        className="spanSaveHabit"
+                        style={{ display: isUpdating.includes(`habit_${habit.id}`) ? "block" : "none" }}
+                    >
+                        Сохранение...
+                    </span>
+                </div>
             </div>
         </div>
     )

@@ -13,7 +13,7 @@ import { ChatTAWrapper } from "./components/ChatTAWrapper";
 import { isSameDay } from "./utils/isSameDay";
 import { isMobile } from "react-device-detect";
 import { api } from "../../components/ts/api";
-import type { message } from "../../components/context/ChatContext";
+import type { activeHeaderType, message } from "../../components/context/ChatContext";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import getCornerType from "./components/getCornet";
 import SystemMessage from "./components/SystemMessage";
@@ -53,6 +53,7 @@ export default function Chat() {
     const [highlightedId, setHighlightedId] = useState<number | null>(null);
     const [showGoDown, setShowGoDown] = useState(false);
     const [mess, setMess] = useState<string>("");
+    const [ activeHeader, setActiveHeader ] = useState<activeHeaderType>("user")
 
     const searchItemRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
     const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -321,6 +322,8 @@ export default function Chat() {
             chosenMess={chosenMess}
             setChosenMess={setChosenMess}
             searchInputRef={searchInputRef}
+            activeHeader={activeHeader}
+            setActiveHeader={setActiveHeader}
         />
 
         <div className="chat" ref={chatContainerRef}>
@@ -399,7 +402,6 @@ export default function Chat() {
             </div>
             ))}
         </div>
-
         <ChatTAWrapper
             showGoDown={showGoDown}
             handleGoDown={() => {

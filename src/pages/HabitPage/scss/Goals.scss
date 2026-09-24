@@ -21,36 +21,33 @@
     gap: 5px;
     @media (hover: hover) {
         &:hover {
-        color: var(--tc);
-        background-color: var(--menuButtHover);
-        > .addGoalCaret {
-        color: var(--borderWh);
-        }
-        >.addGoalIcon {
-        color: var(--accent_text);
-        &.danger {
-        color: var(--notValid);
-        }
-        }
-    
+            color: var(--tc);
+            background-color: var(--menuButtHover);
+            > .addGoalCaret {
+                color: var(--borderWh);
+            }
+            >.addGoalIcon {
+                color: var(--accent_text);
+                &.danger {
+                    color: var(--notValid);
+                }
+            }
         }
     }
 
     @media (hover: none) {
         &:active {
-        color: var(--tc);
-        background-color: var(--menuButtHover);
-        > .addGoalCaret {
-        color: var(--borderWh);
-        }
-        >.addGoalIcon {
-        color: var(--accent_text);
-        &.danger {
-        color: var(--notValid);
-        }
-        }
-    
-        
+            color: var(--tc);
+            background-color: var(--menuButtHover);
+            > .addGoalCaret {
+                color: var(--borderWh);
+            }
+            >.addGoalIcon {
+                color: var(--accent_text);
+                &.danger {
+                    color: var(--notValid);
+                }
+            }
         }
     }
 }

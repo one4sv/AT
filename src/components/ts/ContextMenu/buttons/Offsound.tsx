@@ -18,7 +18,7 @@ export const OffSound = ({ id, bool} : CMFuncsType) => {
     }
     return (
         <div className="ContextMenuButt" onClick={() => offSound()}>
-            {bool ? <BellSlash/> : <Bell/>}
+            {bool ? <BellSlash weight="fill"/> : <Bell/>}
             {bool ? "Без звука" : "Включить звук"}
         </div>
     )

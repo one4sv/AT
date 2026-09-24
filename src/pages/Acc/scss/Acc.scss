@@ -11,13 +11,12 @@
     position: relative;
     justify-content: center;
     scrollbar-width: none;
-}
-@media (max-width: 800px) {
-    .accDiv {
+    @media (max-width: 800px) {
         width: 100%;
         height: calc(100% - 5vh);
     }
 }
+
 .acc {
     width: 50%;
     position: relative;
@@ -26,13 +25,13 @@
     flex-direction: column;
     min-height: 0;
     position: relative;
-    margin-top: 1vh;
-}
-@media (max-width: 800px) {
-    .acc {
+    margin-top: 6vh;
+    @media (max-width: 800px) {
         width: 100%;
+        margin-top: 8vh;
     }
 }
+
 .accInfo {
     border-radius: 24px;
     display: flex;

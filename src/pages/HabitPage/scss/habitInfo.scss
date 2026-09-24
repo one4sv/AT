@@ -10,7 +10,7 @@
 .StatsDivMain {
     flex: 1;
     min-height: 0;
-    padding: 1vh 0.5vw;
+    padding: 6vh 0.5vw 0;
     display: flex;
     flex-direction: column;
     gap: 0.5vw;
@@ -105,7 +105,6 @@
         width: 100%;
         height: 100%;
         border-left: none;
-        z-index: 4;
     }
 }
 .habitSlider {
@@ -113,7 +112,7 @@
     width: 200%;
     height: 100%;
     transition: transform 0.3s ease;
-    padding-bottom:20dvh;
+    padding-bottom:14dvh;
 }
 
 .habitSlider.toSlide {
@@ -127,9 +126,6 @@
     padding: 2vh 2vw;
     position: relative;
     overflow-x: hidden;
-    @media (max-width:800px) {
-        padding-top: 0;
-    }
 }
 .habitMenuShowButt {
     position: absolute;
@@ -149,16 +145,12 @@
     cursor: pointer;
     @media (hover: hover) {
         &:hover {
-        color: var(--tc);
-    
+            color: var(--tc);
         }
     }
-
     @media (hover: none) {
         &:active {
-        color: var(--tc);
-    
-        
+            color: var(--tc);
         }
     }
 }
@@ -169,10 +161,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: end;
-    height: 20vh;
-    padding: 0 6vw 4vh;
+    height: 14vh;
     gap: 4px;
     bottom: 0;
+    padding: 0 2vw 2vh;
+    @media (max-width: 800px) {
+        padding: 0 6vw 4vh;
+    }
 }
 .habitSaveHint {
     padding-top: 1dvh;
@@ -183,79 +178,74 @@
     font-size: 18px;
     display: flex;
     align-items: center;
-    padding: 1vh 0.5vw;
+    padding: 0 0.5vw;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 24px;
     gap: 2px;
+    height: 4.5vh;
+    @media (max-width: 800px) {
+        height: 5vh;
+        padding: 0 3vw;
+    }
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-    
+            background-color: var(--menuButtHover);
         }
     }
-
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-    
-        
+            background-color: var(--menuButtHover);
         }
     }
 }
 .habitSave {
     bottom: 0;
     width: 100%;
-    height: 5vh;
     background:linear-gradient(135deg, var(--accent), var(--grad));
     color: var(--tc);
-    border-radius: 8px;
+    border-radius: 24px;
+    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 18px;
+    height: 4.5vh;
+    @media (max-width: 800px) {
+        height: 5vh;
+    }
     @media (hover: hover) {
         &:hover {
-        box-shadow: 0 0 12px var(--accent),
-        0 0 24px var(--accent);
-        outline: 1px solid var(--tc);
-    
+            box-shadow: 0 0 12px var(--accent),
+            0 0 24px var(--accent);
         }
     }
 
     @media (hover: none) {
         &:active {
-        box-shadow: 0 0 12px var(--accent),
-        0 0 24px var(--accent);
-        outline: 1px solid var(--tc);
-    
-        
+            box-shadow: 0 0 12px var(--accent),
+            0 0 24px var(--accent);
         }
     }
     &.saving {
         background-color: var(--darker_accent);
         @media (hover: hover) {
             &:hover {
-            box-shadow: 0 0 12px var(--darker_accent),
-            0 0 24px var(--darker_accent);
-        
+                box-shadow: 0 0 12px var(--darker_accent),
+                0 0 24px var(--darker_accent);
             }
         }
 
         @media (hover: none) {
             &:active {
-            box-shadow: 0 0 12px var(--darker_accent),
-            0 0 24px var(--darker_accent);
-        
-            
+                box-shadow: 0 0 12px var(--darker_accent),
+                0 0 24px var(--darker_accent);
             }
         }
     }
 }
 .habitInnerSlide {
     width: 100%;
-    height: 93%;
-    margin: 2vh auto;
+    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 0.25vh;

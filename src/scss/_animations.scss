@@ -26,8 +26,9 @@
 		box-shadow: 0 0 1px var(--darker_accent); 
 	}
     50% { 
-		background-color: var(--accent_text); 
+		background: var(--accent_text); 
 		box-shadow: 0 0 5px var(--accent)
+
 	}
     100% { 
 		background-color: var(--darker_accent);

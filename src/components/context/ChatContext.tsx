@@ -59,6 +59,8 @@ export interface message {
   target_id: string | null;
 }
 
+export type activeHeaderType = "user" | "search" | "pinned" | "habit"
+
 export interface ChatContextType {
   chatWith: chatWithType | null;
   refetchChat: (nick: string) => Promise<void>;

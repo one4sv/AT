@@ -1,6 +1,6 @@
-import { createContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react"
+import { createContext, useEffect, useRef, useState, type ReactNode, type RefObject, type SetStateAction } from "react"
 import type { Habit } from "./HabitsContext"
-import type { Media } from "./ChatContext"
+import type { activeHeaderType, Media } from "./ChatContext"
 import type { Perms } from "./GroupContext"
 const ContextMenuContext = createContext<ContextMenuContextType | null>(null)
 
@@ -19,6 +19,8 @@ export interface chatInfoType {
     is_blocked:boolean,
     pinned:boolean,
     is_group?:boolean,
+    activeHeader?:activeHeaderType
+    setActiveHeader?:React.Dispatch<SetStateAction<activeHeaderType>>
 }
 export interface curChatType {
     isReacted?:string,
@@ -29,7 +31,6 @@ export interface curChatType {
     previewText:string,
     is_pinned?:boolean
 }
-
 type MenuState = {
     x: number,
     y: number,
@@ -47,7 +48,7 @@ type MemberType = {
 }
 export type ContextMenuContextType = {
     menu: MenuState
-    openMenu: (x: number, y: number, point: string, options: MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType, memberInfo?:MemberType  ) => void
+    openMenu: (x: number, y: number, point: string, options: MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType, memberInfo?:MemberType) => void
     closeMenu: () => void,
     menuRef:RefObject<HTMLDivElement | null>
 }

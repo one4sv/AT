@@ -90,7 +90,7 @@ export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitS
                 Настройи: {habit.name}
             </div>
             {/* Расписание */}
-            <div className="redHabitBlock" onClick={() => handleScheduleChange(!scheduleToggle)}>
+            <div className="redHabitBlock but" onClick={() => handleScheduleChange(!scheduleToggle)}>
                 <div className="redHabitStr">
                     <span className="redHabitSpan">Расписание:</span>
                     <span className="redHabitToggler">
