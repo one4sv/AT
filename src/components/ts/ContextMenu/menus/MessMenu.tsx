@@ -21,10 +21,8 @@ export default function MessMenu() {
     const { menu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { setDeleteConfirm, setDeleteMess } = useDelete();
-    const { setReaction, messages } = useChat();
+    const { setReaction, messages, setActiveHeader, activeHeader } = useChat();
     const {
-        isChose,
-        setIsChose,
         chosenMess,
         setChosenMess,
         setAnswer,
@@ -34,7 +32,7 @@ export default function MessMenu() {
     const { pinMess } = useSendMess();
 
     const { options, curChat, point } = menu;
-
+    const isChose = activeHeader === "choosing"
     if (!curChat || !setChosenMess) return null;
 
     return (
@@ -76,13 +74,13 @@ export default function MessMenu() {
                 className="ContextMenuButt"
                 onClick={() => {
                     if (!isChose) {
-                        setIsChose(true);
+                        setActiveHeader("choosing");
                         setChosenMess([
                             { id: Number(options.id), text: curChat.text! },
                         ]);
                     } else {
                         setChosenMess([]);
-                        setIsChose(false);
+                        setActiveHeader("text");
                     }
                 }}
             >

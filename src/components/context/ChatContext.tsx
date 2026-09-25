@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useCallback, useRef } from "react";
+import { createContext, useState, useEffect, useCallback, useRef, type SetStateAction } from "react";
 import { type ReactNode } from "react";
 import { useNote } from "../hooks/NoteHook";
 import { useUser } from "../hooks/UserHook";
@@ -59,7 +59,7 @@ export interface message {
   target_id: string | null;
 }
 
-export type activeHeaderType = "user" | "search" | "pinned" | "habit"
+export type activeHeaderType = "text" | "search" | "pinned" | "habit" | "choosing"
 
 export interface ChatContextType {
   chatWith: chatWithType | null;
@@ -82,6 +82,8 @@ export interface ChatContextType {
   loadingMore: boolean;
   loadOlderMessages: () => Promise<void>;
   loadAroundMessage: (messageId: number) => Promise<boolean>;
+  activeHeader: activeHeaderType,
+  setActiveHeader: React.Dispatch<SetStateAction<activeHeaderType>>
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -93,14 +95,15 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const { ws, send } = useWebSocket();
   const navigate = useNavigate();
 
-  const [chatWith, setChatWith] = useState<chatWithType | null>(null);
-  const [messages, setMessages] = useState<message[]>([]);
-  const [chatLoading, setChatLoading] = useState<boolean>(true);
-  const [isTyping, setIsTyping] = useState(false);
-  const [typingMap, setTypingMap] = useState<Record<string, string[]>>({});
-  const [searchMess, setSearchMess] = useState("");
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [ chatWith, setChatWith ] = useState<chatWithType | null>(null);
+  const [ messages, setMessages ] = useState<message[]>([]);
+  const [ chatLoading, setChatLoading ] = useState<boolean>(true);
+  const [ isTyping, setIsTyping ] = useState(false);
+  const [ typingMap, setTypingMap ] = useState<Record<string, string[]>>({});
+  const [ searchMess, setSearchMess ] = useState("");
+  const [ hasMore, setHasMore ] = useState(true);
+  const [ loadingMore, setLoadingMore ] = useState(false);
+  const [ activeHeader, setActiveHeader ] = useState<activeHeaderType>("text")
 
   const typingTimeout = useRef<number | null>(null);
   const chatWithRef = useRef<chatWithType | null>(chatWith);
@@ -556,6 +559,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         loadingMore,
         loadOlderMessages,
         loadAroundMessage,
+        activeHeader,
+        setActiveHeader
       }}
     >
       {children}

@@ -9,14 +9,14 @@ import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
 import { Check, CheckCheck } from "lucide-react";
 import { useNavigate } from "react-router";
-import AnswerMess from "./AnswerMess";
-import MessageFiles from "./MessageFiles";
+import AnswerMess from "../utils/AnswerMess";
+import MessageFiles from "../utils/MessageFiles";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import { reactionsArr } from "../../../components/ts/utils/emojies";
+import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
 
 
 type MessageComponentType = {
-    highlightedId?: number | null,
     message: message,
     messageRefs?: React.MutableRefObject<Map<number, HTMLDivElement | null>>,
     answer?:{id:number, name:string, text:string},
@@ -25,9 +25,10 @@ type MessageComponentType = {
     showNames?:(boolean),
     cornerType?: string | null,
 }
-export default function Message ({ highlightedId, message:m, messageRefs, answer, scrollToMessage, showNames, redir_answer, cornerType } : MessageComponentType) {
-    const { setReaction, chatWith } = useChat()
-    const { chosenMess, setChosenMess, isChose, setAnswer, setIsChose } = useMessages()
+export default function Message ({ message:m, answer, showNames, redir_answer, cornerType } : MessageComponentType) {
+    const { scrollToMessage, messageRefs, highlightedId } = useChatMessageScroll()
+    const { setReaction, chatWith, activeHeader, setActiveHeader } = useChat()
+    const { chosenMess, setChosenMess, setAnswer } = useMessages()
     const { user } = useUser()
     const { openMenu, menu } = useContextMenu()
     const { emote, messdb } = useSettings()
@@ -42,7 +43,7 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
         return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
     const isMy = m.sender_id === user.id ? true : false
-
+    const isChose = activeHeader === "choosing"
     const openContext = (x: number, y: number) => {
         const reaction = m.reactions.find(r => r.user_id === user.id);
         const isReacted = reaction ? reaction.reaction : "none";
@@ -134,7 +135,7 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
                 } else if (messdb === "answer") {
                     setAnswer({id:m.id.toString(), sender:m.sender_name, text:m.content, previewText: m.content || (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : "Пересланное сообщение")})
                 } else if (messdb === "select") {
-                    setIsChose(true)
+                    setActiveHeader("choosing")
                     if (!isChose) {
                         setChosenMess((prev) => [...prev, { id:m.id, text:m.content}]);
                     }
@@ -142,15 +143,7 @@ export default function Message ({ highlightedId, message:m, messageRefs, answer
             }}
         >
             {isChose && (
-                <div className="messChoseButt" style={{opacity: isChose ? "1" : "0"}} onClick={() => {
-                    if (chosenMess.some((mess) => mess.id === m.id)) { 
-                        setChosenMess((prev) => prev.filter(mess => mess.id !== m.id))
-                    }
-                    else {
-                        setChosenMess((prev) => [...prev, { id:m.id, text:m.content}])
-                    }
-                    
-                }}>
+                <div className="messChoseButt" style={{opacity: isChose ? "1" : "0"}}>
                     {chosenMess.some((mess) => mess.id === m.id) ? <CheckCircle weight="fill"/> : <CheckCircle/> }
                 </div>
             )}

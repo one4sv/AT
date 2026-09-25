@@ -26,15 +26,9 @@
 .chatUserMain {
     height: 100%;
     display: flex;
-    width: 25%;
+    width: 100%;
     overflow: hidden;
     transition: width 0.3s ease;
-    @media (max-width: 800px) {
-        width: 0;
-        &.active {
-            width: 100%;
-        }
-    }
 }
 .chatUserPick {
     height: 100%;
@@ -134,52 +128,5 @@
         height: 60%;
         width: 60%;
         aspect-ratio: 1/1;
-    }
-}
-.ChosenCountDiv {
-    position: absolute;
-    right: 0.75%;
-    width: 11vw;
-    background-color: var(--bgc);
-    cursor: pointer;
-    top: 6.75vh;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-.ChosenCount {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 2vh 0;
-}
-.ChosenCountButt {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 2px;
-    padding: 1vh;
-    color: var(--borderWh);
-    @media (hover: hover) {
-        &:hover {
-        color: var(--tc);
-        background-color: var(--menuButtHover);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        color: var(--tc);
-        background-color: var(--menuButtHover);
-    
-        
-        }
-    }
-    &.delete {
-        color: var(--notValid);
     }
 }

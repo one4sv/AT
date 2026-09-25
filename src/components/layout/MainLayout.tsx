@@ -25,10 +25,10 @@ export default function MainLayout({ children }: LayoutProps) {
   const { decor } = useSettings();
   const { chosenDay, setChosenDay } = useCalendar()
   const { blackout, setBlackout } = useBlackout()
-  const { isChose, setIsChose, setChosenMess, setAnswer, answer, editing, redirect, setEditing, setRedirect } = useMessages()
+  const { setChosenMess, setAnswer, answer, editing, redirect, setEditing, setRedirect } = useMessages()
   const { handleDrop, handleDragOver, handleDragEnter, handleDragLeave, isDragging } = useDrop()
   const { showHabitMenu, returnSlide} = useSideMenu()
-  const { searchInputRef, searchMess, setSearchMess } = useChat()
+  const { searchInputRef, searchMess, setSearchMess, activeHeader, setActiveHeader } = useChat()
   const { mainSearchRef, search, setSearch } = useContacts()
 
   const navigate = useNavigate()
@@ -57,8 +57,8 @@ export default function MainLayout({ children }: LayoutProps) {
           setSearchMess("")
           return
         }
-        if (isChose) {
-          setIsChose(false);
+        if (activeHeader !== "text") {
+          setActiveHeader("text");
           setChosenMess([]);
           return;
         }
@@ -125,7 +125,7 @@ export default function MainLayout({ children }: LayoutProps) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [answer, blackout.seted, chosenDay, editing, isChose, location.pathname, mainSearchRef, navigate, redirect, returnSlide, search.length, searchInputRef, searchMess.length, setAnswer, setBlackout, setChosenDay, setChosenMess, setEditing, setIsChose, setRedirect, setSearch, setSearchMess, showHabitMenu, user.id, user.nick]);
+  }, [activeHeader, answer, blackout.seted, chosenDay, editing, location.pathname, mainSearchRef, navigate, redirect, returnSlide, search.length, searchInputRef, searchMess.length, setActiveHeader, setAnswer, setBlackout, setChosenDay, setChosenMess, setEditing, setRedirect, setSearch, setSearchMess, showHabitMenu, user.id, user.nick]);
 
   return (
     <div className="app-layout">

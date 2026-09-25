@@ -12,6 +12,7 @@
     gap: .25vw;
     position: absolute;
     width: 100%;
+    user-select: none;
     &::before {
         content: "";
         position: absolute;

@@ -4,10 +4,12 @@ import ModuleMap from "../modules/ModuleMap";
 import { useMessages } from "../hooks/MessagesHook";
 import { isMobile } from "react-device-detect";
 import "../../scss/blackout.scss";
+import { useChat } from "../hooks/ChatHook";
 
 export default function Blackout() {
   const { blackout, setBlackout } = useBlackout();
-  const { redirect, setRedirect, chosenMess, setIsChose, setChosenMess } = useMessages();
+  const { redirect, setRedirect, chosenMess, setChosenMess } = useMessages();
+  const { setActiveHeader } = useChat()
 
   const [isOpen, setIsOpen] = useState(false);
   const [componentName, setComponenetName] = useState(blackout.module ?? "");
@@ -26,7 +28,7 @@ export default function Blackout() {
     if (blackout.module !== "RedirectMesses") {
       setRedirect(undefined);
     } else {
-      setIsChose(false);
+      setActiveHeader("text");
       setChosenMess([]);
       setRedirect(
         redirect?.filter((m) => chosenMess.some((cm) => cm.id === m.id))

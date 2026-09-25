@@ -2,7 +2,7 @@ import type { Media, message } from "../../../components/context/ChatContext";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useUser } from "../../../components/hooks/UserHook";
-import GetIconByType from "../utils/getIconByType";
+import GetIconByType from "./getIconByType";
 
 export default function MessageFiles({files, m} : {files:Media[], m:message}) {
     const { setBlackout } = useBlackout()

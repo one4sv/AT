@@ -1,4 +1,4 @@
-import { isSameDay } from "../utils/isSameDay";
+import { isSameDay } from "./funcs/isSameDay";
 
 export default function DateDivider({currDate, notop}:{currDate:Date, notop?:boolean}) {
 

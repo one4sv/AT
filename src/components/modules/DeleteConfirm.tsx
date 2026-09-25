@@ -13,17 +13,19 @@ import { useMessages } from "../hooks/MessagesHook";
 import { useGroup } from "../hooks/GroupHook";
 import axios from "axios";
 import { useContacts } from "../hooks/ContactsHook";
+import { useChat } from "../hooks/ChatHook";
 
 export default function DeleteConfirm() {
     const { user } = useUser()
     const { refetchHabits } = useHabits();
     const { refetchContacts, refetchContactsWTLoading } = useContacts();
     const { deleteConfirm, deleteMess } = useDelete();
-    const { setChosenMess, setIsChose } = useMessages()
+    const { setChosenMess } = useMessages()
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
     const { refetchAcc } = useAcc();
     const { group } = useGroup();
+    const { setActiveHeader } = useChat()
 
     const navigate = useNavigate();
 
@@ -62,7 +64,7 @@ export default function DeleteConfirm() {
                     navigate("/");
                 } else if (goal === "mess") {
                     refetchContactsWTLoading()
-                    setIsChose(false)
+                    setActiveHeader("text")
                     setChosenMess([])
                 } else if (goal === "member") {
                     refetchContactsWTLoading()

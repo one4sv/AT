@@ -9,9 +9,9 @@ export function MessBarBlock({ object, scrollToMessage }: {
     object: { id: string, sender?: string, previewText:string },
     scrollToMessage: (id: number) => void
 }) {
-    const { answer, setAnswer, editing, setEditing, redirect, setRedirect, setIsChose, setChosenMess, showNames } = useMessages();
+    const { answer, setAnswer, editing, setEditing, redirect, setRedirect, setChosenMess, showNames } = useMessages();
     const { setBlackout } = useBlackout() 
-    const { messages } = useChat()
+    const { messages, setActiveHeader } = useChat()
     const { openMenu } = useContextMenu()
     
     let barType = "";
@@ -33,7 +33,7 @@ export function MessBarBlock({ object, scrollToMessage }: {
                     )
                 ) scrollToMessage(Number(object.id))
                 else {
-                    setIsChose(true)
+                    setActiveHeader("choosing")
                     setChosenMess(redirect.map(m => ({id:Number(m.id), text:m.content})))
                     setBlackout({seted:true, module:"RedirectMesses"})
                 }

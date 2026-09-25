@@ -2,8 +2,8 @@ import Message from "../../pages/Chat/components/Message"
 import { useMessages } from "../hooks/MessagesHook"
 import "../../scss/modules/RedirectMesses.scss"
 import { Fragment } from "react/jsx-runtime"
-import { isSameDay } from "../../pages/Chat/utils/isSameDay"
-import DateDivider from "../../pages/Chat/components/DateDivider"
+import { isSameDay } from "../../pages/Chat/utils/funcs/isSameDay"
+import DateDivider from "../../pages/Chat/utils/DateDivider"
 
 export default function RedirectMesses() {
     const { redirect } = useMessages()

@@ -1,4 +1,4 @@
-import { CheckCircle, Circle, MagnifyingGlassIcon, PushPinIcon, SignOut, UserIcon } from "@phosphor-icons/react";
+import { ChatTeardropIcon, CheckCircle, Circle, MagnifyingGlassIcon, PushPinIcon, SignOut } from "@phosphor-icons/react";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import { useBlackout } from "../../../hooks/BlackoutHook";
 import { useDelete } from "../../../hooks/DeleteHook";
@@ -11,50 +11,45 @@ export default function AccMenu() {
     const { menu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { setDeleteConfirm } = useDelete();
-    const { isChose, setIsChose, setChosenMess } = useMessages();
-    const { messages } = useChat()
+    const { setChosenMess } = useMessages();
+    const { messages, activeHeader: header, setActiveHeader:setHeader } = useChat()
 
     const { options, chatInfo } = menu;
-    const header = chatInfo?.activeHeader
-    const setHeader = chatInfo?.setActiveHeader
 
     return (
         <>
-            {header && setHeader ? (
-                <>
-                    <div
-                        className="ContextMenuButt"
-                        onClick={() => {
-                            if (header === "search") setHeader("user")
-                            else setHeader("search")
-                        }}
-                    >
-                        {header === "search" ? <UserIcon weight="fill" /> : <MagnifyingGlassIcon />}
-                        {header === "search" ? "Собеседник" : "Поиск сообщений"}
-                    </div>            
-                    {messages.find(m => m.is_pinned) ? (
-                        <div
-                            className="ContextMenuButt"
-                            onClick={() => {
-                                if (header === "pinned") setHeader("user")
-                                else setHeader("pinned")
-                            }}
-                        >
-                            {header === "pinned" ? <UserIcon weight="fill" /> : <PushPinIcon weight="fill"/>}
-                            {header === "pinned" ? "Собеседник" : "Закреплённые сообщения"}
-                        </div>
-                    ) : ""}
-                </> 
-            ) : ""}       
             <div
                 className="ContextMenuButt"
                 onClick={() => {
-                    setIsChose(!isChose);
+                    if (header === "search") setHeader("text")
+                    else setHeader("search")
+                }}
+            >
+                {header === "search" ? <ChatTeardropIcon weight="fill" /> : <MagnifyingGlassIcon />}
+                {header === "search" ? "Сообщение" : "Поиск сообщений"}
+            </div>            
+            {messages.find(m => m.is_pinned) ? (
+                <div
+                    className="ContextMenuButt"
+                    onClick={() => {
+                        if (header === "pinned") setHeader("text")
+                        else setHeader("pinned")
+                    }}
+                >
+                    {header === "pinned" ? <ChatTeardropIcon weight="fill" /> : <PushPinIcon weight="fill"/>}
+                    {header === "pinned" ? "Сообщение" : `${messages.filter(m => m.is_pinned).length} Закреплённые`}
+                </div>
+            ) : ""}
+            <div
+                className="ContextMenuButt"
+                onClick={() => {
+                    if (header === "choosing") setHeader("text")
+                    else setHeader("choosing");
                     setChosenMess([]);
                 }}
             >
-                {isChose ? <Circle /> : <CheckCircle />}
-                {isChose ? "Отменить выбор" : "Выбрать сообщения"}
+                {header === "choosing" ? <Circle /> : <CheckCircle />}
+                {header === "choosing" ? "Отменить выбор" : "Выбрать сообщения"}
             </div>
 
             <LinkButton />

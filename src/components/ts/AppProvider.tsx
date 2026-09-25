@@ -25,6 +25,8 @@ import { SideMenuProvider } from '../context/SideMenuContext';
 import { WebSocketProvider } from '../context/WebSocketContext';
 import { PlannedProvider } from '../context/PlannedContext';
 import { ContactsProvider } from '../context/ContactsContext';
+import { ChatMessageScrollProvider } from '../context/ChatMessageScrollContext';
+import { PinnedMessagesProvider } from '../context/PinnedMessagesContext';
 
 export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
     <NoteProvider>
@@ -35,43 +37,47 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                         <HabitsProvider>
                             <ContactsProvider>
                                 <ChatProvider>
-                                    <SendMessProvider>
-                                        <UpdateUserProvider>
-                                            <AuthProvider>
-                                                <AccProvider>
-                                                    <GroupProvider>
-                                                        <DeleteProvider>
-                                                            <BlackoutProvider>
-                                                                <CalendarProvider>
-                                                                    <TheHabitProvider>
-                                                                        <UpdateHabitProvider>
-                                                                            <DoneProvider>
-                                                                                <PlannedProvider>
-                                                                                    <MessagesProvider>
-                                                                                        <ScheduleProvider>
-                                                                                            <ContextMenuProvider>
-                                                                                                <DropProvider>
-                                                                                                    <PageTitleProvider>
-                                                                                                        <SideMenuProvider>
-                                                                                                                {children}
-                                                                                                        </SideMenuProvider>
-                                                                                                    </PageTitleProvider>
-                                                                                                </DropProvider>
-                                                                                            </ContextMenuProvider>
-                                                                                        </ScheduleProvider>
-                                                                                    </MessagesProvider>
-                                                                                </PlannedProvider>
-                                                                            </DoneProvider>
-                                                                        </UpdateHabitProvider>
-                                                                    </TheHabitProvider>
-                                                                </CalendarProvider>
-                                                            </BlackoutProvider>
-                                                        </DeleteProvider>
-                                                    </GroupProvider>
-                                                </AccProvider>
-                                            </AuthProvider>
-                                        </UpdateUserProvider>
-                                    </SendMessProvider>
+                                    <ChatMessageScrollProvider>
+                                        <PinnedMessagesProvider>
+                                            <SendMessProvider>
+                                                <UpdateUserProvider>
+                                                    <AuthProvider>
+                                                        <AccProvider>
+                                                            <GroupProvider>
+                                                                <DeleteProvider>
+                                                                    <BlackoutProvider>
+                                                                        <CalendarProvider>
+                                                                            <TheHabitProvider>
+                                                                                <UpdateHabitProvider>
+                                                                                    <DoneProvider>
+                                                                                        <PlannedProvider>
+                                                                                            <MessagesProvider>
+                                                                                                <ScheduleProvider>
+                                                                                                    <ContextMenuProvider>
+                                                                                                        <DropProvider>
+                                                                                                            <PageTitleProvider>
+                                                                                                                <SideMenuProvider>
+                                                                                                                        {children}
+                                                                                                                </SideMenuProvider>
+                                                                                                            </PageTitleProvider>
+                                                                                                        </DropProvider>
+                                                                                                    </ContextMenuProvider>
+                                                                                                </ScheduleProvider>
+                                                                                            </MessagesProvider>
+                                                                                        </PlannedProvider>
+                                                                                    </DoneProvider>
+                                                                                </UpdateHabitProvider>
+                                                                            </TheHabitProvider>
+                                                                        </CalendarProvider>
+                                                                    </BlackoutProvider>
+                                                                </DeleteProvider>
+                                                            </GroupProvider>
+                                                        </AccProvider>
+                                                    </AuthProvider>
+                                                </UpdateUserProvider>
+                                            </SendMessProvider>
+                                        </PinnedMessagesProvider>
+                                    </ChatMessageScrollProvider>
                                 </ChatProvider>
                             </ContactsProvider>
                         </HabitsProvider>

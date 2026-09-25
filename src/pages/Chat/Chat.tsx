@@ -3,22 +3,21 @@ import { useChat } from "../../components/hooks/ChatHook";
 import { useMessages } from "../../components/hooks/MessagesHook";
 import { useUser } from "../../components/hooks/UserHook";
 import "./scss/Chat.scss";
-
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import DateDivider from "./components/DateDivider";
+import { useEffect, useMemo, useRef, useState } from "react";
+import DateDivider from "./utils/DateDivider";
 import Message from "./components/Message";
 import ChatUser from "./components/ChatUser";
 import { ChatTAWrapper } from "./components/ChatTAWrapper";
-
-import { isSameDay } from "./utils/isSameDay";
+import { isSameDay } from "./utils/funcs/isSameDay";
 import { isMobile } from "react-device-detect";
 import { api } from "../../components/ts/api";
-import type { activeHeaderType, message } from "../../components/context/ChatContext";
+import type { message } from "../../components/context/ChatContext";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
-import getCornerType from "./components/getCornet";
-import SystemMessage from "./components/SystemMessage";
+import getCornerType from "./utils/funcs/getCornet";
+import SystemMessage from "./utils/SystemMessage";
 import Loader from "../../components/ts/Loader";
 import { LoaderSmall } from "../../components/ts/LoaderSmall";
+import { useChatMessageScroll } from "../../components/hooks/utils/useChatMessageScroll";
 
 export default function Chat() {
     const { user, loadingUser } = useUser();
@@ -29,19 +28,17 @@ export default function Chat() {
         chatWith,
         refetchGroupChatWLoading,
         searchMess: search,
-        setSearchMess: setSearch,
         searchInputRef,
         hasMore,
         loadingMore,
         loadOlderMessages,
-        loadAroundMessage,
+        activeHeader,
+        setActiveHeader
     } = useChat();
 
     const {
         chosenMess,
         setChosenMess,
-        isChose,
-        setIsChose,
         pendingScrollId,
         setPendingScrollId,
     } = useMessages();
@@ -49,16 +46,13 @@ export default function Chat() {
     const { setTitle } = usePageTitle();
     const { nick, id } = useParams();
     const navigate = useNavigate();
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    const [highlightedId, setHighlightedId] = useState<number | null>(null);
-    const [showGoDown, setShowGoDown] = useState(false);
-    const [mess, setMess] = useState<string>("");
-    const [ activeHeader, setActiveHeader ] = useState<activeHeaderType>("user")
+    const [ showGoDown, setShowGoDown ] = useState(false);
+    const [ mess, setMess ] = useState<string>("");
 
-    const searchItemRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
     const chatContainerRef = useRef<HTMLDivElement | null>(null);
-    const messageRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
-    const highlightTimeoutRef = useRef<number | null>(null);
+    const {
+        scrollToMessage,
+    } = useChatMessageScroll();
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
     const isLoadingMoreRef = useRef(false);
     const prevScrollHeightRef = useRef(0);
@@ -67,7 +61,7 @@ export default function Chat() {
     const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
-        setIsChose(false);
+        setActiveHeader("text")
         setChosenMess([]);
         initialScrolledRef.current = false;
 
@@ -99,92 +93,18 @@ export default function Chat() {
         if (!search.trim()) return [];
         return messages
         .filter(
-            (m) =>
-            m.content.toLowerCase().includes(search.toLowerCase()) ||
-            new Date(m.created_at).toLocaleDateString("ru-RU").includes(search)
+            (m) => (m.content.toLowerCase().includes(search.toLowerCase()) ||
+            new Date(m.created_at).toLocaleDateString("ru-RU").includes(search)) &&
+            !m.is_system
         )
         .reverse();
     }, [messages, search]);
 
-    const handleArrowClick = (dir: "up" | "down") => {
-        setHighlightedId(null);
-        if (!searchedMessages.length) return;
-
-        let newIndex = selectedIndex;
-        if (dir === "down")
-        newIndex = Math.min(searchedMessages.length - 1, selectedIndex + 1);
-        if (dir === "up") newIndex = Math.max(0, selectedIndex - 1);
-
-        setSelectedIndex(newIndex);
-        const target = searchedMessages[newIndex];
-        if (!target) return;
-        scrollToMessage(target.id);
-    };
-
-    const scrollToMessage = useCallback(
-        async (targetId: number) => {
-            const existingEl = messageRefs.current.get(targetId);
-            if (existingEl) {
-                if (highlightTimeoutRef.current) {
-                    clearTimeout(highlightTimeoutRef.current);
-                }
-                setHighlightedId(targetId);
-                existingEl.scrollIntoView({ behavior: "smooth", block: "center" });
-
-                highlightTimeoutRef.current = window.setTimeout(() => {
-                    setHighlightedId(null);
-                    highlightTimeoutRef.current = null;
-                }, 2000);
-                return;
-            }
-
-            const success = await loadAroundMessage(targetId);
-            if (!success) return;
-
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    const el = messageRefs.current.get(targetId);
-                    if (el) {
-                        if (highlightTimeoutRef.current) {
-                            clearTimeout(highlightTimeoutRef.current);
-                        }
-                        setHighlightedId(targetId);
-                        el.scrollIntoView({ behavior: "smooth", block: "center" });
-
-                        highlightTimeoutRef.current = window.setTimeout(() => {
-                            setHighlightedId(null);
-                            highlightTimeoutRef.current = null;
-                        }, 2000);
-                    }
-                });
-            });
-        },
-        [loadAroundMessage]
-    );
-
-    const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (!searchedMessages.length) return;
-        setHighlightedId(null);
-
-        if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setSelectedIndex((prev) =>
-            Math.min(prev + 1, searchedMessages.length - 1)
-        );
-        } else if (e.key === "ArrowUp") {
-            e.preventDefault();
-            setSelectedIndex((prev) => Math.max(prev - 1, 0));
-        } else if (e.key === "Enter") {
-            e.preventDefault();
-            scrollToMessage(searchedMessages[selectedIndex].id);
-        }
-    };
-
     useEffect(() => {
         if (
-        !chatLoading &&
-        chatWith &&
-        (chatWith.nick === nick || String(chatWith.id) === id)
+            !chatLoading &&
+            chatWith &&
+            (chatWith.nick === nick || String(chatWith.id) === id)
         ) {
             setTitle(chatWith.name || chatWith.nick);
         }
@@ -306,115 +226,94 @@ export default function Chat() {
     if (chatLoading) return <Loader />;
 
     return (
-        <div className={`chatDiv ${isMobile ? "mobile" : ""}`}>
-        <ChatUser
-            search={search}
-            setSearch={setSearch}
-            selectedIndex={selectedIndex}
-            setSelectedIndex={setSelectedIndex}
-            searchedMessages={searchedMessages}
-            handleSearchKeyDown={handleSearchKeyDown}
-            handleArrowClick={handleArrowClick}
-            scrollToMessage={scrollToMessage}
-            searchItemRefs={searchItemRefs}
-            isChose={isChose}
-            setIsChose={setIsChose}
-            chosenMess={chosenMess}
-            setChosenMess={setChosenMess}
-            searchInputRef={searchInputRef}
-            activeHeader={activeHeader}
-            setActiveHeader={setActiveHeader}
-        />
+        <div className="chatDiv">
+            <ChatUser />
+            <div className={`chat AH${activeHeader}`} ref={chatContainerRef}>
+                {loadingMore && (
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        padding: "12px 0",
+                    }}
+                >
+                    <LoaderSmall />
+                </div>
+                )}
 
-        <div className="chat" ref={chatContainerRef}>
-            {loadingMore && (
-            <div
-                style={{
-                display: "flex",
-                justifyContent: "center",
-                padding: "12px 0",
+                {grouped.map((group) => (
+                <div key={group[0].id}>
+                    <DateDivider currDate={new Date(group[0].created_at)} />
+
+                    {group.map((m) => {
+                    const find = messages.find((mess) => mess.id === m.answer_id);
+                    const answer = find
+                        ? {
+                            id: find.id,
+                            name: find.sender_name,
+                            text:
+                            find.content ||
+                            (find.files?.length
+                                ? `${find.files.length} mediafile`
+                                : "Пересланное сообщение"),
+                        }
+                        : undefined;
+
+                    const redir_find = messages.find(
+                        (mess) =>
+                        mess.id === m.redirected_answer ||
+                        mess.redirected_id === m.redirected_answer
+                    );
+
+                    const redir_answer = redir_find
+                        ? {
+                            id: redir_find.id,
+                            name: redir_find.redirected_name || "",
+                            text:
+                            redir_find.content ||
+                            (redir_find.files?.length
+                                ? `${redir_find.files.length} mediafile`
+                                : "Пересланное сообщение"),
+                        }
+                        : undefined;
+
+                    return m.is_system ? (
+                        <SystemMessage
+                            key={m.id}
+                            m={m}
+                            answer={answer}
+                        />
+                    ) : (
+                        <Message
+                            key={m.id}
+                            message={m}
+                            answer={answer}
+                            redir_answer={redir_answer}
+                            cornerType={getCornerType(
+                                m.id,
+                                messages.map((msg) => msg.id),
+                                chosenMess.map((cm) => cm.id)
+                            )}
+                        />
+                    );
+                    })}
+                </div>
+                ))}
+            </div>
+            <ChatTAWrapper
+                showGoDown={showGoDown}
+                handleGoDown={() => {
+                    chatContainerRef.current?.scrollTo({
+                        top: chatContainerRef.current.scrollHeight,
+                        behavior: "smooth",
+                    });
                 }}
-            >
-                <LoaderSmall />
-            </div>
-            )}
-
-            {grouped.map((group) => (
-            <div key={group[0].id}>
-                <DateDivider currDate={new Date(group[0].created_at)} />
-
-                {group.map((m) => {
-                const find = messages.find((mess) => mess.id === m.answer_id);
-                const answer = find
-                    ? {
-                        id: find.id,
-                        name: find.sender_name,
-                        text:
-                        find.content ||
-                        (find.files?.length
-                            ? `${find.files.length} mediafile`
-                            : "Пересланное сообщение"),
-                    }
-                    : undefined;
-
-                const redir_find = messages.find(
-                    (mess) =>
-                    mess.id === m.redirected_answer ||
-                    mess.redirected_id === m.redirected_answer
-                );
-
-                const redir_answer = redir_find
-                    ? {
-                        id: redir_find.id,
-                        name: redir_find.redirected_name || "",
-                        text:
-                        redir_find.content ||
-                        (redir_find.files?.length
-                            ? `${redir_find.files.length} mediafile`
-                            : "Пересланное сообщение"),
-                    }
-                    : undefined;
-
-                return m.is_system ? (
-                    <SystemMessage
-                        key={m.id}
-                        m={m}
-                        answer={answer}
-                        scrollToMessage={answer ? scrollToMessage : undefined}
-                    />
-                ) : (
-                    <Message
-                        key={m.id}
-                        message={m}
-                        highlightedId={highlightedId}
-                        messageRefs={messageRefs}
-                        answer={answer}
-                        redir_answer={redir_answer}
-                        scrollToMessage={answer ? scrollToMessage : undefined}
-                        cornerType={getCornerType(
-                            m.id,
-                            messages.map((msg) => msg.id),
-                            chosenMess.map((cm) => cm.id)
-                        )}
-                    />
-                );
-                })}
-            </div>
-            ))}
-        </div>
-        <ChatTAWrapper
-            showGoDown={showGoDown}
-            handleGoDown={() => {
-                chatContainerRef.current?.scrollTo({
-                    top: chatContainerRef.current.scrollHeight,
-                    behavior: "smooth",
-                });
-            }}
-            scrollToMessage={scrollToMessage}
-            textAreaRef={textAreaRef}
-            mess={mess}
-            setMess={setMess}
-        />
+                textAreaRef={textAreaRef}
+                mess={mess}
+                setMess={setMess}
+                activeHeader={activeHeader}
+                searchedMessages={searchedMessages}
+            />
         </div>
     );
 }

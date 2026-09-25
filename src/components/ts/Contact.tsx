@@ -7,7 +7,6 @@ import { useContextMenu } from "../hooks/ContextMenuHook";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDrop } from "../hooks/DropHook";
 import { useBlackout } from "../hooks/BlackoutHook";
-import { useMessages } from "../hooks/MessagesHook";
 import { useUser } from "../hooks/UserHook";
 import { useIdentify } from "../hooks/utils/useIdentify";
 import { useMemo } from "react";
@@ -21,12 +20,11 @@ export interface ContactType {
 
 export default function Contact({ contact }: ContactType) {
     const { t, i18n } = useTranslation("common");
-    const { typingMap } = useChat();
+    const { typingMap, setActiveHeader } = useChat();
     const { onlineMap } = useContacts();
     const { setBlackout } = useBlackout();
     const { openMenu } = useContextMenu();
     const { setDroppedFiles } = useDrop();
-    const { setIsChose } = useMessages();
     const { user } = useUser();
     const { closeMenu } = useSideMenu();
     const { nick, id } = useParams<{ nick: string; id: string }>();
@@ -190,7 +188,7 @@ export default function Contact({ contact }: ContactType) {
             key={contact.id}
             onClick={() => {
                 setBlackout({ seted: false });
-                setIsChose(false);
+                setActiveHeader("text");
                 closeMenu();
             }}
             to={contact.is_group ? `chat/g/${contact.id}` : `chat/${contact.nick}`}

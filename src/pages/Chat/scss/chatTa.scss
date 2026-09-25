@@ -28,7 +28,7 @@
         left: 0;
         width: 100%;
         margin-bottom: 0;
-        padding: 0 2.5vw 4vh;
+        padding: 0 2.5vw 2vh;
         &::before {
             content: "";
             position: absolute;
@@ -269,7 +269,7 @@
     height: 3.5vh;
     aspect-ratio: 1/1;
     cursor: pointer;
-    color: var(--borderWhLight);
+    color: var(--tc);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -283,14 +283,14 @@
     }
     @media (hover: hover) {
         &:hover {
-            color: var(--tc);
+            color: var(--inner_text);
             background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }
 
     @media (hover: none) {
         &:active {
-            color: var(--tc);
+            color: var(--inner_text);
             background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }

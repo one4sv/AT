@@ -1,6 +1,6 @@
-import { createContext, useEffect, useRef, useState, type ReactNode, type RefObject, type SetStateAction } from "react"
+import { createContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react"
 import type { Habit } from "./HabitsContext"
-import type { activeHeaderType, Media } from "./ChatContext"
+import type { Media } from "./ChatContext"
 import type { Perms } from "./GroupContext"
 const ContextMenuContext = createContext<ContextMenuContextType | null>(null)
 
@@ -19,8 +19,6 @@ export interface chatInfoType {
     is_blocked:boolean,
     pinned:boolean,
     is_group?:boolean,
-    activeHeader?:activeHeaderType
-    setActiveHeader?:React.Dispatch<SetStateAction<activeHeaderType>>
 }
 export interface curChatType {
     isReacted?:string,
