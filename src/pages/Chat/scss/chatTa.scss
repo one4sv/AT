@@ -23,14 +23,24 @@
     bottom: 0;
     left: 20%;
     z-index: 4;
-    margin-bottom: 1vh;
+    padding-bottom: 1vh;
     border-radius: 24px;
     gap: .5vh;
+    height: 6dvh;
+    > div {
+        width: 100%;
+        position: absolute;
+    }
+
     @media (max-width: 800px) {
         left: 0;
         width: 100%;
         margin-bottom: 0;
         padding: 0 2.5vw 3vh;
+        height: 8vh;
+        > div {
+            width: calc(100% - 5vw);
+        }
         &::before {
             content: "";
             position: absolute;

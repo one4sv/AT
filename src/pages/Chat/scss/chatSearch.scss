@@ -92,7 +92,6 @@
     user-select: none;
     position: absolute;
     bottom: 105%;
-    z-index: 2;
     background-color: var(--interact);
     width: 100%;
     transition: max-height 0.3s ease, opacity 0.3s ease, padding-top .3s ease, padding-bottom .3s ease;

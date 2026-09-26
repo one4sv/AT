@@ -154,15 +154,11 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
                     </div>
                 }
                 {answer && scrollToMessage && (
-                    
                         <AnswerMess answer={answer} scrollToMessage={scrollToMessage}/>
-                    
                 )}
                 <div className={`messageText ${isMobile ? "mobile" : ""}`}>
                     <Linkify>
-                        
                             {m.content}
-                        
                     </Linkify>
                 </div>
                 {m.files && m.files.length > 0 && (

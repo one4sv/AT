@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "motion/react";
 import { CaretDoubleDown, Prohibit } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type SetStateAction } from "react";
 import { useChat } from "../../../components/hooks/ChatHook";
@@ -97,7 +98,17 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, set
                     <CaretDoubleDown />
                 </div>
             )}
-            {renderChatTa()}
+            <AnimatePresence mode="sync" initial={false}>
+                <motion.div
+                    key={activeHeader}
+                    initial={{ y: "300%" }}
+                    animate={{ y: 0 }}
+                    exit={{ y: "300%" }}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                >
+                    {renderChatTa()}
+                </motion.div>
+            </AnimatePresence>
         </div>
     )
 }

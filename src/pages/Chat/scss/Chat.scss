@@ -26,14 +26,13 @@
     height: 100%;
     padding-top: 6dvh;
     padding-bottom:6dvh;
-    transition: padding .3s ease;
     @media (max-width: 800px) {
-        padding-bottom:8dvh;
+        padding-bottom:8vh;
         width: 99%;
         padding-top: 6.5dvh;
         padding-right: 1vw;
         margin: 0 1vw;
-        height: 100ddvh;
+        height: 100dvh;
     }
 }
 .goDown {
