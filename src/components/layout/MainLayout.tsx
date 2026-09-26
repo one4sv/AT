@@ -27,7 +27,7 @@ export default function MainLayout({ children }: LayoutProps) {
   const { blackout, setBlackout } = useBlackout()
   const { setChosenMess, setAnswer, answer, editing, redirect, setEditing, setRedirect } = useMessages()
   const { handleDrop, handleDragOver, handleDragEnter, handleDragLeave, isDragging } = useDrop()
-  const { showHabitMenu, returnSlide} = useSideMenu()
+  const { showHabitMenu, setShowSlide} = useSideMenu()
   const { searchInputRef, searchMess, setSearchMess, activeHeader, setActiveHeader } = useChat()
   const { mainSearchRef, search, setSearch } = useContacts()
 
@@ -79,7 +79,7 @@ export default function MainLayout({ children }: LayoutProps) {
           setChosenDay(today);
           return
         } else if (showHabitMenu) {
-          returnSlide();
+          setShowSlide(null);
           return;
         }
         navigate("/habit");
@@ -125,7 +125,7 @@ export default function MainLayout({ children }: LayoutProps) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeHeader, answer, blackout.seted, chosenDay, editing, location.pathname, mainSearchRef, navigate, redirect, returnSlide, search.length, searchInputRef, searchMess.length, setActiveHeader, setAnswer, setBlackout, setChosenDay, setChosenMess, setEditing, setRedirect, setSearch, setSearchMess, showHabitMenu, user.id, user.nick]);
+  }, [activeHeader, answer, blackout.seted, chosenDay, editing, location.pathname, mainSearchRef, navigate, redirect, search.length, searchInputRef, searchMess.length, setActiveHeader, setAnswer, setBlackout, setChosenDay, setChosenMess, setEditing, setRedirect, setSearch, setSearchMess, setShowSlide, showHabitMenu, user.id, user.nick]);
 
   return (
     <div className="app-layout">
