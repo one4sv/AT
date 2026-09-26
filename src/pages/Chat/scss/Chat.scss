@@ -39,7 +39,7 @@
     position: absolute;
     background-color: var(--interact);
     height: 4dvh;
-    width: 4dvh;
+    width: 4dvh !important;
     z-index: 3;
     bottom: 108%;
     border-radius: 50%;
