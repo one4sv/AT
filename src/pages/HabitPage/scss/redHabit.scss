@@ -128,9 +128,6 @@
             border-bottom: 2px solid var(--accent);
         }
     }
-    > div {
-        padding-inline-start: 0.5vw;
-    }
     &:focus-within {
         >svg {
             color: var(--accent_text);

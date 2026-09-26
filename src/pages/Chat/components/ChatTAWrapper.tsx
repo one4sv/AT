@@ -97,9 +97,9 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, set
                     <CaretDoubleDown />
                 </div>
             )}
-            <div className="chatTAbg">                    
+            {/* <div className="chatTAbg">                     */}
                 {renderChatTa()}
-            </div>
+            {/* </div> */}
         </div>
     )
 }

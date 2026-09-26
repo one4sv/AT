@@ -2,6 +2,10 @@
     display: flex;
     height: 5vh;
     width: 100%;
+    background-color: var(--interact);
+    backdrop-filter: blur(var(--blur));
+    border-radius: 24px;
+    -webkit-backdrop-filter: blur(var(--blur));
 }
 .choosingCount {
     flex: 1;

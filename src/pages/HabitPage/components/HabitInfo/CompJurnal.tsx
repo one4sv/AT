@@ -6,11 +6,10 @@ import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
 import { formatDateFromString } from "../../../../components/ts/utils/dateToStr";
-import type { HabitSlideProps } from "../../HabitPage";
 
-export default function CompJurnal({ id }:HabitSlideProps) {
+export default function CompJurnal() {
     const { calendar } = useCalendar()
-    const { setDayComment, setIsDone, } = useTheHabit()
+    const { setDayComment, setIsDone, habit } = useTheHabit()
     const { setChosenDay, setSelectedYear, setSelectedMonth } = useCalendar();
     const navigate = useNavigate();
 
@@ -22,9 +21,6 @@ export default function CompJurnal({ id }:HabitSlideProps) {
 
     return (
         <div className="habitInnerSlide">
-            <div className="habitInnerSlideTitle">
-                Журнал активности
-            </div>
             <div className="compJurnalsearch">
                 <input type="text" onChange={(e) => setJurnalSearch(e.target.value)} value={jurnalSearch}/>
                 {jurnalSearch.trim().length > 0
@@ -55,7 +51,7 @@ export default function CompJurnal({ id }:HabitSlideProps) {
                                 className="CJrecord"
                                 key={`${date}-${habitId}`}
                                 onClick={() => {
-                                    if (!id) navigate(`/habit/${habitId}`);
+                                    if (!habit) navigate(`/habit/${habitId}`);
                                     setSelectedYear(new Date(date).getFullYear());
                                     setSelectedMonth(new Date(date).getMonth());
                                     setTimeout(() => setChosenDay(date), 1);
@@ -71,7 +67,7 @@ export default function CompJurnal({ id }:HabitSlideProps) {
                                     <div className="CJcreated">отм. {created}</div>
                                 </div>
 
-                                {!id && <div className="CJhabit">{habitName}</div>}
+                                <div className="CJhabit">{habitName}</div>
                                 <div className="CJcomment">{comment}</div>
                             </div>
                         );

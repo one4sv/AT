@@ -14,12 +14,11 @@ function SettingHint({ text }: { text: string }) {
     return <div className="habitSettingHint">{text}</div>;
 }
 
-export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitSlideProps) {
+export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlideProps) {
     const { habitSettings, habitTimer, habit } = useTheHabit();
     const { setNewMetricType, setNewScheduleBool, setNewAutoScheduleCompletion, setNewOngoing } = useUpHabit();
     const { setDeleteConfirm } = useDelete()
     const { setBlackout } = useBlackout()
-    
     const [ metric_type, setMetric_type ] = useState<metricsType>(habitSettings.metric_type);
     const [ scheduleToggle, setScheduleToggle ] = useState(habitSettings.schedule);
     const [ autoCompleteMode, setAutoCompleteMode ] = useState<string | number | undefined>(
@@ -54,25 +53,27 @@ export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitS
     ];
 
     const handleMetricChange = (value: string) => {
-        if (isMetricDisabled) return;
+        if (isMetricDisabled || !habit) return;
         const val = value as metricsType;
         setMetric_type(val);
-        setNewMetricType(id, val);
+        setNewMetricType(habit.id, val);
     };
 
     const handleScheduleChange = useCallback(
         (newValue: boolean) => {
+            if (!habit) return
             if (habit?.periodicity === "sometimes") return;
             setScheduleToggle(newValue);
-            setNewScheduleBool(id, newValue);
+            setNewScheduleBool(habit.id, newValue);
         },
-        [habit?.periodicity, id, setNewScheduleBool]
+        [habit, setNewScheduleBool]
     );
 
     const handleAutoCompletionChange = (value: string) => {
+        if (!habit) return
         const val = value as asctype;
         setAutoCompleteMode(value);
-        setNewAutoScheduleCompletion(id, val);
+        setNewAutoScheduleCompletion(habit.id, val);
     };
     const metricText: Record<metricsType, string> = {
         timer: "Фиксирует продолжительность выполнения.",
@@ -86,9 +87,6 @@ export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitS
 
     return (
         <div className="habitInnerSlide">
-            <div className="habitInnerSlideTitle">
-                Настройи: {habit.name}
-            </div>
             {/* Расписание */}
             <div className="redHabitBlock but" onClick={() => handleScheduleChange(!scheduleToggle)}>
                 <div className="redHabitStr">
@@ -174,7 +172,7 @@ export default function HabitSettings({ id, readOnly, isArchived, isMy }: HabitS
                     
                     {/* Удалить */}
                     <div className="redHabitBlock but danger" onClick={() => {
-                        setDeleteConfirm({goal:"habit", id:id, name:habit.name})
+                        setDeleteConfirm({goal:"habit", id:habit.id, name:habit.name})
                         setBlackout({seted:true, module:"Delete"})
                     }}>
                         <span className="redHabitSpan but"> 

@@ -44,7 +44,11 @@ export default function ChatSearch ({searchedMessages, selectedIndex, setSelecte
 
     return (
         <>
-            <div className="chatSearchMain">
+            <div className="chatTAStr">
+                <div className="chatTaButts">
+                    <div className="chatWriteSvgButt" onClick={() => handleArrowClick("up")}><CaretDownIcon className="chatSvg"/></div>
+                    <div className="chatWriteSvgButt" onClick={() => handleArrowClick("down")}><CaretUpIcon className="chatSvg"/></div>
+                </div>
                 <div className="chatSearch">
                     <input
                         type="text"
@@ -62,11 +66,7 @@ export default function ChatSearch ({searchedMessages, selectedIndex, setSelecte
                         <MagnifyingGlassIcon/>
                     )}
                 </div>
-                <div className="chatSearchInfo">
-                    <div className="chatSearchCarets">
-                        <div className="chatWriteSvgButt" onClick={() => handleArrowClick("up")}><CaretDownIcon className="chatSvg"/></div>
-                        <div className="chatWriteSvgButt" onClick={() => handleArrowClick("down")}><CaretUpIcon className="chatSvg"/></div>
-                    </div>
+                <div className="chatTaButts">
                     <div className="chatWriteTAButt" onClick={() => setIsOpen(!isOpen)}>
                         <List className="chatSend"/>
                     </div>

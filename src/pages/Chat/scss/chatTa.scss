@@ -23,12 +23,13 @@
     z-index: 4;
     margin-bottom: 1vh;
     border-radius: 24px;
+    gap: .5vh;
 
     @media (max-width: 800px) {
         left: 0;
         width: 100%;
         margin-bottom: 0;
-        padding: 0 2.5vw 2vh;
+        padding: 0 2.5vw 3vh;
         &::before {
             content: "";
             position: absolute;
@@ -52,24 +53,18 @@
         }
     }
 }
-.chatTAbg {
-    display: flex;
-    flex-direction: column;
+.chatWriteBar {
+    width: 100%;
     border-radius: 24px;
+    color: var(--tc);
+    min-height: 0;
+    max-height: 5vh;
+    display: flex;
+    gap: 0.5vw;
+    align-items: center;
     background-color: var(--interact);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-}
-.chatWriteBar {
-    width: 100%;
-    border-radius: 24px 24px 0 0;
-    background-color: var(--tr);
-    color: var(--tc);
-    height: 5vh;
-    display: flex;
-    padding-left: 0.5vw;
-    gap: 0.5vw;
-    align-items: center;
     &.chatBarwFiles::after {
         content: "";
         position: absolute;
@@ -80,9 +75,11 @@
     }
 }
 .chatTAFiles {
+    background-color: var(--interact);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     width: 100%;
-    border-radius: 12px 12px 0 0;
-    background-color: var(--tr);
+    border-radius: 24px;
     color: var(--tc);
     height: 8vh;
     display: flex;
@@ -90,8 +87,9 @@
     overflow-x: auto;
     padding: 0.5vh 0.5vw;
     gap: 0.5vw;
-    &.chatTAFileswBar {
-        border-radius: 0 !important;
+    @media (max-width: 800px) {
+        padding: 1vh 3vw;
+        gap: 1vw;
     }
 }
 .chatTAFile {
@@ -109,42 +107,34 @@
 
     @media (hover: hover) {
         &:hover {
-        opacity: 1;
-    
+            opacity: 1;
         }
     }
 
     @media (hover: none) {
         &:active {
-        opacity: 1;
-    
-        
+            opacity: 1;
         }
     }
 }
 
 .chatTAFilePreview {
-  height: 90%;
-  width: auto;
-  aspect-ratio: 1/1;
-  border-radius: 12px;
-  object-fit: cover;
-  transition: transform 0.2s ease;
-
-  @media (hover: hover) {
-      &:hover {
-      transform: scale(1.05);
-  
-      }
-  }
-
-  @media (hover: none) {
-      &:active {
-      transform: scale(1.05);
-  
-      
-      }
-  }
+    height: 100%;
+    width: 100%;
+    width: auto;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+    @media (hover: hover) {
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+    @media (hover: none) {
+        &:active {
+            transform: scale(1.05);
+        }
+    }
 }
 
 .chatTAFileOverlay {
@@ -243,30 +233,53 @@
     }
 }
 
+.chatTAStr {
+    display: flex;
+    min-height: 5vh;
+    align-items: flex-end;
+    gap: .5vh;
+    @media (max-width: 800px) {
+        gap: 1vw;
+    }
+}
 .chatTA {
     resize: none;
     width: 100%;
-    background-color: var(--tr);
+    background-color: var(--interact);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     color: var(--tc);
     font-size: 16px;
     max-height: 50vh;
-    padding: 0.5vh 0.5vw;
+    min-height: 5vh;
+    line-height: 1.35;
+    padding: 1vh 1vw;
     box-sizing: border-box;
     scrollbar-width:thin;
     outline: none;
     border: none;
-    border-radius: 0 0 24px 24px;
-    padding-inline-start: 0.5vw;
+    border-radius: 24px;
     border: none;
-    @media (max-width: 800px) {
-        padding-inline-start: 2vw;
-    }
     &::placeholder {
+        vertical-align: middle; 
         color: var(--borderWhLight);
     }
+    @media (max-width: 800px) {
+        padding: 1vh 2vw;
+    }
+}
+.chatTaButts {
+    height: 5vh;
+    padding: .5vh;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    background-color: var(--interact);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
 }
 .chatWriteSvgButt {
-    height: 3.5vh;
+    height: 4vh;
     aspect-ratio: 1/1;
     cursor: pointer;
     color: var(--tc);
@@ -303,8 +316,6 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    position: absolute;
-    right: 0.3vw;
     background:linear-gradient(135deg, var(--accent), var(--grad));
     @media (hover: hover) {
         &:hover {
@@ -317,9 +328,6 @@
             background:linear-gradient(105deg, var(--accent), var(--grad));
         }
     }
-    @media (max-width:800px) {
-        right: 2vw;
-    }
 }
 .chatSend {
     font-size: 24px;
@@ -330,26 +338,21 @@
     justify-content: space-between;
     width: 74%;
     cursor: pointer;
-    height: 90%;
-    @media (max-width:800px) {
-        width: 64%;
+    height: 5vh;
+    border-radius: 24px;
+    @media (hover: hover) {
+        &:hover {
+            background-color: var(--accent_hov);
+        }
     }
-    >div {
-        border-radius: 8px;
-        @media (hover: hover) {
-            &:hover {
+    @media (hover: none) {
+        &:active {
             background-color: var(--accent_hov);
-        
-            }
         }
-
-        @media (hover: none) {
-            &:active {
-            background-color: var(--accent_hov);
-        
-            
-            }
-        }
+    }
+    @media (max-width:800px) {
+        width: 100%;
+        padding: 0 0 0 2vw;
     }
 }
 .closeAnswer {

@@ -75,9 +75,6 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     
     return (
         <div className="habitInnerSlide">
-            <div className="habitInnerSlideTitle">
-                Добавить в чат
-            </div>
             <div className="settingInnerWrapper">
                 <div className="settingSpan">
                     Настройки чата

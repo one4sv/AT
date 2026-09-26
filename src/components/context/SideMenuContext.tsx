@@ -10,6 +10,7 @@ import {
 import { useLocation } from "react-router-dom";
 
 export type tab = "chats" | "habits" | "spots" | "user";
+export type slides = "settings" | "chat" | "journal" | null
 
 interface SideMenuContextType {
     showSideMenu: boolean;
@@ -18,13 +19,8 @@ interface SideMenuContextType {
     setRed: React.Dispatch<SetStateAction<boolean>>;
     showHabitMenu: boolean;
     setShowHabitMenu: React.Dispatch<SetStateAction<boolean>>;
-    showSettings: boolean;
-    setShowSettings: React.Dispatch<SetStateAction<boolean>>;
-    showJurnal: boolean;
-    setShowJurnal: React.Dispatch<SetStateAction<boolean>>;
-    showChatMenu: boolean;
-    setShowChatMenu: React.Dispatch<SetStateAction<boolean>>;
-    returnSlide: () => void;
+    showSlide: slides;
+    setShowSlide: React.Dispatch<SetStateAction<slides>>;
     activeTab: tab;
     setActiveTab: React.Dispatch<SetStateAction<tab>>;
     messageSelectedValue: string;
@@ -50,9 +46,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [showSideMenu, setShowSideMenu] = useState(true);
     const [red, setRed] = useState(false);
     const [showHabitMenu, setShowHabitMenu] = useState(false);
-    const [showSettings, setShowSettings] = useState(false);
-    const [showJurnal, setShowJurnal] = useState(false);
-    const [showChatMenu, setShowChatMenu] = useState(false);
+    const [showSlide, setShowSlide] = useState<slides>(null);
     const [activeTab, setActiveTab] = useState<tab>("chats");
     const [translateX, setTranslateX] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
@@ -157,13 +151,6 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.pathname]);
 
-    const returnSlide = () => {
-        if (showJurnal) setShowJurnal(false);
-        else if (showSettings) setShowSettings(false);
-        else if (showChatMenu) setShowChatMenu(false);
-        else setShowHabitMenu(false);
-    };
-
 
     return (
         <SideMenuContext.Provider
@@ -174,13 +161,8 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
                 setRed,
                 showHabitMenu,
                 setShowHabitMenu,
-                showSettings,
-                setShowSettings,
-                showChatMenu,
-                setShowChatMenu,
-                showJurnal,
-                setShowJurnal,
-                returnSlide,
+                showSlide,
+                setShowSlide,
                 activeTab,
                 setActiveTab,
                 setTranslateX,

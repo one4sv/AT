@@ -1,4 +1,4 @@
-import { ClockCountdown, Paperclip, SmileySticker, Sticker, X } from "@phosphor-icons/react";
+import { ClockCountdown, Paperclip, SmileySticker, X } from "@phosphor-icons/react";
 import { SendHorizontal } from "lucide-react";
 import { useEffect, useRef, useState, type SetStateAction } from "react";
 import { useLocation, useParams } from "react-router";
@@ -97,17 +97,29 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
         const ta = textAreaRef.current;
         if (!ta) return;
 
-        ta.style.height = "auto";
-        ta.style.minHeight = "2vh";
+        // Сбрасываем, чтобы корректно посчитать scrollHeight
+        ta.style.height = "0px";
+        ta.style.overflowY = "hidden";
 
-        const newHeight = ta.scrollHeight;
-        ta.style.height = newHeight + 15 + "px";
+        const minHeight = window.innerHeight * 0.05; // 5vh
+        const maxHeight = window.innerHeight * 0.5;  // 50vh
 
-        if (newHeight > window.innerHeight * 0.5) {
+        let newHeight = ta.scrollHeight;
+
+        // Всегда не меньше 5vh
+        if (newHeight < minHeight) {
+            newHeight = minHeight;
+        }
+
+        // Ограничиваем максимумом
+        if (newHeight > maxHeight) {
+            newHeight = maxHeight;
             ta.style.overflowY = "auto";
         } else {
             ta.style.overflowY = "hidden";
         }
+
+        ta.style.height = `${newHeight}px`;
     }, [mess]);
 
     useEffect(() => {
@@ -122,7 +134,7 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
             ]);
             setDroppedFiles([])
         }
-    }, [chatLoading, droppedFiles, location.pathname, nick, setDroppedFiles])
+    }, [chatLoading, droppedFiles, id, location.pathname, nick, setDroppedFiles])
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         const pastedFiles = Array.from(e.clipboardData.files).filter(f => f instanceof File && typeof f.type === 'string');
@@ -147,18 +159,6 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
     return (
         <>
             <div className={`chatWriteBar ${files.length > 0 ? "chatBarwFiles" : ""}`}>
-                <div className="chatWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
-                    <Paperclip className="chatSvg"/>
-                </div>                    
-                <div className="chatWriteSvgButt" ref={emojiButtRef} onClick={(e) => {
-                    e.stopPropagation();
-                    setShowEmojiBar(prev => !prev)}
-                }>
-                    <SmileySticker className="chatSvg"/>
-                </div>
-                <div className="chatWriteSvgButt">
-                    <Sticker className="chatSvg"/>
-                </div>
                 {answer !== null && (
                     <MessBarBlock object={answer} scrollToMessage={scrollToMessage} />
                 )}
@@ -175,14 +175,7 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
                                     :"Пересланное сообщение"} 
                             : { id:"0", sender:[...new Set(redirect.filter(m => m.sender_name === m.sender_name).map(m => m.sender_name))].join(',  '), previewText:`${redirect.length} сообщения`}} 
                         scrollToMessage={scrollToMessage} />
-                    )}
-                <div className="chatWriteTAButt" onClick={handleSend}>
-                    {sending ? (
-                        <ClockCountdown className="chatSend"/>
-                    ) : (
-                        <SendHorizontal className="chatSend" fill="currenColor"/>
-                    )}
-                </div>
+                )}
             </div>
             {allFilesForDisplay.length > 0 && (
                 <div className="chatTAFiles chatTAFileswBar">
@@ -223,20 +216,42 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
                     })}
                 </div>
             )}
-            <textarea
-                name="chatTA"
-                id="chatTA"
-                className="chatTA chatTAwFiles"
-                value={mess}
-                ref={textAreaRef}
-                onChange={(e) => {
-                    setMess(e.currentTarget.value)
-                    if (!editing) handleTyping(chatWith ? chatWith.id : "")
-                }}
-                onKeyDown={handleKeyDown}
-                placeholder="Напишите сообщение..."
-                onPaste={handlePaste}
-            />
+            <div className="chatTAStr">
+                <div className="chatTaButts">
+                    <div className="chatWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
+                        <Paperclip className="chatSvg"/>
+                    </div>                    
+                    <div className="chatWriteSvgButt" ref={emojiButtRef} onClick={(e) => {
+                        e.stopPropagation();
+                        setShowEmojiBar(prev => !prev)}
+                    }>
+                        <SmileySticker className="chatSvg"/>
+                    </div>
+                </div>
+                <textarea
+                    name="chatTA"
+                    id="chatTA"
+                    className="chatTA chatTAwFiles"
+                    value={mess}
+                    ref={textAreaRef}
+                    onChange={(e) => {
+                        setMess(e.currentTarget.value)
+                        if (!editing) handleTyping(chatWith ? chatWith.id : "")
+                    }}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Напишите сообщение..."
+                    onPaste={handlePaste}
+                />
+                <div className="chatTaButts">
+                    <div className="chatWriteTAButt" onClick={handleSend}>
+                        {sending ? (
+                            <ClockCountdown className="chatSend"/>
+                        ) : (
+                            <SendHorizontal className="chatSend" fill="currenColor"/>
+                        )}
+                    </div>
+                </div>
+            </div>
             <input
                 type="file"
                 multiple

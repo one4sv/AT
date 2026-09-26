@@ -24,45 +24,23 @@
     width: 60%;
     margin: 0 auto;
     height: 100%;
-    padding-top: 6vh;
+    padding-top: 6dvh;
+    padding-bottom:6dvh;
     transition: padding .3s ease;
     @media (max-width: 800px) {
+        padding-bottom:8dvh;
         width: 99%;
-        padding-top: 6.5vh;
+        padding-top: 6.5dvh;
         padding-right: 1vw;
         margin: 0 1vw;
-        height: 100dvh;
-    }
-    &.AHtext {
-        padding-bottom:12vh;
-        @media (max-width: 800px) {
-            padding-bottom:14vh;
-        }
-    }    
-    &.AHsearch {
-        padding-bottom:6vh;
-        @media (max-width: 800px) {
-            padding-bottom:7vh;
-        }
-    }    
-    &.AHpinned {
-        padding-bottom:6vh;
-        @media (max-width: 800px) {
-            padding-bottom:7vh;
-        }
-    }    
-    &.AHchoosing {
-        padding-bottom:6vh;
-        @media (max-width: 800px) {
-            padding-bottom:7vh;
-        }
+        height: 100ddvh;
     }
 }
 .goDown {
     position: absolute;
     background-color: var(--interact);
-    height: 4vh;
-    width: 4vh;
+    height: 4dvh;
+    width: 4dvh;
     z-index: 3;
     bottom: 108%;
     border-radius: 50%;

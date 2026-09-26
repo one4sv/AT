@@ -29,7 +29,6 @@ import { useUpHabit } from "../../components/hooks/UpdateHabitHook";
 import HabitChatMenu from "./components/HabitInfo/HabitChatMenu";
 
 export interface HabitSlideProps {
-    id: number;
     readOnly?: boolean;
     isArchived?: boolean;
     isMy?: boolean;
@@ -54,14 +53,10 @@ export default function Habit() {
     const {
         showHabitMenu,
         setShowHabitMenu,
-        showJurnal,
-        setShowJurnal,
-        showSettings,
-        setShowSettings,
+        showSlide,
+        setShowSlide,
         setDontHandle,
         dontHandleOther,
-        setShowChatMenu,
-        showChatMenu,
         setDontHandleOther
     } = useSideMenu();
 
@@ -71,20 +66,18 @@ export default function Habit() {
     const { habits, loadingHabits } = useHabits();
     const { setNewOngoing } = useUpHabit();
 
-    const [handleMenu, setHandleMenu] = useState(true);
-    const [handleDelta, setHandleDelta] = useState(true);
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [habitHeight, setHabitHeight] = useState(MIN_HABIT_HEIGHT);
-    const [expandProgress, setExpandProgress] = useState(0);
-    const [pullingState, setPullingState] = useState(false);
-    const [menuTranslate, setMenuTranslate] = useState(100);
-    const [dragging, setDragging] = useState(false);
+    const [ handleMenu, setHandleMenu ] = useState(true);
+    const [ handleDelta, setHandleDelta ] = useState(true);
+    const [ isExpanded, setIsExpanded ] = useState(false);
+    const [ habitHeight, setHabitHeight ] = useState(MIN_HABIT_HEIGHT);
+    const [ expandProgress, setExpandProgress ] = useState(0);
+    const [ pullingState, setPullingState ] = useState(false);
+    const [ menuTranslate, setMenuTranslate ] = useState(100);
+    const [ dragging, setDragging ] = useState(false);
 
     const startX = useRef(0);
     const startTranslate = useRef(100);
     const mainRef = useRef<HTMLDivElement | null>(null);
-
-    const isSlided = showJurnal || showSettings || showChatMenu;
 
     const startY = useRef<number | null>(null);
     const pulling = useRef(false);
@@ -92,11 +85,9 @@ export default function Habit() {
 
     useEffect(() => {
         if (!showHabitMenu) {
-            setShowSettings(false);
-            setShowJurnal(false);
-            setShowChatMenu(false);
+            setShowSlide(null);
         }
-    }, [setShowChatMenu, setShowJurnal, setShowSettings, showHabitMenu]);
+    }, [setShowSlide, showHabitMenu]);
 
     useEffect(() => {
         if (habitId) {
@@ -301,6 +292,31 @@ export default function Habit() {
     const isArchived = !habit?.ongoing;
     const isReadOnly = !isMy || isArchived;
 
+    const renderSlide = () => {
+        switch (showSlide) {
+            case "settings":
+                return (
+                    <HabitSettings
+                        readOnly={isReadOnly}
+                        isArchived={isArchived}
+                        isMy={isMy}
+                    />
+                )
+            case "journal":
+                return (
+                    <CompJurnal/>
+                )
+            case "chat":
+                return (
+                    <HabitChatMenu
+                        readOnly={isReadOnly}
+                        isArchived={isArchived}
+                        isMy={isMy}
+                    />
+                )
+        }
+    }
+
     return (
         <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
             {habitId && (
@@ -411,10 +427,9 @@ export default function Habit() {
                     }}
                 >
                     <div
-                        className={`habitSlider ${
-                            showSettings || showJurnal || showChatMenu
-                                ? "toSlide"
-                                : ""
+                        className={`habitSlider ${showSlide
+                            ? "toSlide"
+                            : ""
                         }`}
                     >
                         <div className="habitSlide">
@@ -424,12 +439,7 @@ export default function Habit() {
                             />
 
                             {!isReadOnly && (
-                                <HabitExtraButts
-                                    id={Number(habitId)}
-                                    setShowSettings={setShowSettings}
-                                    setShowJurnal={setShowJurnal}
-                                    setShowChatMenu={setShowChatMenu}
-                                />
+                                <HabitExtraButts/>
                             )}
 
                             {isMy && isArchived && (
@@ -452,37 +462,13 @@ export default function Habit() {
                                 </div>
                             )}
                         </div>
-
                         <div className="habitSlide">
-                            {showSettings && (
-                                <HabitSettings
-                                    readOnly={isReadOnly}
-                                    id={habit.id}
-                                    isArchived={isArchived}
-                                    isMy={isMy}
-                                />
-                            )}
-
-                            {showJurnal && (
-                                <CompJurnal id={habit.id} />
-                            )}
-
-                            {showChatMenu && (
-                                <HabitChatMenu
-                                    readOnly={isReadOnly}
-                                    id={habit.id}
-                                    isArchived={isArchived}
-                                    isMy={isMy}
-                                />
-                            )}
+                            {renderSlide()}
                         </div>
                     </div>
 
                     <HabitSave
                         readOnly={isReadOnly}
-                        id={habit.id}
-                        archived={!habit.ongoing}
-                        isSlided={isSlided}
                     />
                 </div>
             )}
