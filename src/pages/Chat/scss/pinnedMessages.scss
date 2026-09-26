@@ -120,7 +120,7 @@
     z-index: 1;
     opacity: 0;
     pointer-events: none;
-    transition: top 0.5s ease;
+    transition: all .3s ease;
     @media (max-width: 800px) {
         width: 95vw;
     }

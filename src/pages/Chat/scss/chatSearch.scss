@@ -94,7 +94,7 @@
     bottom: 105%;
     background-color: var(--interact);
     width: 100%;
-    transition: max-height 0.3s ease, opacity 0.3s ease, padding-top .3s ease, padding-bottom .3s ease;
+    transition: all .3s ease;
     overflow-x: hidden;
     border-radius: 24px;
     opacity: 0;
