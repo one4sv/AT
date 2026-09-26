@@ -1,0 +1,59 @@
+.emojiBar {
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--mc);
+    z-index: 6;
+    width: 50%;
+    height: 30vh;
+    position: absolute;
+    bottom: 105%;
+    border-radius: 24px;
+    overflow-y: scroll;
+    padding: 1vh 0.5vw 1vh 1vw;
+    scrollbar-width: thin;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    >.emjojiGroup {
+        width: 100%;
+        height: fit-content;
+    }
+    @media (max-width:800px) {
+        width: 95%;
+        height: 30vh;
+        left: 2.5%;
+        bottom: 105%;
+        padding: 1vh 3vw;
+    }
+}
+.emojiList {
+    display: flex;
+    flex-wrap: wrap;
+}
+.emojiGroupName {
+    color: var(--borderHabit);
+}
+.emoji {
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1/1;
+    width: 7.5%;
+    border-radius: 6px;
+    @media (hover: hover) {
+        &:hover {
+        background-color: var(--menuButtHover);
+    
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+        background-color: var(--menuButtHover);
+    
+        
+        }
+    }
+}

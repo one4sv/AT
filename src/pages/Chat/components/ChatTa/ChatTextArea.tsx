@@ -155,10 +155,24 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
     function isOldMedia(item: typeof allFilesForDisplay[number]): item is { file: Media; isOld: true } {
         return item.isOld === true;
     }
+    
+    const barOpen = files.length > 0 || answer !== null || editing !== null || redirect !== undefined
 
     return (
         <>
-            <div className={`chatWriteBar ${files.length > 0 ? "chatBarwFiles" : ""}`}>
+            <div className="chatTAStr">
+                <div className="chatTaButts">
+                    <div className="chatWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
+                        <Paperclip className="chatSvg"/>
+                    </div>                    
+                    <div className="chatWriteSvgButt" ref={emojiButtRef} onClick={(e) => {
+                        e.stopPropagation();
+                        setShowEmojiBar(prev => !prev)}
+                    }>
+                        <SmileySticker className="chatSvg"/>
+                    </div>
+                </div>
+            <div className={`chatWriteBar ${barOpen ? "open" : ""}`}>
                 {answer !== null && (
                     <MessBarBlock object={answer} scrollToMessage={scrollToMessage} />
                 )}
@@ -176,7 +190,6 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
                             : { id:"0", sender:[...new Set(redirect.filter(m => m.sender_name === m.sender_name).map(m => m.sender_name))].join(',  '), previewText:`${redirect.length} сообщения`}} 
                         scrollToMessage={scrollToMessage} />
                 )}
-            </div>
             {allFilesForDisplay.length > 0 && (
                 <div className="chatTAFiles chatTAFileswBar">
                     {allFilesForDisplay.map((item, i) => {
@@ -216,32 +229,21 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
                     })}
                 </div>
             )}
-            <div className="chatTAStr">
-                <div className="chatTaButts">
-                    <div className="chatWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
-                        <Paperclip className="chatSvg"/>
-                    </div>                    
-                    <div className="chatWriteSvgButt" ref={emojiButtRef} onClick={(e) => {
-                        e.stopPropagation();
-                        setShowEmojiBar(prev => !prev)}
-                    }>
-                        <SmileySticker className="chatSvg"/>
-                    </div>
-                </div>
-                <textarea
-                    name="chatTA"
-                    id="chatTA"
-                    className="chatTA chatTAwFiles"
-                    value={mess}
-                    ref={textAreaRef}
-                    onChange={(e) => {
-                        setMess(e.currentTarget.value)
-                        if (!editing) handleTyping(chatWith ? chatWith.id : "")
-                    }}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Напишите сообщение..."
-                    onPaste={handlePaste}
-                />
+            <textarea
+                name="chatTA"
+                id="chatTA"
+                className="chatTA chatTAwFiles"
+                value={mess}
+                ref={textAreaRef}
+                onChange={(e) => {
+                    setMess(e.currentTarget.value)
+                    if (!editing) handleTyping(chatWith ? chatWith.id : "")
+                }}
+                onKeyDown={handleKeyDown}
+                placeholder="Напишите сообщение..."
+                onPaste={handlePaste}
+            />
+            </div>
                 <div className="chatTaButts">
                     <div className="chatWriteTAButt" onClick={handleSend}>
                         {sending ? (

@@ -1,3 +1,5 @@
+@use "../../../scss/emojiBar";
+
 .chatIsBlocked {
     display: flex;
     flex-direction: column;
@@ -24,7 +26,6 @@
     margin-bottom: 1vh;
     border-radius: 24px;
     gap: .5vh;
-
     @media (max-width: 800px) {
         left: 0;
         width: 100%;
@@ -58,39 +59,27 @@
     border-radius: 24px;
     color: var(--tc);
     min-height: 0;
-    max-height: 5vh;
+    max-height: fit-content;
     display: flex;
-    gap: 0.5vw;
-    align-items: center;
+    flex-direction: column;
     background-color: var(--interact);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    &.chatBarwFiles::after {
-        content: "";
+    transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    &.open {
         position: absolute;
-        margin-top: 4.5vh;
-        left: 2.5%;
-        width: 95%;
-        background-color: var(--borderHabit);
+        bottom: 105%;
     }
 }
 .chatTAFiles {
-    background-color: var(--interact);
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
     width: 100%;
-    border-radius: 24px;
     color: var(--tc);
     height: 8vh;
     display: flex;
     flex-direction: row;
     overflow-x: auto;
-    padding: 0.5vh 0.5vw;
     gap: 0.5vw;
-    @media (max-width: 800px) {
-        padding: 1vh 3vw;
-        gap: 1vw;
-    }
+    padding: .5vh;
 }
 .chatTAFile {
     height: 100%;
@@ -99,23 +88,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 0.3vw;
-    border-radius: 12px;
+    border-radius: 24px;
     overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Тень для превью
-
-    @media (hover: hover) {
-        &:hover {
-            opacity: 1;
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-            opacity: 1;
-        }
-    }
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .chatTAFilePreview {
@@ -125,14 +101,18 @@
     aspect-ratio: 1/1;
     object-fit: cover;
     transition: transform 0.2s ease;
+    transform: scale(1);
+    pointer-events: none;
     @media (hover: hover) {
         &:hover {
             transform: scale(1.05);
+            opacity: 1;
         }
     }
     @media (hover: none) {
         &:active {
             transform: scale(1.05);
+            opacity: 1;
         }
     }
 }
@@ -174,70 +154,13 @@
         word-break: break-all;
     }
 }
-.emojiBar {
-    user-select: none;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--mc);
-    z-index: 6;
-    width: 50%;
-    height: 30vh;
-    position: absolute;
-    bottom: 110%;
-    border-radius: 12px 12px 0 12px;
-    overflow-y: scroll;
-    padding: 0.5vh 0.5vw;
-    scrollbar-width: thin;
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
-    >.emjojiGroup {
-        width: 100%;
-        height: fit-content;
-    }
-    @media (max-width:800px) {
-        width: 90%;
-        height: 30vh;
-        left: 5%;
-        bottom: 105%;
-    }
-}
-.emojiList {
-    display: flex;
-    flex-wrap: wrap;
-}
-.emojiGroupName {
-    color: var(--borderHabit);
-}
-.emoji {
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1/1;
-    width: 7.5%;
-    border-radius: 6px;
-    @media (hover: hover) {
-        &:hover {
-        background-color: var(--menuButtHover);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        background-color: var(--menuButtHover);
-    
-        
-        }
-    }
-}
-
 .chatTAStr {
     display: flex;
     min-height: 5vh;
     align-items: flex-end;
+    position: relative;
     gap: .5vh;
+    justify-content: space-between;
     @media (max-width: 800px) {
         gap: 1vw;
     }
@@ -245,19 +168,16 @@
 .chatTA {
     resize: none;
     width: 100%;
-    background-color: var(--interact);
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
+    background-color: var(--tr);
     color: var(--tc);
     font-size: 16px;
     max-height: 50vh;
     min-height: 5vh;
     line-height: 1.35;
-    padding: 1vh 1vw;
+    padding: 1.35vh 1vw;
     box-sizing: border-box;
     scrollbar-width:thin;
     outline: none;
-    border: none;
     border-radius: 24px;
     border: none;
     &::placeholder {
@@ -265,7 +185,7 @@
         color: var(--borderWhLight);
     }
     @media (max-width: 800px) {
-        padding: 1vh 2vw;
+        padding: 1vh 3vw;
     }
 }
 .chatTaButts {
@@ -334,12 +254,49 @@
     fill: currentColor;
 }
 .answerDiv {
+    padding: .5vh .5vh 0;
     display: flex;
     justify-content: space-between;
-    width: 74%;
+    width: 100%;
     cursor: pointer;
     height: 5vh;
     border-radius: 24px;
+    align-items: center;
+}
+.closeAnswer {
+    height: 4vh;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 24px;
+    @media (hover: hover) {
+        &:hover {
+            background-color: var(--menuButtHover);
+        }
+    }
+    @media (hover: none) {
+        &:active {
+            background-color: var(--menuButtHover);
+        }
+    }
+    > svg {
+        width: 50%;
+        height: 50%;
+    }
+}
+.answer {
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: .75vw;
+    @media (max-width: 800px) {
+        padding-left: 2vw;
+    }
     @media (hover: hover) {
         &:hover {
             background-color: var(--accent_hov);
@@ -350,31 +307,6 @@
             background-color: var(--accent_hov);
         }
     }
-    @media (max-width:800px) {
-        width: 100%;
-        padding: 0 0 0 2vw;
-    }
-}
-.closeAnswer {
-    height: 100%;
-    aspect-ratio: 1/1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    > svg {
-        width: 80%;
-        height: 80%;
-    }
-}
-.answer {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-left: 0.5vw;
-
 }
 .answer1str {
     width: 100%;
