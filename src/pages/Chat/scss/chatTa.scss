@@ -66,9 +66,17 @@
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    bottom: 0;
+    position: absolute;
+    width: calc(100% - 15vh);
+    left: 9.5vh;
     &.open {
-        position: absolute;
+        width: 100%;
+        left: 0;
         bottom: 105%;
+        div {
+            transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
     }
 }
 .chatTAFiles {
@@ -159,7 +167,6 @@
     min-height: 5vh;
     align-items: flex-end;
     position: relative;
-    gap: .5vh;
     justify-content: space-between;
     @media (max-width: 800px) {
         gap: 1vw;

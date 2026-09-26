@@ -210,10 +210,7 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
                         }
 
                         return (
-                            <div key={i} className="chatTAFile">
-                                <div className="chatTAFileOverlay" onClick={() => handleRemoveFile(i)}>
-                                    <X />
-                                </div>
+                            <div key={i} className="chatTAFile" onClick={() => handleRemoveFile(i)}>
                                 {isImage ? (
                                     <img src={previewUrl} alt={name} className="chatTAFilePreview" />
                                 ) : isVideo ? (
