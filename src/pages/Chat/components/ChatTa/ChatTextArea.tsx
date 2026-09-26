@@ -1,4 +1,4 @@
-import { ClockCountdown, Paperclip, SmileySticker, X } from "@phosphor-icons/react";
+import { ClockCountdown, Paperclip, SmileySticker} from "@phosphor-icons/react";
 import { SendHorizontal } from "lucide-react";
 import { useEffect, useRef, useState, type SetStateAction } from "react";
 import { useLocation, useParams } from "react-router";
