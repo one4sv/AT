@@ -1,0 +1,178 @@
+.habitMobileDone {
+    display: flex;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    z-index: 4;
+    border-radius: 24px;
+    gap: .5vh;
+    padding: 0 2.5% 3vh;
+    align-items: end;
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        backdrop-filter: blur(var(--backdropTA));
+        -webkit-backdrop-filter: blur(var(--backdropTA));
+        background:linear-gradient(135deg, var(--tr), #0000009a);
+
+        mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 100%
+        );
+        -webkit-mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 100%
+        );
+    }
+}
+.doneButtDivMobile {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    height: 5vh;
+    width: 100%;
+    border-radius: 24px;
+    transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    justify-content: flex-start;
+    &.planable {
+        background: var(--tc);
+        color: var(--bgc);
+    }
+    &.doable {
+        background:linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--tc);
+    }
+    &.waiting {
+        background:var(--interact);
+        color: var(--tc);
+    }
+    &.close {
+        width: 5vh;
+    }
+    &.open {
+        width: calc(100% - 5.5vh);
+    }
+}
+.doneButtMobile {
+    width: 100%;
+    height: 100%;
+    color: var(--inner_text);
+    border-radius: 24px;
+    background-color: var(--tr);
+    border: none;
+    user-select: none;
+    font-size: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding-left: 3vw;
+    transition: all 0s ease;
+}
+.habitDayCommentMobile {
+    height: fit-content;
+    min-height: 5vh;
+    max-height: 50vh;
+    overflow: hidden;
+    display: flex;
+    position: relative;
+    align-items: end;
+    transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1), opacity .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    * {
+        transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1), opacity .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+    gap: .5vh;
+    &.close {
+        width: 5vh;
+        justify-content: end;
+        .saveCommentButtonMobile {
+            width: 0;
+            opacity: 0;
+        }
+        textarea {
+            width: 0;
+            opacity: 0;
+        }
+    }
+    &.open {
+        width: calc(100% - 5.5vh);
+        .saveCommentButtonMobile {
+            width: 5vh;
+            opacity: 1;
+        }
+        textarea {
+            width: calc(100% - 5.5vh);
+            opacity: 1;
+        }
+    }
+    > textarea {
+        transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1), opacity .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+        resize: none;
+        background-color: var(--tr);
+        color: var(--tc);
+        font-size: 16px;
+        max-height: 50vh;
+        height: 5vh;
+        min-height: 5vh;
+        line-height: 1.35;
+        padding: 1vh 3vw;
+        box-sizing: border-box;
+        scrollbar-width:thin;
+        outline: none;
+        border-radius: 24px;
+        border: none;
+        background-color: var(--interact);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+        &::placeholder {
+            vertical-align: middle; 
+            color: var(--borderWhLight);
+        }
+    }
+    >span {
+        position: absolute;
+        right: 7vh;
+        bottom: 0;
+        color: var(--borderHabit);
+        font-size: 12px;
+    }
+    >.bottomOpen {
+        background-color: var(--interact);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+    }
+}
+.hdcTAExtraMobile {
+    height: 5vh;
+    width: 5vh;
+    border-radius: 24px;
+    overflow: hidden;
+}
+.saveCommentButtonMobile {
+    transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1), opacity .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    height: 5vh;
+    width: 5vh;
+    border-radius: 50%;
+    outline: none;
+    border: none;
+    overflow: hidden;
+    color: var(--tc);
+    background-color: var(--interact);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+}
+.bottomOpen {
+    width: 5vh;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tc);
+    border-radius: 24px;
+}

@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
-import type { habitCounter } from "../../../../../components/context/TheHabitContext";
-import { timeToStr } from "../../../../../components/ts/utils/dateToStr";
+import { timeToStr, todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 import { placeholders } from "../../../utils/placeholders";
 import { Send } from "lucide-react";
 import { api } from "../../../../../components/ts/api";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
+import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 
-export default function CounterProgression({currentCounter}:{currentCounter:habitCounter | null, isHistorical:boolean}) {
-    const { habit, loadCounter, setHabitCounter } = useTheHabit()
-    const events = currentCounter?.progression
+export default function CounterProgression() {
+    const { habit, loadCounter, setHabitCounter, habitCounter, showCounter } = useTheHabit()
+    const { chosenDay } = useCalendar()
     const [ editingIndices, setEditingIndices ] = useState<number[]>([])
     const [ placeholderMap, setPlaceholderMap ] = useState<Record<string, string>>({})
     const [ editedTexts, setEditedTexts ] = useState<Record<string, string>>({})
     
+    const todayStr = todayStrFunc();
+    const isHistorical = chosenDay !== todayStr;
+    const currentCounter = isHistorical ? showCounter : habitCounter;
+    const events = currentCounter?.progression
+
     useEffect(() => {
         if (!events) return
         setPlaceholderMap(prev => {

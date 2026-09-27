@@ -1,32 +1,26 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef} from "react";
 import { useParams } from "react-router";
 import { useTheHabit } from "../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../components/hooks/CalendarHook";
 import Loader from "../../components/ts/Loader";
 import "./scss/habitInfo.scss";
 import "./scss/redHabit.scss";
-import HabitInfo from "./components/HabitInfo/HabitInfo";
 import { isMobile } from "react-device-detect";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
-import HabitSettings from "./components/HabitInfo/HabitSettings";
 import HabitName from "./components/HabitInfo/HabitName";
 import Calendar from "./components/Calendar/Calendar";
 import Diagrams from "./components/Stats/Diagrams";
 import DayComment from "./components/Habit/Comment/DayComment";
 import Complete from "./components/Habit/Complete/Complete";
-import CompJurnal from "./components/HabitInfo/CompJurnal";
 import Schedule from "./components/Schedule/Schedule";
 import ChosenDay from "./components/Calendar/ChosenDay";
-import HabitSave from "./components/HabitInfo/HabitSave";
 import { useSchedule } from "../../components/hooks/ScheduleHook";
-import HabitExtraButts from "./components/HabitInfo/HabitExtraButts";
 import { useHabits } from "../../components/hooks/HabitsHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
-import DoneButton from "./components/Habit/Complete/DoneButt";
-import SvgRain from "../../components/modules/components/SvgRain";
-import { BoxArrowDownIcon } from "@phosphor-icons/react";
-import { useUpHabit } from "../../components/hooks/UpdateHabitHook";
-import HabitChatMenu from "./components/HabitInfo/HabitChatMenu";
+import HabitMenu from "./components/HabitInfo/HabitMenu";
+import CompletionProgress from "./components/Habit/Comment/ComplitionProgress";
+import CounterProgression from "./components/Habit/Comment/CounterProgression";
+import HabitMobileDone from "./components/Habit/Mobile/HabitMobileDone";
 
 export interface HabitSlideProps {
     readOnly?: boolean;
@@ -34,54 +28,21 @@ export interface HabitSlideProps {
     isMy?: boolean;
 }
 
-const params = {
-    count: 50,
-    durMin: 15,
-    durMax: 32,
-    sizeMin: 16,
-    sizeMax: 38,
-    refreshInterval: 2000,
-    refreshCount: 10
-};
-
-const MIN_HABIT_HEIGHT = 85.5;
-const MAX_HABIT_HEIGHT = 96;
-
 export default function Habit() {
     const { fetchCalendarHabit, fetchCalendarWLoading, calendarLoading } = useCalendar();
     const { loadHabitWLoading, habit, loadingHabit, habitSettings } = useTheHabit();
     const {
         showHabitMenu,
         setShowHabitMenu,
-        showSlide,
         setShowSlide,
-        setDontHandle,
-        dontHandleOther,
-        setDontHandleOther
     } = useSideMenu();
 
     const { schedules } = useSchedule();
     const { habitId } = useParams<{ habitId: string }>();
     const { setTitle } = usePageTitle();
     const { habits, loadingHabits } = useHabits();
-    const { setNewOngoing } = useUpHabit();
 
-    const [ handleMenu, setHandleMenu ] = useState(true);
-    const [ handleDelta, setHandleDelta ] = useState(true);
-    const [ isExpanded, setIsExpanded ] = useState(false);
-    const [ habitHeight, setHabitHeight ] = useState(MIN_HABIT_HEIGHT);
-    const [ expandProgress, setExpandProgress ] = useState(0);
-    const [ pullingState, setPullingState ] = useState(false);
-    const [ menuTranslate, setMenuTranslate ] = useState(100);
-    const [ dragging, setDragging ] = useState(false);
-
-    const startX = useRef(0);
-    const startTranslate = useRef(100);
     const mainRef = useRef<HTMLDivElement | null>(null);
-
-    const startY = useRef<number | null>(null);
-    const pulling = useRef(false);
-    const startHabitHeight = useRef(MIN_HABIT_HEIGHT);
 
     useEffect(() => {
         if (!showHabitMenu) {
@@ -114,173 +75,7 @@ export default function Habit() {
             habit.periodicity !== "sometimes" &&
             habitSettings.schedule);
 
-    useEffect(() => {
-        setMenuTranslate(showHabitMenu ? 0 : 100);
-    }, [showHabitMenu]);
-
-    const handleContentTouchStart = (e: React.TouchEvent) => {
-        if (showHabitMenu || dontHandleOther) return;
-
-        startX.current = e.touches[0].clientX;
-        startTranslate.current = 100;
-    };
-
-    const handleContentTouchMove = (e: React.TouchEvent) => {
-        if (!handleMenu || showHabitMenu || dontHandleOther) return;
-
-        const diff = startX.current - e.touches[0].clientX;
-
-        setDragging(true);
-
-        if (diff < 5) {
-            setMenuTranslate(100);
-            return;
-        }
-
-        setHandleDelta(false);
-        setDontHandle(true);
-
-        const translate =
-            100 - Math.min(100, ((diff - 5) / window.innerWidth) * 100);
-
-        setMenuTranslate(translate);
-    };
-
-    const handleContentTouchEnd = () => {
-        if (!dragging || showHabitMenu) {
-            setDragging(false);
-            return;
-        }
-
-        setHandleDelta(true);
-        setDontHandle(false);
-        setDragging(false);
-
-        if (menuTranslate < 60) {
-            setShowHabitMenu(true);
-            setMenuTranslate(0);
-        } else {
-            setMenuTranslate(100);
-        }
-    };
-
-    const handleMenuTouchStart = (e: React.TouchEvent) => {
-        if (!setHandleMenu || dontHandleOther) return;
-
-        setDontHandle(true);
-        startX.current = e.touches[0].clientX;
-        startTranslate.current = menuTranslate;
-        setDragging(true);
-    };
-
-    const handleMenuTouchMove = (e: React.TouchEvent) => {
-        if (dontHandleOther) return;
-
-        setHandleDelta(false);
-        setDontHandle(true);
-
-        const diff = e.touches[0].clientX - startX.current;
-
-        if (diff < 0) return;
-
-        const translate = Math.min(
-            100,
-            startTranslate.current + (diff / window.innerWidth) * 100
-        );
-
-        setMenuTranslate(translate);
-    };
-
-    const handleMenuTouchEnd = () => {
-        if (!dragging) return;
-
-        setDontHandle(false);
-        setDragging(false);
-
-        if (menuTranslate > 40) {
-            setShowHabitMenu(false);
-            setMenuTranslate(100);
-        } else {
-            setMenuTranslate(0);
-        }
-    };
-
-    const handleHabitTouchStart = (e: React.TouchEvent) => {
-        const container = mainRef.current;
-
-        if (
-            !container ||
-            container.scrollTop > 0 ||
-            dontHandleOther ||
-            !handleDelta
-        ) {
-            return;
-        }
-
-        startY.current = e.touches[0].clientY;
-        startHabitHeight.current = habitHeight;
-        pulling.current = true;
-        setPullingState(true);
-    };
-
-    const handleHabitTouchMove = (e: React.TouchEvent) => {
-        if (!handleDelta || dontHandleOther) return;
-
-        const container = mainRef.current;
-
-        if (
-            !pulling.current ||
-            startY.current === null ||
-            !container ||
-            container.scrollTop > 0
-        ) {
-            return;
-        }
-
-        const delta = e.touches[0].clientY - startY.current;
-
-        if (Math.abs(delta) > 5) {
-            setDontHandle(true);
-            setHandleMenu(false);
-        }
-
-        const heightDelta = (delta / window.innerHeight) * 100;
-
-        const nextHeight = Math.max(
-            MIN_HABIT_HEIGHT,
-            Math.min(
-                MAX_HABIT_HEIGHT,
-                startHabitHeight.current + heightDelta
-            )
-        );
-
-        const progress =
-            (nextHeight - MIN_HABIT_HEIGHT) /
-            (MAX_HABIT_HEIGHT - MIN_HABIT_HEIGHT);
-
-        setHabitHeight(nextHeight);
-        setExpandProgress(progress);
-    };
-
-    const handleHabitTouchEnd = () => {
-        if (!pulling.current) return;
-
-        const expanded = expandProgress >= 0.5;
-
-        setIsExpanded(expanded);
-        setHabitHeight(expanded ? MAX_HABIT_HEIGHT : MIN_HABIT_HEIGHT);
-        setExpandProgress(expanded ? 1 : 0);
-        setPullingState(false);
-
-        setHandleMenu(true);
-        setDontHandle(false);
-        setDontHandleOther(false);
-
-        pulling.current = false;
-        startY.current = null;
-    };
-
-    if ((loadingHabit || loadingHabits) || calendarLoading) {
+    if (loadingHabit || loadingHabits || calendarLoading) {
         return <Loader />;
     }
 
@@ -291,113 +86,52 @@ export default function Habit() {
 
     const isArchived = !habit?.ongoing;
     const isReadOnly = !isMy || isArchived;
-
-    const renderSlide = () => {
-        switch (showSlide) {
-            case "settings":
-                return (
-                    <HabitSettings
-                        readOnly={isReadOnly}
-                        isArchived={isArchived}
-                        isMy={isMy}
-                    />
-                )
-            case "journal":
-                return (
-                    <CompJurnal/>
-                )
-            case "chat":
-                return (
-                    <HabitChatMenu
-                        readOnly={isReadOnly}
-                        isArchived={isArchived}
-                        isMy={isMy}
-                    />
-                )
-        }
-    }
+    
 
     return (
-        <div className={`statsDiv ${isMobile ? "mobile" : ""}`}>
+        <div className="statsDiv">
             {habitId && (
                 <HabitName
                     habit={habit}
                     showHabitMenu={showHabitMenu}
                     setShowHabitMenu={setShowHabitMenu}
                     isReadOnly={isReadOnly}
-                    expandProgress={expandProgress}
-                    pulling={pullingState}
                 />
             )}
 
             <div
-                className={`StatsDivMain ${
-                    habitId && !isExpanded ? "sdmwm" : ""
-                }`}
-                style={{
-                    overflow: isExpanded ? "hidden" : "auto",
-                    ...(isMobile && habitId ? {
-                        paddingTop: `${6 * (1 - expandProgress) + 2}vh`,
-                        transition: pullingState ? "none" : undefined
-                    } : {})
-                }}
+                className="StatsDivMain"
                 ref={mainRef}
-                onTouchStart={handleContentTouchStart}
-                onTouchMove={handleContentTouchMove}
-                onTouchEnd={handleContentTouchEnd}
             >
                 <div className="StatsDivHabit">
                     {isMobile ? (
                         <>
                             {habitId && (
-                                <div
-                                    className={`mobileHabitLayout ${
-                                        isExpanded ? "expanded" : ""
-                                    }`}
-                                    style={{
-                                        height: `${habitHeight}dvh`,
-                                        "--expand-progress": expandProgress,
-                                        transition: pullingState
-                                            ? "none"
-                                            : undefined,
-                                    } as React.CSSProperties}
-                                    onTouchStart={handleHabitTouchStart}
-                                    onTouchMove={handleHabitTouchMove}
-                                    onTouchEnd={handleHabitTouchEnd}
-                                >
+                                <div className="mobileHabitLayout">
                                     <Complete isMy={!isReadOnly} />
-
-                                    <DayComment
-                                        id={habitId}
-                                        isMy={!isReadOnly}
-                                    />
-
-                                    <DoneButton
-                                        habitId={Number(habitId)}
-                                    />
-
-                                    {isExpanded && (
-                                        <SvgRain
-                                            className="svgRainInHabit"
-                                            icons={1}
-                                            params={params}
-                                        />
+                                    {habitSettings.metric_type === "timer" && <CompletionProgress />}
+                                    {habitSettings.metric_type === "counter" && (
+                                        <CounterProgression />
                                     )}
                                 </div>
                             )}
 
                             <Calendar />
-
                             {!habitId && <ChosenDay />}
                         </>
                     ) : (
                         <>
                             <Calendar />
-
                             {habitId ? (
                                 <>
-                                    <Complete isMy={!isReadOnly}/>
-                                    <DayComment id={habitId!} isMy={!isReadOnly}/>
+                                    <Complete isMy={!isReadOnly} />
+                                    <div className="dayCommentDiv">
+                                        <DayComment id={habitId!} isMy={!isReadOnly} />
+                                        {habitSettings.metric_type === "timer" && <CompletionProgress />}
+                                        {habitSettings.metric_type === "counter" && (
+                                            <CounterProgression />
+                                        )}
+                                    </div>
                                 </>
                             ) : (
                                 <ChosenDay />
@@ -407,70 +141,16 @@ export default function Habit() {
                 </div>
 
                 {shouldShowSchedule && (
-                    <Schedule id={habitId} isMy={!isReadOnly}/>
+                    <Schedule id={habitId} isMy={!isReadOnly} />
                 )}
 
                 <Diagrams mainRef={mainRef} />
             </div>
-
+            {isMobile && habitId ? (
+                <HabitMobileDone habitId={habitId} isReadOnly={isReadOnly}/>
+            ): ""}
             {habitId && habit && (
-                <div
-                    className={`habitMenu ${isMobile ? "mobile" : ""}`}
-                    onTouchStart={handleMenuTouchStart}
-                    onTouchMove={handleMenuTouchMove}
-                    onTouchEnd={handleMenuTouchEnd}
-                    style={{
-                        transform: `translateX(${menuTranslate}%)`,
-                        transition: dragging
-                            ? "none"
-                            : "transform .1s ease"
-                    }}
-                >
-                    <div
-                        className={`habitSlider ${showSlide
-                            ? "toSlide"
-                            : ""
-                        }`}
-                    >
-                        <div className="habitSlide">
-                            <HabitInfo
-                                habit={habit}
-                                readOnly={isReadOnly}
-                            />
-
-                            {!isReadOnly && (
-                                <HabitExtraButts/>
-                            )}
-
-                            {isMy && isArchived && (
-                                <div
-                                    className="redHabitBlock but danger"
-                                    onClick={() =>
-                                        isArchived !== undefined &&
-                                        setNewOngoing(habit.id, isArchived)
-                                    }
-                                >
-                                    <span className="redHabitSpan but">
-                                        <BoxArrowDownIcon />
-                                        Разархивировать
-                                    </span>
-
-                                    <div className="habitSettingHint">
-                                        Активность снова станет выполнимой и
-                                        вернётся в список текущих.
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                        <div className="habitSlide">
-                            {renderSlide()}
-                        </div>
-                    </div>
-
-                    <HabitSave
-                        readOnly={isReadOnly}
-                    />
-                </div>
+                <HabitMenu isMy={isMy} isArchived={isArchived} isReadOnly={isReadOnly}/>
             )}
         </div>
     );

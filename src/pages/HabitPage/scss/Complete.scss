@@ -61,9 +61,8 @@
         }
     }
     @media (max-width: 800px) {
-        width: 95%;
-        height: 4.2vh;
-        padding-left: 2vw;
+        width: 100%;
+        height: 5vh;
     }
     &.disabled {
         pointer-events: none;
@@ -122,19 +121,17 @@
 
     @media (hover: none) {
         &:active {
-        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
-        &.dbComp {
-        > svg {
-        color: var(--inner_text);
-        }
-        }        
-        &.dbMark {
-        > svg {
-        color: var(--inner_text);
-        }
-        }
-    
-        
+            box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
+            &.dbComp {
+                > svg {
+                    color: var(--inner_text);
+                }
+            }        
+            &.dbMark {
+                > svg {
+                    color: var(--inner_text);
+                }
+            }
         }
     }
 }

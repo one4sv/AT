@@ -12,9 +12,9 @@
     -webkit-backdrop-filter: blur(var(--blur));
     @media (max-width: 800px) {
         min-height: 40vh;
-        width: 95%;
+        width: 100%;
         margin: 0 auto;
-        border-radius: 0 0 12px 12px;
+        border-radius: 24px;
         flex-direction: column-reverse;
         margin-bottom: 2vh;
         backdrop-filter: none;
@@ -51,10 +51,31 @@
         }
     }
     @media (max-width: 800px) {
-        padding: 1.25vh 2vw;
+        padding: .5vh;
+        flex-direction: row;
+        height: 5vh;
         >textarea {
-            padding-inline-start: 1vw;
-            min-height: 45px;
+            resize: none;
+            width: 100%;
+            background-color: var(--tr);
+            color: var(--tc);
+            font-size: 16px;
+            max-height: 50vh;
+            min-height: 5vh;
+            line-height: 1.35;
+            padding: 1.35vh 1vw;
+            box-sizing: border-box;
+            scrollbar-width:thin;
+            outline: none;
+            border-radius: 24px;
+            border: none;
+            &::placeholder {
+                vertical-align: middle; 
+                color: var(--borderWhLight);
+            }
+            @media (max-width: 800px) {
+                padding: 1vh 3vw;
+            }
         }
         &:focus-within {
             border-color: var(--borderHabit);

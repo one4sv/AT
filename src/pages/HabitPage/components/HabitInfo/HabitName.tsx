@@ -14,10 +14,8 @@ interface HabitNameProps {
     showHabitMenu:boolean,
     setShowHabitMenu:React.Dispatch<SetStateAction<boolean>>,
     isReadOnly:boolean,
-    expandProgress:number,
-    pulling:boolean
 }
-export default function HabitName({habit, showHabitMenu, setShowHabitMenu, expandProgress, pulling}:HabitNameProps) {
+export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:HabitNameProps) {
     const { isUpdating } = useUpHabit()
     const { calendar } = useCalendar()
     const { openSideMenu } = useSideMenu()
@@ -26,7 +24,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu, expan
     if (!habit) return null
     
     return (
-        <div className={`headerDiv ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} style={{transform:`translateY(${-8 * expandProgress}vh)`, transition:pulling ? "none" : "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)"}}>
+        <div className={`headerDiv ${showHabitMenu ? "br" : ""}`} ref={habitNameRef}>
             {isMobile && (
                 <div className="headerButt" onClick={() => openSideMenu()}>
                     <TextIndentIcon />

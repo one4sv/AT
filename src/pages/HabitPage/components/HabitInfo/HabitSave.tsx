@@ -2,11 +2,12 @@ import { CaretLeftIcon, XIcon } from "@phosphor-icons/react";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
+import type { Dispatch, SetStateAction } from "react";
 
-export default function HabitSave ({readOnly}:{readOnly:boolean}) {
+export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolean, setMenuTranslate:Dispatch<SetStateAction<number>>}) {
     const { habit } = useTheHabit()
     const { saveHabit, localChanges, isUpdating } = useUpHabit()
-    const { setShowSlide, showSlide } = useSideMenu()
+    const { setShowSlide, showSlide, setShowHabitMenu } = useSideMenu()
     const hasUnsavedChanges = !!localChanges[habit!.id];
     const isThisUpdating = isUpdating.includes(`habit_${habit!.id}`);
 
@@ -20,6 +21,13 @@ export default function HabitSave ({readOnly}:{readOnly:boolean}) {
                 return "Журнал"
         }
     }
+    const menuBack = () => {
+        if (showSlide) setShowSlide(null)
+        else {
+            setShowHabitMenu(false)
+            setMenuTranslate(100)
+        }
+    }
     return (
         <div className="habitSaveDiv">
             {hasUnsavedChanges && (
@@ -27,7 +35,7 @@ export default function HabitSave ({readOnly}:{readOnly:boolean}) {
                     Не забудьте сохранить!
                 </div>
             )}
-            <div className="habitSlideBack" onClick={() => setShowSlide(null)}>
+            <div className="habitSlideBack" onClick={() => menuBack()}>
                 {showSlide ? <CaretLeftIcon size={24}/> : <XIcon size={24}/>} {showSlide ? renderBackText() : 'Закрыть'}
             </div>
             {!readOnly && habit?.ongoing && (

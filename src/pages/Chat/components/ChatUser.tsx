@@ -68,7 +68,7 @@ export default function ChatUser() {
     }
 
     const img = () => {
-        if (isFavorite) return <BookmarkSimpleIcon weight="fill" className="favoriteIcon"/>
+        if (isFavorite) return <BookmarkSimpleIcon weight="fill" className="favoriteIcon" size={24}/>
         else if (chatWith && chatWith.avatar_url) {
             return (
                 <img
@@ -78,7 +78,7 @@ export default function ChatUser() {
                 />
             )
         } else {
-            return <CircleUserRound />
+            return <CircleUserRound size={24}/>
         }
     }
 

@@ -1,12 +1,9 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowBendDownLeftIcon, ClockCountdownIcon } from "@phosphor-icons/react";
 import { useDone } from "../../../../../components/hooks/DoneHook";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import "../../../scss/DayComment.scss";
-import CompletionProgress from "./ComplitionProgress";
-import CounterProgression from "./CounterProgression";
-import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 import { isMobile } from "react-device-detect";
 import { Check } from "lucide-react";
 
@@ -17,16 +14,12 @@ interface DayCommentProps {
 
 export default function DayComment({ id, isMy }: DayCommentProps) {
   const { sendDayComment, waitComAnswer } = useDone();
-  const { dayComment, habit, habitCounter, showCounter, habitSettings } = useTheHabit();
+  const { dayComment, habit,  } = useTheHabit();
   const { chosenDay } = useCalendar();
 
   const [comment, setComment] = useState<string>("");
   const [syncing, setSyncing] = useState(true);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const todayStr = todayStrFunc();
-  const isHistorical = chosenDay !== todayStr;
-  const currentCounter = isHistorical ? showCounter : habitCounter;
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setSyncing(true);
@@ -39,16 +32,33 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
     return () => clearTimeout(t);
   }, [chosenDay, dayComment]);
 
-  const resizeTextarea = useCallback(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = Math.min(el.scrollHeight, window.innerHeight * 0.3) + "px";
-  }, []);
-
   useEffect(() => {
-    resizeTextarea();
-  }, [comment, resizeTextarea]);
+    const ta = textAreaRef.current;
+    if (!ta) return;
+
+    ta.style.height = "0px";
+    ta.style.overflowY = "hidden";
+
+    const minHeight = window.innerHeight * 0.05;
+    const maxHeight = window.innerHeight * 0.5;
+
+    let newHeight = ta.scrollHeight;
+
+    // Всегда не меньше 5vh
+    if (newHeight < minHeight) {
+        newHeight = minHeight;
+    }
+
+    // Ограничиваем максимумом
+    if (newHeight > maxHeight) {
+        newHeight = maxHeight;
+        ta.style.overflowY = "auto";
+    } else {
+        ta.style.overflowY = "hidden";
+    }
+
+    ta.style.height = `${newHeight}px`;
+  }, [comment]);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
@@ -75,44 +85,37 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   };
 
   return (
-    <div className="dayCommentDiv">
-      <div className="habitDayComment">
-        <textarea
-          placeholder="Комментарий"
-          ref={textareaRef}
-          readOnly={!isMy || (habit && !habit.ongoing)}
-          onChange={handleTextareaChange}
-          onKeyDown={handleKeyDown}
-          value={comment}
-          maxLength={200}
-        />
-        <div className="hdcTAExtra"
-        >
-          {!isMobile ? (
-            <span>
-              <ArrowBendDownLeftIcon /> shift+enter
-            </span>
-          ) : ""}
-          <div>
-            <span>{comment.length}/200</span>
-            <button
-              className="saveCommentButton"
-              disabled={cantSave  || waitComAnswer}
-              onClick={handleSave}
-            >
-            {waitComAnswer
-              ? <ClockCountdownIcon size={24}/>
-              : <Check/>
-            }
-              </button>
-          </div>
+    <div className="habitDayComment">
+      <textarea
+        placeholder="Комментарий"
+        ref={textAreaRef}
+        readOnly={!isMy || (habit && !habit.ongoing)}
+        onChange={handleTextareaChange}
+        onKeyDown={handleKeyDown}
+        value={comment}
+        maxLength={200}
+      />
+      <div className="hdcTAExtra"
+      >
+        {!isMobile ? (
+          <span>
+            <ArrowBendDownLeftIcon /> shift+enter
+          </span>
+        ) : ""}
+        <div>
+          <span>{comment.length}/200</span>
+          <button
+            className="saveCommentButton"
+            disabled={cantSave  || waitComAnswer}
+            onClick={handleSave}
+          >
+          {waitComAnswer
+            ? <ClockCountdownIcon size={24}/>
+            : <Check/>
+          }
+            </button>
         </div>
       </div>
-
-      {habitSettings.metric_type === "timer" && <CompletionProgress />}
-      {habitSettings.metric_type === "counter" && (
-        <CounterProgression currentCounter={currentCounter} isHistorical={isHistorical} />
-      )}
     </div>
   );
 }

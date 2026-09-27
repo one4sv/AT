@@ -30,27 +30,26 @@ export default function DoneButton({ habitId }: DoneButtonProps) {
     </div>
   )
 
-  if (planable) return (
-    <div className="doneButtDiv">
-      <button
-        className={`doneButt planButt ${displayDone ? "dbComp" : "dbMark"}`}
-        onClick={() => markPlanWLoading(habitId, chosenDay)}
-      >
-        {displayPlan ? <CalendarCheckIcon /> : <CalendarBlankIcon />}
-        {waitPlanAnswer ? <LoaderSmall /> : displayPlan ? "Запланировано" : "Запланировать"}
-      </button>
-    </div>
-  )
-
   return (
     <div className="doneButtDiv">
-      <button
-        className={`doneButt ${displayDone ? "dbComp" : "dbMark"}`}
-        onClick={() => markDoneWLoading(habitId, chosenDay)}
-      >
-        {displayDone ? <CheckCircle weight="fill" /> : <Circle />}
-        {waitDoneAnswer ? <LoaderSmall /> : displayDone ? "Выполнено" : "Выполнить"}
-      </button>
+      {planable ? (
+        <button
+          className={`doneButt planButt ${displayDone ? "dbComp" : "dbMark"}`}
+          onClick={() => markPlanWLoading(habitId, chosenDay)}
+        >
+          {displayPlan ? <CalendarCheckIcon /> : <CalendarBlankIcon />}
+          {waitPlanAnswer ? <LoaderSmall /> : displayPlan ? "Запланировано" : "Запланировать"}
+        </button>
+      ) : (
+        <button
+          className={`doneButt ${displayDone ? "dbComp" : "dbMark"}`}
+          onClick={() => markDoneWLoading(habitId, chosenDay)}
+        >
+          {displayDone ? <CheckCircle weight="fill" /> : <Circle />}
+          {waitDoneAnswer ? <LoaderSmall /> : displayDone ? "Выполнено" : "Выполнить"}
+        </button>
+      )}
+      
     </div>
   );
 }

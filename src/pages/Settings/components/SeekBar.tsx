@@ -47,17 +47,30 @@ export default function SeekBar({
         };
     };
 
+    const isOverLine = (clientY: number, tolerance = 10) => {
+        if (!lineRef.current) return false;
+        const rect = lineRef.current.getBoundingClientRect();
+        return clientY >= rect.top - tolerance && clientY <= rect.bottom + tolerance;
+    };
+
     const updateValue = (clientX: number) => {
         const data = getValue(clientX);
         if (!data) return;
         onChange?.(data.value);
     };
 
-    // === Pointer ===
+    // === Pointer Events ===
     const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
         if (dontHandleOther || disabled) return;
 
-        e.stopPropagation();          // важно
+        // На мышке — только если кликнули по линии
+        if (e.pointerType === "mouse" && !isOverLine(e.clientY)) {
+            return;
+        }
+
+        e.stopPropagation();
+        e.preventDefault();
+
         setDontHandle(true);
         setDragging(true);
         e.currentTarget.setPointerCapture(e.pointerId);
@@ -73,11 +86,17 @@ export default function SeekBar({
             return;
         }
 
+        // Hover только для мыши и только над линией
         if (e.pointerType === "mouse") {
-            const data = getValue(e.clientX);
-            if (!data) return;
-            setHoverValue(data.value);
-            setHoverPercent(data.percent);
+            if (isOverLine(e.clientY)) {
+                const data = getValue(e.clientX);
+                if (data) {
+                    setHoverValue(data.value);
+                    setHoverPercent(data.percent);
+                }
+            } else {
+                setHoverValue(null);
+            }
         }
     };
 
@@ -95,16 +114,20 @@ export default function SeekBar({
 
     const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
         if (dontHandleOther) return;
+
         e.stopPropagation();
         setDragging(false);
         setDontHandle(false);
+
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+        }
     };
 
-    // === Touch (критично для мобильного меню) ===
+    // === Touch (блокировка сайд-меню) ===
     const handleTouchStart = (e: React.TouchEvent) => {
         if (dontHandleOther || disabled) return;
-
-        e.stopPropagation();          // блокируем touchstart у page-content
+        e.stopPropagation();
         setDontHandle(true);
     };
 
@@ -121,25 +144,25 @@ export default function SeekBar({
     };
 
     return (
-        <div className={`seekBarWrapper ${disabled ? "disabled" : ""}`}>
-            <div
-                className="seekBarLine"
-                ref={lineRef}
-                onContextMenu={(e) => e.preventDefault()}
-                // Pointer
-                onPointerDown={handlePointerDown}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerCancel={handlePointerCancel}
-                onPointerLeave={() => {
-                    if (!dragging) setHoverValue(null);
-                }}
-                // Touch — чтобы меню не открывалось
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-                onTouchCancel={handleTouchEnd}
-            >
+        <div
+            className={`seekBarWrapper ${disabled ? "disabled" : ""}`}
+            style={{ touchAction: "none" }}
+            onContextMenu={(e) => e.preventDefault()}
+            // Pointer — на весь wrapper (для тача удобно)
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
+            onPointerLeave={() => {
+                if (!dragging) setHoverValue(null);
+            }}
+            // Touch — чтобы меню не открывалось
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchEnd}
+        >
+            <div className="seekBarLine" ref={lineRef}>
                 {hoverValue !== null && (
                     <div
                         className="seekBarHoverValue"
@@ -159,8 +182,7 @@ export default function SeekBar({
 
                 <div
                     className="seekBarCurrent"
-                    style={{ left: `${percent}%`, opacity: dragging ? "1" : "0" }}
-                    onPointerDown={handlePointerDown}
+                    style={{ left: `${percent}%`, opacity: dragging ? 1 : 0 }}
                 >
                     {value}
                     {unit}
