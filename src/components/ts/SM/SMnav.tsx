@@ -11,22 +11,18 @@ import {
     SortAscendingIcon,
     UserIcon,
     CheckIcon,
+    MagnifyingGlassIcon,
 } from "@phosphor-icons/react"
 import { useSideMenu } from "../../hooks/SideMenuHook"
 import { useEffect, useRef, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { useContacts } from "../../hooks/ContactsHook"
-import { useSettings } from "../../hooks/SettingsHook"
-import { useHabits } from "../../hooks/HabitsHook"
-import { filterHabitsByOrder } from "../utils/filteredHabitsByOrder"
 import type { tab } from "../../context/SideMenuContext"
 import { useBlackout } from "../../hooks/BlackoutHook"
 import { useNote } from "../../hooks/NoteHook"
 import { useNavigate } from "react-router"
 import { isMobile } from "react-device-detect"
+import { useSettings } from "../../hooks/SettingsHook"
 
 export default function SMnav() {
-    const { t, i18n } = useTranslation("common")
     const { user, logOut } = useUser()
     const {
         setActiveTab,
@@ -35,6 +31,8 @@ export default function SMnav() {
         setMessageSelectedValue,
         habitsSelectedValue,
         setHabitsSelectedValue,
+        chatsFilters,
+        habitsFilters,
         setDontHandle,
         setDontHandleOther,
         translateX,
@@ -45,9 +43,7 @@ export default function SMnav() {
         toggleMenu,
     } = useSideMenu()
     const { setBlackout } = useBlackout()
-    const { list } = useContacts()
-    const { habits, newOrderHabits } = useHabits()
-    const { showArchived, layout } = useSettings()
+    const { layout } = useSettings()
     const { showNotification } = useNote()
 
     const navigate = useNavigate()
@@ -55,12 +51,6 @@ export default function SMnav() {
     const [extraMenu, setExtraMenu] = useState<tab>()
     const [isExtraOpen, setIsExtraOpen] = useState(false)
     const [confirmLogout, setConfirmLogout] = useState(false)
-    const [chatsFilters, setMessagesFilters] = useState<
-        { label: string; value: string; new: string }[]
-    >([])
-    const [habitsFilters, setHabitsFilters] = useState<
-        { label: string; value: string; new: string }[]
-    >([])
 
     const timerRef = useRef<number | null>(null)
     const longPressTriggered = useRef(false)
@@ -71,94 +61,10 @@ export default function SMnav() {
     const filtersRef = useRef<HTMLDivElement>(null)
     const touchHoverRef = useRef<HTMLElement | null>(null)
 
-    // === Свайп меню до long-press ===
     const swipeStartX = useRef(0)
     const swipeStartY = useRef(0)
     const swipeStartTranslate = useRef(0)
     const gesture = useRef<"none" | "menu" | "scroll" | "longpress">("none")
-
-    const newLength = list.filter(
-        (c) => c.unread_count > 0 && !c.is_blocked && c.note
-    ).length
-
-    useEffect(() => {
-        const filters: { label: string; value: string; new: string }[] = []
-
-        const totalNew = newLength > 99 ? "99+" : newLength > 0 ? String(newLength) : ""
-        filters.push({ label: "Чаты", value: "chats", new: totalNew })
-
-        if (newLength > 0) {
-            filters.push({ label: t("sideMenu.new"), value: "new", new: totalNew })
-        }
-
-        const privateChats = list.filter(c => !c.is_group)
-        if (privateChats.length > 0) {
-            const privateNewCount = privateChats.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
-            const privateNew = privateNewCount > 99 ? "99+" : privateNewCount > 0 ? String(privateNewCount) : ""
-            filters.push({ label: t("sideMenu.private"), value: "private", new: privateNew })
-        }
-
-        const groupChats = list.filter(c => c.is_group)
-        if (groupChats.length > 0) {
-            const groupNewCount = groupChats.filter(c => c.unread_count > 0 && !c.is_blocked && c.note).length
-            const groupNew = groupNewCount > 99 ? "99+" : groupNewCount > 0 ? String(groupNewCount) : ""
-            filters.push({ label: t("sideMenu.groups"), value: "group", new: groupNew })
-        }
-
-        setMessagesFilters(filters)
-
-        if (!filters.some(f => f.value === messageSelectedValue)) {
-            setMessageSelectedValue(filters[0]?.value ?? "chats")
-        }
-    }, [list, newLength, t, i18n.language])
-
-    useEffect(() => {
-        const filters: { label: string; value: string; new: string }[] = []
-        filters.push({ label: "Актив", value: "all", new: "0" })
-
-        if (newOrderHabits && habits) {
-            const groupLabels: Record<string, string> = {
-                everyday: t("sideMenu.everyday"),
-                today: t("sideMenu.today"),
-                tomorrow: t("sideMenu.tomorrow"),
-                sometimes: t("sideMenu.sometimes"),
-            }
-
-            const activeHabits = habits.filter(h => h.ongoing)
-
-            newOrderHabits.forEach(order => {
-                if (order === "pinned") return
-
-                const groupHabits = filterHabitsByOrder(order, activeHabits, "")
-                if (groupHabits.length > 0) {
-                    let label = groupLabels[order]
-                    if (!label) {
-                        const date = new Date(order)
-                        if (!isNaN(date.getTime())) {
-                            label = date.toLocaleDateString(i18n.language === "ru" ? "ru-RU" : undefined, {
-                                weekday: "short",
-                                day: "numeric",
-                                month: "numeric"
-                            })
-                        } else {
-                            return
-                        }
-                    }
-                    filters.push({ label, value: order, new: "0" })
-                }
-            })
-
-            if (habits.some(h => !h.ongoing)) {
-                filters.push({ label: t("sideMenu.archive"), value: "archived", new: "0" })
-            }
-        }
-
-        setHabitsFilters(filters)
-
-        if (!filters.some(f => f.value === habitsSelectedValue)) {
-            setHabitsSelectedValue(filters[0]?.value ?? "all")
-        }
-    }, [habits, newOrderHabits, showArchived, t, i18n.language])
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -198,7 +104,6 @@ export default function SMnav() {
         }
 
         timerRef.current = window.setTimeout(() => {
-            // Long-press сработал — свайп меню больше не трогаем
             longPressTriggered.current = true
             wasLongPress.current = true
             gesture.current = "longpress"
@@ -219,7 +124,6 @@ export default function SMnav() {
         setDontHandleOther(false)
     }
 
-    // === Touch handlers для свайпа + long-press ===
     const handleNavTouchStart = (tab: tab, e: React.TouchEvent) => {
         const touch = e.touches[0]
         startLongPress(tab, touch.clientX, touch.clientY)
@@ -228,7 +132,6 @@ export default function SMnav() {
     const handleNavTouchMove = (e: React.TouchEvent) => {
         const touch = e.touches[0]
 
-        // Уже long-press — только hover по extra/filter
         if (longPressTriggered.current || gesture.current === "longpress") {
             const element = document.elementFromPoint(touch.clientX, touch.clientY)
 
@@ -261,19 +164,16 @@ export default function SMnav() {
         const absX = Math.abs(dx)
         const absY = Math.abs(dy)
 
-        // Ещё не решили тип жеста
         if (gesture.current === "none") {
             if (absX < 10 && absY < 10) return
 
             if (absY > absX) {
-                // Вертикаль → отменяем long-press, скролл
                 gesture.current = "scroll"
                 cancelLongPress()
                 setTouchHover(null)
                 return
             }
 
-            // Горизонталь → свайп меню, long-press отменяем
             gesture.current = "menu"
             cancelLongPress()
             setIsDragging(true)
@@ -283,7 +183,6 @@ export default function SMnav() {
 
         if (gesture.current !== "menu") return
 
-        // Тянем меню
         const diffPercent = (dx / window.innerWidth) * 100
         let next = swipeStartTranslate.current + diffPercent
         next = Math.max(-100, Math.min(0, next))
@@ -293,17 +192,14 @@ export default function SMnav() {
     const handleNavTouchEnd = () => {
         if (gesture.current === "menu") {
             setIsDragging(false)
-            // Доводим до края
             const target = translateX < -40 ? -100 : 0
             if (target === -100) {
                 closeMenu()
             } else {
-                // можно вызвать openSideMenu или toggleMenu
                 toggleMenu()
             }
         }
 
-        // Сброс
         if (!wasLongPress.current) {
             cancelLongPress()
         }
@@ -311,14 +207,12 @@ export default function SMnav() {
         isPointerDown.current = false
     }
 
-    // Глобальный pointer up (для long-press выбора) — оставляем как был
     const handlePointerUp = (e: MouseEvent | TouchEvent) => {
         const wasLongPressNow = wasLongPress.current
 
         isPointerDown.current = false
 
         if (!wasLongPressNow) {
-            // Если это был свайп — уже обработали в handleNavTouchEnd
             cancelLongPress()
             wasLongPress.current = false
             return
@@ -471,10 +365,10 @@ export default function SMnav() {
     }
 
     const messageSelected = chatsFilters.find(f => f.value === messageSelectedValue)
-        ?? { label: "Чаты", value: "chats", new: "" }
+        ?? { label: "Все", value: "chats", new: "" }
 
     const habitsSelected = habitsFilters.find(f => f.value === habitsSelectedValue)
-        ?? { label: "Актив", value: "all", new: "0" }
+        ?? { label: "Все", value: "all", new: "0" }
 
     useEffect(() => {
         let timer: number | null = null
@@ -555,7 +449,7 @@ export default function SMnav() {
                             data-action="posts"
                         >
                             <NewspaperIcon weight="fill" size={20} /> Лента
-                        </div>                        
+                        </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname === "/habit" ? "selected" : ""}`}
                             onMouseUp={() => {
@@ -564,7 +458,7 @@ export default function SMnav() {
                             }}
                             data-action="habits"
                         >
-                            <SneakerMoveIcon  weight="fill" size={20} /> Активности
+                            <SneakerMoveIcon weight="fill" size={20} /> Активности
                         </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname.includes("/settings") ? "selected" : ""}`}
@@ -588,14 +482,15 @@ export default function SMnav() {
                             }}
                             data-action="logout"
                         >
-                            {!confirmLogout
-                                ? <>
+                            {!confirmLogout ? (
+                                <>
                                     <SignOutIcon weight="fill" size={20} /> Выйти
-                                </> 
-                                : <>
+                                </>
+                            ) : (
+                                <>
                                     <CheckIcon size={20} /> Да, выйти
                                 </>
-                            }
+                            )}
                         </div>
                     </>
                 )
@@ -669,7 +564,6 @@ export default function SMnav() {
                     onTouchMove={handleNavTouchMove}
                 >
                     <ChatTeardropIcon weight="fill" />
-                    <span>{messageSelected.label}</span>
                 </div>
 
                 <div
@@ -684,7 +578,6 @@ export default function SMnav() {
                     onTouchMove={handleNavTouchMove}
                 >
                     <CalendarCheckIcon weight="fill" />
-                    <span>{habitsSelected.label}</span>
                 </div>
 
                 <div
@@ -698,7 +591,6 @@ export default function SMnav() {
                     onTouchMove={handleNavTouchMove}
                 >
                     <Megaphone fill="currentColor" />
-                    <span>Споты</span>
                 </div>
 
                 <div
@@ -719,7 +611,11 @@ export default function SMnav() {
                     ) : (
                         <CircleUserRound />
                     )}
-                    <span>{user.nick}</span>
+                </div>
+            </div>
+            <div className="smNavSearch">
+                <div className="">
+                    <MagnifyingGlassIcon />
                 </div>
             </div>
         </div>

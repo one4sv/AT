@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import { useSideMenu } from "../hooks/SideMenuHook";
 import SMnav from "../ts/SM/SMnav";
 import { isMobile } from "react-device-detect";
+import SMheader from "../ts/SM/SMheader";
 
 interface LayoutProps {
     children?: ReactNode;
@@ -133,6 +134,7 @@ export default function MobileLayout({ children }: LayoutProps) {
                 </div>
             ) : null}
 
+            <SMheader/>
             <SideMenu />
             <SMnav />
 

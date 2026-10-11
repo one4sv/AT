@@ -15,6 +15,7 @@ import { useUser } from "../hooks/UserHook";
 import { useCalendar } from "../hooks/CalendarHook";
 import { todayStrFunc } from "../ts/utils/dateToStr";
 import SMnav from "../ts/SM/SMnav";
+import SMheader from "../ts/SM/SMheader";
 
 interface LayoutProps {
   children?: ReactNode;
@@ -129,6 +130,7 @@ export default function MainLayout({ children }: LayoutProps) {
 
   return (
     <div className="app-layout">
+      <SMheader/>
       <SideMenu />
       <SMnav/>
       {decor === "glass" && <Background />}

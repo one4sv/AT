@@ -10,16 +10,13 @@ import { isMobile } from "react-device-detect"
 import { useSchedule } from "../../hooks/ScheduleHook.ts"
 import SideMenuUnAunthificated from "../SideMenuUnAunthificated.tsx"
 import { useSideMenu } from "../../hooks/SideMenuHook.ts"
-import { useTranslation } from "react-i18next"
 import { useContacts } from "../../hooks/ContactsHook.ts"
 import AccountList from "./AccountList.tsx"
 import SpotsList from "./SpotsList.tsx"
-import { MagnifyingGlassIcon } from "@phosphor-icons/react"
 
 export default function SideMenu() {
-    const { t } = useTranslation("common")
     const { isAuthenticated, loadingUser } = useUser()
-    const { setSearch, loadingList, mainSearchRef, search } = useContacts()
+    const { loadingList, mainSearchRef } = useContacts()
     const { loadingHabits } = useHabits()
     const { refreshSchedules } = useSchedule()
     const { layout } = useSettings()
@@ -179,7 +176,7 @@ export default function SideMenu() {
                         : "none",
             }}
         >
-            <div className="SMsearchDiv">
+            {/* <div className="SMsearchDiv">
                 <div className="SMsearch">
                     <input
                         type="text"
@@ -191,7 +188,7 @@ export default function SideMenu() {
                     />
                     <MagnifyingGlassIcon size={22} />
                 </div>
-            </div>
+            </div> */}
 
             <div className="ListWrapper">
                 <div
