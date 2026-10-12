@@ -12,6 +12,8 @@ import {
     UserIcon,
     CheckIcon,
     MagnifyingGlassIcon,
+    CaretRightIcon,
+    XIcon,
 } from "@phosphor-icons/react"
 import { useSideMenu } from "../../hooks/SideMenuHook"
 import { useEffect, useRef, useState } from "react"
@@ -21,6 +23,7 @@ import { useNote } from "../../hooks/NoteHook"
 import { useNavigate } from "react-router"
 import { isMobile } from "react-device-detect"
 import { useSettings } from "../../hooks/SettingsHook"
+import { useContacts } from "../../hooks/ContactsHook"
 
 export default function SMnav() {
     const { user, logOut } = useUser()
@@ -45,12 +48,13 @@ export default function SMnav() {
     const { setBlackout } = useBlackout()
     const { layout } = useSettings()
     const { showNotification } = useNote()
-
+    const { search, setSearch } = useContacts()
     const navigate = useNavigate()
 
-    const [extraMenu, setExtraMenu] = useState<tab>()
-    const [isExtraOpen, setIsExtraOpen] = useState(false)
-    const [confirmLogout, setConfirmLogout] = useState(false)
+    const [ extraMenu, setExtraMenu ] = useState<tab>()
+    const [ isExtraOpen, setIsExtraOpen ] = useState(false)
+    const [ confirmLogout, setConfirmLogout ] = useState(false)
+    const [ isSearch, setIsSearch ] = useState(false)
 
     const timerRef = useRef<number | null>(null)
     const longPressTriggered = useRef(false)
@@ -511,7 +515,7 @@ export default function SMnav() {
             onTouchEnd={handleNavTouchEnd}
             onTouchCancel={handleNavTouchEnd}
         >
-            <div className={`SMnavExtraDiv ${isExtraOpen ? "open" : ""} ${extraMenu || ""}`} ref={filtersRef}>
+            <div className={`SMnavExtraDiv ${isExtraOpen ? "open" : ""} ${extraMenu || ""} ${isSearch ? "upper" : ""}`} ref={filtersRef}>
                 {extraButts()}
                 {(extraMenu === "chats" || extraMenu === "habits") && <span className="SMextraSeparator" />}
                 {(extraMenu === "chats" || extraMenu === "habits") &&
@@ -549,7 +553,7 @@ export default function SMnav() {
                     ))}
             </div>
 
-            <div className="SMnav" ref={tabsRef}>
+            <div className={`SMnav ${isSearch ? "dis" : "active"}`} ref={tabsRef}>
                 <div className={`SMnavActive ${activeTab}`} />
 
                 <div
@@ -613,9 +617,21 @@ export default function SMnav() {
                     )}
                 </div>
             </div>
-            <div className="smNavSearch">
-                <div className="">
-                    <MagnifyingGlassIcon />
+            <div className={`smNavSearch ${isSearch ? "active" : "dis"}`}>
+                <input type="text" className="smNavSearchInp" placeholder="Поиск..." onChange={(e) => setSearch(e.target.value)}/>
+                <div className="" onClick={() => {
+                    if (!isSearch) setIsSearch(true)
+                    else {
+                        if (search.trim() !== "") setSearch("")
+                        else setIsSearch(false)
+                    }
+                }}>
+                    {isSearch
+                        ? search.trim() !== ""
+                            ? <XIcon/>
+                            : <CaretRightIcon/>
+                        : <MagnifyingGlassIcon />
+                    }
                 </div>
             </div>
         </div>

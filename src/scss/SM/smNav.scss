@@ -4,14 +4,14 @@
     height: 7vh;
     bottom: 0;
     display: flex;
-    justify-content: center;
+    justify-content: end;
+    padding: 0 1% 2vh;
     align-items: center;
     pointer-events: none;
-    padding: 0 0 2vh;
     background-color: var(--tr);
     z-index: 9;
     will-change: transform;
-
+    gap: 2%;
     &::before {
         content: "";
         position: absolute;
@@ -32,16 +32,43 @@
     @media (max-width: 800px) {
         width: 100%;
         height: 8vh;
-        padding-bottom: 3vh;
+        padding: 0 5% 3vh;
     }
 }
+.SMnavActive {
+    position: absolute;
+    z-index: 2;
+    height: calc(100% - 2px);
+    width: calc(25% - 2px);
+    border-radius: 24px;
+    border: 3px solid var(--tr);
+    box-sizing: border-box;
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    transition: left 0.3s ease, width .3s cubic-bezier(0.075, 0.82, 0.165, 1);
 
+    &.chats {
+        left: 1px;
+    }
+
+    &.habits {
+        left: calc(25% + 1px);
+    }
+
+    &.spots {
+        left: calc(50% + 1px);
+    }
+
+    &.user {
+        left: calc(75% + 1px);
+    }
+}
 .SMnav {
-    position: relative;
+    position: absolute;
     display: flex;
     align-items: center;
-    width: 80%;
-    height: 100%;
+    width: 75%;
+    left: 5%;
+    height: 5vh;
     padding: 2px;
     border-radius: 24px;
     background-color: var(--interact);
@@ -49,30 +76,76 @@
     -webkit-backdrop-filter: blur(var(--blur));
     user-select: none;
     pointer-events: all;
-
+    bottom: 2vh;
+    transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
     @media (max-width: 800px) {
-        height: 100%;
+        width: 78%;
+        bottom: 3vh;
+    }
+    &.dis {
+        width: 90%;
+        bottom: 7.5vh;
+        height: 3.5vh;
+        position: absolute;
+        overflow: hidden;
+        .SMnavButt {
+            svg {
+                scale: .8;
+            }
+        }
+        @media (max-width: 800px) {
+            bottom: 8.5vh;
+        }
     }
 }
-
+.SMnavExpButt {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 4;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.smNavSearchInp {
+    width: 0;
+    background-color: var(--tr);
+    border: none;
+    outline: none;
+    color: var(--tc);
+    padding-inline-start: 1vw;
+    font-size: 16px;
+    transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    @media (max-width: 800px) {
+        padding-inline-start: 3vw;
+    }
+    &::placeholder {
+        color: var(--borderHabit);
+    }
+}
 .smNavSearch {
     height: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
+    width: 5vh;
+    right: 0;
+    border-radius: 24px;
     background: var(--interact);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     overflow: hidden;
     cursor: pointer;
     z-index: 3;
+    display: flex;
     pointer-events: all;
-
+    transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1);
     > div {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 100%;
-        height: 100%;
+        position: absolute;
+        width: 5vh;
+        height: 5vh;
+        right: 0;
         color: var(--borderHabit);
 
         @media (hover: hover) {
@@ -95,6 +168,12 @@
             flex-shrink: 0;
         }
     }
+    &.active {
+        width: 100%;
+        .smNavSearchInp {
+            width: 100%;
+        }
+    }
 }
 
 .SMnavButt {
@@ -111,7 +190,8 @@
     font-size: 14px;
     cursor: pointer;
     z-index: 3;
-
+    scale: 1;
+    transition: scale .3s cubic-bezier(0.075, 0.82, 0.165, 1);
     @media (hover: hover) {
         &:hover {
             background-color: var(--on_con_menu_mess);
@@ -179,34 +259,6 @@
     }
 }
 
-.SMnavActive {
-    position: absolute;
-    z-index: 2;
-    height: calc(100% - 2px);
-    width: calc(25% - 2px);
-    border-radius: 24px;
-    border: 3px solid var(--tr);
-    box-sizing: border-box;
-    background: linear-gradient(135deg, var(--accent), var(--grad));
-    transition: left 0.3s ease;
-
-    &.chats {
-        left: 1px;
-    }
-
-    &.habits {
-        left: calc(25% + 1px);
-    }
-
-    &.spots {
-        left: calc(50% + 1px);
-    }
-
-    &.user {
-        left: calc(75% + 1px);
-    }
-}
-
 .SMnavExtraDiv {
     position: absolute;
     bottom: 105%;
@@ -230,6 +282,9 @@
         opacity 0.5s ease,
         transform 0.3s ease;
 
+    &.upper {
+        bottom: 160%;
+    }
     &.chats {
         left: 3%;
     }

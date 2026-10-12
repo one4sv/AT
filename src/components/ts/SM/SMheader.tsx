@@ -200,6 +200,8 @@ export default function SMheader() {
     const currentFilters = openFilters === "chats" ? chatsFilters : openFilters === "habits" ? habitsFilters : []
     const currentSelected = openFilters === "chats" ? messageSelectedValue : habitsSelectedValue
 
+    if (!user.id) return null
+
     return (
         <div
             className={`smHeader ${openFilters ? "filtersOpen" : ""}`}
