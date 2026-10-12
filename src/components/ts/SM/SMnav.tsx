@@ -618,7 +618,7 @@ export default function SMnav() {
                 </div>
             </div>
             <div className={`smNavSearch ${isSearch ? "active" : "dis"}`}>
-                <input type="text" className="smNavSearchInp" placeholder="Поиск..." onChange={(e) => setSearch(e.target.value)}/>
+                <input type="text" className="smNavSearchInp" placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)}/>
                 <div className="" onClick={() => {
                     if (!isSearch) setIsSearch(true)
                     else {
