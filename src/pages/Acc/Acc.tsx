@@ -75,10 +75,10 @@ export default function Acc() {
     }, [nick, user.nick, user.id]);
 
     useEffect(() => {
-        if (acc && !loading && acc.nick === nick) {
-            setTitle(acc.username || acc.nick);
+        if (acc && !loading && acc.nick) {
+            setTitle(acc.nick);
         }
-    }, [acc, loading, nick]);
+    }, [acc, loading, nick, setTitle]);
 
     const getActiveSlideScrollTop = () => {
         if (!contentRef.current) return 0;

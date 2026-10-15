@@ -2,18 +2,16 @@ import "../../scss/header.scss"
 import { useSideMenu } from "../hooks/SideMenuHook";
 import { usePageTitle } from "../hooks/PageContextHook";
 import { isMobile } from "react-device-detect";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useSettings } from "../hooks/SettingsHook";
 import { TextIndentIcon } from "@phosphor-icons/react";
 
 export default function Header() {
     const { openSideMenu } = useSideMenu();
     const { layout } = useSettings()
-    const { nick } = useParams()
     const { title } = usePageTitle()
     const location = useLocation()
     const navigate = useNavigate()
-    const isAcc = location.pathname.startsWith("/acc")
     const isSettings = location.pathname.startsWith("/settings")
     const isInInfo = location.pathname.startsWith("/info/")
     const isInfo = location.pathname = "/info"
@@ -36,7 +34,7 @@ export default function Header() {
                     else if (isInInfo) navigate("/info")
                     else if (isInfo) navigate("/settings")
                 }}>
-                    { isAcc ? nick : title }
+                    { title }
                 </div>
             </div>
         </>

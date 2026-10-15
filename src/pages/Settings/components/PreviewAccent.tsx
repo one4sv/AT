@@ -1,7 +1,7 @@
 import { CheckCircleIcon, CodeIcon, PushPin, SpeakerSimpleX } from "@phosphor-icons/react";
 import { CheckCheck } from "lucide-react";
 import AT from "../../../../public/favicon.png"
-import { colorsName } from "./colorsName";
+import { colorsName } from "../Arrays/colorsName";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 
 export default function PreviewAccent() {

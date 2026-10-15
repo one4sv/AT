@@ -49,6 +49,9 @@
     border-radius: 24px;
     height: 5vh;
     padding: 1vh 0.5vw;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     cursor: pointer;
     color: var(--borderWh);
     backdrop-filter: blur(var(--blur));
@@ -69,5 +72,12 @@
         width: 95%;
         left: 0;
         padding-left: 3vw;
+    }
+    > h2 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+        flex: 1;
     }
 }

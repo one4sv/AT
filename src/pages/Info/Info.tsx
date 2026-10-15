@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { usePageTitle } from "../../components/hooks/PageContextHook"
 import "./scss/info.scss"
-import type { setting } from "../Settings/Settings"
+import type { Setting } from "../Settings/Settings"
 import { AddressBookIcon, ArrowLeftIcon, DetectiveIcon, HandshakeIcon, InfoIcon, QuestionIcon } from "@phosphor-icons/react"
 import { useNavigate, useParams } from "react-router-dom"
 import AboutTab from "./tabs/AboutTab"
@@ -18,9 +18,9 @@ export default function Info() {
     const { tab } = useParams();
     const navigate = useNavigate();
     
-    const [activeTab, setActiveTab] = useState<setting | null>(null);
+    const [activeTab, setActiveTab] = useState<Setting | null>(null);
 
-    const sections: setting[] = [
+    const sections: Setting[] = [
         {
             name: t("info.about.name"),
             tab: "about",
@@ -54,8 +54,8 @@ export default function Info() {
     ];
 
     useEffect(() => {
-        setTitle(t("info.title"));
-    }, [t, setTitle]);
+        setTitle(activeTab !== null && tab ? activeTab.name : t("info.title"));
+    }, [t, setTitle, activeTab, tab]);
 
         useEffect(() => {
             if (tab) {

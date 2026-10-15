@@ -1,0 +1,22 @@
+.searchUnstarted, .searchedButts, .searchedButtsEmpty {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 1vh;
+    gap: 1vh;
+    > div {
+        width: 98%;
+    }
+    @media (max-width: 800px) {
+        margin-top: 8vh;
+    } 
+}
+.searchedButtsEmpty {
+    background-color: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    >span {
+        font-size: 20px;
+    }
+}

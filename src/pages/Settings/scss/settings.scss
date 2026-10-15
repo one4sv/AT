@@ -3,6 +3,7 @@
 @use "./habits.scss";
 @use "./security.scss";
 @use "./seekbar.scss";
+@use "./search.scss";
 
 .settingsDiv {
     width: 100%;
@@ -12,23 +13,28 @@
     justify-content: center;
     scrollbar-width: none;
     gap: 1vw;
+
     @media (max-width: 800px) {
         height: 100dvh;
     }
 }
+
 .settingsSliderWrapper {
     width: 50%;
     overflow-x: hidden;
+
     @media (max-width: 800px) {
         width: 100%;
     }
 }
+
 .settingsSlider {
     display: flex;
     width: 200%;
     height: 100%;
     transition: transform 0.35s ease;
 }
+
 .settingsPage {
     width: 50%;
     flex-shrink: 0;
@@ -37,10 +43,12 @@
     height: 100%;
     overflow: hidden;
     padding-top: 6vh;
+
     @media (max-width: 800px) {
         padding-top: 0;
     }
 }
+
 .settingsButtsWrapper {
     width: 100%;
     padding: 0 1%;
@@ -50,12 +58,14 @@
     overflow-y: auto;
     scrollbar-width: thin;
     margin-top: 1vh;
+
     @media (max-width: 800px) {
         padding-top: 8vh;
         padding-bottom: 9vh;
         margin-top: 0;
     }
 }
+
 .settingButt {
     background-color: var(--mc);
     border-radius: 24px;
@@ -67,16 +77,20 @@
     gap: 1vh;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    > span {
+
+    >span {
         font-size: 18px;
     }
+
     @media (hover: hover) {
         &:hover {
             background-color: var(--menuButtHover);
-            > .settingName {
+
+            >.settingName {
                 color: var(--tc);
             }
-            > .settingDesc {
+
+            >.settingDesc {
                 color: var(--borderWh);
             }
         }
@@ -85,20 +99,26 @@
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);
-            > .settingName {
+
+            >.settingName {
                 color: var(--tc);
             }
-            > .settingDesc {
+
+            >.settingDesc {
                 color: var(--borderWh);
             }
         }
     }
+
     &.settingButtAcc {
         position: sticky;
-        background:linear-gradient(135deg, var(--accent), var(--grad));
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+
         @media (hover: hover) {
             &:hover {
-                div, span {
+
+                div,
+                span {
                     color: var(--inner_text);
                 }
             }
@@ -106,35 +126,45 @@
 
         @media (hover: none) {
             &:active {
-                div, span {
+
+                div,
+                span {
                     color: var(--inner_text);
                 }
             }
         }
-        div, span {
+
+        div,
+        span {
             color: var(--inner_text);
         }
     }
+
     @media (max-width: 800px) {
         padding: 1vh 3vw;
     }
 }
+
 .settingName {
     display: flex;
     align-items: center;
     gap: 6px;
     color: var(--msbd);
-    > svg {
+
+    >svg {
         color: var(--accent_text);
     }
 }
+
 .settingUserName {
     font-size: 20px;
 }
+
 .settingUserNick {
     font-size: 18px;
     color: var(--accent_text);
 }
+
 .settingAvatar {
     width: 44px;
     height: 44px;
@@ -146,18 +176,22 @@
     align-items: center;
     justify-content: center;
     background: var(--menuButtHover);
-    > img {
+
+    >img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-    > svg {
+
+    >svg {
         color: var(--borderHabit);
     }
 }
+
 .settingDesc {
     color: var(--borderHabit);
 }
+
 .settingBackWrapper {
     width: 50%;
     padding: 0 2% 3vh;
@@ -167,6 +201,7 @@
     justify-content: center;
     z-index: 3;
     gap: 2%;
+
     &::before {
         content: "";
         position: absolute;
@@ -175,20 +210,17 @@
         pointer-events: none;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        background:linear-gradient(135deg, var(--tr), #0000009a);
+        background: linear-gradient(135deg, var(--tr), #0000009a);
 
-        mask-image: linear-gradient(
-            to bottom,
-            transparent 10%,
-            black 100%
-        );
-        -webkit-mask-image: linear-gradient(
-            to bottom,
-            transparent 10%,
-            black 100%
-        );
+        mask-image: linear-gradient(to bottom,
+                transparent 10%,
+                black 100%);
+        -webkit-mask-image: linear-gradient(to bottom,
+                transparent 10%,
+                black 100%);
     }
 }
+
 .settingBack {
     width: 5vh;
     display: flex;
@@ -202,27 +234,32 @@
     color: var(--borderWh);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    > svg {
+
+    >svg {
         width: 3vh;
         height: 3vh;
         flex-shrink: 0;
     }
+
     @media (hover: hover) {
         &:hover {
             color: var(--tc);
             background-color: var(--menuButtHover);
         }
     }
+
     @media (hover: none) {
         &:active {
             color: var(--tc);
             background-color: var(--menuButtHover);
         }
     }
+
     @media (max-width: 800px) {
         left: 0;
     }
 }
+
 .settingTop {
     display: flex;
     width: 100%;
@@ -230,6 +267,7 @@
     gap: 1%;
     height: 5vh;
 }
+
 .settingSearch {
     height: 5vh;
     max-height: 5vh;
@@ -242,10 +280,12 @@
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     overflow: hidden;
+
     @media (max-width: 800px) {
         margin: 0;
     }
-    > div {
+
+    >div {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -255,34 +295,36 @@
         right: 0;
         cursor: pointer;
         color: var(--tc);
+        
         @media (hover: hover) {
             &:hover {
                 background: var(--on_con_menu_mess);
                 color: var(--tc);
             }
         }
+
         @media (hover: none) {
             &:active {
                 background: var(--on_con_menu_mess);
                 color: var(--tc);
             }
         }
-        > svg {
+
+        >svg {
             width: 3vh;
             height: 3vh;
             flex-shrink: 0;
         }
     }
 }
+
 .settingSearchInput {
-    @include var.input(
-        var(--tr),
+    @include var.input(var(--tr),
         var(--tc),
         none,
         100%,
         24px,
-        var(--none)
-    );
+        var(--none));
     width: 100%;
     padding: 0.4vh 0.5vw;
     border: none;
@@ -290,6 +332,7 @@
     &::placeholder {
         color: var(--borderHabit);
     }
+
     @media (max-width:800px) {
         padding-right: 10vw;
         padding-inline-start: 3vw;
@@ -304,16 +347,20 @@
     display: flex;
     flex-direction: column;
     gap: 1vh;
-    padding: 0 1% 1vh;
+    padding: 0 0 1vh;
     margin-top: 1vh;
+    align-items: center;
+    > div {
+        width: 98%;
+    }
     @media (max-width: 800px) {
         padding-top: 8vh;
         padding-bottom: 9vh;
         margin-top: 0vh;
     }
 }
+
 .settingHeader {
-    color: var(--borderWh);
     font-size: 18px;
     padding-inline-start: 0.5vw;
     display: flex;
@@ -323,6 +370,7 @@
         padding-inline-start: 1vw;
     }
 }
+
 .settingInnerDiv {
     background-color: var(--mc);
     border-radius: 24px;
@@ -338,22 +386,27 @@
             margin: 0;
         }
     }
+
     @media (max-width: 800px) {
         padding: 1.5vh 3vw;
     }
 }
+
 .settingSpan {
     font-size: 16px;
     margin-bottom: 1vh;
     padding-inline-start: 0.5vw;
     color: var(--tc);
+
     &.disabled {
         color: var(--borderHabit);
     }
+
     @media (max-width: 800px) {
         padding-inline-start: 1vw;
     }
 }
+
 .settingInnerList {
     padding: 0.5vh 0.25vw;
     background-color: var(--interact);
@@ -361,10 +414,12 @@
     gap: 0.5vh;
     display: flex;
     flex-direction: column;
+
     @media (max-width: 800px) {
         padding: 1.5vw 1vw;
     }
 }
+
 .settingTogglerDiv {
     display: flex;
     gap: 0.5vw;
@@ -375,50 +430,57 @@
     padding: 1vh 0.5vw;
     border-radius: 24px;
     cursor: pointer;
+
     @media (max-width: 800px) {
         padding: 1vh 2vw;
     }
+
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-    
+            background-color: var(--menuButtHover);
+
         }
     }
 
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-    
-        
+            background-color: var(--menuButtHover);
+
+
         }
     }
 }
+
 .settingHint {
     width: 100%;
     padding-inline-start: 0.5vw;
     color: var(--borderHabit);
+
     @media (hover: hover) {
         &:hover {
             color: var(--borderWh);
         }
     }
+
     @media (hover: none) {
         &:active {
             color: var(--borderWh);
         }
     }
+
     @media (max-width: 800px) {
         padding-inline-start: 3vw;
     }
 }
+
 .settingInactive {
     color: var(--borderHabit) !important;
 }
+
 .settingSL {
     position: relative;
     z-index: 3;
-    @include var.selectList(
-        100%,
+    @include var.selectList(100%,
         fit-content,
         fit-content,
         0.3vw,
@@ -429,39 +491,42 @@
         18px,
         1vh,
         0.5vw,
-        5%
-    );
+        5%);
+
     @media (max-width: 800px) {
         >svg {
             right: 2vw;
         }
     }
+
     &:focus-within {
-        > svg {
+        >svg {
             color: var(--accent_text);
         }
     }
-    > input {
-        @include var.input(
-            var(--mc),
+
+    >input {
+        @include var.input(var(--mc),
             var(--tc),
             var(--borderHabit),
             fit-content,
             24px,
-            var(--accent)
-        );
+            var(--accent));
         width: 100%;
         cursor: pointer;
         padding: 1vh 0.5vw;
+
         @media (max-width: 800px) {
             padding-left: 3vw;
         }
     }
-    > div {
+
+    >div {
         border: 1px solid var(--tc);
         z-index: 4;
     }
 }
+
 .settingInnerButt {
     padding: 0.75vh 1vh;
     display: flex;
@@ -470,6 +535,7 @@
     border-radius: 24px;
     cursor: pointer;
     gap: 4px;
+
     @media (hover: hover) {
         &:hover {
             background-color: var(--menuButtHover);
@@ -483,41 +549,50 @@
             color: var(--tc);
         }
     }
+
     &.delete {
         color: var(--notValid);
     }
 }
+
 .settingInnerAccDiv {
     padding: 0;
     gap: 0;
-    > .accInfo {
+
+    >.accInfo {
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
         background-color: var(--tr);
     }
+
     >.settingInnerList {
         margin: 0 0.5vw 1vh;
     }
 }
+
 .settingsLabel {
     width: 100%;
     padding: 0 0.35vw 0.5vh;
     color: var(--borderHabit);
 }
+
 .settingsInputDiv {
     display: flex;
     flex-direction: column;
 }
+
 .settingInputInnerList {
     padding: 0.5vh 0.25vw;
     background-color: var(--interact);
     border-radius: 12px;
     display: flex;
     flex-direction: column;
+
     @media (max-width: 800px) {
         padding: 0.5vh 1.25vw;
     }
 }
+
 .settingAccordion {
     background-color: var(--mc);
     border-radius: 24px;
@@ -542,11 +617,13 @@
     @media (max-width: 800px) {
         padding: 1vh 3vw;
     }
+
     @media (hover: hover) {
         &:hover {
             background-color: var(--menuButtHover);
         }
     }
+
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);

@@ -3,18 +3,10 @@ import { usePageTitle } from "../../components/hooks/PageContextHook";
 import { useUser } from "../../components/hooks/UserHook";
 import "./scss/settings.scss";
 import {
-    ArrowLeftIcon,
-    BellRingingIcon,
-    ChatsTeardropIcon,
-    InfoIcon,
-    LockKeyIcon,
-    MagnifyingGlassIcon,
-    PaintBucketIcon,
-    SneakerMoveIcon,
-    UserIcon,
-    VaultIcon,
-    WrenchIcon,
-    XIcon,
+  ArrowLeftIcon,
+  MagnifyingGlassIcon,
+  UserIcon,
+  XIcon,
 } from "@phosphor-icons/react";
 import { useNavigate, useParams } from "react-router";
 import AccSettingsTab from "./components/SettingsTabs/AccSettingsTab";
@@ -28,232 +20,183 @@ import GeneralTab from "./components/SettingsTabs/GeneralTab";
 import { useAcc } from "../../components/hooks/AccHook";
 import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
+import { useSettingsTabs } from "./Arrays/settingsTabs";
+import SettingsButts from "./components/SettingsButts";
+import SearchUnstarted from "./components/Search/SearchUnstarted";
+import SearchedButts from "./components/Search/SearchedButts";
+import { AnimatePresence, motion } from "motion/react";
 
-export interface setting {
-    name: string;
-    tab: string;
-    desc: string;
-    icon: ElementType;
+export interface Setting {
+  name: string;
+  tab: string;
+  desc: string;
+  icon: ElementType;
+}
+
+export interface SearchableSetting {
+  id: string;
+  name: string;
+  desc: string;
+  tab: string;
+  icon: ElementType;
+  category: string;
 }
 
 export default function Settings() {
-    const { t } = useTranslation("settings");
-    const { setTitle } = usePageTitle();
-    const { user, isAuthenticated, loadingUser,  } = useUser();
-    const { setIsMyAcc } = useAcc();
+  const { t } = useTranslation("settings");
+  const { setTitle } = usePageTitle();
+  const { user, isAuthenticated, loadingUser } = useUser();
+  const { setIsMyAcc } = useAcc();
 
-    const { tab } = useParams();
-    const navigate = useNavigate();
-    
-    const [ activeTab, setActiveTab ] = useState<setting | null>(null);
-    const [ search, setSearch ] = useState("")
+  const { tab } = useParams();
+  const navigate = useNavigate();
+  const settings = useSettingsTabs();
 
-    useEffect(() => {
-        if (!user.id && !loadingUser) { 
-            navigate("/sign");
-        }
-    }, [isAuthenticated, loadingUser, navigate, user]);
+  const [activeTab, setActiveTab] = useState<Setting | null>(null);
+  const [search, setSearch] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-    useEffect(() => {
-        setTitle(tab && activeTab !== null ? activeTab.name : t("settings.title"));
-        setIsMyAcc(true);
-    }, [setIsMyAcc, setTitle, user.nick, t, tab, activeTab]);
-
-    const settings: setting[] = [
-        {
-            name: t("settings.general"),
-            tab: "gen",
-            desc: t("settings.generalDesc"),
-            icon: WrenchIcon,
-        },
-        {
-            name: t("settings.personalization"),
-            tab: "pers",
-            desc: t("settings.personalizationDesc"),
-            icon: PaintBucketIcon,
-        },
-        {
-            name: t("settings.activities"),
-            tab: "activites",
-            desc: t("settings.activitiesDesc"),
-            icon: SneakerMoveIcon,
-        },
-        {
-            name: t("settings.chats"),
-            tab: "chats",
-            desc: t("settings.chatsDesc"),
-            icon: ChatsTeardropIcon,
-        },
-        {
-            name: t("settings.notifications"),
-            tab: "notes",
-            desc: t("settings.notificationsDesc"),
-            icon: BellRingingIcon,
-        },
-        {
-            name: t("settings.security"),
-            tab: "safety",
-            desc: t("settings.securityDesc"),
-            icon: VaultIcon,
-        },
-        {
-            name: t("settings.privacy"),
-            tab: "private",
-            desc: t("settings.privacyDesc"),
-            icon: LockKeyIcon,
-        },
-    ];
-
-    const accTab = {
-        name: user.username ?? user.nick ?? t("settings.account"),
-        desc: t("settings.accountDesc"),
-        icon: UserIcon,
-        tab: "acc",
-    };
-
-    useEffect(() => {
-        if (tab) {
-            if (tab === "acc") setActiveTab(accTab);
-            else setActiveTab(settings.find(s => s.tab === tab) ?? null);
-        }
-    }, [tab, t]);
-
-    const tabs = {
-        gen: <GeneralTab />,
-        acc: <AccSettingsTab />,
-        pers: <PersSettingsTab />,
-        activites: <HabitsTab />,
-        chats: <ChatsTab />,
-        notes: <NotificationsTab />,
-        safety: <SecurityTab />,
-        private: <PrivacyTab />,
-    };
-
-    const settingSearch = () => {
-        return (
-            <div className="settingSearch">
-                <input type="text" className="settingSearchInput" placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)}/>
-                <div onClick={() => setSearch("")}>
-                    {search.trim() !== ""
-                        ? <XIcon/>
-                        : <MagnifyingGlassIcon />}
-                </div>
-            </div>
-        )
+  useEffect(() => {
+    if (!user.id && !loadingUser) {
+      navigate("/sign");
     }
-    return (
-        <div className="settingsDiv">
-            <div className="settingsSliderWrapper">
-                <div
-                    className="settingsSlider"
-                    style={{
-                        transform: tab ? "translateX(-50%)" : "translateX(0)",
-                    }}
+  }, [isAuthenticated, loadingUser, navigate, user]);
+
+  useEffect(() => {
+    setTitle(tab && activeTab !== null ? activeTab.name : t("settings.title"));
+    setIsMyAcc(true);
+  }, [setIsMyAcc, setTitle, user.nick, t, tab, activeTab]);
+
+  const accTab = {
+    name: user.username ?? user.nick ?? t("settings.account"),
+    desc: t("settings.accountDesc"),
+    icon: UserIcon,
+    tab: "acc",
+  };
+
+  useEffect(() => {
+    if (tab) {
+      if (tab === "acc") setActiveTab(accTab);
+      else setActiveTab(settings.find((s) => s.tab === tab) ?? null);
+    }
+  }, [tab, t]);
+
+  const tabs = {
+    gen: <GeneralTab />,
+    acc: <AccSettingsTab />,
+    pers: <PersSettingsTab />,
+    activities: <HabitsTab />,
+    chats: <ChatsTab />,
+    notes: <NotificationsTab />,
+    safety: <SecurityTab />,
+    private: <PrivacyTab />,
+  };
+
+  const settingSearch = () => (
+    <div className="settingSearch">
+      <input
+        type="text"
+        className="settingSearchInput"
+        placeholder="Поиск..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        onFocus={() => setIsSearchFocused(true)}
+        onBlur={() => setIsSearchFocused(false)}
+      />
+      <div onClick={() => setSearch("")}>
+        {search.trim() !== "" ? <XIcon /> : <MagnifyingGlassIcon />}
+      </div>
+    </div>
+  );
+
+  const contentKey =
+    search.trim() !== ""
+      ? "searched"
+      : isSearchFocused
+        ? "unstarted"
+        : "butts";
+
+  return (
+    <div className="settingsDiv">
+      <div className="settingsSliderWrapper">
+        <div
+          className="settingsSlider"
+          style={{
+            transform: tab ? "translateX(-50%)" : "translateX(0)",
+          }}
+        >
+          {/* ========== Левая страница (список) ========== */}
+          <div className="settingsPage">
+            {!isMobile && <div className="settingTop">{settingSearch()}</div>}
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={contentKey}
+                    initial={{ y: 18, scale: 0.97 }}
+                    animate={{ y: 0, scale: 1 }}
+                    exit={{ y: -18, scale: 0.97 }}
+                    transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
                 >
-                    <div className="settingsPage">
-                        {!isMobile ? 
-                            <div className="settingTop">
-                                {settingSearch()}
-                            </div>
-                        : ""}
-                        <div className="settingsButtsWrapper">
-                            <div
-                                className="settingButt settingButtAcc"
-                                onClick={() => {
-                                    navigate(`/settings/${accTab.tab}`);
-                                    setActiveTab(accTab);
-                                }}
-                            >
-                                <span className="settingName">
-                                    {user.avatar_url ? (
-                                        <img className="settingAvatar" src={user.avatar_url} />
-                                    ) : (
-                                        <div className="settingAvatar">
-                                            <UserIcon size={28} weight="fill" />
-                                        </div>
-                                    )}
-                                    {user.username ? (
-                                        <>
-                                            <span className="settingUserName">{user.username}</span>{" "}
-                                            <span className="settingUserNick">| @{user.nick}</span>
-                                        </>
-                                    ) : (
-                                        <>@{user.nick}</>
-                                    )}
-                                </span>
-                                <div className="settingDesc">
-                                    {t("settings.accountDesc")}
-                                </div>
-                            </div>
-                            {settings.map((s) => (
-                                <div
-                                    key={s.tab}
-                                    className="settingButt"
-                                    onClick={() => {
-                                        setActiveTab(s);
-                                        navigate(`/settings/${s.tab}`);
-                                    }}
-                                >
-                                    <span className="settingName">
-                                        <s.icon size={24} weight="fill" />
-                                        {s.name}
-                                    </span>
-                                    <div className="settingDesc">{s.desc}</div>
-                                </div>
-                            ))}
-                            <div
-                                className="settingButt"
-                                onClick={() => {
-                                    navigate("/info");
-                                }}
-                            >
-                                <span className="settingName">
-                                    <InfoIcon size={24} weight="fill" />
-                                    {t("settings.info")}
-                                </span>
-                                <div className="settingDesc">{t("settings.infoDesc")}</div>
-                            </div>
-                        </div>
-                        {isMobile ? 
-                            <div className="settingBackWrapper">
-                                {settingSearch()}
-                            </div>
-                        : ""}
+                    {contentKey === "searched" && <SearchedButts search={search} />}
+                    {contentKey === "unstarted" && <SearchUnstarted />}
+                    {contentKey === "butts" && (
+                    <SettingsButts
+                        settings={settings}
+                        user={user}
+                        accTab={accTab}
+                        setActiveTab={setActiveTab}
+                    />
+                    )}
+                </motion.div>
+            </AnimatePresence>
+            {isMobile && (
+              <div className="settingBackWrapper">{settingSearch()}</div>
+            )}
+          </div>
+
+          {/* ========== Правая страница (контент таба) ========== */}
+          <div className="settingsPage">
+            {activeTab && (
+              <>
+                {!isMobile && (
+                  <div className="settingTop">
+                    <div
+                      className="settingBack"
+                      onClick={() => navigate(`/settings`)}
+                    >
+                      <ArrowLeftIcon />
                     </div>
-                    <div className="settingsPage">
-                        {activeTab && (
-                            <>
-                                {!isMobile ? 
-                                    <div className="settingTop">
-                                        <div className="settingBack" onClick={() => {
-                                            navigate(`/settings`);
-                                        }}>
-                                            <ArrowLeftIcon/>
-                                        </div>
-                                        <div className="settingSearch">
-                                            <input type="text" className="settingSearchInput" placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)}/>
-                                            <div>
-                                                <MagnifyingGlassIcon/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                 : ""}
-                                {tabs[activeTab.tab as keyof typeof tabs]}
-                                {isMobile ? 
-                                    <div className="settingBackWrapper">
-                                        <div className="settingBack" onClick={() => {
-                                            navigate(`/settings`);
-                                        }}>
-                                            <ArrowLeftIcon />
-                                        </div>
-                                        {settingSearch()}
-                                    </div>
-                                 : ""}
-                            </>
-                        )}
+                    {settingSearch()}
+                  </div>
+                )}
+
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab.tab}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                  >
+                    {tabs[activeTab.tab as keyof typeof tabs]}
+                  </motion.div>
+                </AnimatePresence>
+
+                {isMobile && (
+                  <div className="settingBackWrapper">
+                    <div
+                      className="settingBack"
+                      onClick={() => navigate(`/settings`)}
+                    >
+                      <ArrowLeftIcon />
                     </div>
-                </div>
-            </div>
+                    {settingSearch()}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
