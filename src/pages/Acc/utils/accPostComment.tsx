@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import EmojiBar from "../../../components/ts/utils/EmojiBar";
-import { Paperclip, SmileySticker, UserCircle } from "@phosphor-icons/react";
-import { SendHorizontal } from "lucide-react";
+import { Paperclip, PaperPlaneRightIcon, SmileySticker, UserCircle } from "@phosphor-icons/react";
 import { api } from "../../../components/ts/api";
 import { useNavigate } from "react-router";
 import MinLoader from "../../../components/ts/MinLoader";
@@ -161,7 +160,7 @@ export default function AccPostComment({id}:{id:number}) {
                 onTouchCancel={handleTextareaTouchEnd}
             >
                 <div className="sendCommentTAButt">
-                    <SendHorizontal className="sctabSvg" fill="currentColor" onClick={() => sendComment()}/>
+                    <PaperPlaneRightIcon className="sctabSvg" weight="fill" onClick={() => sendComment()}/>
                 </div>
                 <textarea name="" id="" className="AccPostCommentTA" placeholder="Комментарий" ref={taRef} value={comment} onChange={(e) => setComment(e.target.value)}></textarea>
                 {files.length > 0 && (

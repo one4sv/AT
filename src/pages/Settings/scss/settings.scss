@@ -49,9 +49,11 @@
     flex-direction: column;
     overflow-y: auto;
     scrollbar-width: thin;
+    margin-top: 1vh;
     @media (max-width: 800px) {
         padding-top: 8vh;
-        padding-bottom: 1vh;
+        padding-bottom: 9vh;
+        margin-top: 0;
     }
 }
 .settingButt {
@@ -139,19 +141,16 @@
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-
+    user-select: none;
     display: flex;
     align-items: center;
     justify-content: center;
-
     background: var(--menuButtHover);
-
     > img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-
     > svg {
         color: var(--borderHabit);
     }
@@ -161,12 +160,13 @@
 }
 .settingBackWrapper {
     width: 50%;
-    padding-bottom: 1vh;
+    padding: 0 2% 3vh;
     position: absolute;
     bottom: 0;
     display: flex;
     justify-content: center;
     z-index: 3;
+    gap: 2%;
     &::before {
         content: "";
         position: absolute;
@@ -190,19 +190,23 @@
     }
 }
 .settingBack {
-    width: 98%;
+    width: 5vh;
     display: flex;
     align-items: center;
-    background-color: var(--mc);
+    justify-content: center;
+    background-color: var(--interact);
     border-radius: 24px;
     height: 5vh;
-    position: relative;
-    left: 1%;
     padding: 1vh 0.5vw;
     cursor: pointer;
     color: var(--borderWh);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
+    > svg {
+        width: 3vh;
+        height: 3vh;
+        flex-shrink: 0;
+    }
     @media (hover: hover) {
         &:hover {
             color: var(--tc);
@@ -216,62 +220,79 @@
         }
     }
     @media (max-width: 800px) {
-        width: 95%;
         left: 0;
-        margin: 0 0 2vh;
-        padding-left: 2vw;
-        height: 6vh;
     }
 }
+.settingTop {
+    display: flex;
+    width: 100%;
+    padding: 0 1%;
+    gap: 1%;
+    height: 5vh;
+}
 .settingSearch {
-    background-color: var(--mc);
-    border-radius: 24px;
-    margin-bottom: 1vh;
-    padding: 0.5vh 0.25vw;
+    height: 5vh;
+    max-height: 5vh;
+    flex: 1;
     position: relative;
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
+    background: var(--interact);
+    border-radius: 24px;
     display: flex;
     align-items: center;
-    > svg {
-        position: absolute;
-        right: 0.75vw;
-        font-size: 24px;
-        color: var(--borderWh);
-    }
-    &:focus-within {
-        > svg {
-            color: var(--accent_text);
-        }
-    }
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    overflow: hidden;
     @media (max-width: 800px) {
-        padding: 0;
-        margin-top: 1vh;
-        width: 98%;
-        margin-left: 1%;
+        margin: 0;
+    }
+    > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        width: 5vh;
+        height: 5vh;
+        right: 0;
+        cursor: pointer;
+        color: var(--tc);
+        @media (hover: hover) {
+            &:hover {
+                background: var(--on_con_menu_mess);
+                color: var(--tc);
+            }
+        }
+        @media (hover: none) {
+            &:active {
+                background: var(--on_con_menu_mess);
+                color: var(--tc);
+            }
+        }
         > svg {
-            right: 2vw;
+            width: 3vh;
+            height: 3vh;
+            flex-shrink: 0;
         }
     }
 }
 .settingSearchInput {
     @include var.input(
-        var(--interact),
+        var(--tr),
         var(--tc),
-        var(--borderWh),
-        4vh,
+        none,
+        100%,
         24px,
-        var(--accent)
+        var(--none)
     );
     width: 100%;
     padding: 0.4vh 0.5vw;
+    border: none;
+    outline: none;
     &::placeholder {
         color: var(--borderHabit);
     }
     @media (max-width:800px) {
-        height: 5vh;
-        padding-right: 8vw;
-        padding-inline-start: 2vw;
+        padding-right: 10vw;
+        padding-inline-start: 3vw;
     }
 }
 
@@ -287,12 +308,12 @@
     margin-top: 1vh;
     @media (max-width: 800px) {
         padding-top: 8vh;
-        padding-bottom: 10vh;
+        padding-bottom: 9vh;
         margin-top: 0vh;
     }
 }
 .settingHeader {
-    color: var(--accent_text);
+    color: var(--borderWh);
     font-size: 18px;
     padding-inline-start: 0.5vw;
     display: flex;

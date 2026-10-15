@@ -3,16 +3,18 @@ import { usePageTitle } from "../../components/hooks/PageContextHook";
 import { useUser } from "../../components/hooks/UserHook";
 import "./scss/settings.scss";
 import {
+    ArrowLeftIcon,
     BellRingingIcon,
-    CaretLeftIcon,
     ChatsTeardropIcon,
     InfoIcon,
     LockKeyIcon,
+    MagnifyingGlassIcon,
     PaintBucketIcon,
     SneakerMoveIcon,
     UserIcon,
     VaultIcon,
     WrenchIcon,
+    XIcon,
 } from "@phosphor-icons/react";
 import { useNavigate, useParams } from "react-router";
 import AccSettingsTab from "./components/SettingsTabs/AccSettingsTab";
@@ -43,7 +45,8 @@ export default function Settings() {
     const { tab } = useParams();
     const navigate = useNavigate();
     
-    const [activeTab, setActiveTab] = useState<setting | null>(null);
+    const [ activeTab, setActiveTab ] = useState<setting | null>(null);
+    const [ search, setSearch ] = useState("")
 
     useEffect(() => {
         if (!user.id && !loadingUser) { 
@@ -126,6 +129,18 @@ export default function Settings() {
         private: <PrivacyTab />,
     };
 
+    const settingSearch = () => {
+        return (
+            <div className="settingSearch">
+                <input type="text" className="settingSearchInput" placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)}/>
+                <div onClick={() => setSearch("")}>
+                    {search.trim() !== ""
+                        ? <XIcon/>
+                        : <MagnifyingGlassIcon />}
+                </div>
+            </div>
+        )
+    }
     return (
         <div className="settingsDiv">
             <div className="settingsSliderWrapper">
@@ -136,6 +151,11 @@ export default function Settings() {
                     }}
                 >
                     <div className="settingsPage">
+                        {!isMobile ? 
+                            <div className="settingTop">
+                                {settingSearch()}
+                            </div>
+                        : ""}
                         <div className="settingsButtsWrapper">
                             <div
                                 className="settingButt settingButtAcc"
@@ -194,16 +214,33 @@ export default function Settings() {
                                 <div className="settingDesc">{t("settings.infoDesc")}</div>
                             </div>
                         </div>
+                        {isMobile ? 
+                            <div className="settingBackWrapper">
+                                <div className="settingSearch">
+                                    <input type="text" className="settingSearchInput" placeholder="Поиск..."/>
+                                    <div>
+                                        <MagnifyingGlassIcon/>
+                                    </div>
+                                </div>
+                            </div>
+                        : ""}
                     </div>
                     <div className="settingsPage">
                         {activeTab && (
                             <>
                                 {!isMobile ? 
-                                    <div className="settingBack" onClick={() => {
-                                        navigate(`/settings`);
-                                    }}>
-                                        <CaretLeftIcon size={24} />
-                                        <h2>{activeTab.name}</h2>
+                                    <div className="settingTop">
+                                        <div className="settingBack" onClick={() => {
+                                            navigate(`/settings`);
+                                        }}>
+                                            <ArrowLeftIcon/>
+                                        </div>
+                                        <div className="settingSearch">
+                                            <input type="text" className="settingSearchInput" placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)}/>
+                                            <div>
+                                                <MagnifyingGlassIcon/>
+                                            </div>
+                                        </div>
                                     </div>
                                  : ""}
                                 {tabs[activeTab.tab as keyof typeof tabs]}
@@ -212,9 +249,9 @@ export default function Settings() {
                                         <div className="settingBack" onClick={() => {
                                             navigate(`/settings`);
                                         }}>
-                                            <CaretLeftIcon size={24} />
-                                            <h2>{activeTab.name}</h2>
+                                            <ArrowLeftIcon />
                                         </div>
+                                        {settingSearch()}
                                     </div>
                                  : ""}
                             </>

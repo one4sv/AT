@@ -16,7 +16,6 @@
     @media (max-width: 800px) {
         padding: 1vh 3vw;
         margin-top: 0;
-        padding-bottom: 9vh;
     }
 }
 .contact {
@@ -40,5 +39,35 @@
         height: 400%;
         width: auto;
         object-fit:contain;
+    }
+}
+.infoBack {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: var(--interact);
+    border-radius: 24px;
+    height: 5vh;
+    padding: 1vh 0.5vw;
+    cursor: pointer;
+    color: var(--borderWh);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    @media (hover: hover) {
+        &:hover {
+            color: var(--tc);
+            background-color: var(--menuButtHover);
+        }
+    }
+    @media (hover: none) {
+        &:active {
+            color: var(--tc);
+            background-color: var(--menuButtHover);
+        }
+    }
+    @media (max-width: 800px) {
+        width: 95%;
+        left: 0;
+        padding-left: 3vw;
     }
 }

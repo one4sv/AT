@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
-import { ChatCenteredIcon, ClockCountdownIcon } from "@phosphor-icons/react";
+import { ChatCenteredIcon, ClockCountdownIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
 import { useDone } from "../../../../../components/hooks/DoneHook";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import "../../../scss/DayComment.scss";
-import { SendHorizonal } from "lucide-react";
 
 interface DayCommentProps {
     id: string;
@@ -108,7 +107,7 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
                         >
                             {waitComAnswer
                                 ? <ClockCountdownIcon size={24}/>
-                                : <SendHorizonal fill="currentColor"/>
+                                : <PaperPlaneRightIcon weight="fill"/>
                             }
                         </button>
                     </div>

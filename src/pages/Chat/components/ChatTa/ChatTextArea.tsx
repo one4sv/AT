@@ -1,5 +1,4 @@
-import { ClockCountdown, Paperclip, SmileySticker} from "@phosphor-icons/react";
-import { SendHorizontal } from "lucide-react";
+import { ClockCountdown, Paperclip, PaperPlaneRightIcon, SmileySticker} from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type SetStateAction } from "react";
 import { useLocation, useParams } from "react-router";
 import { useChat } from "../../../../components/hooks/ChatHook";
@@ -246,7 +245,7 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
                         {sending ? (
                             <ClockCountdown className="chatSend"/>
                         ) : (
-                            <SendHorizontal className="chatSend" fill="currenColor"/>
+                            <PaperPlaneRightIcon className="chatSend" weight="fill"/>
                         )}
                     </div>
                 </div>

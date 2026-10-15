@@ -1,8 +1,8 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { usePageTitle } from "../../components/hooks/PageContextHook"
 import "./scss/info.scss"
 import type { setting } from "../Settings/Settings"
-import { AddressBookIcon, CaretLeftIcon, DetectiveIcon, HandshakeIcon, InfoIcon, QuestionIcon } from "@phosphor-icons/react"
+import { AddressBookIcon, ArrowLeftIcon, DetectiveIcon, HandshakeIcon, InfoIcon, QuestionIcon } from "@phosphor-icons/react"
 import { useNavigate, useParams } from "react-router-dom"
 import AboutTab from "./tabs/AboutTab"
 import TermsTab from "./tabs/TermsTab"
@@ -17,6 +17,8 @@ export default function Info() {
     const { t } = useTranslation("info");
     const { tab } = useParams();
     const navigate = useNavigate();
+    
+    const [activeTab, setActiveTab] = useState<setting | null>(null);
 
     const sections: setting[] = [
         {
@@ -51,11 +53,16 @@ export default function Info() {
         },
     ];
 
-    const currentTab = sections.find((s) => s.tab === tab);
-
     useEffect(() => {
         setTitle(t("info.title"));
     }, [t, setTitle]);
+
+        useEffect(() => {
+            if (tab) {
+                if (tab === "acc") setActiveTab(sections[0]);
+                else setActiveTab(sections.find(s => s.tab === tab) ?? null);
+            }
+        }, [tab, t]);
 
     const tabs = {
         about: <AboutTab />,
@@ -78,12 +85,12 @@ export default function Info() {
                         <div className="settingsButtsWrapper">
                             {!isMobile ? (
                                 <div
-                                    className="settingBack"
+                                    className="infoBack"
                                     onClick={() => {
                                         navigate(-1);
                                     }}
                                 >
-                                    <CaretLeftIcon size={24} />
+                                    <ArrowLeftIcon size={24} />
                                     <h2>{t("info.title")}</h2>
                                 </div>
                             ) : ""}
@@ -93,6 +100,7 @@ export default function Info() {
                                     className="settingButt"
                                     onClick={() => {
                                         navigate(`/info/${s.tab}`);
+                                        setActiveTab(s)
                                     }}
                                 >
                                     <span className="settingName">
@@ -109,12 +117,12 @@ export default function Info() {
                         {isMobile ? (
                             <div className="settingBackWrapper">
                                 <div
-                                    className="settingBack"
+                                    className="infoBack"
                                     onClick={() => {
                                         navigate(-1);
                                     }}
                                 >
-                                    <CaretLeftIcon size={24} />
+                                    <ArrowLeftIcon size={24} />
                                     <h2>{t("info.title")}</h2>
                                 </div>
                             </div>
@@ -122,32 +130,32 @@ export default function Info() {
                     </div>
 
                     <div className="settingsPage">
-                        {currentTab && (
+                        {activeTab && (
                             <>
                                 {!isMobile ? (
                                     <div
-                                        className="settingBack"
+                                        className="infoBack"
                                         onClick={() => {
                                             navigate(-1);
                                         }}
                                     >
-                                        <CaretLeftIcon size={24} />
-                                        <h2>{currentTab?.name}</h2>
+                                        <ArrowLeftIcon size={24} />
+                                        <h2>{activeTab?.name}</h2>
                                     </div>
                                 ) : "" }
                                 <div className="settingTab">
-                                    {currentTab && tabs[currentTab.tab as keyof typeof tabs]}
+                                    {activeTab && tabs[activeTab.tab as keyof typeof tabs]}
                                 </div>
                                 {isMobile ? (
                                     <div className="settingBackWrapper">
                                         <div
-                                            className="settingBack"
+                                            className="infoBack"
                                             onClick={() => {
                                                 navigate(-1);
                                             }}
                                         >
-                                            <CaretLeftIcon size={24} />
-                                            <h2>{currentTab?.name}</h2>
+                                            <ArrowLeftIcon size={24} />
+                                            <h2>{activeTab?.name}</h2>
                                         </div>
                                     </div>
                                 ) : "" }

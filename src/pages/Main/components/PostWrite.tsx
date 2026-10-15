@@ -2,8 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import "../scss/PostWrite.scss"
 import SelectList from "../../../components/ts/SelectList"
 import { useHabits } from "../../../components/hooks/HabitsHook"
-import { Paperclip, SmileySticker, X } from "@phosphor-icons/react"
-import { SendHorizontal } from "lucide-react"
+import { Paperclip, PaperPlaneRightIcon, SmileySticker, X } from "@phosphor-icons/react"
 import { useNote } from "../../../components/hooks/NoteHook"
 import GetIconByType from "../../Chat/utils/getIconByType"
 import { api } from "../../../components/ts/api"
@@ -126,7 +125,7 @@ export default function PostWrite() {
                         </>
                     )}
                     <div className="postWriteTAButt" onClick={handleSend}>
-                        <SendHorizontal className="chatSend" fill="currenColor"/>
+                        <PaperPlaneRightIcon className="chatSend" weight="fill"/>
                     </div>
                 </div>
                 {files.length > 0 && !fs && (

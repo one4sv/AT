@@ -105,15 +105,15 @@
     }
 }
 .landingInput {
-    @include var.input(var(--mc), var(--tc), var(--borderWh), 4vh, 8px, var(--tc));
+    @include var.input(var(--mc), var(--tc), var(--borderWh), 4vh, 16px, var(--tc));
     width: 80%;
     margin-top: 1vh;
     position: relative;
     z-index: 2;
-    padding-inline-start: 0.4vw;
+    padding-inline-start: .5vw;
     &.landingInputPass {
         width: 100%;
-        padding-inline-end: 2.5vw;
+        padding-inline-end: 3vw;
     }
     &.invalid {
         border-color: var(--notValid);
@@ -283,16 +283,13 @@
     border: none;
     @media (hover: hover) {
         &:hover {
-        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
-    
+            box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
         }
     }
 
     @media (hover: none) {
         &:active {
-        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
-    
-        
+            box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
         }
     }
 }
@@ -300,16 +297,13 @@
     @include var.longButt(15vw, 4vh, 2px, 4px, #fff, #000, var(--tr), #fff);
     @media (hover: hover) {
         &:hover {
-        box-shadow: 0 0 12px #fff, 0 0 24px #fff;
-    
+            box-shadow: 0 0 12px #fff, 0 0 24px #fff;
         }
     }
 
     @media (hover: none) {
         &:active {
-        box-shadow: 0 0 12px #fff, 0 0 24px #fff;
-    
-        
+            box-shadow: 0 0 12px #fff, 0 0 24px #fff;
         }
     }
 }
@@ -321,26 +315,23 @@
     justify-content: center;
     @media (hover: hover) {
         &:hover {
-        color: var(--tc);
-        text-decoration: none;
-        border-radius: 8px;
-        &:hover {
-        background-color: var(--menuButtHover);
-        }
-    
+            color: var(--tc);
+            text-decoration: none;
+            border-radius: 8px;
+            &:hover {
+                background-color: var(--menuButtHover);
+            }
         }
     }
 
     @media (hover: none) {
         &:active {
-        color: var(--tc);
-        text-decoration: none;
-        border-radius: 8px;
-        &:hover {
-        background-color: var(--menuButtHover);
-        }
-    
-        
+            color: var(--tc);
+            text-decoration: none;
+            border-radius: 8px;
+            &:hover {
+                background-color: var(--menuButtHover);
+            }
         }
     }
 }
@@ -352,7 +343,6 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 1vh;
-    border-radius: 8px;
     gap: 2px;
     @media (max-width: 800px) {
         width: 70vw;
