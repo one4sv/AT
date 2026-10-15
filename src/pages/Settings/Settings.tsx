@@ -55,9 +55,9 @@ export default function Settings() {
     }, [isAuthenticated, loadingUser, navigate, user]);
 
     useEffect(() => {
-        setTitle(t("settings.title"));
+        setTitle(tab && activeTab !== null ? activeTab.name : t("settings.title"));
         setIsMyAcc(true);
-    }, [setIsMyAcc, setTitle, user.nick, t]);
+    }, [setIsMyAcc, setTitle, user.nick, t, tab, activeTab]);
 
     const settings: setting[] = [
         {
@@ -216,12 +216,7 @@ export default function Settings() {
                         </div>
                         {isMobile ? 
                             <div className="settingBackWrapper">
-                                <div className="settingSearch">
-                                    <input type="text" className="settingSearchInput" placeholder="Поиск..."/>
-                                    <div>
-                                        <MagnifyingGlassIcon/>
-                                    </div>
-                                </div>
+                                {settingSearch()}
                             </div>
                         : ""}
                     </div>
