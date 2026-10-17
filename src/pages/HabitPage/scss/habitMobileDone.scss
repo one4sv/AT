@@ -162,6 +162,9 @@
     outline: none;
     border: none;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--tc);
     background-color: var(--interact);
     backdrop-filter: blur(var(--blur));

@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowBendDownLeftIcon, ClockCountdownIcon } from "@phosphor-icons/react";
+import { ArrowBendDownLeftIcon, ClockCountdownIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
 import { useDone } from "../../../../../components/hooks/DoneHook";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import "../../../scss/DayComment.scss";
 import { isMobile } from "react-device-detect";
-import { Check } from "lucide-react";
 
 interface DayCommentProps {
   id: string;
@@ -111,7 +110,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
           >
           {waitComAnswer
             ? <ClockCountdownIcon size={24}/>
-            : <Check/>
+            : <PaperPlaneRightIcon weight="fill" size={24}/>
           }
             </button>
         </div>

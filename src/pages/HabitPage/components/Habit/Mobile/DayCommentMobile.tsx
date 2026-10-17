@@ -107,7 +107,7 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
                         >
                             {waitComAnswer
                                 ? <ClockCountdownIcon size={24}/>
-                                : <PaperPlaneRightIcon weight="fill"/>
+                                : <PaperPlaneRightIcon weight="fill" size={24}/>
                             }
                         </button>
                     </div>
