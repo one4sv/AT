@@ -39,12 +39,17 @@ body {
   }
 }
 .background {
+  position: fixed;
   inset: 0;
-  position: absolute;
+  width: 100%;
+  height: 100vh;
+  height: 100lvh;
   z-index: 0;
   overflow: hidden;
   color: var(--accent);
-  >div {
+  pointer-events: none;
+
+  > div {
     position: absolute;
   }
 }
