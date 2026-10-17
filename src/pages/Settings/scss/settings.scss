@@ -209,10 +209,10 @@
 }
 
 .searchReveal {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  scrollbar-width: thin;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
 }
 .settingTab {
     flex: 1;
@@ -545,5 +545,22 @@
         .settingCollapsible.open & {
             padding: 0.25vh 2vw 1.3vh;
         }
+    }
+}
+.settingsDiv.keyboardOpen {
+    .settingsContentWipe {
+        min-height: 0;
+    }
+
+    .searchReveal {
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding-bottom: 7vh;
+    }
+
+    .searchUnstarted,
+    .searchedButts {
+        padding-bottom: 2vh;
     }
 }
