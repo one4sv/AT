@@ -83,11 +83,12 @@
     @media (hover: hover) {
         &:hover {
             background-color: var(--menuButtHover);
-
             >.settingName {
                 color: var(--tc);
+                &.danger {
+                    color: var(--notValid);
+                }
             }
-
             >.settingDesc {
                 color: var(--borderWh);
             }
@@ -97,11 +98,9 @@
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);
-
             >.settingName {
                 color: var(--tc);
             }
-
             >.settingDesc {
                 color: var(--borderWh);
             }
@@ -148,9 +147,15 @@
     align-items: center;
     gap: 6px;
     color: var(--msbd);
-
+    width: 100%;
     >svg {
         color: var(--accent_text);
+    }
+    &.danger {
+        color: var(--notValid);
+        > svg {
+            color: var(--notValid);
+        } 
     }
 }
 

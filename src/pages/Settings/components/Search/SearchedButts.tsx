@@ -2,33 +2,33 @@ import { MagnifyingGlassMinusIcon } from "@phosphor-icons/react";
 import { useSearchableSettings } from "../../Arrays/searchableSettings";
 import type { SearchableSetting } from "../../Settings";
 import { AnimatePresence, motion } from "motion/react";
-
+import { useNavigate } from "react-router";
+import AutoFitIconText from "../AutoFitIconText";
 interface Props {
-  search: string;
-  onSelect?: (item: SearchableSetting) => void;
+    search: string;
+    onSelect?: (item: SearchableSetting) => void;
 }
 
-export default function SearchedButts({ search, onSelect }: Props) {
-  const searchableSettings = useSearchableSettings();
-  const query = search.trim().toLowerCase();
+export default function SearchedButts({ search }: Props) {
+    const searchableSettings = useSearchableSettings();
+    const query = search.trim().toLowerCase();
+    const navigate = useNavigate();
 
-  const filteredSections = searchableSettings
-    .map((section) => {
-      const filteredItems = section.items.filter(
-        (item) =>
-          item.name.toLowerCase().includes(query) ||
-          item.desc.toLowerCase().includes(query) ||
-          section.name.toLowerCase().includes(query)
-      );
+    const filteredSections = searchableSettings
+        .map((section) => {
+            const filteredItems = section.items.filter(
+                (item) =>
+                    item.name.toLowerCase().includes(query)
+            );
 
-      if (filteredItems.length === 0) return null;
+            if (filteredItems.length === 0) return null;
 
-      return {
-        ...section,
-        items: filteredItems,
-      };
-    })
-    .filter(Boolean);
+            return {
+                ...section,
+                items: filteredItems,
+            };
+        })
+        .filter(Boolean);
 
     if (filteredSections.length === 0) {
         return (
@@ -40,55 +40,72 @@ export default function SearchedButts({ search, onSelect }: Props) {
                     exit={{ scale: 0.96, opacity: 0 }}
                     transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                 >
-                    <MagnifyingGlassMinusIcon size={48}/>
+                    <MagnifyingGlassMinusIcon size={48} />
                     <span>Ничего не найдено</span>
                 </motion.div>
             </div>
         );
     }
 
-  return (
-    <div className="searchedButts">
-      <AnimatePresence mode="popLayout">
-        {filteredSections.map((section) => (
-          <motion.div
-            key={section!.id}
-            className="settingInnerDiv"
-            initial={{ scale: 0.97, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.97, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            layout
-          >
-            <div className="settingHeader">{section!.name}</div>
-
+    return (
+        <div className="settingsButtsWrapper">
             <AnimatePresence mode="popLayout">
-              {section!.items.map((item, itemIndex) => (
-                <motion.div
-                  key={item.id}
-                  className="settingButt"
-                  onClick={() => onSelect?.(item)}
-                  initial={{ scale: 0.96, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.96, opacity: 0 }}
-                  transition={{
-                    duration: 0.26,
-                    ease: [0.22, 1, 0.36, 1],
-                    delay: itemIndex * 0.025,
-                  }}
-                  layout
-                >
-                  <span className="settingName">
-                    <item.icon size={22} weight="fill" />
-                    {item.name}
-                  </span>
-                  <div className="settingDesc">{item.desc}</div>
-                </motion.div>
-              ))}
+                {filteredSections.map((section) => (
+                    <motion.div
+                        key={section!.id}
+                        className="settingInnerDiv"
+                        initial={{ scale: 0.97, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.97, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                        layout
+                    >
+                        <div className="searchSectionHeader">
+                            {section && <section.icon size={22} weight="fill" />}
+                            {section!.name}
+                        </div>
+
+                        <AnimatePresence mode="popLayout">
+                            {section!.items.map((item, itemIndex) => (
+                                <motion.div
+                                    key={item.id}
+                                    className="settingButt"
+                                    onClick={() => navigate(`/settings/${section!.id}`)}
+                                    initial={{ scale: 0.96, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.96, opacity: 0 }}
+                                    transition={{
+                                        duration: 0.26,
+                                        ease: [0.22, 1, 0.36, 1],
+                                        delay: itemIndex * 0.025,
+                                    }}
+                                    layout
+                                >
+                                    <span className={`settingName ${item.options?.isDanger ? "danger" : ""}`}>
+                                        {item.icon ? (
+                                            <item.icon
+                                                size={22}
+                                                weight="fill"
+                                                color={item.options?.icon_color ?? "var(--accent)"}
+                                            />
+                                        ) : (
+                                            <AutoFitIconText text={item.options?.icon_text} />
+                                        )}
+                                        {item.options?.icon2 ? (
+                                            <item.options.icon2
+                                                size={22}
+                                                weight="fill"
+                                                color={item.options?.icon2_color ?? "var(--accent)"}
+                                            />
+                                        ) : ""}
+                                        {item.name}
+                                    </span>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </motion.div>
+                ))}
             </AnimatePresence>
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </div>
-  );
+        </div>
+    );
 }

@@ -36,10 +36,15 @@ export interface Setting {
 export interface SearchableSetting {
   id: string;
   name: string;
-  desc: string;
-  tab: string;
-  icon: ElementType;
+  icon: ElementType | null;
   category: string;
+  options?: {
+    icon2?: ElementType;
+    icon_color?: string;
+    icon2_color?: string;
+    icon_text?:string;
+    isDanger?:boolean;
+  };
 }
 
 export default function Settings() {
@@ -125,42 +130,40 @@ export default function Settings() {
             transform: tab ? "translateX(-50%)" : "translateX(0)",
           }}
         >
-          {/* ========== Левая страница (список) ========== */}
           <div className="settingsPage">
             {!isMobile && <div className="settingTop">{settingSearch()}</div>}
-<AnimatePresence mode="wait">
-  <motion.div
-    key={contentKey}
-    initial={{ y: 18, scale: 0.97 }}
-    animate={{ y: 0, scale: 1 }}
-    exit={{ y: -18, scale: 0.97 }}
-    transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-    style={{
-      flex: 1,
-      minHeight: 0,
-      overflowY: "auto",
-      display: "flex",
-      flexDirection: "column",
-    }}
-  >
-    {contentKey === "searched" && <SearchedButts search={search} />}
-    {contentKey === "unstarted" && <SearchUnstarted />}
-    {contentKey === "butts" && (
-      <SettingsButts
-        settings={settings}
-        user={user}
-        accTab={accTab}
-        setActiveTab={setActiveTab}
-      />
-    )}
-  </motion.div>
-</AnimatePresence>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={contentKey}
+                initial={{ y: 18, scale: 0.97 }}
+                animate={{ y: 0, scale: 1 }}
+                exit={{ y: -18, scale: 0.97 }}
+                transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+                style={{
+                  flex: 1,
+                  minHeight: 0,
+                  overflowY: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {contentKey === "searched" && <SearchedButts search={search}/>}
+                {contentKey === "unstarted" && <SearchUnstarted />}
+                {contentKey === "butts" && (
+                  <SettingsButts
+                    settings={settings}
+                    user={user}
+                    accTab={accTab}
+                    setActiveTab={setActiveTab}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
             {isMobile && (
               <div className="settingBackWrapper">{settingSearch()}</div>
             )}
           </div>
 
-          {/* ========== Правая страница (контент таба) ========== */}
           <div className="settingsPage">
             {activeTab && (
               <>
@@ -176,17 +179,7 @@ export default function Settings() {
                   </div>
                 )}
 
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab.tab}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
-                  >
-                    {tabs[activeTab.tab as keyof typeof tabs]}
-                  </motion.div>
-                </AnimatePresence>
+                {tabs[activeTab.tab as keyof typeof tabs]}
 
                 {isMobile && (
                   <div className="settingBackWrapper">

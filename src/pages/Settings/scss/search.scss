@@ -149,17 +149,43 @@
     width: 100%;
     align-items: center;
     flex-direction: column;
-    height: 90dvh;
-    margin-top: 1vh;
+    height: fit-content;
+    min-height: 10dvh;
     gap: 1vh;
     > div {
         width: 98%;
     }
     @media (max-width: 800px) {
-        margin-top: 8vh;
-        justify-content: end;
-        margin-bottom: 9vh;
+        padding: 8dvh 0;
+        min-height: 90dvh;
+        height: fit-content;
     } 
+}
+.searchSectionHeader {
+    font-size: 18px;
+    padding-inline-start: 0.5vw;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    @media (max-width: 800px) {
+        padding-inline-start: 1vw;
+    }
+    >svg {
+        color: var(--accent);
+    }
+}
+.settingSearchSpanIcon {
+    color: var(--accent);
+    width: 22px;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 16px;
+    min-width: 0;
+    vertical-align: middle;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .searchedButtsEmpty {
     background-color: var(--mc);
