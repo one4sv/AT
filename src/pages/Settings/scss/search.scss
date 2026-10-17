@@ -9,7 +9,6 @@
     justify-content: center;
     z-index: 3;
     gap: 2%;
-    /* transition убрали — теперь двигаем через style */
 
     &::before {
         content: "";
@@ -24,19 +23,6 @@
         transition: opacity 0.12s ease;
         mask-image: linear-gradient(to bottom, transparent 10%, black 100%);
         -webkit-mask-image: linear-gradient(to bottom, transparent 10%, black 100%);
-    }
-
-    &.searchFocused {
-        position: fixed;
-
-        &::before {
-            mask-image: linear-gradient(to top, transparent 10%, black 100%);
-            -webkit-mask-image: linear-gradient(to top, transparent 10%, black 100%);
-        }
-    }
-
-    &.isMoving::before {
-        opacity: 0;
     }
 }
 
@@ -163,6 +149,7 @@
     width: 100%;
     align-items: center;
     flex-direction: column;
+    height: 90dvh;
     margin-top: 1vh;
     gap: 1vh;
     > div {
@@ -170,6 +157,8 @@
     }
     @media (max-width: 800px) {
         margin-top: 8vh;
+        justify-content: end;
+        margin-bottom: 9vh;
     } 
 }
 .searchedButtsEmpty {
@@ -177,6 +166,7 @@
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     margin-top: 0;
+    he
     >span {
         font-size: 20px;
     }
