@@ -1,3 +1,163 @@
+@use "../../../scss/mixins" as var;
+
+.settingBackWrapper {
+    width: 50%;
+    padding: 0 2% 3vh;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 3;
+    gap: 2%;
+    /* transition убрали — теперь двигаем через style */
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        background: linear-gradient(135deg, var(--tr), #0000009a);
+        opacity: 1;
+        transition: opacity 0.12s ease;
+        mask-image: linear-gradient(to bottom, transparent 10%, black 100%);
+        -webkit-mask-image: linear-gradient(to bottom, transparent 10%, black 100%);
+    }
+
+    &.searchFocused {
+        position: fixed;
+
+        &::before {
+            mask-image: linear-gradient(to top, transparent 10%, black 100%);
+            -webkit-mask-image: linear-gradient(to top, transparent 10%, black 100%);
+        }
+    }
+
+    &.isMoving::before {
+        opacity: 0;
+    }
+}
+
+.settingBack {
+    width: 5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--interact);
+    border-radius: 24px;
+    height: 5vh;
+    padding: 1vh 0.5vw;
+    cursor: pointer;
+    color: var(--borderWh);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+
+    >svg {
+        width: 3vh;
+        height: 3vh;
+        flex-shrink: 0;
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            color: var(--tc);
+            background-color: var(--menuButtHover);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            color: var(--tc);
+            background-color: var(--menuButtHover);
+        }
+    }
+
+    @media (max-width: 800px) {
+        left: 0;
+    }
+}
+
+.settingTop {
+    display: flex;
+    width: 100%;
+    padding: 0 1%;
+    gap: 1%;
+    height: 5vh;
+}
+
+.settingSearch {
+    height: 5vh;
+    max-height: 5vh;
+    flex: 1;
+    position: relative;
+    background: var(--interact);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    overflow: hidden;
+
+    @media (max-width: 800px) {
+        margin: 0;
+    }
+
+    >div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        width: 5vh;
+        height: 5vh;
+        right: 0;
+        cursor: pointer;
+        color: var(--tc);
+        
+        @media (hover: hover) {
+            &:hover {
+                background: var(--on_con_menu_mess);
+                color: var(--tc);
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+                background: var(--on_con_menu_mess);
+                color: var(--tc);
+            }
+        }
+
+        >svg {
+            width: 3vh;
+            height: 3vh;
+            flex-shrink: 0;
+        }
+    }
+}
+
+.settingSearchInput {
+    @include var.input(var(--tr),
+        var(--tc),
+        none,
+        100%,
+        24px,
+        var(--none));
+    width: 100%;
+    padding: 0.4vh 0.5vw;
+    border: none;
+    outline: none;
+    &::placeholder {
+        color: var(--borderHabit);
+    }
+
+    @media (max-width:800px) {
+        padding-right: 10vw;
+        padding-inline-start: 3vw;
+    }
+}
+
 .searchUnstarted, .searchedButts, .searchedButtsEmpty {
     display: flex;
     width: 100%;
@@ -16,6 +176,7 @@
     background-color: var(--mc);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
+    margin-top: 0;
     >span {
         font-size: 20px;
     }

@@ -24,7 +24,7 @@ import { useSettingsTabs } from "./Arrays/settingsTabs";
 import SettingsButts from "./components/SettingsButts";
 import SearchUnstarted from "./components/Search/SearchUnstarted";
 import SearchedButts from "./components/Search/SearchedButts";
-import { AnimatePresence, motion } from "motion/react";
+import { useMotionValue, animate } from "motion/react";
 
 export interface Setting {
   name: string;
@@ -44,7 +44,7 @@ export interface SearchableSetting {
 
 export default function Settings() {
   const { t } = useTranslation("settings");
-  const { setTitle } = usePageTitle();
+  const { setTitle, setHideHeader } = usePageTitle();
   const { user, isAuthenticated, loadingUser } = useUser();
   const { setIsMyAcc } = useAcc();
 
@@ -56,6 +56,23 @@ export default function Settings() {
   const [search, setSearch] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
+  const searchProgress = useMotionValue(0);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const unsub = searchProgress.on("change", (v) => setProgress(v));
+    return unsub;
+  }, [searchProgress]);
+
+  useEffect(() => {
+    const target = isSearchFocused ? 1 : 0;
+    const controls = animate(searchProgress, target, {
+      duration: 0.32,
+      ease: [0.22, 1, 0.36, 1],
+    });
+    return () => controls.stop();
+  }, [isSearchFocused, searchProgress]);
+
   useEffect(() => {
     if (!user.id && !loadingUser) {
       navigate("/sign");
@@ -66,6 +83,11 @@ export default function Settings() {
     setTitle(tab && activeTab !== null ? activeTab.name : t("settings.title"));
     setIsMyAcc(true);
   }, [setIsMyAcc, setTitle, user.nick, t, tab, activeTab]);
+
+  useEffect(() => {
+    if (isSearchFocused) setHideHeader(true);
+    else setHideHeader(false);
+  }, [isSearchFocused]);
 
   const accTab = {
     name: user.username ?? user.nick ?? t("settings.account"),
@@ -109,12 +131,18 @@ export default function Settings() {
     </div>
   );
 
-  const contentKey =
-    search.trim() !== ""
-      ? "searched"
-      : isSearchFocused
-        ? "unstarted"
-        : "butts";
+  const searchContent =
+    search.trim() !== "" ? (
+      <SearchedButts search={search} />
+    ) : (
+      <SearchUnstarted />
+    );
+
+  // Правильный bottom: 0 → calc(100% - 6.5vh)
+  const searchBottom =
+    progress <= 0
+      ? "0px"
+      : `calc(${progress * 100}% - ${progress * 6.5}vh)`;
 
   return (
     <div className="settingsDiv">
@@ -125,35 +153,49 @@ export default function Settings() {
             transform: tab ? "translateX(-50%)" : "translateX(0)",
           }}
         >
-          {/* ========== Левая страница (список) ========== */}
+          {/* ========== Левая страница ========== */}
           <div className="settingsPage">
             {!isMobile && <div className="settingTop">{settingSearch()}</div>}
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={contentKey}
-                    initial={{ y: 18, scale: 0.97 }}
-                    animate={{ y: 0, scale: 1 }}
-                    exit={{ y: -18, scale: 0.97 }}
-                    transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-                >
-                    {contentKey === "searched" && <SearchedButts search={search} />}
-                    {contentKey === "unstarted" && <SearchUnstarted />}
-                    {contentKey === "butts" && (
-                    <SettingsButts
-                        settings={settings}
-                        user={user}
-                        accTab={accTab}
-                        setActiveTab={setActiveTab}
-                    />
-                    )}
-                </motion.div>
-            </AnimatePresence>
+
+            <div className="settingsContentWipe">
+              <div
+                className="buttsCollapse"
+                style={{
+                  height: `${(1 - progress) * 100}%`,
+                }}
+              >
+                <div className="buttsScroll">
+                  <SettingsButts
+                    settings={settings}
+                    user={user}
+                    accTab={accTab}
+                    setActiveTab={setActiveTab}
+                  />
+                </div>
+              </div>
+
+              <div className="searchReveal">
+                {searchContent}
+              </div>
+            </div>
+
             {isMobile && (
-              <div className="settingBackWrapper">{settingSearch()}</div>
+              <div
+                className={`settingBackWrapper ${
+                  progress > 0.5 ? "searchFocused" : ""
+                } ${progress > 0.01 && progress < 0.99 ? "isMoving" : ""}`}
+                style={{
+                  bottom: searchBottom,
+                  paddingTop: progress > 0.5 ? "1.5vh" : "0px",
+                  paddingBottom: progress > 0.5 ? "0px" : "3vh",
+                }}
+              >
+                {settingSearch()}
+              </div>
             )}
           </div>
 
-          {/* ========== Правая страница (контент таба) ========== */}
+          {/* ========== Правая страница ========== */}
           <div className="settingsPage">
             {activeTab && (
               <>
@@ -169,17 +211,7 @@ export default function Settings() {
                   </div>
                 )}
 
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab.tab}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
-                  >
-                    {tabs[activeTab.tab as keyof typeof tabs]}
-                  </motion.div>
-                </AnimatePresence>
+                {tabs[activeTab.tab as keyof typeof tabs]}
 
                 {isMobile && (
                   <div className="settingBackWrapper">

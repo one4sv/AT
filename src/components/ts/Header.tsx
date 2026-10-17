@@ -9,16 +9,18 @@ import { TextIndentIcon } from "@phosphor-icons/react";
 export default function Header() {
     const { openSideMenu } = useSideMenu();
     const { layout } = useSettings()
-    const { title } = usePageTitle()
+    const { title, hideHeader } = usePageTitle()
+
     const location = useLocation()
     const navigate = useNavigate()
+
     const isSettings = location.pathname.startsWith("/settings")
     const isInInfo = location.pathname.startsWith("/info/")
     const isInfo = location.pathname = "/info"
 
     return (
         <>
-            <div className="headerDiv">
+            <div className={`headerDiv ${hideHeader ? "hide" : ""}`}>
                 {isMobile || layout === "hidden" ? (
                 <div
                     className="headerButt"
