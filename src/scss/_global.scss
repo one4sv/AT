@@ -8,6 +8,7 @@ html, body {
   scrollbar-width: thin;
   scrollbar-color: var(--menuButtHover) transparent;
   overflow: hidden;
+  position: fixed;
 }
 body {
   background-color: var(--bgc);
@@ -22,11 +23,11 @@ body {
 }
 .mobile-layout {
   width: 100%;
-  height: 100%;
+  height: var(--vv-height, 100dvh);
 }
 .mobile-layout .page-content {
   width: 100%;
-  height: 100%;
+  height: var(--vv-height, 100dvh);
 }
 .app-layout .page-content {
   width: 80.5vw;
