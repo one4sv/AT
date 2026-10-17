@@ -43,7 +43,7 @@
     border-radius: 24px 24px 0 0;
     background-color: var(--tr);
     color: var(--tc);
-    height: 5vh;
+    height: 5dvh;
     display: flex;
     padding-left: 0.5vw;
     gap: 0.5vw;
@@ -51,7 +51,7 @@
     &.pwBarwFiles::after {
         content: "";
         position: absolute;
-        margin-top: 6vh;
+        margin-top: 6dvh;
         left: 2.5%;
         width: 95%;
         height: 1px;
@@ -81,7 +81,7 @@
     }
 }
 .postWriteSvgButt {
-    height: 3.5vh;
+    height: 3.5dvh;
     aspect-ratio: 1/1;
     cursor: pointer;
     color: var(--borderWh);
@@ -144,7 +144,7 @@
 }
 .pwTAButtWrapper {
     position: absolute;
-    height: 10vh;
+    height: 10dvh;
     bottom: 0;
     display: flex;
     align-items: center;
@@ -153,7 +153,7 @@
 }
 .postWriteTAButt {
     border-radius: 50%;
-    height: 4vh;
+    height: 4dvh;
     aspect-ratio: 1/1;
     display: flex;
     align-items: center;

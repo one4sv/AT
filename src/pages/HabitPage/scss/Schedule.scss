@@ -2,7 +2,7 @@
 
 .scheduleDiv {
     width: 100%;
-    max-height: 80vh;
+    max-height: 80dvh;
     background-color: var(--mc);
     border-radius: 12px;
     padding: 0.5vh 0.5vw;
@@ -47,7 +47,7 @@
     justify-content: center;
     align-items: center;
     padding: 2px;
-    height: 3vh;
+    height: 3dvh;
     >svg {
         width: 60%;
     }
@@ -138,7 +138,7 @@
     overflow-y: auto;
     width: 100%;
     flex: 1;
-    max-height: 38vh;
+    max-height: 38dvh;
     scrollbar-width: thin;
 }
 @media (max-width: 800px) {
@@ -151,7 +151,7 @@
     .scheduleWrapper {
         flex: 0 0 90vw;
         scroll-snap-align: start;
-        max-height: 70vh;
+        max-height: 70dvh;
     }
 }
 .scheduleInfo {
@@ -325,7 +325,7 @@
     margin-left: 5%;
     resize: none;
     field-sizing: content;
-    max-height: 10vh;
+    max-height: 10dvh;
     padding-left: 0.2vw;
     margin-bottom: 0.2vh;
 }

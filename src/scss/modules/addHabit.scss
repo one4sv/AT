@@ -53,7 +53,7 @@
         padding-inline-start: 0.25vw;
         flex-direction: row;
         gap: 5px;
-        margin-top: 0.5vh;
+        margin-top: 0.5dvh;
         margin-bottom: 0.5vh;
     }
 }
@@ -91,7 +91,7 @@
 }
 .tegSelector {
     display: flex;
-    margin-top: 0.5vh;
+    margin-top: 0.5dvh;
 }
 .addTeg {
     display: flex;
@@ -103,7 +103,7 @@
     border-radius: 12px;
     border: 1px solid var(--borderWh);
     outline: none;
-    height: 4vh;
+    height: 4dvh;
     cursor: pointer;
     @media (hover: hover) {
         &:hover {
@@ -119,26 +119,26 @@
 }
 .tagList {
     opacity: 0;
-    top: 7vh;
+    top: 7dvh;
     position: absolute;
     pointer-events: none;
     background-color: var(--bgc);
     display: flex;
     flex-direction: column;
     border-radius: 12px;
-    max-height: 20vh;
+    max-height: 20dvh;
     overflow-y: scroll;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     z-index: 12;
     width: 100%;
-    max-height: 20vh;
+    max-height: 20dvh;
     scrollbar-width: thin;
     padding: 0.5vh 0.5vw;
     gap: 1vh;
     user-select: none;
     @media (max-width: 800px) {
         padding: 1vh 3vw;
-        max-height: 26vh;
+        max-height: 26dvh;
     }
     &.active {
         pointer-events: all;
@@ -160,7 +160,7 @@
     background-color: var(--interact);
     padding: 0.5vh 0.5vw;
     gap: 0.3rem;
-    height: 4vh;
+    height: 4dvh;
     border-radius: 12px;
     border: 1px solid var(--borderWh);
     white-space: nowrap;    
@@ -252,7 +252,7 @@
 }
 .addHabitGoal {
     @include var.longButt(85%, 4vh, 0, 0, var(--tr), var(--borderHabit), var(--tr), var(--menuButtHover));
-    margin-top: 3vh;
+    margin-top: 3dvh;
     font-size: 20px;
     @media (hover: hover) {
         &:hover {
@@ -271,7 +271,7 @@
 }
 .addHabitSave {
     @include var.longButt(85%, 4vh, 0, 0, var(--accent), var(--tc), var(--tr), var(--darker_accent));
-    margin-top: 1vh;
+    margin-top: 1dvh;
     font-size: 20px;
 }
 .dayChanger {

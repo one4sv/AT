@@ -22,7 +22,7 @@
 
 .notification {
     position: fixed;
-    top: 1vh;
+    top: 1dvh;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -46,8 +46,8 @@
     @media (max-width:800px) {
         min-width: 92vw;
         padding: 1vh 3vw;
-        height: 5vh;
-        top: 0.5vh;
+        height: 5dvh;
+        top: 0.5dvh;
     }
 }
 

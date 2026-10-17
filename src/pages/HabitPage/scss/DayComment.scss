@@ -1,7 +1,7 @@
 @use "../../../scss/mixins" as var;
 
 .dayCommentDiv {
-    height: 40vh;
+    height: 40dvh;
     background-color: var(--mc);
     border-radius: 24px;
     width: 19.5vw;
@@ -11,7 +11,7 @@
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     @media (max-width: 800px) {
-        min-height: 40vh;
+        min-height: 40dvh;
         width: 100%;
         margin: 0 auto;
         border-radius: 24px;
@@ -53,15 +53,15 @@
     @media (max-width: 800px) {
         padding: .5vh;
         flex-direction: row;
-        height: 5vh;
+        height: 5dvh;
         >textarea {
             resize: none;
             width: 100%;
             background-color: var(--tr);
             color: var(--tc);
             font-size: 16px;
-            max-height: 50vh;
-            min-height: 5vh;
+            max-height: 50dvh;
+            min-height: 5dvh;
             line-height: 1.35;
             padding: 1.35vh 1vw;
             box-sizing: border-box;
@@ -87,7 +87,7 @@
     justify-content: space-between;
     display: flex;
     align-items: center;
-    height: 4vh;
+    height: 4dvh;
     >span {
         color: var(--borderHabit);
         display: flex;
@@ -108,9 +108,9 @@
         gap: 1vw;
         >.loaderSmall {
             width: 6vw;
-            height: 3vh;
+            height: 3dvh;
             @media (max-width:800px) {
-                height: 3.6vh;
+                height: 3.6dvh;
                 width: 35vw;
             }
         }
@@ -118,11 +118,11 @@
     @media (max-width:800px) {
         justify-content: end;
         align-items: center;
-        height: 5vh;
+        height: 5dvh;
     }
 }
 .saveCommentButton {
-    height: 4vh;
+    height: 4dvh;
     width: 4vh;
     font-size: 30px;
     border-radius: 50%;
@@ -149,7 +149,7 @@
         }
     }
     @media (max-width: 800px) {
-        height: 5vh;
+        height: 5dvh;
         width: 5vh;
     }
 }
@@ -211,7 +211,7 @@
     overflow: hidden;
     border-bottom: 1px solid var(--borderHabit);
     height: auto;
-    min-height: 2vh;
+    min-height: 2dvh;
     padding: 0;
     padding-inline-start: 2px;
     padding-inline-end: 2vw;
@@ -231,7 +231,7 @@
     border-radius: 4px;
     align-items: center;
     justify-content: center;
-    height: 2vh;
+    height: 2dvh;
     aspect-ratio: 1.3/1;
     cursor: pointer;
     bottom: 0.5vh;
@@ -288,7 +288,7 @@
     padding-inline-end: 2vw;
     border-bottom: 1px solid var(--tr);
     padding-inline-start: 2px;
-    min-height: 2vh;
+    min-height: 2dvh;
     @media (hover: hover) {
         &:hover {
         color: var(--accent_text);

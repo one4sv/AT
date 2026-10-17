@@ -3,7 +3,7 @@
 
 .statsDiv {
     position: relative;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -26,7 +26,7 @@
     }
 }
 .StatsDivHabit {
-    height: 40vh;
+    height: 40dvh;
     display: flex;
     gap: 0.5vw;
     @media (max-width: 800px) {
@@ -43,7 +43,7 @@
     overflow: hidden;
     border-radius: 24px;
     padding: .5vh 0;
-    height: 50vh;
+    height: 50dvh;
     background-color: var(--mc);
     width: 100%;
     will-change: height;
@@ -54,7 +54,7 @@
     -webkit-backdrop-filter: blur(var(--blur));
     > .completeDiv {
         background-color: var(--tr);
-        height: 25vh;
+        height: 25dvh;
     }
 }
 .habitMenu {
@@ -65,7 +65,7 @@
     display: flex;
     flex-direction: column;
     border-left: 1px solid #1b1b1b;
-    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     transition: right 0.3s ease;
     background-color: var(--mc);
@@ -104,7 +104,7 @@
     z-index: 20;
     transform: translateY(-50%);
     width: 2vw;
-    height: 10vh;
+    height: 10dvh;
     background-color: var(--mc);
     top: 50%;
     border-radius: 20px 0 0 20px;
@@ -133,7 +133,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: end;
-    height: 14vh;
+    height: 14dvh;
     gap: 4px;
     bottom: 0;
     padding: 0 2vw 2vh;
@@ -154,9 +154,9 @@
     cursor: pointer;
     border-radius: 24px;
     gap: 2px;
-    height: 4.5vh;
+    height: 4.5dvh;
     @media (max-width: 800px) {
-        height: 5vh;
+        height: 5dvh;
         padding: 0 3vw;
     }
     @media (hover: hover) {
@@ -181,9 +181,9 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    height: 4.5vh;
+    height: 4.5dvh;
     @media (max-width: 800px) {
-        height: 5vh;
+        height: 5dvh;
     }
     @media (hover: hover) {
         &:hover {
@@ -250,6 +250,6 @@
     border-radius: 12px;
     overflow-y: auto;
     >.loaderSmall {
-        margin-top: 2vh;
+        margin-top: 2dvh;
     }
 }

@@ -2,7 +2,7 @@
 
 .selector {
     display: flex;
-    height: 4vh;
+    height: 4dvh;
     width: 100%;
     position: relative;
     overflow-x: hidden;
@@ -10,7 +10,7 @@
     background-color: var(--interact);
     touch-action: none;
     @media (max-width: 800px) {
-        height: 5vh;
+        height: 5dvh;
     }
 }
 .selectedItem {

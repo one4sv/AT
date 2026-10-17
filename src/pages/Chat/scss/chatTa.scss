@@ -37,7 +37,7 @@
         width: 100%;
         margin-bottom: 0;
         padding: 0 2.5vw 3vh;
-        height: 8vh;
+        height: 8dvh;
         > div {
             width: calc(100% - 5vw);
         }
@@ -92,7 +92,7 @@
 .chatTAFiles {
     width: 100%;
     color: var(--tc);
-    height: 8vh;
+    height: 8dvh;
     display: flex;
     flex-direction: row;
     overflow-x: auto;
@@ -174,7 +174,7 @@
 }
 .chatTAStr {
     display: flex;
-    min-height: 5vh;
+    min-height: 5dvh;
     align-items: flex-end;
     position: relative;
     justify-content: space-between;
@@ -188,8 +188,8 @@
     background-color: var(--tr);
     color: var(--tc);
     font-size: 16px;
-    max-height: 50vh;
-    min-height: 5vh;
+    max-height: 50dvh;
+    min-height: 5dvh;
     line-height: 1.35;
     padding: 1.35vh 1vw;
     box-sizing: border-box;
@@ -206,7 +206,7 @@
     }
 }
 .chatTaButts {
-    height: 5vh;
+    height: 5dvh;
     padding: .5vh;
     border-radius: 24px;
     display: flex;
@@ -216,7 +216,7 @@
     -webkit-backdrop-filter: blur(var(--blur));
 }
 .chatWriteSvgButt {
-    height: 4vh;
+    height: 4dvh;
     aspect-ratio: 1/1;
     cursor: pointer;
     color: var(--tc);
@@ -247,7 +247,7 @@
 }
 .chatWriteTAButt {
     border-radius: 50%;
-    height: 4vh;
+    height: 4dvh;
     aspect-ratio: 1/1;
     display: flex;
     align-items: center;
@@ -276,12 +276,12 @@
     justify-content: space-between;
     width: 100%;
     cursor: pointer;
-    height: 5vh;
+    height: 5dvh;
     border-radius: 24px;
     align-items: center;
 }
 .closeAnswer {
-    height: 4vh;
+    height: 4dvh;
     aspect-ratio: 1/1;
     display: flex;
     justify-content: center;

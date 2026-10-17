@@ -27,8 +27,8 @@
     right: 0.2vw;
     cursor: pointer;
     border-radius: 50%;
-    top: 0.5vh;
-    height: 3vh;
+    top: 0.5dvh;
+    height: 3dvh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -65,7 +65,7 @@
 .commentLoad {
     position: absolute;
     right: 0.2vw;
-    height: 3vh;
+    height: 3dvh;
     aspect-ratio: 1/1;
     padding: 0.2vh 0.2vw;
     display: flex;
@@ -117,7 +117,7 @@
     }
 }
 .commentAvatar {
-    height: 3vh;
+    height: 3dvh;
     aspect-ratio: 1/1;
     border-radius: 50%;
     overflow: hidden;

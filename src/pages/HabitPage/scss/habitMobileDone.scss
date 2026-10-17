@@ -33,7 +33,7 @@
 .doneButtDivMobile {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    height: 5vh;
+    height: 5dvh;
     width: 100%;
     border-radius: 24px;
     transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -77,8 +77,8 @@
 }
 .habitDayCommentMobile {
     height: fit-content;
-    min-height: 5vh;
-    max-height: 50vh;
+    min-height: 5dvh;
+    max-height: 50dvh;
     overflow: hidden;
     display: flex;
     position: relative;
@@ -117,9 +117,9 @@
         background-color: var(--tr);
         color: var(--tc);
         font-size: 16px;
-        max-height: 50vh;
-        height: 5vh;
-        min-height: 5vh;
+        max-height: 50dvh;
+        height: 5dvh;
+        min-height: 5dvh;
         line-height: 1.35;
         padding: 1vh 3vw;
         box-sizing: border-box;
@@ -149,14 +149,14 @@
     }
 }
 .hdcTAExtraMobile {
-    height: 5vh;
+    height: 5dvh;
     width: 5vh;
     border-radius: 24px;
     overflow: hidden;
 }
 .saveCommentButtonMobile {
     transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1), opacity .3s cubic-bezier(0.075, 0.82, 0.165, 1);
-    height: 5vh;
+    height: 5dvh;
     width: 5vh;
     border-radius: 50%;
     outline: none;
@@ -172,7 +172,7 @@
 }
 .bottomOpen {
     width: 5vh;
-    height: 5vh;
+    height: 5dvh;
     display: flex;
     align-items: center;
     justify-content: center;

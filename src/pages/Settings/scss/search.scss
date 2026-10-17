@@ -33,7 +33,7 @@
     justify-content: center;
     background-color: var(--interact);
     border-radius: 24px;
-    height: 5vh;
+    height: 5dvh;
     padding: 1vh 0.5vw;
     cursor: pointer;
     color: var(--borderWh);
@@ -42,7 +42,7 @@
 
     >svg {
         width: 3vh;
-        height: 3vh;
+        height: 3dvh;
         flex-shrink: 0;
     }
 
@@ -70,12 +70,12 @@
     width: 100%;
     padding: 0 1%;
     gap: 1%;
-    height: 5vh;
+    height: 5dvh;
 }
 
 .settingSearch {
-    height: 5vh;
-    max-height: 5vh;
+    height: 5dvh;
+    max-height: 5dvh;
     flex: 1;
     position: relative;
     background: var(--interact);
@@ -96,7 +96,7 @@
         align-items: center;
         position: absolute;
         width: 5vh;
-        height: 5vh;
+        height: 5dvh;
         right: 0;
         cursor: pointer;
         color: var(--tc);
@@ -117,7 +117,7 @@
 
         >svg {
             width: 3vh;
-            height: 3vh;
+            height: 3dvh;
             flex-shrink: 0;
         }
     }
@@ -151,7 +151,7 @@
     flex-direction: column;
     height: fit-content;
     min-height: 10dvh;
-    margin-top: 1vh;
+    margin-top: 1dvh;
     gap: 1vh;
     > div {
         width: 98%;

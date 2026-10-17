@@ -73,7 +73,7 @@
     gap: 0.5vh;
     cursor: pointer;
     width: 8vw;
-    height: 12vh;
+    height: 12dvh;
     >span {
         color: var(--borderWh);
     }
@@ -112,7 +112,7 @@
 }
 .bgMini {
     width: 8vw;
-    height: 8vh;
+    height: 8dvh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -129,7 +129,7 @@
     }
     @media (max-width: 800px) {
         width: 100%;
-        height: 14vh;
+        height: 14dvh;
     }
 }
 .bgCustom {
@@ -169,10 +169,10 @@
 
 .colorSelector {
     width: 100%;
-    height: 9vh;
+    height: 9dvh;
     background-color: var(--interact);
     padding: 1vh .5vw;
-    margin-top: 1vh;
+    margin-top: 1dvh;
     display: flex;
     border-radius: 18px;
     color: var(--accent_text);
@@ -180,7 +180,7 @@
     user-select: none;
     @media (max-width: 800px) {
         gap: 2vw;
-        height: 11vh;
+        height: 11dvh;
         padding: 1.5vh .5vw;
     }
 }

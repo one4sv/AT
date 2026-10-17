@@ -4,7 +4,7 @@
     width: 60%;
     margin: 0 auto;
     position: relative;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -19,7 +19,7 @@
 }
 .joinMain {
     position: relative;
-    top: 10vh;
+    top: 10dvh;
     background-color: var(--mc);
     border-radius: 20px;
     padding: 1vh 1vw;
@@ -31,7 +31,7 @@
     margin-bottom: 2vh;
 }
 .joinAccept {
-    margin-top: 2vh;
+    margin-top: 2dvh;
     text-align: center;
 }
 .joinAcceptButt {

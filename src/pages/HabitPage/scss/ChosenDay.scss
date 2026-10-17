@@ -9,7 +9,7 @@
     top: 0;
     position: relative;
     user-select: none;
-    max-height: 58vh;
+    max-height: 58dvh;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--menuButtHover) transparent;
@@ -26,7 +26,7 @@
 .chosenDayDate {
     padding: 1vh 0.5vw 0 1vw;
     display: flex;
-    height: 4vh;
+    height: 4dvh;
     align-items: center;
     font-size: 20px;
     width: 100%;
@@ -43,7 +43,7 @@
     }
 }
 .calendarReturn {
-    height: 3vh;
+    height: 3dvh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -70,14 +70,14 @@
 }
 .cdhabits {
     width: 100%;
-    padding-top: 0.5vh;
+    padding-top: 0.5dvh;
     display: flex;
     flex-direction: column;
     gap: 0.3vh;
 }
 .cdHabitStr {
     display: flex;
-    height: 4vh;
+    height: 4dvh;
     position: relative;
     @media (hover: hover) {
         &:hover {
@@ -94,7 +94,7 @@
         }
     }
     @media (max-width: 800px) {
-        height: 5vh;
+        height: 5dvh;
     }
 }
 .cdHabitInfo {

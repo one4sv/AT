@@ -41,7 +41,7 @@
     background-color: var(--systemMessBg);
     color: var(--tc);
     border-radius: 24px;
-    min-height: 3.2vh;
+    min-height: 3.2dvh;
     cursor: default;
     gap: 6px;
     padding: 0.7vh 1.8vw;
@@ -94,7 +94,7 @@
     }
 }
 .messChoseButt {
-    height: 2.5vh;
+    height: 2.5dvh;
     width: 2.5vh;
     aspect-ratio: 1/1;
     margin: 1.5vh 0.2vw 0 0;
@@ -121,7 +121,7 @@
 }
 .dateDivider {
     position: sticky;
-    top: 1vh;
+    top: 1dvh;
     z-index: 2;
     background-color: var(--systemMessBg);
     width: fit-content;
@@ -235,7 +235,7 @@
     display: flex;
     align-items: center;
     margin-top: 2px;
-    height: 2vh;
+    height: 2dvh;
     user-select: none;
 }
 .messageBar {
@@ -431,7 +431,7 @@
     gap: 0.5vh 0.5vw;
     margin: 0.5vh 0;
     justify-content: flex-start;
-    max-height: 62vh;
+    max-height: 62dvh;
 }
 
 .messageFile {

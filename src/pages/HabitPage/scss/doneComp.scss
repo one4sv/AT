@@ -66,10 +66,10 @@
     cursor: default;
     align-items: center;
     display: flex;
-    min-height: 5.5vh;
+    min-height: 5.5dvh;
     justify-content: center;
     &.doneCompSmall {
-        min-height: calc(5.5vh * 0.8);
+        min-height: calc(5.5dvh * 0.8);
         >.doneCompContolers {
             height: 100%;
         }

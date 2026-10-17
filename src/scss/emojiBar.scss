@@ -5,7 +5,7 @@
     background-color: var(--mc);
     z-index: 6;
     width: 50%;
-    height: 30vh;
+    height: 30dvh;
     position: absolute;
     bottom: 105%;
     border-radius: 24px;
@@ -20,7 +20,7 @@
     }
     @media (max-width:800px) {
         width: 95%;
-        height: 30vh;
+        height: 30dvh;
         left: 2.5%;
         bottom: 105%;
         padding: 1vh 3vw;

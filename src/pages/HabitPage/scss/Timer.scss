@@ -9,7 +9,7 @@
     flex-direction: column;
 }
 .timerNums {
-    height: 5vh;
+    height: 5dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -25,7 +25,7 @@
 .timerButts {
     display: flex;
     gap: 0.5vw;
-    margin-top: 2vh;
+    margin-top: 2dvh;
     align-items: center;
 }
 .launchButt {
@@ -35,7 +35,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    height: 5vh;
+    height: 5dvh;
     aspect-ratio: 1/1;
     color: var(--inner_text);
     > span {

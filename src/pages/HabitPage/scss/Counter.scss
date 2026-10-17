@@ -64,7 +64,7 @@
     transform: translateY(-100%);
 }
 .counterMin {
-    margin-top: 0.5vh;
+    margin-top: 0.5dvh;
     color: var(--borderWh);
     position: relative;
     display: flex;
@@ -108,7 +108,7 @@
 .launchButtWrapper {
     position: relative;
     border-radius: 50%;
-    height: 6vh;
+    height: 6dvh;
     aspect-ratio: 1/1;
     display: flex;
     justify-content: center;
@@ -119,7 +119,7 @@
     display: flex;
     align-items: center;
     position: relative;
-    height: 3vh;
+    height: 3dvh;
     > svg {
         width: 1vw;
         height: 1vw;

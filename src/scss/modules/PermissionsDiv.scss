@@ -3,7 +3,7 @@
 .permissionsDiv {
     @include var.centerModal;
     width: 25vw;
-    height: 70vh;
+    height: 70dvh;
     background-color: var(--mc);
     border-radius: 6px;
     align-items: center;
@@ -47,7 +47,7 @@
     background-color: var(--mc);
     border-radius: 6px;
     width: 100%;
-    height: 5vh;
+    height: 5dvh;
     align-items: center;
     padding-inline: 0.7vw;
     font-size: 20px;
@@ -85,11 +85,11 @@
     // overflow: hidden;
 }
 .roleWrapper {
-    margin-top: 0.2vh;
+    margin-top: 0.2dvh;
 }
 .role {
     width: 100%;
-    height: 4.5vh;
+    height: 4.5dvh;
     display: flex;
     border-radius: 6px;
     align-items: center;
@@ -141,7 +141,7 @@
     }
 }
 .keyWrapper {
-    height: 3.5vh;
+    height: 3.5dvh;
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -183,7 +183,7 @@
 }
 .memberItem {
     width: 100%;
-    height: 4.5vh;
+    height: 4.5dvh;
     font-size: 18px;
     display: flex;
     border-radius: 6px;
@@ -239,7 +239,7 @@
     position: relative;
     background-color: var(--bgc);
     width: 100%;
-    height: 20vh;
+    height: 20dvh;
     overflow: hidden;
     &::after {
         content: "";
@@ -264,8 +264,8 @@
     }
 }
 .infoWrapper {
-    height: calc(100% - 20.5vh);
-    margin-top: 0.5vh;
+    height: calc(100% - 20.5dvh);
+    margin-top: 0.5dvh;
 }
 .roleDesc {
     color: var(--borderWh);
@@ -288,12 +288,12 @@
     }
 }
 .roleInp {
-    height: 4.5vh;
+    height: 4.5dvh;
     padding: 0;
 }
 .permLabel {
     font-size: 14px;
-    margin-top: 0.4vh;
+    margin-top: 0.4dvh;
     margin-left: 0.5vw;
     color: var(--borderHabit);
 }
@@ -412,7 +412,7 @@
     background-color: var(--bgc);
     display: flex;
     width: 100%;
-    height: 4vh;
+    height: 4dvh;
     align-items: center;
     padding-inline-start: 0.5vw;
     > .roleName {
