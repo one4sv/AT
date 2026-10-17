@@ -10,7 +10,7 @@ export default function SearchUnstarted() {
     ) ?? [];
 
     return (
-        <div className="searchUnstarted">
+        <>
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     Недавние
@@ -44,6 +44,6 @@ export default function SearchUnstarted() {
                     </div>
                 ))}
             </div>
-        </div>
+        </>
     );
 }

@@ -144,13 +144,14 @@
     }
 }
 
-.searchUnstarted, .searchedButts, .searchedButtsEmpty {
+.searchUnstarted, .searchedButtsEmpty {
     display: flex;
     width: 100%;
     align-items: center;
     flex-direction: column;
     height: fit-content;
     min-height: 10dvh;
+    margin-top: 1vh;
     gap: 1vh;
     > div {
         width: 98%;

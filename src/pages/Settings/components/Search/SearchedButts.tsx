@@ -32,7 +32,7 @@ export default function SearchedButts({ search }: Props) {
 
     if (filteredSections.length === 0) {
         return (
-            <div className="searchedButts">
+            <>
                 <motion.div
                     className="settingInnerDiv searchedButtsEmpty"
                     initial={{ scale: 0.96, opacity: 0 }}
@@ -43,12 +43,12 @@ export default function SearchedButts({ search }: Props) {
                     <MagnifyingGlassMinusIcon size={48} />
                     <span>Ничего не найдено</span>
                 </motion.div>
-            </div>
+            </>
         );
     }
 
     return (
-        <div className="settingsButtsWrapper">
+        <>
             <AnimatePresence mode="popLayout">
                 {filteredSections.map((section) => (
                     <motion.div
@@ -106,6 +106,6 @@ export default function SearchedButts({ search }: Props) {
                     </motion.div>
                 ))}
             </AnimatePresence>
-        </div>
+        </>
     );
 }

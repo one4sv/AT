@@ -135,6 +135,7 @@ export default function Settings() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={contentKey}
+                className="settingsButtsWrapper"
                 initial={{ y: 18, scale: 0.97 }}
                 animate={{ y: 0, scale: 1 }}
                 exit={{ y: -18, scale: 0.97 }}

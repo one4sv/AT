@@ -30,7 +30,7 @@ export default function SettingsButts({
   const navigate = useNavigate();
 
   return (
-    <div className="settingsButtsWrapper">
+    <>
       {/* Кнопка аккаунта */}
       <div
         className="settingButt settingButtAcc"
@@ -90,6 +90,6 @@ export default function SettingsButts({
         </span>
         <div className="settingDesc">{t("settings.infoDesc")}</div>
       </div>
-    </div>
+    </>
   );
 }
