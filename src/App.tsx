@@ -1,3 +1,4 @@
+
 import './scss/App.scss';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppProvider } from './components/ts/AppProvider';
@@ -16,9 +17,11 @@ import ContextMenu from './components/ts/ContextMenu/ContextMenu';
 import Settings from './pages/Settings/Settings'; 
 import Landing from './pages/Landing/Landing';
 import Info from './pages/Info/Info';
-
+import { useVisualViewport } from './components/hooks/utils/VisualViewportHook';
 
 function App() {
+  useVisualViewport();
+
   return (
     <Router>
       <AppProvider>
