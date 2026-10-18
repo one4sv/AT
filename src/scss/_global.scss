@@ -15,6 +15,8 @@ body {
   transition: background-color 0s ease !important;
   color: var(--tc);
   position: relative; 
+  background-color: red;
+
 }
 
 #root {
@@ -25,6 +27,7 @@ body {
   display: flex;
   overflow: hidden;
   background-color: var(--bgc);
+  background-color: var(--tc);
 }
 
 .mobile-layout {
