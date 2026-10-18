@@ -9,7 +9,10 @@ html, body {
   scrollbar-color: var(--menuButtHover) transparent;
   overflow: hidden;
   position: fixed;
+  top: 0;
+  left: 0;
 }
+
 body {
   background-color: var(--bgc);
   transition: background-color 0s ease !important;
@@ -24,10 +27,15 @@ body {
 .mobile-layout {
   width: 100%;
   height: var(--vv-height, 100dvh);
+  position: absolute;
+  top: var(--vv-top, 0px);
+  left: 0;
 }
 .mobile-layout .page-content {
   width: 100%;
-  height: var(--vv-height, 100dvh);
+  height: 100%; /* Контенту достаточно занимать 100% от уже выровненного родителя */
+  overflow-y: auto; /* Включаем независимый скролл для области сообщений */
+  -webkit-overflow-scrolling: touch;
 }
 .app-layout .page-content {
   width: 80.5vw;

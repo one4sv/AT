@@ -1,6 +1,7 @@
 import Linkify from "linkify-react";
 import { Fragment, type ReactNode } from "react";
 import { useBlackout } from "../hooks/BlackoutHook";
+import { useNavigate } from "react-router";
 
 interface Props {
     text: string;
@@ -9,7 +10,6 @@ interface Props {
 
 function highlightText(text: string, search: string): ReactNode[] {
     if (!search) return [text];
-
     const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const parts = text.split(new RegExp(`(${escaped})`, "gi"));
 
@@ -34,6 +34,7 @@ function highlightText(text: string, search: string): ReactNode[] {
 export default function HighlightText({ text, search }: Props) {
     const { setBlackout } = useBlackout();
     const query = search.trim();
+    const navigate = useNavigate();
 
     const linkifyOptions = {
         render: ({ attributes, content }: { attributes: { href?: string; [key: string]: unknown }; content: ReactNode }) => {
@@ -49,7 +50,7 @@ export default function HighlightText({ text, search }: Props) {
 
                         if (isInternal) {
                             e.preventDefault();
-                            window.location.href = url.href;
+                            navigate(url.pathname + url.search + url.hash);
                             return;
                         }
 
