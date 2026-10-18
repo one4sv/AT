@@ -44,11 +44,20 @@ export default function HighlightText({ text, search }: Props) {
                     {...attributes}
                     href={attributes.href}
                     onClick={(e) => {
+                        const url = new URL(link, window.location.origin);
+                        const isInternal = url.origin === window.location.origin;
+
+                        if (isInternal) {
+                            e.preventDefault();
+                            window.location.href = url.href;
+                            return;
+                        }
+
                         e.preventDefault();
                         setBlackout({
                             seted: true,
                             module: "LinkConfirm",
-                            options: { name:"link", url: link },
+                            options: { name: "link", url: link },
                         });
                     }}
                 >
