@@ -176,20 +176,6 @@ export default function SideMenu() {
                         : "none",
             }}
         >
-            {/* <div className="SMsearchDiv">
-                <div className="SMsearch">
-                    <input
-                        type="text"
-                        className="SMsearchInput"
-                        ref={mainSearchRef}
-                        onChange={(e) => setSearch(e.currentTarget.value)}
-                        placeholder={t("sideMenu.searchPlaceholder")}
-                        value={search}
-                    />
-                    <MagnifyingGlassIcon size={22} />
-                </div>
-            </div> */}
-
             <div className="ListWrapper">
                 <div
                     className="slider"

@@ -116,6 +116,9 @@ export default function AccountList() {
                         {logoutConfirm ? <><CheckIcon size={21}/> Подтвердить выход</> : <><SignOutIcon weight="fill" size={21}/> Выйти из аккаунта</>}
                     </span>
                 </div>
+                <div className="SMaccountButt">
+                    Высота body: {document.body.getBoundingClientRect().height}px, html: {document.documentElement.getBoundingClientRect().height}px, root: {document.getElementById("root")?.getBoundingClientRect().height}px, layout: {document.querySelector(".mobile-layout")?.getBoundingClientRect().height}px
+                </div>
             </div>
         </div>
     )
