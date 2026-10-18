@@ -20,13 +20,17 @@ body {
   color: var(--tc);
 }
 #root {
-  width: 100%;
+width: 100%;
   height: var(--vv-height, 100dvh);
+  position: fixed;                 // добавь
+  top: var(--vv-top, 0px);         // ← ключевая строка
+  left: 0;
   display: flex;
+  overflow: hidden;
 }
 .mobile-layout {
   width: 100%;
-  height: var(--vv-height, 100dvh);
+  height: 100%;
   position: absolute;
   top: var(--vv-top, 0px);
   left: 0;
@@ -55,6 +59,7 @@ body {
   overflow: hidden;
   color: var(--accent);
   pointer-events: none;
+  top: var(--vv-top, 0px);
 
   > div {
     position: absolute;
