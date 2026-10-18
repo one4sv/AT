@@ -1,8 +1,13 @@
 @use "./_variables" as var;
 
 html, body {
-  height: 100%;
+  /* Меняем fixed на absolute для html/body, чтобы избежать багов расчета fixed-координат iOS */
+  position: absolute; 
+  inset: 0;
   width: 100%;
+  /* Используем динамическую высоту */
+  height: 100dvh; 
+  min-height: 100dvh;
   font-family: Arial, Helvetica, sans-serif;
   scrollbar-width: thin;
   scrollbar-color: var(--menuButtHover) transparent;
@@ -10,12 +15,12 @@ html, body {
 }
 
 body {
-  position: fixed;
-  inset: 0;
-  margin: 0;
   background-color: var(--bgc);
   transition: background-color 0s ease !important;
+  margin: 0;
   color: var(--tc);
+  /* Заменяем vh на dvh */
+  height: 100dvh; 
 }
 
 #root {
@@ -24,19 +29,21 @@ body {
   display: flex;
   overflow: hidden;
   background-color: var(--bgc);
+  background-color: var(--tc);
 }
 
 .mobile-layout {
   position: fixed;
   inset: 0;
   width: 100%;
-  height: auto;
+  height: 100dvh; 
   overflow: hidden;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   background-color: var(--bgc);
-  padding-top: env(safe-area-inset-top);
+  
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .mobile-layout .page-content {
@@ -62,17 +69,14 @@ body {
 
 .background {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100dvh + env(safe-area-inset-bottom, 20px)); 
     z-index: 0;
     overflow: hidden;
     color: var(--accent);
     pointer-events: none;
-
-    > div {
-        position: absolute;
-    }
 }
 
 .bgImg {
