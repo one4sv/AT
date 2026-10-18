@@ -20,11 +20,10 @@ body {
 }
 
 #root {
-  position: absolute;
   width: 100%;
   height: 100dvh; 
   min-height: 100dvh;
-  display: flex;
+  margin: 0;
   overflow: hidden;
   background-color: var(--bgc);
   background-color: var(--tc);
