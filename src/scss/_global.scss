@@ -1,86 +1,56 @@
 @use "./_variables" as var;
 
 html, body {
-    height: 100%;
-    width: 100%;
-    font-family: Arial, Helvetica, sans-serif;
-    scrollbar-width: thin;
-    scrollbar-color: var(--menuButtHover) transparent;
-    overflow: hidden;
-    position: fixed;
-    inset: 0;
+  height: 100%;
+  width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  scrollbar-width: thin;
+  scrollbar-color: var(--menuButtHover) transparent;
+  overflow: hidden;
 }
-
 body {
-    background-color: var(--bgc);
-    transition: background-color 0s ease !important;
-    margin: 0;
-    color: var(--tc);
+  background-color: var(--bgc);
+  transition: background-color 0s ease !important;
+  margin: 0;
+  color: var(--tc);
 }
-
 #root {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    inset: 0;
-    display: flex;
-    overflow: hidden;
+  width: 100%;
+  height: 100dvh;
+  display: flex;
 }
-
 .mobile-layout {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: var(--vv-top, 0px);
-    left: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
+  width: 100%;
+  height: 100%;
 }
-
 .mobile-layout .page-content {
-    width: 100%;
-    flex: 1;
-    min-height: 0;
-    height: auto;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    position: relative;
+  width: 100%;
+  height: 100%;
 }
-
 .app-layout .page-content {
-    width: 80.5vw;
-    position: relative;
-    left: 19.5vw;
-    height: 100%;
-
-    > * {
-        z-index: 1;
-    }
+  width: 80.5vw;
+  position: relative;
+  left: 19.5vw;
+  height: 100%;
+  > * {
+    z-index: 1;
+    padding-top: 6vh;
+  }
 }
-
 .background {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: 0;
-    overflow: hidden;
-    color: var(--accent);
-    pointer-events: none;
-
-    > div {
-        position: absolute;
-    }
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+  overflow: hidden;
+  color: var(--accent);
+  >div {
+    position: absolute;
+  }
 }
-
 .bgImg {
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100%;
-
-    @media (max-width: 800px) {
-        background-position: center center;
-    }
+  background-repeat: no-repeat;
+  background-size: cover;
+  @media (max-width: 800px) {
+    background-position: center center;
+  }
 }
