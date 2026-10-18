@@ -1,0 +1,106 @@
+@use "../mixins" as var;
+
+.linkConfirmDiv {
+    @include var.centerModal;
+    background-color: var(--mc);
+    width: 25%;
+    border-radius: 24px;
+    padding: 2vh 2vw;
+    gap: 2vh;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    @media (max-width: 800px) {
+        width: 100%;
+        padding: 4vh 3vw 3vh;
+        border-radius: 24px 24px 0 0;
+    }
+}
+
+.linkConfirmWarning {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    padding: 12px;
+    border: 1px solid var(--borderHabit);
+    border-radius: 24px;
+    color: var(--tc);
+    > svg {
+        flex-shrink: 0;
+        color: var(--accent);
+    }
+}
+
+.linkConfirmWarningTitle {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.linkConfirmWarningText {
+    margin-top: 4px;
+    color: var(--tc);
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.linkConfirmCard {
+    overflow: hidden;
+    min-width: 0;
+    border-radius: 24px;
+    background: var(--bgc);
+    cursor: pointer;
+}
+
+.linkConfirmImage {
+    display: block;
+    width: 100%;
+    max-height: 240px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.linkConfirmCardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 12px;
+    min-width: 0;
+}
+
+.linkConfirmHostname {
+    color: var(--tc);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.linkConfirmTitle {
+    color: var(--tc);
+    font-size: 17px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.linkConfirmDescription {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--tc);
+    font-size: 16px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    line-clamp: 4;
+    -webkit-line-clamp: 4;
+}
+
+.linkConfirmUrl {
+    color: var(--accent);
+    font-size: 16px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.linkConfirmActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}

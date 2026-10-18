@@ -4,7 +4,7 @@ import EmojiNet from "../../../../components/ts/EmojiNet";
 import RadioGroup from "../../../../components/ts/RadioGroup";
 import { reactionsArr } from "../../../../components/ts/utils/emojies";
 import { useTranslation } from "react-i18next";
-import HighlightText from "../Search/HighlightText";
+import HighlightText from "../../../../components/ts/HighlightText";
 
 export default function ChatsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");

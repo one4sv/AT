@@ -125,6 +125,7 @@ export default function Calendar() {
         }
     }, [selectedMonth, setSelectedMonth, setSelectedYear]);
 
+    // Сбрасываем позицию слайдера в центр после смены месяца
     useEffect(() => {
         const el = sliderRef.current;
         if (!el) return;
@@ -138,55 +139,57 @@ export default function Calendar() {
         });
     }, [selectedMonth, selectedYear]);
 
+    // Обработка свайпа + кнопок
     useEffect(() => {
         const el = sliderRef.current;
         if (!el) return;
 
         let timeout: number;
 
-        const handleScroll = () => {
+        const handleScrollEnd = () => {
             if (isAnimatingRef.current) return;
 
-            clearTimeout(timeout);
+            const width = el.clientWidth;
+            if (width === 0) return;
 
-            timeout = window.setTimeout(() => {
-                if (isAnimatingRef.current) return;
+            const index = Math.round(el.scrollLeft / width);
 
-                const width = el.clientWidth;
-                if (width === 0) return;
-
-                const index = Math.round(el.scrollLeft / width);
-
-                if (index === 0) {
-                    isAnimatingRef.current = true;
-                    goToPrevMonth();
-                } else if (index === 2) {
-                    isAnimatingRef.current = true;
-                    goToNextMonth();
-                }
-            }, 50);
+            if (index === 0) {
+                isAnimatingRef.current = true;
+                goToPrevMonth();
+            } else if (index === 2) {
+                isAnimatingRef.current = true;
+                goToNextMonth();
+            }
         };
 
+        // fallback для браузеров без scrollend
+        const handleScroll = () => {
+            if (isAnimatingRef.current) return;
+            clearTimeout(timeout);
+            timeout = window.setTimeout(handleScrollEnd, 80);
+        };
+
+        el.addEventListener("scrollend", handleScrollEnd);
         el.addEventListener("scroll", handleScroll, { passive: true });
 
         return () => {
             clearTimeout(timeout);
+            el.removeEventListener("scrollend", handleScrollEnd);
             el.removeEventListener("scroll", handleScroll);
         };
     }, [goToPrevMonth, goToNextMonth]);
 
-    const slideTo = (direction: "prev" | "next") => {
+    const slideTo = useCallback((direction: "prev" | "next") => {
         const el = sliderRef.current;
         if (!el || isAnimatingRef.current) return;
 
         const width = el.clientWidth;
-        isAnimatingRef.current = true;
-
         el.scrollTo({
             left: direction === "next" ? width * 2 : 0,
             behavior: "smooth"
         });
-    };
+    }, []);
 
     if (!slidesData) return null;
 

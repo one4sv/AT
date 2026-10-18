@@ -3,14 +3,20 @@
 .contactListModule {
     @include var.centerModal;
     background-color: var(--mc);
-    height: 70%;
+    max-height: 70%;
     width: 25%;
-    border-radius: 12px;
+    border-radius: 24px;
     padding: 1vh 0.5vw;
+    height: fit-content;
     @media (max-width: 800px) {
         width: 100%;
-        padding: 4vh 2vw 0;
-        height: 90dvh;
+        padding: 4vh 2vw 3vh;
+        max-height: 90dvh;
+        border-radius: 24px 24px 0 0 ;
+    }
+    > .contactsList {
+        padding-bottom: 2vh;
+        margin-top: 2vh;
     }
 }
 .redirectBar {
@@ -20,17 +26,16 @@
     gap: 5px;
     @media (max-width: 800px) {
         >.SMsearch {
-            width: 90%;
+            width: 100%;
         }
     }
 }
 .cancelRedirect {
-    height: 100%;
-    width: 18%;
+    width: 100%;
     display: flex;
     justify-content: center;
     @media (max-width: 800px) {
-        width: 10%;
+        width: 100%;
     }
 }
 .cancelRedirectButt {
@@ -44,22 +49,18 @@
     }
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-        >svg {
-        color: var(--tc);
-        }
-    
+            background-color: var(--menuButtHover);
+            >svg {
+                color: var(--tc);
+            }
         }
     }
-
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-        >svg {
-        color: var(--tc);
-        }
-    
-        
+            background-color: var(--menuButtHover);
+            >svg {
+                color: var(--tc);
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ import type { message } from "../../../components/context/ChatContext"
 import { useUser } from "../../../components/hooks/UserHook"
 import { useIdentify } from "../../../components/hooks/utils/useIdentify"
 import { useChat } from "../../../components/hooks/ChatHook"
+import HighlightText from "../../../components/ts/HighlightText"
 
 interface ChatUserListType {
     m:message
@@ -10,7 +11,7 @@ interface ChatUserListType {
 export default function UserInChatUserList({m}:ChatUserListType) {
     const { user } = useUser()
     const { chatWith } = useChat()
-
+    const { searchMess } = useChat()
     const isMy = m.sender_id === user.id
     const needIdentify = !isMy && chatWith && !chatWith.members.find(member => member.id === m.sender_id)?.avatar_url && chatWith.is_group
     const { identified } = useIdentify(needIdentify ? m.sender_id : undefined)
@@ -37,7 +38,7 @@ export default function UserInChatUserList({m}:ChatUserListType) {
                 <div className="chatSearchText">
                     <span>
                         {m.content
-                            ? m.content
+                            ? <HighlightText text={m.content} search={searchMess}/>
                             : m.files && m.files.length > 0
                                 ? `${m.files?.length} mediafiles`
                                 : "Пересланное сообщение"}</span>

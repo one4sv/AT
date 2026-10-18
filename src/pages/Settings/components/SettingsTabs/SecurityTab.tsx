@@ -3,7 +3,7 @@ import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { api } from "../../../../components/ts/api";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import HighlightText from "../Search/HighlightText";
+import HighlightText from "../../../../components/ts/HighlightText";
 
 export default function SecurityTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");

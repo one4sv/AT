@@ -8,6 +8,7 @@ import RedirectMesses from './RedirectMesses';
 import CreateChat from './CreateChat';
 import PermissionsSettings from './PermissionsSettings';
 import ShareAcc from './ShareAcc';
+import LinkConfirm from './LinkConfirm';
 
 const ModuleMap: Record<string, React.FC> = {
     AddHabit: AddHabit,
@@ -19,7 +20,8 @@ const ModuleMap: Record<string, React.FC> = {
     RedirectMesses:RedirectMesses,
     CreateChat:CreateChat,
     PermissionsSettings:PermissionsSettings,
-    ShareAcc:ShareAcc
+    ShareAcc:ShareAcc,
+    LinkConfirm:LinkConfirm
 };
 
 export default ModuleMap;

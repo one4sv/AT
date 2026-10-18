@@ -1,3 +1,5 @@
+
+import { useMemo } from "react";
 import { ChatTeardropIcon, CopyIcon, UserIcon } from "@phosphor-icons/react";
 import "../../scss/modules/ShareAccDiv.scss"
 import { useBlackout } from "../hooks/BlackoutHook";
@@ -7,10 +9,20 @@ import { QRCodeSVG } from "qrcode.react";
 export default function ShareAcc() {
     const { blackout } = useBlackout()
     const { showNotification } = useNote()
-
-    const link = window.location.origin + `/acc/${blackout.options?.nick}`
+    const nick = blackout.options?.nick
+    const link = window.location.origin + `/acc/${nick}`
     const photo = blackout.options?.url
-    
+
+    const qr = useMemo(() => (
+        <QRCodeSVG
+            value={link}
+            size={256}
+            level="H"
+            bgColor="transparent"
+            fgColor="url(#qrGradient)"
+        />
+    ), [blackout.seted, blackout.module])
+
     const copyLink = async () => {
         try {
             await navigator.clipboard.writeText(link)
@@ -45,13 +57,7 @@ export default function ShareAcc() {
                         </linearGradient>
                     </defs>
                 </svg>
-                <QRCodeSVG
-                    value={link}
-                    size={256}
-                    level="H"
-                    bgColor="transparent"
-                    fgColor="url(#qrGradient)"
-                />
+                {qr}
                 <div className="qrCodePhoto">
                     {photo ? (
                         <img src={photo} alt=""/>

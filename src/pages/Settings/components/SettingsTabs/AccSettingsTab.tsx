@@ -3,7 +3,7 @@ import { useUser } from "../../../../components/hooks/UserHook";
 import AccInfo from "../../../Acc/components/AccInfo";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import HighlightText from "../Search/HighlightText";
+import HighlightText from "../../../../components/ts/HighlightText";
 
 export default function AccSettingsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");

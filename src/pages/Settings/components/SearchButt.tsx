@@ -3,7 +3,7 @@ import AutoFitIconText from "./AutoFitIconText";
 import type { SearchableSetting } from "../Settings";
 import type { SearchableSection } from "../Arrays/searchableSettings";
 import { isMobile } from "react-device-detect";
-import HighlightText from "./Search/HighlightText";
+import HighlightText from "../../../components/ts/HighlightText";
 
 interface Props {
     item: SearchableSetting,

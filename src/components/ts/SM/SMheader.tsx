@@ -2,8 +2,9 @@ import { isMobile } from "react-device-detect"
 import { useSideMenu } from "../../hooks/SideMenuHook"
 import { useUser } from "../../hooks/UserHook"
 import { useSettings } from "../../hooks/SettingsHook"
-import { SortAscendingIcon } from "@phosphor-icons/react"
+import { QrCodeIcon, ShareFatIcon, SortAscendingIcon } from "@phosphor-icons/react"
 import { useEffect, useRef, useState } from "react"
+import { useBlackout } from "../../hooks/BlackoutHook"
 
 export default function SMheader() {
     const { user } = useUser()
@@ -19,6 +20,7 @@ export default function SMheader() {
         setHabitsSelectedValue,
     } = useSideMenu()
     const { layout } = useSettings()
+    const { setBlackout } = useBlackout()
 
     const [openFilters, setOpenFilters] = useState<"chats" | "habits" | null>(null)
 
@@ -42,7 +44,6 @@ export default function SMheader() {
     const habitsSelected = habitsFilters.find(f => f.value === habitsSelectedValue)
         ?? { label: "Актив", value: "all", new: "0" }
 
-    // Закрытие при клике/таче снаружи
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent | TouchEvent) => {
             if (isPointerDown.current || wasLongPress.current) return
@@ -95,7 +96,6 @@ export default function SMheader() {
         setOpenFilters(prev => (prev === type ? null : type))
     }
 
-    // Обработка движения пальца после long-press
     const handleTouchMove = (e: React.TouchEvent | TouchEvent) => {
         if (!longPressTriggered.current && !wasLongPress.current) return
 
@@ -159,7 +159,6 @@ export default function SMheader() {
                 }
             }
 
-            // Если отпустили не на пункте — закрываем
             if (!filterItem) {
                 setOpenFilters(null)
             } else {
@@ -214,7 +213,6 @@ export default function SMheader() {
                     className="smHeaderSlider"
                     style={{ transform: `translateX(${translateSlider}%)` }}
                 >
-                    {/* ЧАТЫ */}
                     <div className="smHeaderPart">
                         <div className="smHeaderTitle">Чаты</div>
                         <div
@@ -232,7 +230,6 @@ export default function SMheader() {
                         </div>
                     </div>
 
-                    {/* АКТИВНОСТИ */}
                     <div className="smHeaderPart">
                         <div className="smHeaderTitle">Активности</div>
                         <div
@@ -247,19 +244,23 @@ export default function SMheader() {
                         </div>
                     </div>
 
-                    {/* СПОТЫ */}
                     <div className="smHeaderPart">
                         <div className="smHeaderTitle">Споты</div>
                     </div>
 
-                    {/* ЮЗЕР */}
                     <div className="smHeaderPart">
                         <div className="smHeaderTitle">{user.nick ?? "Загрузка"}</div>
+                        <div
+                            className={`smHeaderSelected`}
+                            onClick={() => setBlackout({seted:true, module:"ShareAcc", options:{name:user.username ?? "", nick:user.nick ?? "", url:user.avatar_url ?? ""}})}
+                        >
+                            <ShareFatIcon />
+                            <QrCodeIcon/>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Выпадашка */}
             <div
                 className={`smHeaderExtraDiv ${openFilters ? "open" : ""}`}
                 ref={filtersRef}

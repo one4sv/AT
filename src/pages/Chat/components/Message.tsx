@@ -1,4 +1,4 @@
-import { CheckCircle, ShareFat, PushPin } from "@phosphor-icons/react";
+import { CheckCircle, ShareFat, PushPin, ClockCountdownIcon } from "@phosphor-icons/react";
 import { useChat } from "../../../components/hooks/ChatHook";
 import React, { useRef, useState } from "react";
 import type { message } from "../../../components/context/ChatContext";
@@ -14,6 +14,7 @@ import MessageFiles from "../utils/MessageFiles";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import { reactionsArr } from "../../../components/ts/utils/emojies";
 import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
+import HighlightText from "../../../components/ts/HighlightText";
 
 
 type MessageComponentType = {
@@ -32,7 +33,7 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
     const { user } = useUser()
     const { openMenu, menu } = useContextMenu()
     const { emote, messdb } = useSettings()
-
+    const { searchMess } = useChat()
     const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
 
     const touchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -100,6 +101,7 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
             className={`messageWrapper ${isChose ? "choosing" : ""} ${chosenMess.some(mess => mess.id === m.id) ? "chosen" : ""} ${highlightedId === m.id ? "highlight" : ""}
                 ${cornerType ? `corner-${cornerType}` : ""}
                 ${menu.point === "mess" && menu.options.id === String(m.id) && "onContextMenu"}
+                ${m.isPending ? "pending" : ""}
             `}
             ref={(el) => {messageRefs?.current.set(m.id, el)}}
             onMouseEnter={() => setShowReactionButt(m.id)}
@@ -147,19 +149,17 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
                     {chosenMess.some((mess) => mess.id === m.id) ? <CheckCircle weight="fill"/> : <CheckCircle/> }
                 </div>
             )}
-            <div className={`message ${ isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""}`}>
+            <div className={`message ${ isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""}`}>
                 {!isMy && (showNames === undefined || showNames === true) && chatWith?.is_group && 
                     <div className="senderName" style={{cursor: isChose ? "default" : "pointer"}} onClick={() => !isChose && navigate(`/acc/${m.sender_nick}`)}>
                         {m.sender_name}
                     </div>
                 }
                 {answer && scrollToMessage && (
-                        <AnswerMess answer={answer} scrollToMessage={scrollToMessage}/>
+                    <AnswerMess answer={answer} scrollToMessage={scrollToMessage}/>
                 )}
                 <div className={`messageText ${isMobile ? "mobile" : ""}`}>
-                    <Linkify>
-                            {m.content}
-                    </Linkify>
+                    <HighlightText text={m.content} search={searchMess}/>
                 </div>
                 {m.files && m.files.length > 0 && (
                     <MessageFiles files={m.files} m={m}/>
@@ -224,11 +224,13 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
                         )}
                     </div>
                     {isMy && chatWith &&
-                        (m.read_by.length > 0 ? (
+                        m.isPending ? (
+                            <div className="messageReadSign "><ClockCountdownIcon/></div>
+                        ) : (m.read_by.length > 0 ? (
                             <div className="messageReadSign read"><CheckCheck/></div>
-                        ) : (
-                            <div className="messageReadSign unread"><Check/></div>
-                        ))
+                            ) : (
+                                <div className="messageReadSign unread"><Check/></div>
+                            ))
                     }
                 </div>
                 {highlightedId === m.id && m.reactions && m.reactions.length === 0 ? 

@@ -4,7 +4,7 @@ import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import { type PrivateSettings } from "../../../../components/context/SettingsContext";
 import RadioGroup from "../../../../components/ts/RadioGroup";
 import { useTranslation } from "react-i18next";
-import HighlightText from "../Search/HighlightText";
+import HighlightText from "../../../../components/ts/HighlightText";
 
 export default function PrivacyTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");

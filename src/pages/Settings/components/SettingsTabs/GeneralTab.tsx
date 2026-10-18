@@ -7,7 +7,7 @@ import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import Toggler from "../../../../components/ts/Toggler";
 import { useNote } from "../../../../components/hooks/NoteHook";
-import HighlightText from "../Search/HighlightText";
+import HighlightText from "../../../../components/ts/HighlightText";
 
 export default function GeneralTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");

@@ -11,7 +11,7 @@ import { isMobile } from "react-device-detect";
 import Selector from "../../../../components/ts/Selector.tsx";
 import { MirrorRectangular, PaintBucket, PanelLeft, PanelLeftClose } from "lucide-react";
 import ColorSelector from "../ColorSelector.tsx";
-import HighlightText from "../Search/HighlightText.tsx";
+import HighlightText from "../../../../components/ts/HighlightText.tsx";
 
 export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");

@@ -4,7 +4,7 @@ import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import Toggler from "../../../../components/ts/Toggler";
 import DatePicker from "react-datepicker";
 import { useTranslation } from "react-i18next";
-import HighlightText from "../Search/HighlightText";
+import HighlightText from "../../../../components/ts/HighlightText";
 
 export default function HabitsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");

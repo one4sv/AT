@@ -27,6 +27,10 @@
     &.corner-middle {
         border-radius: 0;
     }
+    &.pending {
+        pointer-events: none;
+        touch-action: none;
+    }
     @media (max-width: 800px) {
         padding: .75vh 1.5vw;
         user-select: none;
@@ -224,7 +228,7 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: pre-wrap;
-    > a {
+    >span > a {
         text-decoration: underline;
     }
     @media (max-width:800px) {

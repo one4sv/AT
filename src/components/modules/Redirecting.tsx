@@ -1,7 +1,6 @@
 import ContactsList from "../ts/SM/ContactsList"
 import "../../scss/modules/Redirecting.scss";
 import { Search } from "lucide-react";
-import { X } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useMessages } from "../hooks/MessagesHook";
 import { useRef } from "react";
@@ -19,16 +18,16 @@ export default function Redirecting() {
                     <input type="text" className="SMsearchInput" ref={searchRef} onChange={(e) => setSearch(e.currentTarget.value)}/>
                     <Search />
                 </div>
-                <div className="cancelRedirect">
-                    <div className="cancelRedirectButt" onClick={() => {
-                        setBlackout({seted:false})
-                        setRedirect(undefined)
-                    }}>
-                        <X/>
-                    </div>
-                </div>
             </div>
             <ContactsList filter="all" searchRef={searchRef}/>
+            <div className="cancelRedirect">
+                <div className="addHabitGoal" onClick={() => {
+                    setBlackout({seted:false})
+                    setRedirect(undefined)
+                }}>
+                    Отмена
+                </div>
+            </div>
         </div>
     )
 }

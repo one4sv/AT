@@ -317,7 +317,6 @@
         &:hover {
             color: var(--tc);
             text-decoration: none;
-            border-radius: 8px;
             &:hover {
                 background-color: var(--menuButtHover);
             }
@@ -328,7 +327,6 @@
         &:active {
             color: var(--tc);
             text-decoration: none;
-            border-radius: 8px;
             &:hover {
                 background-color: var(--menuButtHover);
             }

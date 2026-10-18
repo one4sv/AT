@@ -8,7 +8,7 @@ import { TagIcon } from "../../../HabitPage/utils/TagIcon";
 import { CaretDownIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useNote } from "../../../../components/hooks/NoteHook";
-import HighlightText from "../Search/HighlightText";
+import HighlightText from "../../../../components/ts/HighlightText";
 
 export default function NotificationsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
