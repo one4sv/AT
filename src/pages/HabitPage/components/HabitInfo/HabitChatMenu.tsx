@@ -79,7 +79,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                 <div className="settingSpan">
                     Настройки чата
                 </div>
-                <RadioGroup list={listOption} val={selectedOption} newVal={handleOptionChange} disabled={!isMy || isArchived || readOnly}/>
+                <RadioGroup list={listOption} val={selectedOption} newVal={handleOptionChange} disabled={!isMy || isArchived || readOnly} id=""/>
             </div>
             <span className="chatMenuSpan">
                 {selectedOption === "personal" && "Выберите пользователя:"}
