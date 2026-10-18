@@ -27,6 +27,7 @@ body {
   overflow: hidden;
   background-color: var(--bgc);
   background-color: var(--tc);
+  margin-top: env(safe-area-inset-top);
 }
 
 .mobile-layout {
@@ -39,7 +40,6 @@ body {
   flex-direction: column;
   box-sizing: border-box;
   background-color: var(--bgc);
-  padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
