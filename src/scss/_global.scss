@@ -2,7 +2,8 @@
 @use "./_variables" as var;
 
 html, body {
-  height: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
   width: 100%;
   font-family: Arial, Helvetica, sans-serif;
   scrollbar-width: thin;
@@ -30,6 +31,9 @@ width: 100%;
 }
 .mobile-layout {
   width: 100%;
+  min-height: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
   height: var(--vv-height, 100dvh);
   position: absolute; /* Вместо fixed */
   top: var(--vv-top, 0px);
@@ -74,6 +78,7 @@ body:has(input:focus, textarea:focus) .bottom-navigation-bar {
 .bgImg {
   background-repeat: no-repeat;
   background-size: cover;
+  height: 100%;
   @media (max-width: 800px) {
     background-position: center center;
   }
