@@ -15,17 +15,22 @@ body {
   transition: background-color 0s ease !important;
   color: var(--tc);
   position: relative; 
-  background-color: red;
+  background-color: red; /* Твой красный фон */
 
+  /* ДОБАВИТЬ СЮДА: */
+  display: flex;
+  flex-direction: column;
 }
 
 #root {
   width: 100%;
-  height: 100dvh; 
-  min-height: 100dvh;
+  /* ЗАМЕНИТЬ ВЫСОТУ НА ЭТО: */
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+
   margin: 0;
   overflow: hidden;
-  background-color: var(--bgc);
   background-color: var(--tc);
   margin-top: env(safe-area-inset-top);
 }
