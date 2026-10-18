@@ -21,7 +21,7 @@
 
 .settingsSliderWrapper {
     width: 50%;
-    overflow-x: hidden;
+    overflow: hidden;
 
     @media (max-width: 800px) {
         width: 100%;
@@ -149,11 +149,12 @@
 .settingName {
     display: flex;
     align-items: center;
-    gap: 6px;
     color: var(--msbd);
     width: 100%;
+    white-space: pre-wrap;
     >svg {
         color: var(--accent_text);
+        margin-right: 6px;
     }
     &.danger {
         color: var(--notValid);
@@ -256,7 +257,7 @@
 }
 
 .settingInnerDiv {
-    background-color: var(--mc);
+    background: var(--mc);
     border-radius: 24px;
     display: flex;
     flex-direction: column;
@@ -265,6 +266,7 @@
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     z-index: 2;
+    transition: background .3s cubic-bezier(0.075, 0.82, 0.165, 1);
     >.accInfo {
         @media (max-width: 800px) {
             margin: 0;
@@ -311,12 +313,12 @@
     justify-content: space-between;
     flex: 1;
     align-items: center;
-    padding: 1vh 0.5vw;
+    padding: 1vh 1vw;
     border-radius: 24px;
     cursor: pointer;
 
     @media (max-width: 800px) {
-        padding: 1vh 2vw;
+        padding: 1vh 3vw;
     }
 
     @media (hover: hover) {
@@ -337,7 +339,7 @@
 
 .settingHint {
     width: 100%;
-    padding-inline-start: 0.5vw;
+    padding: 0 1vw;
     color: var(--borderHabit);
 
     @media (hover: hover) {
@@ -353,7 +355,7 @@
     }
 
     @media (max-width: 800px) {
-        padding-inline-start: 3vw;
+        padding: 0 3vw;
     }
 }
 

@@ -1,7 +1,7 @@
 @use "../../../scss/mixins" as var;
 
 .seekBarWrapper {
-    background-color: var(--interact);
+    background: var(--interact);
     border-radius: 18px;
     display: flex;
     flex-direction: column;
@@ -9,6 +9,7 @@
     width: 100%;
     padding: 2vh 0.5vw;
     user-select: none;
+    transition: background .3s cubic-bezier(0.075, 0.82, 0.165, 1);
     &.disabled {
         pointer-events: none;
         > .seekBarLine {

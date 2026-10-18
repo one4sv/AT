@@ -4,8 +4,9 @@ import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import { type PrivateSettings } from "../../../../components/context/SettingsContext";
 import RadioGroup from "../../../../components/ts/RadioGroup";
 import { useTranslation } from "react-i18next";
+import HighlightText from "../Search/HighlightText";
 
-export default function PrivacyTab() {
+export default function PrivacyTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { privateShow } = useSettings();
     const { setNewPrivateShow } = useUpSettings();
@@ -33,12 +34,12 @@ export default function PrivacyTab() {
                     {t("privacy.accountInfo")}
                 </div>
                 <div className="privateSLWrapper">
-                    <div className="settingSpan">{t("privacy.whoSeesPhone")}</div>
-                    <RadioGroup list={privateArr} val={privateShow.number} newVal={(value) => applyNewPrivate("number", value || "nobody")} />
+                    <div className="settingSpan"><HighlightText text={t("privacy.whoSeesPhone")} search={search} /></div>
+                    <RadioGroup list={privateArr} val={privateShow.number} newVal={(value) => applyNewPrivate("number", value || "nobody")} id="number"/>
                 </div>
                 <div className="privateSLWrapper">
-                    <div className="settingSpan">{t("privacy.whoSeesEmail")}</div>
-                    <RadioGroup list={privateArr} val={privateShow.mail} newVal={(value) => applyNewPrivate("mail", value || "nobody")} />
+                    <div className="settingSpan"><HighlightText text={t("privacy.whoSeesEmail")} search={search} /></div>
+                    <RadioGroup list={privateArr} val={privateShow.mail} newVal={(value) => applyNewPrivate("mail", value || "nobody")} id="mail"/>
                 </div>
             </div>
             <div className="settingInnerDiv">
@@ -46,12 +47,12 @@ export default function PrivacyTab() {
                     {t("privacy.contentVisibility")}
                 </div>
                 <div className="privateSLWrapper">
-                    <div className="settingSpan">{t("privacy.whoSeesActivities")}</div>
-                    <RadioGroup list={privateArrFull} val={privateShow.habits} newVal={(value) => applyNewPrivate("habits", value || "nobody")} />
+                    <div className="settingSpan"><HighlightText text={t("privacy.whoSeesActivities")} search={search} /></div>
+                    <RadioGroup list={privateArrFull} val={privateShow.habits} newVal={(value) => applyNewPrivate("habits", value || "nobody")} id="habits"/>
                 </div>
                 <div className="privateSLWrapper">
-                    <div className="settingSpan">{t("privacy.whoSeesPosts")}</div>
-                    <RadioGroup list={privateArrFull} val={privateShow.posts} newVal={(value) => applyNewPrivate("posts", value || "nobody")} />
+                    <div className="settingSpan"><HighlightText text={t("privacy.whoSeesPosts")} search={search} /></div>
+                    <RadioGroup list={privateArrFull} val={privateShow.posts} newVal={(value) => applyNewPrivate("posts", value || "nobody")} id="posts"/>
                 </div>
             </div>
         </div>

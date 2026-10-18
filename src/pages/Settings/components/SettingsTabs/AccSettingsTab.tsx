@@ -3,8 +3,9 @@ import { useUser } from "../../../../components/hooks/UserHook";
 import AccInfo from "../../../Acc/components/AccInfo";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import HighlightText from "../Search/HighlightText";
 
-export default function AccSettingsTab() {
+export default function AccSettingsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { user } = useUser();
     const [openPhone, setOpenPhone] = useState(false);
@@ -12,17 +13,17 @@ export default function AccSettingsTab() {
     
     return (
         <div className="settingTab">
-            <div className="settingInnerDiv settingInnerAccDiv">
+            <div className="settingInnerDiv settingInnerAccDiv" data-setting-id="editAcc">
                 <AccInfo acc={user} canView={() => true} collapsed={0} />
             </div>
 
             {/* Телефон */}
-            <div className="settingAccordion">
+            <div className="settingAccordion" data-setting-id="phone">
                 <div
                     className="settingHeader settingHeaderCollapsible"
                     onClick={() => setOpenPhone(prev => !prev)}
                 >
-                    Изменить номер телефона
+                    <HighlightText text="Изменить номер телефона" search={search} />
                     <CaretDownIcon
                         size={20}
                         className={`settingCaret ${openPhone ? "open" : ""}`}
@@ -58,12 +59,12 @@ export default function AccSettingsTab() {
             </div>
 
             {/* Email */}
-            <div className="settingAccordion">
+            <div className="settingAccordion" data-setting-id="email">
                 <div
                     className="settingHeader settingHeaderCollapsible"
                     onClick={() => setOpenEmail(prev => !prev)}
                 >
-                    Изменить email
+                    <HighlightText text="Изменить email:" search={search} />
                     <CaretDownIcon
                         size={20}
                         className={`settingCaret ${openEmail ? "open" : ""}`}
@@ -102,8 +103,8 @@ export default function AccSettingsTab() {
                     {t("acc.header")}
                 </div>
                 <div className="settingInnerList">
-                    <div className="settingInnerButt delete">
-                        <TrashIcon size={20}/> {t("acc.deleteAccount")}
+                    <div className="settingInnerButt delete" data-setting-id="deleteAccount">
+                        <TrashIcon size={20}/> <HighlightText text={t("acc.deleteAccount")} search={search} />
                     </div>
                 </div>
             </div>

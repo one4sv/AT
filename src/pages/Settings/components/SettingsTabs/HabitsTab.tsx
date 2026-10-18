@@ -4,8 +4,9 @@ import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import Toggler from "../../../../components/ts/Toggler";
 import DatePicker from "react-datepicker";
 import { useTranslation } from "react-i18next";
+import HighlightText from "../Search/HighlightText";
 
-export default function HabitsTab() {
+export default function HabitsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { orderHabits, showArchived, showArchivedInAcc, weekStart } = useSettings();
     const { setNewOrder, setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart } = useUpSettings();
@@ -72,15 +73,15 @@ export default function HabitsTab() {
                     {t("habits.archive")}
                 </div>
                 <div className="settingInnerList">
-                    <div className="settingTogglerDiv" onClick={() => setNewShowArchived(!showArchived)}>
-                        {t("habits.archivedInSideMenu")}
+                    <div className="settingTogglerDiv" onClick={() => setNewShowArchived(!showArchived)} data-setting-id="showArchived">
+                        <HighlightText text={t("habits.archivedInSideMenu")} search={search} />
                         <Toggler state={showArchived} />
                     </div>
                     <div className="settingHint">
                         {t("habits.archivedInSideMenuHint")}
                     </div>
-                    <div className="settingTogglerDiv" onClick={() => setNewShowArchivedInAcc(!showArchivedInAcc)}>
-                        {t("habits.archivedInProfile")}
+                    <div className="settingTogglerDiv" onClick={() => setNewShowArchivedInAcc(!showArchivedInAcc)} data-setting-id="showArchivedInAcc">
+                        <HighlightText text={t("habits.archivedInProfile")} search={search} />
                         <Toggler state={showArchivedInAcc} />
                     </div>
                     <div className="settingHint">
@@ -88,12 +89,12 @@ export default function HabitsTab() {
                     </div>
                 </div>
             </div>
-            <div className="settingInnerDiv">
+            <div className="settingInnerDiv" data-setting-id="weekStart">
                 <div className="settingHeader">
                     {t("habits.schedule")}
                 </div>
                 <div className="habitTabDiv">
-                    {t("habits.weekStartFrom")}
+                    <HighlightText text={t("habits.weekStartFrom")} search={search} />
                     <DatePicker
                         className="habitTabDP"
                         selected={weekStart ? new Date(weekStart) : null}
@@ -108,9 +109,9 @@ export default function HabitsTab() {
                     />
                 </div>
             </div>
-            <div className="settingInnerDiv">
+            <div className="settingInnerDiv" data-setting-id="orderHabits">
                 <div className="settingHeader">
-                    {t("habits.displayOrder")}
+                    <HighlightText text={t("habits.displayOrder")} search={search} />
                 </div>
                 <div className="orderShown">
                     {displayOrder.map((type, index) => (

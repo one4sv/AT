@@ -3,8 +3,9 @@ import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { api } from "../../../../components/ts/api";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import HighlightText from "../Search/HighlightText";
 
-export default function SecurityTab() {
+export default function SecurityTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { user } = useUser();
     const { twoAuth } = useSettings();
@@ -27,9 +28,9 @@ export default function SecurityTab() {
 
     return (
         <div className="settingTab">
-            <div className="settingInnerDiv">
+            <div className="settingInnerDiv" data-setting-id="twoAuth">
                 <div className="settingHeader" title="Не кликабельно">
-                    {t("security.twoFactor")}
+                    <HighlightText text={t("security.twoFactor")} search={search} />
                     <div className={`safetyButt ${pending && "inactive"}`} onClick={() => askAuth()}>
                         {pending
                             ? t("security.sent")
@@ -44,14 +45,14 @@ export default function SecurityTab() {
                         : t("security.confirmHint", { email: user.mail })}
                 </span>
             </div>
-            <div className="settingInnerDiv">
+            <div className="settingInnerDiv" data-setting-id="changePassword">
                 <div className="settingHeader">
-                    {t("security.changePassword")}
+                    <HighlightText text={t("security.changePassword")} search={search} />
                 </div>
             </div>
-            <div className="settingInnerDiv">
+            <div className="settingInnerDiv" data-setting-id="devices">
                 <div className="settingHeader">
-                    {t("security.devices")}
+                    <HighlightText text={t("security.devices")} search={search} />
                 </div>
                 <div className="settingSpan">{t("security.activeSessions")}</div>
                 <div className="settingSpan">{t("security.logoutAll")}</div>

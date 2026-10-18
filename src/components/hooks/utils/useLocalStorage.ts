@@ -42,7 +42,7 @@ export default function useLocalStorage<T>(
         } catch {
             setValue(defaultValue);
         }
-    }, [defaultValue, storageKey]);
+    }, [storageKey]);
 
     useEffect(() => {
         try {

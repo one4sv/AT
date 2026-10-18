@@ -11,8 +11,9 @@ import { isMobile } from "react-device-detect";
 import Selector from "../../../../components/ts/Selector.tsx";
 import { MirrorRectangular, PaintBucket, PanelLeft, PanelLeftClose } from "lucide-react";
 import ColorSelector from "../ColorSelector.tsx";
+import HighlightText from "../Search/HighlightText.tsx";
 
-export default function PersSettingTab() {
+export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { setBlackout } = useBlackout();
     const { isDark, accent, bg, bgUrl, decor, grad, blur, layout } = useSettings();
@@ -60,41 +61,41 @@ export default function PersSettingTab() {
 
     return (
         <div className="settingTab">
-            <div className="settingInnerDiv">
-                <div className="settingHeader">{t("personalization.theme")}</div>
+            <div className="settingInnerDiv" data-setting-id="theme">
+                <div className="settingHeader"><HighlightText text={t("personalization.theme")} search={search} /></div>
                 <div className="settingInnerWrapper">
                     {/* <RadioGroup list={themeArr} val={isDark ? "dark" : "light"} newVal={setNewTheme} /> */}
                     <Selector arr={themeArr} selected={isDark ? "dark" : "light"}/>
                 </div>
             </div>
-            <div className="settingInnerDiv">
-                <div className="settingHeader">{t("personalization.accentColors")}</div>    
+            <div className="settingInnerDiv" data-setting-id="accent">
+                <div className="settingHeader"><HighlightText text={t("personalization.accentColors")} search={search} /></div>    
                 <div className="settingInnerWrapper">
                     <PreviewAccent />
-                    <div className="colorSelector">
-                        <span className="colorTitle">{t("personalization.mainColor")}</span>
+                    <div className="colorSelector" data-setting-id="mainColor">
+                        <span className="colorTitle"><HighlightText text={t("personalization.mainColor")} search={search} /></span>
                         <ColorSelector arr={accentArr} value={accent} setNew={setNewAccent}/>
                     </div>
-                    <div className="colorSelector">
-                        <span className="colorTitle">{t("personalization.gradient")}</span>
+                    <div className="colorSelector" data-setting-id="grad">
+                        <span className="colorTitle"><HighlightText text={t("personalization.gradient")} search={search} /></span>
                         <ColorSelector arr={gradArr} value={grad} setNew={setNewGrad}/>
                     </div>
                 </div>
             </div>
             <div className="settingInnerDiv">
-                <div className="settingHeader">{t("personalization.decor")}</div>
-                <div className="settingInnerWrapper">
-                        <Selector arr={decorArr} selected={decor}/>
+                <div className="settingHeader"><HighlightText text={t("personalization.decor")} search={search} /></div>
+                <div className="settingInnerWrapper" data-setting-id="decor">
+                    <Selector arr={decorArr} selected={decor}/>
                 </div>
                     <div className="settingInnerWrapper">
                         <div className={`settingSpan ${decor !== "glass" ? "disabled" : ""}`}>
-                            Степень размытия
+                            <HighlightText text="Степень размытия" search={search} />
                         </div>
-                        <SeekBar min={2} max={36} value={blur} unit="px" step={1} onChange={setNewBlur} disabled={decor !== "glass"}/>
+                        <SeekBar min={2} max={36} value={blur} unit="px" step={1} onChange={setNewBlur} disabled={decor !== "glass"} id="blur"/>
                     </div>
             </div>
-            <div className="settingInnerDiv">
-                <div className="settingHeader">{t("personalization.background")}</div>
+            <div className="settingInnerDiv" data-setting-id="bg">
+                <div className="settingHeader"><HighlightText text={t("personalization.background")} search={search} /></div>
                 <div className="settingInnerWrapper">
                     <div className="bgPicker">
                         <div className="bgPick">
@@ -133,9 +134,9 @@ export default function PersSettingTab() {
                 </div>
             </div>
             {!isMobile ? (
-                <div className="settingInnerDiv">
+                <div className="settingInnerDiv" data-setting-id="layout">
                     <div className="settingHeader">
-                        Боковое меню
+                        <HighlightText text="Боковое меню" search={search} />
                     </div>
                     <div className="settingInnerWrapper">
                         <Selector arr={layoutArr} selected={layout}/>

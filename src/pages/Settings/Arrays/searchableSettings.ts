@@ -1,4 +1,4 @@
-import { ImageIcon, MoonStarsIcon, PaintBucketIcon, PaintRollerIcon, PaletteIcon, SunIcon, TextIndentIcon, TrashIcon, PhoneIcon, EnvelopeIcon, UserIcon, PencilSimpleIcon, ChatsTeardropIcon, HandTapIcon, CursorClickIcon, TextAaIcon, CalendarBlankIcon, ClockIcon, TranslateIcon, GifIcon, HardDrivesIcon, ImageSquareIcon, CheckCircleIcon, ArchiveIcon, BellIcon, BellRingingIcon, LockIcon, NewspaperIcon, ShieldCheckIcon, KeyIcon, DevicesIcon } from "@phosphor-icons/react";
+import { ImageIcon, MoonStarsIcon, PaintBucketIcon, PaintRollerIcon, PaletteIcon, SunIcon, TextIndentIcon, TrashIcon, PhoneIcon, EnvelopeIcon, UserIcon, PencilSimpleIcon, ChatsTeardropIcon, HandTapIcon, CursorClickIcon, TextAaIcon, CalendarBlankIcon, ClockIcon, TranslateIcon, GifIcon, HardDrivesIcon, ImageSquareIcon, CheckCircleIcon, ArchiveIcon, BellIcon, BellRingingIcon, LockIcon, NewspaperIcon, ShieldCheckIcon, KeyIcon, DevicesIcon, WrenchIcon, SneakerMoveIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import type { SearchableSetting } from "../Settings";
 import type { ElementType } from "react";
@@ -81,13 +81,14 @@ export function useSearchableSettings(): SearchableSection[] {
                     name: "Боковое меню",
                     icon: TextIndentIcon,
                     category: t("settings.personalization"),
+                    options: {mobileOnly:true}
                 },
             ],
         },
         {
-            id: "general",
+            id: "gen",
             name: t("settings.general"),
-            icon: TextAaIcon,
+            icon: WrenchIcon,
             items: [
                 {
                     id: "autoLoadImages",
@@ -191,9 +192,9 @@ export function useSearchableSettings(): SearchableSection[] {
             ],
         },
         {
-            id: "habits",
+            id: "activities",
             name: "Активности",
-            icon: CheckCircleIcon,
+            icon: SneakerMoveIcon,
             items: [
                 {
                     id: "showArchived",
@@ -222,9 +223,9 @@ export function useSearchableSettings(): SearchableSection[] {
             ],
         },
         {
-            id: "notifications",
+            id: "notes",
             name: t("settings.notifications"),
-            icon: BellIcon,
+            icon: BellRingingIcon,
             items: [
                 {
                     id: "note",

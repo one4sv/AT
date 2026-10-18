@@ -4,8 +4,9 @@ import EmojiNet from "../../../../components/ts/EmojiNet";
 import RadioGroup from "../../../../components/ts/RadioGroup";
 import { reactionsArr } from "../../../../components/ts/utils/emojies";
 import { useTranslation } from "react-i18next";
+import HighlightText from "../Search/HighlightText";
 
-export default function ChatsTab() {
+export default function ChatsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { setNewEmote, setNewMessdb } = useUpSettings();
     const { emote, messdb } = useSettings();
@@ -23,15 +24,15 @@ export default function ChatsTab() {
                     {t("chats.header")}
                 </div>
                 <div className="settingInnerWrapper">
-                    <div className="settingSpan">{t("chats.defaultReaction")}</div>
+                    <div className="settingSpan"><HighlightText text={t("chats.defaultReaction")} search={search} /></div>
                     <div className="chatTabSLDiv">
-                        <EmojiNet list={reactionsArr} val={emote} newVal={(val) => setNewEmote(val)} />
+                        <EmojiNet list={reactionsArr} val={emote} newVal={(val) => setNewEmote(val)} id="defaultReaction"/>
                     </div>
                 </div>
                 <div className="settingInnerWrapper">
-                    <div className="settingSpan">{t("chats.doubleClick")}</div>
+                    <div className="settingSpan"><HighlightText text={t("chats.doubleClick")} search={search} /></div>
                     <div className="chatTabSLDiv">
-                        <RadioGroup list={doubleClickArr} val={messdb} newVal={(val) => setNewMessdb(val)} />
+                        <RadioGroup list={doubleClickArr} val={messdb} newVal={(val) => setNewMessdb(val)} id="doubleClick"/>
                     </div>
                 </div>
             </div>

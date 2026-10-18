@@ -4,14 +4,16 @@ import "../../scss/emojiNet.scss"
 export default function EmojiNet({
     list,
     val,
-    newVal
+    newVal,
+    id
 }: {
     list: { label: string; value: string }[];
     val: string;
-    newVal?:(val:string) => void
+    newVal?:(val:string) => void;
+    id:string
 }) {
     return (
-        <div className="emojiNet">
+        <div className="emojiNet" data-setting-id={id}>
             {list.map((el) => {
                 const active = el.value === val
                 return (

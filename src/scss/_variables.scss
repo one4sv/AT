@@ -188,58 +188,86 @@ $accents: (
 $grads: (
     meadow: (
         light: (
-            grad: #00ad09
+            grad: #00ad09,
+            grad_op: #00ad0969,
+            grad_hov: #00ad0981
         ),
         dark: (
-            grad: #14b314
+            grad: #14b314,
+            grad_op: #14b31469,
+            grad_hov: #14b31481
         )
     ),
     rubin: (
         light: (
-            grad: #ff3333
+            grad: #ff3333,
+            grad_op: #ff333369,
+            grad_hov: #ff333381
         ),
         dark: (
-            grad: #ff3b3b
+            grad: #ff3b3b,
+            grad_op: #ff3b3b69,
+            grad_hov: #ff3b3b81
         )
     ),
     ocean: (
         light: (
-            grad: #3399ff
+            grad: #3399ff,
+            grad_op: #3399ff69,
+            grad_hov: #3399ff81
         ),
         dark: (
-            grad: #007bff
+            grad: #007bff,
+            grad_op: #007bff69,
+            grad_hov: #007bff81
         )
     ),
     violet: (
         light: (
-            grad: #8712e7
+            grad: #8712e7,
+            grad_op: #8712e769,
+            grad_hov: #8712e781
         ),
         dark: (
-            grad: #8712e7
+            grad: #8712e7,
+            grad_op: #8712e769,
+            grad_hov: #8712e781
         )
-    ),    
+    ),
     ginger: (
         light: (
-            grad: #FF6B00
+            grad: #FF6B00,
+            grad_op: #FF6B0069,
+            grad_hov: #FF6B0081
         ),
         dark: (
-            grad: #FF6B00
+            grad: #FF6B00,
+            grad_op: #FF6B0069,
+            grad_hov: #FF6B0081
         )
     ),
     mono: (
         light: (
-            grad: #e9e9e9
+            grad: #e9e9e9,
+            grad_op: #e9e9e969,
+            grad_hov: #e9e9e981
         ),
         dark: (
-            grad: #e9e9e9
+            grad: #e9e9e9,
+            grad_op: #e9e9e969,
+            grad_hov: #e9e9e981
         )
     ),
     void: (
         light: (
-            grad: #000
+            grad: #000,
+            grad_op: #00000069,
+            grad_hov: #00000081
         ),
         dark: (
-            grad: #000
+            grad: #000,
+            grad_op: #00000069,
+            grad_hov: #00000081
         )
     )
 );
@@ -320,24 +348,29 @@ $decors: (
 }
 
 @mixin generate-accent-vars {
-  @each $ac-name, $themes-map in $accents {
-    @each $theme-name, $map in $themes-map {
-      [data-theme="#{$theme-name}"][data-accent="#{$ac-name}"] {
-        --accent: #{map-get($map, accent)};
-        --accent_text: #{map-get($map, accent_text)};
-        --accent_op: #{map-get($map, accent_op)};
-        --accent_hov: #{map-get($map, accent_hov)};
-        --darker_accent: #{map-get($map, darker_accent)};
-        --inner_text: #{map-get($map, inner_text)};
-      }
+    @each $ac-name, $themes-map in $accents {
+        @each $theme-name, $map in $themes-map {
+            [data-theme="#{$theme-name}"][data-accent="#{$ac-name}"] {
+                --accent: #{map-get($map, accent)};
+                --accent_text: #{map-get($map, accent_text)};
+                --accent_op: #{map-get($map, accent_op)};
+                --accent_hov: #{map-get($map, accent_hov)};
+                --accent_highlight: #{map-get($map, accent)}66;
+                --darker_accent: #{map-get($map, darker_accent)};
+                --inner_text: #{map-get($map, inner_text)};
+            }
+        }
     }
-  }
 }
+
 @mixin generate-grad-vars {
     @each $grad-name, $themes-map in $grads {
         @each $theme-name, $map in $themes-map {
             [data-theme="#{$theme-name}"][data-grad="#{$grad-name}"] {
                 --grad: #{map-get($map, grad)};
+                --grad_op: #{map-get($map, grad_op)};
+                --grad_hov: #{map-get($map, grad_hov)};
+                --grad_highlight: #{map-get($map, grad)}66;
             }
         }
     }

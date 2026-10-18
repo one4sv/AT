@@ -6,15 +6,17 @@ export default function RadioGroup({
     list,
     val,
     newVal,
-    disabled
+    disabled,
+    id
 }: {
     list: { label: string; value: string; icon?:ElementType }[];
     val: string;
     newVal?:(val:string) => void;
-    disabled?:boolean
+    disabled?:boolean;
+    id:string
 }) {
     return (
-        <div className={`radioGroup ${disabled ? "disabled" : ""}`}>
+        <div className={`radioGroup ${disabled ? "disabled" : ""}`} data-setting-id={id}>
             {list.map((el) => {
                 const active = el.value === val
                 return (

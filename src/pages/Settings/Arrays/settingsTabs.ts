@@ -3,8 +3,8 @@ import {
   ChatsTeardropIcon,
   LockKeyIcon,
   PaintBucketIcon,
+  ShieldCheckIcon,
   SneakerMoveIcon,
-  VaultIcon,
   WrenchIcon,
 } from "@phosphor-icons/react";
 import type { Setting } from "../Settings";
@@ -46,13 +46,13 @@ export function useSettingsTabs(): Setting[] {
     },
     {
       name: t("settings.security"),
-      tab: "safety",
+      tab: "security",
       desc: t("settings.securityDesc"),
-      icon: VaultIcon,
+      icon: ShieldCheckIcon,
     },
     {
       name: t("settings.privacy"),
-      tab: "private",
+      tab: "privacy",
       desc: t("settings.privacyDesc"),
       icon: LockKeyIcon,
     },

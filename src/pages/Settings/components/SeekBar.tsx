@@ -9,6 +9,7 @@ export interface SeekBarInterface {
     step?: number;
     onChange?: (value: number) => void;
     disabled: boolean;
+    id:string
 }
 
 export default function SeekBar({
@@ -19,6 +20,7 @@ export default function SeekBar({
     step = 1,
     onChange,
     disabled,
+    id
 }: SeekBarInterface) {
     const { setDontHandle, dontHandleOther } = useSideMenu();
 
@@ -147,6 +149,7 @@ export default function SeekBar({
         <div
             className={`seekBarWrapper ${disabled ? "disabled" : ""}`}
             style={{ touchAction: "none" }}
+            data-setting-id={id}
             onContextMenu={(e) => e.preventDefault()}
             // Pointer — на весь wrapper (для тача удобно)
             onPointerDown={handlePointerDown}

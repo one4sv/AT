@@ -7,8 +7,9 @@ import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import Toggler from "../../../../components/ts/Toggler";
 import { useNote } from "../../../../components/hooks/NoteHook";
+import HighlightText from "../Search/HighlightText";
 
-export default function GeneralTab() {
+export default function GeneralTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { lang } = useSettings()
     const { setNewLang } = useUpSettings()
@@ -35,16 +36,16 @@ export default function GeneralTab() {
                     {t("general.traffic")}
                 </div>
                 <div className="settingInnerList">
-                    <div className="settingTogglerDiv" onClick={() => showDevNote()}>
-                        {t("general.autoLoadImages")}
+                    <div className="settingTogglerDiv" data-setting-id="autoLoadImages" onClick={() => showDevNote()}>
+                        <HighlightText text={t("general.autoLoadImages")} search={search} />
                         <Toggler state={true} />
                     </div>
-                    <div className="settingTogglerDiv" onClick={() => showDevNote()}>
-                        {t("general.autoPlayGif")}
+                    <div className="settingTogglerDiv" data-setting-id="autoPlayGif" onClick={() => showDevNote()}>
+                        <HighlightText text={t("general.autoPlayGif")} search={search} />
                         <Toggler state={true} />
                     </div>
-                    <div className="settingTogglerDiv" onClick={() => showDevNote()}>
-                        {t("general.useImageCache")}
+                    <div className="settingTogglerDiv" data-setting-id="useImageCache" onClick={() => showDevNote()}>
+                        <HighlightText text={t("general.useImageCache")} search={search} />
                         <Toggler state={true} />
                     </div>
                 </div>
@@ -55,26 +56,26 @@ export default function GeneralTab() {
                 </div>
                 <div className="settingInnerWrapper" onClick={() => showDevNote()}>
                     <div className="settingSpan">
-                        {t("general.fontSize")}
+                        <HighlightText text={t("general.fontSize")} search={search} />
                     </div>
-                    <SeekBar min={12} max={22} value={fontSize} unit="px" step={1} onChange={setFontSize} disabled={false}/>
+                    <SeekBar min={12} max={22} value={fontSize} unit="px" step={1} onChange={setFontSize} disabled={false} id="fontSize"/>
                 </div>
                 <div className="settingInnerWrapper" onClick={() => showDevNote()}>
                     <div className="settingSpan">
-                        {t("general.dateFormat")}
+                        <HighlightText text={t("general.dateFormat")} search={search} />
                     </div>
-                    <RadioGroup list={dateChanger} val={"standart"} />
+                    <RadioGroup list={dateChanger} val={"standart"} id="dateFormat"/>
                 </div>
                 <div className="settingInnerWrapper" onClick={() => showDevNote()}>
                     <div className="settingSpan">
-                        {t("general.timeFormat")}
+                        <HighlightText text={t("general.timeFormat")} search={search} />
                     </div>
-                    <RadioGroup list={timeChanger} val={"twentyFour"} />
+                    <RadioGroup list={timeChanger} val={"twentyFour"} id="timeFormat"/>
                 </div>
             </div>
-            <div className="settingInnerDiv">
+            <div className="settingInnerDiv" data-setting-id="language">
                 <div className="settingHeader">
-                    {t("general.language")}
+                    <HighlightText text={t("general.language")} search={search} />
                 </div>
                 <SelectList arr={langArr} className="settingSL" selected={lang} extraFunction={setNewLang}/>
             </div>

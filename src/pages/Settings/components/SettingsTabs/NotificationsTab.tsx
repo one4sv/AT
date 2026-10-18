@@ -8,8 +8,9 @@ import { TagIcon } from "../../../HabitPage/utils/TagIcon";
 import { CaretDownIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useNote } from "../../../../components/hooks/NoteHook";
+import HighlightText from "../Search/HighlightText";
 
-export default function NotificationsTab() {
+export default function NotificationsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { note, messNote, habitsNote } = useSettings();
     const { setNewNote, setNewMessNote, setNewHabitsNote } = useUpSettings();
@@ -51,12 +52,12 @@ export default function NotificationsTab() {
                     {t("notifications.general")}
                 </div>
                 <div className="settingInnerList">
-                    <div className="settingTogglerDiv" onClick={() => setNewNote(!note)}>
-                        <span title="Не кликабельно">{t("notifications.generalNotifications")}</span>
+                    <div className="settingTogglerDiv" onClick={() => setNewNote(!note)} data-setting-id="note">
+                        <span title="Не кликабельно"><HighlightText text={t("notifications.generalNotifications")} search={search} /></span>
                         <Toggler state={note} setState={setNewNote} />
                     </div>
-                    <div className={`settingTogglerDiv ${!note && "settingInactive"}`} onClick={() => setNewMessNote(!messNote)}>
-                        <span title="Не кликабельно">{t("notifications.newMessages")}</span>
+                    <div className={`settingTogglerDiv ${!note && "settingInactive"}`} onClick={() => setNewMessNote(!messNote)} data-setting-id="messNote">
+                        <span title="Не кликабельно"><HighlightText text={t("notifications.newMessages")} search={search} /></span>
                         <Toggler state={messNote} setState={setNewMessNote} disable={!note} />
                     </div>
                 </div>
@@ -66,12 +67,12 @@ export default function NotificationsTab() {
                     {t("notifications.reminders")}
                 </div>
                 <div className="settingInnerList">
-                    <div className="settingTogglerDiv" onClick={() => setNewHabitsNote(!habitsNote)}>
-                        <span>{t("notifications.remindAboutActivities")}</span>
+                    <div className="settingTogglerDiv" onClick={() => setNewHabitsNote(!habitsNote)} data-setting-id="habitsNote">
+                        <span><HighlightText text={t("notifications.remindAboutActivities")} search={search} /></span>
                         <Toggler state={habitsNote} setState={setNewHabitsNote} />
                     </div>
-                    <div className={`settingTogglerDiv ${!habitsNote && "settingInactive"}`}>
-                        <span>{t("notifications.commonReminderTime")}</span>
+                    <div className={`settingTogglerDiv ${!habitsNote && "settingInactive"}`} data-setting-id="commonReminderTime">
+                        <span><HighlightText text={t("notifications.commonReminderTime")} search={search} /></span>
                     </div>
                 </div>
                 <div className={`settingsInnerDiv ${!habitsNote && "settingInactive"}`}>

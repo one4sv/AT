@@ -8,7 +8,7 @@
     flex-direction: column;
     user-select: none;
     > .orderSetDiv {
-        padding: 1vh 0.5vw;
+        padding: 1vh 1vw;
         cursor: grab;
         color: var(--borderWh);
         @media (max-width: 800px) {
