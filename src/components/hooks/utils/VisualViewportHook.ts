@@ -1,37 +1,44 @@
 import { useEffect } from "react";
 
 export function useVisualViewport() {
-  useEffect(() => {
-    const viewport = window.visualViewport;
-    if (!viewport) return;
+    useEffect(() => {
+        const viewport = window.visualViewport;
+        if (!viewport) return;
 
-    const update = () => {
-      document.documentElement.style.setProperty(
-        "--vv-height",
-        `${viewport.height}px`
-      );
-      document.documentElement.style.setProperty(
-        "--vv-top",
-        `${viewport.offsetTop}px`
-      );
+        const update = () => {
+            // Берем высоту визуального вьюпорта
+            let currentHeight = viewport.height;
 
-      // страховка от уплывания
-      if (viewport.offsetTop !== 0) {
-        window.scrollTo(0, 0);
-      }
-    };
+            // Проверяем, открыта ли клавиатура (высота вьюпорта становится значительно меньше высоты экрана)
+            const isKeyboardOpen = window.innerHeight - currentHeight > 150;
 
-    update();
+            if (isKeyboardOpen) {
+                // Если клавиатура открыта, убираем возможные микро-щели снизу
+                currentHeight = Math.ceil(currentHeight);
+            }
 
-    viewport.addEventListener("resize", update);
-    viewport.addEventListener("scroll", update);
+            document.documentElement.style.setProperty(
+                "--vv-height",
+                `${currentHeight}px`
+            );
 
-    // дополнительная страховка
-    window.addEventListener("scroll", () => window.scrollTo(0, 0), { passive: false });
+            document.documentElement.style.setProperty(
+                "--vv-top",
+                `${viewport.offsetTop}px`
+            );
+        };
 
-    return () => {
-      viewport.removeEventListener("resize", update);
-      viewport.removeEventListener("scroll", update);
-    };
-  }, []);
+        update();
+
+        // Добавляем дополнительные триггеры для iOS, чтобы избежать задержек отрисовки
+        viewport.addEventListener("resize", update);
+        viewport.addEventListener("scroll", update);
+        window.addEventListener("orientationchange", update);
+
+        return () => {
+            viewport.removeEventListener("resize", update);
+            viewport.removeEventListener("scroll", update);
+            window.removeEventListener("orientationchange", update);
+        };
+    }, []);
 }
