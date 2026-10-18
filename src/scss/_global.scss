@@ -29,7 +29,7 @@ body {
 
 .mobile-layout {
     width: 100%;
-    height: var(--vv-height, 100dvh);
+    height: 100%;
     position: fixed;
     top: var(--vv-top, 0px);
     left: 0;
@@ -37,7 +37,6 @@ body {
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    padding-top: env(safe-area-inset-top, 0px);
 }
 
 .mobile-layout .page-content {
