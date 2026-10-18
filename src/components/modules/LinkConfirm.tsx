@@ -118,7 +118,7 @@ export default function LinkConfirm() {
                 </div>
             </div>
 
-            <div className="linkConfirmCard" onClick={() => openLink}>
+            <div className="linkConfirmCard" onClick={() => openLink()}>
                 {preview?.image && (
                     <img
                         className="linkConfirmImage"
