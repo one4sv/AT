@@ -140,7 +140,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             </div>
             <div className="inpWrapperAddHabit">
                 <label htmlFor="addHabitSL">Переодичность</label>
-                <SelectList id="addHabitSL" placeholder="" className="addHabitSL" chevron={true} arr={periodicityArr} hide={true} prop={setSelectedperiodicity} readOnly={true} extraFunction={clearInputPer} selected={undefined}/>
+                <SelectList id="addHabitSL" placeholder="" className="redHabitSL" chevron={true} arr={periodicityArr} hide={true} prop={setSelectedperiodicity} readOnly={true} extraFunction={clearInputPer} selected={undefined}/>
                 <div className="settingHint">
                     {perHint[selectedperiodicity as keyof typeof perHint]}
                 </div>

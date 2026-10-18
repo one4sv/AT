@@ -14,11 +14,14 @@
 }
 .addGoalButtDiv {
     position: relative;
-    @include var.longButt(100%, 5vh, 0.5vh, 0.75vw, var(--tr), var(--borderWh), var(--tr), var(--tr));
+    @include var.longButt(100%, 5vh, 0.5vh, 0.75vw, var(--mc), var(--borderWh), var(--tr), var(--tr));
     display: flex;
     align-items: center;
     font-size: 18px;
     gap: 5px;
+    @media (max-width: 800px) {
+        padding: .5vh 3vw;
+    }
     @media (hover: hover) {
         &:hover {
             color: var(--tc);
@@ -59,4 +62,7 @@
     position: absolute;
     right: 0.5vw;
     color: var(--borderHabit);
+    @media (max-width: 800px) {
+        right: 3vw;
+    }
 }

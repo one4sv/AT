@@ -5,6 +5,7 @@
     flex-direction: column;
     border-radius: 24px;
     padding: 1vh 1vw;
+    background: var(--mc);
     &.but {
         cursor: pointer;
     }
@@ -82,11 +83,6 @@
     &.disabled {
         color: var(--borderHabit);
         cursor: default;
-    }
-}
-.habitSettingsSL {
-    > input {
-        font-size: 16px;
     }
 }
 .habitSettingHint {

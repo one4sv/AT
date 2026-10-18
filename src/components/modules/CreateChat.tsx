@@ -1,7 +1,6 @@
-import { Camera, CheckCircle, Circle, X } from '@phosphor-icons/react';
+import { Camera, CheckCircle, Circle, MagnifyingGlassIcon, X } from '@phosphor-icons/react';
 import '../../scss/modules/CreateChat.scss';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Search } from 'lucide-react';
 import { api } from '../ts/api';
 import { useNote } from '../hooks/NoteHook';
 import { LoaderSmall } from '../ts/LoaderSmall';
@@ -143,7 +142,7 @@ export default function CreateChat() {
                         value={createChatSearch}
                         onChange={(e) => setCreateChatSearch(e.target.value)}
                     />
-                    <Search />
+                    <MagnifyingGlassIcon />
                 </div>
 
                 <div className="createChatChosenCons">

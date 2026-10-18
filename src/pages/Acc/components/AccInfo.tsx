@@ -12,7 +12,7 @@ import DatePicker from "react-datepicker";
 import DatePickerHeader from "../../../components/ts/DatePickerHeader";
 import { useTranslation } from "react-i18next";
 import { useContacts } from "../../../components/hooks/ContactsHook";
-import { ChatTeardropTextIcon, FloppyDiskBackIcon, PencilSimpleIcon } from "@phosphor-icons/react";
+import { ChatTeardropTextIcon, FloppyDiskBackIcon, PencilSimpleIcon, ShareFatIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 
 export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canView: (field: keyof PrivateSettings) => boolean, collapsed: number }) {
@@ -202,15 +202,18 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                                     )
                                     : (
                                         <>
-                                            <PencilSimpleIcon size={20}/>{t("edit")}
+                                            <PencilSimpleIcon size={20} weight="fill"/>{t("edit")}
                                         </>
                                     )
                                 : (
                                     <>
-                                        <ChatTeardropTextIcon size={20}/>Написать сообщение
+                                        <ChatTeardropTextIcon size={20} weight="fill"/>Написать сообщение
                                     </>
                                 )
                             }
+                        </div>
+                        <div className="settingInnerButt" onClick={() => setBlackout({seted:true, module:"ShareAcc", options:{name:acc?.username ?? "", nick:acc?.nick ?? "", url:acc?.avatar_url || ""}})}>
+                            <ShareFatIcon weight="fill"/> Поделится
                         </div>
                     </div>
                 </div>

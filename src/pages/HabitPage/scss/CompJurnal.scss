@@ -7,12 +7,12 @@
 .compJurnalsearch {
     width: 100%;
     > input {
-        @include var.input(var(--mc), var(--tc), var(--borderHabit), 3vh, 8px, var(--tc));
+        @include var.input(var(--mc), var(--tc), var(--borderHabit), 3vh, 24px, var(--tc));
         margin-bottom: 0.5vh;
         width: 100%;
     }
     > svg {
-        @include var.svgInInput(2vh, 4vh, .25vw);
+        @include var.svgInInput(2vh, 0.5vh, .25vw);
         @media (max-width: 800px) {
             right: 2vw;
         }
@@ -30,21 +30,23 @@
 .CJrecord {
     width: 100%;
     padding: 1vh 0.5vw;
-    border-radius: 8px;
+    border-radius: 16px;
+    background-color: var(--mc);
+    margin-bottom: 2px;
     cursor: pointer;
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-    
+            background-color: var(--menuButtHover);
         }
     }
 
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-    
-        
+            background-color: var(--menuButtHover);
         }
+    }
+    @media (max-width: 800px) {
+        padding: 1vh 3vw;
     }
 }
 .CJdates {

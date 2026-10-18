@@ -1,4 +1,4 @@
-import { CaretLeftIcon, XIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, XIcon } from "@phosphor-icons/react";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
@@ -36,7 +36,7 @@ export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolea
                 </div>
             )}
             <div className="habitSlideBack" onClick={() => menuBack()}>
-                {showSlide ? <CaretLeftIcon size={24}/> : <XIcon size={24}/>} {showSlide ? renderBackText() : 'Закрыть'}
+                {showSlide ? <ArrowLeftIcon size={24}/> : <XIcon size={24}/>} {showSlide ? renderBackText() : 'Закрыть'}
             </div>
             {!readOnly && habit?.ongoing && (
                 <div

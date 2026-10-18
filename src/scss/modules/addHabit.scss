@@ -31,7 +31,7 @@
     >label {
         color: var(--borderWh);
         width: 100%;
-        padding-left: 0.25vw;
+        padding-left: .5vw;
         user-select: none;
     }
     &:focus-within {
@@ -41,13 +41,10 @@
     }
     >span {
         position: absolute;
-        right: 0;
-        bottom: -2vh;
-        font-size: 16px;
+        right: .5vw;
+        bottom: 0;
+        font-size: 14px;
         color: var(--borderWh);
-        @media (max-width: 800px) {
-            bottom: -2.5vh;
-        }
     }
     &.date {
         padding-inline-start: 0.25vw;
@@ -66,23 +63,23 @@
     }
 }
 .addHabitInput {
-    background-color: var(--tr);
-    outline: none;
-    border: none;
-    border-bottom: 2px solid var(--borderHabit);
-    padding-bottom: 0.5vh;
+    background-color: var(--interact);
     color: var(--tc);
     font-size: 20px;
     width: 100%;
-    padding-inline-start: 0.25vw;
+    padding: .5vh 2.5vw .5vh .75vw;
+    border-radius: 16px;
     resize: none;
     overflow-y: hidden;
+    border: 1px solid var(--tr);
     &.redHabitDesc {
         font-size: 16px;
     }
     &:focus-visible {
-        border-bottom: 2px solid var(--accent);
-
+        outline: 1px solid var(--accent);
+    }
+    @media (max-width: 800px) {
+        padding: .5vh 10vw .5vh 3vw;
     }
 }
 .AddHabitDateSpan {
@@ -232,24 +229,6 @@
         color: var(--accent_text)
     }
 }
-.addHabitSL {
-    @include var.selectList(100%, 3vh, 9%, 0.1vw, 0.5vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 0.5vw, 1%);
-    margin-bottom: 0.25vh;
-    >input {
-        @include var.input(var(--tr), var(--tc), var(--tr), 3vh, 0, var(--tr));
-        border-bottom: 2px solid var(--borderHabit);
-        width: 100%;
-        cursor: pointer;
-        &:focus-visible {
-            border-bottom: 2px solid var(--accent);
-        }
-    }
-    &:focus-within {
-        >svg {
-            color: var(--accent_text);
-        }
-    }
-}
 .addHabitGoal {
     @include var.longButt(85%, 4vh, 0, 0, var(--tr), var(--borderHabit), var(--tr), var(--menuButtHover));
     margin-top: 3dvh;
@@ -270,9 +249,10 @@
     }
 }
 .addHabitSave {
-    @include var.longButt(85%, 4vh, 0, 0, var(--accent), var(--tc), var(--tr), var(--darker_accent));
+    @include var.longButt(85%, 4vh, 0, 0, none, var(--tc), var(--tr), none);
     margin-top: 1dvh;
     font-size: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--grad));
 }
 .dayChanger {
     position: relative;
@@ -280,33 +260,18 @@
     display: flex;
     flex-direction: row;
     margin-bottom: 2vh;
+    gap: 1px;
     >button {
         flex: 1;
         border-radius: 6px;
         outline: none;
         border: 1px solid black;
-        background-color: var(--bgc);
+        background-color: var(--interact);
         color: var(--borderWh);
         aspect-ratio: 1/1;
         &.active {
             background:linear-gradient(135deg, var(--accent), var(--grad));
             color: var(--tc);
-            @media (hover: hover) {
-                &:hover {
-                background-color: var(--darker_accent);
-                color: var(--tc);
-            
-                }
-            }
-
-            @media (hover: none) {
-                &:active {
-                background-color: var(--darker_accent);
-                color: var(--tc);
-            
-                
-                }
-            }
         }
         &.was {
             background-color: var(--borderHabit);
@@ -314,18 +279,15 @@
         }
         @media (hover: hover) {
             &:hover {
-            background-color: var(--menuButtHover);
-            color: var(--tc);
-        
+                background-color: var(--accent_highlight);
+                color: var(--tc);
             }
         }
 
         @media (hover: none) {
             &:active {
-            background-color: var(--menuButtHover);
-            color: var(--tc);
-        
-            
+                background-color: var(--menuButtHover);
+                color: var(--tc);
             }
         }
     }

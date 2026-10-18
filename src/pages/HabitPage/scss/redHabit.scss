@@ -115,17 +115,27 @@
     justify-content: center;
 }
 .redHabitSL {
-    @include var.selectList(100%, 3vh, 9%, 0vw, 0.4vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 1%);
+    @include var.selectList(100%, fit-content, 9%, 0vw, 0.7vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 5%);
     margin-bottom: 1vh;
     >input {
-        @include var.input(var(--tr), var(--tc), var(--tr), 3vh, 0, var(--tr));
-        border-bottom: 2px solid var(--borderHabit);
+        @include var.input(var(--interact), var(--tc), var(--tr), fit-content, 16px, var(--tr));
         width: 100%;
-        font-size: 18px;
+        font-size: 20px;
+        padding: .65vh 2.5vw .65vh .75vw;
         cursor: pointer;
-        padding-inline-start: 0.5vw;
+        padding-inline-start: 0.75vw;
         &:focus-visible {
-            border-bottom: 2px solid var(--accent);
+            outline: 1px solid var(--accent);
+        }
+        @media (max-width: 800px) {
+            padding-left: 3vw;
+            padding-right: 10vw;
+        }
+    }
+    > div > div {
+        padding-left: 1vw;
+        @media (max-width: 800px) {
+            padding-left: 3vw;
         }
     }
     &:focus-within {

@@ -11,7 +11,7 @@
     align-items: center;
     padding: .5vh 0.5vw 0;
     gap: .25vw;
-    position: fixed;
+    position: absolute;
     user-select: none;
     transition: top .22s cubic-bezier(0.075, 0.82, 0.165, 1);
     &::before {

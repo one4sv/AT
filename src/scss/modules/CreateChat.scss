@@ -262,7 +262,7 @@
         }
     }
     >input {
-        @include var.input(var(--tr), var(--tc), var(--borderHabit), 3.5vh, 12px, var(--accent));
+        @include var.input(var(--tr), var(--tc), var(--borderHabit), 3.5vh, 24px, var(--accent));
         width: 100%;
         padding-inline-start: 0.5vw;
         padding-inline-end: 2vw;

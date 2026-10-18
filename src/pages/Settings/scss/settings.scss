@@ -435,9 +435,14 @@
             color: var(--tc);
         }
     }
-
+    > svg {
+        color: var(--accent);
+    }
     &.delete {
         color: var(--notValid);
+        > svg {
+            color: var(--notValid);
+        }
     }
 }
 
