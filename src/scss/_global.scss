@@ -7,35 +7,36 @@ html, body {
   scrollbar-width: thin;
   scrollbar-color: var(--menuButtHover) transparent;
   overflow: hidden;
-  position: fixed;
-  inset: 0;
 }
 
 body {
-  transition: background-color 0s ease !important;
+  position: fixed;
+  inset: 0;
   margin: 0;
+  background-color: var(--bgc);
+  transition: background-color 0s ease !important;
   color: var(--tc);
 }
 
 #root {
-  width: 100%;
-  height: 100%;
   position: fixed;
   inset: 0;
   display: flex;
   overflow: hidden;
+  background-color: var(--bgc);
 }
 
 .mobile-layout {
-  width: 100%;
-  height: 100%;
   position: fixed;
-  padding-top: env(safe-area-inset-top);
-  left: 0;
+  inset: 0;
+  width: 100%;
+  height: auto;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  background-color: var(--bgc);
+  padding-top: env(safe-area-inset-top);
 }
 
 .mobile-layout .page-content {
