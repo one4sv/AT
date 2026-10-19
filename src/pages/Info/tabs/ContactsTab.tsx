@@ -13,16 +13,15 @@ export default function ContactsTab() {
 
     return (
         <div className="infoText">
-            <div className="one4svlogo">
-                <img src={one4svlogo} />
-            </div>
-
             <h3 className="accent">{t("contacts.development")}</h3>
 
             <p>
                 {t("contacts.developedBy")}{" "}
                 <span className="accent">{t("contacts.studio")}</span>.
             </p>
+            <div className="one4svlogo">
+                <img src={one4svlogo} />
+            </div>
 
             <h3 className="accent">{t("contacts.social")}</h3>
 

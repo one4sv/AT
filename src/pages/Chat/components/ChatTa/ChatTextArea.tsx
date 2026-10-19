@@ -82,7 +82,6 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
                     setChosenMess([])
                 }
             } else {
-                // === ОПТИМИСТИЧНОЕ ДОБАВЛЕНИЕ ===
                 const tempId = -Date.now();
 
                 const tempMessage: message = {

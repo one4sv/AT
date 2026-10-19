@@ -234,6 +234,7 @@ export default function Acc() {
             >
                 <AccInfo acc={acc} canView={canView} collapsed={collapsed} />
                 <div className="accContentSelector">
+                    <div className="accContentIndicator" ref={line} />
                     <div className="accContentSelect">
                         {tabs.map((tab, i) => (
                             <div
@@ -244,9 +245,6 @@ export default function Acc() {
                                 {tab.nameMy && isMyAcc ? tab.nameMy : tab.name}
                             </div>
                         ))}
-                    </div>
-                    <div className="accContentLine">
-                        <div className="accContentLineIndicator" ref={line} />
                     </div>
                 </div>
 

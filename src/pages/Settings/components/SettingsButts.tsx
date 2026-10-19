@@ -49,8 +49,8 @@ export default function SettingsButts({
           )}
           {user.username ? (
             <>
-              <span className="settingUserName">{user.username}</span>{" "}
-              <span className="settingUserNick">| @{user.nick}</span>
+              <span className="settingUserName">{user.username}</span>
+              <span className="settingUserNick"> | @{user.nick}</span>
             </>
           ) : (
             <>@{user.nick}</>
