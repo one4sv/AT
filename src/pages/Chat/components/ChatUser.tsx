@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useChat } from "../../../components/hooks/ChatHook";
 import { useRef } from "react";
@@ -11,6 +10,7 @@ import { useSettings } from "../../../components/hooks/SettingsHook";
 import { useUser } from "../../../components/hooks/UserHook";
 import { CircleUserRound } from "lucide-react";
 import { useNote } from "../../../components/hooks/NoteHook";
+import { useBlackout } from "../../../components/hooks/BlackoutHook";
 
 export default function ChatUser() {
     const { user } = useUser()
@@ -20,7 +20,7 @@ export default function ChatUser() {
     const { openSideMenu } = useSideMenu()
     const { layout } = useSettings()
     const { showNotification } = useNote()
-    const navigate = useNavigate();
+    const { setBlackout } = useBlackout()
 
     const nameRef = useRef<HTMLDivElement | null>(null);
     const chatUserRef = useRef<HTMLDivElement | null>(null);
@@ -118,8 +118,7 @@ export default function ChatUser() {
             <div className="header chatUserInfo"
                 onClick={() => {
                     if (!chatWith) return;
-                    if (chatWith.is_group) navigate(`/room/${chatWith.id}`)
-                    else navigate(`/acc/${chatWith.nick}`)
+                    setBlackout({seted:true, module:"ChatWithInfo", isRoot:true})
                 }} 
                 ref={nameRef}
                 onContextMenu={(e) => {

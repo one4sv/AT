@@ -1,13 +1,61 @@
 import type { Media, message } from "../../../components/context/ChatContext";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import { useChat } from "../../../components/hooks/ChatHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useUser } from "../../../components/hooks/UserHook";
 import GetIconByType from "./getIconByType";
 
 export default function MessageFiles({files, m} : {files:Media[], m:message}) {
+    const { chatWith } = useChat()
     const { setBlackout } = useBlackout()
     const { user } = useUser()
     const { openMenu } = useContextMenu()
+    
+    const imageFiles = files.filter(file => file.type.startsWith("image/"));
+
+    const openImage = (file: Media) => {
+        const sender = {
+            name: m.sender_name,
+            nick: m.sender_nick,
+            url: (chatWith && chatWith.is_group
+                ? m.sender_avatar_url
+                : chatWith?.id === m.sender_id
+                    ? chatWith.avatar_url
+                    : user.avatar_url) ?? "",
+            id: m.sender_id
+        };
+
+        const options = {
+            nick: chatWith
+                ? chatWith.is_group
+                    ? `g/${chatWith.id}`
+                    : chatWith.nick
+                : undefined,
+            id: String(m.id),
+            name: file.name,
+            url: file.url
+        };
+
+        setBlackout({
+            seted: true,
+            module: "ImgPrev",
+            img: file.url,
+            images: imageFiles.map(image => ({
+                url: image.url,
+                name: image.name,
+                options: {
+                    ...options,
+                    name: image.name,
+                    url: image.url
+                },
+                sender
+            })),
+            imageIndex: imageFiles.findIndex(image => image.url === file.url),
+            options,
+            sender
+        });
+    };
+
     return (
         <div className="messageFiles">
             {files.map((file, j) => {
@@ -16,7 +64,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                 return (
                     <div key={j} className="messageFile">
                         {isImage ? (
-                            <img src={file.url} alt={file.name} className="messageFilePreview" onClick={() => setBlackout({seted:true, module:"ImgPrev", img:file.url})}
+                            <img src={file.url} alt={file.name} className="messageFilePreview" onClick={() => openImage(file)}
                             onContextMenu={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()

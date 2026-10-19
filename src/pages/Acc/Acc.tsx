@@ -7,7 +7,6 @@ import type { PrivateSettings } from "../../components/context/SettingsContext";
 import AccInfo from "./components/AccInfo";
 import AccHabits from "./components/AccHabits";
 import AccPosts from "./components/AccPosts";
-import AccMedia from "./components/AccMedia";
 import { useAcc } from "../../components/hooks/AccHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
@@ -20,7 +19,6 @@ export default function Acc() {
     const {
         refetchAcc,
         loading,
-        media,
         posts,
         habits,
         acc,
@@ -37,7 +35,7 @@ export default function Acc() {
 
     const [collapsed, setCollapsed] = useState(0);
     const [selector, setSelector] =
-        useState<"sended" | "habits" | "posts">("sended");
+        useState<"habits" | "posts">("posts");
 
     const touchStartY = useRef(0);
     const touchStartX = useRef(0);
@@ -49,10 +47,9 @@ export default function Acc() {
     const contentRef = useRef<HTMLDivElement>(null);
     const slideRefs = useRef<(HTMLDivElement | null)[]>([null, null, null]);
 
-    const tabs: { tab: "sended" | "habits" | "posts", name: string, nameMy?: string }[] = [
-        { tab: "sended", name: t("tabs.files"), nameMy: t("tabs.favorites") },
-        { tab: "habits", name: t("tabs.activities") },
+    const tabs: { tab: "habits" | "posts", name: string, nameMy?: string }[] = [
         { tab: "posts", name: t("tabs.posts") },
+        { tab: "habits", name: t("tabs.activities") },
     ];
 
     const canView = useCallback(
@@ -69,7 +66,7 @@ export default function Acc() {
 
         const my = nick === user.nick;
         setIsMyAcc(my);
-        setSelector("sended");
+        setSelector("posts");
 
         Promise.all([refetchAcc(nick), refetchPosts(nick)]);
     }, [nick, user.nick, user.id]);
@@ -112,7 +109,7 @@ export default function Acc() {
 
         if (proc > 150) setSelector("posts");
         else if (proc > 50) setSelector("habits");
-        else setSelector("sended");
+        else setSelector("posts");
     };
 
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
@@ -125,7 +122,7 @@ export default function Acc() {
     };
 
     const touchSliderStart = () => {
-        if (selector !== "sended") {
+        if (selector !== "posts") {
             setDontHandle(true);
         }
     };
@@ -263,11 +260,16 @@ export default function Acc() {
                 >
                     <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined}>
                         <div
-                            className="accContentSlide accMedia"
-                            ref={el => { slideRefs.current[0] = el; }}
+                            className="accContentSlide"
+                            ref={el => { slideRefs.current[2] = el; }}
                             style={{ pointerEvents: `${isMobile && collapsed === 0 ? "none" : "all"}` }}
                         >
-                            {!isMyAcc && <AccMedia media={media} />}
+                            <AccPosts
+                                posts={posts}
+                                habits={habits}
+                                isMy={isMyAcc}
+                                refetch={refetchAcc}
+                            />
                         </div>
                     </div>
                     <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined}>
@@ -280,20 +282,6 @@ export default function Acc() {
                                 isMyAcc={isMyAcc}
                                 habits={habits}
                                 canView={canView}
-                            />
-                        </div>
-                    </div>
-                    <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined}>
-                        <div
-                            className="accContentSlide"
-                            ref={el => { slideRefs.current[2] = el; }}
-                            style={{ pointerEvents: `${isMobile && collapsed === 0 ? "none" : "all"}` }}
-                        >
-                            <AccPosts
-                                posts={posts}
-                                habits={habits}
-                                isMy={isMyAcc}
-                                refetch={refetchAcc}
                             />
                         </div>
                     </div>

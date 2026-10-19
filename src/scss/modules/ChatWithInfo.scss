@@ -1,0 +1,251 @@
+@use "../mixins" as var;
+
+.chatWithInfoDiv {
+    @include var.centerModal;
+    background-color: var(--mc);
+    width: 25%;
+    border-radius: 24px;
+    padding: 1vh 1vw;
+    gap: 2vh;
+    max-height: 90dvh;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    scrollbar-width: thin;
+    overflow-x: hidden;
+    transition: min-height .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+    @media (max-width: 800px) {
+        width: 100%;
+        padding: 4vh 2vw 0;
+        border-radius: 24px 24px 0 0;
+        max-height: 100dvh;
+    }
+}
+
+.chatWithInfoMain {
+    cursor: pointer;
+    background-color: var(--interact);
+    border-radius: 24px;
+    padding: 1vh;
+    >.accPic {
+        margin-top: 0;
+    }
+    @media (max-width: 800px) {
+        gap: 5px;
+    }
+}
+
+.chatMediaFilters {
+    display: flex;
+    flex-shrink: 0;
+    background: var(--mc);
+    width: 100%;
+    height: 5vh;
+    min-height: 36px;
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.chatMediaFilterTrack {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    transition: transform .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    pointer-events: none;
+}
+
+.chatMediaFilter {
+    color: var(--borderWh);
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    user-select: none;
+    transition: color .2s ease;
+}
+
+.chatMediaFilter.active {
+    color: var(--tc);
+}
+
+.chatMedia {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 0;
+    gap: 1.5vh;
+}
+
+.chatMediaBody {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    min-height: 0;
+    width: 100%;
+}
+
+.chatMediaGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    width: 100%;
+}
+
+.chatMediaGridlink {
+    display: flex;
+    flex-direction: column;
+}
+
+.chatMediaItem {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    min-width: 0;
+    padding: 0;
+    overflow: hidden;
+    border: none;
+    border-radius: 24px;
+    background: var(--mc);
+    color: var(--tc);
+    cursor: pointer;
+    will-change: transform, opacity;
+}
+
+.chatMedialink {
+    min-height: 5vh;
+    height: fit-content;
+    aspect-ratio: 0;
+    flex-direction: row;
+    background: var(--interact);
+    justify-content: start;
+    padding-left: 1vw;
+    gap: 5px;
+
+    > span {
+        text-align: start;
+    }
+
+    @media (max-width: 800px) {
+        padding-left: 3vw;
+    }
+}
+
+.chatMediaItem img,
+.chatMediaItem video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.chatMediaPlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    filter: drop-shadow(0 1px 4px #000);
+    pointer-events: none;
+}
+
+.chatMediaDocument span {
+    max-width: 100%;
+    font-size: 0.85rem;
+    overflow-wrap: anywhere;
+}
+
+.chatMediaDocument small {
+    color: var(--borderWh);
+    font-size: 0.75rem;
+}
+
+.chatMediaEmpty,
+.chatMediaStatus {
+    padding: 12px;
+    color: var(--borderWh);
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.chatMediaLoading {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    width: 100%;
+    pointer-events: none;
+}
+
+.chatMediaLoadinglink {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chatMediaLoadingItem {
+    position: relative;
+    aspect-ratio: 1;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--mc);
+}
+
+.chatMediaLoadingItemlink {
+    aspect-ratio: auto;
+    min-height: 5vh;
+    border-radius: 16px;
+    background: var(--interact);
+}
+
+.chatMediaLoadingItem::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        110deg,
+        transparent 20%,
+        rgb(255 255 255 / 5%) 40%,
+        rgb(255 255 255 / 12%) 50%,
+        rgb(255 255 255 / 5%) 60%,
+        transparent 80%
+    );
+    background-size: 200% 100%;
+    animation: chatMediaLoading 1.35s ease-in-out infinite;
+}
+
+@keyframes chatMediaLoading {
+    from {
+        background-position: 100% 0;
+    }
+
+    to {
+        background-position: -100% 0;
+    }
+}
+
+@media (max-width: 800px) {
+    .chatMediaItem,
+    .chatMediaLoadingItem {
+        border-radius: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chatMediaLoadingItem::after {
+        animation: none;
+    }
+}

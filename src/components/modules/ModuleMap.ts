@@ -9,6 +9,7 @@ import CreateChat from './CreateChat';
 import PermissionsSettings from './PermissionsSettings';
 import ShareAcc from './ShareAcc';
 import LinkConfirm from './LinkConfirm';
+import ChatWithInfo from './ChatWithInfo';
 
 const ModuleMap: Record<string, React.FC> = {
     AddHabit: AddHabit,
@@ -21,7 +22,8 @@ const ModuleMap: Record<string, React.FC> = {
     CreateChat:CreateChat,
     PermissionsSettings:PermissionsSettings,
     ShareAcc:ShareAcc,
-    LinkConfirm:LinkConfirm
+    LinkConfirm:LinkConfirm,
+    ChatWithInfo:ChatWithInfo
 };
 
 export default ModuleMap;

@@ -41,6 +41,7 @@ export interface message {
   sender_id: string;
   sender_name: string;
   sender_nick: string;
+  sender_avatar_url: string;
   content: string;
   created_at: Date;
   files?: Media[];

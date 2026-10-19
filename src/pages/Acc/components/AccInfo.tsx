@@ -103,7 +103,7 @@ export default function AccInfo({ acc, canView, collapsed }: { acc?: User, canVi
                             onChange={(e) => setNewName(e.currentTarget.value)}
                         />
                     </div>
-                    <div>
+                    <div className="accNickStr">
                         {!isMobile && "@"}
                         <input
                             className={`accInput nickInput ${!red ? "dis" : ""}`}
