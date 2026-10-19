@@ -223,14 +223,13 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
                             </div>
                         )}
                     </div>
-                    {isMy && chatWith &&
-                        m.isPending ? (
-                            <div className="messageReadSign "><ClockCountdownIcon/></div>
-                        ) : (m.read_by.length > 0 ? (
-                            <div className="messageReadSign read"><CheckCheck/></div>
-                            ) : (
-                                <div className="messageReadSign unread"><Check/></div>
-                            ))
+                    {isMy && chatWith
+                        ? m.isPending
+                            ? <div className="messageReadSign "><ClockCountdownIcon/></div>
+                            : m.read_by.length > 0
+                                    ? <div className="messageReadSign read"><CheckCheck/></div>
+                                    : <div className="messageReadSign unread"><Check/></div>
+                        : ""
                     }
                 </div>
                 {highlightedId === m.id && m.reactions && m.reactions.length === 0 ? 

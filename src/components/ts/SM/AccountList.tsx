@@ -116,22 +116,6 @@ export default function AccountList() {
                         {logoutConfirm ? <><CheckIcon size={21}/> Подтвердить выход</> : <><SignOutIcon weight="fill" size={21}/> Выйти из аккаунта</>}
                     </span>
                 </div>
-<div className="SMaccountButt">
-    Высота body: {document.body.getBoundingClientRect().height}px, html: {document.documentElement.getBoundingClientRect().height}px, root: {document.getElementById("root")?.getBoundingClientRect().height}px, layout: {document.querySelector(".mobile-layout")?.getBoundingClientRect().height}px,
-</div>
-<div className="SMaccountButt">
-    innerHeight: {window.innerHeight}px, visualViewport.height: {window.visualViewport?.height}px, visualViewport.offsetTop: {window.visualViewport?.offsetTop}px
-</div>
-<div className="SMAccountButt">
-    root top: {document.getElementById("root")?.getBoundingClientRect().top}px,
-    root bottom: {document.getElementById("root")?.getBoundingClientRect().bottom}px,
-    root clientHeight: {document.getElementById("root")?.clientHeight}px,
-    root CSS height: {getComputedStyle(document.getElementById("root")!).height},
-    root CSS flex: {getComputedStyle(document.getElementById("root")!).flex},
-    root CSS margin: {getComputedStyle(document.getElementById("root")!).margin},
-    body display: {getComputedStyle(document.body).display},
-    body align-items: {getComputedStyle(document.body).alignItems}
-</div>
             </div>
         </div>
     )
