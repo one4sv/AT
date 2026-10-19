@@ -90,6 +90,7 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
                     sender_id: user.id ?? "You",
                     sender_name: user.username || user.username || "You",
                     sender_nick: user.nick || "",
+                    sender_avatar_url: user.avatar_url || "",
                     content: trimmedMess,
                     created_at: new Date(),
                     files: currentFiles.map(f => ({
