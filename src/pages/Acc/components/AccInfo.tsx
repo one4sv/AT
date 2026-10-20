@@ -20,7 +20,7 @@ export default function AccInfo({ acc, canView, collapsed, isDragging, onHeightC
     canView: (field: keyof PrivateSettings) => boolean,
     collapsed: number,
     isDragging: boolean,
-    onHeightChange: (height: number) => void
+    onHeightChange?: (height: number) => void
 }) {
     const { t } = useTranslation("acc");
     const { setBlackout } = useBlackout();
@@ -44,7 +44,7 @@ export default function AccInfo({ acc, canView, collapsed, isDragging, onHeightC
         const measure = () => {
             const height = inner.getBoundingClientRect().height;
             setInfoHeight(prev => prev === height ? prev : height);
-            onHeightChange(height);
+            if (onHeightChange) onHeightChange(height);
         };
 
         measure();

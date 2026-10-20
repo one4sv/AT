@@ -14,7 +14,7 @@ export default function AccSettingsTab({ search }: { search: string }) {
     return (
         <div className="settingTab">
             <div className="settingInnerDiv settingInnerAccDiv" data-setting-id="editAcc">
-                <AccInfo acc={user} canView={() => true} collapsed={0} />
+                <AccInfo acc={user} canView={() => true} collapsed={0} isDragging={false}/>
             </div>
 
             {/* Телефон */}
