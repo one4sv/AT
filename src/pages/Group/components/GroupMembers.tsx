@@ -36,7 +36,7 @@ export default function GroupMembers({ members, myPerms }: { members: Member[]; 
                 </div>}
             </div>
             {filtered.length ? <ul className="groupMemberList">{filtered.map(member => (
-                <li key={member.id} className="groupMember" onContextMenu={event => { event.preventDefault(); showMenu(member, event.clientX, event.clientY); }}>
+                <li key={member.id} className="groupMember" data-context-menu="true" onContextMenu={event => { event.preventDefault(); showMenu(member, event.clientX, event.clientY); }}>
                     <Link className="groupMemberLink" to={`/chat/${member.nick}`}>
                         <span className="groupMemberAvatar">{member.avatar_url ? <img src={member.avatar_url} alt="" loading="lazy" /> : <span><User size={28} /></span>}{onlineMap[member.id] && <i />}</span>
                         <span className="groupMemberInfo"><span className="groupMemberName">{member.name || member.nick}{user.id === member.id && <small>Вы</small>}</span><span className={`groupMemberLastOnline ${onlineMap[member.id] ? "online" : ""}`}>{onlineMap[member.id] && <CircleIcon size={12} weight="fill" aria-hidden="true" />}{onlineMap[member.id] ? "В сети" : formatLastOnline(member.last_online)}</span></span>

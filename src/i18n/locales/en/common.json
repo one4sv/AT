@@ -8,7 +8,9 @@
         "contacts": "Contacts",
         "faq": "FAQ",
         "russian": "Russian",
-        "english": "English"
+        "english": "English",
+        "description": "Personal goals, shared activities and conversations in one place.",
+        "language": "Interface language"
     },
     "sideMenu": {
         "searchPlaceholder": "Search...",
@@ -46,5 +48,38 @@
         "mediafile": "mediafile",
         "mediafiles": "mediafiles",
         "forwardedMessage": "Forwarded message"
+    },
+    "accountNavigation": {
+        "feed": "Feed",
+        "feedDesc": "Updates, posts and activities from your friends.",
+        "activities": "Activities",
+        "activitiesDesc": "Plans, goals and your progress.",
+        "settings": "Settings",
+        "saved": "Saved messages",
+        "logout": "Sign out",
+        "confirmLogout": "Confirm sign out",
+        "settingsSearch": "Search settings",
+        "search": "Search…"
+    },
+    "activityCompletion": {
+        "noTasks": "No tasks for this day",
+        "noBlocks": "No blocks for this day yet",
+        "addBlock": "Add block",
+        "startTime": "Start time",
+        "endTime": "End time",
+        "blockName": "Block name",
+        "save": "Save block",
+        "edit": "Edit block",
+        "delete": "Delete block",
+        "cancelDelete": "Cancel deletion"
+    },
+    "appearance": {
+        "enableLight": "Enable light theme",
+        "enableDark": "Enable dark theme"
+    },
+    "links": {
+        "copy": "Copy link",
+        "copied": "Link copied",
+        "copyFailed": "Could not copy the link"
     }
 }

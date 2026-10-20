@@ -10,12 +10,13 @@ import PolicyTab from "./tabs/PolicyTab"
 import ContactsTab from "./tabs/ContactsTab"
 import FaqTab from "./tabs/FaqTab"
 import { useTranslation } from "react-i18next"
-import { isMobile } from "react-device-detect"
+import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import Toggler from "../../components/ts/Toggler"
 import { AnimatePresence, motion } from "motion/react"
 import { useBlackout } from "../../components/hooks/BlackoutHook"
 
 export default function Info() {
+    const isMobile = useCompactLayout();
     const { setTitle } = usePageTitle()
     const { t } = useTranslation("info");
     const { tab } = useParams();
@@ -186,7 +187,7 @@ export default function Info() {
                                     }}
                                 >
                                     <ArrowLeftIcon size={24} />
-                                    <h2>Назад</h2>
+                                    <h2>{t("navigation.back")}</h2>
                                 </div>
                             </div>
                         ) : ""}
@@ -220,7 +221,7 @@ export default function Info() {
                                     }}
                                 >
                                     <ArrowLeftIcon size={24} />
-                                    <h2>Назад</h2>
+                                    <h2>{t("navigation.back")}</h2>
                                 </div>
                             </div>
                         ) : ""}
@@ -239,7 +240,7 @@ export default function Info() {
                                             <ArrowLeftIcon size={24} />
                                         </div>
                                         <div className="infoTableButt" onClick={() => setTable(!table)}>
-                                            Содержание
+                                            {t("navigation.contents")}
                                             <Toggler state={table} setState={setTable}/>
                                         </div>
                                     </div>
@@ -258,7 +259,7 @@ export default function Info() {
                                             <ArrowLeftIcon size={24} />
                                         </div>
                                         <div className="infoTableButt" onClick={() => setBlackout({seted:true, module:"Table", table:{ contents: contents, activeContent:activeContent}})}>
-                                            Содержание
+                                            {t("navigation.contents")}
                                         </div>
                                     </div>
                                 ) : "" }

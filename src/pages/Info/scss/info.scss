@@ -248,3 +248,9 @@
         color: var(--inner_text);
     }
 }
+.infoIllustration { display: block; width: 100%; max-width: 560px; height: auto; margin: 8px auto 24px; }
+
+.infoText { line-height: 1.6; overflow-wrap: anywhere; }
+.infoText :is(h1, h2, h3) { line-height: 1.25; margin-block: 1.1em .6em; }
+.infoText p { margin-block: .75em; }
+.infoText li { margin-block: .4em; }

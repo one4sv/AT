@@ -201,6 +201,7 @@ export default function HabitDiv({
                 closeMenu();
             }}
             to={`/habit/${habit.id}`}
+            data-context-menu="true"
             onContextMenu={(e) => {
                 e.preventDefault();
                 openMenu(

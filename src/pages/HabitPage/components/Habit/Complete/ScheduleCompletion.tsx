@@ -1,68 +1,40 @@
-import { useState } from "react";
 import { useSchedule } from "../../../../../components/hooks/ScheduleHook";
 import { useParams } from "react-router";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import "../../../scss/scheduleComp.scss";
-import { CheckCircleIcon, Circle } from "@phosphor-icons/react";
+import { CheckCircleIcon, CircleIcon, ListChecksIcon } from "@phosphor-icons/react";
 import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
 import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 import { useScheduleCompleted } from "../../../../../components/hooks/utils/useScheduleCompleted";
+import { useTranslation } from "react-i18next";
 
-export default function ScheduleCompletion({ isMy }:{ isMy:boolean }) {
+export default function ScheduleCompletion({ isMy }: { isMy: boolean }) {
     const { scheduleComplete, loadingComp, loading } = useSchedule();
     const { chosenDay } = useCalendar();
     const { habitId: id } = useParams<{ habitId: string }>();
-    const [ hover, setHover ] = useState<number>(0)
-
-    const scheduleCompleted = useScheduleCompleted(id)
+    const { t } = useTranslation("common");
+    const scheduleCompleted = useScheduleCompleted(id);
     const date = chosenDay || todayStrFunc();
 
     if (!id) return null;
-    if (loading) return (
-        <div className="scheduleCompilition">
-            <span className="scheduleRest">Загрузка</span>
-        </div>
-    )
-    
+
     return (
-        <div className="scheduleCompilition">
-            {!loading && scheduleCompleted.length === 0 && (<span className="scheduleRest">Выходной</span>)}
-            {scheduleCompleted.map((s) => {
-                const key = `${s.id} - ${date}`
-                console.log(key, loadingComp.some(l => l === key))
+        <div className="scheduleCompilition" aria-busy={loading}>
+            {loading && scheduleCompleted.length === 0 && <div className="completionEmpty" role="status"><LoaderSmall/></div>}
+            {!loading && scheduleCompleted.length === 0 && <div className="completionEmpty"><ListChecksIcon size={32}/><span>{t("activityCompletion.noTasks")}</span></div>}
+            {scheduleCompleted.map(block => {
+                const key = `${block.id} - ${date}`;
+                const pending = loadingComp.includes(key);
+                const time = [block.start_time, block.end_time].filter(Boolean).join(" — ");
                 return (
-                    <div
-                        className="scheduleButt"
-                        key={key}
-                        onClick={() => {
-                            if (!isMy) return
-                            scheduleComplete(id, s.id, date)
-                        }}
-                        onMouseOver={() => {
-                            if (!isMy) return
-                            setHover(s.id)
-                        }}
-                        onMouseLeave={() => {
-                            if (!isMy) return
-                            setHover(0)
-                        }}
-                    >
-                        <div className="scheduleButtInfo">
-                            <span className="scheduleButtSpan">
-                                {s.start_time} - {s.end_time}:
-                            </span>
-                            {s.name}
-                        </div>
-                        <div className="scheduleButtSvg">
-                            {loadingComp.some(l => l === key) 
-                                ? <LoaderSmall/>
-                                : s.completed
-                                    ? <CheckCircleIcon weight="fill" className="scsvg"/>
-                                    : hover === s.id ? <CheckCircleIcon/> : <Circle/>
-                            }
-                        </div>
-                    </div>
-                )
+                    <button type="button" className={`scheduleButt ${block.completed ? "completed" : ""}`} key={key} disabled={!isMy || pending} aria-pressed={block.completed} onClick={() => scheduleComplete(id, block.id, date)}>
+                        <span className="scheduleButtInfo">
+                            {time && <span className="scheduleButtSpan">{time}</span>}
+                            <span>{block.name}</span>
+                        </span>
+                        <span className="scheduleButtSvg" aria-hidden="true">{pending ? <LoaderSmall/> : block.completed ? <CheckCircleIcon weight="fill" className="scsvg"/> : <CircleIcon/>}</span>
+                    </button>
+                );
             })}
         </div>
     );

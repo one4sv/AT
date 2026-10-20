@@ -8,9 +8,10 @@ export default function ChosenDayDate () {
     const showReturn = chosenDay !== todayStrFunc() || selectedMonth !== date.getMonth() || selectedYear !== date.getFullYear()
 
     const returnCal = () => {
+        const today = new Date()
         setChosenDay(todayStrFunc())
-        setSelectedMonth(date.getMonth())
-        setSelectedYear(date.getFullYear())
+        setSelectedMonth(today.getMonth())
+        setSelectedYear(today.getFullYear())
     }
     return (
         <div className="chosenDayDate">

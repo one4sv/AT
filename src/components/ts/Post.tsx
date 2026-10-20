@@ -184,7 +184,7 @@ export default function Post({ post, isMy }: PostProps) {
     if (post.likes) likesCount = post.likes.length;
 
     return (
-        <div className="PostDiv" onMouseEnter={() => isMy && setHover(true)} onMouseLeave={() => setHover(false)} onContextMenu={(e) => {
+        <div className="PostDiv" onMouseEnter={() => isMy && setHover(true)} onMouseLeave={() => setHover(false)} data-context-menu="true" onContextMenu={(e) => {
             e.preventDefault();
             openMenu(e.clientX, e.clientY, "post", {id:String(post.id), name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text, isMy:isMy, red:red, func: () => {
                 if (red) {

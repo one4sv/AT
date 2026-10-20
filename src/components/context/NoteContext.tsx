@@ -31,10 +31,10 @@ export const NoteProvider = ({children}:{children:ReactNode}) => {
         setDisplay(true);
         setId(prev=>prev+1);
 
-        timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = window.setTimeout(() => {
             setDisplay(false)
 
-            hideRef.current = setTimeout(() => {
+            hideRef.current = window.setTimeout(() => {
                 setType('false');
                 setTxt('');
             },600);

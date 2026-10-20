@@ -1,4 +1,4 @@
-import { isMobile } from "react-device-detect"
+import useCompactLayout from "../../hooks/utils/useCompactLayout";
 import { useSideMenu } from "../../hooks/SideMenuHook"
 import { useUser } from "../../hooks/UserHook"
 import { useSettings } from "../../hooks/SettingsHook"
@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import { useBlackout } from "../../hooks/BlackoutHook"
 
 export default function SMheader() {
+    const isMobile = useCompactLayout();
     const { user } = useUser()
     const {
         activeTab,
@@ -118,6 +119,12 @@ export default function SMheader() {
 
             isPointerDown.current = false
             cancelLongPress()
+            if (e.type === "touchcancel") {
+                wasLongPress.current = false
+                setOpenFilters(null)
+                setTouchHover(null)
+                return
+            }
 
             if (!wasLong) {
                 wasLongPress.current = false
@@ -175,6 +182,7 @@ export default function SMheader() {
         document.addEventListener("touchmove", handleTouchMove)
 
         return () => {
+            if (timerRef.current) clearTimeout(timerRef.current)
             document.removeEventListener("mouseup", handlePointerUp)
             document.removeEventListener("touchend", handlePointerUp)
             document.removeEventListener("touchcancel", handlePointerUp)

@@ -24,6 +24,8 @@ export type FilterItem = {
 };
 
 interface SideMenuContextType {
+    settingsSearch: string;
+    setSettingsSearch: React.Dispatch<SetStateAction<string>>;
     showSideMenu: boolean;
     setShowSideMenu: React.Dispatch<SetStateAction<boolean>>;
     red: boolean;
@@ -66,6 +68,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [showHabitMenu, setShowHabitMenu] = useState(false);
     const [showSlide, setShowSlide] = useState<slides>(null);
     const [activeTab, setActiveTab] = useState<tab>("chats");
+    const [settingsSearch, setSettingsSearch] = useState("");
     const [translateX, setTranslateX] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
     const [dontHandle, setDontHandle] = useState(false);
@@ -186,7 +189,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     // === остальной код (анимация и т.д.) без изменений ===
     const translateXRef = useRef(0);
     const animationFrame = useRef<number | null>(null);
-    const isInitial = useRef(true);
+    const previousPath = useRef<string | null>(null);
     const location = useLocation();
 
     useEffect(() => {
@@ -236,8 +239,6 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const closeMenu = useCallback(() => {
-        if (isInitial.current) isInitial.current = false;
-
         setIsDragging(false);
         setDontHandle(false);
         setDontHandleOther(false);
@@ -269,15 +270,22 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     }, [animateTo]);
 
     useEffect(() => {
-        if (!isInitial.current) {
+        if (previousPath.current === null) {
+            previousPath.current = location.pathname;
+            if (location.pathname.startsWith("/info")) closeMenu();
+            return;
+        }
+        if (previousPath.current !== location.pathname) {
+            previousPath.current = location.pathname;
             closeMenu();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location.pathname]);
+    }, [location.pathname, closeMenu]);
 
     return (
         <SideMenuContext.Provider
             value={{
+                settingsSearch,
+                setSettingsSearch,
                 showSideMenu,
                 setShowSideMenu,
                 red,

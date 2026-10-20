@@ -133,6 +133,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         i18n.changeLanguage(lang);
+        document.documentElement.lang = lang;
     }, [lang]);
 
     const refetchSettings = useCallback(async () => {

@@ -1,6 +1,8 @@
 @use "../../../scss/mixins" as var;
 
 .completeDiv {
+    min-height: 0;
+    min-width: 0;
     display: flex;
     position: relative;
     flex-direction: column;
@@ -28,6 +30,8 @@
     text-align: center;
 }
 .completeMain {
+    box-sizing: border-box;
+    min-height: 0;
     position: relative;
     width: 100%;
     padding: 0.5vh 0.25vw;

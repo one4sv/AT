@@ -1,5 +1,6 @@
 import {
     CheckCircleIcon,
+    ListChecksIcon,
     FloppyDiskIcon,
     PencilSimpleIcon,
     PlusIcon,
@@ -7,7 +8,7 @@ import {
 } from "@phosphor-icons/react"
 
 import "../../../scss/doneComp.scss"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 import { api } from "../../../../../components/ts/api"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
@@ -16,12 +17,14 @@ import { useNote } from "../../../../../components/hooks/NoteHook"
 import { formatTime, timeToMinutes } from "../../../../../components/ts/utils/dateToStr"
 import { DeleteTimer } from "../../../utils/deleteTimer"
 import axios from "axios"
+import { useTranslation } from "react-i18next"
 import { SaveOffIcon } from "lucide-react"
 import { useChecklistBlocks } from "../../../../../components/hooks/utils/useChecklistHook"
 import { useDelayedDelete } from "../../../../../components/hooks/utils/useDelayedDelete"
 
 export default function DoneCompletion({ isMy }: { isMy: boolean }) {
     const { chosenDay } = useCalendar()
+    const { t } = useTranslation("common")
     const { loadHabit, habit, checklist } = useTheHabit()
     const { showNotification } = useNote()
 
@@ -42,11 +45,25 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
 
     const [editing, setEditing] = useState<Set<number>>(new Set())
     const [loading, setLoading] = useState<Set<number>>(new Set())
+    const saving = useRef(new Set<number>())
+    const mounted = useRef(true)
+    const editingRef = useRef(editing)
+    editingRef.current = editing
+
+    useEffect(() => {
+        mounted.current = true
+        return () => { mounted.current = false }
+    }, [])
 
 
     useEffect(() => {
-        setBlocks(checklist)
-    }, [checklist])
+        setBlocks(previous => [
+            ...checklist.map(block => editingRef.current.has(block.id)
+                ? previous.find(draft => draft.id === block.id) ?? block
+                : block),
+            ...previous.filter(block => block.isNew && block.habit_id === habit?.id)
+        ])
+    }, [checklist, habit?.id, setBlocks])
 
     const addBlock = () => {
         if (!habit) return
@@ -68,8 +85,9 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
     }
 
     const saveBlock = async (b: DoneCompletion) => {
-        if (!b.name.trim()) return
+        if (!isMy || !habit || !b.name.trim() || saving.current.has(b.id) || deleting.has(b.id)) return
 
+        saving.current.add(b.id)
         setLoading(prev => new Set(prev).add(b.id))
 
         try {
@@ -77,29 +95,45 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
 
             const res = await api.post(
                 `checklist/${path}`,
-                b
+                { ...b, name: b.name.trim() }
             )
+            if (!mounted.current) return
 
             if (res.data.success) {
-                toggleEdit(b.id)
-                loadHabit(String(habit?.id))
+                editingRef.current = new Set(editingRef.current)
+                editingRef.current.delete(b.id)
+                setEditing(previous => {
+                    const next = new Set(previous)
+                    next.delete(b.id)
+                    return next
+                })
+                if (res.data.block) {
+                    const saved = { ...res.data.block, isNew: false, start_time: res.data.block.start_time ?? "", end_time: res.data.block.end_time ?? "" }
+                    setBlocks(previous => previous.map(block => block.id === b.id ? saved : block))
+                }
+                await loadHabit(String(b.habit_id))
 
-                if (b.isNew) {
+                if (mounted.current && b.isNew && !res.data.block) {
                     setBlocks(prev => prev.filter(x => x.id !== b.id))
                 }
+            } else {
+                showNotification("error", res.data.error || "Ошибка сохранения")
             }
         } catch (err) {
-            if (!axios.isAxiosError(err)) return
+            if (!mounted.current || !axios.isAxiosError(err)) return
             showNotification(
                 "error",
                 err.response?.data?.error || "Ошибка"
             )
         } finally {
-            setLoading(prev => {
-                const next = new Set(prev)
-                next.delete(b.id)
-                return next
-            })
+            saving.current.delete(b.id)
+            if (mounted.current) {
+                setLoading(prev => {
+                    const next = new Set(prev)
+                    next.delete(b.id)
+                    return next
+                })
+            }
         }
     }
 
@@ -120,6 +154,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
     return (
         <div className="doneCompletionDiv">
             <div className="doneComps">
+                {!filteredBlocks.length && <div className="completionEmpty"><ListChecksIcon size={32}/><span>{t("activityCompletion.noBlocks")}</span></div>}
                 {filteredBlocks.map(b => {
                     const isEditing = editing.has(b.id)
                     const isLoading = loading.has(b.id)
@@ -140,7 +175,10 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                         <>
                                             с{" "}
                                             <input
-                                                value={b.start_time}
+                                                type="time"
+                                                aria-label={t("activityCompletion.startTime")}
+                                                value={b.start_time ?? ""}
+                                                disabled={isLoading}
                                                 className="doneCompInp"
                                                 onChange={e =>
                                                     updateBlock(
@@ -150,11 +188,13 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                                     )
                                                 }
                                                 placeholder="чч:мм"
-                                                pattern="^[\\d.:]{0,5}$"
                                             />
                                             до
                                             <input
-                                                value={b.end_time}
+                                                type="time"
+                                                aria-label={t("activityCompletion.endTime")}
+                                                value={b.end_time ?? ""}
+                                                disabled={isLoading}
                                                 className="doneCompInp"
                                                 onChange={e =>
                                                     updateBlock(
@@ -164,7 +204,6 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                                     )
                                                 }
                                                 placeholder="чч:мм"
-                                                pattern="^[\\d.:]{0,5}$"
                                             />
                                             :
                                         </>
@@ -175,7 +214,11 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
 
                                 {isEditing ? (
                                     <input
+                                        aria-label={t("activityCompletion.blockName")}
+                                        placeholder={t("activityCompletion.blockName")}
+                                        maxLength={1000}
                                         value={b.name}
+                                        disabled={isLoading}
                                         className="doneCompInp dciw"
                                         onChange={e =>
                                             updateBlock(
@@ -193,7 +236,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
 
                             {isMy && (
                                 <div className="doneCompContolers">
-                                    <div
+                                    <button type="button" disabled={isLoading || deleting.has(b.id) || (isEditing && !b.name.trim())} aria-label={t(isEditing ? "activityCompletion.save" : "activityCompletion.edit")}
                                         className="doneCompControler"
                                         onClick={() =>
                                             isEditing
@@ -224,12 +267,16 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                                 size={20}
                                             />
                                         )}
-                                    </div>
+                                    </button>
 
-                                    <div
+                                    <button type="button" disabled={isLoading} aria-label={t(deleting.has(b.id) ? "activityCompletion.cancelDelete" : "activityCompletion.delete")}
                                         className="doneCompDelete doneCompControler"
                                         onClick={() =>
-                                            deleting.has(b.id)
+                                            b.isNew
+                                                ? setBlocks(previous => previous.filter(block => block.id !== b.id))
+                                                : isLoading
+                                                ? undefined
+                                                : deleting.has(b.id)
                                                 ? cancelDelete(b.id)
                                                 : requestDelete(b.id)
                                         }
@@ -246,7 +293,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                         ) : (
                                             <TrashIcon size={20} />
                                         )}
-                                    </div>
+                                    </button>
                                 </div>
                             )}
                         </div>
@@ -255,9 +302,9 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
             </div>
 
             {isMy && (
-                <div className="doneCompAdd" onClick={addBlock}>
-                    <PlusIcon /> Добавить блок
-                </div>
+                <button type="button" className="doneCompAdd" onClick={addBlock}>
+                    <PlusIcon /> {t("activityCompletion.addBlock")}
+                </button>
             )}
         </div>
     )

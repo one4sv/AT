@@ -1,6 +1,7 @@
 @use "../../../scss/mixins" as var;
 
 .doneCompletionDiv {
+    min-height: 0;
     height: 100%;
     position: relative;
     width: 100%;
@@ -10,6 +11,9 @@
     flex-direction: column;
 }
 .doneComps {
+    flex: 1;
+    min-height: 0;
+    overscroll-behavior: contain;
     height: fit-content;
     width: 100%;
     position: relative;
@@ -25,6 +29,8 @@
     }
 }
 .doneCompAdd {
+    flex-shrink: 0;
+    box-sizing: border-box;
     width: 100%;
     display: flex;
     align-items: center;
@@ -57,10 +63,13 @@
     }
 }
 .doneCompContolers {
+    flex-shrink: 0;
+    align-items: center;
     display: flex;
     height: 80%;
 }
 .doneComp {
+    flex-shrink: 0;
     position: relative;
     width: 100%;
     cursor: default;
@@ -76,6 +85,8 @@
     }
 }
 .doneButtInfo {
+    min-width: 0;
+    overflow-wrap: anywhere;
     display: flex;
     width: 100%;
     justify-content: center;
@@ -118,6 +129,8 @@
     }
 }
 .doneCompControler {
+    min-width: 36px;
+    min-height: 36px;
     height: 100%;
     aspect-ratio: 1/1;
     display: flex;
@@ -182,3 +195,17 @@
         }
     }
 }
+
+.doneComp { box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 8px; border-radius: 16px; background: var(--interact, var(--bgc)); }
+.doneComp .doneButtInfo { box-sizing: border-box; height: auto; min-width: 0; padding: 0; gap: 8px; }
+.doneComp .scheduleButtSpan { flex-wrap: wrap; min-width: 0; }
+.doneComp .doneCompInp { box-sizing: border-box; width: 104px; max-width: 100%; min-height: 40px; border: 1px solid transparent; outline: none; border-radius: 12px; background: var(--mc); padding: 8px; font-size: 16px; color: var(--tc); }
+.doneComp .doneCompInp.dciw { width: 100%; }
+.doneComp .doneCompInp:focus { border-color: var(--accent); }
+.doneComp .doneCompContolers { align-self: center; height: auto; }
+.doneCompControler, .doneCompAdd { border: 0; background: transparent; font: inherit; }
+.doneCompControler { width: 40px; height: 40px; }
+.doneCompControler:disabled { opacity: .5; cursor: default; }
+.doneCompAdd { min-height: 44px; }
+.completionEmpty { display: flex; flex: 1; min-height: 80px; padding: 20px; box-sizing: border-box; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--borderWh); text-align: center; font-size: 15px; }
+.doneComps { gap: 8px; }

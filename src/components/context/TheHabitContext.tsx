@@ -303,6 +303,9 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
             setChecklist(
                 (checklist || []).map((c: DoneCompletion) => ({
                     ...c,
+                    start_time: c.start_time ?? "",
+                    end_time: c.end_time ?? "",
+                    name: c.name ?? "",
                     isNew: false
                 }))
             );

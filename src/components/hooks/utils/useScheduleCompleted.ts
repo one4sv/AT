@@ -15,7 +15,7 @@ export function useScheduleCompleted(id?: string) {
         if (!id || !habitSchedule[id]) return [];
 
         let currentDate = new Date();
-        if (chosenDay !== "") currentDate = new Date(chosenDay);
+        if (chosenDay !== "") currentDate = new Date(`${chosenDay}T12:00:00`);
 
         const currentSettings = schedule_settings[String(id)];
         let currentSchedule: ScheduleBlockType[] = [];
@@ -40,7 +40,7 @@ export function useScheduleCompleted(id?: string) {
             .map((s) => ({
                 ...s,
                 completed: scheduleCompletions.some(
-                    (c) => c.schedule_id === s.id && c.date === dateStr
+                    (c) => String(c.habit_id) === id && c.schedule_id === s.id && c.date === dateStr
                 ),
             }))
             .sort(

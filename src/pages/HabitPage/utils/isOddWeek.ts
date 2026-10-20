@@ -1,28 +1,12 @@
-export const isOddWeek = (weekStart:string | null, date:Date) => {
-    if (!weekStart) return true;
-
-    const start = new Date(weekStart);
-    const target = new Date(date);
-    
-    start.setHours(0, 0, 0, 0);
-    target.setHours(0, 0, 0, 0);
-
-    const getMonday = (date: Date): Date => {
-        const d = new Date(date);
-        const day = d.getDay();
-        const diff = day === 0 ? -6 : 1 - day;
-        d.setDate(d.getDate() + diff);
-        d.setHours(0, 0, 0, 0);
-        return d;
+export const isOddWeek = (weekStart: string | null, date: Date) => {
+    const start = new Date(`${weekStart || "2025-09-01"}T00:00:00Z`);
+    const target = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    if (!Number.isFinite(start.getTime()) || !Number.isFinite(target.getTime())) return true;
+    const monday = (day: Date) => {
+        const weekday = day.getUTCDay();
+        day.setUTCDate(day.getUTCDate() + (weekday === 0 ? -6 : 1 - weekday));
+        return day.getTime();
     };
-
-    const startMonday = getMonday(start);
-    const targetMonday = getMonday(target);
-
-    const diffDays = Math.floor(
-        (targetMonday.getTime() - startMonday.getTime()) / (1000 * 60 * 60 * 24)
-    );
-    const weekNumber = Math.floor(diffDays / 7);
-
+    const weekNumber = Math.round((monday(target) - monday(start)) / 604800000);
     return weekNumber % 2 === 0;
 };

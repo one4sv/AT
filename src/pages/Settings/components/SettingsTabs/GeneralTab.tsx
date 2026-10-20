@@ -1,18 +1,15 @@
 import { useState } from "react";
 import RadioGroup from "../../../../components/ts/RadioGroup";
 import SeekBar from "../SeekBar";
-import SelectList from "../../../../components/ts/SelectList";
+import { Link } from "react-router-dom";
+import { TranslateIcon, CaretRightIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
-import { useSettings } from "../../../../components/hooks/SettingsHook";
-import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import Toggler from "../../../../components/ts/Toggler";
 import { useNote } from "../../../../components/hooks/NoteHook";
 import HighlightText from "../../../../components/ts/HighlightText";
 
 export default function GeneralTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { lang } = useSettings()
-    const { setNewLang } = useUpSettings()
     const { showDevNote } = useNote()
     const [ fontSize, setFontSize ] = useState<number>(16);
 
@@ -23,10 +20,6 @@ export default function GeneralTab({ search }: { search: string }) {
     const dateChanger = [
         { label: t("general.dateStandard"), value: "standart" },
         { label: t("general.dateAmerican"), value: "american" },
-    ];
-    const langArr = [
-        { label: t("general.russian"), value: "ru" },
-        { label: t("general.english"), value: "en" },
     ];
 
     return (
@@ -77,7 +70,7 @@ export default function GeneralTab({ search }: { search: string }) {
                 <div className="settingHeader">
                     <HighlightText text={t("general.language")} search={search} />
                 </div>
-                <SelectList arr={langArr} className="settingSL" selected={lang} extraFunction={setNewLang}/>
+                <Link to="/settings/language" state={{ from: "/settings/gen" }} className="settingTogglerDiv languageSettingLink"><TranslateIcon size={22}/><HighlightText text={t("general.language")} search={search}/><CaretRightIcon size={20}/></Link>
             </div>
         </div>
     );

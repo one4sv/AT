@@ -99,6 +99,7 @@
         "default": "Monochrome",
         "glass": "Glass",
         "background": "Background",
+        "landingBackground": "Accent glow",
         "addCustom": "Add custom",
         "contourShapes": "Contour shapes",
         "solidColor": "Solid color",
@@ -126,5 +127,9 @@
         "devices": "Devices",
         "activeSessions": "Active sessions",
         "logoutAll": "Log out from all devices except this one"
+    },
+    "language": {
+        "back": "Back",
+        "description": "Choose your interface language. Changes apply immediately."
     }
 }

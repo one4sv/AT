@@ -21,7 +21,7 @@ export function MessBarBlock({ object, scrollToMessage }: {
     else if (redirect && !showNames) barType = "Переслать от: ";
 
     return (
-        <div className={`answerDiv ${isMobile && "mobile"}`} onContextMenu={(e) => {
+        <div className={`answerDiv ${isMobile && "mobile"}`} data-context-menu="true" onContextMenu={(e) => {
             if (redirect === undefined) return
             e.preventDefault()
             openMenu(e.clientX, e.clientY, "messBar", {id:""})

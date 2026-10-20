@@ -76,3 +76,10 @@
     color: var(--borderHabit);
     text-align: center;
 }
+.scheduleCompilition { min-height: 0; overscroll-behavior: contain; gap: 8px; }
+.scheduleCompilition .scheduleButt { flex-shrink: 0; min-height: 56px; padding: 12px; gap: 12px; border: 1px solid transparent; border-radius: 16px; background: var(--interact, var(--bgc)); color: var(--tc); text-align: start; font: inherit; }
+.scheduleButt.completed { border-color: var(--accent_op); }
+.scheduleButt:disabled { cursor: default; }
+.scheduleButtInfo { min-width: 0; overflow-wrap: anywhere; }
+.scheduleButtSvg { flex: 0 0 24px; width: 24px; height: 24px; }
+.scheduleButt:focus-visible { outline: 2px solid var(--accent_text); outline-offset: -2px; }

@@ -1,12 +1,16 @@
 import { Link } from "@phosphor-icons/react";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
+import { useNote } from "../../../hooks/NoteHook";
+import { useTranslation } from "react-i18next";
 
 export default function LinkButton() {
     const { menu } = useContextMenu();
     const { point, options, chatInfo } = menu;
-    const CopyLink = import.meta.env.VITE_LINK;
+    const { showNotification } = useNote();
+    const { t } = useTranslation("common");
+    const CopyLink = (import.meta.env.VITE_LINK || window.location.origin).replace(/\/+$/, "");
 
-    const handleCopy = () => {
+    const handleCopy = async () => {
         const link =
             point === "habit"
                 ? `habit/${options.id}`
@@ -22,13 +26,19 @@ export default function LinkButton() {
                 ? `acc/${options.nick}`
                 : "";
 
-        navigator.clipboard.writeText(`${CopyLink}/${link}`);
+        if (!link) return;
+        try {
+            await navigator.clipboard.writeText(`${CopyLink}/${link}`);
+            showNotification("success", t("links.copied"));
+        } catch {
+            showNotification("error", t("links.copyFailed"));
+        }
     };
 
     return (
         <div className="ContextMenuButt" onClick={handleCopy}>
             <Link />
-            Скопировать ссылку
+            {t("links.copy")}
         </div>
     );
 }

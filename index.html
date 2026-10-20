@@ -7,36 +7,30 @@
       content="width=device-width, initial-scale=1, maximum-scale=1, interactive-widget=overlays-content"
     />
     <link rel="icon" href="/favicon.svg" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="./public/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Achieve Together" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <title>Achieve Together</title>
     <script>
       (function () {
         try {
-          const savedTheme = localStorage.getItem("setting_theme");
-          const savedAccent = localStorage.getItem("settings_accent");
-          const savedGrad = localStorage.getItem("settings_grad");
-
-          const theme =
-            savedTheme === "light" || savedTheme === "dark"
-              ? savedTheme
-              : window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light";
-
-          const accent = savedAccent || "poison";
-          const grad = savedGrad || "meadow";
-
-          document.documentElement.setAttribute("data-theme", theme);
-          document.documentElement.setAttribute("data-accent", accent);
-          document.documentElement.setAttribute("data-grad", grad);
-        } catch (e) {
-          console.error("Theme init error:", e);
+          const read = (key, fallback) => {
+            const value = localStorage.getItem(key);
+            if (value === null) return fallback;
+            try { return JSON.parse(value); } catch { return value; }
+          };
+          const appearance = read("settings_appearance", {}) || {};
+          const savedTheme = read("settings_theme", "system");
+          const theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.dataset.accent = appearance.settings_accent || read("settings_accent", "poison");
+          document.documentElement.dataset.grad = appearance.settings_grad || read("settings_grad", "meadow");
+          document.documentElement.dataset.decor = appearance.settings_decor || read("settings_decor", "default");
+          document.documentElement.style.colorScheme = theme;
+          document.documentElement.lang = read("settings_lang", "ru");
+        } catch (error) {
+          console.error("Theme init error:", error);
         }
       })();
     </script>

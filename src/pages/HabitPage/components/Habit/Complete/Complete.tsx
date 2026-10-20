@@ -19,8 +19,7 @@ export default function Complete({isMy} : {isMy:boolean}) {
                 {habitSettings.metric_type === "timer" && <Timer isMy={isMy}/>}
                 {habitSettings.metric_type === "counter" && <Counter isMy={isMy}/>}
                 {habitSettings.metric_type === "schedule" && <ScheduleCompletion isMy={isMy}/>}
-                {habitSettings.metric_type === "done" && <DoneCompletion isMy={isMy}/>}
-                {habitSettings.metric_type === "checklist" && <DoneCompletion isMy={isMy}/>}
+                {(habitSettings.metric_type === "done" || habitSettings.metric_type === "checklist") && <DoneCompletion key={habit.id} isMy={isMy}/>}
             </div>
             {isMy && !isMobile && <DoneButton habitId={habit.id}/>}
         </div>

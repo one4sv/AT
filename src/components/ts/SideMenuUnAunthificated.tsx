@@ -1,4 +1,4 @@
-import { isMobile } from "react-device-detect";
+import useCompactLayout from "../hooks/utils/useCompactLayout";
 import { Link } from "react-router-dom";
 import { useSideMenu } from "../hooks/SideMenuHook";
 import { GhostIcon, MoonStarsIcon, SunDimIcon } from "@phosphor-icons/react";
@@ -16,10 +16,11 @@ interface SMUA {
 }
 
 export default function SideMenuUnAunthificated ({ref, onTouchS, onTouchM, onTouchE, translateX, isDragging}: SMUA) {
+    const isMobile = useCompactLayout();
     const { t } = useTranslation("common")
     const { showSideMenu } = useSideMenu()
     const { setNewTheme } = useUpSettings()
-    const { isDark } = useSettings()
+    const { isDark, layout } = useSettings()
 
     return (
         <div className={`sideMenu ${isMobile ? "mobileSM" : ""} ${showSideMenu ? "open" : ""}`} 
@@ -27,7 +28,7 @@ export default function SideMenuUnAunthificated ({ref, onTouchS, onTouchM, onTou
             onTouchStart={isMobile ? onTouchS : undefined}
             onTouchMove={isMobile ? onTouchM : undefined}
             onTouchEnd={isMobile ? onTouchE : undefined} style={{
-                transform: isMobile ? `translateX(${translateX}%)` : "none",
+                transform: isMobile || layout === "hidden" || window.innerWidth <= 800 ? `translateX(${translateX}%)` : "none",
                 transition: isDragging ? "none" : "transform 0.4s ease"
             }}
         >

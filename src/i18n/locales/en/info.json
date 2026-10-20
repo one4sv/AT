@@ -1,27 +1,22 @@
 {
     "info": {
         "title": "Information",
-
         "about": {
             "name": "About Project",
             "desc": "Information about the service and beta testing"
         },
-
         "terms": {
             "name": "User Agreement",
             "desc": "Terms of service"
         },
-
         "policy": {
             "name": "Privacy Policy",
             "desc": "Data processing and storage"
         },
-
         "contacts": {
             "name": "Contacts",
             "desc": "Contact the developer"
         },
-
         "faq": {
             "name": "FAQ",
             "desc": "Frequently asked questions and answers"
@@ -29,37 +24,28 @@
     },
     "about": {
         "title": "Achieve Together",
-
-       "intro1Accent": "Achieve Together",
-        "intro1Text": "is a social platform for creating and tracking activities, sharing achievements, and communicating with other users. The service helps people showcase their progress, find like-minded individuals, and grow together.",
-
-        "intro2Accent": "Three key directions",
-        "intro2Text": "of the project are activities, publications, and communication. Their combination forms the core functionality of the service: sharing achievements through private messages and posts, managing activities together in groups or pairs, reposting content from other users, and providing opportunities to showcase interests, goals, and results.",
-
-        "intro3Accent": "The main goal",
-        "intro3Text": "of the project is to help people find like-minded individuals, share achievements, recognize the success of others, unite around common interests, and support one another in reaching their goals.",
+        "intro1Accent": "Achieve Together",
+        "intro1Text": "brings personal goals, shared activities and conversations together. Create activities, record completion and follow your progress.",
+        "intro2Accent": "Activities, posts and conversations.",
+        "intro2Text": "Plan your tasks, share achievements in posts and discuss them in private and group chats.",
+        "intro3Accent": "Make progress together.",
+        "intro3Text": "Find people with shared interests, support each other and recognise the small steps along the way.",
         "aboutProject": "About the Project",
         "aboutProjectText": "The project is currently under active development and beta testing. Some features may change, be improved, or temporarily work unstably.",
-
         "warning": "Important Notice",
         "warningText": "The project is in an early stage of development. Although the author pays attention to security, the current version of the service does not guarantee absolute data protection. It is not recommended to publish or transfer confidential information, passwords, or other sensitive data through the service.",
-
         "features": "Main Features",
-
         "feature1": "Creating and tracking activities",
         "feature2": "Profile customization and service personalization",
         "feature3": "Publishing posts and sharing achievements",
         "feature4": "Viewing activities of other users",
         "feature5": "Private messages and chat communication",
-
         "feedback": "Feedback",
         "feedbackText1": "If you find a bug, encounter a problem, or would like to suggest a new feature, please visit the",
         "contacts": "Contacts",
         "feedbackText2": " section.",
-
         "future": "Future Updates",
         "futureText": "Future versions will expand the social aspects of the platform and improve existing functionality.",
-
         "future1": "A full-featured text editor for creating posts with text formatting support",
         "future2": "Support for bold text, italics, headings, lists, and other formatting elements",
         "future3": "Adding images directly inside post content",
@@ -68,10 +54,8 @@
         "future6": "Messenger improvements and expanded functionality",
         "future7": "Enhanced activity tracking features",
         "future8": "New tools for user interaction",
-
         "commercial": "Commercial Status",
         "commercialText": "At the moment, Achieve Together is a non-commercial project and is being developed independently.",
-
         "version": "Current version"
     },
     "contacts": {
@@ -223,5 +207,9 @@
         "s9p1": "The administration has the right to change this Agreement. The new version comes into force from the moment of publication.",
         "s10": "10. Final Provisions",
         "s10p1": "Using Achieve Together means the user’s agreement with this User Agreement."
+    },
+    "navigation": {
+        "back": "Back",
+        "contents": "Contents"
     }
 }

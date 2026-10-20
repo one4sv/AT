@@ -19,10 +19,15 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
     const [dragging, setDragging] = useState(false);
 
     const startX = useRef(0);
+    const startY = useRef(0);
+    const touchActive = useRef(false);
+    const direction = useRef<"" | "horizontal" | "vertical">("");
+    const translateRef = useRef(100);
     const startTranslate = useRef(100);
 
     useEffect(() => {
         setMenuTranslate(showHabitMenu ? 0 : 100);
+        translateRef.current = showHabitMenu ? 0 : 100;
     }, [showHabitMenu]);
 
     const renderSlide = () => {
@@ -50,20 +55,27 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
         }
     }
         const handleMenuTouchStart = (e: React.TouchEvent) => {
-        if (dontHandleOther) return;
+        if (dontHandleOther || !showHabitMenu || e.touches.length !== 1) return;
+        if ((e.target as HTMLElement).closest("input, textarea, select, [contenteditable=true]")) return;
 
-        setDontHandle(true);
         startX.current = e.touches[0].clientX;
+        startY.current = e.touches[0].clientY;
         startTranslate.current = menuTranslate;
-        setDragging(true);
+        touchActive.current = true;
+        direction.current = "";
     };
 
     const handleMenuTouchMove = (e: React.TouchEvent) => {
-        if (dontHandleOther) return;
-
-        setDontHandle(true);
+        if (dontHandleOther || !touchActive.current || e.touches.length !== 1) return;
 
         const diff = e.touches[0].clientX - startX.current;
+        const diffY = e.touches[0].clientY - startY.current;
+        if (!direction.current && Math.max(Math.abs(diff), Math.abs(diffY)) > 8) {
+            direction.current = Math.abs(diff) > Math.abs(diffY) ? "horizontal" : "vertical";
+        }
+        if (direction.current !== "horizontal") return;
+        setDontHandle(true);
+        setDragging(true);
 
         if (diff < 0) return;
 
@@ -73,15 +85,18 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
         );
 
         setMenuTranslate(translate);
+        translateRef.current = translate;
     };
 
     const handleMenuTouchEnd = () => {
-        if (!dragging) return;
+        touchActive.current = false;
+        if (direction.current !== "horizontal") return;
+        direction.current = "";
 
         setDontHandle(false);
         setDragging(false);
 
-        if (menuTranslate > 40) {
+        if (translateRef.current > 40) {
             setShowHabitMenu(false);
             setMenuTranslate(100);
         } else {
@@ -97,11 +112,19 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
             onTouchStart={handleMenuTouchStart}
             onTouchMove={handleMenuTouchMove}
             onTouchEnd={handleMenuTouchEnd}
+            onTouchCancel={() => {
+                touchActive.current = false;
+                if (direction.current === "horizontal") setDontHandle(false);
+                direction.current = "";
+                setDragging(false);
+                setMenuTranslate(showHabitMenu ? 0 : 100);
+                translateRef.current = showHabitMenu ? 0 : 100;
+            }}
             style={{
                 transform: `translateX(${menuTranslate}%)`,
                 transition: dragging
                     ? "none"
-                    : "transform .1s ease"
+                    : "transform .28s cubic-bezier(.22, 1, .36, 1)"
             }}
         >
             <div

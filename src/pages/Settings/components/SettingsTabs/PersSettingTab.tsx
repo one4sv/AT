@@ -12,6 +12,7 @@ import Selector from "../../../../components/ts/Selector.tsx";
 import { MirrorRectangular, PaintBucket, PanelLeft, PanelLeftClose } from "lucide-react";
 import ColorSelector from "../ColorSelector.tsx";
 import HighlightText from "../../../../components/ts/HighlightText.tsx";
+import "../../../../scss/landingBackground.scss";
 
 export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
@@ -120,6 +121,10 @@ export default function PersSettingTab({ search }: { search: string }) {
                             </div>
                             <span className={bg === "default" ? "bgSpanChoosen" : ""}>{t("personalization.contourShapes")}</span>
                         </div>                        
+                        <div className="bgPick" role="button" tabIndex={0} aria-pressed={bg === "landing"} onClick={() => setNewBg("landing")} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setNewBg("landing"); } }}>
+                            <div className={`bgImg bgMini landingBackground ${bg === "landing" ? "choosen" : ""}`} />
+                            <span className={bg === "landing" ? "bgSpanChoosen" : ""}>{t("personalization.landingBackground")}</span>
+                        </div>
                         <div className="bgPick" onClick={() => setNewBg("color")}>
                             <div className={`bgImg bgMini ${bg === "color" ? "choosen" : ""}`} />
                             <span className={bg === "color" ? "bgSpanChoosen" : ""}>{t("personalization.solidColor")}</span>

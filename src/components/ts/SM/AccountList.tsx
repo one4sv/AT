@@ -1,122 +1,80 @@
-import { useUser } from "../../hooks/UserHook"
-import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon , SignOutIcon, UserIcon, CheckIcon } from "@phosphor-icons/react";
-import { useNavigate } from "react-router";
+import { useUser } from "../../hooks/UserHook";
+import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, SignOutIcon, UserIcon, CheckIcon } from "@phosphor-icons/react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useSideMenu } from "../../hooks/SideMenuHook";
+import { useTranslation } from "react-i18next";
+import SearchedButts from "../../../pages/Settings/components/Search/SearchedButts";
+import type { SearchableSetting } from "../../../pages/Settings/Settings";
+import useLocalStorage from "../../hooks/utils/useLocalStorage";
+
+const EMPTY_RECENT: string[] = [];
 
 export default function AccountList() {
-    const { logOut, user } = useUser()
-    const { activeTab, closeMenu } = useSideMenu()
-    const navigate = useNavigate()
+    const { logOut, user } = useUser();
+    const { activeTab, closeMenu, settingsSearch: search } = useSideMenu();
+    const { t } = useTranslation("common");
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [, setRecentIds] = useLocalStorage<string[]>("settings_recent", EMPTY_RECENT);
+    const [logoutConfirm, setLogoutConfirm] = useState(false);
+    const logoutRef = useRef<HTMLButtonElement>(null);
 
-    const [ logoutConfirm, setLogoutConfirm ] = useState(false)
-    
-    const logoutRef = useRef<HTMLDivElement | null>(null)
     useEffect(() => {
-        const handleMouseDown = (event: MouseEvent) => {
-            if (
-                logoutRef.current &&
-                !logoutRef.current.contains(event.target as Node)
-            ) {
-                if (activeTab !== "user") {
-                    setTimeout(() => {
-                        setLogoutConfirm(false)
-                    }, 300)
-                }
-                else setLogoutConfirm(false)
-            }
+        const outside = (event: PointerEvent) => {
+            if (!logoutRef.current?.contains(event.target as Node)) setLogoutConfirm(false);
         };
-        document.addEventListener("mousedown", handleMouseDown);
-        return () => document.removeEventListener("mousedown", handleMouseDown);
+        document.addEventListener("pointerdown", outside);
+        return () => document.removeEventListener("pointerdown", outside);
     }, []);
+
+    useEffect(() => { setLogoutConfirm(false); }, [activeTab]);
+
+    const selectSetting = (sectionId: string, item: SearchableSetting) => {
+        setRecentIds(previous => [item.id, ...previous.filter(id => id !== item.id)].slice(0, 5));
+        navigate(item.id === "language" ? "/settings/language" : `/settings/${sectionId}`, {
+            state: { settingId: item.id, settingName: item.name, from: "/settings" }
+        });
+        closeMenu();
+    };
+
+    if (activeTab === "user" && search.trim()) {
+        return <div className="accountList SMlist accountSettingsSearch"><SearchedButts search={search} selectSetting={selectSetting}/></div>;
+    }
 
     return (
         <div className="accountList SMlist">
-            <div
-                className={`SMaccount ${location.pathname === `/acc/${user.nick}` ? "active" : "" }`}
-                onClick={() => {
-                    navigate(`/acc/${user.nick}`);
-                    closeMenu()
-                }}
-            >
-                {user.avatar_url ? (
-                    <div className="SMAvatar">
-                        <img src={user.avatar_url} alt="" />
-                    </div>
-                ) : (
-                    <div className="SMAvatar">
-                        <UserIcon size={28} weight="fill" />
-                    </div>
-                )}
+            <Link to={`/acc/${user.nick}`} className={`SMaccount ${location.pathname === `/acc/${user.nick}` ? "active" : ""}`} onClick={closeMenu}>
+                <div className="SMAvatar">
+                    {user.avatar_url ? <img src={user.avatar_url} alt=""/> : <UserIcon size={28} weight="fill"/>}
+                </div>
                 <div className="SMaccDesc">
                     <span className="SMname">
-                        {user.username ? (
-                            <>
-                                <span className="settingUserName">{user.username}</span>{" "}
-                                <span className="settingUserNick">| {user.nick}</span>
-                            </>
-                        ) : (
-                            <>{user.nick}</>
-                        )}
+                        <span className="settingUserName">{user.username || user.nick}</span>
+                        {user.username && <span className="settingUserNick"> | {user.nick}</span>}
                     </span>
-                    <div className="SMaccDescText">
-                        {user.mail}
-                    </div>
+                    <div className="SMaccDescText">{user.mail}</div>
                 </div>
-            </div>
+            </Link>
             <div className="SMaccountButtsWrapper">
-                <div className={`SMmainButt ${location.pathname === "/" ? "active" : ""}`} 
-                    onClick={() => { 
-                        navigate("/") 
-                        closeMenu()
-                    }}
-                >
-                    <span className="SMmainButtName">
-                        <NewspaperIcon weight="fill" size={30} className="SMmainButtSvg"/> Лента <CaretRightIcon className="fastButtCaret"/>
-                    </span>
-                    <div className="SMmainButtDesc">Просматривайте единую ленту постов из спотов и от друзей, рекомендации, ближайшие активности и планы друзей</div>
-                </div>
-                <div className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} 
-                    onClick={() => {
-                        navigate("/habit")
-                        closeMenu()
-                    }}
-                >
-                    <span className="SMmainButtName">
-                        <SneakerMoveIcon weight="fill" size={30} className="SMmainButtSvg"/> Активности <CaretRightIcon className="fastButtCaret"/>
-                    </span>
-                    <div className="SMmainButtDesc">Следите за активностями, стройте планы, отметьте достижения и проверьте календарь</div>
-                </div>
-                <div className={`SMaccountButt ${location.pathname.includes("/settings") ? "active" : "" }`} 
-                    onClick={() => {
-                        navigate("/settings")
-                        closeMenu()
-                    }}
-                >
-                    <span className="settingName">
-                        <GearIcon size={21} weight="fill"/> 
-                        Настройки
-                    </span>
-                        <CaretRightIcon className="fastButtCaret"/>
-                </div>
-                <div className="SMaccountButt" 
-                    onClick={() => {
-                        navigate(`/chat/${user.nick}`)
-                        closeMenu()
-                    }}
-                >
-                    <span className="settingName">
-                        <BookmarkSimpleIcon weight="fill"/> 
-                        Избранное
-                    </span>
-                    <CaretRightIcon className="fastButtCaret"/>
-                </div>
-                <div className="SMaccountButt logout" onClick={() => logoutConfirm ? logOut() : setLogoutConfirm(true)} ref={logoutRef}>
-                    <span className="settingName" key={logoutConfirm ? "confirm" : "default"}>
-                        {logoutConfirm ? <><CheckIcon size={21}/> Подтвердить выход</> : <><SignOutIcon weight="fill" size={21}/> Выйти из аккаунта</>}
-                    </span>
-                </div>
+                <Link to="/" className={`SMmainButt ${location.pathname === "/" ? "active" : ""}`} onClick={closeMenu}>
+                    <span className="SMmainButtName"><NewspaperIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("accountNavigation.feed")}<CaretRightIcon className="fastButtCaret"/></span>
+                    <div className="SMmainButtDesc">{t("accountNavigation.feedDesc")}</div>
+                </Link>
+                <Link to="/habit" className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} onClick={closeMenu}>
+                    <span className="SMmainButtName"><SneakerMoveIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("accountNavigation.activities")}<CaretRightIcon className="fastButtCaret"/></span>
+                    <div className="SMmainButtDesc">{t("accountNavigation.activitiesDesc")}</div>
+                </Link>
+                <Link to="/settings" className={`SMaccountButt ${location.pathname.startsWith("/settings") ? "active" : ""}`} onClick={closeMenu}>
+                    <span className="settingName"><GearIcon size={21} weight="fill"/>{t("accountNavigation.settings")}</span><CaretRightIcon className="fastButtCaret"/>
+                </Link>
+                <Link to={`/chat/${user.nick}`} className="SMaccountButt" onClick={closeMenu}>
+                    <span className="settingName"><BookmarkSimpleIcon weight="fill"/>{t("accountNavigation.saved")}</span><CaretRightIcon className="fastButtCaret"/>
+                </Link>
+                <button type="button" className="SMaccountButt logout" onClick={() => logoutConfirm ? logOut() : setLogoutConfirm(true)} ref={logoutRef}>
+                    <span className="settingName">{logoutConfirm ? <CheckIcon size={21}/> : <SignOutIcon weight="fill" size={21}/>} {t(logoutConfirm ? "accountNavigation.confirmLogout" : "accountNavigation.logout")}</span>
+                </button>
             </div>
         </div>
-    )
+    );
 }

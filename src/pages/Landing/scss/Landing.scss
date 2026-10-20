@@ -1,521 +1,597 @@
 @use "../../../scss/mixins" as var;
 
 .landing {
+    position: relative;
+    isolation: isolate;
     width: 100%;
-    min-height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    scrollbar-width: thin;
+    height: var(--vv-height, 100%);
+    top: var(--vv-top, 0px);
+    min-height: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    color: var(--tc);
+    background: var(--bgc);
+    --landing-drag: 0px;
 }
+
+// ПЕРВАЯ СЕКЦИЯ: форма ровно на один экран.
 .landingDiv {
     position: relative;
-    margin: 16.5vh auto 11vh;
-    width: 25vw;
-    display: flex;
-    flex-direction: column;
-    gap: 2vh;
-    border-radius: 22px;
-    background-color: var(--tr);
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: max(60px, env(safe-area-inset-top)) 24px max(80px, env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
+    justify-content: center;
+    gap: clamp(18px, 3vh, 30px);
+    z-index: 1;
+}
 
-    @media (max-width: 800px) {
-        width: 90vw;
-    }
-}
 .title {
-    font-size: 40px;
     position: relative;
-    top: 1dvh;
-    font-weight: 700;
+    display: inline-block;
+    width: fit-content;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+    font-size: clamp(27px, 3vw, 42px);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -.035em;
     text-align: center;
-    height: 40px;
+    white-space: nowrap;
     >span {
-        color: var(--accent_text);
-        font-size: 20px;
         position: absolute;
-        left: 101%;
-        top: 55%;
-    }
-    @media (max-width:800px) {
-        margin-bottom: 1vh;
-        >span {
-            left: 85%;
-            top: 100%;
-            margin-left: 4px;
-        }
+        left: calc(100% + 5px);
+        bottom: 2px;
+        top: auto;
+        font-size: clamp(12px, 1.2vw, 16px);
+        font-weight: 400;
+        letter-spacing: 0;
+        color: var(--accent_text);
     }
 }
+
+// Горизонтальное переключение вход / регистрация.
 .landingFormWrapper {
     position: relative;
-    height: 55dvh;
-    width: 100%;
-    overflow-x: hidden;
     display: flex;
     flex-direction: row;
-    padding-bottom: 2vh;
-    display: flex;
+    align-items: stretch;
+    width: min(100%, 430px);
+    height: min(670px, calc(100% - 70px));
+    min-height: 0;
+    flex-shrink: 1;
     overflow-x: auto;
+    overflow-y: hidden;
     scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    overscroll-behavior-inline: contain;
     scrollbar-width: none;
-    @media (max-width: 800px) {
-        width: 85vw;
-    }        
+    border: 1px solid color-mix(in srgb, var(--borderWh) 26%, transparent);
+    border-radius: 24px;
+    background: var(--mc);
+    box-shadow: 0 16px 56px #0000001c;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    &::-webkit-scrollbar { display: none; }
 }
 
 .landingForm {
     position: relative;
-    height: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 100%;
+    align-items: stretch;
     flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+    padding: 24px clamp(20px, 3vw, 32px);
+    gap: 12px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--borderWh) transparent;
     scroll-snap-align: start;
-    >button {
-        @include var.longButt(auto, auto, 0px, 0px, transparent, var(--borderWh), transparent);
-        position: absolute;
-        bottom: 0;
-        background-color: transparent;
+    overscroll-behavior-y: contain;
+    >.landingField:first-child { margin-top: auto; }
+    >button,
+    >.landingSwitchForm {
+        position: static;
+        align-self: center;
+        flex-shrink: 0;
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 16px;
+        margin: 0 0 auto;
+        background: transparent;
         color: var(--borderWh);
-        font-size: 18px;
-        outline: none;
-        border: none;
-        text-decoration: none;
-        border-radius: 12px;
-        padding: 1.25vh 1.35vw;
-        @media (hover: hover) {
-            &:hover {
-            color: var(--tc);
-            background-color: var(--menuButtHover);
-        
-            }
-        }
+        font: inherit;
+        cursor: pointer;
+        transition: background-color .2s, color .2s;
+        &:hover { background: var(--menuButtHover); color: var(--tc); }
+    }
+}
 
-        @media (hover: none) {
-            &:active {
-            color: var(--tc);
-            background-color: var(--menuButtHover);
-        
-            
-            }
-        }
-    }
+.landingField {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    min-width: 0;
+    width: 100%;
 }
+
+.landingLabel {
+    color: var(--tc);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.3;
+    opacity: .85;
+}
+
 .landingInput {
-    @include var.input(var(--mc), var(--tc), var(--borderWh), 4vh, 16px, var(--tc));
-    width: 80%;
-    margin-top: 1dvh;
-    position: relative;
-    z-index: 2;
-    padding-inline-start: .5vw;
-    &.landingInputPass {
-        width: 100%;
-        padding-inline-end: 3vw;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: var(--interact, var(--mc));
+    color: var(--tc);
+    font: inherit;
+    font-size: 15px;
+    transition: border-color .2s, background-color .2s, box-shadow .2s;
+    outline: none;
+    &::placeholder { color: var(--borderWh); opacity: .7; }
+    &:hover { background: var(--menuButtHover); }
+    &:focus {
+        border-color: var(--accent);
+        box-shadow: none;
     }
-    &.invalid {
-        border-color: var(--notValid);
-        &::placeholder {
-            color: var(--notValid) !important;
-        }
-    }
-    @media (max-width:800px) {
-        height: 5dvh;
-        width: 80vw;
-        padding-inline-start: 2vw;
-    }
+    &.invalid { border-color: var(--notValid); }
+    &.landingInputPass { width: 100%; padding-right: 48px; }
 }
-.landingFormWrapper::-webkit-scrollbar {
-    display: none;
-}
+
 .passWrap {
     position: relative;
-    width: 80%;
-    overflow: hidden;
-    > svg {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    overflow: visible;
+    >svg {
         position: absolute;
-        width: 9%;
-        aspect-ratio: 1/1;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 20px;
+        width: 20px;
         cursor: pointer;
-        top: 1.7dvh;
-        right: 0.2vw;
-        z-index: 2;
         color: var(--borderWh);
-        @media (hover: hover) {
-            &:hover {
-            color: var(--tc);
-        
-            }
-        }
-
-        @media (hover: none) {
-            &:active {
-            color: var(--tc);
-        
-            
-            }
-        }
-    }
-    @media (max-width: 800px) {
-        width: 80vw;
-        > svg {
-            top: 2dvh;
-        }
     }
 }
+
+.landingEyeButton {
+    position: absolute;
+    z-index: 3;
+    right: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--borderWh);
+    cursor: pointer;
+    &:hover { background: var(--menuButtHover); color: var(--tc); }
+}
+
 .passRules {
-    margin-top: 0.5dvh;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    margin-block-end: 0;
-    z-index: 1;
-    color: var(--borderWh);
-    height: 5dvh;
-    width: 80%;
+    gap: 4px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin: 4px 0 0;
     >span {
-        color: var(--borderWh);
-        position: relative;
-        font-size: 14px;
-        bottom: 0;
-        height: 18px;
         display: flex;
         align-items: center;
-        &.valid {
-            color: var(--valid);
-        }
-        &.invalid {
-            color: var(--notValid);
-        }
-    }
-    @media (max-width:800px) {
-        width: 80vw;
+        gap: 5px;
+        min-height: 16px;
+        color: var(--borderWh);
+        font-size: 12px;
+        line-height: 1.4;
+        &.valid { color: var(--valid); }
+        &.invalid { color: var(--notValid); }
+        >svg { flex: 0 0 13px; }
     }
 }
+
 .inpExtraSpan {
-    position: relative;
-    font-size: 14px;
-    bottom: 0;
-    width: 80%;
-    height: 18px;
     display: flex;
     align-items: center;
-    &.invalid {
-        color: var(--notValid);
-    }
+    gap: 5px;
+    width: 100%;
+    min-height: 17px;
+    height: auto;
+    font-size: 12px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    &.invalid { color: var(--notValid); }
+    &.valid { color: var(--valid); }
     &.loading {
-        flex-direction: row;
         color: var(--borderWh);
-        >svg {
-            animation: spin 1s linear infinite;
-        }
+        >svg { animation: landingSpin 1s linear infinite; }
     }
-    &.valid {
-        color: var(--valid);
-    }
-    @media (max-width:800px) {
-        width: 80vw;
-    }
+}
+@keyframes landingSpin { to { transform: rotate(360deg); } }
+
+.landingConsents {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 3px;
 }
 .checkString {
-    color: var(--borderWh);
     display: flex;
     align-items: center;
-    cursor: pointer;
-    gap: 4px;
-    height: 3dvh;
-    user-select: none;
     justify-content: center;
-    white-space: nowrap;
-    @media (max-width:800px) {
-        margin-top: 0.25dvh;
-        flex-wrap: wrap;
-        height: fit-content;
-    }
-    >svg {
-        color: var(--accent_text);
-    }
-    &.notAccepted {
-        >svg {
-            color: var(--notValid);
-        }
-    }
+    flex-wrap: wrap;
+    width: 100%;
+    height: auto;
+    min-height: 20px;
+    gap: 4px 5px;
+    color: var(--borderWh);
+    font-size: 13px;
+    line-height: 1.45;
+    user-select: none;
+    white-space: normal;
+    >svg { color: var(--accent_text); }
+    &.notAccepted { color: var(--notValid); }
+    label { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+    svg { flex: 0 0 20px; width: 20px; height: 20px; color: var(--accent_text); }
+}
+.landingNativeCheckbox {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    opacity: 0;
+    &:focus-visible + svg, &:focus-visible + label svg { outline: 2px solid var(--accent_text); outline-offset: 3px; border-radius: 4px; }
 }
 .acceptSpan {
     color: var(--accent_text);
     text-decoration: underline;
-    @media (hover: hover) {
-        &:hover {
-        color: var(--darker_accent);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        color: var(--darker_accent);
-    
-        
-        }
-    }
+    text-underline-offset: 3px;
+    &:hover { color: var(--tc); }
 }
 
 .landingButts {
     display: flex;
     flex-direction: column;
-    margin-top: 2dvh;
-    justify-content: center;
-    align-items: center;
-    user-select: none;
-    >.loaderSmall {
-        width: 15vw;
-        height: 5dvh;
-        margin-bottom: 1vh;
-        @media (max-width: 800px) {
-            width: 70vw;
-        }
-    }
+    align-items: stretch;
+    width: 100%;
+    gap: 8px;
+    margin-top: 10px;
+    >.loaderSmall { align-self: center; }
 }
 .greenButt {
-    @include var.longButt(15vw, 5vh, 2px, 4px, none, var(--inner_text), var(--tr), var(--accent));
-    background:linear-gradient(135deg, var(--accent), var(--grad));
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: none;
-    @media (hover: hover) {
-        &:hover {
-            box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-            box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
-        }
-    }
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--inner_text);
+    font-size: 15px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: filter .2s, box-shadow .2s, transform .2s;
+    &:hover { filter: brightness(1.08); }
+    &:active { transform: scale(.99); }
 }
 .whiteButt {
-    @include var.longButt(15vw, 4vh, 2px, 4px, #fff, #000, var(--tr), #fff);
-    @media (hover: hover) {
-        &:hover {
-            box-shadow: 0 0 12px #fff, 0 0 24px #fff;
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-            box-shadow: 0 0 12px #fff, 0 0 24px #fff;
-        }
-    }
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 14px;
+    background: var(--tc);
+    color: var(--bgc);
+    border: 0;
+    border-radius: 11px;
+    cursor: pointer;
 }
 .wtbgButt {
-    @include var.longButt(auto, auto, 0px, 0px, transparent, var(--borderWh), transparent);
-    padding: 0.75vh 1vw;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    @media (hover: hover) {
-        &:hover {
-            color: var(--tc);
-            text-decoration: none;
-            &:hover {
-                background-color: var(--menuButtHover);
-            }
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-            color: var(--tc);
-            text-decoration: none;
-            &:hover {
-                background-color: var(--menuButtHover);
-            }
-        }
-    }
+    width: auto;
+    min-height: 34px;
+    padding: 7px 10px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--borderWh);
+    text-decoration: none;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    &:hover { color: var(--tc); background: var(--menuButtHover); }
 }
-.greenButt, .whiteButt {
-    user-select: none;
-    font-size: 20px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1vh;
-    gap: 2px;
-    @media (max-width: 800px) {
-        width: 70vw;
-    }
+.landingForm button:disabled { opacity: .55; cursor: not-allowed; }
+.landingForm :is(button, a):focus-visible,
+.changeSignTheme:focus-visible,
+.landingFooter :is(a, button, input):focus-visible {
+    outline: 2px solid var(--accent_text);
+    outline-offset: 3px;
 }
 
+// ВТОРАЯ СЕКЦИЯ: при скролле занимает весь экран,
+// а непрозрачный фон скрывает формы под собой.
 .landingFooter {
     position: relative;
-    font-size: 16px;
+    z-index: 5;
+    box-sizing: border-box;
     width: 100%;
+    min-height: 0;
+    flex: 1 0 auto;
+    margin: 0;
+    padding: 32px 24px;
     display: flex;
-    align-items: center;
-    gap: 1vh;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 38px;
+    background: transparent;
     user-select: none;
-    >div {
-        width: 100%;
-        gap: 0.1vw;
-        height: 4dvh;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-        align-items: flex-end;
-        color: var(--borderWh);
-        @media (max-width:800px) {
-            flex-direction: column;
-            align-items: center;
-            gap: 1vh;
-        }
-        >a {
-            color: var(--tc);
-            text-decoration: none;
-            padding: 0.75vh 1vw;
-            border-radius: 8px;
-            color: var(--borderWh);
-            @media (hover: hover) {
-                &:hover {
-                color: var(--tc);
-                background-color: var(--menuButtHover);
-            
-                }
-            }
-
-            @media (hover: none) {
-                &:active {
-                color: var(--tc);
-                background-color: var(--menuButtHover);
-            
-                
-                }
-            }
-        }
-        >span {
-            cursor: pointer;
-            color: var(--tc);
-            text-decoration: none;
-            padding: 0.75vh 1vw;
-            border-radius: 8px;
-            color: var(--borderWh);
-            @media (hover: hover) {
-                &:hover {
-                color: var(--tc);
-                background-color: var(--menuButtHover);
-            
-                }
-            }
-
-            @media (hover: none) {
-                &:active {
-                color: var(--tc);
-                background-color: var(--menuButtHover);
-            
-                
-                }
-            }
-        }
-    }
     >.o4studio {
+        display: flex;
         flex-direction: column;
-        justify-content: center;
-        gap: 5px;
         align-items: center;
-        height: 6dvh;
-        @media (max-width: 800px) {
-            height: 8dvh;
+        justify-content: center;
+        gap: 9px;
+        width: 100%;
+        height: auto;
+        font-size: 18px;
+        color: var(--borderWh);
+        >svg { max-height: 62px; }
+    }
+    >div:not(.o4studio) {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 12px 22px;
+        width: min(100%, 760px);
+        height: auto;
+        >a, >span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 9px 10px;
+            border-radius: 9px;
+            color: var(--borderWh);
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            &:hover { color: var(--tc); background: var(--menuButtHover); }
         }
     }
 }
 
 .changeSignTheme {
-    position: absolute;
-    right: 0;
-    height: 4dvh;
-    aspect-ratio: 1/1;
+    position: fixed;
+    z-index: 4;
+    top: max(16px, env(safe-area-inset-top));
+    right: max(16px, env(safe-area-inset-right));
     display: flex;
-    justify-content: center;
     align-items: center;
-    cursor: pointer;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 9px;
+    border: 1px solid color-mix(in srgb, var(--borderWh) 40%, transparent);
     border-radius: 50%;
+    background: var(--mc);
     color: var(--borderWh);
-    > svg {
-        width: 70%;
-        height: 70%;
-    }
-    @media (max-width: 800px) {
-        margin: 1vh 1vw;
-        > svg {
-            width: 100%;
-            height: 100%;
-        }
-    }
-    @media (hover: hover) {
-        &:hover {
-        color: var(--tc);
-        background-color: var(--menuButtHover);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        color: var(--tc);
-        background-color: var(--menuButtHover);
-    
-        
-        }
-    }
+    cursor: pointer;
+    >svg { width: 20px; height: 20px; }
+    &:hover { color: var(--tc); background: var(--menuButtHover); }
 }
+
 .landingSL {
-    @include var.selectList(10vw, 100%, 9%, 0vw, 0.4vh, var(--borderWh), var(--tc), var(--mc), 18px, .75vh, .75vw, 1%, true);
+    width: 155px;
+    max-width: 100%;
     display: flex;
     align-items: center;
     >input {
-        @include var.input(var(--tr), var(--borderWh), var(--tr), 3vh, 0, var(--tr));
+        box-sizing: border-box;
         width: 100%;
-        border-radius: 8px;
-        font-size: 18px;
-        cursor: pointer;
-        padding: 0.75vh 1vw;
+        min-height: 38px;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 9px;
+        background: transparent;
+        color: var(--borderWh);
+        font-size: 14px;
         text-align: center;
-        font-weight: 400;
-        @media (hover: hover) {
-            &:hover {
-            background-color: var(--menuButtHover);
-            color: var(--tc);
-        
-            }
-        }
-
-        @media (hover: none) {
-            &:active {
-            background-color: var(--menuButtHover);
-            color: var(--tc);
-        
-            
-            }
-        }
-        &:focus-visible {
-            background-color: var(--menuButtHover);
-            color: var(--tc);
-        }
+        cursor: pointer;
+        &:hover, &:focus-visible { color: var(--tc); background: var(--menuButtHover); }
     }
-    &:focus-within {
-        >svg {
-            color: var(--accent_text);
-        }
-    }
-    > div {
-        width: 100%;
-        > div {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-    @media (max-width: 800px) {
-        width: 40vw;
-    }
+    >div { width: 100%; >div { width: 100%; justify-content: center; } }
 }
+
+.landingEmailHint {
+    margin: 0;
+    color: var(--borderWh);
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 800px) {
+    .landingDiv { padding: max(64px, env(safe-area-inset-top)) 20px max(74px, env(safe-area-inset-bottom)); gap: 24px; }
+    .title { font-size: clamp(25px, 7.5vw, 36px); }
+    .title >span { font-size: 12px; bottom: -12px; }
+    .landingFormWrapper { width: min(100%, 430px); height: min(690px, calc(100% - 64px)); border-radius: 20px; }
+    .landingForm { padding: 22px 20px; gap: 11px; }
+    .landingInput { font-size: 16px; }
+    .landingFooter { padding: 28px 20px; gap: 28px; }
+    .landingFooter >div:not(.o4studio) { gap: 8px 12px; }
+    .landingSL { width: 150px; }
+}
+
+@media (max-height: 680px) {
+    .landingDiv { padding-top: max(56px, env(safe-area-inset-top)); gap: 14px; }
+    .landingFormWrapper { height: calc(100% - 50px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .landing, .landingFormWrapper { scroll-behavior: auto; }
+    .landingInput, .greenButt, .landingForm >button { transition: none; }
+}
+
+.landingFooterTrigger {
+    position: absolute;
+    z-index: 2;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 7px 20px;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    color: var(--borderWh);
+    font: inherit;
+    font-size: 13px;
+    white-space: nowrap;
+    cursor: pointer;
+    &:hover { color: var(--tc); background: var(--menuButtHover); }
+    &:focus-visible { outline: 2px solid var(--accent_text); }
+}
+.landingFooterBackdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background: #00000055;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s ease, visibility .3s;
+}
+.landingFooterSheet {
+    position: absolute;
+    inset: max(56px, env(safe-area-inset-top)) 0 0;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 1px solid color-mix(in srgb, var(--borderWh) 22%, transparent);
+    border-bottom: 0;
+    border-radius: 28px 28px 0 0;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    background: var(--bgc);
+    box-shadow: 0 -12px 60px #00000025;
+    transform: translateY(calc(100% + 12px + var(--landing-drag)));
+    transition: transform .32s cubic-bezier(.22, 1, .36, 1), visibility 0s .32s;
+    visibility: hidden;
+    outline: none;
+}
+.landingFooterHandle {
+    position: sticky;
+    top: 0;
+    z-index: 7;
+    display: flex;
+    flex: 0 0 36px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 36px;
+    border: 0;
+    background: var(--bgc);
+    border-radius: 28px 28px 0 0;
+    cursor: grab;
+    touch-action: none;
+    >span { width: 40px; height: 4px; border-radius: 4px; background: var(--borderWh); opacity: .65; }
+    &:focus-visible { outline: 2px solid var(--accent_text); outline-offset: -4px; }
+}
+.landingFooterBack { flex-shrink: 0; margin: 12px; }
+.landingFooterOpen {
+    .landingFooterBackdrop { visibility: visible; opacity: 1; }
+    .landingFooterSheet { visibility: visible; transition-delay: 0s; transform: translateY(var(--landing-drag)); }
+}
+.landingDragging {
+    .landingFooterSheet { visibility: visible; transition: none; }
+}
+.landingDiv >.landingFormEmail {
+    flex: 0 1 auto;
+    width: min(100%, 430px);
+    min-height: 0;
+    max-height: calc(100% - 70px);
+    overflow-y: auto;
+    border: 1px solid color-mix(in srgb, var(--borderWh) 26%, transparent);
+    border-radius: 24px;
+    background: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+}
+@media (prefers-reduced-motion: reduce) {
+    .landingFooterSheet, .landingFooterBackdrop { transition: none; }
+}
+
+[data-decor="default"] .landing {
+    .landingFormWrapper, .landingDiv >.landingFormEmail {
+        background: transparent;
+        box-shadow: none;
+        border-color: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+    .landingInput, .codeCell { background: var(--mc); }
+}
+
+.landing .greenButt, .landing .whiteButt, .landing .wtbgButt, .landing .landingSwitchForm { border-radius: 24px; font-weight: 400; font-size: 16px; }
+.landing .landingForm >.landingButts { flex-shrink: 0; }
+.landing .title { flex-shrink: 0; }
+.landing .landingFormWrapper.auth { height: min(360px, calc(100% - 70px)); }
+.landing .landingFormWrapper { transition: height .3s cubic-bezier(.22, 1, .36, 1); }
+.landing button { font-family: inherit; }
+.landing input { font-family: inherit; }
+.landing .landingLabel { padding-inline-start: 8px; color: var(--borderWh); }
+.landing .passWrap { background: transparent; border: 0; outline: none; box-shadow: none; }
+.landing .landingFooterNote { width: min(100%, 420px); color: var(--borderWh); font-size: 15px; line-height: 1.6; text-align: center; margin: 0; }
+.landingFooter >div.landingFooterLinks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 8px; }
+.landingFooter >div.landingFooterLinks >a { min-height: 44px; padding: 10px 14px; gap: 8px; border-radius: 24px; text-align: center; }
+.landingFooter .o4studio >svg { width: 88px; height: 44px; }
+@media (max-width: 800px) { .landingFooter >div.landingFooterLinks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

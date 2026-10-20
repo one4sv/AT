@@ -54,7 +54,6 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
         return () => animation.cancel();
     }, []);
 
-    const touchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const navigate = useNavigate()
     const messageGetTime = (date: Date | string) => {
@@ -89,30 +88,6 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
             }
         );
     };
-    const handleTouchStart = (e: React.TouchEvent) => {
-        if (!isMobile) return;
-
-        const touch = e.touches[0];
-
-        touchTimer.current = setTimeout(() => {
-            openContext(touch.clientX, touch.clientY);
-            touchTimer.current = null;
-        }, 400);
-    };
-
-    const handleTouchEnd = () => {
-        if (touchTimer.current) {
-            clearTimeout(touchTimer.current);
-            touchTimer.current = null;
-        }
-    };
-
-    const handleTouchMove = () => {
-        if (touchTimer.current) {
-            clearTimeout(touchTimer.current);
-            touchTimer.current = null;
-        }
-    };
 
     return (
         <div
@@ -139,14 +114,11 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
                     else setChosenMess((prev) => [...prev, { id:m.id, text:m.content}]);
                 }
             }}
+            data-context-menu="true"
             onContextMenu={(e) => {
                 e.preventDefault();
                 openContext(e.clientX, e.clientY);
             }}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-            onTouchCancel={handleTouchEnd}
-            onTouchMove={handleTouchMove}
             onDoubleClick={(e) => {
                 if (isChose) return;
                 e.preventDefault()

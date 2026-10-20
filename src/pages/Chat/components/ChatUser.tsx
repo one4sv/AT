@@ -121,6 +121,7 @@ export default function ChatUser() {
                     setBlackout({seted:true, module:"ChatWithInfo", isRoot:true})
                 }} 
                 ref={nameRef}
+                data-context-menu="true"
                 onContextMenu={(e) => {
                     if (!chatWith) return;
                     e.preventDefault()

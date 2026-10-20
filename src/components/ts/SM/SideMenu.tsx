@@ -6,7 +6,7 @@ import ContactsList from "./ContactsList.tsx"
 import { useSettings } from "../../hooks/SettingsHook.ts"
 import { useHabits } from "../../hooks/HabitsHook.ts"
 import Skeleton from "../Skeleton"
-import { isMobile } from "react-device-detect"
+import useCompactLayout from "../../hooks/utils/useCompactLayout";
 import { useSchedule } from "../../hooks/ScheduleHook.ts"
 import SideMenuUnAunthificated from "../SideMenuUnAunthificated.tsx"
 import { useSideMenu } from "../../hooks/SideMenuHook.ts"
@@ -15,6 +15,7 @@ import AccountList from "./AccountList.tsx"
 import SpotsList from "./SpotsList.tsx"
 
 export default function SideMenu() {
+    const isMobile = useCompactLayout();
     const { user, isAuthenticated, loadingUser } = useUser()
     const { list, loadingList, mainSearchRef } = useContacts()
     const { habits, loadingHabits } = useHabits()
@@ -147,7 +148,7 @@ export default function SideMenu() {
             document.removeEventListener("mousedown", handleClickOutside)
             document.removeEventListener("touchstart", handleClickOutside)
         }
-    }, [layout, showSideMenu])
+    }, [layout, showSideMenu, closeMenu])
 
     if (!isAuthenticated && !loadingUser) {
         return (
@@ -169,6 +170,13 @@ export default function SideMenu() {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            onTouchCancel={() => {
+                horizontalSwipe.current = false
+                verticalScroll.current = false
+                setIsDragging(false)
+                setDontHandle(false)
+                setTranslateX(showSideMenu ? 0 : -100)
+            }}
             style={{
                 transform:
                     isMobile || layout === "hidden"

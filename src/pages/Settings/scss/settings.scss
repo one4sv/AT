@@ -581,3 +581,5 @@
         padding-bottom: 2vh;
     }
 }
+.languageSettingLink { color: var(--tc); text-decoration: none; gap: 10px; }
+.languageSettingLink >svg:last-child { margin-inline-start: auto; }

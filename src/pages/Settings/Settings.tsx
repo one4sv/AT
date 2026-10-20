@@ -20,7 +20,7 @@ import SecurityTab from "./components/SettingsTabs/SecurityTab";
 import GeneralTab from "./components/SettingsTabs/GeneralTab";
 import { useAcc } from "../../components/hooks/AccHook";
 import { useTranslation } from "react-i18next";
-import { isMobile } from "react-device-detect";
+import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import { useSettingsTabs } from "./Arrays/settingsTabs";
 import { useSearchableSettings } from "./Arrays/searchableSettings";
 import SettingsButts from "./components/SettingsButts";
@@ -53,6 +53,7 @@ export interface SearchableSetting {
 const EMPTY_RECENT: string[] = [];
 
 export default function Settings() {
+    const isMobile = useCompactLayout();
     const { t } = useTranslation("settings");
     const { setTitle } = usePageTitle();
     const { user, isAuthenticated, loadingUser } = useUser();
@@ -128,8 +129,9 @@ export default function Settings() {
           ...prev.filter((id) => id !== item.id),
       ].slice(0, 5));
 
-      navigate(`/settings/${sectionId}`, {
+      navigate(item.id === "language" ? "/settings/language" : `/settings/${sectionId}`, {
           state: {
+              from: "/settings",
               settingId: item.id,
               settingName: item.name,
           },

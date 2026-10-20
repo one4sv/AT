@@ -8,7 +8,9 @@
         "contacts": "Контакты",
         "faq": "FAQ",
         "russian": "Русский",
-        "english": "Английский"
+        "english": "Английский",
+        "description": "Личные цели, совместные активности и общение — в одном месте.",
+        "language": "Язык интерфейса"
     },
     "sideMenu": {
         "searchPlaceholder": "Поиск...",
@@ -46,5 +48,38 @@
         "mediafile": "медиафайл",
         "mediafiles": "медиафайла",
         "forwardedMessage": "Пересланное сообщение"
+    },
+    "accountNavigation": {
+        "feed": "Лента",
+        "feedDesc": "Новости друзей, записи и новые активности.",
+        "activities": "Активности",
+        "activitiesDesc": "Планы, цели и ваш прогресс.",
+        "settings": "Настройки",
+        "saved": "Избранное",
+        "logout": "Выйти из аккаунта",
+        "confirmLogout": "Подтвердить выход",
+        "settingsSearch": "Поиск настроек",
+        "search": "Поиск…"
+    },
+    "activityCompletion": {
+        "noTasks": "На этот день нет задач",
+        "noBlocks": "На этот день пока нет блоков",
+        "addBlock": "Добавить блок",
+        "startTime": "Начало",
+        "endTime": "Окончание",
+        "blockName": "Название блока",
+        "save": "Сохранить блок",
+        "edit": "Редактировать блок",
+        "delete": "Удалить блок",
+        "cancelDelete": "Отменить удаление"
+    },
+    "appearance": {
+        "enableLight": "Включить светлую тему",
+        "enableDark": "Включить тёмную тему"
+    },
+    "links": {
+        "copy": "Скопировать ссылку",
+        "copied": "Ссылка скопирована",
+        "copyFailed": "Не удалось скопировать ссылку"
     }
 }

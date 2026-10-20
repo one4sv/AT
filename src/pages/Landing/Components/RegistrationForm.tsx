@@ -1,472 +1,207 @@
 import { Eye, EyeOff } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { CheckIcon, CheckSquareIcon, SquareIcon, CircleNotchIcon, DotOutlineIcon, XIcon } from "@phosphor-icons/react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../components/hooks/AuthHook";
-import { CheckIcon, CheckSquareIcon, CircleNotchIcon, DotOutlineIcon, SquareIcon, XIcon } from "@phosphor-icons/react";
 import { LoaderSmall } from "../../../components/ts/LoaderSmall";
 import { useTranslation } from "react-i18next";
 
-type validationResponse = {
-    valid: boolean;
-    error?: string;
-};
-
-export default function RegistrationForm({
-    showPass,
-    showedPass,
-    swipeForm,
-}: {
+type Props = {
+    active?: boolean;
     showPass: (value: "auth" | "reg" | "conf") => void;
     showedPass: { auth: boolean; reg: boolean; conf: boolean };
     swipeForm: (targetForm: "auth" | "reg") => void;
-}) {
+};
+type Check = { valid: boolean; error?: string; checkedValue?: string };
+type RegisterField = "nick" | "email" | "pass" | "confirm" | "terms" | "pol" | "accepts";
+
+export default function RegistrationForm({ active = true, showPass, showedPass, swipeForm }: Props) {
     const { register, response, setResponse, checkRegister, loadingAuth } = useAuth();
     const { t } = useTranslation("sign");
-
     const [nick, setNick] = useState("");
     const [mail, setMail] = useState("");
     const [pass, setPass] = useState("");
     const [confPass, setConfPass] = useState("");
-    const [isValidNick, setIsValidNick] = useState<validationResponse>({ valid: false });
-    const [isValidMail, setIsValidMail] = useState<validationResponse>({ valid: false });
-    const [isValidPass, setIsValidPass] = useState(false);
-    const [isValidConf, setIsValidConf] = useState(false);
     const [acceptTerms, setAcceptTerms] = useState(false);
     const [acceptPol, setAcceptPol] = useState(false);
+    const [nickCheck, setNickCheck] = useState<Check>({ valid: false });
+    const [mailCheck, setMailCheck] = useState<Check>({ valid: false });
     const [loadingNick, setLoadingNick] = useState(false);
     const [loadingMail, setLoadingMail] = useState(false);
-
-    const nickTimeout = useRef<number | undefined>(undefined);
-    const mailTimeout = useRef<number | undefined>(undefined);
-    const nickAbort = useRef<AbortController | null>(null);
-    const mailAbort = useRef<AbortController | null>(null);
-    const nickReqId = useRef(0);
-    const mailReqId = useRef(0);
+    const checkRegisterRef = useRef(checkRegister);
+    checkRegisterRef.current = checkRegister;
+    const nickController = useRef<AbortController | null>(null);
+    const mailController = useRef<AbortController | null>(null);
+    const nickRequestId = useRef(0);
+    const mailRequestId = useRef(0);
     const nickRef = useRef<HTMLInputElement>(null);
     const mailRef = useRef<HTMLInputElement>(null);
     const passRef = useRef<HTMLInputElement>(null);
     const confRef = useRef<HTMLInputElement>(null);
-    const termsRef = useRef<HTMLDivElement>(null);
-    const polRef = useRef<HTMLDivElement>(null);
+    const termsRef = useRef<HTMLInputElement>(null);
+    const polRef = useRef<HTMLInputElement>(null);
 
-    const success = response.success;
-    const form = "form" in response && response.form === "reg" ? response.form : null;
-    const field = "field" in response ? response.field : null;
-    const error = "error" in response ? response.error : "";
+    const isRegError = response.success === false && "form" in response && response.form === "reg";
+    const field = isRegError && "field" in response ? response.field : null;
+    const error = isRegError && "error" in response ? response.error : "";
+    const passwordLength = pass.length >= 8 && pass.length <= 30;
+    const passwordLatin = /^[A-Za-z\d]+$/.test(pass);
+    const passwordMixed = /[A-Za-z]/.test(pass) && /\d/.test(pass);
+    const passwordValid = passwordLength && passwordLatin && passwordMixed;
+    const confirmValid = confPass.length > 0 && pass === confPass;
+    const nickLocalValid = /^[A-Za-z0-9_]{4,16}$/.test(nick);
+    const mailLocalValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail.trim());
+    const checkedNick = nickLocalValid && nickCheck.valid && nickCheck.checkedValue === nick;
+    const checkedMail = mailLocalValid && mailCheck.valid && mailCheck.checkedValue === mail.trim();
+    const pending = loadingAuth || loadingNick || loadingMail;
 
-    const notPol = (success === false && form && field === "accepts") || field === "pol";
-    const notTerms = (success === false && form && field === "accepts") || field === "terms";
-    const wrongNick = success === false && form && field === "nick"
-    const wrongMail = success === false && form && field === "email"
-    const wrongPass = success === false && form && field === "pass"
-    const wrongConf = success === false && form && field === "confirm"
+    const clearError = () => { if (isRegError) setResponse({ success: null }); };
+    const fail = (target: RegisterField, message: string) => {
+        setResponse({ success: false, form: "reg", field: target, error: message });
+        const refs = {
+            nick: nickRef, email: mailRef, pass: passRef, confirm: confRef, terms: termsRef, pol: polRef, accepts: termsRef
+        };
+        const element = refs[target]?.current;
+        element?.focus({ preventScroll: true });
+        element?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    };
 
-    const validateNick = (value: string) => {
-        clearTimeout(nickTimeout.current);
-        nickAbort.current?.abort();
-        nickAbort.current = null;
-        if (wrongNick) {
-            setResponse({ success: null });
-        }
-        setNick(value);
-
-        if (!value.trim()) {
-            setIsValidNick({ valid: false, error: "" });
-            setLoadingNick(false);
-            return;
-        }
-
-        const regex = /^[A-Za-z0-9_]+$/;
-        const valid = regex.test(value);
-
-        if (!valid) {
-            setIsValidNick({ valid: false, error: t("reg.invalidSymbols") });
-            setLoadingNick(false);
-            return;
-        }
-
-        if (value.trim().length < 4 || value.trim().length > 16) {
-            setIsValidNick({ valid: false, error: t("reg.nickLength") });
-            setLoadingNick(false);
-            return;
-        }
-
-        const currentReqId = ++nickReqId.current;
-
-        nickTimeout.current = window.setTimeout(async () => {
+    useEffect(() => {
+        const id = ++nickRequestId.current;
+        nickController.current?.abort();
+        setLoadingNick(false);
+        setNickCheck({ valid: false });
+        if (!nickLocalValid) return;
+        const timer = window.setTimeout(async () => {
             const controller = new AbortController();
-            nickAbort.current = controller;
+            nickController.current = controller;
             setLoadingNick(true);
             try {
-                const res = await checkRegister({ nick: value, signal:controller.signal});
-                if (currentReqId !== nickReqId.current) return;
-                if (!res.success) {
-                    setIsValidNick({ valid: false, error: t("reg.nickTaken") });
-                } else {
-                    setIsValidNick({ valid: true });
-                }
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (e: any) {
-                if (e?.name === "AbortError") return;
-                console.log(e);
+                const result = await checkRegisterRef.current({ nick, signal: controller.signal });
+                if (id !== nickRequestId.current || controller.signal.aborted) return;
+                setNickCheck({ valid: result.success, checkedValue: nick, error: result.success ? undefined : t("reg.nickTaken") });
+            } catch {
+                if (!controller.signal.aborted && id === nickRequestId.current)
+                    setNickCheck({ valid: false, error: "Не удалось проверить никнейм" });
             } finally {
-                if (currentReqId === nickReqId.current) {
-                    setLoadingNick(false);
-                }
+                if (id === nickRequestId.current && !controller.signal.aborted) setLoadingNick(false);
             }
         }, 500);
-    };
+        return () => { window.clearTimeout(timer); nickController.current?.abort(); };
+    }, [nick, nickLocalValid, t]);
 
-    const validateMail = (value: string) => {
-        clearTimeout(mailTimeout.current);
-        mailAbort.current?.abort();
-        mailAbort.current = null;
-        if (wrongMail) {
-            setResponse({ success: null });
-        }
-        setMail(value);
-
-        if (!value.trim()) {
-            setIsValidMail({ valid: false, error: "" });
-            setLoadingMail(false);
-            return;
-        }
-
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const valid = regex.test(value);
-
-        if (!valid) {
-            setIsValidMail({ valid: false, error: t("reg.invalidEmail") });
-            setLoadingMail(false);
-            return;
-        }
-
-        const currentReqId = ++mailReqId.current;
-
-        mailTimeout.current = window.setTimeout(async () => {
+    useEffect(() => {
+        const id = ++mailRequestId.current;
+        mailController.current?.abort();
+        setLoadingMail(false);
+        setMailCheck({ valid: false });
+        if (!mailLocalValid) return;
+        const value = mail.trim();
+        const timer = window.setTimeout(async () => {
             const controller = new AbortController();
-            mailAbort.current = controller;
-
+            mailController.current = controller;
             setLoadingMail(true);
-
             try {
-                const res = await checkRegister({ mail: value, signal:controller.signal});
-
-                if (currentReqId !== mailReqId.current) return;
-
-                if (!res.success) {
-                    setIsValidMail({
-                        valid: false,
-                        error: t("reg.emailTaken"),
-                    });
-                } else {
-                    setIsValidMail({ valid: true });
-                }
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (e: any) {
-                if (e?.name === "AbortError") return;
-                console.log(e);
+                const result = await checkRegisterRef.current({ mail: value, signal: controller.signal });
+                if (id !== mailRequestId.current || controller.signal.aborted) return;
+                setMailCheck({ valid: result.success, checkedValue: value, error: result.success ? undefined : t("reg.emailTaken") });
+            } catch {
+                if (!controller.signal.aborted && id === mailRequestId.current)
+                    setMailCheck({ valid: false, error: "Не удалось проверить почту" });
             } finally {
-                if (currentReqId === mailReqId.current) {
-                    setLoadingMail(false);
-                }
+                if (id === mailRequestId.current && !controller.signal.aborted) setLoadingMail(false);
             }
         }, 500);
+        return () => { window.clearTimeout(timer); mailController.current?.abort(); };
+    }, [mail, mailLocalValid, t]);
+
+    const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (pending) return;
+        if (!checkedNick) return fail("nick", !nick ? t("reg.nickEmpty") : nickCheck.error || t("reg.nickInvalid"));
+        if (!checkedMail) return fail("email", !mail ? t("reg.emailEmpty") : mailCheck.error || t("reg.emailInvalid"));
+        if (!passwordValid) return fail("pass", !pass ? t("reg.passwordEmpty") : !passwordLength ? "length" : !passwordLatin ? "regex" : "symbols");
+        if (!confirmValid) return fail("confirm", !confPass ? t("reg.confirmRequired") : t("reg.passwordMismatch"));
+        if (!acceptTerms && !acceptPol) return fail("accepts", "unaccepted");
+        if (!acceptTerms) return fail("terms", "unaccepted");
+        if (!acceptPol) return fail("pol", "unaccepted");
+        await register({ mail: mail.trim(), pass, nick });
     };
 
-    const validatePass = (value: string) => {
-        if (wrongPass) {
-            setResponse({ success: null });
-        }
-        setPass(value);
-        const lengthV = value.length >= 8 && value.length <= 30;
-        const type = /^[A-Za-z\d]+$/.test(value);
-        const min = /[A-Za-z]/.test(value) && /\d/.test(value);
-        setIsValidPass(lengthV && type && min);
-        setIsValidConf(value === confPass);
-    };
-
-    const validateConf = (value: string) => {
-        if (wrongConf) {
-            setResponse({ success: null });
-        }
-        setConfPass(value);
-        setIsValidConf(value === pass && value.length > 0);
-    };
-
-    const handleRegister = async () => {
-        if (loadingNick || loadingMail) return;
-        if (!isValidNick.valid) {
-            if (nick.trim() === "") {
-                setResponse({success:false, form:"reg", field:"nick", error: t("reg.nickEmpty")})
-            } else setResponse({success:false, form:"reg", field:"nick", error: t("reg.nickInvalid")})
-            return
-        } else if (!isValidMail.valid) {
-            if (mail.trim() === "") {
-                setResponse({success:false, form:"reg", field:"email", error: t("reg.emailEmpty")})
-            } else setResponse({success:false, form:"reg", field:"email", error: t("reg.emailInvalid")})
-            return
-        } else if (!isValidPass) {
-            if (pass.trim() === "") {
-                setResponse({success:false, form:"reg", field:"pass", error: t("reg.passwordEmpty")})
-            } else if (pass.length < 8 || pass.length > 30) {
-                setResponse({success:false, form:"reg", field:"pass", error:"length"})
-            } else if (/^[A-Za-z\d]+$/.test(pass) === false) {
-                setResponse({success:false, form:"reg", field:"pass", error:"regex"})
-            } else if (/[A-Za-z]/.test(pass) === false || /\d/.test(pass) === false) {
-                setResponse({success:false, form:"reg", field:"pass", error:"symbols"})
-            }
-            return
-        } else if (!isValidConf) {
-            if (confPass.trim() === "") {
-                setResponse({success:false, form:"reg", field:"confirm", error: t("reg.confirmRequired")})
-            } else setResponse({success:false, form:"reg", field:"confirm", error: t("reg.passwordMismatch")})
-            return
-        }
-        if (!acceptPol && acceptTerms) {
-            setResponse({ success: false, form: "reg", field: "pol", error: "unaccepted" });
-            return;
-        } else if (!acceptTerms && acceptPol) {
-            setResponse({ success: false, form: "reg", field: "terms", error: "unaccepted" });
-            return;
-        } else if (!acceptPol && !acceptTerms) {
-            setResponse({ success: false, form: "reg", field: "accepts", error: "unaccepted" });
-            return;
-        }
-        await register({ mail, pass, nick });
-    };
-
-    useEffect(() => {
-        if (acceptPol && notPol) {
-            if (field === "pol") {
-                setResponse({ success: null });
-            } else if (field === "accepts") {
-                setResponse({ success: false, form: "reg", field: "terms", error: "unaccepted" });
-            }
-        }
-        if (acceptTerms && notTerms) {
-            if (field === "terms") {
-                setResponse({ success: null });
-            } else if (field === "accepts") {
-                setResponse({ success: false, form: "reg", field: "pol", error: "unaccepted" });
-            }
-        }
-    }, [acceptPol, acceptTerms, field, notPol, notTerms]);
-
-    useEffect(() => {
-        return () => {
-            clearTimeout(nickTimeout.current);
-            clearTimeout(mailTimeout.current);
-            nickAbort.current?.abort();
-            mailAbort.current?.abort();
-        };
-    }, []);
-
-    useEffect(() => {
-        if (success !== false || form !== "reg") return;
-
-        switch (field) {
-            case "nick":
-                nickRef.current?.focus();
-                nickRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                break;
-
-            case "email":
-                mailRef.current?.focus();
-                mailRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                break;
-
-            case "pass":
-                passRef.current?.focus();
-                passRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                break;
-
-            case "confirm":
-                confRef.current?.focus();
-                confRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                break;
-            case "terms":
-                termsRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                break;
-            case "pol":
-                polRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                break;
-            case "accepts":
-                termsRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                break;
-        }
-    }, [success, form, field]);
-
-    const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            handleRegister()
-        }
-    };
+    const wrong = (name: string) => isRegError && (field === name || (name === "terms" || name === "pol") && field === "accepts");
+    const status = (busy: boolean, valid: boolean, message: string) => (
+        <span className={`inpExtraSpan ${busy ? "loading" : valid ? "valid" : "invalid"}`} role="status">
+            {busy ? <CircleNotchIcon weight="bold"/> : valid ? <CheckIcon weight="bold"/> : <XIcon weight="bold"/>} {message}
+        </span>
+    );
+    const rule = (valid: boolean, label: string, code: string) => (
+        <span className={valid ? "valid" : wrong("pass") && error === code ? "invalid" : ""}>
+            {valid ? <CheckIcon weight="bold"/> : wrong("pass") && error === code ? <XIcon weight="bold"/> : <DotOutlineIcon weight="fill"/>} {label}
+        </span>
+    );
 
     return (
-        <div className="landingForm" onKeyDown={handleKeyDown}>
-            <input
-                type="text"
-                className={`landingInput ${wrongNick ? "invalid" : ""}`}
-                placeholder={wrongNick ? error : t("reg.nickname")}
-                required
-                minLength={4}
-                maxLength={16}
-                ref={nickRef}
-                onChange={(e) => validateNick(e.currentTarget.value)}
-            />
-            {nick.trim() !== "" &&
-                (loadingNick ? (
-                    <span className="inpExtraSpan loading">
-                        <CircleNotchIcon weight="bold" />
-                        {t("reg.checkingNick")}
-                    </span>
-                ) : !isValidNick.valid ? (
-                    <span className="inpExtraSpan invalid">
-                        <XIcon weight="bold" />
-                        {isValidNick.error}
-                    </span>
-                ) : (
-                    <span className="inpExtraSpan valid">
-                        <CheckIcon weight="bold" />
-                        {t("reg.nickAvailable")}   
-                    </span>
-                ))}
-
-            <input
-                type="email"
-                className={`landingInput ${wrongMail ? "invalid" : ""}`}
-                placeholder={wrongMail ? error : t("reg.email")}
-                required
-                ref={mailRef}
-                onChange={(e) => validateMail(e.currentTarget.value)}
-            />
-            {mail.trim() !== "" &&
-                (loadingMail ? (
-                    <span className="inpExtraSpan loading">
-                        <CircleNotchIcon weight="bold" />
-                        {t("reg.checkingEmail")}
-                    </span>
-                ) : !isValidMail.valid ? (
-                    <span className="inpExtraSpan invalid">
-                        <XIcon weight="bold" />
-                        {isValidMail.error}
-                    </span>
-                ) : (
-                    <span className="inpExtraSpan valid">
-                        <CheckIcon weight="bold" />
-                        {t("reg.emailAvailable")}   
-                    </span>
-                ))}
-
-            <div
-                className="passWrap"
-            >
-                <input
-                    type={showedPass.reg ? "text" : "password"}
-                    className={`landingInput landingInputPass ${wrongPass ? "invalid" : ""}`}
-                    placeholder={wrongPass ? error : t("reg.password")}
-                    required
-                    ref={passRef}
-                    onChange={(e) => validatePass(e.target.value)}
-                />
-                {showedPass.reg ? (
-                    <Eye onClick={() => showPass("reg")} onMouseDown={(e) => e.preventDefault()} />
-                ) : (
-                    <EyeOff onClick={() => showPass("reg")} onMouseDown={(e) => e.preventDefault()} />
-                )}
+        <form className="landingForm" onSubmit={handleRegister} noValidate inert={!active} aria-hidden={!active}>
+            <div className="landingField">
+                <label className="landingLabel" htmlFor="reg-nick">{t("reg.nickname")}</label>
+                <input id="reg-nick" name="username" ref={nickRef} type="text" autoComplete="username" autoCapitalize="none" spellCheck={false} minLength={4} maxLength={16} required
+                    className={`landingInput ${wrong("nick") ? "invalid" : ""}`} placeholder={t("reg.nickname")} value={nick}
+                    onChange={e => { clearError(); setNick(e.target.value); }} aria-invalid={wrong("nick")}/>
+                {nick && (!nickLocalValid ? status(false, false, !/^[A-Za-z0-9_]+$/.test(nick) ? t("reg.invalidSymbols") : t("reg.nickLength"))
+                    : status(loadingNick, checkedNick, loadingNick ? t("reg.checkingNick") : checkedNick ? t("reg.nickAvailable") : nickCheck.error || t("reg.checkingNick")))}
+                {wrong("nick") && <span className="inpExtraSpan invalid" role="alert">{error}</span>}
             </div>
-            <div className="passRules">
-                <span className={`${pass.length >= 8 && pass.length <= 30 ? "valid" : ""} ${wrongPass && field === "pass" && error === "length" ? "invalid" : ""}`}>
-                    {pass.length >= 8 && pass.length <= 30 ? (
-                        <CheckIcon weight="bold" />
-                    ) : wrongPass && field === "pass" && error === "length" ? (
-                        <XIcon weight="bold" />
-                    ) : (
-                        <DotOutlineIcon weight="fill" />
-                    )}
-                    {t("reg.passwordLengthRule")}
-                </span>
-                <span className={`${/^[A-Za-z\d]+$/.test(pass) ? "valid" : ""} ${wrongPass && field === "pass" && error === "regex" ? "invalid" : ""}`}>
-                    {/^[A-Za-z\d]+$/.test(pass) ? (
-                        <CheckIcon weight="bold" />
-                    ) : wrongPass && field === "pass" && error === "regex" ? (
-                        <XIcon weight="bold" />
-                    ) : (
-                        <DotOutlineIcon weight="fill" />
-                    )}
-                    {t("reg.passwordLatinRule")}
-                </span>
-                <span className={`${/[A-Za-z]/.test(pass) && /\d/.test(pass) ? "valid" : ""} ${wrongPass && field === "pass" && error === "symbols" ? "invalid" : ""}`}>
-                    {/[A-Za-z]/.test(pass) && /\d/.test(pass) ? (
-                        <CheckIcon weight="bold" />
-                    ) : wrongPass && field === "pass" && error === "symbols" ? (
-                        <XIcon weight="bold" />
-                    ) : (
-                        <DotOutlineIcon weight="fill" />
-                    )}
-                    {t("reg.passwordSymbolsRule")}
-                </span>
+            <div className="landingField">
+                <label className="landingLabel" htmlFor="reg-mail">{t("reg.email")}</label>
+                <input id="reg-mail" name="email" ref={mailRef} type="email" autoComplete="email" autoCapitalize="none" spellCheck={false} required
+                    className={`landingInput ${wrong("email") ? "invalid" : ""}`} placeholder={t("reg.email")} value={mail}
+                    onChange={e => { clearError(); setMail(e.target.value); }} aria-invalid={wrong("email")}/>
+                {mail && (!mailLocalValid ? status(false, false, t("reg.invalidEmail"))
+                    : status(loadingMail, checkedMail, loadingMail ? t("reg.checkingEmail") : checkedMail ? t("reg.emailAvailable") : mailCheck.error || t("reg.checkingEmail")))}
+                {wrong("email") && <span className="inpExtraSpan invalid" role="alert">{error}</span>}
             </div>
-            <div className="passWrap">
-                <input
-                    type={showedPass.conf ? "text" : "password"}
-                    className={`landingInput landingInputPass ${wrongConf ? "invalid" : ""}`}
-                    placeholder={wrongConf ? error : t("reg.confirmPassword")}
-                    required
-                    ref={confRef}
-                    onChange={(e) => validateConf(e.target.value)}
-                />
-                {showedPass.conf ? (
-                    <Eye onClick={() => showPass("conf")} />
-                ) : (
-                    <EyeOff onClick={() => showPass("conf")} />
-                )}
+            <div className="landingField">
+                <label className="landingLabel" htmlFor="reg-pass">{t("reg.password")}</label>
+                <div className="passWrap">
+                    <input id="reg-pass" name="new-password" ref={passRef} type={showedPass.reg ? "text" : "password"} autoComplete="new-password" required
+                        className={`landingInput landingInputPass ${wrong("pass") ? "invalid" : ""}`} placeholder={t("reg.password")} value={pass}
+                        onChange={e => { clearError(); setPass(e.target.value); }} aria-invalid={wrong("pass")}/>
+                    <button type="button" className="landingEyeButton" aria-label={showedPass.reg ? t("controls.hidePassword") : t("controls.showPassword")} onPointerDown={e => e.preventDefault()} onClick={() => showPass("reg")}>
+                        {showedPass.reg ? <Eye size={20}/> : <EyeOff size={20}/>}
+                    </button>
+                </div>
+                <div className="passRules">
+                    {rule(passwordLength, t("reg.passwordLengthRule"), "length")}
+                    {rule(passwordLatin, t("reg.passwordLatinRule"), "regex")}
+                    {rule(passwordMixed, t("reg.passwordSymbolsRule"), "symbols")}
+                </div>
             </div>
-
-            <div
-                className={`checkString ${notTerms && "notAccepted"}`}
-                onClick={() => setAcceptTerms(!acceptTerms)}
-                ref={termsRef}
-            >
-                {acceptTerms ? <CheckSquareIcon weight="fill" /> : <SquareIcon />}
-                {t("reg.acceptTerms")}
-                <span
-                    className="acceptSpan"
-                    onClick={(e) => {
-                        e.preventDefault();
-                    }}
-                >
-                    {t("reg.userAgreement")}
-                </span>
+            <div className="landingField">
+                <label className="landingLabel" htmlFor="reg-conf">{t("reg.confirmPassword")}</label>
+                <div className="passWrap">
+                    <input id="reg-conf" name="confirm-password" ref={confRef} type={showedPass.conf ? "text" : "password"} autoComplete="new-password" required
+                        className={`landingInput landingInputPass ${wrong("confirm") ? "invalid" : ""}`} placeholder={t("reg.confirmPassword")} value={confPass}
+                        onChange={e => { clearError(); setConfPass(e.target.value); }} aria-invalid={wrong("confirm")}/>
+                    <button type="button" className="landingEyeButton" aria-label={showedPass.conf ? t("controls.hidePassword") : t("controls.showPassword")} onPointerDown={e => e.preventDefault()} onClick={() => showPass("conf")}>
+                        {showedPass.conf ? <Eye size={20}/> : <EyeOff size={20}/>}
+                    </button>
+                </div>
+                {!!confPass && !confirmValid && <span className="inpExtraSpan invalid" role="status">{t("reg.passwordMismatch")}</span>}
             </div>
-
-            <div
-                className={`checkString ${notPol && "notAccepted"}`}
-                onClick={() => setAcceptPol(!acceptPol)}
-                ref={polRef}
-            >
-                {acceptPol ? <CheckSquareIcon weight="fill" /> : <SquareIcon />}
-                {t("reg.acceptTerms")}
-                <span
-                    className="acceptSpan"
-                    onClick={(e) => {
-                        e.preventDefault();
-                    }}
-                >
-                    {t("reg.privacyPolicy")}
-                </span>
+            <div className="landingConsents">
+                <div className={`checkString ${wrong("terms") ? "notAccepted" : ""}`}>
+                    <input ref={termsRef} id="reg-terms" className="landingNativeCheckbox" type="checkbox" checked={acceptTerms} onChange={e => { clearError(); setAcceptTerms(e.target.checked); }}/>
+                    <label htmlFor="reg-terms">{acceptTerms ? <CheckSquareIcon weight="fill" aria-hidden="true"/> : <SquareIcon aria-hidden="true"/>}{t("reg.acceptTerms")}</label> <Link className="acceptSpan" to="/info/terms">{t("reg.userAgreement")}</Link>
+                </div>
+                <div className={`checkString ${wrong("pol") ? "notAccepted" : ""}`}>
+                    <input ref={polRef} id="reg-policy" className="landingNativeCheckbox" type="checkbox" checked={acceptPol} onChange={e => { clearError(); setAcceptPol(e.target.checked); }}/>
+                    <label htmlFor="reg-policy">{acceptPol ? <CheckSquareIcon weight="fill" aria-hidden="true"/> : <SquareIcon aria-hidden="true"/>}{t("reg.acceptTerms")}</label> <Link className="acceptSpan" to="/info/policy">{t("reg.privacyPolicy")}</Link>
+                </div>
             </div>
-
             <div className="landingButts">
-            {loadingAuth
-                ? <LoaderSmall/>
-                : <button type="submit" className="greenButt" onClick={() => handleRegister()}>{t("reg.createAccount")}</button>
-            }
-                
+                <button type="submit" className="greenButt" disabled={pending}>{loadingAuth ? <LoaderSmall/> : t("reg.createAccount")}</button>
             </div>
-            <button type="button" onClick={() => swipeForm("auth")}>
-                {t("reg.signIn")}
-            </button>
-        </div>
+            <button type="button" className="landingSwitchForm" disabled={loadingAuth} onClick={() => { clearError(); swipeForm("auth"); }}>{t("reg.signIn")}</button>
+        </form>
     );
 }

@@ -27,21 +27,13 @@ export default function ContextMenu() {
         const element = menuRef.current;
         const menuWidth = element.offsetWidth;
         const menuHeight = element.offsetHeight;
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-
-        let left = menu.x;
-        let top = menu.y;
-
-        if (left + menuWidth > viewportWidth) {
-            left = viewportWidth - menuWidth - 10;
-            if (left < 0) left = 0;
-        }
-
-        if (top + menuHeight > viewportHeight) {
-            top = viewportHeight - menuHeight - 10;
-            if (top < 0) top = 0;
-        }
+        const viewport = window.visualViewport;
+        const viewportWidth = viewport?.width ?? window.innerWidth;
+        const viewportHeight = viewport?.height ?? window.innerHeight;
+        const offsetLeft = viewport?.offsetLeft ?? 0;
+        const offsetTop = viewport?.offsetTop ?? 0;
+        const left = Math.max(offsetLeft + 10, Math.min(menu.x, offsetLeft + viewportWidth - menuWidth - 10));
+        const top = Math.max(offsetTop + 10, Math.min(menu.y, offsetTop + viewportHeight - menuHeight - 10));
 
         setPos({ top, left });
         setIsAdjusted(true);

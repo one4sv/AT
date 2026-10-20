@@ -1,0 +1,9 @@
+.landingBackground {
+    background-color: var(--bgc);
+    background-image:
+        radial-gradient(ellipse 65% 65% at 0% 15%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 78%),
+        radial-gradient(ellipse 60% 75% at 100% 85%, color-mix(in srgb, var(--grad) 22%, transparent), transparent 78%),
+        radial-gradient(ellipse 38% 40% at 65% 0%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 85%);
+    background-repeat: no-repeat;
+    pointer-events: none;
+}

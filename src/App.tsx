@@ -17,6 +17,7 @@ import ContextMenu from './components/ts/ContextMenu/ContextMenu';
 import Settings from './pages/Settings/Settings'; 
 import Landing from './pages/Landing/Landing';
 import Info from './pages/Info/Info';
+import Language from './pages/Settings/Language';
 import { useVisualViewport } from './components/hooks/utils/VisualViewportHook';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         <ContextMenu/>
         <Routes>
           <Route path="/sign" element={<Landing />} />
+          <Route path="/settings/language" element={<Language />} />
           {window.location.hostname === "localhost" && (
             <Route path="/admin" element={<Admin />} />
           )}

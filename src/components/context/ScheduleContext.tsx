@@ -1,9 +1,10 @@
-import { createContext, useState, useMemo, useCallback, type ReactNode } from "react";
+import { createContext, useState, useMemo, useCallback, useRef, useEffect, type ReactNode } from "react";
 import { api } from "../ts/api";
 import { useTheHabit } from "../hooks/TheHabitHook";
 import { useHabits } from "../hooks/HabitsHook";
 import axios from "axios";
 import { useUser } from "../hooks/UserHook";
+import { useNote } from "../hooks/NoteHook";
 
 export type ScheduleBlockType = {
     id: number;
@@ -124,7 +125,11 @@ export type ScheduleContextType = {
 const ScheduleContext = createContext<ScheduleContextType | null>(null);
 
 export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
-    const { habitSettings, loadHabit } = useTheHabit();
+    const { habitSettings, loadHabit, habit } = useTheHabit();
+    const { showNotification } = useNote();
+    const pendingCompletions = useRef(new Set<string>());
+    const currentHabitRef = useRef(habit?.id);
+    currentHabitRef.current = habit?.id;
     const { refetchHabits } = useHabits()
     const { user } = useUser()
     const [ schedules, setSchedules ] = useState<SchedulesMap>({});
@@ -133,6 +138,19 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
     const [ schedule_settings, setSchedule_Settings ] = useState<ScheduleSettingsMap>({});
     const [ scheduleCompletions, setScheduleCompletions ] = useState<ScheduleCompletionType[]>([]);
     const [ loadingComp, setLoadingComp ] = useState<string[]>([])
+    const completionsRef = useRef(scheduleCompletions);
+    completionsRef.current = scheduleCompletions;
+    const userRef = useRef(user.id);
+    userRef.current = user.id;
+
+    useEffect(() => {
+        setSchedules({});
+        setHabitSchedule({});
+        setSchedule_Settings({});
+        setScheduleCompletions([]);
+        setLoadingComp([]);
+        pendingCompletions.current.clear();
+    }, [user.id]);
     
     const refreshSchedules = useCallback(async () => {
         if (!user.id) return
@@ -157,10 +175,11 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         if (habitSettings.metric_type !== "schedule" && !habitSettings.schedule) return;
 
         try {
+            const requestUser = userRef.current;
             const res = await api.get(`/schedule/complete/${habitId}`);
+            if (userRef.current !== requestUser) return;
             if (res.data.success) {
-                setScheduleCompletions(res.data.completions ?? []);
-                console.log("completions:", res.data.completions)
+                setScheduleCompletions(previous => [...previous.filter(block => String(block.habit_id) !== habitId), ...(res.data.completions ?? [])]);
             }
         } catch (e) {
             console.error(e);
@@ -220,58 +239,37 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [loadHabitSchedule]);
 
-    const scheduleComplete = useCallback(async (
-        habitId: string,
-        blockId: number,
-        date: string
-    ) => {
-        const key = `${blockId} - ${date}`
-        setLoadingComp(prev => [...prev, key])
-        console.log(loadingComp)
-        setScheduleCompletions(prev => {
-            const exists = prev.some(
-                c => c.schedule_id === blockId && c.date === date
-            );
-
-            if (exists) {
-                return prev.filter(
-                    c => !(c.schedule_id === blockId && c.date === date)
-                );
-            }
-
-            return [
-                ...prev,
-                {
-                    id: Date.now(),
-                    habit_id: habitId,
-                    schedule_id: blockId,
-                    date
-                }
-            ];
-        });
-
+    const scheduleComplete = useCallback(async (habitId: string, blockId: number, date: string) => {
+        const key = `${blockId} - ${date}`;
+        const requestUser = userRef.current;
+        const pendingKey = `${requestUser}:${key}`;
+        if (pendingCompletions.current.has(pendingKey)) return;
+        pendingCompletions.current.add(pendingKey);
+        const previous = completionsRef.current.find(block => String(block.habit_id) === habitId && block.schedule_id === blockId && block.date === date);
+        setLoadingComp(items => [...items, key]);
+        setScheduleCompletions(items => previous
+            ? items.filter(block => !(String(block.habit_id) === habitId && block.schedule_id === blockId && block.date === date))
+            : [...items, { id: Date.now(), habit_id: habitId, schedule_id: blockId, date }]);
         try {
-            const res = await api.post("/schedule/complete", {
-                habit_id: habitId,
-                blockId,
-                date
-            });
-            if (res.data.success) {
-                try {
-                    await loadHabit(habitId)
-                    await refetchHabits()
-                } catch (e) {
-                    console.log("Ошибка обновления в блоке", blockId, date, e)
-                }
+            const response = await api.post("/schedule/complete", { habit_id: habitId, blockId, date });
+            if (userRef.current !== requestUser) return;
+            if (!response.data.success) throw new Error(response.data.error || "Не удалось сохранить выполнение");
+            await scheduleGetCompletions(habitId);
+            if (String(currentHabitRef.current) === habitId) await loadHabit(habitId);
+            await refetchHabits();
+        } catch (error) {
+            if (userRef.current === requestUser) {
+                setScheduleCompletions(items => {
+                    const remaining = items.filter(block => !(String(block.habit_id) === habitId && block.schedule_id === blockId && block.date === date));
+                    return previous ? [...remaining, previous] : remaining;
+                });
+                showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Не удалось сохранить выполнение" : error instanceof Error ? error.message : "Не удалось сохранить выполнение");
             }
-        } catch (e) {
-            console.error(e);
         } finally {
-            setLoadingComp(prev => prev.filter(l => l !== key))
+            pendingCompletions.current.delete(pendingKey);
+            if (userRef.current === requestUser) setLoadingComp(items => items.filter(item => item !== key));
         }
-    }, [scheduleGetCompletions]);
-
-    
+    }, [scheduleGetCompletions, loadHabit, refetchHabits, showNotification]);
 
     const value = useMemo(() => ({
         schedules,

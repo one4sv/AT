@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import type { DoneCompletion } from "../../context/TheHabitContext"
 
 export function useChecklistBlocks(initial: DoneCompletion[]) {
     const [blocks, setBlocks] = useState<DoneCompletion[]>(initial)
 
-    const generateId = () => Date.now() + Math.random()
+    const nextId = useRef(-1)
+    const generateId = () => nextId.current--
 
     const addBlock = (habitId: number, date: string) => {
         const id = generateId()

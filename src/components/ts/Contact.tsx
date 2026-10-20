@@ -192,6 +192,7 @@ export default function Contact({ contact }: ContactType) {
                 closeMenu();
             }}
             to={contact.is_group ? `chat/g/${contact.id}` : `chat/${contact.nick}`}
+            data-context-menu="true"
             onContextMenu={(e) => {
                 e.preventDefault();
                 openMenu(

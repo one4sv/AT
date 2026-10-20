@@ -21,15 +21,19 @@ import type { tab } from "../../context/SideMenuContext"
 import { useBlackout } from "../../hooks/BlackoutHook"
 import { useNote } from "../../hooks/NoteHook"
 import { useNavigate } from "react-router"
-import { isMobile } from "react-device-detect"
+import useCompactLayout from "../../hooks/utils/useCompactLayout";
 import { useSettings } from "../../hooks/SettingsHook"
 import { useContacts } from "../../hooks/ContactsHook"
+import { useTranslation } from "react-i18next"
 
 export default function SMnav() {
+    const isMobile = useCompactLayout();
     const { user, logOut, loadingUser } = useUser()
     const {
         setActiveTab,
         activeTab,
+        settingsSearch,
+        setSettingsSearch,
         messageSelectedValue,
         setMessageSelectedValue,
         habitsSelectedValue,
@@ -48,8 +52,14 @@ export default function SMnav() {
     const { setBlackout } = useBlackout()
     const { layout } = useSettings()
     const { showNotification } = useNote()
-    const { search, setSearch } = useContacts()
+    const { search: contactSearch, setSearch: setContactSearch } = useContacts()
+    const search = activeTab === "user" ? settingsSearch : contactSearch
+    const setSearch = activeTab === "user" ? setSettingsSearch : setContactSearch
     const navigate = useNavigate()
+    const { t } = useTranslation("common")
+    const searchInputRef = useRef<HTMLInputElement>(null)
+    const suppressMouseUntil = useRef(0)
+    const touchTab = useRef<tab | null>(null)
 
     const [ extraMenu, setExtraMenu ] = useState<tab>()
     const [ isExtraOpen, setIsExtraOpen ] = useState(false)
@@ -129,6 +139,9 @@ export default function SMnav() {
     }
 
     const handleNavTouchStart = (tab: tab, e: React.TouchEvent) => {
+        if (e.touches.length !== 1) return
+        suppressMouseUntil.current = performance.now() + 800
+        touchTab.current = tab
         const touch = e.touches[0]
         startLongPress(tab, touch.clientX, touch.clientY)
     }
@@ -193,7 +206,11 @@ export default function SMnav() {
         setTranslateX(next)
     }
 
-    const handleNavTouchEnd = () => {
+    const handleNavTouchEnd = (event: React.TouchEvent) => {
+        const touch = event.changedTouches[0]
+        const target = touch ? document.elementFromPoint(touch.clientX, touch.clientY)?.closest<HTMLElement>(".SMnavButt") : null
+        if (gesture.current === "none" && !wasLongPress.current && target?.dataset.tab === touchTab.current && touchTab.current) navFunc(touchTab.current)
+        touchTab.current = null
         if (gesture.current === "menu") {
             setIsDragging(false)
             const target = translateX < -40 ? -100 : 0
@@ -332,15 +349,29 @@ export default function SMnav() {
         wasLongPress.current = false
     }
 
+    const pointerUpRef = useRef(handlePointerUp)
+    pointerUpRef.current = handlePointerUp
+    const cancelTouch = () => {
+        setIsExtraOpen(false)
+        touchTab.current = null
+        isPointerDown.current = false
+        wasLongPress.current = false
+        gesture.current = "none"
+        cancelLongPress()
+        setTouchHover(null)
+        setIsDragging(false)
+    }
+
     useEffect(() => {
-        document.addEventListener("mouseup", handlePointerUp)
-        document.addEventListener("touchend", handlePointerUp)
-        document.addEventListener("touchcancel", handlePointerUp)
+        const release = (event: MouseEvent | TouchEvent) => pointerUpRef.current(event)
+        document.addEventListener("mouseup", release)
+        document.addEventListener("touchend", release)
 
         return () => {
-            document.removeEventListener("mouseup", handlePointerUp)
-            document.removeEventListener("touchend", handlePointerUp)
-            document.removeEventListener("touchcancel", handlePointerUp)
+            document.removeEventListener("mouseup", release)
+            document.removeEventListener("touchend", release)
+            if (timerRef.current) clearTimeout(timerRef.current)
+            touchHoverRef.current?.classList.remove("touchHover")
         }
     }, [])
 
@@ -527,7 +558,7 @@ export default function SMnav() {
                         : "none",
             }}
             onTouchEnd={handleNavTouchEnd}
-            onTouchCancel={handleNavTouchEnd}
+            onTouchCancel={cancelTouch}
         >
             <div className={`SMnavExtraDiv ${isExtraOpen ? "open" : ""} ${extraMenu || ""} ${isSearch ? "upper" : ""}`} ref={filtersRef}>
                 {extraButts()}
@@ -574,8 +605,8 @@ export default function SMnav() {
                     className={`SMnavButt ${activeTab === "chats" ? "active" : ""}`}
                     data-tab="chats"
                     onContextMenu={(e) => e.preventDefault()}
-                    onMouseDown={() => startLongPress("chats")}
-                    onMouseUp={() => navFunc("chats")}
+                    onMouseDown={() => { if (performance.now() >= suppressMouseUntil.current) startLongPress("chats") }}
+                    onMouseUp={() => { if (performance.now() >= suppressMouseUntil.current) navFunc("chats") }}
                     onMouseEnter={() => handleNavEnter("chats")}
                     key={messageSelected.value}
                     onTouchStart={(e) => handleNavTouchStart("chats", e)}
@@ -588,8 +619,8 @@ export default function SMnav() {
                     className={`SMnavButt ${activeTab === "habits" ? "active" : ""}`}
                     data-tab="habits"
                     onContextMenu={(e) => e.preventDefault()}
-                    onMouseDown={() => startLongPress("habits")}
-                    onMouseUp={() => navFunc("habits")}
+                    onMouseDown={() => { if (performance.now() >= suppressMouseUntil.current) startLongPress("habits") }}
+                    onMouseUp={() => { if (performance.now() >= suppressMouseUntil.current) navFunc("habits") }}
                     onMouseEnter={() => handleNavEnter("habits")}
                     key={habitsSelected.value}
                     onTouchStart={(e) => handleNavTouchStart("habits", e)}
@@ -602,8 +633,8 @@ export default function SMnav() {
                     className={`SMnavButt ${activeTab === "spots" ? "active" : ""}`}
                     data-tab="spots"
                     onContextMenu={(e) => e.preventDefault()}
-                    onMouseDown={() => startLongPress("spots")}
-                    onMouseUp={() => navFunc("spots")}
+                    onMouseDown={() => { if (performance.now() >= suppressMouseUntil.current) startLongPress("spots") }}
+                    onMouseUp={() => { if (performance.now() >= suppressMouseUntil.current) navFunc("spots") }}
                     onMouseEnter={() => handleNavEnter("spots")}
                     onTouchStart={(e) => handleNavTouchStart("spots", e)}
                     onTouchMove={handleNavTouchMove}
@@ -615,8 +646,8 @@ export default function SMnav() {
                     className={`SMnavButt SMnavAvatar ${activeTab === "user" ? "active" : ""}`}
                     data-tab="user"
                     onContextMenu={(e) => e.preventDefault()}
-                    onMouseDown={() => startLongPress("user")}
-                    onMouseUp={() => navFunc("user")}
+                    onMouseDown={() => { if (performance.now() >= suppressMouseUntil.current) startLongPress("user") }}
+                    onMouseUp={() => { if (performance.now() >= suppressMouseUntil.current) navFunc("user") }}
                     onMouseEnter={() => handleNavEnter("user")}
                     onTouchStart={(e) => handleNavTouchStart("user", e)}
                     onTouchMove={handleNavTouchMove}
@@ -632,9 +663,9 @@ export default function SMnav() {
                 </div>
             </div>
             <div className={`smNavSearch ${isSearch ? "active" : "dis"}`}>
-                <input type="text" className="smNavSearchInp" placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)}/>
+                <input ref={searchInputRef} type="search" className="smNavSearchInp" placeholder={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")} aria-label={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")} value={search} onChange={(e) => setSearch(e.target.value)}/>
                 <div className="" onClick={() => {
-                    if (!isSearch) setIsSearch(true)
+                    if (!isSearch) { setIsSearch(true); requestAnimationFrame(() => searchInputRef.current?.focus()) }
                     else {
                         if (search.trim() !== "") setSearch("")
                         else setIsSearch(false)

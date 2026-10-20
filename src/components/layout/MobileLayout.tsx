@@ -6,7 +6,7 @@ import SideMenu from "../ts/SM/SideMenu";
 import { useLocation } from "react-router-dom";
 import { useSideMenu } from "../hooks/SideMenuHook";
 import SMnav from "../ts/SM/SMnav";
-import { isMobile } from "react-device-detect";
+import useCompactLayout from "../hooks/utils/useCompactLayout";
 import SMheader from "../ts/SM/SMheader";
 
 interface LayoutProps {
@@ -14,6 +14,7 @@ interface LayoutProps {
 }
 
 export default function MobileLayout({ children }: LayoutProps) {
+    const isMobile = useCompactLayout();
     const { decor } = useSettings();
     const location = useLocation();
     const {

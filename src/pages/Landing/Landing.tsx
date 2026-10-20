@@ -11,92 +11,83 @@ import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
 import { MoonStarsIcon, SunDimIcon } from "@phosphor-icons/react";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
+import useLandingSheet from "./Components/useLandingSheet";
+import { useTranslation } from "react-i18next";
+import "../../scss/landingBackground.scss";
 
 export default function Landing() {
     const { loadingAuth, response } = useAuth();
-    const { setTitle } = usePageTitle()
+    const { setTitle } = usePageTitle();
     const { loadingUser, user } = useUser();
-    const { setNewTheme } = useUpSettings()
-    const { theme } = useSettings()
-
+    const { setNewTheme } = useUpSettings();
+    const { theme } = useSettings();
     const navigate = useNavigate();
-    const [ body, setBody ] = useState<"sign" | "mail">("sign")
-    const [ showedPass, setShowedPass ] = useState({
-        auth: false,
-        reg: false,
-        conf: false,
-    });
-    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark =
-        theme === "dark" ||
-        (theme === "system" && systemDark);
-
+    const { t, i18n } = useTranslation("common");
+    const { rootRef, open, setOpen, drag, close } = useLandingSheet();
+    const footerRef = useRef<HTMLDivElement>(null);
+    const footerButtonRef = useRef<HTMLButtonElement>(null);
+    const wasOpen = useRef(false);
+    const russian = i18n.language.startsWith("ru");
+    const [body, setBody] = useState<"sign" | "mail">("sign");
+    const [activeForm, setActiveForm] = useState<"auth" | "reg">("auth");
+    const [showedPass, setShowedPass] = useState({ auth: false, reg: false, conf: false });
+    const [systemDark, setSystemDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const isDark = theme === "dark" || (theme === "system" && systemDark);
     const formRef = useRef<HTMLDivElement>(null);
-    const isTwoAuth = response.success === true && response.form === "auth" && response.two_auth
-    const notTwoAuth = response.success === true && response.form === "auth" && !response.two_auth
-    const regSuccess = response.success === true && response.form === "reg"
-    
+    const isTwoAuth = response.success === true && response.form === "auth" && response.two_auth;
+    const notTwoAuth = response.success === true && response.form === "auth" && !response.two_auth;
+    const regSuccess = response.success === true && response.form === "reg";
+
     useEffect(() => {
-        if (isTwoAuth && !loadingAuth || regSuccess) setBody("mail")
-        else setBody("sign")
-    }, [isTwoAuth, loadingAuth, regSuccess])
+        const query = window.matchMedia("(prefers-color-scheme: dark)");
+        const handleChange = (event: MediaQueryListEvent) => setSystemDark(event.matches);
+        query.addEventListener("change", handleChange);
+        return () => query.removeEventListener("change", handleChange);
+    }, []);
+    useEffect(() => {
+        setBody(((isTwoAuth && !loadingAuth) || regSuccess) ? "mail" : "sign");
+    }, [isTwoAuth, loadingAuth, regSuccess]);
+    useEffect(() => { if (user.id) navigate("/", { replace: true }); }, [user.id, navigate]);
+    useEffect(() => { setTitle("Achieve Together"); }, [setTitle]);
+    useEffect(() => {
+        if (open) footerRef.current?.focus({ preventScroll: true });
+        else if (wasOpen.current) footerButtonRef.current?.focus({ preventScroll: true });
+        wasOpen.current = open;
+    }, [open]);
 
     const swipeForm = (targetForm: "auth" | "reg") => {
         if (!formRef.current || loadingAuth || loadingUser || notTwoAuth) return;
-
-        formRef.current.scrollTo({
-            left: targetForm === "reg" ? formRef.current.clientWidth : 0,
-            behavior: "smooth",
-        });
+        formRef.current.scrollTo({ left: targetForm === "reg" ? formRef.current.clientWidth : 0, behavior: "smooth" });
     };
-
     const showPass = (value: "auth" | "reg" | "conf") => {
-        if (value === "auth") setShowedPass({ ...showedPass, auth: !showedPass.auth });
-        if (value === "reg") setShowedPass({ ...showedPass, reg: !showedPass.reg });
-        if (value === "conf") setShowedPass({ ...showedPass, conf: !showedPass.conf });
+        setShowedPass(previous => ({ ...previous, [value]: !previous[value] }));
     };
 
-    useEffect(() => {
-        if (user.id) navigate("/");
-    }, [user.id]);
-
-    useEffect(() => {   
-        setTitle("Achieve Together")
-    }, []);
-
-    const selectBody = () => {
-        if (body === "sign") return (
-            <div
-                className="landingFormWrapper"
-                ref={formRef}
-            > 
-                {/* Авторизация */}
-                <AuthForm showPass={showPass} showedPass={showedPass} swipeForm={swipeForm}/>
-                {/* Регистрация */}
-                <RegistrationForm showPass={showPass} showedPass={showedPass} swipeForm={swipeForm}/>
-            </div>    
-        )
-        else if (body === "mail") return <BodyMail/>
-    }
-    
     return (
-        <div className="landing">
-            <div className="changeSignTheme" onClick={()=>setNewTheme(isDark ? "light" : "dark")}>
-                    {isDark && (
-                        <MoonStarsIcon />
-                    )}            
-                    {!isDark && (
-                        <SunDimIcon  />
-                    )}
-                </div>
-            <div className="landingDiv">
-                <div className="title">
-                    Achieve Together
-                    <span>beta</span>
-                </div>
-                {selectBody()}
+        <div className={`landing ${open ? "landingFooterOpen" : ""} ${drag ? "landingDragging" : ""}`} ref={rootRef} style={{ "--landing-drag": `${drag}px` } as React.CSSProperties}>
+            <div className="background landingBackground" aria-hidden="true" />
+            <button type="button" className="changeSignTheme" aria-label={t(isDark ? "appearance.enableLight" : "appearance.enableDark")}
+                onClick={() => setNewTheme(isDark ? "light" : "dark")}
+            >{isDark ? <MoonStarsIcon/> : <SunDimIcon/>}</button>
+            <main className="landingDiv" inert={open}>
+                <div className="title">Achieve Together <span>beta</span></div>
+                {body === "mail" ? <BodyMail/> : (
+                    <div className={`landingFormWrapper ${activeForm}`} ref={formRef} onScroll={event => { const element = event.currentTarget; setActiveForm(element.scrollLeft > element.clientWidth / 2 ? "reg" : "auth"); }}>
+                        <AuthForm active={activeForm === "auth"} showPass={showPass} showedPass={showedPass} swipeForm={swipeForm}/>
+                        <RegistrationForm active={activeForm === "reg"} showPass={showPass} showedPass={showedPass} swipeForm={swipeForm}/>
+                    </div>
+                )}
+            </main>
+            <button type="button" className="landingFooterTrigger" ref={footerButtonRef} aria-expanded={open} aria-controls="landingFooterSheet" onClick={() => setOpen(true)} inert={open}>
+                <span>{russian ? "Об Achieve Together" : "About Achieve Together"}</span>
+                <span aria-hidden="true">⌄</span>
+            </button>
+            <div className="landingFooterBackdrop" aria-hidden="true" onClick={close} />
+            <div className="landingFooterSheet" id="landingFooterSheet" ref={footerRef} role="dialog" aria-modal={open ? true : undefined} aria-label={russian ? "Об Achieve Together" : "About Achieve Together"} tabIndex={-1} inert={!open}>
+                <button type="button" className="landingFooterHandle" aria-label={russian ? "Вернуться ко входу" : "Back to sign in"} onClick={close}><span /></button>
+                <LandingFooter isDark={isDark}/>
+                <button type="button" className="wtbgButt landingFooterBack" onClick={close}>{russian ? "Вернуться ко входу" : "Back to sign in"}</button>
             </div>
-            <LandingFooter isDark={isDark}/>
         </div>
-    )
+    );
 }

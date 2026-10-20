@@ -1,106 +1,105 @@
 @use "../../../scss/mixins" as var;
 
 .landingFormEmail {
-    width: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 5vh;
+    align-items: stretch;
+    justify-content: center;
+    gap: 28px;
+    width: 100%;
+    min-height: 100%;
+    padding: 28px 20px;
 }
-
 .emailCodeWrapper {
-    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1vh;
-    >.inpExtraSpan {
-        text-align: center;
-        display: flex;
-        justify-content: center;
-    }
+    gap: 16px;
+    width: 100%;
+    >.inpExtraSpan { justify-content: center; text-align: center; }
 }
 .emailSendedText {
-    width: 100%;
     display: flex;
     justify-content: center;
-    font-size: 18px;
+    width: 100%;
+    margin: 0;
+    color: var(--tc);
+    font-size: clamp(18px, 3vw, 22px);
+    font-weight: 600;
+    text-align: center;
 }
 .codeWrapper {
     position: relative;
     display: flex;
-    gap: 8px;
+    justify-content: center;
+    width: 100%;
+    gap: clamp(5px, 1.4vw, 9px);
     cursor: text;
 }
-
 .hiddenCodeInput {
     position: absolute;
     inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
     opacity: 0;
     cursor: text;
 }
-
 .codeCell {
-    width: 50px;
-    height: 70px;
+    box-sizing: border-box;
     display: flex;
+    flex: 1 1 0;
     align-items: center;
     justify-content: center;
+    width: 0;
+    max-width: 52px;
+    height: clamp(54px, 9vh, 66px);
     border: 1px solid var(--borderWh);
-    border-radius: 10px;
-    font-size: 32px;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--bgc) 40%, transparent);
+    color: var(--tc);
+    font-size: clamp(22px, 5vw, 30px);
     font-weight: 600;
-    &.active {
-        border: 1px solid var(--accent);
-    }
-    &.invalid {
-        border: 1px solid var(--notValid);
-    }
+    transition: border-color .2s, box-shadow .2s;
+    &.active { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent); }
+    &.invalid { border-color: var(--notValid); }
 }
-
 .emailEditWrapper {
-    width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
-    gap: 1vh;
-}
-.emailButtsWrapper {
-    display: flex;
-    gap: 4px;
-    height: 3.5dvh;
-}
-.emailEditButt {
-    color: var(--accent_text);
-    padding: 0.75vh 1vw;
-    display: flex;
-    border-radius: 6px;
-    justify-content: center;
     align-items: center;
+    width: 100%;
+    gap: 12px;
+}
+.emailButtsWrapper { display: flex; justify-content: center; align-items: center; gap: 8px; height: auto; }
+.emailEditButt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 14px;
+    border-radius: 9px;
+    color: var(--accent_text);
     cursor: pointer;
-    @media (hover: hover) {
-        &:hover {
-        background-color: var(--accent_hov)
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        background-color: var(--accent_hov)
-    
-        
-        }
-    }
+    &:hover { background: var(--accent_hov); }
 }
 .emailEditInput {
-    @include var.input(var(--tr), var(--accent), var(--tr), 4vh, 8px, var(--tr), 70%);
-    font-size: 22px;
-    padding-inline-start: 0.5vw;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 360px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid color-mix(in srgb, var(--borderWh) 55%, transparent);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--tc);
+    font-size: 16px;
     text-align: center;
-    @media (max-width: 800px) {
-        width: 90%;
-        padding-inline-start: 1.5vw;
-    }
+    &:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+    &:disabled { border-color: transparent; opacity: 1; }
+}
+@media (max-width: 800px) {
+    .landingFormEmail { padding: 24px 14px; }
+    .emailSendedText { font-size: 19px; }
+    .codeWrapper { gap: 5px; }
 }

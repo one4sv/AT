@@ -158,3 +158,9 @@
         }
     }
 }
+.accountList a { color: inherit; text-decoration: none; box-sizing: border-box; }
+.accountList button.SMaccountButt { box-sizing: border-box; border: 0; font: inherit; text-align: start; }
+.accountList :is(a, button):focus-visible { outline: 2px solid var(--accent_text); outline-offset: -2px; }
+.accountSettingsSearch { box-sizing: border-box; padding-inline: 8px; gap: 12px; }
+.accountSettingsSearch .settingInnerDiv { width: 100%; box-sizing: border-box; }
+.accountSettingsSearch .searchInnerDiv { width: 100%; }

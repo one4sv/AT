@@ -2,6 +2,7 @@ import { createContext, useEffect, useRef, useState, type ReactNode, type RefObj
 import type { Habit } from "./HabitsContext"
 import type { Media } from "./ChatContext"
 import type { Perms } from "./GroupContext"
+import useLongPressContextMenu from "../hooks/utils/useLongPressContextMenu"
 const ContextMenuContext = createContext<ContextMenuContextType | null>(null)
 
 type MenuOptions = {
@@ -52,6 +53,7 @@ export type ContextMenuContextType = {
 }
 
 export function ContextMenuProvider({ children }:{ children: ReactNode }) {
+    useLongPressContextMenu()
     const [menu, setMenu] = useState<MenuState>({
         x: -1000,
         y: 0,
@@ -71,12 +73,18 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
 
     useEffect(() => {
         const close = () => closeMenu()
+        const scroll = (event: Event) => {
+            if (!menuRef.current?.contains(event.target as Node)) closeMenu()
+        }
+        const key = (event: KeyboardEvent) => { if (event.key === "Escape") closeMenu() }
         window.addEventListener("click", close)
-        document.addEventListener("scroll", close, true)
+        window.addEventListener("keydown", key)
+        document.addEventListener("scroll", scroll, true)
 
         return () => {
             window.removeEventListener("click", close)
-            document.removeEventListener("scroll", close, true)
+            window.removeEventListener("keydown", key)
+            document.removeEventListener("scroll", scroll, true)
         }
     }, [])
 

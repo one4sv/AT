@@ -12,6 +12,15 @@ const APPEARANCE_KEYS = [
     "settings_layout", "settings_bg", "settings_decor",
 ];
 
+const readAppearance = (): Record<string, unknown> => {
+    try {
+        const value = JSON.parse(localStorage.getItem("settings_appearance") ?? "{}");
+        return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+    } catch {
+        return {};
+    }
+};
+
 export default function useLocalStorage<T>(
     key: string,
     defaultValue: T
@@ -28,16 +37,16 @@ export default function useLocalStorage<T>(
     const stateKey = initialLoading ? `loading_${storageKey}` : storageKey;
     const readValue = useCallback((): T => {
         try {
-            if (initialLoading && APPEARANCE_KEYS.includes(key)) {
-                const appearance = JSON.parse(localStorage.getItem("settings_appearance") ?? "{}");
-                if (typeof appearance?.[key] === typeof defaultValue) return appearance[key];
+            if ((initialLoading || !user?.nick) && APPEARANCE_KEYS.includes(key)) {
+                const appearance = readAppearance();
+                if (typeof appearance[key] === typeof defaultValue) return appearance[key] as T;
             }
             const stored = localStorage.getItem(storageKey);
             return stored === null ? defaultValue : JSON.parse(stored);
         } catch {
             return defaultValue;
         }
-    }, [key, storageKey, initialLoading, defaultValue]);
+    }, [key, storageKey, initialLoading, defaultValue, user?.nick]);
 
     const [stored, setStored] = useState(() => ({ key: stateKey, value: readValue() }));
     const value = stored.key === stateKey ? stored.value : readValue();
@@ -65,11 +74,12 @@ export default function useLocalStorage<T>(
         try {
             localStorage.setItem(storageKey, JSON.stringify(stored.value));
             if (user.id && APPEARANCE_KEYS.includes(key)) {
-                const appearance = JSON.parse(localStorage.getItem("settings_appearance") ?? "{}");
+                const appearance = readAppearance();
                 localStorage.setItem("settings_appearance", JSON.stringify({
                     ...appearance,
                     [key]: stored.value,
                 }));
+                localStorage.setItem(key, JSON.stringify(stored.value));
             }
         } catch (e) {
             console.error(
