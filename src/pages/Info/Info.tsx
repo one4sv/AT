@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { usePageTitle } from "../../components/hooks/PageContextHook"
 import "./scss/info.scss"
 import type { Setting } from "../Settings/Settings"
@@ -11,14 +11,22 @@ import ContactsTab from "./tabs/ContactsTab"
 import FaqTab from "./tabs/FaqTab"
 import { useTranslation } from "react-i18next"
 import { isMobile } from "react-device-detect"
+import Toggler from "../../components/ts/Toggler"
+import { AnimatePresence, motion } from "motion/react"
+import { useBlackout } from "../../components/hooks/BlackoutHook"
 
 export default function Info() {
     const { setTitle } = usePageTitle()
     const { t } = useTranslation("info");
     const { tab } = useParams();
+    const { setBlackout } = useBlackout()
     const navigate = useNavigate();
     
-    const [activeTab, setActiveTab] = useState<Setting | null>(null);
+    const [ activeTab, setActiveTab ] = useState<Setting | null>(null);
+    const [ table, setTable ] = useState(true)
+    const [ activeContent, setActiveContent ] = useState("info-section-0");
+
+    const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const sections: Setting[] = [
         {
@@ -71,6 +79,93 @@ export default function Info() {
         contacts: <ContactsTab />,
         faq: <FaqTab />,
     };
+    const [contents, setContents] = useState<{ id: string; title: string }[]>([]);
+
+    useEffect(() => {
+        const container = document.querySelector(".settingTab");
+        if (!container || !activeTab) {
+            setContents([]);
+            setActiveContent("info-section-0");
+            return;
+        }
+
+        const headings = container.querySelectorAll("h1, h2, h3");
+
+        const items = Array.from(headings).map((heading, index) => {
+            const id = `info-section-${index}`;
+            heading.id = id;
+
+            return {
+                id,
+                title: heading.textContent?.trim() ?? "",
+            };
+        });
+
+        setContents(items);
+        setActiveContent(items[0]?.id ?? "info-section-0");
+    }, [activeTab, t]);
+
+    useEffect(() => {
+        if (scrollTimeout.current) {
+            clearTimeout(scrollTimeout.current);
+        }
+
+        scrollTimeout.current = setTimeout(() => {
+            document.querySelector(".settingsSlider")?.scrollTo({
+                top: 0,
+                behavior: "instant",
+            });
+
+            document.querySelector(".settingTab")?.scrollTo({
+                top: 0,
+                behavior: "instant",
+            });
+
+            setActiveContent(contents[0]?.id ?? "info-section-0");
+        }, 300);
+
+        return () => {
+            if (scrollTimeout.current) {
+                clearTimeout(scrollTimeout.current);
+            }
+        };
+    }, [tab]);
+
+    useEffect(() => {
+        const container = document.querySelector(".settingTab");
+        if (!container) return;
+
+        const updateActiveContent = () => {
+            const headings = Array.from(
+                container.querySelectorAll<HTMLElement>("h1, h2, h3")
+            );
+
+            if (!headings.length) return;
+
+            const containerTop = container.getBoundingClientRect().top;
+            let current = headings[0];
+
+            for (const heading of headings) {
+                if (heading.getBoundingClientRect().top <= containerTop + 40) {
+                    current = heading;
+                } else {
+                    break;
+                }
+            }
+
+            setActiveContent(current.id);
+        };
+
+        container.addEventListener("scroll", updateActiveContent, {
+            passive: true,
+        });
+
+        updateActiveContent();
+
+        return () => {
+            container.removeEventListener("scroll", updateActiveContent);
+        };
+    }, [contents, tab]);
 
     return (
         <div className="settingsDiv">
@@ -82,8 +177,8 @@ export default function Info() {
                     }}
                 >
                     <div className="settingsPage">
-                        <div className="settingsButtsWrapper">
-                            {!isMobile ? (
+                        {!isMobile ? (
+                            <div className="settingTop">
                                 <div
                                     className="infoBack"
                                     onClick={() => {
@@ -91,9 +186,11 @@ export default function Info() {
                                     }}
                                 >
                                     <ArrowLeftIcon size={24} />
-                                    <h2>{t("info.title")}</h2>
+                                    <h2>Назад</h2>
                                 </div>
-                            ) : ""}
+                            </div>
+                        ) : ""}
+                        <div className="settingsButtsWrapper">
                             {sections.map((s) => (
                                 <div
                                     key={s.tab}
@@ -123,39 +220,45 @@ export default function Info() {
                                     }}
                                 >
                                     <ArrowLeftIcon size={24} />
-                                    <h2>{t("info.title")}</h2>
+                                    <h2>Назад</h2>
                                 </div>
                             </div>
                         ) : ""}
                     </div>
-
                     <div className="settingsPage">
                         {activeTab && (
                             <>
                                 {!isMobile ? (
-                                    <div
-                                        className="infoBack"
-                                        onClick={() => {
-                                            navigate(-1);
-                                        }}
-                                    >
-                                        <ArrowLeftIcon size={24} />
-                                        <h2>{activeTab?.name}</h2>
+                                    <div className="settingTop">
+                                        <div
+                                            className="settingBack"
+                                            onClick={() => {
+                                                navigate(-1);
+                                            }}
+                                        >
+                                            <ArrowLeftIcon size={24} />
+                                        </div>
+                                        <div className="infoTableButt" onClick={() => setTable(!table)}>
+                                            Содержание
+                                            <Toggler state={table} setState={setTable}/>
+                                        </div>
                                     </div>
-                                ) : "" }
+                                ) : ""}
                                 <div className="settingTab">
                                     {activeTab && tabs[activeTab.tab as keyof typeof tabs]}
                                 </div>
                                 {isMobile ? (
                                     <div className="settingBackWrapper">
                                         <div
-                                            className="infoBack"
+                                            className="settingBack"
                                             onClick={() => {
                                                 navigate(-1);
                                             }}
                                         >
                                             <ArrowLeftIcon size={24} />
-                                            <h2>{activeTab?.name}</h2>
+                                        </div>
+                                        <div className="infoTableButt" onClick={() => setBlackout({seted:true, module:"Table", table:{ contents: contents, activeContent:activeContent}})}>
+                                            Содержание
                                         </div>
                                     </div>
                                 ) : "" }
@@ -164,6 +267,54 @@ export default function Info() {
                     </div>
                 </div>
             </div>
+                <AnimatePresence>
+                    {tab && table && !isMobile && (
+                        <motion.div
+                            className="infoTableDiv open"
+                            initial={{ opacity: 0, scale: 0.94, x: 12, filter: "blur(6px)" }}
+                            animate={{ opacity: 1, scale: 1, x: 0, filter: "blur(0px)" }}
+                            exit={{ opacity: 0, scale: 0.98, x: 6, filter: "blur(6px)" }}
+                            transition={{
+                                duration: 0.5,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
+                        >
+                            <div className="infoTable">
+                                {contents.map((item) => (
+                                    <motion.div
+                                        key={item.id}
+                                        className={`infoTableItem ${activeContent === item.id ? "active" : ""}`}
+                                        initial={{ opacity: 0, x: 10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: 8 }}
+                                        transition={{ duration: 0.2 }}
+                                        onClick={() => {
+                                            const heading = document.getElementById(item.id);
+                                            const container = document.querySelector(".settingTab");
+
+                                            if (!heading || !container) return;
+
+                                            container.scrollTo({
+                                                top: container.scrollTop + heading.getBoundingClientRect().top - container.getBoundingClientRect().top - 10,
+                                                behavior: "smooth",
+                                            });
+
+                                            heading.classList.remove("table-highlight");
+                                            void heading.offsetWidth;
+                                            heading.classList.add("table-highlight");
+
+                                            setTimeout(() => {
+                                                heading.classList.remove("table-highlight");
+                                            }, 2000);
+                                        }}
+                                    >
+                                        {item.title}
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
         </div>
     )
 }

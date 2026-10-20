@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import "../../../scss/ContextMenu.scss";
 import { useContextMenu } from "../../hooks/ContextMenuHook";
 
@@ -17,33 +17,51 @@ export default function ContextMenu() {
     const [pos, setPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
     const [isAdjusted, setIsAdjusted] = useState(false);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!menu.visible) {
             setIsAdjusted(false);
             return;
         }
         if (!menuRef.current) return;
 
-        const menuRect = menuRef.current.getBoundingClientRect();
+        const element = menuRef.current;
+        const menuWidth = element.offsetWidth;
+        const menuHeight = element.offsetHeight;
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
         let left = menu.x;
         let top = menu.y;
 
-        if (left + menuRect.width > viewportWidth) {
-            left = viewportWidth - menuRect.width - 10;
+        if (left + menuWidth > viewportWidth) {
+            left = viewportWidth - menuWidth - 10;
             if (left < 0) left = 0;
         }
 
-        if (top + menuRect.height > viewportHeight) {
-            top = viewportHeight - menuRect.height - 10;
+        if (top + menuHeight > viewportHeight) {
+            top = viewportHeight - menuHeight - 10;
             if (top < 0) top = 0;
         }
 
         setPos({ top, left });
         setIsAdjusted(true);
-    }, [menu.x, menu.y, menu.visible, menuRef]);
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const originX = Math.max(0, Math.min(menuWidth, menu.x - left));
+        const originY = Math.max(0, Math.min(menuHeight, menu.y - top));
+        element.style.transformOrigin = `${originX}px ${originY}px`;
+
+        const animation = element.animate([
+            { opacity: 0, transform: "scale(0.94)" },
+            { opacity: 1, transform: "scale(1)" },
+        ], {
+            duration: 200,
+            easing: "cubic-bezier(0.075, 0.82, 0.165, 1)",
+        });
+
+        return () => animation.cancel();
+    }, [menu, menuRef]);
 
     if (!menu.visible) return null;
 

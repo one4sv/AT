@@ -149,7 +149,7 @@
 .settingName {
     display: flex;
     align-items: center;
-    color: var(--msbd);
+    color: var(--borderWh);
     width: 100%;
     white-space: pre-wrap;
     >svg {
@@ -197,7 +197,7 @@
 }
 
 .settingDesc {
-    color: var(--borderHabit);
+    color: var(--borderWh);
 }
 .settingsContentWipe {
   flex: 1;

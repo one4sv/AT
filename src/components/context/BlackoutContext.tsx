@@ -15,6 +15,7 @@ export interface Blackout {
     isRoot?: boolean;
     images?: BlackoutImage[];
     imageIndex?: number;
+    table?: { contents:{ id: string; title: string; }[], activeContent:string }
 }
 
 export interface BlackoutContextType {

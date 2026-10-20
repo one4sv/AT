@@ -1,20 +1,17 @@
 @use "../../../scss/mixins" as var;
 
 .infoText {
-    padding: 1vh 1vw;
     border-radius: 24px;
     background-color: var(--interact);
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
-    .accent {
-        color: var(--accent_text);
-    }
+    backdrop-filter: blur(20px);
+    padding: 1vh .5vw;
+    -webkit-backdrop-filter: blur(20px);
     a {
         color: var(--accent_text);
         text-decoration: underline;
     }
     @media (max-width: 800px) {
-        padding: 1vh 3vw;
+        padding: .5vh 1.5vw 1vh;
         margin-top: 0;
     }
 }
@@ -28,7 +25,7 @@
 .one4svlogo {
     width: 100%;
     height: 10dvh;
-    background-color: #202020;
+    background-color: var(--interact);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -79,5 +76,175 @@
         text-overflow: ellipsis;
         min-width: 0;
         flex: 1;
+    }
+}
+.infoTableButt {
+    height: 5dvh;
+    max-height: 5dvh;
+    flex: 1;
+    position: relative;
+    background: var(--interact);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    overflow: hidden;
+    font-size: 24px;
+    padding: 0 1vw;
+    color: var(--borderWh);
+    user-select: none;
+    cursor: pointer;
+    @media (max-width: 800px) {
+        padding: 0 3vw;
+    }
+    @media (hover: hover) {
+        &:hover {
+            color: var(--tc);
+            background-color: var(--menuButtHover);
+        }
+    }
+    @media (hover: none) {
+        &:active {
+            color: var(--tc);
+            background-color: var(--menuButtHover);
+        }
+    }
+}
+.infoTableDiv {
+    position: absolute;
+    border-radius: 24px;
+    background-color: var(--interact);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    gap: 2px;
+    top: 6vh;
+    right: 1vw;
+    width: 18vw;
+    min-height: 10vh;
+    max-height: 90vh;
+    padding: .5vh .25vw;
+}
+.infoTableItem {
+    padding: 1vh 1vw;
+    cursor: pointer;
+    color: var(--tc);
+    transition: color 0.2s ease;
+    border-radius: 24px;
+    transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    @media (hover: hover) {
+        &:hover {
+            color: var(--accent_text);
+            background: var(--menuButtHover);
+        }
+    }
+    @media (hover: none) {
+        &:active {
+            color: var(--accent_text);
+            background: var(--menuButtHover);
+        }
+    }
+    &.active {
+        color: var(--inner_text);
+        background: linear-gradient(135deg, var(--accent), var(--grad))
+    }
+}
+
+.settingTab h2, h1 {
+    scroll-margin-top: 30px;
+    padding: 1vh .5vw;
+    margin: 0;
+    background: var(--tr);
+    @media (max-width: 800px) {
+        padding: 1vh 1.5vw;
+    }
+}
+.settingTab h3 {
+    scroll-margin-top: 20px;
+    padding: 1vh .5vw;
+    margin: 0;
+    background: var(--tr);
+    @media (max-width: 800px) {
+        padding: 1vh 1.5vw;
+        margin-top: .25vh;
+        margin-bottom: .5vh;
+    }
+}
+.infoText p {
+    padding: .5vh .5vw;
+    margin: .25vh 0.5vw .5vh;
+    @media (max-width: 800px) {
+        padding: .25vh 1.5vw;
+        margin: .5vh;
+    }
+}
+.settingTab h1,
+.settingTab h2,
+.settingTab h3 {
+    position: relative;
+    isolation: isolate;
+    border-radius: 24px;
+}
+
+.settingTab .table-highlight {
+    z-index: 0;
+    position: relative;
+    isolation: isolate;
+    color: var(--tc);
+    animation: tableHighlightText 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.settingTab .table-highlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    opacity: 0;
+    transform: scale(0.96);
+    animation: tableHighlight 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
+}
+
+@keyframes tableHighlight {
+    0% {
+        opacity: 0;
+        transform: scale(0.96);
+        box-shadow: 0 0 0 0 transparent;
+    }
+    20% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 18px 2px color-mix(in srgb, var(--accent) 45%, transparent);
+    }
+    45% {
+        opacity: 0.85;
+        transform: scale(1);
+    }
+    70% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 22px 3px color-mix(in srgb, var(--accent) 55%, transparent);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.02);
+        box-shadow: 0 0 0 0 transparent;
+    }
+}
+
+@keyframes tableHighlightText {
+    0%, 100% {
+        color: var(--tc);
+    }
+    20%, 70% {
+        color: var(--inner_text);
     }
 }

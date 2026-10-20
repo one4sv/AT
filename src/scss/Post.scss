@@ -9,7 +9,7 @@
     background-color: var(--mc);
     border-radius: 24px;
     padding: 0.5vh 0.5vw;
-    max-height: 50dvh;
+    max-height: 60dvh;
     position: relative;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
@@ -24,7 +24,7 @@
     display: flex;
     align-items: center;
     background:linear-gradient(135deg, var(--accent), var(--grad));
-    border-radius: 6px;
+    border-radius: 12px;
     cursor: pointer;
     margin-top: 0.6dvh;
     height: 3dvh;

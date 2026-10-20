@@ -1,155 +1,232 @@
-.groupMembers {
-    display: flex;
-    flex-direction: column;
-    width: 60%;
-    margin: 0 auto;
-    align-items: center;
-    overflow-y:auto;
-    scrollbar-width: thin;
-    background-color: var(--mc);
-    height: fit-content;
-    border-radius: 12px;
-    >.gmHline {
-        height: 1px;
-        background-color: var(--borderHabit);
-        width: 95%;
+.groupPage {
+    .groupMembers {
+        width: 100%;
+        padding-bottom: 11vh;
     }
-}
-.groupMembersSettings {
-    cursor: pointer;
-    width: 100%;
-    height: 6dvh;
-    border-radius: 12px;
-    background-color: var(--tr);
-    display: flex;
-    position: relative;
-    border: 1px solid var(--tr);
-    align-items: center;
-    overflow: hidden;
-    box-sizing: border-box;
-    justify-content: space-evenly;
-    .gmsVline {
-        z-index: 1;
-        position: absolute;
-        width: 1px;
-        background-color: var(--borderHabit);
-        height: 80%;
+
+    .groupMembersToolbar {
+        display: flex;
+        flex-direction: column;
+        gap: 1vh;
+        margin-bottom: 1vh;
     }
-}
-.groupMemberSettingsWrapper {
-    flex: 1;
-    display: flex;
-    padding: 0.5vh 0.5vw;
-    border-radius: 12px;
-    height: 100%;
-    justify-content: center;
-    &.add {
+
+    .groupSearch {
+        display: flex;
+        align-items: center;
+        gap: .5vw;
+        height: 5dvh;
+        min-height: 38px;
+        padding: 0 1vw;
+        background: var(--interact);
+        border-radius: 24px;
+        color: var(--borderWh);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+
+        input {
+            width: 100%;
+            min-width: 0;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: var(--tc);
+            font: inherit;
+            font-size: 16px;
+            &::placeholder {
+                color: var(--borderWh);
+                opacity: 1;
+            }
+            &::-webkit-search-cancel-button { display: none; }
+        }
+
+        &:focus-within { outline: 1px solid var(--accent_text); }
+        button {
+            display: flex;
+            align-items: center;
+            border: none;
+            padding: 4px;
+            border-radius: 50%;
+            background: transparent;
+            color: var(--borderWh);
+        }
+    }
+
+    .groupMemberActions {
+        display: flex;
+        flex-direction: column;
+        padding: .5vh .25vw;
+        gap: .5vh;
+        border-radius: 24px;
+        background: var(--interact);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+    }
+
+    .groupSearchStatus {
+        display: flex;
+        align-items: center;
+        gap: 0.5vw;
+        margin-top: 1vh;
+        padding: 1vh 1vw;
+        border-radius: 24px;
+        background-color: var(--mc);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+        > svg {
+            flex-shrink: 0;
+            color: var(--accent_text);
+        }
+        font-size: 16px;
         color: var(--borderWh);
     }
-    &.rights {
+
+    .groupMemberList {
+        margin: 0;
+        padding: .5vh .25vw;
+        list-style: none;
+        border-radius: 24px;
+        background: var(--mc);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+    }
+
+    .groupMember {
+        display: flex;
+        align-items: center;
+        border-radius: 24px;
+        padding: .5vh .5vw;
+        min-height: 6dvh;
+
+        @media (hover: hover) {
+            &:hover { background: var(--menuButtHover); }
+        }
+        @media (hover: none) {
+            &:active { background: var(--menuButtHover); }
+        }
+    }
+
+    .groupMemberLink {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: .5vw;
+        color: var(--tc);
+    }
+
+    .groupMemberAvatar {
+        position: relative;
+        width: 5vh;
+        height: 5vh;
+        min-width: 36px;
+        min-height: 36px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: var(--bgc);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--borderWh);
+
+        img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        i { position: absolute; right: 0; bottom: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); border: 2px solid var(--mc); }
+    }
+
+    .groupMemberInfo {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .groupMemberName {
+        font-size: 18px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        small { margin-left: .5vw; font-size: 16px; color: var(--borderWh); }
+    }
+
+    .groupMemberLastOnline {
+        font-size: 16px;
+        color: var(--borderWh);
+        &.online {
+            display: flex;
+            align-items: center;
+            align-self: flex-start;
+            gap: 0.25vw;
+            padding: 0.25vh 0.5vw;
+            border-radius: 24px;
+            background-color: var(--interact);
+            color: var(--tc);
+            > svg {
+                flex-shrink: 0;
+                color: var(--accent_text);
+            }
+        }
+    }
+
+    .groupMemberRole {
+        padding: 0.5vh 0.5vw;
+        border-radius: 24px;
+        background-color: var(--interact);
         color: var(--accent_text);
-    }
-    @media (hover: hover) {
-        &:hover {
-        background-color: var(--menuButtHover);
-        &.add {
-        color: var(--tc);
-        }
-    
-        }
+        font-size: 16px;
+        max-width: 30%;
+        overflow-wrap: anywhere;
     }
 
-    @media (hover: none) {
-        &:active {
-        background-color: var(--menuButtHover);
-        &.add {
-        color: var(--tc);
-        }
-    
-        
-        }
-    }
-}
-.groupMemberSettingName {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.groupMember {
-    cursor: pointer;
-    margin: 0.2vh auto;
-    width: 100%;
-    height: 6dvh;
-    padding: 0.5vh 0.5vw;
-    border-radius: 12px;
-    background-color: var(--tr);
-    display: flex;
-    position: relative;
-    border: 1px solid var(--tr);
-    align-items: center;
-    @media (hover: hover) {
-        &:hover {
-        background-color: var(--menuButtHover);
-        border: 1px solid var(--tc);
-    
-        }
+    .groupMemberMenu {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 4vh;
+        min-width: 32px;
+        height: 4vh;
+        min-height: 32px;
+        border: none;
+        border-radius: 50%;
+        background: transparent;
+        color: var(--borderWh);
     }
 
-    @media (hover: none) {
-        &:active {
-        background-color: var(--menuButtHover);
-        border: 1px solid var(--tc);
-    
-        
+    .groupMembersEmpty {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+        gap: 1vh;
+        padding: 3vh 1vw;
+        border-radius: 24px;
+        background: var(--mc);
+        color: var(--borderWh);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+        > svg { color: var(--accent_text); }
+        h2 { margin: 0; font-size: 20px; font-weight: normal; }
+        p { margin: 0; font-size: 16px; }
+    }
+
+    @media (max-width: 800px) {
+        .groupSearch { padding: 0 3vw; gap: 2vw; }
+        .groupMemberActions { padding: 1.5vw 1vw; }
+        .groupMember { padding: .75vh 1vw; }
+        .groupMemberLink {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 0.5vh 2vw;
         }
-    }
-    overflow: hidden;
-    box-sizing: border-box;
-}
-.groupMemberPick {
-    aspect-ratio: 1/1;
-    border-radius: 50%;
-    height: 5dvh;
-    background-color: var(--mc);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.groupMemberNoAva {
-    aspect-ratio: 1/1;
-    border-radius: 50%;
-    height: 5dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--bgc);
-    > svg {
-        height: 60%;
-        width: 60%;
-    }
-    &.gmsIcon {
-        background-color: var(--tr);
-        > svg {
-            height: 70%;
-            width: 70%;
+        .groupMemberAvatar { grid-row: 1 / 3; }
+        .groupMemberRole {
+            grid-column: 2;
+            justify-self: start;
+            max-width: 100%;
+            padding: 0.5vh 2vw;
         }
+        .groupMemberLastOnline.online { gap: 1vw; padding: 0.25vh 2vw; }
+        .groupSearchStatus { gap: 2vw; padding: 1vh 3vw; }
+        .groupMemberName small { margin-left: 1vw; }
     }
-}
-.groupMemberInfo {
-    margin-left: 0.3vw;
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-.groupMemberRole {
-    position: absolute;
-    top: 0.2dvh;
-    right: 0.5vw;
-    font-size: 14px;
-    color: var(--borderWh);
-}
-.groupMemberLastOnline {
-    font-size: 14px;
-    color: var(--borderWh);
 }

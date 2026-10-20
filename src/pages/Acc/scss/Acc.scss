@@ -1,7 +1,6 @@
 @use "../../../scss/mixins" as var;
 @use "./AccHabits.scss";
 @use "./AccPosts.scss";
-@use "./AccMedia.scss";
 @use "./AccPostComments.scss";
 
 .accDiv {
@@ -17,19 +16,20 @@
 .acc {
     width: 50%;
     position: relative;
-    height: 100%;
+    height: calc(100% - 6vh);
     display: flex;
     flex-direction: column;
     min-height: 0;
-    position: relative;
     margin-top: 6vh;
     @media (max-width: 800px) {
         width: 100%;
+        height: calc(100% - 8vh);
         margin-top: 8vh;
     }
 }
 
 .accInfo {
+    --acc-info-margin-top: 0px;
     border-radius: 24px;
     display: flex;
     flex-direction: column;
@@ -38,21 +38,37 @@
     background-color: var(--mc);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    padding: 0.5vh 0.5vw;
+    box-sizing: border-box;
+    padding: 0;
     overflow: hidden;
-    max-height: 700px;
     opacity: 1;
 
     transition:
-        max-height .4s ease,
+        height .4s ease,
         opacity .4s ease,
-        padding .4s ease,
-        margin .4s ease;
+        margin-top .4s ease;
 
     @media (max-width: 800px) {
+        --acc-info-margin-top: 1vh;
         margin: 1vh 2vw 0;
+    }
+}
+.accInfoDragging {
+    transition: none;
+}
+.accInfoInner {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.5vh 0.5vw;
+    @media (max-width: 800px) {
         padding: 1vh 2vw;
     }
+}
+.accInfoInner > * {
+    flex-shrink: 0;
 }
 .accInput.dis,
 .extraInfoInput.dis,
@@ -142,16 +158,26 @@
     }
 }
 .accOnlineStauts {
-    position: relative;
-    width: 100%;
     display: flex;
+    align-items: center;
     justify-content: center;
-    margin-right: 0.5vw;
-    &.online {
-        color: var(--accent);
+    gap: 0.5vw;
+    margin: 0 0.5vw;
+    padding: 0.75vh 0.75vw;
+    border-radius: 24px;
+    background-color: var(--interact);
+    color: var(--borderWh);
+    font-size: 16px;
+    > svg {
+        flex-shrink: 0;
     }
-    &.offline {
-        color: var(--borderHabit);
+    &.online > svg {
+        color: var(--accent_text);
+    }
+    @media (max-width: 800px) {
+        gap: 2vw;
+        margin: 1vh 0 0;
+        padding: 1vh 3vw;
     }
 }
 .nameInput {
@@ -174,7 +200,7 @@
 .accExtraInfoWrapper {
     display: flex;
     flex-direction: column;
-    color: var(--borderHabit);
+    color: var(--borderWh);
     width: 100%;
     padding: 0.5vh 0.5vw;
     min-height: 0;
@@ -244,9 +270,10 @@
     color: var(--borderWh);
     font-size: 20px;
     z-index: 2;
+    user-select: none;
     &.acbActive {
         color: var(--inner_text);
-    }    
+    }
 }
 
 .accContentIndicator {
@@ -257,7 +284,6 @@
     width: 50%;
     height: 100%;
     background:linear-gradient(135deg, var(--accent), var(--grad));
-    transition: transform 0.1s ease;
     will-change: transform;
 }
 
@@ -265,31 +291,52 @@
 .accExtraInfoWrapper,
 .accExtraInfo,
 .accContentSelector {
-    flex-shrink: 0;             /* важно! не сжимаются */
+    flex-shrink: 0;
 }
 
 .accNoPrivateAccess {
-    margin-top: 2vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5vw;
+    padding: 2vh 1vw;
+    border-radius: 24px;
+    background-color: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    > svg {
+        flex-shrink: 0;
+        color: var(--accent_text);
+    }
+    @media (max-width: 800px) {
+        gap: 2vw;
+        padding: 2vh 3vw;
+    }
     width: 100%;
-    font-size: 24px;
+    font-size: 20px;
     text-align: center;
-    color: var(--borderHabit);
+    color: var(--borderWh);
 }
 .accContent {
     display: flex;
     flex-direction: row;
-    scroll-behavior: smooth;
+    flex: 1;
+    scroll-behavior: auto;
     scroll-snap-type: x mandatory;
     overflow-x: auto;
     overflow-y: hidden;
     min-height: 0;
-    height: 100%;
+    min-width: 0;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
     &::-webkit-scrollbar {
         display: none;
     }
+}
+.accContentLocked .accContentSlide {
+    overflow-y: hidden;
+    overflow-anchor: none;
 }
 .accSlide {
     flex: 0 0 100%;
@@ -304,6 +351,7 @@
     width: 80%;
     min-height: 0;
     height: 100%;
+    box-sizing: border-box;
     overflow-y: auto;
     scrollbar-width: thin;
     overscroll-behavior-y: none;

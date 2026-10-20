@@ -1,163 +1,189 @@
-import { Camera, Users } from "lucide-react";
-import { useBlackout } from "../../../components/hooks/BlackoutHook";
-import { useEffect, useRef, useState} from "react";
-import { useNavigate } from "react-router";
+import { CircleIcon, Camera, ChatTeardropText, FloppyDiskBack, PencilSimple, Users, X } from "@phosphor-icons/react";
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import type { Group } from "../../../components/context/GroupContext";
+import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useGroup } from "../../../components/hooks/GroupHook";
-import { useUser } from "../../../components/hooks/UserHook";
-import { api } from "../../../components/ts/api";
-import { useParams } from "react-router";
 import { useNote } from "../../../components/hooks/NoteHook";
 import { useContacts } from "../../../components/hooks/ContactsHook";
+import { api } from "../../../components/ts/api";
 
-interface GroupInfoProps {
-    group: Group | undefined,
-    collapsed:number
-}
-
-export default function GroupInfo({group, collapsed} : GroupInfoProps) {
+export default function GroupInfo({ group, collapsed, isDragging, onHeightChange }: { group: Group; collapsed: number; isDragging: boolean; onHeightChange: (height: number) => void }) {
     const { setBlackout } = useBlackout();
-    const { user } = useUser()
-    const { refetchGroup, members, newAva } = useGroup()
-    const { showNotification } = useNote()
-    const { refetchContactsWTLoading } = useContacts()
-    const navigate = useNavigate()
-    const { id }  = useParams()
-
-    const [ red, setRed ] = useState<boolean>(false);
-    const [ previewUrl, setPreviewUrl ] = useState<string | null>(null);
-
-    const [ newName, setNewName ] = useState<string>(group?.name || "");
-    const [ newDesc, setNewDesc ] = useState<string>(group?.desc || "");
-    const redactable = members.some(m => (m.role_name === "admin" || m.role_name === "owner") && m.id === user.id);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { refetchGroup, members, newAva, setNewAva, myPerms } = useGroup();
+    const { showNotification } = useNote();
+    const { refetchContactsWTLoading, onlineMap } = useContacts();
+    const navigate = useNavigate();
+    const [editing, setEditing] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [name, setName] = useState(group.name);
+    const [description, setDescription] = useState(group.desc ?? "");
+    const inputRef = useRef<HTMLInputElement>(null);
+    const nameRef = useRef<HTMLInputElement>(null);
+    const innerRef = useRef<HTMLDivElement>(null);
+    const bioRef = useRef<HTMLTextAreaElement>(null);
+    const [infoHeight, setInfoHeight] = useState<number | null>(null);
+    useLayoutEffect(() => {
+        const inner = innerRef.current;
+        if (!inner) return;
+        const measure = () => { const height = inner.getBoundingClientRect().height; setInfoHeight(height); onHeightChange(height); };
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(inner);
+        return () => observer.disconnect();
+    }, [onHeightChange]);
+    useLayoutEffect(() => {
+        const element = bioRef.current;
+        if (!element) return;
+        element.style.height = "25px";
+        element.style.height = element.scrollHeight + 1 + "px";
+    }, [editing, description, group.desc]);
+    const canEdit = myPerms?.change_name || myPerms?.change_desc || myPerms?.change_avatar;
+    const onlineCount = members.filter(member => onlineMap[member.id]).length;
 
     useEffect(() => {
-        if (newAva instanceof File) {
-            const url = URL.createObjectURL(newAva);
-            setPreviewUrl(url);
-            return () => URL.revokeObjectURL(url);
-        } else {
+        setNewAva(undefined);
+        return () => setNewAva(undefined);
+    }, [group.id, setNewAva]);
+
+    useEffect(() => {
+        if (!newAva) {
             setPreviewUrl(null);
+            return;
         }
+        const url = URL.createObjectURL(newAva);
+        setPreviewUrl(url);
+        return () => URL.revokeObjectURL(url);
     }, [newAva]);
 
-    const handleSave = async() => {
-        if (!user || !id) return;
-        const updates: {row: string, value: string}[] = [];
-        if (newName !== "" && newName !== group?.name) updates.push({row: "username", value: newName});
-        if (newDesc !== group?.desc) updates.push({row: "desc", value: newDesc});
-        if (newAva) {
-            try {
-                const fd = new FormData();
-                fd.append("avatar", newAva);
-                fd.append("group", id);
-                const upRes = await api.post(`uploadavatar`, fd );
-                if (upRes.data?.success) {
-                    if (updates.length === 0) {
-                        await refetchContactsWTLoading()
-                        await refetchGroup(id)
-                    }
-                } else {
-                    showNotification("error", upRes.data?.error || "Не удалось загрузить аватар");
-                    return;
-                }
-            } catch {
-                showNotification("error", "Не удалось загрузить аватар");
-                return;
-            }
-        }
+    useEffect(() => {
+        if (editing) nameRef.current?.focus();
+    }, [editing]);
 
-        if (updates.length > 0) {
-            try {
-                const res = await api.post(`updategroup`, {
-                    group: id,        // ← добавляем ID группы
-                    updates           // ← массив изменений
-                });
-                if (res.data.success) {
-                    await refetchGroup(id);
-                    await refetchContactsWTLoading(); // если нужно обновить список чатов
-                    showNotification("success", "Данные обновлены");
-                } else {
-                showNotification("error", res.data.error || "Не удалось обновить данные");
-                }
-            } catch {
-                showNotification("error", "Не удалось обновить данные");
-            }
-        }
-        setRed(false);
-    }
+    const startEditing = () => {
+        setName(group.name);
+        setDescription(group.desc ?? "");
+        setEditing(true);
+    };
 
+    const cancelEditing = () => {
+        setEditing(false);
+        setNewAva(undefined);
+    };
+
+    const save = async (event: FormEvent) => {
+        event.preventDefault();
+        if (saving) return;
+        if (myPerms?.change_name && !name.trim()) {
+            showNotification("error", "Введите название группы");
+            nameRef.current?.focus();
+            return;
+        }
+        const updates: { row: string; value: string }[] = [];
+        if (myPerms?.change_name && name.trim() !== group.name) updates.push({ row: "username", value: name.trim() });
+        if (myPerms?.change_desc && description !== (group.desc ?? "")) updates.push({ row: "desc", value: description });
+        setSaving(true);
+        try {
+            if (newAva && myPerms?.change_avatar) {
+                const data = new FormData();
+                data.append("avatar", newAva);
+                data.append("group", String(group.id));
+                const response = await api.post("uploadavatar", data);
+                if (!response.data?.success) throw new Error(response.data?.error || "Не удалось загрузить аватар");
+                // The avatar is already saved; don't upload it again if the next request fails.
+                setNewAva(undefined);
+                await refetchGroup(String(group.id));
+            }
+            if (updates.length) {
+                const response = await api.post("updategroup", { group: group.id, updates });
+                if (!response.data?.success) throw new Error(response.data?.error || "Не удалось сохранить изменения");
+            }
+            await refetchGroup(String(group.id));
+            await refetchContactsWTLoading();
+            setEditing(false);
+            showNotification("success", "Изменения сохранены");
+        } catch (error) {
+            const message = axios.isAxiosError(error)
+                ? error.response?.data?.error || "Не удалось сохранить изменения. Попробуйте ещё раз."
+                : error instanceof Error ? error.message : "Не удалось сохранить изменения";
+            showNotification("error", message);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const avatar = previewUrl || group.avatar_url;
     return (
-        <div className="accInfo"
-            style={{
-            maxHeight: `${500 * (1 - collapsed)}px`,
-            opacity: 1 - collapsed,
-            marginTop: `${(1 - collapsed)}vh`,
-            paddingTop: `${0.5 * (1 - collapsed)}vh`,
-            paddingBottom: `${0.5 * (1 - collapsed)}vh`,
-        }}
-        >
-            <div className="groupInfoWrapper">
-                <div
-                    className="accPic"
-                    onClick={() => redactable && red && fileInputRef.current?.click()}
-                >
-                    <input
-                        type="file"
-                        className="accPicksfileInput"
-                        accept="image/*"
-                        ref={fileInputRef}
-                        onChange={(e) => e.target.files && setBlackout({ seted: true, module: "PickHandler", pick: e.target.files[0] })}
-                    />
-                    {previewUrl ? (
-                        <img src={previewUrl} alt="avatar preview" className="avatarImg"/>
-                    ) : group?.avatar_url && group.avatar_url !== null ? (
-                        <img src={group.avatar_url} alt="avatar" className="avatarImg" onClick={() => {if (!red) setBlackout({seted:true, module:"ImgPrev", img:group.avatar_url ?? undefined})}}/>
-                    ) : red ? (
-                        <Camera size={256} />
-                    ) : (
-                        <Users size={128} />
-                    )}
-                </div>
-                <div className="accInfoNames">
-                    <div className="accMainInfoStr">
-                        <input
-                            className="accInput nameInput"
-                            value={(redactable ? newName : group?.name) ?? ""}
-                            readOnly={!red}
-                            onChange={(e) => setNewName(e.currentTarget.value)}
-                        />
+        <form className={`accInfo${isDragging ? " accInfoDragging" : ""}`} onSubmit={save} aria-busy={saving} inert={collapsed === 1} style={{ height: infoHeight === null ? undefined : infoHeight * (1 - collapsed), opacity: 1 - collapsed, marginTop: `calc(var(--acc-info-margin-top, 0px) * ${1 - collapsed})` }}>
+            <div className="accInfoInner" ref={innerRef}>
+                <div className="accInfoMain">
+                    <button type="button" className="accPic groupAvatar" disabled={saving || (editing ? !myPerms?.change_avatar : !avatar)} aria-label={editing ? "Изменить аватар группы" : "Открыть аватар группы"} onClick={() => {
+                        if (editing) inputRef.current?.click();
+                        else if (avatar) setBlackout({ seted: true, module: "ImgPrev", img: avatar });
+                    }}>
+                        {avatar ? <img src={avatar} alt="" className="avatarImg" /> : editing ? <Camera /> : <Users />}
+                    </button>
+                    <input ref={inputRef} type="file" accept="image/*" hidden onChange={event => {
+                        const file = event.target.files?.[0];
+                        if (file) setBlackout({ seted: true, module: "PickHandler", pick: file });
+                        event.target.value = "";
+                    }} />
+                    <div className="accInfoNames">
+                        <div className="accMainInfoStr"><input ref={nameRef} className={`accInput nameInput ${!editing || !myPerms?.change_name ? "dis" : ""}`} aria-label="Название группы" value={editing ? name : group.name} readOnly={!editing || !myPerms?.change_name} onChange={event => setName(event.target.value)} disabled={saving} /></div>
+                        <div className="accNickStr groupMemberCount">Участников: {members.length}</div>
+                    </div>
+                    <div className="accInfoWrapper">
+                        <div className={`accOnlineStauts ${onlineCount ? "online" : "offline"}`}>
+                            <CircleIcon size={16} weight="fill" aria-hidden="true" />
+                            {onlineCount ? `В сети: ${onlineCount}` : "Группа"}
+                        </div>
                     </div>
                 </div>
-                <div className="groupButtsWrapper">
-                    {redactable && (
-                        <div className="groupInfoButt" onClick={() => {
-                            if (red) {
-                                handleSave()
-                                setRed(false)
-                            } else {
-                                setRed(true)
-                            }
-                        }}>
-                            {red ? "Сохранить" : "Редактировать"}
-                        </div>   
+                <div className="accInfoWrapper">
+                    {(group.desc || editing) && (
+                        <div className="accExtraInfoWrapper">
+                            <label htmlFor="group-description">Описание</label>
+                            <textarea
+                                ref={bioRef}
+                                id="group-description"
+                                className={`extraInfoInput ${!editing || !myPerms?.change_desc ? "dis" : ""}`}
+                                value={editing ? description : group.desc ?? ""}
+                                readOnly={!editing || !myPerms?.change_desc}
+                                onChange={event => setDescription(event.target.value)}
+                                disabled={saving}
+                            />
+                        </div>
                     )}
-                    <div className="groupInfoButt" onClick={() => navigate(`/chat/g/${group?.id}`)}>
-                        Написать сообщение
+                    <div className="accExtraInfoWrapper">
+                        <div className="settingInnerList">
+                            {editing ? (
+                                <>
+                                    <button type="submit" className="settingInnerButt" disabled={saving}>
+                                        <FloppyDiskBack size={20} weight="fill" />
+                                        {saving ? "Сохраняем…" : "Сохранить"}
+                                    </button>
+                                    <button type="button" className="settingInnerButt" onClick={cancelEditing} disabled={saving}>
+                                        <X size={20} />Отмена
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    {canEdit && (
+                                        <button type="button" className="settingInnerButt" onClick={startEditing}>
+                                            <PencilSimple size={20} weight="fill" />Редактировать
+                                        </button>
+                                    )}
+                                    <button type="button" className="settingInnerButt" onClick={() => navigate(`/chat/g/${group.id}`)}>
+                                        <ChatTeardropText size={20} weight="fill" />Написать сообщение
+                                    </button>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className="accExtraInfoWrapper" style={{ display: group?.desc || red ? "flex" : "none" }}>
-                <label htmlFor="bioTA">Описание</label>
-                <textarea
-                    className="bioTA extraInfoInput"
-                    id="bioTA"
-                    value={(redactable ? newDesc : group?.desc) ?? ""}
-                    readOnly={!red}
-                    onChange={(e) => setNewDesc(e.currentTarget.value)}
-                ></textarea>
-            </div>
-        </div>
-    )
+        </form>
+    );
 }
