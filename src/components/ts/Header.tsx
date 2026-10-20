@@ -16,7 +16,7 @@ export default function Header() {
 
     const isSettings = location.pathname.startsWith("/settings")
     const isInInfo = location.pathname.startsWith("/info/")
-    const isInfo = location.pathname = "/info"
+    const isInfo = location.pathname === "/info"
 
     return (
         <>

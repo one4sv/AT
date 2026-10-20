@@ -15,7 +15,7 @@ import type { message } from "../../components/context/ChatContext";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import getCornerType from "./utils/funcs/getCornet";
 import SystemMessage from "./utils/SystemMessage";
-import Loader from "../../components/ts/Loader";
+import Skeleton from "../../components/ts/Skeleton";
 import { LoaderSmall } from "../../components/ts/LoaderSmall";
 import { useChatMessageScroll } from "../../components/hooks/utils/useChatMessageScroll";
 
@@ -208,7 +208,7 @@ export default function Chat() {
 
         el.addEventListener("scroll", onScroll, { passive: true });
         return () => el.removeEventListener("scroll", onScroll);
-    }, [hasMore, loadingMore, loadOlderMessages]);
+    }, [chatLoading, hasMore, loadingMore, loadOlderMessages]);
 
     useEffect(() => {
         if (
@@ -223,7 +223,7 @@ export default function Chat() {
         }
     }, [chatLoading, messages.length]);
 
-    if (chatLoading) return <Loader />;
+    if (chatLoading) return <Skeleton type="chat" count={5} />;
 
     return (
         <div className="chatDiv">
@@ -242,7 +242,7 @@ export default function Chat() {
                 )}
 
                 {grouped.map((group) => (
-                <div key={group[0].id}>
+                <div key={new Date(group[0].created_at).toDateString()}>
                     <DateDivider currDate={new Date(group[0].created_at)} />
 
                     {group.map((m) => {
@@ -285,7 +285,7 @@ export default function Chat() {
                         />
                     ) : (
                         <Message
-                            key={m.id}
+                            key={m.clientId ?? m.id}
                             message={m}
                             answer={answer}
                             redir_answer={redir_answer}

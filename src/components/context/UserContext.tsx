@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useCallback, useRef } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import { type ReactNode } from "react";
 import axios, { isAxiosError } from "axios";
 import { useNote } from "../hooks/NoteHook";
@@ -49,12 +49,10 @@ const UserContext = createContext<UserContextType | null>(null);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const { t } = useTranslation("common")
     const { showNotification } = useNote();
-    const API_WS = import.meta.env.VITE_API_WS
     const [user, setUser] = useState<User>({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null, reg_date:null, sex:null, date_of_birth:null });
     const [loadingUser, setLoadingUser] = useState(true);
     const [initialLoading, setInitialLoading] = useState(true);
 
-    const wsRef = useRef<WebSocket | null>(null);
     
     const isAuthenticated = !!user.nick;
 
@@ -99,16 +97,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         if (initialLoading)
         refetchUser();
     }, [initialLoading, refetchUser, user.nick]);
-
-    useEffect(() => {
-        if (!user?.id) return;
-
-        wsRef.current = new WebSocket(`${API_WS}ws?userId=${user.id}`);
-
-        return () => {
-            wsRef.current?.close();
-        };
-    }, [user?.id]);
 
     useEffect(() => {
         if (user.id === null) return

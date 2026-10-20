@@ -15,7 +15,7 @@ const TheHabitContext = createContext<TheHabitContextType | null>(null);
 export interface TheHabitContextType {
     loadHabit: (id: string | null) => Promise<void>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    findHabit: (id: string | null) => Promise<any>;
+    findHabit: (id: string | null, signal?: AbortSignal) => Promise<any>;
     loadHabitWLoading: (id: string | null) => Promise<void>;
     loadTimer: (id: number) => void;
     loadCounter: (id: number) => void;

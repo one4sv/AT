@@ -151,7 +151,7 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [user.id]);
 
     const scheduleGetCompletions = useCallback(async (habitId: string) => {
         if (habitSettings.metric_type !== "schedule" && !habitSettings.schedule) return;

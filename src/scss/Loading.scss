@@ -1,0 +1,306 @@
+.loadingSpinner {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border: 3px solid var(--accent_op);
+    border-top-color: var(--accent_text);
+    border-right-color: var(--accent_text);
+    border-radius: 50%;
+    animation: loadingSpin .8s linear infinite;
+}
+
+.loaderSmall {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loaderSmall .loadingSpinner {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+}
+.SMnavButt > .skeletonCircle {
+    width: 3vh;
+    height: 3vh;
+    min-width: 24px;
+    min-height: 24px;
+}
+.skeleton {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    width: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+.skeletonCard {
+    background-color: var(--mc);
+    border-radius: 24px;
+    padding: 1vh 1vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+}
+.skeletonRow {
+    display: flex;
+    align-items: center;
+    gap: .5vw;
+}
+.skeletonText {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+.skeletonLine,
+.skeletonCircle,
+.skeletonBlock {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--interact);
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(110deg, transparent 20%, rgb(255 255 255 / 5%) 40%, rgb(255 255 255 / 12%) 50%, rgb(255 255 255 / 5%) 60%, transparent 80%);
+        background-size: 200% 100%;
+        animation: skeletonLoading 1.35s ease-in-out infinite;
+    }
+}
+.skeletonLine {
+    height: 16px;
+    width: 75%;
+    border-radius: 24px;
+    &.skeletonShort { width: 45%; }
+    &.skeletonTitle { height: 24px; width: 40%; }
+}
+.skeletonCircle {
+    width: 5vh;
+    height: 5vh;
+    min-width: 40px;
+    min-height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+}
+.skeletonBlock {
+    height: 18vh;
+    border-radius: 16px;
+}
+.skeleton-list {
+    padding: 4vh .5vw 0;
+    gap: .5vh;
+    .skeletonCard { padding: .5vh .5vw; background-color: var(--tr); backdrop-filter: none; }
+    .skeletonCard:nth-child(even) .skeletonLine { width: 60%; }
+}
+.skeleton-feed {
+    width: 42%;
+    margin: 0 auto;
+    padding-top: 6vh;
+    height: 100%;
+}
+.skeleton-habit {
+    padding: 6vh .5vw 0;
+    height: 100%;
+}
+.skeletonHabit {
+    display: grid;
+    grid-template-columns: 19.5vw minmax(0, 1fr) 19.5vw;
+    height: 40dvh;
+    gap: .5vw;
+}
+.skeletonOverview .skeletonHabit {
+    grid-template-columns: 19.5vw minmax(0, 1fr);
+}
+.skeletonCalendar {
+    padding: 5px;
+    gap: .5vh;
+    .skeletonTitle { height: 3dvh; margin: .5dvh auto; width: 65%; }
+}
+.skeletonWeek,
+.skeletonDays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    place-items: center;
+    gap: .5vh;
+    .skeletonCircle {
+        min-width: 0;
+        min-height: 0;
+        width: 2.5dvh;
+        height: 2.5dvh;
+    }
+}
+.skeletonWeek .skeletonCircle {
+    width: 3dvh;
+    height: 3dvh;
+}
+.skeletonDays {
+    flex: 1;
+}
+.skeletonMetric {
+    align-items: center;
+    justify-content: space-between;
+    .skeletonTitle { width: 70%; }
+    .skeletonCircle { width: 14vh; height: 14vh; }
+    .skeletonBlock { height: 4dvh; width: 45%; }
+}
+.skeletonComment {
+    padding: 1vh .5vw;
+    .skeletonBlock { height: 10dvh; }
+    .skeletonLine { margin: 0 auto; height: 16px; }
+}
+.skeletonStats {
+    margin-top: .5vw;
+    height: 52dvh;
+    padding: 1vh .5vw;
+    gap: 1vh;
+    > .skeletonTitle { height: 20px; width: 20%; flex-shrink: 0; }
+}
+.skeletonStatsGrid {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: .5vh;
+}
+.skeletonStat {
+    border: 1px solid var(--interact);
+    border-radius: 24px;
+    padding: 1vh 1vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    .skeletonBlock { flex: 1; min-height: 0; height: auto; }
+}
+.skeletonPageHeader {
+    position: absolute;
+    top: .5vh;
+    left: .5vw;
+    right: .5vw;
+    height: 4.5dvh;
+    padding: .5vh .5vw;
+    flex-direction: row;
+    .skeletonCircle {
+        min-width: 0;
+        min-height: 0;
+        height: 3.5dvh;
+        width: 3.5dvh;
+    }
+    .skeletonLine { max-width: 180px; }
+}
+.skeleton-chat {
+    height: 100%;
+}
+.skeletonChat { height: 100%; }
+.skeletonMessages {
+    height: 100%;
+    width: 60%;
+    margin: 0 auto;
+    padding: 6dvh 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: .5vh;
+}
+.skeletonMessage {
+    width: 48%;
+    padding: 1vh .5vw .5vh;
+    border-radius: 16px;
+    gap: .75vh;
+    &:nth-child(even) { align-self: flex-end; width: 35%; border-bottom-right-radius: 4px; }
+    &:nth-child(odd) { border-bottom-left-radius: 4px; }
+    &:nth-child(3n) { width: 62%; }
+    .skeletonTime { width: 32px; height: 10px; align-self: flex-end; }
+}
+.skeletonComposer {
+    position: absolute;
+    bottom: 1vh;
+    left: 20%;
+    width: 59%;
+    height: 5dvh;
+    .skeletonCircle { width: 5dvh; height: 5dvh; min-width: 0; min-height: 0; padding: 0; }
+}
+.skeletonInput {
+    flex: 1;
+    height: 100%;
+    justify-content: center;
+}
+.skeleton-profile {
+    width: 50%;
+    margin: 0 auto;
+    padding-top: 6vh;
+}
+
+.SMlist,
+.postFeed,
+.StatsDivMain,
+.chatDiv {
+    animation: contentAppear .25s ease-out;
+}
+.SMlist > :nth-child(-n + 6),
+.postFeed > :nth-child(-n + 4) {
+    animation: contentAppear .3s ease-out backwards;
+}
+@for $i from 2 through 6 {
+    .SMlist > :nth-child(#{$i}),
+    .postFeed > :nth-child(#{$i}) {
+        animation-delay: ($i - 1) * 25ms;
+    }
+}
+
+@keyframes loadingSpin {
+    to { transform: rotate(360deg); }
+}
+@keyframes skeletonLoading {
+    from { background-position: 100% 0; }
+    to { background-position: -100% 0; }
+}
+@keyframes contentAppear {
+    from { opacity: 0; translate: 0 6px; }
+    to { opacity: 1; translate: 0 0; }
+}
+@media (max-width: 800px) {
+    .skeletonCard { padding: 1.5vh 3vw; }
+    .skeletonRow { gap: 2vw; }
+    .skeleton-list { padding: 4vh 1vw 0; }
+    .skeleton-feed, .skeleton-profile { width: 95%; padding-top: 8vh; }
+    .skeleton-habit { padding: 8vh 2vw; }
+    .skeletonHabit,
+    .skeletonOverview .skeletonHabit {
+        grid-template-columns: 1fr;
+        height: auto;
+        gap: 1vh;
+    }
+    .skeletonMetric { order: -1; height: 50dvh; }
+    .skeletonOverview .skeletonMetric { order: 0; }
+    .skeletonCalendar { height: 51dvh; }
+    .skeletonComment { display: none; }
+    .skeletonStats { height: 90dvh; }
+    .skeletonStatsGrid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); }
+    .skeletonPageHeader { top: 1vh; left: 2vw; right: 2vw; height: 6dvh; }
+    .skeletonMessages { width: 99%; padding: 7dvh 1vw 8dvh; }
+    .skeletonMessage { padding: 1vh 2vw .5vh; }
+    .skeletonComposer {
+        left: 2.5vw;
+        width: calc(100% - 5vw);
+        bottom: 3vh;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .loadingSpinner,
+    .skeletonLine::after,
+    .skeletonCircle::after,
+    .skeletonBlock::after,
+    .SMlist,
+    .postFeed,
+    .StatsDivMain,
+    .chatDiv,
+    .SMlist > :nth-child(n),
+    .postFeed > :nth-child(n) {
+        animation: none;
+    }
+}

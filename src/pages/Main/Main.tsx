@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../../components/hooks/UserHook.ts";
-import Loader from "../../components/ts/Loader.tsx";
+import Skeleton from "../../components/ts/Skeleton";
 import FeedNothing from "./components/FeedNothing.tsx";
 import "./scss/Main.scss"
 import type { PostType } from "../../components/context/AccContext.tsx";
@@ -50,7 +50,7 @@ export default function Feed() {
         )
         : Infinity;
 
-    if (initialLoading || postLoading) return <Loader />;
+    if (initialLoading || postLoading) return <Skeleton type="feed" count={3} />;
 
     return (
         <div className={`MainDiv ${isMobile ? "mobile" : ""}`}>

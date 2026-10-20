@@ -86,6 +86,8 @@ export default function ChatTextArea({ textAreaRef, scrollToMessage, mess, setMe
 
                 const tempMessage: message = {
                     id: tempId,
+                    clientId: tempId,
+                    animateIn: true,
                     sender_id: user.id ?? "You",
                     sender_name: user.username || user.username || "You",
                     sender_nick: user.nick || "",

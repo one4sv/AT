@@ -32,10 +32,12 @@ export default function HabitDiv({
     const { ws } = useWebSocket();
 
     const [timerStatus, setTimerStatus] = useState<string>("");
-    const [timerLoading, setTimerLoading] = useState<boolean>(true);
-
-    const hasLoadedRef = useRef(false);
     const tickIntervalRef = useRef<number | null>(null);
+    const timerVersionRef = useRef(0);
+    const settings = Array.isArray(habit.habits_settings)
+        ? habit.habits_settings[0]
+        : habit.habits_settings;
+    const metric = settings?.metric_type;
 
     const updateTimerDisplay = useCallback((timer: habitTimer) => {
         const elapsed = calculateTimerElapsed(timer, false);
@@ -52,29 +54,10 @@ export default function HabitDiv({
         if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
         if (timer.status !== "running") return;
 
-        tickIntervalRef.current = setInterval(() => {
+        tickIntervalRef.current = window.setInterval(() => {
             updateTimerDisplay(timer);
         }, 1000);
     }, [updateTimerDisplay]);
-
-    const loadInitialTimer = useCallback(async () => {
-        if (!habit.id || hasLoadedRef.current) return;
-        setTimerLoading(true);
-        try {
-            const res = await findHabit(String(habit.id));
-            if (res?.success && res.timer && res.settings?.metric_type === "timer") {
-                updateTimerDisplay(res.timer);
-                startLocalTick(res.timer);
-            } else {
-                setTimerStatus("");
-            }
-        } catch (e) {
-            console.error("Ошибка начальной загрузки таймера:", e);
-        } finally {
-            setTimerLoading(false);
-            hasLoadedRef.current = true;
-        }
-    }, [habit.id, findHabit, updateTimerDisplay, startLocalTick]);
 
     useEffect(() => {
         if (!ws || !habit.id) return;
@@ -83,6 +66,7 @@ export default function HabitDiv({
             try {
                 const data = JSON.parse(event.data);
                 if (data.type === "TIMER_UPDATE" && data.habitId === habit.id) {
+                    timerVersionRef.current++;
                     const parsed = parseTimer(data.timer);
                     if (parsed) {
                         updateTimerDisplay(parsed);
@@ -100,11 +84,27 @@ export default function HabitDiv({
     }, [ws, habit.id, parseTimer, updateTimerDisplay, startLocalTick]);
 
     useEffect(() => {
-        loadInitialTimer();
+        const controller = new AbortController();
+        const version = timerVersionRef.current;
+        setTimerStatus("");
+
+        if (habit.ongoing && (!metric || metric === "timer")) {
+            findHabit(String(habit.id), controller.signal).then(res => {
+                if (controller.signal.aborted || version !== timerVersionRef.current) return;
+                if (res?.success && res.timer && res.settings?.metric_type === "timer") {
+                    updateTimerDisplay(res.timer);
+                    startLocalTick(res.timer);
+                }
+            }).catch(error => {
+                if (!controller.signal.aborted) console.error("Ошибка загрузки таймера:", error);
+            });
+        }
+
         return () => {
+            controller.abort();
             if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
         };
-    }, [loadInitialTimer]);
+    }, [habit.id, habit.ongoing, metric, findHabit, updateTimerDisplay, startLocalTick]);
 
     const ruPeriodicity = (habit: Habit): string => {
         if (!habit.ongoing) return "в архиве";
@@ -223,9 +223,7 @@ export default function HabitDiv({
                 </div>
                 <div className="habitPer">
                     {habit.ongoing ? (
-                        timerLoading
-                            ? "Загрузка..."
-                            : timerStatus || periodicityText
+                        timerStatus || periodicityText
                     ) : (
                         `${formatDateFromString(habit.start_date)} - ${formatDateFromString(habit.end_date)}`
                     )}

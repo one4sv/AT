@@ -25,20 +25,25 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
 
         ws.onopen = () => {
             console.log("🟢 WebSocket подключён");
-            setIsConnected(true);
+            if (wsRef.current === ws) setIsConnected(true);
         };
 
         ws.onclose = () => {
             console.log("🔴 WebSocket отключён");
-            setIsConnected(false);
-            wsRef.current = null;
+            if (wsRef.current === ws) {
+                setIsConnected(false);
+                wsRef.current = null;
+            }
         };
 
         ws.onerror = (err) => console.error("WebSocket ошибка:", err);
 
         return () => {
+            ws.onopen = null;
+            ws.onclose = null;
             ws.close();
             wsRef.current = null;
+            setIsConnected(false);
         };
     }, [user?.id, API_WS]);
 

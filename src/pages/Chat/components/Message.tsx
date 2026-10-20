@@ -1,6 +1,6 @@
 import { CheckCircle, ShareFat, PushPin, ClockCountdownIcon } from "@phosphor-icons/react";
 import { useChat } from "../../../components/hooks/ChatHook";
-import React, { useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import type { message } from "../../../components/context/ChatContext";
 import { useUser } from "../../../components/hooks/UserHook";
 import Linkify from "linkify-react";
@@ -35,6 +35,24 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
     const { emote, messdb } = useSettings()
     const { searchMess } = useChat()
     const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
+
+    const appearRef = useRef<HTMLDivElement>(null);
+    const animateIn = useRef(Boolean(m.animateIn));
+
+    useLayoutEffect(() => {
+        const element = appearRef.current;
+        if (!element || !animateIn.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const animation = element.animate([
+            { opacity: 0, transform: "translateY(12px) scale(0.97)" },
+            { opacity: 1, transform: "translateY(0) scale(1)" },
+        ], {
+            duration: 260,
+            easing: "cubic-bezier(0.075, 0.82, 0.165, 1)",
+        });
+
+        return () => animation.cancel();
+    }, []);
 
     const touchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -149,7 +167,7 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
                     {chosenMess.some((mess) => mess.id === m.id) ? <CheckCircle weight="fill"/> : <CheckCircle/> }
                 </div>
             )}
-            <div className={`message ${ isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""}`}>
+            <div ref={appearRef} className={`message ${ isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""}`}>
                 {!isMy && (showNames === undefined || showNames === true) && chatWith?.is_group && 
                     <div className="senderName" style={{cursor: isChose ? "default" : "pointer"}} onClick={() => !isChose && navigate(`/acc/${m.sender_nick}`)}>
                         {m.sender_name}

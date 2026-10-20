@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useUser } from "../UserHook";
 
 type SetValue<T> = React.Dispatch<React.SetStateAction<T>>;
@@ -7,12 +7,16 @@ const GLOBAL_KEYS = [
     "settings_theme",
     "settings_lang",
 ];
+const APPEARANCE_KEYS = [
+    "settings_accent", "settings_grad", "settings_blur",
+    "settings_layout", "settings_bg", "settings_decor",
+];
 
 export default function useLocalStorage<T>(
     key: string,
     defaultValue: T
 ): readonly [T, SetValue<T>] {
-    const { user } = useUser();
+    const { user, initialLoading } = useUser();
 
     const storageKey =
         GLOBAL_KEYS.includes(key)
@@ -21,42 +25,59 @@ export default function useLocalStorage<T>(
                 ? `${user.nick}_${key}`
                 : key;
 
-    const [value, setValue] = useState<T>(() => {
+    const stateKey = initialLoading ? `loading_${storageKey}` : storageKey;
+    const readValue = useCallback((): T => {
         try {
+            if (initialLoading && APPEARANCE_KEYS.includes(key)) {
+                const appearance = JSON.parse(localStorage.getItem("settings_appearance") ?? "{}");
+                if (typeof appearance?.[key] === typeof defaultValue) return appearance[key];
+            }
             const stored = localStorage.getItem(storageKey);
-            return stored ? JSON.parse(stored) : defaultValue;
+            return stored === null ? defaultValue : JSON.parse(stored);
         } catch {
             return defaultValue;
         }
-    });
+    }, [key, storageKey, initialLoading, defaultValue]);
+
+    const [stored, setStored] = useState(() => ({ key: stateKey, value: readValue() }));
+    const value = stored.key === stateKey ? stored.value : readValue();
 
     useEffect(() => {
-        try {
-            const stored = localStorage.getItem(storageKey);
-
-            if (stored) {
-                setValue(JSON.parse(stored));
-            } else {
-                setValue(defaultValue);
-            }
-        } catch {
-            setValue(defaultValue);
+        if (stored.key !== stateKey) {
+            setStored({ key: stateKey, value: readValue() });
         }
-    }, [storageKey]);
+    }, [stateKey, stored.key, readValue]);
+
+    const setValue: SetValue<T> = useCallback(next => {
+        setStored(previous => {
+            const current = previous.key === stateKey ? previous.value : readValue();
+            return {
+                key: stateKey,
+                value: typeof next === "function"
+                    ? (next as (value: T) => T)(current)
+                    : next,
+            };
+        });
+    }, [stateKey, readValue]);
 
     useEffect(() => {
+        if (initialLoading || stored.key !== stateKey) return;
         try {
-            localStorage.setItem(
-                storageKey,
-                JSON.stringify(value)
-            );
+            localStorage.setItem(storageKey, JSON.stringify(stored.value));
+            if (user.id && APPEARANCE_KEYS.includes(key)) {
+                const appearance = JSON.parse(localStorage.getItem("settings_appearance") ?? "{}");
+                localStorage.setItem("settings_appearance", JSON.stringify({
+                    ...appearance,
+                    [key]: stored.value,
+                }));
+            }
         } catch (e) {
             console.error(
                 "Ошибка записи в localStorage:",
                 e
             );
         }
-    }, [storageKey, value]);
+    }, [initialLoading, key, stateKey, storageKey, stored, user.id]);
 
     return [value, setValue] as const;
 }

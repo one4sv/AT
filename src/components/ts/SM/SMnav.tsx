@@ -26,7 +26,7 @@ import { useSettings } from "../../hooks/SettingsHook"
 import { useContacts } from "../../hooks/ContactsHook"
 
 export default function SMnav() {
-    const { user, logOut } = useUser()
+    const { user, logOut, loadingUser } = useUser()
     const {
         setActiveTab,
         activeTab,
@@ -501,6 +501,20 @@ export default function SMnav() {
         }
     }
 
+    if (loadingUser) return (
+        <div
+            className={`SMnavDiv ${showSideMenu ? "open" : ""}`}
+            style={{ transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none" }}
+            role="status"
+            aria-label="Загрузка навигации"
+        >
+            <div className="SMnav" aria-hidden="true">
+                {Array.from({ length: 4 }, (_, i) => (
+                    <div className="SMnavButt" key={i}><div className="skeletonCircle" /></div>
+                ))}
+            </div>
+        </div>
+    )
     if (!user.id) return null
 
     return (

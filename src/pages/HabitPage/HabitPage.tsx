@@ -2,7 +2,7 @@ import { useEffect, useRef} from "react";
 import { useParams } from "react-router";
 import { useTheHabit } from "../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../components/hooks/CalendarHook";
-import Loader from "../../components/ts/Loader";
+import Skeleton from "../../components/ts/Skeleton";
 import "./scss/habitInfo.scss";
 import "./scss/redHabit.scss";
 import { isMobile } from "react-device-detect";
@@ -29,7 +29,7 @@ export interface HabitSlideProps {
 }
 
 export default function Habit() {
-    const { fetchCalendarHabit, fetchCalendarWLoading, calendarLoading } = useCalendar();
+    const { fetchCalendarHabitWLoading, fetchCalendarWLoading, calendarLoading } = useCalendar();
     const { loadHabitWLoading, habit, loadingHabit, habitSettings } = useTheHabit();
     const {
         showHabitMenu,
@@ -53,7 +53,7 @@ export default function Habit() {
     useEffect(() => {
         if (habitId) {
             loadHabitWLoading(habitId);
-            fetchCalendarHabit(habitId);
+            fetchCalendarHabitWLoading(habitId);
         } else {
             fetchCalendarWLoading();
         }
@@ -75,8 +75,8 @@ export default function Habit() {
             habit.periodicity !== "sometimes" &&
             habitSettings.schedule);
 
-    if (loadingHabit || loadingHabits || calendarLoading) {
-        return <Loader />;
+    if ((habitId && loadingHabit) || loadingHabits || calendarLoading) {
+        return <Skeleton type="habit" overview={!habitId} />;
     }
 
     const isMy =

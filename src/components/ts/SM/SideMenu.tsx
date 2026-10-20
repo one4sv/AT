@@ -5,7 +5,7 @@ import { useUser } from "../../hooks/UserHook.ts"
 import ContactsList from "./ContactsList.tsx"
 import { useSettings } from "../../hooks/SettingsHook.ts"
 import { useHabits } from "../../hooks/HabitsHook.ts"
-import MinLoader from "../MinLoader.tsx"
+import Skeleton from "../Skeleton"
 import { isMobile } from "react-device-detect"
 import { useSchedule } from "../../hooks/ScheduleHook.ts"
 import SideMenuUnAunthificated from "../SideMenuUnAunthificated.tsx"
@@ -15,9 +15,9 @@ import AccountList from "./AccountList.tsx"
 import SpotsList from "./SpotsList.tsx"
 
 export default function SideMenu() {
-    const { isAuthenticated, loadingUser } = useUser()
-    const { loadingList, mainSearchRef } = useContacts()
-    const { loadingHabits } = useHabits()
+    const { user, isAuthenticated, loadingUser } = useUser()
+    const { list, loadingList, mainSearchRef } = useContacts()
+    const { habits, loadingHabits } = useHabits()
     const { refreshSchedules } = useSchedule()
     const { layout } = useSettings()
 
@@ -49,8 +49,8 @@ export default function SideMenu() {
     const sideMenuRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        refreshSchedules()
-    }, [])
+        if (user.id) refreshSchedules()
+    }, [user.id, refreshSchedules])
 
     const handleTouchStart = (e: React.TouchEvent) => {
         startX.current = e.touches[0].clientX
@@ -184,10 +184,8 @@ export default function SideMenu() {
                     }}
                 >
                     <div className="slide">
-                        {loadingList ? (
-                            <div className="menuLoader">
-                                <MinLoader />
-                            </div>
+                        {loadingUser || (loadingList && list.length === 0) ? (
+                            <Skeleton type="list" />
                         ) : (
                             <ContactsList
                                 filter={messageSelectedValue}
@@ -197,10 +195,8 @@ export default function SideMenu() {
                     </div>
 
                     <div className="slide">
-                        {loadingHabits ? (
-                            <div className="menuLoader">
-                                <MinLoader />
-                            </div>
+                        {loadingUser || (loadingHabits && !habits?.length) ? (
+                            <Skeleton type="list" />
                         ) : (
                             <HabitsList
                                 filter={habitsSelectedValue}
@@ -209,20 +205,16 @@ export default function SideMenu() {
                     </div>
 
                     <div className="slide">
-                        {loadingList ? (
-                            <div className="menuLoader">
-                                <MinLoader />
-                            </div>
+                        {loadingUser ? (
+                            <Skeleton type="list" />
                         ) : (
                             <SpotsList />
                         )}
                     </div>
 
                     <div className="slide">
-                        {loadingList ? (
-                            <div className="menuLoader">
-                                <MinLoader />
-                            </div>
+                        {loadingUser ? (
+                            <Skeleton type="list" />
                         ) : (
                             <AccountList />
                         )}

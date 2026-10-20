@@ -59,6 +59,8 @@ export interface message {
   is_pinned: boolean;
   target_id: string | null;
   isPending?: boolean;
+  clientId?: number;
+  animateIn?: boolean;
 }
 
 export type activeHeaderType = "text" | "search" | "pinned" | "habit" | "choosing"
@@ -304,13 +306,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
               if (tempIndex !== -1) {
                 const newMessages = [...prev];
-                newMessages[tempIndex] = data.message;
+                newMessages[tempIndex] = { ...data.message, clientId: prev[tempIndex].clientId ?? prev[tempIndex].id };
                 return newMessages;
               }
             }
 
             // Обычное добавление
-            return [...prev, data.message];
+            if (prev.some(m => m.id === data.message.id)) return prev;
+            return [...prev, { ...data.message, animateIn: true }];
           });
         }
 
