@@ -4,11 +4,17 @@
     box-sizing: border-box;
     width: 100%;
     max-height: 80dvh;
+    min-height: 10vh;
     background-color: var(--mc);
-    border-radius: 12px;
+    border-radius: 24px;
     padding: 0.5vh 0.5vw;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    @media (max-width: 800px) {
+        padding: 1vh 0;
+        margin-top: 1vh;
+    }
 }
 
 .schedule {
@@ -38,6 +44,9 @@
     gap: 5px;
     margin-top:5px;
     height: fit-content;
+    @media (max-width: 800px) {
+        padding-left: 2vw;
+    }
     > span {
         color: var(--borderHabit);
     }
@@ -157,11 +166,11 @@
     justify-content: center;
     margin-bottom: 5px;
     border-left: 1px solid var(--borderWh);
+    border-radius: 24px;
     &.oddWeek {
         width: 98%;
         background-color: var(--oddBg);
         color: var(--oddText);
-        border-radius: 6px;
         border-left: 0;
         >.scheduleDate {
             color: var(--borderWhLight);
@@ -171,7 +180,6 @@
         width: 98%;
         background-color: var(--evenBg);
         color: var(--evenText);
-        border-radius: 6px;
         border-left: 0;
         >.scheduleDate {
             color: var(--borderWhLight);
