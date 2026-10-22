@@ -1,5 +1,10 @@
 
 import './scss/App.scss';
+import './scss/InterfaceBlocks.scss';
+import PostPage from './pages/Post/PostPage';
+import ConnectionStatus from './components/ts/ConnectionStatus';
+import QrApprove from './pages/QrApprove';
+import TrustedDevice from './components/ts/TrustedDevice';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppProvider } from './components/ts/AppProvider';
 import Main from './pages/Main/Main';
@@ -27,10 +32,14 @@ function App() {
     <Router>
       <AppProvider>
         <ThemeHandler />
+        <ConnectionStatus />
+        <TrustedDevice />
         <Notification />
         <Blackout />
         <ContextMenu/>
         <Routes>
+          <Route path="/auth/qr" element={<QrApprove />} />
+          <Route path="/connection" element={<ConnectionStatus standalone />} />
           <Route path="/sign" element={<Landing />} />
           <Route path="/settings/language" element={<Language />} />
           {window.location.hostname === "localhost" && (
@@ -38,6 +47,7 @@ function App() {
           )}
           <Route path="/" element={<ResponsiveLayout />}>
             <Route index element={<Main />} />
+            <Route path="post/:postId" element={<PostPage />} />
             <Route path="habit" element={<HabitPage />} />
             <Route path="habit/:habitId" element={<HabitPage />} />
             <Route path="chat/:nick" element={<Chat />} />

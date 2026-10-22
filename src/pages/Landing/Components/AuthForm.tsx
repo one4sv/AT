@@ -1,3 +1,4 @@
+import QuickLogin from "./QuickLogin";
 import { Eye, EyeOff } from "lucide-react";
 import { CheckSquareIcon, SquareIcon } from "@phosphor-icons/react";
 import { useState, type FormEvent } from "react";
@@ -40,11 +41,14 @@ export default function AuthForm({ active = true, showPass, showedPass, swipeFor
             setResponse({ success: false, error: "Пароль не может быть пустым", field: "pass", form: "auth" });
             return;
         }
+        if (isRemember) sessionStorage.setItem("at-trust-after-login", "1");
+        else sessionStorage.removeItem("at-trust-after-login");
         await auth({ login: login.trim(), pass, isRemember });
     };
 
     return (
         <form className="landingForm" onSubmit={handleAuth} noValidate inert={!active} aria-hidden={!active}>
+            <QuickLogin />
             <div className="landingField">
                 <label htmlFor="auth-login" className="landingLabel">{t("auth.emailOrNickname")}</label>
                 <input
@@ -98,7 +102,7 @@ export default function AuthForm({ active = true, showPass, showedPass, swipeFor
             <label className="checkString">
                 <input className="landingNativeCheckbox" type="checkbox" checked={isRemember} onChange={e => setIsRemember(e.target.checked)}/>
                 {isRemember ? <CheckSquareIcon weight="fill" aria-hidden="true"/> : <SquareIcon aria-hidden="true"/>}
-                <span>{t("auth.rememberMe")}</span>
+                <span>{t("auth.rememberMe")} · быстрый вход на 30 дней</span>
             </label>
 
             <div className="landingButts">

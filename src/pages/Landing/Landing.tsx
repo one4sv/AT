@@ -11,9 +11,11 @@ import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
 import { MoonStarsIcon, SunDimIcon } from "@phosphor-icons/react";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
+import useFormSwipe from "./Components/useFormSwipe";
 import useLandingSheet from "./Components/useLandingSheet";
 import { useTranslation } from "react-i18next";
 import "../../scss/landingBackground.scss";
+import { Background } from "../../components/ts/utils/background";
 
 export default function Landing() {
     const { loadingAuth, response } = useAuth();
@@ -34,6 +36,7 @@ export default function Landing() {
     const [systemDark, setSystemDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
     const isDark = theme === "dark" || (theme === "system" && systemDark);
     const formRef = useRef<HTMLDivElement>(null);
+    useFormSwipe(formRef, activeForm, setActiveForm, body, loadingAuth || loadingUser);
     const isTwoAuth = response.success === true && response.form === "auth" && response.two_auth;
     const notTwoAuth = response.success === true && response.form === "auth" && !response.two_auth;
     const regSuccess = response.success === true && response.form === "reg";
@@ -47,7 +50,7 @@ export default function Landing() {
     useEffect(() => {
         setBody(((isTwoAuth && !loadingAuth) || regSuccess) ? "mail" : "sign");
     }, [isTwoAuth, loadingAuth, regSuccess]);
-    useEffect(() => { if (user.id) navigate("/", { replace: true }); }, [user.id, navigate]);
+    useEffect(() => { if (user.id) { const qr = sessionStorage.getItem("at-pending-qr"); navigate(qr ? `/auth/qr#${qr}` : "/", { replace: true }); } }, [user.id, navigate]);
     useEffect(() => { setTitle("Achieve Together"); }, [setTitle]);
     useEffect(() => {
         if (open) footerRef.current?.focus({ preventScroll: true });
@@ -57,6 +60,8 @@ export default function Landing() {
 
     const swipeForm = (targetForm: "auth" | "reg") => {
         if (!formRef.current || loadingAuth || loadingUser || notTwoAuth) return;
+        if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+        setActiveForm(targetForm);
         formRef.current.scrollTo({ left: targetForm === "reg" ? formRef.current.clientWidth : 0, behavior: "smooth" });
     };
     const showPass = (value: "auth" | "reg" | "conf") => {
@@ -65,14 +70,14 @@ export default function Landing() {
 
     return (
         <div className={`landing ${open ? "landingFooterOpen" : ""} ${drag ? "landingDragging" : ""}`} ref={rootRef} style={{ "--landing-drag": `${drag}px` } as React.CSSProperties}>
-            <div className="background landingBackground" aria-hidden="true" />
+            <Background/>
             <button type="button" className="changeSignTheme" aria-label={t(isDark ? "appearance.enableLight" : "appearance.enableDark")}
                 onClick={() => setNewTheme(isDark ? "light" : "dark")}
             >{isDark ? <MoonStarsIcon/> : <SunDimIcon/>}</button>
             <main className="landingDiv" inert={open}>
                 <div className="title">Achieve Together <span>beta</span></div>
                 {body === "mail" ? <BodyMail/> : (
-                    <div className={`landingFormWrapper ${activeForm}`} ref={formRef} onScroll={event => { const element = event.currentTarget; setActiveForm(element.scrollLeft > element.clientWidth / 2 ? "reg" : "auth"); }}>
+                    <div className={`landingFormWrapper ${activeForm}`} ref={formRef}>
                         <AuthForm active={activeForm === "auth"} showPass={showPass} showedPass={showedPass} swipeForm={swipeForm}/>
                         <RegistrationForm active={activeForm === "reg"} showPass={showPass} showedPass={showedPass} swipeForm={swipeForm}/>
                     </div>

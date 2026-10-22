@@ -8,26 +8,27 @@
     margin: 0 auto;
     width: 99%;
     background-color: var(--mc);
-    border-radius: 6px;
+    border-radius: 24px;
     position: relative;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
 }
 .AccPostCommentTA {
     @include var.TA(100%, 6vh, var(--tr), var(--tc));
-    font-size: 14px;
-    border-radius: 6px;
-    padding-inline: 0.3vw;
+    font-size: 16px;
+    border-radius: 24px;
+    padding: 0.5vh 2vw 1vh .5vw;
+    outline: none;
+    &:active {
+        border: 1px solid var(--tc);
+    }
     &::placeholder {
         color: var(--borderHabit);
     }
 }
 .sendCommentTAButt {
-    position: absolute;
-    right: 0.2vw;
     cursor: pointer;
     border-radius: 50%;
-    top: 0.5dvh;
     height: 3dvh;
     display: flex;
     align-items: center;
@@ -78,7 +79,7 @@
 .comment {
     padding: 0.8vh 0.4vw;
     background-color: var(--mc);
-    border-radius: 6px;
+    border-radius: 24px;
     width: 100%;
     margin: 0.3vh auto;
     display: flex;

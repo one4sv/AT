@@ -9,6 +9,7 @@ $borderHabit: #646464;
 $notValid: #f44336;
 $tr: #00000000;
 $mess: #272727;
+$block_border: color-mix(in srgb, var(--borderWh) 22%, transparent);
 
 $themes: (
     light: (

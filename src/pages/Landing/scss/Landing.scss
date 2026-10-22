@@ -258,6 +258,7 @@
     height: auto;
     min-height: 20px;
     gap: 4px 5px;
+    cursor: pointer;
     color: var(--borderWh);
     font-size: 13px;
     line-height: 1.45;
@@ -265,8 +266,17 @@
     white-space: normal;
     >svg { color: var(--accent_text); }
     &.notAccepted { color: var(--notValid); }
-    label { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
-    svg { flex: 0 0 20px; width: 20px; height: 20px; color: var(--accent_text); }
+    label { 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 7px;
+    }
+    svg {
+        flex: 0 0 20px;
+        width: 20px;
+        height: 20px;
+        color: var(--accent_text);
+    }
 }
 .landingNativeCheckbox {
     position: absolute;
@@ -479,6 +489,7 @@
     z-index: 2;
     bottom: max(14px, env(safe-area-inset-bottom));
     left: 50%;
+    background: var(--mc);
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
@@ -487,7 +498,6 @@
     padding: 7px 20px;
     border: 0;
     border-radius: 14px;
-    background: transparent;
     color: var(--borderWh);
     font: inherit;
     font-size: 13px;
@@ -519,9 +529,11 @@
     overscroll-behavior: contain;
     border: 1px solid color-mix(in srgb, var(--borderWh) 22%, transparent);
     border-bottom: 0;
-    border-radius: 28px 28px 0 0;
+    border-radius: 24px 24px 0 0;
     padding-bottom: max(20px, env(safe-area-inset-bottom));
-    background: var(--bgc);
+    background: var(--interact);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     box-shadow: 0 -12px 60px #00000025;
     transform: translateY(calc(100% + 12px + var(--landing-drag)));
     transition: transform .32s cubic-bezier(.22, 1, .36, 1), visibility 0s .32s;
@@ -539,7 +551,7 @@
     width: 100%;
     min-height: 36px;
     border: 0;
-    background: var(--bgc);
+    background: var(--tr);
     border-radius: 28px 28px 0 0;
     cursor: grab;
     touch-action: none;
@@ -584,7 +596,7 @@
 .landing .greenButt, .landing .whiteButt, .landing .wtbgButt, .landing .landingSwitchForm { border-radius: 24px; font-weight: 400; font-size: 16px; }
 .landing .landingForm >.landingButts { flex-shrink: 0; }
 .landing .title { flex-shrink: 0; }
-.landing .landingFormWrapper.auth { height: min(360px, calc(100% - 70px)); }
+// .landing .landingFormWrapper.auth { height: min(360px, calc(100% - 70px)); }
 .landing .landingFormWrapper { transition: height .3s cubic-bezier(.22, 1, .36, 1); }
 .landing button { font-family: inherit; }
 .landing input { font-family: inherit; }

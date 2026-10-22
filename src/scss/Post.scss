@@ -13,6 +13,7 @@
     position: relative;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--block_border);
     @media (max-width: 800px) {
         padding: 1vh 2vw;
     }

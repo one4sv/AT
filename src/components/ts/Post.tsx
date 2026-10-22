@@ -4,7 +4,7 @@ import { useDelete } from "../hooks/DeleteHook";
 import { habitIcon } from "./habitIcon";
 import { ChevronRight } from "lucide-react";
 import Linkify from "linkify-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "./api";
 import EmojiBar from "./utils/EmojiBar";
 import { useAcc } from "../hooks/AccHook";
@@ -12,7 +12,7 @@ import { useUser } from "../hooks/UserHook";
 import AccPostMedia from "../../pages/Acc/utils/AccPostMedia";
 import { ChatCircle, Check, Heart, Paperclip, PencilSimple, SmileySticker, Trash, UserCircle } from "@phosphor-icons/react";
 import formatCreated from "../../pages/Acc/utils/formatCreated";
-import AccPostComment from "../../pages/Acc/utils/accPostComment";
+// import AccPostComment from "../../pages/Acc/utils/accPostComment";
 import type { PostType } from "../context/AccContext";
 import type { Media } from "../context/ChatContext";
 import { useLocation } from "react-router";
@@ -24,8 +24,12 @@ import { useContextMenu } from "../hooks/ContextMenuHook";
 interface PostProps {
     post: PostType
     isMy: boolean
+    expanded?: boolean
 }
-export default function Post({ post, isMy }: PostProps) {
+export default function Post({ post: sourcePost, isMy, expanded = false }: PostProps) {
+    const [post, setLocalPost] = useState(sourcePost);
+    useEffect(() => setLocalPost(sourcePost), [sourcePost]);
+    const [truncated, setTruncated] = useState(false);
     const { setDeleteConfirm } = useDelete()
     const { setBlackout } = useBlackout()
     const { setPosts } = useAcc()
@@ -45,6 +49,16 @@ export default function Post({ post, isMy }: PostProps) {
     const taRef = useRef<HTMLTextAreaElement>(null);
     const divRef = useRef<HTMLDivElement>(null);
     const inputFileRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const node = divRef.current;
+        if (!node || red || expanded) { setTruncated(false); return; }
+        const measure = () => setTruncated(node.scrollHeight > node.clientHeight + 1);
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(node);
+        return () => observer.disconnect();
+    }, [post.text, newText, red, expanded]);
 
     const upPost = async () => {
         const createdObjectUrls: string[] = [];
@@ -92,6 +106,7 @@ export default function Post({ post, isMy }: PostProps) {
 
             if (res.data && res.data.success) {
                 const serverPost = res.data.post;
+                setLocalPost(p => ({ ...p, text: newText, media: serverPost?.media ? (typeof serverPost.media === "string" ? JSON.parse(serverPost.media) : serverPost.media) : optimisticMedia }));
                 if (serverPost) {
                     let serverMedia: Media[] = [];
                     if (serverPost.media) {
@@ -162,6 +177,7 @@ export default function Post({ post, isMy }: PostProps) {
         try {
             const res = await api.post("/like", { id });
             if (res.data.success) {
+                setLocalPost(p => ({ ...p, likes: res.data.liked ? [...p.likes.filter(uid => uid !== user.id), user.id] : p.likes.filter(uid => uid !== user.id) }));
                 setPosts(prev =>
                     prev?.map(p =>
                         p.id === id
@@ -184,7 +200,11 @@ export default function Post({ post, isMy }: PostProps) {
     if (post.likes) likesCount = post.likes.length;
 
     return (
-        <div className="PostDiv" onMouseEnter={() => isMy && setHover(true)} onMouseLeave={() => setHover(false)} data-context-menu="true" onContextMenu={(e) => {
+        <div className={`PostDiv ${expanded ? "postExpanded" : "postPreview"}`} onClick={event => {
+            if (expanded || red || window.getSelection()?.toString()) return;
+            if ((event.target as Element).closest("a, button, input, textarea, video, audio, .postUser, .PostHabit, .PostBottom, .postMediaArea, .AccPostComments")) return;
+            navigate(`/post/${post.id}`);
+        }} onMouseEnter={() => isMy && setHover(true)} onMouseLeave={() => setHover(false)} data-context-menu="true" onContextMenu={(e) => {
             e.preventDefault();
             openMenu(e.clientX, e.clientY, "post", {id:String(post.id), name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text, isMy:isMy, red:red, func: () => {
                 if (red) {
@@ -223,11 +243,12 @@ export default function Post({ post, isMy }: PostProps) {
                     <div className="PostText" style={{display:red ? "none" : "block"}} ref={divRef}>
                         <Linkify>
                             
-                                {newText || post.text}
+                                {post.text}
                             
                         </Linkify>
                     </div>
                 )}
+                {!red && !expanded && <button className={`postReadMore ${truncated ? "" : "postOpenLink"}`} type="button" onClick={() => navigate(`/post/${post.id}`)}>{truncated ? "Читать далее" : "Открыть пост"}</button>}
                 {post.habit && (
                     <div className="PostHabit" onClick={() => navigate(`/habit/${post.habit?.id}`)}>
                         <div className="aphIcon">{habitIcon(post.habit)}</div>
@@ -235,7 +256,7 @@ export default function Post({ post, isMy }: PostProps) {
                         <ChevronRight className="aphGo" />
                     </div>
                 )}
-                <AccPostMedia red={red} media={post.media} keptMedia={keptMedia} newFiles={newFiles} setKeptMedia={setKeptMedia} setNewFiles={setNewFiles} inputFileRef={inputFileRef}/>
+                <div className="postMediaArea"><AccPostMedia red={red} media={post.media} keptMedia={keptMedia} newFiles={newFiles} setKeptMedia={setKeptMedia} setNewFiles={setNewFiles} inputFileRef={inputFileRef}/></div>
                 <div className="PostBottom">
                     <div className="PostInteract">
                         <div
@@ -292,9 +313,9 @@ export default function Post({ post, isMy }: PostProps) {
                     </div>
                 </div>
             </div>
-            {showComment && (
+            {/* {(expanded || showComment) && (
                 <AccPostComment id={post.id}/>
-            )}
+            )} */}
         </div>
     )
 }

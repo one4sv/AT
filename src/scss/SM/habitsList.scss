@@ -60,24 +60,21 @@
     background-color: var(--tr);
     display: flex;
     position: relative;
-    box-sizing: border-box;
     overflow: hidden;
     box-sizing: border-box;
     transition: all 0s;
+    border: 1px solid transparent;
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-        outline: 1px solid var(--tc);
-    
+            background-color: var(--menuButtHover);
+            border: 1px solid var(--tc);
         }
     }
 
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-        outline: 1px solid var(--tc);
-    
-        
+            background-color: var(--menuButtHover);
+            border: 1px solid var(--tc);
         }
     }
     &.active {

@@ -48,6 +48,7 @@ export default function useLandingSheet() {
             if (event.touches.length !== 1 || blocked()) return;
             const target = event.target as HTMLElement;
             if (target.closest("input, textarea, select, a, [contenteditable=true]")) return;
+            if (target.closest(".landingFormWrapper")) return;
             const touch = event.touches[0];
             gesture = { x: touch.clientX, y: touch.clientY, time: performance.now(), target, direction: "" };
             distance = 0;

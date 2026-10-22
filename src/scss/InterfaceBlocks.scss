@@ -1,0 +1,27 @@
+@use "./variables" as var;
+
+:root { --block-border: #{var.$block_border}; }
+// Inner stroke preserves the dimensions of existing cards and sliders.
+.landing .landingFormWrapper { border-color: var.$block_border; scroll-behavior: auto; touch-action: pan-y pinch-zoom; }
+.landingForm { touch-action: pan-y pinch-zoom; }
+.postPreview .Post { max-height: none; cursor: pointer; }
+.postPreview .PostText:not(textarea) { max-height: min(30vh, 15rem); overflow: hidden; overflow-wrap: anywhere; }
+.postExpanded .Post, .postExpanded .PostText { max-height: none; overflow: visible; overflow-wrap: anywhere; }
+.postReadMore, .postBack { background: transparent; border: 0; color: var(--accent_text); font: inherit; cursor: pointer; padding: 8px 0; display: inline-flex; gap: 8px; align-items: center; }
+.postOpenLink { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
+.postOpenLink:focus-visible { position: static; width: auto; height: auto; padding: 8px; clip-path: none; }
+.statusPage { position: fixed; inset: 0; z-index: 10000; background: var(--bgc); color: var(--tc); padding: 24px; display: grid; place-items: center; overflow-y: auto; box-sizing: border-box; }
+.statusCard { background: var(--mc); border-radius: 24px; padding: 28px; max-width: 440px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.statusCard h1 { font-size: 26px; font-weight: 400; margin: 0; }
+.statusCard p { line-height: 1.5; margin: 0; }
+.statusCard >svg { color: var(--accent_text); }
+.statusCard button, .quickLogin button, .qrCard button { font: inherit; color: var(--tc); background: var(--interact); border: 1px solid var.$block_border; border-radius: 24px; min-height: 42px; padding: 10px 16px; cursor: pointer; }
+.statusCard button:disabled, .quickLogin button:disabled { opacity: .5; cursor: wait; }
+.quickLogin { flex-shrink: 0; padding: 12px; border-radius: 20px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+.quickLogin >p { margin: 0; font-size: 13px; color: var(--borderWh); }
+.quickLogin .quickForget { font-size: 13px; background: transparent; min-height: 32px; }
+.qrCard { padding: 12px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.qrCard svg { max-width: 100%; height: auto; background: white; border-radius: 12px; padding: 12px; box-sizing: content-box; }
+.qrCard p { margin: 0; text-align: center; font-size: 13px; line-height: 1.4; }
+.quickError { color: var(--notValid); font-size: 13px; }
+@media (prefers-reduced-motion: reduce) { .landingFormWrapper { scroll-behavior: auto; } }
