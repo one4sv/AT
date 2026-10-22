@@ -1,5 +1,4 @@
 @use "../../../scss/mixins" as var;
-
 .redHabit {
     right: 0;
     display: flex;
@@ -12,6 +11,7 @@
         padding: 2vh 5vw 0;
     }
 }
+
 .habitWrapperIcon {
     display: flex;
     width: 100%;
@@ -21,6 +21,7 @@
         justify-content: end;
     }
 }
+
 .habitIconWrapper {
     width: 7vh;
     height: 6vh;
@@ -30,15 +31,17 @@
         height: 100%;
         width: 100%;
         color: var(--accent_text);
-
     }
 }
+
 .addHabbitCheckBox.redHabitCheckbox {
     margin-bottom: 0;
 }
+
 .ongoingInput {
     font-size: 16px;
 }
+
 .habitButts {
     display: flex;
     position: relative;
@@ -62,23 +65,21 @@
         }
         @media (hover: hover) {
             &:hover {
-            background-color: var(--menuButtHover);
-            >.pinHabit {
-            color: var(--tc);
-            }    
-            >.delHabit {
-            color: #c40000;
-            }
-        
-            }
-        }
-
-        @media (hover: none) {
-            &:active {
-            background-color: var(--menuButtHover);
+                background-color: var(--menuButtHover);
                 >.pinHabit {
                     color: var(--tc);
-                }    
+                }
+                >.delHabit {
+                    color: #c40000;
+                }
+            }
+        }
+        @media (hover: none) {
+            &:active {
+                background-color: var(--menuButtHover);
+                >.pinHabit {
+                    color: var(--tc);
+                }
                 >.delHabit {
                     color: #c40000;
                 }
@@ -86,6 +87,7 @@
         }
     }
 }
+
 .inpWrapperRedHabit {
     width: 100%;
     color: var(--borderHabit);
@@ -98,6 +100,7 @@
         color: var(--accent_text)
     }
 }
+
 .thisarchived {
     width: 80%;
     height: fit-content;
@@ -107,6 +110,7 @@
     margin: 0.2vh 0 0.5vh;
     gap: 0.5vw;
 }
+
 .thisarchivedSvg {
     height: 100%;
     font-size: 30px;
@@ -114,11 +118,13 @@
     align-items: center;
     justify-content: center;
 }
+
 .thisarchivedText {
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
+
 .redHabitSL {
     @include var.selectList(100%, fit-content, 9%, 0vw, 0.7vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 5%);
     margin-bottom: 1vh;

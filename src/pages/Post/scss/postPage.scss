@@ -4,7 +4,8 @@
     height: 100%; 
     overflow-y: auto; 
     padding: 6vh 1% 0; 
-    box-sizing: border-box; width: 100%;
+    box-sizing: border-box;
+    width: 100%;
     @media (max-width: 800px) {
         padding: 8vh 1% 1vh; 
     }
@@ -15,4 +16,34 @@
     display: flex; 
     flex-direction: column; 
     gap: 1vh;
+}
+.postTop {
+    display: flex;
+    width: 100%;
+    gap: 1%;
+    height: 5dvh;
+}
+.postBackWrapper {
+    width: 97.5%;
+    padding: 0 2.5% 3vh;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 3;
+    gap: 2%;
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        background: linear-gradient(135deg, var(--tr), #0000009a);
+        opacity: 1;
+        transition: opacity 0.12s ease;
+        mask-image: linear-gradient(to bottom, transparent 10%, black 100%);
+        -webkit-mask-image: linear-gradient(to bottom, transparent 10%, black 100%);
+    }
 }

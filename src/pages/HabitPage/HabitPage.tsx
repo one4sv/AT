@@ -1,4 +1,4 @@
-import { useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { useTheHabit } from "../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../components/hooks/CalendarHook";
@@ -21,137 +21,118 @@ import HabitMenu from "./components/HabitInfo/HabitMenu";
 import CompletionProgress from "./components/Habit/Comment/ComplitionProgress";
 import CounterProgression from "./components/Habit/Comment/CounterProgression";
 import HabitMobileDone from "./components/Habit/Mobile/HabitMobileDone";
-
 export interface HabitSlideProps {
     readOnly?: boolean;
     isArchived?: boolean;
     isMy?: boolean;
 }
-
 export default function Habit() {
-    const { fetchCalendarHabitWLoading, fetchCalendarWLoading, calendarLoading } = useCalendar();
-    const { loadHabitWLoading, habit, loadingHabit, habitSettings } = useTheHabit();
+    const {
+        fetchCalendarHabitWLoading,
+        fetchCalendarWLoading,
+        calendarLoading
+    } = useCalendar();
+    const {
+        loadHabitWLoading,
+        habit,
+        loadingHabit,
+        habitSettings
+    } = useTheHabit();
     const {
         showHabitMenu,
         setShowHabitMenu,
-        setShowSlide,
+        setShowSlide
     } = useSideMenu();
-
     const { schedules } = useSchedule();
-    const { habitId } = useParams<{ habitId: string }>();
+    const { habitId } = useParams<{
+        habitId: string;
+    }>();
     const { setTitle } = usePageTitle();
-    const { habits, loadingHabits } = useHabits();
-
+    const {
+        habits,
+        loadingHabits
+    } = useHabits();
     const mainRef = useRef<HTMLDivElement | null>(null);
 
-    useEffect(() => {
-        if (!showHabitMenu) {
-            setShowSlide(null);
-        }
-    }, [setShowSlide, showHabitMenu]);
+    useEffect(
+        () => {
+            if (!showHabitMenu) {
+                setShowSlide(null);
+            }
+        },
+        [setShowSlide, showHabitMenu]
+    );
 
-    useEffect(() => {
-        if (habitId) {
-            loadHabitWLoading(habitId);
-            fetchCalendarHabitWLoading(habitId);
-        } else {
-            fetchCalendarWLoading();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [habitId]);
+    useEffect(
+        () => {
+            if (habitId) {
+                loadHabitWLoading(habitId);
+                fetchCalendarHabitWLoading(habitId);
+            } else {
+                fetchCalendarWLoading();
+            }
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        },
+        [habitId]
+    );
 
-    useEffect(() => {
-        if (habitId && habit) {
-            setTitle(habit.name);
-        } else if (!habitId) {
-            setTitle("Активности");
-        }
-    }, [habitId, habit, habit?.name, loadingHabit, setTitle]);
-
-    const shouldShowSchedule =
-        (!habitId && Object.values(schedules).some(arr => arr.length > 0)) ||
-        (habit &&
-            habitId === String(habit.id) &&
-            habit.periodicity !== "sometimes" &&
-            habitSettings.schedule);
-
-    if ((habitId && loadingHabit) || loadingHabits || calendarLoading) {
+    useEffect(
+        () => {
+            if (habitId && habit) {
+                setTitle(habit.name);
+            } else if (!habitId) {
+                setTitle("Активности");
+            }
+        },
+        [habitId, habit, habit?.name, loadingHabit, setTitle]
+    );
+    const shouldShowSchedule = !habitId && Object.values(schedules).some(arr => arr.length > 0) || habit && habitId === String(habit.id) && habit.periodicity !== "sometimes" && habitSettings.schedule;
+    if (habitId && loadingHabit || loadingHabits || calendarLoading) {
         return <Skeleton type="habit" overview={!habitId} />;
     }
-
-    const isMy =
-        (habitId !== undefined &&
-            habits?.some(h => String(h.id) === habitId)) ??
-        false;
-
+    const isMy = (habitId !== undefined && habits?.some(h => String(h.id) === habitId)) ?? false;
     const isArchived = !habit?.ongoing;
     const isReadOnly = !isMy || isArchived;
-    
 
     return (
         <div className="statsDiv">
-            {habitId && (
-                <HabitName
-                    habit={habit}
-                    showHabitMenu={showHabitMenu}
-                    setShowHabitMenu={setShowHabitMenu}
-                    isReadOnly={isReadOnly}
-                />
-            )}
+            {habitId && <HabitName
+                habit={habit}
+                showHabitMenu={showHabitMenu}
+                setShowHabitMenu={setShowHabitMenu}
+                isReadOnly={isReadOnly}
+            />}
 
-            <div
-                className="StatsDivMain"
-                ref={mainRef}
-            >
+            <div className="StatsDivMain" ref={mainRef}>
                 <div className="StatsDivHabit">
-                    {isMobile ? (
-                        <>
-                            {habitId && (
-                                <div className="mobileHabitLayout">
-                                    <Complete isMy={!isReadOnly} />
-                                    {habitSettings.metric_type === "timer" && <CompletionProgress />}
-                                    {habitSettings.metric_type === "counter" && (
-                                        <CounterProgression />
-                                    )}
-                                </div>
-                            )}
+                    {isMobile ? <>
+                        {habitId && <div className="mobileHabitLayout">
+                            <Complete isMy={!isReadOnly} />
+                            {habitSettings.metric_type === "timer" && <CompletionProgress />}
+                            {habitSettings.metric_type === "counter" && <CounterProgression />}
+                        </div>}
 
-                            <Calendar />
-                            {!habitId && <ChosenDay />}
-                        </>
-                    ) : (
-                        <>
-                            <Calendar />
-                            {habitId ? (
-                                <>
-                                    <Complete isMy={!isReadOnly} />
-                                    <div className="dayCommentDiv">
-                                        <DayComment id={habitId!} isMy={!isReadOnly} />
-                                        {habitSettings.metric_type === "timer" && <CompletionProgress />}
-                                        {habitSettings.metric_type === "counter" && (
-                                            <CounterProgression />
-                                        )}
-                                    </div>
-                                </>
-                            ) : (
-                                <ChosenDay />
-                            )}
-                        </>
-                    )}
+                        <Calendar />
+                        {!habitId && <ChosenDay />}
+                    </> : <>
+                        <Calendar />
+                        {habitId ? <>
+                            <Complete isMy={!isReadOnly} />
+                            <div className="dayCommentDiv">
+                                <DayComment id={habitId!} isMy={!isReadOnly} />
+                                {habitSettings.metric_type === "timer" && <CompletionProgress />}
+                                {habitSettings.metric_type === "counter" && <CounterProgression />}
+                            </div>
+                        </> : <ChosenDay />}
+                    </>}
                 </div>
 
-                {shouldShowSchedule && (
-                    <Schedule id={habitId} isMy={!isReadOnly} />
-                )}
+                {shouldShowSchedule && <Schedule id={habitId} isMy={!isReadOnly} />}
 
                 <Diagrams mainRef={mainRef} />
             </div>
-            {isMobile && habitId ? (
-                <HabitMobileDone habitId={habitId} isReadOnly={isReadOnly}/>
-            ): ""}
-            {habitId && habit && (
-                <HabitMenu isMy={isMy} isArchived={isArchived} isReadOnly={isReadOnly}/>
-            )}
+            {isMobile && habitId ? <HabitMobileDone habitId={habitId} isReadOnly={isReadOnly} /> : ""}
+            {habitId && habit && <HabitMenu isMy={isMy} isArchived={isArchived} isReadOnly={isReadOnly} />}
         </div>
     );
 }

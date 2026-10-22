@@ -4,7 +4,6 @@
 @use "./security.scss";
 @use "./seekbar.scss";
 @use "./search.scss";
-
 .settingsDiv {
     width: 100%;
     height: 100dvh;
@@ -13,7 +12,6 @@
     justify-content: center;
     scrollbar-width: none;
     gap: 1vw;
-
     @media (max-width: 800px) {
         height: 100dvh;
     }
@@ -22,7 +20,6 @@
 .settingsSliderWrapper {
     width: 50%;
     overflow: hidden;
-
     @media (max-width: 800px) {
         width: 100%;
     }
@@ -43,7 +40,6 @@
     height: 100%;
     overflow: hidden;
     padding-top: 6dvh;
-
     @media (max-width: 800px) {
         padding-top: 0;
     }
@@ -72,6 +68,7 @@
     background-color: var(--mc);
     border-radius: 24px;
     width: 100%;
+    border: 1px solid var(--block_border);
     padding: 1vh 0.65vw;
     display: flex;
     flex-direction: column;
@@ -79,11 +76,9 @@
     gap: 1vh;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-
     >span {
         font-size: 18px;
     }
-
     @media (hover: hover) {
         &:hover {
             background-color: var(--menuButtHover);
@@ -98,7 +93,6 @@
             }
         }
     }
-
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);
@@ -110,37 +104,28 @@
             }
         }
     }
-
     &.settingButtAcc {
         position: sticky;
         background: linear-gradient(135deg, var(--accent), var(--grad));
-
+        border: none;
         @media (hover: hover) {
             &:hover {
-
-                div,
-                span {
+                div,                 span {
                     color: var(--inner_text);
                 }
             }
         }
-
         @media (hover: none) {
             &:active {
-
-                div,
-                span {
+                div,                 span {
                     color: var(--inner_text);
                 }
             }
         }
-
-        div,
-        span {
+        div,         span {
             color: var(--inner_text);
         }
     }
-
     @media (max-width: 800px) {
         padding: 1vh 3vw;
     }
@@ -160,7 +145,7 @@
         color: var(--notValid);
         > svg {
             color: var(--notValid);
-        } 
+        }
     }
 }
 
@@ -184,13 +169,11 @@
     align-items: center;
     justify-content: center;
     background: var(--menuButtHover);
-
     >img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-
     >svg {
         color: var(--borderHabit);
     }
@@ -199,23 +182,24 @@
 .settingDesc {
     color: var(--borderWh);
 }
+
 .settingsContentWipe {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .buttsCollapse {
-  overflow: hidden;       /* обрезает при уменьшении высоты */
-  flex-shrink: 0;
+    overflow: hidden;
+    /* обрезает при уменьшении высоты */   flex-shrink: 0;
 }
 
 .buttsScroll {
-  height: 100%;
-  overflow-y: auto;       /* кнопки скроллятся */
-  scrollbar-width: thin;
+    height: 100%;
+    overflow-y: auto;
+    /* кнопки скроллятся */   scrollbar-width: thin;
 }
 
 .searchReveal {
@@ -224,6 +208,7 @@
     overscroll-behavior: contain;
     scrollbar-width: thin;
 }
+
 .settingTab {
     flex: 1;
     min-height: 0;
@@ -258,6 +243,8 @@
 }
 
 .settingInnerDiv {
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
     background: var(--mc);
     border-radius: 24px;
     display: flex;
@@ -269,11 +256,11 @@
     z-index: 2;
     transition: background .3s cubic-bezier(0.075, 0.82, 0.165, 1);
     >.accInfo {
+        border: 0;
         @media (max-width: 800px) {
             margin: 0;
         }
     }
-
     @media (max-width: 800px) {
         padding: 1.5vh 3vw;
     }
@@ -284,11 +271,9 @@
     margin-bottom: 1vh;
     padding-inline-start: 0.5vw;
     color: var(--tc);
-
     &.disabled {
         color: var(--borderHabit);
     }
-
     @media (max-width: 800px) {
         padding-inline-start: 1vw;
     }
@@ -301,7 +286,6 @@
     gap: 0.5vh;
     display: flex;
     flex-direction: column;
-
     @media (max-width: 800px) {
         padding: 1.5vw 1vw;
     }
@@ -317,23 +301,17 @@
     padding: 1vh 1vw;
     border-radius: 24px;
     cursor: pointer;
-
     @media (max-width: 800px) {
         padding: 1vh 3vw;
     }
-
     @media (hover: hover) {
         &:hover {
             background-color: var(--menuButtHover);
-
         }
     }
-
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);
-
-
         }
     }
 }
@@ -342,19 +320,16 @@
     width: 100%;
     padding: 0 1vw;
     color: var(--borderHabit);
-
     @media (hover: hover) {
         &:hover {
             color: var(--borderWh);
         }
     }
-
     @media (hover: none) {
         &:active {
             color: var(--borderWh);
         }
     }
-
     @media (max-width: 800px) {
         padding: 0 3vw;
     }
@@ -367,47 +342,26 @@
 .settingSL {
     position: relative;
     z-index: 3;
-    @include var.selectList(100%,
-        fit-content,
-        fit-content,
-        0.3vw,
-        0.9vh,
-        var(--borderWh),
-        var(--tc),
-        var(--interact),
-        18px,
-        1vh,
-        0.5vw,
-        5%);
-
+    @include var.selectList(100%,         fit-content,         fit-content,         0.3vw,         0.9vh,         var(--borderWh),         var(--tc),         var(--interact),         18px,         1vh,         0.5vw,         5%);
     @media (max-width: 800px) {
         >svg {
             right: 2vw;
         }
     }
-
     &:focus-within {
         >svg {
             color: var(--accent_text);
         }
     }
-
     >input {
-        @include var.input(var(--mc),
-            var(--tc),
-            var(--borderHabit),
-            fit-content,
-            24px,
-            var(--accent));
+        @include var.input(var(--mc),             var(--tc),             var(--borderHabit),             fit-content,             24px,             var(--accent));
         width: 100%;
         cursor: pointer;
         padding: 1vh 0.5vw;
-
         @media (max-width: 800px) {
             padding-left: 3vw;
         }
     }
-
     >div {
         border: 1px solid var(--tc);
         z-index: 4;
@@ -422,14 +376,12 @@
     border-radius: 24px;
     cursor: pointer;
     gap: 4px;
-
     @media (hover: hover) {
         &:hover {
             background-color: var(--menuButtHover);
             color: var(--tc);
         }
     }
-
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);
@@ -450,13 +402,11 @@
 .settingInnerAccDiv {
     padding: 0;
     gap: 0;
-
     >.accInfo {
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
         background-color: var(--tr);
     }
-
     >.settingInnerList {
         margin: 0 0.5vw 1vh;
     }
@@ -479,13 +429,14 @@
     border-radius: 12px;
     display: flex;
     flex-direction: column;
-
     @media (max-width: 800px) {
         padding: 0.5vh 1.25vw;
     }
 }
 
 .settingAccordion {
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
     background-color: var(--mc);
     border-radius: 24px;
     display: flex;
@@ -505,17 +456,14 @@
     justify-content: space-between;
     flex-shrink: 0;
     transition: background-color 0.2s ease;
-
     @media (max-width: 800px) {
         padding: 1vh 3vw;
     }
-
     @media (hover: hover) {
         &:hover {
             background-color: var(--menuButtHover);
         }
     }
-
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);
@@ -527,7 +475,6 @@
     transition: transform 0.3s ease;
     flex-shrink: 0;
     color: var(--tc);
-
     &.open {
         transform: rotate(180deg);
     }
@@ -551,35 +498,38 @@
     flex-direction: column;
     gap: 1vh;
     padding: 0 0.75vw;
-
     .settingCollapsible.open & {
         padding: 0.25vh 0.75vw 1.2vh;
     }
-
     @media (max-width: 800px) {
         padding: 0 2vw;
-
         .settingCollapsible.open & {
             padding: 0.25vh 2vw 1.3vh;
         }
     }
 }
+
 .settingsDiv.keyboardOpen {
     .settingsContentWipe {
         min-height: 0;
     }
-
     .searchReveal {
         min-height: 0;
         overflow-y: auto;
         overscroll-behavior: contain;
         padding-bottom: 7vh;
     }
-
-    .searchUnstarted,
-    .searchedButts {
+    .searchUnstarted,     .searchedButts {
         padding-bottom: 2vh;
     }
 }
-.languageSettingLink { color: var(--tc); text-decoration: none; gap: 10px; }
-.languageSettingLink >svg:last-child { margin-inline-start: auto; }
+
+.languageSettingLink {
+    color: var(--tc);
+    text-decoration: none;
+    gap: 10px;
+}
+
+.languageSettingLink >svg:last-child {
+    margin-inline-start: auto;
+}

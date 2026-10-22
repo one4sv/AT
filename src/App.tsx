@@ -1,6 +1,4 @@
-
 import './scss/App.scss';
-import './scss/InterfaceBlocks.scss';
 import PostPage from './pages/Post/PostPage';
 import ConnectionStatus from './components/ts/ConnectionStatus';
 import QrApprove from './pages/QrApprove';
@@ -19,50 +17,46 @@ import Blackout from './components/ts/Blackout';
 import ThemeHandler from './components/hooks/themeHook';
 import ResponsiveLayout from './components/layout/ResponsiveLayout';
 import ContextMenu from './components/ts/ContextMenu/ContextMenu';
-import Settings from './pages/Settings/Settings'; 
+import Settings from './pages/Settings/Settings';
 import Landing from './pages/Landing/Landing';
 import Info from './pages/Info/Info';
 import Language from './pages/Settings/Language';
 import { useVisualViewport } from './components/hooks/utils/VisualViewportHook';
-
 function App() {
-  useVisualViewport();
+    useVisualViewport();
 
-  return (
-    <Router>
-      <AppProvider>
-        <ThemeHandler />
-        <ConnectionStatus />
-        <TrustedDevice />
-        <Notification />
-        <Blackout />
-        <ContextMenu/>
-        <Routes>
-          <Route path="/auth/qr" element={<QrApprove />} />
-          <Route path="/connection" element={<ConnectionStatus standalone />} />
-          <Route path="/sign" element={<Landing />} />
-          <Route path="/settings/language" element={<Language />} />
-          {window.location.hostname === "localhost" && (
-            <Route path="/admin" element={<Admin />} />
-          )}
-          <Route path="/" element={<ResponsiveLayout />}>
-            <Route index element={<Main />} />
-            <Route path="post/:postId" element={<PostPage />} />
-            <Route path="habit" element={<HabitPage />} />
-            <Route path="habit/:habitId" element={<HabitPage />} />
-            <Route path="chat/:nick" element={<Chat />} />
-            <Route path="chat/g/:id" element={<Chat />} />
-            <Route path="acc/:nick" element={<Acc />} />
-            <Route path="room/:id" element={<Group />} />
-            <Route path="join/:token" element={<Join />} />
-            <Route path="acc" element={<Acc />} />
-            <Route path="settings/:tab?" element={<Settings />} />
-            <Route path="info/:tab?" element={<Info />} />
-          </Route>
-        </Routes>
-      </AppProvider>
-    </Router>
-  );
+    return (
+        <Router>
+            <AppProvider>
+                <ThemeHandler />
+                <ConnectionStatus />
+                <TrustedDevice />
+                <Notification />
+                <Blackout />
+                <ContextMenu />
+                <Routes>
+                    <Route path="/auth/qr" element={<QrApprove />} />
+                    <Route path="/connection" element={<ConnectionStatus standalone />} />
+                    <Route path="/sign" element={<Landing />} />
+                    <Route path="/settings/language" element={<Language />} />
+                    {window.location.hostname === "localhost" && <Route path="/admin" element={<Admin />} />}
+                    <Route path="/" element={<ResponsiveLayout />}>
+                        <Route index element={<Main />} />
+                        <Route path="post/:postId" element={<PostPage />} />
+                        <Route path="habit" element={<HabitPage />} />
+                        <Route path="habit/:habitId" element={<HabitPage />} />
+                        <Route path="chat/:nick" element={<Chat />} />
+                        <Route path="chat/g/:id" element={<Chat />} />
+                        <Route path="acc/:nick" element={<Acc />} />
+                        <Route path="room/:id" element={<Group />} />
+                        <Route path="join/:token" element={<Join />} />
+                        <Route path="acc" element={<Acc />} />
+                        <Route path="settings/:tab?" element={<Settings />} />
+                        <Route path="info/:tab?" element={<Info />} />
+                    </Route>
+                </Routes>
+            </AppProvider>
+        </Router>
+    );
 }
-
 export default App;

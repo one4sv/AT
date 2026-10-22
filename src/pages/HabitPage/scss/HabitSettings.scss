@@ -1,5 +1,4 @@
 @use "../../../scss/mixins" as var;
-
 .redHabitBlock {
     display: flex;
     flex-direction: column;
@@ -33,12 +32,14 @@
         padding: 1.5vh 3vw;
     }
 }
+
 .redHabitStr {
     display: flex;
     justify-content: space-between;
     width: 100%;
     align-items: center;
 }
+
 .redHabitSpan {
     color: var(--borderWhLight);
     &.redHabitToggler {
@@ -61,6 +62,7 @@
         }
     }
 }
+
 .redHabitSettingSpan {
     display: flex;
     color: var(--borderWh);
@@ -68,16 +70,12 @@
     gap: 0.25vw;
     @media (hover: hover) {
         &:hover {
-        color: var(--tc);
-    
+            color: var(--tc);
         }
     }
-
     @media (hover: none) {
         &:active {
-        color: var(--tc);
-    
-        
+            color: var(--tc);
         }
     }
     &.disabled {
@@ -85,6 +83,7 @@
         cursor: default;
     }
 }
+
 .habitSettingHint {
     color: var(--borderHabit);
     font-size: 15px;
@@ -93,16 +92,12 @@
     position: relative;
     @media (hover: hover) {
         &:hover {
-        color: var(--borderWh);
-    
+            color: var(--borderWh);
         }
     }
-
     @media (hover: none) {
         &:active {
-        color: var(--borderWh);
-    
-        
+            color: var(--borderWh);
         }
     }
 }

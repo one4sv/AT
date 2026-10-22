@@ -14,11 +14,10 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useWebSocket } from "../hooks/WebSocketHook";
 import { Link } from "react-router-dom";
 import { formatDateFromString } from "./utils/dateToStr";
-
 export default function HabitDiv({
     habit,
     id,
-    isMyAcc,
+    isMyAcc
 }: {
     habit: Habit;
     id?: number;
@@ -26,128 +25,130 @@ export default function HabitDiv({
 }) {
     const { openMenu } = useContextMenu();
     const { closeMenu } = useSideMenu();
-    const { findHabit, parseTimer } = useTheHabit();
+    const {
+        findHabit,
+        parseTimer
+    } = useTheHabit();
     const { schedules } = useSchedule();
     const { weekStart } = useSettings();
     const { ws } = useWebSocket();
-
     const [timerStatus, setTimerStatus] = useState<string>("");
     const tickIntervalRef = useRef<number | null>(null);
     const timerVersionRef = useRef(0);
-    const settings = Array.isArray(habit.habits_settings)
-        ? habit.habits_settings[0]
-        : habit.habits_settings;
+    const settings = Array.isArray(habit.habits_settings) ? habit.habits_settings[0] : habit.habits_settings;
     const metric = settings?.metric_type;
-
-    const updateTimerDisplay = useCallback((timer: habitTimer) => {
-        const elapsed = calculateTimerElapsed(timer, false);
-        if (timer.status === "running") {
-            setTimerStatus(`Выполняется: ${elapsed}`);
-        } else if (timer.status === "paused") {
-            setTimerStatus(`На паузе: ${elapsed}`);
-        } else {
-            setTimerStatus("");
-        }
-    }, []);
-
-    const startLocalTick = useCallback((timer: habitTimer) => {
-        if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
-        if (timer.status !== "running") return;
-
-        tickIntervalRef.current = window.setInterval(() => {
-            updateTimerDisplay(timer);
-        }, 1000);
-    }, [updateTimerDisplay]);
-
-    useEffect(() => {
-        if (!ws || !habit.id) return;
-
-        const handleTimer = (event: MessageEvent) => {
-            try {
-                const data = JSON.parse(event.data);
-                if (data.type === "TIMER_UPDATE" && data.habitId === habit.id) {
-                    timerVersionRef.current++;
-                    const parsed = parseTimer(data.timer);
-                    if (parsed) {
-                        updateTimerDisplay(parsed);
-                        startLocalTick(parsed);
-                    }
-
-                }
-            } catch (e) {
-                console.error("Ошибка TIMER_UPDATE:", e);
+    const updateTimerDisplay = useCallback(
+        (timer: habitTimer) => {
+            const elapsed = calculateTimerElapsed(timer, false);
+            if (timer.status === "running") {
+                setTimerStatus(`Выполняется: ${elapsed}`);
+            } else if (timer.status === "paused") {
+                setTimerStatus(`На паузе: ${elapsed}`);
+            } else {
+                setTimerStatus("");
             }
-        };
-
-        ws.addEventListener("message", handleTimer);
-        return () => ws.removeEventListener("message", handleTimer);
-    }, [ws, habit.id, parseTimer, updateTimerDisplay, startLocalTick]);
-
-    useEffect(() => {
-        const controller = new AbortController();
-        const version = timerVersionRef.current;
-        setTimerStatus("");
-
-        if (habit.ongoing && (!metric || metric === "timer")) {
-            findHabit(String(habit.id), controller.signal).then(res => {
-                if (controller.signal.aborted || version !== timerVersionRef.current) return;
-                if (res?.success && res.timer && res.settings?.metric_type === "timer") {
-                    updateTimerDisplay(res.timer);
-                    startLocalTick(res.timer);
-                }
-            }).catch(error => {
-                if (!controller.signal.aborted) console.error("Ошибка загрузки таймера:", error);
-            });
-        }
-
-        return () => {
-            controller.abort();
+        },
+        []
+    );
+    const startLocalTick = useCallback(
+        (timer: habitTimer) => {
             if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
-        };
-    }, [habit.id, habit.ongoing, metric, findHabit, updateTimerDisplay, startLocalTick]);
+            if (timer.status !== "running") return;
+            tickIntervalRef.current = window.setInterval(() => {
+                updateTimerDisplay(timer);
+            }, 1000);
+        },
+        [updateTimerDisplay]
+    );
 
+    useEffect(
+        () => {
+            if (!ws || !habit.id) return;
+            const handleTimer = (event: MessageEvent) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === "TIMER_UPDATE" && data.habitId === habit.id) {
+                        timerVersionRef.current++;
+                        const parsed = parseTimer(data.timer);
+                        if (parsed) {
+                            updateTimerDisplay(parsed);
+                            startLocalTick(parsed);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Ошибка TIMER_UPDATE:", e);
+                }
+            };
+            ws.addEventListener("message", handleTimer);
+            return () => ws.removeEventListener("message", handleTimer);
+        },
+        [ws, habit.id, parseTimer, updateTimerDisplay, startLocalTick]
+    );
+
+    useEffect(
+        () => {
+            const controller = new AbortController();
+            const version = timerVersionRef.current;
+            setTimerStatus("");
+            if (habit.ongoing && (!metric || metric === "timer")) {
+                findHabit(String(habit.id), controller.signal).then(
+                    res => {
+                        if (controller.signal.aborted || version !== timerVersionRef.current) return;
+                        if (res?.success && res.timer && res.settings?.metric_type === "timer") {
+                            updateTimerDisplay(res.timer);
+                            startLocalTick(res.timer);
+                        }
+                    }
+                ).catch(
+                    error => {
+                        if (!controller.signal.aborted) console.error("Ошибка загрузки таймера:", error);
+                    }
+                );
+            }
+            return () => {
+                controller.abort();
+                if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
+            };
+        },
+        [habit.id, habit.ongoing, metric, findHabit, updateTimerDisplay, startLocalTick]
+    );
     const ruPeriodicity = (habit: Habit): string => {
         if (!habit.ongoing) return "в архиве";
-        const { periodicity: per, chosen_days } = habit;
+        const {
+            periodicity: per,
+            chosen_days
+        } = habit;
         const habitIdKey = String(habit.id);
         const habitBlocks = schedules[habitIdKey] || [];
-
         const todayNum = new Date().getDay();
         let targetDayNum = todayNum;
         let dayLabel = "Сегодня";
         let nearestDiff = 7;
-
         if (per === "weekly" && chosen_days?.length) {
             for (const day of chosen_days) {
                 const diff = (day - todayNum + 7) % 7;
                 if (diff < nearestDiff) nearestDiff = diff;
             }
-
             targetDayNum = (todayNum + nearestDiff) % 7;
-
             const targetDate = new Date();
             targetDate.setDate(targetDate.getDate() + nearestDiff);
-
             const targetIsOdd = isOddWeek(weekStart, targetDate);
             const isInDateRange = habit.end_date ? new Date(habit.end_date) > new Date() : true;
-
-            if (nearestDiff === 0 && isInDateRange) dayLabel = "Сегодня";
-            else if (nearestDiff === 1 && isInDateRange) dayLabel = "Завтра";
-            else if (isInDateRange) {
-                dayLabel = targetDate.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" });
+            if (nearestDiff === 0 && isInDateRange) dayLabel = "Сегодня"; else if (nearestDiff === 1 && isInDateRange) dayLabel = "Завтра"; else if (isInDateRange) {
+                dayLabel = targetDate.toLocaleDateString(
+                    "ru-RU",
+                    {
+                        day: "2-digit",
+                        month: "2-digit"
+                    }
+                );
             } else {
                 dayLabel = "";
             }
-
-            const targetBlocks = habitBlocks.filter(block =>
-                !block.isSeparator &&
-                block.day_of_week === targetDayNum &&
-                block.start_time?.trim() &&
-                (block.isSeparator === !targetIsOdd)
+            const targetBlocks = habitBlocks.filter(
+                block => !block.isSeparator && block.day_of_week === targetDayNum && block.start_time?.trim() && block.isSeparator === !targetIsOdd
             );
-
             let timePart = "";
-
             if (targetBlocks.length > 0) {
                 const timeToMinutes = (t: string) => {
                     if (!t.trim()) return 9999;
@@ -155,20 +156,18 @@ export default function HabitDiv({
                     const [h = "0", m = "0"] = cleaned.split(":");
                     return Number(h) * 60 + Number(m);
                 };
-
                 let minMin = 24 * 60;
                 let maxMin = 0;
-
-                targetBlocks.forEach(b => {
-                    const s = timeToMinutes(b.start_time!);
-                    const e = b.end_time ? timeToMinutes(b.end_time) : 24 * 60;
-                    if (s < minMin) minMin = s;
-                    if (e > maxMin) maxMin = e;
-                });
-
+                targetBlocks.forEach(
+                    b => {
+                        const s = timeToMinutes(b.start_time!);
+                        const e = b.end_time ? timeToMinutes(b.end_time) : 24 * 60;
+                        if (s < minMin) minMin = s;
+                        if (e > maxMin) maxMin = e;
+                    }
+                );
                 const earliest = formatScheduleTime(minMin);
                 const latest = formatScheduleTime(maxMin);
-
                 if (earliest && latest && earliest !== latest) {
                     timePart = ` ${earliest} - ${latest}`;
                 } else if (earliest) {
@@ -177,20 +176,14 @@ export default function HabitDiv({
                     timePart = ` до ${latest}`;
                 }
             }
-
             if (!timePart) timePart = formatHabitTime(habit);
-
             return `${dayLabel}${timePart}`.trim();
         }
-
         const timePart = formatHabitTime(habit);
-
         if (per === "everyday") return `${timePart}`;
         if (per === "sometimes") return `Иногда${timePart}`;
-
         return timePart.trim() || "";
     };
-
     if (isMyAcc === undefined) isMyAcc = true;
     const periodicityText = ruPeriodicity(habit);
 
@@ -202,32 +195,31 @@ export default function HabitDiv({
             }}
             to={`/habit/${habit.id}`}
             data-context-menu="true"
-            onContextMenu={(e) => {
+            onContextMenu={e => {
                 e.preventDefault();
                 openMenu(
                     e.clientX,
                     e.clientY,
                     "habit",
-                    { id: String(habit.id), name: habit.name, isMy: isMyAcc },
+                    {
+                        id: String(habit.id),
+                        name: habit.name,
+                        isMy: isMyAcc
+                    },
                     habit
                 );
             }}
         >
-            {habit.tag && <div className="habitIcon">{habitIcon(habit)}</div>}
-
+            {habit.tag && <div className="habitIcon">
+                {habitIcon(habit)}
+            </div>}
             <div className="habitInfo">
                 <div className="habitName">
                     {habit.name}
-                    {habit.pinned && isMyAcc && (
-                        <PushPinIcon className="pinnedHabitSign" weight="fill" size={14}/>
-                    )}
+                    {habit.pinned && isMyAcc && <PushPinIcon className="pinnedHabitSign" weight="fill" size={14} />}
                 </div>
                 <div className="habitPer">
-                    {habit.ongoing ? (
-                        timerStatus || periodicityText
-                    ) : (
-                        `${formatDateFromString(habit.start_date)} - ${formatDateFromString(habit.end_date)}`
-                    )}
+                    {habit.ongoing ? timerStatus || periodicityText : `${formatDateFromString(habit.start_date)} - ${formatDateFromString(habit.end_date)}`}
                     {habit.done && <CheckCircle className="habitHLStatus" weight="fill" />}
                 </div>
             </div>

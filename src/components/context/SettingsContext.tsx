@@ -99,8 +99,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ grad, setGrad ] = useLocalStorage(LOCAL_KEYS.grad, "meadow");
     const [ blur, setBlur ] = useLocalStorage(LOCAL_KEYS.blur, 6);
     const [ layout, setLayout ] = useLocalStorage(LOCAL_KEYS.layout, "always");
-    const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "default");
-    const [ decor, setDecor ] = useLocalStorage(LOCAL_KEYS.decor, "default");
+    const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "landing");
+    const [ decor, setDecor ] = useLocalStorage(LOCAL_KEYS.decor, "glass");
     const [ lang, setLang ] = useLocalStorage(LOCAL_KEYS.lang, "ru");
     const [ emote, setEmote ] = useLocalStorage(LOCAL_KEYS.emote, "Heart")
     const [ messdb, setMessdb ] = useLocalStorage(LOCAL_KEYS.messdb, "reaction")

@@ -7,26 +7,45 @@ import MobileLayout from "./MobileLayout";
 import Skeleton, { type SkeletonType } from "../ts/Skeleton";
 import { useUser } from "../hooks/UserHook";
 import { useSettings } from "../hooks/SettingsHook";
-
 export default function ResponsiveLayout() {
     const isMobile = useCompactLayout();
-    const { settingsLoaded, layout } = useSettings();
-    const { initialLoading, user } = useUser();
+    const {
+        settingsLoaded,
+        layout
+    } = useSettings();
+    const {
+        initialLoading,
+        user
+    } = useUser();
     const { pathname } = useLocation();
     const outlet = useOutlet();
     const reduced = useReducedMotion();
     const section = pathname.startsWith("/info") ? "info" : pathname.startsWith("/settings") ? "settings" : "page";
-    const type: SkeletonType = pathname.startsWith("/habit") ? "habit"
-        : pathname.startsWith("/chat") ? "chat"
-        : pathname === "/" ? "feed" : "profile";
-    const content = initialLoading || !settingsLoaded
-        ? <Skeleton type={type} count={type === "chat" ? 5 : 3} overview={pathname === "/habit"} />
-        : <AnimatePresence mode="wait">
-            <motion.div key={`${user.id ?? "guest"}-${section}`} className="routeTransition" initial={reduced || section === "page" ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={reduced || section === "page" ? {} : { opacity: 0, y: -8 }} transition={{ duration: .2, ease: [.22, 1, .36, 1] }}>
-                {outlet}
-            </motion.div>
-        </AnimatePresence>;
-
+    const type: SkeletonType = pathname.startsWith("/habit") ? "habit" : pathname.startsWith("/chat") ? "chat" : pathname === "/" ? "feed" : "profile";
+    const content = initialLoading || !settingsLoaded ? <Skeleton type={type} count={type === "chat" ? 5 : 3} overview={pathname === "/habit"} /> : <AnimatePresence mode="wait">
+        <motion.div
+            key={`${user.id ?? "guest"}-${section}`}
+            className="routeTransition"
+            initial={reduced || section === "page" ? false : {
+                opacity: 0,
+                y: 16
+            }}
+            animate={{
+                opacity: 1,
+                y: 0
+            }}
+            exit={reduced || section === "page" ? {} : {
+                opacity: 0,
+                y: -8
+            }}
+            transition={{
+                duration: .2,
+                ease: [.22, 1, .36, 1]
+            }}
+        >
+            {outlet}
+        </motion.div>
+    </AnimatePresence>;
     if (isMobile || layout === "hidden") {
         return (
             <MobileLayout>

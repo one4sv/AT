@@ -40,5 +40,19 @@
     "controls": {
         "showPassword": "Show password",
         "hidePassword": "Hide password"
+    },
+    "quick": {
+        "rememberHint": "quick sign-in for 30 days",
+        "signInAs": "Sign in as {{name}}",
+        "forget": "Remove quick sign-in on this device",
+        "signInQr": "Sign in with QR code",
+        "refreshQr": "Refresh QR code",
+        "expired": "This QR code has expired",
+        "confirmation": "Confirmation code: {{code}} · {{seconds}} s",
+        "instructions": "Open the camera on a device where you are already signed in to AT, then confirm the sign-in.",
+        "closeQr": "Back to sign in",
+        "codeUnavailable": "This code is unavailable. Generate a new QR code.",
+        "failed": "Could not sign in. Try again or use your password.",
+        "loadingQr": "Generating QR code…"
     }
 }

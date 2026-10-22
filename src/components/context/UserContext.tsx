@@ -5,20 +5,18 @@ import { useNote } from "../hooks/NoteHook";
 import { requestNotificationPermission } from "../ts/utils/NoteRequest";
 import { api } from "../ts/api";
 import { useTranslation } from "react-i18next";
-
 export interface User {
     id: string | null;
     nick: string | null;
     mail: string | null;
     username: string | null;
-    bio:string | null;
+    bio: string | null;
     avatar_url: string | null;
     last_online: string | null;
-    reg_date:Date | null,
-    sex:string | null,
-    date_of_birth:string | null
+    reg_date: Date | null;
+    sex: string | null;
+    date_of_birth: string | null;
 }
-
 interface UserResponse {
     success: boolean;
     id?: string;
@@ -30,101 +28,154 @@ interface UserResponse {
     last_online: string;
     error?: string;
     cookie?: boolean;
-    reg_date?:Date,
-    sex?:string,
-    date_of_birth?:string
+    reg_date?: Date;
+    sex?: string;
+    date_of_birth?: string;
 }
-
 export interface UserContextType {
     user: User;
     loadingUser: boolean;
     initialLoading: boolean;
     isAuthenticated: boolean;
     refetchUser: () => Promise<void>;
-    logOut: () => Promise<void>
+    logOut: () => Promise<void>;
 }
-
 const UserContext = createContext<UserContextType | null>(null);
-
-export const UserProvider = ({ children }: { children: ReactNode }) => {
-    const { t } = useTranslation("common")
+export const UserProvider = ({
+    children
+}: {
+    children: ReactNode;
+}) => {
+    const { t } = useTranslation("common");
     const { showNotification } = useNote();
-    const [user, setUser] = useState<User>({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null, reg_date:null, sex:null, date_of_birth:null });
+    const [user, setUser] = useState<User>(
+        {
+            nick: null,
+            mail: null,
+            username: null,
+            id: null,
+            bio: null,
+            avatar_url: null,
+            last_online: null,
+            reg_date: null,
+            sex: null,
+            date_of_birth: null
+        }
+    );
     const [loadingUser, setLoadingUser] = useState(true);
     const [initialLoading, setInitialLoading] = useState(true);
-
-    
     const isAuthenticated = !!user.nick;
-
-    const refetchUser = useCallback(async () => {
-        if (initialLoading) setLoadingUser(true);
-
-        try {
-            const res = await api.get<UserResponse>(`user`);
-            if (res.data.success) {
-                setUser({
-                    nick: res.data.nick ?? null,
-                    mail: res.data.mail ?? null,
-                    username: res.data.username ?? null,
-                    bio: res.data.bio ?? null,
-                    id: res.data.id ?? null,
-                    avatar_url: res.data.avatar_url ?? null,
-                    last_online:res.data.last_online ?? null,
-                    reg_date:res.data.reg_date  ?? null,
-                    sex:res.data.sex ?? null,
-                    date_of_birth:res.data.date_of_birth ?? null
-                });
-            } else {
-                setUser({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null, reg_date:null, sex:null, date_of_birth:null });
-                if (!res.data.cookie) {
-                    showNotification("error", res.data.error || "Ошибка авторизации");
+    const refetchUser = useCallback(
+        async () => {
+            if (initialLoading) setLoadingUser(true);
+            try {
+                const res = await api.get<UserResponse>(`user`);
+                if (res.data.success) {
+                    setUser(
+                        {
+                            nick: res.data.nick ?? null,
+                            mail: res.data.mail ?? null,
+                            username: res.data.username ?? null,
+                            bio: res.data.bio ?? null,
+                            id: res.data.id ?? null,
+                            avatar_url: res.data.avatar_url ?? null,
+                            last_online: res.data.last_online ?? null,
+                            reg_date: res.data.reg_date ?? null,
+                            sex: res.data.sex ?? null,
+                            date_of_birth: res.data.date_of_birth ?? null
+                        }
+                    );
+                } else {
+                    setUser(
+                        {
+                            nick: null,
+                            mail: null,
+                            username: null,
+                            id: null,
+                            bio: null,
+                            avatar_url: null,
+                            last_online: null,
+                            reg_date: null,
+                            sex: null,
+                            date_of_birth: null
+                        }
+                    );
+                    if (!res.data.cookie) {
+                        showNotification("error", res.data.error || "Ошибка авторизации");
+                    }
                 }
-            }
-        } catch (err) {
-            setUser({ nick: null, mail: null, username: null, id:null, bio:null, avatar_url:null, last_online:null, reg_date:null, sex:null, date_of_birth:null });
-            if (axios.isAxiosError(err)) {
-                if (err.response?.status !== 401 && err.response?.status !== 403) {
-                    showNotification("error", err.response?.data?.error || "Ошибка авторизации");
+            } catch (err) {
+                setUser(
+                    {
+                        nick: null,
+                        mail: null,
+                        username: null,
+                        id: null,
+                        bio: null,
+                        avatar_url: null,
+                        last_online: null,
+                        reg_date: null,
+                        sex: null,
+                        date_of_birth: null
+                    }
+                );
+                if (axios.isAxiosError(err)) {
+                    if (err.response?.status !== 401 && err.response?.status !== 403) {
+                        showNotification("error", err.response?.data?.error || "Ошибка авторизации");
+                    }
                 }
+            } finally {
+                setLoadingUser(false);
+                setInitialLoading(false);
             }
-        } finally {
-            setLoadingUser(false);
-            setInitialLoading(false);
-        }
-    }, [initialLoading, showNotification]);
+        },
+        [initialLoading, showNotification]
+    );
 
-    useEffect(() => {
-        if (initialLoading)
-        refetchUser();
-    }, [initialLoading, refetchUser, user.nick]);
+    useEffect(
+        () => {
+            if (initialLoading) refetchUser();
+        },
+        [initialLoading, refetchUser, user.nick]
+    );
 
-    useEffect(() => {
-        if (user.id === null) return
-        requestNotificationPermission();
-    }, [user.id]);
-
+    useEffect(
+        () => {
+            if (user.id === null) return;
+            requestNotificationPermission();
+        },
+        [user.id]
+    );
     const logOut = async () => {
         try {
-            const res = await api.get(`logout`)
+            const res = await api.get(`logout`);
             if (res.data.success) {
-                refetchUser()
+                refetchUser();
             } else {
-                showNotification("error", t("sideMenu.logOutError"))
+                showNotification("error", t("sideMenu.logOutError"));
             }
         } catch (error: unknown) {
             if (isAxiosError(error)) {
-                showNotification("error", error.response?.data?.messages || t("sideMenu.logOutError"))
+                showNotification("error", error.response?.data?.messages || t("sideMenu.logOutError"));
             } else {
-                showNotification("error", t("sideMenu.logOutErrorGeneric"))
+                showNotification("error", t("sideMenu.logOutErrorGeneric"));
             }
         }
-    }
+    };
 
     return (
-        <UserContext.Provider value={{ isAuthenticated, user, loadingUser, initialLoading, refetchUser, logOut }}>
+        <UserContext.Provider
+            value={{
+                isAuthenticated,
+                user,
+                loadingUser,
+                initialLoading,
+                refetchUser,
+                logOut
+            }}
+        >
             {children}
         </UserContext.Provider>
     );
 };
-
 export default UserContext;

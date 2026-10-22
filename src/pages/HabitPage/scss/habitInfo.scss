@@ -1,6 +1,5 @@
 @use "../../../scss/mixins" as var;
 @use "./habitMobileDone.scss";
-
 .statsDiv {
     position: relative;
     height: 100dvh;
@@ -8,6 +7,7 @@
     flex-direction: column;
     overflow: hidden;
 }
+
 .StatsDivMain {
     flex: 1;
     min-height: 0;
@@ -18,13 +18,12 @@
     overflow-y: auto;
     scrollbar-width:thin;
     width: 100%;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-        background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-        margin 0.35s cubic-bezier(.4,0,.2,1);
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),          background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),         margin 0.35s cubic-bezier(.4,0,.2,1);
     @media (max-width:800px) {
         padding: 8vh 2vw 8vh;
     }
 }
+
 .StatsDivHabit {
     height: 40dvh;
     display: flex;
@@ -33,13 +32,17 @@
         gap: 1vh;
     }
 }
+
 .statsCal {
     display: flex;
     flex-direction: column;
     width: fit-content;
     margin-right: 2vw;
 }
+
 .mobileHabitLayout {
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
     overflow: hidden;
     border-radius: 24px;
     padding: .5vh 0;
@@ -57,6 +60,7 @@
         height: 25dvh;
     }
 }
+
 .habitMenu {
     position: fixed;
     right: 0;
@@ -71,7 +75,6 @@
     background-color: var(--mc);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-
     @media (max-width:800px) {
         position: fixed;
         width: 100%;
@@ -79,6 +82,7 @@
         border-left: none;
     }
 }
+
 .habitSlider {
     display: flex;
     width: 200%;
@@ -102,6 +106,7 @@
     position: relative;
     overflow-x: hidden;
 }
+
 .habitMenuShowButt {
     position: absolute;
     z-index: 20;
@@ -129,6 +134,7 @@
         }
     }
 }
+
 .habitSaveDiv {
     position: absolute;
     width: 100%;
@@ -145,10 +151,12 @@
         height: 17dvh;
     }
 }
+
 .habitSaveHint {
     padding-top: 1dvh;
     color: var(--borderWh);
 }
+
 .habitSlideBack {
     width: 100%;
     font-size: 18px;
@@ -174,6 +182,7 @@
         }
     }
 }
+
 .habitSave {
     bottom: 0;
     width: 100%;
@@ -191,34 +200,29 @@
     }
     @media (hover: hover) {
         &:hover {
-            box-shadow: 0 0 12px var(--accent),
-            0 0 24px var(--accent);
+            box-shadow: 0 0 12px var(--accent),             0 0 24px var(--accent);
         }
     }
-
     @media (hover: none) {
         &:active {
-            box-shadow: 0 0 12px var(--accent),
-            0 0 24px var(--accent);
+            box-shadow: 0 0 12px var(--accent),             0 0 24px var(--accent);
         }
     }
     &.saving {
         background-color: var(--darker_accent);
         @media (hover: hover) {
             &:hover {
-                box-shadow: 0 0 12px var(--darker_accent),
-                0 0 24px var(--darker_accent);
+                box-shadow: 0 0 12px var(--darker_accent),                 0 0 24px var(--darker_accent);
             }
         }
-
         @media (hover: none) {
             &:active {
-                box-shadow: 0 0 12px var(--darker_accent),
-                0 0 24px var(--darker_accent);
+                box-shadow: 0 0 12px var(--darker_accent),                 0 0 24px var(--darker_accent);
             }
         }
     }
 }
+
 .habitInnerSlide {
     width: 100%;
     height: 100%;
@@ -227,6 +231,7 @@
     gap: 0.25vh;
     position: relative;
 }
+
 @media (max-width: 800px) {
     .StatsDivMain {
         height: 100%;
@@ -237,13 +242,16 @@
         flex-direction: column;
     }
 }
+
 .habitInnerSlideTitle {
     font-size: 20px;
     margin-bottom: 1vh;
 }
+
 .chatMenuSpan {
     margin: 1vh 0;
 }
+
 .habitChatList {
     display: flex;
     flex-direction: column;

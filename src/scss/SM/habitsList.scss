@@ -1,8 +1,8 @@
 @use "../mixins.scss" as *;
-
 .habitsWrapperStats {
     width: 100%;
 }
+
 .habitsOpen {
     margin-top: 1dvh;
     width: 100%;
@@ -20,21 +20,18 @@
     }
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-        color: var(--tc);
-    
+            background-color: var(--menuButtHover);
+            color: var(--tc);
         }
     }
-
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-        color: var(--tc);
-    
-        
+            background-color: var(--menuButtHover);
+            color: var(--tc);
         }
     }
 }
+
 .orderWrapper {
     user-select: none;
     gap: 0.2vh;
@@ -48,9 +45,10 @@
         cursor: pointer;
         >svg {
             transition: rotate 0.2s ease;
-        } 
+        }
     }
 }
+
 .habit {
     cursor: pointer;
     width: 100%;
@@ -70,7 +68,6 @@
             border: 1px solid var(--tc);
         }
     }
-
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);
@@ -92,6 +89,7 @@
         height: 6.5dvh;
     }
 }
+
 .habitIcon {
     aspect-ratio: 1/1;
     position: relative;
@@ -103,11 +101,13 @@
         margin: 0 1vw;
     }
 }
+
 .habitIconSvg {
     height: 100%;
     width: 100%;
     color: var(--accent_text);
 }
+
 .habitInfo {
     flex: 1;
     margin-left: 0.5vw;
@@ -120,6 +120,7 @@
         margin-left: 1vw;
     }
 }
+
 .habitName {
     display: flex;
     width: 100%;
@@ -127,16 +128,20 @@
     gap: 3px;
     color: var(--tc);
 }
+
 .habitPer {
     color: var(--borderWh);
 }
+
 .moreHabits {
     color: var(--borderHabit);
 }
+
 .pinnedHabitSign {
     fill: currentColor;
     color: var(--borderHabit);
 }
+
 .habit.active {
     background:linear-gradient(135deg, var(--accent), var(--grad));
     .habitPer {
@@ -146,6 +151,7 @@
         color: white;
     }
 }
+
 .habitHLStatus {
     position: absolute;
     aspect-ratio: 1/1;

@@ -6,27 +6,26 @@ import { useSettings } from "../hooks/SettingsHook";
 import type { HabitSettings } from "./TheHabitContext";
 import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
-
 export interface Habit {
-    id:number;
+    id: number;
     name: string;
-    desc:string | "";
+    desc: string | "";
     start_date: string;
     end_date: string | "";
     ongoing: boolean;
     periodicity: "everyday" | "weekly" | "sometimes" | "cycle";
     chosen_days: number[] | null;
-    start_time:string | "";
-    end_time:string | "";
-    created_at:Date;
-    tag:string | "";
-    pinned:boolean;
-    done?:boolean;
-    user_id:string;
-    habits_settings:HabitSettings;
-    cycle_days_active:number,
-    cycle_days_rest:number,
-    chat_id:number | null
+    start_time: string | "";
+    end_time: string | "";
+    created_at: Date;
+    tag: string | "";
+    pinned: boolean;
+    done?: boolean;
+    user_id: string;
+    habits_settings: HabitSettings;
+    cycle_days_active: number;
+    cycle_days_rest: number;
+    chat_id: number | null;
 }
 interface HabitResponse {
     success: boolean;
@@ -34,7 +33,6 @@ interface HabitResponse {
     error?: string;
     cookie?: boolean;
 }
-
 export interface HabitContextType {
     habits: Habit[] | null;
     loadingHabits: boolean;
@@ -42,91 +40,100 @@ export interface HabitContextType {
     refetchHabitsWLoading: () => Promise<void>;
     newOrderHabits: string[] | undefined;
 }
-
 const HabitsContext = createContext<HabitContextType | null>(null);
-
-export const HabitsProvider = ({ children }: { children: ReactNode }) => {
+export const HabitsProvider = ({
+    children
+}: {
+    children: ReactNode;
+}) => {
     const { showNotification } = useNote();
     const { orderHabits } = useSettings();
-    const { user, initialLoading } = useUser()
-
-    const [ habits, setHabits ] = useState<Habit[] | null>(null);
-    const [ loadingHabits, setLoadingHabits ] = useState(true);
-    const [ newOrderHabits, setNewOrderHabits ] = useState<string[] | undefined>()
-
-    const refetchHabits = useCallback(async () => {
-        try {
-            const res = await api.get<HabitResponse>(`habits`);
-
-            if (res.data.success && res.data.habitsArr) {
-                setHabits(res.data.habitsArr);
-            } else {
-                setHabits(null);
-            }
-        } catch (err) {
-            setHabits(null);
-            if (axios.isAxiosError(err)) {
-                if (err.response?.status !== 401 && err.response?.status !== 403) {
-                    showNotification("error", err.response?.data?.error || "Ошибка запроса");
+    const {
+        user,
+        initialLoading
+    } = useUser();
+    const [habits, setHabits] = useState<Habit[] | null>(null);
+    const [loadingHabits, setLoadingHabits] = useState(true);
+    const [newOrderHabits, setNewOrderHabits] = useState<string[] | undefined>();
+    const refetchHabits = useCallback(
+        async () => {
+            try {
+                const res = await api.get<HabitResponse>(`habits`);
+                if (res.data.success && res.data.habitsArr) {
+                    setHabits(res.data.habitsArr);
+                } else {
+                    setHabits(null);
                 }
-                
+            } catch (err) {
+                setHabits(null);
+                if (axios.isAxiosError(err)) {
+                    if (err.response?.status !== 401 && err.response?.status !== 403) {
+                        showNotification("error", err.response?.data?.error || "Ошибка запроса");
+                    }
+                }
+            } finally {
+                setLoadingHabits(false);
             }
-        } finally {
-            setLoadingHabits(false);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
-
-    const refetchHabitsWLoading = async() => {
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        },
+        [user]
+    );
+    const refetchHabitsWLoading = async () => {
         setLoadingHabits(true);
-        await refetchHabits()
-    }
-    useEffect(() => {
-        if (initialLoading) {
-            setHabits(null);
-            return;
-        }
+        await refetchHabits();
+    };
 
-        if (!user.nick) {
-            setHabits(null);
-            return;
-        }
+    useEffect(
+        () => {
+            if (initialLoading) {
+                setHabits(null);
+                return;
+            }
+            if (!user.nick) {
+                setHabits(null);
+                return;
+            }
+            refetchHabits();
+        },
+        [initialLoading, user.nick, refetchHabits]
+    );
 
-        refetchHabits();
-
-    }, [initialLoading, user.nick, refetchHabits]);
-    
-    useEffect(() => {
-        const weekOrder: string[] = [];
-        
-        weekOrder.push("today");
-        weekOrder.push("tomorrow");
-
-        for (let i = 2; i <= 6; i++) {
-            const date = new Date();
-            date.setDate(date.getDate() + i);
-            const yyyy = date.getFullYear();
-            const mm = String(date.getMonth() + 1).padStart(2, "0");
-            const dd = String(date.getDate()).padStart(2, "0");
-            weekOrder.push(`${yyyy}-${mm}-${dd}`);
-        }
-
-        if (!orderHabits || weekOrder.length === 0) return;
-        let newOrder = orderHabits.flatMap(item => item === "weekly" ? weekOrder : [item]);
-        if (habits?.find(h => h.pinned)) newOrder = ["pinned", ...newOrder]
-        const isSame = newOrder.length === orderHabits.length &&
-            newOrder.every((val, i) => val === orderHabits[i]);
-
-        if (!isSame) {
-            setNewOrderHabits(newOrder);
-        }
-    }, [habits, orderHabits]);
+    useEffect(
+        () => {
+            const weekOrder: string[] = [];
+            weekOrder.push("today");
+            weekOrder.push("tomorrow");
+            for (let i = 2;i <= 6;i++) {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+                const yyyy = date.getFullYear();
+                const mm = String(date.getMonth() + 1).padStart(2, "0");
+                const dd = String(date.getDate()).padStart(2, "0");
+                weekOrder.push(`${yyyy}-${mm}-${dd}`);
+            }
+            if (!orderHabits || weekOrder.length === 0) return;
+            let newOrder = orderHabits.flatMap(item => item === "weekly" ? weekOrder : [item]);
+            if (habits?.find(h => h.pinned)) newOrder = ["pinned", ...newOrder];
+            const isSame = newOrder.length === orderHabits.length && newOrder.every((val, i) => val === orderHabits[i]);
+            if (!isSame) {
+                setNewOrderHabits(newOrder);
+            }
+        },
+        [habits, orderHabits]
+    );
 
     return (
-        <HabitsContext.Provider value={{ habits, loadingHabits, refetchHabits, newOrderHabits, refetchHabitsWLoading }}>
-        {children}
+        <HabitsContext.Provider
+            value={{
+                habits,
+                loadingHabits,
+                refetchHabits,
+                newOrderHabits,
+                refetchHabitsWLoading
+            }}
+        >
+            {children}
         </HabitsContext.Provider>
     );
 };
-
 export default HabitsContext;

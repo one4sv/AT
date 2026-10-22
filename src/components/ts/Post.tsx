@@ -16,97 +16,118 @@ import formatCreated from "../../pages/Acc/utils/formatCreated";
 import type { PostType } from "../context/AccContext";
 import type { Media } from "../context/ChatContext";
 import { useLocation } from "react-router";
-import "../../scss/Post.scss"
+import "../../scss/Post.scss";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../hooks/ContextMenuHook";
-
-
 interface PostProps {
-    post: PostType
-    isMy: boolean
-    expanded?: boolean
+    post: PostType;
+    isMy: boolean;
+    expanded?: boolean;
 }
-export default function Post({ post: sourcePost, isMy, expanded = false }: PostProps) {
+export default function Post({
+    post: sourcePost,
+    isMy,
+    expanded = false
+}: PostProps) {
     const [post, setLocalPost] = useState(sourcePost);
+
     useEffect(() => setLocalPost(sourcePost), [sourcePost]);
     const [truncated, setTruncated] = useState(false);
-    const { setDeleteConfirm } = useDelete()
-    const { setBlackout } = useBlackout()
-    const { setPosts } = useAcc()
-    const { user } = useUser()
-    const { openMenu } = useContextMenu()
-
-    const navigate = useNavigate()
-    const location = useLocation()
-    const [ newText, setNewText ] = useState("");
-    const [ red, setRed ] = useState<boolean>(false);
-    const [ hover, setHover ] = useState<boolean>(false)
-    const [ showComment, setShowComment ] = useState<boolean>(false)
-    const [ keptMedia, setKeptMedia ] = useState<Media[]>([]);
-    const [ newFiles, setNewFiles ] = useState<File[]>([]);
-    const [ emojiPos, setEmojiPos ] = useState<{top: number, left: number}>({top: 0, left: 0});
-    const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false)
+    const { setDeleteConfirm } = useDelete();
+    const { setBlackout } = useBlackout();
+    const { setPosts } = useAcc();
+    const { user } = useUser();
+    const { openMenu } = useContextMenu();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [newText, setNewText] = useState("");
+    const [red, setRed] = useState<boolean>(false);
+    const [hover, setHover] = useState<boolean>(false);
+    const [showComment, setShowComment] = useState<boolean>(false);
+    const [keptMedia, setKeptMedia] = useState<Media[]>([]);
+    const [newFiles, setNewFiles] = useState<File[]>([]);
+    const [emojiPos, setEmojiPos] = useState<{
+        top: number;
+        left: number;
+    }>(
+        {
+            top: 0,
+            left: 0
+        }
+    );
+    const [showEmojiBar, setShowEmojiBar] = useState<boolean>(false);
     const taRef = useRef<HTMLTextAreaElement>(null);
     const divRef = useRef<HTMLDivElement>(null);
     const inputFileRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        const node = divRef.current;
-        if (!node || red || expanded) { setTruncated(false); return; }
-        const measure = () => setTruncated(node.scrollHeight > node.clientHeight + 1);
-        measure();
-        const observer = new ResizeObserver(measure);
-        observer.observe(node);
-        return () => observer.disconnect();
-    }, [post.text, newText, red, expanded]);
-
+    useEffect(
+        () => {
+            const node = divRef.current;
+            if (!node || red || expanded) {
+                setTruncated(false);
+                return;
+            }
+            const measure = () => setTruncated(node.scrollHeight > node.clientHeight + 1);
+            measure();
+            const observer = new ResizeObserver(measure);
+            observer.observe(node);
+            return () => observer.disconnect();
+        },
+        [post.text, newText, red, expanded]
+    );
     const upPost = async () => {
         const createdObjectUrls: string[] = [];
-        const optimisticNewFilesMedia: Media[] = newFiles.map((f) => {
-            const url = URL.createObjectURL(f);
-            createdObjectUrls.push(url);
-            return {
-                url,
-                name: f.name,
-                type: f.type,
-                __optimistic: true as boolean,
-            } as unknown as Media;
-        });
-
-        const optimisticMedia: Media[] = [
-            ...(keptMedia || []),
-            ...optimisticNewFilesMedia,
-        ];
-
+        const optimisticNewFilesMedia: Media[] = newFiles.map(
+            f => {
+                const url = URL.createObjectURL(f);
+                createdObjectUrls.push(url);
+                return {
+                    url,
+                    name: f.name,
+                    type: f.type,
+                    __optimistic: true as boolean
+                } as unknown as Media;
+            }
+        );
+        const optimisticMedia: Media[] = [...(keptMedia || []), ...optimisticNewFilesMedia];
         let previousPosts: PostType[] | undefined;
-        setPosts(prev => {
-            previousPosts = prev ? [...prev] : undefined;
-            if (!prev) return prev;
-            return prev.map(p =>
-                p.id === post.id
-                    ? {
+        setPosts(
+            prev => {
+                previousPosts = prev ? [...prev] : undefined;
+                if (!prev) return prev;
+                return prev.map(
+                    p => p.id === post.id ? {
                         ...p,
                         text: newText || p.text,
-                        media: optimisticMedia,
-                    }
-                    : p
-            );
-        });
-
+                        media: optimisticMedia
+                    } : p
+                );
+            }
+        );
         const formData = new FormData();
         formData.append("id", String(post.id));
         formData.append("text", newText);
         formData.append("keptMedia", JSON.stringify(keptMedia));
-        newFiles.forEach((file) => formData.append("media", file));
-
+        newFiles.forEach(file => formData.append("media", file));
         try {
-            const res = await api.post("/uppost", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-
+            const res = await api.post(
+                "/uppost",
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                }
+            );
             if (res.data && res.data.success) {
                 const serverPost = res.data.post;
-                setLocalPost(p => ({ ...p, text: newText, media: serverPost?.media ? (typeof serverPost.media === "string" ? JSON.parse(serverPost.media) : serverPost.media) : optimisticMedia }));
+                setLocalPost(
+                    p => ({
+                        ...p,
+                        text: newText,
+                        media: serverPost?.media ? typeof serverPost.media === "string" ? JSON.parse(serverPost.media) : serverPost.media : optimisticMedia
+                    })
+                );
                 if (serverPost) {
                     let serverMedia: Media[] = [];
                     if (serverPost.media) {
@@ -120,31 +141,32 @@ export default function Post({ post: sourcePost, isMy, expanded = false }: PostP
                             serverMedia = serverPost.media;
                         }
                     }
-
-                    setPosts(prev => prev?.map(p =>
-                        p.id === post.id
-                            ? {
+                    setPosts(
+                        prev => prev?.map(
+                            p => p.id === post.id ? {
                                 ...p,
                                 text: serverPost.text ?? p.text,
                                 media: serverMedia,
                                 comments_count: serverPost.comments_count ?? p.comments_count,
-                                likes: serverPost.likes ?? p.likes,
-                            }
-                            : p
-                    ));
+                                likes: serverPost.likes ?? p.likes
+                            } : p
+                        )
+                    );
                 } else {
-                    setPosts(prev => prev?.map(p =>
-                        p.id === post.id
-                            ? { ...p, text: newText || p.text, media: optimisticMedia }
-                            : p
-                    ));
+                    setPosts(
+                        prev => prev?.map(
+                            p => p.id === post.id ? {
+                                ...p,
+                                text: newText || p.text,
+                                media: optimisticMedia
+                            } : p
+                        )
+                    );
                 }
-
                 // очистка локального редактора
                 setRed(false);
                 setKeptMedia([]);
                 setNewFiles([]);
-
                 createdObjectUrls.forEach(u => URL.revokeObjectURL(u));
             } else {
                 throw new Error(res?.data?.error || "Не удалось обновить пост");
@@ -155,39 +177,38 @@ export default function Post({ post: sourcePost, isMy, expanded = false }: PostP
             createdObjectUrls.forEach(u => URL.revokeObjectURL(u));
         }
     };
-
     const handleToggleEmojiBar = () => {
         if (!taRef.current || !taRef.current.parentElement) return;
         const rect = taRef.current.getBoundingClientRect();
         const container = taRef.current.parentElement;
         const containerRect = container.getBoundingClientRect();
-        const vh = innerHeight/100;
-        const top = rect.bottom - containerRect.top + container.scrollTop + 5*vh;
+        const vh = innerHeight / 100;
+        const top = rect.bottom - containerRect.top + container.scrollTop + 5 * vh;
         const left = rect.left - containerRect.left;
-
         setEmojiPos({
             top,
-            left,
+            left
         });
-
         setShowEmojiBar(prev => !prev);
     };
-
     const like = async (id: number) => {
         try {
-            const res = await api.post("/like", { id });
+            const res = await api.post("/like", {
+                id
+            });
             if (res.data.success) {
-                setLocalPost(p => ({ ...p, likes: res.data.liked ? [...p.likes.filter(uid => uid !== user.id), user.id] : p.likes.filter(uid => uid !== user.id) }));
-                setPosts(prev =>
-                    prev?.map(p =>
-                        p.id === id
-                            ? {
-                                ...p,
-                                likes: res.data.liked
-                                    ? [...p.likes, user.id]
-                                    : p.likes.filter((uid: string | null) => uid !== user.id),
-                            }
-                            : p
+                setLocalPost(
+                    p => ({
+                        ...p,
+                        likes: res.data.liked ? [...p.likes.filter(uid => uid !== user.id), user.id] : p.likes.filter(uid => uid !== user.id)
+                    })
+                );
+                setPosts(
+                    prev => prev?.map(
+                        p => p.id === id ? {
+                            ...p,
+                            likes: res.data.liked ? [...p.likes, user.id] : p.likes.filter((uid: string | null) => uid !== user.id)
+                        } : p
                     )
                 );
             }
@@ -200,122 +221,180 @@ export default function Post({ post: sourcePost, isMy, expanded = false }: PostP
     if (post.likes) likesCount = post.likes.length;
 
     return (
-        <div className={`PostDiv ${expanded ? "postExpanded" : "postPreview"}`} onClick={event => {
-            if (expanded || red || window.getSelection()?.toString()) return;
-            if ((event.target as Element).closest("a, button, input, textarea, video, audio, .postUser, .PostHabit, .PostBottom, .postMediaArea, .AccPostComments")) return;
-            navigate(`/post/${post.id}`);
-        }} onMouseEnter={() => isMy && setHover(true)} onMouseLeave={() => setHover(false)} data-context-menu="true" onContextMenu={(e) => {
-            e.preventDefault();
-            openMenu(e.clientX, e.clientY, "post", {id:String(post.id), name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text, isMy:isMy, red:red, func: () => {
-                if (red) {
-                    upPost();
-                } else {
-                    setRed(true);
-                    setNewText(post.text);
-                    setKeptMedia(post.media || []);
-                    setNewFiles([]);
-                }
-            }})
-        }}>
+        <div
+            className={`PostDiv ${expanded ? "postExpanded" : "postPreview"}`}
+            onClick={event => {
+                if (expanded || red || window.getSelection()?.toString()) return;
+                if ((event.target as Element).closest(
+                    "a, button, input, textarea, video, audio, .postUser, .PostHabit, .PostBottom, .postMediaArea, .AccPostComments"
+                )) return;
+                navigate(`/post/${post.id}`);
+            }}
+            onMouseEnter={() => isMy && setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            data-context-menu="true"
+            onContextMenu={e => {
+                e.preventDefault();
+                openMenu(
+                    e.clientX,
+                    e.clientY,
+                    "post",
+                    {
+                        id: String(post.id),
+                        name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text,
+                        isMy: isMy,
+                        red: red,
+                        func: () => {
+                            if (red) {
+                                upPost();
+                            } else {
+                                setRed(true);
+                                setNewText(post.text);
+                                setKeptMedia(post.media || []);
+                                setNewFiles([]);
+                            }
+                        }
+                    }
+                );
+            }}
+        >
             <div className={`Post ${isMobile ? "mobile" : ""}`}>
-                {!location.pathname.includes("/acc") && (
-                    <div className="postUser" onClick={() => navigate(`/acc/${post.user.nick}`)}>
-                        <div className="postAvatar">
-                            {post.user.avatar_url ? (
-                                <img src={post.user.avatar_url}/>
-                            ) : (
-                                <UserCircle />
-                            )}
-                        </div>
-                        {post.user.username || post.user.nick}
+                {!location.pathname.includes("/acc") && <div className="postUser" onClick={() => navigate(`/acc/${post.user.nick}`)}>
+                    <div className="postAvatar">
+                        {post.user.avatar_url ? <img src={post.user.avatar_url} /> : <UserCircle />}
                     </div>
-                )}
-                <EmojiBar setText={setNewText} cn={"apEmojiBar"} setShowEmojiBar={setShowEmojiBar} showEmojiBar={showEmojiBar} taRef={taRef} emojiPos={emojiPos}/>
-                {red ? (
-                    <textarea
-                        ref={taRef}
-                        defaultValue={newText}
-                        className="PostText"
-                        style={{display:red ? "block" : "none", minHeight:`${divRef.current?.scrollHeight}px`}}
-                        onChange={(e) => setNewText(e.target.value)}
-                    ></textarea>
-                ) : (
-                    <div className="PostText" style={{display:red ? "none" : "block"}} ref={divRef}>
-                        <Linkify>
-                            
-                                {post.text}
-                            
-                        </Linkify>
+                    {post.user.username || post.user.nick}
+                </div>}
+                <EmojiBar
+                    setText={setNewText}
+                    cn={"apEmojiBar"}
+                    setShowEmojiBar={setShowEmojiBar}
+                    showEmojiBar={showEmojiBar}
+                    taRef={taRef}
+                    emojiPos={emojiPos}
+                />
+                {red ? <textarea
+                    ref={taRef}
+                    defaultValue={newText}
+                    className="PostText"
+                    style={{
+                        display: red ? "block" : "none",
+                        minHeight: `${divRef.current?.scrollHeight}px`
+                    }}
+                    onChange={e => setNewText(e.target.value)}
+                ></textarea> : <div
+                    className="PostText"
+                    style={{
+                        display: red ? "none" : "block"
+                    }}
+                    ref={divRef}
+                >
+                    <Linkify>
+                        {post.text}
+                    </Linkify>
+                </div>}
+                {!red && !expanded && <button
+                    className={`postReadMore ${truncated ? "" : "postOpenLink"}`}
+                    type="button"
+                    onClick={() => navigate(`/post/${post.id}`)}
+                >
+                    {truncated ? "Читать далее" : "Открыть пост"}
+                </button>}
+                {post.habit && <div className="PostHabit" onClick={() => navigate(`/habit/${post.habit?.id}`)}>
+                    <div className="aphIcon">
+                        {habitIcon(post.habit)}
                     </div>
-                )}
-                {!red && !expanded && <button className={`postReadMore ${truncated ? "" : "postOpenLink"}`} type="button" onClick={() => navigate(`/post/${post.id}`)}>{truncated ? "Читать далее" : "Открыть пост"}</button>}
-                {post.habit && (
-                    <div className="PostHabit" onClick={() => navigate(`/habit/${post.habit?.id}`)}>
-                        <div className="aphIcon">{habitIcon(post.habit)}</div>
-                        <div className="aphName">{post.habit.name}</div>
-                        <ChevronRight className="aphGo" />
+                    <div className="aphName">
+                        {post.habit.name}
                     </div>
-                )}
-                <div className="postMediaArea"><AccPostMedia red={red} media={post.media} keptMedia={keptMedia} newFiles={newFiles} setKeptMedia={setKeptMedia} setNewFiles={setNewFiles} inputFileRef={inputFileRef}/></div>
+                    <ChevronRight className="aphGo" />
+                </div>}
+                <div className="postMediaArea">
+                    <AccPostMedia
+                        red={red}
+                        media={post.media}
+                        keptMedia={keptMedia}
+                        newFiles={newFiles}
+                        setKeptMedia={setKeptMedia}
+                        setNewFiles={setNewFiles}
+                        inputFileRef={inputFileRef}
+                    />
+                </div>
                 <div className="PostBottom">
                     <div className="PostInteract">
                         <div
                             className="PostLikes"
                             onClick={() => {
-                                like(post.id)
+                                like(post.id);
                             }}
                         >
-                        {isLiked ? <Heart weight="fill" color="#d60000" /> : <Heart />}
-                        <span>{likesCount}</span>
+                            {isLiked ? <Heart weight="fill" color="#d60000" /> : <Heart />}
+                            <span>
+                                {likesCount}
+                            </span>
                         </div>
                         <div className="PostComment" onClick={() => setShowComment(!showComment)}>
                             <ChatCircle />
-                            <span>{post.comments_count}</span>
+                            <span>
+                                {post.comments_count}
+                            </span>
                         </div>
                     </div>
                     <div className="PostDate">
-                        {hover && (
-                        <div className="PostButts">
-                            {red && (
-                                <>
-                                    <div className="PostButt" onClick={() => handleToggleEmojiBar()}>
-                                        <SmileySticker className="pwSvg"/>
-                                    </div>
-                                    <div className="PostButt" onClick={() => inputFileRef.current?.click()}>
-                                        <Paperclip className="pwSvg" />
-                                    </div>
-                                </>
-                            )}
+                        {hover && <div className="PostButts">
+                            {red && <>
+                                <div className="PostButt" onClick={() => handleToggleEmojiBar()}>
+                                    <SmileySticker className="pwSvg" />
+                                </div>
+                                <div className="PostButt" onClick={() => inputFileRef.current?.click()}>
+                                    <Paperclip className="pwSvg" />
+                                </div>
+                            </>}
                             <div
                                 className="PostButt"
                                 onClick={() => {
-                                if (red) {
-                                    upPost();
-                                } else {
-                                    setRed(true);
-                                    setNewText(post.text);
-                                    setKeptMedia(post.media || []);
-                                    setNewFiles([]);
-                                }
-                            }}
+                                    if (red) {
+                                        upPost();
+                                    } else {
+                                        setRed(true);
+                                        setNewText(post.text);
+                                        setKeptMedia(post.media || []);
+                                        setNewFiles([]);
+                                    }
+                                }}
                             >
                                 {red ? <Check /> : <PencilSimple />}
                             </div>
-                            <div className="PostButt" onClick={() => {
-                                setDeleteConfirm({goal:"post", id:post.id, name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text})
-                                setBlackout({seted:true, module:"Delete"})
-                            }}>
+                            <div
+                                className="PostButt"
+                                onClick={() => {
+                                    setDeleteConfirm(
+                                        {
+                                            goal: "post",
+                                            id: post.id,
+                                            name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text
+                                        }
+                                    );
+                                    setBlackout(
+                                        {
+                                            seted: true,
+                                            module: "Delete"
+                                        }
+                                    );
+                                }}
+                            >
                                 <Trash />
                             </div>
-                        </div>
-                        )}
-                        <span>{formatCreated(post.created_at)}</span>
+                        </div>}
+                        <span>
+                            {formatCreated(post.created_at)}
+                        </span>
                     </div>
                 </div>
             </div>
             {/* {(expanded || showComment) && (
-                <AccPostComment id={post.id}/>
-            )} */}
+        <AccPostComment id={post.id}/>
+     )} */}
         </div>
-    )
+    );
 }

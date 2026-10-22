@@ -2,7 +2,6 @@
 @use "./AccHabits.scss";
 @use "./AccPosts.scss";
 @use "./AccPostComments.scss";
-
 .accDiv {
     width: 100%;
     height: 100%;
@@ -29,6 +28,8 @@
 }
 
 .accInfo {
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
     --acc-info-margin-top: 0px;
     border-radius: 24px;
     display: flex;
@@ -42,20 +43,16 @@
     padding: 0;
     overflow: hidden;
     opacity: 1;
-
-    transition:
-        height .4s ease,
-        opacity .4s ease,
-        margin-top .4s ease;
-
     @media (max-width: 800px) {
         --acc-info-margin-top: 1vh;
         margin: 1vh 2vw 0;
     }
 }
+
 .accInfoDragging {
     transition: none;
 }
+
 .accInfoInner {
     display: flex;
     flex-direction: column;
@@ -67,16 +64,17 @@
         padding: 1vh 2vw;
     }
 }
+
 .accInfoInner > * {
     flex-shrink: 0;
 }
-.accInput.dis,
-.extraInfoInput.dis,
-.accExtraInfoWrapper.dis {
+
+.accInput.dis, .extraInfoInput.dis, .accExtraInfoWrapper.dis {
     pointer-events: none;
     user-select: none;
     cursor: default;
 }
+
 .accInfoMain {
     display: flex;
     @media (max-width: 800px) {
@@ -84,6 +82,7 @@
         align-items: center;
     }
 }
+
 .accPic {
     left: 0.5vw;
     aspect-ratio: 1/1;
@@ -99,21 +98,23 @@
         width: 80%;
     }
     @media (max-width: 800px) {
-
         height: 20vh;
         width: 20vh;
         margin-top: 2vh;
     }
 }
+
 .avatarImg {
     width: 100%;
     height: 100%;
     object-fit:cover;
     border-radius: 50%;
 }
+
 .accPicksfileInput {
     display: none;
 }
+
 .accInfoNames {
     flex: 1;
     margin-left: 0.5vw;
@@ -151,12 +152,14 @@
         }
     }
 }
+
 .accNickStr {
     display: flex;
     @media (max-width: 800px) {
         justify-content: center;
     }
 }
+
 .accOnlineStauts {
     display: flex;
     align-items: center;
@@ -180,14 +183,17 @@
         padding: 1vh 3vw;
     }
 }
+
 .nameInput {
     font-size: 30px;
     color: var(--tc) !important;
 }
+
 .nickInput {
     color: var(--borderHabit);
     font-size: 18px;
 }
+
 .accInfoWrapper {
     display: flex;
     align-items: center;
@@ -215,6 +221,7 @@
         color: var(--borderHabit);
     }
 }
+
 .extraInfoInput {
     height: 25px;
     scrollbar-width: none;
@@ -230,6 +237,7 @@
         color: var(--borderWh);
     }
 }
+
 .accExtraInfo {
     display: flex;
     gap: 0.5vw;
@@ -253,14 +261,17 @@
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     min-height: 0;
+    border: 1px solid var(--block_border);
     @media (max-width: 800px) {
         margin: 1vh 2vw;
     }
 }
+
 .accContentSelect {
     display: flex;
     height: 4.5vh;
 }
+
 .accContentButt {
     display: flex;
     cursor: pointer;
@@ -287,10 +298,7 @@
     will-change: transform;
 }
 
-.accInfo,
-.accExtraInfoWrapper,
-.accExtraInfo,
-.accContentSelector {
+.accInfo, .accExtraInfoWrapper, .accExtraInfo, .accContentSelector {
     flex-shrink: 0;
 }
 
@@ -317,6 +325,7 @@
     text-align: center;
     color: var(--borderWh);
 }
+
 .accContent {
     display: flex;
     flex-direction: row;
@@ -334,10 +343,12 @@
         display: none;
     }
 }
+
 .accContentLocked .accContentSlide {
     overflow-y: hidden;
     overflow-anchor: none;
 }
+
 .accSlide {
     flex: 0 0 100%;
     width: 100%;
@@ -347,6 +358,7 @@
     flex-direction: column;
     align-items: center;
 }
+
 .accContentSlide {
     width: 80%;
     min-height: 0;
@@ -360,6 +372,7 @@
         width: 100%;
     }
 }
+
 @media (max-width: 800px) {
     .accContentSlide {
         width: 100%;

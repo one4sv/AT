@@ -6,12 +6,10 @@ import { api } from "../ts/api";
 import { useCalendar } from "../hooks/CalendarHook";
 import axios from "axios";
 import { useNavigate } from "react-router";
-
 /**
  * Контекст для работы с текущей привычкой
  */
 const TheHabitContext = createContext<TheHabitContextType | null>(null);
-
 export interface TheHabitContextType {
     loadHabit: (id: string | null) => Promise<void>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,97 +42,95 @@ export interface TheHabitContextType {
     showCounter: habitCounter | null;
     setShowCounter: React.Dispatch<SetStateAction<habitCounter | null>>;
     counterSettings: counterSettingsType | null;
-    checklist:DoneCompletion[],
-    pattern:ChecklistPattern[],
-    overallStats: OverallStatsData | null
-    loadOverallStats: (habitId: number) => Promise<void>
+    checklist: DoneCompletion[];
+    pattern: ChecklistPattern[];
+    overallStats: OverallStatsData | null;
+    loadOverallStats: (habitId: number) => Promise<void>;
 }
-
 export interface habitTimer {
     id: number;
     started_at: Date;
     end_at: Date;
     status: "running" | "paused" | "ended";
-    pauses: { start: string; time: string; end: string | null }[];
-    circles: { time: string; text: string | null }[];
+    pauses: {
+        start: string;
+        time: string;
+        end: string | null;
+    }[];
+    circles: {
+        time: string;
+        text: string | null;
+    }[];
 }
-
 export interface habitCounter {
     id: number;
     started_at: Date;
     count: number;
-    progression: { count: string; time: Date; text: string }[];
+    progression: {
+        count: string;
+        time: Date;
+        text: string;
+    }[];
     min_count: number;
 }
-
 export interface counterSettingsType {
     id: number;
     min_count: number;
     red_counter_right: number;
     red_counter_left: number;
 }
-
-export type metricsType = "timer" | "counter" | "schedule" | "checklist" | "done"
-export type asctype = "one" | "all" | "none"
-
+export type metricsType = "timer" | "counter" | "schedule" | "checklist" | "done";
+export type asctype = "one" | "all" | "none";
 export interface HabitSettings {
     metric_type: metricsType;
     schedule: boolean;
-    auto_schedule_completion:asctype
+    auto_schedule_completion: asctype;
 }
-export type DoneCompletion = { 
-    id:number, 
-    start_time:string, 
-    end_time:string, 
-    name:string,
-    date:string,
-    habit_id:number,
-    isNew?: boolean
-}
-export type ChecklistPattern = { 
-    id:number, 
-    start_time:string, 
-    end_time:string, 
-    name:string,
-    habit_id:number,
-    isNew?: boolean
-}
+export type DoneCompletion = {
+    id: number;
+    start_time: string;
+    end_time: string;
+    name: string;
+    date: string;
+    habit_id: number;
+    isNew?: boolean;
+};
+export type ChecklistPattern = {
+    id: number;
+    start_time: string;
+    end_time: string;
+    name: string;
+    habit_id: number;
+    isNew?: boolean;
+};
 export interface OverallStats {
-    compCount: number
-    compProcent: string
-    skipCount: number
-    skipProcent: string
-
-    streakCount: number
-    streakMax: number
-    streakMiddle: number
-
-    breakMax: number
-    breakMiddle: number
-
-    allCount: number
-
-    fullCounter?: number
-    maxCounter?: number
-    middleCounter?: number
-
-    fullTimer?: number
-    maxTimer?: number
-    middleTimer?: number
-
-    fullSchedule?: number
-    maxSchedule?: number
-    middleSchedule?: number
+    compCount: number;
+    compProcent: string;
+    skipCount: number;
+    skipProcent: string;
+    streakCount: number;
+    streakMax: number;
+    streakMiddle: number;
+    breakMax: number;
+    breakMiddle: number;
+    allCount: number;
+    fullCounter?: number;
+    maxCounter?: number;
+    middleCounter?: number;
+    fullTimer?: number;
+    maxTimer?: number;
+    middleTimer?: number;
+    fullSchedule?: number;
+    maxSchedule?: number;
+    middleSchedule?: number;
 }
-
 export interface OverallStatsExtras {
-    streakMax: string
-    breakMax: string
+    streakMax: string;
+    breakMax: string;
 }
-
 export interface OverallStatsData {
-    stats: OverallStats
-    extras: OverallStatsExtras
+    stats: OverallStats;
+    extras: OverallStatsExtras;
 }
 /**
  * Парсит счётчик из API (строки → Date)
@@ -148,26 +144,30 @@ const parseCounter = (counter: habitCounter): habitCounter | null => {
         started_at: new Date(counter.started_at),
         count: counter.count,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        progression: (counter.progression || []).map((item: any) => ({
-            count: item.count,
-            time: new Date(item.time),
-            text: item.text
-        })),
+        progression: (counter.progression || []).map(
+            (item: any) => ({
+                count: item.count,
+                time: new Date(item.time),
+                text: item.text
+            })
+        ),
         min_count: counter.min_count
     };
 };
-
 /**
  * Провайдер контекста привычки
  * @param children React-элементы
  * @returns JSX провайдер
  */
-export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
+export const TheHabitProvider = ({
+    children
+}: {
+    children: ReactNode;
+}) => {
     const { showNotification } = useNote();
     const { fetchCalendarHabit } = useCalendar();
     const navigate = useNavigate();
     const API_URL = import.meta.env.VITE_API_URL;
-
     const [loadingHabit, setLoadingHabit] = useState(false);
     const [habit, setHabit] = useState<Habit | undefined>(undefined);
     const [isReadOnly, setIsReadOnly] = useState(false);
@@ -184,52 +184,47 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
     const [counterSettings, setCounterSettings] = useState<counterSettingsType | null>(null);
     const [checklist, setChecklist] = useState<DoneCompletion[]>([]);
     const [pattern, setPattern] = useState<ChecklistPattern[]>([]);
-    const [overallStats, setOverallStats] = useState<OverallStatsData | null>(null)
-    const [habitSettings, setHabitSettings] = useState<HabitSettings>({
-        metric_type: "timer",
-        schedule: false,
-        auto_schedule_completion:"none"
-    });
-
+    const [overallStats, setOverallStats] = useState<OverallStatsData | null>(null);
+    const [habitSettings, setHabitSettings] = useState<HabitSettings>(
+        {
+            metric_type: "timer",
+            schedule: false,
+            auto_schedule_completion: "none"
+        }
+    );
     const habitAbortRef = useRef<AbortController | null>(null);
-    
     /**
      * Парсит таймер из API (строки → Date)
      * @param timer Таймер из API
      * @returns Распарсенный таймер или null
      */
-    const parseTimer = useCallback((timer: habitTimer | null): habitTimer | null => {
-        if (timer === null) return null;
-        return {
-            id: timer.id,
-            started_at: new Date(timer.started_at),
-            end_at: new Date(timer.end_at),
-            status: timer.status,
-            pauses: timer.pauses || [],
-            circles: timer.circles || []
-        };
-    }, []);
-
+    const parseTimer = useCallback(
+        (timer: habitTimer | null): habitTimer | null => {
+            if (timer === null) return null;
+            return {
+                id: timer.id,
+                started_at: new Date(timer.started_at),
+                end_at: new Date(timer.end_at),
+                status: timer.status,
+                pauses: timer.pauses || [],
+                circles: timer.circles || []
+            };
+        },
+        []
+    );
     /**
      * Получает привычку с сервера
      * @param id ID привычки
      * @returns Ответ API с привычкой
      */
     const findHabit = useCallback(
-        async (
-            id: string | null,
-            signal?: AbortSignal
-        ) => {
+        async (id: string | null, signal?: AbortSignal) => {
             if (!id) return null;
-
             try {
-                const res = await api.get(
-                    `habits/${id}`,
-                    { signal }
-                );
-
+                const res = await api.get(`habits/${id}`, {
+                    signal
+                });
                 const data = res.data;
-
                 if (data.success) {
                     return {
                         ...data,
@@ -237,28 +232,20 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                         counter: parseCounter(data.counter)
                     };
                 }
-
                 return data;
             } catch (err) {
                 if (axios.isCancel(err)) {
                     throw err;
                 }
-
                 console.error(err);
-
                 if (axios.isAxiosError(err)) {
-                    showNotification(
-                        "error",
-                        err.response?.data?.error
-                    );
+                    showNotification("error", err.response?.data?.error);
                 }
-
                 throw err;
             }
         },
         [API_URL, parseTimer, showNotification]
     );
-
     /**
      * Загружает привычку и обновляет состояние
      * @param id ID привычки
@@ -266,18 +253,13 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
      */
     const loadHabit = async (id: string | null): Promise<void> => {
         if (!id) return;
-
         habitAbortRef.current?.abort();
-
         const controller = new AbortController();
         habitAbortRef.current = controller;
-
         try {
             const res = await findHabit(id, controller.signal);
-
             if (controller.signal.aborted) return;
             if (!res?.success) return;
-
             const {
                 habit: habitData,
                 isRead,
@@ -289,9 +271,7 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                 checklist,
                 pattern
             } = res;
-
             fetchCalendarHabit(id);
-
             setHabit(habitData);
             setIsReadOnly(isRead);
             setTodayDone(doneToday);
@@ -299,23 +279,21 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
             setCounterSettings(cSettings);
             setHabitCounter(counter);
             setHabitTimer(timer);
-
             setChecklist(
-                (checklist || []).map((c: DoneCompletion) => ({
-                    ...c,
-                    start_time: c.start_time ?? "",
-                    end_time: c.end_time ?? "",
-                    name: c.name ?? "",
-                    isNew: false
-                }))
+                (checklist || []).map(
+                    (c: DoneCompletion) => ({
+                        ...c,
+                        start_time: c.start_time ?? "",
+                        end_time: c.end_time ?? "",
+                        name: c.name ?? "",
+                        isNew: false
+                    })
+                )
             );
-
             setPattern(pattern || []);
-
             await loadOverallStats(Number(id), controller.signal);
         } catch (err) {
             if (axios.isCancel(err)) return;
-
             if (axios.isAxiosError(err)) {
                 if (err.response?.status === 403 || err.response?.status === 404) {
                     if (window.history.length > 1) {
@@ -324,7 +302,6 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                         navigate("/habit");
                     }
                 }
-
                 showNotification("error", err.response?.data?.error);
             }
         } finally {
@@ -333,67 +310,59 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
             }
         }
     };
-
     /**
      * Загружает таймер привычки
      * @param habit_id ID привычки
      * @returns Promise<void>
      */
-    const loadTimer = useCallback(async (habit_id: number): Promise<void> => {
-        try {
-            const res = await api.get(`timer/${habit_id}`);
-            if (res.data.success) {
-                setHabitTimer(parseTimer(res.data.timer));
+    const loadTimer = useCallback(
+        async (habit_id: number): Promise<void> => {
+            try {
+                const res = await api.get(`timer/${habit_id}`);
+                if (res.data.success) {
+                    setHabitTimer(parseTimer(res.data.timer));
+                }
+            } catch (error) {
+                console.error(error);
             }
-        } catch (error) {
-            console.error(error);
-        }
-    }, [API_URL, parseTimer]);
-
+        },
+        [API_URL, parseTimer]
+    );
     /**
      * Загружает счётчик привычки
      * @param habit_id ID привычки
      * @returns Promise<void>
      */
-    const loadCounter = useCallback(async (habit_id: number): Promise<void> => {
-        try {
-            const res = await api.get(`counter/${habit_id}`);
-            if (res.data.success) {
-                setHabitCounter(parseCounter(res.data.counter));
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }, [API_URL]);
-
-    const loadOverallStats = useCallback(
-        async (
-            habitId: number,
-            signal?: AbortSignal
-        ): Promise<void> => {
+    const loadCounter = useCallback(
+        async (habit_id: number): Promise<void> => {
             try {
-                const res = await api.get(
-                    `habits/${habitId}/stats`,
-                    { signal }
-                );
-
+                const res = await api.get(`counter/${habit_id}`);
+                if (res.data.success) {
+                    setHabitCounter(parseCounter(res.data.counter));
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        [API_URL]
+    );
+    const loadOverallStats = useCallback(
+        async (habitId: number, signal?: AbortSignal): Promise<void> => {
+            try {
+                const res = await api.get(`habits/${habitId}/stats`, {
+                    signal
+                });
                 if (signal?.aborted) return;
-
                 if (res.data.success) {
                     setOverallStats(res.data);
                 }
             } catch (error) {
                 if (axios.isCancel(error)) return;
-
-                console.error(
-                    "Ошибка загрузки общей статистики:",
-                    error
-                );
+                console.error("Ошибка загрузки общей статистики:", error);
             }
         },
         [API_URL]
     );
-
     /**
      * Загружает привычку с индикатором загрузки
      * @param id ID привычки
@@ -404,11 +373,14 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
         await loadHabit(id);
     };
 
-    useEffect(() => {
-        return () => {
-            habitAbortRef.current?.abort();
-        };
-    }, []);
+    useEffect(
+        () => {
+            return () => {
+                habitAbortRef.current?.abort();
+            };
+        },
+        []
+    );
 
     return (
         <TheHabitContext.Provider
@@ -446,12 +418,11 @@ export const TheHabitProvider = ({ children }: { children: ReactNode }) => {
                 isPlanned,
                 setIsPlanned,
                 overallStats,
-                loadOverallStats,
+                loadOverallStats
             }}
         >
             {children}
         </TheHabitContext.Provider>
     );
 };
-
 export default TheHabitContext;

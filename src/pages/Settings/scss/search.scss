@@ -1,5 +1,4 @@
 @use "../../../scss/mixins" as var;
-
 .settingBackWrapper {
     width: 50%;
     padding: 0 2% 3vh;
@@ -9,7 +8,6 @@
     justify-content: center;
     z-index: 3;
     gap: 2%;
-
     &::before {
         content: "";
         position: absolute;
@@ -39,27 +37,24 @@
     color: var(--borderWh);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-
+    border: 1px solid var(--block_border);
     >svg {
         width: 3vh;
         height: 3dvh;
         flex-shrink: 0;
     }
-
     @media (hover: hover) {
         &:hover {
             color: var(--tc);
             background-color: var(--menuButtHover);
         }
     }
-
     @media (hover: none) {
         &:active {
             color: var(--tc);
             background-color: var(--menuButtHover);
         }
     }
-
     @media (max-width: 800px) {
         left: 0;
     }
@@ -85,11 +80,9 @@
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     overflow: hidden;
-
     @media (max-width: 800px) {
         margin: 0;
     }
-
     >div {
         display: flex;
         justify-content: center;
@@ -100,21 +93,18 @@
         right: 0;
         cursor: pointer;
         color: var(--tc);
-        
         @media (hover: hover) {
             &:hover {
                 background: var(--on_con_menu_mess);
                 color: var(--tc);
             }
         }
-
         @media (hover: none) {
             &:active {
                 background: var(--on_con_menu_mess);
                 color: var(--tc);
             }
         }
-
         >svg {
             width: 3vh;
             height: 3dvh;
@@ -124,20 +114,15 @@
 }
 
 .settingSearchInput {
-    @include var.input(var(--tr),
-        var(--tc),
-        none,
-        100%,
-        24px,
-        var(--none));
+    @include var.input(var(--tr), var(--tc), none, 100%, 24px, var(--none));
     width: 100%;
     padding: 0.4vh 0.5vw;
     border: none;
     outline: none;
+    border: 1px solid var(--block_border);
     &::placeholder {
         color: var(--borderHabit);
     }
-
     @media (max-width:800px) {
         padding-right: 10vw;
         padding-inline-start: 3vw;
@@ -161,8 +146,9 @@
         min-height: 82dvh;
         justify-content: center;
         height: fit-content;
-    } 
+    }
 }
+
 .searchSectionHeader {
     font-size: 18px;
     padding-inline-start: 0.5vw;
@@ -176,6 +162,7 @@
         margin-right: 5px;
     }
 }
+
 .searchInnerDiv {
     background-color: var(--mc);
     border-radius: 24px;
@@ -191,6 +178,7 @@
         }
     }
 }
+
 .searchButt {
     width: 100%;
     padding: 1vh 0.65vw;
@@ -204,7 +192,6 @@
     >span {
         font-size: 18px;
     }
-
     @media (hover: hover) {
         &:hover {
             background-color: var(--menuButtHover);
@@ -216,7 +203,6 @@
             }
         }
     }
-
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);
@@ -238,6 +224,7 @@
         opacity: .25;
     }
 }
+
 .settingSearchSpanIcon {
     color: var(--accent);
     width: 22px;
@@ -252,13 +239,13 @@
     justify-content: center;
     margin-right: 6px;
 }
+
 .searchedButtsEmpty {
     background-color: var(--mc);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     margin-top: 0;
-    he
-    >span {
+    he     >span {
         font-size: 20px;
     }
 }

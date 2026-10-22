@@ -1,6 +1,7 @@
 @use "../../../scss/mixins" as var;
-
 .chosenDayDiv {
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
     background-color: var(--mc);
     border-radius: 24px;
     display: flex;
@@ -23,6 +24,7 @@
         padding: 0.5vh 2vw;
     }
 }
+
 .chosenDayDate {
     padding: 1vh 0.5vw 0 1vw;
     display: flex;
@@ -34,14 +36,12 @@
     justify-content: space-between;
     align-items: flex-start;
     box-sizing: border-box;
-    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-        background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-        margin 0.35s cubic-bezier(.4,0,.2,1),
-        flex-grow 0.3s ease;
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1),          background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),         margin 0.35s cubic-bezier(.4,0,.2,1),         flex-grow 0.3s ease;
     @media (max-width:800px) {
         padding-left: 3vw;
     }
 }
+
 .calendarReturn {
     height: 3dvh;
     display: flex;
@@ -53,21 +53,18 @@
     cursor: pointer;
     @media (hover: hover) {
         &:hover {
-        color: var(--tc);
-        background-color: var(--menuButtHover);
-    
+            color: var(--tc);
+            background-color: var(--menuButtHover);
         }
     }
-
     @media (hover: none) {
         &:active {
-        color: var(--tc);
-        background-color: var(--menuButtHover);
-    
-        
+            color: var(--tc);
+            background-color: var(--menuButtHover);
         }
     }
 }
+
 .cdhabits {
     width: 100%;
     padding-top: 0.5dvh;
@@ -75,6 +72,7 @@
     flex-direction: column;
     gap: 0.3vh;
 }
+
 .cdHabitStr {
     display: flex;
     height: 4dvh;
@@ -97,6 +95,7 @@
         height: 5dvh;
     }
 }
+
 .cdHabitInfo {
     display: flex;
     align-items: center;
@@ -110,6 +109,7 @@
         padding: 0 2vw;
     }
 }
+
 .cdHabitName {
     display: flex;
     align-items: center;

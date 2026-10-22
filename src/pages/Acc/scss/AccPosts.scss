@@ -7,9 +7,10 @@
     margin: 0 auto;
     gap: 0.8vh;
     position: relative;
-    padding-bottom: 11vh;
+    padding-bottom: 2vh;
     @media (max-width:800px) {
         width: 100%;
+        padding-bottom: 3vh;
     }
 }
 .apEmojiBar {

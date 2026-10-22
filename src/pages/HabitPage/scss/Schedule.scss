@@ -1,6 +1,7 @@
 @use "../../../scss/mixins" as var;
-
 .scheduleDiv {
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
     width: 100%;
     max-height: 80dvh;
     background-color: var(--mc);
@@ -9,6 +10,7 @@
     display: flex;
     flex-direction: column;
 }
+
 .schedule {
     display: flex;
     justify-content: space-around;
@@ -17,15 +19,18 @@
         border-left: 0;
     }
 }
+
 .scheduleOptions {
     display: flex;
     padding: 2px 0.5vw 5px;
     justify-content: space-between;
 }
+
 .scheduleOptionsButts {
     display: flex;
     gap: 0.5vw;
 }
+
 .scheduleOptWeek {
     cursor: pointer;
     user-select: none;
@@ -40,6 +45,7 @@
         color: var(--tc);
     }
 }
+
 .scheduleOpt {
     cursor: pointer;
     border-radius: 6px;
@@ -57,16 +63,12 @@
         background:linear-gradient(135deg, var(--accent), var(--grad));
         @media (hover: hover) {
             &:hover {
-            background-color: var(--darker_accent);
-        
+                background-color: var(--darker_accent);
             }
         }
-
         @media (hover: none) {
             &:active {
-            background-color: var(--darker_accent);
-        
-            
+                background-color: var(--darker_accent);
             }
         }
     }
@@ -74,18 +76,14 @@
         color: var(--borderWh);
         @media (hover: hover) {
             &:hover {
-            background-color: var(--menuButtHover);
-            color: var(--tc);
-        
+                background-color: var(--menuButtHover);
+                color: var(--tc);
             }
         }
-
         @media (hover: none) {
             &:active {
-            background-color: var(--menuButtHover);
-            color: var(--tc);
-        
-            
+                background-color: var(--menuButtHover);
+                color: var(--tc);
             }
         }
     }
@@ -94,42 +92,37 @@
         color: var(--borderWh);
         @media (hover: hover) {
             &:hover {
-            background-color: var(--menuButtHover);
-            color: var(--tc);
-        
+                background-color: var(--menuButtHover);
+                color: var(--tc);
             }
         }
-
         @media (hover: none) {
             &:active {
-            background-color: var(--menuButtHover);
-            color: var(--tc);
-        
-            
+                background-color: var(--menuButtHover);
+                color: var(--tc);
             }
         }
     }
     &.loading {
         animation: pulseBrightness 2s infinite ease-in-out;
     }
-
 }
+
 .scheduleWeekSign {
     margin: 0.5vh 1vw;
     padding: 0.5vh 0.5vw;
     width: fit-content;
     border-radius: 6px;
-
     &.odd {
         background: var(--oddBg);
         color: var(--oddText);
     }
-
     &.even {
         background: var(--evenBg);
         color: var(--evenText);
     }
 }
+
 .scheduleWrapper {
     display: flex;
     flex-direction: column;
@@ -141,6 +134,7 @@
     max-height: 38dvh;
     scrollbar-width: thin;
 }
+
 @media (max-width: 800px) {
     .schedule {
         display: flex;
@@ -154,6 +148,7 @@
         max-height: 70dvh;
     }
 }
+
 .scheduleInfo {
     padding: 0.5vh 0.5vw;
     display: flex;
@@ -183,9 +178,11 @@
         }
     }
 }
+
 .scheduleDate {
     color: var(--borderHabit);
 }
+
 .scheduleBlock {
     position: relative;
     display: flex;
@@ -202,16 +199,12 @@
     gap: 3px;
     @media (hover: hover) {
         &:hover {
-        border: 1px solid var(--tc);
-    
+            border: 1px solid var(--tc);
         }
     }
-
     @media (hover: none) {
         &:active {
-        border: 1px solid var(--tc);
-    
-        
+            border: 1px solid var(--tc);
         }
     }
     &.done {
@@ -223,16 +216,12 @@
             color: var(--borderWhLight);
             @media (hover: hover) {
                 &:hover {
-                color: var(--tc);
-            
+                    color: var(--tc);
                 }
             }
-
             @media (hover: none) {
                 &:active {
-                color: var(--tc);
-            
-                
+                    color: var(--tc);
                 }
             }
         }
@@ -243,9 +232,10 @@
             > .scheduleExtraBlock > .scheduleHabitTime {
                 color: var(--borderWhLight);
             }
-        } 
+        }
     }
 }
+
 .scheduleBar {
     top: 0;
     position: absolute;
@@ -253,6 +243,7 @@
     height: 2px;
     background-color: var(--borderHabit);
 }
+
 .scheduleBarGoing {
     position: absolute;
     height: 100%;
@@ -260,35 +251,41 @@
     left: 0;
     background-color: #129e12;
 }
+
 .scheduleBlockText {
     padding: 0 0.4vw;
     display: flex;
     flex-direction: column;
     min-width: 0;
 }
+
 .scheduleHabitTime {
     color: var(--borderWh);
 }
+
 .scheduleHabitName {
     width: 100%;
     min-width: 0;
     text-overflow: ellipsis;
     white-space: nowrap;
-    overflow: hidden;      
+    overflow: hidden;
 }
 
 .scheduleBlockInputs {
     width: 100%;
 }
+
 .scheduleExtraBlockWrapper {
     display: flex;
     min-width: 0;
 }
+
 .scheduleExtraBlockLine {
     margin: 0 0 0 0.4vw;
     width: 1px;
     background-color: var(--borderHabit);
 }
+
 .scheduleExtraBlock {
     width: 100%;
     display: flex;
@@ -298,6 +295,7 @@
     padding-left: 0.3vw;
     min-width: 0;
 }
+
 .scheduleInpTime {
     display: flex;
     justify-content: start;
@@ -305,6 +303,7 @@
     width: 100%;
     gap: 5px;
 }
+
 .scheduleInp {
     width: 30%;
     background-color: var(--scheduleInp);
@@ -318,6 +317,7 @@
         font-size: 14px;
     }
 }
+
 .scheduleInpText {
     @include var.input(var(--scheduleInp), var(--tc), var(--tr), max-content, 4px, var(--tr));
     font-size: 14px;
@@ -342,19 +342,16 @@
     font-size: 14px;
     @media (hover: hover) {
         &:hover {
-        color: var(--tc);
-    
+            color: var(--tc);
         }
     }
-
     @media (hover: none) {
         &:active {
-        color: var(--tc);
-    
-        
+            color: var(--tc);
         }
     }
 }
+
 .isScheduleBlockDone {
     position: absolute;
     right: 4px;

@@ -36,6 +36,7 @@
         user-select: none;
     }
 }
+
 .systemMessage {
     position: relative;
     width: 100%;
@@ -68,13 +69,13 @@
         gap: 5px;
         flex-wrap: nowrap;
         white-space: nowrap;
-        > div {                     /* это блок с "Пересланное сообщение" */
-            margin-left: 2px;
+        > div {
+            /* это блок с "Пересланное сообщение" */             margin-left: 2px;
             margin-top: 0;
             display: inline-block;
             width: auto;
-            max-width: 38vw;        /* ограничиваем длину цитаты */
-            overflow: hidden;
+            max-width: 38vw;
+            /* ограничиваем длину цитаты */             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             font-size: 13px;
@@ -82,6 +83,7 @@
         }
     }
 }
+
 .systemMessageSender {
     @media (hover: hover) {
         &:hover {
@@ -89,7 +91,6 @@
             cursor: pointer;
         }
     }
-
     @media (hover: none) {
         &:active {
             text-decoration: underline;
@@ -97,6 +98,7 @@
         }
     }
 }
+
 .messChoseButt {
     height: 2.5dvh;
     width: 2.5vh;
@@ -116,13 +118,13 @@
             background-color: #e0e0e08f;
         }
     }
-
     @media (hover: none) {
         &:active {
             background-color: #e0e0e08f;
         }
     }
 }
+
 .dateDivider {
     position: sticky;
     top: 1dvh;
@@ -142,6 +144,7 @@
         padding: 0.5vh 3vw;
     }
 }
+
 .message {
     max-width: 25vw;
     width: fit-content;
@@ -184,12 +187,13 @@
         padding: 0.5vh 2vw;
     }
 }
+
 .senderName {
     color: var(--accent_text);
     font-size: 14px;
     cursor: pointer;
-    
 }
+
 .answerMess {
     min-width: 10vw;
     max-width: 25vw;
@@ -200,16 +204,12 @@
     background-color: var(--on_con_menu_mess);
     @media (hover: hover) {
         &:hover {
-        background-color: var(--chosing_mess);
-    
+            background-color: var(--chosing_mess);
         }
     }
-
     @media (hover: none) {
         &:active {
-        background-color: var(--chosing_mess);
-    
-        
+            background-color: var(--chosing_mess);
         }
     }
     > div {
@@ -223,6 +223,7 @@
         padding: 0.25vh 2vw;
     }
 }
+
 .messageText {
     max-width: 100%;
     word-wrap: break-word;
@@ -235,6 +236,7 @@
         max-width: 100%;
     }
 }
+
 .messageStatusBarDiv {
     display: flex;
     align-items: center;
@@ -242,21 +244,26 @@
     height: 2dvh;
     user-select: none;
 }
+
 .messageBar {
     display: flex;
     align-items: center;
     gap: 0.2vw;
 }
+
 .messTime {
     font-size: 12px;
 }
+
 .editedMess {
     font-size: 12px;
 }
+
 .messBarSvg {
     height: 12px;
     width: 12px;
 }
+
 .reactionButt {
     position: absolute;
     bottom: 2px;
@@ -272,43 +279,37 @@
         background-color: var(--darker_accent);
         @media (hover: hover) {
             &:hover {
-            background-color: var(--accent_text);
-        
+                background-color: var(--accent_text);
             }
         }
-
         @media (hover: none) {
             &:active {
-            background-color: var(--accent_text);
-        
-            
+                background-color: var(--accent_text);
             }
         }
-    }    
+    }
     &.urRB {
         left: 95%;
         background-color: var(--mess);
         @media (hover: hover) {
             &:hover {
-            background-color: var(--borderHabit);
-        
+                background-color: var(--borderHabit);
             }
         }
-
         @media (hover: none) {
             &:active {
-            background-color: var(--borderHabit);
-        
-            
+                background-color: var(--borderHabit);
             }
         }
     }
 }
+
 .reactions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.3vw;
 }
+
 .reactionItem {
     display: flex;
     align-items: center;
@@ -321,16 +322,12 @@
         margin-right: 0.5vw;
         @media (hover: hover) {
             &:hover {
-            background-color: var(--accent_text);
-        
+                background-color: var(--accent_text);
             }
         }
-
         @media (hover: none) {
             &:active {
-            background-color: var(--accent_text);
-        
-            
+                background-color: var(--accent_text);
             }
         }
     }
@@ -338,16 +335,12 @@
         margin-left: 0.5vw;
         @media (hover: hover) {
             &:hover {
-            background-color: var(--borderHabit);
-        
+                background-color: var(--borderHabit);
             }
         }
-
         @media (hover: none) {
             &:active {
-            background-color: var(--borderHabit);
-        
-            
+                background-color: var(--borderHabit);
             }
         }
     }
@@ -355,20 +348,17 @@
         display: flex;
         align-items: center;
         gap: -0.3vw;
-
         .reactionUser {
             width: 1.3vw;
             height: 1.2vw;
             border-radius: 50%;
             overflow: hidden;
-
             > img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
             }
         }
-
         span {
             margin-left: 0.3vw;
             color: var(--borderWh);
@@ -376,6 +366,7 @@
         }
     }
 }
+
 .redirectSign {
     display: flex;
     align-items: center;
@@ -386,20 +377,17 @@
         cursor: pointer;
         @media (hover: hover) {
             &:hover {
-            text-decoration: underline;
-        
+                text-decoration: underline;
             }
         }
-
         @media (hover: none) {
             &:active {
-            text-decoration: underline;
-        
-            
+                text-decoration: underline;
             }
         }
     }
 }
+
 .redirectText {
     max-width: 100%;
     word-wrap: break-word;
@@ -429,6 +417,7 @@
         height: 100%;
     }
 }
+
 .messageFiles {
     display: flex;
     flex-wrap: wrap;
@@ -452,7 +441,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
     }
-
     @media (hover: none) {
         &:active {
             transform: scale(1.01);
@@ -467,6 +455,7 @@
     object-fit: cover;
     border-radius: 12px;
 }
+
 .messageFileOther {
     display: flex;
     flex-direction: column;
@@ -475,38 +464,33 @@
     height: 100%;
     background-color: var(--bgc);
     color: var(--inner_text);
-    text-decoration: none; // Для a tag
+    text-decoration: none;
+    // Для a tag
     border-radius: 12px;
     padding: 0.5vh;
-
     > svg {
         font-size: 2rem;
         margin-bottom: 0.3vh;
         color: var(--accent_text);
     }
-
     > span {
         font-size: 0.8rem;
         text-align: center;
         word-break: break-all;
         color: var(--borderWh);
     }
-
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-    
+            background-color: var(--menuButtHover);
         }
     }
-
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-    
-        
+            background-color: var(--menuButtHover);
         }
     }
 }
+
 .messageWrapper.highlight {
     animation: highlightFadeWrapper 3s ease;
     > .message {
@@ -521,8 +505,12 @@
             }
         }
     }
-    
 }
 
-.message.my { transform-origin: right bottom; }
-.message.ur { transform-origin: left bottom; }
+.message.my {
+    transform-origin: right bottom;
+}
+
+.message.ur {
+    transform-origin: left bottom;
+}

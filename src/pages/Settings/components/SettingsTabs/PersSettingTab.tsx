@@ -115,16 +115,16 @@ export default function PersSettingTab({ search }: { search: string }) {
                             </div>
                             <span>{t("personalization.addCustom")}</span>
                         </div>
+                        <div className="bgPick" role="button" tabIndex={0} aria-pressed={bg === "landing"} onClick={() => setNewBg("landing")} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setNewBg("landing"); } }}>
+                            <div className={`bgImg bgMini landingBackground ${bg === "landing" ? "choosen" : ""}`} />
+                            <span className={bg === "landing" ? "bgSpanChoosen" : ""}>{t("personalization.landingBackground")}</span>
+                        </div>
                         <div className="bgPick" onClick={() => setNewBg("default")}>
                             <div className={`bgImg bgMini ${bg === "default" ? "choosen" : ""}`}>
                                 {backIconsPattern}
                             </div>
                             <span className={bg === "default" ? "bgSpanChoosen" : ""}>{t("personalization.contourShapes")}</span>
                         </div>                        
-                        <div className="bgPick" role="button" tabIndex={0} aria-pressed={bg === "landing"} onClick={() => setNewBg("landing")} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setNewBg("landing"); } }}>
-                            <div className={`bgImg bgMini landingBackground ${bg === "landing" ? "choosen" : ""}`} />
-                            <span className={bg === "landing" ? "bgSpanChoosen" : ""}>{t("personalization.landingBackground")}</span>
-                        </div>
                         <div className="bgPick" onClick={() => setNewBg("color")}>
                             <div className={`bgImg bgMini ${bg === "color" ? "choosen" : ""}`} />
                             <span className={bg === "color" ? "bgSpanChoosen" : ""}>{t("personalization.solidColor")}</span>

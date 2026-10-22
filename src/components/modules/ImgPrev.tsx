@@ -7,7 +7,7 @@ import { ArrowDownToLine, ChevronLeft, ChevronRight, MessageCircleReply } from "
 import { UserIcon } from "@phosphor-icons/react";
 
 export default function ImgPrev() {
-    const { blackout, setBlackout } = useBlackout();
+    const { blackout, setBlackout, setBlackoutStack } = useBlackout();
     const { setPendingScrollId } = useMessages();
     const navigate = useNavigate();
     const { images, imageIndex = 0 } = blackout;
@@ -300,6 +300,7 @@ export default function ImgPrev() {
                         onClick={() => {
                             navigate(`/acc/${sender.nick}`);
                             setBlackout({ seted: false });
+                            setBlackoutStack([])
                         }}
                     >
                         <div className="senderInfoPic">

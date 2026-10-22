@@ -70,6 +70,7 @@
         transition: backdrop-filter .2s ease;
         backdrop-filter: blur(var(--blur));
         -webkit-backdrop-filter: blur(var(--blur));
+        border: 1px solid var(--block_border);
         &.imgPrevDiv {
             backdrop-filter: none;
             -webkit-backdrop-filter: none;

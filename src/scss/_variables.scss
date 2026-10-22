@@ -1,3 +1,4 @@
+$block_border: color-mix(in srgb, var(--borderWh) 22%, transparent);
 $bgc: #1d1d1d;
 $tc: white;
 $borderWh: #a1a1a1;
@@ -9,7 +10,6 @@ $borderHabit: #646464;
 $notValid: #f44336;
 $tr: #00000000;
 $mess: #272727;
-$block_border: color-mix(in srgb, var(--borderWh) 22%, transparent);
 
 $themes: (
     light: (
@@ -339,6 +339,9 @@ $decors: (
 );
 
 @mixin generate-theme-vars {
+  :root {
+    --block_border: #{$block_border};
+  }
   @each $theme-name, $map in $themes {
     [data-theme="#{$theme-name}"] {
       @each $k, $v in $map {

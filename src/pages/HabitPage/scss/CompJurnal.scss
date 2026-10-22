@@ -1,9 +1,9 @@
 @use "../../../scss/mixins" as var;
-
 .compJurnalMain {
     height: 100%;
     width: 100%;
 }
+
 .compJurnalsearch {
     width: 100%;
     > input {
@@ -27,6 +27,7 @@
         }
     }
 }
+
 .CJrecord {
     width: 100%;
     padding: 1vh 0.5vw;
@@ -39,7 +40,6 @@
             background-color: var(--menuButtHover);
         }
     }
-
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);
@@ -49,21 +49,25 @@
         padding: 1vh 3vw;
     }
 }
+
 .CJdates {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
+
 .CJdate {
     display: flex;
     color: #11c011;
     align-items: center;
     gap: 0.2vw;
 }
+
 .CJcreated {
     color: var(--borderHabit);
     font-size: 14px;
 }
+
 .CJcomment {
     color: var(--borderWh);
     white-space: pre-wrap;

@@ -1,6 +1,7 @@
 @use "../../../scss/mixins" as var;
-
 .infoText {
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
     border-radius: 24px;
     background-color: var(--interact);
     backdrop-filter: blur(20px);
@@ -15,6 +16,7 @@
         margin-top: 0;
     }
 }
+
 .contact {
     display: flex;
     align-items: center;
@@ -22,6 +24,7 @@
     text-decoration: none !important;
     gap: 4px;
 }
+
 .one4svlogo {
     width: 100%;
     height: 10dvh;
@@ -31,13 +34,13 @@
     justify-content: center;
     padding-top:1dvh;
     border-radius: 12px;
-
     > img {
         height: 400%;
         width: auto;
         object-fit:contain;
     }
 }
+
 .infoBack {
     width: 100%;
     display: flex;
@@ -53,6 +56,7 @@
     color: var(--borderWh);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--block_border);
     @media (hover: hover) {
         &:hover {
             color: var(--tc);
@@ -78,6 +82,7 @@
         flex: 1;
     }
 }
+
 .infoTableButt {
     height: 5dvh;
     max-height: 5dvh;
@@ -96,6 +101,7 @@
     color: var(--borderWh);
     user-select: none;
     cursor: pointer;
+    border: 1px solid var(--block_border);
     @media (max-width: 800px) {
         padding: 0 3vw;
     }
@@ -112,6 +118,7 @@
         }
     }
 }
+
 .infoTableDiv {
     position: absolute;
     border-radius: 24px;
@@ -131,6 +138,7 @@
     max-height: 90vh;
     padding: .5vh .25vw;
 }
+
 .infoTableItem {
     padding: 1vh 1vw;
     cursor: pointer;
@@ -165,6 +173,7 @@
         padding: 1vh 1.5vw;
     }
 }
+
 .settingTab h3 {
     scroll-margin-top: 20px;
     padding: 1vh .5vw;
@@ -176,6 +185,7 @@
         margin-bottom: .5vh;
     }
 }
+
 .infoText p {
     padding: .5vh .5vw;
     margin: .25vh 0.5vw .5vh;
@@ -184,9 +194,8 @@
         margin: .5vh;
     }
 }
-.settingTab h1,
-.settingTab h2,
-.settingTab h3 {
+
+.settingTab h1, .settingTab h2, .settingTab h3 {
     position: relative;
     isolation: isolate;
     border-radius: 24px;
@@ -248,9 +257,29 @@
         color: var(--inner_text);
     }
 }
-.infoIllustration { display: block; width: 100%; max-width: 560px; height: auto; margin: 8px auto 24px; }
 
-.infoText { line-height: 1.6; overflow-wrap: anywhere; }
-.infoText :is(h1, h2, h3) { line-height: 1.25; margin-block: 1.1em .6em; }
-.infoText p { margin-block: .75em; }
-.infoText li { margin-block: .4em; }
+.infoIllustration {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    height: auto;
+    margin: 8px auto 24px;
+}
+
+.infoText {
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.infoText :is(h1, h2, h3) {
+    line-height: 1.25;
+    margin-block: 1.1em .6em;
+}
+
+.infoText p {
+    margin-block: .75em;
+}
+
+.infoText li {
+    margin-block: .4em;
+}

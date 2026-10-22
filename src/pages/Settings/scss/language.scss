@@ -10,9 +10,12 @@
     padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
     overflow-y: auto;
     color: var(--tc);
-    background: var(--bgc);
+    background: var(--tr);
 }
+
 .languageCard {
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
     position: relative;
     z-index: 1;
     display: flex;
@@ -25,12 +28,40 @@
     background: var(--mc);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    h1 { margin: 0; font-size: 28px; font-weight: 400; }
-    p { margin: 0; color: var(--borderWh); font-size: 15px; line-height: 1.6; }
+    h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 400;
+    }
+    p {
+        margin: 0;
+        color: var(--borderWh);
+        font-size: 15px;
+        line-height: 1.6;
+    }
 }
-.languageIcon { margin-top: 12px; color: var(--accent_text); }
-.languageBack { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; color: var(--borderWh); text-decoration: none; }
-.languageChoices { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+
+.languageIcon {
+    margin-top: 12px;
+    color: var(--accent_text);
+}
+
+.languageBack {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    color: var(--borderWh);
+    text-decoration: none;
+}
+
+.languageChoices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+}
+
 .languageChoice {
     display: flex;
     align-items: center;
@@ -47,10 +78,29 @@
     text-align: start;
     cursor: pointer;
     transition: background-color .2s, border-color .2s;
-    small { display: block; margin-top: 4px; font-size: 13px; color: var(--borderWh); }
-    &.active { border-color: var(--accent); }
-    >svg { color: var(--accent_text); }
-    &:hover { background: var(--menuButtHover); }
+    small {
+        display: block;
+        margin-top: 4px;
+        font-size: 13px;
+        color: var(--borderWh);
+    }
+    &.active {
+        border-color: var(--accent);
+    }
+    >svg {
+        color: var(--accent_text);
+    }
+    &:hover {
+        background: var(--menuButtHover);
+    }
 }
-.languagePage :is(a, button):focus-visible { outline: 2px solid var(--accent_text); outline-offset: 3px; }
-[data-decor="default"] .languageCard { backdrop-filter: none; -webkit-backdrop-filter: none; }
+
+.languagePage :is(a, button):focus-visible {
+    outline: 2px solid var(--accent_text);
+    outline-offset: 3px;
+}
+
+[data-decor="default"] .languageCard {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}

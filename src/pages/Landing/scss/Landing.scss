@@ -1,5 +1,4 @@
 @use "../../../scss/mixins" as var;
-
 .landing {
     position: relative;
     isolation: isolate;
@@ -78,7 +77,9 @@
     box-shadow: 0 16px 56px #0000001c;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    &::-webkit-scrollbar { display: none; }
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .landingForm {
@@ -100,9 +101,10 @@
     scrollbar-color: var(--borderWh) transparent;
     scroll-snap-align: start;
     overscroll-behavior-y: contain;
-    >.landingField:first-child { margin-top: auto; }
-    >button,
-    >.landingSwitchForm {
+    >.landingField:first-child {
+        margin-top: auto;
+    }
+    >button,     >.landingSwitchForm {
         position: static;
         align-self: center;
         flex-shrink: 0;
@@ -115,7 +117,10 @@
         font: inherit;
         cursor: pointer;
         transition: background-color .2s, color .2s;
-        &:hover { background: var(--menuButtHover); color: var(--tc); }
+        &:hover {
+            background: var(--menuButtHover);
+            color: var(--tc);
+        }
     }
 }
 
@@ -152,14 +157,24 @@
     font-size: 15px;
     transition: border-color .2s, background-color .2s, box-shadow .2s;
     outline: none;
-    &::placeholder { color: var(--borderWh); opacity: .7; }
-    &:hover { background: var(--menuButtHover); }
+    &::placeholder {
+        color: var(--borderWh);
+        opacity: .7;
+    }
+    &:hover {
+        background: var(--menuButtHover);
+    }
     &:focus {
         border-color: var(--accent);
         box-shadow: none;
     }
-    &.invalid { border-color: var(--notValid); }
-    &.landingInputPass { width: 100%; padding-right: 48px; }
+    &.invalid {
+        border-color: var(--notValid);
+    }
+    &.landingInputPass {
+        width: 100%;
+        padding-right: 48px;
+    }
 }
 
 .passWrap {
@@ -197,7 +212,10 @@
     background: transparent;
     color: var(--borderWh);
     cursor: pointer;
-    &:hover { background: var(--menuButtHover); color: var(--tc); }
+    &:hover {
+        background: var(--menuButtHover);
+        color: var(--tc);
+    }
 }
 
 .passRules {
@@ -217,9 +235,15 @@
         color: var(--borderWh);
         font-size: 12px;
         line-height: 1.4;
-        &.valid { color: var(--valid); }
-        &.invalid { color: var(--notValid); }
-        >svg { flex: 0 0 13px; }
+        &.valid {
+            color: var(--valid);
+        }
+        &.invalid {
+            color: var(--notValid);
+        }
+        >svg {
+            flex: 0 0 13px;
+        }
     }
 }
 
@@ -233,14 +257,25 @@
     font-size: 12px;
     line-height: 1.4;
     overflow-wrap: anywhere;
-    &.invalid { color: var(--notValid); }
-    &.valid { color: var(--valid); }
+    &.invalid {
+        color: var(--notValid);
+    }
+    &.valid {
+        color: var(--valid);
+    }
     &.loading {
         color: var(--borderWh);
-        >svg { animation: landingSpin 1s linear infinite; }
+        >svg {
+            animation: landingSpin 1s linear infinite;
+        }
     }
 }
-@keyframes landingSpin { to { transform: rotate(360deg); } }
+
+@keyframes landingSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
 
 .landingConsents {
     display: flex;
@@ -249,6 +284,7 @@
     width: 100%;
     margin-top: 3px;
 }
+
 .checkString {
     display: flex;
     align-items: center;
@@ -264,11 +300,15 @@
     line-height: 1.45;
     user-select: none;
     white-space: normal;
-    >svg { color: var(--accent_text); }
-    &.notAccepted { color: var(--notValid); }
-    label { 
-        display: inline-flex; 
-        align-items: center; 
+    >svg {
+        color: var(--accent_text);
+    }
+    &.notAccepted {
+        color: var(--notValid);
+    }
+    label {
+        display: inline-flex;
+        align-items: center;
         gap: 7px;
     }
     svg {
@@ -278,6 +318,7 @@
         color: var(--accent_text);
     }
 }
+
 .landingNativeCheckbox {
     position: absolute;
     width: 1px;
@@ -285,13 +326,20 @@
     overflow: hidden;
     clip-path: inset(50%);
     opacity: 0;
-    &:focus-visible + svg, &:focus-visible + label svg { outline: 2px solid var(--accent_text); outline-offset: 3px; border-radius: 4px; }
+    &:focus-visible + svg, &:focus-visible + label svg {
+        outline: 2px solid var(--accent_text);
+        outline-offset: 3px;
+        border-radius: 4px;
+    }
 }
+
 .acceptSpan {
     color: var(--accent_text);
     text-decoration: underline;
     text-underline-offset: 3px;
-    &:hover { color: var(--tc); }
+    &:hover {
+        color: var(--tc);
+    }
 }
 
 .landingButts {
@@ -301,8 +349,11 @@
     width: 100%;
     gap: 8px;
     margin-top: 10px;
-    >.loaderSmall { align-self: center; }
+    >.loaderSmall {
+        align-self: center;
+    }
 }
+
 .greenButt {
     box-sizing: border-box;
     width: 100%;
@@ -319,9 +370,14 @@
     font-weight: 400;
     cursor: pointer;
     transition: filter .2s, box-shadow .2s, transform .2s;
-    &:hover { filter: brightness(1.08); }
-    &:active { transform: scale(.99); }
+    &:hover {
+        filter: brightness(1.08);
+    }
+    &:active {
+        transform: scale(.99);
+    }
 }
+
 .whiteButt {
     box-sizing: border-box;
     width: 100%;
@@ -333,6 +389,7 @@
     border-radius: 11px;
     cursor: pointer;
 }
+
 .wtbgButt {
     display: inline-flex;
     align-items: center;
@@ -348,12 +405,18 @@
     font: inherit;
     font-size: 14px;
     cursor: pointer;
-    &:hover { color: var(--tc); background: var(--menuButtHover); }
+    &:hover {
+        color: var(--tc);
+        background: var(--menuButtHover);
+    }
 }
-.landingForm button:disabled { opacity: .55; cursor: not-allowed; }
-.landingForm :is(button, a):focus-visible,
-.changeSignTheme:focus-visible,
-.landingFooter :is(a, button, input):focus-visible {
+
+.landingForm button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.landingForm :is(button, a):focus-visible, .changeSignTheme:focus-visible, .landingFooter :is(a, button, input):focus-visible {
     outline: 2px solid var(--accent_text);
     outline-offset: 3px;
 }
@@ -386,7 +449,9 @@
         height: auto;
         font-size: 18px;
         color: var(--borderWh);
-        >svg { max-height: 62px; }
+        >svg {
+            max-height: 62px;
+        }
     }
     >div:not(.o4studio) {
         display: flex;
@@ -407,7 +472,10 @@
             font-size: 14px;
             text-decoration: none;
             cursor: pointer;
-            &:hover { color: var(--tc); background: var(--menuButtHover); }
+            &:hover {
+                color: var(--tc);
+                background: var(--menuButtHover);
+            }
         }
     }
 }
@@ -428,8 +496,14 @@
     background: var(--mc);
     color: var(--borderWh);
     cursor: pointer;
-    >svg { width: 20px; height: 20px; }
-    &:hover { color: var(--tc); background: var(--menuButtHover); }
+    >svg {
+        width: 20px;
+        height: 20px;
+    }
+    &:hover {
+        color: var(--tc);
+        background: var(--menuButtHover);
+    }
 }
 
 .landingSL {
@@ -449,9 +523,18 @@
         font-size: 14px;
         text-align: center;
         cursor: pointer;
-        &:hover, &:focus-visible { color: var(--tc); background: var(--menuButtHover); }
+        &:hover, &:focus-visible {
+            color: var(--tc);
+            background: var(--menuButtHover);
+        }
     }
-    >div { width: 100%; >div { width: 100%; justify-content: center; } }
+    >div {
+        width: 100%;
+        >div {
+            width: 100%;
+            justify-content: center;
+        }
+    }
 }
 
 .landingEmailHint {
@@ -464,24 +547,58 @@
 }
 
 @media (max-width: 800px) {
-    .landingDiv { padding: max(64px, env(safe-area-inset-top)) 20px max(74px, env(safe-area-inset-bottom)); gap: 24px; }
-    .title { font-size: clamp(25px, 7.5vw, 36px); }
-    .title >span { font-size: 12px; bottom: -12px; }
-    .landingFormWrapper { width: min(100%, 430px); height: min(690px, calc(100% - 64px)); border-radius: 20px; }
-    .landingForm { padding: 22px 20px; gap: 11px; }
-    .landingInput { font-size: 16px; }
-    .landingFooter { padding: 28px 20px; gap: 28px; }
-    .landingFooter >div:not(.o4studio) { gap: 8px 12px; }
-    .landingSL { width: 150px; }
+    .landingDiv {
+        padding: max(64px, env(safe-area-inset-top)) 20px max(74px, env(safe-area-inset-bottom));
+        gap: 24px;
+    }
+    .title {
+        font-size: clamp(25px, 7.5vw, 36px);
+    }
+    .title >span {
+        font-size: 12px;
+        bottom: -12px;
+    }
+    .landingFormWrapper {
+        width: min(100%, 430px);
+        height: min(690px, calc(100% - 64px));
+        border-radius: 20px;
+    }
+    .landingForm {
+        padding: 22px 20px;
+        gap: 11px;
+    }
+    .landingInput {
+        font-size: 16px;
+    }
+    .landingFooter {
+        padding: 28px 20px;
+        gap: 28px;
+    }
+    .landingFooter >div:not(.o4studio) {
+        gap: 8px 12px;
+    }
+    .landingSL {
+        width: 150px;
+    }
 }
 
 @media (max-height: 680px) {
-    .landingDiv { padding-top: max(56px, env(safe-area-inset-top)); gap: 14px; }
-    .landingFormWrapper { height: calc(100% - 50px); }
+    .landingDiv {
+        padding-top: max(56px, env(safe-area-inset-top));
+        gap: 14px;
+    }
+    .landingFormWrapper {
+        height: calc(100% - 50px);
+    }
 }
+
 @media (prefers-reduced-motion: reduce) {
-    .landing, .landingFormWrapper { scroll-behavior: auto; }
-    .landingInput, .greenButt, .landingForm >button { transition: none; }
+    .landing, .landingFormWrapper {
+        scroll-behavior: auto;
+    }
+    .landingInput, .greenButt, .landingForm >button {
+        transition: none;
+    }
 }
 
 .landingFooterTrigger {
@@ -503,9 +620,15 @@
     font-size: 13px;
     white-space: nowrap;
     cursor: pointer;
-    &:hover { color: var(--tc); background: var(--menuButtHover); }
-    &:focus-visible { outline: 2px solid var(--accent_text); }
+    &:hover {
+        color: var(--tc);
+        background: var(--menuButtHover);
+    }
+    &:focus-visible {
+        outline: 2px solid var(--accent_text);
+    }
 }
+
 .landingFooterBackdrop {
     position: absolute;
     inset: 0;
@@ -515,6 +638,7 @@
     visibility: hidden;
     transition: opacity .3s ease, visibility .3s;
 }
+
 .landingFooterSheet {
     position: absolute;
     inset: max(56px, env(safe-area-inset-top)) 0 0;
@@ -540,6 +664,7 @@
     visibility: hidden;
     outline: none;
 }
+
 .landingFooterHandle {
     position: sticky;
     top: 0;
@@ -555,17 +680,43 @@
     border-radius: 28px 28px 0 0;
     cursor: grab;
     touch-action: none;
-    >span { width: 40px; height: 4px; border-radius: 4px; background: var(--borderWh); opacity: .65; }
-    &:focus-visible { outline: 2px solid var(--accent_text); outline-offset: -4px; }
+    >span {
+        width: 40px;
+        height: 4px;
+        border-radius: 4px;
+        background: var(--borderWh);
+        opacity: .65;
+    }
+    &:focus-visible {
+        outline: 2px solid var(--accent_text);
+        outline-offset: -4px;
+    }
 }
-.landingFooterBack { flex-shrink: 0; margin: 12px; }
+
+.landingFooterBack {
+    flex-shrink: 0;
+    margin: 12px;
+}
+
 .landingFooterOpen {
-    .landingFooterBackdrop { visibility: visible; opacity: 1; }
-    .landingFooterSheet { visibility: visible; transition-delay: 0s; transform: translateY(var(--landing-drag)); }
+    .landingFooterBackdrop {
+        visibility: visible;
+        opacity: 1;
+    }
+    .landingFooterSheet {
+        visibility: visible;
+        transition-delay: 0s;
+        transform: translateY(var(--landing-drag));
+    }
 }
+
 .landingDragging {
-    .landingFooterSheet { visibility: visible; transition: none; }
+    .landingFooterSheet {
+        visibility: visible;
+        transition: none;
+    }
 }
+
 .landingDiv >.landingFormEmail {
     flex: 0 1 auto;
     width: min(100%, 430px);
@@ -578,8 +729,11 @@
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
 }
+
 @media (prefers-reduced-motion: reduce) {
-    .landingFooterSheet, .landingFooterBackdrop { transition: none; }
+    .landingFooterSheet, .landingFooterBackdrop {
+        transition: none;
+    }
 }
 
 [data-decor="default"] .landing {
@@ -590,20 +744,265 @@
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
     }
-    .landingInput, .codeCell { background: var(--mc); }
+    .landingInput, .codeCell {
+        background: var(--mc);
+    }
 }
 
-.landing .greenButt, .landing .whiteButt, .landing .wtbgButt, .landing .landingSwitchForm { border-radius: 24px; font-weight: 400; font-size: 16px; }
-.landing .landingForm >.landingButts { flex-shrink: 0; }
-.landing .title { flex-shrink: 0; }
+.landing .greenButt, .landing .whiteButt, .landing .wtbgButt, .landing .landingSwitchForm {
+    border-radius: 24px;
+    font-weight: 400;
+    font-size: 16px;
+}
+
+.landing .landingForm >.landingButts {
+    flex-shrink: 0;
+}
+
+.landing .title {
+    flex-shrink: 0;
+}
+
 // .landing .landingFormWrapper.auth { height: min(360px, calc(100% - 70px)); }
-.landing .landingFormWrapper { transition: height .3s cubic-bezier(.22, 1, .36, 1); }
-.landing button { font-family: inherit; }
-.landing input { font-family: inherit; }
-.landing .landingLabel { padding-inline-start: 8px; color: var(--borderWh); }
-.landing .passWrap { background: transparent; border: 0; outline: none; box-shadow: none; }
-.landing .landingFooterNote { width: min(100%, 420px); color: var(--borderWh); font-size: 15px; line-height: 1.6; text-align: center; margin: 0; }
-.landingFooter >div.landingFooterLinks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 8px; }
-.landingFooter >div.landingFooterLinks >a { min-height: 44px; padding: 10px 14px; gap: 8px; border-radius: 24px; text-align: center; }
-.landingFooter .o4studio >svg { width: 88px; height: 44px; }
-@media (max-width: 800px) { .landingFooter >div.landingFooterLinks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.landing .landingFormWrapper {
+    transition: height .3s cubic-bezier(.22, 1, .36, 1);
+}
+
+.landing button {
+    font-family: inherit;
+}
+
+.landing input {
+    font-family: inherit;
+}
+
+.landing .landingLabel {
+    padding-inline-start: 8px;
+    color: var(--borderWh);
+}
+
+.landing .passWrap {
+    background: transparent;
+    border: 0;
+    outline: none;
+    box-shadow: none;
+}
+
+.landing .landingFooterNote {
+    width: min(100%, 420px);
+    color: var(--borderWh);
+    font-size: 15px;
+    line-height: 1.6;
+    text-align: center;
+    margin: 0;
+}
+
+.landingFooter >div.landingFooterLinks {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 8px;
+}
+
+.landingFooter >div.landingFooterLinks >a {
+    min-height: 44px;
+    padding: 10px 14px;
+    gap: 8px;
+    border-radius: 24px;
+    text-align: center;
+}
+
+.landingFooter .o4studio >svg {
+    width: 88px;
+    height: 44px;
+}
+
+@media (max-width: 800px) {
+    .landingFooter >div.landingFooterLinks {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.landing .landingFormWrapper {
+    border-color: var(--block_border);
+    scroll-behavior: auto;
+    touch-action: pan-y pinch-zoom;
+}
+
+.landingForm {
+    touch-action: pan-y pinch-zoom;
+}
+
+.quickLogin {
+    flex-shrink: 0;
+    padding: 12px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.quickLogin >p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--borderWh);
+}
+
+.quickLogin .quickForget {
+    font-size: 13px;
+    background: transparent;
+    min-height: 32px;
+}
+
+.qrCard {
+    padding: 12px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.qrCard svg {
+    max-width: 100%;
+    height: auto;
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    box-sizing: content-box;
+}
+
+.qrCard p {
+    margin: 0;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.quickError {
+    color: var(--notValid);
+    font-size: 13px;
+}
+
+.landing .landingFormWrapper {
+    container-type: size;
+}
+
+.landing .landingForm {
+    scrollbar-width: none;
+}
+
+.landing .landingForm::-webkit-scrollbar {
+    display: none;
+}
+
+.landing .landingFormAuth {
+    gap: 10px;
+    overflow-y: hidden;
+}
+
+.landing .landingFormAuth > .landingSwitchForm {
+    margin-bottom: 0;
+    padding-block: 8px;
+}
+
+.landing .landingFormAuth > .quickLogin {
+    margin-top: auto;
+}
+
+.landing .quickLogin {
+    padding: 0;
+    margin-bottom: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+}
+
+.landing .quickLogin .quickQrButton {
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--accent_text);
+}
+
+.landing .quickLogin .quickQrButton:focus-visible {
+    outline: 2px solid var(--accent_text);
+    outline-offset: 2px;
+}
+
+.landing .qrCard {
+    padding: 0;
+    border: 0;
+    outline: none;
+}
+
+.landing .landingQrSlide {
+    overflow-y: hidden;
+}
+
+.landing .landingQrSlide > .quickLogin {
+    margin-block: auto;
+}
+
+.quickLoginQr h2 {
+    font-size: 22px;
+    font-weight: 400;
+    text-align: center;
+    margin: 0 0 12px;
+}
+
+.qrImage {
+    display: grid;
+    place-items: center;
+    min-height: 204px;
+    width: 100%;
+}
+
+.landing .landingInput {
+    border: 1px solid var(--block_border);
+}
+
+.landing .landingInput:focus {
+    border-color: var(--accent);
+}
+
+.landing .landingInput.invalid {
+    border-color: var(--notValid);
+}
+
+.quickLogin button, .qrCard button {
+    font: inherit;
+    color: var(--tc);
+    background: var(--interact);
+    border: 0;
+    border-radius: 24px;
+    min-height: 42px;
+    padding: 10px 16px;
+    cursor: pointer;
+}
+
+.quickLogin button:disabled {
+    opacity: .5;
+    cursor: wait;
+}
+
+.landing .quickLogin .quickQrButton {
+    border: 0;
+    background: transparent;
+    color: var(--accent_text);
+}
+
+@container (max-height: 480px) {
+    .landing .landingFormAuth, .landing .landingQrSlide {
+        overflow-y: auto;
+        padding-block: 12px;
+        gap: 8px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing .landingFormWrapper {
+        scroll-behavior: auto;
+    }
+}

@@ -1,5 +1,4 @@
 @use "../../../scss/global" as var;
-
 .scheduleCompilition {
     display: flex;
     flex-direction: column;
@@ -9,6 +8,7 @@
     overflow-y: auto;
     scrollbar-width: thin;
 }
+
 .scheduleButt {
     align-items: center;
     display: flex;
@@ -18,31 +18,28 @@
     // background-color: var(--interact);
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-        > .scheduleButtSvg {
-        color: var(--tc);
-        > .scsvg {
-        color: var(--tc);
-        }
-        }
-    
+            background-color: var(--menuButtHover);
+            > .scheduleButtSvg {
+                color: var(--tc);
+                > .scsvg {
+                    color: var(--tc);
+                }
+            }
         }
     }
-
     @media (hover: none) {
         &:active {
-        background-color: var(--menuButtHover);
-        > .scheduleButtSvg {
-        color: var(--tc);
-        > .scsvg {
-        color: var(--tc);
-        }
-        }
-    
-        
+            background-color: var(--menuButtHover);
+            > .scheduleButtSvg {
+                color: var(--tc);
+                > .scsvg {
+                    color: var(--tc);
+                }
+            }
         }
     }
 }
+
 .scheduleButtInfo {
     display: flex;
     width: 100%;
@@ -50,6 +47,7 @@
     flex-direction: column;
     gap: 2px;
 }
+
 .scheduleButtSpan {
     color: var(--borderWh);
     font-size: 15px;
@@ -57,6 +55,7 @@
     align-items: center;
     gap: 5px;
 }
+
 .scheduleButtSvg {
     height: 1.9dvh;
     aspect-ratio: 1/1;
@@ -71,15 +70,52 @@
         color: var(--accent_text);
     }
 }
+
 .scheduleRest {
     width: 100%;
     color: var(--borderHabit);
     text-align: center;
 }
-.scheduleCompilition { min-height: 0; overscroll-behavior: contain; gap: 8px; }
-.scheduleCompilition .scheduleButt { flex-shrink: 0; min-height: 56px; padding: 12px; gap: 12px; border: 1px solid transparent; border-radius: 16px; background: var(--interact, var(--bgc)); color: var(--tc); text-align: start; font: inherit; }
-.scheduleButt.completed { border-color: var(--accent_op); }
-.scheduleButt:disabled { cursor: default; }
-.scheduleButtInfo { min-width: 0; overflow-wrap: anywhere; }
-.scheduleButtSvg { flex: 0 0 24px; width: 24px; height: 24px; }
-.scheduleButt:focus-visible { outline: 2px solid var(--accent_text); outline-offset: -2px; }
+
+.scheduleCompilition {
+    min-height: 0;
+    overscroll-behavior: contain;
+    gap: 8px;
+}
+
+.scheduleCompilition .scheduleButt {
+    flex-shrink: 0;
+    min-height: 56px;
+    padding: 12px;
+    gap: 12px;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: var(--interact, var(--bgc));
+    color: var(--tc);
+    text-align: start;
+    font: inherit;
+}
+
+.scheduleButt.completed {
+    border-color: var(--accent_op);
+}
+
+.scheduleButt:disabled {
+    cursor: default;
+}
+
+.scheduleButtInfo {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.scheduleButtSvg {
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.scheduleButt:focus-visible {
+    outline: 2px solid var(--accent_text);
+    outline-offset: -2px;
+}

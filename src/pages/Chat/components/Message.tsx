@@ -15,73 +15,108 @@ import { useSettings } from "../../../components/hooks/SettingsHook";
 import { reactionsArr } from "../../../components/ts/utils/emojies";
 import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
 import HighlightText from "../../../components/ts/HighlightText";
-
-
 type MessageComponentType = {
-    message: message,
-    messageRefs?: React.MutableRefObject<Map<number, HTMLDivElement | null>>,
-    answer?:{id:number, name:string, text:string},
-    redir_answer?:{id:number, name:string, text:string},
-    scrollToMessage?:(id:number) => void,
-    showNames?:(boolean),
-    cornerType?: string | null,
-}
-export default function Message ({ message:m, answer, showNames, redir_answer, cornerType } : MessageComponentType) {
-    const { scrollToMessage, messageRefs, highlightedId } = useChatMessageScroll()
-    const { setReaction, chatWith, activeHeader, setActiveHeader } = useChat()
-    const { chosenMess, setChosenMess, setAnswer } = useMessages()
-    const { user } = useUser()
-    const { openMenu, menu } = useContextMenu()
-    const { emote, messdb } = useSettings()
-    const { searchMess } = useChat()
-    const [ showReactionButt, setShowReactionButt ] = useState<number>(0)
-
+    message: message;
+    messageRefs?: React.MutableRefObject<Map<number, HTMLDivElement | null>>;
+    answer?: {
+        id: number;
+        name: string;
+        text: string;
+    };
+    redir_answer?: {
+        id: number;
+        name: string;
+        text: string;
+    };
+    scrollToMessage?: (id: number) => void;
+    showNames?: (boolean);
+    cornerType?: string | null;
+};
+export default function Message({
+    message: m,
+    answer,
+    showNames,
+    redir_answer,
+    cornerType
+}: MessageComponentType) {
+    const {
+        scrollToMessage,
+        messageRefs,
+        highlightedId
+    } = useChatMessageScroll();
+    const {
+        setReaction,
+        chatWith,
+        activeHeader,
+        setActiveHeader
+    } = useChat();
+    const {
+        chosenMess,
+        setChosenMess,
+        setAnswer
+    } = useMessages();
+    const { user } = useUser();
+    const {
+        openMenu,
+        menu
+    } = useContextMenu();
+    const {
+        emote,
+        messdb
+    } = useSettings();
+    const { searchMess } = useChat();
+    const [showReactionButt, setShowReactionButt] = useState<number>(0);
     const appearRef = useRef<HTMLDivElement>(null);
     const animateIn = useRef(Boolean(m.animateIn));
 
-    useLayoutEffect(() => {
-        const element = appearRef.current;
-        if (!element || !animateIn.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-        const animation = element.animate([
-            { opacity: 0, transform: "translateY(12px) scale(0.97)" },
-            { opacity: 1, transform: "translateY(0) scale(1)" },
-        ], {
-            duration: 260,
-            easing: "cubic-bezier(0.075, 0.82, 0.165, 1)",
-        });
-
-        return () => animation.cancel();
-    }, []);
-
-
-    const navigate = useNavigate()
+    useLayoutEffect(
+        () => {
+            const element = appearRef.current;
+            if (!element || !animateIn.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+            const animation = element.animate(
+                [{
+                    opacity: 0,
+                    transform: "translateY(12px) scale(0.97)"
+                }, {
+                    opacity: 1,
+                    transform: "translateY(0) scale(1)"
+                }],
+                {
+                    duration: 260,
+                    easing: "cubic-bezier(0.075, 0.82, 0.165, 1)"
+                }
+            );
+            return () => animation.cancel();
+        },
+        []
+    );
+    const navigate = useNavigate();
     const messageGetTime = (date: Date | string) => {
         const d = new Date(date);
-        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-    const isMy = m.sender_id === user.id ? true : false
-    const isChose = activeHeader === "choosing"
+        return d.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+    const isMy = m.sender_id === user.id ? true : false;
+    const isChose = activeHeader === "choosing";
     const openContext = (x: number, y: number) => {
         const reaction = m.reactions.find(r => r.user_id === user.id);
         const isReacted = reaction ? reaction.reaction : "none";
-
         openMenu(
             x,
             y,
             "mess",
-            { id: String(m.id) },
+            {
+                id: String(m.id)
+            },
             undefined,
             undefined,
             {
                 isReacted,
                 isMy: m.sender_id === user.id,
                 text: m.content,
-                previewText: m.content || (
-                    m.files && m.files.length > 0
-                        ? `${m.files.length} mediafile`
-                        : "Пересланное сообщение"
-                ),
+                previewText: m.content || (m.files && m.files.length > 0 ? `${m.files.length} mediafile` : "Пересланное сообщение"),
                 sender: m.sender_name,
                 files: m.files || undefined,
                 is_pinned: m.is_pinned
@@ -96,108 +131,128 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
                 ${menu.point === "mess" && menu.options.id === String(m.id) && "onContextMenu"}
                 ${m.isPending ? "pending" : ""}
             `}
-            ref={(el) => {messageRefs?.current.set(m.id, el)}}
+            ref={el => {
+                messageRefs?.current.set(m.id, el);
+            }}
             onMouseEnter={() => setShowReactionButt(m.id)}
             onMouseLeave={() => setShowReactionButt(0)}
-            onMouseDown={(e) => {
+            onMouseDown={e => {
                 if (e.detail === 2) {
-                const el = e.currentTarget;
-                el.style.userSelect = "none";
-                setTimeout(() => {
-                    el.style.userSelect = "text";
-                }, 300);
+                    const el = e.currentTarget;
+                    el.style.userSelect = "none";
+                    setTimeout(() => {
+                        el.style.userSelect = "text";
+                    }, 300);
                 }
             }}
             onClick={() => {
                 if (isChose) {
-                    if (chosenMess.some((mess) => mess.id === m.id )) setChosenMess((prev) => prev.filter(mess => mess.id !== m.id));
-                    else setChosenMess((prev) => [...prev, { id:m.id, text:m.content}]);
+                    if (chosenMess.some(mess => mess.id === m.id)) setChosenMess(prev => prev.filter(mess => mess.id !== m.id)); else setChosenMess(
+                        prev => [...prev, {
+                            id: m.id,
+                            text: m.content
+                        }]
+                    );
                 }
             }}
             data-context-menu="true"
-            onContextMenu={(e) => {
+            onContextMenu={e => {
                 e.preventDefault();
                 openContext(e.clientX, e.clientY);
             }}
-            onDoubleClick={(e) => {
+            onDoubleClick={e => {
                 if (isChose) return;
-                e.preventDefault()
+                e.preventDefault();
                 if (messdb === "reaction") {
-                    setReaction(m.id, emote)
+                    setReaction(m.id, emote);
                 } else if (messdb === "answer") {
-                    setAnswer({id:m.id.toString(), sender:m.sender_name, text:m.content, previewText: m.content || (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : "Пересланное сообщение")})
+                    setAnswer(
+                        {
+                            id: m.id.toString(),
+                            sender: m.sender_name,
+                            text: m.content,
+                            previewText: m.content || (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : "Пересланное сообщение")
+                        }
+                    );
                 } else if (messdb === "select") {
-                    setActiveHeader("choosing")
+                    setActiveHeader("choosing");
                     if (!isChose) {
-                        setChosenMess((prev) => [...prev, { id:m.id, text:m.content}]);
+                        setChosenMess(
+                            prev => [...prev, {
+                                id: m.id,
+                                text: m.content
+                            }]
+                        );
                     }
                 }
             }}
         >
-            {isChose && (
-                <div className="messChoseButt" style={{opacity: isChose ? "1" : "0"}}>
-                    {chosenMess.some((mess) => mess.id === m.id) ? <CheckCircle weight="fill"/> : <CheckCircle/> }
-                </div>
-            )}
-            <div ref={appearRef} className={`message ${ isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""}`}>
-                {!isMy && (showNames === undefined || showNames === true) && chatWith?.is_group && 
-                    <div className="senderName" style={{cursor: isChose ? "default" : "pointer"}} onClick={() => !isChose && navigate(`/acc/${m.sender_nick}`)}>
-                        {m.sender_name}
-                    </div>
-                }
-                {answer && scrollToMessage && (
-                    <AnswerMess answer={answer} scrollToMessage={scrollToMessage}/>
-                )}
+            {isChose && <div className="messChoseButt" style={{
+                opacity: isChose ? "1" : "0"
+            }}>
+                {chosenMess.some(mess => mess.id === m.id) ? <CheckCircle weight="fill" /> : <CheckCircle />}
+            </div>}
+            <div
+                ref={appearRef}
+                className={`message ${isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""}`}
+            >
+                {!isMy && (showNames === undefined || showNames === true) && chatWith?.is_group && <div
+                    className="senderName"
+                    style={{
+                        cursor: isChose ? "default" : "pointer"
+                    }}
+                    onClick={() => !isChose && navigate(`/acc/${m.sender_nick}`)}
+                >
+                    {m.sender_name}
+                </div>}
+                {answer && scrollToMessage && <AnswerMess answer={answer} scrollToMessage={scrollToMessage} />}
                 <div className={`messageText ${isMobile ? "mobile" : ""}`}>
-                    <HighlightText text={m.content} search={searchMess}/>
+                    <HighlightText text={m.content} search={searchMess} />
                 </div>
-                {m.files && m.files.length > 0 && (
-                    <MessageFiles files={m.files} m={m}/>
-                )}
-                {m.redirected_id && (
-                    <div className="redirectedMess">
-                        <div className="redirectSign"><ShareFat weight="fill"/>{`Переслано ${m.redirected_name ? "от" : ""}`}&nbsp;<span onClick={() => navigate(`/acc/${m.redirected_nick}`)}>{m.redirected_name}</span></div>
-                        {m.redirected_answer && redir_answer && m.redirected_name && scrollToMessage && (
-                            <AnswerMess answer={redir_answer} scrollToMessage={scrollToMessage}/>
-                        )}
-                        <div className="redirectText"><Linkify>{m.redirected_content}</Linkify></div>
-                        {m.redirected_files && m.redirected_files.length > 0 && (
-                            <MessageFiles files={m.redirected_files} m={m}/>
-                        )}
+                {m.files && m.files.length > 0 && <MessageFiles files={m.files} m={m} />}
+                {m.redirected_id && <div className="redirectedMess">
+                    <div className="redirectSign">
+                        <ShareFat weight="fill" />
+                        {`Переслано ${m.redirected_name ? "от" : ""}`}&nbsp;
+                        <span onClick={() => navigate(`/acc/${m.redirected_nick}`)}>
+                            {m.redirected_name}
+                        </span>
                     </div>
-                )}
+                    {m.redirected_answer && redir_answer && m.redirected_name && scrollToMessage && <AnswerMess answer={redir_answer} scrollToMessage={scrollToMessage} />}
+                    <div className="redirectText">
+                        <Linkify>
+                            {m.redirected_content}
+                        </Linkify>
+                    </div>
+                    {m.redirected_files && m.redirected_files.length > 0 && <MessageFiles files={m.redirected_files} m={m} />}
+                </div>}
                 <div className="messageStatusBarDiv">
                     <div className="messageBar">
-                        <span className="messTime">{messageGetTime(m.created_at)}</span> 
-                        {m.is_pinned && (
-                            <PushPin weight="fill" className="messBarSvg"/>
-                        )}
-                        {m.edited && (
-                            <span className="editedMess">изменено</span>
-                        )}
-                        {m.reactions && m.reactions.length > 0 && (
-                            <div className="reactions" onClick={()=> setReaction(m.id, "Heart")}>
-                                {Object.entries(
-                                    m.reactions.reduce((acc, r) => {
+                        <span className="messTime">
+                            {messageGetTime(m.created_at)}
+                        </span>
+                        {m.is_pinned && <PushPin weight="fill" className="messBarSvg" />}
+                        {m.edited && <span className="editedMess">изменено</span>}
+                        {m.reactions && m.reactions.length > 0 && <div className="reactions" onClick={() => setReaction(m.id, "Heart")}>
+                            {Object.entries(
+                                m.reactions.reduce(
+                                    (acc, r) => {
                                         if (!acc[r.reaction]) acc[r.reaction] = [];
                                         acc[r.reaction].push(r.user_id);
                                         return acc;
-                                    }, {} as Record<string, string[]>)
-                                ).map(([reaction, users]) => (
-                                    <div key={reaction} className={`reactionItem ${isMy ? "myR" : "urR"}`}>
-                                        
-                                            {reactionsArr.find(r => r.value === reaction)?.label}
-                                        
-                                        <div className="reactionUsers">
-                                            {users.slice(0, 2).map((userId) => {
+                                    },
+                                    {} as Record<string, string[]>
+                                )
+                            ).map(
+                                ([reaction, users]) => <div key={reaction} className={`reactionItem ${isMy ? "myR" : "urR"}`}>
+
+                                    {reactionsArr.find(r => r.value === reaction)?.label}
+
+                                    <div className="reactionUsers">
+                                        {users.slice(0, 2).map(
+                                            userId => {
                                                 if (!chatWith) return null;
-                                                const src = userId === user.id
-                                                    ? user.avatar_url
-                                                    : chatWith.is_group 
-                                                        ? chatWith.members.find(m => m.id === userId)
-                                                            ? chatWith.members.find(m => m.id === userId)?.avatar_url
-                                                            : ""
-                                                        : chatWith.avatar_url
+                                                const src = userId === user.id ? user.avatar_url : chatWith.is_group ? chatWith.members.find(m => m.id === userId) ? chatWith.members.find(m => m.id === userId)?.avatar_url : "" : chatWith.avatar_url;
                                                 if (src) {
                                                     return (
                                                         <div key={userId} className="reactionUser">
@@ -205,43 +260,36 @@ export default function Message ({ message:m, answer, showNames, redir_answer, c
                                                         </div>
                                                     );
                                                 }
-                                            })}
-                                            {users.length > 2 && <span>+{users.length - 2}</span>}
-                                        </div>
+                                            }
+                                        )}
+                                        {users.length > 2 && <span>+
+                                            {users.length - 2}
+                                        </span>}
                                     </div>
-                                ))}
-                            </div>
-                        )}
+                                </div>
+                            )}
+                        </div>}
                     </div>
-                    {isMy && chatWith
-                        ? m.isPending
-                            ? <div className="messageReadSign "><ClockCountdownIcon/></div>
-                            : m.read_by.length > 0
-                                    ? <div className="messageReadSign read"><CheckCheck/></div>
-                                    : <div className="messageReadSign unread"><Check/></div>
-                        : ""
-                    }
+                    {isMy && chatWith ? m.isPending ? <div className="messageReadSign ">
+                        <ClockCountdownIcon />
+                    </div> : m.read_by.length > 0 ? <div className="messageReadSign read">
+                        <CheckCheck />
+                    </div> : <div className="messageReadSign unread">
+                        <Check />
+                    </div> : ""}
                 </div>
-                {highlightedId === m.id && m.reactions && m.reactions.length === 0 ? 
-                    (
-                        <div 
-                            className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
-                            style={{opacity: showReactionButt === m.id ? "1" : "0"}}
-                            onClick={() => setReaction(m.id, emote)}
-                        >
-                            {reactionsArr.find(r => r.value === emote)?.label}
-                        </div>
-                    
-                    ) : ( !isMobile && showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && !isChose && (
-                        <div 
-                            className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
-                            onClick={() => setReaction(m.id, emote)}
-                        >
-                            {reactionsArr.find(r => r.value === emote)?.label}
-                        </div>
-                    ))
-                }
+                {highlightedId === m.id && m.reactions && m.reactions.length === 0 ? <div
+                    className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
+                    style={{
+                        opacity: showReactionButt === m.id ? "1" : "0"
+                    }}
+                    onClick={() => setReaction(m.id, emote)}
+                >
+                    {reactionsArr.find(r => r.value === emote)?.label}
+                </div> : !isMobile && showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && !isChose && <div className={`reactionButt ${isMy ? "myRB" : "urRB"}`} onClick={() => setReaction(m.id, emote)}>
+                    {reactionsArr.find(r => r.value === emote)?.label}
+                </div>}
             </div>
         </div>
-    )
+    );
 }

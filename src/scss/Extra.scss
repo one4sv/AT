@@ -1,5 +1,4 @@
 @use "./mixins.scss" as var;
-
 .confirmDiv {
     @include var.centerTopModal;
     width: 100%;
@@ -10,6 +9,7 @@
     font-size: 24px;
     color: var(--tc);
 }
+
 .titleConfirm {
     font-size: 48px;
     position: absolute;
@@ -31,6 +31,7 @@
     align-items: center;
     position: relative;
 }
+
 .loading {
     display: flex;
     align-items: center;
@@ -47,6 +48,7 @@
         padding: 2vh 5vw;
     }
 }
+
 .minLoader {
     display: flex;
     align-items: center;
@@ -55,6 +57,7 @@
     height: 100%;
     min-height: 48px;
 }
+
 .darkLayout {
     position: absolute;
     top: 0;
@@ -68,6 +71,7 @@
     align-items: center;
     justify-content: center;
 }
+
 .darkLayoutDiv {
     height: 48%;
     aspect-ratio: 1/1;
@@ -84,6 +88,68 @@
         height: 50%;
     }
 }
+
 .favoriteIcon {
     color: var(--accent);
+}
+
+.statusPage {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: var(--bgc);
+    color: var(--tc);
+    padding: 24px;
+    display: grid;
+    place-items: center;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.statusCard {
+    border: 1px solid var(--block_border);
+    background: var(--mc);
+    border-radius: 24px;
+    padding: 28px;
+    max-width: 440px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.statusCard h1 {
+    font-size: 26px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.statusCard p {
+    line-height: 1.5;
+    margin: 0;
+}
+
+.statusCard >svg {
+    color: var(--accent_text);
+}
+
+.statusCard button {
+    font: inherit;
+    color: var(--tc);
+    background: var(--interact);
+    border: 0;
+    border-radius: 24px;
+    min-height: 42px;
+    padding: 10px 16px;
+    cursor: pointer;
+}
+
+.statusCard button:disabled {
+    opacity: .5;
+    cursor: wait;
+}
+
+.statusCard {
+    box-sizing: border-box;
 }

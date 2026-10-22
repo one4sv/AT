@@ -15,11 +15,13 @@
         }
     }
 }
+
 .habitNameTag {
     color: var(--accent);
     height: 6dvh;
     aspect-ratio: 1/1;
 }
+
 .saveHabit {
     flex: 1;
     display: flex;
@@ -32,6 +34,7 @@
         animation: fadeIn 0.5s ease-in-out forwards, pulseBrightness 2s ease-in-out infinite;
     }
 }
+
 @media (max-width: 800px) {
     .habitNameMain {
         width: 90%;

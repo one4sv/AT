@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useUser } from "../../components/hooks/UserHook";
 import "./scss/Acc.scss";
@@ -34,14 +34,9 @@ export default function Acc() {
     const navigate = useNavigate();
 
     const [collapsed, setCollapsed] = useState(0);
-    const [isInfoCollapsed, setIsInfoCollapsed] = useState(false);
-    const [isDraggingInfo, setIsDraggingInfo] = useState(false);
     const [selector, setSelector] =
         useState<"habits" | "posts">("posts");
 
-    const infoHeight = useRef(0);
-    const collapseStartY = useRef(0);
-    const collapseStartValue = useRef(0);
     const touchStartY = useRef(0);
     const touchStartX = useRef(0);
     const expanded = useRef(false);
@@ -88,10 +83,6 @@ export default function Acc() {
         }
     }, [acc, loading, nick, setTitle]);
 
-    const handleInfoHeight = useCallback((height: number) => {
-        infoHeight.current = height;
-    }, []);
-
     const getActiveSlideScrollTop = () => {
         if (!contentRef.current) return 0;
 
@@ -104,45 +95,14 @@ export default function Acc() {
         return slide ? Math.max(0, slide.scrollTop) : 0;
     };
 
-    useLayoutEffect(() => {
-        const info = accRef.current?.querySelector<HTMLElement>(".accInfo");
-        if (!info) return;
+    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+        if (dontHandleOther) return;
 
-        const measure = () => {
-            const hidden = collapsed === 1 && !isDraggingInfo && info.getBoundingClientRect().height <= 1;
-            setIsInfoCollapsed(hidden);
+        const scrollTop = getActiveSlideScrollTop();
+        if (scrollTop > 0) return;
 
-            if (!hidden) {
-                slideRefs.current.forEach(slide => {
-                    if (slide) slide.scrollTop = 0;
-                });
-            }
-        };
-
-        measure();
-        const observer = new ResizeObserver(measure);
-        observer.observe(info);
-
-        return () => observer.disconnect();
-    });
-
-    const handleWheel = (e: WheelEvent) => {
-        if (dontHandleOther || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-
-        const info = accRef.current?.querySelector<HTMLElement>(".accInfo");
-        const infoVisible = collapsed !== 1 || (info?.getBoundingClientRect().height ?? 0) > 1;
-
-        if (infoVisible) {
-            if (e.cancelable) e.preventDefault();
-            if (e.deltaY > 0) setCollapsed(1);
-            if (e.deltaY < 0) setCollapsed(0);
-            return;
-        }
-
-        if (e.deltaY < 0 && getActiveSlideScrollTop() <= 1) {
-            if (e.cancelable) e.preventDefault();
-            setCollapsed(0);
-        }
+        if (e.deltaY > 0) setCollapsed(1);
+        if (e.deltaY < 0) setCollapsed(0);
     };
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -166,7 +126,7 @@ export default function Acc() {
         touchStartX.current = e.touches[0].clientX;
         expanded.current = false;
         isHorizontal.current = false;
-        canExpand.current = getActiveSlideScrollTop() <= 1;
+        canExpand.current = getActiveSlideScrollTop() === 0;
         isCollapsingGesture.current = false;
         gestureMoved.current = false;
         gestureBlocked.current = dontHandleOther;
@@ -215,6 +175,9 @@ export default function Acc() {
                 sliderOwnsGesture.current = true;
                 setDontHandle(true);
             }
+
+            touchStartY.current = currentY;
+            touchStartX.current = currentX;
         }
 
         if (isHorizontal.current) {
@@ -226,28 +189,20 @@ export default function Acc() {
 
         const scrollTop = getActiveSlideScrollTop();
 
-        if (scrollTop > 1) {
+        if (scrollTop > 0) {
             canExpand.current = false;
 
             if (!isCollapsingGesture.current) return;
         }
 
         if (!isCollapsingGesture.current) {
-            const info = accRef.current?.querySelector<HTMLDivElement>(".accInfo");
-            const height = infoHeight.current;
-            if (!info || height <= 0) return;
-
-            const visibleCollapsed = Math.max(0, Math.min(1,
-                1 - info.getBoundingClientRect().height / height
-            ));
-
-            if (deltaY > 0 && visibleCollapsed < 1 && scrollTop <= 1) {
+            if (deltaY > 0 && collapsed < 1 && scrollTop === 0) {
                 isCollapsingGesture.current = true;
             } else if (
                 deltaY < 0 &&
-                visibleCollapsed > 0 &&
+                collapsed > 0 &&
                 canExpand.current &&
-                scrollTop <= 1
+                scrollTop === 0
             ) {
                 isCollapsingGesture.current = true;
             } else {
@@ -255,9 +210,6 @@ export default function Acc() {
                 return;
             }
 
-            collapseStartValue.current = visibleCollapsed;
-            collapseStartY.current = touchStartY.current;
-            setIsDraggingInfo(true);
             setDontHandle(true);
         }
 
@@ -266,10 +218,17 @@ export default function Acc() {
         if (e.cancelable) {
             e.preventDefault();
         }
-        const next = collapseStartValue.current +
-            (collapseStartY.current - currentY) / infoHeight.current;
+        setCollapsed(prev => {
+            if (deltaY > 0) {
+                return Math.max(0, Math.min(1, prev + deltaY / 700));
+            }
 
-        setCollapsed(Math.max(0, Math.min(1, next)));
+            if (deltaY < 0 && canExpand.current) {
+                return Math.max(0, Math.min(1, prev + deltaY / 700));
+            }
+
+            return prev;
+        });
 
         touchStartY.current = currentY;
     };
@@ -279,11 +238,9 @@ export default function Acc() {
         if (!element) return;
 
         element.addEventListener("touchmove", handleTouchMove, { passive: false });
-        element.addEventListener("wheel", handleWheel, { passive: false });
 
         return () => {
             element.removeEventListener("touchmove", handleTouchMove);
-            element.removeEventListener("wheel", handleWheel);
         };
     });
 
@@ -297,7 +254,6 @@ export default function Acc() {
         sliderOwnsGesture.current = false;
 
         if (wasCollapsingGesture) {
-            setIsDraggingInfo(false);
             setCollapsed(prev => (prev > 0.45 ? 1 : 0));
         }
 
@@ -351,11 +307,11 @@ export default function Acc() {
                 className="acc"
                 ref={accRef}
                 onTouchStartCapture={handleTouchStart}
-               
-                onTouchEnd={handleTouchEnd}
-                onTouchCancel={handleTouchEnd}
+                onWheel={handleWheel}
+                onTouchEndCapture={handleTouchEnd}
+                onTouchCancelCapture={handleTouchEnd}
             >
-                <AccInfo acc={acc} canView={canView} collapsed={collapsed} isDragging={isDraggingInfo} onHeightChange={handleInfoHeight} />
+                <AccInfo acc={acc} canView={canView} collapsed={collapsed}/>
                 <div className="accContentSelector">
                     <div className="accContentIndicator" ref={line} />
                     <div className="accContentSelect">
@@ -372,14 +328,14 @@ export default function Acc() {
                 </div>
 
                 <div
-                    className={`accContent ${!isInfoCollapsed ? "accContentLocked" : ""}`}
+                    className="accContent"
                     ref={contentRef}
                     style={{
                         overflowX: dontHandleOther ? "hidden" : undefined,
                         touchAction: dontHandleOther ? "pan-y" : undefined,
                     }}
                     onScroll={handleScroll}
-                    onTouchStart={touchSliderStart}
+                    onTouchStartCapture={touchSliderStart}
                 >
                     <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined}>
                         <div

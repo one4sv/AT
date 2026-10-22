@@ -1,5 +1,4 @@
 @use "../../../scss/mixins" as var;
-
 .TimerDiv {
     height: 100%;
     width: 100%;
@@ -8,26 +7,31 @@
     align-items: center;
     flex-direction: column;
 }
+
 .timerNums {
     height: 5dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+
 .untilNums {
     color: var(--borderWh);
     user-select: none;
 }
+
 .timerLeft {
     color: var(--accent_text);
     font-size: 20px;
 }
+
 .timerButts {
     display: flex;
     gap: 0.5vw;
     margin-top: 2dvh;
     align-items: center;
 }
+
 .launchButt {
     border-radius: 50%;
     background:linear-gradient(135deg, var(--accent), var(--grad));
@@ -46,16 +50,12 @@
     }
     @media (hover: hover) {
         &:hover {
-        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
-    
+            box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
         }
     }
-
     @media (hover: none) {
         &:active {
-        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
-    
-        
+            box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
         }
     }
     > svg {

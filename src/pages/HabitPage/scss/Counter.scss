@@ -1,5 +1,4 @@
 @use "../../../scss/mixins" as var;
-
 .CounterDiv {
     height: 100%;
     width: 100%;
@@ -8,19 +7,20 @@
     align-items: center;
     flex-direction: column;
 }
+
 .counterScore {
     display: flex;
     flex-direction: row;
-    gap: 5px; 
+    gap: 5px;
     font-size: 20px;
     color: var(--accent_text);
 }
 
 .digitSquare {
     width: 40px;
-    height: 50px; 
+    height: 50px;
     background-color: var(--menuButtHover);
-    border-radius: 5px; 
+    border-radius: 5px;
     overflow: hidden;
     position: relative;
     display: flex;
@@ -63,6 +63,7 @@
 .digitSquare.changing::before {
     transform: translateY(-100%);
 }
+
 .counterMin {
     margin-top: 0.5dvh;
     color: var(--borderWh);
@@ -74,20 +75,16 @@
     left: 0.5vw;
     @media (hover: hover) {
         &:hover {
-        >svg {
-        visibility: visible;
-        }
-    
+            >svg {
+                visibility: visible;
+            }
         }
     }
-
     @media (hover: none) {
         &:active {
-        >svg {
-        visibility: visible;
-        }
-    
-        
+            >svg {
+                visibility: visible;
+            }
         }
     }
     > span {
@@ -105,6 +102,7 @@
         right: -1vw;
     }
 }
+
 .launchButtWrapper {
     position: relative;
     border-radius: 50%;
@@ -114,6 +112,7 @@
     justify-content: center;
     align-items: center;
 }
+
 .counterChange {
     width: 6vw;
     display: flex;
@@ -125,6 +124,7 @@
         height: 1vw;
     }
 }
+
 .changeCounterInp {
     @include var.input(var(--tr), var(--tc), var(--tr), 3vh, 0, var(--tr));
     width: 4vw;
@@ -133,6 +133,7 @@
         border-bottom: 1px solid var(--accent);
     }
 }
+
 .counterRedButt {
     position: absolute;
     top:95%;
@@ -145,16 +146,12 @@
     display: none;
     @media (hover: hover) {
         &:hover {
-        color: var(--accent_text);
-    
+            color: var(--accent_text);
         }
     }
-
     @media (hover: none) {
         &:active {
-        color: var(--accent_text);
-    
-        
+            color: var(--accent_text);
         }
     }
     >svg {
@@ -162,6 +159,7 @@
         width: 70%;
     }
 }
+
 .flyingNumber {
     position: fixed;
     color: var(--tc);

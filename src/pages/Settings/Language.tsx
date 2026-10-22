@@ -8,7 +8,7 @@ import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
 import { useUser } from "../../components/hooks/UserHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import "./scss/language.scss";
-import "../../scss/landingBackground.scss";
+import { Background } from "../../components/ts/utils/background";
 
 export default function Language() {
     const { lang } = useSettings();
@@ -25,7 +25,7 @@ export default function Language() {
 
     return (
         <div className="languagePage">
-            <div className="background landingBackground" aria-hidden="true"/>
+            <Background/>
             <motion.main className="languageCard" initial={reduced ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .28 }}>
                 <Link className="languageBack" to={back}><ArrowLeftIcon size={22}/>{t("language.back")}</Link>
                 <TranslateIcon className="languageIcon" size={40} aria-hidden="true"/>

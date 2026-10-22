@@ -22,6 +22,7 @@ export interface BlackoutContextType {
     blackout: Blackout;
     blackoutStack: Blackout[];
     setBlackout: React.Dispatch<React.SetStateAction<Blackout>>;
+    setBlackoutStack:React.Dispatch<React.SetStateAction<Blackout[]>>
 }
 export interface BlackoutImage {
     url: string;
@@ -61,7 +62,7 @@ export const BlackoutProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <BlackoutContext.Provider value={{ blackout, blackoutStack, setBlackout }}>
+        <BlackoutContext.Provider value={{ blackout, blackoutStack, setBlackout, setBlackoutStack }}>
             {children}
         </BlackoutContext.Provider>
     );
