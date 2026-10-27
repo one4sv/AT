@@ -8,6 +8,7 @@ import { useChat } from "../../hooks/ChatHook";
 import { api } from "../../ts/api";
 import { useBlackout } from "../../hooks/BlackoutHook";
 import { useParams } from "react-router";
+import useOpenLink from "../../hooks/utils/useOpenLink";
 import GetIconByType from "../../../pages/Chat/utils/getIconByType";
 
 type MediaCategory = "photo" | "video" | "link" | "file";
@@ -53,6 +54,7 @@ const cardVariants = {
 };
 
 export default function ChatMedia() {
+    const openLink = useOpenLink();
     const { chatWith } = useChat();
     const { setBlackout } = useBlackout();
     const { nick, id } = useParams();
@@ -178,14 +180,7 @@ export default function ChatMedia() {
 
     const openMedia = (item: ChatMediaItem) => {
         if (item.category === "link") {
-            setBlackout({
-                seted: true,
-                module: "LinkConfirm",
-                options: {
-                    name: "link",
-                    url: item.url
-                }
-            });
+            openLink(item.url, true);
             return;
         }
 

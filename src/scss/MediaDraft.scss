@@ -1,0 +1,46 @@
+.mediaDraft {
+    display: flex;
+    gap: .5vw;
+    padding: .5vh .5vw;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.mediaDraftItem {
+    position: relative;
+    flex-shrink: 0;
+    height: 12vh;
+    max-width: 40vw;
+    border-radius: 1.5vh;
+    overflow: hidden;
+    background: var(--interact);
+    color: var(--tc);
+    > img, > video {
+        height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    > span {
+        display: flex;
+        gap: .5vw;
+        align-items: center;
+        height: 100%;
+        padding: 1vh 1vw;
+        overflow-wrap: anywhere;
+    }
+    > button {
+        position: absolute;
+        top: .5vh;
+        right: .5vh;
+        width: 3vh;
+        height: 3vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 50%;
+        background: var(--bgc);
+        color: var(--tc);
+        cursor: pointer;
+    }
+}

@@ -1,3 +1,4 @@
+import TA from "../../../../../components/ts/TA";
 import { useEffect, useRef, useState } from "react";
 import { ArrowBendDownLeftIcon, ClockCountdownIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
 import { useDone } from "../../../../../components/hooks/DoneHook";
@@ -31,46 +32,19 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
     return () => clearTimeout(t);
   }, [chosenDay, dayComment]);
 
-  useEffect(() => {
-    const ta = textAreaRef.current;
-    if (!ta) return;
-
-    ta.style.height = "0px";
-    ta.style.overflowY = "hidden";
-
-    const minHeight = window.innerHeight * 0.05;
-    const maxHeight = window.innerHeight * 0.5;
-
-    let newHeight = ta.scrollHeight;
-
-    // Всегда не меньше 5vh
-    if (newHeight < minHeight) {
-        newHeight = minHeight;
-    }
-
-    // Ограничиваем максимумом
-    if (newHeight > maxHeight) {
-        newHeight = maxHeight;
-        ta.style.overflowY = "auto";
-    } else {
-        ta.style.overflowY = "hidden";
-    }
-
-    ta.style.height = `${newHeight}px`;
-  }, [comment]);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
   };
 
   const cantSave =
-    syncing ||
+    syncing || waitComAnswer ||
     !isMy ||
     !habit?.ongoing ||
     comment.trim() === (dayComment || "").trim();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey && !isMobile) {
+    if (e.key === "Enter" && !e.shiftKey && !isMobile && !e.nativeEvent.isComposing) {
       e.preventDefault();
       if (cantSave) return;
       sendDayComment(id, comment, chosenDay);
@@ -85,9 +59,9 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
 
   return (
     <div className="habitDayComment">
-      <textarea
+      <TA
         placeholder="Комментарий"
-        ref={textAreaRef}
+        taRef={textAreaRef}
         readOnly={!isMy || (habit && !habit.ongoing)}
         onChange={handleTextareaChange}
         onKeyDown={handleKeyDown}

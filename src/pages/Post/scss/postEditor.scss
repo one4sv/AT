@@ -1,0 +1,54 @@
+@use "../../../scss/mixins" as var;
+
+.postEditorTitle {
+    margin-bottom: 1vh;
+    padding: 1vh 1vw;
+    background: var(--mc);
+    color: var(--tc);
+    border-radius: 24px;
+    @media (max-width: 800px) { padding: 1vh 3vw; }
+}
+
+.postEditorHabit {
+    @include var.selectList(100%, 5vh, 2.5vh, 1vw, 1.25vh, var(--tc), var(--accent_text), var(--bgc), inherit, 1vh, 1vw, .5vh);
+    margin-bottom: 1vh;
+    > input {
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+        width: 100%;
+        height: 100%;
+        padding: 0 4vh 0 1vw;
+        border: 1px solid var(--block_border);
+        border-radius: 24px;
+        background: var(--interact);
+        color: var(--tc);
+        font: inherit;
+        outline: none;
+        cursor: pointer;
+    }
+    > div { max-height: 30vh; overflow-y: auto; }
+    @media (max-width: 800px) {
+        > input { padding-left: 3vw; }
+        > div > div { padding-inline: 3vw; }
+        > svg { right: 3vw; }
+    }
+}
+.postTA {
+    border-radius: 24px;
+    min-height: 85dvh;
+    width: 100%;
+    background: var(--interact);
+    border: 1px solid var(--block_border);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    outline: none;
+    font: var(--font);
+    padding: 1vh 1vw;
+    @media (max-width: 800px) {
+        padding: 1vh 3vw;
+    }
+}
+.postEditor .composerEmoji {
+    top: 100%;
+    bottom: auto;
+}

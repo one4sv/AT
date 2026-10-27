@@ -1,3 +1,4 @@
+import TA from "../../../../../components/ts/TA";
 import { Send } from "lucide-react"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
 import { useEffect, useMemo, useState } from "react"
@@ -263,29 +264,24 @@ export default function CompletionProgress() {
 
                             {isEditing && canEdit ? (
                                 <div className="circleEditWrapper">
-                                    <textarea
+                                    <TA minHeight={2}
                                         className="circleTA"
                                         placeholder={currentValue ? "" : placeholderMap[event.time]}
                                         maxLength={200}
                                         value={currentValue}
                                         onFocus={(e) => {
                                             const ta = e.target;
-                                            ta.style.height = 'auto';
-                                            ta.style.height = `${ta.scrollHeight}px`;
                                             ta.selectionStart = ta.value.length;
                                             ta.selectionEnd = ta.value.length;
                                         }}
                                         onChange={(e) => {
-                                            const ta = e.target;
-                                            ta.style.height = 'auto';
-                                            ta.style.height = `${ta.scrollHeight}px`;
                                             setEditedTexts(prev => ({
                                                 ...prev,
                                                 [originalCircleTime]: e.target.value
                                             }));
                                         }}
                                         onKeyDown={(e) => {
-                                            if (e.key === "Enter" && !e.shiftKey && hasChanged) {
+                                            if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && hasChanged) {
                                                 e.preventDefault();
                                                 handleSend(originalCircleTime, currentValue.trim())
                                                 setEditingKeys(prev => prev.filter(k => k !== originalCircleTime))

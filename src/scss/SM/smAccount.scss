@@ -63,6 +63,7 @@
         padding: 1vh 3vw;
     }
     &.active {
+        border: none;
         background: linear-gradient(135deg, var(--accent), var(--grad));
         > .settingName {
             color: var(--tc);
@@ -149,6 +150,7 @@
         padding: 1vh 3vw;
     }
     &.active {
+        border: none;
         background: linear-gradient(135deg, var(--accent), var(--grad));
         .SMmainButtName {
             color: var(--inner_text);

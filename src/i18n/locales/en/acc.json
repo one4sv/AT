@@ -1,16 +1,44 @@
 {
-    "tabs": {
-        "files": "Files",
-        "favorites": "Favorites",
-        "activities": "Activities",
-        "posts": "Posts"
-    },
-    "online": "Online",
-    "about": "About",
-    "hidden": "Hidden",
-    "phone": "Phone",
-    "email": "Email",
-    "birthday": "Birthday",
-    "save":"Save",
-    "edit":"Edit"
+  "tabs": {
+    "files": "Files",
+    "favorites": "Favorites",
+    "activities": "Activities",
+    "posts": "Posts"
+  },
+  "online": "Online",
+  "about": "About",
+  "hidden": "Hidden",
+  "phone": "Phone",
+  "email": "Email",
+  "birthday": "Birthday",
+  "save": "Save",
+  "edit": "Edit",
+  "post": {
+    "title": "Post",
+    "loading": "Loading post",
+    "unavailable": "Post deleted or unavailable",
+    "loadFailed": "Could not load post",
+    "retry": "Retry",
+    "comments": "Comments",
+    "loadingComments": "Loading comments…",
+    "commentsFailed": "Could not load comments",
+    "sendFailed": "Could not send. Your draft is saved.",
+    "empty": "No comments yet",
+    "reload": "Reload",
+    "attach": "Attach files",
+    "emoji": "Emoji",
+    "comment": "Comment",
+    "placeholder": "Write a comment…",
+    "send": "Send comment",
+    "signIn": "Sign in to comment",
+    "create": "Write a post",
+    "edit": "Edit post",
+    "publish": "Publish",
+    "write": "Share something…",
+    "noHabit": "No habit",
+    "saveFailed": "Could not save the post. Your text and files are still in the editor.",
+    "removeFile": "Remove file {{name}}",
+    "readMore": "Read more…",
+    "open": "Open post"
+  }
 }

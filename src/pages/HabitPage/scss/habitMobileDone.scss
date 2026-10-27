@@ -109,6 +109,7 @@
         }
     }
     > textarea {
+        min-width: 0;
         transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1), opacity .3s cubic-bezier(0.075, 0.82, 0.165, 1);
         resize: none;
         border: 1px solid var(--block_border);
@@ -130,6 +131,9 @@
         &::placeholder {
             vertical-align: middle;
             color: var(--borderWhLight);
+            word-break: normal;
+            overflow-wrap: normal;
+            hyphens: none;
         }
     }
     >span {
@@ -147,6 +151,7 @@
 }
 
 .hdcTAExtraMobile {
+    flex-shrink: 0;
     height: 5dvh;
     width: 5vh;
     border-radius: 24px;

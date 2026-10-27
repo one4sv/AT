@@ -1,49 +1,83 @@
 @use "../../../scss/mixins" as var;
 
-.postPage { 
-    height: 100%; 
-    overflow-y: auto; 
-    padding: 6vh 1% 0; 
+.postPage {
+    display: flex;
+    flex-direction: column;
+    width: 42vw;
+    height: 100%;
+    min-height: 0;
+    margin: 0 auto;
     box-sizing: border-box;
-    width: 100%;
+    position: relative;
+    overflow: hidden;
     @media (max-width: 800px) {
-        padding: 8vh 1% 1vh; 
+        width: 96vw;
     }
 }
-.postPageInner {
-    max-width: 760px; 
-    margin: 0 auto; 
-    display: flex; 
-    flex-direction: column; 
+
+.postPageScroll {
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    padding-top: 6vh;
+    @media (max-width: 800px) {
+        padding-top: 8vh;
+        padding-bottom: 14vh;
+    }
+}
+
+.postComments {
+    display: flex;
+    flex-direction: column;
     gap: 1vh;
-}
-.postTop {
-    display: flex;
-    width: 100%;
-    gap: 1%;
-    height: 5dvh;
-}
-.postBackWrapper {
-    width: 97.5%;
-    padding: 0 2.5% 3vh;
-    position: absolute;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    z-index: 3;
-    gap: 2%;
-    &::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        background: linear-gradient(135deg, var(--tr), #0000009a);
-        opacity: 1;
-        transition: opacity 0.12s ease;
-        mask-image: linear-gradient(to bottom, transparent 10%, black 100%);
-        -webkit-mask-image: linear-gradient(to bottom, transparent 10%, black 100%);
+    margin-top: 1vh;
+    border-radius: 24px;
+    background: var(--mc);    
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--block_border);
+    padding: 1vh 1vw;
+    @media (max-width: 800px) { padding: 1vh 1.5vw; }
+    .comments {
+        width: 100%;
+        gap: 1vh;
+        display: flex;
+        flex-direction: column;
     }
+    .comment {
+        box-sizing: border-box;
+        padding: 1vh .75vw;
+        @media (max-width: 800px) { padding: 1.25vh 2.5vw; }
+    }
+    .commentText { overflow-wrap: anywhere; margin-top: .5vh; }
+    > p, .postCommentsTitle, .postCommentError {
+        margin: 0;
+        border-radius: 24px;
+        color: var(--tc);
+        @media (max-width: 800px) { padding: 0 2vw; }
+    }
+}
+
+.postCommentError, .postStatus {
+    display: flex;
+    gap: .5vw;
+    align-items: center;
+    padding: 1vh 1vw;
+    border-radius: 24px;
+    background: var(--mc);
+    color: var(--tc);
+}
+
+.postSkeleton {
+    height: auto;
+    .skeletonCard { border: 1px solid var(--block_border); padding: 2vh 1vw; }
+}
+
+.postCommentBottom {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    padding: 1vh 0 max(2vh, env(safe-area-inset-bottom));
+    @media (max-width: 800px) { padding-bottom: max(3vh, env(safe-area-inset-bottom)); }
 }

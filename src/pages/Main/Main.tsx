@@ -1,3 +1,6 @@
+import PageBottom from "../../components/ts/PageBottom";
+import { Plus } from "@phosphor-icons/react";
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useUser } from "../../components/hooks/UserHook.ts";
 import Skeleton from "../../components/ts/Skeleton";
@@ -11,6 +14,7 @@ import { usePageTitle } from "../../components/hooks/PageContextHook.ts";
 import { useNavigate } from "react-router";
 import FirstSteps from "./components/FirstSteps.tsx";
 export default function Feed() {
+    const { t } = useTranslation("acc");
     const {
         initialLoading,
         user,
@@ -56,10 +60,12 @@ export default function Feed() {
             <div className={`postFeed ${isMobile ? "mobile" : ""}`}>
                 {diffDays < 30 && user.nick && <FirstSteps />}
                 {posts.length === 0 ? <FeedNothing /> : <>
-                    {posts.map(post => <Post isMy={false} post={post} key={post.id} />)}
+                    {posts.map(post => <Post isMy={post.user.id === user.id} post={post} key={post.id} />)}
                 </>}
             </div>
-            {/* <PostWrite/> */}
+            <PageBottom className="feedBottom">
+                <div className="pageBottomAction" onClick={() => navigate("/post/new")}><Plus/><h2>{t("post.create")}</h2></div>
+            </PageBottom>
         </div>
     );
 }

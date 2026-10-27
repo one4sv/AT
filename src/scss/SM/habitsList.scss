@@ -75,6 +75,8 @@
         }
     }
     &.active {
+        border: none;
+        background:linear-gradient(135deg, var(--accent), var(--grad));
         .habitName {
             color: var(--inner_text);
         }
@@ -140,16 +142,6 @@
 .pinnedHabitSign {
     fill: currentColor;
     color: var(--borderHabit);
-}
-
-.habit.active {
-    background:linear-gradient(135deg, var(--accent), var(--grad));
-    .habitPer {
-        color: var(--inner_text) !important;
-    }
-    .pinnedHabitSign {
-        color: white;
-    }
 }
 
 .habitHLStatus {

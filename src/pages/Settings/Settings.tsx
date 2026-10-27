@@ -1,3 +1,4 @@
+import PageBottom from "../../components/ts/PageBottom";
 
 import { useEffect, useState, type ElementType } from "react";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
@@ -248,7 +249,7 @@ export default function Settings() {
                             </motion.div>
                         </AnimatePresence>
                         {isMobile && (
-                            <div className="settingBackWrapper">{settingSearch()}</div>
+                            <PageBottom className="settingBackWrapper">{settingSearch()}</PageBottom>
                         )}
                     </div>
 
@@ -270,15 +271,9 @@ export default function Settings() {
                                 {tabs[activeTab.tab as keyof typeof tabs]}
 
                                 {isMobile && (
-                                    <div className="settingBackWrapper">
-                                        <div
-                                            className="settingBack"
-                                            onClick={() => navigate("/settings")}
-                                        >
-                                            <ArrowLeftIcon />
-                                        </div>
+                                    <PageBottom className="settingBackWrapper" onBack={() => navigate("/settings")}>
                                         {settingSearch()}
-                                    </div>
+                                    </PageBottom>
                                 )}
                             </>
                         )}

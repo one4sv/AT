@@ -34,7 +34,7 @@ export default function MainLayout({ children }: LayoutProps) {
 
   const navigate = useNavigate()
   const location = useLocation()
-  const needDrag = location.pathname === "/" || location.pathname.startsWith("/chat")
+  const needDrag = location.pathname.startsWith("/post") || location.pathname.startsWith("/chat")
   const hideHeader = location.pathname.startsWith("/chat") || location.pathname.startsWith("/habit/")
   
   useEffect(() => {

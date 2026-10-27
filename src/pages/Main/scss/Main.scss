@@ -20,12 +20,13 @@
     width: 70%;
     gap: 0.8vh;
     scrollbar-width: thin;
-    padding: 6vh 0 0;
+    padding: 6vh 0 2vh;
+    min-height: 0;
     overflow-y: auto;
     @media (max-width: 800px) {
         width: 95%;
         height: 100%;
-        padding: 8vh 0 0;
+        padding: 8vh 0 3vh;
     }
 }
 
@@ -104,4 +105,8 @@
             }
         }
     }
+}
+.feedBottom {
+    width: 70%;
+    @media (max-width: 800px) { width: 95%; }
 }

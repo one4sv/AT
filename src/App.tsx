@@ -1,3 +1,4 @@
+import PostEditor from "./pages/Post/PostEditor";
 import './scss/App.scss';
 import PostPage from './pages/Post/PostPage';
 import ConnectionStatus from './components/ts/ConnectionStatus';
@@ -42,6 +43,8 @@ function App() {
                     {window.location.hostname === "localhost" && <Route path="/admin" element={<Admin />} />}
                     <Route path="/" element={<ResponsiveLayout />}>
                         <Route index element={<Main />} />
+                        <Route path="post/new" element={<PostEditor />} />
+                        <Route path="post/:postId/edit" element={<PostEditor />} />
                         <Route path="post/:postId" element={<PostPage />} />
                         <Route path="habit" element={<HabitPage />} />
                         <Route path="habit/:habitId" element={<HabitPage />} />

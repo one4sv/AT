@@ -1,3 +1,4 @@
+import TA from "../../../../../components/ts/TA";
 import { useEffect, useState } from "react";
 import { timeToStr, todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 import { placeholders } from "../../../utils/placeholders";
@@ -85,29 +86,24 @@ export default function CounterProgression() {
                         <span className="eventTime">{timeToStr(event.time)}</span> значение изменено на {event.count}
                         {isEditing ? (
                             <div className="circleEditWrapper">
-                                <textarea
+                                <TA minHeight={2}
                                     className="circleTA"
                                     placeholder={currentValue ? "" : placeholderMap[key]}
                                     maxLength={200}
                                     value={currentValue}
                                     onFocus={(e) => {
                                         const ta = e.target;
-                                        ta.style.height = 'auto';
-                                        ta.style.height = `${ta.scrollHeight}px`;
                                         ta.selectionStart = ta.value.length;
                                         ta.selectionEnd = ta.value.length;
                                     }}
                                     onChange={(e) => {
-                                        const ta = e.target;
-                                        ta.style.height = 'auto';
-                                        ta.style.height = `${ta.scrollHeight}px`;
                                         setEditedTexts(prev => ({
                                             ...prev,
                                             [key]: e.target.value
                                         }));
                                     }}
                                     onKeyDown={(e) => {
-                                        if (e.key === "Enter" && !e.shiftKey && hasChanged) {
+                                        if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && hasChanged) {
                                             e.preventDefault();
                                             handleSend(key, event.time, currentValue.trim())
                                             setEditingIndices(prev => prev.filter(i => i !== index))

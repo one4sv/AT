@@ -922,7 +922,7 @@
 .landing .quickLogin .quickQrButton {
     border: 0;
     outline: none;
-    background: transparent;
+    background: var(--interact);
     color: var(--accent_text);
 }
 
@@ -989,7 +989,7 @@
 
 .landing .quickLogin .quickQrButton {
     border: 0;
-    background: transparent;
+    background: var(--interact);
     color: var(--accent_text);
 }
 
@@ -1005,4 +1005,15 @@
     .landing .landingFormWrapper {
         scroll-behavior: auto;
     }
+}
+
+.landing .title {
+    background: var(--interact);
+    border-radius: 24px;
+    padding: 10px 18px;
+}
+
+.landingFooter .o4studio > svg {
+    background: var(--interact);
+    border-radius: 24px;
 }

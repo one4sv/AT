@@ -1,0 +1,53 @@
+.pageBottom {
+    display: flex;
+    align-items: flex-end;
+    gap: .5vw;
+    flex-shrink: 0;
+    position: absolute;
+    z-index: 3;
+    width: 100%;
+    padding: 1vh 0 max(2vh, env(safe-area-inset-bottom));
+    bottom: 0;
+    box-sizing: border-box;
+    @media (max-width: 800px) {
+        gap: .5vw;
+        padding-bottom: max(3vh, env(safe-area-inset-bottom));
+    }
+}
+
+.pageBottomBack {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 5vh;
+    height: 5vh;
+    padding: 0;
+    border: 1px solid var(--block_border);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    border-radius: 50%;
+    background: var(--interact);
+    color: var(--borderWh);
+    cursor: pointer;
+    > svg { width: 3vh; height: 3vh; }
+}
+
+.pageBottomAction {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    height: 5vh;
+    padding: 0 1vw;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--interact);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    color: var(--tc);
+    text-align: left;
+    font: inherit;
+    gap: .5vw;
+    cursor: pointer;
+    > svg { width: 3vh; height: 3vh; }
+    @media (max-width: 800px) { padding: 0 3vw; gap: .5vw; }
+}

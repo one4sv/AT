@@ -1,3 +1,4 @@
+import TA from "../../../../../components/ts/TA";
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { ChatCenteredIcon, ClockCountdownIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
 import { useDone } from "../../../../../components/hooks/DoneHook";
@@ -20,8 +21,6 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
     const [comment, setComment] = useState<string>("");
     const [syncing, setSyncing] = useState(true);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
-    console.log(comment)
-    if (textAreaRef && textAreaRef.current) console.log(textAreaRef.current.scrollHeight)
     useEffect(() => {
         setSyncing(true);
         setComment(dayComment || "");
@@ -33,42 +32,20 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
         return () => clearTimeout(t);
     }, [chosenDay, dayComment]);
 
-    useEffect(() => {
-        const ta = textAreaRef.current;
-        if (!ta) return;
-
-        // Сбрасываем высоту, чтобы корректно измерить scrollHeight
-        ta.style.height = "0px";
-        ta.style.overflowY = "hidden";
-
-        const minHeight = window.innerHeight * 0.05; // 5vh
-        const maxHeight = window.innerHeight * 0.5;  // 50vh
-
-        // scrollHeight уже включает padding (благодаря box-sizing: border-box)
-        let newHeight = Math.max(ta.scrollHeight, minHeight);
-
-        if (newHeight > maxHeight) {
-            newHeight = maxHeight;
-            ta.style.overflowY = "auto";
-        } else {
-            ta.style.overflowY = "hidden";
-        }
-
-        ta.style.height = `${newHeight}px`;
-    }, [comment]);
+  
 
     const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setComment(e.target.value);
     };
 
     const cantSave =
-        syncing ||
+        syncing || waitComAnswer ||
         !isMy ||
         !habit?.ongoing ||
         comment.trim() === (dayComment || "").trim();
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter" && !e.shiftKey) {
+        if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
             e.preventDefault();
             if (cantSave) return;
             sendDayComment(id, comment, chosenDay);
@@ -89,9 +66,9 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
                 </div>
             ) : (
                 <>
-                    <textarea
+                    <TA
                         placeholder="Комментарий"
-                        ref={textAreaRef}
+                        taRef={textAreaRef}
                         readOnly={!isMy || (habit && !habit.ongoing)}
                         onChange={handleTextareaChange}
                         onKeyDown={handleKeyDown}

@@ -1,7 +1,8 @@
 import Linkify from "linkify-react";
 import { Fragment, type ReactNode } from "react";
-import { useBlackout } from "../hooks/BlackoutHook";
-import { useNavigate } from "react-router";
+import useOpenLink from "../hooks/utils/useOpenLink";
+import { LinkIcon } from "@phosphor-icons/react";
+
 
 interface Props {
     text: string;
@@ -32,9 +33,9 @@ function highlightText(text: string, search: string): ReactNode[] {
 }
 
 export default function HighlightText({ text, search }: Props) {
-    const { setBlackout } = useBlackout();
+    const openLink = useOpenLink();
     const query = search.trim();
-    const navigate = useNavigate();
+
 
     const linkifyOptions = {
         render: ({ attributes, content }: { attributes: { href?: string; [key: string]: unknown }; content: ReactNode }) => {
@@ -44,24 +45,12 @@ export default function HighlightText({ text, search }: Props) {
                 <a
                     {...attributes}
                     href={attributes.href}
-                    onClick={(e) => {
-                        const url = new URL(link, window.location.origin);
-                        const isInternal = url.origin === window.location.origin;
-
-                        if (isInternal) {
-                            e.preventDefault();
-                            navigate(url.pathname + url.search + url.hash);
-                            return;
-                        }
-
-                        e.preventDefault();
-                        setBlackout({
-                            seted: true,
-                            module: "LinkConfirm",
-                            options: { name: "link", url: link },
-                        });
+                    onClick={event => {
+                        event.stopPropagation();
+                        if (openLink(link)) event.preventDefault();
                     }}
                 >
+                    <LinkIcon size={14} aria-hidden="true" style={{ verticalAlign: "-2px", marginInlineEnd: 3 }} />
                     {content}
                 </a>
             );

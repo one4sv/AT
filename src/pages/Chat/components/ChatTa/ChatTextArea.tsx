@@ -1,8 +1,9 @@
+import TA from "../../../../components/ts/TA";
+import MediaDraft from "../../../../components/ts/MediaDraft";
 import { Paperclip, PaperPlaneRightIcon, SmileySticker } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type SetStateAction } from "react";
 import { useLocation, useParams } from "react-router";
 import { useChat } from "../../../../components/hooks/ChatHook";
-import GetIconByType from "../../utils/getIconByType";
 import { isMobile } from "react-device-detect";
 import { useDrop } from "../../../../components/hooks/DropHook";
 import { useMessages } from "../../../../components/hooks/MessagesHook";
@@ -80,18 +81,8 @@ export default function ChatTextArea({
         },
         [editing]
     );
-    const allFilesForDisplay = [...oldMedia.map(m => ({
-        file: m,
-        isOld: true
-    })), ...files.map(f => ({
-        file: f,
-        isOld: false
-    }))] as {
-        file: Media | File;
-        isOld: boolean;
-    }[];
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter" && !e.shiftKey && !isMobile) {
+        if (e.key === "Enter" && !e.shiftKey && !isMobile && !e.nativeEvent.isComposing) {
             e.preventDefault();
             handleSend();
         }
@@ -172,28 +163,7 @@ export default function ChatTextArea({
         }
     };
 
-    useEffect(
-        () => {
-            const ta = textAreaRef.current;
-            if (!ta) return;
-            ta.style.height = "0px";
-            ta.style.overflowY = "hidden";
-            const minHeight = window.innerHeight * 0.05;
-            const maxHeight = window.innerHeight * 0.5;
-            let newHeight = ta.scrollHeight;
-            if (newHeight < minHeight) {
-                newHeight = minHeight;
-            }
-            if (newHeight > maxHeight) {
-                newHeight = maxHeight;
-                ta.style.overflowY = "auto";
-            } else {
-                ta.style.overflowY = "hidden";
-            }
-            ta.style.height = `${newHeight}px`;
-        },
-        [mess]
-    );
+
 
     useEffect(() => {
         setFiles([]);
@@ -213,7 +183,7 @@ export default function ChatTextArea({
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         const pastedFiles = Array.from(e.clipboardData.files).filter(f => f instanceof File && typeof f.type === 'string');
         if (pastedFiles.length > 0) {
-            e.preventDefault();
+            if (!e.clipboardData.getData("text/plain")) e.preventDefault();
             setFiles(prev => [...prev, ...pastedFiles]);
         }
     };
@@ -224,12 +194,6 @@ export default function ChatTextArea({
             setFiles(prev => prev.filter((_, i) => i !== index - oldMedia.length));
         }
     };
-    function isOldMedia(item: typeof allFilesForDisplay[number]): item is {
-        file: Media;
-        isOld: true;
-    } {
-        return item.isOld === true;
-    }
     const barOpen = files.length > 0 || answer !== null || editing !== null || redirect !== undefined;
 
     return (
@@ -267,36 +231,13 @@ export default function ChatTextArea({
                         }}
                         scrollToMessage={scrollToMessage}
                     />}
-                    {allFilesForDisplay.length > 0 && <div className="chatTAFiles chatTAFileswBar">
-                        {allFilesForDisplay.map(
-                            (item, i) => {
-                                const { file } = item;
-                                const isImage = isOldMedia(item) ? (file as Media).url?.match(/\.(png|jpe?g|gif|webp)$/i) : (file as File).type?.startsWith("image/") ?? false;
-                                const isVideo = isOldMedia(item) ? (file as Media).url?.match(/\.(mp4|webm|ogg)$/i) : (file as File).type?.startsWith("video/") ?? false;
-                                const name = file.name ?? 'unknown';
-                                let previewUrl: string | undefined;
-                                if (isImage || isVideo) {
-                                    previewUrl = isOldMedia(item) ? (file as Media).url : URL.createObjectURL(file as File);
-                                }
-                                return (
-                                    <div key={i} className="chatTAFile" onClick={() => handleRemoveFile(i)}>
-                                        {isImage ? <img src={previewUrl} alt={name} className="chatTAFilePreview" /> : isVideo ? <video src={previewUrl} className="chatTAFilePreview" controls /> : <div className="chatTAFileOther">
-                                            {GetIconByType(name, (file as Media | File).type ?? '')}
-                                            <span className="chatTAFileName">
-                                                {name}
-                                            </span>
-                                        </div>}
-                                    </div>
-                                );
-                            }
-                        )}
-                    </div>}
-                    <textarea
+                    <MediaDraft files={files} media={oldMedia} onRemove={handleRemoveFile} />
+                    <TA
                         name="chatTA"
                         id="chatTA"
                         className="chatTA chatTAwFiles"
                         value={mess}
-                        ref={textAreaRef}
+                        taRef={textAreaRef}
                         onChange={e => {
                             setMess(e.currentTarget.value);
                             if (!editing) handleTyping(chatWith ? chatWith.id : "");
@@ -323,6 +264,7 @@ export default function ChatTextArea({
                     if (!e.target.files) return;
                     const selectedFiles = Array.from(e.target.files).filter(f => f instanceof File && typeof f.type === 'string');
                     setFiles(prev => [...prev, ...selectedFiles]);
+                    e.target.value = "";
                 }}
             />
         </>
