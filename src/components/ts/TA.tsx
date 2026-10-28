@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, type TextareaHTMLAttributes, type RefObject } from "react";
 
-interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TAProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
     taRef?: RefObject<HTMLTextAreaElement | null>;
     onSend?: () => void;
     onFiles?: (files: File[]) => void;
@@ -8,7 +8,16 @@ interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
     maxHeight?: number;
 }
 
-export default function TA({ taRef, onSend, onFiles, minHeight = 5, maxHeight = 50, onKeyDown, onPaste, ...props }: Props) {
+export default function TA({
+    taRef,
+    onSend,
+    onFiles,
+    minHeight = 5,
+    maxHeight = 50,
+    onKeyDown,
+    onPaste,
+    ...props
+}: TAProps) {
     const localRef = useRef<HTMLTextAreaElement>(null);
     const ref = taRef || localRef;
 
@@ -36,7 +45,9 @@ export default function TA({ taRef, onSend, onFiles, minHeight = 5, maxHeight = 
         window.addEventListener("resize", resize);
         window.visualViewport?.addEventListener("resize", resize);
         let active = true;
-        document.fonts.ready.then(() => { if (active) resize(); });
+        document.fonts.ready.then(() => {
+            if (active) resize();
+        });
         return () => {
             active = false;
             observer.disconnect();
@@ -45,20 +56,34 @@ export default function TA({ taRef, onSend, onFiles, minHeight = 5, maxHeight = 
         };
     }, [props.value, minHeight, maxHeight, ref]);
 
-    return <textarea {...props} ref={ref} rows={1}
-        onKeyDown={event => {
-            onKeyDown?.(event);
-            if (!event.defaultPrevented && onSend && event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
-                event.preventDefault();
-                onSend();
-            }
-        }}
-        onPaste={event => {
-            onPaste?.(event);
-            const files = Array.from(event.clipboardData.files);
-            if (!event.defaultPrevented && onFiles && files.length) {
-                if (!event.clipboardData.getData("text/plain")) event.preventDefault();
-                onFiles(files);
-            }
-        }} />;
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        onKeyDown?.(event);
+        if (event.defaultPrevented || !onSend || event.nativeEvent.isComposing) return;
+
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            onSend();
+        }
+    };
+
+    const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+        onPaste?.(event);
+        if (event.defaultPrevented || !onFiles) return;
+
+        const files = Array.from(event.clipboardData.files);
+        if (!files.length) return;
+
+        if (!event.clipboardData.getData("text/plain")) event.preventDefault();
+        onFiles(files);
+    };
+
+    return (
+        <textarea
+            {...props}
+            ref={ref}
+            rows={1}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+        />
+    );
 }

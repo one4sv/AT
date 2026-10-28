@@ -21,6 +21,7 @@
     overflow-y: auto;
     overscroll-behavior-y: contain;
     padding-top: 6vh;
+    scrollbar-width: thin;
     @media (max-width: 800px) {
         padding-top: 8vh;
         padding-bottom: 14vh;
@@ -38,7 +39,9 @@
     -webkit-backdrop-filter: blur(var(--blur));
     border: 1px solid var(--block_border);
     padding: 1vh 1vw;
-    @media (max-width: 800px) { padding: 1vh 1.5vw; }
+    @media (max-width: 800px) {
+        padding: 1vh 1.5vw;
+    }
     .comments {
         width: 100%;
         gap: 1vh;
@@ -48,14 +51,21 @@
     .comment {
         box-sizing: border-box;
         padding: 1vh .75vw;
-        @media (max-width: 800px) { padding: 1.25vh 2.5vw; }
+        @media (max-width: 800px) {
+            padding: 1.25vh 2.5vw;
+        }
     }
-    .commentText { overflow-wrap: anywhere; margin-top: .5vh; }
+    .commentText {
+        overflow-wrap: anywhere;
+        margin-top: .5vh;
+    }
     > p, .postCommentsTitle, .postCommentError {
         margin: 0;
         border-radius: 24px;
         color: var(--tc);
-        @media (max-width: 800px) { padding: 0 2vw; }
+        @media (max-width: 800px) {
+            padding: 0 2vw;
+        }
     }
 }
 
@@ -71,7 +81,10 @@
 
 .postSkeleton {
     height: auto;
-    .skeletonCard { border: 1px solid var(--block_border); padding: 2vh 1vw; }
+    .skeletonCard {
+        border: 1px solid var(--block_border);
+        padding: 2vh 1vw;
+    }
 }
 
 .postCommentBottom {
@@ -79,5 +92,7 @@
     width: 100%;
     bottom: 0;
     padding: 1vh 0 max(2vh, env(safe-area-inset-bottom));
-    @media (max-width: 800px) { padding-bottom: max(3vh, env(safe-area-inset-bottom)); }
+    @media (max-width: 800px) {
+        padding-bottom: max(3vh, env(safe-area-inset-bottom));
+    }
 }

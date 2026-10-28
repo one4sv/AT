@@ -29,7 +29,10 @@
     background: var(--interact);
     color: var(--borderWh);
     cursor: pointer;
-    > svg { width: 3vh; height: 3vh; }
+    > svg {
+        width: 3vh;
+        height: 3vh;
+    }
 }
 
 .pageBottomAction {
@@ -48,6 +51,12 @@
     font: inherit;
     gap: .5vw;
     cursor: pointer;
-    > svg { width: 3vh; height: 3vh; }
-    @media (max-width: 800px) { padding: 0 3vw; gap: .5vw; }
+    > svg {
+        width: 3vh;
+        height: 3vh;
+    }
+    @media (max-width: 800px) {
+        padding: 0 3vw;
+        gap: .5vw;
+    }
 }

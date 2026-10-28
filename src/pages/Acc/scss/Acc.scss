@@ -43,9 +43,6 @@
     padding: 0;
     overflow: hidden;
     opacity: 1;
-    @media (min-width: 801px) {
-        transition: height .3s ease, opacity .3s ease, margin-top .3s ease;
-    }
     @media (max-width: 800px) {
         --acc-info-margin-top: 1vh;
         margin: 1vh 2vw 0;

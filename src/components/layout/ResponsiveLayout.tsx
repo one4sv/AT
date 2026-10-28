@@ -20,7 +20,7 @@ export default function ResponsiveLayout() {
     const { pathname } = useLocation();
     const outlet = useOutlet();
     const reduced = useReducedMotion();
-    const section = pathname.startsWith("/info") ? "info" : pathname.startsWith("/settings") ? "settings" : "page";
+    const section = pathname.startsWith("/post/") ? pathname : pathname.startsWith("/info") ? "info" : pathname.startsWith("/settings") ? "settings" : "page";
     const type: SkeletonType = pathname.startsWith("/habit") ? "habit" : pathname.startsWith("/chat") ? "chat" : pathname === "/" ? "feed" : "profile";
     const content = initialLoading || !settingsLoaded ? <Skeleton type={type} count={type === "chat" ? 5 : 3} overview={pathname === "/habit"} /> : <AnimatePresence mode="wait">
         <motion.div
@@ -28,7 +28,7 @@ export default function ResponsiveLayout() {
             className="routeTransition"
             initial={reduced || section === "page" ? false : {
                 opacity: 0,
-                y: 16
+                y: "2vh"
             }}
             animate={{
                 opacity: 1,
@@ -36,7 +36,7 @@ export default function ResponsiveLayout() {
             }}
             exit={reduced || section === "page" ? {} : {
                 opacity: 0,
-                y: -8
+                y: "-1vh"
             }}
             transition={{
                 duration: .2,

@@ -1,3 +1,4 @@
+import RichPost, { mediaIds } from "../../pages/Post/RichPost";
 import { useNavigate, useLocation } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,13 +22,15 @@ interface PostProps {
     post: PostType;
     isMy: boolean;
     expanded?: boolean;
+    onLike?: () => void;
+    liking?: boolean;
 }
 
-export default function Post({ post: sourcePost, isMy, expanded = false }: PostProps) {
+export default function Post({ post: sourcePost, isMy, expanded = false, onLike, liking }: PostProps) {
     const { t } = useTranslation("acc");
-    const [post, setLocalPost] = useState(sourcePost);
-    const [truncated, setTruncated] = useState(false);
-    const [hover, setHover] = useState(false);
+    const [ post, setLocalPost ] = useState(sourcePost);
+    const [ truncated, setTruncated ] = useState(false);
+    const [ hover, setHover ] = useState(false);
     const { setDeleteConfirm } = useDelete();
     const { setBlackout } = useBlackout();
     const { setPosts } = useAcc();
@@ -46,7 +49,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false }: PostP
         const observer = new ResizeObserver(measure);
         observer.observe(node);
         return () => observer.disconnect();
-    }, [post.text, expanded]);
+    }, [post.text, post.content, expanded]);
     const like = async (id: number) => {
         try {
             const res = await api.post("/like", {
@@ -113,7 +116,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false }: PostP
                     {post.user.username || post.user.nick}
                 </div>}
                 <div className="PostText" ref={divRef}>
-                    <HighlightText text={post.text} search="" />
+                    {post.content ? <RichPost content={post.content} media={post.media || []} /> : <HighlightText text={post.text} search="" />}
                 </div>
                 {!expanded && <button
                     className={`postReadMore ${truncated ? "" : "postOpenLink"}`}
@@ -132,14 +135,17 @@ export default function Post({ post: sourcePost, isMy, expanded = false }: PostP
                     <ChevronRight className="aphGo" />
                 </div>}
                 <div className="postMediaArea">
-                    <AccPostMedia red={false} media={post.media} />
+                    <AccPostMedia red={false} media={post.media?.filter(file => !mediaIds(post.content).includes(file.id || file.url))} />
                 </div>
                 <div className="PostBottom">
                     <div className="PostInteract">
                         <div
                             className="PostLikes"
                             onClick={() => {
-                                like(post.id);
+                                if (liking) return;
+                                if (!user.id) navigate("/sign");
+                                else if (onLike) onLike();
+                                else void like(post.id);
                             }}
                         >
                             {isLiked ? <Heart weight="fill" color="#d60000" /> : <Heart />}

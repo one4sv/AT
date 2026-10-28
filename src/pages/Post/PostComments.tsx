@@ -20,24 +20,25 @@ interface Comment {
     user: { nick: string; username: string; avatar_url?: string } | null;
 }
 
-interface Props {
+interface PostCommentsProps {
     id: number;
     onSent: () => void;
     children: ReactNode;
     onBack: () => void;
     onEdit?: () => void;
+    action?: ReactNode;
 }
 
-export default function PostComments({ id, onSent, children, onBack, onEdit }: Props) {
+export default function PostComments({ id, onSent, children, onBack, onEdit, action }: PostCommentsProps) {
     const { user } = useUser();
     const { t } = useTranslation("acc");
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [text, setText] = useState("");
-    const [files, setFiles] = useState<File[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [sending, setSending] = useState(false);
-    const [error, setError] = useState("");
-    const [retry, setRetry] = useState(0);
+    const [ comments, setComments ] = useState<Comment[]>([]);
+    const [ text, setText ] = useState("");
+    const [ files, setFiles ] = useState<File[]>([]);
+    const [ loading, setLoading ] = useState(true);
+    const [ sending, setSending ] = useState(false);
+    const [ error, setError ] = useState("");
+    const [ retry, setRetry ] = useState(0);
     const sendingRef = useRef(false);
     const mounted = useRef(true);
     const sectionRef = useRef<HTMLElement>(null);
@@ -45,7 +46,9 @@ export default function PostComments({ id, onSent, children, onBack, onEdit }: P
 
     useEffect(() => {
         mounted.current = true;
-        return () => { mounted.current = false; };
+        return () => {
+            mounted.current = false;
+        };
     }, []);
 
     useEffect(() => {
@@ -102,18 +105,30 @@ export default function PostComments({ id, onSent, children, onBack, onEdit }: P
         <>
             <div className="postPageScroll">
                 {children}
-                <section ref={sectionRef} className="AccPostComments postComments" id="comments" aria-label={t("post.comments")}>
-                    <div className="postCommentsTitle">{t("post.comments")}:</div>
-                    {loading && <p role="status">{t("post.loadingComments")}</p>}
+                <section
+                    ref={sectionRef}
+                    className="AccPostComments postComments"
+                    id="comments"
+                    aria-label={t("post.comments")}
+                >
+                    <div className="postCommentsTitle">
+                        {t("post.comments")}:</div>
+                    {loading && <p role="status">
+                        {t("post.loadingComments")}
+                    </p>}
                     {error && (
                         <div role="alert" className="postCommentError">
-                            <span>{t(error)}</span>
+                            <span>
+                                {t(error)}
+                            </span>
                             <button type="button" onClick={() => setRetry(value => value + 1)}>
                                 {t("post.reload")}
                             </button>
                         </div>
                     )}
-                    {!loading && !error && !comments.length && <p>{t("post.empty")}</p>}
+                    {!loading && !error && !comments.length && <p>
+                        {t("post.empty")}
+                    </p>}
                     <div className="comments">
                         {comments.map(comment => (
                             <article className="comment" key={comment.id}>
@@ -126,9 +141,13 @@ export default function PostComments({ id, onSent, children, onBack, onEdit }: P
                                             {comment.user.username || comment.user.nick}
                                         </Link>
                                     )}
-                                    <span className="commentDate">{formatCreated(comment.created_at)}</span>
+                                    <span className="commentDate">
+                                        {formatCreated(comment.created_at)}
+                                    </span>
                                 </div>
-                                <div className="commentText"><HighlightText text={comment.text ?? ""} search="" /></div>
+                                <div className="commentText">
+                                    <HighlightText text={comment.text ?? ""} search="" />
+                                </div>
                                 <AccPostMedia red={false} media={comment.files ?? []} />
                             </article>
                         ))}
@@ -136,11 +155,25 @@ export default function PostComments({ id, onSent, children, onBack, onEdit }: P
                 </section>
             </div>
             <div className="postCommentBottom">
-                {user.id ? <Composer text={text} setText={setText} files={files} setFiles={setFiles}
-                    placeholder={t("post.placeholder")} onSend={sendComment} disabled={loading || sending}
-                    sendLabel={t("post.send")} onBack={onBack}
-                    action={onEdit && <button type="button" className="pageBottomAction" onClick={onEdit}><PencilSimpleIcon weight="fill"/> {t("post.edit")}</button>} />
-                    : <PageBottom onBack={onBack}><Link className="pageBottomAction" to="/sign">{t("post.signIn")}</Link></PageBottom>}
+                {user.id ? <Composer
+                    text={text}
+                    setText={setText}
+                    files={files}
+                    setFiles={setFiles}
+                    placeholder={t("post.placeholder")}
+                    onSend={sendComment}
+                    disabled={loading || sending}
+                    sendLabel={t("post.send")}
+                    onBack={onBack}
+                    action={action || (onEdit && <button type="button" className="pageBottomAction" onClick={onEdit}>
+                        <PencilSimpleIcon weight="fill" /> {t("post.edit")}
+                    </button>)}
+                />
+                    : <PageBottom onBack={onBack}>
+                        {action}<Link className="pageBottomAction" to="/sign">
+                            {t("post.signIn")}
+                        </Link>
+                    </PageBottom>}
             </div>
         </>
     );

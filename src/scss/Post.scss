@@ -328,3 +328,37 @@
     border-radius: 24px;
     width: fit-content;
 }
+
+.richPost, .postRichInput {
+    p {
+        margin: 0 0 1vh;
+    }
+
+    h2 {
+        margin: 1vh 0;
+    }
+
+    blockquote {
+        margin: 1vh 0;
+        padding-left: 1vw;
+        border-left: 1px solid var(--accent_text);
+    }
+
+    ul, ol {
+        padding-left: 2em;
+        margin: 1vh 0;
+    }
+
+    a {
+        color: var(--accent_text);
+
+        svg {
+            display: inline;
+            vertical-align: middle;
+        }
+    }
+
+    code {
+        background: var(--interact);
+    }
+}

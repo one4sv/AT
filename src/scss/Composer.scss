@@ -32,8 +32,12 @@
         border: 0;
         outline: none;
         resize: none;
-        &::placeholder { color: var(--borderWhLight); }
-        @media (max-width: 800px) { padding-inline: 3vw; }
+        &::placeholder {
+            color: var(--borderWhLight);
+        }
+        @media (max-width: 800px) {
+            padding-inline: 3vw;
+        }
     }
 }
 
@@ -57,8 +61,14 @@
         background: var(--interact);
         color: var(--tc);
         cursor: pointer;
-        > svg { width: 2.5vh; height: 2.5vh; }
-        &:disabled { opacity: .5; cursor: default; }
+        > svg {
+            width: 2.5vh;
+            height: 2.5vh;
+        }
+        &:disabled {
+            opacity: .5;
+            cursor: default;
+        }
     }
     > .pageBottomAction {
         width: auto;
@@ -66,7 +76,9 @@
         border-radius: 24px;
         padding: 0 1vw;
         color: var(--borderWh);
-        @media (max-width: 800px) { padding: 0 3vw; }
+        @media (max-width: 800px) {
+            padding: 0 3vw;
+        }
     }
     > .composerSend {
         margin-left: auto;

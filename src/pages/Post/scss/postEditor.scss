@@ -6,7 +6,9 @@
     background: var(--mc);
     color: var(--tc);
     border-radius: 24px;
-    @media (max-width: 800px) { padding: 1vh 3vw; }
+    @media (max-width: 800px) {
+        padding: 1vh 3vw;
+    }
 }
 
 .postEditorHabit {
@@ -26,14 +28,26 @@
         outline: none;
         cursor: pointer;
     }
-    > div { max-height: 30vh; overflow-y: auto; }
+    > div {
+        max-height: 30vh;
+        overflow-y: auto;
+    }
     @media (max-width: 800px) {
-        > input { padding-left: 3vw; }
-        > div > div { padding-inline: 3vw; }
-        > svg { right: 3vw; }
+        > input {
+            padding-left: 3vw;
+        }
+        > div > div {
+            padding-inline: 3vw;
+        }
+        > svg {
+            right: 3vw;
+        }
     }
 }
 .postTA {
+    position: relative;
+    box-sizing: border-box;
+    color: var(--tc);
     border-radius: 24px;
     min-height: 85dvh;
     width: 100%;
@@ -42,8 +56,8 @@
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     outline: none;
-    font: var(--font);
-    padding: 1vh 1vw;
+    font: inherit;
+    padding: 1vh .75vw;
     @media (max-width: 800px) {
         padding: 1vh 3vw;
     }
@@ -51,4 +65,251 @@
 .postEditor .composerEmoji {
     top: 100%;
     bottom: auto;
+}
+
+.postEditor .postPageScroll {
+    padding-bottom: 8dvh;
+}
+
+.postRichInput {
+    min-height: 70dvh;
+    padding: 1vh 2.5vw 2vh 0;
+    outline: none;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+
+    p {
+        min-height: 1em;
+        margin: 0 0 1vh;
+    }
+}
+
+.postToolbar {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    border-radius: 24px;
+    background: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    padding: .5vh .5vw;
+
+    > div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5vh;
+    }
+
+    button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 3.5vh;
+        min-height: 3.5vh;
+        padding: .5vh;
+        border: none;
+        border-radius: 24px;
+        background: transparent;
+        color: var(--tc);
+        font: inherit;
+        cursor: pointer;
+
+        &[aria-pressed="true"] {
+            background: var(--interact);
+            color: var(--accent_text);
+        }
+
+        svg {
+            width: 2.5vh;
+            height: 2.5vh;
+        }
+    }
+}
+
+.postLinkInput {
+    padding: 1vh 0;
+
+    input {
+        min-width: 0;
+        flex: 1;
+        background: var(--interact);
+        color: var(--tc);
+        border: 1px solid var(--block_border);
+        border-radius: 24px;
+        padding: .5vh 1vw;
+        font: inherit;
+    }
+}
+
+.postEditorEmpty {
+    position: relative;
+
+    &::before {
+        content: attr(data-placeholder);
+        position: absolute;
+        top: 1vh;
+        left: 0;
+        pointer-events: none;
+        opacity: .6;
+    }
+}
+
+.postInsert {
+    position: absolute;
+    right: .5vw;
+    margin-top: 1vh;
+    z-index: 4;
+
+    > button {
+        width: 3.5vh;
+        height: 3.5vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 50%;
+        color: var(--accent_text);
+        background: var(--accent_op);
+        cursor: pointer;
+    }
+}
+
+.postInsertOptions {
+    position: absolute;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    padding: 1vh 1vw;
+    border-radius: 24px;
+    background: var(--mc);
+    backdrop-filter: blur(var(--blur));
+
+    button {
+        padding: 1vh 0;
+        border: none;
+        background: transparent;
+        color: var(--tc);
+        text-align: left;
+        font: inherit;
+        cursor: pointer;
+    }
+}
+
+.postInlineMedia {
+    position: relative;
+    margin: 1vh 0;
+
+    img, video, audio {
+        display: block;
+        max-width: 100%;
+        max-height: 55vh;
+        border-radius: 24px;
+    }
+
+    button {
+        position: absolute;
+        right: 1vw;
+        top: 1vh;
+        border: none;
+        border-radius: 50%;
+        background: var(--mc);
+        color: var(--tc);
+        padding: .5vh;
+        cursor: pointer;
+    }
+}
+
+.postAttachments {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+
+    > div {
+        display: flex;
+        align-items: center;
+        gap: 1vw;
+    }
+
+    img {
+        width: 6vh;
+        height: 6vh;
+        border-radius: 24px;
+        object-fit: cover;
+    }
+
+    span {
+        overflow-wrap: anywhere;
+    }
+
+    button {
+        margin-left: auto;
+        border: none;
+        background: transparent;
+        color: var(--tc);
+        cursor: pointer;
+    }
+}
+
+.postPublishSettings {
+    position: absolute;
+    bottom: 9vh;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    padding: 2vh 1vw;
+    max-height: 65dvh;
+    overflow-y: auto;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--mc);
+    color: var(--tc);
+    backdrop-filter: blur(var(--blur));
+}
+
+.postPublishHeading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    button {
+        background: transparent;
+        color: var(--tc);
+        border: none;
+        cursor: pointer;
+    }
+}
+
+.postVisibility {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+
+    label {
+        display: flex;
+        align-items: center;
+        gap: 1vw;
+        cursor: pointer;
+    }
+
+    input {
+        accent-color: var(--accent);
+    }
+}
+
+@media (max-width: 800px) {
+    .postRichInput {
+        padding-right: 8vw;
+    }
+
+    .postPublishSettings {
+        padding-inline: 3vw;
+        bottom: 11vh;
+    }
+
+    .postInsert {
+        right: 2vw;
+    }
 }

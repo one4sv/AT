@@ -33,9 +33,57 @@ export default function Acc() {
     const { setDontHandle, dontHandleOther } = useSideMenu();
     const navigate = useNavigate();
 
-    const [collapsed, setCollapsed] = useState(0);
-    const [selector, setSelector] =
-        useState<"habits" | "posts">("posts");
+    const [ collapsed, setCollapsed ] = useState(0);
+    const [ selector, setSelector ] = useState<"habits" | "posts">("posts");
+
+    const collapsedRef = useRef(0);
+    const collapseTarget = useRef(0);
+    const collapseFrame = useRef<number | null>(null);
+
+    useEffect(() => {
+        collapsedRef.current = collapsed;
+    }, [collapsed]);
+
+    useEffect(() => {
+        return () => {
+            if (collapseFrame.current !== null) {
+                cancelAnimationFrame(collapseFrame.current);
+                collapseFrame.current = null;
+            }
+        };
+    }, [nick]);
+
+    const animateCollapse = (target: number) => {
+        if (collapseFrame.current !== null) {
+            if (collapseTarget.current === target) return;
+            cancelAnimationFrame(collapseFrame.current);
+            collapseFrame.current = null;
+        }
+
+        const start = collapsedRef.current;
+        const startTime = performance.now();
+        const duration = 320;
+        collapseTarget.current = target;
+
+        if (start === target) return;
+
+        const animate = (time: number) => {
+            const progress = Math.min((time - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const next = start + (target - start) * eased;
+
+            collapsedRef.current = next;
+            setCollapsed(next);
+
+            if (progress < 1) {
+                collapseFrame.current = requestAnimationFrame(animate);
+            } else {
+                collapseFrame.current = null;
+            }
+        };
+
+        collapseFrame.current = requestAnimationFrame(animate);
+    };
 
     const touchStartY = useRef(0);
     const touchStartX = useRef(0);
@@ -95,15 +143,26 @@ export default function Acc() {
         return slide ? Math.max(0, slide.scrollTop) : 0;
     };
 
-    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-        if (dontHandleOther) return;
+    const handleWheel = (e: WheelEvent) => {
+        if (isMobile || dontHandleOther || e.ctrlKey) return;
+        if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
+        if ((e.target as Element).closest("input, textarea, [contenteditable='true'], .react-datepicker-popper")) return;
+        if (getActiveSlideScrollTop() > 0) return;
 
-        const scrollTop = getActiveSlideScrollTop();
-        if (scrollTop > 0) return;
+        const target = e.deltaY > 0 ? 1 : 0;
+        if (collapsedRef.current === target && collapseFrame.current === null) return;
 
-        if (e.deltaY > 0) setCollapsed(1);
-        if (e.deltaY < 0) setCollapsed(0);
+        if (e.cancelable) e.preventDefault();
+        animateCollapse(target);
     };
+
+    useEffect(() => {
+        const element = accRef.current;
+        if (!element) return;
+
+        element.addEventListener("wheel", handleWheel, { passive: false });
+        return () => element.removeEventListener("wheel", handleWheel);
+    });
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         if (e.target !== e.currentTarget) return;
@@ -122,6 +181,10 @@ export default function Acc() {
     };
 
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+        if (collapseFrame.current !== null) {
+            cancelAnimationFrame(collapseFrame.current);
+            collapseFrame.current = null;
+        }
         touchStartY.current = e.touches[0].clientY;
         touchStartX.current = e.touches[0].clientX;
         expanded.current = false;
@@ -288,7 +351,7 @@ export default function Acc() {
             if (activeSlide && activeSlide.scrollTop > 0) {
                 activeSlide.scrollTo({ top: 0, behavior: "smooth" });
             } else {
-                setCollapsed(prev => (prev === 0 ? 1 : 0));
+                animateCollapse(collapsedRef.current === 0 ? 1 : 0);
             }
             return;
         }
@@ -307,7 +370,6 @@ export default function Acc() {
                 className="acc"
                 ref={accRef}
                 onTouchStartCapture={handleTouchStart}
-                onWheel={handleWheel}
                 onTouchEndCapture={handleTouchEnd}
                 onTouchCancelCapture={handleTouchEnd}
             >

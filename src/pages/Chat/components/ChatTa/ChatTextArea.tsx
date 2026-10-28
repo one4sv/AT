@@ -247,10 +247,8 @@ export default function ChatTextArea({
                         onPaste={handlePaste}
                     />
                 </div>
-                <div className="chatTaButts">
-                    <div className="chatWriteTAButt" onClick={handleSend}>
-                        <PaperPlaneRightIcon className="chatSend" weight="fill" />
-                    </div>
+                <div className="chatWriteTAButt" onClick={handleSend}>
+                    <PaperPlaneRightIcon className="chatSend" weight="fill" />
                 </div>
             </div>
             <input

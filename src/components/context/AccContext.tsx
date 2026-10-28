@@ -1,3 +1,5 @@
+import type { JSONContent } from "@tiptap/core";
+import type { PostMedia } from "../../pages/Post/RichPost";
 import { createContext, useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { type ReactNode } from "react"
 import { api } from "../ts/api";
@@ -13,7 +15,9 @@ const AccContext = createContext<AccContextType | null>(null);
 export type PostType = {
     id:number,
     user:User,
-    media?:Media[];
+    media?:PostMedia[];
+    content?: JSONContent | null;
+    visibility?: "inherit" | "all" | "contacts" | "nobody";
     habit?:Habit,
     text:string,
     likes:(string | null)[],
