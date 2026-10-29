@@ -95,3 +95,27 @@
     max-width: 100%;
     overflow-y: auto;
 }
+
+.composerRow {
+    > .composerAttach { flex-basis: 4vh; }
+    > .pageBottomBack { flex-basis: 5vh; }
+    > .chatWriteTAButt { flex: 0 0 5vh; }
+}
+.composer.reading .composerInput > textarea { padding-inline-end: 2vw; }
+.composer.writing .composerInput > textarea { padding-inline-end: 5vh; }
+.composerAction {
+    flex: 0 0 5vh;
+    .pageBottomAction {
+        width: 5vh;
+        padding: 0;
+        justify-content: center;
+        font-size: 0;
+        gap: 0;
+        > svg { flex-shrink: 0; }
+    }
+    &:empty { display: none; }
+}
+.composerDraft[hidden] { display: none; }
+.postPage:has(.composer) .postPageScroll {
+    padding-bottom: calc(var(--comment-bottom, 9vh) + 1vh);
+}

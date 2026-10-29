@@ -1,3 +1,6 @@
+import { isMobile } from "react-device-detect";
+import EmojiButton from "../../../../../components/ts/utils/EmojiButton";
+import EmojiBar from "../../../../../components/ts/utils/EmojiBar";
 import TA from "../../../../../components/ts/TA";
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { ChatCenteredIcon, ClockCountdownIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
@@ -20,6 +23,8 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
 
     const [comment, setComment] = useState<string>("");
     const [syncing, setSyncing] = useState(true);
+    const [ showEmojiBar, setShowEmojiBar ] = useState(false);
+    const emojiRef = useRef<HTMLDivElement>(null);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     useEffect(() => {
         setSyncing(true);
@@ -34,6 +39,8 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
 
   
 
+    useEffect(() => { setShowEmojiBar(false); }, [open, chosenDay]);
+
     const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setComment(e.target.value);
     };
@@ -45,7 +52,7 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
         comment.trim() === (dayComment || "").trim();
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+        if (e.key === "Enter" && !e.shiftKey && !isMobile && !e.nativeEvent.isComposing) {
             e.preventDefault();
             if (cantSave) return;
             sendDayComment(id, comment, chosenDay);
@@ -59,13 +66,15 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
     };
 
     return (
-        <div className={`habitDayCommentMobile ${open === "comment" ? "open" : "close"}`}>
+        <div ref={emojiRef} className={`habitDayCommentMobile inputWithEmoji ${open === "comment" ? "open" : "close"}`}>
             {open === "done" ? (
                 <div className="bottomOpen" onClick={() => setOpen("comment")}>
                     <ChatCenteredIcon size={22}/> 
                 </div>
             ) : (
                 <>
+                    <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!isMy || !habit?.ongoing || syncing} />
+                    <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar} setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef} />
                     <TA
                         placeholder="Комментарий"
                         taRef={textAreaRef}

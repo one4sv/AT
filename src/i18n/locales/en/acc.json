@@ -27,6 +27,7 @@
         "reload": "Reload",
         "attach": "Attach files",
         "emoji": "Emoji",
+        "keyboard": "Keyboard",
         "comment": "Comment",
         "placeholder": "Write a comment…",
         "send": "Send comment",

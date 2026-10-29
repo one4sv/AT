@@ -1,3 +1,5 @@
+import EmojiButton from "../../../../../components/ts/utils/EmojiButton";
+import EmojiBar from "../../../../../components/ts/utils/EmojiBar";
 import TA from "../../../../../components/ts/TA";
 import { useEffect, useRef, useState } from "react";
 import { ArrowBendDownLeftIcon, ClockCountdownIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
@@ -19,6 +21,8 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
 
   const [comment, setComment] = useState<string>("");
   const [syncing, setSyncing] = useState(true);
+  const [ showEmojiBar, setShowEmojiBar ] = useState(false);
+  const emojiRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -32,6 +36,8 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
     return () => clearTimeout(t);
   }, [chosenDay, dayComment]);
 
+
+  useEffect(() => { setShowEmojiBar(false); }, [chosenDay]);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
@@ -58,7 +64,9 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
   };
 
   return (
-    <div className="habitDayComment">
+    <div className="habitDayComment inputWithEmoji" ref={emojiRef}>
+      <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!isMy || !habit?.ongoing || syncing} />
+      <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar} setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef} />
       <TA
         placeholder="Комментарий"
         taRef={textAreaRef}

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction, type ReactNode } from "react";
-import { Paperclip, PaperPlaneRightIcon, SmileySticker } from "@phosphor-icons/react";
+import { Paperclip, PaperPlaneRightIcon, ArrowLeftIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useDrop } from "../hooks/DropHook";
 import type { Media } from "../context/ChatContext";
-import PageBottom from "./PageBottom";
+import EmojiButton from "./utils/EmojiButton";
+import { isMobile } from "react-device-detect";
 import TA from "./TA";
 import MediaDraft from "./MediaDraft";
 import EmojiBar from "./utils/EmojiBar";
@@ -40,11 +41,13 @@ export default function Composer({
 }: ComposerProps) {
     const { t } = useTranslation("acc");
     const { droppedFiles, setDroppedFiles } = useDrop();
+    const [ writing, setWriting ] = useState(false);
+    const composerRef = useRef<HTMLDivElement>(null);
     const [ showEmojiBar, setShowEmojiBar ] = useState(false);
     const taRef = useRef<HTMLTextAreaElement>(null);
     const fileRef = useRef<HTMLInputElement>(null);
     const emojiRef = useRef<HTMLDivElement>(null);
-    const addFiles = (next: File[]) => setFiles(prev => [...prev, ...next]);
+    const addFiles = (next: File[]) => { setWriting(true); setFiles(prev => [...prev, ...next]); };
     const removeFile = (index: number) => {
         if (index < media.length) setMedia?.(prev => prev.filter((_, i) => i !== index));
         else setFiles(prev => prev.filter((_, i) => i !== index - media.length));
@@ -56,37 +59,71 @@ export default function Composer({
 
     useEffect(() => {
         if (!droppedFiles.length) return;
-        if (!disabled) setFiles(prev => [...prev, ...droppedFiles]);
+        if (!disabled) { setWriting(true); setFiles(prev => [...prev, ...droppedFiles]); }
         setDroppedFiles([]);
     }, [droppedFiles, disabled, setFiles, setDroppedFiles]);
 
+    useEffect(() => {
+        const element = composerRef.current;
+        const page = element?.closest<HTMLElement>(".postPage");
+        const bottom = element?.closest<HTMLElement>(".postCommentBottom");
+        if (!page || !bottom) return;
+        const measure = () => page.style.setProperty("--comment-bottom", `${bottom.offsetHeight + (parseFloat(bottom.style.bottom) || 0)}px`);
+        const observer = new ResizeObserver(measure);
+        observer.observe(bottom);
+        window.addEventListener("composerresize", measure);
+        measure();
+        return () => {
+            observer.disconnect();
+            window.removeEventListener("composerresize", measure);
+            page.style.removeProperty("--comment-bottom");
+        };
+    }, []);
+
+    useEffect(() => {
+        const closeOutside = (event: PointerEvent) => {
+            const target = event.target as Element;
+            if (composerRef.current?.contains(target) || target.closest(".emojiBar, .blackout")) return;
+            taRef.current?.blur();
+            setWriting(false);
+            setShowEmojiBar(false);
+        };
+        document.addEventListener("pointerdown", closeOutside);
+        return () => document.removeEventListener("pointerdown", closeOutside);
+    }, []);
+
+    const goBack = () => {
+        if (showEmojiBar) setShowEmojiBar(false);
+        else if (writing) {
+            taRef.current?.blur();
+            setWriting(false);
+        } else onBack?.();
+    };
+
     return (
-        <div className="composer">
+        <div className={`composer ${writing ? "writing" : "reading"}`} ref={composerRef}>
             <div className="composerRow" ref={emojiRef}>
-                <div className="chatTaButts">
-                    <div
-                        className="chatWriteSvgButt"
-                        onClick={() => fileRef.current?.click()}
-                        aria-label={t("post.attach")}
-                    >
-                        <Paperclip />
-                    </div>
-                    <div
-                        className="chatWriteSvgButt"
-                        onClick={() => setShowEmojiBar(!showEmojiBar)}
-                        aria-label={t("post.emoji")}
-                    >
-                        <SmileySticker />
-                    </div>
-                </div>
-                <div className="composerInput">
+                <button type="button" className="pageBottomBack" onClick={goBack} aria-label={t("navigation.back", { ns: "info" })}>
+                    <ArrowLeftIcon />
+                </button>
+                {writing && <button type="button" className="composerAttach" disabled={disabled}
+                    onMouseDown={event => event.preventDefault()}
+                    onClick={() => fileRef.current?.click()} aria-label={t("post.attach")}>
+                    <Paperclip />
+                </button>}
+                <div className="composerInput inputWithEmoji">
+                    {writing && <EmojiButton taRef={taRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={disabled} />}
+                    <div className="composerDraft" hidden={!writing}>
                     <MediaDraft
                         files={files}
                         media={media}
                         onRemove={removeFile}
                         disabled={disabled}
                     />
+                    </div>
                     <TA
+                        onFocus={() => setWriting(true)}
+                        maxHeight={writing ? 35 : 5}
                         taRef={taRef}
                         value={text}
                         onChange={event => setText(event.target.value)}
@@ -94,16 +131,19 @@ export default function Composer({
                         aria-label={placeholder}
                         disabled={disabled}
                         onFiles={addFiles}
-                        onSend={onSend}
+                        onSend={isMobile ? undefined : onSend}
                     />
                 </div>
-                <div
+                {writing ? <button
+                    type="button"
                     className="chatWriteTAButt"
+                    disabled={disabled || (!text.trim() && !files.length && !media.length)}
+                    onMouseDown={event => event.preventDefault()}
                     onClick={onSend}
                     aria-label={sendLabel}
                 >
                     <PaperPlaneRightIcon weight="fill" className="chatSend"/>
-                </div>
+                </button> : <div className="composerAction">{action}</div>}
             </div>
             <EmojiBar
                 taRef={taRef}
@@ -113,9 +153,6 @@ export default function Composer({
                 emojiRef={emojiRef}
                 cn="composerEmoji"
             />
-            <PageBottom className="composerTools" onBack={onBack}>
-                {action}
-            </PageBottom>
             <input
                 ref={fileRef}
                 type="file"

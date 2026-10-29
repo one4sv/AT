@@ -1,6 +1,6 @@
 import TA from "../../../../components/ts/TA";
 import MediaDraft from "../../../../components/ts/MediaDraft";
-import { Paperclip, PaperPlaneRightIcon, SmileySticker } from "@phosphor-icons/react";
+import { Paperclip, PaperPlaneRightIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type SetStateAction } from "react";
 import { useLocation, useParams } from "react-router";
 import { useChat } from "../../../../components/hooks/ChatHook";
@@ -11,6 +11,7 @@ import { MessBarBlock } from "../../utils/MessBarBlock";
 import type { Media, message } from "../../../../components/context/ChatContext";
 import { useSendMess } from "../../../../components/hooks/SendMessHook";
 import { useUser } from "../../../../components/hooks/UserHook";
+import EmojiButton from "../../../../components/ts/utils/EmojiButton";
 interface ChatTABgProps {
     textAreaRef: React.RefObject<HTMLTextAreaElement | null>;
     scrollToMessage: (id: number) => void;
@@ -26,6 +27,7 @@ export default function ChatTextArea({
     mess,
     setMess,
     setShowEmojiBar,
+    showEmojiBar,
     emojiButtRef
 }: ChatTABgProps) {
     const {
@@ -203,18 +205,8 @@ export default function ChatTextArea({
                     <div className="chatWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
                         <Paperclip className="chatSvg" />
                     </div>
-                    <div
-                        className="chatWriteSvgButt"
-                        ref={emojiButtRef}
-                        onClick={e => {
-                            e.stopPropagation();
-                            setShowEmojiBar(prev => !prev);
-                        }}
-                    >
-                        <SmileySticker className="chatSvg" />
-                    </div>
                 </div>
-                <div className={`chatWriteBar ${barOpen ? "open" : ""}`}>
+                <div className={`chatWriteBar inputWithEmoji ${barOpen ? "open" : ""}`} ref={emojiButtRef}>
                     {answer !== null && <MessBarBlock object={answer} scrollToMessage={scrollToMessage} />}
                     {editing !== null && <MessBarBlock object={editing} scrollToMessage={scrollToMessage} />}
                     {redirect !== undefined && <MessBarBlock
@@ -232,6 +224,7 @@ export default function ChatTextArea({
                         scrollToMessage={scrollToMessage}
                     />}
                     <MediaDraft files={files} media={oldMedia} onRemove={handleRemoveFile} />
+                    <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} />
                     <TA
                         name="chatTA"
                         id="chatTA"

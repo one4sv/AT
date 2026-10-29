@@ -301,3 +301,12 @@
         }
     }
 }
+
+.habitDayComment.inputWithEmoji > .inputEmojiButton {
+    bottom: 5vh;
+}
+.habitDayCommentMobile.inputWithEmoji {
+    > textarea { padding-inline-end: 5vh; padding-bottom: 1.5vh; }
+    > .inputEmojiButton { right: 6vh; bottom: 1vh; }
+}
+
