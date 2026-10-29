@@ -7,6 +7,7 @@ import MobileLayout from "./MobileLayout";
 import Skeleton, { type SkeletonType } from "../ts/Skeleton";
 import { useUser } from "../hooks/UserHook";
 import { useSettings } from "../hooks/SettingsHook";
+import PostEditorSkeleton from "../../pages/Post/PostEditorSkeleton";
 export default function ResponsiveLayout() {
     const isMobile = useCompactLayout();
     const {
@@ -22,7 +23,8 @@ export default function ResponsiveLayout() {
     const reduced = useReducedMotion();
     const section = pathname.startsWith("/post/") ? pathname : pathname.startsWith("/info") ? "info" : pathname.startsWith("/settings") ? "settings" : "page";
     const type: SkeletonType = pathname.startsWith("/habit") ? "habit" : pathname.startsWith("/chat") ? "chat" : pathname === "/" ? "feed" : "profile";
-    const content = initialLoading || !settingsLoaded ? <Skeleton type={type} count={type === "chat" ? 5 : 3} overview={pathname === "/habit"} /> : <AnimatePresence mode="wait">
+    const isPostEditor = pathname === "/post/new" || /^\/post\/[^/]+\/edit\/?$/.test(pathname);
+    const content = initialLoading || !settingsLoaded ? (isPostEditor ? <PostEditorSkeleton /> : <Skeleton type={type} count={type === "chat" ? 5 : 3} overview={pathname === "/habit"} />) : <AnimatePresence mode="wait">
         <motion.div
             key={`${user.id ?? "guest"}-${section}`}
             className="routeTransition"

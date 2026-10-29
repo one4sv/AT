@@ -33,6 +33,7 @@ export default function SideMenu() {
     const { layout } = useSettings();
     const {
         closeMenu,
+        openSideMenu,
         activeTab,
         showSideMenu,
         setIsDragging,
@@ -40,12 +41,14 @@ export default function SideMenu() {
         setTranslateX,
         messageSelectedValue,
         habitsSelectedValue,
-        setDontHandle
+        setDontHandle,
+        setDontHandleOther
     } = useSideMenu();
     const translateSlider = activeTab === "chats" ? 0 : activeTab === "habits" ? -25 : activeTab === "spots" ? -50 : activeTab === "user" ? -75 : 0;
     const startX = useRef(0);
     const startY = useRef(0);
     const startTranslate = useRef(0);
+    const currentTranslate = useRef(0);
     const horizontalSwipe = useRef(false);
     const verticalScroll = useRef(false);
     const sideMenuRef = useRef<HTMLDivElement>(null);
@@ -57,6 +60,7 @@ export default function SideMenu() {
         startX.current = e.touches[0].clientX;
         startY.current = e.touches[0].clientY;
         startTranslate.current = translateX;
+        currentTranslate.current = translateX;
         horizontalSwipe.current = false;
         verticalScroll.current = false;
     };
@@ -66,7 +70,7 @@ export default function SideMenu() {
         const diffPx = clientX - startX.current;
         const diffPy = clientY - startY.current;
         if (!horizontalSwipe.current && !verticalScroll.current) {
-            if (Math.abs(diffPy) > 5 || Math.abs(diffPx) > 5) {
+            if (Math.abs(diffPy) >= 8 || Math.abs(diffPx) >= 8) {
                 if (Math.abs(diffPy) > Math.abs(diffPx)) {
                     verticalScroll.current = true;
                     setDontHandle(true);
@@ -74,6 +78,7 @@ export default function SideMenu() {
                 }
                 horizontalSwipe.current = true;
                 setIsDragging(true);
+                setDontHandleOther(true);
                 setDontHandle(false);
             }
         }
@@ -81,6 +86,7 @@ export default function SideMenu() {
         const diffPercent = diffPx / window.innerWidth * 100;
         let newTranslate = startTranslate.current + diffPercent;
         newTranslate = Math.max(-100, Math.min(0, newTranslate));
+        currentTranslate.current = newTranslate;
         setTranslateX(newTranslate);
     };
     const handleTouchEnd = () => {
@@ -92,22 +98,8 @@ export default function SideMenu() {
         }
         setIsDragging(false);
         setDontHandle(false);
-        const target = translateX < -40 ? -100 : 0;
-        const start = translateX;
-        const duration = 400;
-        const startTime = performance.now();
-        const animate = (time: number) => {
-            const progress = Math.min((time - startTime) / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            const next = start + (target - start) * eased;
-            setTranslateX(next);
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-            } else if (target === -100) {
-                closeMenu();
-            }
-        };
-        requestAnimationFrame(animate);
+        if (currentTranslate.current < -40) closeMenu();
+        else openSideMenu();
         horizontalSwipe.current = false;
         verticalScroll.current = false;
     };

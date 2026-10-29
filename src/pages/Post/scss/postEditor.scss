@@ -12,7 +12,7 @@
 }
 
 .postEditorHabit {
-    @include var.selectList(100%, 5vh, 2.5vh, 1vw, 1.25vh, var(--tc), var(--accent_text), var(--bgc), inherit, 1vh, 1vw, .5vh);
+    @include var.selectList(100%, 5vh, 2.5vh, 1vw, 1.25vh, var(--tc), var(--accent_text), var(--bgc), inherit, 1vh, 1vw, .5vh, true);
     margin-bottom: 1vh;
     > input {
         backdrop-filter: blur(var(--blur));
@@ -51,7 +51,7 @@
     border-radius: 24px;
     min-height: 85dvh;
     width: 100%;
-    background: var(--interact);
+    background: var(--mc);
     border: 1px solid var(--block_border);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
@@ -89,10 +89,12 @@
     top: 0;
     z-index: 3;
     border-radius: 24px;
-    background: var(--mc);
-    backdrop-filter: blur(var(--blur));
+    background: var(--interact);
+    border: 1px solid var(--block_border);
     padding: .5vh .5vw;
-
+    margin-bottom: 1vh;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     > div {
         display: flex;
         flex-wrap: wrap;
@@ -250,66 +252,62 @@
     }
 }
 
-.postPublishSettings {
-    position: absolute;
-    bottom: 9vh;
-    left: 0;
-    right: 0;
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    gap: 1vh;
-    padding: 2vh 1vw;
-    max-height: 65dvh;
-    overflow-y: auto;
-    border: 1px solid var(--block_border);
-    border-radius: 24px;
-    background: var(--mc);
-    color: var(--tc);
-    backdrop-filter: blur(var(--blur));
-}
-
-.postPublishHeading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    button {
-        background: transparent;
-        color: var(--tc);
-        border: none;
-        cursor: pointer;
-    }
-}
-
-.postVisibility {
-    display: flex;
-    flex-direction: column;
-    gap: 1vh;
-
-    label {
-        display: flex;
-        align-items: center;
-        gap: 1vw;
-        cursor: pointer;
-    }
-
-    input {
-        accent-color: var(--accent);
-    }
-}
-
 @media (max-width: 800px) {
     .postRichInput {
         padding-right: 8vw;
     }
 
-    .postPublishSettings {
-        padding-inline: 3vw;
-        bottom: 11vh;
-    }
-
     .postInsert {
         right: 2vw;
+    }
+}
+
+.postEditorSkeleton {
+    .postTA {
+        pointer-events: none;
+    }
+
+    .postSkeletonTool {
+        width: 3.5vh;
+        height: 3.5vh;
+        border-radius: 24px;
+        flex-shrink: 0;
+    }
+
+    .postRichInput {
+        padding-top: 2vh;
+        gap: 1.5vh;
+    }
+
+    .skeletonLine {
+        height: 1.8vh;
+        background: var(--mc);
+    }
+
+    .skeletonTitle {
+        height: 2.5vh;
+        margin-bottom: 1vh;
+    }
+
+    .postSkeletonSettings {
+        flex: 1;
+        height: 5vh;
+        border-radius: 24px;
+    }
+
+    .postSkeletonBack,
+    .postSkeletonSend {
+        min-width: 0;
+        min-height: 0;
+    }
+
+    .postSkeletonBack {
+        width: 5vh;
+        height: 5vh;
+    }
+
+    .postSkeletonSend {
+        width: 4vh;
+        height: 4vh;
     }
 }

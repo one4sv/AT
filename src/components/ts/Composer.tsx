@@ -62,23 +62,48 @@ export default function Composer({
 
     return (
         <div className="composer">
-            <div className="composerInput">
-                <MediaDraft
-                    files={files}
-                    media={media}
-                    onRemove={removeFile}
-                    disabled={disabled}
-                />
-                <TA
-                    taRef={taRef}
-                    value={text}
-                    onChange={event => setText(event.target.value)}
-                    placeholder={placeholder}
-                    aria-label={placeholder}
-                    disabled={disabled}
-                    onFiles={addFiles}
-                    onSend={onSend}
-                />
+            <div className="composerRow" ref={emojiRef}>
+                <div className="chatTaButts">
+                    <div
+                        className="chatWriteSvgButt"
+                        onClick={() => fileRef.current?.click()}
+                        aria-label={t("post.attach")}
+                    >
+                        <Paperclip />
+                    </div>
+                    <div
+                        className="chatWriteSvgButt"
+                        onClick={() => setShowEmojiBar(!showEmojiBar)}
+                        aria-label={t("post.emoji")}
+                    >
+                        <SmileySticker />
+                    </div>
+                </div>
+                <div className="composerInput">
+                    <MediaDraft
+                        files={files}
+                        media={media}
+                        onRemove={removeFile}
+                        disabled={disabled}
+                    />
+                    <TA
+                        taRef={taRef}
+                        value={text}
+                        onChange={event => setText(event.target.value)}
+                        placeholder={placeholder}
+                        aria-label={placeholder}
+                        disabled={disabled}
+                        onFiles={addFiles}
+                        onSend={onSend}
+                    />
+                </div>
+                <div
+                    className="chatWriteTAButt"
+                    onClick={onSend}
+                    aria-label={sendLabel}
+                >
+                    <PaperPlaneRightIcon weight="fill" className="chatSend"/>
+                </div>
             </div>
             <EmojiBar
                 taRef={taRef}
@@ -88,37 +113,8 @@ export default function Composer({
                 emojiRef={emojiRef}
                 cn="composerEmoji"
             />
-            <PageBottom
-                className="composerTools"
-                innerRef={emojiRef}
-                onBack={onBack}
-            >
-                <button
-                    type="button"
-                    disabled={disabled}
-                    onClick={() => fileRef.current?.click()}
-                    aria-label={t("post.attach")}
-                >
-                    <Paperclip />
-                </button>
-                <button
-                    type="button"
-                    disabled={disabled}
-                    onClick={() => setShowEmojiBar(!showEmojiBar)}
-                    aria-label={t("post.emoji")}
-                >
-                    <SmileySticker />
-                </button>
+            <PageBottom className="composerTools" onBack={onBack}>
                 {action}
-                <button
-                    type="button"
-                    className="composerSend"
-                    disabled={disabled || (!text.trim() && !files.length && !media.length)}
-                    onClick={onSend}
-                    aria-label={sendLabel}
-                >
-                    <PaperPlaneRightIcon weight="fill" />
-                </button>
             </PageBottom>
             <input
                 ref={fileRef}

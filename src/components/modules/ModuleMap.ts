@@ -11,6 +11,7 @@ import ShareAcc from './ShareAcc';
 import LinkConfirm from './LinkConfirm';
 import ChatWithInfo from './ChatWithInfo';
 import Table from './Table';
+import PostSettings from './PostSettings';
 
 const ModuleMap: Record<string, React.FC> = {
     AddHabit: AddHabit,
@@ -25,6 +26,7 @@ const ModuleMap: Record<string, React.FC> = {
     ShareAcc:ShareAcc,
     LinkConfirm:LinkConfirm,
     ChatWithInfo:ChatWithInfo,
+    PostSettings:PostSettings,
     Table:Table
 };
 

@@ -20,7 +20,6 @@ export default function MobileLayout({ children }: LayoutProps) {
     const {
         toggleMenu,
         translateX,
-        isDragging,
         setIsDragging,
         setTranslateX,
         dontHandle,
@@ -30,87 +29,67 @@ export default function MobileLayout({ children }: LayoutProps) {
 
     const startX = useRef(0);
     const startY = useRef(0);
-    const gesture = useRef<"none" | "menu" | "scroll">("none"); // тип жеста фиксируем один раз
+    const startTranslate = useRef(-100);
+    const pageRef = useRef<HTMLDivElement>(null);
+    const gesture = useRef<"none" | "menu" | "scroll">("none");
 
     const handleTouchStart = (e: React.TouchEvent) => {
-        const activeElement = document.activeElement;
+        gesture.current = "none";
+        if (e.touches.length !== 1 || dontHandle) return;
 
-        const isInputFocused =
-            activeElement?.tagName === "INPUT" ||
-            activeElement?.tagName === "TEXTAREA";
-
-        if (isInputFocused) {
-            setDontHandleOther(true);
-            setIsDragging(false);
-            setDontHandle(true);
-            gesture.current = "none";
+        const target = e.target as Element;
+        if (target.closest("input, textarea, [contenteditable='true']")) {
+            gesture.current = "scroll";
             return;
         }
 
         startX.current = e.touches[0].clientX;
         startY.current = e.touches[0].clientY;
-        gesture.current = "none";
-        setIsDragging(true);
+        startTranslate.current = translateX;
     };
 
-    const handleTouchMove = (e: React.TouchEvent) => {
-        if (!isDragging || dontHandle) return;
+    const handleTouchMove = (e: TouchEvent) => {
+        if (dontHandle || e.touches.length !== 1 || gesture.current === "scroll") return;
 
-        const clientX = e.touches[0].clientX;
-        const clientY = e.touches[0].clientY;
+        const diffX = e.touches[0].clientX - startX.current;
+        const diffY = e.touches[0].clientY - startY.current;
 
-        const diffX = clientX - startX.current;
-        const diffY = clientY - startY.current;
-
-        // === Решаем тип жеста только один раз ===
         if (gesture.current === "none") {
-            const absX = Math.abs(diffX);
-            const absY = Math.abs(diffY);
+            if (Math.abs(diffX) < 8 && Math.abs(diffY) < 8) return;
 
-            // Ещё слишком мало движения — ждём
-            if (absX < 8 && absY < 8) return;
-
-            if (absY > absX) {
-                // Вертикаль победила → это скролл, меню не трогаем
+            if (Math.abs(diffY) >= Math.abs(diffX) || (startTranslate.current <= -100 && diffX < 0)) {
                 gesture.current = "scroll";
-                setDontHandle(true);
-                setIsDragging(false);
                 return;
             }
 
-            // Горизонталь победила → это меню
             gesture.current = "menu";
+            setIsDragging(true);
+            setDontHandleOther(true);
         }
 
-        // Если уже решили, что скролл — ничего не делаем
-        if (gesture.current === "scroll") return;
-
-        // === Жест меню ===
-        // (вертикаль больше не может его отменить)
-
-        const percent = (diffX / window.innerWidth) * 100;
-        let next = -100 + percent;
-        next = Math.max(-100, Math.min(0, next));
-
-        setDontHandleOther(true);
-        setTranslateX(next);
+        if (e.cancelable) e.preventDefault();
+        const percent = diffX / window.innerWidth * 100;
+        setTranslateX(Math.max(-100, Math.min(0, startTranslate.current + percent)));
     };
 
     const handleTouchEnd = () => {
-        if (gesture.current === "menu") {
-            // Всегда доводим анимацию до края
-            toggleMenu();
-        }
+        if (gesture.current === "menu") toggleMenu();
 
         gesture.current = "none";
         setIsDragging(false);
-        // dontHandle сбрасывать не обязательно — toggleMenu/closeMenu сами это делают
+        setDontHandle(false);
     };
 
     useEffect(() => {
-        if (translateX > -100) {
-            setDontHandleOther(true);
-        }
+        const element = pageRef.current;
+        if (!element) return;
+
+        element.addEventListener("touchmove", handleTouchMove, { passive: false });
+        return () => element.removeEventListener("touchmove", handleTouchMove);
+    });
+
+    useEffect(() => {
+        setDontHandleOther(translateX > -100);
     }, [setDontHandleOther, translateX]);
 
     const hideHeader =
@@ -143,9 +122,9 @@ export default function MobileLayout({ children }: LayoutProps) {
 
             <div
                 className="page-content"
+                ref={pageRef}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
-                onTouchMove={handleTouchMove}
                 onTouchCancel={handleTouchEnd}
             >
                 {decor === "default" && <Background />}

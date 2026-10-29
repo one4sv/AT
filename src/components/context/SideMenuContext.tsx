@@ -238,6 +238,19 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         animationFrame.current = requestAnimationFrame(animate);
     }, []);
 
+    useEffect(() => {
+        if (isDragging && animationFrame.current !== null) {
+            cancelAnimationFrame(animationFrame.current);
+            animationFrame.current = null;
+        }
+    }, [isDragging]);
+
+    useEffect(() => {
+        return () => {
+            if (animationFrame.current !== null) cancelAnimationFrame(animationFrame.current);
+        };
+    }, []);
+
     const closeMenu = useCallback(() => {
         setIsDragging(false);
         setDontHandle(false);

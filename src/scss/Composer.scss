@@ -7,9 +7,12 @@
     flex-direction: column;
     gap: .5vh;
     height: fit-content;
+    position: relative;
 }
 
 .composerInput {
+    flex: 1;
+    min-width: 0;
     border: 1px solid var(--block_border);
     border-radius: 24px;
     background: var(--interact);
@@ -41,51 +44,47 @@
     }
 }
 
-.pageBottom.composerTools {
-    padding: 0;
+.composerRow {
     display: flex;
+    align-items: flex-end;
     gap: .5vh;
-    position: relative;
-    > * {
-        backdrop-filter: blur(var(--blur));
-        -webkit-backdrop-filter: blur(var(--blur));
-    }
+    min-width: 0;
+
     > button {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 5vh;
+        flex: 0 0 4vh;
         height: 5vh;
-        border: 1px solid var(--block_border);
-        border-radius: 50%;
+        padding: 0;
+        border: none;
+        border-radius: 24px;
         background: var(--interact);
         color: var(--tc);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
         cursor: pointer;
+
         > svg {
             width: 2.5vh;
             height: 2.5vh;
         }
+
         &:disabled {
             opacity: .5;
             cursor: default;
         }
     }
-    > .pageBottomAction {
-        width: auto;
-        justify-content: flex-start;
-        border-radius: 24px;
-        padding: 0 1vw;
-        color: var(--borderWh);
-        @media (max-width: 800px) {
-            padding: 0 3vw;
-        }
-    }
+
     > .composerSend {
-        margin-left: auto;
-        border: none;
         background: linear-gradient(135deg, var(--accent), var(--grad));
         color: var(--inner_text);
     }
+}
+
+.pageBottom.composerTools {
+    position: relative;
+    padding: 0;
 }
 
 .composerEmoji {

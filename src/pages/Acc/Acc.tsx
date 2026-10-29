@@ -30,7 +30,7 @@ export default function Acc() {
 
     const { nick } = useParams();
     const { setTitle } = usePageTitle();
-    const { setDontHandle, dontHandleOther } = useSideMenu();
+    const { setDontHandle, setIsDragging, dontHandleOther } = useSideMenu();
     const navigate = useNavigate();
 
     const [ collapsed, setCollapsed ] = useState(0);
@@ -224,7 +224,7 @@ export default function Acc() {
         const deltaX = currentX - touchStartX.current;
 
         if (!expanded.current) {
-            if (Math.abs(deltaY) <= 5 && Math.abs(deltaX) <= 5) return;
+            if (Math.abs(deltaY) < 8 && Math.abs(deltaX) < 8) return;
 
             gestureMoved.current = true;
             isHorizontal.current = Math.abs(deltaX) > Math.abs(deltaY);
@@ -283,11 +283,15 @@ export default function Acc() {
         }
         setCollapsed(prev => {
             if (deltaY > 0) {
-                return Math.max(0, Math.min(1, prev + deltaY / 700));
+                const next = Math.max(0, Math.min(1, prev + deltaY / 700));
+                collapsedRef.current = next;
+                return next;
             }
 
             if (deltaY < 0 && canExpand.current) {
-                return Math.max(0, Math.min(1, prev + deltaY / 700));
+                const next = Math.max(0, Math.min(1, prev + deltaY / 700));
+                collapsedRef.current = next;
+                return next;
             }
 
             return prev;
@@ -317,24 +321,27 @@ export default function Acc() {
         sliderOwnsGesture.current = false;
 
         if (wasCollapsingGesture) {
-            setCollapsed(prev => (prev > 0.45 ? 1 : 0));
+            animateCollapse(collapsedRef.current > 0.45 ? 1 : 0);
         }
 
         if (ownedGesture) {
             e.stopPropagation();
+            setIsDragging(false);
             setDontHandle(false);
         }
     };
 
-    const handleSlideClick = () => {
+    const handleSlideClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (
             dontHandleOther ||
             gestureBlocked.current ||
             gestureMoved.current
         ) return;
 
-        if (collapsed === 0) {
-            setCollapsed(1);
+        if (collapsedRef.current < 1) {
+            e.preventDefault();
+            e.stopPropagation();
+            animateCollapse(1);
         }
     };
 
@@ -399,7 +406,7 @@ export default function Acc() {
                     onScroll={handleScroll}
                     onTouchStartCapture={touchSliderStart}
                 >
-                    <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined}>
+                    <div className="accSlide" onClickCapture={handleSlideClick}>
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[0] = el; }}
@@ -413,7 +420,7 @@ export default function Acc() {
                             />
                         </div>
                     </div>
-                    <div className="accSlide" onClick={isMobile ? handleSlideClick : undefined}>
+                    <div className="accSlide" onClickCapture={handleSlideClick}>
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[1] = el; }}

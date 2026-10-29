@@ -7,16 +7,16 @@ import type { JSONContent } from "@tiptap/core";
 import { GearIcon, PaperclipIcon, PaperPlaneRightIcon, XIcon } from "@phosphor-icons/react";
 import { api } from "../../components/ts/api";
 import { useUser } from "../../components/hooks/UserHook";
-import { useHabits } from "../../components/hooks/HabitsHook";
 import { useAcc } from "../../components/hooks/AccHook";
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import type { PostType } from "../../components/context/AccContext";
 import PageBottom from "../../components/ts/PageBottom";
-import SelectList from "../../components/ts/SelectList";
+import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { PostMediaContext, PostMediaNode } from "./PostMediaNode";
 import { mediaIds, type PostMedia } from "./RichPost";
 import PostToolbar from "./PostToolbar";
+import PostEditorSkeleton from "./PostEditorSkeleton";
 import "../../scss/Post.scss";
 import "./scss/postPage.scss";
 import "./scss/postEditor.scss";
@@ -30,21 +30,23 @@ export default function PostEditor() {
     const { postId } = useParams();
     const { t } = useTranslation("acc");
     const { user, loadingUser } = useUser();
-    const { habits } = useHabits();
     const { refetchPosts } = useAcc();
-    const { privateShow, settingsLoaded } = useSettings();
+    const { settingsLoaded } = useSettings();
+    const { blackout, setBlackout, setBlackoutStack } = useBlackout();
     const { setTitle } = usePageTitle();
+
     const navigate = useNavigate();
+
     const [ media, setMedia ] = useState<DraftMedia[]>([]);
     const [ habit, setHabit ] = useState("none");
     const [ visibility, setVisibility ] = useState("inherit");
-    const [ settings, setSettings ] = useState(false);
     const [ insert, setInsert ] = useState(false);
     const [ caretTop, setCaretTop ] = useState(6);
     const [ loading, setLoading ] = useState(!!postId);
     const [ sending, setSending ] = useState(false);
     const [ error, setError ] = useState("");
     const [ retry, setRetry ] = useState(0);
+    
     const sendingRef = useRef(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const areaRef = useRef<HTMLDivElement>(null);
@@ -91,7 +93,7 @@ export default function PostEditor() {
         onSelectionUpdate: ({ editor: current }) => {
             positionRef.current = current.state.selection.from;
             const rect = areaRef.current?.getBoundingClientRect();
-            if (!rect) return;
+            if (!rect || !current.isInitialized || !areaRef.current?.offsetHeight) return;
             const coords = current.view.coordsAtPos(current.state.selection.from);
             setCaretTop(Math.max(0, (coords.top - rect.top) / window.innerHeight * 100));
         }
@@ -100,6 +102,10 @@ export default function PostEditor() {
     const inlineIds = mediaIds(content);
     const attachments = media.filter(file => !file.inline && !inlineIds.includes(file.id || file.url));
     const hasContent = !!editor?.getText().trim() || !!inlineIds.length || !!attachments.length;
+
+    useEffect(() => {
+        return () => setBlackoutStack(previous => previous.filter(item => item.module !== "PostSettings"));
+    }, [postId, setBlackoutStack]);
 
     useEffect(() => {
         setTitle(title);
@@ -162,7 +168,7 @@ export default function PostEditor() {
     useEffect(() => {
         if (!editor || loading || !areaRef.current) return;
         const measure = () => {
-            if (editor.isDestroyed || !areaRef.current) return;
+            if (editor.isDestroyed || !editor.isInitialized || !areaRef.current?.offsetHeight) return;
             const rect = areaRef.current.getBoundingClientRect();
             const coords = editor.view.coordsAtPos(editor.state.selection.from);
             setCaretTop(Math.max(0, (coords.top - rect.top) / window.innerHeight * 100));
@@ -206,6 +212,23 @@ export default function PostEditor() {
         inputRef.current?.click();
     };
 
+    const openSettings = () => {
+        setBlackout({
+            seted: true,
+            module: "PostSettings",
+            postSettings: {
+                visibility,
+                habit,
+                setVisibility: value => {
+                    if (!sendingRef.current) setVisibility(value);
+                },
+                setHabit: value => {
+                    if (!sendingRef.current) setHabit(value);
+                }
+            }
+        });
+    };
+
     const goBack = () => {
         if (window.history.state?.idx > 0) navigate(-1);
         else navigate(postId ? `/post/${postId}` : "/");
@@ -246,154 +269,99 @@ export default function PostEditor() {
     };
 
     return (
-        <div className="postPage postEditor">
-            <div className="postPageScroll">
-                {loading && <div className="postStatus" role="status">
-                    {t("post.loading")}
-                </div>}
-                {error && <div className="postStatus" role="alert">
-                    {t(error)}
-                    {error === "post.loadFailed" && (
-                        <button type="button" onClick={() => setRetry(value => value + 1)}>
-                            {t("post.retry")}
-                        </button>
-                    )}
-                </div>}
-                {!loading && error !== "post.loadFailed" && (
-                    <div className="postTA" ref={areaRef}>
-                        <PostToolbar editor={editor} disabled={sending} />
-                        <PostMediaContext.Provider value={media}>
-                            <EditorContent
-                                editor={editor}
-                                className={editor?.isEmpty ? "postEditorEmpty" : ""}
-                                data-placeholder={t("editor.placeholder")}
-                            />
-                        </PostMediaContext.Provider>
-                        <div className="postInsert" style={{ top: `${caretTop}vh` }}>
-                            <button
-                                type="button"
-                                disabled={sending}
-                                aria-label={t("editor.addFile")}
-                                aria-expanded={insert}
-                                onMouseDown={event => event.preventDefault()}
-                                onClick={() => setInsert(value => !value)}
-                            >
-                                <PaperclipIcon size={20}/>
+        <>
+            {(loading || !editor) && <PostEditorSkeleton onBack={goBack} />}
+            <div className="postPage postEditor" style={{ display: loading || !editor ? "none" : undefined }}>
+                <div className="postPageScroll">
+                    {error && <div className="postStatus" role="alert">
+                        {t(error)}
+                        {error === "post.loadFailed" && (
+                            <button type="button" onClick={() => setRetry(value => value + 1)}>
+                                {t("post.retry")}
                             </button>
-                            {insert && <div className="postInsertOptions">
-                                <button type="button" onClick={() => chooseFiles(true)}>
-                                    {t("editor.inline")}
+                        )}
+                    </div>}
+                    {editor && error !== "post.loadFailed" && <PostToolbar editor={editor} disabled={sending} />}
+                    {editor && error !== "post.loadFailed" && (
+                        <div className="postTA" ref={areaRef}>
+                            <PostMediaContext.Provider value={media}>
+                                <EditorContent
+                                    editor={editor}
+                                    className={editor?.isEmpty ? "postEditorEmpty" : ""}
+                                    data-placeholder={t("editor.placeholder")}
+                                />
+                            </PostMediaContext.Provider>
+                            <div className="postInsert" style={{ top: `${caretTop}vh` }}>
+                                <button
+                                    type="button"
+                                    disabled={sending}
+                                    aria-label={t("editor.addFile")}
+                                    aria-expanded={insert}
+                                    onMouseDown={event => event.preventDefault()}
+                                    onClick={() => setInsert(value => !value)}
+                                >
+                                    <PaperclipIcon size={20}/>
                                 </button>
-                                <button type="button" onClick={() => chooseFiles(false)}>
-                                    {t("editor.attachment")}
-                                </button>
+                                {insert && <div className="postInsertOptions">
+                                    <button type="button" onClick={() => chooseFiles(true)}>
+                                        {t("editor.inline")}
+                                    </button>
+                                    <button type="button" onClick={() => chooseFiles(false)}>
+                                        {t("editor.attachment")}
+                                    </button>
+                                </div>}
+                            </div>
+                            <input
+                                ref={inputRef}
+                                type="file"
+                                multiple
+                                hidden
+                                onChange={event => {
+                                    addFiles(Array.from(event.target.files || []), inlineRef.current);
+                                    event.target.value = "";
+                                }}
+                            />
+                            {!!attachments.length && <div className="postAttachments">
+                                {attachments.map(file => (
+                                    <div key={file.id || file.url}>
+                                        {file.type.startsWith("image/") && <img src={file.url} alt="" />}
+                                        <span>
+                                            {file.name}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            disabled={sending}
+                                            aria-label={t("editor.removeFile")}
+                                            onClick={() => setMedia(previous => previous.filter(item => item !== file))}
+                                        >
+                                            <XIcon />
+                                        </button>
+                                    </div>
+                                ))}
                             </div>}
                         </div>
-                        <input
-                            ref={inputRef}
-                            type="file"
-                            multiple
-                            hidden
-                            onChange={event => {
-                                addFiles(Array.from(event.target.files || []), inlineRef.current);
-                                event.target.value = "";
-                            }}
-                        />
-                        {!!attachments.length && <div className="postAttachments">
-                            {attachments.map(file => (
-                                <div key={file.id || file.url}>
-                                    {file.type.startsWith("image/") && <img src={file.url} alt="" />}
-                                    <span>
-                                        {file.name}
-                                    </span>
-                                    <button
-                                        type="button"
-                                        disabled={sending}
-                                        aria-label={t("editor.removeFile")}
-                                        onClick={() => setMedia(previous => previous.filter(item => item !== file))}
-                                    >
-                                        <XIcon />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>}
-                    </div>
-                )}
-            </div>
-            {settings && <section className="postPublishSettings" aria-label={t("editor.settings")}>
-                <div className="postPublishHeading">
-                    <span>
-                        {t("editor.settings")}
-                    </span>
+                    )}
+                </div>
+                <PageBottom onBack={goBack}>
                     <button
                         type="button"
-                        onClick={() => setSettings(false)}
-                        aria-label={t("editor.close")}
+                        className="pageBottomAction"
+                        onClick={openSettings}
+                        aria-expanded={blackout.module === "PostSettings"}
+                        disabled={loading || sending || error === "post.loadFailed"}
                     >
-                        <XIcon />
+                        <GearIcon weight="fill" color="var(--accent)" />
+                        {t("editor.settings")}
                     </button>
-                </div>
-                <span>
-                    {t("editor.visibility")}
-                </span>
-                <span>
-                    {settingsLoaded ? t("editor.defaultVisibility", {
-                        visibility: t(`editor.${privateShow.posts || "all"}`)
-                    }) : t("post.loading")}
-                </span>
-                <div
-                    className="postVisibility"
-                    role="radiogroup"
-                    aria-label={t("editor.visibility")}
-                >
-                    {["inherit", "all", "contacts", "nobody"].map(value => (
-                        <label key={value}>
-                            <input
-                                type="radio"
-                                name="postVisibility"
-                                value={value}
-                                checked={visibility === value}
-                                disabled={sending}
-                                onChange={() => setVisibility(value)}
-                            />
-                            {t(`editor.${value}`)}
-                        </label>
-                    ))}
-                </div>
-                <span>
-                    {t("editor.inheritHint")}
-                </span>
-                <span>
-                    {t("editor.habit")}
-                </span>
-                <SelectList
-                    className="postEditorHabit"
-                    arr={[
-                        { label: t("post.noHabit"), value: "none" },
-                        ...(habits || []).map(item => ({ label: item.name, value: String(item.id) }))
-                    ]}
-                    selected={habit}
-                    onChange={value => { if (!sending) setHabit(value); }}
-                />
-            </section>}
-            <PageBottom onBack={goBack}>
-                <button
-                    type="button"
-                    className="pageBottomAction"
-                    onClick={() => setSettings(value => !value)}
-                    aria-expanded={settings}
-                >
-                    <GearIcon weight="fill" color="var(--accent)" />
-                    {t("editor.settings")}
-                </button>
-                <div
-                    className="chatWriteTAButt"
-                    onClick={sendPost}
-                    aria-label={t(postId ? "editor.save" : "editor.publish")}
-                >
-                    <PaperPlaneRightIcon className="chatSend" weight="fill" />
-                </div>
-            </PageBottom>
-        </div>
+                    <div
+                        className="chatWriteTAButt"
+                        onClick={sendPost}
+                        aria-label={t(postId ? "editor.save" : "editor.publish")}
+                    >
+                        <PaperPlaneRightIcon className="chatSend" weight="fill" />
+                    </div>
+                </PageBottom>
+            </div>
+        </>
     );
 }

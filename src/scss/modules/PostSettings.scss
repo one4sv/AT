@@ -1,0 +1,48 @@
+@use "../mixins" as var;
+
+.postSettingsDiv {
+    @include var.centerModal;
+    width: 40vw;
+    max-height: 85dvh;
+    overflow-y: auto;
+    color: var(--tc);
+    padding: 2vh 1vw;
+    gap: 1.5vh;
+
+    @media (max-width: 800px) {
+        width: 100%;
+        padding: 4vh 3vw max(3vh, env(safe-area-inset-bottom));
+        border-radius: 24px 24px 0 0;
+    }
+}
+
+.postSettingsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+
+    .settingHeader {
+        display: flex;
+        align-items: center;
+        gap: .5vw;
+
+        svg {
+            color: var(--accent_text);
+        }
+    }
+
+    button {
+        display: flex;
+        padding: .5vh;
+        border: none;
+        background: transparent;
+        color: var(--tc);
+        cursor: pointer;
+
+        svg {
+            width: 2.5vh;
+            height: 2.5vh;
+        }
+    }
+}

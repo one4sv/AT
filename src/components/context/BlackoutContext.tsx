@@ -12,6 +12,12 @@ export interface Blackout {
     point?: string;
     options?: { id?: string; nick?: string; name?: string; url?: string };
     sender?: { id?: string; nick?: string; name?: string; url?: string };
+    postSettings?: {
+        visibility: string;
+        habit: string;
+        setVisibility: (value: string) => void;
+        setHabit: (value: string) => void;
+    };
     isRoot?: boolean;
     images?: BlackoutImage[];
     imageIndex?: number;
