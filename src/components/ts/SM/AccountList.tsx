@@ -1,5 +1,5 @@
 import { useUser } from "../../hooks/UserHook";
-import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, SignOutIcon, UserIcon, CheckIcon } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, SignOutIcon, UserIcon, CheckIcon, CalendarCheckIcon, ChatTeardropIcon } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useSideMenu } from "../../hooks/SideMenuHook";
@@ -7,12 +7,17 @@ import { useTranslation } from "react-i18next";
 import SearchedButts from "../../../pages/Settings/components/Search/SearchedButts";
 import type { SearchableSetting } from "../../../pages/Settings/Settings";
 import useLocalStorage from "../../hooks/utils/useLocalStorage";
+import { Megaphone } from "lucide-react";
+import { useBlackout } from "../../hooks/BlackoutHook";
+import { useNote } from "../../hooks/NoteHook";
 
 const EMPTY_RECENT: string[] = [];
 
 export default function AccountList() {
     const { logOut, user } = useUser();
+    const { showNotification } = useNote()
     const { activeTab, closeMenu, settingsSearch: search } = useSideMenu();
+    const { setBlackout } = useBlackout()
     const { t } = useTranslation("common");
     const location = useLocation();
     const navigate = useNavigate();
@@ -71,6 +76,17 @@ export default function AccountList() {
                 <Link to={`/chat/${user.nick}`} className="SMaccountButt" onClick={closeMenu}>
                     <span className="settingName"><BookmarkSimpleIcon weight="fill"/>{t("accountNavigation.saved")}</span><CaretRightIcon className="fastButtCaret"/>
                 </Link>
+                <div className="SMcreateDiv">
+                    <div className="SMcreateButt" onClick={() => setBlackout({ seted: true, module: "CreateChat" })}>
+                        <ChatTeardropIcon size={18} weight="fill"/> Новый чат
+                    </div>                    
+                    <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddHabit"})}>
+                        <CalendarCheckIcon size={18} weight="fill"/> Новая активность
+                    </div>                    
+                    <div className="SMcreateButt" onClick={() => showNotification("info", "В разработке")}>
+                        <Megaphone size={18} fill="currentColor"/> Новый спот
+                    </div>
+                </div>
                 <button type="button" className="SMaccountButt logout" onClick={() => logoutConfirm ? logOut() : setLogoutConfirm(true)} ref={logoutRef}>
                     <span className="settingName">{logoutConfirm ? <CheckIcon size={21}/> : <SignOutIcon weight="fill" size={21}/>} {t(logoutConfirm ? "accountNavigation.confirmLogout" : "accountNavigation.logout")}</span>
                 </button>

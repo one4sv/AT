@@ -232,3 +232,40 @@
         color: var(--accent_text);
     }
 }
+.SMcreateDiv {
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
+    background: var(--tr);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+}
+.SMcreateButt {
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 1vh 0.75vw;
+    cursor: pointer;
+    background: var(--tr);
+    transition: background .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    > svg {
+        color: var(--accent);
+    }
+    @media (hover: hover) {
+        &:hover {
+            background: var(--mc);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background: var(--mc);
+        }
+    }
+    @media (max-width: 800px) {
+        padding: 1vh 3vw;
+    }
+}
