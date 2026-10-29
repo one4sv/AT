@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { GearIcon, XIcon } from "@phosphor-icons/react";
+import { GearIcon, XIcon, ProhibitIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useSettings } from "../hooks/SettingsHook";
 import { useHabits } from "../hooks/HabitsHook";
 import RadioGroup from "../ts/RadioGroup";
-import SelectList from "../ts/SelectList";
+import PostHabit from "./PostHabit";
+import HabitDiv from "../ts/Habit";
 import "../../pages/Settings/scss/settings.scss";
 import "../../pages/Post/scss/postEditor.scss";
 import "../../scss/modules/PostSettings.scss";
@@ -19,6 +20,10 @@ export default function PostSettings() {
     const [ visibility, setVisibility ] = useState(settings?.visibility || "inherit");
     const [ habit, setHabit ] = useState(settings?.habit || "none");
 
+    const [ choosingHabit, setChoosingHabit ] = useState(false);
+
+    const selectedHabit = habits?.find(item => String(item.id) === habit);
+
     if (!settings) return null;
 
     const changeVisibility = (value: string) => {
@@ -29,7 +34,16 @@ export default function PostSettings() {
     const changeHabit = (value: string) => {
         setHabit(value);
         settings.setHabit(value);
+        setChoosingHabit(false);
     };
+
+    if (choosingHabit) return (
+        <PostHabit
+            selected={habit}
+            onSelect={changeHabit}
+            onBack={() => setChoosingHabit(false)}
+        />
+    );
 
     return (
         <div
@@ -71,15 +85,23 @@ export default function PostSettings() {
             <div className="settingHint">{t("editor.inheritHint")}</div>
             <div className="settingInnerWrapper">
                 <div className="settingSpan">{t("editor.habit")}</div>
-                <SelectList
-                    className="postEditorHabit"
-                    arr={[
-                        { label: t("post.noHabit"), value: "none" },
-                        ...(habits || []).map(item => ({ label: item.name, value: String(item.id) }))
-                    ]}
-                    selected={habit}
-                    onChange={changeHabit}
-                />
+                {selectedHabit ? <HabitDiv
+                    habit={selectedHabit}
+                    onSelect={() => setChoosingHabit(true)}
+                    id={selectedHabit.id}
+                /> : <button
+                    type="button"
+                    className="habit postNoHabit"
+                    onClick={() => setChoosingHabit(true)}
+                    aria-haspopup="dialog"
+                >
+                    <div className="habitIcon">
+                        <ProhibitIcon className="habitIconSvg" />
+                    </div>
+                    <div className="habitInfo">
+                        <div className="habitName">{t("post.noHabit")}</div>
+                    </div>
+                </button>}
             </div>
         </div>
     );

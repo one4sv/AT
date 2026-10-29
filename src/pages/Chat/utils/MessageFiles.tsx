@@ -64,7 +64,10 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                 return (
                     <div key={j} className="messageFile">
                         {isImage ? (
-                            <img src={file.url} alt={file.name} className="messageFilePreview" onClick={() => openImage(file)}
+                            <img src={file.url} alt={file.name} className="messageFilePreview" onClick={event => {
+                                event.stopPropagation();
+                                openImage(file);
+                            }}
                             data-context-menu="true"
                             onContextMenu={(e) => {
                                 e.preventDefault()

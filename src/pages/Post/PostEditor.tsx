@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import type { JSONContent } from "@tiptap/core";
-import { GearIcon, PaperclipIcon, PaperPlaneRightIcon, XIcon } from "@phosphor-icons/react";
+import { GearIcon, PaperPlaneRightIcon, XIcon } from "@phosphor-icons/react";
 import { api } from "../../components/ts/api";
 import { useUser } from "../../components/hooks/UserHook";
 import { useAcc } from "../../components/hooks/AccHook";
@@ -16,6 +16,7 @@ import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { PostMediaContext, PostMediaNode } from "./PostMediaNode";
 import { mediaIds, type PostMedia } from "./RichPost";
 import PostToolbar from "./PostToolbar";
+import useImagePreview from "../../components/hooks/utils/useImagePreview";
 import PostEditorSkeleton from "./PostEditorSkeleton";
 import "../../scss/Post.scss";
 import "./scss/postPage.scss";
@@ -41,7 +42,6 @@ export default function PostEditor() {
     const [ habit, setHabit ] = useState("none");
     const [ visibility, setVisibility ] = useState("inherit");
     const [ insert, setInsert ] = useState(false);
-    const [ caretTop, setCaretTop ] = useState(6);
     const [ loading, setLoading ] = useState(!!postId);
     const [ sending, setSending ] = useState(false);
     const [ error, setError ] = useState("");
@@ -94,13 +94,13 @@ export default function PostEditor() {
             positionRef.current = current.state.selection.from;
             const rect = areaRef.current?.getBoundingClientRect();
             if (!rect || !current.isInitialized || !areaRef.current?.offsetHeight) return;
-            const coords = current.view.coordsAtPos(current.state.selection.from);
-            setCaretTop(Math.max(0, (coords.top - rect.top) / window.innerHeight * 100));
         }
     });
     const content = useEditorState({ editor, selector: context => context.editor?.getJSON() });
     const inlineIds = mediaIds(content);
     const attachments = media.filter(file => !file.inline && !inlineIds.includes(file.id || file.url));
+    const previewMedia = media.filter(file => !file.inline || inlineIds.includes(file.id || file.url));
+    const openImage = useImagePreview(previewMedia);
     const hasContent = !!editor?.getText().trim() || !!inlineIds.length || !!attachments.length;
 
     useEffect(() => {
@@ -169,9 +169,6 @@ export default function PostEditor() {
         if (!editor || loading || !areaRef.current) return;
         const measure = () => {
             if (editor.isDestroyed || !editor.isInitialized || !areaRef.current?.offsetHeight) return;
-            const rect = areaRef.current.getBoundingClientRect();
-            const coords = editor.view.coordsAtPos(editor.state.selection.from);
-            setCaretTop(Math.max(0, (coords.top - rect.top) / window.innerHeight * 100));
         };
         const observer = new ResizeObserver(measure);
         observer.observe(areaRef.current);
@@ -281,36 +278,22 @@ export default function PostEditor() {
                             </button>
                         )}
                     </div>}
-                    {editor && error !== "post.loadFailed" && <PostToolbar editor={editor} disabled={sending} />}
+                    {editor && error !== "post.loadFailed" && <PostToolbar
+                        editor={editor}
+                        disabled={sending}
+                        insert={insert}
+                        setInsert={setInsert}
+                        chooseFiles={chooseFiles}
+                    />}
                     {editor && error !== "post.loadFailed" && (
                         <div className="postTA" ref={areaRef}>
-                            <PostMediaContext.Provider value={media}>
+                            <PostMediaContext.Provider value={previewMedia}>
                                 <EditorContent
                                     editor={editor}
                                     className={editor?.isEmpty ? "postEditorEmpty" : ""}
                                     data-placeholder={t("editor.placeholder")}
                                 />
                             </PostMediaContext.Provider>
-                            <div className="postInsert" style={{ top: `${caretTop}vh` }}>
-                                <button
-                                    type="button"
-                                    disabled={sending}
-                                    aria-label={t("editor.addFile")}
-                                    aria-expanded={insert}
-                                    onMouseDown={event => event.preventDefault()}
-                                    onClick={() => setInsert(value => !value)}
-                                >
-                                    <PaperclipIcon size={20}/>
-                                </button>
-                                {insert && <div className="postInsertOptions">
-                                    <button type="button" onClick={() => chooseFiles(true)}>
-                                        {t("editor.inline")}
-                                    </button>
-                                    <button type="button" onClick={() => chooseFiles(false)}>
-                                        {t("editor.attachment")}
-                                    </button>
-                                </div>}
-                            </div>
                             <input
                                 ref={inputRef}
                                 type="file"
@@ -324,7 +307,7 @@ export default function PostEditor() {
                             {!!attachments.length && <div className="postAttachments">
                                 {attachments.map(file => (
                                     <div key={file.id || file.url}>
-                                        {file.type.startsWith("image/") && <img src={file.url} alt="" />}
+                                        {file.type.startsWith("image/") && <img src={file.url} alt={file.name} onClick={event => openImage(file, event)} />}
                                         <span>
                                             {file.name}
                                         </span>

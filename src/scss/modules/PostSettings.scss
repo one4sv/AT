@@ -46,3 +46,26 @@
         }
     }
 }
+
+.postNoHabit {
+    text-align: left;
+    font: inherit;
+    color: var(--tc);
+
+    .habitIcon .habitIconSvg {
+        color: #fff;
+    }
+}
+
+.postHabitList {
+    display: flex;
+    flex-direction: column;
+    gap: .5vh;
+
+    > .habit {
+        flex-shrink: 0;
+        text-align: left;
+        font: inherit;
+        color: var(--tc);
+    }
+}

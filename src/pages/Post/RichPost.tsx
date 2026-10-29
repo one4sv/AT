@@ -62,7 +62,7 @@ export default function RichPost({ content, media }: { content: JSONContent; med
         switch (node.type) {
             case "paragraph": return (
                 <p key={index}>
-                    {children || <br />}
+                    {children?.length ? children : <br />}
                 </p>
             );
             case "heading": return (
@@ -97,6 +97,7 @@ export default function RichPost({ content, media }: { content: JSONContent; med
                 <AccPostMedia
                     key={index}
                     red={false}
+                    gallery={media}
                     media={media.filter(file => (file.id || file.url) === node.attrs?.id)}
                 />
             );

@@ -1,9 +1,23 @@
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { type Editor, useEditorState } from "@tiptap/react";
 import { useTranslation } from "react-i18next";
-import { TextBIcon, TextItalicIcon, TextUnderlineIcon, TextStrikethroughIcon, CodeIcon, TextHIcon, QuotesIcon, ListBulletsIcon, ListNumbersIcon, LinkSimpleIcon, ArrowCounterClockwiseIcon, ArrowClockwiseIcon } from "@phosphor-icons/react";
+import { TextBIcon, TextItalicIcon, TextUnderlineIcon, TextStrikethroughIcon, CodeIcon, TextHIcon, QuotesIcon, ListBulletsIcon, ListNumbersIcon, LinkSimpleIcon, ArrowCounterClockwiseIcon, ArrowClockwiseIcon, PaperclipIcon } from "@phosphor-icons/react";
 
-export default function PostToolbar({ editor, disabled }: { editor: Editor | null; disabled: boolean }) {
+interface PostToolbarProps {
+    editor: Editor | null;
+    disabled: boolean;
+    insert: boolean;
+    setInsert: Dispatch<SetStateAction<boolean>>;
+    chooseFiles: (inline: boolean) => void;
+}
+
+export default function PostToolbar({
+    editor,
+    disabled,
+    insert,
+    setInsert,
+    chooseFiles
+}: PostToolbarProps) {
     const { t } = useTranslation("acc");
     const [ link, setLink ] = useState<string | null>(null);
     const [ invalid, setInvalid ] = useState(false);
@@ -21,13 +35,24 @@ export default function PostToolbar({ editor, disabled }: { editor: Editor | nul
         { name: "bulletList", icon: ListBulletsIcon, run: () => editor.chain().focus().toggleBulletList().run() },
         { name: "orderedList", icon: ListNumbersIcon, run: () => editor.chain().focus().toggleOrderedList().run() },
         {
-            name: "link", icon: LinkSimpleIcon, run: () => {
+            name: "link",
+            icon: LinkSimpleIcon,
+            run: () => {
+                setInsert(false);
                 setInvalid(false);
                 setLink(editor.getAttributes("link").href || "");
             }
         },
         { name: "undo", icon: ArrowCounterClockwiseIcon, run: () => editor.chain().focus().undo().run() },
-        { name: "redo", icon: ArrowClockwiseIcon, run: () => editor.chain().focus().redo().run() }
+        { name: "redo", icon: ArrowClockwiseIcon, run: () => editor.chain().focus().redo().run() },
+        {
+            name: "file",
+            icon: PaperclipIcon,
+            run: () => {
+                setLink(null);
+                setInsert(value => !value);
+            }
+        }
     ];
 
     const applyLink = () => {
@@ -48,9 +73,14 @@ export default function PostToolbar({ editor, disabled }: { editor: Editor | nul
                     <button
                         key={action.name}
                         type="button"
-                        title={t(`editor.${action.name}`)}
-                        aria-label={t(`editor.${action.name}`)}
-                        aria-pressed={editor.isActive(action.name)}
+                        title={t(`editor.${action.name === "file" ? "addFile" : action.name}`)}
+                        aria-label={t(`editor.${action.name === "file" ? "addFile" : action.name}`)}
+                        aria-pressed={
+                            action.name === "file"
+                                ? undefined
+                                : editor.isActive(action.name)
+                        }
+                        aria-expanded={action.name === "file" ? insert : undefined}
                         disabled={disabled}
                         onMouseDown={event => event.preventDefault()}
                         onClick={action.run}
@@ -59,6 +89,32 @@ export default function PostToolbar({ editor, disabled }: { editor: Editor | nul
                     </button>
                 ))}
             </div>
+            {insert && <div className="postInsert">
+                <div className="postInsertOptions">
+                    <button
+                        type="button"
+                        disabled={disabled}
+                        onMouseDown={event => event.preventDefault()}
+                        onClick={() => {
+                            chooseFiles(true);
+                            setInsert(false);
+                        }}
+                    >
+                        {t("editor.inline")}
+                    </button>
+                    <button
+                        type="button"
+                        disabled={disabled}
+                        onMouseDown={event => event.preventDefault()}
+                        onClick={() => {
+                            chooseFiles(false);
+                            setInsert(false);
+                        }}
+                    >
+                        {t("editor.attachment")}
+                    </button>
+                </div>
+            </div>}
             {link !== null && <div className="postLinkInput">
                 <input
                     value={link}

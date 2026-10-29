@@ -4,18 +4,20 @@ import { NodeViewWrapper, ReactNodeViewRenderer, type NodeViewProps } from "@tip
 import { XIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import type { PostMedia } from "./RichPost";
+import useImagePreview from "../../components/hooks/utils/useImagePreview";
 
 export const PostMediaContext = createContext<PostMedia[]>([]);
 
 function MediaView({ node, deleteNode }: NodeViewProps) {
     const media = useContext(PostMediaContext);
+    const openImage = useImagePreview(media);
     const { t } = useTranslation("acc");
     const file = media.find(item => (item.id || item.url) === node.attrs.id);
 
     return (
         <NodeViewWrapper className="postInlineMedia" contentEditable={false}>
             {file && (file.type.startsWith("image/") ? (
-                <img src={file.url} alt={file.name} />
+                <img src={file.url} alt={file.name} onClick={event => openImage(file, event)} />
             ) : file.type.startsWith("video/") ? (
                 <video src={file.url} controls />
             ) : file.type.startsWith("audio/") ? (

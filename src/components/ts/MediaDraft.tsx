@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { Media } from "../context/ChatContext";
 import GetIconByType from "../../pages/Chat/utils/getIconByType";
 import "../../scss/MediaDraft.scss";
+import useImagePreview from "../hooks/utils/useImagePreview";
 
 interface MediaDraftProps {
     files: File[];
@@ -21,13 +22,14 @@ export default function MediaDraft({ files, media = [], onRemove, disabled }: Me
         return () => next.forEach(item => URL.revokeObjectURL(item.url));
     }, [files]);
     const items = [...media, ...previews.map(({ file, url }) => ({ name: file.name, type: file.type, url }))];
+    const openImage = useImagePreview(items);
     if (!items.length) return null;
 
     return (
         <div className="mediaDraft">
             {items.map((file, index) => <div className="mediaDraftItem" key={file.url}>
                 {file.type?.startsWith("image/") || /\.(png|jpe?g|gif|webp|avif)(?:[?#]|$)/i.test(file.url)
-                    ? <img src={file.url} alt={file.name} />
+                    ? <img src={file.url} alt={file.name} onClick={event => openImage(file, event)} />
                     : file.type?.startsWith("video/") || /\.(mp4|webm|mov)(?:[?#]|$)/i.test(file.url)
                         ? <video
                             src={file.url}

@@ -135,7 +135,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                     <ChevronRight className="aphGo" />
                 </div>}
                 <div className="postMediaArea">
-                    <AccPostMedia red={false} media={post.media?.filter(file => !mediaIds(post.content).includes(file.id || file.url))} />
+                    <AccPostMedia red={false} gallery={post.media} media={post.media?.filter(file => !mediaIds(post.content).includes(file.id || file.url))} />
                 </div>
                 <div className="PostBottom">
                     <div className="PostInteract">

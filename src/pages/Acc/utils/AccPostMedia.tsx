@@ -1,11 +1,12 @@
 import { X } from "@phosphor-icons/react";
 import GetIconByType from "../../Chat/utils/getIconByType";
-import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import useImagePreview from "../../../components/hooks/utils/useImagePreview";
 import type { Media } from "../../../components/context/ChatContext";
 
 interface AccPostMediaProps {
     red: boolean;
     media?: Media[];
+    gallery?: Media[];
     keptMedia?: { url: string; name: string; type: string }[];
     newFiles?: File[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,13 +18,14 @@ interface AccPostMediaProps {
 export default function AccPostMedia({
     red,
     media,
+    gallery,
     keptMedia = [],
     newFiles = [],
     setKeptMedia = () => {},
     setNewFiles = () => {},
     inputFileRef
 }: AccPostMediaProps) {
-    const { setBlackout } = useBlackout()
+    const openImage = useImagePreview(gallery || (red ? keptMedia : media) || []);
     return (
         <div className="accPostmedia">
             {!red ? (
@@ -39,7 +41,7 @@ export default function AccPostMedia({
                                             src={file.url}
                                             alt={file.name}
                                             className="postFilePreview"
-                                            onClick={() => setBlackout({ seted: true, module: "ImgPrev", img: file.url })}
+                                            onClick={event => openImage(file, event)}
                                         />
                                     ) : isVideo ? (
                                         <video src={file.url} className="postFilePreview" controls />
@@ -73,7 +75,7 @@ export default function AccPostMedia({
                                             src={file.url}
                                             alt={file.name}
                                             className="postFilePreview"
-                                            onClick={() => setBlackout({ seted: true, module: "ImgPrev", img: file.url })}
+                                            onClick={event => openImage(file, event)}
                                         />
                                     ) : isVideo ? (
                                         <video src={file.url} className="postFilePreview" controls />

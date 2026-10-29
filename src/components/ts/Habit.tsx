@@ -17,11 +17,13 @@ import { formatDateFromString } from "./utils/dateToStr";
 export default function HabitDiv({
     habit,
     id,
-    isMyAcc
+    isMyAcc,
+    onSelect
 }: {
     habit: Habit;
     id?: number;
     isMyAcc?: boolean;
+    onSelect?: (habit: Habit) => void;
 }) {
     const { openMenu } = useContextMenu();
     const { closeMenu } = useSideMenu();
@@ -190,13 +192,27 @@ export default function HabitDiv({
     return (
         <Link
             className={`habit ${id === habit.id ? "active" : ""}`}
-            onClick={() => {
+            role={onSelect ? "button" : undefined}
+            aria-pressed={onSelect ? id === habit.id : undefined}
+            onKeyDown={e => {
+                if (onSelect && e.key === " ") {
+                    e.preventDefault();
+                    onSelect(habit);
+                }
+            }}
+            onClick={e => {
+                if (onSelect) {
+                    e.preventDefault();
+                    onSelect(habit);
+                    return;
+                }
                 closeMenu();
             }}
             to={`/habit/${habit.id}`}
-            data-context-menu="true"
+            data-context-menu={onSelect ? undefined : "true"}
             onContextMenu={e => {
                 e.preventDefault();
+                if (onSelect) return;
                 openMenu(
                     e.clientX,
                     e.clientY,
