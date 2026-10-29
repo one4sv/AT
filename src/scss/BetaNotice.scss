@@ -1,0 +1,156 @@
+.betaNotice {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+    flex-shrink: 0;
+    padding: 1.5vh 1vw;
+    border: 1px solid var(--accent);
+    border-radius: 24px;
+    background: var(--mc);
+    color: var(--tc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    > .betaArt {
+        width: 5vw;
+        height: 8vh;
+        flex-shrink: 0;
+    }
+    strong {
+        display: block;
+        font-weight: 400;
+        color: var(--accent_text);
+    }
+    p {
+        margin: .5vh 0;
+        line-height: 1.4;
+    }
+    a {
+        display: inline-block;
+        color: var(--accent_text);
+        text-decoration: none;
+        padding-block: .5vh;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+    a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+        border-radius: 24px;
+    }
+    @media (max-width: 800px) {
+        gap: 3vw;
+        padding: 1.5vh 3vw;
+        > .betaArt {
+            width: 15vw;
+            height: 9vh;
+        }
+    }
+}
+.betaNoticeText {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.betaArt {
+    display: block;
+    color: var(--accent_text);
+    pointer-events: none;
+    overflow: hidden;
+}
+.betaArtFloat {
+    animation: betaFloat 6s ease-in-out infinite;
+}
+.betaArtOrbit {
+    transform-origin: 120px 90px;
+    animation: betaOrbit 32s linear infinite;
+}
+.landingBetaDesktop {
+    position: absolute;
+    right: 2vw;
+    bottom: 2vh;
+    width: 25vw;
+    z-index: 8;
+}
+.landingBetaMobile {
+    display: none;
+}
+.landingFooter:has(.landingBetaMobile) {
+    padding-bottom: 20vh;
+    isolation: isolate;
+    > .betaArt--background {
+        position: absolute;
+        z-index: -1;
+        width: 38vw;
+        height: 46vh;
+        left: -5vw;
+        top: 10vh;
+        opacity: .12;
+        transform: rotate(-18deg);
+    }
+}
+.settingsButtsWrapper > .betaNotice {
+    margin-bottom: .5vh;
+}
+.betaInfoArt {
+    display: grid;
+    place-items: center;
+    height: 14vh;
+}
+.betaInfoArt > .betaArt {
+    width: 18vw;
+    height: 14vh;
+}
+@media (max-width: 800px) {
+    .landingBetaDesktop {
+        display: none;
+    }
+    .landingBetaMobile {
+        display: flex;
+        align-self: stretch;
+    }
+    .landingFooter:has(.landingBetaMobile) {
+        padding-bottom: 3vh;
+        > .betaArt--background {
+            width: 85vw;
+            height: 45vh;
+            left: -22vw;
+            top: 14vh;
+        }
+    }
+    .betaInfoArt > .betaArt {
+        width: 45vw;
+    }
+}
+@keyframes betaFloat {
+    50% {
+        transform: translateY(-.6vh);
+    }
+}
+@keyframes betaOrbit {
+    50% {
+        transform: rotate(4deg);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .betaArt * {
+        animation: none !important;
+    }
+}
+
+.landingFooter .o4studio > svg {
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+}
+
+.landingFooter .landingFooterLinks > a > svg {
+    width: 2.5vh;
+    height: 2.5vh;
+    flex-shrink: 0;
+    color: var(--accent_text);
+}
+
+.landing .title {
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+}

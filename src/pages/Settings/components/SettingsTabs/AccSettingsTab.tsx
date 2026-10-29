@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import HighlightText from "../../../../components/ts/HighlightText";
 
+import SectionArt from "../../../../components/ts/SectionArt";
+
 export default function AccSettingsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { user } = useUser();
@@ -13,6 +15,7 @@ export default function AccSettingsTab({ search }: { search: string }) {
     
     return (
         <div className="settingTab">
+            {!search.trim() && <SectionArt theme="account"/>}
             <div className="settingInnerDiv settingInnerAccDiv" data-setting-id="editAcc">
                 <AccInfo acc={user} canView={() => true} collapsed={0}/>
             </div>

@@ -6,6 +6,8 @@ import DatePicker from "react-datepicker";
 import { useTranslation } from "react-i18next";
 import HighlightText from "../../../../components/ts/HighlightText";
 
+import SectionArt from "../../../../components/ts/SectionArt";
+
 export default function HabitsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { orderHabits, showArchived, showArchivedInAcc, weekStart } = useSettings();
@@ -68,6 +70,7 @@ export default function HabitsTab({ search }: { search: string }) {
 
     return (
         <div className="settingTab">
+            {!search.trim() && <SectionArt theme="habits"/>}
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     {t("habits.archive")}

@@ -3,7 +3,7 @@
         "title": "Information",
         "about": {
             "name": "About Project",
-            "desc": "Information about the service and beta testing"
+            "desc": "Information about the service and early development"
         },
         "terms": {
             "name": "User Agreement",
@@ -31,7 +31,7 @@
         "intro3Accent": "Make progress together.",
         "intro3Text": "Find people with shared interests, support each other and recognise the small steps along the way.",
         "aboutProject": "About the Project",
-        "aboutProjectText": "The project is currently under active development and beta testing. Some features may change, be improved, or temporarily work unstably.",
+        "aboutProjectText": "The project is currently in early development. Some features may change, be improved, or temporarily work unstably.",
         "warning": "Important Notice",
         "warningText": "The project is in an early stage of development. Although the author pays attention to security, the current version of the service does not guarantee absolute data protection. It is not recommended to publish or transfer confidential information, passwords, or other sensitive data through the service.",
         "features": "Main Features",
@@ -68,14 +68,14 @@
         "email": "Email",
         "supportText2": "We are open to feedback and suggestions for the development of the project.",
         "aboutProject": "About the Project",
-        "aboutProjectText": "Achieve Together is currently in beta testing. We continue to develop the service by adding new features for communication, publications, and jointly achieving goals."
+        "aboutProjectText": "Achieve Together is currently in early development. We continue to develop the service by adding new features for communication, publications, and jointly achieving goals."
     },
     "faq": {
         "title": "FAQ",
         "q1": "What is Achieve Together?",
         "a1": "Achieve Together is a social platform for tracking activities, communication, publishing posts, and finding like-minded people.",
         "q2": "Is the project already finished?",
-        "a2": "No. The project is under active development and beta testing. Some features may change or temporarily work unstably.",
+        "a2": "No. The project is in early development. Some features may change or temporarily work unstably.",
         "q3": "Is the service paid?",
         "a3": "At the moment, Achieve Together is completely free and is not a commercial project.",
         "q4": "Why are activities needed?",
@@ -166,7 +166,7 @@
         "s1_1": "1.1. This User Agreement regulates the use of the Achieve Together service (hereinafter — “AT”, “Service”).",
         "s1_2": "1.2. By using the Service, the user confirms that they have read this Agreement and accept its terms in full.",
         "s1_3": "1.3. If the user does not agree with the terms of the Agreement, they must stop using the Service.",
-        "s1_4": "1.4. The Service is under development and beta testing. Some features may change, work unstably, or be temporarily unavailable.",
+        "s1_4": "1.4. The Service is in early development. Some features may change, work unstably, or be temporarily unavailable.",
         "s2": "2. Purpose of the Service",
         "s2_1": "2.1. AT is a social platform designed for:",
         "s2li1": "creating and tracking activities;",
@@ -211,5 +211,27 @@
     "navigation": {
         "back": "Back",
         "contents": "Contents"
+    }
+,
+    "beta": {
+        "hint": "Tip",
+        "notice": "AchieveTogether is in early development. Some features may be unstable.",
+        "more": "Learn more",
+        "title": "Early development",
+        "intro": "We are developing AchieveTogether together with its first users. At this stage, we test habits, posts and conversations in everyday use.",
+        "expectTitle": "What to expect",
+        "expect": "During testing, you may encounter bugs, temporarily unavailable features and interface changes. Behaviour may differ between devices.",
+        "dataTitle": "Important data",
+        "data": "Keep separate copies of important text and files. While the app is being tested, do not use it as the only place to store valuable information.",
+        "helpTitle": "How to report a bug",
+        "help": "Describe the issue and reach out through the project contacts. To help us reproduce it, include:",
+        "steps": "The steps that led to the issue.",
+        "result": "What you expected and what actually happened.",
+        "device": "Your device model, operating system and browser.",
+        "capture": "A screenshot or screen recording if it helps explain the issue.",
+        "secrets": "Do not send passwords, verification codes or other users’ personal data. Hide private information before sharing a screenshot.",
+        "contact": "Contact the developer",
+        "nextTitle": "What comes next",
+        "next": "We will fix bugs and improve features based on testing feedback. Thank you for reporting issues and sharing ideas — they help the project grow."
     }
 }

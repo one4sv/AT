@@ -7,12 +7,15 @@ import Inst from "../../../assets/icons/inst.svg";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import one4svlogo from "../../../assets/pics/one4svlogo.png";
 
+import SectionArt from "../../../components/ts/SectionArt";
+
 export default function ContactsTab() {
     const { t } = useTranslation("info");
     const { isDark } = useSettings();
 
     return (
         <div className="infoText">
+            <SectionArt theme="contacts"/>
             <h3 className="accent">{t("contacts.development")}</h3>
 
             <p>

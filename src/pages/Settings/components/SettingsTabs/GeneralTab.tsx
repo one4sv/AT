@@ -8,6 +8,8 @@ import Toggler from "../../../../components/ts/Toggler";
 import { useNote } from "../../../../components/hooks/NoteHook";
 import HighlightText from "../../../../components/ts/HighlightText";
 
+import SectionArt from "../../../../components/ts/SectionArt";
+
 export default function GeneralTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { showDevNote } = useNote()
@@ -24,6 +26,7 @@ export default function GeneralTab({ search }: { search: string }) {
 
     return (
         <div className="settingTab">
+            {!search.trim() && <SectionArt theme="general"/>}
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     {t("general.traffic")}

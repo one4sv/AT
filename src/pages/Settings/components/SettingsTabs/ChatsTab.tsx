@@ -6,6 +6,8 @@ import { reactionsArr } from "../../../../components/ts/utils/emojies";
 import { useTranslation } from "react-i18next";
 import HighlightText from "../../../../components/ts/HighlightText";
 
+import SectionArt from "../../../../components/ts/SectionArt";
+
 export default function ChatsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { setNewEmote, setNewMessdb } = useUpSettings();
@@ -19,6 +21,7 @@ export default function ChatsTab({ search }: { search: string }) {
 
     return (
         <div className="settingTab">
+            {!search.trim() && <SectionArt theme="chats"/>}
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     {t("chats.header")}

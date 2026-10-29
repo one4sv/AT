@@ -17,6 +17,7 @@ import useLandingSheet from "./Components/useLandingSheet";
 import { useTranslation } from "react-i18next";
 import "../../scss/landingBackground.scss";
 import { Background } from "../../components/ts/utils/background";
+import BetaNotice from "../../components/ts/BetaNotice";
 export default function Landing() {
     const {
         loadingAuth,
@@ -133,6 +134,7 @@ export default function Landing() {
             } as React.CSSProperties}
         >
             <Background />
+            <BetaNotice className="landingBetaDesktop"/>
             <button
                 type="button"
                 className="changeSignTheme"
@@ -142,7 +144,7 @@ export default function Landing() {
                 {isDark ? <MoonStarsIcon /> : <SunDimIcon />}
             </button>
             <main className="landingDiv" inert={open}>
-                <div className="title">{"Achieve Together "}<span>beta</span>
+                <div className="title">{"Achieve Together "}<span>dev</span>
                 </div>
                 {body === "mail" ? <BodyMail /> : <div className={`landingFormWrapper ${activeForm}`} ref={formRef}>
                     <section
@@ -191,7 +193,7 @@ export default function Landing() {
                 id="landingFooterSheet"
                 ref={footerRef}
                 role="dialog"
-                aria-modal={open ? true : undefined}
+
                 aria-label={russian ? "Об Achieve Together" : "About Achieve Together"}
                 tabIndex={-1}
                 inert={!open}

@@ -15,6 +15,11 @@ import Toggler from "../../components/ts/Toggler"
 import { AnimatePresence, motion } from "motion/react"
 import { useBlackout } from "../../components/hooks/BlackoutHook"
 
+import SectionArt from "../../components/ts/SectionArt";
+
+import BetaNotice from "../../components/ts/BetaNotice";
+import BetaTab from "./tabs/BetaTab";
+
 export default function Info() {
     const isMobile = useCompactLayout();
     const { setTitle } = usePageTitle()
@@ -30,6 +35,7 @@ export default function Info() {
     const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const sections: Setting[] = [
+        { name: t("beta.title"), tab: "beta", desc: t("beta.notice"), icon: InfoIcon },
         {
             name: t("info.about.name"),
             tab: "about",
@@ -68,12 +74,13 @@ export default function Info() {
 
         useEffect(() => {
             if (tab) {
-                if (tab === "acc") setActiveTab(sections[0]);
+                if (tab === "acc") setActiveTab(sections.find(s => s.tab === "about") ?? null);
                 else setActiveTab(sections.find(s => s.tab === tab) ?? null);
             }
         }, [tab, t]);
 
     const tabs = {
+        beta: <BetaTab />,
         about: <AboutTab />,
         terms: <TermsTab />,
         policy: <PolicyTab />,
@@ -192,7 +199,8 @@ export default function Info() {
                             </div>
                         ) : ""}
                         <div className="settingsButtsWrapper">
-                            {sections.map((s) => (
+                            <BetaNotice/>
+                            {sections.filter(s => s.tab !== "beta").map((s) => (
                                 <div
                                     key={s.tab}
                                     className="settingButt"
@@ -209,6 +217,7 @@ export default function Info() {
                                     <div className="settingDesc">
                                         {s.desc}
                                     </div>
+                                    <SectionArt section={s.tab} mini/>
                                 </div>
                             ))}
                         </div>

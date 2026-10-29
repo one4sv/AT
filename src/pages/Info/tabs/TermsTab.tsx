@@ -1,10 +1,13 @@
 import { useTranslation } from "react-i18next";
 
+import SectionArt from "../../../components/ts/SectionArt";
+
 export default function TermsTab() {
     const { t } = useTranslation("info");
 
     return (
         <div className="infoText">
+            <SectionArt theme="terms"/>
             <h2 className="accent">{t("terms.title")}</h2>
 
             <p>{t("terms.effectiveDate")}</p>

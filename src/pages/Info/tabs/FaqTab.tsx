@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+import SectionArt from "../../../components/ts/SectionArt";
+
 export default function FaqTab() {
     const { t } = useTranslation("info");
 
     return (
         <div className="infoText">
+            <SectionArt theme="faq"/>
             <h2 className="accent">{t("faq.title")}</h2>
 
             <h3 className="accent">{t("faq.q1")}</h3>
@@ -23,6 +26,7 @@ export default function FaqTab() {
             <h3 className="accent">{t("faq.q5")}</h3>
             <p>{t("faq.a5")}</p>
 
+            <SectionArt theme="habits"/>
             <h3 className="accent">{t("faq.q6")}</h3>
             <p>{t("faq.a6")}</p>
 

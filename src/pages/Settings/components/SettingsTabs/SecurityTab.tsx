@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import HighlightText from "../../../../components/ts/HighlightText";
 
+import SectionArt from "../../../../components/ts/SectionArt";
+
 export default function SecurityTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { user } = useUser();
@@ -28,6 +30,7 @@ export default function SecurityTab({ search }: { search: string }) {
 
     return (
         <div className="settingTab">
+            {!search.trim() && <SectionArt theme="security"/>}
             <div className="settingInnerDiv" data-setting-id="twoAuth">
                 <div className="settingHeader" title="Не кликабельно">
                     <HighlightText text={t("security.twoFactor")} search={search} />

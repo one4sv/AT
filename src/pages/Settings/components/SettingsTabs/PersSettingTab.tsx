@@ -14,6 +14,8 @@ import ColorSelector from "../ColorSelector.tsx";
 import HighlightText from "../../../../components/ts/HighlightText.tsx";
 import "../../../../scss/landingBackground.scss";
 
+import SectionArt from "../../../../components/ts/SectionArt";
+
 export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { setBlackout } = useBlackout();
@@ -62,6 +64,7 @@ export default function PersSettingTab({ search }: { search: string }) {
 
     return (
         <div className="settingTab">
+            {!search.trim() && <SectionArt theme="personalization"/>}
             <div className="settingInnerDiv" data-setting-id="theme">
                 <div className="settingHeader"><HighlightText text={t("personalization.theme")} search={search} /></div>
                 <div className="settingInnerWrapper">

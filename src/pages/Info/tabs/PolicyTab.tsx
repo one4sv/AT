@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+import SectionArt from "../../../components/ts/SectionArt";
+
 export default function PolicyTab() {
     const { t } = useTranslation("info");
 
     return (
         <div className="infoText">
+            <SectionArt theme="policy"/>
             <h2 className="accent">{t("policy.title")}</h2>
 
             <p>{t("policy.effectiveDate")}</p>

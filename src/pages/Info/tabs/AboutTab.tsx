@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next"
+import SectionArt from "../../../components/ts/SectionArt";
 import AboutIllustration from "../AboutIllustration";
 
 export default function AboutTab() {
@@ -31,6 +32,7 @@ export default function AboutTab() {
             <h3 className="accent">{t("about.warning")}</h3>
             <p>{t("about.warningText")}</p>
 
+            <SectionArt theme="growth"/>
             <h3 className="accent">{t("about.features")}</h3>
 
             <ul>
@@ -41,6 +43,7 @@ export default function AboutTab() {
                 <li>{t("about.feature5")}</li>
             </ul>
 
+            <SectionArt theme="community"/>
             <h3 className="accent">{t("about.feedback")}</h3>
 
             <p>
@@ -49,6 +52,7 @@ export default function AboutTab() {
                 {t("about.feedbackText2")}
             </p>
 
+            <SectionArt theme="future"/>
             <h3 className="accent">{t("about.future")}</h3>
 
             <p>{t("about.futureText")}</p>

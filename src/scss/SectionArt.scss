@@ -1,0 +1,245 @@
+.sectionArt {
+    width: min(100%, 36vw);
+    max-width: 40vw;
+    margin: .5vh auto 1.5vh;
+    flex: 0 0 auto;
+    overflow: hidden;
+    pointer-events: none;
+    contain: paint;
+    > svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: hidden;
+    }
+    .artPaper {
+        fill: var(--mc);
+        stroke: var(--borderHabit);
+        stroke-width: 1.5;
+    }
+    .artTint {
+        fill: var(--accent_op);
+        stroke: var(--accent);
+        stroke-width: 1.5;
+    }
+    .artSolid {
+        fill: var(--art-paint);
+    }
+    .artWhite {
+        fill: var(--inner_text);
+    }
+    .artLine, .artInverse {
+        fill: none;
+        stroke: var(--accent_text);
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+    .artInverse {
+        stroke: var(--inner_text);
+    }
+    .artRing {
+        stroke: var(--accent);
+        stroke-width: 2;
+        stroke-dasharray: 5 7;
+    }
+    .artWash {
+        fill: var(--accent_op);
+        opacity: .55;
+    }
+    .artShadow {
+        fill: var(--accent);
+        opacity: .09;
+    }
+    .artTrail {
+        stroke: var(--borderHabit);
+        stroke-width: 1.5;
+        stroke-dasharray: 3 7;
+        opacity: .5;
+    }
+    .artBob {
+        animation: artBob 5s ease-in-out infinite;
+    }
+    .artPulse {
+        animation: artPulse 3.6s ease-in-out infinite;
+    }
+    .artShimmer {
+        animation: artPulse 5s ease-in-out infinite;
+    }
+    .artSway {
+        transform-box: fill-box;
+        transform-origin: 50% 15%;
+        animation: artSway 6s ease-in-out infinite;
+    }
+    .artOrbit {
+        animation: artOrbit 20s linear infinite;
+    }
+    .artSlide {
+        animation: artSlide 6s ease-in-out infinite;
+    }
+    .artDraw {
+        stroke-dasharray: 140;
+        animation: artDraw 6s ease-in-out infinite;
+    }
+    .artBars {
+        transform-box: fill-box;
+        transform-origin: center bottom;
+        animation: artBars 5s ease-in-out infinite;
+    }
+    .artDelay1 {
+        animation-delay: -1.6s;
+    }
+    .artDelay2 {
+        animation-delay: -3.2s;
+    }
+    &:not(.isVisible) * {
+        animation-play-state: paused;
+    }
+    @media (max-width: 800px) {
+        width: min(100%, 84vw);
+        margin-block: .5vh 1vh;
+    }
+}
+.sectionArt.sectionArt--mini {
+    width: 100%;
+    margin: 0;
+}
+.settingButt:has(> .sectionArt--mini) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 8vw;
+    column-gap: 1vw;
+    > .settingName {
+        grid-column: 1;
+        min-width: 0;
+    }
+    > .settingDesc {
+        grid-column: 1;
+        min-width: 0;
+    }
+    > .sectionArt--mini {
+        grid-column: 2;
+        grid-row: 1 / 3;
+        align-self: center;
+    }
+}
+.settingTab > .sectionArt,
+.infoText > .sectionArt:first-child {
+    width: 98%;
+    max-width: none;
+    height: 12vh;
+    margin: 0 auto .5vh;
+    display: grid;
+    place-items: center;
+    border-radius: 24px;
+    border: 1px solid var(--accent_op);
+    background: linear-gradient(115deg, var(--accent_op), var(--mc) 52%, var(--accent_op));
+    > svg {
+        width: min(100%, 16vw);
+        height: 11.8vh;
+    }
+    .artPaper {
+        stroke: var(--accent_text);
+        stroke-width: 2;
+    }
+    .artTint {
+        stroke-width: 2;
+    }
+    .artLine {
+        stroke-width: 3.5;
+    }
+    .artWash {
+        opacity: 1;
+    }
+    .artTrail {
+        stroke: var(--accent);
+        opacity: .7;
+    }
+    .artShadow {
+        opacity: .18;
+    }
+    @media (max-width: 800px) {
+        height: 12vh;
+        > svg {
+            width: min(100%, 50vw);
+            height: 11.8vh;
+        }
+    }
+}
+.infoText > .sectionArt:first-child {
+    width: 100%;
+}
+@keyframes artBob {
+    0%,100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+@keyframes artPulse {
+    0%,100% {
+        opacity: .45;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+@keyframes artSway {
+    0%,80%,100% {
+        transform: rotate(0);
+    }
+    85% {
+        transform: rotate(-7deg);
+    }
+    90% {
+        transform: rotate(6deg);
+    }
+    95% {
+        transform: rotate(-3deg);
+    }
+}
+@keyframes artOrbit {
+    to {
+        transform: rotate(360deg);
+    }
+}
+@keyframes artSlide {
+    0%,30%,100% {
+        transform: translateX(0);
+    }
+    55%,75% {
+        transform: translateX(12px);
+    }
+}
+@keyframes artDraw {
+    0%,10% {
+        stroke-dashoffset: 140;
+    }
+    35%,100% {
+        stroke-dashoffset: 0;
+    }
+}
+@keyframes artBars {
+    0%,100% {
+        transform: scaleY(.82);
+    }
+    50% {
+        transform: scaleY(1);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sectionArt * {
+        animation: none !important;
+    }
+    .sectionArt .artDraw {
+        stroke-dashoffset: 0;
+    }
+}
+@media (max-width: 800px) {
+    .sectionArt {
+        max-width: 90vw;
+    }
+    .settingButt:has(> .sectionArt--mini) {
+        grid-template-columns: minmax(0, 1fr) 20vw;
+    }
+}

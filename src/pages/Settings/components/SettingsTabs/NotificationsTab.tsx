@@ -10,6 +10,8 @@ import { useTranslation } from "react-i18next";
 import { useNote } from "../../../../components/hooks/NoteHook";
 import HighlightText from "../../../../components/ts/HighlightText";
 
+import SectionArt from "../../../../components/ts/SectionArt";
+
 export default function NotificationsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { note, messNote, habitsNote } = useSettings();
@@ -47,6 +49,7 @@ export default function NotificationsTab({ search }: { search: string }) {
 
     return (
         <div className="settingTab">
+            {!search.trim() && <SectionArt theme="notifications"/>}
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     {t("notifications.general")}

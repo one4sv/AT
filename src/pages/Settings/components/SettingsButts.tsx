@@ -4,6 +4,8 @@ import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import type { Setting } from "../Settings";
 
+import SectionArt from "../../../components/ts/SectionArt";
+
 interface SettingsButtsProps {
   settings: Setting[];
   user: {
@@ -74,6 +76,7 @@ export default function SettingsButts({
             {s.name}
           </span>
           <div className="settingDesc">{s.desc}</div>
+          <SectionArt section={s.tab} mini/>
         </div>
       ))}
 
@@ -89,6 +92,7 @@ export default function SettingsButts({
           {t("settings.info")}
         </span>
         <div className="settingDesc">{t("settings.infoDesc")}</div>
+        <SectionArt theme="about" mini/>
       </div>
     </>
   );

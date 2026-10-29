@@ -6,6 +6,8 @@ import RadioGroup from "../../../../components/ts/RadioGroup";
 import { useTranslation } from "react-i18next";
 import HighlightText from "../../../../components/ts/HighlightText";
 
+import SectionArt from "../../../../components/ts/SectionArt";
+
 export default function PrivacyTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { privateShow } = useSettings();
@@ -29,6 +31,7 @@ export default function PrivacyTab({ search }: { search: string }) {
 
     return (
         <div className="settingTab">
+            {!search.trim() && <SectionArt theme="privacy"/>}
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     {t("privacy.accountInfo")}
