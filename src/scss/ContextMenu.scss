@@ -32,8 +32,11 @@
         height: 1vw;
         margin-right: 0.3vw;
     }
-    &.delete:hover {
+    &.delete {
         color: var(--notValid);
+        &:hover {
+            color: var(--notValid);
+        }
     }
     @media (hover: hover) {
         &:hover {

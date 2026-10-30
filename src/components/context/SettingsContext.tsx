@@ -8,7 +8,10 @@ import { api } from "../ts/api";
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
+export type GroupInviteRules = { contacts: "direct" | "message" | "none"; others: "direct" | "message" | "none" };
+
 export interface SettingsContextType {
+    groupInvites: GroupInviteRules;
     orderHabits: string[  ] | null;
     setOrderHabits: React.Dispatch<React.SetStateAction<string[  ] | null>>;
     theme: string;
@@ -56,6 +59,7 @@ export interface SettingsContextType {
 }
 
 interface SettingsResponse {
+    group_invites: GroupInviteRules;
     success: boolean;
     order: string[  ];
     private: PrivateSettings;
@@ -123,6 +127,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             return "";
         }
     });
+    const [ groupInvites, setGroupInvites ] = useState<GroupInviteRules>({ contacts: "message", others: "none" });
     const [ twoAuth, setTwoAuth ] = useState<boolean | null>(null);
     const [ privateShow, setPrivate ] = useState<PrivateSettings>({ number: "", mail: "", habits: "", posts: "" });
     const [ showArchived, setShowArchived ] = useState<boolean>(false);
@@ -142,6 +147,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
             if (res.data.success) {
                 setOrderHabits(res.data.order ?? [ "everyday", "weekly", "sometimes" ]);
+                setGroupInvites(res.data.group_invites ?? { contacts: "message", others: "none" });
                 setPrivate(res.data.private ?? { number: "contacts", mail: "contacts", habits: "all", posts: "all" });
                 setTwoAuth(res.data.twoAuth ?? false);
                 setNote(res.data.all_note ?? true);
@@ -198,7 +204,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             bg, setBg,
             decor, setDecor,
             bgUrl, lang, setLang,
-            privateShow, setPrivate,
+            privateShow, setPrivate, groupInvites,
             twoAuth, setTwoAuth,
             note, setNote,
             messNote, setMessNote,

@@ -8,7 +8,7 @@ import { useChat } from "../hooks/ChatHook";
 
 export default function Blackout() {
     const { blackout, blackoutStack, setBlackout } = useBlackout();
-    const { redirect, setRedirect, chosenMess, setChosenMess } = useMessages();
+    const { redirect, setRedirect, setForwardPost, chosenMess, setChosenMess } = useMessages();
     const { setActiveHeader } = useChat();
 
     const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +30,7 @@ export default function Blackout() {
         const module = visibleStack[index];
 
         if (!module) return;
+        if (module.module === "Redirecting") setForwardPost(null);
 
         if (module.module !== "RedirectMesses") {
             setRedirect(undefined);

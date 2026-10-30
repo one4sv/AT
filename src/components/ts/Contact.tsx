@@ -191,7 +191,7 @@ export default function Contact({ contact }: ContactType) {
                 setActiveHeader("text");
                 closeMenu();
             }}
-            to={contact.is_group ? `chat/g/${contact.id}` : `chat/${contact.nick}`}
+            to={contact.is_group ? `/chat/g/${contact.id}` : `/chat/${contact.nick}`}
             data-context-menu="true"
             onContextMenu={(e) => {
                 e.preventDefault();

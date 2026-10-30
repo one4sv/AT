@@ -11,10 +11,11 @@
     flex-direction: column;
     align-items: center;
     z-index: 11;
-    gap: 1vh;
+    gap: 1.5vh;
+    box-sizing: border-box;
     @media (max-width: 800px) {
         width: 100%;
-        padding: 4vh 10% 3vh;
+        padding: 4vh 5vw calc(3vh + env(safe-area-inset-bottom));
         border-radius: 24px 24px 0 0;
     }
 }
@@ -27,6 +28,8 @@
     flex-direction: column;
     position: relative;
     width: 100%;
+    min-width: 0;
+    gap: .5vh;
     >label {
         color: var(--borderWh);
         width: 100%;
@@ -40,8 +43,9 @@
     }
     >span {
         position: absolute;
-        right: .5vw;
-        bottom: 0;
+        right: 1vw;
+        bottom: .5vh;
+        pointer-events: none;
         font-size: 14px;
         color: var(--borderWh);
     }
@@ -66,19 +70,33 @@
     color: var(--tc);
     font-size: 20px;
     width: 100%;
-    padding: .5vh 2.5vw .5vh .75vw;
-    border-radius: 16px;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: .8vh 3vw 1.8vh 1vw;
+    border-radius: 24px;
     resize: none;
     overflow-y: hidden;
-    border: 1px solid var(--tr);
+    border: 1px solid var(--block_border);
+    transition: border-color .18s ease, background-color .18s ease;
+
+    &[type="time"] {
+        padding: .8vh 1vw;
+        min-height: 4.5vh;
+    }
     &.redHabitDesc {
         font-size: 16px;
     }
     &:focus-visible {
-        outline: 1px solid var(--accent);
+        outline: 1px solid var(--accent_text);
+        outline-offset: 1px;
+        border-color: var(--accent_text);
     }
     @media (max-width: 800px) {
-        padding: .5vh 10vw .5vh 3vw;
+        padding: .8vh 12vw 1.8vh 3vw;
+
+        &[type="time"] {
+            padding-inline: 3vw;
+        }
     }
 }
 .AddHabitDateSpan {
@@ -87,6 +105,8 @@
 }
 .tegSelector {
     display: flex;
+    flex-wrap: wrap;
+    gap: .6vh 1vw;
     margin-top: 0.5dvh;
 }
 .addTeg {
@@ -306,5 +326,13 @@
                 color: var(--tc);
             }
         }
+    }
+}
+.addHabitWrapper.time > .addHabitInput {
+    min-height: 4.5vh;
+    padding: .8vh 1vw;
+
+    @media (max-width: 800px) {
+        padding-inline: 3vw;
     }
 }

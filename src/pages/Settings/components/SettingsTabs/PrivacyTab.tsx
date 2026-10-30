@@ -1,3 +1,7 @@
+import { useRef, useState } from "react";
+import { api } from "../../../../components/ts/api";
+import { useNote } from "../../../../components/hooks/NoteHook";
+import type { GroupInviteRules } from "../../../../components/context/SettingsContext";
 import { type Option } from "../../../../components/ts/SelectList";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
@@ -10,7 +14,26 @@ import SectionArt from "../../../../components/ts/SectionArt";
 
 export default function PrivacyTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { privateShow } = useSettings();
+    const { privateShow, groupInvites, refetchSettings, settingsLoaded } = useSettings();
+    const { showNotification } = useNote();
+    const [ savingInvites, setSavingInvites ] = useState(false);
+    const savingRef = useRef(false);
+    const inviteOptions = ["direct", "message", "none"].map(value => ({ value, label: t(`privacy.invites.${value}`) }));
+    const saveInvites = async (rules: GroupInviteRules) => {
+        if (savingRef.current || !settingsLoaded) return;
+        savingRef.current = true;
+        setSavingInvites(true);
+        try {
+            const res = await api.post("updatesettings", { group_invites: rules });
+            if (!res.data.success) throw new Error();
+            await refetchSettings();
+        } catch {
+            showNotification("error", t("privacy.invites.saveError"));
+        } finally {
+            savingRef.current = false;
+            setSavingInvites(false);
+        }
+    };
     const { setNewPrivateShow } = useUpSettings();
 
     const privateArr: Option[] = [
@@ -32,6 +55,18 @@ export default function PrivacyTab({ search }: { search: string }) {
     return (
         <div className="settingTab">
             {!search.trim() && <SectionArt theme="privacy"/>}
+            <div className="settingInnerDiv" data-setting-id="groupInvites">
+                <div className="settingHeader"><HighlightText text={t("privacy.invites.title")} search={search}/></div>
+                <div className="settingSpan">{t("privacy.invites.hint")}</div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">{t("privacy.invites.contacts")}</div>
+                    <RadioGroup list={inviteOptions} val={groupInvites.contacts} disabled={savingInvites || !settingsLoaded} id="groupInviteContacts" newVal={value => void saveInvites({ ...groupInvites, contacts: value as GroupInviteRules["contacts"] })}/>
+                </div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">{t("privacy.invites.others")}</div>
+                    <RadioGroup list={inviteOptions} val={groupInvites.others} disabled={savingInvites || !settingsLoaded} id="groupInviteOthers" newVal={value => void saveInvites({ ...groupInvites, others: value as GroupInviteRules["others"] })}/>
+                </div>
+            </div>
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     {t("privacy.accountInfo")}

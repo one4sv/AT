@@ -11,7 +11,10 @@ import { useGroup } from '../hooks/GroupHook';
 import { useContacts } from '../hooks/ContactsHook';
 import type { Contact } from '../context/ContactsContext';
 
+import { useTranslation } from "react-i18next";
+
 export default function CreateChat() {
+    const { t } = useTranslation("settings");
     const { search, refetchContacts, findContacts } = useContacts();
     const { setBlackout, blackout } = useBlackout();
     const { members, refetchGroup, group } = useGroup();
@@ -99,10 +102,11 @@ export default function CreateChat() {
         try {
             const res = await api.post(`${path}`, formData);
             if (res.data.success) {
+                showNotification("success", t("privacy.invites.summary", { added: res.data.added ?? 0, invited: res.data.invited ?? 0, blocked: res.data.blocked ?? 0, already: res.data.already ?? 0 }));
                 if (blackout.point === "InviteUser") {
                     await refetchGroup(group.id);
                 } else {
-                    showNotification("success", "Чат создан");
+
                     setName("");
                     setDesc("");
                     setPick(null);

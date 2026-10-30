@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useUser } from "../components/hooks/UserHook";
@@ -16,6 +17,7 @@ interface JoinGroup {
 }
 
 export default function Join() {
+    const { t } = useTranslation("settings");
     const { token } = useParams<{ token: string }>();
     const { user, loadingUser } = useUser();
     const { showNotification } = useNote();
@@ -24,6 +26,7 @@ export default function Join() {
     const [group, setGroup] = useState<JoinGroup>({ id: "", name: "", desc: null, avatar_url: null, member_count: 0 });
     const [loading, setLoading] = useState(true);
     const [joining, setJoining] = useState(false);
+    const [ personal, setPersonal ] = useState(false);
 
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -33,6 +36,7 @@ export default function Join() {
                 const res = await api.get(`group/invite/${token}`);
                 if (res.data.success) {
                     setGroup(res.data.group);
+                    setPersonal(res.data.personal === true);
                 } else {
                     showNotification("error", res.data.error || "Приглашение недействительно");
                     navigate("/");
@@ -44,11 +48,16 @@ export default function Join() {
                 setLoading(false);
             }
         };
+        if (loadingUser) return;
+        if (token?.startsWith("i_") && !user.id) {
+            navigate("/sign", { state: { from: `/join/${token}` } });
+            return;
+        }
         fetchGroup();
-    }, [API_URL, navigate, showNotification, token]);
+    }, [API_URL, navigate, showNotification, token, user.id, loadingUser]);
 
     const handleJoin = async () => {
-        if (!user && !loadingUser) {
+        if (!user.id && !loadingUser) {
             navigate("/sign", { state: { from: `/join/${token}` } });
             return;
         }
@@ -66,6 +75,20 @@ export default function Join() {
             showNotification("error", "Не удалось вступить");
         }
         setJoining(false);
+    };
+
+    const decline = async () => {
+        if (joining) return;
+        setJoining(true);
+        try {
+            const res = await api.post("group/join", { token, decline: true });
+            if (!res.data.success) throw new Error();
+            navigate("/");
+        } catch {
+            showNotification("error", t("privacy.invites.saveError"));
+        } finally {
+            setJoining(false);
+        }
     };
 
     if (loading) return <Loader/>;
@@ -105,6 +128,7 @@ export default function Join() {
                     ></textarea>
                 </div>
                 <div className="joinAccept">
+                    {personal && <button type="button" className="joinAcceptButt" onClick={() => void decline()} disabled={joining}>{t("privacy.invites.decline")}</button>}
                     <button className="joinAcceptButt" onClick={handleJoin} disabled={joining}>
                         {joining ? "Принимаем..." : "Принять приглашение"}
                     </button>

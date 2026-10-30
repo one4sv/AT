@@ -14,6 +14,10 @@ type MenuOptions = {
     isMy?:boolean,
     func?: () => void,
     url?:string,
+    postHeader?: boolean,
+    onCopy?: () => void,
+    onShare?: () => void,
+    onForward?: () => void,
 }
 export interface chatInfoType {
     note:boolean,

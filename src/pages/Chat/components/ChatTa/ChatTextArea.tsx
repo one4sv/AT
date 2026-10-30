@@ -1,6 +1,7 @@
+import { useTranslation } from "react-i18next";
 import TA from "../../../../components/ts/TA";
 import MediaDraft from "../../../../components/ts/MediaDraft";
-import { Paperclip, PaperPlaneRightIcon } from "@phosphor-icons/react";
+import { Paperclip, PaperPlaneRightIcon, X } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type SetStateAction } from "react";
 import { useLocation, useParams } from "react-router";
 import { useChat } from "../../../../components/hooks/ChatHook";
@@ -50,6 +51,8 @@ export default function ChatTextArea({
         setDroppedFiles
     } = useDrop();
     const {
+        forwardPost,
+        setForwardPost,
         answer,
         editing,
         setEditing,
@@ -60,11 +63,15 @@ export default function ChatTextArea({
         setChosenMess
     } = useMessages();
     const { user } = useUser();
+    const { t } = useTranslation("acc");
+    const sending = useRef(false);
+    const routeRef = useRef("");
     const [oldMess, setOldMess] = useState<string>("");
     const [files, setFiles] = useState<File[]>([]);
     const [oldFiles, setOldFiles] = useState<File[]>([]);
     const [oldMedia, setOldMedia] = useState<Media[]>([]);
     const location = useLocation();
+    routeRef.current = location.pathname;
     const inputFileRef = useRef<HTMLInputElement>(null);
 
     useEffect(
@@ -90,9 +97,14 @@ export default function ChatTextArea({
         }
     };
     const handleSend = async () => {
-        const trimmedMess = mess.trim();
+        if (sending.current) return;
+        const currentPost = forwardPost;
+        const currentRoute = location.pathname;
+        const draftText = mess;
+        const trimmedMess = [mess.trim(), currentPost ? new URL("/post/" + currentPost.id, window.location.origin).href : ""].filter(Boolean).join("\n\n");
         const hasContent = trimmedMess || files.length > 0 || editing && oldMedia.length > 0 || redirect;
         if (!(nick || id) || !hasContent) return;
+        sending.current = true;
         // Сохраняем текущие значения перед очисткой
         const currentFiles = [...files];
         const currentAnswer = answer;
@@ -141,6 +153,7 @@ export default function ChatTextArea({
                 setFiles([]);
                 setChosenMess([]);
                 setRedirect(undefined);
+                setForwardPost(null);
                 setShowNames(true);
                 stopTyping();
                 const success = await sendMess(
@@ -157,11 +170,19 @@ export default function ChatTextArea({
                 if (!success) {
                     // Если отправка не удалась — убираем временное сообщение
                     setMessages(prev => prev.filter(m => m.id !== tempId));
+                    if (routeRef.current === currentRoute) {
+                        setMess(value => value || draftText);
+                        setFiles(value => [...currentFiles, ...value]);
+                        if (currentPost) setForwardPost(currentPost);
+                        else if (currentRedirect) setRedirect(currentRedirect);
+                    }
                 }
             }
         } catch (error) {
             console.error("Ошибка при отправке сообщения:", error);
-            // Можно дополнительно удалить temp-сообщение при ошибке
+            if (routeRef.current === currentRoute && currentPost) setForwardPost(currentPost);
+        } finally {
+            sending.current = false;
         }
     };
 
@@ -196,7 +217,7 @@ export default function ChatTextArea({
             setFiles(prev => prev.filter((_, i) => i !== index - oldMedia.length));
         }
     };
-    const barOpen = files.length > 0 || answer !== null || editing !== null || redirect !== undefined;
+    const barOpen = forwardPost !== null || files.length > 0 || answer !== null || editing !== null || redirect !== undefined;
 
     return (
         <>
@@ -223,6 +244,15 @@ export default function ChatTextArea({
                         }}
                         scrollToMessage={scrollToMessage}
                     />}
+                    {forwardPost && <div className="answerDiv postForwardDraft">
+                        <div className="answer">
+                            <div className="answer1str">{t("post.forward")}: {forwardPost.author}</div>
+                            <div className="answer2str">{forwardPost.text || t("post.open")}</div>
+                        </div>
+                        <button type="button" className="closeAnswer" aria-label={t("editor.close")} onClick={() => setForwardPost(null)}>
+                            <X />
+                        </button>
+                    </div>}
                     <MediaDraft files={files} media={oldMedia} onRemove={handleRemoveFile} />
                     <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} />
                     <TA

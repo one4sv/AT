@@ -114,7 +114,19 @@
         "whoSeesPosts": "Who can see your posts",
         "nobody": "Nobody",
         "contacts": "Contacts",
-        "all": "Everyone"
+        "all": "Everyone",
+        "invites": {
+            "title": "Group invitations",
+            "hint": "Contacts are people you have messaged in a private chat. Message invitations require your confirmation. Blocking prevents invitations in every mode.",
+            "contacts": "All contacts",
+            "others": "Everyone else",
+            "direct": "Add directly",
+            "message": "Invite by message",
+            "none": "Cannot invite",
+            "saveError": "Could not save changes",
+            "decline": "Decline",
+            "summary": "Added: {{added}}. Invited by message: {{invited}}. Not allowed: {{blocked}}. Already processed: {{already}}."
+        }
     },
     "security": {
         "twoFactor": "Two-factor authentication",

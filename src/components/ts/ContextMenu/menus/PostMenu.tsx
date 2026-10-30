@@ -1,25 +1,32 @@
-import { Check, PencilSimple } from "@phosphor-icons/react";
+import { PencilSimple, LinkSimple, ShareNetwork, ArrowBendUpRight } from "@phosphor-icons/react";
+import { useTranslation } from "react-i18next";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import DeleteButton from "../buttons/DeleteButton";
 
 export default function PostMenu() {
     const { menu } = useContextMenu();
     const { options } = menu;
-
-    if (!options.isMy) return null;
+    const { t } = useTranslation("acc");
 
     return (
         <>
-            <div
-                className="ContextMenuButt"
-                onClick={() => {
-                    if (options.func) options.func();
-                }}
-            >
-                {options.red ? <Check /> : <PencilSimple />}
-                {options.red ? "Сохранить" : "Редактировать"}
+            <div className="ContextMenuButt" onClick={options.onCopy}>
+                <LinkSimple />{t("post.copyLink")}
             </div>
-            <DeleteButton />
+            <div className="ContextMenuButt" onClick={options.onForward}>
+                <ArrowBendUpRight />{t("post.forward")}
+            </div>
+            {options.postHeader && <>
+                <div className="ContextMenuButt" onClick={options.onShare}>
+                    <ShareNetwork />{t("post.share")}
+                </div>
+                {options.isMy && <>
+                    <div className="ContextMenuButt" onClick={options.func}>
+                        <PencilSimple />{t("post.edit")}
+                    </div>
+                    <DeleteButton />
+                </>}
+            </>}
         </>
     );
 }

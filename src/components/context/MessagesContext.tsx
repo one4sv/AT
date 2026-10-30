@@ -5,7 +5,11 @@ import { type Media } from "./ChatContext";
 import { type message } from "./ChatContext";
 const MessagesContext = createContext<MessagesContextType | null>(null);
 
+export type ForwardPost = { id: number; text: string; author: string };
+
 export interface MessagesContextType {
+    forwardPost: ForwardPost | null,
+    setForwardPost: (post: ForwardPost | null) => void,
     chosenMess: { id: number; text: string }[],
     setChosenMess: React.Dispatch<React.SetStateAction<{ id: number; text: string }[]>>,
     showNames: boolean,
@@ -37,12 +41,14 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
         media?: Media[]
     } | null>(null)
     const [ redirectState, setRedirectState ] = useState<message[] | undefined>(undefined)
+    const [ forwardPost, setForwardPostState ] = useState<ForwardPost | null>(null);
     const [ showNames, setShowNames ] = useState(true)
 
     const location = useLocation()
 
     const setAnswer: MessagesContextType["setAnswer"] = (value) => {
         setAnswerState(value)
+        setForwardPostState(null)
         setEditingState(null)
         setRedirectState(undefined)
         setShowNames(true)
@@ -50,6 +56,7 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
 
     const setEditing: MessagesContextType["setEditing"] = (value) => {
         setEditingState(value)
+        setForwardPostState(null)
         setAnswerState(null)
         setRedirectState(undefined)
         setShowNames(true)
@@ -57,14 +64,25 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
 
     const setRedirect: MessagesContextType["setRedirect"] = (value) => {
         setRedirectState(value)
+        setForwardPostState(null)
         setAnswerState(null)
         setEditingState(null)
     }
+
+    const setForwardPost = (post: ForwardPost | null) => {
+        setForwardPostState(post);
+        if (post) {
+            setAnswerState(null);
+            setEditingState(null);
+            setRedirectState(undefined);
+        }
+    };
 
     useEffect(() => {
         setAnswerState(null)
         setEditingState(null)
         if (!location.pathname.startsWith("/chat")) {
+            setForwardPostState(null);
             setShowNames(true)
             setRedirectState(undefined)
         }
@@ -80,6 +98,7 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
     return (
         <MessagesContext.Provider
             value={{
+                forwardPost, setForwardPost,
                 chosenMess, setChosenMess,
                 pendingScrollId, setPendingScrollId,
                 answer: answerState, setAnswer,

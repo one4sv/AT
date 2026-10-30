@@ -10,7 +10,7 @@
 .habitPlusButts {
     display: flex;
     flex-direction: column;
-    gap: 0.2vh;
+    gap: 0.5vh;
 }
 
 .addGoalButtDiv {
@@ -20,6 +20,7 @@
     align-items: center;
     font-size: 18px;
     gap: 5px;
+    border: 1px solid var(--block_border);
     @media (max-width: 800px) {
         padding: .5vh 3vw;
     }

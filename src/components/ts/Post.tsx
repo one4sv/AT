@@ -1,12 +1,13 @@
 import RichPost, { mediaIds } from "../../pages/Post/RichPost";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronRight } from "lucide-react";
-import { ChatCircle, Heart, Trash, UserCircle } from "@phosphor-icons/react";
+import { ChatCircle, Heart, DotsThree, UserCircle } from "@phosphor-icons/react";
 import { isMobile } from "react-device-detect";
 import { useBlackout } from "../hooks/BlackoutHook";
-import { useDelete } from "../hooks/DeleteHook";
+import { useMessages } from "../hooks/MessagesHook";
+import { useNote } from "../hooks/NoteHook";
 import { useAcc } from "../hooks/AccHook";
 import { useUser } from "../hooks/UserHook";
 import { useContextMenu } from "../hooks/ContextMenuHook";
@@ -30,14 +31,13 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
     const { t } = useTranslation("acc");
     const [ post, setLocalPost ] = useState(sourcePost);
     const [ truncated, setTruncated ] = useState(false);
-    const [ hover, setHover ] = useState(false);
-    const { setDeleteConfirm } = useDelete();
+    const { setForwardPost } = useMessages();
+    const { showNotification } = useNote();
     const { setBlackout } = useBlackout();
     const { setPosts } = useAcc();
     const { user } = useUser();
     const { openMenu } = useContextMenu();
     const navigate = useNavigate();
-    const location = useLocation();
     const divRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => setLocalPost(sourcePost), [sourcePost]);
@@ -76,6 +76,45 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
         }
     };
 
+    const postUrl = new URL('/post/' + post.id, window.location.origin).href;
+    const copyLink = async () => {
+        try {
+            await navigator.clipboard.writeText(postUrl);
+            showNotification("success", t("post.linkCopied"));
+        } catch {
+            showNotification("error", t("post.copyFailed"));
+        }
+    };
+    const share = async () => {
+        if (!navigator.share) return copyLink();
+        try {
+            await navigator.share({ url: postUrl });
+        } catch (error) {
+            if (!(error instanceof DOMException && error.name === "AbortError")) {
+                showNotification("error", t("post.shareFailed"));
+            }
+        }
+    };
+    const openPostMenu = (x: number, y: number, postHeader: boolean) => {
+        openMenu(x, y, "post", {
+            id: String(post.id),
+            name: post.text.slice(0, 40),
+            isMy,
+            postHeader,
+            func: () => navigate('/post/' + post.id + '/edit'),
+            onCopy: () => { void copyLink(); },
+            onShare: () => { void share(); },
+            onForward: () => {
+                if (!user.id) {
+                    navigate("/sign");
+                    return;
+                }
+                setForwardPost({ id: post.id, text: post.text, author: post.user.username || post.user.nick || "" });
+                setBlackout({ seted: true, module: "Redirecting" });
+            }
+        });
+    };
+
     const likesCount = post.likes?.length || 0;
     const isLiked = post.likes?.includes(user.id!);
 
@@ -89,32 +128,32 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                 )) return;
                 navigate(`/post/${post.id}`);
             }}
-            onMouseEnter={() => isMy && setHover(true)}
-            onMouseLeave={() => setHover(false)}
             data-context-menu="true"
             onContextMenu={e => {
                 e.preventDefault();
-                openMenu(
-                    e.clientX,
-                    e.clientY,
-                    "post",
-                    {
-                        id: String(post.id),
-                        name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text,
-                        isMy: isMy,
-                        red: false,
-                        func: () => navigate(`/post/${post.id}/edit`)
-                    }
-                );
+                openPostMenu(e.clientX, e.clientY, false);
             }}
         >
             <div className={`Post ${isMobile ? "mobile" : ""}`}>
-                {!location.pathname.includes("/acc") && <div className="postUser" onClick={() => navigate(`/acc/${post.user.nick}`)}>
-                    <div className="postAvatar">
-                        {post.user.avatar_url ? <img src={post.user.avatar_url} /> : <UserCircle />}
-                    </div>
-                    {post.user.username || post.user.nick}
-                </div>}
+                <div className="postHeader" data-context-menu="true" onContextMenu={event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openPostMenu(event.clientX, event.clientY, true);
+                }}>
+                    <button type="button" className="postUser" onClick={() => navigate('/acc/' + post.user.nick)}>
+                        <div className="postAvatar">
+                            {post.user.avatar_url ? <img src={post.user.avatar_url} alt="" /> : <UserCircle />}
+                        </div>
+                        <span>{post.user.username || post.user.nick}</span>
+                    </button>
+                    <button type="button" className="postMenuButton" aria-label={t("post.actions")} aria-haspopup="menu" onClick={event => {
+                        event.stopPropagation();
+                        const rect = event.currentTarget.getBoundingClientRect();
+                        openPostMenu(rect.right, rect.bottom, true);
+                    }}>
+                        <DotsThree weight="bold" />
+                    </button>
+                </div>
                 <div className="PostText" ref={divRef}>
                     {post.content ? <RichPost content={post.content} media={post.media || []} /> : <HighlightText text={post.text} search="" />}
                 </div>
@@ -164,29 +203,6 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                         </div>
                     </div>
                     <div className="PostDate">
-                        {hover && <div className="PostButts">
-
-                            <div
-                                className="PostButt"
-                                onClick={() => {
-                                    setDeleteConfirm(
-                                        {
-                                            goal: "post",
-                                            id: post.id,
-                                            name: post.text.length > 15 ? post.text.slice(0, 15) + "…" : post.text
-                                        }
-                                    );
-                                    setBlackout(
-                                        {
-                                            seted: true,
-                                            module: "Delete"
-                                        }
-                                    );
-                                }}
-                            >
-                                <Trash />
-                            </div>
-                        </div>}
                         <span>
                             {formatCreated(post.created_at)}
                         </span>

@@ -9,7 +9,7 @@ import { useContacts } from "../hooks/ContactsHook";
 export default function Redirecting() {
     const { setSearch } = useContacts()
     const { setBlackout } = useBlackout()
-    const { setRedirect } = useMessages()
+    const { setRedirect, setForwardPost } = useMessages()
     const searchRef = useRef<HTMLInputElement | null>(null)
     return (
         <div className="contactListModule">
@@ -24,6 +24,7 @@ export default function Redirecting() {
                 <div className="addHabitGoal" onClick={() => {
                     setBlackout({seted:false})
                     setRedirect(undefined)
+                    setForwardPost(null)
                 }}>
                     Отмена
                 </div>

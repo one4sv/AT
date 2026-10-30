@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import "./scss/Landing.scss";
 import { useAuth } from "../../components/hooks/AuthHook";
 import { useUser } from "../../components/hooks/UserHook";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import LandingFooter from "./Components/LandingFooter";
 import BodyMail from "./Components/BodyMail";
 import RegistrationForm from "./Components/RegistrationForm";
@@ -31,6 +31,9 @@ export default function Landing() {
     const { setNewTheme } = useUpSettings();
     const { theme } = useSettings();
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from;
+    const returnTo = typeof from === "string" && /^\/join\/[a-zA-Z0-9_-]+$/.test(from) ? from : "/";
     const {
         t,
         i18n
@@ -82,12 +85,12 @@ export default function Landing() {
         () => {
             if (user.id) {
                 const qr = sessionStorage.getItem("at-pending-qr");
-                navigate(qr ? `/auth/qr#${qr}` : "/", {
+                navigate(qr ? `/auth/qr#${qr}` : returnTo, {
                     replace: true
                 });
             }
         },
-        [user.id, navigate]
+        [user.id, navigate, returnTo]
     );
 
     useEffect(() => {

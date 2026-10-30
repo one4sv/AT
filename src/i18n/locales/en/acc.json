@@ -33,14 +33,21 @@
         "send": "Send comment",
         "signIn": "Sign in to comment",
         "create": "Write a post",
-        "edit": "Edit post",
+        "edit": "Edit",
         "publish": "Publish",
         "write": "Share something…",
         "noHabit": "No habit",
         "saveFailed": "Could not save the post. Your text and files are still in the editor.",
         "removeFile": "Remove file {{name}}",
         "readMore": "Read more…",
-        "open": "Open post"
+        "open": "Open post",
+        "actions": "Post actions",
+        "copyLink": "Copy link",
+        "forward": "Forward post",
+        "share": "Share",
+        "linkCopied": "Link copied",
+        "copyFailed": "Could not copy link",
+        "shareFailed": "Could not share post"
     },
     "editor": {
         "settings": "Publication settings",
