@@ -55,18 +55,6 @@ export default function PrivacyTab({ search }: { search: string }) {
     return (
         <div className="settingTab">
             {!search.trim() && <SectionArt theme="privacy"/>}
-            <div className="settingInnerDiv" data-setting-id="groupInvites">
-                <div className="settingHeader"><HighlightText text={t("privacy.invites.title")} search={search}/></div>
-                <div className="settingSpan">{t("privacy.invites.hint")}</div>
-                <div className="privateSLWrapper">
-                    <div className="settingSpan">{t("privacy.invites.contacts")}</div>
-                    <RadioGroup list={inviteOptions} val={groupInvites.contacts} disabled={savingInvites || !settingsLoaded} id="groupInviteContacts" newVal={value => void saveInvites({ ...groupInvites, contacts: value as GroupInviteRules["contacts"] })}/>
-                </div>
-                <div className="privateSLWrapper">
-                    <div className="settingSpan">{t("privacy.invites.others")}</div>
-                    <RadioGroup list={inviteOptions} val={groupInvites.others} disabled={savingInvites || !settingsLoaded} id="groupInviteOthers" newVal={value => void saveInvites({ ...groupInvites, others: value as GroupInviteRules["others"] })}/>
-                </div>
-            </div>
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     {t("privacy.accountInfo")}
@@ -91,6 +79,18 @@ export default function PrivacyTab({ search }: { search: string }) {
                 <div className="privateSLWrapper">
                     <div className="settingSpan"><HighlightText text={t("privacy.whoSeesPosts")} search={search} /></div>
                     <RadioGroup list={privateArrFull} val={privateShow.posts} newVal={(value) => applyNewPrivate("posts", value || "nobody")} id="posts"/>
+                </div>
+            </div>
+            <div className="settingInnerDiv" data-setting-id="groupInvites">
+                <div className="settingHeader"><HighlightText text={t("privacy.invites.title")} search={search}/></div>
+                <div className="settingHint">{t("privacy.invites.hint")}</div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">{t("privacy.invites.contacts")}</div>
+                    <RadioGroup list={inviteOptions} val={groupInvites.contacts} disabled={savingInvites || !settingsLoaded} id="groupInviteContacts" newVal={value => void saveInvites({ ...groupInvites, contacts: value as GroupInviteRules["contacts"] })}/>
+                </div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">{t("privacy.invites.others")}</div>
+                    <RadioGroup list={inviteOptions} val={groupInvites.others} disabled={savingInvites || !settingsLoaded} id="groupInviteOthers" newVal={value => void saveInvites({ ...groupInvites, others: value as GroupInviteRules["others"] })}/>
                 </div>
             </div>
         </div>
