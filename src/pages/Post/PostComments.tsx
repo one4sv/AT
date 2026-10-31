@@ -206,14 +206,11 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                             {comment.user.username || comment.user.nick}
                                         </Link>
                                     )}
-                                    <span className="commentDate">
-                                        {formatCreated(comment.created_at)}
-                                    </span>
                                     <div className="commentActions">
                                         <button type="button" aria-label={t("post.commentActions")} aria-expanded={menuId === comment.id} onClick={() => setMenuId(previous => previous === comment.id ? null : comment.id)}>
                                             <DotsThreeIcon />
                                         </button>
-                                        {menuId === comment.id && <div className="commentActionMenu ContextMenuWrapper">
+                                        {menuId === comment.id && <div className="commentActionMenu">
                                             {user.id && <button type="button" onClick={() => { setReplyTo(comment); setMenuId(null); }}><ArrowBendUpLeftIcon /> {t("post.commentReply")}</button>}
                                             {!!comment.text && <button type="button" onClick={() => { void navigator.clipboard.writeText(comment.text || ""); setMenuId(null); }}><CopyIcon /> {t("post.commentCopy")}</button>}
                                             {user.id === comment.user?.id && <button type="button" onClick={() => {
@@ -238,12 +235,13 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                 </div>}
                                 <AccPostMedia red={false} media={comment.files ?? []} />
                                 <div className="commentReactions">
-                                    <button type="button" disabled={!user.id || likingId === comment.id} aria-pressed={(comment.likes || []).includes(user.id || "")} onClick={() => void likeComment(comment.id)}>
-                                        <HeartIcon weight={(comment.likes || []).includes(user.id || "") ? "fill" : "regular"} /> {(comment.likes || []).length}
+                                    <button type="button" className="commentLike" disabled={!user.id || likingId === comment.id} aria-pressed={(comment.likes || []).includes(user.id || "")} onClick={() => void likeComment(comment.id)}>
+                                        <HeartIcon weight={(comment.likes || []).includes(user.id || "") ? "fill" : "regular"} color={(comment.likes || []).includes(user.id || "") ? "#d60000" : undefined} /> {(comment.likes || []).length}
                                     </button>
-                                    {user.id && <button type="button" onClick={() => setReplyTo(comment)}>
+                                    {user.id && <button type="button" className="commentReply" onClick={() => setReplyTo(comment)}>
                                         <ArrowBendUpLeftIcon /> {t("post.commentReply")}
                                     </button>}
+                                    <span className="commentDate">{formatCreated(comment.created_at)}</span>
                                 </div>
                             </article>
                         ))}
