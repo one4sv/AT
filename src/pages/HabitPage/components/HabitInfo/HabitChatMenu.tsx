@@ -57,7 +57,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
 
     useEffect(() => {
         window.dispatchEvent(new CustomEvent("habit-chat-dirty", { detail: { habitId: habit?.id, dirty: chosenCons.length > 0 || (selectedOption === "add" && (!!name.trim() || !!desc.trim() || !!pick)) } }));
-        return () => window.dispatchEvent(new CustomEvent("habit-chat-dirty", { detail: { habitId: habit?.id, dirty: false } }));
+        return () => { window.dispatchEvent(new CustomEvent("habit-chat-dirty", { detail: { habitId: habit?.id, dirty: false } })); };
     }, [habit?.id, chosenCons, selectedOption, name, desc, pick]);
 
     const abortRef = useRef<AbortController | null>(null);
