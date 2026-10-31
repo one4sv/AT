@@ -3,7 +3,7 @@ import Composer from "../../components/ts/Composer";
 import PageBottom from "../../components/ts/PageBottom";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { PencilSimpleIcon, UserCircle, DotsThreeIcon, TrashIcon, XIcon, CheckIcon } from "@phosphor-icons/react";
+import { PencilSimpleIcon, UserCircle, DotsThreeIcon, TrashIcon, XIcon, CheckIcon, HeartIcon, ArrowBendUpLeftIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../components/ts/api";
 import { useUser } from "../../components/hooks/UserHook";
@@ -16,6 +16,8 @@ interface Comment {
     id: number;
     text: string | null;
     files: Media[];
+    parent_id?: number | null;
+    likes?: string[];
     created_at: string;
     user: { id: string; nick: string; username: string; avatar_url?: string } | null;
 }
@@ -39,6 +41,8 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
     const [ sending, setSending ] = useState(false);
     const [ error, setError ] = useState("");
     const [ retry, setRetry ] = useState(0);
+    const [ replyTo, setReplyTo ] = useState<Comment | null>(null);
+    const [ likingId, setLikingId ] = useState<number | null>(null);
     const [ menuId, setMenuId ] = useState<number | null>(null);
     const [ editingId, setEditingId ] = useState<number | null>(null);
     const [ editText, setEditText ] = useState("");
@@ -87,6 +91,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
         const form = new FormData();
         form.append("id", String(id));
         form.append("text", text);
+        if (replyTo) form.append("parent_id", String(replyTo.id));
         files.forEach(file => form.append("media", file));
 
         try {
@@ -96,12 +101,32 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
             setComments(prev => [...prev, res.data.comment]);
             setText("");
             setFiles([]);
+            setReplyTo(null);
             onSent();
         } catch {
             if (mounted.current) setError("post.sendFailed");
         } finally {
             sendingRef.current = false;
             if (mounted.current) setSending(false);
+        }
+    };
+
+    const likeComment = async (commentId: number) => {
+        if (!user.id) return;
+        setLikingId(commentId);
+        try {
+            const res = await api.post(`comments/${commentId}/like`);
+            if (!res.data.success) throw new Error("Like failed");
+            setComments(previous => previous.map(comment => {
+                if (comment.id !== commentId) return comment;
+                const likes = (comment.likes || []).filter(id => id !== user.id);
+                if (res.data.liked) likes.push(user.id);
+                return { ...comment, likes };
+            }));
+        } catch {
+            setError("editor.likeFailed");
+        } finally {
+            setLikingId(null);
         }
     };
 
@@ -167,7 +192,10 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                     </p>}
                     <div className="comments">
                         {comments.map(comment => (
-                            <article className="comment" key={comment.id}>
+                            <article className="comment" key={comment.id} style={comment.parent_id ? { marginLeft: "3vw" } : undefined}>
+                                {comment.parent_id && <div className="commentReplyParent">
+                                    <ArrowBendUpLeftIcon /> {comments.find(item => item.id === comment.parent_id)?.user?.username || comments.find(item => item.id === comment.parent_id)?.user?.nick || "Ответ"}
+                                </div>}
                                 <div className="commentInfo">
                                     {comment.user && (
                                         <Link className="commentUser" to={`/acc/${comment.user.nick}`}>
@@ -206,12 +234,21 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                     <HighlightText text={comment.text ?? ""} search="" />
                                 </div>}
                                 <AccPostMedia red={false} media={comment.files ?? []} />
+                                <div className="commentReactions">
+                                    <button type="button" disabled={!user.id || likingId === comment.id} aria-pressed={(comment.likes || []).includes(user.id)} onClick={() => void likeComment(comment.id)}>
+                                        <HeartIcon weight={(comment.likes || []).includes(user.id) ? "fill" : "regular"} /> {(comment.likes || []).length}
+                                    </button>
+                                    {user.id && <button type="button" onClick={() => setReplyTo(comment)}>
+                                        <ArrowBendUpLeftIcon /> Ответить
+                                    </button>}
+                                </div>
                             </article>
                         ))}
                     </div>
                 </section>
             </div>
             <div className="postCommentBottom">
+                {replyTo && <div className="commentReplyBanner">Ответ: {replyTo.user?.username || replyTo.user?.nick}<button type="button" onClick={() => setReplyTo(null)} aria-label="Отменить ответ"><XIcon /></button></div>}
                 {user.id ? <Composer
                     text={text}
                     setText={setText}
