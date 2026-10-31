@@ -139,8 +139,8 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
                         readOnly={isReadOnly}
                     />
 
-                    {!isReadOnly && (
-                        <HabitExtraButts/>
+                    {!isArchived && (
+                        <HabitExtraButts isMy={isMy}/>
                     )}
 
                     {isMy && isArchived && (
