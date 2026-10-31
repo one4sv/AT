@@ -27,6 +27,11 @@ export interface Habit {
     cycle_days_rest: number;
     chat_id: number | null;
     chat_participation_mode?: "required" | "optional";
+    metric_progress_mode?: "personal" | "shared";
+    schedule_blocks_mode?: "personal" | "shared";
+    members_can_edit_blocks?: boolean;
+    members_can_edit_info?: boolean;
+    members_can_invite?: boolean;
 }
 interface HabitResponse {
     success: boolean;
