@@ -78,6 +78,7 @@ export interface PrivateSettings {
     habits: string;
     posts: string;
     activity_invites?: string;
+    activity_invite_exceptions?: Record<string, "allow" | "deny">;
 }
 
 const LOCAL_KEYS = {
