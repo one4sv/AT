@@ -28,7 +28,22 @@
 
 .habitCollaborationButton {
     width: 100%;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75vw;
+    flex-shrink: 0;
+    margin-top: 2dvh;
+    > svg {
+        color: var(--accent);
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+    }
+    @media (max-width: 800px) {
+        gap: 2vw;
+        margin-bottom: 2dvh;
+    }
 }
 
 .habitCollaborationModal {
@@ -66,7 +81,23 @@
         > .settingSpan, > .settingHint { margin: 0; }
     }
 }
-.habitCollaborationClose { flex-shrink: 0; margin: 1dvh 4% 2dvh; }
+.habitCollaborationClose {
+    flex-shrink: 0;
+    align-self: center;
+    width: calc(100% - 8%);
+    min-height: 5dvh;
+    margin: 1dvh 4% 2dvh;
+    border: 0;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    color: var(--tc);
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    font: inherit;
+}
 
 @media (max-width: 800px) {
     .habitCollaborationModal {
