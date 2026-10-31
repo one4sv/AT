@@ -8,6 +8,8 @@ import Loader from "../components/ts/Loader";
 import '../scss/Join.scss';
 import { Users } from "@phosphor-icons/react";
 
+interface JoinActivity { id: number; name: string; chat_participation_mode: "required" | "optional"; }
+
 interface JoinGroup {
     id: string;
     name: string;
@@ -25,6 +27,7 @@ export default function Join() {
 
     const [group, setGroup] = useState<JoinGroup>({ id: "", name: "", desc: null, avatar_url: null, member_count: 0 });
     const [loading, setLoading] = useState(true);
+    const [ activities, setActivities ] = useState<JoinActivity[]>([]);
     const [joining, setJoining] = useState(false);
     const [ personal, setPersonal ] = useState(false);
 
@@ -37,6 +40,7 @@ export default function Join() {
                 if (res.data.success) {
                     setGroup(res.data.group);
                     setPersonal(res.data.personal === true);
+                    setActivities(res.data.activities || []);
                 } else {
                     showNotification("error", res.data.error || "Приглашение недействительно");
                     navigate("/");
@@ -127,6 +131,17 @@ export default function Join() {
                         readOnly
                     ></textarea>
                 </div>
+                {activities.length > 0 && <div className="accExtraInfoWrapper">
+                    <div className="settingSpan">Активности беседы</div>
+                    {activities.map(activity => <div className="settingHint" key={activity.id}>
+                        <strong>{activity.name}</strong> — {activity.chat_participation_mode === "required"
+                            ? "Участие обязательно: при вступлении в беседу активность добавится к вашим."
+                            : "Участие по желанию: вступление в беседу не добавит вас в активность."}
+                    </div>)}
+                    {activities.some(activity => activity.chat_participation_mode === "required") && <div className="settingHint">
+                        Принимая приглашение, вы также соглашаетесь участвовать в обязательных активностях беседы. Ваши выполнения остаются личными.
+                    </div>}
+                </div>}
                 <div className="joinAccept">
                     {personal && <button type="button" className="joinAcceptButt" onClick={() => void decline()} disabled={joining}>{t("privacy.invites.decline")}</button>}
                     <button className="joinAcceptButt" onClick={handleJoin} disabled={joining}>
