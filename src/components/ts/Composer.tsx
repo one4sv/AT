@@ -23,6 +23,8 @@ interface ComposerProps {
     sendLabel: string;
     onBack?: () => void;
     action?: ReactNode;
+    reply?: { name: string; text: string } | null;
+    onCancelReply?: () => void;
 }
 
 export default function Composer({
@@ -37,11 +39,14 @@ export default function Composer({
     disabled,
     sendLabel,
     onBack,
-    action
+    action,
+    reply,
+    onCancelReply
 }: ComposerProps) {
     const { t } = useTranslation("acc");
     const { droppedFiles, setDroppedFiles } = useDrop();
     const [ writing, setWriting ] = useState(false);
+    useEffect(() => { if (reply) setWriting(true); }, [reply]);
     const composerRef = useRef<HTMLDivElement>(null);
     const [ showEmojiBar, setShowEmojiBar ] = useState(false);
     const taRef = useRef<HTMLTextAreaElement>(null);
@@ -102,6 +107,13 @@ export default function Composer({
 
     return (
         <div className={`composer ${writing ? "writing" : "reading"}`} ref={composerRef}>
+            {reply && <div className="composerReply">
+                <div className="composerReplyInfo">
+                    <span>{t("post.commentReplying", { name: reply.name })}</span>
+                    <span>{reply.text}</span>
+                </div>
+                <button type="button" onClick={onCancelReply} aria-label={t("post.commentCancel")}>×</button>
+            </div>}
             <div className="composerRow" ref={emojiRef}>
                 <button type="button" className="pageBottomBack" onClick={goBack} aria-label={t("navigation.back", { ns: "info" })}>
                     <ArrowLeftIcon />
