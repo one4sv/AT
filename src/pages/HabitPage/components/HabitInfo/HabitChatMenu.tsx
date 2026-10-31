@@ -8,11 +8,15 @@ import CreateChatInfo from "../../../../components/modules/components/CreateChat
 import { CameraIcon, CameraPlusIcon, CheckCircleIcon, CircleIcon, XIcon } from "@phosphor-icons/react";
 import { CircleUserRound, SearchIcon } from "lucide-react";
 import { LoaderSmall } from "../../../../components/ts/LoaderSmall";
+import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
+import { api } from "../../../../components/ts/api";
 
-type ChatMenuOption = "personal" | "group" | "add";
+type ChatMenuOption = "personal" | "group" | "add" | "activity";
 
 export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlideProps) {
     const { findContacts } = useContacts()
+    const { habit } = useTheHabit()
+    const [ inviting, setInviting ] = useState(false)
     const { showNotification } = useNote()
     const [ selectedOption, setSelectedOption ] = useState<ChatMenuOption>("personal")
     const [ loadingList, setLoadingList ] = useState<boolean>(false);
@@ -29,11 +33,12 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
         {label:"Добавить в личный чат", value:"personal"},
         {label:"Добавить в беседу", value:"group"},
         {label:"Создать новую беседу", value:"add"},
+        {label:"Пригласить в активность", value:"activity"},
     ]
 
     const handleOptionChange = (val: string) => {
         setChosenCons([])
-        if (val === "personal" || val === "group" || val === "add") {
+        if (val === "personal" || val === "group" || val === "add" || val === "activity") {
             setSelectedOption(val);
         }
     };
@@ -85,6 +90,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                 {selectedOption === "personal" && "Выберите пользователя:"}
                 {selectedOption === "group" && "Выберите беседу:"}
                 {selectedOption === "add" && "Создать беседу:"}
+                {selectedOption === "activity" && "Выберите контакт для приглашения в активность:"}
             </span>
             {selectedOption === "add" && (
                 <CreateChatInfo
@@ -119,6 +125,24 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                     </div>
                 </div>
             )}
+            {selectedOption === "activity" && chosenCons[0] && <button
+                type="button"
+                className="addGoalButtDiv"
+                disabled={inviting || !isMy || isArchived || readOnly}
+                onClick={async () => {
+                    if (!habit || !chosenCons[0] || inviting) return;
+                    setInviting(true);
+                    try {
+                        await api.post(`habits/${habit.id}/members`, { user_id: String(chosenCons[0].id) });
+                        showNotification("success", "Приглашение отправлено");
+                        setChosenCons([]);
+                    } catch {
+                        showNotification("error", "Не удалось пригласить пользователя");
+                    } finally {
+                        setInviting(false);
+                    }
+                }}
+            >{inviting ? "Приглашаем..." : "Пригласить в активность"}</button>}
             <div className="habitChatList">
                 <div className="createChatSearch">
                     <input
@@ -166,7 +190,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                             key={con.id}
                             className="createChatContact"
                             onClick={() => {
-                                if (selectedOption === "personal" || selectedOption === "group") setChosenCons([con])
+                                if (selectedOption === "personal" || selectedOption === "group" || selectedOption === "activity") setChosenCons([con])
                                 else {
                                     setChosenCons((prev) =>
                                         prev.some((acc) => acc.id === con.id)
