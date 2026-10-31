@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, XIcon } from "@phosphor-icons/react";
+import { CaretDownIcon } from "@phosphor-icons/react";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
@@ -11,16 +11,6 @@ export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolea
     const hasUnsavedChanges = !!localChanges[habit!.id];
     const isThisUpdating = isUpdating.includes(`habit_${habit!.id}`);
 
-    const renderBackText = () => {
-        switch (showSlide) {
-            case "settings":
-                return "Настройки"     
-            case "chat":
-                return "Чат"            
-            case "journal":
-                return "Журнал"
-        }
-    }
     const menuBack = () => {
         if (showSlide) setShowSlide(null)
         else {
@@ -35,14 +25,14 @@ export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolea
                     Не забудьте сохранить!
                 </div>
             )}
-            <div className="habitSlideBack" onClick={() => menuBack()}>
-                {showSlide ? <ArrowLeftIcon size={24}/> : <XIcon size={24}/>} {showSlide ? renderBackText() : 'Закрыть'}
-            </div>
+            <button type="button" className="habitSlideBack" onClick={menuBack} aria-label={showSlide ? "Назад" : "Закрыть"}>
+                <CaretDownIcon size={24}/>
+            </button>
             {!readOnly && habit?.ongoing && (
                 <div
                     className={`habitSave ${isThisUpdating ? "saving" : ""}`}
                     onClick={async () => {
-                        if (readOnly || habit?.ongoing || !hasUnsavedChanges || isThisUpdating) return;
+                        if (readOnly || !habit?.ongoing || !hasUnsavedChanges || isThisUpdating) return;
                         await saveHabit(habit!.id);
                     }}
                 >
