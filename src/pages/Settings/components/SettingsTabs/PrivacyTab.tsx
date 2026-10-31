@@ -149,6 +149,27 @@ export default function PrivacyTab({ search }: { search: string }) {
                     <div className="settingSpan">{t("privacy.invites.others")}</div>
                     <RadioGroup list={inviteOptions} val={visibleInvites.others} disabled={savingInvites || !settingsLoaded} id="groupInviteOthers" newVal={value => void saveInvites({ ...visibleInvites, others: value as GroupInviteRules["others"] })}/>
                 </div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">Исключения приглашений в беседы</div>
+                    <div className="settingHint">Для разрешённых пользователей будет доступно приглашение сообщением, даже если общее правило запрещает приглашения. Заблокированные пользователи не смогут вас приглашать.</div>
+                    <input className="addHabitInput" value={exceptionSearch} placeholder="Поиск контакта" onChange={event => setExceptionSearch(event.target.value)}/>
+                    {exceptionContacts.slice(0, 12).map(contact => <div className="createChatContact" key={contact.id}>
+                        <span>{contact.name || contact.nick}</span>
+                        <RadioGroup id={`groupException-${contact.id}`} list={[
+                            { label: "По общему правилу", value: "default" },
+                            { label: "Разрешить сообщением", value: "allow" },
+                            { label: "Запретить", value: "deny" }
+                        ]} val={visiblePrivate.group_invite_exceptions?.[contact.id] || "default"}
+                            newVal={value => {
+                                const exceptions = { ...(visiblePrivate.group_invite_exceptions || {}) };
+                                if (value === "allow" || value === "deny") exceptions[contact.id] = value;
+                                else delete exceptions[contact.id];
+                                const updated = { ...visiblePrivate, group_invite_exceptions: exceptions };
+                                setVisiblePrivate(updated);
+                                setNewPrivateShow(updated);
+                            }}/>
+                    </div>)}
+                </div>
             </div>
         </div>
     );
