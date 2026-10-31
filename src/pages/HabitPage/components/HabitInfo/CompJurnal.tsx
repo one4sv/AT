@@ -10,7 +10,7 @@ import { formatDateFromString } from "../../../../components/ts/utils/dateToStr"
 
 interface ActivityEvent {
     id: string;
-    type: "completion" | "joined";
+    type: "completion" | "joined" | "left" | "invited" | "declined" | "settings_changed";
     date?: string;
     created_at: string;
     user: { nick: string; username: string | null } | null;
@@ -67,7 +67,7 @@ export default function CompJurnal() {
                         <div className="CJdate">{event.user?.username || event.user?.nick || "Участник"}</div>
                         <div className="CJcreated">{new Date(event.created_at).toLocaleString("ru-RU")}</div>
                     </div>
-                    <div className="CJcomment">{event.type === "joined" ? "Присоединился к активности" : `Выполнил активность за ${event.date}`}</div>
+                    <div className="CJcomment">{event.type === "joined" ? "Присоединился к активности" : event.type === "left" ? "Покинул активность" : event.type === "invited" ? "Получил приглашение" : event.type === "declined" ? "Отклонил приглашение" : event.type === "settings_changed" ? "Изменены настройки активности" : `Выполнил активность за ${event.date}`}</div>
                 </div>)}
             </div>}
             <div className="compJurnalMain">
