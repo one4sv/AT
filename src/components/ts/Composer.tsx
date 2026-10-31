@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction, type ReactNode } from "react";
-import { Paperclip, PaperPlaneRightIcon, ArrowLeftIcon } from "@phosphor-icons/react";
+import { Paperclip, PaperPlaneRightIcon, ArrowLeftIcon, X } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useDrop } from "../hooks/DropHook";
 import type { Media } from "../context/ChatContext";
@@ -25,6 +25,7 @@ interface ComposerProps {
     action?: ReactNode;
     reply?: { name: string; text: string } | null;
     onCancelReply?: () => void;
+    inlineAttach?: boolean;
 }
 
 export default function Composer({
@@ -41,7 +42,8 @@ export default function Composer({
     onBack,
     action,
     reply,
-    onCancelReply
+    onCancelReply,
+    inlineAttach = false
 }: ComposerProps) {
     const { t } = useTranslation("acc");
     const { droppedFiles, setDroppedFiles } = useDrop();
@@ -107,23 +109,31 @@ export default function Composer({
 
     return (
         <div className={`composer ${writing ? "writing" : "reading"}`} ref={composerRef}>
-            {reply && <div className="composerReply">
+            <div className="composerRow" ref={emojiRef}>
+                {!inlineAttach && reply && <div className="composerReply">
                 <div className="composerReplyInfo">
                     <span>{t("post.commentReplying", { name: reply.name })}</span>
                     <span>{reply.text}</span>
                 </div>
-                <button type="button" onClick={onCancelReply} aria-label={t("post.commentCancel")}>×</button>
+                <button type="button" className="closeAnswer" onClick={onCancelReply} aria-label={t("post.commentCancel")}><X /></button>
             </div>}
-            <div className="composerRow" ref={emojiRef}>
                 <button type="button" className="pageBottomBack" onClick={goBack} aria-label={t("navigation.back", { ns: "info" })}>
                     <ArrowLeftIcon />
                 </button>
-                {writing && <button type="button" className="composerAttach" disabled={disabled}
+                {writing && !inlineAttach && <button type="button" className="composerAttach" disabled={disabled}
                     onMouseDown={event => event.preventDefault()}
                     onClick={() => fileRef.current?.click()} aria-label={t("post.attach")}>
                     <Paperclip />
                 </button>}
-                <div className="composerInput inputWithEmoji">
+                <div className={`composerInput inputWithEmoji ${inlineAttach && writing ? "open" : ""} ${inlineAttach ? "composerChatStyle" : ""}`}>
+                    {inlineAttach && reply && <div className="answerDiv">
+                        <div className="answer">
+                            <div className="answer1str">{t("post.commentReplying", { name: reply.name })}</div>
+                            <div className="answer2str">{reply.text}</div>
+                        </div>
+                        <button type="button" className="closeAnswer" onClick={onCancelReply} aria-label={t("post.commentCancel")}><X /></button>
+                    </div>}
+                    {inlineAttach && writing && <button type="button" className="composerInlineAttach" disabled={disabled} onPointerDown={event => event.preventDefault()} onClick={() => fileRef.current?.click()} aria-label={t("post.attach")}><Paperclip /></button>}
                     {writing && <EmojiButton taRef={taRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={disabled} />}
                     <div className="composerDraft" hidden={!writing}>
                     <MediaDraft
