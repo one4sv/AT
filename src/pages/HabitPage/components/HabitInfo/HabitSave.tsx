@@ -1,4 +1,4 @@
-import { CaretDownIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, XIcon } from "@phosphor-icons/react";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
@@ -26,7 +26,7 @@ export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolea
                 </div>
             )}
             <button type="button" className="habitSlideBack" onClick={menuBack} aria-label={showSlide ? "Назад" : "Закрыть"}>
-                <CaretDownIcon size={24}/>
+                {showSlide ? <ArrowLeftIcon size={24}/> : <XIcon size={24}/>}
             </button>
             {!readOnly && habit?.ongoing && (
                 <div
