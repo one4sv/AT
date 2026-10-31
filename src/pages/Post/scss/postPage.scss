@@ -262,3 +262,58 @@
     color: var(--tc);
     button { border: 0; background: transparent; color: inherit; cursor: pointer; }
 }
+
+
+.commentActionMenu {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        left: auto;
+        z-index: 1100;
+        min-width: max(12vw, 180px);
+        max-width: min(85vw, 320px);
+        padding: 0;
+        border: 0;
+        border-radius: 24px;
+        background: var(--interact);
+        color: var(--borderWh);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        overflow: hidden;
+        @media (max-width: 800px) {
+            min-width: 40vw;
+        }
+        button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: .5vw;
+            padding: 1vh .75vw;
+            color: inherit;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            cursor: pointer;
+            text-align: left;
+            user-select: none;
+            svg {
+                width: 1vw;
+                height: 1vw;
+                flex-shrink: 0;
+            }
+            &.delete { color: var(--notValid); }
+            @media (hover: hover) {
+                &:hover { background: var(--accent_hov); color: var(--tc); }
+                &.delete:hover { background: var(--notValidBg); color: var(--notValid); }
+            }
+            @media (hover: none) {
+                &:active { background: var(--accent_hov); color: var(--tc); }
+                &.delete:active { background: var(--notValidBg); color: var(--notValid); }
+            }
+            @media (max-width: 800px) {
+                padding: 1vh 3vw;
+                gap: 2vw;
+                svg { width: 5vw; height: 5vw; }
+            }
+        }
+    }
