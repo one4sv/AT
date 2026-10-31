@@ -6,6 +6,9 @@ import { useGroup } from "../../components/hooks/GroupHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
 import Loader from "../../components/ts/Loader";
+import { api } from "../../components/ts/api";
+import { useHabits } from "../../components/hooks/HabitsHook";
+import { useNote } from "../../components/hooks/NoteHook";
 import AccHabits from "../Acc/components/AccHabits";
 import GroupInfo from "./components/GroupInfo";
 import GroupMembers from "./components/GroupMembers";
@@ -28,6 +31,9 @@ export default function Group() {
         id: string;
     }>();
     const navigate = useNavigate();
+    const { habits: myHabits, refetchHabits } = useHabits();
+    const { showNotification } = useNote();
+    const [ joiningActivity, setJoiningActivity ] = useState<number | null>(null);
     const [collapsed, setCollapsed] = useState(0);
     const [isInfoCollapsed, setIsInfoCollapsed] = useState(false);
     const [isDraggingInfo, setIsDraggingInfo] = useState(false);
@@ -344,7 +350,26 @@ export default function Group() {
                                 slideRefs.current[0] = el;
                             }}
                         >
-                            {habits.length ? <AccHabits habits={habits} /> : <div className="accNoPrivateAccess">
+                            {habits.length ? <>
+                                <AccHabits habits={habits} />
+                                {habits.filter(h => h.chat_participation_mode === "optional" && !myHabits?.some(my => my.id === h.id)).map(h => <div className="settingInnerList" key={h.id}>
+                                    <span>{h.name} — участие по желанию</span>
+                                    <button type="button" className="settingInnerButt" disabled={joiningActivity !== null} onClick={async event => {
+                                        event.stopPropagation();
+                                        setJoiningActivity(h.id);
+                                        try {
+                                            const response = await api.post(`habits/${h.id}/join-chat`);
+                                            if (!response.data.success) throw new Error();
+                                            await refetchHabits();
+                                            showNotification("success", "Вы присоединились к активности");
+                                        } catch {
+                                            showNotification("error", "Не удалось присоединиться к активности");
+                                        } finally {
+                                            setJoiningActivity(null);
+                                        }
+                                    }}>{joiningActivity === h.id ? "Присоединяемся..." : "Присоединиться"}</button>
+                                </div>)}
+                            </> : <div className="accNoPrivateAccess">
                                 <CalendarBlankIcon size={28} aria-hidden="true" />
                                 <span>Пока нет активностей</span>
                             </div>}
