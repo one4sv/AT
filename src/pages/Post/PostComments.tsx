@@ -3,7 +3,7 @@ import Composer from "../../components/ts/Composer";
 import PageBottom from "../../components/ts/PageBottom";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { PencilSimpleIcon, UserCircle, DotsThreeIcon, TrashIcon, XIcon, CheckIcon, HeartIcon, ArrowBendUpLeftIcon } from "@phosphor-icons/react";
+import { PencilSimpleIcon, UserCircle, DotsThreeIcon, TrashIcon, XIcon, CheckIcon, HeartIcon, ArrowBendUpLeftIcon, CopyIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../components/ts/api";
 import { useUser } from "../../components/hooks/UserHook";
@@ -24,7 +24,7 @@ interface Comment {
 
 interface PostCommentsProps {
     id: number;
-    onSent: () => void;
+    onSent: (delta?: number) => void;
     children: ReactNode;
     onBack: () => void;
     onEdit?: () => void;
@@ -124,7 +124,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                 return { ...comment, likes };
             }));
         } catch {
-            setError("editor.likeFailed");
+            setError("post.commentLikeFailed");
         } finally {
             setLikingId(null);
         }
@@ -141,22 +141,23 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
             setEditingId(null);
             setMenuId(null);
         } catch {
-            setError("post.sendFailed");
+            setError("post.commentActionsFailed");
         } finally {
             setChangingId(null);
         }
     };
 
     const deleteComment = async (commentId: number) => {
-        if (changingId !== null || !window.confirm("Удалить комментарий?")) return;
+        if (changingId !== null || !window.confirm(t("post.commentDeleteConfirm"))) return;
         setChangingId(commentId);
         try {
             const res = await api.delete(`comments/${commentId}`);
             if (!res.data.success) throw new Error("Comment not deleted");
             setComments(previous => previous.filter(comment => comment.id !== commentId));
             setMenuId(null);
+            onSent(-1);
         } catch {
-            setError("post.sendFailed");
+            setError("post.commentActionsFailed");
         } finally {
             setChangingId(null);
         }
@@ -194,7 +195,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                         {comments.map(comment => (
                             <article className="comment" key={comment.id} style={comment.parent_id ? { marginLeft: "3vw" } : undefined}>
                                 {comment.parent_id && <div className="commentReplyParent">
-                                    <ArrowBendUpLeftIcon /> {comments.find(item => item.id === comment.parent_id)?.user?.username || comments.find(item => item.id === comment.parent_id)?.user?.nick || "Ответ"}
+                                    <ArrowBendUpLeftIcon /> {comments.find(item => item.id === comment.parent_id)?.user?.username || comments.find(item => item.id === comment.parent_id)?.user?.nick || t("post.commentReply")}
                                 </div>}
                                 <div className="commentInfo">
                                     {comment.user && (
@@ -208,28 +209,30 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                     <span className="commentDate">
                                         {formatCreated(comment.created_at)}
                                     </span>
-                                    {user.id && comment.user?.id === user.id && <div className="commentActions">
-                                        <button type="button" aria-label="Действия с комментарием" aria-expanded={menuId === comment.id} onClick={() => setMenuId(previous => previous === comment.id ? null : comment.id)}>
+                                    <div className="commentActions">
+                                        <button type="button" aria-label={t("post.commentActions")} aria-expanded={menuId === comment.id} onClick={() => setMenuId(previous => previous === comment.id ? null : comment.id)}>
                                             <DotsThreeIcon />
                                         </button>
                                         {menuId === comment.id && <div className="commentActionMenu">
-                                            <button type="button" onClick={() => {
+                                            {user.id && <button type="button" onClick={() => { setReplyTo(comment); setMenuId(null); }}><ArrowBendUpLeftIcon /> {t("post.commentReply")}</button>}
+                                            {!!comment.text && <button type="button" onClick={() => { void navigator.clipboard.writeText(comment.text || ""); setMenuId(null); }}><CopyIcon /> {t("post.commentCopy")}</button>}
+                                            {user.id === comment.user?.id && <button type="button" onClick={() => {
                                                 setEditingId(comment.id);
                                                 setEditText(comment.text || "");
                                                 setMenuId(null);
-                                            }}><PencilSimpleIcon /> {t("post.edit")}</button>
-                                            <button type="button" disabled={changingId === comment.id} onClick={() => void deleteComment(comment.id)}>
-                                                <TrashIcon /> Удалить
-                                            </button>
+                                            }}><PencilSimpleIcon /> {t("post.edit")}</button>}
+                                            {user.id === comment.user?.id && <button type="button" disabled={changingId === comment.id} onClick={() => void deleteComment(comment.id)}>
+                                                <TrashIcon /> {t("post.commentDelete")}
+                                            </button>}
                                         </div>}
-                                    </div>}
+                                    </div>
                                 </div>
                                 {editingId === comment.id ? <div className="commentEdit">
                                     <textarea value={editText} disabled={changingId === comment.id} onChange={event => setEditText(event.target.value)} />
-                                    <button type="button" disabled={!editText.trim() || changingId === comment.id} onClick={() => void editComment(comment.id)} aria-label="Сохранить">
+                                    <button type="button" disabled={!editText.trim() || changingId === comment.id} onClick={() => void editComment(comment.id)} aria-label={t("post.commentSave")}>
                                         <CheckIcon />
                                     </button>
-                                    <button type="button" onClick={() => setEditingId(null)} aria-label="Отмена"><XIcon /></button>
+                                    <button type="button" onClick={() => setEditingId(null)} aria-label={t("post.commentCancel")}><XIcon /></button>
                                 </div> : <div className="commentText">
                                     <HighlightText text={comment.text ?? ""} search="" />
                                 </div>}
@@ -239,7 +242,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                         <HeartIcon weight={(comment.likes || []).includes(user.id) ? "fill" : "regular"} /> {(comment.likes || []).length}
                                     </button>
                                     {user.id && <button type="button" onClick={() => setReplyTo(comment)}>
-                                        <ArrowBendUpLeftIcon /> Ответить
+                                        <ArrowBendUpLeftIcon /> {t("post.commentReply")}
                                     </button>}
                                 </div>
                             </article>
@@ -248,7 +251,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                 </section>
             </div>
             <div className="postCommentBottom">
-                {replyTo && <div className="commentReplyBanner">Ответ: {replyTo.user?.username || replyTo.user?.nick}<button type="button" onClick={() => setReplyTo(null)} aria-label="Отменить ответ"><XIcon /></button></div>}
+                {replyTo && <div className="commentReplyBanner">{t("post.commentReplying", { name: replyTo.user?.username || replyTo.user?.nick || "" })}<button type="button" onClick={() => setReplyTo(null)} aria-label={t("post.commentCancel")}><XIcon /></button></div>}
                 {user.id ? <Composer
                     text={text}
                     setText={setText}
