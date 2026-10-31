@@ -75,10 +75,10 @@ export default function PostPage() {
         if (window.history.state?.idx > 0) navigate(-1);
         else navigate("/");
     };
-    const onCommentSent = () => {
-        setPost(prev => prev ? { ...prev, comments_count: prev.comments_count + 1 } : prev);
+    const onCommentSent = (delta = 1) => {
+        setPost(prev => prev ? { ...prev, comments_count: Math.max(0, prev.comments_count + delta) } : prev);
         setPosts(prev => prev.map(item => String(item.id) === postId
-            ? { ...item, comments_count: item.comments_count + 1 } : item));
+            ? { ...item, comments_count: Math.max(0, item.comments_count + delta) } : item));
     };
 
     return (
