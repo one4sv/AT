@@ -4,8 +4,17 @@ import "../../scss/CompJurnal.scss";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { Search, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "../../../../components/ts/api";
 import { formatDateFromString } from "../../../../components/ts/utils/dateToStr";
+
+interface ActivityEvent {
+    id: string;
+    type: "completion" | "joined";
+    date?: string;
+    created_at: string;
+    user: { nick: string; username: string | null } | null;
+}
 
 export default function CompJurnal() {
     const { calendar } = useCalendar()
@@ -14,6 +23,25 @@ export default function CompJurnal() {
     const navigate = useNavigate();
 
     const [ jurnalSearch, setJurnalSearch ] = useState("")
+    const [ memberEvents, setMemberEvents ] = useState<ActivityEvent[]>([])
+    const [ memberEventsError, setMemberEventsError ] = useState(false)
+
+    useEffect(() => {
+        if (!habit?.id) {
+            setMemberEvents([]);
+            return;
+        }
+        let active = true;
+        api.get(`habits/${habit.id}/activity`).then(res => {
+            if (active) {
+                setMemberEvents(res.data.events || []);
+                setMemberEventsError(false);
+            }
+        }).catch(() => {
+            if (active) setMemberEventsError(true);
+        });
+        return () => { active = false; };
+    }, [habit?.id])
 
     const sortedCalendar = [...calendar]
         .filter(c => jurnalSearch.trim().length > 0 ? (c.comment?.includes(jurnalSearch) || formatDateFromString(c.date).includes(jurnalSearch)) && c.isDone : c.isDone)
@@ -30,6 +58,18 @@ export default function CompJurnal() {
                         <Search/>
                     )}
             </div>
+            {habit && <div className="settingInnerWrapper">
+                <div className="settingSpan">Действия участников</div>
+                {memberEventsError && <div className="settingHint">Не удалось загрузить действия участников</div>}
+                {!memberEventsError && memberEvents.length === 0 && <div className="settingHint">Пока нет действий участников</div>}
+                {memberEvents.filter(event => !jurnalSearch.trim() || [event.user?.username, event.user?.nick, event.date].some(value => value?.toLowerCase().includes(jurnalSearch.trim().toLowerCase()))).slice(0, 30).map(event => <div className="CJrecord" key={event.id}>
+                    <div className="CJdates">
+                        <div className="CJdate">{event.user?.username || event.user?.nick || "Участник"}</div>
+                        <div className="CJcreated">{new Date(event.created_at).toLocaleString("ru-RU")}</div>
+                    </div>
+                    <div className="CJcomment">{event.type === "joined" ? "Присоединился к активности" : `Выполнил активность за ${event.date}`}</div>
+                </div>)}
+            </div>}
             <div className="compJurnalMain">
                 <Virtuoso
                     data={sortedCalendar}
