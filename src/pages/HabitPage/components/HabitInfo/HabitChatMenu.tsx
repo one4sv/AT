@@ -26,6 +26,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     const [ savingCollaboration, setSavingCollaboration ] = useState(false)
     useEffect(() => { setLinkedChatId(habit?.chat_id ?? null); }, [habit?.chat_id])
     const [ inviting, setInviting ] = useState(false)
+    const canInvite = !!isMy || !!habit?.members_can_invite
     const { showNotification } = useNote()
     const [ selectedOption, setSelectedOption ] = useState<ChatMenuOption>("activity")
     const [ loadingList, setLoadingList ] = useState<boolean>(false);
@@ -200,7 +201,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                 <div className="settingSpan">
                     Добавить участников
                 </div>
-                <RadioGroup list={listOption} val={selectedOption} newVal={handleOptionChange} disabled={!isMy || isArchived || readOnly} id=""/>
+                <RadioGroup list={listOption} val={selectedOption} newVal={handleOptionChange} disabled={!canInvite || isArchived} id=""/>
             </div>
             <span className="chatMenuSpan">
                 {selectedOption === "group" && "Выберите беседу:"}
@@ -268,7 +269,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
             )}
             {selectedOption === "group" && chosenCons[0] && <button type="button"
                 className="addGoalButtDiv"
-                disabled={savingChat || !isMy || readOnly || isArchived}
+                disabled={savingChat || !isMy || isArchived}
                 onClick={() => {
                     const id = Number(chosenCons[0].id);
                     if (Number.isSafeInteger(id) && id > 0) void updateChat(id);
@@ -277,7 +278,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
             {selectedOption === "activity" && chosenCons[0] && <button
                 type="button"
                 className="addGoalButtDiv"
-                disabled={inviting || !isMy || isArchived || readOnly}
+                disabled={inviting || !canInvite || isArchived}
                 onClick={async () => {
                     if (!habit || !chosenCons[0] || inviting) return;
                     setInviting(true);
