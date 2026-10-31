@@ -34,20 +34,29 @@
     }
     &.delete {
         color: var(--notValid);
-        &:hover {
-            color: var(--notValid);
-        }
     }
     @media (hover: hover) {
         &:hover {
             color: var(--tc);
-            background-color: var(--menuButtHover);
+            background-color: var(--accent_hov);
         }
     }
     @media (hover: none) {
         &:active {
             color: var(--tc);
             background-color: var(--menuButtHover);
+        }
+    }
+    @media (hover: hover) {
+        &.delete:hover {
+            color: var(--notValid);
+            background-color: var(--notValidBg);
+        }
+    }
+    @media (hover: none) {
+        &.delete:active {
+            color: var(--notValid);
+            background-color: var(--notValidBg);
         }
     }
     @media (max-width:800px) {
