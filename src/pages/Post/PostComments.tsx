@@ -253,6 +253,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
             <div className="postCommentBottom">
 
                 {user.id ? <Composer
+                    inlineAttach
                     text={text}
                     reply={replyTo ? { name: replyTo.user?.username || replyTo.user?.nick || "", text: replyTo.text || "" } : null}
                     onCancelReply={() => setReplyTo(null)}
