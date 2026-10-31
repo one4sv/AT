@@ -18,6 +18,9 @@ type MenuOptions = {
     onCopy?: () => void,
     onShare?: () => void,
     onForward?: () => void,
+    onReply?: () => void,
+    onEdit?: () => void,
+    onDelete?: () => void,
 }
 export interface chatInfoType {
     note:boolean,
