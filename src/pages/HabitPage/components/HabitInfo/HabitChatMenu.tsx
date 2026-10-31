@@ -11,14 +11,14 @@ import { LoaderSmall } from "../../../../components/ts/LoaderSmall";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { api } from "../../../../components/ts/api";
 
-type ChatMenuOption = "personal" | "group" | "add" | "activity";
+type ChatMenuOption = "group" | "add" | "activity";
 
 export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlideProps) {
     const { findContacts } = useContacts()
     const { habit } = useTheHabit()
     const [ inviting, setInviting ] = useState(false)
     const { showNotification } = useNote()
-    const [ selectedOption, setSelectedOption ] = useState<ChatMenuOption>("personal")
+    const [ selectedOption, setSelectedOption ] = useState<ChatMenuOption>("activity")
     const [ loadingList, setLoadingList ] = useState<boolean>(false);
     const [ chatList, setChatList ] = useState<Contact[]>([])
     const [ search, setSearch ] = useState("")
@@ -30,15 +30,14 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     const abortRef = useRef<AbortController | null>(null);
     
     const listOption = [
-        {label:"Добавить в личный чат", value:"personal"},
+        {label:"Пригласить в активность", value:"activity"},
         {label:"Добавить в беседу", value:"group"},
         {label:"Создать новую беседу", value:"add"},
-        {label:"Пригласить в активность", value:"activity"},
     ]
 
     const handleOptionChange = (val: string) => {
         setChosenCons([])
-        if (val === "personal" || val === "group" || val === "add" || val === "activity") {
+        if (val === "group" || val === "add" || val === "activity") {
             setSelectedOption(val);
         }
     };
@@ -50,7 +49,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
         abortRef.current = controller;
 
         try {
-            const filter: ContactsFilter = selectedOption === "personal" || selectedOption === "group"
+            const filter: ContactsFilter = selectedOption === "group"
                 ? selectedOption
                 : "personal"
                 
@@ -82,12 +81,11 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
         <div className="habitInnerSlide">
             <div className="settingInnerWrapper">
                 <div className="settingSpan">
-                    Настройки чата
+                    Добавить участников
                 </div>
                 <RadioGroup list={listOption} val={selectedOption} newVal={handleOptionChange} disabled={!isMy || isArchived || readOnly} id=""/>
             </div>
             <span className="chatMenuSpan">
-                {selectedOption === "personal" && "Выберите пользователя:"}
                 {selectedOption === "group" && "Выберите беседу:"}
                 {selectedOption === "add" && "Создать беседу:"}
                 {selectedOption === "activity" && "Выберите контакт для приглашения в активность:"}
