@@ -19,18 +19,28 @@ export default function PrivacyTab({ search }: { search: string }) {
     const { privateShow, groupInvites, refetchSettings, settingsLoaded } = useSettings();
     const { showNotification } = useNote();
     const { findContacts } = useContacts();
-    const [ exceptionSearch, setExceptionSearch ] = useState("");
-    const [ exceptionContacts, setExceptionContacts ] = useState<Contact[]>([]);
+    const [ activitySearch, setActivitySearch ] = useState("");
+    const [ groupSearch, setGroupSearch ] = useState("");
+    const [ activityContacts, setActivityContacts ] = useState<Contact[]>([]);
+    const [ groupContacts, setGroupContacts ] = useState<Contact[]>([]);
     useEffect(() => {
-        if (!exceptionSearch.trim()) { setExceptionContacts([]); return; }
         const controller = new AbortController();
         const timer = setTimeout(() => {
-            findContacts(exceptionSearch, controller, "personal").then(result => {
-                if (!controller.signal.aborted) setExceptionContacts(result || []);
+            findContacts(activitySearch, controller, "personal").then(result => {
+                if (!controller.signal.aborted) setActivityContacts(result || []);
             }).catch(() => {});
         }, 250);
         return () => { clearTimeout(timer); controller.abort(); };
-    }, [exceptionSearch, findContacts]);
+    }, [activitySearch, findContacts]);
+    useEffect(() => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => {
+            findContacts(groupSearch, controller, "personal").then(result => {
+                if (!controller.signal.aborted) setGroupContacts(result || []);
+            }).catch(() => {});
+        }, 250);
+        return () => { clearTimeout(timer); controller.abort(); };
+    }, [groupSearch, findContacts]);
     const [ savingInvites, setSavingInvites ] = useState(false);
     const [ visibleInvites, setVisibleInvites ] = useState(groupInvites);
     const [ visiblePrivate, setVisiblePrivate ] = useState(privateShow);
@@ -114,13 +124,13 @@ export default function PrivacyTab({ search }: { search: string }) {
                     ]} val={visiblePrivate.activity_invites || "all"} newVal={value => applyNewPrivate("activity_invites", value || "all")} id="activityInvites"/>
                 </div>
             </div>
-            <div className="settingInnerDiv">
+            <div className="settingInnerDiv" data-setting-id="activityInviteExceptions">
                 <div className="settingHeader">Исключения приглашений в активности</div>
                 <div className="settingHint">Исключения имеют приоритет над общим правилом. Разрешённые пользователи могут приглашать даже при выборе «Никто».</div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan">Найти пользователя</div>
-                    <input className="addHabitInput" value={exceptionSearch} placeholder="Поиск контакта" onChange={event => setExceptionSearch(event.target.value)}/>
-                    {exceptionContacts.slice(0, 12).map(contact => <div className="createChatContact" key={contact.id}>
+                    <input className="addHabitInput" value={activitySearch} placeholder="Поиск контакта" onChange={event => setActivitySearch(event.target.value)}/>
+                    {activityContacts.slice(0, 12).map(contact => <div className="createChatContact" key={contact.id}>
                         <span>{contact.name || contact.nick}</span>
                         <RadioGroup id={`activityException-${contact.id}`} list={[
                             { label: "По общему правилу", value: "default" },
@@ -149,11 +159,12 @@ export default function PrivacyTab({ search }: { search: string }) {
                     <div className="settingSpan">{t("privacy.invites.others")}</div>
                     <RadioGroup list={inviteOptions} val={visibleInvites.others} disabled={savingInvites || !settingsLoaded} id="groupInviteOthers" newVal={value => void saveInvites({ ...visibleInvites, others: value as GroupInviteRules["others"] })}/>
                 </div>
-                <div className="privateSLWrapper">
-                    <div className="settingSpan">Исключения приглашений в беседы</div>
-                    <div className="settingHint">Для разрешённых пользователей будет доступно приглашение сообщением, даже если общее правило запрещает приглашения. Заблокированные пользователи не смогут вас приглашать.</div>
-                    <input className="addHabitInput" value={exceptionSearch} placeholder="Поиск контакта" onChange={event => setExceptionSearch(event.target.value)}/>
-                    {exceptionContacts.slice(0, 12).map(contact => <div className="createChatContact" key={contact.id}>
+
+            </div>            <div className="settingInnerDiv" data-setting-id="groupInviteExceptions">
+                <div className="settingHeader">Исключения приглашений в беседы</div>
+                <div className="settingHint">Разрешённые пользователи могут приглашать сообщением. Блокировка пользователя всегда имеет приоритет.</div>
+                <div className="privateSLWrapper">\n                    <div className="settingSpan">Найти пользователя</div>\n                    <input className="addHabitInput" value={groupSearch} placeholder="Поиск контакта" onChange={event => setGroupSearch(event.target.value)}/>
+                    {groupContacts.slice(0, 12).map(contact => <div className="createChatContact" key={contact.id}>
                         <span>{contact.name || contact.nick}</span>
                         <RadioGroup id={`groupException-${contact.id}`} list={[
                             { label: "По общему правилу", value: "default" },
@@ -171,6 +182,7 @@ export default function PrivacyTab({ search }: { search: string }) {
                     </div>)}
                 </div>
             </div>
+
         </div>
     );
 }
