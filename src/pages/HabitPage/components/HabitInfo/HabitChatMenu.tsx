@@ -26,7 +26,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     const [ savingMode, setSavingMode ] = useState(false)
     const [ savingCollaboration, setSavingCollaboration ] = useState(false)
     const [ showCollaboration, setShowCollaboration ] = useState(false)
-    const [ collaboration, setCollaboration ] = useState({
+    const [ collaboration, setCollaboration ] = useState<{ metric_progress_mode: "personal" | "shared"; schedule_blocks_mode: "personal" | "shared"; members_can_edit_blocks: boolean; members_can_edit_info: boolean; members_can_invite: boolean }>({
         metric_progress_mode: habit?.metric_progress_mode || "personal",
         schedule_blocks_mode: habit?.schedule_blocks_mode || "shared",
         members_can_edit_blocks: !!habit?.members_can_edit_blocks,
