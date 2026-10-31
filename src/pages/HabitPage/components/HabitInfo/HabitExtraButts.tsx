@@ -7,7 +7,7 @@ import { UserRoundPlus } from "lucide-react";
 import { useNote } from "../../../../components/hooks/NoteHook";
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook";
 
-export default function HabitExtraButts () {
+export default function HabitExtraButts ({ isMy }: { isMy: boolean }) {
     const { showDevNote } = useNote()
     const { habit } = useTheHabit()
     const [hasMembers, setHasMembers] = useState(false)
@@ -30,16 +30,16 @@ export default function HabitExtraButts () {
                     {hasMembers ? "Настройки совместной активности" : "Пригласить в активность"}
                     <CaretRightIcon className="addGoalCaret"/>
                 </div>
-                <div className="addGoalButtDiv" onClick={() => setShowSlide("settings")}>
+                {isMy && <div className="addGoalButtDiv" onClick={() => setShowSlide("settings")}>
                     <GearSix weight="fill" className="addGoalIcon settings"/>
                     Настройки
                     <CaretRightIcon className="addGoalCaret"/>
-                </div>
-                <div className="addGoalButtDiv" onClick={() => showDevNote()}>
+                </div>}
+                {isMy && <div className="addGoalButtDiv" onClick={() => showDevNote()}>
                     <Target weight="fill" className="addGoalIcon goal"/>
                     Добавить цель
                     <CaretRightIcon className="addGoalCaret"/>
-                </div>                
+                </div>}                
                 <div className="addGoalButtDiv" onClick={() => setShowSlide("journal")}>
                     <NotebookIcon  weight="fill" className="addGoalIcon"/>
                     Журнал активности
