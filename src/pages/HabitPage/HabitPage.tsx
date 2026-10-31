@@ -95,7 +95,7 @@ export default function Habit() {
     }
     const isMy = !!habit && habit.user_id === user.id;
     const isMember = !!habits?.some(h => h.id === habit?.id);
-    const canComplete = isMy || (isMember && habitSettings.metric_type === "done");
+    const canComplete = isMy || (isMember && ["done", "timer", "counter"].includes(habitSettings.metric_type));
     const isArchived = !habit?.ongoing;
     const isReadOnly = !isMy || isArchived;
     const isCompletionReadOnly = !canComplete || isArchived;
