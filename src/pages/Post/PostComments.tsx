@@ -120,7 +120,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
             setComments(previous => previous.map(comment => {
                 if (comment.id !== commentId) return comment;
                 const likes = (comment.likes || []).filter(id => id !== user.id);
-                if (res.data.liked) likes.push(user.id);
+                if (res.data.liked) likes.push(user.id!);
                 return { ...comment, likes };
             }));
         } catch {
@@ -238,8 +238,8 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                 </div>}
                                 <AccPostMedia red={false} media={comment.files ?? []} />
                                 <div className="commentReactions">
-                                    <button type="button" disabled={!user.id || likingId === comment.id} aria-pressed={(comment.likes || []).includes(user.id)} onClick={() => void likeComment(comment.id)}>
-                                        <HeartIcon weight={(comment.likes || []).includes(user.id) ? "fill" : "regular"} /> {(comment.likes || []).length}
+                                    <button type="button" disabled={!user.id || likingId === comment.id} aria-pressed={(comment.likes || []).includes(user.id || "")} onClick={() => void likeComment(comment.id)}>
+                                        <HeartIcon weight={(comment.likes || []).includes(user.id || "") ? "fill" : "regular"} /> {(comment.likes || []).length}
                                     </button>
                                     {user.id && <button type="button" onClick={() => setReplyTo(comment)}>
                                         <ArrowBendUpLeftIcon /> {t("post.commentReply")}
