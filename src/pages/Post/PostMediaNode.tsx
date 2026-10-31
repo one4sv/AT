@@ -8,7 +8,7 @@ import useImagePreview from "../../components/hooks/utils/useImagePreview";
 
 export const PostMediaContext = createContext<PostMedia[]>([]);
 
-function MediaView({ node, deleteNode }: NodeViewProps) {
+function MediaView({ node, deleteNode, editor }: NodeViewProps) {
     const media = useContext(PostMediaContext);
     const openImage = useImagePreview(media);
     const { t } = useTranslation("acc");
@@ -27,7 +27,8 @@ function MediaView({ node, deleteNode }: NodeViewProps) {
             </span>)}
             <button
                 type="button"
-                onClick={deleteNode}
+                onClick={() => { if (editor.isEditable) deleteNode(); }}
+                disabled={!editor.isEditable}
                 aria-label={t("editor.removeFile")}
             >
                 <XIcon />
