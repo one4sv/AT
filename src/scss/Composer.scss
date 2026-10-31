@@ -166,6 +166,10 @@
 .composer:has(.composerChatStyle) {
     .composerRow { position: relative; min-height: 5dvh; }
     .composerInput.composerChatStyle {
+        position: absolute;
+        left: 5.5vh;
+        bottom: 0;
+        width: calc(100% - 11vh);
         transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1),
                     left .3s cubic-bezier(0.075, 0.82, 0.165, 1),
                     bottom .3s cubic-bezier(0.075, 0.82, 0.165, 1);
