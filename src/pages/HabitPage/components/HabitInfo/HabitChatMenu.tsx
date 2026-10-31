@@ -343,7 +343,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                         { label: "Общий для всех участников", value: "shared" }
                     ]} id="habitMetricProgress" val={collaboration.metric_progress_mode}
                         disabled={!isMy || savingCollaboration}
-                        newVal={value => void updateCollaboration({ metric_progress_mode: value })}/>
+                        newVal={value => { if (value === "personal" || value === "shared") void updateCollaboration({ metric_progress_mode: value }); }}/>
                     <div className="settingHint">Общий режим объединяет измерения участников. Личный режим сохраняет независимые показатели.</div>
                 </div>
                 <div className="privateSLWrapper">
@@ -353,7 +353,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                         { label: "У каждого свои блоки", value: "personal" }
                     ]} id="habitScheduleBlocks" val={collaboration.schedule_blocks_mode}
                         disabled={!isMy || savingCollaboration}
-                        newVal={value => void updateCollaboration({ schedule_blocks_mode: value })}/>
+                        newVal={value => { if (value === "personal" || value === "shared") void updateCollaboration({ schedule_blocks_mode: value }); }}/>
                 </div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan">Кто может менять блоки</div>
