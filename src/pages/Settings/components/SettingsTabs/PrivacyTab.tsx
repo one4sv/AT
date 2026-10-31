@@ -11,11 +11,26 @@ import { useTranslation } from "react-i18next";
 import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
+import { useContacts } from "../../../../components/hooks/ContactsHook";
+import type { Contact } from "../../../../components/context/ContactsContext";
 
 export default function PrivacyTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { privateShow, groupInvites, refetchSettings, settingsLoaded } = useSettings();
     const { showNotification } = useNote();
+    const { findContacts } = useContacts();
+    const [ exceptionSearch, setExceptionSearch ] = useState("");
+    const [ exceptionContacts, setExceptionContacts ] = useState<Contact[]>([]);
+    useEffect(() => {
+        if (!exceptionSearch.trim()) { setExceptionContacts([]); return; }
+        const controller = new AbortController();
+        const timer = setTimeout(() => {
+            findContacts(exceptionSearch, controller, "personal").then(result => {
+                if (!controller.signal.aborted) setExceptionContacts(result || []);
+            }).catch(() => {});
+        }, 250);
+        return () => { clearTimeout(timer); controller.abort(); };
+    }, [exceptionSearch, findContacts]);
     const [ savingInvites, setSavingInvites ] = useState(false);
     const [ visibleInvites, setVisibleInvites ] = useState(groupInvites);
     const [ visiblePrivate, setVisiblePrivate ] = useState(privateShow);
@@ -97,6 +112,30 @@ export default function PrivacyTab({ search }: { search: string }) {
                         { label: t("privacy.all"), value: "all" },
                         { label: t("privacy.nobody"), value: "nobody" }
                     ]} val={visiblePrivate.activity_invites || "all"} newVal={value => applyNewPrivate("activity_invites", value || "all")} id="activityInvites"/>
+                </div>
+            </div>
+            <div className="settingInnerDiv">
+                <div className="settingHeader">Исключения приглашений в активности</div>
+                <div className="settingHint">Исключения имеют приоритет над общим правилом. Разрешённые пользователи могут приглашать даже при выборе «Никто».</div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">Найти пользователя</div>
+                    <input className="addHabitInput" value={exceptionSearch} placeholder="Поиск контакта" onChange={event => setExceptionSearch(event.target.value)}/>
+                    {exceptionContacts.slice(0, 12).map(contact => <div className="createChatContact" key={contact.id}>
+                        <span>{contact.name || contact.nick}</span>
+                        <RadioGroup id={`activityException-${contact.id}`} list={[
+                            { label: "По общему правилу", value: "default" },
+                            { label: "Разрешить", value: "allow" },
+                            { label: "Запретить", value: "deny" }
+                        ]} val={visiblePrivate.activity_invite_exceptions?.[contact.id] || "default"}
+                            newVal={value => {
+                                const exceptions = { ...(visiblePrivate.activity_invite_exceptions || {}) };
+                                if (value === "allow" || value === "deny") exceptions[contact.id] = value;
+                                else delete exceptions[contact.id];
+                                const updated = { ...visiblePrivate, activity_invite_exceptions: exceptions };
+                                setVisiblePrivate(updated);
+                                setNewPrivateShow(updated);
+                            }}/>
+                    </div>)}
                 </div>
             </div>
             <div className="settingInnerDiv" data-setting-id="groupInvites">
