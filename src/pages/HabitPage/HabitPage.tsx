@@ -94,7 +94,8 @@ export default function Habit() {
         return <Skeleton type="habit" overview={!habitId} />;
     }
     const isMy = !!habit && habit.user_id === user.id;
-    const canComplete = isMy || !!habits?.some(h => h.id === habit?.id);
+    const isMember = !!habits?.some(h => h.id === habit?.id);
+    const canComplete = isMy || (isMember && habitSettings.metric_type === "done");
     const isArchived = !habit?.ongoing;
     const isReadOnly = !isMy || isArchived;
     const isCompletionReadOnly = !canComplete || isArchived;
