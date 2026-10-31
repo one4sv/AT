@@ -19,6 +19,8 @@ export default function PrivacyTab({ search }: { search: string }) {
     const { privateShow, groupInvites, refetchSettings, settingsLoaded } = useSettings();
     const { showNotification } = useNote();
     const { findContacts } = useContacts();
+    const findContactsRef = useRef(findContacts);
+    findContactsRef.current = findContacts;
     const [ activitySearch, setActivitySearch ] = useState("");
     const [ groupSearch, setGroupSearch ] = useState("");
     const [ activityContacts, setActivityContacts ] = useState<Contact[]>([]);
@@ -26,21 +28,21 @@ export default function PrivacyTab({ search }: { search: string }) {
     useEffect(() => {
         const controller = new AbortController();
         const timer = setTimeout(() => {
-            findContacts(activitySearch, controller, "personal").then(result => {
+            findContactsRef.current(activitySearch, controller, "personal").then(result => {
                 if (!controller.signal.aborted) setActivityContacts(result || []);
             }).catch(() => {});
         }, 250);
         return () => { clearTimeout(timer); controller.abort(); };
-    }, [activitySearch, findContacts]);
+    }, [activitySearch]);
     useEffect(() => {
         const controller = new AbortController();
         const timer = setTimeout(() => {
-            findContacts(groupSearch, controller, "personal").then(result => {
+            findContactsRef.current(groupSearch, controller, "personal").then(result => {
                 if (!controller.signal.aborted) setGroupContacts(result || []);
             }).catch(() => {});
         }, 250);
         return () => { clearTimeout(timer); controller.abort(); };
-    }, [groupSearch, findContacts]);
+    }, [groupSearch]);
     const [ savingInvites, setSavingInvites ] = useState(false);
     const [ visibleInvites, setVisibleInvites ] = useState(groupInvites);
     const [ visiblePrivate, setVisiblePrivate ] = useState(privateShow);
