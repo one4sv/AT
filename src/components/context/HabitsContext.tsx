@@ -26,6 +26,7 @@ export interface Habit {
     cycle_days_active: number;
     cycle_days_rest: number;
     chat_id: number | null;
+    chat_participation_mode?: "required" | "optional";
 }
 interface HabitResponse {
     success: boolean;
