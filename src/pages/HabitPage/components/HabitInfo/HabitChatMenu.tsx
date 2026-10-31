@@ -13,6 +13,7 @@ import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import HabitMembers from "./HabitMembers";
 import { Link } from "react-router-dom";
 import { api } from "../../../../components/ts/api";
+import "../../scss/HabitChatMenu.scss";
 
 type ChatMenuOption = "group" | "add" | "activity";
 
@@ -35,7 +36,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     useEffect(() => { if (habit) setCollaboration({ metric_progress_mode: habit.metric_progress_mode || "personal", schedule_blocks_mode: habit.schedule_blocks_mode || "shared", members_can_edit_blocks: !!habit.members_can_edit_blocks, members_can_edit_info: !!habit.members_can_edit_info, members_can_invite: !!habit.members_can_invite }); }, [habit?.id])
     useEffect(() => { setLinkedChatId(habit?.chat_id ?? null); }, [habit?.chat_id])
     const [ inviting, setInviting ] = useState(false)
-    const canInvite = !!isMy || !!habit?.members_can_invite
+    const canInvite = !!isMy || collaboration.members_can_invite
     const { showNotification } = useNote()
     const [ selectedOption, setSelectedOption ] = useState<ChatMenuOption>("activity")
     const [ loadingList, setLoadingList ] = useState<boolean>(false);
@@ -130,7 +131,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     }, [refetchUsers]);
     
     return (
-        <div className="habitInnerSlide">
+        <div className="habitInnerSlide habitChatMenuSlide">
             {habit && <div className="settingInnerWrapper">
                 {linkedChatId && <div className="privateSLWrapper">
                     <div className="settingSpan">Участие в активностях беседы</div>
@@ -157,7 +158,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                 </div>}
                 {linkedChatId && <Link to={`/chat/g/${linkedChatId}`} className="addGoalButtDiv">Открыть беседу</Link>}
                 {linkedChatId && isMy && <button type="button" className="addGoalButtDiv" disabled={savingChat} onClick={() => void updateChat(null)}>Отвязать от беседы</button>}
-                {isMy && <button type="button" className="addGoalButtDiv" onClick={() => setShowCollaboration(true)}>Настройки совместной активности</button>}
+                {isMy && <button type="button" className="addGoalButtDiv habitCollaborationButton" onClick={() => setShowCollaboration(true)}>Настройки совместной активности</button>}
                 <HabitMembers habitId={habit.id} isOwner={!!isMy} showInvite={false}/>
             </div>}
             <div className="settingInnerWrapper">
