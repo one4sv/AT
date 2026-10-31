@@ -84,6 +84,17 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
         }
     }, [loading]);
 
+    const openCommentMenu = (comment: Comment, x: number, y: number) => {
+        openMenu(x, y, "comment", {
+            id: String(comment.id),
+            isMy: !!user.id && user.id === comment.user?.id,
+            onReply: user.id ? () => { setReplyTo(comment); closeMenu(); } : undefined,
+            onCopy: comment.text ? () => { void navigator.clipboard.writeText(comment.text || ""); closeMenu(); } : undefined,
+            onEdit: () => { setEditingId(comment.id); setEditText(comment.text || ""); closeMenu(); },
+            onDelete: () => { closeMenu(); void deleteComment(comment.id); }
+        });
+    };
+
     const sendComment = async () => {
         if (!user.id || loading || sendingRef.current || (!text.trim() && !files.length)) return;
         sendingRef.current = true;
@@ -192,7 +203,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                     </p>}
                     <div className="comments">
                         {comments.map(comment => (
-                            <article className="comment" key={comment.id} style={comment.parent_id ? { marginLeft: "3vw" } : undefined}>
+                            <article className="comment" key={comment.id} data-context-menu="true" onContextMenu={event => { event.preventDefault(); event.stopPropagation(); openCommentMenu(comment, event.clientX, event.clientY); }} style={comment.parent_id ? { marginLeft: "3vw" } : undefined}>
                                 {comment.parent_id && <div className="commentReplyParent">
                                     <ArrowBendUpLeftIcon /> {comments.find(item => item.id === comment.parent_id)?.user?.username || comments.find(item => item.id === comment.parent_id)?.user?.nick || t("post.commentReply")}
                                 </div>}
@@ -207,15 +218,9 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                     )}
                                     <div className="commentActions">
                                         <button type="button" aria-label={t("post.commentActions")} aria-haspopup="menu" onClick={event => {
+                                            event.stopPropagation();
                                             const rect = event.currentTarget.getBoundingClientRect();
-                                            openMenu(rect.right, rect.bottom, "comment", {
-                                                id: String(comment.id),
-                                                isMy: !!user.id && user.id === comment.user?.id,
-                                                onReply: user.id ? () => { setReplyTo(comment); closeMenu(); } : undefined,
-                                                onCopy: comment.text ? () => { void navigator.clipboard.writeText(comment.text || ""); closeMenu(); } : undefined,
-                                                onEdit: () => { setEditingId(comment.id); setEditText(comment.text || ""); closeMenu(); },
-                                                onDelete: () => { void deleteComment(comment.id); closeMenu(); }
-                                            });
+                                            openCommentMenu(comment, rect.right, rect.bottom);
                                         }}>
                                             <DotsThreeIcon />
                                         </button>
