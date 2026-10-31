@@ -16,17 +16,15 @@ export default function PostMenu() {
             <div className="ContextMenuButt" onClick={options.onForward}>
                 <ArrowBendUpRight />{t("post.forward")}
             </div>
-            <>
-                <div className="ContextMenuButt" onClick={options.onShare}>
+            <div className="ContextMenuButt" onClick={options.onShare}>
                     <ShareNetwork />{t("post.share")}
-                </div>
-                {options.isMy && <>
+            </div>
+            {options.isMy && <>
                     <div className="ContextMenuButt" onClick={options.func}>
                         <PencilSimple />{t("post.edit")}
                     </div>
                     <DeleteButton />
-                </>}
-            </>
+            </>}
         </>
     );
 }
