@@ -55,6 +55,11 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     const [pick, setPick] = useState<File | null>(null);
     const [chosenCons, setChosenCons] = useState<Contact[]>([]);
 
+    useEffect(() => {
+        window.dispatchEvent(new CustomEvent("habit-chat-dirty", { detail: { habitId: habit?.id, dirty: chosenCons.length > 0 || (selectedOption === "add" && (!!name.trim() || !!desc.trim() || !!pick)) } }));
+        return () => window.dispatchEvent(new CustomEvent("habit-chat-dirty", { detail: { habitId: habit?.id, dirty: false } }));
+    }, [habit?.id, chosenCons, selectedOption, name, desc, pick]);
+
     const abortRef = useRef<AbortController | null>(null);
     
     const listOption = [
@@ -142,7 +147,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
 
             if (controller.signal.aborted || !sortedList) return;
 
-            setChatList(sortedList);
+            setChatList(sortedList.filter(item => !item.is_group || selectedOption === "group").filter(item => item.name !== "Избранное" && item.nick !== "Избранное" && !("is_favorite" in item && item.is_favorite)));
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             if (error?.name === "CanceledError" || error?.code === "ERR_CANCELED") return;
@@ -209,6 +214,17 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                     setDesc={setDesc}
                 />
             )}
+            {selectedOption !== "add" && chosenCons[0] && <div className="contactsUser active habitSelectedContact" onClick={() => setChosenCons([])}>
+                <div className="contactsUserPic">
+                    {chosenCons[0].avatar_url ? <img className="contactsUserAvatar" src={chosenCons[0].avatar_url} alt="" /> : <CameraIcon />}
+                </div>
+                <div className="contactsUserInfo">
+                    <div className="contactsUserStr">
+                        <span className="nameSpan">{chosenCons[0].name || chosenCons[0].nick}</span>
+                        <XIcon />
+                    </div>
+                </div>
+            </div>}
             <div className="habitChatList">
                 <div className="createChatSearch">
                     <input
@@ -254,7 +270,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                     chatList.map((con) => (
                         <div
                             key={con.id}
-                            className={`createChatContact ${chosenCons.some(item => item.id === con.id) ? "selected" : ""}`}
+                            className="createChatContact"
                             onClick={() => {
                                 if (selectedOption === "group" || selectedOption === "activity") setChosenCons([con])
                                 else {
