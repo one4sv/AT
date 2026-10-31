@@ -199,19 +199,47 @@
 .postComments {
     .commentReactions {
         display: flex;
-        gap: 1vw;
+        align-items: center;
+        gap: .4vw;
         margin-top: .75vh;
         button {
             display: inline-flex;
-            gap: .4vw;
             align-items: center;
+            gap: .3vw;
             padding: .5vh .5vw;
             border: 0;
-            border-radius: 12px;
+            border-radius: 24px;
             background: transparent;
             color: var(--tc);
             cursor: pointer;
+            > svg {
+                width: 24px;
+                height: 24px;
+                flex-shrink: 0;
+            }
             &:disabled { opacity: .5; cursor: default; }
+            @media (hover: hover) {
+                &:hover {
+                    background-color: var(--menuButtHover);
+                }
+                &.commentLike:hover > svg { color: #d60000; }
+                &.commentReply:hover > svg { color: var(--accent_text); }
+            }
+            @media (hover: none) {
+                &:active {
+                    background-color: var(--menuButtHover);
+                }
+                &.commentLike:active > svg { color: #d60000; }
+                &.commentReply:active > svg { color: var(--accent_text); }
+            }
+        }
+        .commentDate {
+            margin-left: auto;
+            white-space: nowrap;
+        }
+        @media (max-width: 800px) {
+            gap: 1vw;
+            button { gap: 1vw; padding: .5vh 1vw; }
         }
     }
     .commentReplyParent {
