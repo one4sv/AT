@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronRight } from "lucide-react";
-import { ChatCircle, Heart, DotsThree, UserCircle } from "@phosphor-icons/react";
+import { ChatCircle, Heart, DotsThreeVertical, UserCircle } from "@phosphor-icons/react";
 import { isMobile } from "react-device-detect";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useMessages } from "../hooks/MessagesHook";
@@ -150,7 +150,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                         const rect = event.currentTarget.getBoundingClientRect();
                         openPostMenu(rect.right, rect.bottom);
                     }}>
-                        <DotsThree weight="bold" />
+                        <DotsThreeVertical weight="bold" />
                     </button>
                 </div>
                 <div className="PostText" ref={divRef}>
