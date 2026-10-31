@@ -2,7 +2,7 @@ import { ArrowLeftIcon, XIcon } from "@phosphor-icons/react";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
-import type { Dispatch, SetStateAction } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 
 export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolean, setMenuTranslate:Dispatch<SetStateAction<number>>}) {
     const { habit } = useTheHabit()
@@ -10,6 +10,16 @@ export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolea
     const { setShowSlide, showSlide, setShowHabitMenu } = useSideMenu()
     const hasUnsavedChanges = !!localChanges[habit!.id];
     const isThisUpdating = isUpdating.includes(`habit_${habit!.id}`);
+    const [ chatDirty, setChatDirty ] = useState(false);
+    useEffect(() => {
+        const onDirty = (event: Event) => {
+            const detail = (event as CustomEvent<{ habitId: number; dirty: boolean }>).detail;
+            if (detail?.habitId === habit?.id) setChatDirty(detail.dirty);
+        };
+        window.addEventListener("habit-chat-dirty", onDirty);
+        return () => window.removeEventListener("habit-chat-dirty", onDirty);
+    }, [habit?.id]);
+    const shouldShowSaveHint = hasUnsavedChanges || (showSlide === "chat" && chatDirty);
 
     const menuBack = () => {
         if (showSlide) setShowSlide(null)
@@ -20,7 +30,7 @@ export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolea
     }
     return (
         <div className="habitSaveDiv">
-            {hasUnsavedChanges && (
+            {shouldShowSaveHint && (
                 <div className="habitSaveHint">
                     Не забудьте сохранить!
                 </div>
