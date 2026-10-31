@@ -192,7 +192,9 @@
         }
     }
     .composerRow > .composerSend {
+        margin-left: auto;
         flex: 0 0 5vh;
+        border: 0;
         width: 5vh;
         height: 5vh;
         border-radius: 50%;
