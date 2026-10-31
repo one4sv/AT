@@ -16,7 +16,7 @@ export default function PostMenu() {
             <div className="ContextMenuButt" onClick={options.onForward}>
                 <ArrowBendUpRight />{t("post.forward")}
             </div>
-            {options.postHeader && <>
+            <>
                 <div className="ContextMenuButt" onClick={options.onShare}>
                     <ShareNetwork />{t("post.share")}
                 </div>
@@ -26,7 +26,7 @@ export default function PostMenu() {
                     </div>
                     <DeleteButton />
                 </>}
-            </>}
+            </>
         </>
     );
 }
