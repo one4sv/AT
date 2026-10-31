@@ -29,7 +29,9 @@ export default function HabitInvitations() {
         try {
             const res = await api.patch(`habits/${id}/members/me`, { status });
             if (!res.data.success) throw new Error("Invitation update failed");
-            setInvitations(previous => previous.filter(item => item.habit_id !== id));
+            setInvitations(previous => status === "accepted"
+                ? previous.map(item => item.habit_id === id ? { ...item, status } : item)
+                : previous.filter(item => item.habit_id !== id));
         } catch {
             setError("Не удалось обработать приглашение");
         } finally {
