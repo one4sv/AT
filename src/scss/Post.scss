@@ -265,8 +265,9 @@
 }
 
 .postAvatar {
-    height: 3dvh;
+    height: 4.5dvh;
     aspect-ratio: 1/1;
+    flex-shrink: 0;
     border-radius: 50%;
     overflow: hidden;
     >img {
@@ -394,18 +395,18 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 4.5vh;
-    height: 4.5vh;
-    padding: .7vh;
+    width: 3.5vh;
+    height: 3.5vh;
+    padding: .5vh;
     border: 1px solid var(--block_border);
     border-radius: 24px;
     background: var(--interact);
-    color: var(--tc);
+    color: var(--borderWh);
     cursor: pointer;
 
     svg {
-        width: 3vh;
-        height: 3vh;
+        width: 2vh;
+        height: 2vh;
     }
 }
 
