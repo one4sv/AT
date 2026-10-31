@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { api } from "../../../../components/ts/api";
+import { Link } from "react-router-dom";
 
 interface Invitation {
     habit_id: number;
+    status: "pending" | "accepted";
     habit: { id: number; name: string } | null;
 }
 
@@ -38,12 +40,14 @@ export default function HabitInvitations() {
     if (!invitations.length && !error) return null;
     return (
         <section className="habitInvitations">
-            <h3>Приглашения в активности</h3>
+            <h3>Совместные активности</h3>
             {error && <p role="alert">{error}</p>}
             {invitations.map(item => <div key={item.habit_id} className="habitInvitation">
-                <span>{item.habit?.name || "Активность"}</span>
-                <button type="button" disabled={busy !== null} onClick={() => void respond(item.habit_id, "accepted")}>Принять</button>
-                <button type="button" disabled={busy !== null} onClick={() => void respond(item.habit_id, "declined")}>Отклонить</button>
+                {item.status === "accepted" ? <Link to={`/habit/${item.habit_id}`}>{item.habit?.name || "Активность"}</Link> : <>
+                    <span>{item.habit?.name || "Активность"}</span>
+                    <button type="button" disabled={busy !== null} onClick={() => void respond(item.habit_id, "accepted")}>Принять</button>
+                    <button type="button" disabled={busy !== null} onClick={() => void respond(item.habit_id, "declined")}>Отклонить</button>
+                </>}
             </div>)}
         </section>
     );
