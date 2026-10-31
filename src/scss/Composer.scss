@@ -79,6 +79,7 @@
     > .composerSend {
         background: linear-gradient(135deg, var(--accent), var(--grad));
         color: var(--inner_text);
+        &:disabled { opacity: 1; }
     }
 }
 
@@ -173,7 +174,11 @@
         transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1),
                     left .3s cubic-bezier(0.075, 0.82, 0.165, 1),
                     bottom .3s cubic-bezier(0.075, 0.82, 0.165, 1);
-        > textarea { padding-inline-end: 5vh; }
+        > textarea {
+            padding-inline-end: 10vh;
+            max-height: 35vh;
+            overflow-y: hidden !important;
+        }
         &.open {
             position: absolute;
             left: 0;
@@ -186,9 +191,19 @@
             > textarea { width: 100%; }
         }
     }
+    .composerRow > .composerSend {
+        flex: 0 0 5vh;
+        width: 5vh;
+        height: 5vh;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
+        &:disabled { opacity: 1; cursor: default; }
+    }
+    .composerInput.composerChatStyle > .inputEmojiButton { right: .5vh; }
     .composerInlineAttach {
         position: absolute;
-        right: 5vh;
+        right: 4.75vh;
         bottom: .5vh;
         width: 4vh;
         height: 4vh;
