@@ -18,7 +18,10 @@ type ChatMenuOption = "group" | "add" | "activity";
 
 export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlideProps) {
     const { findContacts } = useContacts()
-    const { habit } = useTheHabit()
+    const { habit, loadHabitWLoading } = useTheHabit()
+    const [ linkedChatId, setLinkedChatId ] = useState<number | null>(habit?.chat_id ?? null)
+    const [ savingChat, setSavingChat ] = useState(false)
+    useEffect(() => { setLinkedChatId(habit?.chat_id ?? null); }, [habit?.chat_id])
     const [ inviting, setInviting ] = useState(false)
     const { showNotification } = useNote()
     const [ selectedOption, setSelectedOption ] = useState<ChatMenuOption>("activity")
@@ -37,6 +40,23 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
         {label:"Добавить в беседу", value:"group"},
         {label:"Создать новую беседу", value:"add"},
     ]
+
+    const updateChat = async (chatId: number | null) => {
+        if (!habit || savingChat || !isMy) return;
+        setSavingChat(true);
+        try {
+            const res = await api.patch(`habits/${habit.id}/chat`, { chat_id: chatId });
+            if (!res.data.success) throw new Error("Link failed");
+            setLinkedChatId(chatId);
+            setChosenCons([]);
+            await loadHabitWLoading(String(habit.id));
+            showNotification("success", chatId ? "Активность привязана к беседе" : "Активность больше не привязана к беседе");
+        } catch (error) {
+            showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Ошибка изменения беседы" : "Ошибка изменения беседы");
+        } finally {
+            setSavingChat(false);
+        }
+    };
 
     const handleOptionChange = (val: string) => {
         setChosenCons([])
@@ -84,8 +104,9 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
         <div className="habitInnerSlide">
             {habit && <div className="settingInnerWrapper">
                 <div className="settingSpan">Совместная активность</div>
-                <div className="settingHint">{habit.chat_id ? "Активность привязана к беседе" : "Пока без привязки к беседе. Приглашённые участники получают отдельный прогресс выполнения."}</div>
-                {habit.chat_id && <Link to={`/chat/g/${habit.chat_id}`} className="addGoalButtDiv">Открыть беседу</Link>}
+                <div className="settingHint">{linkedChatId ? "Активность привязана к беседе" : "Пока без привязки к беседе. Приглашённые участники получают отдельный прогресс выполнения."}</div>
+                {linkedChatId && <Link to={`/chat/g/${linkedChatId}`} className="addGoalButtDiv">Открыть беседу</Link>}
+                {linkedChatId && isMy && <button type="button" className="addGoalButtDiv" disabled={savingChat} onClick={() => void updateChat(null)}>Отвязать от беседы</button>}
                 <HabitMembers habitId={habit.id} isOwner={!!isMy} showInvite={false}/>
             </div>}
             <div className="settingInnerWrapper">
@@ -132,6 +153,14 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                     </div>
                 </div>
             )}
+            {selectedOption === "group" && chosenCons[0] && <button type="button"
+                className="addGoalButtDiv"
+                disabled={savingChat || !isMy || readOnly || isArchived}
+                onClick={() => {
+                    const id = Number(chosenCons[0].id);
+                    if (Number.isSafeInteger(id) && id > 0) void updateChat(id);
+                }}
+            >{savingChat ? "Сохраняем..." : linkedChatId ? "Перенести привязку в эту беседу" : "Привязать активность к беседе"}</button>}
             {selectedOption === "activity" && chosenCons[0] && <button
                 type="button"
                 className="addGoalButtDiv"
