@@ -79,6 +79,7 @@ export interface PrivateSettings {
     posts: string;
     activity_invites?: string;
     activity_invite_exceptions?: Record<string, "allow" | "deny">;
+    group_invite_exceptions?: Record<string, "allow" | "deny">;
 }
 
 const LOCAL_KEYS = {
