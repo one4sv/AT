@@ -213,7 +213,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                         <button type="button" aria-label={t("post.commentActions")} aria-expanded={menuId === comment.id} onClick={() => setMenuId(previous => previous === comment.id ? null : comment.id)}>
                                             <DotsThreeIcon />
                                         </button>
-                                        {menuId === comment.id && <div className="commentActionMenu">
+                                        {menuId === comment.id && <div className="commentActionMenu ContextMenuWrapper">
                                             {user.id && <button type="button" onClick={() => { setReplyTo(comment); setMenuId(null); }}><ArrowBendUpLeftIcon /> {t("post.commentReply")}</button>}
                                             {!!comment.text && <button type="button" onClick={() => { void navigator.clipboard.writeText(comment.text || ""); setMenuId(null); }}><CopyIcon /> {t("post.commentCopy")}</button>}
                                             {user.id === comment.user?.id && <button type="button" onClick={() => {
@@ -221,7 +221,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                                 setEditText(comment.text || "");
                                                 setMenuId(null);
                                             }}><PencilSimpleIcon /> {t("post.edit")}</button>}
-                                            {user.id === comment.user?.id && <button type="button" disabled={changingId === comment.id} onClick={() => void deleteComment(comment.id)}>
+                                            {user.id === comment.user?.id && <button type="button" className="delete" disabled={changingId === comment.id} onClick={() => void deleteComment(comment.id)}>
                                                 <TrashIcon /> {t("post.commentDelete")}
                                             </button>}
                                         </div>}
