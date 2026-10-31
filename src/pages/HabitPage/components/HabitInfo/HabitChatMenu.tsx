@@ -109,7 +109,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                     setDesc={setDesc}
                 />
             )}
-            {(selectedOption === "personal" || selectedOption === "group") && chosenCons[0] && (
+            {selectedOption === "group" && chosenCons[0] && (
                 <div className="contactsUser" onClick={() => setChosenCons([])}>
                     <div className="contactsUserPic">
                         {chosenCons[0].avatar_url ? (
@@ -198,7 +198,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                             key={con.id}
                             className="createChatContact"
                             onClick={() => {
-                                if (selectedOption === "personal" || selectedOption === "group" || selectedOption === "activity") setChosenCons([con])
+                                if (selectedOption === "group" || selectedOption === "activity") setChosenCons([con])
                                 else {
                                     setChosenCons((prev) =>
                                         prev.some((acc) => acc.id === con.id)
