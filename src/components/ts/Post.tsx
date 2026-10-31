@@ -95,12 +95,11 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
             }
         }
     };
-    const openPostMenu = (x: number, y: number, postHeader: boolean) => {
+    const openPostMenu = (x: number, y: number) => {
         openMenu(x, y, "post", {
             id: String(post.id),
             name: post.text.slice(0, 40),
             isMy,
-            postHeader,
             func: () => navigate('/post/' + post.id + '/edit'),
             onCopy: () => { void copyLink(); },
             onShare: () => { void share(); },
@@ -131,14 +130,14 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
             data-context-menu="true"
             onContextMenu={e => {
                 e.preventDefault();
-                openPostMenu(e.clientX, e.clientY, false);
+                openPostMenu(e.clientX, e.clientY);
             }}
         >
             <div className={`Post ${isMobile ? "mobile" : ""}`}>
                 <div className="postHeader" data-context-menu="true" onContextMenu={event => {
                     event.preventDefault();
                     event.stopPropagation();
-                    openPostMenu(event.clientX, event.clientY, true);
+                    openPostMenu(event.clientX, event.clientY);
                 }}>
                     <button type="button" className="postUser" onClick={() => navigate('/acc/' + post.user.nick)}>
                         <div className="postAvatar">
@@ -149,7 +148,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                     <button type="button" className="postMenuButton" aria-label={t("post.actions")} aria-haspopup="menu" onClick={event => {
                         event.stopPropagation();
                         const rect = event.currentTarget.getBoundingClientRect();
-                        openPostMenu(rect.right, rect.bottom, true);
+                        openPostMenu(rect.right, rect.bottom);
                     }}>
                         <DotsThree weight="bold" />
                     </button>
