@@ -1,0 +1,68 @@
+@use "../../../scss/mixins" as var;
+
+.habitSaveDiv {
+    background: color-mix(in srgb, var(--mc) 66%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    isolation: isolate;
+    z-index: 12;
+}
+
+.habitChatList {
+    min-height: 22dvh;
+    flex: 1 0 auto;
+    overflow: visible;
+}
+
+.habitCollaborationButton {
+    width: 100%;
+    text-align: center;
+}
+
+.habitCollaborationOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3dvh 3vw;
+    background: color-mix(in srgb, black 45%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+.habitCollaborationModal {
+    width: min(100%, 480px);
+    max-height: 90dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--mc);
+    border: 1px solid var(--borderHabit);
+}
+.habitCollaborationHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2dvh 4%;
+    font-weight: 600;
+    > button { border: 0; color: inherit; background: transparent; cursor: pointer; }
+}
+.habitCollaborationBody {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 4% 2dvh;
+    display: flex;
+    flex-direction: column;
+    gap: 2dvh;
+    > .privateSLWrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8dvh;
+        margin: 0;
+        > .settingSpan, > .settingHint { margin: 0; }
+    }
+}
+.habitCollaborationClose { flex-shrink: 0; margin: 1dvh 4% 2dvh; }
