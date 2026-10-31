@@ -160,10 +160,13 @@ export default function PrivacyTab({ search }: { search: string }) {
                     <RadioGroup list={inviteOptions} val={visibleInvites.others} disabled={savingInvites || !settingsLoaded} id="groupInviteOthers" newVal={value => void saveInvites({ ...visibleInvites, others: value as GroupInviteRules["others"] })}/>
                 </div>
 
-            </div>            <div className="settingInnerDiv" data-setting-id="groupInviteExceptions">
+            </div>
+            <div className="settingInnerDiv" data-setting-id="groupInviteExceptions">
                 <div className="settingHeader">Исключения приглашений в беседы</div>
                 <div className="settingHint">Разрешённые пользователи могут приглашать сообщением. Блокировка пользователя всегда имеет приоритет.</div>
-                <div className="privateSLWrapper">\n                    <div className="settingSpan">Найти пользователя</div>\n                    <input className="addHabitInput" value={groupSearch} placeholder="Поиск контакта" onChange={event => setGroupSearch(event.target.value)}/>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">Найти пользователя</div>
+                    <input className="addHabitInput" value={groupSearch} placeholder="Поиск контакта" onChange={event => setGroupSearch(event.target.value)}/>
                     {groupContacts.slice(0, 12).map(contact => <div className="createChatContact" key={contact.id}>
                         <span>{contact.name || contact.nick}</span>
                         <RadioGroup id={`groupException-${contact.id}`} list={[
