@@ -80,6 +80,46 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
         }
     };
 
+    useEffect(() => {
+        const saveSelection = async (event: Event) => {
+            const detail = (event as CustomEvent<{ habitId: number }>).detail;
+            if (!habit || detail?.habitId !== habit.id || !chosenCons.length || isArchived) return;
+            const selected = chosenCons[0];
+            try {
+                if (selectedOption === "activity") {
+                    if (!canInvite || inviting) return;
+                    setInviting(true);
+                    await api.post(`habits/${habit.id}/members`, { user_id: String(selected.id) });
+                    showNotification("success", "Приглашение отправлено");
+                    window.dispatchEvent(new Event("habit-members-updated"));
+                } else if (selectedOption === "group") {
+                    const id = Number(selected.id);
+                    if (!isMy || !Number.isSafeInteger(id) || id <= 0) return;
+                    await updateChat(id);
+                } else if (selectedOption === "add") {
+                    if (!isMy || creatingChat || !name.trim()) return;
+                    setCreatingChat(true);
+                    const form = new FormData();
+                    form.append("name", name.trim());
+                    form.append("desc", desc.trim());
+                    form.append("members", JSON.stringify(chosenCons.map(con => con.id)));
+                    if (pick) form.append("pick", pick);
+                    const created = await api.post("createchat", form);
+                    if (!created.data.success || !created.data.chat_id) throw new Error("Не удалось создать беседу");
+                    await updateChat(Number(created.data.chat_id));
+                }
+                setChosenCons([]);
+            } catch (error) {
+                showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Не удалось сохранить" : "Не удалось сохранить");
+            } finally {
+                setInviting(false);
+                setCreatingChat(false);
+            }
+        };
+        window.addEventListener("habit-chat-save", saveSelection);
+        return () => window.removeEventListener("habit-chat-save", saveSelection);
+    });
+
     const handleOptionChange = (val: string) => {
         setChosenCons([])
         if (val === "group" || val === "add" || val === "activity") {
@@ -169,82 +209,6 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                     setDesc={setDesc}
                 />
             )}
-            {selectedOption === "add" && <button type="button" className="addGoalButtDiv"
-                disabled={creatingChat || savingChat || !name.trim() || !chosenCons.length || !isMy || readOnly || isArchived}
-                onClick={async () => {
-                    if (!habit || creatingChat || !name.trim() || !chosenCons.length) return;
-                    setCreatingChat(true);
-                    try {
-                        const form = new FormData();
-                        form.append("name", name.trim());
-                        form.append("desc", desc.trim());
-                        form.append("members", JSON.stringify(chosenCons.map(con => con.id)));
-                        if (pick) form.append("pick", pick);
-                        const created = await api.post("createchat", form);
-                        if (!created.data.success || !created.data.chat_id) throw new Error("Не удалось создать беседу");
-                        const linked = await api.patch(`habits/${habit.id}/chat`, { chat_id: Number(created.data.chat_id) });
-                        if (!linked.data.success) throw new Error("Беседа создана, но не удалось привязать активность");
-                        setLinkedChatId(Number(created.data.chat_id));
-                        setChosenCons([]);
-                        await loadHabitWLoading(String(habit.id));
-                        showNotification("success", "Беседа создана и привязана к активности");
-                    } catch (error) {
-                        showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Не удалось создать беседу" : error instanceof Error ? error.message : "Не удалось создать беседу");
-                    } finally {
-                        setCreatingChat(false);
-                    }
-                }}
-            >{creatingChat ? "Создаём беседу..." : "Создать беседу с активностью"}</button>}
-            {selectedOption === "group" && chosenCons[0] && (
-                <div className="contactsUser" onClick={() => setChosenCons([])}>
-                    <div className="contactsUserPic">
-                        {chosenCons[0].avatar_url ? (
-                            <img
-                                className="contactsUserAvatar"
-                                src={chosenCons[0].avatar_url}
-                                alt={chosenCons[0].name ?? chosenCons[0].nick}
-                            />
-                        ) : (
-                            <CircleUserRound />
-                        )}
-                    </div>
-                    <div className="contactsUserInfo">
-                        <div className="contactsUserStr">
-                            <span className="nameSpan">
-                                {chosenCons[0].name ?? chosenCons[0].nick}
-                            </span>
-                            <XIcon />
-                        </div>
-                    </div>
-                </div>
-            )}
-            {selectedOption === "group" && chosenCons[0] && <button type="button"
-                className="addGoalButtDiv"
-                disabled={savingChat || !isMy || isArchived}
-                onClick={() => {
-                    const id = Number(chosenCons[0].id);
-                    if (Number.isSafeInteger(id) && id > 0) void updateChat(id);
-                }}
-            >{savingChat ? "Сохраняем..." : linkedChatId ? "Перенести привязку в эту беседу" : "Привязать активность к беседе"}</button>}
-            {selectedOption === "activity" && chosenCons[0] && <button
-                type="button"
-                className="addGoalButtDiv"
-                disabled={inviting || !canInvite || isArchived}
-                onClick={async () => {
-                    if (!habit || !chosenCons[0] || inviting) return;
-                    setInviting(true);
-                    try {
-                        await api.post(`habits/${habit.id}/members`, { user_id: String(chosenCons[0].id) });
-                        showNotification("success", "Приглашение отправлено");
-                        setChosenCons([]);
-                        window.dispatchEvent(new Event("habit-members-updated"));
-                    } catch (error) {
-                        showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Не удалось пригласить пользователя" : "Не удалось пригласить пользователя");
-                    } finally {
-                        setInviting(false);
-                    }
-                }}
-            >{inviting ? "Приглашаем..." : "Пригласить в активность"}</button>}
             <div className="habitChatList">
                 <div className="createChatSearch">
                     <input
@@ -290,7 +254,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                     chatList.map((con) => (
                         <div
                             key={con.id}
-                            className="createChatContact"
+                            className={`createChatContact ${chosenCons.some(item => item.id === con.id) ? "selected" : ""}`}
                             onClick={() => {
                                 if (selectedOption === "group" || selectedOption === "activity") setChosenCons([con])
                                 else {
