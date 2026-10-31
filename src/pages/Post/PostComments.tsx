@@ -3,6 +3,7 @@ import Composer from "../../components/ts/Composer";
 import PageBottom from "../../components/ts/PageBottom";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { PencilSimpleIcon, UserCircle, DotsThreeIcon, TrashIcon, XIcon, CheckIcon, HeartIcon, ArrowBendUpLeftIcon, CopyIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../components/ts/api";
@@ -44,6 +45,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
     const [ replyTo, setReplyTo ] = useState<Comment | null>(null);
     const [ likingId, setLikingId ] = useState<number | null>(null);
     const [ menuId, setMenuId ] = useState<number | null>(null);
+    const [ menuPosition, setMenuPosition ] = useState({ top: 0, left: 0 });
     const [ editingId, setEditingId ] = useState<number | null>(null);
     const [ editText, setEditText ] = useState("");
     const [ changingId, setChangingId ] = useState<number | null>(null);
@@ -207,10 +209,10 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                         </Link>
                                     )}
                                     <div className="commentActions">
-                                        <button type="button" aria-label={t("post.commentActions")} aria-expanded={menuId === comment.id} onClick={() => setMenuId(previous => previous === comment.id ? null : comment.id)}>
+                                        <button type="button" aria-label={t("post.commentActions")} aria-expanded={menuId === comment.id} onClick={event => { const rect = event.currentTarget.getBoundingClientRect(); setMenuPosition({ top: Math.min(rect.bottom, window.innerHeight - 190), left: Math.max(10, Math.min(rect.right - 200, window.innerWidth - 210)) }); setMenuId(previous => previous === comment.id ? null : comment.id); }}>
                                             <DotsThreeIcon />
                                         </button>
-                                        {menuId === comment.id && <div className="commentActionMenu">
+                                        {menuId === comment.id && createPortal(<div className="commentActionMenu" style={{ position: "fixed", top: menuPosition.top, left: menuPosition.left }}>
                                             {user.id && <button type="button" onClick={() => { setReplyTo(comment); setMenuId(null); }}><ArrowBendUpLeftIcon /> {t("post.commentReply")}</button>}
                                             {!!comment.text && <button type="button" onClick={() => { void navigator.clipboard.writeText(comment.text || ""); setMenuId(null); }}><CopyIcon /> {t("post.commentCopy")}</button>}
                                             {user.id === comment.user?.id && <button type="button" onClick={() => {
@@ -221,7 +223,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                             {user.id === comment.user?.id && <button type="button" className="delete" disabled={changingId === comment.id} onClick={() => void deleteComment(comment.id)}>
                                                 <TrashIcon /> {t("post.commentDelete")}
                                             </button>}
-                                        </div>}
+                                        </div>, document.body)}
                                     </div>
                                 </div>
                                 {editingId === comment.id ? <div className="commentEdit">
