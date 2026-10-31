@@ -14,10 +14,12 @@ export default function HabitExtraButts () {
     useEffect(() => {
         if (!habit?.id) return;
         let active = true;
-        api.get(`habits/${habit.id}/members`).then(res => {
+        const reload = () => api.get(`habits/${habit.id}/members`).then(res => {
             if (active) setHasMembers((res.data.members || []).some((member: { status: string }) => member.status === "accepted" || member.status === "pending"));
         }).catch(() => {});
-        return () => { active = false; };
+        void reload();
+        window.addEventListener("habit-members-updated", reload);
+        return () => { active = false; window.removeEventListener("habit-members-updated", reload); };
     }, [habit?.id])
     const { setShowSlide } = useSideMenu() 
     return (
