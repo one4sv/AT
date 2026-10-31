@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../../../../components/ts/api";
 import { Link } from "react-router-dom";
+import { useHabits } from "../../../../components/hooks/HabitsHook";
 
 interface Invitation {
     habit_id: number;
@@ -9,6 +10,7 @@ interface Invitation {
 }
 
 export default function HabitInvitations() {
+    const { refetchHabits } = useHabits();
     const [ invitations, setInvitations ] = useState<Invitation[]>([]);
     const [ busy, setBusy ] = useState<number | null>(null);
     const [ error, setError ] = useState("");
@@ -29,6 +31,7 @@ export default function HabitInvitations() {
         try {
             const res = await api.patch(`habits/${id}/members/me`, { status });
             if (!res.data.success) throw new Error("Invitation update failed");
+            await refetchHabits();
             setInvitations(previous => status === "accepted"
                 ? previous.map(item => item.habit_id === id ? { ...item, status } : item)
                 : previous.filter(item => item.habit_id !== id));
