@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import SelectList from "../../../../components/ts/SelectList";
+import HabitMembers from "./HabitMembers";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import type { Habit } from "../../../../components/context/HabitsContext";
 import TagSelector from "../../../../components/ts/TagSelector";
@@ -116,6 +117,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     </div>
                 </div>
             )}
+            <HabitMembers habitId={habit.id} isOwner={!readOnly} />
             <div className="habitWrapperIcon">
                 {(selectedTag || habit.tag) && (
                     <div className="habitIconWrapper">
