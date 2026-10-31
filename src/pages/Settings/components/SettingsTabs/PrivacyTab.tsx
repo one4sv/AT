@@ -89,6 +89,16 @@ export default function PrivacyTab({ search }: { search: string }) {
                     <RadioGroup list={privateArrFull} val={visiblePrivate.posts} newVal={(value) => applyNewPrivate("posts", value || "nobody")} id="posts"/>
                 </div>
             </div>
+            <div className="settingInnerDiv">
+                <div className="settingHeader">Приглашения в активности</div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">Кто может приглашать меня в активности</div>
+                    <RadioGroup list={[
+                        { label: t("privacy.all"), value: "all" },
+                        { label: t("privacy.nobody"), value: "nobody" }
+                    ]} val={visiblePrivate.activity_invites || "all"} newVal={value => applyNewPrivate("activity_invites", value || "all")} id="activityInvites"/>
+                </div>
+            </div>
             <div className="settingInnerDiv" data-setting-id="groupInvites">
                 <div className="settingHeader"><HighlightText text={t("privacy.invites.title")} search={search}/></div>
                 <div className="settingHint">{t("privacy.invites.hint")}</div>
