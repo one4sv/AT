@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import axios from "axios";
 import RadioGroup from "../../../../components/ts/RadioGroup";
 import type { HabitSlideProps } from "../../HabitPage";
 import { useNote } from "../../../../components/hooks/NoteHook";
@@ -134,8 +135,8 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                         await api.post(`habits/${habit.id}/members`, { user_id: String(chosenCons[0].id) });
                         showNotification("success", "Приглашение отправлено");
                         setChosenCons([]);
-                    } catch {
-                        showNotification("error", "Не удалось пригласить пользователя");
+                    } catch (error) {
+                        showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Не удалось пригласить пользователя" : "Не удалось пригласить пользователя");
                     } finally {
                         setInviting(false);
                     }
