@@ -21,6 +21,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     const { habit, loadHabitWLoading } = useTheHabit()
     const [ linkedChatId, setLinkedChatId ] = useState<number | null>(habit?.chat_id ?? null)
     const [ savingChat, setSavingChat ] = useState(false)
+    const [ savingMode, setSavingMode ] = useState(false)
     useEffect(() => { setLinkedChatId(habit?.chat_id ?? null); }, [habit?.chat_id])
     const [ inviting, setInviting ] = useState(false)
     const { showNotification } = useNote()
@@ -105,6 +106,29 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
             {habit && <div className="settingInnerWrapper">
                 <div className="settingSpan">Совместная активность</div>
                 <div className="settingHint">{linkedChatId ? "Активность привязана к беседе" : "Пока без привязки к беседе. Приглашённые участники получают отдельный прогресс выполнения."}</div>
+                {linkedChatId && <div className="privateSLWrapper">
+                    <div className="settingSpan">Участие в активностях беседы</div>
+                    <RadioGroup list={[
+                        { label: "Обязательное для участников беседы", value: "required" },
+                        { label: "По желанию (участники присоединяются отдельно)", value: "optional" }
+                    ]} val={habit.chat_participation_mode || "optional"} id="habitChatMode"
+                        disabled={!isMy || savingMode || readOnly}
+                        newVal={async value => {
+                            if (!habit || savingMode) return;
+                            setSavingMode(true);
+                            try {
+                                const res = await api.patch(`habits/${habit.id}/chat-mode`, { mode: value });
+                                if (!res.data.success) throw new Error("Save failed");
+                                await loadHabitWLoading(String(habit.id));
+                                showNotification("success", "Режим участия обновлён");
+                            } catch {
+                                showNotification("error", "Не удалось изменить режим участия");
+                            } finally {
+                                setSavingMode(false);
+                            }
+                        }}/>
+                    <div className="settingHint">Обязательный режим действует для новых участников беседы при принятии приглашения. Уже вступивших пользователей он автоматически не добавляет.</div>
+                </div>}
                 {linkedChatId && <Link to={`/chat/g/${linkedChatId}`} className="addGoalButtDiv">Открыть беседу</Link>}
                 {linkedChatId && isMy && <button type="button" className="addGoalButtDiv" disabled={savingChat} onClick={() => void updateChat(null)}>Отвязать от беседы</button>}
                 <HabitMembers habitId={habit.id} isOwner={!!isMy} showInvite={false}/>
