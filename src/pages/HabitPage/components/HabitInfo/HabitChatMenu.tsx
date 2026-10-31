@@ -6,7 +6,7 @@ import { useNote } from "../../../../components/hooks/NoteHook";
 import { useContacts } from "../../../../components/hooks/ContactsHook";
 import { type ContactsFilter, type Contact } from "../../../../components/context/ContactsContext";
 import CreateChatInfo from "../../../../components/modules/components/CreateChatInfo";
-import { CameraIcon, CameraPlusIcon, CheckCircleIcon, CircleIcon, XIcon } from "@phosphor-icons/react";
+import { CameraIcon, CameraPlusIcon, CheckCircleIcon, CircleIcon, GearIcon, XIcon } from "@phosphor-icons/react";
 import { CircleUserRound, SearchIcon } from "lucide-react";
 import { LoaderSmall } from "../../../../components/ts/LoaderSmall";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
@@ -150,7 +150,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                 </div>}
                 {linkedChatId && <Link to={`/chat/g/${linkedChatId}`} className="addGoalButtDiv">Открыть беседу</Link>}
                 {linkedChatId && isMy && <button type="button" className="addGoalButtDiv" disabled={savingChat} onClick={() => void updateChat(null)}>Отвязать от беседы</button>}
-                {isMy && <button type="button" className="addGoalButtDiv habitCollaborationButton" onClick={() => setBlackout({ seted: true, module: "HabitCollaborationSettings" })}>Настройки совместной активности</button>}
+                
                 <HabitMembers habitId={habit.id} isOwner={!!isMy} showInvite={false}/>
             </div>}
             <div className="settingInnerWrapper">
@@ -321,7 +321,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                     ))
                 )}
             </div>
-
+            {isMy && <button type="button" className="addGoalButtDiv habitCollaborationButton" onClick={() => setBlackout({ seted: true, module: "HabitCollaborationSettings" })}><GearIcon weight="fill" />Настройки совместной активности</button>}
         </div>
     )
 }
