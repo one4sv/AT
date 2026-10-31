@@ -127,7 +127,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                                 setSavingMode(false);
                             }
                         }}/>
-                    <div className="settingHint">Обязательный режим действует для новых участников беседы при принятии приглашения. Уже вступивших пользователей он автоматически не добавляет.</div>
+                    <div className="settingHint">В обязательном режиме участники беседы присоединяются к активности автоматически, включая тех, кто уже состоит в беседе. В необязательном режиме каждый решает сам.</div>
                 </div>}
                 {linkedChatId && <Link to={`/chat/g/${linkedChatId}`} className="addGoalButtDiv">Открыть беседу</Link>}
                 {linkedChatId && isMy && <button type="button" className="addGoalButtDiv" disabled={savingChat} onClick={() => void updateChat(null)}>Отвязать от беседы</button>}
