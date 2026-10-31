@@ -10,6 +10,8 @@ import { CameraIcon, CameraPlusIcon, CheckCircleIcon, CircleIcon, XIcon } from "
 import { CircleUserRound, SearchIcon } from "lucide-react";
 import { LoaderSmall } from "../../../../components/ts/LoaderSmall";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
+import HabitMembers from "./HabitMembers";
+import { Link } from "react-router-dom";
 import { api } from "../../../../components/ts/api";
 
 type ChatMenuOption = "group" | "add" | "activity";
@@ -80,6 +82,12 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     
     return (
         <div className="habitInnerSlide">
+            {habit && <div className="settingInnerWrapper">
+                <div className="settingSpan">Совместная активность</div>
+                <div className="settingHint">{habit.chat_id ? "Активность привязана к беседе" : "Пока без привязки к беседе. Приглашённые участники получают отдельный прогресс выполнения."}</div>
+                {habit.chat_id && <Link to={`/chat/g/${habit.chat_id}`} className="addGoalButtDiv">Открыть беседу</Link>}
+                <HabitMembers habitId={habit.id} isOwner={!!isMy} showInvite={false}/>
+            </div>}
             <div className="settingInnerWrapper">
                 <div className="settingSpan">
                     Добавить участников
@@ -135,6 +143,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                         await api.post(`habits/${habit.id}/members`, { user_id: String(chosenCons[0].id) });
                         showNotification("success", "Приглашение отправлено");
                         setChosenCons([]);
+                        window.dispatchEvent(new Event("habit-members-updated"));
                     } catch (error) {
                         showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Не удалось пригласить пользователя" : "Не удалось пригласить пользователя");
                     } finally {
