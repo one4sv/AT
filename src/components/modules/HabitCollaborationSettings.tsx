@@ -99,6 +99,6 @@ export default function HabitCollaborationSettings() {
 
 
         </div>
-        <button type="button" className="addGoalButtDiv habitCollaborationClose" onClick={() => setBlackout({ seted: false })}>Готово</button>
+        <button type="button" className="habitCollaborationClose" onClick={() => setBlackout({ seted: false })}>Готово</button>
     </div>;
 }
