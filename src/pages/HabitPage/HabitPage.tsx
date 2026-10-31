@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useParams } from "react-router";
+import { useUser } from "../../components/hooks/UserHook";
 import { useTheHabit } from "../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../components/hooks/CalendarHook";
 import Skeleton from "../../components/ts/Skeleton";
@@ -45,6 +46,7 @@ export default function Habit() {
         setShowSlide
     } = useSideMenu();
     const { schedules } = useSchedule();
+    const { user } = useUser();
     const { habitId } = useParams<{
         habitId: string;
     }>();
@@ -91,9 +93,11 @@ export default function Habit() {
     if (habitId && loadingHabit || loadingHabits || calendarLoading) {
         return <Skeleton type="habit" overview={!habitId} />;
     }
-    const isMy = (habitId !== undefined && habits?.some(h => String(h.id) === habitId)) ?? false;
+    const isMy = !!habit && habit.user_id === user.id;
+    const canComplete = isMy || !!habits?.some(h => h.id === habit?.id);
     const isArchived = !habit?.ongoing;
     const isReadOnly = !isMy || isArchived;
+    const isCompletionReadOnly = !canComplete || isArchived;
 
     return (
         <div className="statsDiv">
@@ -109,7 +113,7 @@ export default function Habit() {
                 <div className="StatsDivHabit">
                     {isMobile ? <>
                         {habitId && <div className="mobileHabitLayout">
-                            <Complete isMy={!isReadOnly} />
+                            <Complete isMy={!isCompletionReadOnly} />
                             {habitSettings.metric_type === "timer" && <CompletionProgress />}
                             {habitSettings.metric_type === "counter" && <CounterProgression />}
                         </div>}
@@ -133,7 +137,7 @@ export default function Habit() {
 
                 <Diagrams mainRef={mainRef} />
             </div>
-            {isMobile && habitId ? <HabitMobileDone habitId={habitId} isReadOnly={isReadOnly} /> : ""}
+            {isMobile && habitId ? <HabitMobileDone habitId={habitId} isReadOnly={isCompletionReadOnly} /> : ""}
             {habitId && habit && <HabitMenu isMy={isMy} isArchived={isArchived} isReadOnly={isReadOnly} />}
         </div>
     );
