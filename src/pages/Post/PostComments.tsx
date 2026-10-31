@@ -3,7 +3,7 @@ import Composer from "../../components/ts/Composer";
 import PageBottom from "../../components/ts/PageBottom";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { PencilSimpleIcon, UserCircle } from "@phosphor-icons/react";
+import { PencilSimpleIcon, UserCircle, DotsThreeIcon, TrashIcon, XIcon, CheckIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../components/ts/api";
 import { useUser } from "../../components/hooks/UserHook";
@@ -17,7 +17,7 @@ interface Comment {
     text: string | null;
     files: Media[];
     created_at: string;
-    user: { nick: string; username: string; avatar_url?: string } | null;
+    user: { id: string; nick: string; username: string; avatar_url?: string } | null;
 }
 
 interface PostCommentsProps {
@@ -39,6 +39,10 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
     const [ sending, setSending ] = useState(false);
     const [ error, setError ] = useState("");
     const [ retry, setRetry ] = useState(0);
+    const [ menuId, setMenuId ] = useState<number | null>(null);
+    const [ editingId, setEditingId ] = useState<number | null>(null);
+    const [ editText, setEditText ] = useState("");
+    const [ changingId, setChangingId ] = useState<number | null>(null);
     const sendingRef = useRef(false);
     const mounted = useRef(true);
     const sectionRef = useRef<HTMLElement>(null);
@@ -101,6 +105,38 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
         }
     };
 
+    const editComment = async (commentId: number) => {
+        if (!editText.trim() || changingId !== null) return;
+        setChangingId(commentId);
+        try {
+            const res = await api.patch(`comments/${commentId}`, { text: editText });
+            if (!res.data.success) throw new Error("Comment not updated");
+            setComments(previous => previous.map(comment => comment.id === commentId
+                ? { ...comment, text: res.data.comment.text } : comment));
+            setEditingId(null);
+            setMenuId(null);
+        } catch {
+            setError("post.sendFailed");
+        } finally {
+            setChangingId(null);
+        }
+    };
+
+    const deleteComment = async (commentId: number) => {
+        if (changingId !== null || !window.confirm("Удалить комментарий?")) return;
+        setChangingId(commentId);
+        try {
+            const res = await api.delete(`comments/${commentId}`);
+            if (!res.data.success) throw new Error("Comment not deleted");
+            setComments(previous => previous.filter(comment => comment.id !== commentId));
+            setMenuId(null);
+        } catch {
+            setError("post.sendFailed");
+        } finally {
+            setChangingId(null);
+        }
+    };
+
     return (
         <>
             <div className="postPageScroll">
@@ -144,10 +180,31 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                     <span className="commentDate">
                                         {formatCreated(comment.created_at)}
                                     </span>
+                                    {user.id && comment.user?.id === user.id && <div className="commentActions">
+                                        <button type="button" aria-label="Действия с комментарием" aria-expanded={menuId === comment.id} onClick={() => setMenuId(previous => previous === comment.id ? null : comment.id)}>
+                                            <DotsThreeIcon />
+                                        </button>
+                                        {menuId === comment.id && <div className="commentActionMenu">
+                                            <button type="button" onClick={() => {
+                                                setEditingId(comment.id);
+                                                setEditText(comment.text || "");
+                                                setMenuId(null);
+                                            }}><PencilSimpleIcon /> {t("post.edit")}</button>
+                                            <button type="button" disabled={changingId === comment.id} onClick={() => void deleteComment(comment.id)}>
+                                                <TrashIcon /> Удалить
+                                            </button>
+                                        </div>}
+                                    </div>}
                                 </div>
-                                <div className="commentText">
+                                {editingId === comment.id ? <div className="commentEdit">
+                                    <textarea value={editText} disabled={changingId === comment.id} onChange={event => setEditText(event.target.value)} />
+                                    <button type="button" disabled={!editText.trim() || changingId === comment.id} onClick={() => void editComment(comment.id)} aria-label="Сохранить">
+                                        <CheckIcon />
+                                    </button>
+                                    <button type="button" onClick={() => setEditingId(null)} aria-label="Отмена"><XIcon /></button>
+                                </div> : <div className="commentText">
                                     <HighlightText text={comment.text ?? ""} search="" />
-                                </div>
+                                </div>}
                                 <AccPostMedia red={false} media={comment.files ?? []} />
                             </article>
                         ))}
