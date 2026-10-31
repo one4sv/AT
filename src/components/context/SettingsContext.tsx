@@ -77,6 +77,7 @@ export interface PrivateSettings {
     mail: string;
     habits: string;
     posts: string;
+    activity_invites?: string;
 }
 
 const LOCAL_KEYS = {
