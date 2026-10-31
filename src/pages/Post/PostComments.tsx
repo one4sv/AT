@@ -3,7 +3,7 @@ import Composer from "../../components/ts/Composer";
 import PageBottom from "../../components/ts/PageBottom";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { PencilSimpleIcon, UserCircle, DotsThreeIcon, XIcon, CheckIcon, HeartIcon, ArrowBendUpLeftIcon } from "@phosphor-icons/react";
+import { PencilSimpleIcon, UserCircle, DotsThreeVerticalIcon, XIcon, CheckIcon, HeartIcon, ArrowBendUpLeftIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../components/ts/api";
 import { useUser } from "../../components/hooks/UserHook";
@@ -222,7 +222,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                             const rect = event.currentTarget.getBoundingClientRect();
                                             openCommentMenu(comment, rect.right, rect.bottom);
                                         }}>
-                                            <DotsThreeIcon />
+                                            <DotsThreeVerticalIcon />
                                         </button>
                                     </div>
                                 </div>
