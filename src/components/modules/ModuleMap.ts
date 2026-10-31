@@ -12,6 +12,7 @@ import LinkConfirm from './LinkConfirm';
 import ChatWithInfo from './ChatWithInfo';
 import Table from './Table';
 import PostSettings from './PostSettings';
+import HabitCollaborationSettings from './HabitCollaborationSettings';
 
 const ModuleMap: Record<string, React.FC> = {
     AddHabit: AddHabit,
