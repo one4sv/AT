@@ -23,6 +23,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     const [ savingChat, setSavingChat ] = useState(false)
     const [ creatingChat, setCreatingChat ] = useState(false)
     const [ savingMode, setSavingMode ] = useState(false)
+    const [ savingCollaboration, setSavingCollaboration ] = useState(false)
     useEffect(() => { setLinkedChatId(habit?.chat_id ?? null); }, [habit?.chat_id])
     const [ inviting, setInviting ] = useState(false)
     const { showNotification } = useNote()
@@ -57,6 +58,21 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
             showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Ошибка изменения беседы" : "Ошибка изменения беседы");
         } finally {
             setSavingChat(false);
+        }
+    };
+
+    const updateCollaboration = async (changes: Record<string, string | boolean>) => {
+        if (!habit || !isMy || savingCollaboration) return;
+        setSavingCollaboration(true);
+        try {
+            const res = await api.patch(`habits/${habit.id}/collaboration`, changes);
+            if (!res.data.success) throw new Error("Save failed");
+            await loadHabitWLoading(String(habit.id));
+            showNotification("success", "Настройки совместной активности сохранены");
+        } catch (error) {
+            showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Ошибка сохранения" : "Ошибка сохранения");
+        } finally {
+            setSavingCollaboration(false);
         }
     };
 
@@ -132,6 +148,52 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                 </div>}
                 {linkedChatId && <Link to={`/chat/g/${linkedChatId}`} className="addGoalButtDiv">Открыть беседу</Link>}
                 {linkedChatId && isMy && <button type="button" className="addGoalButtDiv" disabled={savingChat} onClick={() => void updateChat(null)}>Отвязать от беседы</button>}
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">Таймер и счётчик</div>
+                    <RadioGroup list={[
+                        { label: "У каждого свой прогресс", value: "personal" },
+                        { label: "Общий для всех участников", value: "shared" }
+                    ]} id="habitMetricProgress" val={habit.metric_progress_mode || "personal"}
+                        disabled={!isMy || savingCollaboration}
+                        newVal={value => void updateCollaboration({ metric_progress_mode: value })}/>
+                    <div className="settingHint">Общий режим объединяет измерения участников. Личный режим сохраняет независимые показатели.</div>
+                </div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">Блоки расписания и задачи</div>
+                    <RadioGroup list={[
+                        { label: "Общие блоки", value: "shared" },
+                        { label: "У каждого свои блоки", value: "personal" }
+                    ]} id="habitScheduleBlocks" val={habit.schedule_blocks_mode || "shared"}
+                        disabled={!isMy || savingCollaboration}
+                        newVal={value => void updateCollaboration({ schedule_blocks_mode: value })}/>
+                </div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">Кто может менять блоки</div>
+                    <RadioGroup list={[
+                        { label: "Только владелец", value: "owner" },
+                        { label: "Все участники", value: "members" }
+                    ]} id="habitBlocksPermission" val={habit.members_can_edit_blocks ? "members" : "owner"}
+                        disabled={!isMy || savingCollaboration}
+                        newVal={value => void updateCollaboration({ members_can_edit_blocks: value === "members" })}/>
+                </div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">Кто может изменять информацию активности</div>
+                    <RadioGroup list={[
+                        { label: "Только владелец", value: "owner" },
+                        { label: "Все участники", value: "members" }
+                    ]} id="habitInfoPermission" val={habit.members_can_edit_info ? "members" : "owner"}
+                        disabled={!isMy || savingCollaboration}
+                        newVal={value => void updateCollaboration({ members_can_edit_info: value === "members" })}/>
+                </div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">Кто может приглашать участников</div>
+                    <RadioGroup list={[
+                        { label: "Только владелец", value: "owner" },
+                        { label: "Все участники", value: "members" }
+                    ]} id="habitInvitePermission" val={habit.members_can_invite ? "members" : "owner"}
+                        disabled={!isMy || savingCollaboration}
+                        newVal={value => void updateCollaboration({ members_can_invite: value === "members" })}/>
+                </div>
                 <HabitMembers habitId={habit.id} isOwner={!!isMy} showInvite={false}/>
             </div>}
             <div className="settingInnerWrapper">
