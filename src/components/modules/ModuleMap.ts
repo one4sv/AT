@@ -28,6 +28,7 @@ const ModuleMap: Record<string, React.FC> = {
     LinkConfirm:LinkConfirm,
     ChatWithInfo:ChatWithInfo,
     PostSettings:PostSettings,
+    HabitCollaborationSettings:HabitCollaborationSettings,
     Table:Table
 };
 
