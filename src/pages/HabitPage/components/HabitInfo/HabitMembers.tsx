@@ -7,7 +7,7 @@ interface Member {
     user: { nick: string; username: string; avatar_url?: string } | null;
 }
 
-export default function HabitMembers({ habitId, isOwner }: { habitId: number; isOwner: boolean }) {
+export default function HabitMembers({ habitId, isOwner, showInvite = true }: { habitId: number; isOwner: boolean; showInvite?: boolean }) {
     const [ members, setMembers ] = useState<Member[]>([]);
     const [ nick, setNick ] = useState("");
     const [ ownerId, setOwnerId ] = useState("");
@@ -32,6 +32,13 @@ export default function HabitMembers({ habitId, isOwner }: { habitId: number; is
 
     useEffect(() => {
         void load();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [habitId]);
+
+    useEffect(() => {
+        const reload = () => { void load(); };
+        window.addEventListener("habit-members-updated", reload);
+        return () => window.removeEventListener("habit-members-updated", reload);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [habitId]);
 
@@ -67,7 +74,7 @@ export default function HabitMembers({ habitId, isOwner }: { habitId: number; is
     return (
         <section className="habitMembers">
             <h3>Участники активности</h3>
-            {isOwner && <div className="habitMembersInvite">
+            {isOwner && showInvite && <div className="habitMembersInvite">
                 <input className="addHabitInput" value={nick} placeholder="Ник пользователя" onChange={event => setNick(event.target.value)} />
                 <button type="button" disabled={pending || !nick.trim()} onClick={() => void invite()}>Пригласить</button>
             </div>}
