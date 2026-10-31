@@ -7,7 +7,7 @@ import { useContacts } from "../../../../components/hooks/ContactsHook";
 import { type ContactsFilter, type Contact } from "../../../../components/context/ContactsContext";
 import CreateChatInfo from "../../../../components/modules/components/CreateChatInfo";
 import { CameraIcon, CameraPlusIcon, CheckCircleIcon, CircleIcon, GearIcon, XIcon } from "@phosphor-icons/react";
-import { CircleUserRound, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import { LoaderSmall } from "../../../../components/ts/LoaderSmall";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import HabitMembers from "./HabitMembers";
