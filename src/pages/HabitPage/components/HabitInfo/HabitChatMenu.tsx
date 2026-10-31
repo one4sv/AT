@@ -25,7 +25,6 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     const [ savingChat, setSavingChat ] = useState(false)
     const [ creatingChat, setCreatingChat ] = useState(false)
     const [ savingMode, setSavingMode ] = useState(false)
-    const [ savingCollaboration, setSavingCollaboration ] = useState(false)
     const { setBlackout } = useBlackout()
     const [ collaboration, setCollaboration ] = useState<{ metric_progress_mode: "personal" | "shared"; schedule_blocks_mode: "personal" | "shared"; members_can_edit_blocks: boolean; members_can_edit_info: boolean; members_can_invite: boolean }>({
         metric_progress_mode: habit?.metric_progress_mode || "personal",
@@ -36,6 +35,14 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     })
     useEffect(() => { if (habit) setCollaboration({ metric_progress_mode: habit.metric_progress_mode || "personal", schedule_blocks_mode: habit.schedule_blocks_mode || "shared", members_can_edit_blocks: !!habit.members_can_edit_blocks, members_can_edit_info: !!habit.members_can_edit_info, members_can_invite: !!habit.members_can_invite }); }, [habit?.id])
     useEffect(() => { setLinkedChatId(habit?.chat_id ?? null); }, [habit?.chat_id])
+    useEffect(() => {
+        const onUpdate = (event: Event) => {
+            const data = (event as CustomEvent<{ habitId: number; changes: Partial<typeof collaboration> }>).detail;
+            if (data?.habitId === habit?.id) setCollaboration(current => ({ ...current, ...data.changes }));
+        };
+        window.addEventListener("habit-collaboration-updated", onUpdate);
+        return () => window.removeEventListener("habit-collaboration-updated", onUpdate);
+    }, [habit?.id]);
     const [ inviting, setInviting ] = useState(false)
     const canInvite = !!isMy || collaboration.members_can_invite
     const { showNotification } = useNote()
@@ -70,22 +77,6 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
             showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Ошибка изменения беседы" : "Ошибка изменения беседы");
         } finally {
             setSavingChat(false);
-        }
-    };
-
-    const updateCollaboration = async (changes: Partial<typeof collaboration>) => {
-        if (!habit || !isMy || savingCollaboration) return;
-        const previous = collaboration;
-        setCollaboration(current => ({ ...current, ...changes }));
-        setSavingCollaboration(true);
-        try {
-            const res = await api.patch(`habits/${habit.id}/collaboration`, changes);
-            if (!res.data.success) throw new Error("Save failed");
-        } catch (error) {
-            setCollaboration(previous);
-            showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Ошибка сохранения" : "Ошибка сохранения");
-        } finally {
-            setSavingCollaboration(false);
         }
     };
 
