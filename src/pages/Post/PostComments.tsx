@@ -3,11 +3,11 @@ import Composer from "../../components/ts/Composer";
 import PageBottom from "../../components/ts/PageBottom";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { createPortal } from "react-dom";
-import { PencilSimpleIcon, UserCircle, DotsThreeIcon, TrashIcon, XIcon, CheckIcon, HeartIcon, ArrowBendUpLeftIcon, CopyIcon } from "@phosphor-icons/react";
+import { PencilSimpleIcon, UserCircle, DotsThreeIcon, XIcon, CheckIcon, HeartIcon, ArrowBendUpLeftIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../components/ts/api";
 import { useUser } from "../../components/hooks/UserHook";
+import { useContextMenu } from "../../components/hooks/ContextMenuHook";
 import HighlightText from "../../components/ts/HighlightText";
 import AccPostMedia from "../Acc/utils/AccPostMedia";
 import formatCreated from "../Acc/utils/formatCreated";
@@ -34,6 +34,7 @@ interface PostCommentsProps {
 
 export default function PostComments({ id, onSent, children, onBack, onEdit, action }: PostCommentsProps) {
     const { user } = useUser();
+    const { openMenu, closeMenu } = useContextMenu();
     const { t } = useTranslation("acc");
     const [ comments, setComments ] = useState<Comment[]>([]);
     const [ text, setText ] = useState("");
@@ -44,8 +45,6 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
     const [ retry, setRetry ] = useState(0);
     const [ replyTo, setReplyTo ] = useState<Comment | null>(null);
     const [ likingId, setLikingId ] = useState<number | null>(null);
-    const [ menuId, setMenuId ] = useState<number | null>(null);
-    const [ menuPosition, setMenuPosition ] = useState({ top: 0, left: 0 });
     const [ editingId, setEditingId ] = useState<number | null>(null);
     const [ editText, setEditText ] = useState("");
     const [ changingId, setChangingId ] = useState<number | null>(null);
@@ -141,7 +140,6 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
             setComments(previous => previous.map(comment => comment.id === commentId
                 ? { ...comment, text: res.data.comment.text } : comment));
             setEditingId(null);
-            setMenuId(null);
         } catch {
             setError("post.commentActionsFailed");
         } finally {
@@ -156,7 +154,6 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
             const res = await api.delete(`comments/${commentId}`);
             if (!res.data.success) throw new Error("Comment not deleted");
             setComments(previous => previous.filter(comment => comment.id !== commentId));
-            setMenuId(null);
             onSent(-1);
         } catch {
             setError("post.commentActionsFailed");
@@ -209,21 +206,19 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                         </Link>
                                     )}
                                     <div className="commentActions">
-                                        <button type="button" aria-label={t("post.commentActions")} aria-expanded={menuId === comment.id} onClick={event => { const rect = event.currentTarget.getBoundingClientRect(); setMenuPosition({ top: Math.min(rect.bottom, window.innerHeight - 190), left: Math.max(10, Math.min(rect.right - 200, window.innerWidth - 210)) }); setMenuId(previous => previous === comment.id ? null : comment.id); }}>
+                                        <button type="button" aria-label={t("post.commentActions")} aria-haspopup="menu" onClick={event => {
+                                            const rect = event.currentTarget.getBoundingClientRect();
+                                            openMenu(rect.right, rect.bottom, "comment", {
+                                                id: String(comment.id),
+                                                isMy: !!user.id && user.id === comment.user?.id,
+                                                onReply: user.id ? () => { setReplyTo(comment); closeMenu(); } : undefined,
+                                                onCopy: comment.text ? () => { void navigator.clipboard.writeText(comment.text || ""); closeMenu(); } : undefined,
+                                                onEdit: () => { setEditingId(comment.id); setEditText(comment.text || ""); closeMenu(); },
+                                                onDelete: () => { void deleteComment(comment.id); closeMenu(); }
+                                            });
+                                        }}>
                                             <DotsThreeIcon />
                                         </button>
-                                        {menuId === comment.id && createPortal(<div className="commentActionMenu" style={{ position: "fixed", top: menuPosition.top, left: menuPosition.left }}>
-                                            {user.id && <button type="button" onClick={() => { setReplyTo(comment); setMenuId(null); }}><ArrowBendUpLeftIcon /> {t("post.commentReply")}</button>}
-                                            {!!comment.text && <button type="button" onClick={() => { void navigator.clipboard.writeText(comment.text || ""); setMenuId(null); }}><CopyIcon /> {t("post.commentCopy")}</button>}
-                                            {user.id === comment.user?.id && <button type="button" onClick={() => {
-                                                setEditingId(comment.id);
-                                                setEditText(comment.text || "");
-                                                setMenuId(null);
-                                            }}><PencilSimpleIcon /> {t("post.edit")}</button>}
-                                            {user.id === comment.user?.id && <button type="button" className="delete" disabled={changingId === comment.id} onClick={() => void deleteComment(comment.id)}>
-                                                <TrashIcon /> {t("post.commentDelete")}
-                                            </button>}
-                                        </div>, document.body)}
                                     </div>
                                 </div>
                                 {editingId === comment.id ? <div className="commentEdit">
@@ -251,9 +246,11 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                 </section>
             </div>
             <div className="postCommentBottom">
-                {replyTo && <div className="commentReplyBanner">{t("post.commentReplying", { name: replyTo.user?.username || replyTo.user?.nick || "" })}<button type="button" onClick={() => setReplyTo(null)} aria-label={t("post.commentCancel")}><XIcon /></button></div>}
+
                 {user.id ? <Composer
                     text={text}
+                    reply={replyTo ? { name: replyTo.user?.username || replyTo.user?.nick || "", text: replyTo.text || "" } : null}
+                    onCancelReply={() => setReplyTo(null)}
                     setText={setText}
                     files={files}
                     setFiles={setFiles}
