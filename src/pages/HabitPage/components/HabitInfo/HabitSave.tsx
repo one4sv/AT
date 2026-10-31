@@ -32,8 +32,9 @@ export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolea
                 <div
                     className={`habitSave ${isThisUpdating ? "saving" : ""}`}
                     onClick={async () => {
-                        if (readOnly || !habit?.ongoing || !hasUnsavedChanges || isThisUpdating) return;
-                        await saveHabit(habit!.id);
+                        if (readOnly || !habit?.ongoing || isThisUpdating) return;
+                        if (hasUnsavedChanges) await saveHabit(habit.id);
+                        if (showSlide === "chat") window.dispatchEvent(new CustomEvent("habit-chat-save", { detail: { habitId: habit.id } }));
                     }}
                 >
                     {isThisUpdating ? "Сохраняется..." : "Сохранить"}
