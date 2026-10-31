@@ -48,6 +48,7 @@ export default function Composer({
     const { t } = useTranslation("acc");
     const { droppedFiles, setDroppedFiles } = useDrop();
     const [ writing, setWriting ] = useState(false);
+    const expanded = !!reply || files.length > 0 || media.length > 0;
     useEffect(() => { if (reply) setWriting(true); }, [reply]);
     const composerRef = useRef<HTMLDivElement>(null);
     const [ showEmojiBar, setShowEmojiBar ] = useState(false);
@@ -125,7 +126,7 @@ export default function Composer({
                     onClick={() => fileRef.current?.click()} aria-label={t("post.attach")}>
                     <Paperclip />
                 </button>}
-                <div className={`composerInput inputWithEmoji ${inlineAttach && writing ? "open" : ""} ${inlineAttach ? "composerChatStyle" : ""}`}>
+                <div className={`composerInput inputWithEmoji ${inlineAttach && expanded ? "open" : ""} ${inlineAttach ? "composerChatStyle" : ""}`}>
                     {inlineAttach && reply && <div className="answerDiv">
                         <div className="answer">
                             <div className="answer1str">{t("post.commentReplying", { name: reply.name })}</div>
@@ -133,8 +134,8 @@ export default function Composer({
                         </div>
                         <button type="button" className="closeAnswer" onClick={onCancelReply} aria-label={t("post.commentCancel")}><X /></button>
                     </div>}
-                    {inlineAttach && writing && <button type="button" className="composerInlineAttach" disabled={disabled} onPointerDown={event => event.preventDefault()} onClick={() => fileRef.current?.click()} aria-label={t("post.attach")}><Paperclip /></button>}
-                    {writing && <EmojiButton taRef={taRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={disabled} />}
+                    {inlineAttach && <button type="button" className="composerInlineAttach" disabled={disabled} onPointerDown={event => event.preventDefault()} onClick={() => fileRef.current?.click()} aria-label={t("post.attach")}><Paperclip /></button>}
+                    {(writing || inlineAttach) && <EmojiButton taRef={taRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={disabled} />}
                     <div className="composerDraft" hidden={!writing}>
                     <MediaDraft
                         files={files}
@@ -145,7 +146,7 @@ export default function Composer({
                     </div>
                     <TA
                         onFocus={() => setWriting(true)}
-                        maxHeight={writing ? 35 : 5}
+                        maxHeight={writing || inlineAttach ? 35 : 5}
                         taRef={taRef}
                         value={text}
                         onChange={event => setText(event.target.value)}
@@ -156,9 +157,9 @@ export default function Composer({
                         onSend={isMobile ? undefined : onSend}
                     />
                 </div>
-                {writing ? <button
+                {(writing || inlineAttach) ? <button
                     type="button"
-                    className="chatWriteTAButt"
+                    className="chatWriteTAButt composerSend"
                     disabled={disabled || (!text.trim() && !files.length && !media.length)}
                     onMouseDown={event => event.preventDefault()}
                     onClick={onSend}
