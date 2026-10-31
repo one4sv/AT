@@ -14,6 +14,7 @@ import HabitMembers from "./HabitMembers";
 import { Link } from "react-router-dom";
 import { api } from "../../../../components/ts/api";
 import "../../scss/HabitChatMenu.scss";
+import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 
 type ChatMenuOption = "group" | "add" | "activity";
 
@@ -25,7 +26,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
     const [ creatingChat, setCreatingChat ] = useState(false)
     const [ savingMode, setSavingMode ] = useState(false)
     const [ savingCollaboration, setSavingCollaboration ] = useState(false)
-    const [ showCollaboration, setShowCollaboration ] = useState(false)
+    const { setBlackout } = useBlackout()
     const [ collaboration, setCollaboration ] = useState<{ metric_progress_mode: "personal" | "shared"; schedule_blocks_mode: "personal" | "shared"; members_can_edit_blocks: boolean; members_can_edit_info: boolean; members_can_invite: boolean }>({
         metric_progress_mode: habit?.metric_progress_mode || "personal",
         schedule_blocks_mode: habit?.schedule_blocks_mode || "shared",
@@ -158,7 +159,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                 </div>}
                 {linkedChatId && <Link to={`/chat/g/${linkedChatId}`} className="addGoalButtDiv">Открыть беседу</Link>}
                 {linkedChatId && isMy && <button type="button" className="addGoalButtDiv" disabled={savingChat} onClick={() => void updateChat(null)}>Отвязать от беседы</button>}
-                {isMy && <button type="button" className="addGoalButtDiv habitCollaborationButton" onClick={() => setShowCollaboration(true)}>Настройки совместной активности</button>}
+                {isMy && <button type="button" className="addGoalButtDiv habitCollaborationButton" onClick={() => setBlackout({ seted: true, module: "HabitCollaborationSettings" })}>Настройки совместной активности</button>}
                 <HabitMembers habitId={habit.id} isOwner={!!isMy} showInvite={false}/>
             </div>}
             <div className="settingInnerWrapper">
@@ -329,64 +330,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                     ))
                 )}
             </div>
-            {showCollaboration && <div className="habitCollaborationOverlay" onClick={() => setShowCollaboration(false)}>
-                <div className="habitCollaborationModal" role="dialog" aria-modal="true" aria-label="Настройки совместной активности" onClick={event => event.stopPropagation()}>
-                    <div className="habitCollaborationHeader">
-                        <span>Настройки совместной активности</span>
-                        <button type="button" onClick={() => setShowCollaboration(false)} aria-label="Закрыть"><XIcon size={24}/></button>
-                    </div>
-                    <div className="habitCollaborationBody">
-                <div className="privateSLWrapper">
-                    <div className="settingSpan">Таймер и счётчик</div>
-                    <RadioGroup list={[
-                        { label: "У каждого свой прогресс", value: "personal" },
-                        { label: "Общий для всех участников", value: "shared" }
-                    ]} id="habitMetricProgress" val={collaboration.metric_progress_mode}
-                        disabled={!isMy || savingCollaboration}
-                        newVal={value => { if (value === "personal" || value === "shared") void updateCollaboration({ metric_progress_mode: value }); }}/>
-                    <div className="settingHint">Общий режим объединяет измерения участников. Личный режим сохраняет независимые показатели.</div>
-                </div>
-                <div className="privateSLWrapper">
-                    <div className="settingSpan">Блоки расписания и задачи</div>
-                    <RadioGroup list={[
-                        { label: "Общие блоки", value: "shared" },
-                        { label: "У каждого свои блоки", value: "personal" }
-                    ]} id="habitScheduleBlocks" val={collaboration.schedule_blocks_mode}
-                        disabled={!isMy || savingCollaboration}
-                        newVal={value => { if (value === "personal" || value === "shared") void updateCollaboration({ schedule_blocks_mode: value }); }}/>
-                </div>
-                <div className="privateSLWrapper">
-                    <div className="settingSpan">Кто может менять блоки</div>
-                    <RadioGroup list={[
-                        { label: "Только владелец", value: "owner" },
-                        { label: "Все участники", value: "members" }
-                    ]} id="habitBlocksPermission" val={collaboration.members_can_edit_blocks ? "members" : "owner"}
-                        disabled={!isMy || savingCollaboration}
-                        newVal={value => void updateCollaboration({ members_can_edit_blocks: value === "members" })}/>
-                </div>
-                <div className="privateSLWrapper">
-                    <div className="settingSpan">Кто может изменять информацию активности</div>
-                    <RadioGroup list={[
-                        { label: "Только владелец", value: "owner" },
-                        { label: "Все участники", value: "members" }
-                    ]} id="habitInfoPermission" val={collaboration.members_can_edit_info ? "members" : "owner"}
-                        disabled={!isMy || savingCollaboration}
-                        newVal={value => void updateCollaboration({ members_can_edit_info: value === "members" })}/>
-                </div>
-                <div className="privateSLWrapper">
-                    <div className="settingSpan">Кто может приглашать участников</div>
-                    <RadioGroup list={[
-                        { label: "Только владелец", value: "owner" },
-                        { label: "Все участники", value: "members" }
-                    ]} id="habitInvitePermission" val={collaboration.members_can_invite ? "members" : "owner"}
-                        disabled={!isMy || savingCollaboration}
-                        newVal={value => void updateCollaboration({ members_can_invite: value === "members" })}/>
-                </div>
 
-                    </div>
-                    <button type="button" className="addGoalButtDiv habitCollaborationClose" onClick={() => setShowCollaboration(false)}>Готово</button>
-                </div>
-            </div>}
         </div>
     )
 }
