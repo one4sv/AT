@@ -16,6 +16,7 @@ import ChatWithInfo from './ChatWithInfo';
 import Table from './Table';
 import PostSettings from './PostSettings';
 import HabitCollaborationSettings from './HabitCollaborationSettings';
+import HabitDayActivityHistory from './HabitDayActivityHistory';
 
 const ModuleMap: Record<string, React.FC> = {
     ConfirmAction:ConfirmAction,
@@ -35,6 +36,7 @@ const ModuleMap: Record<string, React.FC> = {
     ChatWithInfo:ChatWithInfo,
     PostSettings:PostSettings,
     HabitCollaborationSettings:HabitCollaborationSettings,
+    HabitDayActivityHistory:HabitDayActivityHistory,
     Table:Table
 };
 

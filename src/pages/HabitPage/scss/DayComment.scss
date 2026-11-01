@@ -435,3 +435,127 @@
         overflow-y: auto;
     }
 }
+
+
+.dayActivityPreview {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+
+    .sharedDayComments {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+    }
+}
+
+.dayActivityEntries {
+    display: flex;
+    flex-direction: column;
+    gap: .75vh;
+    min-width: 0;
+}
+
+.sharedDayCompletion {
+    .commentInfo {
+        gap: .4vw;
+    }
+
+    .commentUser {
+        min-width: 0;
+
+        > span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .commentDate {
+        margin-left: auto;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .dayCompletionIcon {
+        color: var(--accent_text);
+        flex-shrink: 0;
+        width: 2dvh;
+        height: 2dvh;
+    }
+}
+
+.dayActivityShowAll {
+    flex-shrink: 0;
+    border: none;
+    border-radius: 20px;
+    background: var(--mc);
+    color: var(--accent_text);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    padding: .8dvh .75vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5vw;
+
+    > svg {
+        width: 2dvh;
+        height: 2dvh;
+    }
+
+    @media (hover: hover) {
+        &:hover { background: var(--menuButtHover); }
+    }
+
+    @media (hover: none) {
+        &:active { background: var(--menuButtHover); }
+    }
+}
+
+.habitDayActivityModal {
+    width: 30vw;
+    max-height: 85dvh;
+    height: min(80dvh, 800px);
+
+    > .sharedDayComments {
+        min-height: 0;
+        flex: 1;
+        padding: 1dvh 1vw 2dvh;
+        overflow-y: auto;
+    }
+
+    .sharedDayComment {
+        padding: 1dvh .75vw;
+    }
+
+    @media (max-width: 800px) {
+        width: 100%;
+        max-width: 100%;
+        height: 100dvh;
+        max-height: 100dvh;
+
+        > .sharedDayComments {
+            padding: 1dvh 3vw 3dvh;
+        }
+    }
+}
+
+@media (max-width: 800px) {
+    .mobileSharedDayComments .dayActivityPreview {
+        max-height: 30dvh;
+        min-height: 0;
+    }
+
+    .dayActivityShowAll {
+        gap: 2vw;
+        padding: 1dvh 3vw;
+    }
+
+    .sharedDayCompletion .commentInfo {
+        gap: 2vw;
+    }
+}
