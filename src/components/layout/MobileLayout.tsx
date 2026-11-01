@@ -49,6 +49,7 @@ export default function MobileLayout({ children }: LayoutProps) {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+        if ((e.target as Element).closest(".habitMenu")) return;
         if (dontHandle || e.touches.length !== 1 || gesture.current === "scroll") return;
 
         const diffX = e.touches[0].clientX - startX.current;

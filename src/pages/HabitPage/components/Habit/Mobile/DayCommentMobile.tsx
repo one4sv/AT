@@ -55,13 +55,13 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
         if (e.key === "Enter" && !e.shiftKey && !isMobile && !e.nativeEvent.isComposing) {
             e.preventDefault();
             if (cantSave) return;
-            sendDayComment(id, comment, chosenDay);
+            void sendDayComment(id, comment, chosenDay);
         }
     };
 
     const handleSave = () => {
         if (!cantSave) {
-            sendDayComment(id, comment, chosenDay);
+            void sendDayComment(id, comment, chosenDay);
         }
     };
 

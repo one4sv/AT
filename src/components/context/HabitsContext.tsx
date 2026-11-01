@@ -6,7 +6,24 @@ import { useSettings } from "../hooks/SettingsHook";
 import type { HabitSettings } from "./TheHabitContext";
 import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
+export type HabitPermission = "owner" | "members" | "roles";
+export interface HabitAccess {
+    is_owner: boolean;
+    is_member: boolean;
+    can_view: boolean;
+    can_complete: boolean;
+    can_comment: boolean;
+    can_edit_blocks: boolean;
+    can_edit_info: boolean;
+    can_invite: boolean;
+}
 export interface Habit {
+    access?: HabitAccess;
+    complete_permission?: HabitPermission;
+    comment_permission?: HabitPermission;
+    edit_blocks_permission?: HabitPermission;
+    edit_info_permission?: HabitPermission;
+    invite_permission?: HabitPermission;
     id: number;
     name: string;
     desc: string | "";

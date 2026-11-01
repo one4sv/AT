@@ -1,3 +1,4 @@
+import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { BoxArrowDownIcon } from "@phosphor-icons/react";
 import HabitSave from "./HabitSave";
 import HabitInfo from "./HabitInfo";
@@ -12,7 +13,8 @@ import { useEffect, useRef, useState } from "react";
 
 export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean, isArchived:boolean, isReadOnly: boolean}) {
     const { habit } = useTheHabit()
-    const { showSlide, showHabitMenu, setShowHabitMenu, dontHandleOther, setDontHandle } = useSideMenu()
+    const { blackout } = useBlackout()
+    const { showSlide, showHabitMenu, setShowHabitMenu, setDontHandle } = useSideMenu()
     const { setNewOngoing } = useUpHabit()
     
     const [menuTranslate, setMenuTranslate] = useState(100);
@@ -55,7 +57,9 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
         }
     }
         const handleMenuTouchStart = (e: React.TouchEvent) => {
-        if (dontHandleOther || !showHabitMenu || e.touches.length !== 1) return;
+        if (blackout.seted || !showHabitMenu || e.touches.length !== 1) return;
+        e.stopPropagation();
+        setDontHandle(true);
         if ((e.target as HTMLElement).closest("input, textarea, select, [contenteditable=true]")) return;
 
         startX.current = e.touches[0].clientX;
@@ -66,14 +70,15 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
     };
 
     const handleMenuTouchMove = (e: React.TouchEvent) => {
-        if (dontHandleOther || !touchActive.current || e.touches.length !== 1) return;
+        if (!touchActive.current || e.touches.length !== 1) return;
+        e.stopPropagation();
 
         const diff = e.touches[0].clientX - startX.current;
         const diffY = e.touches[0].clientY - startY.current;
         if (!direction.current && Math.max(Math.abs(diff), Math.abs(diffY)) > 8) {
             direction.current = Math.abs(diff) > Math.abs(diffY) ? "horizontal" : "vertical";
         }
-        if (direction.current !== "horizontal") return;
+        if (direction.current !== "horizontal" || diff <= 0) return;
         setDontHandle(true);
         setDragging(true);
 
@@ -90,13 +95,14 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
 
     const handleMenuTouchEnd = () => {
         touchActive.current = false;
+        setDontHandle(false);
         if (direction.current !== "horizontal") return;
         direction.current = "";
 
         setDontHandle(false);
         setDragging(false);
 
-        if (translateRef.current > 40) {
+        if (translateRef.current > 25) {
             setShowHabitMenu(false);
             setMenuTranslate(100);
         } else {
@@ -111,10 +117,11 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
             className="habitMenu"
             onTouchStart={handleMenuTouchStart}
             onTouchMove={handleMenuTouchMove}
-            onTouchEnd={handleMenuTouchEnd}
-            onTouchCancel={() => {
+            onTouchEnd={event => { event.stopPropagation(); handleMenuTouchEnd(); }}
+            onTouchCancel={event => {
+                event.stopPropagation();
                 touchActive.current = false;
-                if (direction.current === "horizontal") setDontHandle(false);
+                setDontHandle(false);
                 direction.current = "";
                 setDragging(false);
                 setMenuTranslate(showHabitMenu ? 0 : 100);
@@ -169,7 +176,7 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
             </div>
 
             <HabitSave
-                readOnly={isReadOnly} setMenuTranslate={setMenuTranslate}
+                readOnly={isReadOnly && !habit.access?.can_edit_info} setMenuTranslate={setMenuTranslate}
             />
         </div>
     )

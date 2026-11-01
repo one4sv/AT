@@ -75,6 +75,8 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
         { label: "иногда", value: "sometimes" },
     ];
 
+    const infoReadOnly = !(habit.access?.can_edit_info ?? !readOnly) || !ongoing;
+
     const formatTimeInput = (val: string) => {
         const digits = val.replace(/\D/g, "");
         if (digits.length >= 3) {
@@ -129,7 +131,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         type="text"
                         className="addHabitInput"
                         maxLength={40}
-                        readOnly={readOnly || !ongoing}
+                        readOnly={infoReadOnly}
                         value={name}
                         minLength={1}
                         onChange={(e) => {
@@ -147,7 +149,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     className="addHabitInput redHabitDesc"
                     maxLength={120}
                     value={desc || habit.desc}
-                    readOnly={readOnly || !ongoing}
+                    readOnly={infoReadOnly}
                     onChange={(e) => {
                         setDesc(e.currentTarget.value);
                         setNewDescription(habit.id, e.currentTarget.value);
@@ -156,7 +158,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                 <span>{desc?.length || 0}/120</span>
             </div>
             <div className="addHabitWrapper">
-                <TagSelector selectedTag={habit.tag || selectedTag} setSelectedTag={setSelectedTag} showOnly={readOnly || !ongoing}/>
+                <TagSelector selectedTag={habit.tag || selectedTag} setSelectedTag={setSelectedTag} showOnly={infoReadOnly}/>
             </div>
 
             <div className="inpWrapperRedHabit">

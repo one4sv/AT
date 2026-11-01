@@ -12,6 +12,7 @@ import HabitName from "./components/HabitInfo/HabitName";
 import HabitInvitations from "./components/HabitInfo/HabitInvitations";
 import Calendar from "./components/Calendar/Calendar";
 import Diagrams from "./components/Stats/Diagrams";
+import SharedDayComments from "./components/Habit/Comment/SharedDayComments";
 import DayComment from "./components/Habit/Comment/DayComment";
 import Complete from "./components/Habit/Complete/Complete";
 import Schedule from "./components/Schedule/Schedule";
@@ -95,7 +96,8 @@ export default function Habit() {
     }
     const isMy = !!habit && habit.user_id === user.id;
     const isMember = !!habits?.some(h => h.id === habit?.id);
-    const canComplete = isMy || (isMember && ["done", "timer", "counter", "schedule", "checklist"].includes(habitSettings.metric_type));
+    const canComplete = habit?.access?.can_complete ?? (isMy || isMember);
+    const canComment = habit?.access?.can_comment ?? (isMy || isMember);
     const isArchived = !habit?.ongoing;
     const isReadOnly = !isMy || isArchived;
     const isCompletionReadOnly = !canComplete || isArchived;
@@ -124,9 +126,10 @@ export default function Habit() {
                     </> : <>
                         <Calendar />
                         {habitId ? <>
-                            <Complete isMy={!isReadOnly} />
+                            <Complete isMy={!isCompletionReadOnly} />
                             <div className="dayCommentDiv">
-                                <DayComment id={habitId!} isMy={!isReadOnly} />
+                                <DayComment id={habitId!} isMy={canComment && !isArchived} />
+                                <SharedDayComments />
                                 {habitSettings.metric_type === "timer" && <CompletionProgress />}
                                 {habitSettings.metric_type === "counter" && <CounterProgression />}
                             </div>
@@ -134,11 +137,12 @@ export default function Habit() {
                     </>}
                 </div>
 
-                {shouldShowSchedule && <Schedule id={habitId} isMy={!isReadOnly} />}
+                {shouldShowSchedule && <Schedule id={habitId} isMy={!!habit?.access?.can_edit_blocks || isMy} />}
 
+                {isMobile && habitId && <div className="dayCommentDiv mobileSharedDayComments"><SharedDayComments /></div>}
                 <Diagrams mainRef={mainRef} />
             </div>
-            {isMobile && habitId ? <HabitMobileDone habitId={habitId} isReadOnly={isCompletionReadOnly} /> : ""}
+            {isMobile && habitId ? <HabitMobileDone habitId={habitId} isReadOnly={isCompletionReadOnly} canComment={canComment && !isArchived} /> : ""}
             {habitId && habit && <HabitMenu isMy={isMy} isArchived={isArchived} isReadOnly={isReadOnly} />}
         </div>
     );

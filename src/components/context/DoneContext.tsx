@@ -67,6 +67,7 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
                 { habit_id: id, text, date },
             );
             if (res.data.success) {
+                window.dispatchEvent(new Event('habit-day-comment-updated'));
                 fetchCalendarHabit(id);
                 loadHabit(id);
             }

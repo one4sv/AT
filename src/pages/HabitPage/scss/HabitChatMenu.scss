@@ -56,8 +56,8 @@
     margin-top: 0.3dvh;
     > svg {
         color: var(--accent);
-        width: 22px;
-        height: 22px;
+        width: 2.5vh;
+        height: 2.5vh;
         flex-shrink: 0;
     }
     @media (max-width: 800px) {
@@ -68,7 +68,8 @@
 
 .habitCollaborationModal {
     @include var.centerModal;
-    width: min(100%, 480px);
+    width: 36vw;
+    max-width: 94vw;
     max-height: 90dvh;
     margin: auto auto 2dvh;
     display: flex;
@@ -251,5 +252,139 @@
         &:disabled {
             opacity: .5;
         }
+    }
+}
+
+.habitCollaborationOverview {
+    height: auto;
+    min-height: 100%;
+    gap: 1.5vh;
+
+    > .privateSLWrapper {
+        margin: 0;
+    }
+
+    .habitCollaborationButton {
+        margin-top: auto;
+    }
+}
+
+.habitSettingValue {
+    display: block;
+    color: var(--borderWh);
+    margin-top: .5vh;
+    line-height: 1.4;
+}
+
+.habitMembersSkeleton {
+    display: flex;
+    flex-direction: column;
+    gap: .75vh;
+
+    > div {
+        height: 5.5vh;
+        width: 100%;
+        border-radius: 24px;
+        background: linear-gradient(100deg, var(--interact), var(--mc), var(--interact));
+        background-size: 200% 100%;
+        animation: habitMemberShimmer 1.4s ease-in-out infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        > div {
+            animation: none;
+        }
+    }
+}
+
+@keyframes habitMemberShimmer {
+    to {
+        background-position: -200% 0;
+    }
+}
+
+.habitParticipantPicker {
+    height: 78dvh;
+
+    .habitCollaborationBody {
+        gap: 1vh;
+
+        > .contactsUser,
+        > .createChatSearch,
+        > .RadioGroup,
+        > .createChatInfo {
+            flex-shrink: 0;
+        }
+    }
+
+    button.contactsUser {
+        font: inherit;
+        color: var(--tc);
+        border: 0;
+        text-align: left;
+        flex-shrink: 0;
+    }
+
+    .createChatSearch {
+        width: 100%;
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+}
+
+.habitPickerContacts {
+    flex: 1;
+    min-height: 12vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.habitConfirmActions {
+    display: flex;
+    gap: 1vw;
+    padding: 1vh 1.5vw max(2vh, env(safe-area-inset-bottom));
+    flex-shrink: 0;
+
+    button {
+        flex: 1;
+        min-height: 5vh;
+        border: 1px solid var(--block_border);
+        border-radius: 24px;
+        background: var(--mc);
+        color: var(--tc);
+        font: inherit;
+        cursor: pointer;
+
+        &.accept {
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+        }
+
+        &.danger {
+            color: #ff6767;
+        }
+
+        &:disabled {
+            opacity: .5;
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 3vw;
+        padding-inline: 4vw;
+    }
+}
+
+.habitOwnerLink {
+    text-decoration: none;
+    color: var(--tc);
+
+    > img {
+        width: 4vh;
+        height: 4vh;
+        object-fit: cover;
+        border-radius: 50%;
     }
 }

@@ -2,15 +2,15 @@ import { useState } from "react"
 import DayCommentMobile from "./DayCommentMobile"
 import DoneButtonMobile from "./DoneButtonMobile"
 
-export default function HabitMobileDone({ habitId, isReadOnly} : {habitId:string, isReadOnly: boolean}) {
-    const [ open, setOpen ] = useState("done")
+export default function HabitMobileDone({ habitId, isReadOnly, canComment } : {habitId:string, isReadOnly: boolean, canComment: boolean}) {
+    const [ open, setOpen ] = useState(isReadOnly ? "comment" : "done")
 
-    if (!habitId || isReadOnly) return null
+    if (!habitId || (isReadOnly && !canComment)) return null
 
     return (
         <div className="habitMobileDone">
-            <DoneButtonMobile habitId={Number(habitId)} open={open} setOpen={setOpen}/>
-            <DayCommentMobile id={habitId} isMy={!isReadOnly} open={open} setOpen={setOpen}/>
+            {!isReadOnly && <DoneButtonMobile habitId={Number(habitId)} open={open} setOpen={setOpen}/>}
+            <DayCommentMobile id={habitId} isMy={canComment} open={open} setOpen={setOpen}/>
         </div>
     )
 

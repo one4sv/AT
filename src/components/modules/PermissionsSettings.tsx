@@ -30,6 +30,11 @@ export interface MemberPermType extends Member {
 }
 
 const PERM_LABELS: Record<keyof Perms, string> = {
+    habit_complete: "Отмечать выполнения активностей",
+    habit_comment: "Комментировать активности",
+    habit_edit_blocks: "Изменять блоки активностей",
+    habit_edit_info: "Изменять информацию активностей",
+    habit_invite: "Приглашать в активности",
     change_avatar: "Изменять аватарку беседы",
     change_name: "Изменять название беседы",
     change_desc: "Изменять описание беседы",
@@ -43,6 +48,11 @@ const PERM_LABELS: Record<keyof Perms, string> = {
 };
 
 const PERM_ICONS: Record<keyof Perms, React.ComponentType<{ size?: number }>> = {
+    habit_complete: User,
+    habit_comment: TextAlignCenter,
+    habit_edit_blocks: TextAa,
+    habit_edit_info: TextAa,
+    habit_invite: UserPlus,
     change_avatar: Image,
     change_name: TextAa ,
     change_desc: TextAlignCenter,

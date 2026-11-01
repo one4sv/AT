@@ -39,6 +39,11 @@ export interface Group {
     invite_expires_at: string | null,
 }
 export interface Perms {
+    habit_complete?: boolean,
+    habit_comment?: boolean,
+    habit_edit_blocks?: boolean,
+    habit_edit_info?: boolean,
+    habit_invite?: boolean,
     change_avatar: boolean,
     change_name: boolean,
     change_desc: boolean,

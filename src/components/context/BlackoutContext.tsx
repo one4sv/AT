@@ -5,6 +5,7 @@ const BlackoutContext = createContext<BlackoutContextType | null>(null);
 
 export interface Blackout {
     seted: boolean;
+    confirmAction?: { title: string; description: string; label?: string; run: () => Promise<void> };
     module?: string;
     pick?: File;
     bg?: File;

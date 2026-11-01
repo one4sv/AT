@@ -1,0 +1,35 @@
+import { useRef, useState } from "react";
+import { useBlackout } from "../hooks/BlackoutHook";
+
+export default function ConfirmAction() {
+    const { blackout, setBlackout } = useBlackout();
+    const [ saving, setSaving ] = useState(false);
+    const [ error, setError ] = useState("");
+    const submitting = useRef(false);
+    const action = blackout.confirmAction;
+    if (!action) return null;
+    return <div className="habitCollaborationModal habitConfirmModal" role="dialog" aria-modal="true" aria-label={action.title}>
+        <div className="habitCollaborationHeader">{action.title}</div>
+        <div className="habitCollaborationBody">
+            <p>{action.description}</p>
+            {error && <p role="alert">{error}</p>}
+        </div>
+        <div className="habitConfirmActions">
+            <button type="button" disabled={saving} onClick={() => setBlackout({ seted: false })}>Отмена</button>
+            <button type="button" className="danger" disabled={saving} onClick={async () => {
+                if (submitting.current) return;
+                submitting.current = true;
+                setSaving(true);
+                try {
+                    await action.run();
+                    setBlackout({ seted: false });
+                } catch {
+                    setError("Не удалось выполнить действие");
+                } finally {
+                    submitting.current = false;
+                    setSaving(false);
+                }
+            }}>{saving ? "Подождите…" : action.label || "Удалить"}</button>
+        </div>
+    </div>;
+}

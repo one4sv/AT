@@ -310,3 +310,78 @@
     > .inputEmojiButton { right: 6vh; bottom: 1vh; }
 }
 
+
+.sharedDayComments {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1vh .75vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+}
+
+.sharedDayComment {
+    flex-shrink: 0;
+    min-width: 0;
+    padding-bottom: 1vh;
+    border-bottom: 1px solid var(--block_border);
+}
+
+.sharedDayCommentUser {
+    display: flex;
+    align-items: center;
+    gap: .5vw;
+    color: var(--accent_text);
+    text-decoration: none;
+    margin-bottom: .5vh;
+
+    > img,
+    > svg {
+        width: 3vh;
+        height: 3vh;
+        flex-shrink: 0;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+}
+
+.sharedDayCommentText {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+}
+
+.dayCommentDiv > .habitDayComment {
+    flex-shrink: 0;
+    box-sizing: border-box;
+
+    textarea {
+        max-height: 14vh;
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 800px) {
+    .mobileSharedDayComments.dayCommentDiv {
+        flex-direction: column;
+        min-height: 12vh;
+        height: 30vh;
+        flex-shrink: 0;
+        margin-bottom: 3vh;
+    }
+
+    .sharedDayComments {
+        padding: 1.5vh 3vw;
+    }
+
+    .sharedDayCommentUser {
+        gap: 2vw;
+    }
+
+    .habitDayCommentMobile > textarea {
+        max-height: 20vh;
+        overflow-y: auto;
+    }
+}
