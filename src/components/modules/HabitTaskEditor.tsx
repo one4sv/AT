@@ -43,7 +43,7 @@ export default function HabitTaskEditor() {
                 const blocks = await loadHabitSchedule(habitId);
                 const isSeparated = !!schedule_settings[habitId]?.isSeparated;
                 const dayOfWeek = new Date(`${date}T12:00:00Z`).getUTCDay();
-                const separator = isSeparated ? isOddWeek(weekStart, new Date(`${date}T12:00:00`)) : false;
+                const separator = isSeparated ? !isOddWeek(weekStart, new Date(`${date}T12:00:00`)) : false;
                 const payload = [
                     ...blocks.map(block => ({
                         id: block.id, day_of_week: block.day_of_week,
