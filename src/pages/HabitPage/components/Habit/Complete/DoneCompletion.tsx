@@ -1,5 +1,6 @@
 import {
     CheckCircleIcon,
+    CircleIcon,
     ListChecksIcon,
     FloppyDiskIcon,
     PencilSimpleIcon,
@@ -46,6 +47,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
 
     const [editing, setEditing] = useState<Set<number>>(new Set())
     const [loading, setLoading] = useState<Set<number>>(new Set())
+    const [completing, setCompleting] = useState<Set<number>>(new Set())
     const saving = useRef(new Set<number>())
     const mounted = useRef(true)
     const editingRef = useRef(editing)
@@ -136,6 +138,27 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
         }
     }
 
+    const toggleComplete = async (block: DoneCompletion) => {
+        if (!isMy || !habit || block.isNew || completing.has(block.id)) return;
+        setCompleting(previous => new Set(previous).add(block.id));
+        try {
+            const response = await api.post("checklist/toggle", { id: block.id });
+            if (!response.data.success) throw new Error("Не удалось отметить задачу");
+            await loadHabit(String(habit.id));
+            window.dispatchEvent(new Event("habit-day-comment-updated"));
+        } catch (error) {
+            showNotification("error", axios.isAxiosError(error)
+                ? error.response?.data?.error || "Не удалось отметить задачу"
+                : "Не удалось отметить задачу");
+        } finally {
+            setCompleting(previous => {
+                const next = new Set(previous);
+                next.delete(block.id);
+                return next;
+            });
+        }
+    };
+
     const filteredBlocks = [
         ...blocks
             .filter(
@@ -212,11 +235,24 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                 ) : (
                                     <span className="doneCompName">{b.name}</span>
                                 )}
-                                {habit?.metric_progress_mode === "shared" && b.creator_name && <span className="sharedTaskAttribution">Добавил: {b.creator_name}</span>}
+                                {habit?.metric_progress_mode === "shared" && (b.creator_name || b.completer_name) && <span className="sharedTaskAttribution">
+                                    {b.creator_name && <span>Добавил: {b.creator_name}</span>}
+                                    {b.completed_at && b.completer_name && <span>Выполнил: {b.completer_name}</span>}
+                                </span>}
                             </div>
 
                             {isMy && (
                                 <div className="doneCompContolers">
+                                    {!isEditing && !b.isNew && <button
+                                        type="button"
+                                        className="doneCompControler doneCompComplete"
+                                        aria-label={b.completed_at ? "Снять выполнение задачи" : "Отметить задачу выполненной"}
+                                        aria-pressed={!!b.completed_at}
+                                        disabled={completing.has(b.id) || isLoading}
+                                        onClick={() => void toggleComplete(b)}
+                                    >
+                                        {b.completed_at ? <CheckCircleIcon weight="fill" size={22}/> : <CircleIcon size={22}/>}
+                                    </button>}
                                     <button type="button" disabled={isLoading || deleting.has(b.id) || (isEditing && !b.name.trim())} aria-label={t(isEditing ? "activityCompletion.save" : "activityCompletion.edit")}
                                         className="doneCompControler"
                                         onClick={() =>

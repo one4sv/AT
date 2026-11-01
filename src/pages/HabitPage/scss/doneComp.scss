@@ -374,3 +374,9 @@
 @media (max-width: 800px) {
     .doneCompAdd { width: 80%; min-height: 4.5dvh; }
 }
+
+.doneCompComplete {
+    color: var(--borderWh);
+    > svg { flex-shrink: 0; }
+    &[aria-pressed="true"] { color: var(--accent_text); }
+}

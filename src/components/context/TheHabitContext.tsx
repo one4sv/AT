@@ -96,6 +96,9 @@ export type DoneCompletion = {
     isNew?: boolean;
     created_by?: string | null;
     creator_name?: string | null;
+    completed_by?: string | null;
+    completed_at?: string | null;
+    completer_name?: string | null;
 };
 export type ChecklistPattern = {
     id: number;

@@ -150,3 +150,10 @@
         }
     }
 }
+
+@media (max-width: 800px) {
+    .chosenDayDate .calendarReturn {
+        margin-right: 3vw;
+        flex-shrink: 0;
+    }
+}
