@@ -1,8 +1,9 @@
-import { Copy, Link } from "@phosphor-icons/react";
+import { CopyIcon, LinkIcon, QrCodeIcon } from "@phosphor-icons/react";
+import { QRCodeSVG } from "qrcode.react";
 import { useGroup } from "../../hooks/GroupHook";
 import { api } from "../../ts/api";
 import { useNote } from "../../hooks/NoteHook";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatDistanceToNow, isPast } from "date-fns";
 import { ru } from "date-fns/locale";
 
@@ -10,61 +11,107 @@ export default function InviteUser() {
     const { group, refetchGroup } = useGroup();
     const { showNotification } = useNote();
 
-    const [ loading, setLoading ] = useState<boolean>(false);
-    const [ showCopied, setShowCopied ] = useState<boolean>(false);
+    const [ loading, setLoading ] = useState(false);
+    const [ generatedLink, setGeneratedLink ] = useState("");
+    const [ showQr, setShowQr ] = useState(false);
+    const [ showCopied, setShowCopied ] = useState(false);
 
-    const linked = group.link;
-    const expiresAt = group?.invite_expires_at ? new Date(group.invite_expires_at) : null;
-    const isExpired = expiresAt && isPast(expiresAt);
+    const expiresAt = group.invite_expires_at ? new Date(group.invite_expires_at) : null;
+    const isExpired = !!expiresAt && isPast(expiresAt);
+    const linked = generatedLink || (isExpired ? "" : group.link || "");
 
-    const linking = async() => {
-        console.log("linking");
-        if (linked && !isExpired) {
-            navigator.clipboard.writeText(linked);
-            setShowCopied(true);
-            setTimeout(() => setShowCopied(false), 1200);
-            return
-        } else {
-            setLoading(true);
-            try {
-                const res = await api.post(`group/generate_link`, { group_id: group.id })
-                if (res.data.success) {
-                    navigator.clipboard.writeText(res.data.link);
-                    setShowCopied(true);
-                    setTimeout(() => setShowCopied(false), 1200)
-                    await refetchGroup(group.id);
-                }
-                else {
-                    console.log("error generating link");
-                }
-            } catch (error) {
-                showNotification("error", "Не удалось сгенерировать ссылку");
-                console.log("error generating link", error);
-            }
+    useEffect(() => {
+        setGeneratedLink("");
+        setShowQr(false);
+        setShowCopied(false);
+    }, [group.id]);
+
+    const ensureLink = async () => {
+        if (linked) return linked;
+        if (!group.id || loading) return "";
+        setLoading(true);
+        try {
+            const res = await api.post("group/generate_link", { group_id: group.id });
+            if (!res.data.success || !res.data.link) throw new Error("Link generation failed");
+            setGeneratedLink(res.data.link);
+            await refetchGroup(group.id);
+            return res.data.link as string;
+        } catch {
+            showNotification("error", "Не удалось создать ссылку. Проверьте права в беседе.");
+            return "";
+        } finally {
             setLoading(false);
         }
-    }
+    };
+
+    const copyLink = async () => {
+        const link = await ensureLink();
+        if (!link) return;
+        try {
+            await navigator.clipboard.writeText(link);
+            setShowCopied(true);
+            setTimeout(() => setShowCopied(false), 1200);
+        } catch {
+            showNotification("error", "Не удалось скопировать ссылку");
+        }
+    };
+
+    const toggleQr = async () => {
+        if (showQr) {
+            setShowQr(false);
+            return;
+        }
+        const link = await ensureLink();
+        if (link) setShowQr(true);
+    };
 
     const timeLeftText = expiresAt && !isExpired
         ? `Ссылка истекает ${formatDistanceToNow(expiresAt, { locale: ru, addSuffix: true })}`
-        : ""
+        : "Ссылка действует 24 часа с момента создания.";
 
     return (
         <div className="inviteUser">
-            <label htmlFor="inviteUserLink">Ссылка приглашение</label>
-            {showCopied && (
-                <div className="copiedToast">
-                    Скопировано
-                </div>
-            )}
-            <div className="InviteUserWrapper" onClick={(e) => {
-                e.preventDefault();
-                linking()
-            }}>
-                <input type="text" className="inviteUserLink" name="" id="inviteUserLink" readOnly value={linked && !isExpired ? linked : ""} placeholder={loading ? "Генерируем..." :  "Нажмите чтобы создать ссылку"}/>
-                <button>{linked ? <Copy/> : <Link/>}</button>
+            <label htmlFor="inviteUserLink">Ссылка-приглашение</label>
+            <div className="InviteUserWrapper">
+                <input
+                    type="text"
+                    className="inviteUserLink"
+                    id="inviteUserLink"
+                    readOnly
+                    value={linked}
+                    placeholder={loading ? "Создаём ссылку…" : "Нажмите, чтобы создать ссылку"}
+                    onClick={() => {
+                        if (!linked) void ensureLink();
+                    }}
+                />
+                <button
+                    type="button"
+                    disabled={loading}
+                    onClick={() => void copyLink()}
+                    aria-label={linked ? "Скопировать ссылку" : "Создать и скопировать ссылку"}
+                    title={linked ? "Скопировать ссылку" : "Создать ссылку"}
+                >
+                    {linked ? <CopyIcon weight="bold" /> : <LinkIcon weight="bold" />}
+                </button>
             </div>
-            <span>{timeLeftText}</span>
+            {showCopied && <span className="copiedToast" role="status">Ссылка скопирована</span>}
+            <span className="inviteUserHint">{timeLeftText}</span>
+            <button
+                type="button"
+                className="inviteUserQrButton"
+                disabled={loading}
+                onClick={() => void toggleQr()}
+                aria-expanded={showQr}
+            >
+                <QrCodeIcon weight="fill" />
+                {showQr ? "Скрыть QR-код" : "Показать QR-код беседы"}
+            </button>
+            {showQr && linked && <div className="inviteUserQr" aria-label="QR-код приглашения в беседу">
+                <div className="inviteUserQrImage">
+                    <QRCodeSVG value={linked} size={240} level="M" />
+                </div>
+                <span>Отсканируйте код, чтобы открыть приглашение</span>
+            </div>}
         </div>
-    )
+    );
 }

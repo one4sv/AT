@@ -123,7 +123,7 @@ export default function CreateChat() {
     };
 
     return (
-        <div className="createChatDiv">
+        <div className={`createChatDiv ${blackout.point === "InviteUser" ? "inviteChatDiv" : ""}`}>
             {blackout.point === "InviteUser" ? (
                 <InviteUser />
             ) : (
@@ -138,17 +138,6 @@ export default function CreateChat() {
             )}
 
             <div className="createChatList">
-                <div className="createChatSearch">
-                    <input
-                        type="text"
-                        name="searchList"
-                        id="searchList"
-                        value={createChatSearch}
-                        onChange={(e) => setCreateChatSearch(e.target.value)}
-                    />
-                    <MagnifyingGlassIcon />
-                </div>
-
                 <div className="createChatChosenCons">
                     {chosenCons.length > 0 &&
                         chosenCons.map((con) => (
@@ -174,6 +163,18 @@ export default function CreateChat() {
                                 </div>
                             </div>
                         ))}
+                </div>
+
+
+                <div className="createChatSearch">
+                    <input
+                        type="text"
+                        name="searchList"
+                        id="searchList"
+                        value={createChatSearch}
+                        onChange={(e) => setCreateChatSearch(e.target.value)}
+                    />
+                    <MagnifyingGlassIcon />
                 </div>
 
                 {loadingList ? (
@@ -215,11 +216,13 @@ export default function CreateChat() {
             <button
                 className="createChatButt"
                 disabled={
+                    loadingCreateChat ||
                     chosenCons.length < 1 ||
                     (name.trim() === "" && blackout.point !== "InviteUser")
                 }
                 onClick={() => {
                     if (
+                        loadingCreateChat ||
                         chosenCons.length < 1 ||
                         (name.trim() === "" && blackout.point !== "InviteUser")
                     )
