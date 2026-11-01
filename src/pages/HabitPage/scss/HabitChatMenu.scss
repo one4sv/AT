@@ -129,11 +129,34 @@
 }
 
 @media (max-width: 800px) {
-    .habitCollaborationModal {
+    .habitCollaborationModal:not(.habitConfirmModal) {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        align-self: stretch;
         width: 100%;
-        max-height: 90dvh;
+        max-width: 100%;
+        height: 100dvh;
+        max-height: 100dvh;
+        min-height: 0;
+        box-sizing: border-box;
+        border: 0;
         border-radius: 24px 24px 0 0;
-        margin: auto 0 0;
+        margin: 0;
+        padding-top: 4dvh;
+    }
+
+    .blackoutModule.habitModalModule > .mobileBar {
+        position: absolute;
+        top: 1.5dvh;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20;
+        margin: 0;
+        border: 0;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 }
 
@@ -231,6 +254,10 @@
         flex-shrink: 0;
         gap: .3vw;
         border: 1px solid var(--block_border);
+
+        &.active {
+            border: 0;
+        }
 
         .nameSpan {
             color: inherit;
@@ -333,7 +360,7 @@
     height: 78dvh;
 
     .habitCollaborationBody {
-        gap: 1vh;
+        gap: 1dvh;
 
         > .contactsUser,
         > .createChatSearch,
@@ -341,6 +368,11 @@
         > .createChatInfo {
             flex-shrink: 0;
         }
+    }
+
+    .createChatInfo {
+        margin-top: 0.5dvh;
+        margin-bottom: 0.5dvh;
     }
 
     button.contactsUser {
@@ -353,10 +385,45 @@
 
     .createChatSearch {
         width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
 
-        input {
+        > input {
             width: 100%;
+            min-width: 0;
             box-sizing: border-box;
+            min-height: 4.5dvh;
+            padding: 0.75dvh 3vw 0.75dvh 1vw;
+            padding-inline-end: 3vw;
+        }
+
+        > svg {
+            top: 50%;
+            right: 1vw;
+            width: 2.5dvh;
+            height: 2.5dvh;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        @media (max-width: 800px) {
+            > input {
+                padding-inline-start: 3vw;
+                padding-inline-end: 12vw;
+            }
+
+            > svg {
+                right: 3vw;
+            }
+        }
+    }
+
+    .habitConfirmActions {
+        width: 100%;
+
+        > .accept {
+            width: 100%;
+            border: 0;
         }
     }
 }
@@ -385,6 +452,7 @@
         cursor: pointer;
 
         &.accept {
+            border: 0;
             background: linear-gradient(135deg, var(--accent), var(--grad));
         }
 

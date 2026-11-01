@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeftIcon, CheckCircleIcon, CircleIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { CheckCircleIcon, CircleIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { SearchIcon } from "lucide-react";
 import RadioGroup from "../ts/RadioGroup";
 import CreateChatInfo from "./components/CreateChatInfo";
@@ -121,7 +121,6 @@ export default function HabitParticipantPicker() {
             </div>
         </div>
         <div className="habitConfirmActions">
-            <button type="button" disabled={saving} onClick={() => setBlackout({ seted: false })} aria-label="Назад"><ArrowLeftIcon /></button>
             <button type="button" className="accept" disabled={saving || (mode !== "add" && !selected.length) || (mode === "add" && !name.trim()) || (shared && !data?.access.is_owner)} onClick={() => void save()}>{saving ? "Сохраняется…" : "Сохранить"}</button>
         </div>
     </div>;
