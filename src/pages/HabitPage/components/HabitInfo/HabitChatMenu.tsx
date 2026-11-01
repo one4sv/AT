@@ -94,8 +94,9 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                 if (selectedOption === "activity") {
                     if (!canInvite || inviting) return;
                     setInviting(true);
-                    await api.post(`habits/${habit.id}/members`, { user_id: String(selected.id) });
-                    showNotification("success", "Приглашение отправлено");
+                    const res = await api.post(`habits/${habit.id}/members`, { user_id: String(selected.id) });
+                    if (!res.data.success) throw new Error("Invitation failed");
+                    showNotification("success", res.data.already_member ? "Контакт уже участвует в активности" : res.data.already_invited ? "Приглашение уже есть в чате" : "Приглашение отправлено в личный чат");
                     window.dispatchEvent(new Event("habit-members-updated"));
                 } else if (selectedOption === "group") {
                     const id = Number(selected.id);
@@ -263,6 +264,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                             </div>
                         ))}
                 </div>
+                <div className="habitChatContacts">
                 {loadingList ? (
                     <LoaderSmall />
                 ) : (
@@ -270,7 +272,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                     chatList.map((con) => (
                         <div
                             key={con.id}
-                            className="createChatContact"
+                            className={`createChatContact ${chosenCons.some(item => item.id === con.id) ? "selected" : ""}`}
                             onClick={() => {
                                 if (selectedOption === "group" || selectedOption === "activity") setChosenCons([con])
                                 else {
@@ -300,6 +302,7 @@ export default function HabitChatMenu({ readOnly, isArchived, isMy }: HabitSlide
                         </div>
                     ))
                 )}
+                </div>
             </div>
             {isMy && <button type="button" className="addGoalButtDiv habitCollaborationButton" onClick={() => setBlackout({ seted: true, module: "HabitCollaborationSettings" })}><GearIcon weight="fill" />Настройки совместной активности</button>}
         </div>

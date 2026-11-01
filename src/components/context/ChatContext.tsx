@@ -58,6 +58,8 @@ export interface message {
     is_system: boolean;
     is_pinned: boolean;
     target_id: string | null;
+    habit_invite_habit_id?: number | null;
+    habit_invite_recipient_id?: string | null;
     isPending?: boolean;
     clientId?: number;
     animateIn?: boolean;
@@ -451,6 +453,9 @@ export const ChatProvider = ({
                 }
                 if (data.type === "MESSAGE_DELETED") {
                     setMessages(prev => prev.filter(m => String(m.id) !== String(data.messageId)));
+                }
+                if (data.type === "HABIT_INVITATION_UPDATED") {
+                    window.dispatchEvent(new CustomEvent("habit-invitation-updated", { detail: data.message.id }));
                 }
                 if (data.type === "MESSAGE_EDITED") {
                     setMessages(

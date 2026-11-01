@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../../../../components/ts/api";
+import { UserCircleIcon, XIcon } from "@phosphor-icons/react";
+import { Link } from "react-router-dom";
 
 interface Member {
     user_id: string;
@@ -80,9 +82,17 @@ export default function HabitMembers({ habitId, isOwner, showInvite = true }: { 
             </div>}
             {loading && <span>Загрузка участников…</span>}
             {error && <p role="alert">{error}</p>}
-            {members.map(member => <div className="habitMember" key={member.user_id}>
-                <span>{member.user?.username || member.user?.nick || "Пользователь"} — {member.status === "accepted" ? "участник" : member.status === "pending" ? "приглашён" : "отказался"}</span>
-                {isOwner && member.user_id !== ownerId && <button type="button" disabled={pending} onClick={() => void remove(member.user_id)}>Удалить</button>}
+            {members.map(member => <div className="contactsUser active habitMember" key={member.user_id}>
+                <div className="contactsUserPic">
+                    {member.user?.avatar_url ? <img className="contactsUserAvatar" src={member.user.avatar_url} alt="" /> : <UserCircleIcon />}
+                </div>
+                <div className="contactsUserInfo">
+                    <div className="contactsUserStr">
+                        {member.user?.nick ? <Link className="nameSpan" to={`/acc/${member.user.nick}`}>{member.user.username || member.user.nick}</Link> : <span className="nameSpan">Пользователь</span>}
+                    </div>
+                    <span className="habitMemberStatus">{member.status === "accepted" ? "Участник" : member.status === "pending" ? "Приглашён" : "Отклонил приглашение"}</span>
+                </div>
+                {isOwner && member.user_id !== ownerId && <button type="button" className="habitMemberRemove" aria-label={member.status === "pending" ? "Отменить приглашение" : "Удалить участника"} disabled={pending} onClick={() => void remove(member.user_id)}><XIcon /></button>}
             </div>)}
         </section>
     );

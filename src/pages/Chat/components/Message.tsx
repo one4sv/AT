@@ -15,6 +15,7 @@ import { useSettings } from "../../../components/hooks/SettingsHook";
 import { reactionsArr } from "../../../components/ts/utils/emojies";
 import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
 import HighlightText from "../../../components/ts/HighlightText";
+import HabitInvitation from "./HabitInvitation";
 type MessageComponentType = {
     message: message;
     messageRefs?: React.MutableRefObject<Map<number, HTMLDivElement | null>>;
@@ -206,9 +207,9 @@ export default function Message({
                     {m.sender_name}
                 </div>}
                 {answer && scrollToMessage && <AnswerMess answer={answer} scrollToMessage={scrollToMessage} />}
-                <div className={`messageText ${isMobile ? "mobile" : ""}`}>
+                {m.habit_invite_habit_id && m.habit_invite_recipient_id ? <HabitInvitation messageId={m.id} recipientId={m.habit_invite_recipient_id} /> : <div className={`messageText ${isMobile ? "mobile" : ""}`}>
                     <HighlightText text={m.content} search={searchMess} />
-                </div>
+                </div>}
                 {m.files && m.files.length > 0 && <MessageFiles files={m.files} m={m} />}
                 {m.redirected_id && <div className="redirectedMess">
                     <div className="redirectSign">
