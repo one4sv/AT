@@ -36,7 +36,7 @@ export default function HabitMembers({ habitId, data, loading, error }: { habitI
         {data && <>
             {row(data.owner, data.owner_id, "Владелец")}
             {data.chat ? <>
-                <Link className={`contactsUser habitMember ${data.my_role ? "active" : ""}`} to={`/room/${data.chat.id}`}>
+                <Link className="contactsUser habitMember" to={`/room/${data.chat.id}`}>
                     <div className="contactsUserPic">{data.chat.avatar_url ? <img className="contactsUserAvatar" src={data.chat.avatar_url} alt="" /> : <UsersIcon />}</div>
                     <div className="contactsUserInfo"><div className="contactsUserStr"><span className="nameSpan">{data.chat.name}</span></div><span className="habitMemberStatus">Беседа</span></div>
                 </Link>

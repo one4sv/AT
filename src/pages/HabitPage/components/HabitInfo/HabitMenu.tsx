@@ -14,7 +14,7 @@ import { useEffect, useRef, useState } from "react";
 export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean, isArchived:boolean, isReadOnly: boolean}) {
     const { habit } = useTheHabit()
     const { blackout } = useBlackout()
-    const { showSlide, showHabitMenu, setShowHabitMenu, setDontHandle } = useSideMenu()
+    const { showSlide, showHabitMenu, setShowHabitMenu, dontHandleOther, setDontHandle } = useSideMenu()
     const { setNewOngoing } = useUpHabit()
     
     const [menuTranslate, setMenuTranslate] = useState(100);
@@ -57,9 +57,7 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
         }
     }
         const handleMenuTouchStart = (e: React.TouchEvent) => {
-        if (blackout.seted || !showHabitMenu || e.touches.length !== 1) return;
-        e.stopPropagation();
-        setDontHandle(true);
+        if (blackout.seted || dontHandleOther || !showHabitMenu || e.touches.length !== 1) return;
         if ((e.target as HTMLElement).closest("input, textarea, select, [contenteditable=true]")) return;
 
         startX.current = e.touches[0].clientX;
@@ -70,8 +68,7 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
     };
 
     const handleMenuTouchMove = (e: React.TouchEvent) => {
-        if (!touchActive.current || e.touches.length !== 1) return;
-        e.stopPropagation();
+        if (dontHandleOther || !touchActive.current || e.touches.length !== 1) return;
 
         const diff = e.touches[0].clientX - startX.current;
         const diffY = e.touches[0].clientY - startY.current;
@@ -79,6 +76,7 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
             direction.current = Math.abs(diff) > Math.abs(diffY) ? "horizontal" : "vertical";
         }
         if (direction.current !== "horizontal" || diff <= 0) return;
+        e.stopPropagation();
         setDontHandle(true);
         setDragging(true);
 
@@ -98,8 +96,6 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
         setDontHandle(false);
         if (direction.current !== "horizontal") return;
         direction.current = "";
-
-        setDontHandle(false);
         setDragging(false);
 
         if (translateRef.current > 25) {

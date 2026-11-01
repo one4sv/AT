@@ -15,7 +15,7 @@ export default function HabitChatMenu(_props: HabitSlideProps) {
     if (!habit) return null;
     return <div className="habitInnerSlide habitChatMenuSlide habitCollaborationOverview">
         <HabitMembers habitId={habit.id} data={data} loading={loading} error={error} />
-        {data?.access.can_invite && !habit.chat_id && <button type="button" className="addGoalButtDiv" onClick={() => setBlackout({ seted: true, module: "HabitParticipantPicker", point: data.member_count > 0 ? "shared" : "personal" })}>
+        {data?.access.can_invite && !habit.chat_id && <button type="button" className="addGoalButtDiv" onClick={() => setBlackout({ seted: true, module: "HabitParticipantPicker", point: data.access.is_owner && data.member_count > 0 ? "shared" : "personal" })}>
             <UserPlusIcon />Добавить участников
         </button>}
         {data?.access.is_owner && habit.chat_id && <button type="button" className="addGoalButtDiv" onClick={() => setBlackout({ seted: true, module: "ConfirmAction", confirmAction: {
