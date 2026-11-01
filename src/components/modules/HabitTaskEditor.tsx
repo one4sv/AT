@@ -18,7 +18,7 @@ export default function HabitTaskEditor() {
     const { blackout, setBlackout } = useBlackout();
     const { habit, loadHabit } = useTheHabit();
     const { chosenDay } = useCalendar();
-    const { habitSchedule, loadHabitSchedule, saveHabitSchedule, schedule_settings } = useSchedule();
+    const { loadHabitSchedule, saveHabitSchedule, schedule_settings } = useSchedule();
     const { weekStart } = useSettings();
     const { showNotification } = useNote();
     const [tasks, setTasks] = useState<TaskDraft[]>([emptyTask()]);
