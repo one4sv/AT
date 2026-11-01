@@ -80,11 +80,9 @@ export default function SharedDayComments({ mobile = false }: { mobile?: boolean
                     </div>
                     <span>{comment.user?.username || comment.user?.nick || "Участник"}</span>
                 </Link>
-            </div>
-            <div className="commentText">{comment.comment}</div>
-            <div className="commentReactions">
                 <span className="commentDate">{formatCreated(comment.created_at)}</span>
             </div>
+            <div className="commentText">{comment.comment}</div>
         </article>)}
     </div>;
     return mobile ? <div className="dayCommentDiv mobileSharedDayComments">{content}</div> : content;
