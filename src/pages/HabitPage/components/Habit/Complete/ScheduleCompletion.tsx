@@ -34,6 +34,10 @@ export default function ScheduleCompletion({ isMy }: { isMy: boolean }) {
                         <span className="scheduleButtInfo">
                             {time && <span className="scheduleButtSpan">{time}</span>}
                             <span>{block.name}</span>
+                            {habit?.schedule_blocks_mode === "shared" && (block.creator_name || block.actor_name) && <span className="sharedTaskAttribution">
+                                {block.creator_name && <span>Добавил: {block.creator_name}</span>}
+                                {block.completed && block.actor_name && <span>Выполнил: {block.actor_name}</span>}
+                            </span>}
                         </span>
                         <span className="scheduleButtSvg" aria-hidden="true">{pending ? <LoaderSmall/> : block.completed ? <CheckCircleIcon weight="fill" className="scsvg"/> : <CircleIcon/>}</span>
                     </button>

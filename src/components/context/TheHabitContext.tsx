@@ -94,6 +94,8 @@ export type DoneCompletion = {
     date: string;
     habit_id: number;
     isNew?: boolean;
+    created_by?: string | null;
+    creator_name?: string | null;
 };
 export type ChecklistPattern = {
     id: number;

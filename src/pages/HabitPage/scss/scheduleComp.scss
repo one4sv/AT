@@ -132,3 +132,15 @@
     overscroll-behavior-y: auto;
     touch-action: pan-y;
 }
+
+.sharedTaskAttribution {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5vw;
+    color: var(--borderWh);
+    font-size: 12px;
+}
+@media (max-width: 800px) {
+    .sharedTaskAttribution { gap: 2vw; }
+}

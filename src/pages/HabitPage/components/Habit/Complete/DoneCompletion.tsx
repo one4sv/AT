@@ -212,6 +212,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                 ) : (
                                     <span className="doneCompName">{b.name}</span>
                                 )}
+                                {habit?.metric_progress_mode === "shared" && b.creator_name && <span className="sharedTaskAttribution">Добавил: {b.creator_name}</span>}
                             </div>
 
                             {isMy && (

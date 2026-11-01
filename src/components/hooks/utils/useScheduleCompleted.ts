@@ -42,6 +42,9 @@ export function useScheduleCompleted(id?: string) {
                 completed: scheduleCompletions.some(
                     (c) => String(c.habit_id) === id && c.schedule_id === s.id && c.date === dateStr
                 ),
+                actor_name: scheduleCompletions.find(
+                    c => String(c.habit_id) === id && c.schedule_id === s.id && c.date === dateStr
+                )?.actor_name || null,
             }))
             .sort(
                 (a, b) =>

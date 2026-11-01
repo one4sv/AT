@@ -23,8 +23,9 @@ interface DayComment extends DayAction {
 }
 
 interface DayCompletion extends DayAction {}
+interface DayTaskCompletion extends DayAction { name: string; }
 
-type FeedItem = (DayComment & { type: "comment" }) | (DayCompletion & { type: "completion" });
+type FeedItem = (DayComment & { type: "comment" }) | (DayCompletion & { type: "completion" }) | (DayTaskCompletion & { type: "task" });
 
 const formatEventDate = (date: string) => {
     const parsed = new Date(date);
@@ -45,6 +46,7 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
     const { ws } = useWebSocket();
     const [ comments, setComments ] = useState<DayComment[]>([]);
     const [ completions, setCompletions ] = useState<DayCompletion[]>([]);
+    const [ taskCompletions, setTaskCompletions ] = useState<DayTaskCompletion[]>([]);
     const [ error, setError ] = useState("");
     const [ overflowed, setOverflowed ] = useState(false);
     const feedRef = useRef<HTMLDivElement | null>(null);
@@ -57,6 +59,7 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
             if (!signal?.aborted) {
                 setComments(res.data.comments || []);
                 setCompletions(res.data.completions || []);
+                setTaskCompletions(res.data.taskCompletions || []);
                 setError("");
             }
         } catch {
@@ -68,6 +71,7 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
         const controller = new AbortController();
         setComments([]);
         setCompletions([]);
+        setTaskCompletions([]);
         setOverflowed(false);
         void load(controller.signal);
         const refresh = () => { void load(controller.signal); };
@@ -100,7 +104,8 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
 
     const feed: FeedItem[] = [
         ...comments.filter(item => item.user_id !== user.id).map(item => ({ ...item, type: "comment" as const })),
-        ...completions.map(item => ({ ...item, type: "completion" as const }))
+        ...completions.map(item => ({ ...item, type: "completion" as const })),
+        ...taskCompletions.map(item => ({ ...item, type: "task" as const }))
     ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
     useEffect(() => {
@@ -124,7 +129,7 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
         <div className="dayActivityEntries" ref={entriesRef}>
             {error && <div role="alert">{error}</div>}
             {feed.map(item => <article
-                className={`sharedDayComment ${item.type === "completion" ? "sharedDayCompletion" : ""}`}
+                className={`sharedDayComment ${item.type !== "comment" ? "sharedDayCompletion" : ""}`}
                 key={`${item.type}-${item.id}`}
             >
                 <div className="commentInfo">
@@ -138,9 +143,10 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
                         <span>Участник</span>
                     </div>}
                     <span className="commentDate">{formatEventDate(item.created_at)}</span>
-                    {item.type === "completion" && <CheckCircleIcon className="dayCompletionIcon" weight="fill" aria-label="Выполнено" />}
+                    {item.type !== "comment" && <CheckCircleIcon className="dayCompletionIcon" weight="fill" aria-label="Выполнено" />}
                 </div>
                 {item.type === "comment" && <div className="commentText">{item.comment}</div>}
+                {item.type === "task" && <div className="commentText sharedTaskEventName">Выполнил задачу: {item.name}</div>}
             </article>)}
             {expanded && !feed.length && !error && <div className="habitSettingValue">За этот день действий пока нет</div>}
         </div>

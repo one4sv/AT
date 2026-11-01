@@ -12,6 +12,8 @@ export type ScheduleBlockType = {
     name: string;
     start_time: string;
     end_time: string;
+    created_by?: string | null;
+    creator_name?: string | null;
 };
 export type RawScheduleBlock = {
     id: number;
@@ -20,6 +22,8 @@ export type RawScheduleBlock = {
     name: string | null;
     start_time: string | null;
     end_time: string | null;
+    created_by?: string | null;
+    creator_name?: string | null;
 };
 type ScheduleBlockToSend = {
     id?: number;
@@ -41,6 +45,8 @@ export type ScheduleCompletionType = {
     habit_id: string;
     schedule_id: number;
     date: string;
+    actor_user_id?: string | null;
+    actor_name?: string | null;
 };
 export type ScheduleContextType = {
     /** 
@@ -191,7 +197,9 @@ export const ScheduleProvider = ({
                             isSeparator: Boolean(b.isSeparator),
                             name: b.name || "",
                             start_time: b.start_time || "",
-                            end_time: b.end_time || ""
+                            end_time: b.end_time || "",
+                            created_by: b.created_by || null,
+                            creator_name: b.creator_name || null
                         })
                     );
                     setHabitSchedule(
@@ -278,6 +286,7 @@ export const ScheduleProvider = ({
                 if (userRef.current !== requestUser) return;
                 if (!response.data.success) throw new Error(response.data.error || "Не удалось сохранить выполнение");
                 await scheduleGetCompletions(habitId);
+                window.dispatchEvent(new Event("habit-day-comment-updated"));
                 if (String(currentHabitRef.current) === habitId) await loadHabit(habitId);
                 await refetchHabits();
             } catch (error) {
