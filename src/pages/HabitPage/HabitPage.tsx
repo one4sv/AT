@@ -139,7 +139,7 @@ export default function Habit() {
 
                 {shouldShowSchedule && <Schedule id={habitId} isMy={!!habit?.access?.can_edit_blocks || isMy} />}
 
-                {isMobile && habitId && <div className="dayCommentDiv mobileSharedDayComments"><SharedDayComments /></div>}
+                {isMobile && habitId && <SharedDayComments mobile />}
                 <Diagrams mainRef={mainRef} />
             </div>
             {isMobile && habitId ? <HabitMobileDone habitId={habitId} isReadOnly={isCompletionReadOnly} canComment={canComment && !isArchived} /> : ""}

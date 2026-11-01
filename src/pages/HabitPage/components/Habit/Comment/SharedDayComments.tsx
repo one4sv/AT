@@ -19,7 +19,7 @@ interface DayComment {
     user: HabitUser | null;
 }
 
-export default function SharedDayComments() {
+export default function SharedDayComments({ mobile = false }: { mobile?: boolean }) {
     const { habit, dayComment } = useTheHabit();
     const { user } = useUser();
     const { data } = useHabitMembers(habit?.id);
@@ -70,7 +70,7 @@ export default function SharedDayComments() {
     const othersComments = comments.filter(comment => comment.user_id !== user.id);
     if (!isShared || (!othersComments.length && !error)) return null;
 
-    return <div className="sharedDayComments comments" aria-label="Комментарии участников">
+    const content = <div className="sharedDayComments comments" aria-label="Комментарии участников">
         {error && <div role="alert">{error}</div>}
         {othersComments.map(comment => <article className="comment sharedDayComment" key={comment.id}>
             <div className="commentInfo">
@@ -87,4 +87,5 @@ export default function SharedDayComments() {
             </div>
         </article>)}
     </div>;
+    return mobile ? <div className="dayCommentDiv mobileSharedDayComments">{content}</div> : content;
 }
