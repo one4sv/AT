@@ -1,5 +1,6 @@
 import ConfirmAction from './ConfirmAction';
 import HabitParticipantPicker from './HabitParticipantPicker';
+import HabitCreateChat from './HabitCreateChat';
 import AddHabit from './AddHabit';
 import DeleteConfirm from './DeleteConfirm';
 import { PickHandler } from './PickHandler';
@@ -19,6 +20,7 @@ import HabitCollaborationSettings from './HabitCollaborationSettings';
 const ModuleMap: Record<string, React.FC> = {
     ConfirmAction:ConfirmAction,
     HabitParticipantPicker:HabitParticipantPicker,
+    HabitCreateChat:HabitCreateChat,
     AddHabit: AddHabit,
     Delete:DeleteConfirm,
     PickHandler:PickHandler,

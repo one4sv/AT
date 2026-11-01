@@ -587,3 +587,23 @@
         outline: none;
     }
 }
+
+.habitCreateChat {
+    height: auto;
+    min-height: 35dvh;
+
+    .createChatInfo {
+        margin-bottom: 1dvh;
+    }
+
+    @media (max-width: 800px) {
+        height: 100dvh;
+    }
+}
+
+.habitPickerCreate {
+    flex-shrink: 0;
+    justify-content: center;
+    border: 0;
+    background: var(--interact);
+}
