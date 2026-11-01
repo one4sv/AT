@@ -129,7 +129,7 @@ export default function HabitParticipantPicker() {
             </div>}
             <div className="createChatSearch"><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Поиск контактов" aria-label="Поиск контактов" /><SearchIcon /></div>
             <div className="habitPickerContacts">
-                {loading ? <div className="habitMembersSkeleton" role="status" aria-label="Загрузка контактов"><div /><div /></div> : listError ? <p role="alert">{listError}</p> : list.length === 0 ? <div className="habitSettingValue">Контакты не найдены</div> : list.map(contact => <button key={contact.id} type="button" className="contactsUser" disabled={saving} onClick={() => setSelected(current => [contact])}>
+                {loading ? <div className="habitMembersSkeleton" role="status" aria-label="Загрузка контактов"><div /><div /></div> : listError ? <p role="alert">{listError}</p> : list.length === 0 ? <div className="habitSettingValue">Контакты не найдены</div> : list.map(contact => <button key={contact.id} type="button" className="contactsUser" disabled={saving} onClick={() => setSelected([contact])}>
                     <div className="contactsUserPic">{contact.avatar_url ? <img className="contactsUserAvatar" src={contact.avatar_url} alt="" /> : <UserCircleIcon />}</div>
                     <div className="contactsUserInfo"><div className="contactsUserStr"><span className="nameSpan">{contact.name || contact.nick}</span>{selected.some(item => item.id === contact.id) ? <CheckCircleIcon weight="fill" /> : <CircleIcon />}</div></div>
                 </button>)}
