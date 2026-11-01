@@ -35,8 +35,9 @@ export default function HabitParticipantPicker() {
     const notifyRef = useRef(showNotification);
     notifyRef.current = showNotification;
     useEffect(() => {
-        if (!canDirectInvite && isOwner) setMode("group");
-    }, [canDirectInvite, isOwner]);
+        if (!data || !isOwner) return;
+        setMode(canDirectInvite && blackout.point !== "shared" ? "activity" : "group");
+    }, [data?.owner_id, canDirectInvite, isOwner, blackout.point]);
     useEffect(() => {
         const controller = new AbortController();
         setLoading(true);
@@ -87,7 +88,8 @@ export default function HabitParticipantPicker() {
             await loadHabit(String(habit.id));
             window.dispatchEvent(new Event("habit-members-updated"));
             setBlackout({ seted: false });
-            showNotification("success", mode === "activity" ? "Приглашение отправлено в чат" : "Активность связана с беседой");
+            if (mode === "activity") showNotification("success", "Приглашение отправлено в чат");
+            else showNotification("success", "Активность связана с беседой");
         } catch (error) {
             showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Не удалось сохранить участников" : "Не удалось сохранить участников. Проверьте права и выбор беседы.");
         } finally {

@@ -16,7 +16,7 @@ export default function HabitChatMenu(_props: HabitSlideProps) {
     return <div className="habitInnerSlide habitChatMenuSlide habitCollaborationOverview">
         <HabitMembers habitId={habit.id} data={data} loading={loading} error={error} />
         {!habit.chat_id && (data?.access.is_owner || data?.access.can_invite && !data?.members.some(member => member.user_id !== data.owner_id && (member.status === "accepted" || member.status === "pending"))) && <button type="button" className="addGoalButtDiv" onClick={() => setBlackout({ seted: true, module: "HabitParticipantPicker", point: data.access.is_owner && data.members.some(member => member.user_id !== data.owner_id && (member.status === "accepted" || member.status === "pending")) ? "shared" : "personal" })}>
-            <UserPlusIcon />Добавить участников
+            <UserPlusIcon />{data?.members.some(member => member.user_id !== data.owner_id && (member.status === "accepted" || member.status === "pending")) ? "Добавить в беседу" : "Добавить участников"}
         </button>}
         {data?.access.is_owner && habit.chat_id && <button type="button" className="addGoalButtDiv" onClick={() => setBlackout({ seted: true, module: "ConfirmAction", confirmAction: {
             title: "Отвязать активность от беседы?",

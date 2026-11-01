@@ -34,6 +34,7 @@ export default function HabitCreateChat() {
             await loadHabit(String(habit.id));
             window.dispatchEvent(new Event("habit-members-updated"));
             setBlackout({ seted: false });
+            setBlackout({ seted: false });
             showNotification("success", result.data.invited
                 ? "Беседа создана. Второму участнику отправлено приглашение."
                 : "Беседа создана и привязана к активности");
