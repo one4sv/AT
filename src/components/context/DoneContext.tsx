@@ -4,7 +4,7 @@ import { useTheHabit } from "../hooks/TheHabitHook";
 import { useCalendar } from "../hooks/CalendarHook";
 import { useHabits } from "../hooks/HabitsHook";
 import { api } from "../ts/api";
-import { dateToCalendarFormat } from "../ts/utils/dateToStr";
+import { dateToCalendarFormat, todayStrFunc } from "../ts/utils/dateToStr";
 import { getDayArrays } from "../ts/utils/getDayArrs";
 import { useParams } from "react-router-dom";
 
@@ -119,7 +119,18 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
             setIsPlanned(plannedArr.length > 0 && habit.periodicity === "sometimes");
         } else {
             setIsDone(false);
-            setDoable(false);
+            // A rest day in a cycle is not scheduled, but the backend permits
+            // a member with can_complete to record an explicit completion.
+            // Never enable dates before the habit starts or in the future.
+            const canMarkCycleRestToday =
+                habit.ongoing &&
+                habit.periodicity === "cycle" &&
+                !!habit.access?.can_complete &&
+                chosenDay === todayStrFunc() &&
+                chosenDay >= habit.start_date &&
+                (!habit.end_date || chosenDay <= habit.end_date);
+
+            setDoable(canMarkCycleRestToday);
             setPlanable(false);
             setIsPlanned(false);
         }

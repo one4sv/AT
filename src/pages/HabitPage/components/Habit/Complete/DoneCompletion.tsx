@@ -170,47 +170,34 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                             key={b.id}
                         >
                             <div className="doneButtInfo">
-                                <span className="scheduleButtSpan">
-                                    {isEditing ? (
-                                        <>
-                                            с{" "}
+                                {isEditing ? (
+                                    <div className="doneCompTimeRow">
+                                        <label className="doneCompTimeField">
+                                            <span>С</span>
                                             <input
                                                 type="time"
                                                 aria-label={t("activityCompletion.startTime")}
                                                 value={b.start_time ?? ""}
                                                 disabled={isLoading}
                                                 className="doneCompInp"
-                                                onChange={e =>
-                                                    updateBlock(
-                                                        b.id,
-                                                        "start_time",
-                                                        e.target.value
-                                                    )
-                                                }
-                                                placeholder="чч:мм"
+                                                onChange={e => updateBlock(b.id, "start_time", e.target.value)}
                                             />
-                                            до
+                                        </label>
+                                        <label className="doneCompTimeField">
+                                            <span>До</span>
                                             <input
                                                 type="time"
                                                 aria-label={t("activityCompletion.endTime")}
                                                 value={b.end_time ?? ""}
                                                 disabled={isLoading}
                                                 className="doneCompInp"
-                                                onChange={e =>
-                                                    updateBlock(
-                                                        b.id,
-                                                        "end_time",
-                                                        e.target.value
-                                                    )
-                                                }
-                                                placeholder="чч:мм"
+                                                onChange={e => updateBlock(b.id, "end_time", e.target.value)}
                                             />
-                                            :
-                                        </>
-                                    ) : (
-                                        formatTime(b.start_time, b.end_time,)
-                                    )}
-                                </span>
+                                        </label>
+                                    </div>
+                                ) : (b.start_time || b.end_time) && (
+                                    <span className="scheduleButtSpan">{formatTime(b.start_time, b.end_time)}</span>
+                                )}
 
                                 {isEditing ? (
                                     <input
@@ -220,17 +207,11 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                         value={b.name}
                                         disabled={isLoading}
                                         className="doneCompInp dciw"
-                                        onChange={e =>
-                                            updateBlock(
-                                                b.id,
-                                                "name",
-                                                e.target.value
-                                            )
-                                        }
+                                        onChange={e => updateBlock(b.id, "name", e.target.value)}
                                         minLength={1}
                                     />
                                 ) : (
-                                    <span>{b.name}</span>
+                                    <span className="doneCompName">{b.name}</span>
                                 )}
                             </div>
 

@@ -191,14 +191,18 @@
     }
 }
 
+
 .doneComp {
     box-sizing: border-box;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: 8px;
-    padding: 8px;
-    border-radius: 16px;
-    background: var(--interact, var(--bgc));
+    align-items: center;
+    gap: .75vw;
+    padding: 1dvh .75vw;
+    min-height: 6dvh;
+    border: none;
+    border-radius: 20px;
+    background: var(--interact);
 }
 
 .doneComp .doneButtInfo {
@@ -206,50 +210,89 @@
     height: auto;
     min-width: 0;
     padding: 0;
-    gap: 8px;
+    gap: .75dvh;
+}
+
+.doneCompTimeRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75vw;
+    min-width: 0;
+}
+
+.doneCompTimeField {
+    display: flex;
+    align-items: center;
+    gap: .4vw;
+    min-width: 0;
+    color: var(--borderWh);
+    font-size: 14px;
 }
 
 .doneComp .scheduleButtSpan {
+    color: var(--borderWh);
+    font-size: 14px;
     flex-wrap: wrap;
     min-width: 0;
 }
 
+.doneCompName {
+    min-width: 0;
+    color: var(--tc);
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+}
+
 .doneComp .doneCompInp {
     box-sizing: border-box;
-    width: 104px;
+    width: 8vw;
+    min-width: 0;
     max-width: 100%;
-    min-height: 40px;
-    border: 1px solid transparent;
+    min-height: 3.5dvh;
+    height: 3.5dvh;
+    padding: .5dvh .5vw;
+    border: none;
     outline: none;
     border-radius: 12px;
     background: var(--mc);
-    padding: 8px;
-    font-size: 16px;
     color: var(--tc);
+    font: inherit;
+    font-size: 15px;
+
+    &:focus-visible {
+        background: var(--menuButtHover);
+        border: none;
+        outline: none;
+    }
 }
 
 .doneComp .doneCompInp.dciw {
     width: 100%;
-}
-
-.doneComp .doneCompInp:focus {
-    border-color: var(--accent);
+    min-height: 4dvh;
+    height: auto;
 }
 
 .doneComp .doneCompContolers {
     align-self: center;
     height: auto;
+    gap: .25vw;
 }
 
-.doneCompControler, .doneCompAdd {
-    border: 0;
+.doneCompControler,
+.doneCompAdd {
+    border: none;
+    outline: none;
     background: transparent;
     font: inherit;
 }
 
 .doneCompControler {
-    width: 40px;
-    height: 40px;
+    width: 4dvh;
+    height: 4dvh;
+    min-width: 4dvh;
+    min-height: 4dvh;
+    border-radius: 12px;
 }
 
 .doneCompControler:disabled {
@@ -258,24 +301,49 @@
 }
 
 .doneCompAdd {
-    min-height: 44px;
+    min-height: 4.5dvh;
+    border-radius: 20px;
 }
 
 .completionEmpty {
     display: flex;
     flex: 1;
-    min-height: 80px;
-    padding: 20px;
+    min-height: 8dvh;
+    padding: 2dvh 1vw;
     box-sizing: border-box;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 1dvh;
     color: var(--borderWh);
     text-align: center;
     font-size: 15px;
 }
 
 .doneComps {
-    gap: 8px;
+    gap: .75dvh;
+}
+
+@media (max-width: 800px) {
+    .doneComp {
+        padding: 1dvh 2vw;
+        gap: 2vw;
+    }
+
+    .doneCompTimeRow {
+        gap: 2vw;
+    }
+
+    .doneCompTimeField {
+        gap: 1vw;
+    }
+
+    .doneComp .doneCompInp {
+        width: 23vw;
+        padding: .5dvh 2vw;
+    }
+
+    .doneComp .doneCompContolers {
+        gap: 1vw;
+    }
 }
