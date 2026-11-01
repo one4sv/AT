@@ -548,6 +548,12 @@
     .mobileSharedDayComments .dayActivityPreview {
         max-height: 30dvh;
         min-height: 0;
+        width: 100%;
+    }
+
+    .mobileSharedDayComments .sharedDayComments {
+        max-height: 24dvh;
+        overflow-y: auto;
     }
 
     .dayActivityShowAll {
