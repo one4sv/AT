@@ -48,6 +48,15 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
             loadHabitSchedule(id)
         }
     }, [id, loadHabitSchedule])
+    useEffect(() => {
+        if (!id) return;
+        const onTasks = (event: Event) => {
+            const { habitId } = (event as CustomEvent<{ habitId: number }>).detail || {};
+            if (String(habitId) === id) void loadHabitSchedule(id);
+        };
+        window.addEventListener("habit-tasks-updated", onTasks);
+        return () => window.removeEventListener("habit-tasks-updated", onTasks);
+    }, [id, loadHabitSchedule]);
 
     const createWeek = (startDate: Date) => {
         const result = []

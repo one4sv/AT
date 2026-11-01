@@ -119,3 +119,16 @@
     outline: 2px solid var(--accent_text);
     outline-offset: -2px;
 }
+
+.scheduleTaskAdd {
+    flex-shrink: 0;
+    border: 0;
+    outline: none;
+    background: var(--interact);
+    color: var(--accent_text);
+    margin: 1dvh auto .5dvh;
+}
+.scheduleCompilition {
+    overscroll-behavior-y: auto;
+    touch-action: pan-y;
+}

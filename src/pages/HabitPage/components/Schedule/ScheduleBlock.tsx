@@ -2,7 +2,8 @@ import { CheckCircleIcon, Plus } from "@phosphor-icons/react"
 import { formatHabitTime } from "../../../../components/ts/utils/formatHabitTime"
 import type { Habit } from "../../../../components/context/HabitsContext"
 import { useCalendar } from "../../../../components/hooks/CalendarHook"
-import { useRef, type SetStateAction } from "react"
+import { useBlackout } from "../../../../components/hooks/BlackoutHook"
+import { type SetStateAction } from "react"
 import { useNavigate } from "react-router-dom"
 import type { CountInpsType } from "./Schedule"
 import { useSettings } from "../../../../components/hooks/SettingsHook"
@@ -44,7 +45,7 @@ export default function ScheduleBlock({
     const { calendar } = useCalendar()
     const today = new Date()
     const navigate = useNavigate()
-    const tempIdRef = useRef(1)
+    const { setBlackout } = useBlackout()
     
 
     const getTimeClass = (h: Habit, day: number, date:Date) => {
@@ -207,21 +208,7 @@ export default function ScheduleBlock({
             {edit && !isGeneral && setCountInps && (
                 <button
                     className="scheduleBlockAdd"
-                    onClick={() =>
-                        setCountInps(prev => [
-                            ...prev,
-                            {
-                                fullDate: d.fullDate,
-                                day_of_week: d.value,
-                                isSeparator: isSeparator,
-                                id: 0,
-                                tempId: tempIdRef.current++,
-                                start_time: "",
-                                end_time: "",
-                                name: ""
-                            }
-                        ])
-                    }
+                    onClick={() => setBlackout({ seted: true, module: "HabitTaskEditor", point: "schedule", options: { id: d.fullDate } })}
                 >
                     <Plus/>Добавить блок
                 </button>

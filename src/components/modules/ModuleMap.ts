@@ -17,6 +17,7 @@ import Table from './Table';
 import PostSettings from './PostSettings';
 import HabitCollaborationSettings from './HabitCollaborationSettings';
 import HabitDayActivityHistory from './HabitDayActivityHistory';
+import HabitTaskEditor from './HabitTaskEditor';
 
 const ModuleMap: Record<string, React.FC> = {
     ConfirmAction:ConfirmAction,
@@ -37,6 +38,7 @@ const ModuleMap: Record<string, React.FC> = {
     PostSettings:PostSettings,
     HabitCollaborationSettings:HabitCollaborationSettings,
     HabitDayActivityHistory:HabitDayActivityHistory,
+    HabitTaskEditor:HabitTaskEditor,
     Table:Table
 };
 

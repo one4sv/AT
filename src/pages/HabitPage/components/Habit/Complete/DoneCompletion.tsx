@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from "react"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 import { api } from "../../../../../components/ts/api"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
+import { useBlackout } from "../../../../../components/hooks/BlackoutHook"
 import { type DoneCompletion } from "../../../../../components/context/TheHabitContext"
 import { useNote } from "../../../../../components/hooks/NoteHook"
 import { formatTime, timeToMinutes } from "../../../../../components/ts/utils/dateToStr"
@@ -26,12 +27,12 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
     const { chosenDay } = useCalendar()
     const { t } = useTranslation("common")
     const { loadHabit, habit, checklist } = useTheHabit()
+    const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
 
     const {
         blocks,
         setBlocks,
-        addBlock: addBlockBase,
         updateBlock,
     } = useChecklistBlocks(checklist)
 
@@ -66,11 +67,9 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
     }, [checklist, habit?.id, setBlocks])
 
     const addBlock = () => {
-        if (!habit) return
-
-        const id = addBlockBase(habit.id, chosenDay)
-        toggleEdit(id)
-    }
+        if (!habit) return;
+        setBlackout({ seted: true, module: "HabitTaskEditor", point: "checklist", options: { id: chosenDay } });
+    };
 
     const toggleEdit = (id: number) => {
         setEditing(prev => {
@@ -284,7 +283,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
 
             {isMy && (
                 <button type="button" className="doneCompAdd" onClick={addBlock}>
-                    <PlusIcon /> {t("activityCompletion.addBlock")}
+                    <PlusIcon /> Добавить задачу
                 </button>
             )}
         </div>

@@ -364,7 +364,7 @@ export default function Blackout() {
                                 moduleRefs.current.delete(index);
                             }
                         }}
-                        className={`blackoutModule ${isTop ? "open" : "close"} ${["HabitParticipantPicker", "HabitCollaborationSettings", "HabitCreateChat", "HabitDayActivityHistory"].includes(item.module || "") ? "habitModalModule" : ""}`}
+                        className={`blackoutModule ${isTop ? "open" : "close"} ${["HabitParticipantPicker", "HabitCollaborationSettings", "HabitCreateChat", "HabitDayActivityHistory", "HabitTaskEditor"].includes(item.module || "") ? "habitModalModule" : ""}`}
                         style={{
                             position: "absolute",
                             inset: 0,

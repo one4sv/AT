@@ -1,18 +1,21 @@
 import { useSchedule } from "../../../../../components/hooks/ScheduleHook";
+import { useBlackout } from "../../../../../components/hooks/BlackoutHook";
+import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 import { useParams } from "react-router";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import "../../../scss/scheduleComp.scss";
-import { CheckCircleIcon, CircleIcon, ListChecksIcon } from "@phosphor-icons/react";
+import { CheckCircleIcon, CircleIcon, ListChecksIcon, PlusIcon } from "@phosphor-icons/react";
 import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
 import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 import { useScheduleCompleted } from "../../../../../components/hooks/utils/useScheduleCompleted";
-import { useTranslation } from "react-i18next";
+
 
 export default function ScheduleCompletion({ isMy }: { isMy: boolean }) {
     const { scheduleComplete, loadingComp, loading } = useSchedule();
     const { chosenDay } = useCalendar();
+    const { setBlackout } = useBlackout();
+    const { habit } = useTheHabit();
     const { habitId: id } = useParams<{ habitId: string }>();
-    const { t } = useTranslation("common");
     const scheduleCompleted = useScheduleCompleted(id);
     const date = chosenDay || todayStrFunc();
 
@@ -36,6 +39,11 @@ export default function ScheduleCompletion({ isMy }: { isMy: boolean }) {
                     </button>
                 );
             })}
+            {!!habit?.access?.can_edit_blocks && habit.ongoing && <button
+                type="button"
+                className="doneCompAdd scheduleTaskAdd"
+                onClick={() => setBlackout({ seted: true, module: "HabitTaskEditor", point: "schedule", options: { id: date } })}
+            ><PlusIcon /> Добавить задачу</button>}
         </div>
     );
 }
