@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserCircleIcon } from "@phosphor-icons/react";
+import { useUser } from "../../../../../components/hooks/UserHook";
+import formatCreated from "../../../../Acc/utils/formatCreated";
+import useHabitMembers from "../../HabitInfo/useHabitMembers";
+import "../../../scss/DayComment.scss";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 import { api } from "../../../../../components/ts/api";
@@ -11,17 +15,21 @@ interface DayComment {
     id: number;
     user_id: string;
     comment: string;
+    created_at: string;
     user: HabitUser | null;
 }
 
 export default function SharedDayComments() {
     const { habit, dayComment } = useTheHabit();
+    const { user } = useUser();
+    const { data } = useHabitMembers(habit?.id);
+    const isShared = !!data?.member_count;
     const { chosenDay } = useCalendar();
     const { ws } = useWebSocket();
     const [ comments, setComments ] = useState<DayComment[]>([]);
     const [ error, setError ] = useState("");
     const load = useCallback(async (signal?: AbortSignal) => {
-        if (!habit) return;
+        if (!habit || !isShared) return;
         try {
             const res = await api.get(`habits/${habit.id}/day-comments`, { params: { date: chosenDay }, signal });
             if (!signal?.aborted) {
@@ -31,7 +39,7 @@ export default function SharedDayComments() {
         } catch {
             if (!signal?.aborted) setError("Не удалось загрузить комментарии");
         }
-    }, [habit?.id, chosenDay]);
+    }, [habit?.id, chosenDay, isShared]);
     useEffect(() => {
         const controller = new AbortController();
         setComments([]);
@@ -59,15 +67,24 @@ export default function SharedDayComments() {
         ws.addEventListener("message", onMessage);
         return () => { controller.abort(); ws.removeEventListener("message", onMessage); };
     }, [ws, habit?.id, chosenDay, load]);
-    return <div className="sharedDayComments" aria-label="Комментарии участников">
+    const othersComments = comments.filter(comment => comment.user_id !== user.id);
+    if (!isShared || (!othersComments.length && !error)) return null;
+
+    return <div className="sharedDayComments comments" aria-label="Комментарии участников">
         {error && <div role="alert">{error}</div>}
-        {comments.map(comment => <div className="sharedDayComment" key={comment.id}>
-            <Link className="sharedDayCommentUser" to={`/acc/${comment.user?.nick || comment.user_id}`}>
-                {comment.user?.avatar_url ? <img src={comment.user.avatar_url} alt="" /> : <UserCircleIcon />}
-                <span>{comment.user?.username || comment.user?.nick || "Участник"}</span>
-            </Link>
-            <div className="sharedDayCommentText">{comment.comment}</div>
-        </div>)}
-        {!comments.length && !error && <div className="habitSettingValue">За этот день пока нет комментариев</div>}
+        {othersComments.map(comment => <article className="comment sharedDayComment" key={comment.id}>
+            <div className="commentInfo">
+                <Link className="commentUser" to={`/acc/${comment.user?.nick || comment.user_id}`}>
+                    <div className="commentAvatar">
+                        {comment.user?.avatar_url ? <img src={comment.user.avatar_url} alt="" /> : <UserCircleIcon />}
+                    </div>
+                    <span>{comment.user?.username || comment.user?.nick || "Участник"}</span>
+                </Link>
+            </div>
+            <div className="commentText">{comment.comment}</div>
+            <div className="commentReactions">
+                <span className="commentDate">{formatCreated(comment.created_at)}</span>
+            </div>
+        </article>)}
     </div>;
 }

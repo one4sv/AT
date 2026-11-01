@@ -474,11 +474,35 @@
 .habitOwnerLink {
     text-decoration: none;
     color: var(--tc);
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    padding: .5vh .75vw;
 
-    > img {
-        width: 4vh;
-        height: 4vh;
-        object-fit: cover;
-        border-radius: 50%;
+    .contactsUserPic {
+        flex-shrink: 0;
+    }
+
+    .contactsUserInfo {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .habitMemberStatus {
+        color: var(--inner_text);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .addGoalCaret {
+        position: static;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    @media (max-width: 800px) {
+        padding: .5vh 3vw;
     }
 }

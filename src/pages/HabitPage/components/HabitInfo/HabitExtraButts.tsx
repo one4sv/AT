@@ -18,9 +18,16 @@ export default function HabitExtraButts({ isMy }: { isMy: boolean }) {
             {data?.member_count || habit?.chat_id ? <UsersIcon className="addGoalIcon chats" weight="fill" /> : <UserRoundPlus className="addGoalIcon chats" />}
             {data?.member_count || habit?.chat_id ? "Настройки совместной активности" : "Пригласить в активность"}
             <CaretRightIcon className="addGoalCaret" />
-        </div> : data?.owner && <Link className="addGoalButtDiv habitOwnerLink" to={`/acc/${data.owner.nick}`}>
-            {data.owner.avatar_url ? <img src={data.owner.avatar_url} alt="" /> : <UserCircleIcon />}
-            <span>{data.owner.username || data.owner.nick}<span className="habitSettingValue">Владелец{habit?.chat_id ? " + беседа" : data.member_count ? ` + ${data.member_count}` : ""}</span></span>
+        </div> : data?.owner && <Link className="contactsUser habitOwnerLink" to={`/acc/${data.owner.nick}`}>
+            <div className="contactsUserPic">
+                {data.owner.avatar_url ? <img className="contactsUserAvatar" src={data.owner.avatar_url} alt="" /> : <UserCircleIcon />}
+            </div>
+            <div className="contactsUserInfo">
+                <div className="contactsUserStr">
+                    <span className="nameSpan">{data.owner.username || data.owner.nick}</span>
+                </div>
+                <span className="habitMemberStatus">Владелец{habit?.chat_id ? " + беседа" : data.member_count ? ` + ${data.member_count}` : ""}</span>
+            </div>
             <CaretRightIcon className="addGoalCaret" />
         </Link>}
         {isMy && <div className="addGoalButtDiv" onClick={() => setShowSlide("settings")}><GearSix weight="fill" className="addGoalIcon settings" />Настройки<CaretRightIcon className="addGoalCaret" /></div>}
