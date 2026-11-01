@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { CheckCircleIcon, CircleIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { CheckCircleIcon, CircleIcon, UserCircleIcon, XIcon } from "@phosphor-icons/react";
 import { SearchIcon } from "lucide-react";
 import RadioGroup from "../ts/RadioGroup";
 import CreateChatInfo from "./components/CreateChatInfo";
@@ -22,8 +22,8 @@ export default function HabitParticipantPicker() {
     const { user } = useUser();
     const { showNotification } = useNote();
     const { data } = useHabitMembers(habit?.id);
-    const shared = blackout.point === "shared";
-    const [ mode, setMode ] = useState(shared ? "group" : "activity");
+    const isOwner = habit?.user_id === user.id;
+    const [ mode, setMode ] = useState(blackout.point === "shared" && isOwner ? "group" : "activity");
     const [ search, setSearch ] = useState("");
     const [ list, setList ] = useState<Contact[]>([]);
     const [ selected, setSelected ] = useState<Contact[]>([]);
@@ -69,7 +69,7 @@ export default function HabitParticipantPicker() {
         };
     }, [search, mode, data?.members, user.id]);
     const save = async () => {
-        if (!habit || submitting.current || (shared && !data?.access.is_owner)) return;
+        if (!habit || submitting.current || !selected.length || (mode === "add" && name.trim().length < 3) || (mode !== "activity" && !isOwner)) return;
         submitting.current = true;
         setSaving(true);
         try {
@@ -106,12 +106,37 @@ export default function HabitParticipantPicker() {
     return <div className="habitCollaborationModal habitParticipantPicker" role="dialog" aria-modal="true" aria-label="Добавить участников">
         <div className="habitCollaborationHeader">Добавить участников</div>
         <div className="habitCollaborationBody">
-            {shared ? <RadioGroup list={[{ label: "Добавить в существующую беседу", value: "group" }, { label: "Создать беседу", value: "add" }]} id="participantMode" val={mode} disabled={saving} newVal={value => { setMode(value); setSelected([]); }} /> : <div className="settingSpan">Пригласить в активность</div>}
+            {isOwner ? <RadioGroup
+                list={[
+                    { label: "Пригласить в активность", value: "activity" },
+                    { label: "Добавить в существующую беседу", value: "group" },
+                    { label: "Создать беседу", value: "add" }
+                ]}
+                id="participantMode"
+                val={mode}
+                disabled={saving}
+                newVal={value => {
+                    setMode(value);
+                    setSelected([]);
+                }}
+            /> : <div className="settingSpan">Пригласить в активность</div>}
             {mode === "add" && <CreateChatInfo name={name} setName={setName} desc={desc} setDesc={setDesc} pick={pick} setPick={setPick} />}
-            {mode !== "add" && selected.map(contact => <button key={contact.id} type="button" className="contactsUser active" onClick={() => setSelected(current => current.filter(item => item.id !== contact.id))}>
-                <div className="contactsUserPic">{contact.avatar_url ? <img className="contactsUserAvatar" src={contact.avatar_url} alt="" /> : <UserCircleIcon />}</div>
-                <div className="contactsUserInfo"><div className="contactsUserStr"><span className="nameSpan">{contact.name || contact.nick}</span><CheckCircleIcon /></div></div>
-            </button>)}
+            {selected.length > 0 && <div className="createChatChosenCons">
+                {selected.map(contact => <button
+                    key={contact.id}
+                    type="button"
+                    className="createChatChosenCon"
+                    disabled={saving}
+                    aria-label={`Убрать ${contact.name || contact.nick} из выбранных`}
+                    onClick={() => setSelected(current => current.filter(item => item.id !== contact.id))}
+                >
+                    <div className="creteChatConPick">
+                        {contact.avatar_url ? <img src={contact.avatar_url} alt="" /> : <UserCircleIcon />}
+                    </div>
+                    <span>{contact.name || contact.nick}</span>
+                    <XIcon className="createChatConRemove" />
+                </button>)}
+            </div>}
             <div className="createChatSearch"><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Поиск контактов" aria-label="Поиск контактов" /><SearchIcon /></div>
             <div className="habitPickerContacts">
                 {loading ? <div className="habitMembersSkeleton" role="status" aria-label="Загрузка контактов"><div /><div /></div> : listError ? <p role="alert">{listError}</p> : list.length === 0 ? <div className="habitSettingValue">Контакты не найдены</div> : list.map(contact => <button key={contact.id} type="button" className="contactsUser" disabled={saving} onClick={() => setSelected(current => mode === "add" ? current.some(item => item.id === contact.id) ? current.filter(item => item.id !== contact.id) : [...current, contact] : [contact])}>
@@ -121,7 +146,7 @@ export default function HabitParticipantPicker() {
             </div>
         </div>
         <div className="habitConfirmActions">
-            <button type="button" className="accept" disabled={saving || (mode !== "add" && !selected.length) || (mode === "add" && !name.trim()) || (shared && !data?.access.is_owner)} onClick={() => void save()}>{saving ? "Сохраняется…" : "Сохранить"}</button>
+            <button type="button" className="accept" disabled={saving || !selected.length || (mode === "add" && name.trim().length < 3) || (mode !== "activity" && !isOwner)} onClick={() => void save()}>{saving ? "Сохраняется…" : "Сохранить"}</button>
         </div>
     </div>;
 }

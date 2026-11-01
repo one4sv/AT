@@ -68,7 +68,7 @@
 
 .habitCollaborationModal {
     @include var.centerModal;
-    width: 36vw;
+    width: 25vw;
     max-width: 94vw;
     max-height: 90dvh;
     margin: auto auto 2dvh;
@@ -357,7 +357,7 @@
 }
 
 .habitParticipantPicker {
-    height: 78dvh;
+    height: 80dvh;
 
     .habitCollaborationBody {
         gap: 1dvh;
@@ -381,6 +381,54 @@
         border: 0;
         text-align: left;
         flex-shrink: 0;
+    }
+
+    .createChatChosenCons {
+        flex-shrink: 0;
+        width: 100%;
+        gap: .4dvh .4vw;
+    }
+
+    .createChatChosenCon {
+        border: none;
+        outline: none;
+        color: var(--tc);
+        font: inherit;
+        padding: .25dvh .5vw;
+        gap: .4vw;
+
+        > span {
+            max-width: 12vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        > .createChatConRemove {
+            visibility: visible;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 800px) {
+            padding: .25dvh 2vw;
+            gap: 1vw;
+
+            > span {
+                max-width: 45vw;
+            }
+        }
+    }
+
+    @media (hover: hover) {
+        button.contactsUser:hover {
+            outline: none;
+        }
+    }
+
+    @media (hover: none) {
+        button.contactsUser:active {
+            outline: none;
+        }
     }
 
     .createChatSearch {
@@ -504,5 +552,38 @@
 
     @media (max-width: 800px) {
         padding: .5vh 3vw;
+    }
+}
+
+.habitLinkChatButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    gap: .5vw;
+
+    > svg {
+        flex-shrink: 0;
+        color: var(--accent_text);
+        width: 2.5dvh;
+        height: 2.5dvh;
+    }
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+    }
+}
+
+@media (hover: hover) {
+    .habitMembers .contactsUser:hover,
+    .habitOwnerLink:hover {
+        outline: none;
+    }
+}
+
+@media (hover: none) {
+    .habitMembers .contactsUser:active,
+    .habitOwnerLink:active {
+        outline: none;
     }
 }

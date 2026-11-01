@@ -1,6 +1,6 @@
 import { useState } from "react";
 import RadioGroup from "../ts/RadioGroup";
-import { XIcon } from "@phosphor-icons/react";
+import { UsersIcon, XIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useTheHabit } from "../hooks/TheHabitHook";
 import { useUser } from "../hooks/UserHook";
@@ -39,6 +39,14 @@ export default function HabitCollaborationSettings() {
         <div className="habitCollaborationBody">
             {modeSetting("metric_progress_mode", "Прогресс выполнения: отметки, таймер, счётчик и задачи")}
             {modeSetting("schedule_blocks_mode", "Блоки расписания")}
+            {isOwner && !habit.chat_id && <button
+                type="button"
+                className="addGoalButtDiv habitLinkChatButton"
+                onClick={() => setBlackout({ seted: true, module: "HabitParticipantPicker", point: "shared" })}
+            >
+                <UsersIcon weight="fill" />
+                Добавить активность в беседу
+            </button>}
             {habit.chat_id && <div className="privateSLWrapper">
                 <div className="settingSpan">Участие в активности беседы</div>
                 {isOwner ? <RadioGroup list={[{ label: "По желанию", value: "optional" }, { label: "Для всех участников беседы", value: "required" }]} id="habitChatParticipation" val={habit.chat_participation_mode || "optional"} disabled={saving} newVal={async mode => {
