@@ -154,7 +154,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
     return (
         <div className="doneCompletionDiv">
             <div className="doneComps">
-                {!filteredBlocks.length && <div className="completionEmpty"><ListChecksIcon size={32}/><span>{t("activityCompletion.noBlocks")}</span></div>}
+                {!filteredBlocks.length && <div className="completionEmpty"><ListChecksIcon size={32}/><span>На этот день пока нет задач</span></div>}
                 {filteredBlocks.map(b => {
                     const isEditing = editing.has(b.id)
                     const isLoading = loading.has(b.id)

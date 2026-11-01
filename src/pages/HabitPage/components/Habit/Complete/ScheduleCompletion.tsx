@@ -21,7 +21,7 @@ export default function ScheduleCompletion({ isMy }: { isMy: boolean }) {
     return (
         <div className="scheduleCompilition" aria-busy={loading}>
             {loading && scheduleCompleted.length === 0 && <div className="completionEmpty" role="status"><LoaderSmall/></div>}
-            {!loading && scheduleCompleted.length === 0 && <div className="completionEmpty"><ListChecksIcon size={32}/><span>{t("activityCompletion.noTasks")}</span></div>}
+            {!loading && scheduleCompleted.length === 0 && <div className="completionEmpty"><ListChecksIcon size={32}/><span>На этот день пока нет задач</span></div>}
             {scheduleCompleted.map(block => {
                 const key = `${block.id} - ${date}`;
                 const pending = loadingComp.includes(key);

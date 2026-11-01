@@ -347,3 +347,15 @@
         gap: 1vw;
     }
 }
+
+/* Let a vertical touch gesture on the checklist continue to the page.
+   Internal scrolling remains available when there are many entries. */
+@media (max-width: 800px) {
+    .doneComps, .doneCompletionDiv {
+        touch-action: pan-y;
+        overscroll-behavior-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .doneComps { overflow-y: visible; height: auto; flex: 0 1 auto; }
+    .doneCompletionDiv { overflow-y: auto; overscroll-behavior-y: auto; }
+}
