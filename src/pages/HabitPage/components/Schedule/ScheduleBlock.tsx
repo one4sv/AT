@@ -38,7 +38,6 @@ export default function ScheduleBlock({
     id,
     countInps, 
     setCountInps,
-    isSeparator = false,
     extraBlocks = [],
 }: ScheduleBlock) {
     const { weekStart } = useSettings()
