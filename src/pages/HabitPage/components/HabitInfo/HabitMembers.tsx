@@ -82,7 +82,7 @@ export default function HabitMembers({ habitId, isOwner, showInvite = true }: { 
             </div>}
             {loading && <span>Загрузка участников…</span>}
             {error && <p role="alert">{error}</p>}
-            {members.map(member => <div className="contactsUser active habitMember" key={member.user_id}>
+            {members.map(member => <div className="contactsUser habitMember" key={member.user_id}>
                 <div className="contactsUserPic">
                     {member.user?.avatar_url ? <img className="contactsUserAvatar" src={member.user.avatar_url} alt="" /> : <UserCircleIcon />}
                 </div>

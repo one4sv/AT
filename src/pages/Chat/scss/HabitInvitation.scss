@@ -17,7 +17,7 @@
         margin: 0;
         background: var(--mc);
         border: 1px solid var(--block_border);
-        cursor: default;
+        cursor: pointer;
 
         .habitName {
             white-space: normal;
@@ -38,7 +38,7 @@
             justify-content: center;
             gap: .3vw;
             padding: .7vh .5vw;
-            border: 1px solid var(--block_border);
+            border: none;
             border-radius: 24px;
             background: var(--mc);
             color: var(--tc);
@@ -46,8 +46,36 @@
             cursor: pointer;
 
             &.accept {
-                background: linear-gradient(135deg, var(--accent), var(--grad));
+                background: linear-gradient(135deg, var(--accent_hov), var(--grad_hov));
                 color: var(--inner_text);
+                @media (hover: hover) {
+                    &:hover {
+                        background: linear-gradient(135deg, var(--accent), var(--grad));
+                    }
+                }
+
+                @media (hover: none) {
+                    &:active {
+                        color: var(--notValid);
+                        background: linear-gradient(135deg, var(--accent), var(--grad));
+                    }
+                }
+            }
+            &.cancel {
+                border: 1px solid var(--notValidBg);
+                @media (hover: hover) {
+                    &:hover {
+                        color: var(--notValid);
+                        background: var(--notValidBg);
+                    }
+                }
+
+                @media (hover: none) {
+                    &:active {
+                        color: var(--notValid);
+                        background: var(--notValidBg);
+                    }
+                }
             }
 
             &:disabled {

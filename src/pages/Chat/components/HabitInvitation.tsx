@@ -93,18 +93,17 @@ export default function HabitInvitation({ messageId, recipientId }: { messageId:
             <div className="habitInvitationTitle">Приглашение в активность</div>
             {loading && <div role="status">Загрузка…</div>}
             {invitation && <>
-                <div className="habit habitInvitationHabit">
+                <Link className="habit habitInvitationHabit" to={`/habit/${invitation.habit.id}`}>
                     <div className="habitIcon"><Icon className="habitIconSvg" /></div>
                     <div className="habitInfo">
                         <div className="habitName">{invitation.habit.name}</div>
                         <div className="habitPer">{time || (invitation.habit.periodicity === "everyday" ? "Каждый день" : "Совместная активность")}</div>
                     </div>
-                </div>
+                </Link>
                 {invitation.can_respond ? <div className="habitInvitationActions">
-                    <button type="button" disabled={saving} onClick={() => void respond("declined")}><XIcon />Отклонить</button>
-                    <button type="button" className="accept" disabled={saving} onClick={() => void respond("accepted")}><CheckIcon />Принять</button>
+                    <button type="button" className="habitInvationButt cancel" disabled={saving} onClick={() => void respond("declined")}><XIcon size={18}/>Отклонить</button>
+                    <button type="button" className="habitInvationButt accept" disabled={saving} onClick={() => void respond("accepted")}><CheckIcon size={18}/>Принять</button>
                 </div> : <div className="habitInvitationStatus" role="status">{statusText}</div>}
-                {invitation.status === "accepted" && <Link className="habitInvitationOpen" to={`/habit/${invitation.habit.id}`}>Открыть активность</Link>}
             </>}
             {error && <div className="habitInvitationError" role="alert">
                 <span>{error}</span>

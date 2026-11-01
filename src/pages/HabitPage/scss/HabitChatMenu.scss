@@ -67,6 +67,7 @@
 }
 
 .habitCollaborationModal {
+    @include var.centerModal;
     width: min(100%, 480px);
     max-height: 90dvh;
     margin: auto auto 2dvh;
@@ -201,8 +202,8 @@
 
     .habitMember {
         flex-shrink: 0;
-        cursor: default;
         gap: .3vw;
+        border: 1px solid var(--block_border);
 
         .nameSpan {
             color: inherit;
@@ -231,6 +232,21 @@
         background: var(--mc);
         color: var(--tc);
         cursor: pointer;
+        align-self: center;
+        border: 1px solid var(--block_border);
+        @media (hover: hover) {
+            &:hover {
+                color: var(--tc);
+                background: var(--interact);
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+                color: var(--tc);
+                background: var(--interact);
+            }
+        }
 
         &:disabled {
             opacity: .5;

@@ -1,5 +1,5 @@
 import "../../scss/Goals.scss"
-import { CaretRightIcon, GearSix, NotebookIcon, Target } from "@phosphor-icons/react";
+import { CaretRightIcon, GearSix, NotebookIcon, Target, UsersIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { api } from "../../../../components/ts/api";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
@@ -26,7 +26,7 @@ export default function HabitExtraButts ({ isMy }: { isMy: boolean }) {
         <div className="habitPlusDiv">
             <div className="habitPlusButts">
                 <div className="addGoalButtDiv" onClick={() => setShowSlide("chat")}>
-                    <UserRoundPlus className="addGoalIcon chats"/>
+                    {hasMembers ? <UsersIcon className="addGoalIcon chats" weight="fill"/> : <UserRoundPlus className="addGoalIcon chats"/>}
                     {hasMembers ? "Настройки совместной активности" : "Пригласить в активность"}
                     <CaretRightIcon className="addGoalCaret"/>
                 </div>

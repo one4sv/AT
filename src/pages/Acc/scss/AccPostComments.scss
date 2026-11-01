@@ -101,18 +101,15 @@
     width: fit-content;
     @media (hover: hover) {
         &:hover {
-        text-decoration: underline;
-        color: var(--tc);
-    
+            text-decoration: underline;
+            color: var(--tc);
         }
     }
 
     @media (hover: none) {
         &:active {
-        text-decoration: underline;
-        color: var(--tc);
-    
-        
+            text-decoration: underline;
+            color: var(--tc);
         }
     }
 }
