@@ -332,7 +332,8 @@
 }
 
 .rolesModalFields textarea {
-    resize: vertical;
+    resize: none;
+    field-sizing: content;
 }
 
 .rolesModalDetail {

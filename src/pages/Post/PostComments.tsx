@@ -1,3 +1,4 @@
+import TA from "../../components/ts/TA";
 import type { ReactNode } from "react";
 import Composer from "../../components/ts/Composer";
 import PageBottom from "../../components/ts/PageBottom";
@@ -227,7 +228,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                     </div>
                                 </div>
                                 {editingId === comment.id ? <div className="commentEdit">
-                                    <textarea value={editText} disabled={changingId === comment.id} onChange={event => setEditText(event.target.value)} />
+                                    <TA value={editText} disabled={changingId === comment.id} onChange={event => setEditText(event.target.value)} />
                                     <button type="button" disabled={!editText.trim() || changingId === comment.id} onClick={() => void editComment(comment.id)} aria-label={t("post.commentSave")}>
                                         <CheckIcon />
                                     </button>

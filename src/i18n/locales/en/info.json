@@ -96,7 +96,25 @@
         "a10End": " section.",
         "q11": "What features will appear in the future?",
         "a11": "Plans include development of publications, messenger improvements, channels, expanded activity features, and new tools for interaction between users.",
-        "contacts": "Contacts"
+        "contacts": "Contacts",
+        "q12": "How does the post editor work?",
+        "a12": "You can create and edit formatted posts with attachments, insert images into the content, configure visibility and link a post to an activity. Some editor functions are still being improved.",
+        "q13": "What is a shared activity?",
+        "a13": "An owner can invite another user or link an activity to a group chat. Participants accept invitations; completion, commenting and editing depend on their permissions.",
+        "q14": "What is the difference between personal and shared completion?",
+        "a14": "With personal completion, each participant keeps their own completion marks. In shared mode, participants share the result. Timer, counter, task progress and schedule blocks also have their own settings.",
+        "q15": "What can activities track?",
+        "a15": "Activities can provide a calendar, schedule, completion marks, timers, counters, tasks, comments and statistics, depending on the activity type and configuration.",
+        "q16": "How do chat roles and permissions work?",
+        "a16": "The Roles and permissions screen displays role priorities and member rights. Authorized members can adjust permissions for inviting users, managing chats and interacting with linked activities.",
+        "q17": "Can I edit the owner role?",
+        "a17": "No. Owner is a protected system role with priority 100 and all permissions. Its priority, name, description and permissions cannot be changed, and it cannot become the default role.",
+        "q18": "How can I invite people to a chat?",
+        "a18": "You can create an invitation link in chat settings and display its QR code. The owner and members with sufficient permissions can invite other people.",
+        "q19": "Can I edit or delete a comment?",
+        "a19": "Available actions depend on the comment type and the author's permissions. More comment and reply features are being developed; please report issues through Contacts.",
+        "q20": "Where can I see the development roadmap?",
+        "a20": "Version 0.6 work includes shared activities, the editor, chat permissions and comments. An interactive roadmap inside AT is planned, not yet released."
     },
     "policy": {
         "title": "Privacy Policy of Achieve Together (AT)",
@@ -211,8 +229,7 @@
     "navigation": {
         "back": "Back",
         "contents": "Contents"
-    }
-,
+    },
     "beta": {
         "hint": "Tip",
         "notice": "AchieveTogether is in early development. Some features may be unstable.",

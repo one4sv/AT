@@ -1,3 +1,4 @@
+import TA from "../../../../components/ts/TA";
 import { useState, useEffect } from "react";
 import SelectList from "../../../../components/ts/SelectList";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
@@ -144,7 +145,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             </div>
             <div className="addHabitWrapper">
                 <label htmlFor="redHabitDesc">Описание</label>
-                <textarea
+                <TA
                     id="redHabitDesc"
                     className="addHabitInput redHabitDesc"
                     maxLength={120}

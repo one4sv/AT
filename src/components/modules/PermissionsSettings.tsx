@@ -7,6 +7,7 @@ import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
 import { api } from "../ts/api";
 import Loader from "../ts/Loader";
+import TA from "../ts/TA";
 import SelectList from "../ts/SelectList";
 import { ArrowLeft, CaretDown, CaretRight, Image, TextAa, TextAlignCenter, User, UserGear, UserMinus, UserPlus, Prohibit, Trash, PushPin, ShareFat } from "@phosphor-icons/react";
 
@@ -130,7 +131,9 @@ export default function PermissionsSettings() {
     const myMember = members.find(member => member.id === user.id);
     const myRank = roles.find(role => role.role_id === myMember?.role_id)?.rank ?? 0;
     const selectedMemberRank = roles.find(role => role.role_id === selectedMember?.role_id)?.rank ?? 0;
-    const canEditRole = !!selectedRole && (
+    const isOwnerRole = (role: RoleType) => role.role_name.trim().toLowerCase() === "owner";
+    const ownerRoleSelected = !!selectedRole && isOwnerRole(selectedRole);
+    const canEditRole = !!selectedRole && !ownerRoleSelected && (
         isOwner || (selectedRole.is_editable && myRank > selectedRole.rank)
     );
     const canEditMember = !!selectedMember && selectedMember.id !== user.id && (
@@ -141,7 +144,7 @@ export default function PermissionsSettings() {
     const targetId = selectedRole?.role_id || selectedMember?.id || "";
     const permissions = selectedRole?.permissions || selectedMember?.permissions;
     const enabledCount = PERMISSIONS.filter(({ key }) =>
-        !!editedValue(target, targetId, key, permissions?.[key] ?? false)
+        ownerRoleSelected || !!editedValue(target, targetId, key, permissions?.[key] ?? false)
     ).length;
     const defaultRoleId = roles.find(role => role.is_default)?.role_id ?? null;
     const chosenDefaultRoleId = editedValue("group", group.id, "default_role_id", defaultRoleId);
@@ -239,7 +242,7 @@ export default function PermissionsSettings() {
                                                         id="roles-default"
                                                         arr={[
                                                             { label: "Без роли", value: "" },
-                                                            ...roles.map(role => ({ label: role.role_name, value: role.role_id }))
+                                                            ...roles.filter(role => !isOwnerRole(role)).map(role => ({ label: role.role_name, value: role.role_id }))
                                                         ]}
                                                         selected={String(chosenDefaultRoleId ?? "")}
                                                         showOnly={saving}
@@ -310,7 +313,7 @@ export default function PermissionsSettings() {
                                                 <span>{selectedRole ? selectedRole.role_name : selectedMember?.name || selectedMember?.nick}</span>
                                                 <small>
                                                     {selectedRole
-                                                        ? "Редактирование роли"
+                                                        ? ownerRoleSelected ? "Системная роль владельца — только просмотр" : "Редактирование роли"
                                                         : selectedMember?.id === ownerId ? "Владелец" : "Права участника"}
                                                 </small>
                                             </div>
@@ -359,6 +362,7 @@ export default function PermissionsSettings() {
                                                         arr={[
                                                             { label: "Без роли", value: "" },
                                                             ...roles
+                                                                .filter(role => !isOwnerRole(role) || role.role_id === selectedMember.role_id)
                                                                 .filter(role => isOwner || role.rank < myRank || role.role_id === selectedMember.role_id)
                                                                 .map(role => ({ label: role.role_name, value: role.role_id }))
                                                         ]}
@@ -380,7 +384,7 @@ export default function PermissionsSettings() {
 
                                         <div className="rolesModalPermissions">
                                             {PERMISSIONS.map(({ key, label, icon: Icon }) => {
-                                                const active = !!editedValue(target, targetId, key, permissions?.[key] ?? false);
+                                                const active = ownerRoleSelected || !!editedValue(target, targetId, key, permissions?.[key] ?? false);
                                                 return (
                                                     <button
                                                         type="button"
@@ -406,8 +410,9 @@ export default function PermissionsSettings() {
                                             <div className="rolesModalFields">
                                                 <label>
                                                     Описание роли
-                                                    <textarea
-                                                        rows={3}
+                                                    <TA
+                                                        minHeight={5}
+                                                        maxHeight={40}
                                                         value={String(editedValue("role", selectedRole.role_id, "desc", selectedRole.desc) ?? "")}
                                                         disabled={!canEditRole || saving}
                                                         onChange={event => changeValue(

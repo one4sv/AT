@@ -1,3 +1,4 @@
+import TA from "../../../components/ts/TA";
 import { CircleIcon, Camera, ChatTeardropText, FloppyDiskBack, PencilSimple, Users, X } from "@phosphor-icons/react";
 import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
@@ -234,8 +235,8 @@ export default function GroupInfo({
                 <div className="accInfoWrapper">
                     {(group.desc || editing) && <div className="accExtraInfoWrapper">
                         <label htmlFor="group-description">Описание</label>
-                        <textarea
-                            ref={bioRef}
+                        <TA
+                            taRef={bioRef}
                             id="group-description"
                             className={`extraInfoInput ${!editing || !myPerms?.change_desc ? "dis" : ""}`}
                             value={editing ? description : group.desc ?? ""}

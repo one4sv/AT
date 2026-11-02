@@ -1,5 +1,7 @@
 # Продолжение работы над AT
 
+Актуальные требования owner, TA, FAQ, QA и roadmap: [V0_6_FEATURES_AND_QA.md](V0_6_FEATURES_AND_QA.md), [ROADMAP_PROPOSAL.md](ROADMAP_PROPOSAL.md).
+
 Работай через GitHub, Supabase, Vercel и Render независимо от компьютера пользователя. Репозитории: one4sv/AT (клиент) и one4sv/achievetogether-server (сервер), ветка main. Прямой push и деплой разрешены. Сохраняй правки пользователя. Делай один общий коммит на репозиторий за выпуск, избегай лишних деплоев Vercel.
 
 ## Фактическое состояние

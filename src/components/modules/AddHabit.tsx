@@ -1,3 +1,4 @@
+import TA from "../ts/TA";
 import { useState, useEffect } from "react"
 import "../../scss/modules/addHabit.scss"
 import { forwardRef, useRef } from "react"
@@ -132,7 +133,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             </div>
             <div className="addHabitWrapper">
                 <label htmlFor="inputDesc">Описание</label>
-                <textarea id="inputDesc" className="inputDesc addHabitInput" maxLength={120} ref={textAreaRef}onChange={(e) => setDescription(e.currentTarget.value)}></textarea>
+                <TA id="inputDesc" className="inputDesc addHabitInput" maxLength={120} taRef={textAreaRef}onChange={(e) => setDescription(e.currentTarget.value)}></TA>
                 <span>{desc.length}/120</span>
             </div>            
             <div className="addHabitWrapper">

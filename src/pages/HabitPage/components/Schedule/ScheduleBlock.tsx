@@ -1,3 +1,4 @@
+import TA from "../../../../components/ts/TA";
 import { CheckCircleIcon, Plus } from "@phosphor-icons/react"
 import { formatHabitTime } from "../../../../components/ts/utils/formatHabitTime"
 import type { Habit } from "../../../../components/context/HabitsContext"
@@ -182,7 +183,7 @@ export default function ScheduleBlock({
                                 />
                             </div>
 
-                            <textarea
+                            <TA
                                 className="scheduleInpText"
                                 value={i.name}
                                 onChange={(e) =>

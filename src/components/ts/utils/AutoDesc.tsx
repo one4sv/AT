@@ -26,7 +26,7 @@ export default function AutoDesc({
 
     useEffect(() => {
         adjustHeight();
-    }, [value]);
+    }, [value, defaultValue]);
 
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         adjustHeight();
@@ -41,6 +41,7 @@ export default function AutoDesc({
             value={displayValue}           // контролируемое значение
             disabled={readOnly}
             className={className}
+            style={{ resize: "none" }}
             onInput={adjustHeight}         // на всякий случай (для быстрого ввода)
             onChange={handleChange}
         />

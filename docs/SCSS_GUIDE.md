@@ -1,5 +1,7 @@
 # SCSS в AchieveTogether: структура, оформление и правила
 
+Правила текстовых полей и owner: [V0_6_FEATURES_AND_QA.md](V0_6_FEATURES_AND_QA.md).
+
 Документ для работы со стилями клиентского репозитория [one4sv/AT](https://github.com/one4sv/AT). Составлен по существующим `src/scss`, SCSS страниц и рабочим инструкциям проекта. **Перед изменением интерфейса прочитать этот файл, [CODE_STYLE.md](CODE_STYLE.md) и [CUSTOM_COMPONENTS.md](CUSTOM_COMPONENTS.md).** Текущий исходник в `main` важнее устаревшего примера.
 
 ## 1. Где какие стили

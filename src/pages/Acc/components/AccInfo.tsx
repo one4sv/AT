@@ -1,3 +1,4 @@
+import TA from "../../../components/ts/TA";
 import { Camera, UserRound } from "lucide-react";
 import { useUpUser } from "../../../components/hooks/UpdateUserHook";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
@@ -168,9 +169,9 @@ export default function AccInfo({
                         <label htmlFor="extraInfoInputBio">
                             {t("about")}
                         </label>
-                        <textarea
+                        <TA
                             className="bioTA extraInfoInput"
-                            ref={bioRef}
+                            taRef={bioRef}
                             id="extraInfoInputBio"
                             value={(isMyAcc ? newBio : acc?.bio) ?? ""}
                             readOnly={!red}

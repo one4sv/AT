@@ -35,6 +35,10 @@ a {
 button {
     cursor: pointer;
 }
+textarea {
+    resize: none;
+    field-sizing: content;
+}
 a {
     color: var(--tc);
     text-decoration: none;

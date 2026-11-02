@@ -1,3 +1,4 @@
+import TA from "../components/ts/TA";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -124,12 +125,12 @@ export default function Join() {
                 </div>
                 <div className="accExtraInfoWrapper">
                     <label htmlFor="bioTA">Описание</label>
-                    <textarea
+                    <TA
                         className="bioTA extraInfoInput"
                         id="bioTA"
                         value={(group.desc) ?? ""}
                         readOnly
-                    ></textarea>
+                    ></TA>
                 </div>
                 {activities.length > 0 && <div className="accExtraInfoWrapper">
                     <div className="settingSpan">Активности беседы</div>

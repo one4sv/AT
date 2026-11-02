@@ -80,6 +80,7 @@ export default function TA({
     return (
         <textarea
             {...props}
+            style={{ ...props.style, resize: "none" }}
             ref={ref}
             rows={1}
             onKeyDown={handleKeyDown}

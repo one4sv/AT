@@ -1,3 +1,4 @@
+import TA from "../../ts/TA";
 import { Camera } from "@phosphor-icons/react";
 import React, { useRef } from "react";
 
@@ -34,7 +35,7 @@ export default function CreateChatInfo({pick, setPick, name, setName, desc, setD
             <div className="creteChatStr">
                 <div className="createChatWrapper">
                     <label htmlFor="createChatDesc">Описание</label>
-                    <textarea id="createChatDesc" className='createChatDesc' value={desc} onChange={(e) => setDesc(e.target.value)} maxLength={150}/>
+                    <TA id="createChatDesc" className='createChatDesc' value={desc} onChange={(e) => setDesc(e.target.value)} maxLength={150}/>
                     <span>{desc.length}/150</span>
                 </div>
             </div>
