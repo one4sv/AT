@@ -9,17 +9,22 @@
     gap: 1vh;
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    overflow: hidden;
     @media (max-width: 800px) {
         width: 100%;
         padding: 4vh 3vw 3vh;
         border-radius: 24px 24px 0 0;
-        max-height: 90vh;
+        max-height: 90dvh;
     }
 }
 .tableModule {
     background: var(--interact);
     border-radius: 24px;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
 }
 .tableModuleItem {
     padding: 1.5vh 3vw;

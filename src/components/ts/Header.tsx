@@ -31,7 +31,7 @@ export default function Header() {
                     <TextIndentIcon />
                 </div> : ""}
                 <div
-                    className="header headerTitle"
+                    className={`header headerTitle ${isInInfo || isInfo ? "headerInfo" : ""}`}
                     onClick={() => {
                         if (isSettings) navigate("/settings"); else if (isInInfo) navigate("/info"); else if (isInfo) navigate("/settings");
                     }}

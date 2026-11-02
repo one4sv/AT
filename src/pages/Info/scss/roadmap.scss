@@ -128,19 +128,27 @@
         color: var(--borderWh);
     }
 
-    .roadmapCurrentContent {
+    :is(.roadmapCurrentContent, .roadmapReleaseMajor) {
         box-sizing: border-box;
         border: 1px solid var(--accent);
         border-radius: 24px;
         padding: 1.5dvh 1.25vw;
         background: linear-gradient(135deg, var(--accent_hov), var(--grad_hov));
         color: var(--tc);
+    }
 
-        > h3 {
-            margin: .5dvh 0 1dvh;
-            padding: 0;
-            background: transparent;
+    .roadmapReleaseMajor {
+        margin: 1dvh 0;
+
+        &:last-child {
+            border-bottom: 1px solid var(--accent);
         }
+    }
+
+    .roadmapCurrentContent > h3 {
+        margin: .5dvh 0 1dvh;
+        padding: 0;
+        background: transparent;
     }
 
     .roadmapStatus {
@@ -192,7 +200,7 @@
             gap: 2vw;
         }
 
-        .roadmapCurrentContent {
+        :is(.roadmapCurrentContent, .roadmapReleaseMajor) {
             padding: 1.5dvh 3vw;
         }
 

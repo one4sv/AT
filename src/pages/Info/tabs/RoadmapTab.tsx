@@ -14,7 +14,7 @@ export default function RoadmapTab() {
     const releaseList = (releases: RoadmapRelease[]) => (
         <div className="roadmapReleases">
             {releases.map(release => (
-                <div className="roadmapRelease" key={release.version}>
+                <div className={`roadmapRelease ${/^0\.\d+$/.test(release.version) ? "roadmapReleaseMajor" : ""}`} key={release.version}>
                     <div className="roadmapReleaseHeading">
                         <span className="roadmapVersion">{release.version}</span>
                         {release.title && <span>{release.title[language]}</span>}
@@ -52,7 +52,7 @@ export default function RoadmapTab() {
                 <section className="roadmapBranch roadmapBranchCurrent">
                     <div className="roadmapCurrentContent">
                         <span className="roadmapStatus">{t("roadmap.current")}</span>
-                        <h3>{roadmapCurrent.version} — {roadmapCurrent.title[language]}</h3>
+                        <h3>{roadmapCurrent.version}{roadmapCurrent.title && <> — {roadmapCurrent.title[language]}</>}</h3>
                         <ul>
                             {roadmapCurrent.features.map((feature, index) => (
                                 <li key={index}>{feature[language]}</li>

@@ -193,7 +193,7 @@ setBlackout({
 
 **Язык**: `useTranslation("namespace")` из `react-i18next`; возможные namespaces `common`, `sign`, `info`, `settings`, `acc`. Значение меняется в `src/pages/Settings/Language.tsx`, сохраняется в `settings_lang` и используется через `SettingsContext`. `RoadmapText` — исключение для массива данных релизов; остальные JSX-строки не писать как `en ? "..." : "..."`.
 
-**Info**: кнопки страниц формируются в `src/pages/Info/Info.tsx`, а содержимое — в `tabs`. Для новой страницы потребуется элемент `sections`, ключ в `tabs` и оба JSON `info.json`; маршрут `/info/:tab?` уже предусмотрен. В версии `dev 0.6` ссылка на `/info/roadmap`. В FAQ для контактов и roadmap использовать настоящие внутренние `Link`.
+**Info**: кнопки страниц формируются в `src/pages/Info/Info.tsx`, а содержимое — в `tabs`. Для новой страницы потребуется элемент `sections`, ключ в `tabs` и оба JSON `info.json`; маршрут `/info/:tab?` уже предусмотрен. В версии `dev 0.6.1` ссылка на `/info/roadmap`. В FAQ для контактов и roadmap использовать настоящие внутренние `Link`.
 
 **Состояние**: `GroupInfo` и `AccInfo` используют одинаковую схему сворачивания, но соответствующее управление жестами находится у экранных контейнеров `Group.tsx`/`Acc.tsx`. Не пытаться исправить проблему только CSS-анимацией в дочернем компоненте.
 

@@ -285,15 +285,24 @@ export const roadmapHistory: RoadmapRelease[] = [
             { ru: "Улучшение модалок", en: "Modal improvements" },
             { ru: "Редактор и страницы постов: форматирование, медиа, комментарии и действия с публикациями", en: "Post editor and pages: rich text, media, comments and post actions" }
         ]
+    },
+    {
+        version: "0.6",
+        title: { ru: "Эра сотрудничества", en: "Era of Collaboration" },
+        features: [
+            { ru: "Совместные активности и активности внутри бесед", en: "Shared activities and activities in group chats" },
+            { ru: "Личное или общее выполнение для участников", en: "Personal or shared completion for participants" }
+        ]
     }
 ];
 
-export const roadmapCurrent: RoadmapRelease & { title: RoadmapText } = {
-    version: "0.6",
-    title: { ru: "Эра сотрудничества", en: "Era of Collaboration" },
+export const roadmapCurrent: RoadmapRelease = {
+    version: "0.6.1",
     features: [
-        { ru: "Совместные активности и активности внутри бесед", en: "Shared activities and activities in group chats" },
-        { ru: "Личное или общее выполнение для участников", en: "Personal or shared completion for participants" },
+        { ru: "Восстановление и смена пароля", en: "Password recovery and password changes" },
+        { ru: "Авторизованные устройства и управление сессиями", en: "Authorized devices and session management" },
+        { ru: "Настройки cookies и улучшения безопасности входа", en: "Cookie preferences and sign-in security improvements" },
+        { ru: "Исправления интерфейса и навигации", en: "Interface and navigation fixes" }
     ],
     notice: {
         ru: "Тестирование совместных активностей, прав и редактора ещё продолжается",

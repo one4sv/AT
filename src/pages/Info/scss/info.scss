@@ -135,8 +135,16 @@
     right: 1vw;
     width: 18vw;
     min-height: 10vh;
-    max-height: 90vh;
+    max-height: 90dvh;
     padding: .5vh .25vw;
+}
+
+.infoTable {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
 }
 
 .infoTableItem {
