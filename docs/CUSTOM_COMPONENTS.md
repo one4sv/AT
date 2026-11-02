@@ -1,0 +1,188 @@
+# Самописные компоненты интерфейса AchieveTogether
+
+> Каталог существующих React-компонентов и UI-обвязок в `one4sv/AT`. Подготовлен по исходникам актуального `main`. Это карта переиспользования, а не замена описания пропсов в TypeScript.
+>
+> **Перед созданием поля, списка, переключателя, модалки, меню, композера или загрузчика обязательно найти готовый компонент здесь и перечитать его исходник, связанные SCSS и пример использования.** Не заменять собственный компонент нативным элементом или новой реализацией только потому, что так быстрее. При реальной необходимости новой реализации объяснить отличие.
+
+Смежные правила: [CODE_STYLE.md](CODE_STYLE.md), [CONTINUE.md](CONTINUE.md), [AGENTS.md](../AGENTS.md). Главные каталоги — `src/components/ts/`, `src/components/ts/utils/`, `src/components/modules/`, `src/components/hooks/`. Контейнеры конкретных страниц находятся в `src/pages/`.
+
+## Быстрый выбор компонента
+
+| Нужен элемент | Использовать | Исходник / стили |
+| --- | --- | --- |
+| Выпадающий список вариантов | **`SelectList`** | `src/components/ts/SelectList.tsx`, `src/scss/_mixins.scss` → `@mixin selectList` |
+| Выбор ровно одного режима из нескольких строк | **`RadioGroup`** | `src/components/ts/RadioGroup.tsx`, `src/scss/radioGroup.scss` |
+| Переключение вкладок с движущимся индикатором | **`Selector`** | `src/components/ts/Selector.tsx`, `src/scss/selector.scss` |
+| Переключатель on/off | **`Toggler`** | `src/components/ts/Toggler.tsx`, `src/scss/toggler.scss` |
+| Квадратный чекбокс | **`Checkbox`** | `src/components/ts/utils/Checkbox.tsx`, `src/scss/Checkbox.scss` |
+| Выбор тега активности | **`TagSelector`** | `src/components/ts/TagSelector.tsx`, `src/components/ts/tags.ts` |
+| Выбор дней недели | **`DayChanger`** | `src/components/ts/DayChanger.tsx` |
+| Ввод календарной даты | **`CalendarInput`** | `src/components/ts/CalendarInput.tsx`; обёртка над `react-datepicker` |
+| Заголовок календаря с месяцем и годом | **`DatePickerHeader`** | `src/components/ts/DatePickerHeader.tsx` |
+| Автоувеличивающееся текстовое поле | **`TA`** / **`AutoDesc`** | `src/components/ts/TA.tsx` / `src/components/ts/utils/AutoDesc.tsx` |
+| Полный ввод текста с файлами и emoji | **`Composer`** | `src/components/ts/Composer.tsx`, `src/scss/Composer.scss` |
+| Кнопка/панель emoji | **`EmojiButton`**, **`EmojiBar`** | `src/components/ts/utils/EmojiButton.tsx`, `EmojiBar.tsx`, `src/scss/emojiBar.scss` |
+| Превью прикреплённых файлов | **`MediaDraft`** | `src/components/ts/MediaDraft.tsx`, `src/scss/MediaDraft.scss` |
+| Нижняя область страницы с возвратом | **`PageBottom`** | `src/components/ts/PageBottom.tsx`, `src/scss/PageBottom.scss` |
+| Карточка чата в боковом меню | **`Contact`** | `src/components/ts/Contact.tsx`, `src/scss/SM/contactsList.scss` |
+| Карточка активности | **`Habit`** | `src/components/ts/Habit.tsx` |
+| Контекстное меню | **`ContextMenu`** + `useContextMenu` | `src/components/ts/ContextMenu/`, `src/components/context/ContextMenuContext.tsx` |
+| Модальное окно | **`Blackout`** + зарегистрированный модуль | `src/components/ts/Blackout.tsx`, `src/components/modules/ModuleMap.ts` |
+| Просмотр фотографии/галереи | **`ImgPrev`** + `useImagePreview` | `src/components/modules/ImgPrev.tsx`, `src/components/hooks/utils/useImagePreview.ts` |
+| Подтверждение внешней ссылки | **`LinkConfirm`** + `useOpenLink` | `src/components/modules/LinkConfirm.tsx`, `src/components/hooks/utils/useOpenLink.ts` |
+| QR аккаунта или приглашения в беседу | **`ShareAcc`** | `src/components/modules/ShareAcc.tsx`, `src/scss/modules/ShareAccDiv.scss` |
+| Индикатор загрузки | **`Loader`**, **`LoaderSmall`**, **`MinLoader`** | `src/components/ts/Loader.tsx`, `LoaderSmall.tsx`, `MinLoader.tsx`, `src/scss/Loading.scss` |
+| Скелетон загрузки | **`Skeleton`** | `src/components/ts/Skeleton.tsx`, `src/scss/Loading.scss` |
+| Уведомление | **`Notification`** через `useNote` | `src/components/ts/Notification.tsx`, `src/components/context/NoteContext.tsx` |
+| Подсветка текста поиска и ссылки | **`HighlightText`** | `src/components/ts/HighlightText.tsx` |
+| Декоративная SVG-иллюстрация секции | **`SectionArt`** | `src/components/ts/SectionArt.tsx`, `src/scss/SectionArt.scss` |
+| Сообщение о стадии разработки | **`BetaNotice`** / **`BetaArt`** | `src/components/ts/BetaNotice.tsx` / `BetaArt.tsx` |
+
+## 1. Поля выбора и переключатели
+
+### `SelectList` — свой выпадающий список (ПРИОРИТЕТ)
+
+Файл: `src/components/ts/SelectList.tsx`. Примеры: `src/pages/HabitPage/components/HabitInfo/HabitSettings.tsx`, `src/components/modules/PermissionsSettings.tsx`. Стили **не встроены в компонент**: конкретный `className` должен оформляться через `@include var.selectList(...)` из `src/scss/_mixins.scss`, затем локально донастраиваться.
+
+Реальные пропсы:
+- `className: string` — обязательный CSS-класс, определяющий внешний вид;
+- `arr: { label: string; value: string }[]` — варианты;
+- `selected?: string | number` — выбранное значение; для корректного отображения должно совпадать с `arr[].value` (строкой);
+- `onChange?: (value: string) => void` или `extraFunction?: (value: string) => void` — реакция на выбор;
+- `prop?` — альтернативный setter состояния; не передавать одновременно несколько обработчиков без причины;
+- `placeholder?`, `id?`, `chevron?`, `hide?`, `showSelected?`, `showOnly?`, `readOnly?`.
+
+Пример:
+```tsx
+<SelectList
+    className="redHabitSL"
+    arr={[
+        { label: "У каждого своё", value: "personal" },
+        { label: "Общее для всех", value: "shared" }
+    ]}
+    selected={mode}
+    onChange={setMode}
+/>
+```
+
+**Особенности реализации:** `readOnly` управляет только редактируемостью текстового `input` и по умолчанию включён — это **не** запрет выбирать вариант. `showOnly` скрывает варианты и используется в существующем коде для режима только чтения. `hide` управляет закрытием при клике снаружи, `showSelected` — наличием текущего варианта в списке. Компонент сам хранит `showList` и `selectedLabel`; проверяйте, как он ведёт себя при изменении `selected` и при пустом значении. Для `Без роли` можно включать пункт с `value: ""`. Не добавлять рядом нативный `<select>`.
+
+Оформление: найти стиль готового варианта `.redHabitSL` в `src/pages/HabitPage/scss/redHabit.scss`, `.rolesModalSelect` в `src/scss/modules/PermissionsDiv.scss` или другой подходящий вариант. Важно проверить `position`, `z-index`, `overflow` и границы прокручиваемой модалки: список не должен обрезаться или перекрывать соседние панели. Все обычные скругления — 24px; не задавать новый шрифт/`font-weight`.
+
+### `RadioGroup`
+
+Файл: `src/components/ts/RadioGroup.tsx`; стили: `src/scss/radioGroup.scss`. Выбор одного из режимов (например, видимость, доступ к совместной активности). Пропсы: `list` (элементы с `label`, `value` и необязательным `icon`), `val` (текущее значение), `newVal?` (обработчик), `disabled?`, обязательный `id` (используется как `data-setting-id`).
+
+```tsx
+<RadioGroup
+    id="completion_mode"
+    list={[
+        { label: "У каждого своё", value: "personal" },
+        { label: "Общее для всех", value: "shared" }
+    ]}
+    val={completionMode}
+    disabled={saving}
+    newVal={setCompletionMode}
+/>
+```
+
+Не заменять нативными `<input type="radio">` или новым списком кнопок. Обратите внимание: в текущем коде `disabled` блокирует клики через CSS (`pointer-events: none`), а не через обработчик JS.
+
+### `Selector`
+
+Файл: `src/components/ts/Selector.tsx`; стили: `src/scss/selector.scss`. Горизонтальный переключатель с анимированным индикатором. Принимает `arr: { label, icon?, value, func }[]` и `selected`. Работает с `useSideMenu` и флагами `dontHandle` / `dontHandleOther`. Не переписывать управление касаниями: удержание 350 мс, перемещение, освобождение и отмена уже реализованы.
+
+### `Toggler` и `Checkbox`
+
+`Toggler`: `state`, `setState?`, `onToggle?`, `funcToggle?`, `disable?`, `stopPropagation?`. Для булевых настроек. `Checkbox`: `state`, `setState?`, `func?`, `funcNoVal?`, `disable?`. Для нескольких независимых выбранных значений.
+
+**Важно:** если переключатель вложен в кликабельную строку, проверить всплытие события: не должно быть двойного переключения. Не добавлять другой switch, если можно использовать эти компоненты. Для семантики доступности в новом коде отдельно проверять клавиатуру и доступные названия, не считать `div` автоматически полноценным `button`.
+
+### `TagSelector`, `DayChanger`, `CalendarInput`
+
+`TagSelector`: `selectedTag`, `setSelectedTag`, `showOnly?`; список тегов уже определён в `src/components/ts/tags.ts`. `DayChanger`: `chosenDays`, `toggleDay`, `showOnly?`, `chosenArr?` — кнопки дней недели. `CalendarInput`: `value?: Date | null`, `onChange`, `maxDate?`, `minDate?`, `placeholder?`, `className?`, `id?`, `readOnly?`; обёртка использует `react-datepicker`, ввод даты — `ДД.ММ.ГГГГ`. `DatePickerHeader` — готовая навигация по месяцу/году в календаре.
+
+## 2. Текст, файлы и emoji
+
+- **`TA`** (`src/components/ts/TA.tsx`): автоизменение высоты текстового поля. Наследует обычные `textarea`-props, дополнительно `taRef?`, `onSend?`, `onFiles?`, `minHeight?` (по умолчанию 5 vh), `maxHeight?` (по умолчанию 50 vh). При `onSend` Enter отправляет, Shift+Enter создаёт новую строку; учитывается IME. `onFiles` обрабатывает файлы из буфера обмена. Использовать для ввода сообщений/комментариев вместо голого `textarea`, если нужен такой сценарий.
+- **`AutoDesc`** (`src/components/ts/utils/AutoDesc.tsx`): компактное автоувеличивающееся поле описания. `value?`, `defaultValue?`, `onChange?`, `readOnly?`, `className?`. Не путать с `TA`.
+- **`Composer`** (`src/components/ts/Composer.tsx`, `src/scss/Composer.scss`): готовая строка/панель написания текста. Обязательны `text`, `setText`, `files`, `setFiles`, `placeholder`, `onSend`, `sendLabel`. Также поддерживаются `media/setMedia`, `disabled`, `onBack`, `action`, `reply/onCancelReply` и `inlineAttach`. Содержит `TA`, отправку, вложения, emoji, drag/drop, предпросмотр. Для нового чата/комментариев/редактора сначала проверить, применим ли он.
+- **`MediaDraft`** (`src/components/ts/MediaDraft.tsx`): `files`, `media?`, `onRemove(index)`, `disabled?`. Показывает вложения и умеет открывать изображения через `useImagePreview`. Для локальных файлов освобождает `URL.createObjectURL` при очистке.
+- **`EmojiButton`** (`src/components/ts/utils/EmojiButton.tsx`): `taRef`, `open`, `setOpen`, `disabled?`. **`EmojiBar`** (`src/components/ts/utils/EmojiBar.tsx`): `taRef`, `setText`, `showEmojiBar`, `setShowEmojiBar`, `cn?`, `emojiPos?`, `emojiRef?`. Вставляет emoji в позицию курсора; учитывает мобильную клавиатуру и `visualViewport`. Не создавать ещё одну панель emoji.
+- **`PageBottom`** (`src/components/ts/PageBottom.tsx`): `children?`, `innerRef?`, `onBack?`, `className?`. Нижняя область страницы; иконка возврата появляется при переданном `onBack`.
+- **`HighlightText`** (`src/components/ts/HighlightText.tsx`): `text` и `search`. Подсвечивает совпадения, ссылки открывает через `useOpenLink` с подтверждением внешних адресов.
+
+## 3. Контакты, активности и меню
+
+- **`Contact`** (`src/components/ts/Contact.tsx`) — готовая **карточка чата** для бокового меню: принимает `contact`, отображает аватар, имя, последнее сообщение, статус прочтения/набора и действия. Это не универсальный пользовательский picker. Для поиска/выбора контактов в модалках также проверять `src/components/modules/HabitParticipantPicker.tsx`, `src/scss/modules/CreateChat.scss` и существующие `.createChatContact` / `.contactsUser.active`.
+- **`Habit`** (`src/components/ts/Habit.tsx`) — карточка активности. Перед созданием похожей карточки проверить его пропсы и отображение `isMyAcc`, `id`, `onSelect` в реальных местах использования.
+- **`SideMenu`** (`src/components/ts/SM/SideMenu.tsx`) и связанные `ContactsList`, `HabitsList`, `AccountList`, `SpotsList` — уже существующая система боковой навигации и горизонтальных жестов. Не создавать отдельную копию сайдбара.
+- **`ContextMenu`** (`src/components/ts/ContextMenu/ContextMenu.tsx`) — единый рендерер контекстных меню. Открывается через `useContextMenu().openMenu(x, y, point, options, ...)`. Типы меню определены в `src/components/ts/ContextMenu/menus/` (активность, чат, пост, сообщение, участник, медиа и другие). `closeMenu()` закрывает его. `ContextMenuContext` устанавливает общий обработчик долгого нажатия для элементов с `data-context-menu`. Текущее удержание — 350 мс, отмена при движении больше 10 px. Сверять одинаковые действия для обычного клика, ПКМ и мобильного long-press.
+- `src/components/ts/ContextMenu/MobileContextMenu.tsx` **сейчас пустой**. Не считать его готовой альтернативой основному меню.
+
+## 4. Модалки, подтверждения, QR и просмотр изображений
+
+**Единственная система модалок**: `Blackout` (`src/components/ts/Blackout.tsx`), `BlackoutContext`, `useBlackout` и регистрация в `src/components/modules/ModuleMap.ts`.
+
+Пример открытия существующего модуля:
+
+```tsx
+const { setBlackout } = useBlackout();
+
+setBlackout({
+    seted: true,
+    module: "ShareAcc",
+    options: {
+        nick: user.nick,
+        url: user.avatar_url ?? undefined
+    }
+});
+```
+
+Закрытие: `setBlackout({ seted: false })`. `Blackout` уже управляет затемнением, стеком окон, кликом снаружи и мобильным свайпом. На мобильном `.mobileBar` рендерится оболочкой `.blackoutModule`, а **не** внутри компонента модалки. Не рисовать вторую полоску. Не добавлять в каждую модалку `×` или «Отмена» автоматически: ориентироваться на требование конкретного окна. В частности, в `PermissionsSettings` пользователь не хочет дополнительных кнопок закрытия; «Назад» предназначена только для внутреннего экрана.
+
+Имеющиеся модули в `ModuleMap`:
+- `ConfirmAction` — подтверждение действия с `blackout.confirmAction` (`title`, `description`, `label?`, асинхронная `run`);
+- `Delete` / `DeleteConfirm` — существующие сценарии удаления;
+- `ShareAcc` — общий QR аккаунта и приглашения в беседу. Для беседы передать в `options` готовую `link` и `url` аватара; не создавать второй QR;
+- `ImgPrev` — полноэкранный просмотр изображений, галерея, навигация; предпочтительно вызывать через `useImagePreview(files)`;
+- `LinkConfirm` — предпросмотр и подтверждение внешних ссылок; предпочтительно вызывать через `useOpenLink()`, который внутренние маршруты открывает напрямую;
+- `PermissionsSettings` — **специальная** модалка «Права и роли»; файл `src/components/modules/PermissionsSettings.tsx`, стили `src/scss/modules/PermissionsDiv.scss`. Два экрана, сохранение настроек, **`SelectList` для выбора ролей**;
+- `HabitParticipantPicker`, `HabitCollaborationSettings`, `HabitCreateChat`, `HabitDayActivityHistory`, `HabitTaskEditor` — готовые модалки совместной активности;
+- `CreateChat`, `ChatWithInfo`, `Redirecting`, `RedirectMesses`, `PostSettings`, `AddHabit`, `Table` и остальные перечислены в `ModuleMap.ts`.
+
+**Новая модалка:** сначала проверить существующую, затем использовать `Blackout`, добавить модуль в `ModuleMap` и локальный SCSS. Не создавать отдельный `position: fixed`-оверлей поверх `Blackout`. На мобильном: полная ширина, safe-area, скролл только у контента, нижние кнопки не должны уезжать за экран. Для слайдов: область просмотра `overflow: hidden`, панели имеют `flex: 0 0 100%`, сдвиг `translateX(-100%)`; не центрировать двойной контейнер через конфликтующий mixin/`transform`.
+
+## 5. Загрузка, обратная связь, визуальные компоненты
+
+- `Loader` — крупная загрузка, `LoaderSmall` и `MinLoader` — компактные; все используют существующие стили `Loading.scss`.
+- `Skeleton` — `type?: "list" | "feed" | "habit" | "chat" | "profile"`, `count?` и `overview?`. Использовать для начальной загрузки списков/страниц вместо пустого состояния, которое может выглядеть как отсутствие данных.
+- `Notification` вызывается через `useNote().showNotification(type, text)`; не писать новый toast для каждой формы. Проверять актуальный тип `useNote`.
+- `SectionArt` — тематические SVG для разделов; `theme?` (варианты определены типом `ArtTheme`), `section?`, `mini?`. `BetaNotice` и `BetaArt` — штатное предупреждение о ранней стадии разработки.
+- `Header`, `Post`, `PageBottom`, `SideMenu` и компоненты конкретных страниц тоже самописные. Они **не обязательно универсальны**: перед переносом проверить состояние/контексты и все связанные CSS-классы.
+
+## 6. Самописные хуки — часть контракта компонентов
+
+Для модалки: `useBlackout`. Для уведомлений: `useNote`. Для контекстного меню: `useContextMenu`. Для внутренних и внешних ссылок: `useOpenLink`. Для изображений: `useImagePreview`. Для выбора режимов/боковой панели: `useSideMenu`. Для совместной активности: `useTheHabit`, `useGroup` и `useHabitMembers` (последний расположен рядом с `HabitInfo`). Для чатов и вложений: `useChat`, `useDrop`, `useMessages`.
+
+Не делать самостоятельное состояние для данных, которые уже предоставляются соответствующим провайдером, если это создаст расхождение. Учитывать расположение провайдеров относительно `Routes` — параметры маршрутов, получаемые дочерними элементами, нельзя автоматически ожидать у глобального провайдера.
+
+## 7. Стили, ограничения и порядок работы
+
+1. Найти компонент в этом каталоге, открыть актуальный `.tsx` и все используемые `.scss` / миксины; проверить реальное использование в коде, включая `@media`.
+2. Сначала переиспользовать компонент. Если нужна другая компоновка — передать `className` или добавить локальный вариант SCSS, а не копировать логику.
+3. Использовать CSS-токены проекта (`--mc`, `--tc`, `--interact`, `--accent`, `--grad`, `--borderWh`, `--menuButtHover` и др.). Новые размеры геометрии — преимущественно `vw`/`dvh`, типовые скругления — **24px**.
+4. **Не добавлять и не переопределять `font-weight`**. Не менять порядок импортов, структуру чужого JSX и стили за пределами задачи без необходимости.
+5. Для `SelectList` помнить о `@mixin selectList(...)`, `z-index`, `overflow`, выпадающем списке и мобильной клавиатуре. Нативный `<select>` не подменяет готовый компонент.
+6. Проверять доступность: `aria-label`, `focus-visible`, управление с клавиатуры, реальное поведение `disabled`. Не путать CSS-блокировку с серверной проверкой прав.
+7. Проверять длительный текст, пустой список, загрузку и ошибку; на ПК и на мобильном — с открытым выпадающим списком, скроллом, свайпом и safe-area.
+8. Изменения React/SCSS проверять через `npm run build`. После коммита проверить Vercel по новому SHA; для серверных API — Render. Не объявлять проверенным сценарий под пользователем, если его не тестировали.
+
+## 8. Перед добавлением нового компонента
+
+- Убедиться, что нужного уже нет в `src/components/ts`, `utils`, `modules` или компонентах страниц.
+- Для новой переиспользуемой сущности определить интерфейс пропсов, место хранения состояния и существующую тему/SCSS.
+- Если новый компонент действительно добавлен или изменён контракт старого, **обновить этот каталог в том же коммите**: путь, назначение, основные пропсы, стили, способ использования и ограничения.
+- Компоненты из библиотек (например, сам `react-datepicker`, `@tiptap/react`, иконки Phosphor/Lucide) не считать самописными. Описывать **наши обёртки** над ними: `CalendarInput`, редактор постов, `SectionArt` и т. п.
+
+Этот документ фиксирует состояние файлов, просмотренных при составлении. Перед рефакторингом источником истины остаётся текущий код `main`; если документ и код расходятся, проверить код и обновить документацию.
