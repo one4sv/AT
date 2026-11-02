@@ -200,7 +200,7 @@ export default function PermissionsSettings() {
             {loadingPermissions ? <Loader /> : (
             <div
                 className="slidesContainer"
-                style={{ transform: slided ? "translateX(-50%)" : "translateX(0)"}}
+                style={{ transform: slided ? "translateX(-100%)" : "translateX(0)"}}
             >
                 <div className="permissionsSlide">
                     <div className="permissionsWrapper">
@@ -426,9 +426,6 @@ export default function PermissionsSettings() {
             {!loadingPermissions && (
                 <div className="permissionsButts">
                     <div className="permsButtsDiv">
-                        <button type="button" className="permButt permCancel" onClick={() => setBlackout({seted:false})}>
-                            Отмена
-                        </button>
                         <button type="button" className="permButt permSave" disabled={changes.length === 0} onClick={() => void handleSave()}>
                             Сохранить
                         </button>

@@ -369,23 +369,21 @@
     border: none;
     &.permBack{
         width: 5vw;
+        background-color: var(--mc);
         @media (hover: hover) {
             &:hover {
-            background-color: var(--menuButtHover);
+            background-color: var(--interact);
         
             }
         }
 
         @media (hover: none) {
             &:active {
-            background-color: var(--menuButtHover);
+            background-color: var(--interact);
         
             
             }
         }
-    }
-    &.permCancel:hover {
-        background-color: var(--borderWh);
     }
     &.permSave {
         background:linear-gradient(135deg, var(--accent), var(--grad));
@@ -466,14 +464,14 @@
     }
 }
 .slidesContainer {
-    width: 200%;
+    width: 100%;
     flex: 1;
     min-height: 0;
     height: auto;
 }
 .permissionsSlide {
-    width: 50%;
-    flex: 0 0 50%;
+    width: 100%;
+    flex: 0 0 100%;
     min-width: 0;
     min-height: 0;
     height: 100%;
@@ -530,10 +528,6 @@
 }
 .permButt.permBack {
     width: auto;
-}
-.permButt.permCancel {
-    background: var(--interact);
-    color: var(--tc);
 }
 .permButt:disabled {
     opacity: .5;
