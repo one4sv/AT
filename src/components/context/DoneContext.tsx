@@ -92,10 +92,18 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         if (!habit) return;
 
-        if (new Date(chosenDay) < new Date(habit.start_date)) {
+        if (
+            chosenDay < habit.start_date ||
+            (
+                habit.chat_id &&
+                !habit.access?.is_owner &&
+                (!habit.access?.completion_start_date || chosenDay < habit.access.completion_start_date)
+            )
+        ) {
             setIsDone(false);
             setDoable(false);
-            setPlanable(false)
+            setPlanable(false);
+            setIsPlanned(false);
             return;
         }
 
