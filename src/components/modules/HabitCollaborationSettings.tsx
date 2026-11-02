@@ -17,7 +17,7 @@ export default function HabitCollaborationSettings() {
     const [ saving, setSaving ] = useState(false);
     if (!habit) return null;
     const isOwner = habit.user_id === user.id;
-    const updateMode = async (field: "metric_progress_mode" | "schedule_blocks_mode", value: string) => {
+    const updateMode = async (field: "completion_mode" | "metric_progress_mode" | "schedule_blocks_mode", value: string) => {
         if (!isOwner || saving || !["personal", "shared"].includes(value)) return;
         setSaving(true);
         try {
@@ -30,14 +30,15 @@ export default function HabitCollaborationSettings() {
             setSaving(false);
         }
     };
-    const modeSetting = (field: "metric_progress_mode" | "schedule_blocks_mode", title: string) => <div className="privateSLWrapper">
+    const modeSetting = (field: "completion_mode" | "metric_progress_mode" | "schedule_blocks_mode", title: string) => <div className="privateSLWrapper">
         <div className="settingSpan">{title}</div>
-        {isOwner ? <RadioGroup list={[{ label: "У каждого свой", value: "personal" }, { label: "Общий для всех", value: "shared" }]} id={field} val={habit[field] || (field === "metric_progress_mode" ? "personal" : "shared")} disabled={saving} newVal={value => void updateMode(field, value)} /> : <div className="habitSettingValue">{habit[field] === "personal" ? "У каждого свой" : "Общий для всех"}</div>}
+        {isOwner ? <RadioGroup list={[{ label: "У каждого свой", value: "personal" }, { label: "Общий для всех", value: "shared" }]} id={field} val={habit[field] || (field === "schedule_blocks_mode" ? "shared" : "personal")} disabled={saving} newVal={value => void updateMode(field, value)} /> : <div className="habitSettingValue">{habit[field] === "personal" ? "У каждого свой" : "Общий для всех"}</div>}
     </div>;
     return <div className="habitCollaborationModal" role="dialog" aria-modal="true" aria-label="Настройки совместной активности">
         <div className="habitCollaborationHeader"><span>Настройки совместной активности</span><button type="button" onClick={() => setBlackout({ seted: false })} aria-label="Закрыть"><XIcon /></button></div>
         <div className="habitCollaborationBody">
-            {modeSetting("metric_progress_mode", "Прогресс выполнения: отметки, таймер, счётчик и задачи")}
+            {modeSetting("completion_mode", "Выполнение")}
+            {modeSetting("metric_progress_mode", "Таймер, счётчик и задачи")}
             {modeSetting("schedule_blocks_mode", "Блоки расписания")}
             {habit.chat_id && <div className="privateSLWrapper">
                 <div className="settingSpan">Участие в активности беседы</div>
