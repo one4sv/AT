@@ -54,5 +54,32 @@
         "codeUnavailable": "This code is unavailable. Generate a new QR code.",
         "failed": "Could not sign in. Try again or use your password.",
         "loadingQr": "Generating QR code…"
+    },
+    "password": {
+        "back": "Back",
+        "forgotTitle": "Recover access",
+        "resetTitle": "New password",
+        "changeTitle": "Change password",
+        "forgotDescription": "Enter your account email. If it is registered, we'll send you a recovery link.",
+        "resetDescription": "Choose a new account password.",
+        "changeDescription": "Enter your current password and a new one. You'll need to sign in again after saving.",
+        "email": "Email",
+        "current": "Current password",
+        "new": "New password",
+        "confirm": "Repeat new password",
+        "invalidEmail": "Enter a valid email address",
+        "passwordRules": "8–30 characters, Latin letters and numbers only, at least one letter and one digit.",
+        "notMatching": "Passwords do not match",
+        "currentRequired": "Enter your current password",
+        "expired": "This link has expired or was already used. Request a new one.",
+        "rateLimited": "Too many attempts. Please try again later.",
+        "wrongCurrent": "The current password is incorrect",
+        "error": "Something went wrong. Try again later.",
+        "loading": "Please wait…",
+        "save": "Save password",
+        "send": "Send recovery link",
+        "signIn": "Back to sign in",
+        "changed": "Password changed. Sign in with your new password.",
+        "emailSent": "If an account with this email exists, a recovery link will be sent."
     }
 }

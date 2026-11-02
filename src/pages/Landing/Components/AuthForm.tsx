@@ -2,6 +2,7 @@ import QuickLogin from "./QuickLogin";
 import { Eye, EyeOff } from "lucide-react";
 import { CheckSquareIcon, SquareIcon } from "@phosphor-icons/react";
 import { useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../components/hooks/AuthHook";
 import { LoaderSmall } from "../../../components/ts/LoaderSmall";
 import { useTranslation } from "react-i18next";
@@ -162,7 +163,9 @@ export default function AuthForm({
                 <button type="submit" className="greenButt" disabled={loadingAuth}>
                     {loadingAuth ? <LoaderSmall /> : t("auth.signIn")}
                 </button>
-                {/* Подключите сюда реальный маршрут восстановления пароля после его реализации. */}
+                <Link to="/reset-password" className="landingSwitchForm">
+                    {t("auth.forgotPassword")}
+                </Link>
             </div>
             <button
                 type="button"

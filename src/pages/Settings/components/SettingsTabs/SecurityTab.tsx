@@ -3,6 +3,7 @@ import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { api } from "../../../../components/ts/api";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
@@ -51,14 +52,20 @@ export default function SecurityTab({ search }: { search: string }) {
             <div className="settingInnerDiv" data-setting-id="changePassword">
                 <div className="settingHeader">
                     <HighlightText text={t("security.changePassword")} search={search} />
+                    <Link className="securityAction" to="/settings/password">
+                        {t("security.open")}
+                    </Link>
                 </div>
+                <span className="settingHint">{t("security.passwordHint")}</span>
             </div>
             <div className="settingInnerDiv" data-setting-id="devices">
                 <div className="settingHeader">
                     <HighlightText text={t("security.devices")} search={search} />
+                    <Link className="securityAction" to="/settings/devices">
+                        {t("security.open")}
+                    </Link>
                 </div>
-                <div className="settingSpan">{t("security.activeSessions")}</div>
-                <div className="settingSpan">{t("security.logoutAll")}</div>
+                <span className="settingHint">{t("security.devicesHint")}</span>
             </div>
         </div>
     );

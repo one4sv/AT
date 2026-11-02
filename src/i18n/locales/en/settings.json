@@ -138,10 +138,31 @@
         "changePassword": "Change password",
         "devices": "Devices",
         "activeSessions": "Active sessions",
-        "logoutAll": "Log out from all devices except this one"
+        "logoutAll": "Log out from all devices except this one",
+        "open": "Open",
+        "passwordHint": "Change your account password. You'll need to sign in again.",
+        "devicesHint": "View authorized devices, revoke individual sessions, or sign out elsewhere."
     },
     "language": {
         "back": "Back",
         "description": "Choose your interface language. Changes apply immediately."
+    },
+    "securityDevices": {
+        "description": "Manage signed-in sessions and quick sign-in devices. Device names are estimated from browser information.",
+        "sessions": "Active sessions",
+        "trusted": "Quick sign-in devices",
+        "current": "Current",
+        "since": "Signed in: {{date}}",
+        "lastSeen": "Last activity: {{date}}",
+        "address": "IP: {{ip}}",
+        "revoke": "Sign out",
+        "empty": "No devices",
+        "loading": "Loading devices…",
+        "loadError": "Couldn't load devices",
+        "confirmTitle": "Revoke access?",
+        "confirmSession": "This device session will end and will require a new sign-in.",
+        "confirmTrust": "Quick sign-in on this device will be disabled.",
+        "confirmOthers": "All other sessions and quick sign-in devices will be revoked.",
+        "legacy": "This sign-in predates device tracking. Sign in again to make it appear in your sessions."
     }
 }

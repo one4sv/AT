@@ -9,6 +9,10 @@
 - [SCSS](SCSS_GUIDE.md) — миксины, токены, темы, glass, мобильная вёрстка.
 - [Каталог самописных компонентов](CUSTOM_COMPONENTS.md) — SelectList, RadioGroup, TA, Composer, Blackout и остальные.
 
+## Авторизация и безопасность
+
+- [Почта, пароль, устройства и сессии](AUTH_AND_SESSIONS.md) — SendGrid, восстановление доступа, смена пароля, WebSocket и миграции.
+
 ## Интерфейс и содержимое
 
 - [Язык и переводы RU/EN](I18N.md) — namespaces, локали, смена языка, FAQ.

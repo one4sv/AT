@@ -1,5 +1,6 @@
 import { createContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { useUser } from "../hooks/UserHook";
+import { api } from "../ts/api";
 export interface WebSocketContextType {
     ws: WebSocket | null;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,33 +18,53 @@ export const WebSocketProvider = ({
     const [isConnected, setIsConnected] = useState(false);
     const API_WS = import.meta.env.VITE_API_WS;
 
-    useEffect(
-        () => {
-            if (!user?.id || wsRef.current) return;
-            const ws = new WebSocket(`${API_WS}ws?userId=${user.id}`);
-            wsRef.current = ws;
-            ws.onopen = () => {
-                console.log("🟢 WebSocket подключён");
-                if (wsRef.current === ws) setIsConnected(true);
-            };
-            ws.onclose = () => {
-                console.log("🔴 WebSocket отключён");
-                if (wsRef.current === ws) {
-                    setIsConnected(false);
-                    wsRef.current = null;
+    useEffect(() => {
+        if (!user?.id || !API_WS) return;
+        let disposed = false;
+        let reconnect: number | undefined;
+
+
+        const connect = async () => {
+            if (disposed) return;
+            try {
+                const { data } = await api.post("/auth/ws-ticket");
+                if (disposed) return;
+                if (!data?.ticket) throw new Error("WebSocket ticket unavailable");
+
+                const endpoint = new URL(`${API_WS}ws`);
+                endpoint.searchParams.set("ticket", data.ticket);
+                const ws = new WebSocket(endpoint.toString());
+                wsRef.current = ws;
+
+                ws.onopen = () => {
+                    if (disposed) return;
+                    setIsConnected(true);
+                };
+                ws.onclose = () => {
+                    if (wsRef.current === ws) {
+                        wsRef.current = null;
+                        setIsConnected(false);
+                    }
+                    if (!disposed) reconnect = window.setTimeout(() => void connect(), 5000);
+                };
+                ws.onerror = error => console.error("WebSocket connection error:", error);
+            } catch (error) {
+                if (!disposed) {
+                    console.error("WebSocket authorization error:", error);
+                    reconnect = window.setTimeout(() => void connect(), 5000);
                 }
-            };
-            ws.onerror = err => console.error("WebSocket ошибка:", err);
-            return () => {
-                ws.onopen = null;
-                ws.onclose = null;
-                ws.close();
-                wsRef.current = null;
-                setIsConnected(false);
-            };
-        },
-        [user?.id, API_WS]
-    );
+            }
+        };
+
+        void connect();
+        return () => {
+            disposed = true;
+            if (reconnect !== undefined) window.clearTimeout(reconnect);
+            wsRef.current?.close();
+            wsRef.current = null;
+            setIsConnected(false);
+        };
+    }, [user?.id, API_WS]);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const send = (data: any) => {
         if (wsRef.current?.readyState === WebSocket.OPEN) {

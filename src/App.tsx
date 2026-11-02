@@ -22,6 +22,8 @@ import Settings from './pages/Settings/Settings';
 import Landing from './pages/Landing/Landing';
 import Info from './pages/Info/Info';
 import Language from './pages/Settings/Language';
+import PasswordAccess from './pages/Settings/PasswordAccess';
+import AuthorizedDevices from './pages/Settings/AuthorizedDevices';
 import { useVisualViewport } from './components/hooks/utils/VisualViewportHook';
 function App() {
     useVisualViewport();
@@ -40,6 +42,9 @@ function App() {
                     <Route path="/connection" element={<ConnectionStatus standalone />} />
                     <Route path="/sign" element={<Landing />} />
                     <Route path="/settings/language" element={<Language />} />
+                    <Route path="/reset-password" element={<PasswordAccess />} />
+                    <Route path="/settings/password" element={<PasswordAccess />} />
+                    <Route path="/settings/devices" element={<AuthorizedDevices />} />
                     {window.location.hostname === "localhost" && <Route path="/admin" element={<Admin />} />}
                     <Route path="/" element={<ResponsiveLayout />}>
                         <Route index element={<Main />} />

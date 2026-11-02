@@ -17,6 +17,7 @@
 
 - **Язык и строки:** [I18N.md](docs/I18N.md). Сейчас RU/EN частично локализованы через `i18next`. Новые строки обеих локалей изменять вместе, никаких самодельных `en ? "..." : "..."` в JSX.
 - **Рисованные SVG:** [SVG_ART.md](docs/SVG_ART.md). Уникальные сюжеты создаются внутри общей `SectionArt`, а не самостоятельной картинкой с чужими цветами и размерами. Декор не блокирует события.
+- **Авторизация, почта и устройства:** [AUTH_AND_SESSIONS.md](docs/AUTH_AND_SESSIONS.md). Проверка сессий и отзыв доступа обязательны на сервере; не оставлять старые JWT без контроля версий.
 - **Архитектура и контексты:** [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - **Совместные активности, роли, дата вступления:** [COLLABORATION_AND_PERMISSIONS.md](docs/COLLABORATION_AND_PERMISSIONS.md), [habit-invitations.md](docs/habit-invitations.md).
 - **Текущая версия:** [V0_6_FEATURES_AND_QA.md](docs/V0_6_FEATURES_AND_QA.md). В «О проекте» — **dev 0.6**; локальная версия package.json может отличаться.
