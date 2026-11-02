@@ -4,7 +4,7 @@
 >
 > **Перед созданием поля, списка, переключателя, модалки, меню, композера или загрузчика обязательно найти готовый компонент здесь и перечитать его исходник, связанные SCSS и пример использования.** Не заменять собственный компонент нативным элементом или новой реализацией только потому, что так быстрее. При реальной необходимости новой реализации объяснить отличие.
 
-Смежные правила: [CODE_STYLE.md](CODE_STYLE.md), [CONTINUE.md](CONTINUE.md), [AGENTS.md](../AGENTS.md). Главные каталоги — `src/components/ts/`, `src/components/ts/utils/`, `src/components/modules/`, `src/components/hooks/`. Контейнеры конкретных страниц находятся в `src/pages/`.
+Смежные правила: [CODE_STYLE.md](CODE_STYLE.md), [SCSS_GUIDE.md](SCSS_GUIDE.md), [CONTINUE.md](CONTINUE.md), [AGENTS.md](../AGENTS.md). Главные каталоги — `src/components/ts/`, `src/components/ts/utils/`, `src/components/modules/`, `src/components/hooks/`. Контейнеры конкретных страниц находятся в `src/pages/`.
 
 ## Быстрый выбор компонента
 

@@ -280,7 +280,7 @@
 .rolesModalSelect {
     @include var.selectList(
         100%, 4.5dvh, 2.2dvh, .75vw, 1.1dvh,
-        var(--borderWh), var(--tc), var(--mc),
+        var(--borderWh), var(--tc), var(--bgc),
         16px, .8dvh, .75vw, .25dvh
     );
     min-width: 0;
