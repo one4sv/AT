@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { QRCodeSVG } from "qrcode.react";
 import { api } from "../../../components/ts/api";
+import { getCookiePreference, cookieConsentEvent } from "../../../components/ts/utils/cookieConsent";
 import { useUser } from "../../../components/hooks/UserHook";
 type Challenge = {
     id: string;
@@ -23,6 +24,16 @@ export default function QuickLogin({
 }: Props) {
     const { t } = useTranslation("sign");
     const { refetchUser } = useUser();
+    const [cookieChoice, setCookieChoice] = useState(getCookiePreference);
+    useEffect(() => {
+        const sync = () => setCookieChoice(getCookiePreference());
+        window.addEventListener(cookieConsentEvent, sync);
+        window.addEventListener("storage", sync);
+        return () => {
+            window.removeEventListener(cookieConsentEvent, sync);
+            window.removeEventListener("storage", sync);
+        };
+    }, []);
     const [account, setAccount] = useState<{
         nick: string;
         username: string;
@@ -36,7 +47,10 @@ export default function QuickLogin({
 
     useEffect(
         () => {
-            if (mode !== "device") return;
+            if (mode !== "device" || cookieChoice !== "all") {
+                setAccount(null);
+                return;
+            }
             const controller = new AbortController();
             api.get("auth/device", {
                 signal: controller.signal
@@ -47,7 +61,7 @@ export default function QuickLogin({
             );
             return () => controller.abort();
         },
-        [mode]
+        [mode, cookieChoice]
     );
 
     useEffect(

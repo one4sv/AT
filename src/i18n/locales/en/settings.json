@@ -126,7 +126,10 @@
             "saveError": "Could not save changes",
             "decline": "Decline",
             "summary": "Added: {{added}}. Invited by message: {{invited}}. Not allowed: {{blocked}}. Already processed: {{already}}."
-        }
+        },
+        "cookies": "Cookies and storage",
+        "manageCookies": "Manage",
+        "cookiesHint": "Essential sign-in cookies and an optional quick sign-in cookie. You can change your choice at any time."
     },
     "security": {
         "twoFactor": "Two-factor authentication",

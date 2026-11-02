@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useUser } from "../hooks/UserHook";
 import { useNote } from "../hooks/NoteHook";
 import { api } from "./api";
+import { getCookiePreference } from "./utils/cookieConsent";
 export default function TrustedDevice() {
     const { user } = useUser();
     const { showNotification } = useNote();
@@ -10,6 +11,10 @@ export default function TrustedDevice() {
     useEffect(
         () => {
             if (!user.id || pending.current || sessionStorage.getItem("at-trust-after-login") !== "1") return;
+            if (getCookiePreference() !== "all") {
+                sessionStorage.removeItem("at-trust-after-login");
+                return;
+            }
             pending.current = true;
             sessionStorage.removeItem("at-trust-after-login");
             api.post("auth/device").catch(

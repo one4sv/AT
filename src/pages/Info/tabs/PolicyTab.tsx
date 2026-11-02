@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import SectionArt from "../../../components/ts/SectionArt";
+import { openCookiePreferences } from "../../../components/ts/utils/cookieConsent";
 
 export default function PolicyTab() {
     const { t } = useTranslation("info");
+    const { t: tCommon } = useTranslation("common");
 
     return (
         <div className="infoText">
@@ -90,6 +92,9 @@ export default function PolicyTab() {
                 {t("policy.s11p1End")}
             </p>
             <p>{t("policy.s11p2")}</p>
+            <button type="button" className="cookiePolicyAction" onClick={openCookiePreferences}>
+                {tCommon("cookieConsent.manage")}
+            </button>
         </div>
     );
 }

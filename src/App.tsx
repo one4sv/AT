@@ -24,6 +24,7 @@ import Info from './pages/Info/Info';
 import Language from './pages/Settings/Language';
 import PasswordAccess from './pages/Settings/PasswordAccess';
 import AuthorizedDevices from './pages/Settings/AuthorizedDevices';
+import CookieConsent from './components/ts/CookieConsent';
 import { useVisualViewport } from './components/hooks/utils/VisualViewportHook';
 function App() {
     useVisualViewport();
@@ -34,6 +35,7 @@ function App() {
                 <ThemeHandler />
                 <ConnectionStatus />
                 <TrustedDevice />
+                <CookieConsent />
                 <Notification />
                 <Blackout />
                 <ContextMenu />

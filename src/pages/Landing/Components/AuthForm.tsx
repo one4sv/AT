@@ -1,11 +1,12 @@
 import QuickLogin from "./QuickLogin";
 import { Eye, EyeOff } from "lucide-react";
 import { CheckSquareIcon, SquareIcon } from "@phosphor-icons/react";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../components/hooks/AuthHook";
 import { LoaderSmall } from "../../../components/ts/LoaderSmall";
 import { useTranslation } from "react-i18next";
+import { getCookiePreference, cookieConsentEvent, openCookiePreferences } from "../../../components/ts/utils/cookieConsent";
 type Props = {
     active?: boolean;
     showPass: (value: "auth" | "reg" | "conf") => void;
@@ -34,6 +35,20 @@ export default function AuthForm({
     const [pass, setPass] = useState("");
     const [login, setLogin] = useState("");
     const [isRemember, setIsRemember] = useState(false);
+    const [cookieChoice, setCookieChoice] = useState(getCookiePreference);
+    useEffect(() => {
+        const update = () => {
+            const next = getCookiePreference();
+            setCookieChoice(next);
+            if (next !== "all") setIsRemember(false);
+        };
+        window.addEventListener(cookieConsentEvent, update);
+        window.addEventListener("storage", update);
+        return () => {
+            window.removeEventListener(cookieConsentEvent, update);
+            window.removeEventListener("storage", update);
+        };
+    }, []);
     const isAuthError = response.success === false && "form" in response && response.form === "auth";
     const field = isAuthError && "field" in response ? response.field : null;
     const error = isAuthError && "error" in response ? response.error : "";
@@ -69,11 +84,12 @@ export default function AuthForm({
             );
             return;
         }
-        if (isRemember) sessionStorage.setItem("at-trust-after-login", "1"); else sessionStorage.removeItem("at-trust-after-login");
+        const remember = isRemember && getCookiePreference() === "all";
+        if (remember) sessionStorage.setItem("at-trust-after-login", "1"); else sessionStorage.removeItem("at-trust-after-login");
         await auth({
             login: login.trim(),
             pass,
-            isRemember
+            isRemember: remember
         });
     };
 
@@ -152,7 +168,13 @@ export default function AuthForm({
                     className="landingNativeCheckbox"
                     type="checkbox"
                     checked={isRemember}
-                    onChange={e => setIsRemember(e.target.checked)}
+                    onChange={e => {
+                        if (e.target.checked && cookieChoice !== "all") {
+                            openCookiePreferences();
+                            return;
+                        }
+                        setIsRemember(e.target.checked);
+                    }}
                 />
                 {isRemember ? <CheckSquareIcon weight="fill" aria-hidden="true" /> : <SquareIcon aria-hidden="true" />}
                 <span>

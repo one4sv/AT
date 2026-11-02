@@ -81,5 +81,15 @@
         "copy": "Copy link",
         "copied": "Link copied",
         "copyFailed": "Could not copy the link"
+    },
+    "cookieConsent": {
+        "title": "Cookies in AchieveTogether",
+        "description": "Essential cookies keep you signed in and protect your sessions. They are used regardless of your choice.",
+        "optional": "An optional cookie lets you enable 30-day quick sign-in on this device. AT does not use advertising cookies.",
+        "necessary": "Essential only",
+        "allow": "Allow quick sign-in",
+        "policy": "Privacy policy",
+        "manage": "Manage cookies",
+        "saveError": "Could not disable quick sign-in. Check your connection and try again."
     }
 }

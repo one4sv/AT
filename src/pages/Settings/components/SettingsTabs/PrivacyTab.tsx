@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
+import { openCookiePreferences } from "../../../../components/ts/utils/cookieConsent";
 import { useContacts } from "../../../../components/hooks/ContactsHook";
 import type { Contact } from "../../../../components/context/ContactsContext";
 
@@ -186,6 +187,15 @@ export default function PrivacyTab({ search }: { search: string }) {
                             }}/>
                     </div>)}
                 </div>
+            </div>
+            <div className="settingInnerDiv" data-setting-id="cookieConsent">
+                <div className="settingHeader">
+                    <HighlightText text={t("privacy.cookies")} search={search} />
+                    <button type="button" className="securityAction" onClick={openCookiePreferences}>
+                        {t("privacy.manageCookies")}
+                    </button>
+                </div>
+                <span className="settingHint">{t("privacy.cookiesHint")}</span>
             </div>
 
         </div>
