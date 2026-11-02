@@ -265,6 +265,10 @@
     }
     &.loading {
         color: var(--borderWh);
+        padding: 0;
+        background: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
         >svg {
             animation: landingSpin 1s linear infinite;
         }
