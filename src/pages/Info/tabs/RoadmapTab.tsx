@@ -58,6 +58,12 @@ export default function RoadmapTab() {
                                 <li key={index}>{feature[language]}</li>
                             ))}
                         </ul>
+                        {roadmapCurrent.notice && (
+                            <p className="roadmapNotice">
+                                <span aria-hidden="true">!</span>
+                                {roadmapCurrent.notice[language]}
+                            </p>
+                        )}
                     </div>
                 </section>
 
