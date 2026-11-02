@@ -13,13 +13,15 @@ interface DoneButtonProps {
 }
 
 export default function DoneButton({ habitId, open, setOpen }: DoneButtonProps) {
-    const { todayDone, isDone, doable, planable, isPlanned } = useTheHabit();
+    const { todayDone, isDone, doable, planable, isPlanned, habit } = useTheHabit();
     const { markDoneWLoading, waitDoneAnswer } = useDone();
     const { waitPlanAnswer, markPlanWLoading } = usePlanned()
     const { chosenDay } = useCalendar();
 
     const displayDone = isDone !== null ? isDone : todayDone;
     const displayPlan = isPlanned
+    const beforeJoining = !!habit?.chat_id && !habit.access?.is_owner &&
+        (!habit.access?.completion_start_date || chosenDay < habit.access.completion_start_date);
 
     return (
         <div className={`doneButtDivMobile ${open === "done" ? "open" : "close"} ${planable ? "planable" : doable ? "doable" : "waiting"}`}>
@@ -59,7 +61,7 @@ export default function DoneButton({ habitId, open, setOpen }: DoneButtonProps) 
                         onClick={() => undefined}
                     >
                         <ClockIcon size={22}/>
-                        Ожидаем
+                        {beforeJoining ? "До вступления" : "Ожидаем"}
                     </button>
                 )
             )}
