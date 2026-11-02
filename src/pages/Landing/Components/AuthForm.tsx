@@ -185,10 +185,10 @@ export default function AuthForm({
                 <button type="submit" className="greenButt" disabled={loadingAuth}>
                     {loadingAuth ? <LoaderSmall /> : t("auth.signIn")}
                 </button>
-                <Link to="/reset-password" className="landingSwitchForm">
-                    {t("auth.forgotPassword")}
-                </Link>
             </div>
+            <Link to="/reset-password" className="landingSwitchForm">
+                {t("auth.forgotPassword")}
+            </Link>
             <button
                 type="button"
                 className="landingSwitchForm"
