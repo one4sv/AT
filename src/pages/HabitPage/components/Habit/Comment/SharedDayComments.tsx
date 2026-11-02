@@ -164,5 +164,5 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
             Показать все
         </button>}
     </div>;
-    return mobile ? <div className="dayCommentDiv mobileSharedDayComments"><div className="dayActivityTitle">Активность участников</div>{preview}</div> : preview;
+    return mobile ? <div className="dayCommentDiv mobileSharedDayComments"><div className="statsTitle">Активность участников</div>{preview}</div> : preview;
 }
