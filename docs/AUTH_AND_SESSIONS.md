@@ -4,7 +4,9 @@
 
 ## Почта без недельного Google OAuth
 
-Предпочтительный транспорт — **Resend Email API**. Для активации в Render задать `RESEND_API_KEY` и `RESEND_FROM_EMAIL` с **собственного подтверждённого домена**, при необходимости `MAIL_FROM_NAME`. Код теперь выбирает Resend → Brevo → SendGrid → Gmail, причём резервный провайдер используется только если Resend не настроен. Со статусом LIVE без API-ключа доставка через Resend ещё не подтверждена. Не коммитить ключи. Подробная инструкция — [EMAIL_DELIVERY.md](https://github.com/one4sv/achievetogether-server/blob/main/docs/EMAIL_DELIVERY.md) в backend-репозитории.
+**Без домена и платных услуг:** оставить Gmail API и перевести существующий Google OAuth-проект из режима `Testing` в `In production`, после чего один раз обновить `GOOGLE_REFRESH_TOKEN` в Render. Это убирает 7-дневный тестовый срок refresh token. SMTP не использовать: Render Free блокирует порты 25/465/587. Отправка через Gmail остаётся ограничена квотами и правилами Google, реальную доставку нужно протестировать.
+
+В коде также готов Resend Email API, но для него требуется собственный подтверждённый домен, который владелец пока не планирует покупать. При наличии ключей приоритет Resend → Brevo → SendGrid → Gmail; без ключей остаётся Gmail. Полная инструкция — [EMAIL_DELIVERY.md](https://github.com/one4sv/achievetogether-server/blob/main/docs/EMAIL_DELIVERY.md) в backend-репозитории.
 
 Проверить: письмо регистрации, вход с 2FA, запрос восстановления пароля, правильные ошибки при недоступной почте. `sendMail` теперь пробрасывает ошибки вместо ложного успеха. Регистрация очищает созданный pending-код при ошибке доставки и не записывает пароль в логи.
 
