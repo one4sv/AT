@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from "react"
 import { usePageTitle } from "../../components/hooks/PageContextHook"
 import "./scss/info.scss"
 import type { Setting } from "../Settings/Settings"
-import { AddressBookIcon, ArrowLeftIcon, DetectiveIcon, HandshakeIcon, InfoIcon, QuestionIcon } from "@phosphor-icons/react"
+import { AddressBookIcon, ArrowLeftIcon, DetectiveIcon, HandshakeIcon, InfoIcon, QuestionIcon, GitBranchIcon } from "@phosphor-icons/react"
 import { useNavigate, useParams } from "react-router-dom"
 import AboutTab from "./tabs/AboutTab"
 import TermsTab from "./tabs/TermsTab"
 import PolicyTab from "./tabs/PolicyTab"
 import ContactsTab from "./tabs/ContactsTab"
 import FaqTab from "./tabs/FaqTab"
+import RoadmapTab from "./tabs/RoadmapTab"
 import { useTranslation } from "react-i18next"
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import Toggler from "../../components/ts/Toggler"
@@ -66,6 +67,12 @@ export default function Info() {
             desc: t("info.faq.desc"),
             icon: QuestionIcon,
         },
+        {
+            name: t("info.roadmap.name"),
+            tab: "roadmap",
+            desc: t("info.roadmap.desc"),
+            icon: GitBranchIcon,
+        },
     ];
 
     useEffect(() => {
@@ -86,6 +93,7 @@ export default function Info() {
         policy: <PolicyTab />,
         contacts: <ContactsTab />,
         faq: <FaqTab />,
+        roadmap: <RoadmapTab />,
     };
     const [contents, setContents] = useState<{ id: string; title: string }[]>([]);
 

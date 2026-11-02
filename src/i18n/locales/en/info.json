@@ -20,6 +20,10 @@
         "faq": {
             "name": "FAQ",
             "desc": "Frequently asked questions and answers"
+        },
+        "roadmap": {
+            "name": "Roadmap",
+            "desc": "Release history and development plans"
         }
     },
     "about": {
@@ -114,7 +118,11 @@
         "q19": "Can I edit or delete a comment?",
         "a19": "Available actions depend on the comment type and the author's permissions. More comment and reply features are being developed; please report issues through Contacts.",
         "q20": "Where can I see the development roadmap?",
-        "a20": "Version 0.6 work includes shared activities, the editor, chat permissions and comments. An interactive roadmap inside AT is planned, not yet released."
+        "a20": "See the roadmap page for past releases and plans.",
+        "a19Start": "Available actions depend on the comment type and author permissions. To report a problem, please visit",
+        "a19End": ". Comment and reply features are still evolving.",
+        "a20Start": "Version 0.6 includes shared activities, the post editor and role management. See the release history and plans in our",
+        "a20End": "."
     },
     "policy": {
         "title": "Privacy Policy of Achieve Together (AT)",
@@ -250,5 +258,13 @@
         "contact": "Contact the developer",
         "nextTitle": "What comes next",
         "next": "We will fix bugs and improve features based on testing feedback. Thank you for reporting issues and sharing ideas — they help the project grow."
+    },
+    "roadmap": {
+        "title": "Development roadmap",
+        "intro": "AchieveTogether's journey from its earliest pages to shared activities. The current release is highlighted; past and future milestones can be expanded.",
+        "past": "Past releases",
+        "current": "Current update · dev 0.6.0",
+        "future": "Upcoming releases",
+        "note": "Future features are plans, not confirmed release dates. Version dev 0.6.0 is still being tested."
     }
 }

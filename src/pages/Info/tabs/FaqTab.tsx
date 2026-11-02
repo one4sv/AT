@@ -57,7 +57,21 @@ export default function FaqTab() {
             {Array.from({ length: 9 }, (_, index) => index + 12).map(index => (
                 <div key={index}>
                     <h3 className="accent">{t(`faq.q${index}`)}</h3>
-                    <p>{t(`faq.a${index}`)}</p>
+                    <p>
+                        {index === 19 ? (
+                            <>
+                                {t("faq.a19Start")}{" "}
+                                <Link to="/info/contacts">{t("faq.contacts")}</Link>
+                                {t("faq.a19End")}
+                            </>
+                        ) : index === 20 ? (
+                            <>
+                                {t("faq.a20Start")}{" "}
+                                <Link to="/info/roadmap">{t("roadmap.title")}</Link>
+                                {t("faq.a20End")}
+                            </>
+                        ) : t(`faq.a${index}`)}
+                    </p>
                 </div>
             ))}
         </div>
