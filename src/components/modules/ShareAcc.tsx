@@ -63,7 +63,7 @@ export default function ShareAcc() {
                     {photo ? (
                         <img src={photo} alt=""/>
                     ) : (
-                        {isGroup ? <UsersIcon weight="fill"/> : <UserIcon weight="fill"/>}
+                        isGroup ? <UsersIcon weight="fill"/> : <UserIcon weight="fill"/>
                     )}
                 </div>
             </div>
