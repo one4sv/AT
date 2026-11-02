@@ -120,18 +120,21 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
             setIsPlanned(plannedArr.length > 0 && habit.periodicity === "sometimes");
         } else {
             setIsDone(false);
-            // A rest day in a cycle is not scheduled, but the backend permits
-            // a member with can_complete to record an explicit completion.
-            // Never enable dates before the habit starts or in the future.
-            const canMarkCycleRestToday =
+            // Personal completions are independent, even on an unscheduled day.
+            // Only allow recording for dates within the habit and not in the future.
+            const today = todayStrFunc();
+            const canMarkUnscheduledDay =
                 habit.ongoing &&
-                habit.periodicity === "cycle" &&
                 !!habit.access?.can_complete &&
-                chosenDay === todayStrFunc() &&
                 chosenDay >= habit.start_date &&
-                (!habit.end_date || chosenDay <= habit.end_date);
+                chosenDay <= today &&
+                (!habit.end_date || chosenDay <= habit.end_date) &&
+                (
+                    habit.completion_mode === "personal" ||
+                    (habit.periodicity === "cycle" && chosenDay === today)
+                );
 
-            setDoable(canMarkCycleRestToday);
+            setDoable(canMarkUnscheduledDay);
             setPlanable(false);
             setIsPlanned(false);
         }

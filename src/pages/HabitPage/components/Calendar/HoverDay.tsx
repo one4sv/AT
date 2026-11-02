@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useParams } from "react-router";
 
@@ -19,10 +19,10 @@ export default function HoverDay({
     targetRef,
     comment,
 }: HoverDayProps) {
-    const [position, setPosition] = useState({ top: 0, left: 0 });
+    const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
     const { habitId: id } = useParams<{ habitId: string }>();
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const updatePosition = () => {
             if (!targetRef.current) return;
 
@@ -45,6 +45,8 @@ export default function HoverDay({
             window.removeEventListener("resize", updatePosition);
         };
     }, [targetRef]);
+
+    if (!position) return null;
 
     const content = (
         <div
