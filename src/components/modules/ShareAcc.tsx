@@ -1,6 +1,6 @@
 
 import { useMemo } from "react";
-import { ChatTeardropIcon, CopyIcon, UserIcon } from "@phosphor-icons/react";
+import { ChatTeardropIcon, CopyIcon, UserIcon, UsersIcon } from "@phosphor-icons/react";
 import "../../scss/modules/ShareAccDiv.scss"
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
@@ -10,7 +10,8 @@ export default function ShareAcc() {
     const { blackout } = useBlackout()
     const { showNotification } = useNote()
     const nick = blackout.options?.nick
-    const link = window.location.origin + `/acc/${nick}`
+    const isGroup = Boolean(blackout.options?.link)
+    const link = blackout.options?.link || window.location.origin + `/acc/${nick}`
     const photo = blackout.options?.url
 
     const qr = useMemo(() => (
@@ -21,7 +22,7 @@ export default function ShareAcc() {
             bgColor="transparent"
             fgColor="url(#qrGradient)"
         />
-    ), [blackout.seted, blackout.module])
+    ), [link])
 
     const copyLink = async () => {
         try {
@@ -35,15 +36,15 @@ export default function ShareAcc() {
     return (
         <div className="shareAccDiv">
             <div className="moduleName">
-                Поделиться аккаунтом
+                {isGroup ? "Приглашение в беседу" : "Поделиться аккаунтом"}
             </div>
             <div className="settingInnerList">
                 <div className="settingInnerButt" onClick={copyLink}>
                     <CopyIcon weight="fill"/> Скопировать ссылку
                 </div>
-                <div className="settingInnerButt" onClick={() => showNotification("info", "В разработке")}>
+                {!isGroup && <div className="settingInnerButt" onClick={() => showNotification("info", "В разработке")}>
                     <ChatTeardropIcon weight="fill"/> Отправить в чат
-                </div>
+                </div>}
             </div>
             <div className="moduleName">
                 QR - код
@@ -62,7 +63,7 @@ export default function ShareAcc() {
                     {photo ? (
                         <img src={photo} alt=""/>
                     ) : (
-                        <UserIcon weight="fill"/>
+                        {isGroup ? <UsersIcon weight="fill"/> : <UserIcon weight="fill"/>}
                     )}
                 </div>
             </div>

@@ -432,3 +432,136 @@
         }
     }
 }
+.permissionsDiv {
+    width: 25vw;
+    height: 78dvh;
+    padding: 1dvh .75vw;
+    box-sizing: border-box;
+    border-radius: 24px;
+    overflow: hidden;
+    gap: 1dvh;
+}
+.permissionsHeader {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 4dvh;
+    padding: 0 .5vw;
+    color: var(--tc);
+    font-size: 20px;
+
+    > button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 4dvh;
+        height: 4dvh;
+        border: none;
+        border-radius: 50%;
+        background: var(--interact);
+        color: var(--tc);
+        cursor: pointer;
+    }
+}
+.slidesContainer {
+    width: 200%;
+    flex: 1;
+    min-height: 0;
+    height: auto;
+}
+.permissionsSlide {
+    width: 50%;
+    flex: 0 0 50%;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+.permissionsName {
+    box-sizing: border-box;
+    color: var(--tc);
+    font: inherit;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.permissionsLength > svg {
+    width: 2.5dvh;
+    height: 2.5dvh;
+    flex-shrink: 0;
+}
+.permissionsEmpty {
+    padding: 2dvh 1vw;
+    color: var(--borderHabit);
+    text-align: center;
+}
+.roleName {
+    min-width: 0;
+    overflow: hidden;
+}
+.roleName > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.roleLength {
+    flex-shrink: 0;
+    margin-left: auto;
+}
+.memberItem {
+    min-width: 0;
+}
+.infoWrapper {
+    height: auto;
+    padding-bottom: 2dvh;
+}
+.permissionsButts {
+    flex-shrink: 0;
+    height: auto;
+    min-height: 5dvh;
+    box-sizing: border-box;
+}
+.permButt {
+    width: auto;
+    min-height: 5dvh;
+    padding: 0 1vw;
+    border-radius: 24px;
+}
+.permButt.permBack {
+    width: auto;
+}
+.permButt.permCancel {
+    background: var(--interact);
+    color: var(--tc);
+}
+.permButt:disabled {
+    opacity: .5;
+    cursor: default;
+}
+@media (max-width: 800px) {
+    .permissionsDiv {
+        width: 100%;
+        max-width: 100%;
+        height: 100dvh;
+        padding: 4dvh 3vw max(2dvh, env(safe-area-inset-bottom));
+        border-radius: 24px 24px 0 0;
+    }
+    .permissionsHeader {
+        padding: 0 2vw;
+    }
+    .permissionsName {
+        padding-inline: 3vw;
+    }
+    .memberProf {
+        width: 100%;
+    }
+    .permButt {
+        padding: 0 3vw;
+    }
+    .blackoutModule:has(> .permissionsDiv) > .mobileBar {
+        position: absolute;
+        top: 1.5dvh;
+        margin: 0;
+    }
+}

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react"
 import type { Member, Perms } from "../context/GroupContext"
 import { useGroup } from "../hooks/GroupHook"
 import { api } from "../ts/api"
-import { CaretRight, User, Image, UserPlus, UserMinus, Prohibit, Trash, PushPin, TextAlignCenter, TextAa , UserGear, ShareFat } from "@phosphor-icons/react"
+import { CaretRight, User, Image, UserPlus, UserMinus, Prohibit, Trash, PushPin, TextAlignCenter, TextAa , UserGear, ShareFat, XIcon } from "@phosphor-icons/react"
 import Toggler from "../ts/Toggler"
 import { useUser } from "../hooks/UserHook"
 import PermissionsName from "./components/PermissionsName"
@@ -14,6 +14,7 @@ import ImgsMembers from "./components/ImgsMembers"
 import AutoDesc from "../ts/utils/AutoDesc"
 import SelectList from "../ts/SelectList"
 import { useBlackout } from "../hooks/BlackoutHook"
+import { useNote } from "../hooks/NoteHook"
 
 export interface RoleType {
     role_id:string,
@@ -71,7 +72,7 @@ export default function PermissionsSettings() {
     const { group, refetchGroup } = useGroup()
     const { user } = useUser()
     const { setBlackout } = useBlackout()
-    const API_URL = import.meta.env.VITE_API_URL;
+    const { showNotification } = useNote()
 
     const [ roles, setRoles ] = useState<RoleType[]>([])
     const [ members, setMembers ] = useState<MemberPermType[]>([])
@@ -130,19 +131,19 @@ export default function PermissionsSettings() {
         finally {
             setLoadingPermissions(false)
         }
-    }, [API_URL, group])
+    }, [group])
 
     const handleSave = async() => {
         if (!group || changes.length === 0) return
         setLoadingPermissions(true)
         try {
             const res = await api.post(`editpermissions/${group.id}`, changes)
-            if (res.data.success) {
-                setBlackout({seted:false})
-                await refetchGroup(group.id)
-            }
-        } catch (error) {
-            console.log(error)
+            if (!res.data.success) throw new Error(res.data.error || "Не удалось сохранить")
+            setChanges([])
+            setBlackout({seted:false})
+            await refetchGroup(group.id)
+        } catch {
+            showNotification("error", "Не удалось сохранить права и роли")
         } finally {
             setLoadingPermissions(false)
         }
@@ -186,16 +187,20 @@ export default function PermissionsSettings() {
 
     const isEditable = showRole
         ? showRole.is_editable
-        : myRank !== undefined && targetRank !== undefined
+        : showMember?.id !== user.id && myRank !== undefined && targetRank !== undefined
             ? targetRank < myRank
             : false;
 
     return (
-        <div className="permissionsDiv">
+        <div className="permissionsDiv" role="dialog" aria-modal="true" aria-label="Права и роли">
+            <div className="permissionsHeader">
+                <span>Права и роли</span>
+                <button type="button" aria-label="Закрыть" onClick={() => setBlackout({seted:false})}><XIcon size={22}/></button>
+            </div>
             {loadingPermissions ? <Loader /> : (
             <div
                 className="slidesContainer"
-                style={{ transform: slided ? "translateX(-25%)" : "translateX(25%)"}}
+                style={{ transform: slided ? "translateX(-50%)" : "translateX(0)"}}
             >
                 <div className="permissionsSlide">
                     <div className="permissionsWrapper">
@@ -218,18 +223,7 @@ export default function PermissionsSettings() {
                                     </div>
                                 </div>
                             ))}
-                            {roles.length < 10 && (
-                                <div className="roleWrapper">
-                                    <div className="role">
-                                        <div className="roleName">
-                                            <span className="roleName1str addRole">Добавить роль</span>
-                                        </div>
-                                        <div className="roleLength">
-                                            <CaretRight className="caret"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+                            {roles.length === 0 && <div className="permissionsEmpty">Ролей пока нет</div>}
                             <div className="defRole">
                                 <div className="roleName">
                                     Роль по умолчанию:
@@ -365,7 +359,7 @@ export default function PermissionsSettings() {
                             </div>
                         )}
                         <label className="permLabel">
-                            {Object.values(editedPermissions || {}).filter(Boolean).length}/10 разрешений
+                            {Object.values(editedPermissions || {}).filter(Boolean).length}/{ALL_PERM_KEYS.length} разрешений
                         </label>
                         {ALL_PERM_KEYS.map((key) => {
                             const Icon = PERM_ICONS[key];
@@ -432,15 +426,15 @@ export default function PermissionsSettings() {
             {!loadingPermissions && (
                 <div className="permissionsButts">
                     <div className="permsButtsDiv">
-                        <button className="permButt permCancel" onClick={() => setBlackout({seted:true})}>
+                        <button type="button" className="permButt permCancel" onClick={() => setBlackout({seted:false})}>
                             Отмена
                         </button>
-                        <button className="permButt permSave" onClick={() => handleSave()}>
+                        <button type="button" className="permButt permSave" disabled={changes.length === 0} onClick={() => void handleSave()}>
                             Сохранить
                         </button>
                     </div>
                     {slided && (
-                        <div className="permButt permBack" onClick={() => {
+                        <button type="button" className="permButt permBack" onClick={() => {
                             setSlided(false)
                             if (showMember) setShowMember(undefined)
                             else setShowRole(undefined)
@@ -449,7 +443,7 @@ export default function PermissionsSettings() {
                                 <ArrowLeft/>
                             </div>
                             Назад
-                        </div>
+                        </button>
                     )}
                 </div>
             )}

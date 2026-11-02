@@ -1,6 +1,6 @@
 import { CopyIcon, LinkIcon, QrCodeIcon } from "@phosphor-icons/react";
-import { QRCodeSVG } from "qrcode.react";
 import { useGroup } from "../../hooks/GroupHook";
+import { useBlackout } from "../../hooks/BlackoutHook";
 import { api } from "../../ts/api";
 import { useNote } from "../../hooks/NoteHook";
 import { useEffect, useState } from "react";
@@ -10,10 +10,10 @@ import { ru } from "date-fns/locale";
 export default function InviteUser() {
     const { group, refetchGroup } = useGroup();
     const { showNotification } = useNote();
+    const { setBlackout } = useBlackout();
 
     const [ loading, setLoading ] = useState(false);
     const [ generatedLink, setGeneratedLink ] = useState("");
-    const [ showQr, setShowQr ] = useState(false);
     const [ showCopied, setShowCopied ] = useState(false);
 
     const expiresAt = group.invite_expires_at ? new Date(group.invite_expires_at) : null;
@@ -22,7 +22,6 @@ export default function InviteUser() {
 
     useEffect(() => {
         setGeneratedLink("");
-        setShowQr(false);
         setShowCopied(false);
     }, [group.id]);
 
@@ -56,13 +55,18 @@ export default function InviteUser() {
         }
     };
 
-    const toggleQr = async () => {
-        if (showQr) {
-            setShowQr(false);
-            return;
-        }
+    const openQr = async () => {
         const link = await ensureLink();
-        if (link) setShowQr(true);
+        if (!link) return;
+        setBlackout({
+            seted: true,
+            module: "ShareAcc",
+            options: {
+                link,
+                name: group.name,
+                url: group.avatar_url ?? undefined
+            }
+        });
     };
 
     const timeLeftText = expiresAt && !isExpired
@@ -100,18 +104,11 @@ export default function InviteUser() {
                 type="button"
                 className="inviteUserQrButton"
                 disabled={loading}
-                onClick={() => void toggleQr()}
-                aria-expanded={showQr}
+                onClick={() => void openQr()}
             >
                 <QrCodeIcon weight="fill" />
-                {showQr ? "Скрыть QR-код" : "Показать QR-код беседы"}
+                Показать QR-код беседы
             </button>
-            {showQr && linked && <div className="inviteUserQr" aria-label="QR-код приглашения в беседу">
-                <div className="inviteUserQrImage">
-                    <QRCodeSVG value={linked} size={240} level="M" />
-                </div>
-                <span>Отсканируйте код, чтобы открыть приглашение</span>
-            </div>}
         </div>
     );
 }

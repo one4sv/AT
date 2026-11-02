@@ -91,7 +91,7 @@ export default function GroupMembers({
                             }
                         )}
                     >
-                        <Settings2 size={18} />Права доступа</button>}
+                        <Settings2 size={18} />Права и роли</button>}
                 </div>}
             </div>
             {filtered.length ? <ul className="groupMemberList">

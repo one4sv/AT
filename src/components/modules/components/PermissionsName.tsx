@@ -19,7 +19,7 @@ export default function PermissionsName({ showList, setShowList, roles, members 
     };
 
     return (
-        <div className="permissionsName" onClick={handleClick}>
+        <button type="button" className="permissionsName" onClick={handleClick} aria-expanded={isMembers ? showList.members : showList.roles}>
             <span>{isMembers ? "Участники" : "Роли"}:</span>
             <div className="permissionsLength">
                 {isMembers ? members : roles}
@@ -31,6 +31,6 @@ export default function PermissionsName({ showList, setShowList, roles, members 
                     }}
                 />
             </div>
-        </div>
+        </button>
     );
 }
