@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import "../../scss/SectionArt.scss";
 
-export type ArtTheme = "general" | "account" | "personalization" | "habits" | "chats" | "notifications" | "security" | "privacy" | "about" | "contacts" | "faq" | "policy" | "terms" | "growth" | "future" | "community";
+export type ArtTheme = "general" | "account" | "personalization" | "habits" | "chats" | "notifications" | "security" | "privacy" | "about" | "contacts" | "faq" | "policy" | "terms" | "growth" | "future" | "community" | "roadmap";
 
 const themes: Record<string, ArtTheme> = {
     gen: "general", pers: "personalization", activities: "habits", notes: "notifications",
@@ -81,6 +81,19 @@ function Motif({ theme }: { theme: ArtTheme }) {
             <path d="M0-32c-20-15-42-14-61-7v81c24-7 41-8 61 4 20-12 37-11 61-4v-81c-19-7-41-8-61 7Z" className="artPaper"/>
             <path d="M0-32v78M-45-16l28 3m-28 13 28 3m-28 13 28 3M17-13l28-3M17 3l28-3M17 19l28-3" className="artLine"/>
             <path d="M28-42v30l9-7 9 5v-31" className="artSolid artShimmer"/>
+        </>;
+        case "roadmap": return <>
+            <rect x="-60" y="-46" width="120" height="92" rx="20" className="artPaper"/>
+            <path d="M-44-26h31m-31 12h18" className="artLine"/>
+            <path d="m-43 26 34-23 26 12 31-40" className="artLine artDraw"/>
+            <circle cx="-43" cy="26" r="9" className="artTint artPulse"/>
+            <circle cx="-9" cy="3" r="9" className="artTint artPulse artDelay1"/>
+            <circle cx="17" cy="15" r="8" className="artTint"/>
+            <g className="artBob artDelay2">
+                <circle cx="48" cy="-25" r="18" className="artSolid"/>
+                <path d="m39-25 6 6 12-13" className="artInverse"/>
+            </g>
+            <path d="M-43 38h25M-9 16v22M17 27v11" className="artTrail"/>
         </>;
         case "growth": return <>
             <path d="M-65 45H65" className="artLine"/>
