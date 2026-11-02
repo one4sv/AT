@@ -1,561 +1,544 @@
 @use "../mixins.scss" as var;
 
-.permissionsDiv {
+.rolesModal {
     @include var.centerModal;
-    width: 25vw;
-    height: 70dvh;
-    background-color: var(--mc);
-    border-radius: 6px;
-    align-items: center;
-    z-index: 11;
-    overflow-y:auto;
-    display: flex;
-    overflow-x: hidden;
-    transition: translate 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    @media (max-width: 800px) {
-        width: 100%;
-    }
-}
-.slidesContainer {
-    width: 50vw;
-    height: 93%;
-    display: flex;
-    transition: transform 0.3s ease;
-}
-.permissionsSlide {
-    width: 25vw;
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    overflow-y:auto;
-    scrollbar-width:thin;
-}
-.permissionsSlide::-webkit-scrollbar-button {
-    display: none;
-    width: 0;
-    height: 0;
-}
-.permissionsWrapper {
-    width: 100%;
-    height: fit-content;
-}
-.permissionsName {
-    border: 1px solid var(--borderHabit);
-    background-color: var(--mc);
-    border-radius: 6px;
-    width: 100%;
-    height: 5dvh;
-    align-items: center;
-    padding-inline: 0.7vw;
-    font-size: 20px;
-    justify-content: space-between;
-    display: flex;
-    cursor: pointer;
-    @media (hover: hover) {
-        &:hover {
-        background-color: var(--menuButtHover);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        background-color: var(--menuButtHover);
-    
-        
-        }
-    }
-}
-.permissionsLength {
-    display: flex;
-    gap: 0.5vw;
-    color: var(--accent_text);
-    >svg {
-        width: 50%;
-        height: 100%;
-        color: var(--tc);
-    }
-}
-.permissionsList {
-    width: 100%;
-    margin: 0 auto;
-    // overflow: hidden;
-}
-.roleWrapper {
-    margin-top: 0.2dvh;
-}
-.role {
-    width: 100%;
-    height: 4.5dvh;
-    display: flex;
-    border-radius: 6px;
-    align-items: center;
-    padding-inline: 0.5vw;
-    justify-content: space-between;
-    cursor: pointer;
-    @media (hover: hover) {
-        &:hover {
-        background-color: var(--menuButtHover);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        background-color: var(--menuButtHover);
-    
-        
-        }
-    }
-}
-.roleName {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    white-space: nowrap;
-    padding: 0 1%;
-}
-.roleName1str {
-    font-size: 18px;
-    &.isMy {
-        color: var(--accent_text);
-    }
-    &.addRole {
-        font-size: 16px;
-    }
-}
-.roleName2str {
-    font-size: 14px;
-    color: var(--borderHabit);
-}
-.roleLength {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    color: var(--borderHabit);
-    > .caret {
-        font-size: 20px;
-    }
-}
-.keyWrapper {
-    height: 3.5dvh;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    align-items: center;
-    padding-inline: 0.5vw;
-    border-radius: 6px;
-    margin: 0 0 0.4vh;
-    color: var(--borderWhLight);
-    cursor: pointer;
-    &.noteditable {
-        color: var(--borderHabit);
-        cursor: default;
-    }
-    > .toggler.disable {
-        border-color: var(--borderHabit);
-        > .togglerCircle {
-            background-color: var(--borderHabit);
-        }
-    }
-    @media (hover: hover) {
-        &:hover {
-        background-color: var(--menuButtHover);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        background-color: var(--menuButtHover);
-    
-        
-        }
-    }
-}
-.permDiv {
-    display: flex;
-    align-items: center;
-    gap: 0.5vw;
-}
-.memberItem {
-    width: 100%;
-    height: 4.5dvh;
-    font-size: 18px;
-    display: flex;
-    border-radius: 6px;
-    align-items: center;
-    cursor: pointer;
-    gap: 0.2vw;
-    position: relative;
-    @media (hover: hover) {
-        &:hover {
-        background-color: var(--menuButtHover);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        background-color: var(--menuButtHover);
-    
-        
-        }
-    }
-}
-.memberImg {
-    border-radius: 50%;
-    height: 80%;
-    aspect-ratio: 1/1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--bgc);
-    >img {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-    > svg {
-        width: 80%;
-        height: 80%;
-        color: var(--borderWh);
-    }
-}
-.roleSpan {
-    color: var(--borderHabit);
-    font-size: 14px;
-    position: absolute;
-    right: 0;
-}
-
-// 2 slide
-
-.permissionsBg {
-    position: relative;
-    background-color: var(--bgc);
-    width: 100%;
-    height: 20dvh;
-    overflow: hidden;
-    &::after {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: -75%;
-        transform: translateX(-50%);
-        pointer-events: none;
-
-        width: 120%;
-        height: 150%;
-
-        background: radial-gradient(
-            ellipse at center,
-            color-mix(in srgb, var(--accent) 60%, transparent) 0%,
-            color-mix(in srgb, var(--accent) 40%, transparent) 30%,
-            transparent 70%
-        );
-
-        filter: blur(25px);
-        pointer-events: none;
-    }
-}
-.infoWrapper {
-    height: calc(100% - 20.5dvh);
-    margin-top: 0.5dvh;
-}
-.roleDesc {
-    color: var(--borderWh);
-    width: 100%;
-    background-color: var(--tr);
-    border: none;
-    outline: none;
-    resize: none;
-    font-size: 14px;
-    overflow: hidden;
-    padding-inline-start: 0.4vw;
-}
-.permBackSvg {
-    height: 80%;
-    display: flex;
-    align-items: center;
-    >svg {
-        height: 90%;
-        width: 90%;
-    }
-}
-.roleInp {
-    height: 4.5dvh;
-    padding: 0;
-}
-.permLabel {
-    font-size: 14px;
-    margin-top: 0.4dvh;
-    margin-left: 0.5vw;
-    color: var(--borderHabit);
-}
-.permInp {
-    width: 100%;
-    border: none;
-    outline: none;
-    background-color: var(--tr);
-    color: var(--tc);
-    height: 100%;
-    font-size: 18px;
-    padding-inline:0.5vw;
-    &:read-only {
-        color: var(--borderWh);
-        pointer-events: none;
-    }
-}
-.permSL {
-    @include var.selectList(100%, 100%, 9%, 0, 0.3vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 10%);
-    > div {
-        top: 70%;
-    }
-    > svg {
-        height: 80%;
-    }
-    > input {
-        @include var.input(var(--tr), var(--tc), var(--tr), 100%, 0, var(--tr));
-        width: 100%;
-        font-size: 18px;
-        cursor: pointer;
-        padding-inline: 0.5vw;
-        border-bottom: 2px solid var(--tr);
-        &:focus-visible {
-            border-bottom: 2px solid var(--accent);
-        }
-    }
-    &:focus-within {
-        > svg {
-            color: var(--accent_text);
-        }
-    }
-}
-.permissionsButts {
-    display: flex;
-    flex-direction: row-reverse;
-    width: 100%;
-    align-items: center;
-    height: 7%;
-    position: relative;
-    justify-content: space-between;
-    padding-left: 0.5vw;
-    padding-right: 0.8vw;
-}
-.permsButtsDiv {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    position: relative;
-    right: 0;
-    justify-self: flex-end;
-    gap: 0.5vw;
-}
-.permButt {
-    height: calc(100% - 0.6vw);
-    width: 6vw;
-    font-size: 18px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    outline: none;
-    border: none;
-    &.permBack{
-        width: 5vw;
-        background-color: var(--mc);
-        @media (hover: hover) {
-            &:hover {
-            background-color: var(--interact);
-        
-            }
-        }
-
-        @media (hover: none) {
-            &:active {
-            background-color: var(--interact);
-        
-            
-            }
-        }
-    }
-    &.permSave {
-        background:linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--tc);
-        @media (hover: hover) {
-            &:hover {
-            color: var(--tc);
-            background-color: var(--darker_accent);
-        
-            }
-        }
-
-        @media (hover: none) {
-            &:active {
-            color: var(--tc);
-            background-color: var(--darker_accent);
-        
-            
-            }
-        }
-    }
-}
-.defRole {
-    background-color: var(--bgc);
-    display: flex;
-    width: 100%;
-    height: 4dvh;
-    align-items: center;
-    padding-inline-start: 0.5vw;
-    > .roleName {
-        font-size: 15px;
-        color: var(--accent_text);
-    }
-    > .selectListDiv {
-        width: fit-content;
-        > input {
-            padding-inline-start: 0;
-            border: none;
-            font-size: 14px !important;
-            color: var(--accent_text);
-        }
-        > svg {
-            width: 0;
-        }
-    }
-}
-.permissionsDiv {
-    width: 25vw;
+    width: 30vw;
     height: 78dvh;
-    padding: 1dvh .75vw;
     box-sizing: border-box;
-    border-radius: 24px;
-    overflow: hidden;
-    gap: 1dvh;
-}
-.permissionsHeader {
+    padding: 1.5dvh 1vw;
     display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    min-height: 4dvh;
-    padding: 0 .5vw;
-    color: var(--tc);
-    font-size: 20px;
-
-    > button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 4dvh;
-        height: 4dvh;
-        border: none;
-        border-radius: 50%;
-        background: var(--interact);
-        color: var(--tc);
-        cursor: pointer;
-    }
-}
-.slidesContainer {
-    width: 100%;
-    flex: 1;
-    min-height: 0;
-    height: auto;
-}
-.permissionsSlide {
-    width: 100%;
-    flex: 0 0 100%;
+    flex-direction: column;
     min-width: 0;
     min-height: 0;
-    height: 100%;
-    box-sizing: border-box;
-    overflow-y: auto;
+    overflow: hidden;
+    gap: 1dvh;
+    border-radius: 24px;
+    background-color: var(--mc);
+    color: var(--tc);
 }
-.permissionsName {
+
+.rolesModalHeader {
+    width: 100%;
+    min-height: 4dvh;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0 .5vw;
     box-sizing: border-box;
+    font-size: 20px;
+}
+
+.rolesModalLoading,
+.rolesModalError {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1dvh;
+    color: var(--tc);
+}
+
+.rolesModalError {
+    padding: 2dvh 1vw;
+    text-align: center;
+
+    > button {
+        border: none;
+        background: var(--interact);
+        color: var(--tc);
+        border-radius: 24px;
+        padding: 1dvh 1vw;
+        font: inherit;
+        cursor: pointer;
+    }
+}
+
+.rolesModalViewport {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.rolesModalTrack {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    transition: transform .3s ease;
+    transform: translateX(0);
+
+    &.showDetail {
+        transform: translateX(-100%);
+    }
+}
+
+.rolesModalPanel {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    flex: 0 0 100%;
+    box-sizing: border-box;
+    padding: .25dvh .25vw 1dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+}
+
+.rolesModalSection {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .75dvh;
+    margin-bottom: 1.5dvh;
+}
+
+.rolesModalSectionHead {
+    width: 100%;
+    min-height: 5dvh;
+    padding: 1dvh 1vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+    box-sizing: border-box;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--interact);
     color: var(--tc);
     font: inherit;
-    font-size: 20px;
-    flex-shrink: 0;
+    font-size: 18px;
+    text-align: left;
+    cursor: pointer;
 }
-.permissionsLength > svg {
-    width: 2.5dvh;
-    height: 2.5dvh;
+
+.rolesModalSectionMeta {
+    display: flex;
+    align-items: center;
+    gap: .6vw;
     flex-shrink: 0;
+    color: var(--accent_text);
+
+    > svg {
+        flex-shrink: 0;
+        color: var(--tc);
+        transform: rotate(0);
+        transition: transform .2s ease;
+
+        &.expanded {
+            transform: rotate(180deg);
+        }
+    }
 }
-.permissionsEmpty {
+
+.rolesModalItems {
+    display: flex;
+    flex-direction: column;
+    gap: .3dvh;
+    min-width: 0;
+}
+
+.rolesModalItem {
+    width: 100%;
+    min-height: 5.5dvh;
+    padding: .65dvh .75vw;
+    display: flex;
+    align-items: center;
+    gap: .75vw;
+    min-width: 0;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 24px;
+    background: transparent;
+    color: var(--tc);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.rolesModalAvatar {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 4.25dvh;
+    height: 4.25dvh;
+    overflow: hidden;
+    border-radius: 50%;
+    background: var(--interact);
+    color: var(--borderWh);
+
+    > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.rolesModalItemText {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    gap: .2dvh;
+
+    > span,
+    > small {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    > small {
+        font-size: 14px;
+        color: var(--borderHabit);
+    }
+}
+
+.rolesModalItemEnd {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+    gap: .6vw;
+    max-width: 35%;
+    color: var(--borderHabit);
+
+    > small {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 14px;
+    }
+
+    > svg {
+        flex-shrink: 0;
+    }
+}
+
+.rolesModalEmpty {
     padding: 2dvh 1vw;
     color: var(--borderHabit);
     text-align: center;
 }
-.roleName {
+
+.rolesModalDefault,
+.rolesModalFields {
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+    padding: 1dvh .75vw;
+    border-radius: 24px;
+    background: var(--interact);
+}
+
+.rolesModalDefault > label,
+.rolesModalFields > label {
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
     min-width: 0;
-    overflow: hidden;
+    color: var(--borderWh);
 }
-.roleName > span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.roleLength {
-    flex-shrink: 0;
-    margin-left: auto;
-}
-.memberItem {
+
+.rolesModalDefault select,
+.rolesModalFields select,
+.rolesModalFields input,
+.rolesModalFields textarea {
+    width: 100%;
     min-width: 0;
+    min-height: 4.5dvh;
+    box-sizing: border-box;
+    padding: .75dvh .75vw;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    outline: none;
+    background: var(--mc);
+    color: var(--tc);
+    font: inherit;
+
+    &:focus-visible {
+        border-color: var(--accent_text);
+    }
+
+    &:disabled {
+        opacity: .6;
+        cursor: default;
+    }
 }
-.infoWrapper {
-    height: auto;
-    padding-bottom: 2dvh;
+
+.rolesModalFields textarea {
+    resize: vertical;
 }
-.permissionsButts {
+
+.rolesModalDetail {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 1dvh;
+}
+
+.rolesModalIdentity {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: 6dvh;
+    gap: .75vw;
+    padding: .75dvh .75vw;
+    border-radius: 24px;
+    background: var(--interact);
+}
+
+.rolesModalPermissionsHeading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5vw;
+    padding: .75dvh .75vw 0;
+    color: var(--tc);
+
+    > span:last-child {
+        color: var(--accent_text);
+    }
+}
+
+.rolesModalPermissions {
+    display: flex;
+    flex-direction: column;
+    gap: .25dvh;
+}
+
+.rolesModalPermission {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75vw;
+    min-height: 4.75dvh;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: .65dvh .75vw;
+    border: none;
+    border-radius: 24px;
+    background: transparent;
+    color: var(--tc);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:disabled {
+        cursor: default;
+        opacity: .65;
+    }
+}
+
+.rolesModalPermissionText {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: .7vw;
+    min-width: 0;
+
+    > svg {
+        flex-shrink: 0;
+        color: var(--borderWh);
+    }
+
+    > span {
+        min-width: 0;
+        overflow-wrap: break-word;
+    }
+}
+
+.rolesModalSwitch {
+    position: relative;
+    flex: 0 0 auto;
+    width: 3.75dvh;
+    height: 2.2dvh;
+    box-sizing: border-box;
+    border: 1px solid var(--borderWh);
+    border-radius: 24px;
+    background: var(--mc);
+    transition: background-color .2s ease;
+
+    > span {
+        position: absolute;
+        width: 1.5dvh;
+        height: 1.5dvh;
+        top: calc(50% - .75dvh);
+        left: .25dvh;
+        border-radius: 50%;
+        background: var(--borderWh);
+        transition: left .2s ease, background-color .2s ease;
+    }
+
+    &.active {
+        border: none;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+
+        > span {
+            left: calc(100% - 1.75dvh);
+            background: var(--tc);
+        }
+    }
+}
+
+.rolesModalFooter {
+    display: flex;
+    align-items: center;
     flex-shrink: 0;
-    height: auto;
+    justify-content: flex-end;
+    gap: .75vw;
+    width: 100%;
+    min-height: 5.5dvh;
+    box-sizing: border-box;
+    padding: .5dvh .25vw 0;
+}
+
+.rolesModalBack,
+.rolesModalSave {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5vw;
     min-height: 5dvh;
     box-sizing: border-box;
-}
-.permButt {
-    width: auto;
-    min-height: 5dvh;
-    padding: 0 1vw;
+    padding: 0 1.25vw;
+    border: none;
     border-radius: 24px;
+    color: var(--tc);
+    font: inherit;
+    font-size: 18px;
+    cursor: pointer;
 }
-.permButt.permBack {
-    width: auto;
+
+.rolesModalBack {
+    margin-right: auto;
+    background: var(--mc);
 }
-.permButt:disabled {
-    opacity: .5;
-    cursor: default;
+
+.rolesModalSave {
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+
+    &:disabled {
+        opacity: .5;
+        cursor: default;
+    }
 }
+
+@media (hover: hover) {
+    .rolesModalSectionHead:hover,
+    .rolesModalItem:hover,
+    .rolesModalPermission:not(:disabled):hover {
+        background: var(--menuButtHover);
+    }
+
+    .rolesModalBack:hover {
+        background: var(--interact);
+    }
+}
+
+@media (hover: none) {
+    .rolesModalSectionHead:active,
+    .rolesModalItem:active,
+    .rolesModalPermission:not(:disabled):active {
+        background: var(--menuButtHover);
+    }
+
+    .rolesModalBack:active {
+        background: var(--interact);
+    }
+}
+
+@media (max-width: 1100px) and (min-width: 801px) {
+    .rolesModal {
+        width: 42vw;
+    }
+}
+
 @media (max-width: 800px) {
-    .permissionsDiv {
+    .rolesModal {
         width: 100%;
         max-width: 100%;
         height: 100dvh;
         padding: 4dvh 3vw max(2dvh, env(safe-area-inset-bottom));
         border-radius: 24px 24px 0 0;
     }
-    .permissionsHeader {
+
+    .rolesModalHeader {
         padding: 0 2vw;
     }
-    .permissionsName {
-        padding-inline: 3vw;
+
+    .rolesModalPanel {
+        padding: .25dvh 0 1dvh;
     }
-    .memberProf {
-        width: 100%;
+
+    .rolesModalSectionHead {
+        padding: 1dvh 3vw;
     }
-    .permButt {
-        padding: 0 3vw;
+
+    .rolesModalItem {
+        padding: .65dvh 2vw;
+        gap: 2vw;
     }
-    .blackoutModule:has(> .permissionsDiv) > .mobileBar {
+
+    .rolesModalItemEnd,
+    .rolesModalSectionMeta,
+    .rolesModalIdentity,
+    .rolesModalPermission,
+    .rolesModalPermissionText {
+        gap: 2vw;
+    }
+
+    .rolesModalDefault,
+    .rolesModalFields {
+        padding: 1dvh 3vw;
+    }
+
+    .rolesModalDefault select,
+    .rolesModalFields select,
+    .rolesModalFields input,
+    .rolesModalFields textarea {
+        padding: .75dvh 3vw;
+    }
+
+    .rolesModalPermission {
+        padding: 1dvh 2vw;
+    }
+
+    .rolesModalFooter {
+        padding: .5dvh 0 0;
+        gap: 2vw;
+    }
+
+    .rolesModalBack,
+    .rolesModalSave {
+        padding: 0 4vw;
+    }
+
+    .blackoutModule:has(> .rolesModal) > .mobileBar {
         position: absolute;
         top: 1.5dvh;
         margin: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rolesModalTrack,
+    .rolesModalSwitch,
+    .rolesModalSwitch > span {
+        transition: none;
     }
 }

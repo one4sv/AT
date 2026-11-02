@@ -1,449 +1,451 @@
-import "../../scss/modules/PermissionsDiv.scss"
-import { useCallback, useEffect, useState } from "react"
-import type { Member, Perms } from "../context/GroupContext"
-import { useGroup } from "../hooks/GroupHook"
-import { api } from "../ts/api"
-import { CaretRight, User, Image, UserPlus, UserMinus, Prohibit, Trash, PushPin, TextAlignCenter, TextAa , UserGear, ShareFat, XIcon } from "@phosphor-icons/react"
-import Toggler from "../ts/Toggler"
-import { useUser } from "../hooks/UserHook"
-import PermissionsName from "./components/PermissionsName"
-import Loader from "../ts/Loader"
-import { ArrowLeft } from "lucide-react"
-import SvgRain from "./components/SvgRain"
-import ImgsMembers from "./components/ImgsMembers"
-import AutoDesc from "../ts/utils/AutoDesc"
-import SelectList from "../ts/SelectList"
-import { useBlackout } from "../hooks/BlackoutHook"
-import { useNote } from "../hooks/NoteHook"
+import "../../scss/modules/PermissionsDiv.scss";
+import { useCallback, useEffect, useState } from "react";
+import type { Member, Perms } from "../context/GroupContext";
+import { useGroup } from "../hooks/GroupHook";
+import { useUser } from "../hooks/UserHook";
+import { useBlackout } from "../hooks/BlackoutHook";
+import { useNote } from "../hooks/NoteHook";
+import { api } from "../ts/api";
+import Loader from "../ts/Loader";
+import { ArrowLeft, CaretDown, CaretRight, Image, TextAa, TextAlignCenter, User, UserGear, UserMinus, UserPlus, Prohibit, Trash, PushPin, ShareFat } from "@phosphor-icons/react";
 
 export interface RoleType {
-    role_id:string,
-    role_name:string,
-    permissions: Perms,
-    is_editable:boolean,
-    desc:string | null,
-    is_default:boolean,
-    rank:number
+    role_id: string;
+    role_name: string;
+    permissions: Perms;
+    is_editable: boolean;
+    desc: string | null;
+    is_default: boolean;
+    rank: number;
 }
 
 export interface MemberPermType extends Member {
-    permissions:Perms
+    permissions: Perms;
 }
 
-const PERM_LABELS: Record<keyof Perms, string> = {
-    habit_complete: "Отмечать выполнения активностей",
-    habit_comment: "Комментировать активности",
-    habit_edit_blocks: "Изменять блоки активностей",
-    habit_edit_info: "Изменять информацию активностей",
-    habit_invite: "Приглашать в активности",
-    change_avatar: "Изменять аватарку беседы",
-    change_name: "Изменять название беседы",
-    change_desc: "Изменять описание беседы",
-    manage_roles: "Управлять ролями",
-    can_invite_users: "Приглашать участников",
-    kick_users: "Исключать участников",
-    ban_users: "Банить участников",
-    delete_others: "Удалять чужие сообщения",
-    pin_messages: "Закреплять сообщения",
-    redirect_messages: "Пересылать сообщения",
+type Change = {
+    target: "group" | "role" | "member";
+    target_id: string;
+    label: string;
+    value: string | number | boolean | null;
 };
 
-const PERM_ICONS: Record<keyof Perms, React.ComponentType<{ size?: number }>> = {
-    habit_complete: User,
-    habit_comment: TextAlignCenter,
-    habit_edit_blocks: TextAa,
-    habit_edit_info: TextAa,
-    habit_invite: UserPlus,
-    change_avatar: Image,
-    change_name: TextAa ,
-    change_desc: TextAlignCenter,
-    manage_roles: UserGear,
-    can_invite_users: UserPlus,
-    kick_users: UserMinus,
-    ban_users: Prohibit,
-    delete_others: Trash,
-    pin_messages: PushPin,
-    redirect_messages: ShareFat,
-};
+type Selection = { type: "role" | "member"; id: string } | null;
 
-const ALL_PERM_KEYS = Object.keys(PERM_LABELS) as (keyof Perms)[];
+const PERMISSIONS: { key: keyof Perms; label: string; icon: React.ComponentType<{ size?: number }> }[] = [
+    { key: "habit_complete", label: "Отмечать выполнения активностей", icon: User },
+    { key: "habit_comment", label: "Комментировать активности", icon: TextAlignCenter },
+    { key: "habit_edit_blocks", label: "Изменять блоки активностей", icon: TextAa },
+    { key: "habit_edit_info", label: "Изменять информацию активностей", icon: TextAa },
+    { key: "habit_invite", label: "Приглашать в активности", icon: UserPlus },
+    { key: "change_avatar", label: "Изменять аватарку беседы", icon: Image },
+    { key: "change_name", label: "Изменять название беседы", icon: TextAa },
+    { key: "change_desc", label: "Изменять описание беседы", icon: TextAlignCenter },
+    { key: "manage_roles", label: "Управлять ролями", icon: UserGear },
+    { key: "can_invite_users", label: "Приглашать участников", icon: UserPlus },
+    { key: "kick_users", label: "Исключать участников", icon: UserMinus },
+    { key: "ban_users", label: "Банить участников", icon: Prohibit },
+    { key: "delete_others", label: "Удалять чужие сообщения", icon: Trash },
+    { key: "pin_messages", label: "Закреплять сообщения", icon: PushPin },
+    { key: "redirect_messages", label: "Пересылать сообщения", icon: ShareFat }
+];
 
 export default function PermissionsSettings() {
-    const { group, refetchGroup } = useGroup()
-    const { user } = useUser()
-    const { setBlackout } = useBlackout()
-    const { showNotification } = useNote()
+    const { group, refetchGroup } = useGroup();
+    const { user } = useUser();
+    const { setBlackout } = useBlackout();
+    const { showNotification } = useNote();
 
-    const [ roles, setRoles ] = useState<RoleType[]>([])
-    const [ members, setMembers ] = useState<MemberPermType[]>([])
-    const [ loadingPermissions, setLoadingPermissions ] = useState(false)
-    const [ showList, setShowList ] = useState<{roles:boolean, members:boolean}>({roles:true, members:true})
-    const [ showRole, setShowRole ] = useState<RoleType | undefined>(undefined)
-    const [ showMember, setShowMember ] = useState<MemberPermType | undefined>()
-    const [ slided, setSlided ] = useState(false)
-    const [ changes, setChanges ] = useState<{ 
-        target: string, 
-        target_id: string, 
-        label: string, 
-        value: string | number | boolean | null
-    }[]>([])
+    const [ roles, setRoles ] = useState<RoleType[]>([]);
+    const [ members, setMembers ] = useState<MemberPermType[]>([]);
+    const [ isOwner, setIsOwner ] = useState(false);
+    const [ ownerId, setOwnerId ] = useState<string | null>(null);
+    const [ loading, setLoading ] = useState(true);
+    const [ saving, setSaving ] = useState(false);
+    const [ error, setError ] = useState(false);
+    const [ selection, setSelection ] = useState<Selection>(null);
+    const [ expanded, setExpanded ] = useState({ roles: true, members: true });
+    const [ changes, setChanges ] = useState<Change[]>([]);
 
-    // Локальные редактируемые состояния
-    const [editedName, setEditedName] = useState<string>("")
-    const [editedRank, setEditedRank] = useState<number>(0)
-    const [editedDesc, setEditedDesc] = useState<string>("")
-    const [editedPermissions, setEditedPermissions] = useState<Perms | null>(null)
-    const [editedMemberRoleId, setEditedMemberRoleId] = useState<string | number | undefined>(undefined)
-    const [editedDefaultRoleId, setEditedDefaultRoleId] = useState<string | number |undefined>(undefined)
-
-    const refetchMembers = useCallback( async() => {
-        if (!group) return
-        setLoadingPermissions(true)
+    const loadPermissions = useCallback(async () => {
+        if (!group.id) return;
+        setLoading(true);
+        setError(false);
         try {
-            const res = await api.get(`getpermissions/${group.id}`)
-            if (res.data.success) {
-                const members = res.data.members as MemberPermType[];
-                const roles = res.data.roles as RoleType[];
+            const res = await api.get("getpermissions/" + group.id);
+            if (!res.data.success) throw new Error("Не удалось получить права");
+            const nextRoles = (res.data.roles || []) as RoleType[];
+            const nextMembers = (res.data.members || []) as MemberPermType[];
 
-                const priority = (roleName: string) => {
-                    if (roleName === "owner") return 0;
-                    if (roleName === "admin") return 1;
-                    return 2;
-                };
-
-                const rolesSorted = [...roles].sort((a, b) => {
-                    const pA = priority(a.role_name);
-                    const pB = priority(b.role_name);
-                    if (pA !== pB) return pA - pB;
-
-                    const countA = members.filter(m => m.role_id === a.role_id).length;
-                    const countB = members.filter(m => m.role_id === b.role_id).length;
-
-                    return countB - countA;
-                });
-
-                setMembers(members);
-                setRoles(rolesSorted);
-            }
-        } catch (error) {
-            console.log(error)
-        }
-        finally {
-            setLoadingPermissions(false)
-        }
-    }, [group])
-
-    const handleSave = async() => {
-        if (!group || changes.length === 0) return
-        setLoadingPermissions(true)
-        try {
-            const res = await api.post(`editpermissions/${group.id}`, changes)
-            if (!res.data.success) throw new Error(res.data.error || "Не удалось сохранить")
-            setChanges([])
-            setBlackout({seted:false})
-            await refetchGroup(group.id)
+            setRoles([...nextRoles].sort((a, b) => b.rank - a.rank));
+            setMembers(nextMembers);
+            setIsOwner(res.data.is_owner === true);
+            setOwnerId(res.data.owner_id || null);
         } catch {
-            showNotification("error", "Не удалось сохранить права и роли")
+            setError(true);
+            showNotification("error", "Не удалось загрузить права беседы");
         } finally {
-            setLoadingPermissions(false)
+            setLoading(false);
         }
-    }
+    }, [group.id]);
 
-    const slide = (role?:RoleType, member?:MemberPermType) => {
-        if (!member && !role) return
-        setSlided(true)
-        if (role) setShowRole(role)
-        else setShowMember(member)
-    }
-
-    // Сброс/инициализация локальных состояний при открытии слайда
     useEffect(() => {
-        if (showRole) {
-            setEditedName(showRole.role_name)
-            setEditedRank(showRole.rank)
-            setEditedDesc(showRole.desc || "")
-            setEditedPermissions({...showRole.permissions})
-        } else if (showMember) {
-            setEditedMemberRoleId(showMember.role_id)
-            setEditedPermissions({...showMember.permissions})
-        } else {
-            setEditedPermissions(null)
+        void loadPermissions();
+    }, [loadPermissions]);
+
+    const editedValue = (
+        target: Change["target"],
+        targetId: string,
+        label: string,
+        original: Change["value"]
+    ): Change["value"] => {
+        const change = changes.find(item =>
+            item.target === target && item.target_id === targetId && item.label === label
+        );
+        return change ? change.value : original;
+    };
+
+    const changeValue = (
+        target: Change["target"],
+        targetId: string,
+        label: string,
+        value: Change["value"],
+        original: Change["value"]
+    ) => {
+        setChanges(prev => {
+            const rest = prev.filter(item =>
+                !(item.target === target && item.target_id === targetId && item.label === label)
+            );
+            return value === original ? rest : [...rest, { target, target_id: targetId, label, value }];
+        });
+    };
+
+    const selectedRole = selection?.type === "role"
+        ? roles.find(role => role.role_id === selection.id)
+        : undefined;
+    const selectedMember = selection?.type === "member"
+        ? members.find(member => member.id === selection.id)
+        : undefined;
+    const myMember = members.find(member => member.id === user.id);
+    const myRank = roles.find(role => role.role_id === myMember?.role_id)?.rank ?? 0;
+    const selectedMemberRank = roles.find(role => role.role_id === selectedMember?.role_id)?.rank ?? 0;
+    const canEditRole = !!selectedRole && (
+        isOwner || (selectedRole.is_editable && myRank > selectedRole.rank)
+    );
+    const canEditMember = !!selectedMember && selectedMember.id !== user.id && (
+        isOwner || (selectedMember.id !== ownerId && myRank > selectedMemberRank)
+    );
+    const editable = selectedRole ? canEditRole : canEditMember;
+    const target = selectedRole ? "role" : "member";
+    const targetId = selectedRole?.role_id || selectedMember?.id || "";
+    const permissions = selectedRole?.permissions || selectedMember?.permissions;
+    const enabledCount = PERMISSIONS.filter(({ key }) =>
+        !!editedValue(target, targetId, key, permissions?.[key] ?? false)
+    ).length;
+    const defaultRoleId = roles.find(role => role.is_default)?.role_id ?? null;
+    const chosenDefaultRoleId = editedValue("group", group.id, "default_role_id", defaultRoleId);
+
+    const save = async () => {
+        if (saving || loading || changes.length === 0) return;
+
+        const editedRoleNames = roles.map(role =>
+            String(editedValue("role", role.role_id, "role_name", role.role_name) || "").trim()
+        );
+        if (editedRoleNames.some(name => !name)) {
+            showNotification("error", "Название роли не может быть пустым");
+            return;
         }
-    }, [showRole, showMember])
 
-    // Инициализация дефолтной роли
-    useEffect(() => {
-        setEditedDefaultRoleId(roles.find(r => r.is_default)?.role_id)
-    }, [roles])
-
-    useEffect(() => {
-        if (!group) return
-        else refetchMembers()
-    }, [group, refetchMembers]);
-
-    const imMember = members.find(m => m.id === user.id);
-    const myRank = imMember ? roles.find(r => r.role_id === imMember.role_id)?.rank : undefined;
-    const targetRank = showMember ? roles.find(r => r.role_id === showMember.role_id)?.rank : undefined;
-
-    const isEditable = showRole
-        ? showRole.is_editable
-        : showMember?.id !== user.id && myRank !== undefined && targetRank !== undefined
-            ? targetRank < myRank
-            : false;
+        setSaving(true);
+        try {
+            const payload = changes.map(change => (
+                change.label === "role_name" && typeof change.value === "string"
+                    ? { ...change, value: change.value.trim() }
+                    : change
+            ));
+            const res = await api.post("editpermissions/" + group.id, payload);
+            if (!res.data.success) throw new Error("Не удалось сохранить права");
+            await refetchGroup(group.id);
+            setBlackout({ seted: false });
+        } catch {
+            showNotification("error", "Не удалось сохранить права и роли");
+            await loadPermissions();
+        } finally {
+            setSaving(false);
+        }
+    };
 
     return (
-        <div className="permissionsDiv" role="dialog" aria-modal="true" aria-label="Права и роли">
-            <div className="permissionsHeader">
+        <div className="rolesModal" role="dialog" aria-modal="true" aria-label="Права и роли">
+            <div className="rolesModalHeader">
                 <span>Права и роли</span>
-                <button type="button" aria-label="Закрыть" onClick={() => setBlackout({seted:false})}><XIcon size={22}/></button>
             </div>
-            {loadingPermissions ? <Loader /> : (
-            <div
-                className="slidesContainer"
-                style={{ transform: slided ? "translateX(-100%)" : "translateX(0)"}}
-            >
-                <div className="permissionsSlide">
-                    <div className="permissionsWrapper">
-                        <PermissionsName showList={showList} setShowList={setShowList} roles={roles.length}/>
-                        <div className="permissionsList" style={{height:!showList.roles ? "0vh" : "fit-content"}}>
-                            {roles.map((r) => (
-                                <div className="roleWrapper" key={r.role_id}>
-                                    <div className="role" onClick={() => slide(r)}>
-                                        <div className="roleName">
-                                            <span className={`roleName1str ${members.find(m => m.id === user.id)?.role_id === r.role_id ? "isMy" : ""}`}>{r.role_name}</span>
-                                            <span className="roleName2str">
-                                                {members.find(m => m.id === user.id)?.role_id === r.role_id ? "Ваша роль; " : ""}
-                                                приоритет {r.rank};
-                                            </span>
+
+            {loading ? (
+                <div className="rolesModalLoading"><Loader /></div>
+            ) : error ? (
+                <div className="rolesModalError">
+                    <span>Не удалось загрузить права и роли</span>
+                    <button type="button" onClick={() => void loadPermissions()}>Повторить</button>
+                </div>
+            ) : (
+                <>
+                    <div className="rolesModalViewport">
+                        <div className={"rolesModalTrack" + (selection ? " showDetail" : "")}>
+                            <div className="rolesModalPanel" inert={selection !== null}>
+                                <section className="rolesModalSection">
+                                    <button
+                                        type="button"
+                                        className="rolesModalSectionHead"
+                                        aria-expanded={expanded.roles}
+                                        onClick={() => setExpanded(prev => ({ ...prev, roles: !prev.roles }))}
+                                    >
+                                        <span>Роли</span>
+                                        <span className="rolesModalSectionMeta">
+                                            {roles.length}/10
+                                            <CaretDown className={expanded.roles ? "expanded" : ""} size={20} />
+                                        </span>
+                                    </button>
+
+                                    {expanded.roles && (
+                                        <div className="rolesModalItems">
+                                            {roles.length ? roles.map(role => (
+                                                <button
+                                                    type="button"
+                                                    className="rolesModalItem"
+                                                    key={role.role_id}
+                                                    onClick={() => setSelection({ type: "role", id: role.role_id })}
+                                                >
+                                                    <span className="rolesModalItemText">
+                                                        <span>{role.role_name}</span>
+                                                        <small>
+                                                            {role.is_default ? "Роль по умолчанию · " : ""}
+                                                            Приоритет {role.rank}
+                                                        </small>
+                                                    </span>
+                                                    <span className="rolesModalItemEnd">
+                                                        {members.filter(member => member.role_id === role.role_id).length}
+                                                        <CaretRight size={18} />
+                                                    </span>
+                                                </button>
+                                            )) : <div className="rolesModalEmpty">Ролей пока нет</div>}
+
+                                            {roles.length > 0 && (
+                                                <div className="rolesModalDefault">
+                                                    <label htmlFor="roles-default">Роль по умолчанию</label>
+                                                    <select
+                                                        id="roles-default"
+                                                        value={String(chosenDefaultRoleId ?? "")}
+                                                        disabled={saving}
+                                                        onChange={event => changeValue(
+                                                            "group", group.id, "default_role_id",
+                                                            event.target.value || null, defaultRoleId
+                                                        )}
+                                                    >
+                                                        <option value="">Без роли</option>
+                                                        {roles.map(role => (
+                                                            <option key={role.role_id} value={role.role_id}>
+                                                                {role.role_name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            )}
                                         </div>
-                                        <div className="roleLength">
-                                            {members.filter(m => m.role_id === r.role_id).length} участник
-                                            <CaretRight className="caret"/>
+                                    )}
+                                </section>
+
+                                <section className="rolesModalSection">
+                                    <button
+                                        type="button"
+                                        className="rolesModalSectionHead"
+                                        aria-expanded={expanded.members}
+                                        onClick={() => setExpanded(prev => ({ ...prev, members: !prev.members }))}
+                                    >
+                                        <span>Участники</span>
+                                        <span className="rolesModalSectionMeta">
+                                            {members.length}
+                                            <CaretDown className={expanded.members ? "expanded" : ""} size={20} />
+                                        </span>
+                                    </button>
+
+                                    {expanded.members && (
+                                        <div className="rolesModalItems">
+                                            {members.length ? members.map(member => (
+                                                <button
+                                                    type="button"
+                                                    className="rolesModalItem"
+                                                    key={member.id}
+                                                    onClick={() => setSelection({ type: "member", id: member.id })}
+                                                >
+                                                    <span className="rolesModalAvatar">
+                                                        {member.avatar_url ? <img src={member.avatar_url} alt="" /> : <User size={24} />}
+                                                    </span>
+                                                    <span className="rolesModalItemText">
+                                                        <span>{member.name || member.nick}</span>
+                                                        <small>{member.id === user.id ? "Вы" : "@" + member.nick}</small>
+                                                    </span>
+                                                    <span className="rolesModalItemEnd">
+                                                        <small>{member.id === ownerId ? "Владелец" : member.role_name || "Участник"}</small>
+                                                        <CaretRight size={18} />
+                                                    </span>
+                                                </button>
+                                            )) : <div className="rolesModalEmpty">Участников пока нет</div>}
                                         </div>
-                                    </div>
-                                </div>
-                            ))}
-                            {roles.length === 0 && <div className="permissionsEmpty">Ролей пока нет</div>}
-                            <div className="defRole">
-                                <div className="roleName">
-                                    Роль по умолчанию:
-                                </div>
-                                <SelectList className="permSL"
-                                    arr={roles.filter(r => r.is_editable).map(r => ({ label:r.role_name, value:r.role_id}))}
-                                    selected={editedDefaultRoleId}
-                                    prop={setEditedDefaultRoleId}   // обновляем локальное состояние
-                                    extraFunction={(value) => {      // собираем изменение
-                                        const original = roles.find(r => r.is_default)?.role_id
-                                        if (value !== original) {
-                                            setChanges(prev => [...prev, {
-                                                target: "group",
-                                                target_id: group!.id,
-                                                label: "default_role_id",
-                                                value
-                                            }])
-                                        }
-                                    }}
-                                />
+                                    )}
+                                </section>
                             </div>
-                        </div>
-                    </div>
-                    <div className="permissionsWrapper">
-                        <PermissionsName showList={showList} setShowList={setShowList} members={members.length}/>
-                        <div className="permissionsList" style={{height:!showList.members ? "0vh" : "fit-content"}}>
-                            {members.map((m) => (
-                                <div className="roleWrapper" key={m.id}>
-                                    <div className="role" onClick={() => slide(undefined, m)}>
-                                        <div className="memberItem">
-                                            <div className="memberImg">
-                                                {m.avatar_url ? <img src={m.avatar_url}/> : <User/>}
-                                            </div>
-                                            <div className="roleName">
-                                                <span className="roleName1str">{m.name || m.nick}</span>
-                                                <span className="roleName2str">
-                                                    {m.id === user.id
-                                                        ? "вы"
-                                                        : m.name
-                                                            ? `@${m.nick}`
-                                                            : ""
-                                                    }
+
+                            <div className="rolesModalPanel" inert={selection === null}>
+                                {(selectedRole || selectedMember) && (
+                                    <div className="rolesModalDetail">
+                                        <div className="rolesModalIdentity">
+                                            {selectedMember && (
+                                                <span className="rolesModalAvatar">
+                                                    {selectedMember.avatar_url ? (
+                                                        <img src={selectedMember.avatar_url} alt="" />
+                                                    ) : <User size={24} />}
                                                 </span>
+                                            )}
+                                            <div className="rolesModalItemText">
+                                                <span>{selectedRole ? selectedRole.role_name : selectedMember?.name || selectedMember?.nick}</span>
+                                                <small>
+                                                    {selectedRole
+                                                        ? "Редактирование роли"
+                                                        : selectedMember?.id === ownerId ? "Владелец" : "Права участника"}
+                                                </small>
                                             </div>
-                                            <span className="roleSpan">{roles.find(r => r.role_id === m.role_id)?.role_name}</span>
                                         </div>
-                                        <div className="roleLength">
-                                            <CaretRight className="caret"/>
+
+                                        {selectedRole && (
+                                            <div className="rolesModalFields">
+                                                <label>
+                                                    Название роли
+                                                    <input
+                                                        type="text"
+                                                        value={String(editedValue("role", selectedRole.role_id, "role_name", selectedRole.role_name) ?? "")}
+                                                        disabled={!canEditRole || saving}
+                                                        onChange={event => changeValue(
+                                                            "role", selectedRole.role_id, "role_name",
+                                                            event.target.value, selectedRole.role_name
+                                                        )}
+                                                    />
+                                                </label>
+                                                <label>
+                                                    Приоритет
+                                                    <input
+                                                        type="number"
+                                                        min={1}
+                                                        max={99}
+                                                        value={Number(editedValue("role", selectedRole.role_id, "rank", selectedRole.rank))}
+                                                        disabled={!canEditRole || saving}
+                                                        onChange={event => {
+                                                            const value = Number(event.target.value);
+                                                            if (value >= 1 && value <= 99) {
+                                                                changeValue("role", selectedRole.role_id, "rank", value, selectedRole.rank);
+                                                            }
+                                                        }}
+                                                    />
+                                                </label>
+                                            </div>
+                                        )}
+
+                                        {selectedMember && roles.length > 0 && (
+                                            <div className="rolesModalFields">
+                                                <label>
+                                                    Роль участника
+                                                    <select
+                                                        value={String(editedValue("member", selectedMember.id, "role_id", selectedMember.role_id || null) ?? "")}
+                                                        disabled={!canEditMember || saving}
+                                                        onChange={event => changeValue(
+                                                            "member", selectedMember.id, "role_id",
+                                                            event.target.value || null, selectedMember.role_id || null
+                                                        )}
+                                                    >
+                                                        <option value="">Без роли</option>
+                                                        {roles.filter(role => isOwner || role.rank < myRank).map(role => (
+                                                            <option key={role.role_id} value={role.role_id}>
+                                                                {role.role_name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </label>
+                                            </div>
+                                        )}
+
+                                        <div className="rolesModalPermissionsHeading">
+                                            <span>Разрешения</span>
+                                            <span>{enabledCount}/{PERMISSIONS.length}</span>
                                         </div>
+
+                                        <div className="rolesModalPermissions">
+                                            {PERMISSIONS.map(({ key, label, icon: Icon }) => {
+                                                const active = !!editedValue(target, targetId, key, permissions?.[key] ?? false);
+                                                return (
+                                                    <button
+                                                        type="button"
+                                                        key={key}
+                                                        className="rolesModalPermission"
+                                                        aria-pressed={active}
+                                                        disabled={!editable || saving}
+                                                        onClick={() => changeValue(target, targetId, key, !active, permissions?.[key] ?? false)}
+                                                    >
+                                                        <span className="rolesModalPermissionText">
+                                                            <Icon size={20} />
+                                                            <span>{label}</span>
+                                                        </span>
+                                                        <span className={"rolesModalSwitch" + (active ? " active" : "")} aria-hidden="true">
+                                                            <span />
+                                                        </span>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {selectedRole && (
+                                            <div className="rolesModalFields">
+                                                <label>
+                                                    Описание роли
+                                                    <textarea
+                                                        rows={3}
+                                                        value={String(editedValue("role", selectedRole.role_id, "desc", selectedRole.desc) ?? "")}
+                                                        disabled={!canEditRole || saving}
+                                                        onChange={event => changeValue(
+                                                            "role", selectedRole.role_id, "desc",
+                                                            event.target.value || null, selectedRole.desc
+                                                        )}
+                                                    />
+                                                </label>
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                            ))}
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="permissionsSlide">
-                    <div className="permissionsBg">
-                        <ImgsMembers members={members.filter(m => (showRole && m.role_id === showRole.role_id) || (showMember && m.id === showMember.id))}/>
-                        <SvgRain/>
-                    </div>
-                    <div className="infoWrapper">
-                        {showRole ? (
-                            <div className="permSettingsDiv">
-                                <label className="permLabel">Название</label>
-                                <div className={`keyWrapper ${!isEditable ? "noteditable" : ""} roleInp`}>
-                                    <input
-                                        type="text"
-                                        className="permInp"
-                                        disabled={!isEditable}
-                                        value={editedName}
-                                        onChange={(e) => {
-                                            const val = e.target.value
-                                            setEditedName(val)
-                                            if (val !== showRole.role_name) {
-                                                setChanges(prev => [...prev, {
-                                                    target: "role",
-                                                    target_id: showRole.role_id,
-                                                    label: "role_name",
-                                                    value: val
-                                                }])
-                                            }
-                                        }}
-                                    />
-                                </div>
-                                <label className="permLabel">Приоритет (максимум 99)</label>
-                                <div className={`keyWrapper ${!isEditable ? "noteditable" : ""} roleInp`}>
-                                    <input
-                                        type="number"
-                                        min={1}
-                                        max={99}
-                                        className="permInp"
-                                        disabled={!isEditable}
-                                        value={editedRank}
-                                        onChange={(e) => {
-                                            const val = Number(e.target.value)
-                                            if (!isNaN(val) && val > 0 && val < 100) {
-                                                setEditedRank(val)
-                                                if (val !== showRole.rank) {
-                                                    setChanges(prev => [...prev, {
-                                                        target: "role",
-                                                        target_id: showRole.role_id,
-                                                        label: "rank",               // ← исправлено
-                                                        value: val
-                                                    }])
-                                                }
-                                            }
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="permSettingsDiv">
-                                <label className="permLabel">Роль</label>
-                                <div className={`keyWrapper ${!isEditable ? "noteditable" : ""} roleInp`}>
-                                    <SelectList
-                                        className="permSL"
-                                        arr={roles.map(r => ({ label:r.role_name, value:r.role_id}))}
-                                        selected={editedMemberRoleId ?? showMember?.role_id}
-                                        prop={setEditedMemberRoleId}
-                                        extraFunction={(value) => {
-                                            if (value !== showMember?.role_id) {
-                                                setChanges(prev => [...prev, {
-                                                    target: "member",
-                                                    target_id: showMember!.id,
-                                                    label: "role_id",
-                                                    value
-                                                }])
-                                            }
-                                        }}
-                                        showSelected={false}
-                                    />
-                                </div>
-                            </div>
+
+                    <div className="rolesModalFooter">
+                        {selection && (
+                            <button
+                                type="button"
+                                className="rolesModalBack"
+                                onClick={() => setSelection(null)}
+                            >
+                                <ArrowLeft size={21} />
+                                Назад
+                            </button>
                         )}
-                        <label className="permLabel">
-                            {Object.values(editedPermissions || {}).filter(Boolean).length}/{ALL_PERM_KEYS.length} разрешений
-                        </label>
-                        {ALL_PERM_KEYS.map((key) => {
-                            const Icon = PERM_ICONS[key];
-                            const currentState = editedPermissions?.[key] ?? false
-
-                            return (
-                                <div key={key}>
-                                    <div
-                                        className={`keyWrapper ${!isEditable ? "noteditable" : ""}`}
-                                        onClick={() => {
-                                            if (!isEditable) return;
-
-                                            const newState = !currentState;
-
-                                            setEditedPermissions(prev =>
-                                                prev ? { ...prev, [key]: newState } : prev
-                                            );
-
-                                            setChanges(prev => [...prev, {
-                                                target: showRole ? "role" : "member",
-                                                target_id: showRole ? showRole.role_id : showMember!.id,
-                                                label: key,
-                                                value: newState
-                                            }]);
-                                        }}
-                                        >
-                                        <div className="permDiv">
-                                            <Icon size={20} />
-                                            <span className="permStr">{PERM_LABELS[key]}</span>
-                                        </div>
-                                        <Toggler
-                                            state={currentState}
-                                            disable={!isEditable}
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                        {showRole && (
-                            <>
-                                <label className="permLabel">Описание</label>
-                                <AutoDesc
-                                    className="roleDesc"
-                                    readOnly={!isEditable}
-                                    value={editedDesc}
-                                    onChange={(val) => {
-                                        setEditedDesc(val);
-                                        const original = showRole.desc || "";
-                                        if (val !== original) {
-                                            setChanges(prev => [...prev, {
-                                                target: "role",
-                                                target_id: showRole.role_id,
-                                                label: "desc",
-                                                value: val || null   // если пусто — отправляем null
-                                            }]);
-                                        }
-                                    }}
-                                />
-                            </>
-                        )}
-                    </div>
-                </div>
-            </div>)}
-            {!loadingPermissions && (
-                <div className="permissionsButts">
-                    <div className="permsButtsDiv">
-                        <button type="button" className="permButt permSave" disabled={changes.length === 0} onClick={() => void handleSave()}>
-                            Сохранить
+                        <button
+                            type="button"
+                            className="rolesModalSave"
+                            disabled={saving || changes.length === 0}
+                            onClick={() => void save()}
+                        >
+                            {saving ? "Сохраняем…" : "Сохранить"}
                         </button>
                     </div>
-                    {slided && (
-                        <button type="button" className="permButt permBack" onClick={() => {
-                            setSlided(false)
-                            if (showMember) setShowMember(undefined)
-                            else setShowRole(undefined)
-                        }}>
-                            <div className="permBackSvg">
-                                <ArrowLeft/>
-                            </div>
-                            Назад
-                        </button>
-                    )}
-                </div>
+                </>
             )}
         </div>
-    )
+    );
 }
