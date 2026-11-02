@@ -207,3 +207,28 @@
         }
     }
 }
+
+.roadmapPage .roadmapNotice {
+    display: flex;
+    align-items: flex-start;
+    gap: .75vw;
+    padding: .75dvh 0;
+    margin: 1dvh 0 0;
+    color: var(--tc);
+
+    > span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.2dvh;
+        height: 2.2dvh;
+        flex-shrink: 0;
+        border: 1px solid var(--accent);
+        border-radius: 50%;
+        color: var(--accent_text);
+    }
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+    }
+}
