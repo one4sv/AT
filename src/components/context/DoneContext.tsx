@@ -6,7 +6,7 @@ import { useHabits } from "../hooks/HabitsHook";
 import { api } from "../ts/api";
 import { dateToCalendarFormat, todayStrFunc } from "../ts/utils/dateToStr";
 import { getDayArrays } from "../ts/utils/getDayArrs";
-import { useParams } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 
 const DoneContext = createContext<DoneContextType | null>(null);
 
@@ -26,7 +26,8 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
     const [waitDoneAnswer, setWaitDoneAnswer] = useState(false);
     const [waitComAnswer, setWaitComAnswer] = useState(false);
 
-    const { habitId: id } = useParams<{ habitId: string }>();
+    // DoneProvider is mounted above <Routes>, where useParams has no route match.
+    const id = useMatch("/habit/:habitId")?.params.habitId;
 
   // ==================== МАРКИРОВКА ВЫПОЛНЕНИЯ ====================
     const markDone = async (id: number, date: string) => {
