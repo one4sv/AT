@@ -7,6 +7,7 @@ import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
 import { api } from "../ts/api";
 import Loader from "../ts/Loader";
+import SelectList from "../ts/SelectList";
 import { ArrowLeft, CaretDown, CaretRight, Image, TextAa, TextAlignCenter, User, UserGear, UserMinus, UserPlus, Prohibit, Trash, PushPin, ShareFat } from "@phosphor-icons/react";
 
 export interface RoleType {
@@ -233,22 +234,20 @@ export default function PermissionsSettings() {
                                             {roles.length > 0 && (
                                                 <div className="rolesModalDefault">
                                                     <label htmlFor="roles-default">Роль по умолчанию</label>
-                                                    <select
+                                                    <SelectList
+                                                        className={saving ? "rolesModalSelect rolesModalSelectLocked" : "rolesModalSelect"}
                                                         id="roles-default"
-                                                        value={String(chosenDefaultRoleId ?? "")}
-                                                        disabled={saving}
-                                                        onChange={event => changeValue(
+                                                        arr={[
+                                                            { label: "Без роли", value: "" },
+                                                            ...roles.map(role => ({ label: role.role_name, value: role.role_id }))
+                                                        ]}
+                                                        selected={String(chosenDefaultRoleId ?? "")}
+                                                        showOnly={saving}
+                                                        onChange={value => changeValue(
                                                             "group", group.id, "default_role_id",
-                                                            event.target.value || null, defaultRoleId
+                                                            value || null, defaultRoleId
                                                         )}
-                                                    >
-                                                        <option value="">Без роли</option>
-                                                        {roles.map(role => (
-                                                            <option key={role.role_id} value={role.role_id}>
-                                                                {role.role_name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
+                                                    />
                                                 </div>
                                             )}
                                         </div>
@@ -354,21 +353,22 @@ export default function PermissionsSettings() {
                                             <div className="rolesModalFields">
                                                 <label>
                                                     Роль участника
-                                                    <select
-                                                        value={String(editedValue("member", selectedMember.id, "role_id", selectedMember.role_id || null) ?? "")}
-                                                        disabled={!canEditMember || saving}
-                                                        onChange={event => changeValue(
+                                                    <SelectList
+                                                        key={selectedMember.id}
+                                                        className={!canEditMember || saving ? "rolesModalSelect rolesModalSelectLocked" : "rolesModalSelect"}
+                                                        arr={[
+                                                            { label: "Без роли", value: "" },
+                                                            ...roles
+                                                                .filter(role => isOwner || role.rank < myRank || role.role_id === selectedMember.role_id)
+                                                                .map(role => ({ label: role.role_name, value: role.role_id }))
+                                                        ]}
+                                                        selected={String(editedValue("member", selectedMember.id, "role_id", selectedMember.role_id || null) ?? "")}
+                                                        showOnly={!canEditMember || saving}
+                                                        onChange={value => changeValue(
                                                             "member", selectedMember.id, "role_id",
-                                                            event.target.value || null, selectedMember.role_id || null
+                                                            value || null, selectedMember.role_id || null
                                                         )}
-                                                    >
-                                                        <option value="">Без роли</option>
-                                                        {roles.filter(role => isOwner || role.rank < myRank).map(role => (
-                                                            <option key={role.role_id} value={role.role_id}>
-                                                                {role.role_name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
+                                                    />
                                                 </label>
                                             </div>
                                         )}
