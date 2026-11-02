@@ -16,6 +16,7 @@ export interface HabitAccess {
     can_edit_blocks: boolean;
     can_edit_info: boolean;
     can_invite: boolean;
+    completion_start_date?: string | null;
 }
 export interface Habit {
     access?: HabitAccess;
