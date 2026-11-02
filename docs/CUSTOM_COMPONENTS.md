@@ -186,3 +186,17 @@ setBlackout({
 - Компоненты из библиотек (например, сам `react-datepicker`, `@tiptap/react`, иконки Phosphor/Lucide) не считать самописными. Описывать **наши обёртки** над ними: `CalendarInput`, редактор постов, `SectionArt` и т. п.
 
 Этот документ фиксирует состояние файлов, просмотренных при составлении. Перед рефакторингом источником истины остаётся текущий код `main`; если документ и код расходятся, проверить код и обновить документацию.
+
+## 9. Рисованные иллюстрации и языковой слой
+
+**Рисованные SVG**: `src/components/ts/SectionArt.tsx` — единая оболочка `SectionArt` и переключаемые сюжеты `Motif`. `src/scss/SectionArt.scss` определяет палитру, слои, миниатюры и анимации. `src/pages/Info/RoadmapArt.tsx` специально рендерит `<SectionArt theme="roadmap" mini/>` — не содержит собственной отдельной графической системы. Иллюстрацию для кнопки Info надо добавлять через `theme`/`section` и стандартный `.sectionArt--mini`, а не создавать второй SVG-фон или grid-правила.
+
+**Язык**: `useTranslation("namespace")` из `react-i18next`; возможные namespaces `common`, `sign`, `info`, `settings`, `acc`. Значение меняется в `src/pages/Settings/Language.tsx`, сохраняется в `settings_lang` и используется через `SettingsContext`. `RoadmapText` — исключение для массива данных релизов; остальные JSX-строки не писать как `en ? "..." : "..."`.
+
+**Info**: кнопки страниц формируются в `src/pages/Info/Info.tsx`, а содержимое — в `tabs`. Для новой страницы потребуется элемент `sections`, ключ в `tabs` и оба JSON `info.json`; маршрут `/info/:tab?` уже предусмотрен. В версии `dev 0.6` ссылка на `/info/roadmap`. В FAQ для контактов и roadmap использовать настоящие внутренние `Link`.
+
+**Состояние**: `GroupInfo` и `AccInfo` используют одинаковую схему сворачивания, но соответствующее управление жестами находится у экранных контейнеров `Group.tsx`/`Acc.tsx`. Не пытаться исправить проблему только CSS-анимацией в дочернем компоненте.
+
+**Права и даты**: `DoneContext` отвечает за состояние возможности выполнить день; реальная авторизация — в backend `getHabitAccess`. Для активности беседы `completion_start_date` определяется из `chat_members.joined_at`. Поэтому новая кнопка выполнения не должна обходить общую проверку.
+
+Подробнее: [SVG_ART.md](SVG_ART.md), [I18N.md](I18N.md), [ARCHITECTURE.md](ARCHITECTURE.md), [COLLABORATION_AND_PERMISSIONS.md](COLLABORATION_AND_PERMISSIONS.md).

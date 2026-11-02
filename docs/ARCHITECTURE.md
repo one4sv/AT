@@ -1,0 +1,58 @@
+# Архитектура AchieveTogether
+
+Краткая карта кода для новых разработчиков и агентов. Состояние на 2 ноября 2026 года; перед правкой изучать текущую ветку `main`. Репозитории: [клиент](https://github.com/one4sv/AT) и [сервер](https://github.com/one4sv/achievetogether-server).
+
+## Стек и запуск
+
+- Клиент: React 19, TypeScript, Vite 7, React Router, SCSS/Sass, Motion, Axios; редактор на Tiptap 3; графики Chart.js; i18next.
+- `npm ci`, `npm run dev` — локальный запуск; `npm run build` запускает `tsc -b && vite build`; `npm run lint` — ESLint. Для Vite env локальные значения не коммитить.
+- `src/main.tsx` предварительно импортирует `theme-init.ts` и `i18n/i18n.ts`, затем `App`.
+- `src/App.tsx` содержит Router, `AppProvider`, глобальные UI (`Blackout`, `Notification`, `ContextMenu`), маршруты.
+- `src/components/ts/AppProvider.tsx` — вложенный граф контекстов. Смотрите реальный порядок: глобальный провайдер находится **выше** `Routes`, поэтому `useParams` внутри него может не иметь текущих параметров. `DoneContext` использует `useMatch`.
+- API клиента: `src/components/ts/api.ts` создаёт Axios `baseURL: "/api/"` с `withCredentials: true`. Не отправлять запросы на случайный альтернативный URL; сопоставлять запросы с backend routes.
+- Сервер: Node.js/Express, Supabase, realtime/WebSocket. Серверная авторизация и проверка разрешений обязательны для мутаций.
+
+## Карта клиентских каталогов
+
+| Папка | Назначение |
+| --- | --- |
+| `src/pages/` | Экранные контейнеры: Main, Chat, Acc, Group, HabitPage, Post, Info, Settings, Landing |
+| `src/components/ts/` | Общие визуальные компоненты: `TA`, `Composer`, `SelectList`, `Blackout`, `SectionArt`, `PageBottom` |
+| `src/components/ts/utils/` | Утилиты и простые UI-элементы |
+| `src/components/modules/` | Содержимое модалок и `ModuleMap.ts` |
+| `src/components/context/` | Контексты состояния, запросов, действий |
+| `src/components/hooks/` | Удобные `useX`-обёртки над контекстами и независимые хуки |
+| `src/components/layout/` | Адаптивная компоновка `ResponsiveLayout` |
+| `src/scss/` | Глобальные токены, темы, миксины и общие стили |
+| `src/pages/*/scss/` | Стили конкретных экранов |
+| `src/i18n/` | Настройка i18next и RU/EN JSON |
+| `src/pages/Info/` | Info, FAQ, about, roadmap, отдельные данные релизов и рисованные SVG |
+
+## Реальные маршруты
+
+В `App.tsx`: `/` — Main; `/sign` — landing; `/post/new`, `/post/:postId/edit`, `/post/:postId`; `/habit`, `/habit/:habitId`; `/chat/:nick`, `/chat/g/:id`; `/acc/:nick`, `/acc`; `/room/:id`; `/join/:token`; `/settings/:tab?`, `/settings/language`, `/info/:tab?`; отдельный QR-маршрут авторизации. `/info/roadmap` — вкладка Info, не отдельный роут верхнего уровня.
+
+## Передача данных и состояния
+
+1. В `SettingsContext` живут тема, акцент, декор, язык; `UpdateSettingsContext` отвечает за их изменение; `theme-init.ts` подставляет CSS-атрибуты до React.
+2. В `HabitsContext` список доступных активностей, `TheHabitContext` — конкретная активность/состояние таймера и счётчика, `CalendarContext` — календарь, `DoneContext` — отправка отметок; `GroupContext` — данные беседы и права.
+3. `SideMenuContext` арбитрирует мобильные жесты; меню/свайп/слайдер/сворачивание не должны конкурировать.
+4. `BlackoutContext` и `ModuleMap` управляют модалками. Внутренний `PermissionsSettings` не создаёт второй оверлей.
+5. `ChatContext`, `MessagesContext`, `WebSocketContext`, `SendMessContext` отвечают за работу переписки и realtime. Для добавления события сначала разобраться с существующей синхронизацией.
+6. Для внешних ссылок и медиа применять `useOpenLink` и `useImagePreview`; для уведомлений `useNote`.
+
+## Источники истины и права
+
+- React `disabled` или скрытая кнопка — UX, не безопасность. Источник прав: backend, Supabase/SQL RPC.
+- Для активности серверная `utils/habitAccess.js` вычисляет `can_view`, `can_complete`, `can_comment`, `can_edit_blocks`, `can_edit_info`, `can_invite`, пользователя персонального/общего прогресса.
+- Для привязанной к чату активности `chat_members.joined_at` определяет **раннюю допустимую дату** отметки участника. В сервере проверяют ручное выполнение, задачи и таймер; владелец исключён из ограничения.
+- Для беседы роль `owner` (приоритет 100) системная и защищённая. Разрешения сохраняются и проверяются сервером; см. [COLLABORATION_AND_PERMISSIONS.md](COLLABORATION_AND_PERMISSIONS.md).
+- Опасные изменения схемы выполнять только после чтения SQL/RPC и миграций; никогда не запускать старую миграцию наугад.
+
+## Тема, визуальные правила и локализация
+
+См. [SCSS_GUIDE.md](SCSS_GUIDE.md), [CUSTOM_COMPONENTS.md](CUSTOM_COMPONENTS.md), [SVG_ART.md](SVG_ART.md), [I18N.md](I18N.md). SCSS-геометрия преимущественно `vw/dvh`, радиусы 24px, CSS-токены темы. **Не добавлять `font-weight`**. Сохранить структуру JSX/порядок импортов. Рисованные иллюстрации — система `SectionArt`, языки — i18next.
+
+## Работа с функциональностью
+
+Любая правка данных совместной активности затрагивает как минимум: API сервера, соответствующий контекст/хук, отображение календаря, права доступа, статистику и UI. Перед коммитом проверить обе модели `personal/shared`, состояние владельца и приглашённого, mobile desktop, прошлое/сегодня/будущее, дату вступления, смену прав, обработку ошибок и realtime.
