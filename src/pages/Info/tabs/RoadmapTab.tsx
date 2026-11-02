@@ -17,7 +17,7 @@ export default function RoadmapTab() {
                 <div className="roadmapRelease" key={release.version}>
                     <div className="roadmapReleaseHeading">
                         <span className="roadmapVersion">{release.version}</span>
-                        <span>{release.title[language]}</span>
+                        {release.title && <span>{release.title[language]}</span>}
                     </div>
                     <ul>
                         {release.features.map((feature, index) => (
@@ -36,17 +36,17 @@ export default function RoadmapTab() {
             <p>{t("roadmap.intro")}</p>
 
             <div className="roadmapTimeline">
-                <section className="roadmapBranch roadmapBranchPast">
+                <section className="roadmapBranch roadmapBranchFuture">
                     <button
                         type="button"
                         className="roadmapToggle"
-                        aria-expanded={showPast}
-                        onClick={() => setShowPast(prev => !prev)}
+                        aria-expanded={showFuture}
+                        onClick={() => setShowFuture(prev => !prev)}
                     >
-                        <span>{t("roadmap.past")} <span className="roadmapCount">({roadmapHistory.length})</span></span>
-                        <CaretDownIcon size={20} className={showPast ? "expanded" : ""}/>
+                        <span>{t("roadmap.future")}</span>
+                        <CaretDownIcon size={20} className={showFuture ? "expanded" : ""}/>
                     </button>
-                    {showPast && releaseList(roadmapHistory)}
+                    {showFuture && releaseList(roadmapFuture)}
                 </section>
 
                 <section className="roadmapBranch roadmapBranchCurrent">
@@ -61,17 +61,17 @@ export default function RoadmapTab() {
                     </div>
                 </section>
 
-                <section className="roadmapBranch roadmapBranchFuture">
+                <section className="roadmapBranch roadmapBranchPast">
                     <button
                         type="button"
                         className="roadmapToggle"
-                        aria-expanded={showFuture}
-                        onClick={() => setShowFuture(prev => !prev)}
+                        aria-expanded={showPast}
+                        onClick={() => setShowPast(prev => !prev)}
                     >
-                        <span>{t("roadmap.future")}</span>
-                        <CaretDownIcon size={20} className={showFuture ? "expanded" : ""}/>
+                        <span>{t("roadmap.past")} <span className="roadmapCount">({roadmapHistory.length})</span></span>
+                        <CaretDownIcon size={20} className={showPast ? "expanded" : ""}/>
                     </button>
-                    {showFuture && releaseList(roadmapFuture)}
+                    {showPast && releaseList([...roadmapHistory].reverse())}
                 </section>
             </div>
 

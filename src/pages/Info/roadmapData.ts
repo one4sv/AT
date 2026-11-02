@@ -5,42 +5,37 @@ export interface RoadmapText {
 
 export interface RoadmapRelease {
     version: string;
-    title: RoadmapText;
+    title?: RoadmapText;
     features: RoadmapText[];
 }
 
 export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.0.1",
-        title: { ru: "Страница регистрации", en: "Sign-in page" },
         features: [
             { ru: "Первый экран входа", en: "Initial sign-in screen" }
         ]
     },
     {
         version: "0.0.2",
-        title: { ru: "Учётные записи", en: "Account context" },
         features: [
             { ru: "UserContext и подтверждение почты", en: "UserContext and email confirmation" }
         ]
     },
     {
         version: "0.0.3",
-        title: { ru: "Главная страница", en: "Home page" },
         features: [
             { ru: "Первая версия главной страницы", en: "First home page" }
         ]
     },
     {
         version: "0.0.4",
-        title: { ru: "Боковое меню", en: "Side menu" },
         features: [
             { ru: "Первая версия SideMenu", en: "First SideMenu" }
         ]
     },
     {
         version: "0.0.5",
-        title: { ru: "Профиль", en: "Profile" },
         features: [
             { ru: "Страница аккаунта и редактирование профиля", en: "Account page and profile editing" }
         ]
@@ -54,21 +49,18 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.1.1",
-        title: { ru: "Создание активности", en: "Create activity" },
         features: [
             { ru: "Добавление привычек", en: "Create habits" }
         ]
     },
     {
         version: "0.1.2",
-        title: { ru: "Состояние активностей", en: "Activity state" },
         features: [
             { ru: "HabitContext", en: "HabitContext" }
         ]
     },
     {
         version: "0.1.3",
-        title: { ru: "Страница привычки", en: "Habit page" },
         features: [
             { ru: "Активности в SideMenu", en: "Habits in SideMenu" },
             { ru: "Страница активности", en: "Habit page" }
@@ -83,7 +75,6 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.2.1",
-        title: { ru: "Контакты и поиск", en: "Contacts and search" },
         features: [
             { ru: "Контакты в SideMenu", en: "Contacts in SideMenu" },
             { ru: "Поиск в SideMenu", en: "SideMenu search" }
@@ -91,21 +82,18 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.2.2",
-        title: { ru: "Страница чата", en: "Chat page" },
         features: [
             { ru: "Первые интерфейсы переписки", en: "Early messaging interface" }
         ]
     },
     {
         version: "0.2.3",
-        title: { ru: "Обновление профиля", en: "Profile refresh" },
         features: [
             { ru: "Улучшения страницы аккаунта", en: "Account page improvements" }
         ]
     },
     {
         version: "0.2.4",
-        title: { ru: "Сообщения", en: "Messaging" },
         features: [
             { ru: "WebSocket", en: "WebSocket" },
             { ru: "Отправка и отображение сообщений", en: "Message sending and display" }
@@ -120,42 +108,36 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.3.1",
-        title: { ru: "Главная и публикации", en: "Home and publishing" },
         features: [
             { ru: "Текстовое поле для публикаций", en: "Post text input" }
         ]
     },
     {
         version: "0.3.2",
-        title: { ru: "Посты профиля", en: "Profile posts" },
         features: [
             { ru: "Публикации пользователя", en: "User posts" }
         ]
     },
     {
         version: "0.3.3",
-        title: { ru: "Лента контактов", en: "Contacts feed" },
         features: [
             { ru: "Публикации контактов на главной", en: "Contacts' posts on home" }
         ]
     },
     {
         version: "0.3.4",
-        title: { ru: "Реакции", en: "Reactions" },
         features: [
             { ru: "Лайки и комментарии к постам", en: "Post likes and comments" }
         ]
     },
     {
         version: "0.3.5",
-        title: { ru: "Календарь", en: "Calendar" },
         features: [
             { ru: "Календарь активности", en: "Activity calendar" }
         ]
     },
     {
         version: "0.3.6",
-        title: { ru: "Прогресс", en: "Progress" },
         features: [
             { ru: "Стрики", en: "Streaks" },
             { ru: "Комментарии к активностям", en: "Activity comments" },
@@ -171,7 +153,6 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.4.1",
-        title: { ru: "Контекстное меню", en: "Context menus" },
         features: [
             { ru: "Контекстные действия", en: "Context actions" },
             { ru: "Адаптация меню", en: "Context menu adaptation" }
@@ -179,7 +160,6 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.4.2",
-        title: { ru: "Интерактивность", en: "Interactions" },
         features: [
             { ru: "Интерактивные сообщения", en: "Interactive messages" },
             { ru: "Контакты и медиа", en: "Contacts and media interactions" },
@@ -188,7 +168,6 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.4.3",
-        title: { ru: "Системные сообщения", en: "System messages" },
         features: [
             { ru: "Системные сообщения", en: "System messages" },
             { ru: "Групповые API", en: "Group endpoints" }
@@ -196,42 +175,36 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.4.4",
-        title: { ru: "Обновление чатов", en: "Chat improvements" },
         features: [
             { ru: "Интерфейс страницы чата", en: "Chat page refresh" }
         ]
     },
     {
         version: "0.4.5",
-        title: { ru: "Беседы", en: "Group rooms" },
         features: [
             { ru: "Страница беседы", en: "Group room page" }
         ]
     },
     {
         version: "0.4.6",
-        title: { ru: "Приглашения в беседу", en: "Invite members" },
         features: [
             { ru: "Добавление участников", en: "Add group members" }
         ]
     },
     {
         version: "0.4.7",
-        title: { ru: "Участники беседы", en: "Manage members" },
         features: [
             { ru: "Исключение участников", en: "Remove group members" }
         ]
     },
     {
         version: "0.4.8",
-        title: { ru: "Закреплённые сообщения", en: "Pinned messages" },
         features: [
             { ru: "Закрепление сообщений", en: "Pin messages" }
         ]
     },
     {
         version: "0.4.9",
-        title: { ru: "Права в беседе", en: "Chat permissions" },
         features: [
             { ru: "Роли и права участников", en: "Roles and member permissions" }
         ]
@@ -246,21 +219,18 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.5.1",
-        title: { ru: "Архив", en: "Archive" },
         features: [
             { ru: "Архивация активностей", en: "Activity archive" }
         ]
     },
     {
         version: "0.5.2",
-        title: { ru: "Фильтры меню", en: "Side menu filters" },
         features: [
             { ru: "Фильтрация содержимого SideMenu", en: "SideMenu content filters" }
         ]
     },
     {
         version: "0.5.3",
-        title: { ru: "Обновление дизайна", en: "Redesign" },
         features: [
             { ru: "Редизайн интерфейса", en: "Interface redesign" },
             { ru: "Совместный журнал", en: "Collaborative journal" }
@@ -268,7 +238,6 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.5.4",
-        title: { ru: "Таймер и счётчик", en: "Timer and counter" },
         features: [
             { ru: "Таймер выполнения", en: "Completion timer" },
             { ru: "Счётчик прогресса", en: "Progress counter" }
@@ -276,7 +245,6 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.5.5",
-        title: { ru: "Расписание и архив", en: "Schedule and archive" },
         features: [
             { ru: "Расписание активностей", en: "Activity schedule" },
             { ru: "Фильтры SideMenu", en: "SideMenu filters" },
@@ -286,7 +254,6 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.5.6",
-        title: { ru: "Профиль и настройки", en: "Account and settings" },
         features: [
             { ru: "Обновление профиля", en: "Account page update" },
             { ru: "Редизайн настроек", en: "Settings redesign" },
@@ -295,7 +262,6 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.5.7",
-        title: { ru: "Язык и оформление", en: "Language and personalization" },
         features: [
             { ru: "Обновление регистрации", en: "Sign-in refresh" },
             { ru: "Информационный раздел", en: "Information pages" },
@@ -304,7 +270,6 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.5.8",
-        title: { ru: "Гостевой доступ", en: "Guest access" },
         features: [
             { ru: "Гостевой режим", en: "Guest access" },
             { ru: "Кнопки планирования", en: "Plan button" }
@@ -312,7 +277,6 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.5.9",
-        title: { ru: "Статистика и циклы", en: "Stats and cycles" },
         features: [
             { ru: "Статистика активностей", en: "Activity statistics" },
             { ru: "Циклическая периодичность", en: "Cyclic activity scheduling" },
@@ -321,7 +285,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     }
 ];
 
-export const roadmapCurrent: RoadmapRelease = {
+export const roadmapCurrent: RoadmapRelease & { title: RoadmapText } = {
     version: "0.6",
     title: { ru: "Эра сотрудничества", en: "Era of Collaboration" },
     features: [
@@ -337,8 +301,16 @@ export const roadmapCurrent: RoadmapRelease = {
 
 export const roadmapFuture: RoadmapRelease[] = [
     {
-        version: "0.7+",
-        title: { ru: "Новые горизонты", en: "New Horizons" },
+        version: "0.7",
+        title: { ru: "Споты", en: "Spots" },
+        features: [
+            { ru: "Споты — пространства для сообществ и интересов", en: "Spots — spaces for communities and shared interests" },
+            { ru: "Публикации и обсуждения внутри спотов", en: "Posts and discussions within spots" },
+            { ru: "Участники, подписки и взаимодействия", en: "Members, subscriptions and interactions" }
+        ]
+    },
+    {
+        version: "0.6+",
         features: [
             { ru: "Цели и расширенная аналитика активностей", en: "Goals and extended activity analytics" },
             { ru: "Развитие комментариев и ответов", en: "Expanded comments and replies" },

@@ -10,6 +10,7 @@ import PolicyTab from "./tabs/PolicyTab"
 import ContactsTab from "./tabs/ContactsTab"
 import FaqTab from "./tabs/FaqTab"
 import RoadmapTab from "./tabs/RoadmapTab"
+import RoadmapArt from "./RoadmapArt"
 import { useTranslation } from "react-i18next"
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import Toggler from "../../components/ts/Toggler"
@@ -225,7 +226,7 @@ export default function Info() {
                                     <div className="settingDesc">
                                         {s.desc}
                                     </div>
-                                    <SectionArt section={s.tab} mini/>
+                                    {s.tab === "roadmap" ? <RoadmapArt/> : <SectionArt section={s.tab} mini/>}
                                 </div>
                             ))}
                         </div>
