@@ -12,7 +12,6 @@
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     @media (max-width: 800px) {
-        margin-top: 1dvh;
         min-height: 90dvh;
         padding: 0.5vh 2vw;
         margin-bottom: 1vh;
