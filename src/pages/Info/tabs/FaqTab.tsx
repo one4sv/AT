@@ -59,7 +59,7 @@ export default function FaqTab() {
                     <h3 className="accent">{t(`faq.q${index}`)}</h3>
                     <p>{t(`faq.a${index}`)}</p>
                 </div>
-            ))
+            ))}
         </div>
     );
 }
