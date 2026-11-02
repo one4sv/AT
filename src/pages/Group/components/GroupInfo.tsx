@@ -11,14 +11,10 @@ import { useContacts } from "../../../components/hooks/ContactsHook";
 import { api } from "../../../components/ts/api";
 export default function GroupInfo({
     group,
-    collapsed,
-    isDragging,
-    onHeightChange
+    collapsed
 }: {
     group: Group;
     collapsed: number;
-    isDragging: boolean;
-    onHeightChange: (height: number) => void;
 }) {
     const { setBlackout } = useBlackout();
     const {
@@ -51,15 +47,14 @@ export default function GroupInfo({
             if (!inner) return;
             const measure = () => {
                 const height = inner.getBoundingClientRect().height;
-                setInfoHeight(height);
-                onHeightChange(height);
+                setInfoHeight(prev => prev === height ? prev : height);
             };
             measure();
             const observer = new ResizeObserver(measure);
             observer.observe(inner);
             return () => observer.disconnect();
         },
-        [onHeightChange]
+        []
     );
 
     useLayoutEffect(
@@ -164,14 +159,15 @@ export default function GroupInfo({
 
     return (
         <form
-            className={`accInfo${isDragging ? " accInfoDragging" : ""}`}
+            className="accInfo"
             onSubmit={save}
             aria-busy={saving}
             inert={collapsed === 1}
             style={{
-                height: infoHeight === null ? undefined : infoHeight * (1 - collapsed),
+                height: infoHeight === null ? undefined : `${infoHeight * (1 - collapsed)}px`,
                 opacity: 1 - collapsed,
-                marginTop: `calc(var(--acc-info-margin-top, 0px) * ${1 - collapsed})`
+                marginTop: `calc(var(--acc-info-margin-top, 0px) * ${1 - collapsed})`,
+                pointerEvents: collapsed === 1 ? "none" : undefined
             }}
         >
             <div className="accInfoInner" ref={innerRef}>

@@ -1,5 +1,5 @@
 import { CalendarBlankIcon } from "@phosphor-icons/react";
-import { useEffect, useLayoutEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { useGroup } from "../../components/hooks/GroupHook";
@@ -23,10 +23,7 @@ export default function Group() {
         myPerms
     } = useGroup();
     const { setTitle } = usePageTitle();
-    const {
-        setDontHandle,
-        dontHandleOther
-    } = useSideMenu();
+    const { setDontHandle, setIsDragging, dontHandleOther } = useSideMenu();
     const { id } = useParams<{
         id: string;
     }>();
@@ -34,13 +31,57 @@ export default function Group() {
     const { habits: myHabits, refetchHabits } = useHabits();
     const { showNotification } = useNote();
     const [ joiningActivity, setJoiningActivity ] = useState<number | null>(null);
-    const [collapsed, setCollapsed] = useState(0);
-    const [isInfoCollapsed, setIsInfoCollapsed] = useState(false);
-    const [isDraggingInfo, setIsDraggingInfo] = useState(false);
-    const [selector, setSelector] = useState<"habits" | "members">("habits");
-    const infoHeight = useRef(0);
-    const collapseStartY = useRef(0);
-    const collapseStartValue = useRef(0);
+    const [ collapsed, setCollapsed ] = useState(0);
+    const [ selector, setSelector ] = useState<"habits" | "members">("habits");
+
+    const collapsedRef = useRef(0);
+    const collapseTarget = useRef(0);
+    const collapseFrame = useRef<number | null>(null);
+
+    useEffect(() => {
+        collapsedRef.current = collapsed;
+    }, [collapsed]);
+
+    useEffect(() => {
+        return () => {
+            if (collapseFrame.current !== null) {
+                cancelAnimationFrame(collapseFrame.current);
+                collapseFrame.current = null;
+            }
+        };
+    }, [id]);
+
+    const animateCollapse = (target: number) => {
+        if (collapseFrame.current !== null) {
+            if (collapseTarget.current === target) return;
+            cancelAnimationFrame(collapseFrame.current);
+            collapseFrame.current = null;
+        }
+
+        const start = collapsedRef.current;
+        const startTime = performance.now();
+        const duration = 320;
+        collapseTarget.current = target;
+
+        if (start === target) return;
+
+        const animate = (time: number) => {
+            const progress = Math.min((time - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const next = start + (target - start) * eased;
+
+            collapsedRef.current = next;
+            setCollapsed(next);
+
+            if (progress < 1) {
+                collapseFrame.current = requestAnimationFrame(animate);
+            } else {
+                collapseFrame.current = null;
+            }
+        };
+
+        collapseFrame.current = requestAnimationFrame(animate);
+    };
     const touchStartY = useRef(0);
     const touchStartX = useRef(0);
     const expanded = useRef(false);
@@ -87,54 +128,39 @@ export default function Group() {
         },
         [group, groupLoading, id, setTitle]
     );
-    const handleInfoHeight = useCallback((height: number) => {
-        infoHeight.current = height;
-    }, []);
     const getActiveSlideScrollTop = () => {
         if (!contentRef.current) return 0;
+
         const elWidth = contentRef.current.clientWidth;
         if (!elWidth) return 0;
+
         const idx = Math.round(contentRef.current.scrollLeft / elWidth);
         const slide = slideRefs.current[idx];
+
         return slide ? Math.max(0, slide.scrollTop) : 0;
     };
 
-    useLayoutEffect(
-        () => {
-            const info = accRef.current?.querySelector<HTMLElement>(".accInfo");
-            if (!info) return;
-            const measure = () => {
-                const hidden = collapsed === 1 && !isDraggingInfo && info.getBoundingClientRect().height <= 1;
-                setIsInfoCollapsed(hidden);
-                if (!hidden) {
-                    slideRefs.current.forEach(
-                        slide => {
-                            if (slide) slide.scrollTop = 0;
-                        }
-                    );
-                }
-            };
-            measure();
-            const observer = new ResizeObserver(measure);
-            observer.observe(info);
-            return () => observer.disconnect();
-        }
-    );
     const handleWheel = (e: WheelEvent) => {
-        if (dontHandleOther || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-        const info = accRef.current?.querySelector<HTMLElement>(".accInfo");
-        const infoVisible = collapsed !== 1 || (info?.getBoundingClientRect().height ?? 0) > 1;
-        if (infoVisible) {
-            if (e.cancelable) e.preventDefault();
-            if (e.deltaY > 0) setCollapsed(1);
-            if (e.deltaY < 0) setCollapsed(0);
-            return;
-        }
-        if (e.deltaY < 0 && getActiveSlideScrollTop() <= 1) {
-            if (e.cancelable) e.preventDefault();
-            setCollapsed(0);
-        }
+        if (isMobile || dontHandleOther || e.ctrlKey) return;
+        if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
+        if ((e.target as Element).closest("input, textarea, [contenteditable='true'], .react-datepicker-popper")) return;
+        if (getActiveSlideScrollTop() > 0) return;
+
+        const target = e.deltaY > 0 ? 1 : 0;
+        if (collapsedRef.current === target && collapseFrame.current === null) return;
+
+        if (e.cancelable) e.preventDefault();
+        animateCollapse(target);
     };
+
+    useEffect(() => {
+        const element = accRef.current;
+        if (!element) return;
+
+        element.addEventListener("wheel", handleWheel, { passive: false });
+        return () => element.removeEventListener("wheel", handleWheel);
+    });
+
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         if (e.target !== e.currentTarget) return;
         if (!line.current || !contentRef.current) return;
@@ -146,149 +172,194 @@ export default function Group() {
         if (proc > 50) setSelector("members"); else setSelector("habits");
     };
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+        if (collapseFrame.current !== null) {
+            cancelAnimationFrame(collapseFrame.current);
+            collapseFrame.current = null;
+        }
         touchStartY.current = e.touches[0].clientY;
         touchStartX.current = e.touches[0].clientX;
         expanded.current = false;
         isHorizontal.current = false;
-        canExpand.current = getActiveSlideScrollTop() <= 1;
+        canExpand.current = getActiveSlideScrollTop() === 0;
         isCollapsingGesture.current = false;
         gestureMoved.current = false;
         gestureBlocked.current = dontHandleOther;
         sliderGesture.current = false;
         sliderOwnsGesture.current = false;
     };
+
     const touchSliderStart = (e: React.TouchEvent<HTMLDivElement>) => {
         sliderGesture.current = true;
         sliderStartLeft.current = contentRef.current?.scrollLeft ?? 0;
+
         if (dontHandleOther) return;
+
         if (sliderStartLeft.current > 1) {
             sliderOwnsGesture.current = true;
             setDontHandle(true);
             e.stopPropagation();
         }
     };
+
     const handleTouchMove = (e: TouchEvent) => {
         if (dontHandleOther) {
             gestureBlocked.current = true;
             return;
         }
+
         if (gestureBlocked.current || e.touches.length !== 1) return;
+
         const currentY = e.touches[0].clientY;
         const currentX = e.touches[0].clientX;
         const deltaY = touchStartY.current - currentY;
         const deltaX = currentX - touchStartX.current;
+
         if (!expanded.current) {
-            if (Math.abs(deltaY) <= 5 && Math.abs(deltaX) <= 5) return;
+            if (Math.abs(deltaY) < 8 && Math.abs(deltaX) < 8) return;
+
             gestureMoved.current = true;
             isHorizontal.current = Math.abs(deltaX) > Math.abs(deltaY);
             expanded.current = true;
-            if (isHorizontal.current && sliderGesture.current && (sliderStartLeft.current > 1 || deltaX < 0)) {
+
+            if (
+                isHorizontal.current &&
+                sliderGesture.current &&
+                (sliderStartLeft.current > 1 || deltaX < 0)
+            ) {
                 sliderOwnsGesture.current = true;
                 setDontHandle(true);
             }
+
+            touchStartY.current = currentY;
+            touchStartX.current = currentX;
         }
+
         if (isHorizontal.current) {
             if (sliderOwnsGesture.current) {
                 e.stopPropagation();
             }
             return;
         }
+
         const scrollTop = getActiveSlideScrollTop();
-        if (scrollTop > 1) {
+
+        if (scrollTop > 0) {
             canExpand.current = false;
+
             if (!isCollapsingGesture.current) return;
         }
+
         if (!isCollapsingGesture.current) {
-            const info = accRef.current?.querySelector<HTMLDivElement>(".accInfo");
-            const height = infoHeight.current;
-            if (!info || height <= 0) return;
-            const visibleCollapsed = Math.max(0, Math.min(1, 1 - info.getBoundingClientRect().height / height));
-            if (deltaY > 0 && visibleCollapsed < 1 && scrollTop <= 1) {
+            if (deltaY > 0 && collapsed < 1 && scrollTop === 0) {
                 isCollapsingGesture.current = true;
-            } else if (deltaY < 0 && visibleCollapsed > 0 && canExpand.current && scrollTop <= 1) {
+            } else if (
+                deltaY < 0 &&
+                collapsed > 0 &&
+                canExpand.current &&
+                scrollTop === 0
+            ) {
                 isCollapsingGesture.current = true;
             } else {
                 touchStartY.current = currentY;
                 return;
             }
-            collapseStartValue.current = visibleCollapsed;
-            collapseStartY.current = touchStartY.current;
-            setIsDraggingInfo(true);
+
             setDontHandle(true);
         }
+
         e.stopPropagation();
+
         if (e.cancelable) {
             e.preventDefault();
         }
-        const next = collapseStartValue.current + (collapseStartY.current - currentY) / infoHeight.current;
-        setCollapsed(Math.max(0, Math.min(1, next)));
+        setCollapsed(prev => {
+            if (deltaY > 0) {
+                const next = Math.max(0, Math.min(1, prev + deltaY / 700));
+                collapsedRef.current = next;
+                return next;
+            }
+
+            if (deltaY < 0 && canExpand.current) {
+                const next = Math.max(0, Math.min(1, prev + deltaY / 700));
+                collapsedRef.current = next;
+                return next;
+            }
+
+            return prev;
+        });
+
         touchStartY.current = currentY;
     };
 
-    useEffect(
-        () => {
-            const element = accRef.current;
-            if (!element) return;
-            element.addEventListener("touchmove", handleTouchMove, {
-                passive: false
-            });
-            element.addEventListener("wheel", handleWheel, {
-                passive: false
-            });
-            return () => {
-                element.removeEventListener("touchmove", handleTouchMove);
-                element.removeEventListener("wheel", handleWheel);
-            };
-        }
-    );
+    useEffect(() => {
+        const element = accRef.current;
+        if (!element) return;
+
+        element.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+        return () => {
+            element.removeEventListener("touchmove", handleTouchMove);
+        };
+    });
+
     const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
         const wasCollapsingGesture = isCollapsingGesture.current;
         const ownedGesture = sliderOwnsGesture.current || wasCollapsingGesture;
+
         isHorizontal.current = false;
         isCollapsingGesture.current = false;
         sliderGesture.current = false;
         sliderOwnsGesture.current = false;
+
         if (wasCollapsingGesture) {
-            setIsDraggingInfo(false);
-            setCollapsed(prev => prev > 0.45 ? 1 : 0);
+            animateCollapse(collapsedRef.current > 0.45 ? 1 : 0);
         }
+
         if (ownedGesture) {
             e.stopPropagation();
+            setIsDragging(false);
             setDontHandle(false);
         }
     };
-    const handleSlideClick = () => {
-        if (dontHandleOther || gestureBlocked.current || gestureMoved.current) return;
-        if (collapsed === 0) {
-            setCollapsed(1);
+
+    const handleSlideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (
+            dontHandleOther ||
+            gestureBlocked.current ||
+            gestureMoved.current
+        ) return;
+
+        if (collapsedRef.current < 1) {
+            e.preventDefault();
+            e.stopPropagation();
+            animateCollapse(1);
         }
     };
+
     const handleSelectorClick = (i: number) => {
         if (dontHandleOther || !contentRef.current) return;
+
         const elWidth = contentRef.current.clientWidth;
         if (!elWidth) return;
+
         const currentIdx = Math.round(contentRef.current.scrollLeft / elWidth);
         const activeSlide = slideRefs.current[currentIdx];
+
         if (currentIdx === i) {
             if (activeSlide && activeSlide.scrollTop > 0) {
-                activeSlide.scrollTo(
-                    {
-                        top: 0,
-                        behavior: "smooth"
-                    }
-                );
+                activeSlide.scrollTo({ top: 0, behavior: "smooth" });
             } else {
-                setCollapsed(prev => prev === 0 ? 1 : 0);
+                animateCollapse(collapsedRef.current === 0 ? 1 : 0);
             }
             return;
         }
-        contentRef.current.scrollTo(
-            {
-                left: elWidth * i,
-                behavior: "smooth"
-            }
-        );
+
+        contentRef.current.scrollTo({
+            left: elWidth * i,
+            behavior: "smooth",
+        });
     };
+
     if (groupLoading || String(group.id) !== id) return <Loader />;
 
     return (
@@ -297,15 +368,13 @@ export default function Group() {
                 className="acc"
                 ref={accRef}
                 onTouchStartCapture={handleTouchStart}
-                onTouchEnd={handleTouchEnd}
-                onTouchCancel={handleTouchEnd}
+                onTouchEndCapture={handleTouchEnd}
+                onTouchCancelCapture={handleTouchEnd}
             >
                 <GroupInfo
                     key={id}
                     group={group}
                     collapsed={collapsed}
-                    isDragging={isDraggingInfo}
-                    onHeightChange={handleInfoHeight}
                 />
                 <div className="accContentSelector">
                     <div className="accContentIndicator" ref={line} />
@@ -327,10 +396,10 @@ export default function Group() {
                     </div>
                 </div>
                 <div
-                    className={`accContent ${!isInfoCollapsed ? "accContentLocked" : ""}`}
+                    className="accContent"
                     ref={contentRef}
                     onScroll={handleScroll}
-                    onTouchStart={touchSliderStart}
+                    onTouchStartCapture={touchSliderStart}
                     style={{
                         overflowX: dontHandleOther ? "hidden" : undefined,
                         touchAction: dontHandleOther ? "pan-y" : undefined
@@ -341,14 +410,14 @@ export default function Group() {
                         role="tabpanel"
                         id="group-panel-habits"
                         aria-labelledby="group-tab-habits"
-                        inert={selector !== "habits"}
-                        onClick={isMobile ? handleSlideClick : undefined}
+                        onClickCapture={handleSlideClick}
                     >
                         <div
                             className="accContentSlide"
                             ref={el => {
                                 slideRefs.current[0] = el;
                             }}
+                            style={{ pointerEvents: isMobile && collapsed === 0 ? "none" : "all" }}
                         >
                             {habits.length ? <>
                                 <AccHabits habits={habits} />
@@ -380,14 +449,14 @@ export default function Group() {
                         role="tabpanel"
                         id="group-panel-members"
                         aria-labelledby="group-tab-members"
-                        inert={selector !== "members"}
-                        onClick={isMobile ? handleSlideClick : undefined}
+                        onClickCapture={handleSlideClick}
                     >
                         <div
                             className="accContentSlide"
                             ref={el => {
                                 slideRefs.current[1] = el;
                             }}
+                            style={{ pointerEvents: isMobile && collapsed === 0 ? "none" : "all" }}
                         >
                             <GroupMembers members={members} myPerms={myPerms} />
                         </div>
