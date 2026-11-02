@@ -7,6 +7,7 @@ export interface RoadmapRelease {
     version: string;
     title?: RoadmapText;
     features: RoadmapText[];
+    notice?: RoadmapText;
 }
 
 export const roadmapHistory: RoadmapRelease[] = [
@@ -272,15 +273,17 @@ export const roadmapHistory: RoadmapRelease[] = [
         version: "0.5.8",
         features: [
             { ru: "Гостевой режим", en: "Guest access" },
-            { ru: "Кнопки планирования", en: "Plan button" }
+            { ru: "Кнопки планирования", en: "Plan button" },
+            { ru: "Статистика активностей", en: "Activity statistics" },
+            { ru: "QR-коды приглашений", en: "Invitation QR codes" }
         ]
     },
     {
         version: "0.5.9",
         features: [
-            { ru: "Статистика активностей", en: "Activity statistics" },
             { ru: "Циклическая периодичность", en: "Cyclic activity scheduling" },
-            { ru: "Улучшение модалок", en: "Modal improvements" }
+            { ru: "Улучшение модалок", en: "Modal improvements" },
+            { ru: "Редактор и страницы постов: форматирование, медиа, комментарии и действия с публикациями", en: "Post editor and pages: rich text, media, comments and post actions" }
         ]
     }
 ];
@@ -291,12 +294,11 @@ export const roadmapCurrent: RoadmapRelease & { title: RoadmapText } = {
     features: [
         { ru: "Совместные активности и активности внутри бесед", en: "Shared activities and activities in group chats" },
         { ru: "Личное или общее выполнение для участников", en: "Personal or shared completion for participants" },
-        { ru: "Права и роли в беседах, управление участниками", en: "Chat roles, permissions and member management" },
-        { ru: "Редактор постов с форматированием и медиа", en: "Rich-text post editor with media" },
-        { ru: "Страницы постов, комментарии и действия с публикациями", en: "Post pages, comments and post actions" },
-        { ru: "Приглашения и QR-коды, журнал совместной активности", en: "Invitations, QR codes and shared activity history" },
-        { ru: "Тестирование совместок, прав и редактора ещё продолжается", en: "QA for collaboration, permissions and editor is still in progress" }
-    ]
+    ],
+    notice: {
+        ru: "Тестирование совместных активностей, прав и редактора ещё продолжается",
+        en: "QA for shared activities, permissions and the editor is still in progress"
+    }
 };
 
 export const roadmapFuture: RoadmapRelease[] = [
