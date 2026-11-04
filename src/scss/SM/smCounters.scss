@@ -122,7 +122,7 @@
         min-width: 1.85dvh;
         height: 1.85dvh;
         padding: 0 .25vw;
-        border: 1px solid var(--block_border);
+        border: none;
         border-radius: 24px;
         overflow: visible;
         text-align: center;
@@ -138,6 +138,6 @@
 }
 
 .SMnavButt.active > .smNavUnread {
-    background: var(--bgc);
-    color: var(--accent_text);
+    background: var(--mc);
+    color: var(--tc);
 }

@@ -39,6 +39,10 @@
     &.doable {
         background:linear-gradient(135deg, var(--accent), var(--grad));
         color: var(--tc);
+
+        > .bottomOpen {
+            border: none;
+        }
     }
     &.waiting {
         background:var(--interact);
