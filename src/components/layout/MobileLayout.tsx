@@ -5,6 +5,8 @@ import Header from "../ts/Header";
 import SideMenu from "../ts/SM/SideMenu";
 import { useLocation } from "react-router-dom";
 import { useSideMenu } from "../hooks/SideMenuHook";
+import { useContextMenu } from "../hooks/ContextMenuHook";
+import { useBlackout } from "../hooks/BlackoutHook";
 import SMnav from "../ts/SM/SMnav";
 import useCompactLayout from "../hooks/utils/useCompactLayout";
 import SMheader from "../ts/SM/SMheader";
@@ -16,6 +18,8 @@ interface LayoutProps {
 export default function MobileLayout({ children }: LayoutProps) {
     const isMobile = useCompactLayout();
     const { decor } = useSettings();
+    const { menu: contextMenu } = useContextMenu();
+    const { blackout } = useBlackout();
     const location = useLocation();
     const {
         toggleMenu,
@@ -35,10 +39,13 @@ export default function MobileLayout({ children }: LayoutProps) {
 
     const handleTouchStart = (e: React.TouchEvent) => {
         gesture.current = "none";
-        if (e.touches.length !== 1 || dontHandle) return;
+        if (e.touches.length !== 1 || dontHandle || contextMenu.visible || blackout.seted) {
+            gesture.current = "scroll";
+            return;
+        }
 
         const target = e.target as Element;
-        if (target.closest("input, textarea, [contenteditable='true']")) {
+        if (target.closest("input, textarea, [contenteditable='true'], [data-context-menu], [data-header-gesture], .selector, .ContextMenuWrapper, .blackout")) {
             gesture.current = "scroll";
             return;
         }
@@ -50,7 +57,8 @@ export default function MobileLayout({ children }: LayoutProps) {
 
     const handleTouchMove = (e: TouchEvent) => {
         if ((e.target as Element).closest(".habitMenu")) return;
-        if (dontHandle || e.touches.length !== 1 || gesture.current === "scroll") return;
+        if (contextMenu.visible || blackout.seted || dontHandle ||
+            e.touches.length !== 1 || gesture.current === "scroll") return;
 
         const diffX = e.touches[0].clientX - startX.current;
         const diffY = e.touches[0].clientY - startY.current;
@@ -74,7 +82,7 @@ export default function MobileLayout({ children }: LayoutProps) {
     };
 
     const handleTouchEnd = () => {
-        if (gesture.current === "menu") toggleMenu();
+        if (gesture.current === "menu" && !contextMenu.visible && !blackout.seted) toggleMenu();
 
         gesture.current = "none";
         setIsDragging(false);

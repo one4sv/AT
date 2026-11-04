@@ -237,7 +237,7 @@
     "stock": "Built-in",
     "custom": "My backgrounds",
     "add": "Add background",
-    "limit": "You can store at most five backgrounds",
+    "limit": "You can store at most six backgrounds",
     "delete": "Delete background",
     "deleteQuestion": "Delete this background?",
     "deleteHint": "The image will be removed from your library.",
@@ -252,6 +252,8 @@
     "saturate": "Saturation",
     "error": "Couldn't save background",
     "empty": "No custom backgrounds yet",
-    "selected": "Selected"
+    "selected": "Selected",
+    "blurBackground": "Background blur",
+    "filters": "Filters"
   }
 }

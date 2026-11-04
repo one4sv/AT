@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ElementType } from "react"
+import { useEffect, useRef, useState, type ElementType, type PointerEvent } from "react"
 import "../../scss/selector.scss"
 import { useSideMenu } from "../hooks/SideMenuHook"
 
@@ -16,93 +16,84 @@ export default function Selector<T extends string | number>({
     arr: selectorArr<T>[],
     selected: T
 }) {
-    const { setDontHandle, dontHandleOther } = useSideMenu()
+    const { setDontHandle } = useSideMenu()
 
     const selectorRef = useRef<HTMLDivElement | null>(null)
-    const timerRef = useRef<number | null>(null)
-    const longPress = useRef(false)
-    const dragging = useRef(false)
-    const pressed = useRef(false)
+    const pointerId = useRef<number | null>(null)
     const selectedIndex = arr.findIndex(i => i.value === selected)
     const [ indicator, setIndicator ] = useState(Math.max(0, selectedIndex))
 
     useEffect(() => {
-        if (!dragging.current) setIndicator(Math.max(0, selectedIndex))
+        if (pointerId.current === null) setIndicator(Math.max(0, selectedIndex))
     }, [selectedIndex])
 
     useEffect(() => () => {
-        if (timerRef.current) clearTimeout(timerRef.current)
+        pointerId.current = null
         setDontHandle(false)
     }, [setDontHandle])
 
-    const changeByPosition = (x: number) => {
-        if (dontHandleOther || !arr.length) return
-        const selector = selectorRef.current
-        if (!selector) return
-
-        const rect = selector.getBoundingClientRect()
-        const index = Math.max(0, Math.min(arr.length - 1, Math.floor((x - rect.left) / (rect.width / arr.length))))
-        setIndicator(index)
-
-        if (arr[index] && arr[index].value !== selected) arr[index].func(arr[index].value)
+    const findIndex = (x: number) => {
+        const rect = selectorRef.current?.getBoundingClientRect()
+        if (!rect || !arr.length || rect.width <= 0) return -1
+        return Math.max(0, Math.min(arr.length - 1, Math.floor((x - rect.left) / (rect.width / arr.length))))
     }
 
-    const startLongPress = (x: number) => {
-        if (dontHandleOther) return
+    const handlePointerDown = (e: PointerEvent<HTMLDivElement>) => {
+        if (e.pointerType === "mouse" && e.button !== 0) return
+        e.stopPropagation()
+        e.preventDefault()
+        if (pointerId.current !== null) return
 
-        pressed.current = true
-        longPress.current = false
-        dragging.current = false
-        if (timerRef.current) clearTimeout(timerRef.current)
+        pointerId.current = e.pointerId
         setDontHandle(true)
-
-        timerRef.current = window.setTimeout(() => {
-            if (!pressed.current) return
-            longPress.current = true
-            dragging.current = true
-            changeByPosition(x)
-        }, 350)
+        e.currentTarget.setPointerCapture(e.pointerId)
+        const index = findIndex(e.clientX)
+        if (index >= 0) setIndicator(index)
     }
 
-    const move = (x: number) => {
-        if (!dragging.current || dontHandleOther) return
-        changeByPosition(x)
+    const handlePointerMove = (e: PointerEvent<HTMLDivElement>) => {
+        if (pointerId.current !== e.pointerId) return
+        e.stopPropagation()
+        const index = findIndex(e.clientX)
+        if (index >= 0) setIndicator(index)
     }
 
-    const end = () => {
-        pressed.current = false
-        if (timerRef.current) {
-            clearTimeout(timerRef.current)
-            timerRef.current = null
+    const releasePointer = (e: PointerEvent<HTMLDivElement>, cancel = false) => {
+        if (pointerId.current !== e.pointerId) return
+        e.stopPropagation()
+        e.preventDefault()
+
+        const index = findIndex(e.clientX)
+        pointerId.current = null
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId)
         }
-
-        if (dragging.current) dragging.current = false
-        else setIndicator(Math.max(0, selectedIndex))
-
-        longPress.current = false
         setDontHandle(false)
+
+        if (cancel || index < 0) {
+            setIndicator(Math.max(0, selectedIndex))
+            return
+        }
+        setIndicator(index)
+        if (arr[index].value !== selected) arr[index].func(arr[index].value)
     }
 
     return (
         <div
             className="selector"
             ref={selectorRef}
-            onMouseMove={e => move(e.clientX)}
-            onMouseUp={end}
-            onMouseLeave={end}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={releasePointer}
+            onPointerCancel={e => releasePointer(e, true)}
+            onTouchStart={e => e.stopPropagation()}
             onTouchMove={e => {
-                if (dontHandleOther) return
                 e.stopPropagation()
-                move(e.touches[0].clientX)
+                if (e.cancelable) e.preventDefault()
             }}
-            onTouchEnd={e => {
-                e.stopPropagation()
-                end()
-            }}
-            onTouchCancel={e => {
-                e.stopPropagation()
-                end()
-            }}
+            onTouchEnd={e => e.stopPropagation()}
+            onTouchCancel={e => e.stopPropagation()}
+            onContextMenu={e => e.preventDefault()}
         >
             <div
                 className="selectedItem"
@@ -117,30 +108,16 @@ export default function Selector<T extends string | number>({
                     className="selectorElement"
                     style={{ width: `${100 / arr.length}%` }}
                     key={n}
-                    onMouseDown={e => {
-                        e.stopPropagation()
-                        startLongPress(e.clientX)
-                    }}
-                    onMouseUp={() => {
-                        if (!longPress.current) {
-                            setIndicator(n)
+                    tabIndex={0}
+                    role="button"
+                    aria-pressed={selected === i.value}
+                    onKeyDown={e => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault()
+                            e.stopPropagation()
                             i.func(i.value)
                         }
                     }}
-                    onTouchStart={e => {
-                        if (dontHandleOther) return
-                        e.stopPropagation()
-                        startLongPress(e.touches[0].clientX)
-                    }}
-                    onTouchEnd={e => {
-                        if (dontHandleOther) return
-                        e.stopPropagation()
-                        if (!longPress.current) {
-                            setIndicator(n)
-                            i.func(i.value)
-                        }
-                    }}
-                    onContextMenu={e => e.preventDefault()}
                 >
                     <span className={`selectorSpan ${i.value === selected ? "chosen" : ""}`}>
                         {i.icon ? <i.icon size={20} weight="fill" /> : ""}

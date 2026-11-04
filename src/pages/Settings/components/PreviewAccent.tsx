@@ -24,7 +24,7 @@ export default function PreviewAccent() {
                 </div>
                 <div className="contactsUser active">
                     <div className="contactsUserPic">
-                        <ChatTeardropIcon className="contactsUserAvatar" weight="fill" color="var(--accent_text)" size={26}/>
+                        <ChatTeardropIcon className="contactsUserAvatar" weight="fill" size={26}/>
                     </div>
 
                     <div className="contactsUserInfo">

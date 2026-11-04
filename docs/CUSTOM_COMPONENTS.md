@@ -218,3 +218,9 @@ setBlackout({
 В `BackgroundLibrary` до появления `settingsLoaded` рисуется skeleton-сетка, а для `img` до `onLoad` — `skeletonBlock`; в `QuickActionPicker` при загрузке контактов/активностей — строки `.skeletonCircle` + `.skeletonLine`, без преждевременного empty state. Анимация открытия не должна конкурировать со скроллом/жестом закрытия `Blackout`, на системном reduced-motion отключается.
 
 Порядок разделов активности на iPhone меняется `pointerdown/move/up` за `ListIcon`, а не HTML `draggable`; активная строка и соседние плавно сдвигаются. Все изменённые функции сохраняют порядок в настройках.
+
+## Selector внутри Blackout — запрет сквозных касаний
+
+`src/components/ts/Selector.tsx` — **единственный** компонент переключения сегментов, включая `BackgroundLibrary`. Выбор работает на `pointerdown → pointermove → pointerup` с `setPointerCapture`, без задержки в 350 мс. Позиция индикатора может следовать пальцу, но значение отправляется только на `pointerup`. `pointercancel` откатывает индикатор, Enter/Space выбирает пункт с клавиатуры.
+
+Селектор **не должен проверять `dontHandleOther` перед обработкой нажатия**: этот флаг может быть выставлен открытым SideMenu, из-за чего происходила потеря касаний. Сразу и всегда вызывать `stopPropagation` для touch/pointer событий, для `touchmove` — также `preventDefault` при `cancelable`. `touch-action: none` остаётся на `.selector`. При старте и завершении владения жестом `setDontHandle(true/false)`. Скролл `Blackout` и свайпы `MobileLayout` не должны получать этот жест. Не добавлять вторые `onTouchEnd` на каждый `.selectorElement`, иначе возникают двойные срабатывания.

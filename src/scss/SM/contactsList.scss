@@ -167,6 +167,7 @@
     background:linear-gradient(135deg, var(--accent), var(--grad));
     >.contactsUserPic > svg {
         color: var(--inner_text);
+        fill: var(--inner_text);
     }
     >.contactsUserInfo {
         >.contactsUserStr {

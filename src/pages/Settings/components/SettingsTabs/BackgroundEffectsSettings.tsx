@@ -35,28 +35,32 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
     const filters: BackgroundEffects["filter"][] = ["none", "grayscale", "sepia", "invert", "contrast", "saturate"];
 
     return (
-        <div className="settingInnerDiv" data-setting-id="backgroundEffects">
-            <div className="settingHeader"><HighlightText text={t("backgroundLibrary.title")} search={search}/></div>
-            <div className="settingInnerWrapper">
-                <div className="settingSpan"><HighlightText text={t("backgroundLibrary.blur")} search={search}/>: {bgEffects.blur}px</div>
+        <>
+            <div className="settingInnerWrapper" data-setting-id="backgroundBlur">
+                <div className="settingSpan">
+                    <HighlightText text={t("backgroundLibrary.blurBackground")} search={search}/>
+                </div>
                 <SeekBar id="backgroundBlur" min={0} max={30} value={bgEffects.blur}
                     onChange={value => update({ ...bgEffects, blur: value })} disabled={false} step={1}/>
             </div>
-            <div className="settingInnerList">
+            <div className="settingInnerWrapper" data-setting-id="backgroundMovement">
                 <div className="settingTogglerDiv" onClick={() => update({ ...bgEffects, movement: !bgEffects.movement })}>
                     <HighlightText text={t("backgroundLibrary.movement")} search={search}/>
                     <Toggler state={bgEffects.movement}/>
                 </div>
-                <div className="settingSpan"><HighlightText text={t("backgroundLibrary.filter")} search={search}/></div>
-                <div className="backgroundEffectsFilters">
-                    {filters.map(filter => (
-                        <button type="button" key={filter} className={bgEffects.filter === filter ? "active" : ""}
-                            onClick={() => update({ ...bgEffects, filter })}>
-                            {t(`backgroundLibrary.${filter}`)}
-                        </button>
-                    ))}
-                </div>
             </div>
-        </div>
+            <div className="settingSpan" data-setting-id="backgroundFilters">
+                <HighlightText text={t("backgroundLibrary.filters")} search={search}/>
+            </div>
+            <div className="backgroundEffectsFilters">
+                {filters.map(filter => (
+                    <button type="button" key={filter} data-filter={filter}
+                        className={bgEffects.filter === filter ? "active" : ""}
+                        onClick={() => update({ ...bgEffects, filter })}>
+                        {t(`backgroundLibrary.${filter}`)}
+                    </button>
+                ))}
+            </div>
+        </>
     );
 }

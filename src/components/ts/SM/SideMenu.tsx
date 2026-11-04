@@ -70,7 +70,7 @@ export default function SideMenu() {
     }, [menu.visible, showSideMenu, setIsDragging, setTranslateX]);
     const handleTouchStart = (e: React.TouchEvent) => {
         contextGesture.current = menu.visible ||
-            !!(e.target instanceof Element && e.target.closest(".ContextMenuWrapper"));
+            !!(e.target instanceof Element && e.target.closest("[data-context-menu], [data-header-gesture], .selector, .ContextMenuWrapper, .blackout"));
         if (contextGesture.current || e.touches.length !== 1) return;
         startX.current = e.touches[0].clientX;
         startY.current = e.touches[0].clientY;

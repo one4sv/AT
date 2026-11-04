@@ -103,8 +103,8 @@ export default function PersSettingTab({ search }: { search: string }) {
                         <span>{t("backgroundLibrary.change")}</span>
                     </button>
                 </div>
+                <BackgroundEffectsSettings search={search}/>
             </div>
-            <BackgroundEffectsSettings search={search}/>
             {!isMobile ? (
                 <div className="settingInnerDiv" data-setting-id="layout">
                     <div className="settingHeader">

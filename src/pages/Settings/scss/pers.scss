@@ -294,6 +294,8 @@
     align-items: center;
     gap: 1vw;
     width: 100%;
+    font: inherit;
+    font-size: 16px;
 
     > .bgManagePreview {
         width: 9vw;
@@ -313,7 +315,7 @@
     }
 }
 
-// Filters belong to the interface settings page, not inside BackgroundLibrary.
+// Background effects share one settingInnerDiv with the currently selected background.
 .backgroundEffectsFilters {
     display: flex;
     flex-wrap: wrap;
@@ -346,5 +348,37 @@
     @media (max-width: 800px) {
         gap: 1.5vw;
         > button { padding: 1dvh 3vw; }
+    }
+}
+
+.backgroundEffectsFilters {
+    > button {
+        &.active[data-filter="grayscale"] {
+            background: linear-gradient(135deg, #e5e5e5, #292929);
+            color: #fff;
+        }
+
+        &.active[data-filter="sepia"] {
+            background: linear-gradient(135deg, #d6ad73, #684223);
+            color: #fff;
+        }
+
+        &.active[data-filter="invert"] {
+            background: transparent;
+            color: #fff;
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+
+            &::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(135deg, var(--accent), var(--grad));
+                filter: invert(1);
+                border-radius: inherit;
+                z-index: -1;
+            }
+        }
     }
 }

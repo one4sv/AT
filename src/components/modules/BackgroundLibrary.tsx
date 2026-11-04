@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { CheckCircleIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react";
+import { CheckCircleIcon, PlusCircleIcon, TrashIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../hooks/SettingsHook";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
@@ -89,7 +89,7 @@ export default function BackgroundLibrary() {
             <div className="backgroundLibraryScroll" key={tab}>
                 {tab === "custom" && bgGallery.length < 6 && settingsLoaded && (
                     <button type="button" className="backgroundLibraryAdd" onClick={() => fileRef.current?.click()}>
-                        <PlusIcon size={24} weight="fill"/>
+                        <PlusCircleIcon size={24} weight="fill"/>
                         {t("backgroundLibrary.add")}
                     </button>
                 )}
