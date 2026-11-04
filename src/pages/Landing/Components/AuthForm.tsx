@@ -73,6 +73,15 @@ export default function AuthForm({
             );
             return;
         }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(login.trim()) || login.trim().length > 254) {
+            setResponse({
+                success: false,
+                error: t("auth.invalidEmail"),
+                field: "login",
+                form: "auth"
+            });
+            return;
+        }
         if (!pass) {
             setResponse(
                 {
@@ -87,7 +96,7 @@ export default function AuthForm({
         const remember = isRemember && getCookiePreference() === "all";
         if (remember) sessionStorage.setItem("at-trust-after-login", "1"); else sessionStorage.removeItem("at-trust-after-login");
         await auth({
-            login: login.trim(),
+            login: login.trim().toLowerCase(),
             pass,
             isRemember: remember
         });
@@ -103,17 +112,18 @@ export default function AuthForm({
         >
             <div className="landingField">
                 <label htmlFor="auth-login" className="landingLabel">
-                    {t("auth.emailOrNickname")}
+                    {t("auth.email")}
                 </label>
                 <input
                     id="auth-login"
-                    name="username"
-                    type="text"
+                    name="email"
+                    type="email"
+                    inputMode="email"
                     autoComplete="username"
                     autoCapitalize="none"
                     spellCheck={false}
                     className={`landingInput ${wrongLogin ? "invalid" : ""}`}
-                    placeholder={t("auth.emailOrNickname")}
+                    placeholder={t("auth.email")}
                     aria-invalid={wrongLogin}
                     aria-describedby={wrongLogin ? "auth-login-error" : undefined}
                     required

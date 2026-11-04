@@ -1,6 +1,7 @@
 {
     "auth": {
-        "emailOrNickname": "Email or nickname",
+        "email": "Email",
+        "invalidEmail": "Enter a valid email address",
         "password": "Password",
         "rememberMe": "Remember me",
         "signIn": "Sign in",

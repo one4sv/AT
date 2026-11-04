@@ -1,6 +1,7 @@
 {
     "auth": {
-        "emailOrNickname": "Email или никнейм",
+        "email": "Электронная почта",
+        "invalidEmail": "Укажите корректный email",
         "password": "Пароль",
         "rememberMe": "Запомнить меня",
         "signIn": "Войти",
