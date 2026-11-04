@@ -27,7 +27,10 @@ export default function BackgroundFullscreen() {
     const [ panelOpen, setPanelOpen ] = useState(false);
     const [ closing, setClosing ] = useState(false);
     const [ index, setIndex ] = useState(() => {
-        const all = backgroundGroups.flatMap(group => group.items);
+        const all = backgroundGroups.reduce<{ id: string; labelKey: string }[]>((list, group) => {
+            group.items.forEach(item => list.push(item));
+            return list;
+        }, []);
         if (blackout.options?.id === "custom") {
             const selected = bgGallery.findIndex(item => item.url === blackout.options?.url);
             return selected < 0 ? 0 : all.length + selected;
@@ -37,10 +40,10 @@ export default function BackgroundFullscreen() {
     });
 
     const items = useMemo<PreviewItem[]>(() => [
-        ...backgroundGroups.flatMap(group => group.items.map(item => ({
-            id: item.id,
-            label: t(item.labelKey)
-        }))),
+        ...backgroundGroups.reduce<PreviewItem[]>((list, group) => {
+            group.items.forEach(item => list.push({ id: item.id, label: t(item.labelKey) }));
+            return list;
+        }, []),
         ...bgGallery.map(item => ({
             id: "custom",
             url: item.url,
