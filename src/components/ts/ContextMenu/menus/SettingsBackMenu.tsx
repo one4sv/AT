@@ -1,10 +1,8 @@
 import { useNavigate } from "react-router";
-import { useTranslation } from "react-i18next";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import { useSettingsTabs } from "../../../../pages/Settings/Arrays/settingsTabs";
 
 export default function SettingsBackMenu() {
-    const { t } = useTranslation("settings");
     const navigate = useNavigate();
     const { closeMenu, menu } = useContextMenu();
     const settings = useSettingsTabs();
@@ -19,10 +17,6 @@ export default function SettingsBackMenu() {
                     {item.name}
                 </div>
             ))}
-            <div className="ContextMenuButt" onClick={() => {
-                closeMenu();
-                navigate("/settings");
-            }}>{t("settings.title")}</div>
         </>
     );
 }

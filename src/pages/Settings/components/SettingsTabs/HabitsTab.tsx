@@ -1,4 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, type PointerEvent } from "react";
+import { ListIcon } from "@phosphor-icons/react";
+import { motion } from "motion/react";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import Toggler from "../../../../components/ts/Toggler";
@@ -10,49 +12,78 @@ import SectionArt from "../../../../components/ts/SectionArt";
 
 export default function HabitsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { orderHabits, showArchived, showArchivedInAcc, weekStart } = useSettings();
+    const { orderHabits, showArchived, showArchivedInAcc, weekStart, settingsLoaded } = useSettings();
     const { setNewOrder, setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart } = useUpSettings();
 
-    const [isInitialOrderSync, setIsInitialOrderSync] = useState(true);
     const [displayOrder, setDisplayOrder] = useState<string[]>([]);
-    const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
-    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-
-    const dragItem = useRef<number | null>(null);
+    const [dragging, setDragging] = useState<string | null>(null);
+    const currentOrder = useRef<string[]>([]);
+    const drag = useRef<{ id: number; index: number; changed: boolean } | null>(null);
 
     useEffect(() => {
-        if (orderHabits && Array.isArray(orderHabits) && isInitialOrderSync) {
-            setDisplayOrder(orderHabits);
-            setIsInitialOrderSync(false);
+        if (!drag.current && Array.isArray(orderHabits)) {
+            currentOrder.current = [...orderHabits];
+            setDisplayOrder([...orderHabits]);
         }
-    }, [orderHabits, isInitialOrderSync]);
+    }, [orderHabits]);
 
-    const handleDragEnd = () => {
-        dragItem.current = null;
-        setDraggingIndex(null);
-        setDragOverIndex(null);
-    };
-
-    const handleDragStart = (_e: React.DragEvent<HTMLDivElement>, index: number) => {
-        dragItem.current = index;
-        setDraggingIndex(index);
-    };
-
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    const startDrag = (e: PointerEvent<HTMLButtonElement>, index: number) => {
+        if (drag.current || !settingsLoaded || displayOrder.length < 2) return;
         e.preventDefault();
-        setDragOverIndex(index);
+        e.stopPropagation();
+        drag.current = { id: e.pointerId, index, changed: false };
+        currentOrder.current = [...displayOrder];
+        setDragging(displayOrder[index]);
+        e.currentTarget.setPointerCapture(e.pointerId);
     };
 
-    const handleDrop = (_e: React.DragEvent<HTMLDivElement>, dropIndex: number) => {
-        if (dragItem.current === null) return;
-        const newOrder = [...displayOrder];
-        const draggedItem = newOrder.splice(dragItem.current, 1)[0];
-        newOrder.splice(dropIndex, 0, draggedItem);
-        setDisplayOrder(newOrder);
-        dragItem.current = null;
-        setDraggingIndex(null);
-        setDragOverIndex(null);
-        setNewOrder(newOrder);
+    const moveDrag = (e: PointerEvent<HTMLButtonElement>) => {
+        const active = drag.current;
+        if (!active || active.id !== e.pointerId) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        const element = document.elementFromPoint(e.clientX, e.clientY);
+        const row = element?.closest<HTMLElement>(".orderSetDiv");
+        if (!row) return;
+        const index = Number(row.dataset.orderIndex);
+        if (!Number.isInteger(index) || index < 0 || index >= currentOrder.current.length ||
+            index === active.index) return;
+
+        const next = [...currentOrder.current];
+        const item = next.splice(active.index, 1)[0];
+        next.splice(index, 0, item);
+        active.index = index;
+        active.changed = true;
+        currentOrder.current = next;
+        setDisplayOrder(next);
+    };
+
+    const endDrag = (e: PointerEvent<HTMLButtonElement>, cancelled = false) => {
+        const active = drag.current;
+        if (!active || active.id !== e.pointerId) return;
+        drag.current = null;
+        setDragging(null);
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+        }
+
+        if (cancelled) {
+            currentOrder.current = [...orderHabits];
+            setDisplayOrder([...orderHabits]);
+        } else if (active.changed) {
+            setNewOrder(currentOrder.current);
+        }
+    };
+
+    const moveByKeyboard = (index: number, direction: number) => {
+        const target = index + direction;
+        if (target < 0 || target >= displayOrder.length) return;
+        const next = [...displayOrder];
+        next.splice(target, 0, ...next.splice(index, 1));
+        currentOrder.current = next;
+        setDisplayOrder(next);
+        setNewOrder(next);
     };
 
     const getHabitLabel = (type: string) => {
@@ -116,22 +147,39 @@ export default function HabitsTab({ search }: { search: string }) {
                 <div className="settingHeader">
                     <HighlightText text={t("habits.displayOrder")} search={search} />
                 </div>
-                <div className="orderShown">
-                    {displayOrder.map((type, index) => (
-                        <div
-                            key={type}
-                            className={`orderSetDiv 
-                                ${draggingIndex === index ? "dragging" : ""} 
-                                ${dragOverIndex === index ? "drag-over" : ""}`}
-                            draggable
-                            onDragStart={(e) => handleDragStart(e, index)}
-                            onDragOver={(e) => handleDragOver(e, index)}
-                            onDrop={(e) => handleDrop(e, index)}
-                            onDragEnd={handleDragEnd}
-                        >
-                            {getHabitLabel(type)}
-                        </div>
-                    ))}
+                <div className="orderShown" role="list">
+                    {!settingsLoaded ?
+                        Array.from({ length: 3 }, (_, index) => (
+                            <div className="orderSetDiv skeletonOrderItem" key={index}>
+                                <div className="skeletonLine skeletonShort"/>
+                            </div>
+                        )) :
+                        displayOrder.map((type, index) => (
+                            <motion.div
+                                layout
+                                transition={{ layout: { duration: .22, ease: "easeOut" } }}
+                                key={type}
+                                role="listitem"
+                                data-order-index={index}
+                                className={`orderSetDiv ${dragging === type ? "dragging" : ""}`}
+                            >
+                                <button type="button" className="orderDragHandle" data-no-pull-refresh="true"
+                                    aria-label={t("habits.displayOrder")}
+                                    onPointerDown={e => startDrag(e, index)}
+                                    onPointerMove={moveDrag}
+                                    onPointerUp={e => endDrag(e)}
+                                    onPointerCancel={e => endDrag(e, true)}
+                                    onKeyDown={e => {
+                                        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                                            e.preventDefault();
+                                            moveByKeyboard(index, e.key === "ArrowUp" ? -1 : 1);
+                                        }
+                                    }}
+                                ><ListIcon size={20}/></button>
+                                {getHabitLabel(type)}
+                            </motion.div>
+                        ))
+                    }
                 </div>
             </div>
         </div>

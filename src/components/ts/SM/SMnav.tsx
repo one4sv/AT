@@ -536,7 +536,10 @@ export default function SMnav() {
             style={{
                 transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none"
             }}
-            onTouchEnd={handleNavTouchEnd}
+            onTouchEnd={e => {
+                if (document.querySelector(".ContextMenuWrapper")) return;
+                handleNavTouchEnd(e);
+            }}
             onTouchCancel={cancelTouch}
         >
             <div

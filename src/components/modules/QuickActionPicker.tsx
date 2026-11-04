@@ -15,8 +15,8 @@ import "../../pages/Settings/components/SettingsTabs/QuickActionsSettings.scss";
 export default function QuickActionPicker() {
     const { t } = useTranslation("settings");
     const { quickActions, setQuickActions, settingsLoaded } = useSettings();
-    const { habits } = useHabits();
-    const { list } = useContacts();
+    const { habits, loadingHabits } = useHabits();
+    const { list, loadingList } = useContacts();
     const { user } = useUser();
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
@@ -102,7 +102,14 @@ export default function QuickActionPicker() {
                         onClick={() => setFilter(value)}>{label}</button>
                 ))}
             </div>}
-            <div className="quickActionModalList">
+            <div className="quickActionModalList" key={kind ?? "all"}>
+                {kind && (kind === "habit" ? loadingHabits : loadingList) &&
+                    Array.from({ length: 4 }, (_, index) => (
+                        <div className="quickActionModalOption" role="status" aria-busy="true" key={index}>
+                            <div className="skeletonCircle"/>
+                            <div className="skeletonLine skeletonShort"/>
+                        </div>
+                    ))}
                 {!kind && choices.map(({ type }) => {
                     const action: QuickAction = { type };
                     const disabled = saving || quickActions.length >= 3 ||
@@ -114,14 +121,14 @@ export default function QuickActionPicker() {
                         </button>
                     );
                 })}
-                {kind === "habit" && filteredHabits.map(item => {
+                {kind === "habit" && !loadingHabits && filteredHabits.map(item => {
                     const action: QuickAction = { type: "habit", target: String(item.id), label: item.name };
                     return (
                         <button key={item.id} type="button" className="quickActionModalOption" disabled={saving || quickActions.some(a => a.type === "habit" && a.target === action.target)}
                             onClick={() => void add(action)}><QuickActionVisual action={action}/></button>
                     );
                 })}
-                {kind === "chat" && filteredChats.map(item => {
+                {kind === "chat" && !loadingList && filteredChats.map(item => {
                     const action: QuickAction = {
                         type: "chat",
                         target: item.is_group ? `g/${item.id}` : item.nick,
@@ -132,7 +139,8 @@ export default function QuickActionPicker() {
                             onClick={() => void add(action)}><QuickActionVisual action={action}/></button>
                     );
                 })}
-                {kind && !(kind === "habit" ? filteredHabits.length : filteredChats.length) && (
+                {kind && !(kind === "habit" ? loadingHabits : loadingList) &&
+                    !(kind === "habit" ? filteredHabits.length : filteredChats.length) && (
                     <div className="quickActionModalEmpty">{t("general.quickActionsEmpty")}</div>
                 )}
             </div>

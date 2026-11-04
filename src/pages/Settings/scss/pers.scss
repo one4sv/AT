@@ -288,3 +288,63 @@
         padding: 1.2dvh 3vw;
     }
 }
+
+.bgManageButton {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+    width: 100%;
+
+    > .bgManagePreview {
+        width: 9vw;
+        height: 7dvh;
+        background: var(--bgc);
+        border-radius: 16px;
+        object-fit: cover;
+        flex-shrink: 0;
+
+        @media (max-width: 800px) {
+            width: 26vw;
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 3vw;
+    }
+}
+
+// Filters belong to the interface settings page, not inside BackgroundLibrary.
+.backgroundEffectsFilters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5vw;
+    padding: .5dvh 0;
+
+    > button {
+        background: var(--interact);
+        color: var(--tc);
+        border-radius: 24px;
+        border: none;
+        padding: .75dvh .8vw;
+        cursor: pointer;
+        transition: background .2s ease, color .2s ease;
+
+        &.active {
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            color: var(--inner_text);
+            border: none;
+        }
+
+        @media (hover: hover) {
+            &:not(.active):hover { background: var(--menuButtHover); }
+        }
+        @media (hover: none) {
+            &:not(.active):active { background: var(--menuButtHover); }
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 1.5vw;
+        > button { padding: 1dvh 3vw; }
+    }
+}

@@ -1,4 +1,4 @@
-@use "../../../scss/mixins" as var;
+@use "../../../scss/mixins.scss" as var;
 
 .orderShown {
     background-color: var(--interact);
@@ -9,8 +9,12 @@
     user-select: none;
     > .orderSetDiv {
         padding: 1vh 1vw;
-        cursor: grab;
+        display: flex;
+        align-items: center;
+        gap: 1vw;
+        cursor: default;
         color: var(--borderWh);
+        transition: background-color .2s ease, color .2s ease;
         @media (max-width: 800px) {
             padding: 2vh 4vw;
         }
@@ -35,10 +39,7 @@
             opacity: 1;
             background-color: var(--menuButtHoverLight);
         }
-        &.drag-over {
-            border: 2px dashed var(--menuButtHover);
-            background-color: var(--menuButtHoverLighter);
-        }
+
     }
 }
 .orderSpan {
@@ -82,4 +83,33 @@
     .habitTabDP {
         width: 30vw;
     }
+}
+.orderDragHandle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    color: var(--borderWh);
+    padding: .4dvh;
+    border-radius: 24px;
+    cursor: grab;
+    touch-action: none;
+    -webkit-touch-callout: none;
+
+    &:active {
+        cursor: grabbing;
+        background: var(--menuButtHover);
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--menuButtHover);
+        }
+    }
+}
+
+.skeletonOrderItem .skeletonLine {
+    margin: .6dvh 0;
 }

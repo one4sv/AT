@@ -277,6 +277,7 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    border: none;
     overflow: hidden;
     opacity: 0;
     pointer-events: none;
@@ -294,10 +295,12 @@
     }
     &.chats {
         left: 3%;
+        border: none;
     }
 
     &.habits {
         left: 25%;
+        border: none;
     }
 
     &.spots {
@@ -392,7 +395,3 @@
     color: var(--notValid);
 }
 
-.SMnavButt:not(.active) > svg,
-.smNavSearch > div > svg {
-    color: var(--accent_text);
-}

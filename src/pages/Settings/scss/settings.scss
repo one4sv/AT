@@ -536,3 +536,24 @@
 .languageSettingLink >svg:last-child {
     margin-inline-start: auto;
 }
+
+.settingButt, .settingInnerDiv {
+    animation: settingsContentIn .28s ease-out backwards;
+}
+.settingButt:nth-child(2n), .settingInnerDiv:nth-child(2n) {
+    animation-delay: 35ms;
+}
+.settingButt:nth-child(3n), .settingInnerDiv:nth-child(3n) {
+    animation-delay: 70ms;
+}
+
+@keyframes settingsContentIn {
+    from { opacity: 0; translate: 0 .75dvh; }
+    to { opacity: 1; translate: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .settingButt, .settingInnerDiv {
+        animation: none;
+    }
+}

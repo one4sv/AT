@@ -11,8 +11,8 @@ import Toggler from "../../Toggler";
 export default function SettingsSectionMenu() {
     const { t } = useTranslation("settings");
     const { menu, closeMenu } = useContextMenu();
-    const { isDark, decor, note, messNote, showArchived } = useSettings();
-    const { setNewTheme, setNewDecor, setNewNote, setNewMessNote, setNewShowArchived } = useUpSettings();
+    const { isDark, decor, note, messNote } = useSettings();
+    const { setNewTheme, setNewDecor, setNewNote, setNewMessNote } = useUpSettings();
     const { setBlackout } = useBlackout();
     const navigate = useNavigate();
     const section = menu.options.id;
@@ -59,10 +59,9 @@ export default function SettingsSectionMenu() {
                 }}><ChatsTeardropIcon/>{t("notifications.newMessages")}<Toggler state={messNote}/></div>
             </>}
 
-            {section === "activities" && <div className="ContextMenuButt" onClick={() => {
-                setNewShowArchived(!showArchived);
-                closeMenu();
-            }}><PaintBucketIcon/>{t("settings.activities")}<Toggler state={showArchived}/></div>}
+            {section === "activities" && <div className="ContextMenuButt" onClick={() => openSection("activities")}>
+                <PaintBucketIcon/>{t("settings.activities")}
+            </div>}
 
             {section === "security" && <>
                 <div className="ContextMenuButt" onClick={() => {

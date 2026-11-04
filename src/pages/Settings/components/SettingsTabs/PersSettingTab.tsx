@@ -15,6 +15,7 @@ import HighlightText from "../../../../components/ts/HighlightText.tsx";
 import "../../../../scss/landingBackground.scss";
 
 import SectionArt from "../../../../components/ts/SectionArt";
+import BackgroundEffectsSettings from "./BackgroundEffectsSettings";
 
 export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
@@ -94,20 +95,16 @@ export default function PersSettingTab({ search }: { search: string }) {
             <div className="settingInnerDiv" data-setting-id="bg">
                 <div className="settingHeader"><HighlightText text={t("personalization.background")} search={search}/></div>
                 <div className="settingInnerWrapper">
-                    <div className="bgCurrent">
-                        {bg === "custom" && bgUrl ?
-                            <img src={bgUrl} alt=""/> :
-                            <div className={`bgCurrentPreview ${bg === "landing" ? "landingBackground" : ""}`} />}
-                        <span>{bg === "custom" ? t("personalization.yourBg") :
-                            bg === "landing" ? t("personalization.landingBackground") :
-                            bg === "default" ? t("personalization.contourShapes") : t("personalization.solidColor")}</span>
-                    </div>
                     <button type="button" className="bgManageButton"
                         onClick={() => setBlackout({ seted: true, module: "BackgroundLibrary" })}>
-                        {t("backgroundLibrary.change")}
+                        {bg === "custom" && bgUrl ?
+                            <img className="bgManagePreview" src={bgUrl} alt=""/> :
+                            <div className={`bgManagePreview ${bg === "landing" ? "landingBackground" : ""}`}/>}
+                        <span>{t("backgroundLibrary.change")}</span>
                     </button>
                 </div>
             </div>
+            <BackgroundEffectsSettings search={search}/>
             {!isMobile ? (
                 <div className="settingInnerDiv" data-setting-id="layout">
                     <div className="settingHeader">

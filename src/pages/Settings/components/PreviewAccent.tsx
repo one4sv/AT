@@ -1,6 +1,5 @@
-import { CheckCircleIcon, CodeIcon, PushPin, SpeakerSimpleX } from "@phosphor-icons/react";
+import { CheckCircleIcon, CodeIcon, PushPin, SpeakerSimpleX, ChatTeardropIcon } from "@phosphor-icons/react";
 import { CheckCheck } from "lucide-react";
-import AT from "../../../../public/favicon.png"
 import { colorsName } from "../Arrays/colorsName";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 
@@ -25,11 +24,7 @@ export default function PreviewAccent() {
                 </div>
                 <div className="contactsUser active">
                     <div className="contactsUserPic">
-                        <img
-                            className="contactsUserAvatar"
-                            src={AT}
-                            alt="beta_tester"
-                        />
+                        <ChatTeardropIcon className="contactsUserAvatar" weight="fill" color="var(--accent_text)" size={26}/>
                     </div>
 
                     <div className="contactsUserInfo">

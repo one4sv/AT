@@ -58,6 +58,7 @@ export default function SideMenu() {
         if (user.id) refreshSchedules();
     }, [user.id, refreshSchedules]);
     const handleTouchStart = (e: React.TouchEvent) => {
+        if (document.querySelector(".ContextMenuWrapper")) return;
         startX.current = e.touches[0].clientX;
         startY.current = e.touches[0].clientY;
         startTranslate.current = translateX;
@@ -66,7 +67,8 @@ export default function SideMenu() {
         verticalScroll.current = false;
     };
     const handleTouchMove = (e: React.TouchEvent) => {
-        // Header gestures have priority over SideMenu horizontal swipe.
+        // A visible context menu owns this touch; SideMenu must not translate.
+        if (document.querySelector(".ContextMenuWrapper")) return;
         if (dontHandleOther && !horizontalSwipe.current) return;
         const clientX = e.touches[0].clientX;
         const clientY = e.touches[0].clientY;
@@ -93,6 +95,12 @@ export default function SideMenu() {
         setTranslateX(newTranslate);
     };
     const handleTouchEnd = () => {
+        if (document.querySelector(".ContextMenuWrapper")) {
+            horizontalSwipe.current = false;
+            verticalScroll.current = false;
+            setIsDragging(false);
+            return;
+        }
         if (!horizontalSwipe.current) {
             setDontHandle(false);
             verticalScroll.current = false;
@@ -110,7 +118,8 @@ export default function SideMenu() {
     useEffect(
         () => {
             const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-                if (layout !== "hidden" || !showSideMenu) return;
+                if (layout !== "hidden" || !showSideMenu ||
+                    document.querySelector(".ContextMenuWrapper")) return;
                 if (sideMenuRef.current && !sideMenuRef.current.contains(event.target as Node)) {
                     closeMenu();
                 }

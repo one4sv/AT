@@ -54,6 +54,15 @@
     border: 1px solid var(--block_border);
     height: 4dvh;
     gap: 1vh;
+    > .settingName {
+        color: var(--tc);
+        display: flex;
+        align-items: center;
+        gap: .5vw;
+        > svg {
+            color: var(--accent);
+        }
+    }
     > span {
         font-size: 18px;
         animation: buttonTextIn .3s ease;
@@ -66,9 +75,9 @@
         border: none;
         background: linear-gradient(135deg, var(--accent), var(--grad));
         > .settingName {
-            color: var(--tc);
+            color: var(--inner_text);
             > svg {
-                color: var(--tc);
+                color: var(--inner_text);
             }
         }
     }
