@@ -3,7 +3,7 @@
     border: 1px solid var(--block_border);
     box-sizing: border-box;
     width: 100%;
-    min-height: 56dvh;
+    min-height: 0;
     height: auto;
     display: flex;
     flex-direction: column;
@@ -14,7 +14,7 @@
     -webkit-backdrop-filter: blur(var(--blur));
 
     @media (max-width: 800px) {
-        min-height: 90dvh;
+        min-height: 0;
         padding: .7dvh 2vw;
         margin-bottom: 1dvh;
     }
@@ -22,7 +22,7 @@
 
 .statsDivWrapper {
     display: flex;
-    flex: 1 0 auto;
+    flex: 0 0 auto;
     min-height: 0;
     width: 100%;
     overflow: hidden;

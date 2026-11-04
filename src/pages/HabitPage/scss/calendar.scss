@@ -209,6 +209,7 @@
 
 /* ==================== СЛАЙДЕР ==================== */ .calendarSlider {
     width: 100%;
+    min-width: 0;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     display: flex;
@@ -221,13 +222,16 @@
 
 .calendarSlidesWrapper {
     display: flex;
-    width: 100%;
+    flex: 0 0 300%;
+    width: 300%;
+    min-width: 0;
     height: 100%;
 }
 
 .calendarSlide {
-    flex: 0 0 100%;
-    width: 100%;
+    flex: 0 0 calc(100% / 3);
+    width: calc(100% / 3);
+    min-width: 0;
     height: 100%;
     scroll-snap-align: center;
 }
@@ -235,7 +239,7 @@
 /* Сетка дней */ .calendarDays {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 0.25vh 0.35vw;
     padding: 1px;
 }
