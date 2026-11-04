@@ -140,7 +140,21 @@
         color: var(--tc);
     }
 
-    &.headerButt > svg {
-        color: inherit;
+    &.headerButt {
+        @media (hover: hover) {
+            &:hover > svg {
+                color: var(--tc);
+            }
+        }
+
+        @media (hover: none) {
+            &:active > svg {
+                color: var(--tc);
+            }
+        }
+
+        &.headerGestureActive > svg {
+            color: var(--tc);
+        }
     }
 }
