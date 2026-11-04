@@ -6,33 +6,72 @@
     height: 100%;
     pointer-events: none;
     isolation: isolate;
+    background-color: var(--bgc);
 
     &--art {
-        background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--accent) 30%, #16162a), #0e101b 76%);
+        background:
+            radial-gradient(ellipse at 50% 45%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 72%),
+            linear-gradient(140deg, color-mix(in srgb, var(--bgc) 85%, var(--accent)), color-mix(in srgb, var(--bgc) 85%, var(--grad)));
     }
 
     &--aurora {
-        background: radial-gradient(ellipse at 60% 110%, #11344b 5%, #050e24 75%);
+        background:
+            radial-gradient(ellipse at 25% 90%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 70%),
+            linear-gradient(155deg, color-mix(in srgb, var(--bgc) 92%, var(--grad)), var(--bgc) 55%, color-mix(in srgb, var(--bgc) 78%, var(--accent)));
     }
 
     &--nebula {
         background:
-            radial-gradient(ellipse at 25% 30%, #974fb6aa, transparent 46%),
-            radial-gradient(ellipse at 82% 60%, #1ea5b9aa, transparent 47%),
-            radial-gradient(ellipse at 45% 80%, #f16a9d66, transparent 53%),
-            #090c23;
+            radial-gradient(ellipse at 28% 26%, color-mix(in srgb, var(--accent) 60%, transparent), transparent 57%),
+            radial-gradient(ellipse at 79% 72%, color-mix(in srgb, var(--grad) 60%, transparent), transparent 60%),
+            radial-gradient(ellipse at 55% 52%, color-mix(in srgb, var(--accent) 27%, transparent), transparent 75%),
+            var(--bgc);
     }
 
     &--sunset {
-        background: linear-gradient(180deg, #263052 0%, #d66f82 42%, #ffb37d 73%, #3d5676 100%);
+        background: linear-gradient(180deg,
+            color-mix(in srgb, var(--bgc) 55%, var(--grad)) 0%,
+            color-mix(in srgb, var(--accent) 60%, var(--bgc)) 43%,
+            color-mix(in srgb, var(--accent) 65%, var(--grad)) 75%,
+            color-mix(in srgb, var(--bgc) 68%, var(--grad)) 100%);
     }
+}
+
+.atScenePattern {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.atSceneParticle {
+    position: absolute;
+    display: block;
+    border-radius: 61% 39% 48% 52%;
+    background: radial-gradient(ellipse at 48% 42%,
+        color-mix(in srgb, var(--accent) 83%, transparent),
+        color-mix(in srgb, var(--accent) 20%, transparent) 60%,
+        transparent 78%);
+    filter: blur(1.1vw);
+    mix-blend-mode: screen;
+
+    &--grad {
+        background: radial-gradient(ellipse at 45% 50%,
+            color-mix(in srgb, var(--grad) 83%, transparent),
+            color-mix(in srgb, var(--grad) 20%, transparent) 59%,
+            transparent 79%);
+    }
+}
+
+.atScene--art .atSceneParticle {
+    opacity: .2;
 }
 
 .atSceneArt {
     position: absolute;
     width: 45%;
     aspect-ratio: 360 / 176;
-    opacity: .85;
+    opacity: .9;
     filter: drop-shadow(0 0 1.7vw color-mix(in srgb, var(--accent) 35%, transparent));
 
     .sectionArt {
@@ -46,16 +85,19 @@
         top: 34%;
         left: 18%;
     }
+
     &--left {
         top: 9%;
         left: -10%;
         transform: rotate(-21deg);
     }
+
     &--right {
         top: 7%;
         right: -13%;
         transform: rotate(18deg);
     }
+
     &--far {
         bottom: 4%;
         right: -9%;
@@ -66,72 +108,76 @@
 
 .atAurora {
     position: absolute;
-    height: 115%;
-    width: 50%;
+    width: 45%;
+    height: 130%;
     top: -35%;
-    border-radius: 50%;
-    opacity: .85;
-    filter: blur(4.5vw);
-    transform: rotate(-19deg);
-    background: linear-gradient(90deg, transparent, #35e8a8bb, #a78ef1aa, transparent);
+    border-radius: 46%;
+    opacity: .7;
+    filter: blur(2.6vw);
+    transform: rotate(-22deg);
+    background: linear-gradient(90deg,
+        transparent,
+        color-mix(in srgb, var(--accent) 75%, transparent) 39%,
+        color-mix(in srgb, var(--grad) 75%, transparent) 68%,
+        transparent);
 
-    &--first { left: 7%; }
+    &--first {
+        left: 5%;
+    }
+
     &--second {
         left: 38%;
-        top: -26%;
-        background: linear-gradient(90deg, transparent, #53b9f3bb, #a667dbbb, transparent);
-        transform: rotate(13deg);
+        top: -28%;
+        transform: rotate(16deg);
+        background: linear-gradient(90deg,
+            transparent,
+            color-mix(in srgb, var(--grad) 72%, transparent),
+            color-mix(in srgb, var(--accent) 55%, transparent),
+            transparent);
     }
+
     &--third {
-        left: 70%;
-        opacity: .65;
-        background: linear-gradient(90deg, transparent, #60f5c1cc, #56afcbbb, transparent);
+        left: 72%;
+        opacity: .5;
+        transform: rotate(-10deg);
     }
-}
-
-.atAuroraStars, .atNebulaStars {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(#ffffffcc 1px, transparent 1.4px), radial-gradient(#ffffffff .7px, transparent 1.1px);
-    background-size: 6vw 8dvh, 9vw 12dvh;
-    background-position: 0 0, 4vw 3dvh;
-    opacity: .7;
-}
-
-.atNebulaStars {
-    background-size: 5vw 7dvh, 8vw 10dvh;
 }
 
 .atSun {
     position: absolute;
     left: 43%;
-    top: 36%;
+    top: 35%;
     width: 14%;
     aspect-ratio: 1;
     border-radius: 50%;
-    background: #ffe5ba;
-    box-shadow: 0 0 7vw 2vw #ffd6a488;
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    box-shadow: 0 0 4vw 1vw color-mix(in srgb, var(--accent) 65%, transparent);
 }
 
 .atHorizon {
     position: absolute;
     width: 150%;
-    height: 44%;
+    height: 43%;
     left: -25%;
     bottom: -25%;
     border-radius: 50% 50% 0 0;
-    background: #1b294a;
+    background: color-mix(in srgb, var(--bgc) 70%, var(--accent));
 
     &--far {
         bottom: -17%;
         left: -8%;
-        background: #536180;
-        opacity: .7;
+        background: color-mix(in srgb, var(--bgc) 50%, var(--grad));
+        opacity: .8;
     }
 }
 
 @media (max-width: 800px) {
-    .atAurora { filter: blur(13vw); }
+    .atSceneParticle {
+        filter: blur(3vw);
+    }
+    .atAurora {
+        filter: blur(7vw);
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {

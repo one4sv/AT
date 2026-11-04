@@ -13,12 +13,11 @@ export default function Redirecting() {
     const { setRedirect, setForwardPost } = useMessages()
     const { t } = useTranslation("settings")
     const searchRef = useRef<HTMLInputElement | null>(null)
-    const [ filter, setFilter ] = useState<"all" | "private" | "group" | "new">("all")
+    const [ filter, setFilter ] = useState<"all" | "private" | "group">("all")
     const filters = [
         { value: "all" as const, label: t("quickFilters.all") },
         { value: "private" as const, label: t("quickFilters.private") },
-        { value: "group" as const, label: t("quickFilters.group") },
-        { value: "new" as const, label: t("forwardFilters.unread") }
+        { value: "group" as const, label: t("quickFilters.group") }
     ]
 
     return (

@@ -82,15 +82,16 @@
     box-sizing: border-box;
     width: 100%;
     min-height: 5dvh;
-    border: none;
+    border: 1px solid var(--block_border);
     border-radius: 24px;
     padding: 1dvh 1vw;
     outline: none;
     cursor: pointer;
     font: inherit;
 
-    &:focus-visible {
-        outline: 1px solid var(--accent_text);
+    &:focus, &:focus-visible {
+        border-color: var(--accent);
+        outline: none;
     }
 
     @media (max-width: 800px) {

@@ -1,4 +1,4 @@
-import { BellRingingIcon, ChatsTeardropIcon, GearIcon, MoonStarsIcon, PaintBucketIcon, SunIcon, TranslateIcon, ImageIcon, LockKeyIcon, ShieldCheckIcon } from "@phosphor-icons/react";
+import { BellRingingIcon, ChatsTeardropIcon, GearIcon, MoonStarsIcon, PaintBucketIcon, SunIcon, TranslateIcon, ImageIcon, LockKeyIcon, ShieldCheckIcon, EyeIcon, UsersIcon, UserCircleIcon, CookieIcon } from "@phosphor-icons/react";
 import { MirrorRectangular } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
@@ -77,9 +77,29 @@ export default function SettingsSectionMenu() {
             {section === "chats" && <div className="ContextMenuButt" onClick={() => openSection("chats", "chatWelcome")}>
                 <ChatsTeardropIcon/>{t("settings.chats")}
             </div>}
-            {section === "privacy" && <div className="ContextMenuButt" onClick={() => openSection("privacy", "groupInvites")}>
-                <LockKeyIcon/>{t("privacy.invites.title")}
-            </div>}
+            {section === "privacy" && <>
+                <div className="ContextMenuButt" onClick={() => openSection("privacy", "privacyAccountInfo")}>
+                    <UserCircleIcon/>{t("privacy.accountInfo")}
+                </div>
+                <div className="ContextMenuButt" onClick={() => openSection("privacy", "privacyContentVisibility")}>
+                    <EyeIcon/>{t("privacy.contentVisibility")}
+                </div>
+                <div className="ContextMenuButt" onClick={() => openSection("privacy", "privacyActivityInvites")}>
+                    <ShieldCheckIcon/>{t("privacy.exceptions.activityTitle")}
+                </div>
+                <div className="ContextMenuButt" onClick={() => openSection("privacy", "activityInviteExceptions")}>
+                    <UsersIcon/>{t("privacy.exceptions.activityExceptions")}
+                </div>
+                <div className="ContextMenuButt" onClick={() => openSection("privacy", "groupInvites")}>
+                    <LockKeyIcon/>{t("privacy.invites.title")}
+                </div>
+                <div className="ContextMenuButt" onClick={() => openSection("privacy", "groupInviteExceptions")}>
+                    <UsersIcon/>{t("privacy.exceptions.groupExceptions")}
+                </div>
+                <div className="ContextMenuButt" onClick={() => openSection("privacy", "cookieConsent")}>
+                    <CookieIcon/>{t("privacy.manageCookies")}
+                </div>
+            </>}
             {section === "acc" && <div className="ContextMenuButt" onClick={() => openSection("acc")}>
                 <GearIcon/>{t("settings.account")}
             </div>}

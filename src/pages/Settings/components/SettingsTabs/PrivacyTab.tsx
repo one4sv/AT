@@ -71,7 +71,7 @@ export default function PrivacyTab({ search }: { search: string }) {
     return (
         <div className="settingTab">
             {!search.trim() && <SectionArt theme="privacy"/>}
-            <div className="settingInnerDiv">
+            <div className="settingInnerDiv" data-setting-id="privacyAccountInfo">
                 <div className="settingHeader">
                     {t("privacy.accountInfo")}
                 </div>
@@ -84,7 +84,7 @@ export default function PrivacyTab({ search }: { search: string }) {
                     <RadioGroup list={privateArr} val={visiblePrivate.mail} newVal={(value) => applyNewPrivate("mail", value || "nobody")} id="mail"/>
                 </div>
             </div>
-            <div className="settingInnerDiv">
+            <div className="settingInnerDiv" data-setting-id="privacyContentVisibility">
                 <div className="settingHeader">
                     {t("privacy.contentVisibility")}
                 </div>
@@ -97,7 +97,7 @@ export default function PrivacyTab({ search }: { search: string }) {
                     <RadioGroup list={privateArrFull} val={visiblePrivate.posts} newVal={(value) => applyNewPrivate("posts", value || "nobody")} id="posts"/>
                 </div>
             </div>
-            <div className="settingInnerDiv">
+            <div className="settingInnerDiv" data-setting-id="privacyActivityInvites">
                 <div className="settingHeader">{t("privacy.exceptions.activityTitle")}</div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan">{t("privacy.exceptions.activityWho")}</div>
