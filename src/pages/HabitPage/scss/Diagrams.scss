@@ -31,15 +31,22 @@
     touch-action: pan-y;
 }
 .statsDivSlider {
-    width: 200%;
     display: flex;
+    width: 200%;
+    flex: 0 0 200%;
+    min-width: 0;
+    transform: translate3d(0, 0, 0);
     transition: transform .3s ease-in-out;
-    will-change: transform;
+
+    &.toDetails {
+        transform: translate3d(-50%, 0, 0);
+    }
 }
+
 .statsDivSlide {
     min-width: 0;
+    flex: 0 0 50%;
     padding: .5dvh .6vw 1.5dvh;
-    width: 50%;
     min-height: 0;
     overflow-y: auto;
     box-sizing: border-box;
@@ -234,4 +241,10 @@
 }
 @media (prefers-reduced-motion: reduce) {
     .overallCard, .overallProgressTrack > div { transition: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .statsDivSlider {
+        transition: none;
+    }
 }

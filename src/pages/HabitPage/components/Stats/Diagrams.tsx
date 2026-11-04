@@ -9,218 +9,96 @@ import DoneDiagram from "./Diagrams/DoneDiagram";
 import StreakDiagram from "./Diagrams/StreakDiagram";
 import BreakDiagram from "./Diagrams/BreakDiagram";
 
+type StatsSlide = {
+    label: string;
+    value: string;
+    slide: boolean;
+};
+
 export default function Diagrams({
     mainRef
 }: {
     mainRef: React.RefObject<HTMLDivElement | null>
 }) {
-    const { setDontHandle, setDontHandleOther } = useSideMenu()
+    const { setDontHandle } = useSideMenu();
+    const touchStart = useRef<{ x: number; y: number } | null>(null);
+    const gesture = useRef<"none" | "vertical" | "horizontal">("none");
 
-    const sliderRef = useRef<HTMLDivElement>(null);
-    const wrapperRef = useRef<HTMLDivElement>(null);
-
-    const touchStartX = useRef<number | null>(null);
-    const dragging = useRef(false);
-
-    const [slide, setSlide] = useState<{
-        label: string
-        value: string
-        slide: boolean
-    }>({
-        label: "Выполнено",
-        value: "comp",
-        slide: false
-    })
-
-    const [period, setPeriod] = useState(periods[0].value)
-    const [metric, setMetric] = useState(metrics[0].value)
-    const [group, setGroup] = useState(groups[0].value)
+    const [slide, setSlide] = useState<StatsSlide>({ label: "Выполнено", value: "comp", slide: false });
+    const [period, setPeriod] = useState(periods[0].value);
+    const [metric, setMetric] = useState(metrics[0].value);
+    const [group, setGroup] = useState(groups[0].value);
 
     useEffect(() => {
-        if (period === "thirty" || period === "week") {
-            setGroup("day")
-        }
-    }, [period])
+        if (period === "thirty" || period === "week") setGroup("day");
+    }, [period]);
 
-    // Обычное положение слайда
-    useEffect(() => {
-        if (!sliderRef.current || !wrapperRef.current) return
-
-        const wrapperWidth = wrapperRef.current.clientWidth
-
-        sliderRef.current.style.transition = "transform 0.3s ease-in-out"
-
-        sliderRef.current.style.transform = slide.slide
-            ? `translateX(-${wrapperWidth}px)`
-            : "translateX(0)"
-    }, [slide.slide])
-
-    const handleTouchStart = (
-        e: React.TouchEvent<HTMLDivElement>
-    ) => {
-        if (!sliderRef.current || !wrapperRef.current) return
-
-        touchStartX.current = e.touches[0].clientX
-        dragging.current = true
-
-        if (slide.slide === false) {
-            setDontHandle(false)
-            setDontHandleOther(true)
-        } else {
-            setDontHandle(true)
-            setDontHandleOther(false)
+    const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+        if (event.touches.length !== 1 ||
+            (event.target as Element).closest("button, input, .statsFilter, .selectList")) {
+            touchStart.current = null;
+            return;
         }
 
-        sliderRef.current.style.transition = "none"
-    }
+        touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+        gesture.current = "none";
+    };
 
-    const handleTouchMove = (
-        e: React.TouchEvent<HTMLDivElement>
-    ) => {
-        if (
-            touchStartX.current === null ||
-            !dragging.current ||
-            !sliderRef.current ||
-            !wrapperRef.current
-        ) {
-            return
+    const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+        if (!touchStart.current || event.touches.length !== 1) return;
+
+        const dx = event.touches[0].clientX - touchStart.current.x;
+        const dy = event.touches[0].clientY - touchStart.current.y;
+
+        if (gesture.current === "none" && Math.max(Math.abs(dx), Math.abs(dy)) > 8) {
+            gesture.current = Math.abs(dx) > Math.abs(dy) ? "horizontal" : "vertical";
+            if (gesture.current === "horizontal") setDontHandle(true);
         }
 
-        const currentX = e.touches[0].clientX
-        const diff = currentX - touchStartX.current
+        if (gesture.current === "horizontal") event.stopPropagation();
+    };
 
-        const wrapperWidth = wrapperRef.current.clientWidth
-
-        const startPosition = slide.slide
-            ? -wrapperWidth
-            : 0
-
-        let position = startPosition + diff
-
-        position = Math.max(
-            -wrapperWidth,
-            Math.min(0, position)
-        )
-        if (slide.slide === false && diff < 0) {
-            setDontHandleOther(true)
-            setDontHandle(false)
-            e.stopPropagation()
-        }
-        else if (slide.slide && diff < 0) {
-            setDontHandle(true)
-            setDontHandleOther(false)
-        }
-
-
-        sliderRef.current.style.transform =
-            `translateX(${position}px)`
-    }
-
-    const handleTouchEnd = (
-        e: React.TouchEvent<HTMLDivElement>
-    ) => {
-        if (
-            touchStartX.current === null ||
-            !sliderRef.current ||
-            !wrapperRef.current
-        ) {
-            return
-        }
-
-        const touchEndX = e.changedTouches[0].clientX
-        const diff = touchEndX - touchStartX.current
-
-        const wrapperWidth = wrapperRef.current.clientWidth
-
-        touchStartX.current = null
-        dragging.current = false
-
-        const threshold = wrapperWidth * 0.2
-
-        if (Math.abs(diff) >= threshold) {
-            if (diff < 0) {
-                setSlide(prev => ({
-                    ...prev,
-                    slide: true
-                }))
-            } else {
-                setSlide(prev => ({
-                    ...prev,
-                    slide: false
-                }))
+    const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+        if (touchStart.current && gesture.current === "horizontal") {
+            const dx = event.changedTouches[0].clientX - touchStart.current.x;
+            if (Math.abs(dx) > 48) {
+                setSlide(current => ({ ...current, slide: dx < 0 }));
             }
-        } else {
-            sliderRef.current.style.transition =
-                "transform 0.3s ease-in-out"
-
-            sliderRef.current.style.transform = slide.slide
-                ? `translateX(-${wrapperWidth}px)`
-                : "translateX(0)"
         }
 
-        setDontHandle(false)
-        setDontHandleOther(false)
-    }
+        touchStart.current = null;
+        gesture.current = "none";
+        setDontHandle(false);
+    };
 
     const handleTouchCancel = () => {
-        if (!sliderRef.current || !wrapperRef.current) return
-        
-        const wrapperWidth = wrapperRef.current.clientWidth
-
-        touchStartX.current = null
-        dragging.current = false
-
-        sliderRef.current.style.transition =
-            "transform 0.3s ease-in-out"
-
-        sliderRef.current.style.transform = slide.slide
-            ? `translateX(-${wrapperWidth}px)`
-            : "translateX(0)"
-
-        setDontHandle(false)
-        setDontHandleOther(false)
-    }
+        touchStart.current = null;
+        gesture.current = "none";
+        setDontHandle(false);
+    };
 
     const goBack = () => {
-        setSlide({
-            label: "Выполнено",
-            value: "comp",
-            slide: false
-        })
-    }
+        if (slide.slide) setSlide({ label: "Выполнено", value: "comp", slide: false });
+    };
 
     return (
         <div className="statsDivStats">
-            <div
-                className={`statsTitle ${slide.slide ? "slided" : ""}`}
-                onClick={goBack}
-            >
-                {slide.slide ? (
-                    <>
-                        <CaretLeftIcon />
-                        {slide.label}
-                    </>
-                ) : (
-                    "Статистика"
-                )}
+            <div className={`statsTitle ${slide.slide ? "slided" : ""}`} onClick={goBack}>
+                {slide.slide ? <>
+                    <CaretLeftIcon/>
+                    {slide.label}
+                </> : "Статистика"}
             </div>
 
-            <div
-                className="statsDivWrapper"
-                ref={wrapperRef}
+            <div className="statsDivWrapper"
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
-                onTouchCancel={handleTouchCancel}
-            >
-                <div
-                    className="statsDivSlider"
-                    ref={sliderRef}
-                >
+                onTouchCancel={handleTouchCancel}>
+                <div className={`statsDivSlider ${slide.slide ? "toDetails" : ""}`}>
                     <div className="statsDivSlide">
-                        <OverallStats setSlide={setSlide} />
+                        <OverallStats setSlide={setSlide}/>
                     </div>
-
                     <div className="statsDivSlide">
                         <StatsFilters
                             period={period}
@@ -232,33 +110,25 @@ export default function Diagrams({
                             slide={slide.value}
                         />
 
-                        {slide.value === "comp" && (
-                            <DoneDiagram
-                                mainRef={mainRef}
-                                period={period}
-                                metric={metric}
-                                group={group}
-                            />
-                        )}
-
-                        {slide.value === "streak" && (
-                            <StreakDiagram
-                                mainRef={mainRef}
-                                period={period}
-                                group={group}
-                            />
-                        )}
-
-                        {slide.value === "break" && (
-                            <BreakDiagram
-                                mainRef={mainRef}
-                                period={period}
-                                group={group}
-                            />
-                        )}
+                        {slide.value === "comp" && <DoneDiagram
+                            mainRef={mainRef}
+                            period={period}
+                            metric={metric}
+                            group={group}
+                        />}
+                        {slide.value === "streak" && <StreakDiagram
+                            mainRef={mainRef}
+                            period={period}
+                            group={group}
+                        />}
+                        {slide.value === "break" && <BreakDiagram
+                            mainRef={mainRef}
+                            period={period}
+                            group={group}
+                        />}
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
