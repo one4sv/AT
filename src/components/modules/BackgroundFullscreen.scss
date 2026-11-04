@@ -196,7 +196,7 @@
         min-width: 0;
         width: 100%;
         padding: .6dvh;
-        border: 1px solid transparent;
+        border: none;
         border-radius: 16px;
         background: var(--interact);
         color: var(--tc);
@@ -212,10 +212,14 @@
             text-overflow: ellipsis;
         }
 
-        &.active { border-color: var(--accent); }
+        &.active {
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            border: none;
+            color: var(--inner_text);
+        }
 
         @media (hover: hover) {
-            &:hover { background: var(--menuButtHover); }
+            &:not(.active):hover { background: var(--menuButtHover); }
         }
     }
 
