@@ -18,11 +18,12 @@ import SectionArt from "../../../../components/ts/SectionArt";
 import BackgroundEffectsSettings from "./BackgroundEffectsSettings";
 import { BackgroundScene, type StockScene, isStockScene } from "../../../../components/ts/utils/BackgroundScene";
 import BackIconsScene from "../../../../components/ts/utils/BackIconsScene";
+import { getBackgroundFilter } from "../../../../components/ts/utils/backgroundFilter";
 
 export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { setBlackout } = useBlackout();
-    const { isDark, accent, bg, bgUrl, decor, grad, blur, layout } = useSettings();
+    const { isDark, accent, bg, bgUrl, bgEffects, decor, grad, blur, layout } = useSettings();
     const { setNewTheme, setNewAccent, setNewDecor, setNewGrad, setNewBlur, setNewLayout } = useUpSettings();
 
     const themeArr = [
@@ -105,8 +106,8 @@ export default function PersSettingTab({ search }: { search: string }) {
                     <button type="button" className="bgManageButton"
                         onClick={() => setBlackout({ seted: true, module: "BackgroundLibrary" })}>
                         {bg === "custom" && bgUrl ?
-                            <img className="bgManagePreview" src={bgUrl} alt=""/> :
-                            <div className={`bgManagePreview ${bg === "landing" ? "landingBackground" : ""}`}>
+                            <img className="bgManagePreview" src={bgUrl} alt="" style={{ filter: getBackgroundFilter(bgEffects, .24) }}/> :
+                            <div className={`bgManagePreview ${bg === "landing" ? "landingBackground" : ""}`} style={{ filter: getBackgroundFilter(bgEffects, .24) }}>
                                 {bg === "default" ? <BackIconsScene/> : isStockScene(bg) &&
                                     <BackgroundScene variant={bg as StockScene}/>}
                             </div>}

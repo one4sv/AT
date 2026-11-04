@@ -1,23 +1,15 @@
 import { useSettings } from "../../hooks/SettingsHook";
 import BackIconsScene from "./BackIconsScene";
+import { getBackgroundFilter } from "./backgroundFilter";
 import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "./BackgroundScene";
 import "../../../scss/landingBackground.scss";
 
 export function Background() {
   const { bg, bgUrl, bgEffects } = useSettings();
 
-  const filter = ({
-    none: "",
-    grayscale: "grayscale(1)",
-    sepia: "sepia(1)",
-    invert: "invert(1)",
-    contrast: "contrast(1.4)",
-    saturate: "saturate(1.8)"
-  } as const)[bgEffects.filter] ?? "";
-
   const speed = Math.min(3, Math.max(.5, bgEffects.speed ?? 1));
   const effects = {
-    filter: `blur(${bgEffects.blur}px) ${filter}`,
+    filter: getBackgroundFilter(bgEffects),
     animation: bgEffects.movement && supportsBackgroundMotion(bg) && !isStockScene(bg)
       ? `atBackgroundDrift ${24 / speed}s ease-in-out infinite alternate` : undefined,
     "--scene-duration": `${18 / speed}s`

@@ -6,6 +6,7 @@ import { useUpSettings } from "../hooks/UpdateSettingsHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
 import BackIconsScene from "../ts/utils/BackIconsScene";
+import { getBackgroundFilter } from "../ts/utils/backgroundFilter";
 import Selector from "../ts/Selector";
 import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "../ts/utils/BackgroundScene";
 import { api } from "../ts/api";
@@ -35,6 +36,7 @@ export default function BackgroundLibrary() {
     const [ tab, setTab ] = useState<"stock" | "custom">("stock");
     const [ saving, setSaving ] = useState(false);
     const fileRef = useRef<HTMLInputElement | null>(null);
+    const previewStyle = { filter: getBackgroundFilter(bgEffects, .24) };
     const tabs = [
         { value: "stock" as const, label: t("backgroundLibrary.stock"), func: setTab },
         { value: "custom" as const, label: `${t("backgroundLibrary.custom")} (${bgGallery.length}/6)`, func: setTab }
@@ -152,14 +154,14 @@ export default function BackgroundLibrary() {
                                             className={`bgPick backgroundLibraryTile ${bg === item.id ? "active" : ""}`}
                                             onClick={() => selectStock(item.id)}>
                                             {item.id === "landing" ?
-                                                <div className="bgImg bgMini landingBackground"/> :
+                                                <div className="bgImg bgMini landingBackground" style={previewStyle}/> :
                                                 item.id === "default" ?
-                                                    <div className="bgImg bgMini"><BackIconsScene/></div> :
+                                                    <div className="bgImg bgMini" style={previewStyle}><BackIconsScene/></div> :
                                                     isStockScene(item.id) ?
-                                                        <div className="bgImg bgMini" style={{ "--scene-duration": `${18 / Math.max(.5, Math.min(3, bgEffects.speed ?? 1))}s` } as CSSProperties}>
+                                                        <div className="bgImg bgMini" style={{ ...previewStyle, "--scene-duration": `${18 / Math.max(.5, Math.min(3, bgEffects.speed ?? 1))}s` } as CSSProperties}>
                                                             <BackgroundScene variant={item.id as StockScene} motion={supportsBackgroundMotion(item.id)}/>
                                                         </div> :
-                                                        <div className="bgImg bgMini"/>}
+                                                        <div className="bgImg bgMini" style={previewStyle}/>}
                                             <span className={bg === item.id ? "bgSpanChoosen" : ""}>{item.label}</span>
                                             {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
                                         </button>
