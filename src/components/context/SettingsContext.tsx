@@ -66,6 +66,10 @@ export interface SettingsContextType {
     bgEffectsReady: boolean;
     contourPattern: ContourPattern;
     contourSize: number;
+    artPattern: ContourPattern;
+    setArtPattern: React.Dispatch<React.SetStateAction<ContourPattern>>;
+    artSize: number;
+    setArtSize: React.Dispatch<React.SetStateAction<number>>;
     setContourSize: React.Dispatch<React.SetStateAction<number>>;
     setContourPattern: React.Dispatch<React.SetStateAction<ContourPattern>>;
     setBgEffects: React.Dispatch<React.SetStateAction<BackgroundEffects>>;
@@ -122,6 +126,8 @@ const LOCAL_KEYS = {
     bgEffects: "settings_bg_effects",
     contourPattern: "settings_contour_pattern",
     contourSize: "settings_contour_size",
+    artPattern: "settings_art_pattern",
+    artSize: "settings_art_size",
     decor: "settings_decor",
     emote:"settings_emote",
     messdb:"settings_messdb",
@@ -142,6 +148,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "landing");
     const [ contourPattern, setContourPattern ] = useLocalStorage<ContourPattern>(LOCAL_KEYS.contourPattern, "order");
     const [ contourSize, setContourSize ] = useLocalStorage<number>(LOCAL_KEYS.contourSize, 1);
+    const [ artPattern, setArtPattern ] = useLocalStorage<ContourPattern>(LOCAL_KEYS.artPattern, "order");
+    const [ artSize, setArtSize ] = useLocalStorage<number>(LOCAL_KEYS.artSize, 1);
     const [ storedBgEffects, setStoredBgEffects ] = useLocalStorage<BackgroundEffects>(LOCAL_KEYS.bgEffects, defaultBackgroundEffects);
     const bgEffects = useMemo(() => normalizeBackgroundEffects(storedBgEffects), [storedBgEffects]);
     const setBgEffects = useCallback<React.Dispatch<React.SetStateAction<BackgroundEffects>>>(next => {
@@ -260,7 +268,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             layout, setLayout,
             bg, setBg,
             decor, setDecor,
-            bgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, contourPattern, setContourPattern, contourSize, setContourSize, lang, setLang,
+            bgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang,
             privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
             twoAuth, setTwoAuth,
             note, setNote,

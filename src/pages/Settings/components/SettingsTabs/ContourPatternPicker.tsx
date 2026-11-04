@@ -24,11 +24,12 @@ function ChaosIcon({ size = 20 }: { size?: number }) {
     </svg>;
 }
 
-export function ContourPatternPicker({ value, onChange, size = 1, onSizeChange }: {
+export function ContourPatternPicker({ value, onChange, size = 1, onSizeChange, subject = "contour" }: {
     value: ContourPattern;
     onChange: (value: ContourPattern) => void;
     size?: number;
     onSizeChange?: (size: number) => void;
+    subject?: "contour" | "art";
 }) {
     const { t } = useTranslation("settings");
     const items = [
@@ -37,10 +38,10 @@ export function ContourPatternPicker({ value, onChange, size = 1, onSizeChange }
     ];
 
     return <div className="settingInnerWrapper contourPatternPicker" data-setting-id="contourPattern">
-        <div className="settingSpan">{t("backgroundLibrary.contourPattern")}</div>
+        <div className="settingSpan">{t(subject === "art" ? "backgroundLibrary.artPattern" : "backgroundLibrary.contourPattern")}</div>
         <Selector arr={items} selected={value}/>
         {onSizeChange && <>
-            <div className="settingSpan">{t("backgroundLibrary.contourSize")}</div>
+            <div className="settingSpan">{t(subject === "art" ? "backgroundLibrary.artSize" : "backgroundLibrary.contourSize")}</div>
             <SeekBar id="contourSize" min={.5} max={1.5} step={.05}
                 value={size} unit="×" disabled={false} onChange={onSizeChange}/>
         </>}

@@ -5,11 +5,13 @@ import { getBackgroundFilter } from "./backgroundFilter";
 import { BackgroundScene, type StockScene, isStockScene } from "./BackgroundScene";
 import "../../../scss/landingBackground.scss";
 
-export function Background({ previewBg, previewUrl, previewEffects, previewContourPattern, previewContourSize }: { previewBg?: string; previewUrl?: string; previewEffects?: BackgroundEffects; previewContourPattern?: ContourPattern; previewContourSize?: number } = {}) {
-  const { bg, bgUrl, bgEffects, bgEffectsReady, contourPattern, contourSize } = useSettings();
+export function Background({ previewBg, previewUrl, previewEffects, previewContourPattern, previewContourSize, previewArtPattern, previewArtSize }: { previewBg?: string; previewUrl?: string; previewEffects?: BackgroundEffects; previewContourPattern?: ContourPattern; previewContourSize?: number; previewArtPattern?: ContourPattern; previewArtSize?: number } = {}) {
+  const { bg, bgUrl, bgEffects, bgEffectsReady, contourPattern, contourSize, artPattern, artSize } = useSettings();
   const effectsState = previewEffects ?? bgEffects;
   const selectedPattern = previewContourPattern ?? contourPattern;
   const selectedContourSize = previewContourSize ?? contourSize;
+  const selectedArtPattern = previewArtPattern ?? artPattern;
+  const selectedArtSize = previewArtSize ?? artSize;
   const selectedBg = previewBg ?? bg;
   const selectedUrl = previewUrl ?? bgUrl;
 
@@ -36,7 +38,8 @@ export function Background({ previewBg, previewUrl, previewEffects, previewConto
     canvas = <div className="backgroundCanvas" style={effects}><BackIconsScene pattern={selectedPattern} size={selectedContourSize}/></div>;
   } else if (isStockScene(selectedBg)) {
     canvas = <div className="backgroundCanvas" style={effects}>
-      <BackgroundScene variant={selectedBg as StockScene} motion={running}/>
+      <BackgroundScene variant={selectedBg as StockScene} motion={running}
+        artPattern={selectedArtPattern} artSize={selectedArtSize}/>
     </div>;
   } else if (selectedBg === "color") {
     canvas = <div className="backgroundCanvas" style={effects}/>;

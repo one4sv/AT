@@ -23,7 +23,7 @@ import { getBackgroundFilter } from "../../../../components/ts/utils/backgroundF
 export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { setBlackout } = useBlackout();
-    const { isDark, accent, bg, bgUrl, bgEffects, contourPattern, contourSize, decor, grad, blur, layout } = useSettings();
+    const { isDark, accent, bg, bgUrl, bgEffects, contourPattern, contourSize, artPattern, artSize, decor, grad, blur, layout } = useSettings();
     const { setNewTheme, setNewAccent, setNewDecor, setNewGrad, setNewBlur, setNewLayout } = useUpSettings();
 
     const themeArr = [
@@ -109,7 +109,7 @@ export default function PersSettingTab({ search }: { search: string }) {
                             <img className="bgManagePreview" src={bgUrl} alt="" style={{ filter: getBackgroundFilter(bgEffects, .24) }}/> :
                             <div className={`bgManagePreview ${bg === "landing" ? "landingBackground" : ""}`} style={{ filter: getBackgroundFilter(bgEffects, .24) }}>
                                 {bg === "default" ? <BackIconsScene pattern={contourPattern} size={contourSize}/> : isStockScene(bg) &&
-                                    <BackgroundScene variant={bg as StockScene}/>}
+                                    <BackgroundScene variant={bg as StockScene} artPattern={artPattern} artSize={artSize}/>}
                             </div>}
                         <span>{t("backgroundLibrary.change")}</span>
                     </button>

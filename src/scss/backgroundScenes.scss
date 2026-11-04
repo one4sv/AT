@@ -543,3 +543,39 @@
 .atScene--art:not(.atScene--running) .sectionArt *::after {
     animation: none !important;
 }
+
+/* Shared art pattern controls: the layouts remain deterministic. */
+.atScene--art .atSceneArt {
+    scale: var(--art-size, 1);
+    transform-origin: center;
+}
+
+.atScene--art-chaos {
+    .atSceneArt--center {
+        width: 51%;
+        left: 26%;
+        top: 39%;
+        rotate: -9deg;
+    }
+
+    .atSceneArt--left {
+        width: 40%;
+        left: -2%;
+        top: 9%;
+        rotate: 13deg;
+    }
+
+    .atSceneArt--right {
+        width: 43%;
+        right: -7%;
+        top: 5%;
+        rotate: -12deg;
+    }
+
+    .atSceneArt--far {
+        width: 42%;
+        bottom: 7%;
+        right: 2%;
+        rotate: 18deg;
+    }
+}

@@ -1,4 +1,6 @@
 import SectionArt from "../SectionArt";
+import type { CSSProperties } from "react";
+import type { ContourPattern } from "../../context/SettingsContext";
 import "../../../scss/backgroundScenes.scss";
 
 export const stockScenes = ["art", "aurora", "nebula", "sunset", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals"] as const;
@@ -62,9 +64,10 @@ const neonTowers = [
     { x: 70, w: 12, h: 76 }, { x: 81, w: 8, h: 57 }, { x: 88, w: 12, h: 69 }
 ];
 
-export function BackgroundScene({ variant, motion = false }: { variant: StockScene; motion?: boolean }) {
+export function BackgroundScene({ variant, motion = false, artPattern = "order", artSize = 1 }: { variant: StockScene; motion?: boolean; artPattern?: ContourPattern; artSize?: number }) {
     return (
-        <div className={`atScene atScene--${variant} ${motion ? "atScene--running" : ""}`} aria-hidden="true">
+        <div className={`atScene atScene--${variant} ${motion ? "atScene--running" : ""} ${variant === "art" ? `atScene--art-${artPattern}` : ""}`}
+            style={{ "--art-size": artSize } as CSSProperties} aria-hidden="true">
             <div className="atScenePattern">
                 {patterns[variant].map((particle, index) => (
                     <span key={index}
