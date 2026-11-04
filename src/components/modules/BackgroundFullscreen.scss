@@ -93,7 +93,7 @@
     bottom: auto;
     left: auto;
     transform: none;
-    border: none;
+    border: 1px solid var(--block_border);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     color: var(--tc);
@@ -479,7 +479,7 @@
     margin: 0;
     padding: .4dvh .65vw;
     align-self: center;
-    border: none;
+    border: 1px solid var(--block_border);
     background: var(--interact);
     color: var(--tc);
     pointer-events: auto;
