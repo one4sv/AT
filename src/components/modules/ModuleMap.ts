@@ -18,6 +18,7 @@ import PostSettings from './PostSettings';
 import HabitCollaborationSettings from './HabitCollaborationSettings';
 import HabitDayActivityHistory from './HabitDayActivityHistory';
 import HabitTaskEditor from './HabitTaskEditor';
+import WelcomeMessageInfo from './WelcomeMessageInfo';
 
 const ModuleMap: Record<string, React.FC> = {
     ConfirmAction:ConfirmAction,
@@ -39,6 +40,7 @@ const ModuleMap: Record<string, React.FC> = {
     HabitCollaborationSettings:HabitCollaborationSettings,
     HabitDayActivityHistory:HabitDayActivityHistory,
     HabitTaskEditor:HabitTaskEditor,
+    WelcomeMessageInfo:WelcomeMessageInfo,
     Table:Table
 };
 

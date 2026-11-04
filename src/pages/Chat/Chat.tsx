@@ -17,6 +17,7 @@ import getCornerType from "./utils/funcs/getCornet";
 import SystemMessage from "./utils/SystemMessage";
 import Skeleton from "../../components/ts/Skeleton";
 import { LoaderSmall } from "../../components/ts/LoaderSmall";
+import WelcomeMessage from "./components/WelcomeMessage";
 import { useChatMessageScroll } from "../../components/hooks/utils/useChatMessageScroll";
 export default function Chat() {
     const {
@@ -57,6 +58,7 @@ export default function Chat() {
     const isLoadingMoreRef = useRef(false);
     const prevScrollHeightRef = useRef(0);
     const initialScrolledRef = useRef(false);
+    const hadMessagesRef = useRef(false);
     const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(
@@ -64,6 +66,7 @@ export default function Chat() {
             setActiveHeader("text");
             setChosenMess([]);
             initialScrolledRef.current = false;
+            hadMessagesRef.current = false;
             if (id) {
                 refetchGroupChatWLoading(id);
             } else if (nick) {
@@ -219,6 +222,10 @@ export default function Chat() {
         },
         [chatLoading, messages.length]
     );
+    useEffect(() => {
+        if (!chatLoading && messages.length > 0) hadMessagesRef.current = true;
+    }, [chatLoading, messages.length]);
+
     if (chatLoading) return <Skeleton type="chat" count={5} />;
 
     return (
@@ -235,6 +242,10 @@ export default function Chat() {
                     <LoaderSmall />
                 </div>}
 
+                {!hadMessagesRef.current && messages.length === 0 && !id &&
+                    chatWith?.nick === nick && chatWith.id !== user.id && chatWith.welcome_message &&
+                    <WelcomeMessage person={chatWith} text={chatWith.welcome_message}/>
+                }
                 {grouped.map(
                     group => <div key={new Date(group[0].created_at).toDateString()}>
                         <DateDivider currDate={new Date(group[0].created_at)} />

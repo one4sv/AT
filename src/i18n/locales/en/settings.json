@@ -33,7 +33,22 @@
         "doubleClick": "Double click on message",
         "reaction": "Set default reaction",
         "answer": "Reply to message",
-        "select": "Select message"
+        "select": "Select message",
+        "welcomeTitle": "Welcome message",
+        "welcomeEnable": "Show my welcome message",
+        "welcomeHint": "Your welcome message is displayed in an empty private chat before the conversation starts. It is not sent automatically and does not trigger notifications.",
+        "welcomeText": "Welcome text",
+        "welcomePlaceholder": "Write what people will see before starting a conversation…",
+        "welcomeLength": "{{count}} / 500",
+        "welcomeRequired": "Enter some text to enable the welcome message",
+        "welcomeSave": "Save",
+        "welcomeSaving": "Saving…",
+        "welcomeSaved": "Welcome message saved",
+        "welcomeSaveError": "Couldn't save welcome message",
+        "welcomeBadge": "Welcome message",
+        "welcomeInfoTitle": "What is a welcome message?",
+        "welcomeInfoDescription": "This text was set by the person in their chat settings. It appears only before a private conversation starts. It is not a sent message, creates no notifications or read receipts, and disappears after the first real message.",
+        "welcomeInfoButton": "Got it"
     },
     "general": {
         "language": "App language",

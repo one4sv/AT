@@ -1,0 +1,152 @@
+@use "../../../scss/mixins" as var;
+
+.welcomeMessageRow {
+    display: flex;
+    align-items: flex-start;
+    gap: .7vw;
+    padding: 2dvh .4vw 1dvh;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.welcomeMessageAvatar {
+    width: 4dvh;
+    height: 4dvh;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--tc);
+
+    > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    > svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.welcomeMessageContent {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    max-width: 100%;
+    gap: .5dvh;
+}
+
+.welcomeMessageAuthor {
+    color: var(--borderWh);
+    padding-left: .4vw;
+}
+
+.welcomeMessageBubble {
+    display: flex;
+    flex-direction: column;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    padding: 1.25dvh 1vw;
+}
+
+.welcomeMessageBadge {
+    display: flex;
+    align-items: center;
+    gap: .35vw;
+    border: none;
+    border-radius: 24px;
+    background: var(--interact);
+    color: var(--borderWh);
+    padding: .6dvh .7vw;
+    font: inherit;
+    font-size: .85em;
+    cursor: pointer;
+
+    @media (hover: hover) {
+        &:hover {
+            color: var(--tc);
+            background: var(--menuButtHover);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            color: var(--tc);
+            background: var(--menuButtHover);
+        }
+    }
+}
+
+.welcomeMessageInfoModal {
+    @include var.centerModal;
+    width: 29vw;
+    max-width: 90vw;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5dvh;
+    padding: 2dvh 1.5vw;
+    border-radius: 24px;
+    background: var(--bgc);
+    color: var(--tc);
+
+    > p {
+        margin: 0;
+        line-height: 1.5;
+        color: var(--borderWh);
+    }
+
+    > button {
+        border: none;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
+        border-radius: 24px;
+        padding: 1.2dvh 1vw;
+        cursor: pointer;
+        font: inherit;
+    }
+}
+
+.welcomeMessageInfoTitle {
+    font-size: 20px;
+}
+
+@media (max-width: 800px) {
+    .welcomeMessageRow {
+        gap: 2vw;
+        padding: 2dvh 1.5vw 1dvh;
+    }
+
+    .welcomeMessageBubble {
+        padding: 1.1dvh 3vw;
+        max-width: 70vw;
+    }
+
+    .welcomeMessageAuthor {
+        padding-left: 2vw;
+    }
+
+    .welcomeMessageBadge {
+        gap: 1vw;
+        padding: .75dvh 2vw;
+    }
+
+    .welcomeMessageInfoModal {
+        top: auto;
+        left: auto;
+        transform: none;
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        max-height: 85dvh;
+        align-self: stretch;
+        margin: 0;
+        border-radius: 24px 24px 0 0;
+        padding: 3.5dvh 4vw calc(2dvh + env(safe-area-inset-bottom));
+    }
+}

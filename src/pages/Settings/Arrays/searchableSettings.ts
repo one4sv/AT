@@ -189,6 +189,12 @@ export function useSearchableSettings(): SearchableSection[] {
                     icon: isMobile ? HandTapIcon : CursorClickIcon,
                     category: t("chats.header"),
                 },
+                {
+                    id: "welcomeMessage",
+                    name: t("chats.welcomeTitle"),
+                    icon: ChatsTeardropIcon,
+                    category: t("settings.chats"),
+                },
             ],
         },
         {

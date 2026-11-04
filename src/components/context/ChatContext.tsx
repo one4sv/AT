@@ -25,6 +25,7 @@ export interface chatWithType {
     }[];
     last_online: string;
     chat_id: string;
+    welcome_message?: string | null;
 }
 export interface ReactionsType {
     user_id: string;
@@ -158,7 +159,8 @@ export const ChatProvider = ({
                         am_i_blocked: u.am_i_blocked,
                         is_group: false,
                         members: [],
-                        chat_id: res.data.chat_id
+                        chat_id: res.data.chat_id,
+                        welcome_message: res.data.welcome_message ?? null
                     }
                 );
                 setMessages(res.data.messages || []);
