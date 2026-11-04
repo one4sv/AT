@@ -147,7 +147,7 @@ export function BackgroundScene({ variant, motion = false, artPattern = "order",
                     <div className="atSceneArt atSceneArt--left"><SectionArt theme="habits" mini/></div>
                     <div className="atSceneArt atSceneArt--right"><SectionArt theme="chats" mini/></div>
                     <div className="atSceneArt atSceneArt--far"><SectionArt theme="notifications" mini/></div>
-                </>)
+                </>)}
             {variant === "aurora" && <>
                 <div className="atAurora atAurora--first"/>
                 <div className="atAurora atAurora--second"/>
