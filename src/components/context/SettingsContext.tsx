@@ -60,6 +60,7 @@ export interface SettingsContextType {
     messNote: boolean;
     setMessNote: React.Dispatch<React.SetStateAction<boolean>>;
     bgUrl: string;
+    setBgUrl: React.Dispatch<React.SetStateAction<string>>;
     bgGallery: SavedBackground[];
     setBgGallery: React.Dispatch<React.SetStateAction<SavedBackground[]>>;
     bgEffects: BackgroundEffects;
@@ -101,7 +102,6 @@ interface SettingsResponse {
     show_archived: boolean;
     show_archived_in_acc: boolean;
     week_start: string;
-    bg_url: string;
     bg_gallery?: SavedBackground[];
     bg_effects?: BackgroundEffects;
 }
@@ -123,6 +123,7 @@ const LOCAL_KEYS = {
     blur: "settings_blur",
     layout: "settings_layout",
     bg: "settings_bg",
+    bgUrl: "settings_bg_url",
     bgEffects: "settings_bg_effects",
     contourPattern: "settings_contour_pattern",
     contourSize: "settings_contour_size",
@@ -173,15 +174,15 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         (theme === "system" && systemDark);
 
     const [ orderHabits, setOrderHabits ] = useState<string[  ] | null>(null);
-    const [bgUrl, setBgUrl] = useState<string>(() => {
+    const [ bgUrl, setBgUrl ] = useLocalStorage(LOCAL_KEYS.bgUrl, (() => {
         try {
-            return JSON.parse(
-                localStorage.getItem("settings_bg_url") ?? '""'
-            );
+            // Migrate the previous device-only key without reading a selected URL from the API.
+            const value = JSON.parse(localStorage.getItem("settings_bg_url") ?? '""');
+            return typeof value === "string" ? value : "";
         } catch {
             return "";
         }
-    });
+    })());
     const [ bgGallery, setBgGallery ] = useState<SavedBackground[]>([]);
     const [ groupInvites, setGroupInvites ] = useState<GroupInviteRules>({ contacts: "message", others: "none" });
     const [ chatWelcome, setChatWelcome ] = useState<ChatWelcomeSettings>({ enabled: false, text: "" });
@@ -217,16 +218,11 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setShowArchived(res.data.show_archived ?? false);
                 setShowArchivedInAcc(res.data.show_archived_in_acc ?? false);
                 setWeekStart(res.data.week_start ?? null);
-                setBgUrl(res.data.bg_url ?? "");
                 setBgGallery(Array.isArray(res.data.bg_gallery) ? res.data.bg_gallery.slice(0, 6) : []);
                 if (hydratedBgEffectsFor.current !== user.nick) {
                     if (!hasLocalBgEffects) setBgEffects(normalizeBackgroundEffects(res.data.bg_effects));
                     hydratedBgEffectsFor.current = user.nick;
                 }
-                localStorage.setItem(
-                    "settings_bg_url",
-                    JSON.stringify(res.data.bg_url ?? "")
-                );
             }
         } catch (err) {
             if (axios.isAxiosError(err) && err.response?.status === 401) return;
@@ -268,7 +264,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             layout, setLayout,
             bg, setBg,
             decor, setDecor,
-            bgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang,
+            bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang,
             privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
             twoAuth, setTwoAuth,
             note, setNote,

@@ -37,7 +37,7 @@ type UpdateQueueItem = {
 const UpdateSettingsContext = createContext<UpdateSettingsContextType | null>(null);
 
 export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchSettings, orderHabits, showArchived, showArchivedInAcc, setTheme, setAccent, setBg, 
+    const { refetchSettings, orderHabits, showArchived, showArchivedInAcc, setTheme, setAccent, setBg, setBgUrl: setLocalBgUrl, 
         setDecor, setMessdb, setEmote, setNote, setMessNote, setHabitsNote, setGrad, setLang, setBlur, setLayout 
     } = useSettings();
     const { refetchUser, user } = useUser();
@@ -135,7 +135,9 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
             const upRes = await api.post(`uploadbg`, bg, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-            if (upRes.data?.success) {
+            if (upRes.data?.success && typeof upRes.data.bg_url === "string") {
+                // The file belongs to the shared gallery, the selected URL stays on this device.
+                setLocalBgUrl(upRes.data.bg_url);
                 await refetchSettings();
                 return true;
             } else {

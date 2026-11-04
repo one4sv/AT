@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { useSettings } from "../hooks/SettingsHook";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
 import { useBlackout } from "../hooks/BlackoutHook";
-import { useNote } from "../hooks/NoteHook";
 import BackIconsScene from "../ts/utils/BackIconsScene";
 import { getBackgroundFilter } from "../ts/utils/backgroundFilter";
 import Selector from "../ts/Selector";
@@ -32,10 +31,9 @@ function CustomBackgroundThumb({ url }: { url: string }) {
 
 export default function BackgroundLibrary() {
     const { t } = useTranslation("settings");
-    const { bg, bgUrl, bgGallery, bgEffects, contourPattern, contourSize, artPattern, artSize, settingsLoaded, refetchSettings } = useSettings();
+    const { bg, bgUrl, setBgUrl, bgGallery, bgEffects, contourPattern, contourSize, artPattern, artSize, settingsLoaded, refetchSettings } = useSettings();
     const { setNewBg } = useUpSettings();
     const { setBlackout } = useBlackout();
-    const { showNotification } = useNote();
     const [ tab, setTab ] = useState<"stock" | "custom">("stock");
     const sliderRef = useRef<HTMLDivElement>(null);
     const sliderX = useMotionValue("0%");
@@ -43,9 +41,6 @@ export default function BackgroundLibrary() {
     const swipeStart = useRef<{ id: number; x: number; y: number; horizontal: boolean } | null>(null);
     const suppressClick = useRef(false);
     const [ saving, setSaving ] = useState(false);
-    const [ selectedLocal, setSelectedLocal ] = useState<{ bg: string; url: string } | null>(null);
-    const selectedBg = selectedLocal?.bg ?? bg;
-    const selectedUrl = selectedLocal?.url ?? bgUrl;
     const [ collapsedGroups, setCollapsedGroups ] = useState<string[]>([]);
     const fileRef = useRef<HTMLInputElement | null>(null);
     const previewStyle = { filter: getBackgroundFilter(bgEffects, .24) };
@@ -131,22 +126,11 @@ export default function BackgroundLibrary() {
         { value: "custom" as const, label: `${t("backgroundLibrary.custom")} (${bgGallery.length}/6)`, func: changeTab }
     ];
 
-    const selectCustom = async (url: string) => {
+    const selectCustom = (url: string) => {
         if (saving) return;
-        setSaving(true);
-        const previous = selectedLocal;
-        setSelectedLocal({ bg: "custom", url });
-        try {
-            const res = await api.post("backgrounds/select", { url });
-            if (!res.data?.success) throw new Error();
-            setNewBg("custom");
-            await refetchSettings();
-        } catch {
-            setSelectedLocal(previous);
-            showNotification("error", t("backgroundLibrary.error"));
-        } finally {
-            setSaving(false);
-        }
+        // Only the current browser saves which gallery image is selected.
+        setBgUrl(url);
+        setNewBg("custom");
     };
 
     const previewBackground = (id: string, url?: string) => {
@@ -161,10 +145,18 @@ export default function BackgroundLibrary() {
             description: t("backgroundLibrary.deleteHint"),
             label: t("backgroundLibrary.delete"),
             run: async () => {
-                const res = await api.post("backgrounds/delete", { url });
-                if (!res.data?.success) throw new Error();
-                if (bg === "custom" && bgUrl === url && !res.data.bg_url) setNewBg("landing");
-                await refetchSettings();
+                setSaving(true);
+                try {
+                    const res = await api.post("backgrounds/delete", { url });
+                    if (!res.data?.success) throw new Error();
+                    if (bg === "custom" && bgUrl === url) {
+                        setBgUrl("");
+                        setNewBg("landing");
+                    }
+                    await refetchSettings();
+                } finally {
+                    setSaving(false);
+                }
             }
         } });
     };
@@ -176,7 +168,6 @@ export default function BackgroundLibrary() {
 
     const selectStock = (id: string) => {
         if (saving) return;
-        setSelectedLocal({ bg: id, url: "" });
         setNewBg(id);
     };
 
@@ -222,7 +213,7 @@ export default function BackgroundLibrary() {
                                             <div className="backgroundLibraryGrid" hidden={collapsedGroups.includes(group.id)}>
                                                 {group.items.map(item => (
                                                     <div key={item.id}
-                                                        className={`bgPick backgroundLibraryTile ${selectedBg === item.id ? "active" : ""}`}>
+                                                        className={`bgPick backgroundLibraryTile ${bg === item.id ? "active" : ""}`}>
                                                         <button type="button" className="backgroundLibraryChoose"
                                                             onClick={() => selectStock(item.id)}>
                                                             {item.id === "landing" ?
@@ -235,7 +226,7 @@ export default function BackgroundLibrary() {
                                                                             artPattern={artPattern} artSize={artSize}/>
                                                                     </div> :
                                                                     <div className="bgImg bgMini" style={previewStyle}/>}
-                                                            <span className={`backgroundLibraryName ${selectedBg === item.id ? "bgSpanChoosen" : ""}`}>
+                                                            <span className={`backgroundLibraryName ${bg === item.id ? "bgSpanChoosen" : ""}`}>
                                                                 {item.label}
                                                                 {supportsBackgroundMotion(item.id) && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.motionAvailable")}>
                                                                     <Film size={15} aria-label={t("backgroundLibrary.motionAvailable")}/>
@@ -251,7 +242,7 @@ export default function BackgroundLibrary() {
                                                                         <LayoutGrid size={15} aria-label={t("backgroundLibrary.patternAvailable")}/>
                                                                     </span>}
                                                             </span>
-                                                            {selectedBg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
+                                                            {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
                                                         </button>
                                                         <button type="button" className="backgroundLibraryPreview"
                                                             aria-label={t("backgroundLibrary.preview")} title={t("backgroundLibrary.preview")}
@@ -294,11 +285,11 @@ export default function BackgroundLibrary() {
                             ) : (
                                 <div className="backgroundLibraryGrid">
                                     {bgGallery.map(item => (
-                                        <div key={item.url} className={`bgPick backgroundLibraryTile ${selectedBg === "custom" && selectedUrl === item.url ? "active" : ""}`}>
+                                        <div key={item.url} className={`bgPick backgroundLibraryTile ${bg === "custom" && bgUrl === item.url ? "active" : ""}`}>
                                             <button type="button" className="backgroundLibraryChoose" disabled={saving}
                                                 onClick={() => void selectCustom(item.url)}>
                                                 <CustomBackgroundThumb url={item.url}/>
-                                                 {selectedBg === "custom" && selectedUrl === item.url && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
+                                                 {bg === "custom" && bgUrl === item.url && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
                                             </button>
                                             <button type="button" className="backgroundLibraryDelete"
                                                 disabled={saving} aria-label={t("backgroundLibrary.delete")}
