@@ -53,11 +53,11 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
                 </div>
             </div>
             <div className="settingInnerWrapper" data-setting-id="backgroundSpeed">
-                <div className={`settingSpan ${!motionAvailable || !bgEffects.movement ? "disabled" : ""}`}>
+                <div className={`settingSpan ${!motionAvailable ? "disabled" : ""}`}>
                     <HighlightText text={t("backgroundLibrary.speed")} search={search}/> — {(bgEffects.speed ?? 1).toFixed(2)}×
                 </div>
                 <SeekBar id="backgroundSpeed" min={0.5} max={3} step={0.25} value={bgEffects.speed ?? 1}
-                    disabled={!motionAvailable || !bgEffects.movement}
+                    disabled={!motionAvailable}
                     onChange={speed => update({ ...bgEffects, speed })}/>
             </div>
             <div className="settingSpan" data-setting-id="backgroundFilters">

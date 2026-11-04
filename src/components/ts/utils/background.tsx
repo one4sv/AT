@@ -1,11 +1,10 @@
 import { useSettings } from "../../hooks/SettingsHook";
-import { useBackIconsPattern } from "../../hooks/utils/useBackIconsPattern";
+import BackIconsScene from "./BackIconsScene";
 import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "./BackgroundScene";
 import "../../../scss/landingBackground.scss";
 
 export function Background() {
   const { bg, bgUrl, bgEffects } = useSettings();
-  const backIconsPattern = useBackIconsPattern();
 
   const filter = ({
     none: "",
@@ -29,7 +28,7 @@ export function Background() {
   }
 
   if (bg === "default") {
-    return <div className="background" style={effects} aria-hidden="true">{backIconsPattern}</div>;
+    return <div className="background" style={effects} aria-hidden="true"><BackIconsScene/></div>;
   }
 
   if (bg === "color") {

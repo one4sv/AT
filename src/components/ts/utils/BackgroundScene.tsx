@@ -55,6 +55,13 @@ const patterns: Record<StockScene, Particle[]> = {
     petals: createPattern(8648, 24)
 };
 
+const neonTowers = [
+    { x: 0, w: 9, h: 43 }, { x: 8, w: 7, h: 62 }, { x: 14, w: 9, h: 49 },
+    { x: 22, w: 10, h: 83 }, { x: 31, w: 8, h: 57 }, { x: 38, w: 11, h: 72 },
+    { x: 48, w: 7, h: 46 }, { x: 54, w: 10, h: 88 }, { x: 63, w: 8, h: 53 },
+    { x: 70, w: 12, h: 76 }, { x: 81, w: 8, h: 57 }, { x: 88, w: 12, h: 69 }
+];
+
 export function BackgroundScene({ variant, motion = false }: { variant: StockScene; motion?: boolean }) {
     return (
         <div className={`atScene atScene--${variant} ${motion ? "atScene--running" : ""}`} aria-hidden="true">
@@ -103,7 +110,17 @@ export function BackgroundScene({ variant, motion = false }: { variant: StockSce
                     </svg>
                 </div>
             </>}
-            {variant === "neonCity" && <div className="atNeonCityGlow"/>}
+            {variant === "neonCity" && <>
+                <div className="atNeonMoon"/>
+                <div className="atNeonSkyline">
+                    {neonTowers.map((tower, index) => (
+                        <div key={index} className={`atNeonTower ${index % 3 === 0 ? "atNeonTower--grad" : ""}`}
+                            style={{ left: `${tower.x}%`, width: `${tower.w}%`, height: `${tower.h}%` }}/>
+                    ))}
+                </div>
+                <div className="atNeonStreet"/>
+                <div className="atNeonCityGlow"/>
+            </>}
             {variant === "laser" && <div className="atLaserFloor"/>}
             {variant === "orbit" && <div className="atOrbitSun"/>}
             {variant === "waves" && <div className="atWaveHorizon"/>}

@@ -310,3 +310,26 @@
     padding-bottom: .4dvh;
     .backgroundLibraryCheck { bottom: .8dvh; right: 1vw; }
 }
+
+.backgroundLibrarySections {
+    display: flex;
+    flex-direction: column;
+    gap: 2dvh;
+}
+
+.backgroundLibrarySection {
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+    min-width: 0;
+}
+
+.backgroundLibrarySectionTitle {
+    color: var(--tc);
+    padding: .6dvh .5vw;
+    font-size: 17px;
+
+    @media (max-width: 800px) {
+        padding: .8dvh 1vw;
+    }
+}

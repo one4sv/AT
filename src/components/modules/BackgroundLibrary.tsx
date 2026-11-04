@@ -1,13 +1,13 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import { CheckCircleIcon, PlusCircleIcon, TrashIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../hooks/SettingsHook";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
-import { useBackIconsPattern } from "../hooks/utils/useBackIconsPattern";
+import BackIconsScene from "../ts/utils/BackIconsScene";
 import Selector from "../ts/Selector";
-import { BackgroundScene, type StockScene, isStockScene } from "../ts/utils/BackgroundScene";
+import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "../ts/utils/BackgroundScene";
 import { api } from "../ts/api";
 import "./BackgroundLibrary.scss";
 import "../../scss/Loading.scss";
@@ -28,20 +28,13 @@ function CustomBackgroundThumb({ url }: { url: string }) {
 
 export default function BackgroundLibrary() {
     const { t } = useTranslation("settings");
-    const { bg, bgUrl, bgGallery, settingsLoaded, refetchSettings } = useSettings();
+    const { bg, bgUrl, bgGallery, bgEffects, setBgEffects, settingsLoaded, refetchSettings } = useSettings();
     const { setNewBg } = useUpSettings();
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
     const [ tab, setTab ] = useState<"stock" | "custom">("stock");
     const [ saving, setSaving ] = useState(false);
     const fileRef = useRef<HTMLInputElement | null>(null);
-    const backIconsPattern = useBackIconsPattern({
-        width: 160,
-        height: 90,
-        minSize: 26,
-        maxSize: 45
-    });
-
     const tabs = [
         { value: "stock" as const, label: t("backgroundLibrary.stock"), func: setTab },
         { value: "custom" as const, label: `${t("backgroundLibrary.custom")} (${bgGallery.length}/6)`, func: setTab }
@@ -77,25 +70,49 @@ export default function BackgroundLibrary() {
         } });
     };
 
-    const stock = [
-        { id: "landing", label: t("personalization.landingBackground") },
-        { id: "default", label: t("personalization.contourShapes") },
-        { id: "color", label: t("personalization.solidColor") },
-        { id: "art", label: t("backgroundLibrary.art") },
-        { id: "aurora", label: t("backgroundLibrary.aurora") },
-        { id: "nebula", label: t("backgroundLibrary.nebula") },
-        { id: "sunset", label: t("backgroundLibrary.sunset") },
-        { id: "retroDrive", label: t("backgroundLibrary.retroDrive") },
-        { id: "neonCity", label: t("backgroundLibrary.neonCity") },
-        { id: "paintSplash", label: t("backgroundLibrary.paintSplash") },
-        { id: "liquid", label: t("backgroundLibrary.liquid") },
-        { id: "prism", label: t("backgroundLibrary.prism") },
-        { id: "laser", label: t("backgroundLibrary.laser") },
-        { id: "waves", label: t("backgroundLibrary.waves") },
-        { id: "orbit", label: t("backgroundLibrary.orbit") },
-        { id: "glitch", label: t("backgroundLibrary.glitch") },
-        { id: "petals", label: t("backgroundLibrary.petals") }
+    const stockGroups = [
+        { id: "essential", items: [
+            { id: "landing", label: t("personalization.landingBackground") },
+            { id: "default", label: t("personalization.contourShapes") },
+            { id: "color", label: t("personalization.solidColor") }
+        ] },
+        { id: "atmospheric", items: [
+            { id: "aurora", label: t("backgroundLibrary.aurora") },
+            { id: "nebula", label: t("backgroundLibrary.nebula") },
+            { id: "sunset", label: t("backgroundLibrary.sunset") },
+            { id: "waves", label: t("backgroundLibrary.waves") },
+            { id: "petals", label: t("backgroundLibrary.petals") }
+        ] },
+        { id: "retro", items: [
+            { id: "retroDrive", label: t("backgroundLibrary.retroDrive") },
+            { id: "neonCity", label: t("backgroundLibrary.neonCity") },
+            { id: "laser", label: t("backgroundLibrary.laser") },
+            { id: "orbit", label: t("backgroundLibrary.orbit") },
+            { id: "glitch", label: t("backgroundLibrary.glitch") }
+        ] },
+        { id: "abstract", items: [
+            { id: "art", label: t("backgroundLibrary.art") },
+            { id: "paintSplash", label: t("backgroundLibrary.paintSplash") },
+            { id: "liquid", label: t("backgroundLibrary.liquid") },
+            { id: "prism", label: t("backgroundLibrary.prism") }
+        ] }
     ];
+
+    const selectStock = (id: string) => {
+        if (saving) return;
+        setNewBg(id);
+
+        if (!supportsBackgroundMotion(id) || bgEffects.movement) return;
+
+        const next = { ...bgEffects, movement: true };
+        setBgEffects(next);
+        void api.post("updatesettings", { bg_effects: next }).then(res => {
+            if (!res.data?.success) throw new Error();
+        }).catch(() => {
+            showNotification("error", t("backgroundLibrary.error"));
+            void refetchSettings();
+        });
+    };
 
     return (
         <div className="backgroundLibraryModal" role="dialog" aria-modal="true" aria-label={t("backgroundLibrary.title")}>
@@ -124,24 +141,36 @@ export default function BackgroundLibrary() {
                             </div>
                         ))}
                     </div>
+                ) : tab === "stock" ? (
+                    <div className="backgroundLibrarySections">
+                        {stockGroups.map(group => (
+                            <section className="backgroundLibrarySection" key={group.id}>
+                                <div className="backgroundLibrarySectionTitle">{t(`backgroundLibrary.${group.id}`)}</div>
+                                <div className="backgroundLibraryGrid">
+                                    {group.items.map(item => (
+                                        <button type="button" key={item.id}
+                                            className={`bgPick backgroundLibraryTile ${bg === item.id ? "active" : ""}`}
+                                            onClick={() => selectStock(item.id)}>
+                                            {item.id === "landing" ?
+                                                <div className="bgImg bgMini landingBackground"/> :
+                                                item.id === "default" ?
+                                                    <div className="bgImg bgMini"><BackIconsScene/></div> :
+                                                    isStockScene(item.id) ?
+                                                        <div className="bgImg bgMini" style={{ "--scene-duration": `${18 / Math.max(.5, Math.min(3, bgEffects.speed ?? 1))}s` } as CSSProperties}>
+                                                            <BackgroundScene variant={item.id as StockScene} motion={supportsBackgroundMotion(item.id)}/>
+                                                        </div> :
+                                                        <div className="bgImg bgMini"/>}
+                                            <span className={bg === item.id ? "bgSpanChoosen" : ""}>{item.label}</span>
+                                            {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
+                                        </button>
+                                    ))}
+                                </div>
+                            </section>
+                        ))}
+                    </div>
                 ) : (
                     <div className="backgroundLibraryGrid">
-                        {tab === "stock" && stock.map(item => (
-                            <button type="button" key={item.id}
-                                className={`bgPick backgroundLibraryTile ${bg === item.id ? "active" : ""}`}
-                                onClick={() => setNewBg(item.id)}>
-                                {item.id === "landing" ?
-                                    <div className="bgImg bgMini landingBackground"/> :
-                                    item.id === "default" ?
-                                        <div className="bgImg bgMini">{backIconsPattern}</div> :
-                                        isStockScene(item.id) ?
-                                        <div className="bgImg bgMini"><BackgroundScene variant={item.id as StockScene}/></div> :
-                                        <div className="bgImg bgMini"/>}
-                                <span className={bg === item.id ? "bgSpanChoosen" : ""}>{item.label}</span>
-                                {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
-                            </button>
-                        ))}
-                        {tab === "custom" && bgGallery.map(item => (
+                        {bgGallery.map(item => (
                             <div key={item.url} className={`bgPick backgroundLibraryTile ${bg === "custom" && bgUrl === item.url ? "active" : ""}`}>
                                 <button type="button" className="backgroundLibraryChoose" disabled={saving}
                                     onClick={() => void selectCustom(item.url)}>
