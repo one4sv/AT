@@ -11,6 +11,7 @@ import Selector from "../ts/Selector";
 import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "../ts/utils/BackgroundScene";
 import { api } from "../ts/api";
 import { Film, Palette } from "lucide-react";
+import { backgroundGroups } from "../ts/utils/backgroundCatalog";
 import "./BackgroundLibrary.scss";
 import "../../scss/Loading.scss";
 
@@ -78,33 +79,10 @@ export default function BackgroundLibrary() {
         } });
     };
 
-    const stockGroups = [
-        { id: "essential", items: [
-            { id: "landing", label: t("personalization.landingBackground") },
-            { id: "default", label: t("personalization.contourShapes") },
-            { id: "color", label: t("personalization.solidColor") }
-        ] },
-        { id: "atmospheric", items: [
-            { id: "aurora", label: t("backgroundLibrary.aurora") },
-            { id: "nebula", label: t("backgroundLibrary.nebula") },
-            { id: "sunset", label: t("backgroundLibrary.sunset") },
-            { id: "waves", label: t("backgroundLibrary.waves") },
-            { id: "petals", label: t("backgroundLibrary.petals") }
-        ] },
-        { id: "retro", items: [
-            { id: "retroDrive", label: t("backgroundLibrary.retroDrive") },
-            { id: "neonCity", label: t("backgroundLibrary.neonCity") },
-            { id: "laser", label: t("backgroundLibrary.laser") },
-            { id: "orbit", label: t("backgroundLibrary.orbit") },
-            { id: "glitch", label: t("backgroundLibrary.glitch") }
-        ] },
-        { id: "abstract", items: [
-            { id: "art", label: t("backgroundLibrary.art") },
-            { id: "paintSplash", label: t("backgroundLibrary.paintSplash") },
-            { id: "liquid", label: t("backgroundLibrary.liquid") },
-            { id: "prism", label: t("backgroundLibrary.prism") }
-        ] }
-    ];
+    const stockGroups = backgroundGroups.map(group => ({
+        id: group.id,
+        items: group.items.map(item => ({ id: item.id, label: t(item.labelKey) }))
+    }));
 
     const selectStock = (id: string) => {
         if (saving) return;

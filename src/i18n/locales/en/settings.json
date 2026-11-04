@@ -287,6 +287,12 @@
     "themeAware": "Colors follow your theme",
     "contourPattern": "Contour arrangement",
     "order": "Ordered",
-    "chaos": "Chaos"
+    "chaos": "Chaos",
+    "previewBackgrounds": "Other backgrounds",
+    "previewSettings": "Preview settings",
+    "previewOnly": "Preview only",
+    "previewReset": "Reset",
+    "previous": "Previous background",
+    "next": "Next background"
   }
 }

@@ -16,19 +16,298 @@
         animation: backgroundFullscreenLeave .28s cubic-bezier(.4, 0, .8, .2) both;
         pointer-events: none;
     }
+}
+
+.backgroundFullscreenDeck {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    touch-action: pan-y;
+    pointer-events: none;
+}
+
+.backgroundFullscreenSlide {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
 
     > .background {
         position: absolute;
         inset: 0;
         width: 100%;
         height: 100%;
-        z-index: 0;
+    }
+}
+
+.backgroundFullscreenArrow {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 5dvh;
+    height: 5dvh;
+    padding: 0;
+    border: 1px solid var(--block_border);
+    border-radius: 50%;
+    background: var(--interact);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    color: var(--tc);
+    cursor: pointer;
+
+    > svg {
+        width: 3dvh;
+        height: 3dvh;
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--menuButtHover);
+        }
+    }
+
+    @media (max-width: 800px) {
+        width: 5dvh;
+        height: 5dvh;
+    }
+}
+
+.backgroundFullscreenArrowLeft {
+    left: max(2vw, env(safe-area-inset-left));
+}
+
+.backgroundFullscreenArrowRight {
+    right: max(2vw, env(safe-area-inset-right));
+}
+
+.backgroundFullscreenInfo {
+    position: absolute;
+    z-index: 5;
+    bottom: calc(10dvh + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid var(--block_border);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    color: var(--tc);
+    align-items: center;
+    min-width: 24vw;
+    max-width: 80vw;
+    font: inherit;
+    text-align: left;
+
+    > .senderInfoPic {
+        flex-shrink: 0;
+    }
+
+    > .senderInfoMain {
+        flex: 1;
+        min-width: 0;
+        padding-right: .5vw;
+
+        > span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    > svg {
+        margin-right: 1vw;
+        transition: transform .2s ease;
+
+        &.rotated {
+            transform: rotate(180deg);
+        }
+    }
+
+    @media (max-width: 800px) {
+        min-width: 0;
+        width: 72vw;
+        height: 6dvh;
+        bottom: calc(10dvh + env(safe-area-inset-bottom));
+    }
+}
+
+.backgroundFullscreenPanel {
+    position: absolute;
+    z-index: 6;
+    bottom: calc(17dvh + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(38vw, 48rem);
+    max-height: 67dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2dvh;
+    padding: 1.5dvh 1vw;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    color: var(--tc);
+    scrollbar-width: thin;
+    animation: backgroundFullscreenPanelIn .2s ease-out both;
+
+    @media (max-width: 800px) {
+        width: 94vw;
+        max-height: 62dvh;
+        padding: 2dvh 3vw;
+    }
+}
+
+.backgroundFullscreenPanelHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1vw;
+
+    > span:first-child {
+        font-size: 18px;
+    }
+
+    > span:last-child {
+        font-size: 12px;
+        color: var(--borderWh);
+    }
+}
+
+.backgroundFullscreenChoices {
+    display: flex;
+    gap: .75vw;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-bottom: 1dvh;
+    touch-action: pan-x;
+
+    > button {
+        min-width: 8vw;
+        width: 8vw;
+        padding: .5dvh;
+        flex-shrink: 0;
+        border: 1px solid transparent;
+        border-radius: 16px;
+        background: var(--interact);
+        color: var(--tc);
+        font: inherit;
+        cursor: pointer;
+
+        > span:last-child {
+            display: block;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        &.active {
+            border-color: var(--accent);
+        }
+
+        @media (hover: hover) {
+            &:hover {
+                background: var(--menuButtHover);
+            }
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+
+        > button {
+            width: 22vw;
+            min-width: 22vw;
+        }
+    }
+}
+
+.backgroundFullscreenChoiceThumb {
+    position: relative;
+    display: block;
+    height: 7dvh;
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--bgc);
+    pointer-events: none;
+
+    > .background {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.backgroundFullscreenControl {
+    display: flex;
+    flex-direction: column;
+    gap: .7dvh;
+
+    > .disabled {
+        color: var(--borderWh);
+    }
+}
+
+.backgroundFullscreenMovement {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+    width: 100%;
+    padding: .5dvh 0;
+    border: none;
+    color: var(--tc);
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &.disabled {
+        opacity: .45;
+        cursor: default;
+    }
+}
+
+.backgroundFullscreenReset {
+    display: inline-flex;
+    align-items: center;
+    gap: .5vw;
+    padding: .5dvh .7vw;
+    border-radius: 24px;
+    border: none;
+    color: var(--tc);
+    background: var(--interact);
+    font: inherit;
+    cursor: pointer;
+
+    @media (max-width: 800px) {
+        padding: 1dvh 2vw;
+        gap: 2vw;
+    }
+}
+
+.backgroundFullscreenFilters {
+    > button {
+        padding: .6dvh .8vw;
     }
 }
 
 .backgroundFullscreenBottom {
     justify-content: center;
-    z-index: 2;
+    z-index: 7;
     pointer-events: none;
     padding-bottom: max(3dvh, env(safe-area-inset-bottom));
 }
@@ -63,13 +342,20 @@
     to { opacity: 0; scale: .96; translate: 0 1.5dvh; }
 }
 
+@keyframes backgroundFullscreenPanelIn {
+    from { opacity: 0; translate: 0 1dvh; }
+    to { opacity: 1; translate: 0 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .blackoutModule > .backgroundFullscreenView,
-    .blackoutModule > .backgroundFullscreenView.closing {
+    .blackoutModule > .backgroundFullscreenView.closing,
+    .backgroundFullscreenPanel {
         animation: none;
     }
 
-    .backgroundFullscreenExit {
+    .backgroundFullscreenExit,
+    .backgroundFullscreenInfo > svg {
         transition: none;
     }
 }

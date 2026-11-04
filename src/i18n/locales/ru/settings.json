@@ -287,6 +287,12 @@
     "themeAware": "Цвета зависят от оформления",
     "contourPattern": "Расположение фигур",
     "order": "Порядок",
-    "chaos": "Хаос"
+    "chaos": "Хаос",
+    "previewBackgrounds": "Другие фоны",
+    "previewSettings": "Настройки предпросмотра",
+    "previewOnly": "Только для просмотра",
+    "previewReset": "Сбросить",
+    "previous": "Предыдущий фон",
+    "next": "Следующий фон"
   }
 }
