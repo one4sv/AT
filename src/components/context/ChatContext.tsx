@@ -307,18 +307,8 @@ export const ChatProvider = ({
                     if (chatWithRef.current && String(chatWithRef.current.chat_id) === String(data.chat_id)) {
                         setMessages(
                             prev => {
-                                // Если сообщение от нас — ищем временное (id < 0) и заменяем
-                                if (messageSenderId === String(user.id)) {
-                                    const tempIndex = prev.findIndex(m => m.id < 0);
-                                    if (tempIndex !== -1) {
-                                        const newMessages = [...prev];
-                                        newMessages[tempIndex] = {
-                                            ...data.message,
-                                            clientId: prev[tempIndex].clientId ?? prev[tempIndex].id
-                                        };
-                                        return newMessages;
-                                    }
-                                }
+                                // Подтверждение своего сообщения выполняется по точному ID из ответа POST /chat.
+                                // Не подменяем первое временное сообщение: событие может относиться к другой вкладке.
                                 // Обычное добавление
                                 if (prev.some(m => m.id === data.message.id)) return prev;
                                 return [...prev, {

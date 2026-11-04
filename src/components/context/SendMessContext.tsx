@@ -7,7 +7,7 @@ import { useContacts } from "../hooks/ContactsHook";
 const SendMessContext = createContext<SendMessContextType | null>(null);
 
 export interface SendMessContextType {
-    sendMess: (receiver:{ nick?: string, id?: string }, text: string, files?: File[], answer_id?: string, redirect?:message[], showNames?:boolean) => Promise<boolean |  undefined>,
+    sendMess: (receiver:{ nick?: string, id?: string }, text: string, files?: File[], answer_id?: string, redirect?:message[], showNames?:boolean, onConfirmed?: (messages: message[]) => void) => Promise<boolean | undefined>,
     editMess:(messageId: number, text: string, newFiles: File[], keptUrls: string[], answer_id?: string)=>Promise<boolean | undefined>
     pinMess: (messageId:string) => Promise<boolean | undefined>
 } 
@@ -16,7 +16,7 @@ export const SendMessProvider = ({ children }: { children: ReactNode }) => {
     const { refetchContactsWTLoading } = useContacts()
     const { showNotification } = useNote()
 
-    const sendMess = async (receiver:{ nick?: string, id?: string }, text: string, files: File[] = [], answer_id?:string, redirect?:message[], showNames?:boolean) => {
+    const sendMess = async (receiver:{ nick?: string, id?: string }, text: string, files: File[] = [], answer_id?:string, redirect?:message[], showNames?:boolean, onConfirmed?: (messages: message[]) => void) => {
         if (!text.trim() && files.length === 0 && !redirect) return;
         try {
             const formData = new FormData();
@@ -32,10 +32,12 @@ export const SendMessProvider = ({ children }: { children: ReactNode }) => {
             files.forEach(file => formData.append("files", file));
 
             const res = await api.post(`chat`, formData)
-            if (res.data.success) {
+            if (res.data.success && Array.isArray(res.data.messages) && res.data.messages.length > 0) {
+                onConfirmed?.(res.data.messages);
                 refetchContactsWTLoading();
                 return true;
             }
+            throw new Error("Сервер не вернул отправленное сообщение");
         } catch (error) {
             console.error("Ошибка при отправке:", error);
             showNotification("error", "Не удалось отправить сообщение");

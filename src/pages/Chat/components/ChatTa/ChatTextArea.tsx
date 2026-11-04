@@ -165,7 +165,29 @@ export default function ChatTextArea({
                     currentFiles,
                     currentAnswer !== null ? currentAnswer.id : undefined,
                     currentRedirect,
-                    currentShowNames
+                    currentShowNames,
+                    confirmedMessages => {
+                        if (routeRef.current !== currentRoute) return;
+
+                        setMessages(prev => {
+                            const serverIds = new Set(confirmedMessages.map(message => message.id));
+                            const pendingIndex = prev.findIndex(message => message.id === tempId);
+                            const confirmed = confirmedMessages.map((message, index) => ({
+                                ...(prev.find(existing => existing.id === message.id) ?? message),
+                                ...(index === 0 ? { clientId: tempId, animateIn: true } : {})
+                            }));
+
+                            if (pendingIndex === -1) {
+                                const missing = confirmed.filter(message => !prev.some(existing => existing.id === message.id));
+                                return missing.length ? [...prev, ...missing] : prev;
+                            }
+
+                            const next = prev.filter(message => message.id !== tempId && !serverIds.has(message.id));
+                            const insertIndex = prev.slice(0, pendingIndex).filter(message => !serverIds.has(message.id)).length;
+                            next.splice(insertIndex, 0, ...confirmed);
+                            return next;
+                        });
+                    }
                 );
                 if (!success) {
                     // Если отправка не удалась — убираем временное сообщение
