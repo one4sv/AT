@@ -301,7 +301,7 @@
     cursor: pointer;
 
     &.disabled {
-        opacity: .45;
+        color: var(--borderHabit);
         cursor: default;
     }
 }

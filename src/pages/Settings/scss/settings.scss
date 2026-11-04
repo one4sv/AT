@@ -320,6 +320,21 @@
             background-color: var(--menuButtHover);
         }
     }
+    &.disabled {
+        color: var(--borderHabit);
+        cursor: default;
+
+        @media (hover: hover) {
+            &:hover {
+                background-color: transparent;
+            }
+        }
+        @media (hover: none) {
+            &:active {
+                background-color: transparent;
+            }
+        }
+    }
 }
 
 .settingHint {
