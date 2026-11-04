@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { TouchEvent } from "react";
+import type { PointerEvent as ReactPointerEvent, TouchEvent } from "react";
 import { ArrowsInIcon } from "@phosphor-icons/react";
 import { ChevronDown, ChevronLeft, ChevronRight, RotateCcw, Settings2 } from "lucide-react";
-import { motion, animate, useMotionValue } from "framer-motion";
+import { AnimatePresence, motion, animate, useMotionValue, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useSettings } from "../hooks/SettingsHook";
@@ -30,8 +30,9 @@ export default function BackgroundFullscreen() {
     const [ previewArtSize, setPreviewArtSize ] = useState(() => artSize);
     const [ panelTab, setPanelTab ] = useState<"backgrounds" | "settings">("backgrounds");
     const [ galleryPage, setGalleryPage ] = useState(0);
-    const galleryTouch = useRef<{ x: number; y: number } | null>(null);
+    const [ galleryDirection, setGalleryDirection ] = useState(1);
     const ignoreGalleryClick = useRef(false);
+    const reduceMotion = useReducedMotion();
     const [ panelOpen, setPanelOpen ] = useState(false);
     const [ closing, setClosing ] = useState(false);
     const [ index, setIndex ] = useState(() => {
@@ -64,9 +65,16 @@ export default function BackgroundFullscreen() {
     const pageSize = 6;
     const pageCount = Math.max(1, Math.ceil(items.length / pageSize));
     const currentPage = Math.min(galleryPage, pageCount - 1);
+    const changeGalleryPage = (nextPage: number) => {
+        if (nextPage < 0 || nextPage >= pageCount || nextPage === currentPage) return;
+        setGalleryDirection(nextPage > currentPage ? 1 : -1);
+        setGalleryPage(nextPage);
+    };
     const moving = useRef(false);
     const startTouch = useRef<{ x: number; y: number } | null>(null);
     const horizontalGesture = useRef(false);
+    const pointerStart = useRef<{ x: number; y: number; id: number } | null>(null);
+    const pointerGesture = useRef(false);
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const viewRef = useRef<HTMLDivElement>(null);
     const dragX = useMotionValue(0);
@@ -163,6 +171,41 @@ export default function BackgroundFullscreen() {
         horizontalGesture.current = false;
     };
 
+    const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+        if (event.pointerType === "touch" || event.button !== 0 || panelOpen || moving.current ||
+            (event.target as Element).closest("button, input, .backgroundFullscreenPanel, .backgroundFullscreenInfo")) return;
+        pointerStart.current = { x: event.clientX, y: event.clientY, id: event.pointerId };
+        pointerGesture.current = false;
+    };
+
+    const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+        if (event.pointerType === "touch" || !pointerStart.current || pointerStart.current.id !== event.pointerId) return;
+        const dx = event.clientX - pointerStart.current.x;
+        const dy = event.clientY - pointerStart.current.y;
+        if (!pointerGesture.current && Math.max(Math.abs(dx), Math.abs(dy)) > 8) {
+            if (Math.abs(dy) >= Math.abs(dx)) {
+                pointerStart.current = null;
+                return;
+            }
+            pointerGesture.current = true;
+        }
+        if (pointerGesture.current) dragX.set(dx);
+    };
+
+    const handlePointerEnd = (event: ReactPointerEvent<HTMLDivElement>) => {
+        if (event.pointerType === "touch" || !pointerStart.current || pointerStart.current.id !== event.pointerId) return;
+        const moved = pointerGesture.current;
+        const dx = dragX.get();
+        pointerStart.current = null;
+        pointerGesture.current = false;
+        if (!moved) return;
+        if (Math.abs(dx) >= Math.min(100, (viewRef.current?.clientWidth ?? window.innerWidth) * .2)) {
+            changeSlide(dx < 0 ? 1 : -1);
+        } else {
+            animate(dragX, 0, { type: "spring", stiffness: 420, damping: 34 });
+        }
+    };
+
     const slideFor = (offset: number) => {
         const item = items[(currentIndex + offset + items.length) % items.length];
         return <div key={offset} className="backgroundFullscreenSlide"
@@ -176,7 +219,14 @@ export default function BackgroundFullscreen() {
     return <div ref={viewRef} className={`backgroundFullscreenView ${closing ? "closing" : ""}`}
         role="dialog" aria-modal="true" aria-label={t("backgroundLibrary.preview")}
         onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchEnd}>
+        onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchEnd}
+        onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerEnd} onPointerCancel={handlePointerEnd}
+        onClick={event => {
+            if (panelOpen && !(event.target as Element).closest(".backgroundFullscreenPanel, .backgroundFullscreenInfo")) {
+                setPanelOpen(false);
+            }
+        }}>
         <motion.div className="backgroundFullscreenDeck" style={{ x: dragX }}>
             {items.length > 1 && slideFor(-1)}
             {slideFor(0)}
@@ -192,7 +242,13 @@ export default function BackgroundFullscreen() {
                 onClick={() => changeSlide(1)}><ChevronRight/></button>
         </>}
 
-        {panelOpen && <div className="backgroundFullscreenPanel" onTouchStart={event => event.stopPropagation()}
+        <AnimatePresence initial={false}>
+        {panelOpen && <motion.div className="backgroundFullscreenPanel"
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 12, scale: reduceMotion ? 1 : .975 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: reduceMotion ? 0 : 12, scale: reduceMotion ? 1 : .975 }}
+            transition={{ duration: reduceMotion ? 0 : .24, ease: [.22, 1, .36, 1] }}
+            onTouchStart={event => event.stopPropagation()}
             onTouchMove={event => event.stopPropagation()}>
             <Selector arr={[
                 { label: t("backgroundLibrary.previewBackgrounds"), value: "backgrounds" as const, func: setPanelTab },
@@ -203,38 +259,38 @@ export default function BackgroundFullscreen() {
                     <span>{t("backgroundLibrary.previewBackgrounds")}</span>
                     <span>{t("backgroundLibrary.previewOnly")}</span>
                 </div>
-                <div className="backgroundFullscreenChoices"
-                    onTouchStart={event => {
-                        ignoreGalleryClick.current = false;
-                        if (event.touches.length !== 1) {
-                            galleryTouch.current = null;
-                            return;
-                        }
-                        galleryTouch.current = {
-                            x: event.touches[0].clientX,
-                            y: event.touches[0].clientY
-                        };
-                    }}
-                    onTouchEnd={event => {
-                        if (!galleryTouch.current || !event.changedTouches.length) return;
-                        const dx = event.changedTouches[0].clientX - galleryTouch.current.x;
-                        const dy = event.changedTouches[0].clientY - galleryTouch.current.y;
-                        galleryTouch.current = null;
-                        if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
-
-                        // Suppress the click synthesized after a gallery page swipe.
-                        ignoreGalleryClick.current = true;
-                        setGalleryPage(current => Math.max(0, Math.min(pageCount - 1, current + (dx < 0 ? 1 : -1))));
-                    }}
-                    onTouchCancel={() => {
-                        galleryTouch.current = null;
-                    }}
-                    onClickCapture={event => {
-                        if (!ignoreGalleryClick.current) return;
-                        event.preventDefault();
-                        event.stopPropagation();
-                        ignoreGalleryClick.current = false;
-                    }}>
+                <div className="backgroundFullscreenChoicesViewport">
+                    <AnimatePresence custom={galleryDirection} initial={false} mode="wait">
+                        <motion.div key={currentPage} className="backgroundFullscreenChoices"
+                            custom={galleryDirection}
+                            variants={{
+                                enter: (direction: number) => ({
+                                    x: reduceMotion ? "0%" : `${direction > 0 ? 24 : -24}%`,
+                                    opacity: reduceMotion ? 1 : .2
+                                }),
+                                center: { x: "0%", opacity: 1 },
+                                exit: (direction: number) => ({
+                                    x: reduceMotion ? "0%" : `${direction > 0 ? -24 : 24}%`,
+                                    opacity: reduceMotion ? 1 : .2
+                                })
+                            }}
+                            initial="enter" animate="center" exit="exit"
+                            transition={{ duration: reduceMotion ? 0 : .21, ease: [.22, 1, .36, 1] }}
+                            drag="x" dragConstraints={{ left: 0, right: 0 }}
+                            dragElastic={.65} dragMomentum={false} dragDirectionLock
+                            onDragStart={() => { ignoreGalleryClick.current = true; }}
+                            onDragEnd={(_, info) => {
+                                ignoreGalleryClick.current = true;
+                                window.setTimeout(() => { ignoreGalleryClick.current = false; }, 180);
+                                if (Math.abs(info.offset.x) < 45 && Math.abs(info.velocity.x) < 550) return;
+                                changeGalleryPage(currentPage + (info.offset.x < 0 ? 1 : -1));
+                            }}
+                            onClickCapture={event => {
+                                if (!ignoreGalleryClick.current) return;
+                                event.preventDefault();
+                                event.stopPropagation();
+                                ignoreGalleryClick.current = false;
+                            }}>
                     {items.slice(currentPage * pageSize, (currentPage + 1) * pageSize).map((item, position) => {
                         const itemIndex = currentPage * pageSize + position;
                         return <button type="button" key={item.id + (item.url ?? "")}
@@ -254,15 +310,17 @@ export default function BackgroundFullscreen() {
                             <span>{item.label}</span>
                         </button>;
                     })}
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
                 <div className="backgroundFullscreenPagination">
                     <button type="button" disabled={currentPage === 0}
                         aria-label={t("backgroundLibrary.previous")}
-                        onClick={() => setGalleryPage(Math.max(0, currentPage - 1))}><ChevronLeft/></button>
+                        onClick={() => changeGalleryPage(currentPage - 1)}><ChevronLeft/></button>
                     <span>{currentPage + 1} / {pageCount}</span>
                     <button type="button" disabled={currentPage >= pageCount - 1}
                         aria-label={t("backgroundLibrary.next")}
-                        onClick={() => setGalleryPage(Math.min(pageCount - 1, currentPage + 1))}><ChevronRight/></button>
+                        onClick={() => changeGalleryPage(currentPage + 1)}><ChevronRight/></button>
                 </div>
             </> : <>
             <div className="backgroundFullscreenPanelHeader">
@@ -311,7 +369,8 @@ export default function BackgroundFullscreen() {
                 ))}
             </div>
             </>}
-        </div>}
+        </motion.div>}
+        </AnimatePresence>
 
         <PageBottom className="backgroundFullscreenBottom">
             <button type="button" className="pageBottomBack backgroundFullscreenExit"

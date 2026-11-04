@@ -11,6 +11,7 @@
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     animation: backgroundFullscreenEnter .32s cubic-bezier(.2, .8, .2, 1) both;
+    touch-action: pan-y;
 
     &.closing {
         animation: backgroundFullscreenLeave .28s cubic-bezier(.4, 0, .8, .2) both;
@@ -141,7 +142,7 @@
     z-index: 6;
     bottom: calc(10dvh + env(safe-area-inset-bottom));
     left: 50%;
-    transform: translateX(-50%);
+    translate: -50% 0;
     width: min(38vw, 48rem);
     max-height: 67dvh;
     overflow-x: hidden;
@@ -159,7 +160,6 @@
     -webkit-backdrop-filter: blur(var(--blur));
     color: var(--tc);
     scrollbar-width: thin;
-    animation: backgroundFullscreenPanelIn .2s ease-out both;
 
     @media (max-width: 800px) {
         width: 94vw;
@@ -196,7 +196,8 @@
         min-width: 0;
         width: 100%;
         padding: .6dvh;
-        border: none;
+        border: 1px solid transparent;
+        box-sizing: border-box;
         border-radius: 16px;
         background: var(--interact);
         color: var(--tc);
@@ -213,9 +214,9 @@
         }
 
         &.active {
-            background: linear-gradient(135deg, var(--accent), var(--grad));
-            border: none;
-            color: var(--inner_text);
+            background: var(--interact);
+            border-color: var(--accent);
+            color: var(--tc);
         }
 
         @media (hover: hover) {
@@ -367,15 +368,9 @@
     to { opacity: 0; scale: .96; translate: 0 1.5dvh; }
 }
 
-@keyframes backgroundFullscreenPanelIn {
-    from { opacity: 0; translate: 0 1dvh; }
-    to { opacity: 1; translate: 0 0; }
-}
-
 @media (prefers-reduced-motion: reduce) {
     .blackoutModule > .backgroundFullscreenView,
-    .blackoutModule > .backgroundFullscreenView.closing,
-    .backgroundFullscreenPanel {
+    .blackoutModule > .backgroundFullscreenView.closing {
         animation: none;
     }
 
@@ -547,4 +542,16 @@
     touch-action: pan-y;
     user-select: none;
     -webkit-user-select: none;
+}
+
+.backgroundFullscreenChoicesViewport {
+    width: 100%;
+    min-height: 21dvh;
+    overflow: hidden;
+    flex-shrink: 0;
+    touch-action: pan-y;
+
+    @media (max-width: 800px) {
+        min-height: 32dvh;
+    }
 }
