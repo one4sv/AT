@@ -1,22 +1,41 @@
 .quickActionsSettings {
     display: flex;
     flex-direction: column;
-    gap: 1dvh;
+    gap: .25dvh;
     min-width: 0;
+    padding: .5dvh .5vw;
+    border-radius: 24px;
+    background: var(--interact);
+
+    @media (max-width: 800px) {
+        padding: .75dvh 1.5vw;
+    }
 }
 
 .quickActionSelected, .quickActionAdd {
-    min-width: 0;
     display: flex;
     align-items: center;
-    gap: 1vw;
+    gap: .6vw;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     border-radius: 24px;
-    padding: 1dvh .85vw;
+    padding: .75dvh .5vw;
+    border: none;
+    color: var(--tc);
     background: transparent;
 
     @media (max-width: 800px) {
         gap: 2vw;
-        padding: 1.25dvh 3vw;
+        padding: 1dvh 1.5vw;
+    }
+}
+
+.quickActionSelected {
+    transition: background-color .15s ease;
+
+    &.dragging {
+        background: var(--menuButtHover);
     }
 }
 
@@ -36,6 +55,10 @@
         border-radius: 50%;
     }
 
+    > svg {
+        color: var(--accent_text);
+    }
+
     > span {
         white-space: nowrap;
         overflow: hidden;
@@ -47,48 +70,66 @@
     }
 }
 
-.quickActionControls {
+.quickActionDragHandle, .quickActionRemove {
     display: flex;
+    justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    gap: .35vw;
+    height: 3.5dvh;
+    width: 3.5dvh;
+    border-radius: 24px;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
 
-    > button {
-        width: 3.5dvh;
-        height: 3.5dvh;
-        border: none;
-        border-radius: 24px;
-        background: var(--mc);
-        color: var(--borderWh);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
+    &:disabled {
+        opacity: .35;
+        cursor: default;
+    }
+}
 
-        &:disabled {
-            opacity: .35;
-            cursor: default;
-        }
+.quickActionDragHandle {
+    border: none;
+    color: var(--borderWh);
+    touch-action: none;
+    -webkit-touch-callout: none;
 
-        @media (hover: hover) {
-            &:not(:disabled):hover {
-                background: var(--menuButtHover);
-                color: var(--tc);
-            }
+    @media (hover: hover) {
+        &:not(:disabled):hover {
+            background: var(--menuButtHover);
         }
     }
 
-    @media (max-width: 800px) {
-        gap: 1vw;
+    @media (hover: none) {
+        &:not(:disabled):active {
+            background: var(--menuButtHover);
+        }
+    }
+}
+
+.quickActionRemove {
+    border: 1px solid var(--notValid);
+    color: var(--notValid);
+
+    @media (hover: hover) {
+        &:not(:disabled):hover {
+            color: var(--notValid);
+            background: var(--notValidBg);
+        }
+    }
+
+    @media (hover: none) {
+        &:not(:disabled):active {
+            color: var(--notValid);
+            background: var(--notValidBg);
+        }
     }
 }
 
 .quickActionAdd {
-    border: none;
-    width: 100%;
-    color: var(--tc);
     cursor: pointer;
     font: inherit;
+    text-align: start;
 
     > svg {
         color: var(--accent_text);
@@ -102,6 +143,12 @@
 
     @media (hover: hover) {
         &:not(:disabled):hover {
+            background: var(--menuButtHover);
+        }
+    }
+
+    @media (hover: none) {
+        &:not(:disabled):active {
             background: var(--menuButtHover);
         }
     }
@@ -179,6 +226,9 @@
 
 .quickActionModalList {
     display: flex;
+    padding: .5dvh .5vw;
+    border-radius: 24px;
+    background: var(--interact);
     flex-direction: column;
     overflow-y: auto;
     min-height: 0;
@@ -209,6 +259,12 @@
 
     @media (hover: hover) {
         &:not(:disabled):hover {
+            background: var(--menuButtHover);
+        }
+    }
+
+    @media (hover: none) {
+        &:not(:disabled):active {
             background: var(--menuButtHover);
         }
     }

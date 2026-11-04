@@ -39,7 +39,7 @@ export default function usePullToRefresh(pathname: string) {
 
             const element = event.target;
             if (!(element instanceof Element) ||
-                element.closest("input, textarea, select, [contenteditable='true'], .ContextMenuWrapper, .headerDiv, .smHeader")) return;
+                element.closest("input, textarea, select, [contenteditable='true'], [data-no-pull-refresh], .ContextMenuWrapper, .headerDiv, .smHeader")) return;
 
             const root = element.closest(".sideMenu, .page-content");
             if (!root) return;

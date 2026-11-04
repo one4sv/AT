@@ -11,9 +11,11 @@ import { useUser } from "../../../components/hooks/UserHook";
 import { CircleUserRound } from "lucide-react";
 import { useNote } from "../../../components/hooks/NoteHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import useHeaderMenuGestures from "../../../components/hooks/utils/useHeaderMenuGestures";
 
 export default function ChatUser() {
     const { user } = useUser()
+    const headerGestures = useHeaderMenuGestures();
     const { chatWith, typingMap, messages, activeHeader, setActiveHeader } = useChat();
     const { onlineMap } = useContacts()
     const { openMenu, menu, closeMenu } = useContextMenu();
@@ -105,7 +107,7 @@ export default function ChatUser() {
     }
 
     return (
-        <div className="headerDiv" ref={chatUserRef}>
+        <div className="headerDiv" ref={chatUserRef} {...headerGestures}>
             {isMobile || layout === "hidden" ? (
                 <div className="headerButt"
                     data-header-gesture="quick"
@@ -114,7 +116,6 @@ export default function ChatUser() {
                         openMenu(e.clientX, e.clientY, "headerQuickAction", { id: "headerQuickAction" });
                     }}
                     onMouseDown={(e) => e.stopPropagation()}
-                    onTouchStart={(e) => e.stopPropagation()}
                     onClick={() => openSideMenu()}
                 >
                     <TextIndentIcon />

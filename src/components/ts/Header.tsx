@@ -8,8 +8,10 @@ import { TextIndentIcon } from "@phosphor-icons/react";
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { getHeaderScrollTarget } from "../ts/utils/pageScroll";
 import { requestContentRefresh } from "../ts/utils/contentRefresh";
+import useHeaderMenuGestures from "../hooks/utils/useHeaderMenuGestures";
 export default function Header() {
     const isMobile = useCompactLayout();
+    const headerGestures = useHeaderMenuGestures();
     const { openSideMenu } = useSideMenu();
     const { openMenu } = useContextMenu();
     const { layout } = useSettings();
@@ -39,7 +41,7 @@ export default function Header() {
 
     return (
         <>
-            <div className={`headerDiv ${hideHeader ? "hide" : ""}`}>
+            <div className={`headerDiv ${hideHeader ? "hide" : ""}`} {...headerGestures}>
                 {isMobile || layout === "hidden" ? <div
                     className="headerButt"
                     data-header-gesture="quick"
@@ -49,7 +51,6 @@ export default function Header() {
                         openMenu(e.clientX, e.clientY, "headerQuickAction", { id: "headerQuickAction" });
                     }}
                     onMouseDown={e => e.stopPropagation()}
-                    onTouchStart={e => e.stopPropagation()}
                     onClick={() => openSideMenu()}
                 >
                     <TextIndentIcon />
