@@ -104,3 +104,16 @@
     pointer-events: none;
     white-space: nowrap;
 }
+.seekBarFill {
+    transition: width .12s linear;
+}
+.seekBarDot {
+    transition: left .12s linear;
+}
+.seekBarWrapper.dragging {
+    .seekBarFill { transition: width .045s linear; }
+    .seekBarDot { transition: left .045s linear; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .seekBarFill, .seekBarDot { transition: none; }
+}

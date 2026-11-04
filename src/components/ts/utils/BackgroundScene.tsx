@@ -5,7 +5,7 @@ export const stockScenes = ["art", "aurora", "nebula", "sunset", "retroDrive", "
 export type StockScene = typeof stockScenes[number];
 export const isStockScene = (id: string): id is StockScene =>
     (stockScenes as readonly string[]).includes(id);
-const animated: readonly string[] = ["aurora", "nebula", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals"];
+const animated: readonly string[] = ["art", "aurora", "nebula", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals"];
 export const supportsBackgroundMotion = (bg: string) =>
     bg === "custom" || bg === "default" || bg === "landing" || animated.includes(bg);
 

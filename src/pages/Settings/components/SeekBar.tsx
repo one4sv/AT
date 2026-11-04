@@ -30,7 +30,8 @@ export default function SeekBar({
     const [hoverValue, setHoverValue] = useState<number | null>(null);
     const [hoverPercent, setHoverPercent] = useState(0);
 
-    const percent = ((value - min) / (max - min)) * 100;
+    const percent = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
+    const formatValue = (number: number) => String(Number(number.toFixed(4)));
 
     const getValue = (clientX: number) => {
         if (!lineRef.current) return null;
@@ -40,7 +41,8 @@ export default function SeekBar({
         p = Math.max(0, Math.min(1, p));
 
         let newValue = min + p * (max - min);
-        newValue = Math.round(newValue / step) * step;
+        newValue = min + Math.round((newValue - min) / step) * step;
+        newValue = Number(newValue.toFixed(4));
         newValue = Math.max(min, Math.min(max, newValue));
 
         return {
@@ -147,7 +149,7 @@ export default function SeekBar({
 
     return (
         <div
-            className={`seekBarWrapper ${disabled ? "disabled" : ""}`}
+            className={`seekBarWrapper ${disabled ? "disabled" : ""} ${dragging ? "dragging" : ""}`}
             style={{ touchAction: "none" }}
             data-setting-id={id}
             onContextMenu={(e) => e.preventDefault()}
@@ -171,7 +173,7 @@ export default function SeekBar({
                         className="seekBarHoverValue"
                         style={{ left: `${hoverPercent}%` }}
                     >
-                        {hoverValue}
+                        {formatValue(hoverValue)}
                         {unit}
                     </div>
                 )}
@@ -187,7 +189,7 @@ export default function SeekBar({
                     className="seekBarCurrent"
                     style={{ left: `${percent}%`, opacity: dragging ? 1 : 0 }}
                 >
-                    {value}
+                    {formatValue(value)}
                     {unit}
                 </div>
             </div>

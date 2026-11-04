@@ -284,15 +284,17 @@
     "glitch": "Glitch",
     "petals": "Petals",
     "motionAvailable": "Supports animation",
-    "themeAware": "Colors follow your theme",
+    "themeAware": "Depends on colors",
     "contourPattern": "Contour arrangement",
     "order": "Ordered",
     "chaos": "Chaos",
-    "previewBackgrounds": "Other backgrounds",
-    "previewSettings": "Preview settings",
+    "previewBackgrounds": "Choose background",
+    "previewSettings": "Settings",
     "previewOnly": "Preview only",
     "previewReset": "Reset",
     "previous": "Previous background",
-    "next": "Next background"
+    "next": "Next background",
+    "appearanceAware": "Depends on appearance",
+    "contourSize": "Contour size"
   }
 }

@@ -213,6 +213,19 @@
     background: color-mix(in srgb, var(--bgc) 66%, var(--accent));
     clip-path: polygon(0 95%, 0 50%, 12% 25%, 24% 62%, 39% 10%, 58% 67%, 71% 22%, 100% 72%, 100% 100%);
 }
+.atScene--running.atScene--art .atSceneArt {
+    animation: atArtFloat var(--scene-duration, 18s) ease-in-out infinite alternate;
+}
+.atScene--running.atScene--art .atSceneArt--left {
+    animation-delay: -3s;
+}
+.atScene--running.atScene--art .atSceneArt--right {
+    animation-delay: -6s;
+}
+@keyframes atArtFloat {
+    from { translate: 0 -1%; }
+    to { translate: 0 2%; }
+}
 .atRetroRoad {
     position: absolute;
     bottom: -5%;
@@ -225,12 +238,18 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: repeating-linear-gradient(180deg,
-            transparent 0 12%, color-mix(in srgb, var(--accent) 78%, transparent) 12% 14%, transparent 14% 30%);
+        background-image: linear-gradient(180deg,
+            transparent 0 67%, color-mix(in srgb, var(--accent) 78%, transparent) 67% 78%, transparent 78% 100%);
+        background-size: 100% 8dvh;
+        background-repeat: repeat-y;
     }
 }
 .atScene--running .atRetroRoad::after {
-    animation: atRoadScroll calc(var(--scene-duration, 18s) / 4) linear infinite;
+    animation: atRetroRoadScroll calc(var(--scene-duration, 18s) / 4) linear infinite;
+}
+@keyframes atRetroRoadScroll {
+    from { background-position: 0 0; }
+    to { background-position: 0 8dvh; }
 }
 @keyframes atRoadScroll {
     to { background-position: 0 18dvh; }

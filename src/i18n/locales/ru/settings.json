@@ -284,15 +284,17 @@
     "glitch": "Глитч",
     "petals": "Лепестки",
     "motionAvailable": "Поддерживает анимацию",
-    "themeAware": "Цвета зависят от оформления",
+    "themeAware": "Зависит от цветов",
     "contourPattern": "Расположение фигур",
     "order": "Порядок",
     "chaos": "Хаос",
-    "previewBackgrounds": "Другие фоны",
-    "previewSettings": "Настройки предпросмотра",
+    "previewBackgrounds": "Выбор фона",
+    "previewSettings": "Настройки",
     "previewOnly": "Только для просмотра",
     "previewReset": "Сбросить",
     "previous": "Предыдущий фон",
-    "next": "Следующий фон"
+    "next": "Следующий фон",
+    "appearanceAware": "Зависит от оформления",
+    "contourSize": "Размер фигур"
   }
 }
