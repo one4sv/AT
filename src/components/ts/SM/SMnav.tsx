@@ -649,7 +649,7 @@ export default function SMnav() {
             <div className={`smNavSearch ${isSearch ? "active" : "dis"}`}>
                 <input
                     ref={searchInputRef}
-                    type="search"
+                    type="text"
                     className="smNavSearchInp"
                     placeholder={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")}
                     aria-label={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")}
