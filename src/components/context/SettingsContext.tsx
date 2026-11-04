@@ -78,7 +78,7 @@ export interface PrivateSettings {
     habits: string;
     posts: string;
     activity_invites?: string;
-    activity_invite_exceptions?: Record<string, "allow" | "deny">;
+    activity_invite_exceptions?: Record<string, "allow" | "deny" | "invert">;
     group_invite_exceptions?: Record<string, "allow" | "deny">;
 }
 

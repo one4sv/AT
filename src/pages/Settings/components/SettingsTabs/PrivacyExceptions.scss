@@ -1,0 +1,219 @@
+.privacyExceptions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5dvh;
+    min-width: 0;
+
+    .settingHint {
+        padding: 0 0.5vw;
+    }
+}
+
+.privacyExceptionSection {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 0.6dvh;
+}
+
+.privacyExceptionLabel {
+    color: var(--tc);
+    padding: 0 0.5vw;
+}
+
+.privacyExceptionSearch {
+    background-color: var(--interact);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    gap: 0.75vw;
+    min-width: 0;
+    padding: 0.8dvh 1vw;
+    color: var(--borderWh);
+
+    input {
+        flex: 1;
+        min-width: 0;
+        width: 100%;
+        background: none;
+        border: none;
+        color: var(--tc);
+        outline: none;
+
+        &::placeholder {
+            color: var(--borderHabit);
+        }
+    }
+
+    &:focus-within {
+        outline: 1px solid var(--accent);
+    }
+
+    button {
+        border: none;
+        background: none;
+        color: var(--tc);
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+}
+
+.privacyExceptionList {
+    border-radius: 24px;
+    background-color: var(--interact);
+    padding: 0.5dvh 0.4vw;
+    display: flex;
+    flex-direction: column;
+    max-height: 40dvh;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    gap: 0.25dvh;
+}
+
+.privacyExceptionUser {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    border-radius: 24px;
+    gap: 0.75vw;
+    padding: 0.65dvh 0.65vw;
+
+    @media (hover: hover) {
+        &:hover {
+            background-color: var(--menuButtHover);
+        }
+    }
+
+    &.selected {
+        background-color: color-mix(in srgb, var(--accent) 9%, transparent);
+    }
+}
+
+.privacyExceptionAvatar {
+    flex-shrink: 0;
+    width: 3dvh;
+    height: 3dvh;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tc);
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.privacyExceptionIdentity {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25dvh;
+}
+
+.privacyExceptionName {
+    color: var(--tc);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.privacyExceptionMeta {
+    color: var(--borderHabit);
+    font-size: 0.85em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.privacyExceptionAction {
+    border: none;
+    border-radius: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4vw;
+    padding: 0.65dvh 0.85vw;
+    cursor: pointer;
+    flex-shrink: 0;
+    background-color: var(--mc);
+    color: var(--tc);
+
+    &.allow {
+        color: var(--accent_text);
+    }
+
+    &.deny {
+        color: var(--tc);
+    }
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
+
+    @media (hover: hover) {
+        &:not(:disabled):hover {
+            background-color: var(--menuButtHover);
+        }
+    }
+}
+
+.privacyExceptionEmpty, .privacyExceptionRetry {
+    color: var(--borderHabit);
+    padding: 1dvh 1vw;
+    text-align: center;
+}
+
+.privacyExceptionRetry {
+    border: none;
+    border-radius: 24px;
+    background-color: var(--interact);
+    cursor: pointer;
+}
+
+@media (max-width: 800px) {
+    .privacyExceptions .settingHint {
+        padding: 0 1vw;
+    }
+
+    .privacyExceptionSearch {
+        gap: 2vw;
+        padding: 1.1dvh 3vw;
+    }
+
+    .privacyExceptionLabel {
+        padding: 0 1vw;
+    }
+
+    .privacyExceptionList {
+        padding: 0.5dvh 1vw;
+        max-height: 35dvh;
+    }
+
+    .privacyExceptionUser {
+        gap: 2.5vw;
+        padding: 1dvh 2vw;
+    }
+
+    .privacyExceptionAction {
+        gap: 1vw;
+        padding: 1dvh 3vw;
+    }
+}
