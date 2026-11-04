@@ -93,7 +93,7 @@
     bottom: auto;
     left: auto;
     transform: none;
-    border: 1px solid var(--block_border);
+    border: none;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     color: var(--tc);
@@ -405,7 +405,7 @@
     min-width: 0;
     margin: 0;
     padding: .4dvh .6vw;
-    border: 1px solid var(--block_border);
+    border: none;
 
     @media (max-width: 800px) {
         width: 60vw;
@@ -434,10 +434,22 @@
     min-height: 4.5dvh;
 }
 
-/* Footer controls are one centered, clickable group on desktop and mobile. */
-.backgroundFullscreenBottom {
-    gap: .75vw;
+/* Same geometry as settingBackWrapper + settingSearch. No decorative gradient border. */
+.backgroundFullscreenBottom.pageBottom {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    padding: 0 2% max(3dvh, env(safe-area-inset-bottom));
+    gap: 2%;
+    align-items: center;
+    justify-content: center;
     pointer-events: none;
+
+    @media (max-width: 800px) {
+        width: 100%;
+        padding: 0 3vw max(3dvh, env(safe-area-inset-bottom));
+        gap: 2vw;
+    }
 }
 
 .backgroundFullscreenBottom > .backgroundFullscreenExit {
@@ -455,24 +467,80 @@
     bottom: auto;
     left: auto;
     transform: none;
-    flex: 0 1 27vw;
-    width: 27vw;
-    max-width: 65vw;
+    flex: 1;
+    width: auto;
+    height: 5dvh;
+    max-width: none;
     min-width: 0;
     margin: 0;
+    padding: .4dvh .65vw;
     align-self: center;
+    border: none;
+    background: var(--interact);
+    color: var(--tc);
     pointer-events: auto;
     cursor: pointer;
+
+    > .senderInfoPic > svg {
+        color: var(--accent_text);
+    }
+
+    &[aria-expanded="true"] {
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        border: none;
+        color: var(--inner_text);
+
+        .senderInfoPic > svg,
+        > svg {
+            color: var(--inner_text);
+        }
+
+        .senderInfoMain > span {
+            color: var(--inner_text);
+        }
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            border: none;
+            color: var(--inner_text);
+
+            .senderInfoPic > svg,
+            > svg {
+                color: var(--inner_text);
+            }
+
+            .senderInfoMain > span {
+                color: var(--inner_text);
+            }
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            border: none;
+            color: var(--inner_text);
+
+            .senderInfoPic > svg,
+            > svg {
+                color: var(--inner_text);
+            }
+
+            .senderInfoMain > span {
+                color: var(--inner_text);
+            }
+        }
+    }
+
+    @media (max-width: 800px) {
+        padding: .4dvh 2vw;
+    }
 }
 
-@media (max-width: 800px) {
-    .backgroundFullscreenBottom {
-        gap: 2vw;
-    }
-
-    .backgroundFullscreenBottom > .backgroundFullscreenInfo {
-        flex: 0 1 64vw;
-        width: 64vw;
-        max-width: 68vw;
-    }
+.backgroundFullscreenChoices {
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
 }

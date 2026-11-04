@@ -30,6 +30,8 @@ export default function BackgroundFullscreen() {
     const [ previewArtSize, setPreviewArtSize ] = useState(() => artSize);
     const [ panelTab, setPanelTab ] = useState<"backgrounds" | "settings">("backgrounds");
     const [ galleryPage, setGalleryPage ] = useState(0);
+    const galleryTouch = useRef<{ x: number; y: number } | null>(null);
+    const ignoreGalleryClick = useRef(false);
     const [ panelOpen, setPanelOpen ] = useState(false);
     const [ closing, setClosing ] = useState(false);
     const [ index, setIndex ] = useState(() => {
@@ -201,7 +203,38 @@ export default function BackgroundFullscreen() {
                     <span>{t("backgroundLibrary.previewBackgrounds")}</span>
                     <span>{t("backgroundLibrary.previewOnly")}</span>
                 </div>
-                <div className="backgroundFullscreenChoices">
+                <div className="backgroundFullscreenChoices"
+                    onTouchStart={event => {
+                        ignoreGalleryClick.current = false;
+                        if (event.touches.length !== 1) {
+                            galleryTouch.current = null;
+                            return;
+                        }
+                        galleryTouch.current = {
+                            x: event.touches[0].clientX,
+                            y: event.touches[0].clientY
+                        };
+                    }}
+                    onTouchEnd={event => {
+                        if (!galleryTouch.current || !event.changedTouches.length) return;
+                        const dx = event.changedTouches[0].clientX - galleryTouch.current.x;
+                        const dy = event.changedTouches[0].clientY - galleryTouch.current.y;
+                        galleryTouch.current = null;
+                        if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+
+                        // Suppress the click synthesized after a gallery page swipe.
+                        ignoreGalleryClick.current = true;
+                        setGalleryPage(current => Math.max(0, Math.min(pageCount - 1, current + (dx < 0 ? 1 : -1))));
+                    }}
+                    onTouchCancel={() => {
+                        galleryTouch.current = null;
+                    }}
+                    onClickCapture={event => {
+                        if (!ignoreGalleryClick.current) return;
+                        event.preventDefault();
+                        event.stopPropagation();
+                        ignoreGalleryClick.current = false;
+                    }}>
                     {items.slice(currentPage * pageSize, (currentPage + 1) * pageSize).map((item, position) => {
                         const itemIndex = currentPage * pageSize + position;
                         return <button type="button" key={item.id + (item.url ?? "")}
