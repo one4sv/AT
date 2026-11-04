@@ -116,3 +116,9 @@
 
 - В `SettingsSectionMenu` раздел `privacy` содержит переходы к реальным блокам `PrivacyTab`: `privacyAccountInfo`, `privacyContentVisibility`, `privacyActivityInvites`, `activityInviteExceptions`, `groupInvites`, `groupInviteExceptions`, `cookieConsent`. Использовать `openSection("privacy", settingId)` и уже существующий скролл до `data-setting-id` — не создавать отдельные экраны и не копировать переключатели.
 - В `Redirecting` только три фильтра: **«Все», «Личные», «Беседы»**. **«Непрочитанные» в пересылке не нужны.** Фильтрация локальная и не должна влиять на фильтры/состояние SideMenu.
+
+## Расписание активности и SideMenu на мобильном
+
+- Горизонтальный скролл `.scheduleDiv .schedule` принадлежит **только расписанию**, не может открывать/закрывать SideMenu. В `MobileLayout` проверять `target.closest(".scheduleDiv")` на `touchstart` и `touchmove`: жест навсегда назначается скроллу до `touchend`.
+- `.StatsDivMain:has(.scheduleDiv)` не должен задавать `touch-action: pan-y`, перекрывающий горизонтальные свайпы вложенного `.schedule`. На `.schedule` использовать `overflow-x: auto`, `touch-action: pan-x`, `overscroll-behavior-x: contain` и сохранение штатного snap между днями.
+- Даже на крайнем левом дне Schedule свайп назад не должен пробрасываться к SideMenu. Не перехватывать нативное горизонтальное движение у скроллера собственным `setTranslateX`.

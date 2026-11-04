@@ -45,7 +45,7 @@ export default function MobileLayout({ children }: LayoutProps) {
         }
 
         const target = e.target as Element;
-        if (target.closest("input, textarea, [contenteditable='true'], [data-context-menu], [data-header-gesture], .selector, .ContextMenuWrapper, .blackout")) {
+        if (target.closest("input, textarea, [contenteditable='true'], [data-context-menu], [data-header-gesture], .selector, .ContextMenuWrapper, .blackout, .scheduleDiv")) {
             gesture.current = "scroll";
             return;
         }
@@ -56,7 +56,7 @@ export default function MobileLayout({ children }: LayoutProps) {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-        if ((e.target as Element).closest(".habitMenu")) return;
+        if ((e.target as Element).closest(".habitMenu, .scheduleDiv")) return;
         if (contextMenu.visible || blackout.seted || dontHandle ||
             e.touches.length !== 1 || gesture.current === "scroll") return;
 

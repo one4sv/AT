@@ -29,6 +29,7 @@ export type ScheduleBlock = {
     setCountInps?: React.Dispatch<SetStateAction<CountInpsType[]>>,
     extraBlocks?: ExtraScheduleBlock[],
     isSeparator?:boolean,
+    isSeparated?:boolean,
 }
 
 export default function ScheduleBlock({ 
@@ -40,12 +41,16 @@ export default function ScheduleBlock({
     countInps, 
     setCountInps,
     extraBlocks = [],
+    isSeparated = false,
 }: ScheduleBlock) {
     const { weekStart } = useSettings()
     const { calendar } = useCalendar()
     const today = new Date()
     const navigate = useNavigate()
     const { setBlackout } = useBlackout()
+    const visibleExtraBlocks = extraBlocks.filter(
+        b => !isSeparated || b.isSeparator !== isOddWeek(weekStart, d.date)
+    )
     
 
     const getTimeClass = (h: Habit, day: number, date:Date) => {
@@ -101,17 +106,10 @@ export default function ScheduleBlock({
                     <div className="scheduleBarGoing" style={{width:countProcents(habit)}}></div>
                 </div>
             }
-            {!id ? (
-                habitInfo()
-            ) : extraBlocks.length > 0 ? (
-                ""
-            ) : (
-                habitInfo()
-            )}
-            {!edit && extraBlocks.length > 0 && (
+            {(!id || (edit ? extraBlocks.length === 0 : visibleExtraBlocks.length === 0)) && habitInfo()}
+            {!edit && visibleExtraBlocks.length > 0 && (
                 <div className="scheduleExtraBlocks">
-                    {extraBlocks
-                        .filter(b => b.isSeparator !== isOddWeek(weekStart, d.date))
+                    {visibleExtraBlocks
                         .sort((a, b) => timeToMinutes(a.start_time) - timeToMinutes(b.start_time))
                         .map((block) => {
                             return (

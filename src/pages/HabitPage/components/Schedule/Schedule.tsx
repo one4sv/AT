@@ -149,10 +149,13 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
     }
 
     const isVisible = (value: number) =>
-        habit &&
-        habit.periodicity !== "sometimes" &&
-        habit.ongoing &&
-        (habit.chosen_days?.includes(value) || habit.periodicity === "everyday")
+        !!habit && (
+            (
+                habit.periodicity !== "sometimes" &&
+                (habit.chosen_days?.includes(value) || habit.periodicity === "everyday")
+            ) ||
+            currentHabitBlocks.some(b => b.day_of_week === value)
+        )
 
     return (
         <div className="scheduleDiv">
@@ -181,7 +184,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                         </>
                     )}
                 </div>
-                {(isMy && !id || (habit && id === String(habit.id) && habit?.ongoing)) && (
+                {(isMy && !id || (isMy && habit && id === String(habit.id) && habit.ongoing)) && (
                     <div className="scheduleOptionsButts">
                         {loading ? (
                             <div className="scheduleOpt loading">Загрузка</div>
@@ -245,6 +248,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                                     setCountInps={setCountInps}
                                     key={`${habit.id}-${d.fullDate}`}
                                     extraBlocks={currentHabitBlocks.filter(b => b.day_of_week === d.value)}
+                                    isSeparated={currentSettings?.isSeparated ?? false}
                                 />
                             )
                         ) : (
@@ -267,6 +271,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                                             isGeneral
                                             key={`${h.id}-${d.fullDate}`}
                                             extraBlocks={habitBlocks}
+                                            isSeparated={schedule_settings[String(h.id)]?.isSeparated ?? false}
                                         />
                                     )
                                 })
@@ -294,6 +299,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                                     setCountInps={setCountInps}
                                     key={d.fullDate}
                                     extraBlocks={currentHabitBlocks.filter(b => b.day_of_week === d.value)}
+                                    isSeparated={currentSettings?.isSeparated ?? false}
                                     isSeparator
                                 />
                             )}

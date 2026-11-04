@@ -6,6 +6,8 @@
     max-height: 80dvh;
     min-height: 10vh;
     background-color: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     border-radius: 24px;
     padding: 0.5vh 0.5vw;
     display: flex;
@@ -145,10 +147,16 @@
 }
 
 @media (max-width: 800px) {
+    .StatsDivMain:has(.scheduleDiv) {
+        touch-action: auto;
+    }
     .schedule {
         display: flex;
         overflow-x: auto;
+        overflow-y: hidden;
         scroll-snap-type: x mandatory;
+        overscroll-behavior-x: contain;
+        touch-action: pan-x;
         -webkit-overflow-scrolling: touch;
     }
     .scheduleWrapper {
