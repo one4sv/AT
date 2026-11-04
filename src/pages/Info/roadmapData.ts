@@ -319,15 +319,12 @@ export const roadmapCurrent: RoadmapRelease = {
     version: "0.6.2",
     title: { ru: "Новая палитра", en: "New palette" },
     features: [
-        { ru: "Переработанная статистика активностей и исправления высоты и прокрутки расписания", en: "Redesigned activity statistics and schedule height and scrolling fixes" },
+        { ru: "Новая статистика активностей и исправление расписания", en: "Refreshed activity statistics and schedule layout fixes" },
         { ru: "Собственные цвета акцента и градиента", en: "Custom accent and gradient colors" },
-        { ru: "Расширенная библиотека фонов: атмосферные, ретро, неоновые, абстрактные и собственные изображения", en: "Expanded background library: atmospheric, retro, neon, abstract and personal images" },
-        { ru: "Эффекты фона: размытие, фильтры, управление движением и скоростью анимации", en: "Background effects: blur, filters, motion controls and animation speed" },
-        { ru: "Паттерны «Порядок» и «Хаос» с настройкой размера контурных фигур и рисунков AchieveTogether", en: "Ordered and chaotic patterns with adjustable sizes for outline icons and AchieveTogether artwork" },
-        { ru: "Полноэкранный предпросмотр фонов с перелистыванием и отдельными временными настройками", en: "Fullscreen background previews with swipe navigation and independent temporary settings" },
-        { ru: "Выбор обоев: сворачиваемые разделы, свайпы между стандартными и своими фонами", en: "Wallpaper selection: collapsible sections and swipes between built-in and personal backgrounds" },
-        { ru: "Выбранный фон хранится на устройстве; загруженные изображения доступны в общей галерее аккаунта", en: "Wallpaper selection stays on each device; uploaded images remain available in the account gallery" },
-        { ru: "Улучшения адаптации интерфейса и модалок для ПК и мобильных устройств", en: "Desktop and mobile interface and modal improvements" }
+        { ru: "Десять новых стандартных фонов и анимации", en: "Ten new built-in backgrounds and animations" },
+        { ru: "Настройка скорости анимации фонов", en: "Configurable background animation speed" },
+        { ru: "Переработка интерфейса фоновых изображений", en: "Background image interface redesign" },
+        { ru: "Улучшения мобильного интерфейса", en: "Mobile interface improvements" }
     ],
     notice: {
         ru: "Продолжается тестирование на мобильных устройствах",
