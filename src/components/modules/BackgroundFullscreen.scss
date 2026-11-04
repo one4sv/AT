@@ -90,9 +90,9 @@
 .backgroundFullscreenInfo {
     position: absolute;
     z-index: 5;
-    bottom: calc(10dvh + env(safe-area-inset-bottom));
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: auto;
+    left: auto;
+    transform: none;
     border: 1px solid var(--block_border);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
@@ -139,7 +139,7 @@
 .backgroundFullscreenPanel {
     position: absolute;
     z-index: 6;
-    bottom: calc(17dvh + env(safe-area-inset-bottom));
+    bottom: calc(10dvh + env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
     width: min(38vw, 48rem);
@@ -186,24 +186,23 @@
 }
 
 .backgroundFullscreenChoices {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: .75vw;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    padding-bottom: 1dvh;
-    touch-action: pan-x;
+    width: 100%;
+    overflow: visible;
 
     > button {
-        min-width: 8vw;
-        width: 8vw;
-        padding: .5dvh;
-        flex-shrink: 0;
+        min-width: 0;
+        width: 100%;
+        padding: .6dvh;
         border: 1px solid transparent;
         border-radius: 16px;
         background: var(--interact);
         color: var(--tc);
         font: inherit;
         cursor: pointer;
+        text-align: center;
 
         > span:last-child {
             display: block;
@@ -213,25 +212,47 @@
             text-overflow: ellipsis;
         }
 
-        &.active {
-            border-color: var(--accent);
-        }
+        &.active { border-color: var(--accent); }
 
         @media (hover: hover) {
-            &:hover {
-                background: var(--menuButtHover);
-            }
+            &:hover { background: var(--menuButtHover); }
         }
     }
 
     @media (max-width: 800px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 2vw;
+    }
+}
 
-        > button {
-            width: 22vw;
-            min-width: 22vw;
+.backgroundFullscreenPagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5vw;
+    width: 100%;
+
+    > button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 4dvh;
+        height: 4dvh;
+        padding: .5dvh;
+        border: none;
+        border-radius: 50%;
+        background: var(--interact);
+        color: var(--tc);
+        cursor: pointer;
+
+        &:disabled { opacity: .35; cursor: default; }
+
+        @media (hover: hover) {
+            &:not(:disabled):hover { background: var(--menuButtHover); }
         }
     }
+
+    @media (max-width: 800px) { gap: 5vw; }
 }
 
 .backgroundFullscreenChoiceThumb {
@@ -358,4 +379,57 @@
     .backgroundFullscreenInfo > svg {
         transition: none;
     }
+}
+
+.backgroundFullscreenBottom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.backgroundFullscreenBottom > .backgroundFullscreenExit {
+    position: absolute;
+    left: max(3vw, env(safe-area-inset-left));
+    bottom: max(3dvh, env(safe-area-inset-bottom));
+}
+
+.backgroundFullscreenBottom > .backgroundFullscreenInfo {
+    position: relative;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    width: min(28vw, 36rem);
+    height: 5dvh;
+    max-width: 75vw;
+    min-width: 0;
+    margin: 0;
+    padding: .4dvh .6vw;
+    border: 1px solid var(--block_border);
+
+    @media (max-width: 800px) {
+        width: 60vw;
+        max-width: 60vw;
+        height: 5dvh;
+        padding: .4dvh 2vw;
+    }
+
+    .senderInfoPic {
+        border: 0;
+        flex: 0 0 4dvh;
+        color: var(--accent_text);
+
+        > svg {
+            border: none;
+            padding: 0;
+            width: 2.6dvh;
+            height: 2.6dvh;
+            color: var(--accent_text);
+        }
+    }
+}
+
+.backgroundFullscreenPanel > .selector {
+    flex: 0 0 auto;
+    min-height: 4.5dvh;
 }

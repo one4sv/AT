@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TouchEvent } from "react";
-import { ArrowsInIcon, ImageIcon } from "@phosphor-icons/react";
-import { ChevronDown, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
+import { ArrowsInIcon } from "@phosphor-icons/react";
+import { ChevronDown, ChevronLeft, ChevronRight, RotateCcw, Settings2 } from "lucide-react";
 import { motion, animate, useMotionValue } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
@@ -12,6 +12,7 @@ import { backgroundGroups } from "../ts/utils/backgroundCatalog";
 import { supportsBackgroundMotion } from "../ts/utils/BackgroundScene";
 import { ContourPatternPicker } from "../../pages/Settings/components/SettingsTabs/ContourPatternPicker";
 import SeekBar from "../../pages/Settings/components/SeekBar";
+import Selector from "../ts/Selector";
 import Toggler from "../ts/Toggler";
 import PageBottom from "../ts/PageBottom";
 import "./BackgroundFullscreen.scss";
@@ -21,9 +22,12 @@ type PreviewItem = { id: string; url?: string; label: string };
 export default function BackgroundFullscreen() {
     const { t } = useTranslation("settings");
     const { blackout, setBlackout } = useBlackout();
-    const { bgGallery, bgEffects, contourPattern } = useSettings();
+    const { bgGallery, bgEffects, contourPattern, contourSize } = useSettings();
     const [ previewEffects, setPreviewEffects ] = useState<BackgroundEffects>(() => ({ ...bgEffects }));
     const [ previewPattern, setPreviewPattern ] = useState<ContourPattern>(() => contourPattern);
+    const [ previewContourSize, setPreviewContourSize ] = useState(() => contourSize);
+    const [ panelTab, setPanelTab ] = useState<"backgrounds" | "settings">("backgrounds");
+    const [ galleryPage, setGalleryPage ] = useState(0);
     const [ panelOpen, setPanelOpen ] = useState(false);
     const [ closing, setClosing ] = useState(false);
     const [ index, setIndex ] = useState(() => {
@@ -53,6 +57,9 @@ export default function BackgroundFullscreen() {
 
     const currentIndex = Math.min(index, items.length - 1);
     const current = items[currentIndex];
+    const pageSize = 6;
+    const pageCount = Math.max(1, Math.ceil(items.length / pageSize));
+    const currentPage = Math.min(galleryPage, pageCount - 1);
     const moving = useRef(false);
     const startTouch = useRef<{ x: number; y: number } | null>(null);
     const horizontalGesture = useRef(false);
@@ -78,6 +85,7 @@ export default function BackgroundFullscreen() {
                 const next = (currentIndex + step + items.length) % items.length;
                 dragX.set(0);
                 setIndex(next);
+                setGalleryPage(Math.floor(next / pageSize));
                 moving.current = false;
             }
         });
@@ -156,7 +164,7 @@ export default function BackgroundFullscreen() {
         return <div key={offset} className="backgroundFullscreenSlide"
             style={{ left: `${offset * 100}%` }}>
             <Background previewBg={item.id} previewUrl={item.url}
-                previewEffects={previewEffects} previewContourPattern={previewPattern}/>
+                previewEffects={previewEffects} previewContourPattern={previewPattern} previewContourSize={previewContourSize}/>
         </div>;
     };
 
@@ -179,53 +187,60 @@ export default function BackgroundFullscreen() {
                 onClick={() => changeSlide(1)}><ChevronRight/></button>
         </>}
 
-        <button type="button" className="modulesenderInfo backgroundFullscreenInfo"
-            aria-expanded={panelOpen} onClick={() => setPanelOpen(open => !open)}>
-            <span className="senderInfoPic">
-                {current.url ? <img src={current.url} alt=""/> : <ImageIcon size={24}/>}
-            </span>
-            <span className="senderInfoMain">
-                <span>{current.label}</span>
-                <span>{currentIndex + 1} / {items.length}</span>
-            </span>
-            <ChevronDown size={18} className={panelOpen ? "rotated" : ""}/>
-        </button>
-
         {panelOpen && <div className="backgroundFullscreenPanel" onTouchStart={event => event.stopPropagation()}
             onTouchMove={event => event.stopPropagation()}>
-            <div className="backgroundFullscreenPanelHeader">
-                <span>{t("backgroundLibrary.previewBackgrounds")}</span>
-                <span>{t("backgroundLibrary.previewOnly")}</span>
-            </div>
-            <div className="backgroundFullscreenChoices">
-                {items.map((item, itemIndex) => (
-                    <button type="button" key={item.id + (item.url ?? "")}
-                        className={itemIndex === currentIndex ? "active" : ""}
-                        onClick={() => {
-                            if (moving.current) return;
-                            dragX.set(0);
-                            setIndex(itemIndex);
-                            setPanelOpen(false);
-                        }}>
-                        <span className="backgroundFullscreenChoiceThumb">
-                            <Background previewBg={item.id} previewUrl={item.url}
-                                previewEffects={previewEffects} previewContourPattern={previewPattern}/>
-                        </span>
-                        <span>{item.label}</span>
-                    </button>
-                ))}
-            </div>
+            <Selector arr={[
+                { label: t("backgroundLibrary.previewBackgrounds"), value: "backgrounds" as const, func: setPanelTab },
+                { label: t("backgroundLibrary.previewSettings"), value: "settings" as const, func: setPanelTab }
+            ]} selected={panelTab}/>
+            {panelTab === "backgrounds" ? <>
+                <div className="backgroundFullscreenPanelHeader">
+                    <span>{t("backgroundLibrary.previewBackgrounds")}</span>
+                    <span>{t("backgroundLibrary.previewOnly")}</span>
+                </div>
+                <div className="backgroundFullscreenChoices">
+                    {items.slice(currentPage * pageSize, (currentPage + 1) * pageSize).map((item, position) => {
+                        const itemIndex = currentPage * pageSize + position;
+                        return <button type="button" key={item.id + (item.url ?? "")}
+                            className={itemIndex === currentIndex ? "active" : ""}
+                            onClick={() => {
+                                if (moving.current) return;
+                                dragX.set(0);
+                                setIndex(itemIndex);
+                                setGalleryPage(Math.floor(itemIndex / pageSize));
+                                setPanelOpen(false);
+                            }}>
+                            <span className="backgroundFullscreenChoiceThumb">
+                                <Background previewBg={item.id} previewUrl={item.url}
+                                    previewEffects={previewEffects} previewContourPattern={previewPattern} previewContourSize={previewContourSize}/>
+                            </span>
+                            <span>{item.label}</span>
+                        </button>;
+                    })}
+                </div>
+                <div className="backgroundFullscreenPagination">
+                    <button type="button" disabled={currentPage === 0}
+                        aria-label={t("backgroundLibrary.previous")}
+                        onClick={() => setGalleryPage(Math.max(0, currentPage - 1))}><ChevronLeft/></button>
+                    <span>{currentPage + 1} / {pageCount}</span>
+                    <button type="button" disabled={currentPage >= pageCount - 1}
+                        aria-label={t("backgroundLibrary.next")}
+                        onClick={() => setGalleryPage(Math.min(pageCount - 1, currentPage + 1))}><ChevronRight/></button>
+                </div>
+            </> : <>
             <div className="backgroundFullscreenPanelHeader">
                 <span>{t("backgroundLibrary.previewSettings")}</span>
                 <button type="button" className="backgroundFullscreenReset"
                     onClick={() => {
                         setPreviewEffects({ ...bgEffects });
                         setPreviewPattern(contourPattern);
+                        setPreviewContourSize(contourSize);
                     }} title={t("backgroundLibrary.previewReset")}>
                     <RotateCcw size={16}/> {t("backgroundLibrary.previewReset")}
                 </button>
             </div>
-            {current.id === "default" && <ContourPatternPicker value={previewPattern} onChange={setPreviewPattern}/>}
+            {current.id === "default" && <ContourPatternPicker value={previewPattern} onChange={setPreviewPattern}
+                size={previewContourSize} onSizeChange={setPreviewContourSize}/>}
             <div className="backgroundFullscreenControl">
                 <span>{t("backgroundLibrary.blurBackground")}</span>
                 <SeekBar id="previewBlur" min={0} max={30} step={1} unit="px"
@@ -254,6 +269,7 @@ export default function BackgroundFullscreen() {
                     </button>
                 ))}
             </div>
+            </>}
         </div>}
 
         <PageBottom className="backgroundFullscreenBottom">
@@ -262,6 +278,20 @@ export default function BackgroundFullscreen() {
                 title={t("backgroundLibrary.exitPreview")}
                 onClick={close}>
                 <ArrowsInIcon/>
+            </button>
+            <button type="button" className="modulesenderInfo backgroundFullscreenInfo"
+                aria-expanded={panelOpen} onClick={() => {
+                    setGalleryPage(Math.floor(currentIndex / pageSize));
+                    setPanelOpen(open => !open);
+                }}>
+                <span className="senderInfoPic">
+                    <Settings2 size={24}/>
+                </span>
+                <span className="senderInfoMain">
+                    <span>{current.label}</span>
+                    <span>{currentIndex + 1} / {items.length}</span>
+                </span>
+                <ChevronDown size={18} className={panelOpen ? "rotated" : ""}/>
             </button>
         </PageBottom>
     </div>;
