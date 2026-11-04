@@ -10,6 +10,7 @@ import useCompactLayout from "../../hooks/utils/useCompactLayout";
 import { useSchedule } from "../../hooks/ScheduleHook.ts";
 import SideMenuUnAunthificated from "../SideMenuUnAunthificated.tsx";
 import { useSideMenu } from "../../hooks/SideMenuHook.ts";
+import { useContextMenu } from "../../hooks/ContextMenuHook.ts";
 import { useContacts } from "../../hooks/ContactsHook.ts";
 import AccountList from "./AccountList.tsx";
 import SpotsList from "./SpotsList.tsx";
@@ -31,6 +32,7 @@ export default function SideMenu() {
     } = useHabits();
     const { refreshSchedules } = useSchedule();
     const { layout } = useSettings();
+    const { menu } = useContextMenu();
     const {
         closeMenu,
         openSideMenu,
@@ -52,13 +54,24 @@ export default function SideMenu() {
     const currentTranslate = useRef(0);
     const horizontalSwipe = useRef(false);
     const verticalScroll = useRef(false);
+    const contextGesture = useRef(false);
     const sideMenuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (user.id) refreshSchedules();
     }, [user.id, refreshSchedules]);
+    useEffect(() => {
+        if (!menu.visible) return;
+        contextGesture.current = true;
+        horizontalSwipe.current = false;
+        verticalScroll.current = false;
+        setIsDragging(false);
+        setTranslateX(showSideMenu ? 0 : -100);
+    }, [menu.visible, showSideMenu, setIsDragging, setTranslateX]);
     const handleTouchStart = (e: React.TouchEvent) => {
-        if (document.querySelector(".ContextMenuWrapper")) return;
+        contextGesture.current = menu.visible ||
+            !!(e.target instanceof Element && e.target.closest(".ContextMenuWrapper"));
+        if (contextGesture.current || e.touches.length !== 1) return;
         startX.current = e.touches[0].clientX;
         startY.current = e.touches[0].clientY;
         startTranslate.current = translateX;
@@ -67,8 +80,13 @@ export default function SideMenu() {
         verticalScroll.current = false;
     };
     const handleTouchMove = (e: React.TouchEvent) => {
-        // A visible context menu owns this touch; SideMenu must not translate.
-        if (document.querySelector(".ContextMenuWrapper")) return;
+        // ContextMenu retains ownership even if it closes before touchend bubbles.
+        if (menu.visible || contextGesture.current) {
+            contextGesture.current = true;
+            horizontalSwipe.current = false;
+            verticalScroll.current = false;
+            return;
+        }
         if (dontHandleOther && !horizontalSwipe.current) return;
         const clientX = e.touches[0].clientX;
         const clientY = e.touches[0].clientY;
@@ -95,7 +113,8 @@ export default function SideMenu() {
         setTranslateX(newTranslate);
     };
     const handleTouchEnd = () => {
-        if (document.querySelector(".ContextMenuWrapper")) {
+        if (menu.visible || contextGesture.current) {
+            contextGesture.current = false;
             horizontalSwipe.current = false;
             verticalScroll.current = false;
             setIsDragging(false);
@@ -118,8 +137,7 @@ export default function SideMenu() {
     useEffect(
         () => {
             const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-                if (layout !== "hidden" || !showSideMenu ||
-                    document.querySelector(".ContextMenuWrapper")) return;
+                if (layout !== "hidden" || !showSideMenu || menu.visible) return;
                 if (sideMenuRef.current && !sideMenuRef.current.contains(event.target as Node)) {
                     closeMenu();
                 }
@@ -131,7 +149,7 @@ export default function SideMenu() {
                 document.removeEventListener("touchstart", handleClickOutside);
             };
         },
-        [layout, showSideMenu, closeMenu]
+        [layout, showSideMenu, closeMenu, menu.visible]
     );
     if (!isAuthenticated && !loadingUser) {
         return <SideMenuUnAunthificated
@@ -141,11 +159,12 @@ export default function SideMenu() {
             onTouchE={handleTouchEnd}
             translateX={translateX}
             onTouchCancel={() => {
+                contextGesture.current = false;
                 horizontalSwipe.current = false;
                 verticalScroll.current = false;
                 setIsDragging(false);
                 setDontHandle(false);
-                setTranslateX(showSideMenu ? 0 : -100);
+                if (!menu.visible) setTranslateX(showSideMenu ? 0 : -100);
             }}
         />;
     }
@@ -158,11 +177,12 @@ export default function SideMenu() {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
             onTouchCancel={() => {
+                contextGesture.current = false;
                 horizontalSwipe.current = false;
                 verticalScroll.current = false;
                 setIsDragging(false);
                 setDontHandle(false);
-                setTranslateX(showSideMenu ? 0 : -100);
+                if (!menu.visible) setTranslateX(showSideMenu ? 0 : -100);
             }}
             style={{
                 transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none"

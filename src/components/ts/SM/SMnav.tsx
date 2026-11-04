@@ -2,6 +2,7 @@ import { useUser } from "../../hooks/UserHook";
 import { CircleUserRound, Megaphone } from "lucide-react";
 import { CalendarCheckIcon, ChatTeardropIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, PlusIcon, SignOutIcon, SortAscendingIcon, UserIcon, CheckIcon, MagnifyingGlassIcon, CaretRightIcon, XIcon } from "@phosphor-icons/react";
 import { useSideMenu } from "../../hooks/SideMenuHook";
+import { useContextMenu } from "../../hooks/ContextMenuHook";
 import { useEffect, useRef, useState } from "react";
 import type { tab } from "../../context/SideMenuContext";
 import { useBlackout } from "../../hooks/BlackoutHook";
@@ -38,6 +39,7 @@ export default function SMnav() {
         closeMenu,
         toggleMenu
     } = useSideMenu();
+    const { menu: contextMenu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { layout } = useSettings();
     const { showNotification } = useNote();
@@ -90,6 +92,7 @@ export default function SMnav() {
         []
     );
     const startLongPress = (tab: tab, clientX?: number, clientY?: number) => {
+        if (contextMenu.visible) return;
         isPointerDown.current = true;
         longPressTriggered.current = false;
         wasLongPress.current = false;
@@ -127,13 +130,14 @@ export default function SMnav() {
         setDontHandleOther(false);
     };
     const handleNavTouchStart = (tab: tab, e: React.TouchEvent) => {
-        if (e.touches.length !== 1) return;
+        if (contextMenu.visible || e.touches.length !== 1) return;
         suppressMouseUntil.current = performance.now() + 800;
         touchTab.current = tab;
         const touch = e.touches[0];
         startLongPress(tab, touch.clientX, touch.clientY);
     };
     const handleNavTouchMove = (e: React.TouchEvent) => {
+        if (contextMenu.visible) return;
         const touch = e.touches[0];
         if (longPressTriggered.current || gesture.current === "longpress") {
             const element = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -182,6 +186,10 @@ export default function SMnav() {
         setTranslateX(next);
     };
     const handleNavTouchEnd = (event: React.TouchEvent) => {
+        if (contextMenu.visible) {
+            cancelTouch();
+            return;
+        }
         const touch = event.changedTouches[0];
         const target = touch ? document.elementFromPoint(touch.clientX, touch.clientY)?.closest<HTMLElement>(".SMnavButt") : null;
         if (gesture.current === "none" && !wasLongPress.current && target?.dataset.tab === touchTab.current && touchTab.current) navFunc(touchTab.current);
@@ -202,6 +210,10 @@ export default function SMnav() {
         isPointerDown.current = false;
     };
     const handlePointerUp = (e: MouseEvent | TouchEvent) => {
+        if (contextMenu.visible) {
+            cancelTouch();
+            return;
+        }
         const wasLongPressNow = wasLongPress.current;
         isPointerDown.current = false;
         if (!wasLongPressNow) {
@@ -344,12 +356,13 @@ export default function SMnav() {
         []
     );
     const handleNavEnter = (tab: tab) => {
+        if (contextMenu.visible) return;
         if (longPressTriggered.current) {
             setExtraMenu(tab);
         }
     };
     const navFunc = (tab: tab) => {
-        if (wasLongPress.current) return;
+        if (contextMenu.visible || wasLongPress.current) return;
         if (tab !== activeTab) {
             setExtraMenu(tab);
             setActiveTab(tab);
@@ -536,10 +549,7 @@ export default function SMnav() {
             style={{
                 transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none"
             }}
-            onTouchEnd={e => {
-                if (document.querySelector(".ContextMenuWrapper")) return;
-                handleNavTouchEnd(e);
-            }}
+            onTouchEnd={handleNavTouchEnd}
             onTouchCancel={cancelTouch}
         >
             <div
