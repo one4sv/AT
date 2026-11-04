@@ -151,6 +151,8 @@ setBlackout({
 - `HabitParticipantPicker`, `HabitCollaborationSettings`, `HabitCreateChat`, `HabitDayActivityHistory`, `HabitTaskEditor` — готовые модалки совместной активности;
 - `CreateChat`, `ChatWithInfo`, `Redirecting`, `RedirectMesses`, `PostSettings`, `AddHabit`, `Table` и остальные перечислены в `ModuleMap.ts`.
 
+**Визуальный стандарт:** корень модалки использует `background: var(--mc)` и `backdrop-filter: blur(var(--blur))` с `-webkit-backdrop-filter`. Не ставить `var(--bgc)` на весь модальный контейнер: этот токен нужен для непрозрачного фона приложения или раскрывающегося списка, когда необходимо перекрыть текст за ним. На мобильном — полная ширина и без боковых зазоров. Подробно: [SCSS_GUIDE.md](SCSS_GUIDE.md#7-модалки-вложенность-слайдеры).
+
 **Новая модалка:** сначала проверить существующую, затем использовать `Blackout`, добавить модуль в `ModuleMap` и локальный SCSS. Не создавать отдельный `position: fixed`-оверлей поверх `Blackout`. На мобильном: полная ширина, safe-area, скролл только у контента, нижние кнопки не должны уезжать за экран. Для слайдов: область просмотра `overflow: hidden`, панели имеют `flex: 0 0 100%`, сдвиг `translateX(-100%)`; не центрировать двойной контейнер через конфликтующий mixin/`transform`.
 
 ## 5. Загрузка, обратная связь, визуальные компоненты
