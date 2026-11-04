@@ -1,0 +1,101 @@
+@use "../mixins" as var;
+
+.confirmActionModal {
+    @include var.centerModal;
+    width: 32vw;
+    max-width: 92vw;
+    max-height: 85dvh;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 2dvh;
+    padding: 2dvh 1.5vw;
+    background: var(--mc);
+    color: var(--tc);
+    border-radius: 24px;
+
+    @media (max-width: 800px) {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        align-self: stretch;
+        width: 100%;
+        max-width: 100%;
+        max-height: 90dvh;
+        padding: 3dvh 4vw calc(2dvh + env(safe-area-inset-bottom));
+        margin: 0;
+        border-radius: 24px 24px 0 0;
+    }
+}
+
+.confirmActionHeader {
+    font-size: 20px;
+    color: var(--tc);
+    overflow-wrap: anywhere;
+}
+
+.confirmActionBody {
+    color: var(--borderWh);
+    font-size: 16px;
+    line-height: 1.45;
+    min-height: 0;
+    overflow-y: auto;
+
+    > p {
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    [role="alert"] {
+        color: var(--notValid);
+    }
+}
+
+.confirmActionButtons {
+    display: flex;
+    gap: 1vw;
+    flex-shrink: 0;
+
+    > button {
+        flex: 1;
+        min-height: 5dvh;
+        padding: 1dvh 1vw;
+        border: none;
+        border-radius: 24px;
+        background: var(--interact);
+        color: var(--tc);
+        font: inherit;
+        cursor: pointer;
+
+        &.danger {
+            background: var(--notValidBg);
+            color: var(--notValid);
+        }
+
+        &:disabled {
+            opacity: .5;
+            cursor: default;
+        }
+
+        @media (hover: hover) {
+            &:not(:disabled):hover {
+                background: var(--menuButtHover);
+            }
+
+            &.danger:not(:disabled):hover {
+                background: var(--notValid);
+                color: var(--inner_text);
+            }
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 3vw;
+
+        > button {
+            min-height: 6dvh;
+        }
+    }
+}

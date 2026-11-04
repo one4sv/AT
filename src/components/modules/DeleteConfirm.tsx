@@ -84,15 +84,16 @@ export default function DeleteConfirm() {
     };
 
     return (
-        <div className="deleteDiv">
-            <span className="deleteSpan">
+        <div className="deleteDiv" role="dialog" aria-modal="true" aria-label="Подтвердите действие">
+            <div className="deleteTitle">Подтвердите действие</div>
+            <div className="deleteSpan">
                 {deleteConfirm.goal === "member"
                     ? `Вы действительно хотите исключить пользователя ${deleteConfirm.name} из беседы ${group.name}?`
                     : deleteConfirm.goal === "leave"
                             ? `Вы действительно хотите покинуть беседу ${delThing}?`
                             : `Вы действительно хотите удалить ${delThing} ${deleteConfirm.name}?`
                 }
-            </span>
+            </div>
             {deleteConfirm.goal === "mess" && (
                 <div className={`deleteMessForAll ${delForAll ? "on" : ""}`}>
                     <Toggler state={delForAll} setState={setDelForAll}/>

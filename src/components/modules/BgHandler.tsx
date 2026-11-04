@@ -1,113 +1,71 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../../scss/modules/BackgroundHandler.scss";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
+import { useNote } from "../hooks/NoteHook";
 import Cropper from "react-easy-crop";
 import type { Area } from "react-easy-crop";
 import getCroppedImg from "../ts/utils/cropImage";
+import SeekBar from "../../pages/Settings/components/SeekBar";
 
 export const BgHandler = () => {
-  const { blackout, setBlackout } = useBlackout();
-  const { setNewBg, setBgUrl } = useUpSettings();
+    const { blackout, setBlackout } = useBlackout();
+    const { setNewBg, setBgUrl } = useUpSettings();
+    const { showNotification } = useNote();
+    const [ crop, setCrop ] = useState({ x: 0, y: 0 });
+    const [ zoom, setZoom ] = useState(1);
+    const [ croppedAreaPixels, setCroppedAreaPixels ] = useState<Area | null>(null);
+    const [ previewUrl, setPreviewUrl ] = useState("");
+    const [ saving, setSaving ] = useState(false);
 
-  const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState<number>(1);
-  const [blur, setBlur] = useState<number>(0);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+    useEffect(() => {
+        if (!blackout.bg) return;
+        const url = URL.createObjectURL(blackout.bg);
+        setPreviewUrl(url);
+        return () => URL.revokeObjectURL(url);
+    }, [blackout.bg]);
 
-  const onCropComplete = (_: Area, croppedArea: Area) => {
-    setCroppedAreaPixels(croppedArea);
-  };
+    const cropImageHandler = async () => {
+        if (!blackout.bg || !croppedAreaPixels || saving) return;
+        setSaving(true);
+        try {
+            const croppedFile = await getCroppedImg(blackout.bg, croppedAreaPixels);
+            const saved = await setBgUrl(croppedFile);
+            if (!saved) {
+                showNotification("error", "Не удалось сохранить фон");
+                return;
+            }
+            setNewBg("custom");
+            setBlackout({ seted: false });
+        } catch {
+            showNotification("error", "Не удалось обработать фон");
+        } finally {
+            setSaving(false);
+        }
+    };
 
-  const cropImageHandler = async () => {
-    if (!blackout.bg || !croppedAreaPixels) return;
-
-    try {
-      const croppedFile = await getCroppedImg(blackout.bg, croppedAreaPixels, blur);
-      const saved = await setBgUrl(croppedFile);
-      if (!saved) return;
-      setNewBg("custom");
-      setBlackout({ seted: false });
-    } catch (err) {
-      console.error("Ошибка при кропе:", err);
-    }
-  };
-
-  return (
-    <div className="backgroundHandlerDiv">
-      <div className="backgroundHandlerImg">
-        {blackout.bg && (
-          <div className="cropContainer">
-            <img
-              src={URL.createObjectURL(blackout.bg)}
-              alt="preview"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                filter: `blur(${blur}px)`,
-                transform: `scale(${zoom})`,
-                transformOrigin: "center",
-                zIndex: 0,
-              }}
-            />
-            <Cropper
-              image={URL.createObjectURL(blackout.bg)}
-              crop={crop}
-              zoom={zoom}
-              aspect={16 / 9}
-              cropShape="rect"
-              showGrid={true}
-              onCropChange={setCrop}
-              onZoomChange={setZoom}
-              onCropComplete={onCropComplete}
-              style={{ containerStyle: { zIndex: 1, position: "relative" } }}
-            />
-          </div>
-        )}
-      </div>
-
-      <div className="backgroundHandlerControls">
-        <div className="backgroundHandlerBlur">
-          <label htmlFor="blurRange">Размытие: {blur}px</label>
-          <input
-            type="range"
-            id="blurRange"
-            min={0}
-            max={20}
-            step={0.1}
-            value={blur}
-            onChange={(e) => setBlur(Number(e.target.value))}
-          />
+    return <div className="backgroundHandlerDiv" role="dialog" aria-modal="true" aria-label="Редактировать фон">
+        <div className="backgroundHandlerTitle">Редактировать фон</div>
+        <div className="backgroundHandlerImg">
+            {previewUrl && <div className="cropContainer">
+                <Cropper image={previewUrl} crop={crop} zoom={zoom} aspect={16 / 9}
+                    cropShape="rect" showGrid={true}
+                    onCropChange={setCrop} onZoomChange={setZoom}
+                    onCropComplete={(_, area) => setCroppedAreaPixels(area)}/>
+            </div>}
         </div>
-        <div className="backgroundHandlerZoom">
-          <label htmlFor="zoomRange">Масштаб: {zoom.toFixed(1)}x</label>
-          <input
-            type="range"
-            id="zoomRange"
-            min={1}
-            max={3}
-            step={0.1}
-            value={zoom}
-            onChange={(e) => setZoom(Number(e.target.value))}
-          />
+        <div className="backgroundHandlerControls">
+            <div className="backgroundHandlerZoom">
+                <label>Масштаб</label>
+                <SeekBar id="backgroundZoom" min={1} max={3} step={.1} value={zoom} unit="×"
+                    disabled={saving} onChange={setZoom}/>
+            </div>
         </div>
-      </div>
-
-      <div className="backgroundHandlerButts">
-        <button
-          className="backgroundHandlerCancel"
-          onClick={() => setBlackout({ seted: false })}
-        >
-          Отмена
-        </button>
-        <button className="backgroundHandlerConfirm" onClick={cropImageHandler}>
-          Подтвердить
-        </button>
-      </div>
-    </div>
-  );
+        <div className="backgroundHandlerButts">
+            <button type="button" className="backgroundHandlerCancel" disabled={saving}
+                onClick={() => setBlackout({ seted: false })}>Отмена</button>
+            <button type="button" className="backgroundHandlerConfirm" disabled={saving || !croppedAreaPixels}
+                onClick={() => void cropImageHandler()}>{saving ? "Сохранение…" : "Сохранить фон"}</button>
+        </div>
+    </div>;
 };

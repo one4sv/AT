@@ -1,3 +1,4 @@
+import "../../scss/modules/confirmAction.scss";
 import { useRef, useState } from "react";
 import { useBlackout } from "../hooks/BlackoutHook";
 
@@ -8,13 +9,13 @@ export default function ConfirmAction() {
     const submitting = useRef(false);
     const action = blackout.confirmAction;
     if (!action) return null;
-    return <div className="habitCollaborationModal habitConfirmModal" role="dialog" aria-modal="true" aria-label={action.title}>
-        <div className="habitCollaborationHeader">{action.title}</div>
-        <div className="habitCollaborationBody">
+    return <div className="confirmActionModal" role="dialog" aria-modal="true" aria-label={action.title}>
+        <div className="confirmActionHeader">{action.title}</div>
+        <div className="confirmActionBody">
             <p>{action.description}</p>
             {error && <p role="alert">{error}</p>}
         </div>
-        <div className="habitConfirmActions">
+        <div className="confirmActionButtons">
             <button type="button" disabled={saving} onClick={() => setBlackout({ seted: false })}>Отмена</button>
             <button type="button" className="danger" disabled={saving} onClick={async () => {
                 if (submitting.current) return;

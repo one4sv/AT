@@ -1,153 +1,133 @@
 @use "../mixins.scss" as var;
 
 .backgroundHandlerDiv {
-    background-color: var(--mc);
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
-    border-radius: 24px;
-    display: flex;
-    width: 60vw;
-    flex-direction: column;
-    padding: 2vh 1vw;
     @include var.centerModal;
+    width: 60vw;
+    max-width: 94vw;
+    max-height: 88dvh;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5dvh;
+    padding: 2dvh 1.5vw;
+    box-sizing: border-box;
+    border-radius: 24px;
+    background: var(--bgc);
+    color: var(--tc);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 
     @media (max-width: 800px) {
-        width: 100%;
-        max-width: 100%;
-        max-height: 88dvh;
-        overflow-y: auto;
-        box-sizing: border-box;
+        position: relative;
         top: auto;
         left: auto;
         transform: none;
-        position: relative;
+        align-self: stretch;
+        width: 100%;
+        max-width: 100%;
+        max-height: 92dvh;
+        margin: 0;
         border-radius: 24px 24px 0 0;
-        padding: 2dvh 4vw calc(2dvh + env(safe-area-inset-bottom));
+        padding: 3dvh 4vw calc(2dvh + env(safe-area-inset-bottom));
     }
+}
+
+.blackoutModule > .backgroundHandlerDiv {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.backgroundHandlerTitle {
+    color: var(--tc);
+    font-size: 20px;
+    flex-shrink: 0;
 }
 
 .backgroundHandlerImg {
     width: 100%;
     aspect-ratio: 16 / 9;
     position: relative;
-    margin-bottom: 1vh;
     overflow: hidden;
+    border-radius: 24px;
+    background: var(--interact);
+    flex-shrink: 0;
+
     > .cropContainer {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 16 / 9;
+        position: absolute;
+        inset: 0;
         overflow: hidden;
-    }
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: filter 0.3s ease, transform 0.3s ease; /* Плавный переход для блюра и масштаба */
     }
 }
 
 .backgroundHandlerControls {
     display: flex;
     flex-direction: column;
-    gap: 1vh;
-    margin-bottom: 1vh;
+    gap: 1dvh;
+    flex-shrink: 0;
 }
 
-.backgroundHandlerBlur,
 .backgroundHandlerZoom {
     display: flex;
     flex-direction: column;
+    gap: 1dvh;
     width: 100%;
-    label {
-        font-size: 14px;
-        margin-bottom: 4px;
-    }
 
-    input[type="range"] {
-        -webkit-appearance: none;
-        width: 100%;
-        height: 6px;
-        background: var(--darker_accent);
-        border-radius: 3px;
-        outline: none;
-
-        &::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: var(--accent);
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid var(--accent);
-        }
-
-        &::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: var(--tc);
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid var(--accent);
-        }
+    > label {
+        color: var(--tc);
     }
 }
 
 .backgroundHandlerButts {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     gap: 1vw;
+    flex-shrink: 0;
 
     > button {
-        padding: 1vh 2vw;
-        outline: none;
-        border: none;
-        font-size: 18px;
+        min-height: 5dvh;
+        padding: 1dvh 2vw;
+        border: 0;
         border-radius: 24px;
+        outline: none;
+        font: inherit;
         cursor: pointer;
+
+        &:disabled {
+            opacity: .5;
+            cursor: default;
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 3vw;
+        width: 100%;
+
+        > button {
+            flex: 1;
+            min-height: 6dvh;
+        }
     }
 }
 
 .backgroundHandlerCancel {
-    background-color: var(--tr);
-    color: var(--borderWh);
+    background: var(--interact);
+    color: var(--tc);
 
     @media (hover: hover) {
         &:hover {
-        background-color: var(--menuButtHover);
-        color: var(--tc);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        background-color: var(--menuButtHover);
-        color: var(--tc);
-    
-        
+            background: var(--menuButtHover);
         }
     }
 }
 
 .backgroundHandlerConfirm {
-    background-color: var(--tr);
-    color: var(--tc);
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--inner_text);
 
     @media (hover: hover) {
-        &:hover {
-        background-color: var(--menuButtHover);
-        color: var(--accent_text);
-    
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-        background-color: var(--menuButtHover);
-        color: var(--accent_text);
-    
-        
+        &:not(:disabled):hover {
+            filter: brightness(1.1);
         }
     }
 }
