@@ -202,61 +202,61 @@ export default function BackgroundLibrary() {
                                     ))}
                                 </div>
                             ) : (
-                    <div className="backgroundLibrarySections">
-                        {stockGroups.map(group => (
-                            <section className="backgroundLibrarySection" key={group.id}>
-                                <button type="button" className="backgroundLibrarySectionTitle"
-                                    aria-expanded={!collapsedGroups.includes(group.id)}
-                                    onClick={() => setCollapsedGroups(current => current.includes(group.id)
-                                        ? current.filter(id => id !== group.id) : [...current, group.id])}>
-                                    <span>{t(`backgroundLibrary.${group.id}`)}</span>
-                                    <ChevronDown size={20} className={collapsedGroups.includes(group.id) ? "collapsed" : ""}/>
-                                </button>
-                                <div className="backgroundLibraryGrid" hidden={collapsedGroups.includes(group.id)}>
-                                    {group.items.map(item => (
-                                        <div key={item.id}
-                                            className={`bgPick backgroundLibraryTile ${bg === item.id ? "active" : ""}`}>
-                                            <button type="button" className="backgroundLibraryChoose"
-                                                onClick={() => selectStock(item.id)}>
-                                                {item.id === "landing" ?
-                                                <div className="bgImg bgMini landingBackground" style={previewStyle}/> :
-                                                item.id === "default" ?
-                                                    <div className="bgImg bgMini" style={previewStyle}><BackIconsScene pattern={contourPattern} size={contourSize}/></div> :
-                                                    isStockScene(item.id) ?
-                                                        <div className="bgImg bgMini" style={{ ...previewStyle, "--scene-duration": `${18 / Math.max(.25, Math.min(3, bgEffects.speed ?? 1))}s` } as CSSProperties}>
-                                                            <BackgroundScene variant={item.id as StockScene} motion={supportsBackgroundMotion(item.id) && bgEffects.movement && (bgEffects.speed ?? 1) > 0}
-                                                                artPattern={artPattern} artSize={artSize}/>
-                                                        </div> :
-                                                        <div className="bgImg bgMini" style={previewStyle}/>}
-                                                <span className={`backgroundLibraryName ${bg === item.id ? "bgSpanChoosen" : ""}`}>
-                                                    {item.label}
-                                                    {supportsBackgroundMotion(item.id) && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.motionAvailable")}>
-                                                        <Film size={15} aria-label={t("backgroundLibrary.motionAvailable")}/>
-                                                    </span>}
-                                                    <span className="backgroundLibraryCapability" title={t("backgroundLibrary.themeAware")}>
-                                                        <Palette size={15} aria-label={t("backgroundLibrary.themeAware")}/>
-                                                    </span>
-                                                    {item.id === "art" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.appearanceAware")}>
-                                                        <WandSparkles size={15} aria-label={t("backgroundLibrary.appearanceAware")}/>
-                                                    </span>}
-                                                    {(item.id === "default" || item.id === "art") &&
-                                                        <span className="backgroundLibraryCapability" title={t("backgroundLibrary.patternAvailable")}>
-                                                            <LayoutGrid size={15} aria-label={t("backgroundLibrary.patternAvailable")}/>
-                                                        </span>}
-                                                </span>
-                                                {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
+                                <div className="backgroundLibrarySections">
+                                    {stockGroups.map(group => (
+                                        <section className="backgroundLibrarySection" key={group.id}>
+                                            <button type="button" className="backgroundLibrarySectionTitle"
+                                                aria-expanded={!collapsedGroups.includes(group.id)}
+                                                onClick={() => setCollapsedGroups(current => current.includes(group.id)
+                                                    ? current.filter(id => id !== group.id) : [...current, group.id])}>
+                                                <span>{t(`backgroundLibrary.${group.id}`)}</span>
+                                                <ChevronDown size={20} className={collapsedGroups.includes(group.id) ? "collapsed" : ""}/>
                                             </button>
-                                            <button type="button" className="backgroundLibraryPreview"
-                                                aria-label={t("backgroundLibrary.preview")} title={t("backgroundLibrary.preview")}
-                                                onClick={() => previewBackground(item.id)}>
-                                                <ArrowsOutIcon size={20}/>
-                                            </button>
-                                        </div>
+                                            <div className="backgroundLibraryGrid" hidden={collapsedGroups.includes(group.id)}>
+                                                {group.items.map(item => (
+                                                    <div key={item.id}
+                                                        className={`bgPick backgroundLibraryTile ${bg === item.id ? "active" : ""}`}>
+                                                        <button type="button" className="backgroundLibraryChoose"
+                                                            onClick={() => selectStock(item.id)}>
+                                                            {item.id === "landing" ?
+                                                            <div className="bgImg bgMini landingBackground" style={previewStyle}/> :
+                                                            item.id === "default" ?
+                                                                <div className="bgImg bgMini" style={previewStyle}><BackIconsScene pattern={contourPattern} size={contourSize}/></div> :
+                                                                isStockScene(item.id) ?
+                                                                    <div className="bgImg bgMini" style={{ ...previewStyle, "--scene-duration": `${18 / Math.max(.25, Math.min(3, bgEffects.speed ?? 1))}s` } as CSSProperties}>
+                                                                        <BackgroundScene variant={item.id as StockScene} motion={supportsBackgroundMotion(item.id) && bgEffects.movement && (bgEffects.speed ?? 1) > 0}
+                                                                            artPattern={artPattern} artSize={artSize}/>
+                                                                    </div> :
+                                                                    <div className="bgImg bgMini" style={previewStyle}/>}
+                                                            <span className={`backgroundLibraryName ${bg === item.id ? "bgSpanChoosen" : ""}`}>
+                                                                {item.label}
+                                                                {supportsBackgroundMotion(item.id) && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.motionAvailable")}>
+                                                                    <Film size={15} aria-label={t("backgroundLibrary.motionAvailable")}/>
+                                                                </span>}
+                                                                <span className="backgroundLibraryCapability" title={t("backgroundLibrary.themeAware")}>
+                                                                    <Palette size={15} aria-label={t("backgroundLibrary.themeAware")}/>
+                                                                </span>
+                                                                {item.id === "art" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.appearanceAware")}>
+                                                                    <WandSparkles size={15} aria-label={t("backgroundLibrary.appearanceAware")}/>
+                                                                </span>}
+                                                                {(item.id === "default" || item.id === "art") &&
+                                                                    <span className="backgroundLibraryCapability" title={t("backgroundLibrary.patternAvailable")}>
+                                                                        <LayoutGrid size={15} aria-label={t("backgroundLibrary.patternAvailable")}/>
+                                                                    </span>}
+                                                            </span>
+                                                            {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
+                                                        </button>
+                                                        <button type="button" className="backgroundLibraryPreview"
+                                                            aria-label={t("backgroundLibrary.preview")} title={t("backgroundLibrary.preview")}
+                                                            onClick={() => previewBackground(item.id)}>
+                                                            <ArrowsOutIcon size={20}/>
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </section>
                                     ))}
                                 </div>
-                            </section>
-                        ))}
-                    </div>
                             )}
                         </div>
                     </div>
@@ -285,28 +285,28 @@ export default function BackgroundLibrary() {
                                     ))}
                                 </div>
                             ) : (
-                    <div className="backgroundLibraryGrid">
-                        {bgGallery.map(item => (
-                            <div key={item.url} className={`bgPick backgroundLibraryTile ${bg === "custom" && bgUrl === item.url ? "active" : ""}`}>
-                                <button type="button" className="backgroundLibraryChoose" disabled={saving}
-                                    onClick={() => void selectCustom(item.url)}>
-                                    <CustomBackgroundThumb url={item.url}/>
-                                     {bg === "custom" && bgUrl === item.url && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
-                                </button>
-                                <button type="button" className="backgroundLibraryDelete"
-                                    disabled={saving} aria-label={t("backgroundLibrary.delete")}
-                                    onClick={() => deleteCustom(item.url)}>
-                                    <TrashIcon size={19}/>
-                                </button>
-                                <button type="button" className="backgroundLibraryPreview"
-                                    disabled={saving} aria-label={t("backgroundLibrary.preview")}
-                                    title={t("backgroundLibrary.preview")}
-                                    onClick={() => previewBackground("custom", item.url)}>
-                                    <ArrowsOutIcon size={20}/>
-                                </button>
-                            </div>
-                        ))}
-                    </div>
+                                <div className="backgroundLibraryGrid">
+                                    {bgGallery.map(item => (
+                                        <div key={item.url} className={`bgPick backgroundLibraryTile ${bg === "custom" && bgUrl === item.url ? "active" : ""}`}>
+                                            <button type="button" className="backgroundLibraryChoose" disabled={saving}
+                                                onClick={() => void selectCustom(item.url)}>
+                                                <CustomBackgroundThumb url={item.url}/>
+                                                 {bg === "custom" && bgUrl === item.url && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
+                                            </button>
+                                            <button type="button" className="backgroundLibraryDelete"
+                                                disabled={saving} aria-label={t("backgroundLibrary.delete")}
+                                                onClick={() => deleteCustom(item.url)}>
+                                                <TrashIcon size={19}/>
+                                            </button>
+                                            <button type="button" className="backgroundLibraryPreview"
+                                                disabled={saving} aria-label={t("backgroundLibrary.preview")}
+                                                title={t("backgroundLibrary.preview")}
+                                                onClick={() => previewBackground("custom", item.url)}>
+                                                <ArrowsOutIcon size={20}/>
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                             {settingsLoaded && bgGallery.length >= 6 &&
                                 <div className="settingHint">{t("backgroundLibrary.limit")}</div>}
