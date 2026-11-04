@@ -147,7 +147,7 @@ export default function BackgroundLibrary() {
                                                     </span>
                                                     {item.id === "art" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.appearanceAware")}>
                                                         <WandSparkles size={15} aria-label={t("backgroundLibrary.appearanceAware")}/>
-                                                    </span>
+                                                    </span>}
                                                 </span>
                                                 {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
                                             </button>
