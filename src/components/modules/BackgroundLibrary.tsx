@@ -7,6 +7,7 @@ import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
 import { useBackIconsPattern } from "../hooks/utils/useBackIconsPattern";
 import Selector from "../ts/Selector";
+import { BackgroundScene, type StockScene } from "../ts/utils/BackgroundScene";
 import { api } from "../ts/api";
 import "./BackgroundLibrary.scss";
 import "../../scss/Loading.scss";
@@ -79,7 +80,11 @@ export default function BackgroundLibrary() {
     const stock = [
         { id: "landing", label: t("personalization.landingBackground") },
         { id: "default", label: t("personalization.contourShapes") },
-        { id: "color", label: t("personalization.solidColor") }
+        { id: "color", label: t("personalization.solidColor") },
+        { id: "art", label: t("backgroundLibrary.art") },
+        { id: "aurora", label: t("backgroundLibrary.aurora") },
+        { id: "nebula", label: t("backgroundLibrary.nebula") },
+        { id: "sunset", label: t("backgroundLibrary.sunset") }
     ];
 
     return (
@@ -119,6 +124,8 @@ export default function BackgroundLibrary() {
                                     <div className="bgImg bgMini landingBackground"/> :
                                     item.id === "default" ?
                                         <div className="bgImg bgMini">{backIconsPattern}</div> :
+                                        ["art", "aurora", "nebula", "sunset"].includes(item.id) ?
+                                        <div className="bgImg bgMini"><BackgroundScene variant={item.id as StockScene}/></div> :
                                         <div className="bgImg bgMini"/>}
                                 <span className={bg === item.id ? "bgSpanChoosen" : ""}>{item.label}</span>
                                 {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}

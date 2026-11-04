@@ -213,6 +213,12 @@ export default function Blackout() {
         if (index !== topIndex || isClosing.current) return;
 
         const target = e.target as HTMLElement;
+        // Controls never own the swipe-down-to-dismiss gesture.
+        if (target.closest(".selector, button, input, textarea, select, [role='button']")) {
+            dragging.current = false;
+            canDismiss.current = false;
+            return;
+        }
         const isImagePreview = !!target.closest(".imgPrevDiv");
 
         horizontalSwipe.current = false;
@@ -397,8 +403,6 @@ export default function Blackout() {
                         onTouchEnd={() => handleTouchEnd(index)}
                         onClick={(e) => {
                             if (!isTop) return;
-                            e.preventDefault();
-
                             if (e.target === e.currentTarget) {
                                 if (isMobile) {
                                     animateClose(index);

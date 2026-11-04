@@ -1,5 +1,6 @@
 import { useSettings } from "../../hooks/SettingsHook";
 import { useBackIconsPattern } from "../../hooks/utils/useBackIconsPattern";
+import { BackgroundScene, type StockScene } from "./BackgroundScene";
 import "../../../scss/landingBackground.scss";
 
 export function Background() {
@@ -30,6 +31,12 @@ export function Background() {
 
   if (bg === "color") {
     return null;
+  }
+
+  if (["art", "aurora", "nebula", "sunset"].includes(bg)) {
+    return <div className="background" style={effects} aria-hidden="true">
+      <BackgroundScene variant={bg as StockScene}/>
+    </div>;
   }
 
   if (bg === "custom") {

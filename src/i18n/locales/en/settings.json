@@ -254,6 +254,10 @@
     "empty": "No custom backgrounds yet",
     "selected": "Selected",
     "blurBackground": "Background blur",
-    "filters": "Filters"
+    "filters": "Filters",
+    "art": "AchieveTogether art",
+    "aurora": "Northern lights",
+    "nebula": "Nebula",
+    "sunset": "Sunset"
   }
 }

@@ -51,24 +51,15 @@ export default function useHeaderMenuGestures() {
     };
 
     const findTrigger = (x: number, y: number) => {
+        // Only a finger physically over another header control may switch its menu.
+        // The old nearest-button fallback treated motion toward the menu as a swipe to SM.
         const element = document.elementFromPoint(x, y);
-        const exact = element?.closest<HTMLElement>("[data-header-gesture]");
-        if (exact) return exact;
-
-        const header = Array.from(document.querySelectorAll<HTMLElement>(".headerDiv"))
-            .find(node => {
-                const box = node.getBoundingClientRect();
-                return y >= box.top - 18 && y <= box.bottom + 18 &&
-                    x >= box.left - 12 && x <= box.right + 12;
-            });
-        if (!header) return null;
-
-        const buttons = Array.from(header.querySelectorAll<HTMLElement>("[data-header-gesture]"));
-        return buttons.sort((a, b) => {
-            const ar = a.getBoundingClientRect();
-            const br = b.getBoundingClientRect();
-            return Math.abs(ar.left + ar.width / 2 - x) - Math.abs(br.left + br.width / 2 - x);
-        })[0] ?? null;
+        if (element?.closest(".ContextMenuWrapper")) return null;
+        const trigger = element?.closest<HTMLElement>("[data-header-gesture]") ?? null;
+        if (!trigger || !trigger.closest(".headerDiv")) return null;
+        const box = trigger.getBoundingClientRect();
+        if (x < box.left || x > box.right || y < box.top || y > box.bottom) return null;
+        return trigger;
     };
 
     const open = (trigger: HTMLElement) => {
@@ -134,7 +125,7 @@ export default function useHeaderMenuGestures() {
         // Identical to SMnav: timer opens while the finger remains down, not on release.
         press.timer = setTimeout(() => {
             if (state.current !== press) return;
-            open(findTrigger(press.x, press.y) ?? press.original);
+            open(press.original);
         }, 350);
         e.stopPropagation();
     };
@@ -161,9 +152,9 @@ export default function useHeaderMenuGestures() {
             hovered.current?.classList.add("touchHover");
         }
 
-        if (!item) {
+        if (!item && !element?.closest(".ContextMenuWrapper")) {
             const trigger = findTrigger(touch.clientX, touch.clientY);
-            if (trigger) open(trigger);
+            if (trigger && trigger !== selectedTrigger.current) open(trigger);
         }
         if (e.cancelable) e.preventDefault();
     };

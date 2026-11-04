@@ -20,6 +20,8 @@ export default function Selector<T extends string | number>({
 
     const selectorRef = useRef<HTMLDivElement | null>(null)
     const pointerId = useRef<number | null>(null)
+    const pendingSelection = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const suppressGhostClick = useRef<{ x: number; y: number; until: number } | null>(null)
     const selectedIndex = arr.findIndex(i => i.value === selected)
     const [ indicator, setIndicator ] = useState(Math.max(0, selectedIndex))
 
@@ -27,9 +29,21 @@ export default function Selector<T extends string | number>({
         if (pointerId.current === null) setIndicator(Math.max(0, selectedIndex))
     }, [selectedIndex])
 
-    useEffect(() => () => {
-        pointerId.current = null
-        setDontHandle(false)
+    useEffect(() => {
+        const preventRetargetedClick = (event: MouseEvent) => {
+            const guard = suppressGhostClick.current
+            if (!guard || !event.isTrusted || performance.now() > guard.until) return
+            if (Math.hypot(event.clientX - guard.x, event.clientY - guard.y) > 26) return
+            event.preventDefault()
+            event.stopImmediatePropagation()
+        }
+        document.addEventListener("click", preventRetargetedClick, true)
+        return () => {
+            document.removeEventListener("click", preventRetargetedClick, true)
+            pointerId.current = null
+            if (pendingSelection.current !== null) clearTimeout(pendingSelection.current)
+            setDontHandle(false)
+        }
     }, [setDontHandle])
 
     const findIndex = (x: number) => {
@@ -64,6 +78,14 @@ export default function Selector<T extends string | number>({
         e.preventDefault()
 
         const index = findIndex(e.clientX)
+        if (e.pointerType === "touch") {
+            // iOS Safari may send a later click to a new background tile after tab rerender.
+            suppressGhostClick.current = {
+                x: e.clientX,
+                y: e.clientY,
+                until: performance.now() + 450
+            }
+        }
         pointerId.current = null
         if (e.currentTarget.hasPointerCapture(e.pointerId)) {
             e.currentTarget.releasePointerCapture(e.pointerId)
@@ -75,7 +97,14 @@ export default function Selector<T extends string | number>({
             return
         }
         setIndicator(index)
-        if (arr[index].value !== selected) arr[index].func(arr[index].value)
+        if (arr[index].value !== selected) {
+            if (pendingSelection.current !== null) clearTimeout(pendingSelection.current)
+            const next = arr[index]
+            pendingSelection.current = setTimeout(() => {
+                pendingSelection.current = null
+                next.func(next.value)
+            }, 40)
+        }
     }
 
     return (
@@ -93,6 +122,10 @@ export default function Selector<T extends string | number>({
             }}
             onTouchEnd={e => e.stopPropagation()}
             onTouchCancel={e => e.stopPropagation()}
+            onClickCapture={e => {
+                e.preventDefault()
+                e.stopPropagation()
+            }}
             onContextMenu={e => e.preventDefault()}
         >
             <div

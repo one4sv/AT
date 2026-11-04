@@ -186,7 +186,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setShowArchivedInAcc(res.data.show_archived_in_acc ?? false);
                 setWeekStart(res.data.week_start ?? null);
                 setBgUrl(res.data.bg_url ?? "");
-                setBgGallery(Array.isArray(res.data.bg_gallery) ? res.data.bg_gallery.slice(0, 5) : []);
+                setBgGallery(Array.isArray(res.data.bg_gallery) ? res.data.bg_gallery.slice(0, 6) : []);
                 setBgEffects(res.data.bg_effects ?? { blur: 0, movement: false, filter: "none" });
                 localStorage.setItem(
                     "settings_bg_url",

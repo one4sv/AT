@@ -254,6 +254,10 @@
     "empty": "Здесь пока нет ваших фонов",
     "selected": "Выбран",
     "blurBackground": "Размытие заднего фона",
-    "filters": "Фильтры"
+    "filters": "Фильтры",
+    "art": "Рисунки AchieveTogether",
+    "aurora": "Северное сияние",
+    "nebula": "Туманность",
+    "sunset": "Закат"
   }
 }

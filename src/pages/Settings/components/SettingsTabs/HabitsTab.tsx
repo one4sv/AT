@@ -128,7 +128,9 @@ export default function HabitsTab({ search }: { search: string }) {
                     {t("habits.schedule")}
                 </div>
                 <div className="habitTabDiv">
-                    <HighlightText text={t("habits.weekStartFrom")} search={search} />
+                    <div className="settingSpan">
+                        <HighlightText text={t("habits.weekStartFrom")} search={search} />
+                    </div>
                     <DatePicker
                         className="habitTabDP"
                         selected={weekStart ? new Date(weekStart) : null}

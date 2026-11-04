@@ -1,0 +1,141 @@
+.atScene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    isolation: isolate;
+
+    &--art {
+        background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--accent) 30%, #16162a), #0e101b 76%);
+    }
+
+    &--aurora {
+        background: radial-gradient(ellipse at 60% 110%, #11344b 5%, #050e24 75%);
+    }
+
+    &--nebula {
+        background:
+            radial-gradient(ellipse at 25% 30%, #974fb6aa, transparent 46%),
+            radial-gradient(ellipse at 82% 60%, #1ea5b9aa, transparent 47%),
+            radial-gradient(ellipse at 45% 80%, #f16a9d66, transparent 53%),
+            #090c23;
+    }
+
+    &--sunset {
+        background: linear-gradient(180deg, #263052 0%, #d66f82 42%, #ffb37d 73%, #3d5676 100%);
+    }
+}
+
+.atSceneArt {
+    position: absolute;
+    width: 45%;
+    aspect-ratio: 360 / 176;
+    opacity: .85;
+    filter: drop-shadow(0 0 1.7vw color-mix(in srgb, var(--accent) 35%, transparent));
+
+    .sectionArt {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+    &--center {
+        width: 64%;
+        top: 34%;
+        left: 18%;
+    }
+    &--left {
+        top: 9%;
+        left: -10%;
+        transform: rotate(-21deg);
+    }
+    &--right {
+        top: 7%;
+        right: -13%;
+        transform: rotate(18deg);
+    }
+    &--far {
+        bottom: 4%;
+        right: -9%;
+        width: 35%;
+        transform: rotate(-12deg);
+    }
+}
+
+.atAurora {
+    position: absolute;
+    height: 115%;
+    width: 50%;
+    top: -35%;
+    border-radius: 50%;
+    opacity: .85;
+    filter: blur(4.5vw);
+    transform: rotate(-19deg);
+    background: linear-gradient(90deg, transparent, #35e8a8bb, #a78ef1aa, transparent);
+
+    &--first { left: 7%; }
+    &--second {
+        left: 38%;
+        top: -26%;
+        background: linear-gradient(90deg, transparent, #53b9f3bb, #a667dbbb, transparent);
+        transform: rotate(13deg);
+    }
+    &--third {
+        left: 70%;
+        opacity: .65;
+        background: linear-gradient(90deg, transparent, #60f5c1cc, #56afcbbb, transparent);
+    }
+}
+
+.atAuroraStars, .atNebulaStars {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(#ffffffcc 1px, transparent 1.4px), radial-gradient(#ffffffff .7px, transparent 1.1px);
+    background-size: 6vw 8dvh, 9vw 12dvh;
+    background-position: 0 0, 4vw 3dvh;
+    opacity: .7;
+}
+
+.atNebulaStars {
+    background-size: 5vw 7dvh, 8vw 10dvh;
+}
+
+.atSun {
+    position: absolute;
+    left: 43%;
+    top: 36%;
+    width: 14%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #ffe5ba;
+    box-shadow: 0 0 7vw 2vw #ffd6a488;
+}
+
+.atHorizon {
+    position: absolute;
+    width: 150%;
+    height: 44%;
+    left: -25%;
+    bottom: -25%;
+    border-radius: 50% 50% 0 0;
+    background: #1b294a;
+
+    &--far {
+        bottom: -17%;
+        left: -8%;
+        background: #536180;
+        opacity: .7;
+    }
+}
+
+@media (max-width: 800px) {
+    .atAurora { filter: blur(13vw); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .atScene *, .atScene .sectionArt * {
+        animation: none !important;
+    }
+}

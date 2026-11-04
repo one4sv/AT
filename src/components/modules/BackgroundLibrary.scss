@@ -267,3 +267,36 @@
         transition: none;
     }
 }
+
+// Only the tile itself may react on hover; the old bgPick style also highlighted
+// the nested bgMini and created a second, overlapping hover effect.
+.backgroundLibraryModal {
+    .backgroundLibraryTile,
+    .backgroundLibraryTile:hover,
+    .backgroundLibraryTile:active {
+        background: transparent;
+        border: none;
+        border-radius: 24px;
+    }
+
+    .backgroundLibraryTile > .bgMini,
+    .backgroundLibraryTile .backgroundLibraryChoose > .bgMini {
+        position: relative;
+        border: none !important;
+        background-clip: padding-box;
+        transition: filter .2s ease;
+    }
+
+    .backgroundLibraryTile > span,
+    .backgroundLibraryTile .backgroundLibraryChoose > span {
+        text-align: center;
+    }
+
+    @media (hover: hover) {
+        .backgroundLibraryTile:hover > .bgMini,
+        .backgroundLibraryTile:hover .backgroundLibraryChoose > .bgMini {
+            filter: brightness(1.12);
+            border: none !important;
+        }
+    }
+}
