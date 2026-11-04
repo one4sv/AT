@@ -9,7 +9,7 @@ export function Background({ previewBg, previewUrl }: { previewBg?: string; prev
   const selectedBg = previewBg ?? bg;
   const selectedUrl = previewUrl ?? bgUrl;
 
-  if (!bgEffectsReady) return null;
+  if (!bgEffectsReady || selectedBg === "color") return null;
 
   const speed = Math.min(3, Math.max(0, bgEffects.speed ?? 1));
   const running = bgEffects.movement && speed > 0;
@@ -20,27 +20,28 @@ export function Background({ previewBg, previewUrl }: { previewBg?: string; prev
     "--scene-duration": `${18 / Math.max(speed, .25)}s`
   } as React.CSSProperties;
 
+  // Keep the clipping frame still. Filtering or transforming the frame itself
+  // cuts off blurred pixels and can expose its parent while it moves.
+  const frameStyle = {
+    "--background-bleed": `${Math.ceil(bgEffects.blur * 2 + 24)}px`
+  } as React.CSSProperties;
+
+  let canvas: React.ReactNode = null;
+
   if (selectedBg === "landing") {
-    return <div className="background landingBackground" style={effects} aria-hidden="true" />;
-  }
-
-  if (selectedBg === "default") {
-    return <div className="background" style={effects} aria-hidden="true"><BackIconsScene/></div>;
-  }
-
-  if (selectedBg === "color") {
-    return null;
-  }
-
-  if (isStockScene(selectedBg)) {
-    return <div className="background" style={effects} aria-hidden="true">
+    canvas = <div className="backgroundCanvas landingBackground" style={effects}/>;
+  } else if (selectedBg === "default") {
+    canvas = <div className="backgroundCanvas" style={effects}><BackIconsScene/></div>;
+  } else if (isStockScene(selectedBg)) {
+    canvas = <div className="backgroundCanvas" style={effects}>
       <BackgroundScene variant={selectedBg as StockScene} motion={running}/>
     </div>;
+  } else if (selectedBg === "custom") {
+    canvas = <div className="backgroundCanvas bgImg"
+      style={{ ...effects, backgroundImage: `url("${selectedUrl}")` }}/>;
   }
 
-  if (selectedBg === "custom") {
-    return <div className="background bgImg" style={{ ...effects, backgroundImage: `url("${selectedUrl}")` }} aria-hidden="true"/>;
-  }
+  if (!canvas) return null;
 
-  return null;
+  return <div className="background" style={frameStyle} aria-hidden="true">{canvas}</div>;
 }

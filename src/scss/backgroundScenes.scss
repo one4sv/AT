@@ -40,8 +40,9 @@
 
 .atScenePattern {
     position: absolute;
-    inset: 0;
-    overflow: hidden;
+    // Leave space for translated/rotating patterns; only the outer scene clips.
+    inset: -8%;
+    overflow: visible;
     pointer-events: none;
 }
 
@@ -487,6 +488,11 @@
 }
 .atScene--running.atScene--nebula .atScenePattern {
     animation: atFloat var(--scene-duration, 18s) ease-in-out infinite alternate;
+}
+
+// The orbit pattern rotates as a group: reserve enough room for its corners.
+.atScene--orbit .atScenePattern {
+    inset: -24%;
 }
 @keyframes atFloat {
     from { translate: -3% 0; }

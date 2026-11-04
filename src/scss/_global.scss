@@ -74,8 +74,13 @@ body {
     pointer-events: none;
     background-color: var(--bgc); /* Гарантия цвета */
 
-    > div {
+    > .backgroundCanvas {
         position: absolute;
+        inset: calc(-1 * var(--background-bleed, 24px));
+        width: auto;
+        height: auto;
+        background-color: var(--bgc);
+        transform-origin: center;
     }
 }
 
