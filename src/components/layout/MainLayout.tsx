@@ -20,7 +20,6 @@ import usePullToRefresh from "../hooks/utils/usePullToRefresh";
 import { CONTENT_REFRESH_EVENT, type ContentRefreshEvent } from "../ts/utils/contentRefresh";
 import { useHabits } from "../hooks/HabitsHook";
 import { useSchedule } from "../hooks/ScheduleHook";
-import { useCalendar } from "../hooks/CalendarHook";
 
 interface LayoutProps {
   children?: ReactNode;
