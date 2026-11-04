@@ -24,11 +24,27 @@
 
 @media (max-width: 800px) {
     .calendarDiv {
-        min-height: 51dvh;
+        height: 60dvh;
+        min-height: 60dvh;
         width: 100%;
     }
     .calendarMain {
+        display: flex;
+        flex-direction: column;
         height: 100%;
+        min-height: 60dvh;
+    }
+    .calendarSlider {
+        flex: 1;
+        min-height: 0;
+    }
+    .calendarDays {
+        height: 100%;
+        grid-auto-rows: 1fr;
+    }
+    .calDay {
+        aspect-ratio: auto;
+        min-height: 0;
     }
 }
 

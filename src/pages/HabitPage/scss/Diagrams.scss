@@ -3,7 +3,7 @@
     border: 1px solid var(--block_border);
     box-sizing: border-box;
     width: 100%;
-    min-height: 54dvh;
+    min-height: 70dvh;
     height: auto;
     display: flex;
     flex-direction: column;
@@ -14,7 +14,7 @@
     -webkit-backdrop-filter: blur(var(--blur));
 
     @media (max-width: 800px) {
-        min-height: 88dvh;
+        min-height: 108dvh;
         padding: .7dvh 2vw;
         margin-bottom: 1dvh;
     }
@@ -23,12 +23,16 @@
 .statsDivWrapper {
     display: flex;
     flex: 1;
-    min-height: 46dvh;
+    min-height: 62dvh;
     width: 100%;
     overflow: hidden;
     position: relative;
     scrollbar-width: none;
     touch-action: pan-y;
+
+    @media (max-width: 800px) {
+        min-height: 100dvh;
+    }
 }
 .statsDivSlider {
     display: flex;
