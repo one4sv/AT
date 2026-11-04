@@ -1,55 +1,25 @@
 import { useEffect } from "react";
-import { useSettings } from "./SettingsHook"; // путь твой
-
+import { useSettings } from "./SettingsHook";
+import { applyCustomPalette } from "../ts/utils/customPalette";
 export default function ThemeHandler() {
-  const { theme, accent, decor, blur } = useSettings();
-
-  function getSystemTheme(): "light" | "dark" {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  }
-
-  useEffect(() => {
-    if (!theme || !accent) return;
-
-    document.documentElement.setAttribute("data-accent", accent);
-    document.documentElement.setAttribute("data-decor", decor);
-
-    document.documentElement.style.setProperty(
-      "--blur",
-      `${blur}px`
-  );
-    // custom: если нужно — брать из настроек/localStorage и выставлять инлайн-переменные
-    if (accent === "custom") {
-      try {
-        const stored = localStorage.getItem("customAccent"); // { accent: "#...", darkerAccent: "#..." }
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (parsed.accent) document.documentElement.style.setProperty("--accent", parsed.accent);
-          if (parsed.darkerAccent) document.documentElement.style.setProperty("--darkerAccent", parsed.darkerAccent);
-        }
-      } catch (e) {
-        console.error("custom accent parse error", e);
-      }
-    } else {
-      // при смене предустановленного акцента можно удалить инлайн если были ранее установлены
-      document.documentElement.style.removeProperty("--accent");
-      document.documentElement.style.removeProperty("--darkerAccent");
-    }
-
-    if (theme === "system") {
-      document.documentElement.setAttribute("data-theme", getSystemTheme());
-
-      const media = window.matchMedia("(prefers-color-scheme: dark)");
-      const handler = (e: MediaQueryListEvent) => {
-        const newTheme = e.matches ? "dark" : "light";
-        document.documentElement.setAttribute("data-theme", newTheme);
-      };
-      media.addEventListener("change", handler);
-      return () => media.removeEventListener("change", handler);
-    } else {
-      document.documentElement.setAttribute("data-theme", theme);
-    }
-  }, [accent, theme, decor, blur]);
-
-  return null;
+    const { theme, accent, grad, decor, blur } = useSettings();
+    useEffect(() => {
+        const root = document.documentElement;
+        root.setAttribute("data-accent", accent);
+        root.setAttribute("data-grad", grad);
+        root.setAttribute("data-decor", decor);
+        root.style.setProperty("--blur", `${blur}px`);
+        const setTheme = () => {
+            root.setAttribute("data-theme", theme === "system"
+                ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+                : theme);
+            applyCustomPalette(accent, grad);
+        };
+        setTheme();
+        if (theme !== "system") return;
+        const media = window.matchMedia("(prefers-color-scheme: dark)");
+        media.addEventListener("change", setTheme);
+        return () => media.removeEventListener("change", setTheme);
+    }, [theme, accent, grad, decor, blur]);
+    return null;
 }

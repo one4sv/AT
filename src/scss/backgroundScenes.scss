@@ -185,3 +185,257 @@
         animation: none !important;
     }
 }
+
+
+// Ten theme-aware scenes. Their shapes use seeded positions in BackgroundScene.
+// Colors are always derived from --accent, --grad and --bgc.
+.atScene--retroDrive {
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--bgc) 65%, var(--grad)),
+        color-mix(in srgb, var(--accent) 55%, var(--grad)) 48%,
+        var(--bgc) 82%);
+}
+.atRetroSun {
+    position: absolute;
+    width: 25%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    left: 38%;
+    top: 20%;
+    background: linear-gradient(180deg, var(--accent), var(--grad));
+    box-shadow: 0 0 5vw color-mix(in srgb, var(--grad) 72%, transparent);
+}
+.atRetroMountains {
+    position: absolute;
+    inset: 36% 0 20%;
+    background: color-mix(in srgb, var(--bgc) 66%, var(--accent));
+    clip-path: polygon(0 95%, 0 50%, 12% 25%, 24% 62%, 39% 10%, 58% 67%, 71% 22%, 100% 72%, 100% 100%);
+}
+.atRetroRoad {
+    position: absolute;
+    bottom: -5%;
+    left: 0;
+    width: 100%;
+    height: 44%;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--bgc) 80%, var(--grad)), var(--bgc));
+    clip-path: polygon(41% 0, 59% 0, 100% 100%, 0 100%);
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(180deg,
+            transparent 0 12%, color-mix(in srgb, var(--accent) 78%, transparent) 12% 14%, transparent 14% 30%);
+    }
+}
+.atRetroCar {
+    position: absolute;
+    bottom: 13%;
+    left: -30%;
+    width: 29%;
+    filter: drop-shadow(0 1dvh 1vw var(--bgc));
+    svg { width: 100%; height: auto; }
+}
+.atScene--running .atRetroCar {
+    animation: atDrive calc(var(--scene-duration, 18s) * 1.1) linear infinite;
+}
+.atScene--running .atRetroRoad::after {
+    animation: atRoadScroll calc(var(--scene-duration, 18s) / 4) linear infinite;
+}
+@keyframes atDrive {
+    0% { translate: 0 0; }
+    100% { translate: 480% 0; }
+}
+@keyframes atRoadScroll {
+    to { background-position: 0 18dvh; }
+}
+
+.atScene--neonCity {
+    background:
+        radial-gradient(ellipse at 75% 35%, color-mix(in srgb, var(--grad) 55%, transparent), transparent 65%),
+        linear-gradient(180deg, var(--bgc), color-mix(in srgb, var(--bgc) 60%, var(--accent)));
+}
+.atScene--neonCity .atSceneParticle {
+    border-radius: 3px 3px 0 0;
+    height: 60% !important;
+    width: 4% !important;
+    top: auto !important;
+    bottom: -12%;
+    opacity: .72 !important;
+    transform: none !important;
+    background: repeating-linear-gradient(180deg,
+        var(--bgc) 0 7%, color-mix(in srgb, var(--accent) 90%, var(--bgc)) 7% 9%, var(--bgc) 9% 17%);
+    filter: drop-shadow(0 0 1vw var(--grad));
+}
+.atNeonCityGlow {
+    position: absolute;
+    inset: 58% 0 0;
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--grad) 30%, transparent));
+}
+.atScene--running .atNeonCityGlow {
+    animation: atPulse var(--scene-duration, 18s) ease-in-out infinite alternate;
+}
+
+.atScene--paintSplash {
+    background: radial-gradient(ellipse at center, color-mix(in srgb, var(--bgc) 65%, var(--accent)), var(--bgc));
+}
+.atScene--paintSplash .atSceneParticle {
+    border-radius: 12% 80% 23% 65%;
+    background: radial-gradient(ellipse at 30% 35%, var(--accent), var(--grad) 45%, transparent 72%);
+    filter: blur(.35vw);
+    mix-blend-mode: screen;
+}
+.atScene--running.atScene--paintSplash .atSceneParticle {
+    animation: atPulse var(--scene-duration, 18s) ease-in-out infinite alternate;
+}
+
+.atScene--liquid {
+    background: linear-gradient(135deg, var(--bgc), color-mix(in srgb, var(--bgc) 70%, var(--grad)));
+}
+.atScene--liquid .atSceneParticle {
+    border-radius: 61% 39% 72% 28%;
+    background: linear-gradient(145deg, var(--accent), var(--bgc) 38%, var(--grad) 78%, var(--accent));
+    box-shadow: inset 0 0 3vw color-mix(in srgb, var(--bgc) 70%, transparent);
+    filter: blur(.2vw);
+}
+.atScene--running.atScene--liquid .atScenePattern {
+    animation: atFloat var(--scene-duration, 18s) ease-in-out infinite alternate;
+}
+
+.atScene--prism {
+    background: linear-gradient(35deg, var(--bgc), color-mix(in srgb, var(--bgc) 70%, var(--accent)));
+}
+.atScene--prism .atSceneParticle {
+    clip-path: polygon(50% 0, 100% 76%, 9% 100%);
+    border-radius: 0;
+    background: linear-gradient(40deg, var(--accent), var(--grad), color-mix(in srgb, var(--accent) 25%, var(--bgc)));
+    filter: none;
+    opacity: .4;
+}
+.atScene--running.atScene--prism .atScenePattern {
+    animation: atFloat calc(var(--scene-duration, 18s) * 1.3) ease-in-out infinite alternate;
+}
+
+.atScene--laser {
+    background: radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--accent) 22%, transparent), var(--bgc) 77%);
+}
+.atScene--laser .atSceneParticle {
+    height: 140% !important;
+    width: 2px !important;
+    border-radius: 0;
+    background: linear-gradient(180deg, transparent, var(--accent) 28%, var(--grad), transparent 87%);
+    filter: drop-shadow(0 0 1vw var(--accent));
+}
+.atLaserFloor {
+    position: absolute;
+    left: -30%;
+    bottom: -30%;
+    width: 160%;
+    height: 85%;
+    transform: perspective(12vw) rotateX(58deg);
+    background:
+        repeating-linear-gradient(90deg, transparent 0 8%, var(--grad) 8% 8.2%),
+        repeating-linear-gradient(0deg, transparent 0 10%, var(--accent) 10% 10.3%);
+    opacity: .35;
+}
+.atScene--running.atScene--laser .atLaserFloor { animation: atRoadScroll calc(var(--scene-duration, 18s) / 2) linear infinite; }
+
+.atScene--waves {
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--bgc) 90%, var(--grad)),
+        color-mix(in srgb, var(--accent) 50%, var(--bgc)));
+}
+.atScene--waves .atSceneParticle {
+    border: .35vw solid var(--grad);
+    border-radius: 50%;
+    background: transparent;
+    filter: drop-shadow(0 0 .8vw var(--accent));
+}
+.atWaveHorizon {
+    position: absolute;
+    bottom: -20%;
+    left: -10%;
+    width: 120%;
+    height: 60%;
+    border-top: 1.5vw solid var(--accent);
+    border-radius: 50%;
+    opacity: .55;
+}
+.atScene--running.atScene--waves .atScenePattern {
+    animation: atFloat var(--scene-duration, 18s) ease-in-out infinite alternate;
+}
+
+.atScene--orbit {
+    background: radial-gradient(circle at 50% 48%, color-mix(in srgb, var(--accent) 16%, var(--bgc)), var(--bgc) 72%);
+}
+.atScene--orbit .atSceneParticle {
+    border: 1px solid var(--grad);
+    border-radius: 50%;
+    background: transparent;
+    filter: drop-shadow(0 0 .5vw var(--accent));
+}
+.atOrbitSun {
+    position: absolute;
+    left: 42%;
+    top: 34%;
+    width: 16%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, var(--accent), var(--grad));
+    box-shadow: 0 0 6vw var(--accent);
+}
+.atScene--running.atScene--orbit .atScenePattern {
+    animation: atOrbit var(--scene-duration, 18s) linear infinite;
+}
+
+.atScene--glitch {
+    background: linear-gradient(130deg, color-mix(in srgb, var(--bgc) 78%, var(--grad)), var(--bgc));
+}
+.atScene--glitch .atSceneParticle {
+    border-radius: 0;
+    height: 2% !important;
+    background: linear-gradient(90deg, transparent, var(--accent) 22%, var(--grad) 70%, transparent);
+    filter: none;
+}
+.atScene--running.atScene--glitch .atScenePattern {
+    animation: atGlitch calc(var(--scene-duration, 18s) / 3) steps(5, end) infinite alternate;
+}
+
+.atScene--petals {
+    background: radial-gradient(ellipse at 45% 40%, color-mix(in srgb, var(--grad) 22%, var(--bgc)), var(--bgc) 85%);
+}
+.atScene--petals .atSceneParticle {
+    width: 9% !important;
+    height: 22% !important;
+    border-radius: 80% 10% 80% 10%;
+    background: linear-gradient(130deg, var(--accent), var(--grad));
+    box-shadow: 0 0 1vw color-mix(in srgb, var(--grad) 60%, transparent);
+    filter: blur(.12vw);
+}
+.atScene--running.atScene--petals .atScenePattern {
+    animation: atFloat var(--scene-duration, 18s) ease-in-out infinite alternate;
+}
+.atScene--running.atScene--aurora .atAurora {
+    animation: atFloat var(--scene-duration, 18s) ease-in-out infinite alternate;
+}
+.atScene--running.atScene--nebula .atScenePattern {
+    animation: atFloat var(--scene-duration, 18s) ease-in-out infinite alternate;
+}
+@keyframes atFloat {
+    from { translate: -3% 0; }
+    to { translate: 3% 4%; }
+}
+@keyframes atPulse {
+    from { opacity: .35; }
+    to { opacity: .95; }
+}
+@keyframes atOrbit {
+    to { rotate: 360deg; }
+}
+@keyframes atGlitch {
+    0%, 100% { translate: 0 0; }
+    40% { translate: 3% 0; }
+    65% { translate: -2% 2%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .atScene--running *, .atScene--running *::after { animation: none !important; }
+}

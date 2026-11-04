@@ -1,6 +1,6 @@
 import { useSettings } from "../../hooks/SettingsHook";
 import { useBackIconsPattern } from "../../hooks/utils/useBackIconsPattern";
-import { BackgroundScene, type StockScene } from "./BackgroundScene";
+import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "./BackgroundScene";
 import "../../../scss/landingBackground.scss";
 
 export function Background() {
@@ -16,10 +16,13 @@ export function Background() {
     saturate: "saturate(1.8)"
   } as const)[bgEffects.filter] ?? "";
 
+  const speed = Math.min(3, Math.max(.5, bgEffects.speed ?? 1));
   const effects = {
     filter: `blur(${bgEffects.blur}px) ${filter}`,
-    animation: bgEffects.movement ? "atBackgroundDrift 24s ease-in-out infinite alternate" : undefined
-  };
+    animation: bgEffects.movement && supportsBackgroundMotion(bg) && !isStockScene(bg)
+      ? `atBackgroundDrift ${24 / speed}s ease-in-out infinite alternate` : undefined,
+    "--scene-duration": `${18 / speed}s`
+  } as React.CSSProperties;
 
   if (bg === "landing") {
     return <div className="background landingBackground" style={effects} aria-hidden="true" />;
@@ -33,9 +36,9 @@ export function Background() {
     return null;
   }
 
-  if (["art", "aurora", "nebula", "sunset"].includes(bg)) {
+  if (isStockScene(bg)) {
     return <div className="background" style={effects} aria-hidden="true">
-      <BackgroundScene variant={bg as StockScene}/>
+      <BackgroundScene variant={bg as StockScene} motion={bgEffects.movement}/>
     </div>;
   }
 

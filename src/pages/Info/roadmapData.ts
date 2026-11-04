@@ -43,7 +43,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.1",
-        title: { ru: "Foundation", en: "Foundation" },
+        title: { ru: "Начало", en: "Beginning" },
         features: [
             { ru: "Основа приложения и навигации", en: "Core application and navigation" }
         ]
@@ -69,7 +69,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.2",
-        title: { ru: "Привычки", en: "Habits" },
+        title: { ru: "Ритм", en: "Rhythm" },
         features: [
             { ru: "Основные инструменты привычек", en: "Core habit tools" }
         ]
@@ -102,7 +102,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.3",
-        title: { ru: "Связь", en: "Connections" },
+        title: { ru: "Диалог", en: "Dialogue" },
         features: [
             { ru: "Личные диалоги", en: "Direct conversations" }
         ]
@@ -147,7 +147,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.4",
-        title: { ru: "Сообщество", en: "Community" },
+        title: { ru: "Взаимодействие", en: "Interaction" },
         features: [
             { ru: "Публикации и взаимодействия", en: "Posts and interactions" }
         ]
@@ -212,8 +212,9 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.5",
-        title: { ru: "Интерфейс Афродиты", en: "Aphrodite Interface" },
+        title: { ru: "Афродита", en: "Aphrodite" },
         features: [
+            { ru: "Улучшение интерфейса", en: "Interface improvements" },
             { ru: "Групповые беседы", en: "Group chats" },
             { ru: "Новая визуальная основа AT", en: "Refined AT interface" }
         ]
@@ -221,18 +222,21 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.5.1",
         features: [
+            { ru: "Улучшение интерфейса", en: "Interface improvements" },
             { ru: "Архивация активностей", en: "Activity archive" }
         ]
     },
     {
         version: "0.5.2",
         features: [
+            { ru: "Улучшение интерфейса", en: "Interface improvements" },
             { ru: "Фильтрация содержимого SideMenu", en: "SideMenu content filters" }
         ]
     },
     {
         version: "0.5.3",
         features: [
+            { ru: "Улучшение интерфейса", en: "Interface improvements" },
             { ru: "Редизайн интерфейса", en: "Interface redesign" },
             { ru: "Совместный журнал", en: "Collaborative journal" }
         ]
@@ -240,6 +244,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.5.4",
         features: [
+            { ru: "Улучшение интерфейса", en: "Interface improvements" },
             { ru: "Таймер выполнения", en: "Completion timer" },
             { ru: "Счётчик прогресса", en: "Progress counter" }
         ]
@@ -247,6 +252,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.5.5",
         features: [
+            { ru: "Улучшение интерфейса", en: "Interface improvements" },
             { ru: "Расписание активностей", en: "Activity schedule" },
             { ru: "Фильтры SideMenu", en: "SideMenu filters" },
             { ru: "Периодичности дней и дней отдыха", en: "Active/rest-day cycles" },
@@ -256,6 +262,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.5.6",
         features: [
+            { ru: "Улучшение интерфейса", en: "Interface improvements" },
             { ru: "Обновление профиля", en: "Account page update" },
             { ru: "Редизайн настроек", en: "Settings redesign" },
             { ru: "Мобильная адаптация", en: "Mobile layout update" }
@@ -264,6 +271,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.5.7",
         features: [
+            { ru: "Улучшение интерфейса", en: "Interface improvements" },
             { ru: "Обновление регистрации", en: "Sign-in refresh" },
             { ru: "Информационный раздел", en: "Information pages" },
             { ru: "Персонализация и языки", en: "Personalization and languages" }
@@ -272,6 +280,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.5.8",
         features: [
+            { ru: "Улучшение интерфейса", en: "Interface improvements" },
             { ru: "Гостевой режим", en: "Guest access" },
             { ru: "Кнопки планирования", en: "Plan button" },
             { ru: "Статистика активностей", en: "Activity statistics" },
@@ -281,6 +290,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.5.9",
         features: [
+            { ru: "Улучшение интерфейса", en: "Interface improvements" },
             { ru: "Циклическая периодичность", en: "Cyclic activity scheduling" },
             { ru: "Улучшение модалок", en: "Modal improvements" },
             { ru: "Редактор и страницы постов: форматирование, медиа, комментарии и действия с публикациями", en: "Post editor and pages: rich text, media, comments and post actions" }
@@ -288,32 +298,43 @@ export const roadmapHistory: RoadmapRelease[] = [
     },
     {
         version: "0.6",
-        title: { ru: "Эра сотрудничества", en: "Era of Collaboration" },
+        title: { ru: "Вместе", en: "Together" },
         features: [
             { ru: "Совместные активности и активности внутри бесед", en: "Shared activities and activities in group chats" },
             { ru: "Личное или общее выполнение для участников", en: "Personal or shared completion for participants" }
+        ]
+    },
+    {
+        version: "0.6.1",
+        features: [
+            { ru: "Восстановление и смена пароля", en: "Password recovery and password changes" },
+            { ru: "Авторизованные устройства и управление сессиями", en: "Authorized devices and session management" },
+            { ru: "Настройки cookies и улучшения безопасности входа", en: "Cookie preferences and sign-in security improvements" },
+            { ru: "Исправления интерфейса и навигации", en: "Interface and navigation fixes" }
         ]
     }
 ];
 
 export const roadmapCurrent: RoadmapRelease = {
-    version: "0.6.1",
+    version: "0.6.2",
+    title: { ru: "Новая палитра", en: "New palette" },
     features: [
-        { ru: "Восстановление и смена пароля", en: "Password recovery and password changes" },
-        { ru: "Авторизованные устройства и управление сессиями", en: "Authorized devices and session management" },
-        { ru: "Настройки cookies и улучшения безопасности входа", en: "Cookie preferences and sign-in security improvements" },
-        { ru: "Исправления интерфейса и навигации", en: "Interface and navigation fixes" }
+        { ru: "Новая статистика активностей и исправление расписания", en: "Refreshed activity statistics and schedule layout fixes" },
+        { ru: "Собственные цвета акцента и градиента", en: "Custom accent and gradient colors" },
+        { ru: "Десять новых стандартных фонов и анимации", en: "Ten new built-in backgrounds and animations" },
+        { ru: "Настройка скорости анимации фонов", en: "Configurable background animation speed" },
+        { ru: "Улучшения мобильного интерфейса", en: "Mobile interface improvements" }
     ],
     notice: {
-        ru: "Тестирование совместных активностей, прав и редактора ещё продолжается",
-        en: "QA for shared activities, permissions and the editor is still in progress"
+        ru: "Продолжается тестирование на мобильных устройствах",
+        en: "Mobile device testing is ongoing"
     }
 };
 
 export const roadmapFuture: RoadmapRelease[] = [
     {
         version: "0.7",
-        title: { ru: "Споты", en: "Spots" },
+        title: { ru: "Пространства", en: "Spaces" },
         features: [
             { ru: "Споты — пространства для сообществ и интересов", en: "Spots — spaces for communities and shared interests" },
             { ru: "Публикации и обсуждения внутри спотов", en: "Posts and discussions within spots" },

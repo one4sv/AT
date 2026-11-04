@@ -21,6 +21,7 @@ import HabitTaskEditor from './HabitTaskEditor';
 import WelcomeMessageInfo from './WelcomeMessageInfo';
 import QuickActionPicker from './QuickActionPicker';
 import BackgroundLibrary from './BackgroundLibrary';
+import CustomThemeColor from './CustomThemeColor';
 
 const ModuleMap: Record<string, React.FC> = {
     ConfirmAction:ConfirmAction,
@@ -45,6 +46,7 @@ const ModuleMap: Record<string, React.FC> = {
     WelcomeMessageInfo:WelcomeMessageInfo,
     QuickActionPicker:QuickActionPicker,
     BackgroundLibrary:BackgroundLibrary,
+    CustomThemeColor:CustomThemeColor,
     Table:Table
 };
 

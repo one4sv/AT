@@ -300,3 +300,13 @@
         }
     }
 }
+
+.backgroundLibraryChoose {
+    position: relative;
+    > .bgMini { width: 100%; }
+}
+.backgroundLibraryTile:has(.backgroundLibraryChoose) {
+    gap: 0;
+    padding-bottom: .4dvh;
+    .backgroundLibraryCheck { bottom: .8dvh; right: 1vw; }
+}

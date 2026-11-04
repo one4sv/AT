@@ -1,7 +1,13 @@
 import SectionArt from "../SectionArt";
 import "../../../scss/backgroundScenes.scss";
 
-export type StockScene = "art" | "aurora" | "nebula" | "sunset";
+export const stockScenes = ["art", "aurora", "nebula", "sunset", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals"] as const;
+export type StockScene = typeof stockScenes[number];
+export const isStockScene = (id: string): id is StockScene =>
+    (stockScenes as readonly string[]).includes(id);
+const animated: readonly string[] = ["aurora", "nebula", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals"];
+export const supportsBackgroundMotion = (bg: string) =>
+    bg === "custom" || bg === "default" || bg === "landing" || animated.includes(bg);
 
 type Particle = {
     x: number;
@@ -36,12 +42,22 @@ const patterns: Record<StockScene, Particle[]> = {
     art: createPattern(721, 14),
     aurora: createPattern(1337, 16),
     nebula: createPattern(4099, 22),
-    sunset: createPattern(911, 12)
+    sunset: createPattern(911, 12),
+    retroDrive: createPattern(701, 15),
+    neonCity: createPattern(1584, 15),
+    paintSplash: createPattern(2467, 28),
+    liquid: createPattern(3350, 15),
+    prism: createPattern(4233, 15),
+    laser: createPattern(5116, 15),
+    waves: createPattern(5999, 15),
+    orbit: createPattern(6882, 15),
+    glitch: createPattern(7765, 15),
+    petals: createPattern(8648, 24)
 };
 
-export function BackgroundScene({ variant }: { variant: StockScene }) {
+export function BackgroundScene({ variant, motion = false }: { variant: StockScene; motion?: boolean }) {
     return (
-        <div className={`atScene atScene--${variant}`} aria-hidden="true">
+        <div className={`atScene atScene--${variant} ${motion ? "atScene--running" : ""}`} aria-hidden="true">
             <div className="atScenePattern">
                 {patterns[variant].map((particle, index) => (
                     <span key={index}
@@ -73,6 +89,24 @@ export function BackgroundScene({ variant }: { variant: StockScene }) {
                 <div className="atHorizon atHorizon--far"/>
                 <div className="atHorizon atHorizon--near"/>
             </>}
+            {variant === "retroDrive" && <>
+                <div className="atRetroSun"/>
+                <div className="atRetroMountains"/>
+                <div className="atRetroRoad"/>
+                <div className="atRetroCar">
+                    <svg viewBox="0 0 180 80" fill="none" focusable="false">
+                        <path d="M12 42h18l26-23h63l27 23h18v21H12Z" fill="var(--accent)"/>
+                        <path d="m58 24-18 18h42V24Zm31 0v18h48l-20-18Z" fill="var(--bgc)" opacity=".9"/>
+                        <path d="M17 53h146" stroke="var(--grad)" strokeWidth="7"/>
+                        <circle cx="49" cy="62" r="14" fill="var(--bgc)" stroke="var(--grad)" strokeWidth="5"/>
+                        <circle cx="133" cy="62" r="14" fill="var(--bgc)" stroke="var(--grad)" strokeWidth="5"/>
+                    </svg>
+                </div>
+            </>}
+            {variant === "neonCity" && <div className="atNeonCityGlow"/>}
+            {variant === "laser" && <div className="atLaserFloor"/>}
+            {variant === "orbit" && <div className="atOrbitSun"/>}
+            {variant === "waves" && <div className="atWaveHorizon"/>}
         </div>
     );
 }

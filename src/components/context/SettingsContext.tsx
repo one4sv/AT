@@ -17,6 +17,7 @@ export type BackgroundEffects = {
     blur: number;
     movement: boolean;
     filter: "none" | "grayscale" | "sepia" | "invert" | "contrast" | "saturate";
+    speed: number;
 };
 
 export interface SettingsContextType {
@@ -152,7 +153,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         }
     });
     const [ bgGallery, setBgGallery ] = useState<SavedBackground[]>([]);
-    const [ bgEffects, setBgEffects ] = useState<BackgroundEffects>({ blur: 0, movement: false, filter: "none" });
+    const [ bgEffects, setBgEffects ] = useState<BackgroundEffects>({ blur: 0, movement: false, filter: "none", speed: 1 });
     const [ groupInvites, setGroupInvites ] = useState<GroupInviteRules>({ contacts: "message", others: "none" });
     const [ chatWelcome, setChatWelcome ] = useState<ChatWelcomeSettings>({ enabled: false, text: "" });
     const [ quickActions, setQuickActions ] = useState<QuickAction[]>([]);
@@ -187,7 +188,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setWeekStart(res.data.week_start ?? null);
                 setBgUrl(res.data.bg_url ?? "");
                 setBgGallery(Array.isArray(res.data.bg_gallery) ? res.data.bg_gallery.slice(0, 6) : []);
-                setBgEffects(res.data.bg_effects ?? { blur: 0, movement: false, filter: "none" });
+                setBgEffects({ blur: 0, movement: false, filter: "none", speed: 1, ...res.data.bg_effects });
                 localStorage.setItem(
                     "settings_bg_url",
                     JSON.stringify(res.data.bg_url ?? "")

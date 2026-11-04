@@ -7,10 +7,11 @@ import Toggler from "../../../../components/ts/Toggler";
 import SeekBar from "../SeekBar";
 import HighlightText from "../../../../components/ts/HighlightText";
 import type { BackgroundEffects } from "../../../../components/context/SettingsContext";
+import { supportsBackgroundMotion } from "../../../../components/ts/utils/BackgroundScene";
 
 export default function BackgroundEffectsSettings({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { bgEffects, setBgEffects, refetchSettings } = useSettings();
+    const { bg, bgEffects, setBgEffects, refetchSettings } = useSettings();
     const { showNotification } = useNote();
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -32,6 +33,7 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
         }, 450);
     };
 
+    const motionAvailable = supportsBackgroundMotion(bg);
     const filters: BackgroundEffects["filter"][] = ["none", "grayscale", "sepia", "invert", "contrast", "saturate"];
 
     return (
@@ -44,10 +46,19 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
                     onChange={value => update({ ...bgEffects, blur: value })} disabled={false} step={1}/>
             </div>
             <div className="settingInnerWrapper" data-setting-id="backgroundMovement">
-                <div className="settingTogglerDiv" onClick={() => update({ ...bgEffects, movement: !bgEffects.movement })}>
+                <div className={`settingTogglerDiv ${!motionAvailable ? "disabled" : ""}`}
+                    onClick={() => { if (motionAvailable) update({ ...bgEffects, movement: !bgEffects.movement }); }}>
                     <HighlightText text={t("backgroundLibrary.movement")} search={search}/>
-                    <Toggler state={bgEffects.movement}/>
+                    <Toggler state={motionAvailable && bgEffects.movement}/>
                 </div>
+            </div>
+            <div className="settingInnerWrapper" data-setting-id="backgroundSpeed">
+                <div className={`settingSpan ${!motionAvailable || !bgEffects.movement ? "disabled" : ""}`}>
+                    <HighlightText text={t("backgroundLibrary.speed")} search={search}/> — {(bgEffects.speed ?? 1).toFixed(2)}×
+                </div>
+                <SeekBar id="backgroundSpeed" min={0.5} max={3} step={0.25} value={bgEffects.speed ?? 1}
+                    disabled={!motionAvailable || !bgEffects.movement}
+                    onChange={speed => update({ ...bgEffects, speed })}/>
             </div>
             <div className="settingSpan" data-setting-id="backgroundFilters">
                 <HighlightText text={t("backgroundLibrary.filters")} search={search}/>

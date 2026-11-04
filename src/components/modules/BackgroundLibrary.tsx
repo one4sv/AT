@@ -7,7 +7,7 @@ import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
 import { useBackIconsPattern } from "../hooks/utils/useBackIconsPattern";
 import Selector from "../ts/Selector";
-import { BackgroundScene, type StockScene } from "../ts/utils/BackgroundScene";
+import { BackgroundScene, type StockScene, isStockScene } from "../ts/utils/BackgroundScene";
 import { api } from "../ts/api";
 import "./BackgroundLibrary.scss";
 import "../../scss/Loading.scss";
@@ -84,7 +84,17 @@ export default function BackgroundLibrary() {
         { id: "art", label: t("backgroundLibrary.art") },
         { id: "aurora", label: t("backgroundLibrary.aurora") },
         { id: "nebula", label: t("backgroundLibrary.nebula") },
-        { id: "sunset", label: t("backgroundLibrary.sunset") }
+        { id: "sunset", label: t("backgroundLibrary.sunset") },
+        { id: "retroDrive", label: t("backgroundLibrary.retroDrive") },
+        { id: "neonCity", label: t("backgroundLibrary.neonCity") },
+        { id: "paintSplash", label: t("backgroundLibrary.paintSplash") },
+        { id: "liquid", label: t("backgroundLibrary.liquid") },
+        { id: "prism", label: t("backgroundLibrary.prism") },
+        { id: "laser", label: t("backgroundLibrary.laser") },
+        { id: "waves", label: t("backgroundLibrary.waves") },
+        { id: "orbit", label: t("backgroundLibrary.orbit") },
+        { id: "glitch", label: t("backgroundLibrary.glitch") },
+        { id: "petals", label: t("backgroundLibrary.petals") }
     ];
 
     return (
@@ -124,7 +134,7 @@ export default function BackgroundLibrary() {
                                     <div className="bgImg bgMini landingBackground"/> :
                                     item.id === "default" ?
                                         <div className="bgImg bgMini">{backIconsPattern}</div> :
-                                        ["art", "aurora", "nebula", "sunset"].includes(item.id) ?
+                                        isStockScene(item.id) ?
                                         <div className="bgImg bgMini"><BackgroundScene variant={item.id as StockScene}/></div> :
                                         <div className="bgImg bgMini"/>}
                                 <span className={bg === item.id ? "bgSpanChoosen" : ""}>{item.label}</span>
@@ -136,10 +146,7 @@ export default function BackgroundLibrary() {
                                 <button type="button" className="backgroundLibraryChoose" disabled={saving}
                                     onClick={() => void selectCustom(item.url)}>
                                     <CustomBackgroundThumb url={item.url}/>
-                                    <span className={bg === "custom" && bgUrl === item.url ? "bgSpanChoosen" : ""}>
-                                        {t("backgroundLibrary.change")}
-                                    </span>
-                                    {bg === "custom" && bgUrl === item.url && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
+                                     {bg === "custom" && bgUrl === item.url && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
                                 </button>
                                 <button type="button" className="backgroundLibraryDelete"
                                     disabled={saving} aria-label={t("backgroundLibrary.delete")}

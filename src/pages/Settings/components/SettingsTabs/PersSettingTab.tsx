@@ -16,7 +16,7 @@ import "../../../../scss/landingBackground.scss";
 
 import SectionArt from "../../../../components/ts/SectionArt";
 import BackgroundEffectsSettings from "./BackgroundEffectsSettings";
-import { BackgroundScene, type StockScene } from "../../../../components/ts/utils/BackgroundScene";
+import { BackgroundScene, type StockScene, isStockScene } from "../../../../components/ts/utils/BackgroundScene";
 
 export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
@@ -101,7 +101,7 @@ export default function PersSettingTab({ search }: { search: string }) {
                         {bg === "custom" && bgUrl ?
                             <img className="bgManagePreview" src={bgUrl} alt=""/> :
                             <div className={`bgManagePreview ${bg === "landing" ? "landingBackground" : ""}`}>
-                                {["art", "aurora", "nebula", "sunset"].includes(bg) &&
+                                {isStockScene(bg) &&
                                     <BackgroundScene variant={bg as StockScene}/>}
                             </div>}
                         <span>{t("backgroundLibrary.change")}</span>

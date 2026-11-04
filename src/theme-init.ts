@@ -1,3 +1,4 @@
+import { applyCustomPalette } from "./components/ts/utils/customPalette";
 (() => {
     try {
         const theme = JSON.parse(
@@ -44,6 +45,7 @@
             "data-decor",
             decor
         );
+        applyCustomPalette(accent, grad);
     } catch (e) {
         console.error(e);
     }
