@@ -5,7 +5,9 @@ import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotio
 import "../../../scss/landingBackground.scss";
 
 export function Background() {
-  const { bg, bgUrl, bgEffects } = useSettings();
+  const { bg, bgUrl, bgEffects, bgEffectsReady } = useSettings();
+
+  if (!bgEffectsReady) return null;
 
   const speed = Math.min(3, Math.max(0, bgEffects.speed ?? 1));
   const running = bgEffects.movement && speed > 0;

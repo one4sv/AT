@@ -1,4 +1,4 @@
-import { createContext, useState, useCallback, useEffect } from "react";
+import { createContext, useState, useCallback, useEffect, useMemo, useRef } from "react";
 import type { ReactNode, SetStateAction } from "react";
 import axios from "axios";
 import { useUser } from "../hooks/UserHook";
@@ -6,6 +6,7 @@ import useLocalStorage from "../hooks/utils/useLocalStorage";
 import i18n from "../../i18n/i18n";
 import { api } from "../ts/api";
 import { applyCustomPalette } from "../ts/utils/customPalette";
+import { defaultBackgroundEffects, hasCachedBackgroundEffects, normalizeBackgroundEffects } from "../ts/utils/backgroundEffects";
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
@@ -61,6 +62,7 @@ export interface SettingsContextType {
     bgGallery: SavedBackground[];
     setBgGallery: React.Dispatch<React.SetStateAction<SavedBackground[]>>;
     bgEffects: BackgroundEffects;
+    bgEffectsReady: boolean;
     setBgEffects: React.Dispatch<React.SetStateAction<BackgroundEffects>>;
     privateShow: PrivateSettings;
     setPrivate: React.Dispatch<React.SetStateAction<PrivateSettings>>;
@@ -112,6 +114,7 @@ const LOCAL_KEYS = {
     blur: "settings_blur",
     layout: "settings_layout",
     bg: "settings_bg",
+    bgEffects: "settings_bg_effects",
     decor: "settings_decor",
     emote:"settings_emote",
     messdb:"settings_messdb",
@@ -130,6 +133,15 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ blur, setBlur ] = useLocalStorage(LOCAL_KEYS.blur, 6);
     const [ layout, setLayout ] = useLocalStorage(LOCAL_KEYS.layout, "always");
     const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "landing");
+    const [ storedBgEffects, setStoredBgEffects ] = useLocalStorage<BackgroundEffects>(LOCAL_KEYS.bgEffects, defaultBackgroundEffects);
+    const bgEffects = useMemo(() => normalizeBackgroundEffects(storedBgEffects), [storedBgEffects]);
+    const setBgEffects = useCallback<React.Dispatch<React.SetStateAction<BackgroundEffects>>>(next => {
+        setStoredBgEffects(previous => normalizeBackgroundEffects(
+            typeof next === "function" ? next(normalizeBackgroundEffects(previous)) : next
+        ));
+    }, [setStoredBgEffects]);
+    const hasLocalBgEffects = useMemo(() => hasCachedBackgroundEffects(user.nick, initialLoading), [user.nick, initialLoading]);
+    const hydratedBgEffectsFor = useRef<string | null>(null);
     const [ decor, setDecor ] = useLocalStorage(LOCAL_KEYS.decor, "glass");
     const [ lang, setLang ] = useLocalStorage(LOCAL_KEYS.lang, "ru");
     const [ emote, setEmote ] = useLocalStorage(LOCAL_KEYS.emote, "Heart")
@@ -154,7 +166,6 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         }
     });
     const [ bgGallery, setBgGallery ] = useState<SavedBackground[]>([]);
-    const [ bgEffects, setBgEffects ] = useState<BackgroundEffects>({ blur: 0, movement: false, filter: "none", speed: 1 });
     const [ groupInvites, setGroupInvites ] = useState<GroupInviteRules>({ contacts: "message", others: "none" });
     const [ chatWelcome, setChatWelcome ] = useState<ChatWelcomeSettings>({ enabled: false, text: "" });
     const [ quickActions, setQuickActions ] = useState<QuickAction[]>([]);
@@ -164,7 +175,9 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ showArchivedInAcc, setShowArchivedInAcc ] = useState<boolean>(false);
     const [ weekStart, setWeekStart ] = useState<string | null>(null);
     const [ tab, setTab ] = useState<string>('menu');
-    const [ settingsLoaded, setSettingsLoaded ] = useState(false);
+    const [ loadedSettingsFor, setLoadedSettingsFor ] = useState<string | null>(null);
+    const settingsLoaded = !initialLoading && (!user.nick || loadedSettingsFor === user.nick);
+    const bgEffectsReady = hasLocalBgEffects || settingsLoaded;
 
     useEffect(() => {
         i18n.changeLanguage(lang);
@@ -189,7 +202,10 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setWeekStart(res.data.week_start ?? null);
                 setBgUrl(res.data.bg_url ?? "");
                 setBgGallery(Array.isArray(res.data.bg_gallery) ? res.data.bg_gallery.slice(0, 6) : []);
-                setBgEffects({ blur: 0, movement: false, filter: "none", speed: 1, ...res.data.bg_effects });
+                if (hydratedBgEffectsFor.current !== user.nick) {
+                    if (!hasLocalBgEffects) setBgEffects(normalizeBackgroundEffects(res.data.bg_effects));
+                    hydratedBgEffectsFor.current = user.nick;
+                }
                 localStorage.setItem(
                     "settings_bg_url",
                     JSON.stringify(res.data.bg_url ?? "")
@@ -199,21 +215,18 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             if (axios.isAxiosError(err) && err.response?.status === 401) return;
             console.error("Ошибка загрузки настроек:", err);
         }
-    }, [setMessNote, setNote]);
+    }, [setMessNote, setNote, setBgEffects, hasLocalBgEffects, user.nick]);
 
     useEffect(() => {
         if (initialLoading) return;
 
-        if (!user.nick) {
-            setSettingsLoaded(true);
-            return;
-        }
+        if (!user.nick) return;
 
         const init = async () => {
             try {
                 await refetchSettings();
             } finally {
-                setSettingsLoaded(true);
+                setLoadedSettingsFor(user.nick);
             }
         };
 
@@ -238,7 +251,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             layout, setLayout,
             bg, setBg,
             decor, setDecor,
-            bgUrl, bgGallery, setBgGallery, bgEffects, setBgEffects, lang, setLang,
+            bgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, lang, setLang,
             privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
             twoAuth, setTwoAuth,
             note, setNote,
