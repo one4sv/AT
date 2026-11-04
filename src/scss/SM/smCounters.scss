@@ -97,7 +97,7 @@
 .SMnavExtraDiv {
     &.chats, &.habits {
         background: var(--interact);
-        border: 1px solid var(--block_border);
+        border: none;
         transform: translateY(8px) scale(.96);
         transition:
             left .3s ease,
