@@ -19,6 +19,7 @@ import HabitCollaborationSettings from './HabitCollaborationSettings';
 import HabitDayActivityHistory from './HabitDayActivityHistory';
 import HabitTaskEditor from './HabitTaskEditor';
 import WelcomeMessageInfo from './WelcomeMessageInfo';
+import QuickActionPicker from './QuickActionPicker';
 
 const ModuleMap: Record<string, React.FC> = {
     ConfirmAction:ConfirmAction,
@@ -41,6 +42,7 @@ const ModuleMap: Record<string, React.FC> = {
     HabitDayActivityHistory:HabitDayActivityHistory,
     HabitTaskEditor:HabitTaskEditor,
     WelcomeMessageInfo:WelcomeMessageInfo,
+    QuickActionPicker:QuickActionPicker,
     Table:Table
 };
 

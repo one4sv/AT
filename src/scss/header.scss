@@ -119,3 +119,14 @@
     touch-action: none;
     -webkit-touch-callout: none;
 }
+
+.headerDiv [data-header-gesture] {
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.ContextMenuWrapper .ContextMenuButt.touchHover {
+    background: var(--accent_hov);
+    color: var(--tc);
+}

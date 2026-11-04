@@ -42,7 +42,8 @@ export default function SideMenu() {
         messageSelectedValue,
         habitsSelectedValue,
         setDontHandle,
-        setDontHandleOther
+        setDontHandleOther,
+        dontHandleOther
     } = useSideMenu();
     const translateSlider = activeTab === "chats" ? 0 : activeTab === "habits" ? -25 : activeTab === "spots" ? -50 : activeTab === "user" ? -75 : 0;
     const startX = useRef(0);
@@ -65,6 +66,8 @@ export default function SideMenu() {
         verticalScroll.current = false;
     };
     const handleTouchMove = (e: React.TouchEvent) => {
+        // Header gestures have priority over SideMenu horizontal swipe.
+        if (dontHandleOther) return;
         const clientX = e.touches[0].clientX;
         const clientY = e.touches[0].clientY;
         const diffPx = clientX - startX.current;

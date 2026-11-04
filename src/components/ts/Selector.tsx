@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, type ElementType } from "react"
+import { useEffect, useRef, useState, type ElementType } from "react"
 import "../../scss/selector.scss"
 import { useSideMenu } from "../hooks/SideMenuHook"
 
@@ -22,66 +22,42 @@ export default function Selector<T extends string | number>({
     const timerRef = useRef<number | null>(null)
     const longPress = useRef(false)
     const dragging = useRef(false)
-
-    const width = 100 / arr.length
+    const pressed = useRef(false)
     const selectedIndex = arr.findIndex(i => i.value === selected)
-
-    const [indicator, setIndicator] = useState(0)
-
-    const setSelectedPosition = useCallback(() => {
-        if (dragging.current) return
-
-        const selector = selectorRef.current
-        if (!selector) return
-
-        const itemWidth = selector.getBoundingClientRect().width / arr.length
-        setIndicator(selectedIndex * itemWidth)
-    }, [selectedIndex, arr.length])
+    const [ indicator, setIndicator ] = useState(Math.max(0, selectedIndex))
 
     useEffect(() => {
-        setSelectedPosition()
+        if (!dragging.current) setIndicator(Math.max(0, selectedIndex))
+    }, [selectedIndex])
 
-        window.addEventListener('resize', setSelectedPosition)
-        return () => window.removeEventListener('resize', setSelectedPosition)
-    }, [setSelectedPosition])
+    useEffect(() => () => {
+        if (timerRef.current) clearTimeout(timerRef.current)
+        setDontHandle(false)
+    }, [setDontHandle])
 
     const changeByPosition = (x: number) => {
-        if (dontHandleOther) return
+        if (dontHandleOther || !arr.length) return
         const selector = selectorRef.current
         if (!selector) return
 
         const rect = selector.getBoundingClientRect()
-        const itemWidth = rect.width / arr.length
+        const index = Math.max(0, Math.min(arr.length - 1, Math.floor((x - rect.left) / (rect.width / arr.length))))
+        setIndicator(index)
 
-        let position = x - rect.left - itemWidth / 2
-
-        if (position < 0) position = 0
-        if (position > rect.width - itemWidth) position = rect.width - itemWidth
-
-        setIndicator(position)
-
-        let index = Math.floor((x - rect.left) / itemWidth)
-        index = Math.max(0, Math.min(index, arr.length - 1))
-
-        if (arr[index] && arr[index].value !== selected) {
-            arr[index].func(arr[index].value)
-        }
+        if (arr[index] && arr[index].value !== selected) arr[index].func(arr[index].value)
     }
 
     const startLongPress = (x: number) => {
         if (dontHandleOther) return
 
+        pressed.current = true
         longPress.current = false
         dragging.current = false
-
-        if (timerRef.current) {
-            clearTimeout(timerRef.current)
-        }
-
-        // Сразу блокируем меню (ещё до long-press)
+        if (timerRef.current) clearTimeout(timerRef.current)
         setDontHandle(true)
 
         timerRef.current = window.setTimeout(() => {
+            if (!pressed.current) return
             longPress.current = true
             dragging.current = true
             changeByPosition(x)
@@ -89,27 +65,21 @@ export default function Selector<T extends string | number>({
     }
 
     const move = (x: number) => {
-        if (dontHandleOther) return
-        if (!dragging.current) return
+        if (!dragging.current || dontHandleOther) return
         changeByPosition(x)
     }
 
     const end = () => {
-        if (dontHandleOther) return
-
+        pressed.current = false
         if (timerRef.current) {
             clearTimeout(timerRef.current)
             timerRef.current = null
         }
 
+        if (dragging.current) dragging.current = false
+        else setIndicator(Math.max(0, selectedIndex))
+
         longPress.current = false
-
-        if (dragging.current) {
-            dragging.current = false
-            setSelectedPosition()
-        }
-
-        // Всегда снимаем блокировку
         setDontHandle(false)
     }
 
@@ -117,19 +87,19 @@ export default function Selector<T extends string | number>({
         <div
             className="selector"
             ref={selectorRef}
-            onMouseMove={(e) => move(e.clientX)}
+            onMouseMove={e => move(e.clientX)}
             onMouseUp={end}
             onMouseLeave={end}
-            onTouchMove={(e) => {
+            onTouchMove={e => {
                 if (dontHandleOther) return
-                e.stopPropagation()          // ← важно
+                e.stopPropagation()
                 move(e.touches[0].clientX)
             }}
-            onTouchEnd={(e) => {
+            onTouchEnd={e => {
                 e.stopPropagation()
                 end()
             }}
-            onTouchCancel={(e) => {
+            onTouchCancel={e => {
                 e.stopPropagation()
                 end()
             }}
@@ -137,45 +107,42 @@ export default function Selector<T extends string | number>({
             <div
                 className="selectedItem"
                 style={{
-                    width: `${width}%`,
-                    transform: `translateX(${indicator}px)`
+                    width: `${100 / arr.length}%`,
+                    transform: `translateX(${indicator * 100}%)`
                 }}
             />
 
             {arr.map((i, n) => (
                 <div
                     className="selectorElement"
-                    style={{ width: `${width}%` }}
+                    style={{ width: `${100 / arr.length}%` }}
                     key={n}
-                    onMouseDown={(e) => {
+                    onMouseDown={e => {
                         e.stopPropagation()
                         startLongPress(e.clientX)
                     }}
                     onMouseUp={() => {
                         if (!longPress.current) {
+                            setIndicator(n)
                             i.func(i.value)
                         }
                     }}
-                    onTouchStart={(e) => {
+                    onTouchStart={e => {
                         if (dontHandleOther) return
-                        e.stopPropagation()      // ← критично: не даём событию уйти в MobileLayout
-                        const touch = e.touches[0]
-                        startLongPress(touch.clientX)
+                        e.stopPropagation()
+                        startLongPress(e.touches[0].clientX)
                     }}
-                    onTouchEnd={(e) => {
+                    onTouchEnd={e => {
                         if (dontHandleOther) return
                         e.stopPropagation()
                         if (!longPress.current) {
+                            setIndicator(n)
                             i.func(i.value)
                         }
                     }}
-                    onContextMenu={(e) => e.preventDefault()}
+                    onContextMenu={e => e.preventDefault()}
                 >
-                    <span
-                        className={`selectorSpan ${
-                            i.value === selected ? "chosen" : ""
-                        }`}
-                    >
+                    <span className={`selectorSpan ${i.value === selected ? "chosen" : ""}`}>
                         {i.icon ? <i.icon size={20} weight="fill" /> : ""}
                         {i.label}
                     </span>

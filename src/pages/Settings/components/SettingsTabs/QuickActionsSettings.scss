@@ -1,5 +1,3 @@
-@use "../../../../scss/mixins" as var;
-
 .quickActionsSettings {
     display: flex;
     flex-direction: column;
@@ -7,7 +5,7 @@
     min-width: 0;
 }
 
-.quickActionSelected, .quickActionPicker {
+.quickActionSelected, .quickActionAdd {
     min-width: 0;
     display: flex;
     align-items: center;
@@ -85,99 +83,140 @@
     }
 }
 
-.quickActionPicker {
+.quickActionAdd {
+    border: none;
+    width: 100%;
+    color: var(--tc);
+    cursor: pointer;
+    font: inherit;
+
     > svg {
-        flex-shrink: 0;
         color: var(--accent_text);
+        flex-shrink: 0;
     }
 
-    .quickActionsSelect {
-        flex: 1;
-        min-width: 0;
+    &:disabled {
+        opacity: .5;
+        cursor: default;
     }
-}
 
-.quickActionCandidates {
-    display: flex;
-    flex-direction: column;
-    gap: .5dvh;
-    min-width: 0;
-
-    > input {
-        border: 1px solid var(--block_border);
-        border-radius: 24px;
-        box-sizing: border-box;
-        background: var(--interact);
-        color: var(--tc);
-        padding: 1dvh 1vw;
-        width: 100%;
-        outline: none;
-
-        @media (max-width: 800px) {
-            padding: 1.25dvh 3vw;
+    @media (hover: hover) {
+        &:not(:disabled):hover {
+            background: var(--menuButtHover);
         }
     }
 }
 
-.quickActionCandidatesList {
-    max-height: 30dvh;
-    overflow-y: auto;
+.quickActionModal {
+    width: min(35vw, 90vw);
+    max-height: 75dvh;
+    min-height: 0;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: .25dvh;
+    gap: 1.5dvh;
+    padding: 2dvh 1.5vw;
+    border-radius: 24px;
+    background: var(--bgc);
+    color: var(--tc);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    @media (max-width: 800px) {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        max-height: 85dvh;
+        max-width: 100%;
+        padding: 3dvh 4vw calc(2dvh + env(safe-area-inset-bottom));
+        border-radius: 24px 24px 0 0;
+    }
+}
+
+.quickActionModalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2vw;
+    flex-shrink: 0;
+    font-size: 20px;
 
     > button {
         display: flex;
         align-items: center;
-        width: 100%;
-        min-width: 0;
+        justify-content: center;
+        color: var(--tc);
         border: none;
-        border-radius: 24px;
-        background: var(--interact);
+        background: none;
+        padding: .5dvh;
         cursor: pointer;
-        padding: 1dvh 1vw;
-
-        &:disabled {
-            opacity: .4;
-            cursor: default;
-        }
-
-        @media (hover: hover) {
-            &:not(:disabled):hover {
-                background: var(--menuButtHover);
-            }
-        }
-        @media (max-width: 800px) {
-            padding: 1dvh 3vw;
-        }
     }
 }
 
-.quickActionsSelect {
-    @include var.selectList(100%, fit-content, 2dvh, .8vw, 1dvh, var(--borderWh), var(--tc), var(--bgc), 16px, 1dvh, 1vw, .5dvh);
+.quickActionModalSearch {
+    box-sizing: border-box;
+    flex-shrink: 0;
+    min-height: 5dvh;
+    width: 100%;
+    border: none;
+    outline: none;
+    border-radius: 24px;
+    padding: 1dvh 1vw;
+    background: var(--interact);
+    color: var(--tc);
+    font: inherit;
 
-    > input {
-        @include var.input(var(--mc), var(--tc), var(--tr), 4dvh, 24px, var(--accent));
-        width: 100%;
-        min-width: 0;
-        box-sizing: border-box;
-        border: none;
-        padding: 1dvh 3vw 1dvh 1vw;
-        cursor: pointer;
+    @media (max-width: 800px) {
+        padding: 1.3dvh 3vw;
+    }
+}
 
-        @media (max-width: 800px) {
-            padding: 1dvh 8vw 1dvh 3vw;
+.quickActionModalList {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    min-height: 0;
+    gap: .5dvh;
+    scrollbar-width: thin;
+}
+
+.quickActionModalOption {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 24px;
+    padding: 1dvh 1vw;
+    cursor: pointer;
+    color: var(--tc);
+    background: transparent;
+    text-align: start;
+    font: inherit;
+
+    &:disabled {
+        opacity: .4;
+        cursor: default;
+    }
+
+    @media (hover: hover) {
+        &:not(:disabled):hover {
+            background: var(--menuButtHover);
         }
     }
 
-    > div {
-        max-height: 34dvh;
-        overflow-y: auto;
-        border-radius: 24px;
-        scrollbar-width: thin;
-
-        > div {
-            white-space: normal;
-        }
+    @media (max-width: 800px) {
+        padding: 1.2dvh 3vw;
     }
+}
+
+.quickActionModalEmpty {
+    color: var(--borderHabit);
+    padding: 1dvh 1vw;
 }
