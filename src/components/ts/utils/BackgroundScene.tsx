@@ -1,4 +1,5 @@
 import SectionArt from "../SectionArt";
+import type { ArtTheme } from "../SectionArt";
 import type { CSSProperties } from "react";
 import type { ContourPattern } from "../../context/SettingsContext";
 import "../../../scss/backgroundScenes.scss";
@@ -57,6 +58,51 @@ const patterns: Record<StockScene, Particle[]> = {
     petals: createPattern(8648, 24)
 };
 
+// All available SectionArt motifs can appear in the chaotic wallpaper.
+// A per-load seed gives a fresh composition, shared by the page and thumbnails.
+const artThemes: ArtTheme[] = [
+    "general", "account", "personalization", "habits", "chats",
+    "notifications", "security", "privacy", "about", "contacts",
+    "faq", "policy", "terms", "growth", "future", "community", "roadmap"
+];
+
+function createArtChaos() {
+    let seed = Math.floor(Math.random() * 4294967296);
+    const random = () => {
+        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+        return seed / 4294967296;
+    };
+
+    const themes = [...artThemes];
+    for (let i = themes.length - 1; i > 0; i--) {
+        const index = Math.floor(random() * (i + 1));
+        [themes[i], themes[index]] = [themes[index], themes[i]];
+    }
+
+    const positions: { x: number; y: number }[] = [];
+    return themes.slice(0, 8).map(theme => {
+        let x = 0;
+        let y = 0;
+        for (let attempt = 0; attempt < 35; attempt++) {
+            x = 2 + random() * 70;
+            y = 2 + random() * 82;
+            if (positions.every(item => Math.hypot((item.x - x) * 1.2, item.y - y) > 19)) break;
+        }
+        positions.push({ x, y });
+
+        return {
+            theme,
+            x,
+            y,
+            width: 23 + random() * 11,
+            rotation: random() * 38 - 19,
+            delay: -random() * 9
+        };
+    });
+}
+
+const chaoticArtwork = createArtChaos();
+
 const neonTowers = [
     { x: 0, w: 9, h: 43 }, { x: 8, w: 7, h: 62 }, { x: 14, w: 9, h: 49 },
     { x: 22, w: 10, h: 83 }, { x: 31, w: 8, h: 57 }, { x: 38, w: 11, h: 72 },
@@ -83,12 +129,25 @@ export function BackgroundScene({ variant, motion = false, artPattern = "order",
                     />
                 ))}
             </div>
-            {variant === "art" && <>
-                <div className="atSceneArt atSceneArt--center"><SectionArt theme="personalization" mini/></div>
-                <div className="atSceneArt atSceneArt--left"><SectionArt theme="habits" mini/></div>
-                <div className="atSceneArt atSceneArt--right"><SectionArt theme="chats" mini/></div>
-                <div className="atSceneArt atSceneArt--far"><SectionArt theme="notifications" mini/></div>
-            </>}
+            {variant === "art" && (artPattern === "chaos" ?
+                chaoticArtwork.map((item, index) => (
+                    <div key={item.theme} className="atSceneArt atSceneArt--scattered"
+                        style={{
+                            left: `${item.x}%`,
+                            top: `${item.y}%`,
+                            width: `${item.width}%`,
+                            rotate: `${item.rotation}deg`,
+                            animationDelay: `${item.delay}s`,
+                            zIndex: index + 1
+                        }}>
+                        <SectionArt theme={item.theme} mini/>
+                    </div>
+                )) : <>
+                    <div className="atSceneArt atSceneArt--center"><SectionArt theme="personalization" mini/></div>
+                    <div className="atSceneArt atSceneArt--left"><SectionArt theme="habits" mini/></div>
+                    <div className="atSceneArt atSceneArt--right"><SectionArt theme="chats" mini/></div>
+                    <div className="atSceneArt atSceneArt--far"><SectionArt theme="notifications" mini/></div>
+                </>)
             {variant === "aurora" && <>
                 <div className="atAurora atAurora--first"/>
                 <div className="atAurora atAurora--second"/>
