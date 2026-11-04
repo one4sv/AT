@@ -134,6 +134,8 @@
     "background": "Background",
     "landingBackground": "Accent glow",
     "addCustom": "Add custom",
+        "customColors": "Custom colors",
+        "saveColors": "Save colors",
         "customAccent": "Custom accent color",
         "customGrad": "Custom gradient color",
         "pickColor": "Choose color",

@@ -400,9 +400,10 @@
     font: inherit;
     padding: .6dvh 1vw;
     cursor: pointer;
+    margin-top: 1dvh;
     &.active { background: var(--menuButtHover); }
     @media (hover: hover) { &:hover { background: var(--menuButtHover); } }
-    @media (max-width: 800px) { padding: .9dvh 3vw; gap: 2vw; }
+    @media (max-width: 800px) { padding: 1dvh 3vw; gap: 2vw; }
 }
 .customPaletteSwatch {
     display: inline-block;
@@ -411,10 +412,5 @@
     flex: 0 0 2dvh;
     border-radius: 50%;
     border: 1px solid var(--block_border);
+    background: linear-gradient(135deg, var(--accent), var(--grad));
 }
-.colorSelector:has(.customPaletteOpen) {
-    height: auto;
-    min-height: 9dvh;
-    gap: .5dvh;
-}
-.colorSelector:has(.customPaletteOpen) .colorSelectorWrapper { min-height: 5dvh; }

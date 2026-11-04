@@ -17,7 +17,6 @@ import "../../../../scss/landingBackground.scss";
 import SectionArt from "../../../../components/ts/SectionArt";
 import BackgroundEffectsSettings from "./BackgroundEffectsSettings";
 import { BackgroundScene, type StockScene, isStockScene } from "../../../../components/ts/utils/BackgroundScene";
-import { getCustomHex } from "../../../../components/ts/utils/customPalette";
 
 export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
@@ -75,21 +74,16 @@ export default function PersSettingTab({ search }: { search: string }) {
                     <div className="colorSelector" data-setting-id="mainColor">
                         <span className="colorTitle"><HighlightText text={t("personalization.mainColor")} search={search} /></span>
                         <ColorSelector arr={accentArr} value={accent} setNew={setNewAccent}/>
-                        <button type="button" className={`customPaletteOpen ${accent === "custom" ? "active" : ""}`}
-                            onClick={() => setBlackout({ seted: true, module: "CustomThemeColor", options: { id: "accent" } })}>
-                            <span className="customPaletteSwatch" style={{ backgroundColor: accent === "custom" ? "var(--accent)" : getCustomHex("accent") }}/>
-                            {t("personalization.customAccent")}
-                        </button>
                     </div>
                     <div className="colorSelector" data-setting-id="grad">
                         <span className="colorTitle"><HighlightText text={t("personalization.gradient")} search={search} /></span>
                         <ColorSelector arr={gradArr} value={grad} setNew={setNewGrad}/>
-                        <button type="button" className={`customPaletteOpen ${grad === "custom" ? "active" : ""}`}
-                            onClick={() => setBlackout({ seted: true, module: "CustomThemeColor", options: { id: "grad" } })}>
-                            <span className="customPaletteSwatch" style={{ backgroundColor: grad === "custom" ? "var(--grad)" : getCustomHex("grad") }}/>
-                            {t("personalization.customGrad")}
-                        </button>
                     </div>
+                    <button type="button" className={`customPaletteOpen ${accent === "custom" || grad === "custom" ? "active" : ""}`}
+                        onClick={() => setBlackout({ seted: true, module: "CustomThemeColor" })}>
+                        <span className="customPaletteSwatch" aria-hidden="true"/>
+                        {t("personalization.customColors")}
+                    </button>
                 </div>
             </div>
             <div className="settingInnerDiv">

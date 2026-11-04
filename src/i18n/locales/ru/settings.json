@@ -134,6 +134,8 @@
     "background": "Задний фон",
     "landingBackground": "Акцентное свечение",
     "addCustom": "Добавить свой",
+        "customColors": "Свои цвета",
+        "saveColors": "Сохранить цвета",
         "customAccent": "Свой акцентный цвет",
         "customGrad": "Свой цвет градиента",
         "pickColor": "Выбрать цвет",
