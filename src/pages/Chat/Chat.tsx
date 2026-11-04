@@ -242,8 +242,8 @@ export default function Chat() {
                     <LoaderSmall />
                 </div>}
 
-                {!hadMessagesRef.current && messages.length === 0 && !id &&
-                    chatWith?.nick === nick && chatWith.id !== user.id && chatWith.welcome_message &&
+                {!hadMessagesRef.current && messages.length === 0 && !id && chatWith &&
+                    chatWith.nick === nick && chatWith.id !== user.id && chatWith.welcome_message &&
                     <WelcomeMessage person={chatWith} text={chatWith.welcome_message}/>
                 }
                 {grouped.map(
