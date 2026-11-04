@@ -185,8 +185,9 @@ export default function Settings() {
 
     const settingSearch = () => (
         <div className="settingSearch">
+            <MagnifyingGlassIcon className="settingSearchIcon" size={20} aria-hidden="true"/>
             <input
-                type="text"
+                type="search"
                 className="settingSearchInput"
                 placeholder="Поиск..."
                 value={search}
@@ -194,9 +195,17 @@ export default function Settings() {
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setIsSearchFocused(false)}
             />
-            <div onClick={() => setSearch("")}>
-                {search.trim() !== "" ? <XIcon /> : <MagnifyingGlassIcon />}
-            </div>
+            {search && (
+                <button
+                    type="button"
+                    className="settingSearchClear"
+                    aria-label="Очистить поиск"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => setSearch("")}
+                >
+                    <XIcon size={18}/>
+                </button>
+            )}
         </div>
     );
 

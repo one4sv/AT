@@ -70,62 +70,90 @@
 
 .settingSearch {
     height: 5dvh;
-    max-height: 5dvh;
+    min-height: 5dvh;
+    box-sizing: border-box;
     flex: 1;
-    position: relative;
-    background: var(--interact);
-    border-radius: 24px;
+    min-width: 0;
     display: flex;
     align-items: center;
+    gap: 0.6vw;
+    padding: 0 0.65vw;
+    background: var(--interact);
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    overflow: hidden;
+
+    &:focus-within {
+        border-color: var(--accent_text);
+    }
+
     @media (max-width: 800px) {
         margin: 0;
-    }
-    >div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: absolute;
-        width: 5vh;
-        height: 5dvh;
-        right: 0;
-        cursor: pointer;
-        color: var(--tc);
-        @media (hover: hover) {
-            &:hover {
-                background: var(--on_con_menu_mess);
-                color: var(--tc);
-            }
-        }
-        @media (hover: none) {
-            &:active {
-                background: var(--on_con_menu_mess);
-                color: var(--tc);
-            }
-        }
-        >svg {
-            width: 3vh;
-            height: 3dvh;
-            flex-shrink: 0;
-        }
+        gap: 2vw;
+        padding: 0 3vw;
     }
 }
 
+.settingSearchIcon {
+    flex-shrink: 0;
+    color: var(--borderWh);
+}
+
 .settingSearchInput {
-    @include var.input(var(--tr), var(--tc), none, 100%, 24px, var(--none));
     width: 100%;
-    padding: 0.4vh 0.5vw;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    font-size: 16px;
+    line-height: normal;
+    color: var(--tc);
+    background: transparent;
     border: none;
     outline: none;
-    border: 1px solid var(--block_border);
+    appearance: none;
+    -webkit-appearance: none;
+
     &::placeholder {
         color: var(--borderHabit);
     }
-    @media (max-width:800px) {
-        padding-right: 10vw;
-        padding-inline-start: 3vw;
+
+    &::-webkit-search-cancel-button {
+        display: none;
+    }
+}
+
+.settingSearchClear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5dvh;
+    height: 3.5dvh;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+    background: transparent;
+    color: var(--borderWh);
+    cursor: pointer;
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--on_con_menu_mess);
+            color: var(--tc);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background: var(--on_con_menu_mess);
+            color: var(--tc);
+        }
     }
 }
 
