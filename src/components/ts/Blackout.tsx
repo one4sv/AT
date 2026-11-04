@@ -210,7 +210,7 @@ export default function Blackout() {
 
 
     const handleTouchStart = (e: React.TouchEvent, index: number) => {
-        if (index !== topIndex || isClosing.current) return;
+        if (index !== topIndex || isClosing.current || visibleStack[index]?.module === "BackgroundFullscreen") return;
 
         const target = e.target as HTMLElement;
         // Controls never own the swipe-down-to-dismiss gesture.
@@ -412,7 +412,7 @@ export default function Blackout() {
                             }
                         }}
                     >
-                        {isTop && isMobile && !item.img && <div className="mobileBar" />}
+                        {isTop && isMobile && !item.img && item.module !== "BackgroundFullscreen" && <div className="mobileBar" />}
                         {Component ? <Component /> : null}
                     </div>
                 );

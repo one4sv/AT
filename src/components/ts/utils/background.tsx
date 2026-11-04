@@ -4,8 +4,10 @@ import { getBackgroundFilter } from "./backgroundFilter";
 import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "./BackgroundScene";
 import "../../../scss/landingBackground.scss";
 
-export function Background() {
+export function Background({ previewBg, previewUrl }: { previewBg?: string; previewUrl?: string } = {}) {
   const { bg, bgUrl, bgEffects, bgEffectsReady } = useSettings();
+  const selectedBg = previewBg ?? bg;
+  const selectedUrl = previewUrl ?? bgUrl;
 
   if (!bgEffectsReady) return null;
 
@@ -13,31 +15,31 @@ export function Background() {
   const running = bgEffects.movement && speed > 0;
   const effects = {
     filter: getBackgroundFilter(bgEffects),
-    animation: running && supportsBackgroundMotion(bg) && !isStockScene(bg)
+    animation: running && supportsBackgroundMotion(selectedBg) && !isStockScene(selectedBg)
       ? `atBackgroundDrift ${24 / speed}s ease-in-out infinite alternate` : undefined,
     "--scene-duration": `${18 / Math.max(speed, .25)}s`
   } as React.CSSProperties;
 
-  if (bg === "landing") {
+  if (selectedBg === "landing") {
     return <div className="background landingBackground" style={effects} aria-hidden="true" />;
   }
 
-  if (bg === "default") {
+  if (selectedBg === "default") {
     return <div className="background" style={effects} aria-hidden="true"><BackIconsScene/></div>;
   }
 
-  if (bg === "color") {
+  if (selectedBg === "color") {
     return null;
   }
 
-  if (isStockScene(bg)) {
+  if (isStockScene(selectedBg)) {
     return <div className="background" style={effects} aria-hidden="true">
-      <BackgroundScene variant={bg as StockScene} motion={running}/>
+      <BackgroundScene variant={selectedBg as StockScene} motion={running}/>
     </div>;
   }
 
-  if (bg === "custom") {
-    return <div className="background bgImg" style={{ ...effects, backgroundImage: `url("${bgUrl}")` }} aria-hidden="true"/>;
+  if (selectedBg === "custom") {
+    return <div className="background bgImg" style={{ ...effects, backgroundImage: `url("${selectedUrl}")` }} aria-hidden="true"/>;
   }
 
   return null;

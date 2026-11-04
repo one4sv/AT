@@ -1,0 +1,75 @@
+.blackoutModule > .backgroundFullscreenView {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: var(--bgc);
+    border: none;
+    border-radius: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    animation: backgroundFullscreenEnter .32s cubic-bezier(.2, .8, .2, 1) both;
+
+    &.closing {
+        animation: backgroundFullscreenLeave .28s cubic-bezier(.4, 0, .8, .2) both;
+        pointer-events: none;
+    }
+
+    > .background {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+}
+
+.backgroundFullscreenBottom {
+    justify-content: center;
+    z-index: 2;
+    pointer-events: none;
+    padding-bottom: max(3dvh, env(safe-area-inset-bottom));
+}
+
+.backgroundFullscreenExit {
+    pointer-events: auto;
+    flex: 0 0 5dvh;
+    color: var(--tc);
+    transition: background-color .2s ease, transform .2s ease;
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--menuButtHover);
+            transform: scale(1.08);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background: var(--menuButtHover);
+        }
+    }
+}
+
+@keyframes backgroundFullscreenEnter {
+    from { opacity: 0; scale: .96; translate: 0 1.5dvh; }
+    to { opacity: 1; scale: 1; translate: 0 0; }
+}
+
+@keyframes backgroundFullscreenLeave {
+    from { opacity: 1; scale: 1; translate: 0 0; }
+    to { opacity: 0; scale: .96; translate: 0 1.5dvh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blackoutModule > .backgroundFullscreenView,
+    .blackoutModule > .backgroundFullscreenView.closing {
+        animation: none;
+    }
+
+    .backgroundFullscreenExit {
+        transition: none;
+    }
+}

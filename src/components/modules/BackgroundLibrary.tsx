@@ -1,5 +1,5 @@
 import { useRef, useState, type CSSProperties } from "react";
-import { CheckCircleIcon, PlusCircleIcon, TrashIcon } from "@phosphor-icons/react";
+import { ArrowsOutIcon, CheckCircleIcon, PlusCircleIcon, TrashIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../hooks/SettingsHook";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
@@ -55,6 +55,11 @@ export default function BackgroundLibrary() {
         } finally {
             setSaving(false);
         }
+    };
+
+    const previewBackground = (id: string, url?: string) => {
+        if (saving) return;
+        setBlackout({ seted: true, module: "BackgroundFullscreen", options: { id, url } });
     };
 
     const deleteCustom = (url: string) => {
@@ -150,10 +155,11 @@ export default function BackgroundLibrary() {
                                 <div className="backgroundLibrarySectionTitle">{t(`backgroundLibrary.${group.id}`)}</div>
                                 <div className="backgroundLibraryGrid">
                                     {group.items.map(item => (
-                                        <button type="button" key={item.id}
-                                            className={`bgPick backgroundLibraryTile ${bg === item.id ? "active" : ""}`}
-                                            onClick={() => selectStock(item.id)}>
-                                            {item.id === "landing" ?
+                                        <div key={item.id}
+                                            className={`bgPick backgroundLibraryTile ${bg === item.id ? "active" : ""}`}>
+                                            <button type="button" className="backgroundLibraryChoose"
+                                                onClick={() => selectStock(item.id)}>
+                                                {item.id === "landing" ?
                                                 <div className="bgImg bgMini landingBackground" style={previewStyle}/> :
                                                 item.id === "default" ?
                                                     <div className="bgImg bgMini" style={previewStyle}><BackIconsScene/></div> :
@@ -162,9 +168,15 @@ export default function BackgroundLibrary() {
                                                             <BackgroundScene variant={item.id as StockScene} motion={supportsBackgroundMotion(item.id) && (bgEffects.speed ?? 1) > 0}/>
                                                         </div> :
                                                         <div className="bgImg bgMini" style={previewStyle}/>}
-                                            <span className={bg === item.id ? "bgSpanChoosen" : ""}>{item.label}</span>
-                                            {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
-                                        </button>
+                                                <span className={bg === item.id ? "bgSpanChoosen" : ""}>{item.label}</span>
+                                                {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
+                                            </button>
+                                            <button type="button" className="backgroundLibraryPreview"
+                                                aria-label={t("backgroundLibrary.preview")} title={t("backgroundLibrary.preview")}
+                                                onClick={() => previewBackground(item.id)}>
+                                                <ArrowsOutIcon size={20}/>
+                                            </button>
+                                        </div>
                                     ))}
                                 </div>
                             </section>
@@ -183,6 +195,12 @@ export default function BackgroundLibrary() {
                                     disabled={saving} aria-label={t("backgroundLibrary.delete")}
                                     onClick={() => deleteCustom(item.url)}>
                                     <TrashIcon size={19}/>
+                                </button>
+                                <button type="button" className="backgroundLibraryPreview"
+                                    disabled={saving} aria-label={t("backgroundLibrary.preview")}
+                                    title={t("backgroundLibrary.preview")}
+                                    onClick={() => previewBackground("custom", item.url)}>
+                                    <ArrowsOutIcon size={20}/>
                                 </button>
                             </div>
                         ))}

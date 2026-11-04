@@ -246,6 +246,8 @@
     "add": "Add background",
     "limit": "You can store at most six backgrounds",
     "delete": "Delete background",
+    "preview": "Preview background",
+    "exitPreview": "Exit full-screen preview",
     "deleteQuestion": "Delete this background?",
     "deleteHint": "The image will be removed from your library.",
     "blur": "Blur",
