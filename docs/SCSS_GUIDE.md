@@ -467,3 +467,7 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
 
 - В `BackgroundLibrary` выбор фона подсвечивается **локально на миниатюре**, а не border вокруг всей `.backgroundLibraryTile`. Для выбранной `.backgroundLibraryChoose > .bgMini` — `outline: 1px solid var(--accent)` и `outline-offset: -1px`, без изменения геометрии/размера изображения; у самой карточки border:none. Локальное выделение обновляется при клике, выбор пользовательского фона откатывается при ошибке API.
 - У `.customPaletteSwatch` («Свои цвета») **border: none** при всех состояниях, так как кругляшок сам имеет `background: linear-gradient(135deg, var(--accent), var(--grad))`. Не добавлять ему `var(--block_border)` даже в нейтральной кнопке вокруг.
+
+## Размер текста новых кнопок — обязательное правило
+
+**ТЕКСТ КНОПОК ПО УМОЛЧАНИЮ — `font-size: 16px`, ЕСЛИ ПОЛЬЗОВАТЕЛЬ ЯВНО НЕ УКАЗАЛ ДРУГОЕ.** Это относится к `backgroundLibraryAdd` и ко всем новым кнопкам. Не назначать `font-weight` и не менять размеры уже существующих кнопок без запроса.

@@ -201,3 +201,10 @@
 
 - В `BackgroundLibrary` выбор фона подсвечивается **локально на миниатюре**, а не border вокруг всей `.backgroundLibraryTile`. Для выбранной `.backgroundLibraryChoose > .bgMini` — `outline: 1px solid var(--accent)` и `outline-offset: -1px`, без изменения геометрии/размера изображения; у самой карточки border:none. Локальное выделение обновляется при клике, выбор пользовательского фона откатывается при ошибке API.
 - У `.customPaletteSwatch` («Свои цвета») **border: none** при всех состояниях, так как кругляшок сам имеет `background: linear-gradient(135deg, var(--accent), var(--grad))`. Не добавлять ему `var(--block_border)` даже в нейтральной кнопке вокруг.
+
+### 05.11.2026 — выбор обоев только на текущем устройстве
+
+- Выбранный тип фона `settings_bg` и URL выбранного собственного изображения `settings_bg_url` **хранятся только в локальном хранилище устройства** (`useLocalStorage`, ключи аккаунта и кэш оформления). При открытии второго устройства выбранный фон **не переносится**.
+- `SettingsContext.refetchSettings` **не должен** перезаписывать `bgUrl` из `/settings`. В `BackgroundLibrary.selectCustom` **не отправлять** `POST /backgrounds/select`: вызывать локально `setBgUrl(url)` и `setNewBg("custom")`. После загрузки через `uploadbg` выбранный URL берётся из ответа API и сохраняется локально.
+- На сервере общими остаются только загруженные файлы и список `bg_gallery`, но **не выбранный URL**. `uploadbg` и `backgrounds/delete` не обновляют `settings.bg_url`, endpoint `backgrounds/select` удалён, `GET /settings` не возвращает `bg_url`. Удаление выбранного изображения на текущем устройстве переводит фон на `landing`; другие устройства не должны менять свой выбор.
+- Совместимость: старый локальный ключ `settings_bg_url` используется как начальное значение при переходе на ключ `useLocalStorage`. Не импортировать выбранный URL из серверной БД. **Текст новых кнопок 16px по умолчанию**. `backgroundLibraryAdd` имеет явный `font-size:16px`.
