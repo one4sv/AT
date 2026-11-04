@@ -22,8 +22,8 @@ export default function HabitsTab({ search }: { search: string }) {
 
     useEffect(() => {
         if (!drag.current && Array.isArray(orderHabits)) {
-            currentOrder.current = [...orderHabits];
-            setDisplayOrder([...orderHabits]);
+            currentOrder.current = Array.isArray(orderHabits) ? [...orderHabits] : [];
+            setDisplayOrder(currentOrder.current);
         }
     }, [orderHabits]);
 
