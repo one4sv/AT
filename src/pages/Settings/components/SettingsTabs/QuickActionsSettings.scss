@@ -1,3 +1,5 @@
+@use "../../../../scss/mixins" as var;
+
 .quickActionsSettings {
     display: flex;
     flex-direction: column;
@@ -147,6 +149,35 @@
         }
         @media (max-width: 800px) {
             padding: 1dvh 3vw;
+        }
+    }
+}
+
+.quickActionsSelect {
+    @include var.selectList(100%, fit-content, 2dvh, .8vw, 1dvh, var(--borderWh), var(--tc), var(--bgc), 16px, 1dvh, 1vw, .5dvh);
+
+    > input {
+        @include var.input(var(--mc), var(--tc), var(--tr), 4dvh, 24px, var(--accent));
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        border: none;
+        padding: 1dvh 3vw 1dvh 1vw;
+        cursor: pointer;
+
+        @media (max-width: 800px) {
+            padding: 1dvh 8vw 1dvh 3vw;
+        }
+    }
+
+    > div {
+        max-height: 34dvh;
+        overflow-y: auto;
+        border-radius: 24px;
+        scrollbar-width: thin;
+
+        > div {
+            white-space: normal;
         }
     }
 }

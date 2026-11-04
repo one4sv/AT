@@ -97,7 +97,7 @@ export default function QuickActionsSettings({ search }: { search: string }) {
                     <>
                         <div className="quickActionPicker">
                             <PlusIcon size={20}/>
-                            <SelectList className="quickActionsSelect" arr={choices}
+                            <SelectList key={quickActions.map(action => action.type + (action.target || "")).join(",")} className="quickActionsSelect" arr={choices}
                                 placeholder={t("general.quickActionsSelect")} selected={kind}
                                 onChange={choose}/>
                         </div>
