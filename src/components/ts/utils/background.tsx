@@ -5,10 +5,11 @@ import { getBackgroundFilter } from "./backgroundFilter";
 import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "./BackgroundScene";
 import "../../../scss/landingBackground.scss";
 
-export function Background({ previewBg, previewUrl, previewEffects, previewContourPattern }: { previewBg?: string; previewUrl?: string; previewEffects?: BackgroundEffects; previewContourPattern?: ContourPattern } = {}) {
-  const { bg, bgUrl, bgEffects, bgEffectsReady, contourPattern } = useSettings();
+export function Background({ previewBg, previewUrl, previewEffects, previewContourPattern, previewContourSize }: { previewBg?: string; previewUrl?: string; previewEffects?: BackgroundEffects; previewContourPattern?: ContourPattern; previewContourSize?: number } = {}) {
+  const { bg, bgUrl, bgEffects, bgEffectsReady, contourPattern, contourSize } = useSettings();
   const effectsState = previewEffects ?? bgEffects;
   const selectedPattern = previewContourPattern ?? contourPattern;
+  const selectedContourSize = previewContourSize ?? contourSize;
   const selectedBg = previewBg ?? bg;
   const selectedUrl = previewUrl ?? bgUrl;
 
@@ -34,7 +35,7 @@ export function Background({ previewBg, previewUrl, previewEffects, previewConto
   if (selectedBg === "landing") {
     canvas = <div className="backgroundCanvas landingBackground" style={effects}/>;
   } else if (selectedBg === "default") {
-    canvas = <div className="backgroundCanvas" style={effects}><BackIconsScene pattern={selectedPattern}/></div>;
+    canvas = <div className="backgroundCanvas" style={effects}><BackIconsScene pattern={selectedPattern} size={selectedContourSize}/></div>;
   } else if (isStockScene(selectedBg)) {
     canvas = <div className="backgroundCanvas" style={effects}>
       <BackgroundScene variant={selectedBg as StockScene} motion={running}/>

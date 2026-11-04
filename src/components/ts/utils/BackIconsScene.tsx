@@ -9,15 +9,15 @@ const createContours = (mode: ContourPattern) => {
         return seed / 4294967296;
     };
 
-    return Array.from({ length: mode === "order" ? 54 : 67 }, (_, index) => {
-        const column = index % 9;
-        const row = Math.floor(index / 9);
+    return Array.from({ length: mode === "order" ? 54 : 44 }, (_, index) => {
+        const column = index % (mode === "order" ? 9 : 8);
+        const row = Math.floor(index / (mode === "order" ? 9 : 8));
         return {
-            x: mode === "order" ? (column + .4 + random() * .4) / 9 * 100 : random() * 100,
-            y: mode === "order" ? (row + .4 + random() * .4) / 6 * 100 : random() * 100,
-            size: mode === "order" ? 6 + random() * 4 : 8 + random() * 12,
+            x: mode === "order" ? (column + .4 + random() * .4) / 9 * 100 : (column + .15 + random() * .7) / 8 * 100,
+            y: mode === "order" ? (row + .4 + random() * .4) / 6 * 100 : (row + .1 + random() * .8) / 6 * 100,
+            size: mode === "order" ? 6 + random() * 4 : 4 + random() * 5,
             rotate: mode === "order" ? random() * 70 - 35 : random() * 360,
-            opacity: .12 + random() * .13,
+            opacity: mode === "chaos" ? .075 + random() * .095 : .12 + random() * .13,
             index: Math.floor(random() * backPattern.length)
         };
     });
@@ -26,7 +26,7 @@ const createContours = (mode: ContourPattern) => {
 const orderedContours = createContours("order");
 const chaoticContours = createContours("chaos");
 
-export default function BackIconsScene({ pattern = "order" }: { pattern?: ContourPattern }) {
+export default function BackIconsScene({ pattern = "order", size = 1 }: { pattern?: ContourPattern; size?: number }) {
     const contours = pattern === "chaos" ? chaoticContours : orderedContours;
 
     return <div className="atContourScene" aria-hidden="true">
@@ -35,7 +35,7 @@ export default function BackIconsScene({ pattern = "order" }: { pattern?: Contou
             return <span key={index} className="atContourIcon" style={{
                 left: `${item.x}%`,
                 top: `${item.y}%`,
-                width: `${item.size}cqw`,
+                width: `${item.size * size}cqw`,
                 opacity: item.opacity,
                 transform: `translate(-50%, -50%) rotate(${item.rotate}deg)`
             }}>

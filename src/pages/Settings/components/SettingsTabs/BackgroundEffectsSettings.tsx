@@ -12,7 +12,7 @@ import { ContourPatternPicker } from "./ContourPatternPicker";
 
 export default function BackgroundEffectsSettings({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { bg, bgEffects, setBgEffects, refetchSettings, contourPattern, setContourPattern } = useSettings();
+    const { bg, bgEffects, setBgEffects, refetchSettings, contourPattern, setContourPattern, contourSize, setContourSize } = useSettings();
     const { showNotification } = useNote();
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -39,7 +39,7 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
 
     return (
         <>
-            {bg === "default" && <ContourPatternPicker value={contourPattern} onChange={setContourPattern}/>}
+            {bg === "default" && <ContourPatternPicker value={contourPattern} onChange={setContourPattern} size={contourSize} onSizeChange={setContourSize}/>}
             <div className="settingInnerWrapper" data-setting-id="backgroundBlur">
                 <div className="settingSpan">
                     <HighlightText text={t("backgroundLibrary.blurBackground")} search={search}/>
