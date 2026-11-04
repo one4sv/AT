@@ -8,6 +8,8 @@ import { useCalendar } from "../../../../components/hooks/CalendarHook"
 import { TextIndentIcon } from "@phosphor-icons/react"
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook"
 import { isMobile } from "react-device-detect"
+import { useContextMenu } from "../../../../components/hooks/ContextMenuHook"
+import useHeaderMenuGestures from "../../../../components/hooks/utils/useHeaderMenuGestures"
 
 interface HabitNameProps {
     habit:Habit | undefined,
@@ -19,18 +21,30 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:Habit
     const { isUpdating } = useUpHabit()
     const { calendar } = useCalendar()
     const { openSideMenu } = useSideMenu()
+    const { openMenu } = useContextMenu()
+    const headerGestures = useHeaderMenuGestures()
     const habitNameRef = useRef<HTMLDivElement | null>(null);
 
     if (!habit) return null
     
     return (
-        <div className={`headerDiv ${showHabitMenu ? "br" : ""}`} ref={habitNameRef}>
+        <div className={`headerDiv ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} {...headerGestures}>
             {isMobile && (
-                <div className="headerButt" onClick={() => openSideMenu()}>
+                <div className="headerButt" data-header-gesture="quick"
+                    onContextMenu={e => {
+                        e.preventDefault()
+                        openMenu(e.clientX, e.clientY, "headerQuickAction", { id: "headerQuickAction" })
+                    }}
+                    onClick={() => openSideMenu()}>
                     <TextIndentIcon />
                 </div>
             )}
-            <div className="header habitNameMain" onClick={() => setShowHabitMenu(!showHabitMenu)}>
+            <div className="header habitNameMain" data-header-gesture="habit" data-habit-id={habit.id}
+                onContextMenu={e => {
+                    e.preventDefault()
+                    openMenu(e.clientX, e.clientY, "habitHeader", { id: String(habit.id) })
+                }}
+                onClick={() => setShowHabitMenu(!showHabitMenu)}>
                 {habit.tag && (
                     <div className="habitNameTag chatUserPick">
                         {TagIcon(habit)}

@@ -17,26 +17,26 @@ export default function HeaderQuickActionMenu() {
         <>
             {quickActions.map(action => (
                 <div
-                    className="ContextMenuButt quickActionMenuButt"
+                    className="ContextMenuButt"
                     key={`${action.type}:${action.target || ""}`}
                     onClick={() => {
                         closeMenu();
                         navigate(quickActionPath(action, user.nick));
                     }}
                 >
-                    <QuickActionVisual action={action}/>
+                    <QuickActionVisual action={action} inMenu/>
                 </div>
             ))}
-            <div
-                className="ContextMenuButt quickActionMenuButt"
+            {quickActions.length < 3 && <div
+                className="ContextMenuButt"
                 onClick={() => {
                     closeMenu();
                     navigate("/settings/gen", { state: { settingId: "quickActions" } });
                 }}
             >
-                <PlusIcon />
+                <PlusIcon color="var(--accent_text)"/>
                 {t("general.quickActionsAdd")}
-            </div>
+            </div>}
         </>
     );
 }

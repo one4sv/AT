@@ -3,7 +3,7 @@ import { useChat } from "../ChatHook";
 import { useContextMenu } from "../ContextMenuHook";
 import { useSideMenu } from "../SideMenuHook";
 
-type HeaderGesture = "quick" | "chat";
+type HeaderGesture = "quick" | "chat" | "habit";
 
 type PressState = {
     id: number;
@@ -95,6 +95,8 @@ export default function useHeaderMenuGestures() {
                 pinned: chatWith.pinned,
                 is_group: chatWith.is_group
             });
+        } else if (kind === "habit") {
+            openMenu(box.left, box.bottom + 6, "habitHeader", { id: trigger.dataset.habitId || "" });
         } else {
             openMenu(box.left, box.bottom + 6, "headerQuickAction", { id: "headerQuickAction" });
         }

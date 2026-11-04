@@ -20,7 +20,7 @@ export function quickActionPath(action: QuickAction, ownNick: string | null) {
     }
 }
 
-export function QuickActionVisual({ action }: { action: QuickAction }) {
+export function QuickActionVisual({ action, inMenu = false }: { action: QuickAction; inMenu?: boolean }) {
     const { t } = useTranslation("settings");
     const { user } = useUser();
     const { list } = useContacts();
@@ -44,9 +44,13 @@ export function QuickActionVisual({ action }: { action: QuickAction }) {
         action.type === "habits" ? SneakerMoveIcon :
         action.type === "habit" ? CalendarCheckIcon : ChatTeardropIcon;
 
+    const image = avatar ? <img src={avatar} alt=""/> : <Icon size={21} weight="fill" color="var(--accent_text)"/>;
+
+    if (inMenu) return <>{image}{label}</>;
+
     return (
         <span className="quickActionVisual">
-            {avatar ? <img src={avatar} alt=""/> : <Icon size={21} weight="fill"/>}
+            {image}
             <span>{label}</span>
         </span>
     );

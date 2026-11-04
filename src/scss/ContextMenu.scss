@@ -78,40 +78,17 @@
     background: var(--accent_hov);
 }
 
-.quickActionMenuButt {
-    gap: .5vw;
-    min-height: 40px;
-
-    .quickActionVisual {
-        flex: 1;
-        min-width: 0;
-        gap: .3vw;
-
-        > img, > svg {
-            width: 1vw;
-            height: 1vw;
-            flex-shrink: 0;
-        }
-
-        > svg {
-            color: var(--accent_text);
-        }
-    }
-
-    > svg {
-        color: var(--accent_text);
-    }
+.ContextMenuButt > img {
+    width: 1vw;
+    height: 1vw;
+    margin-right: .3vw;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
 
     @media (max-width: 800px) {
-        gap: 2vw;
-
-        .quickActionVisual {
-            gap: 2vw;
-
-            > img, > svg {
-                width: 5vw;
-                height: 5vw;
-            }
-        }
+        width: 5vw;
+        height: 5vw;
+        margin-right: 0;
     }
 }
