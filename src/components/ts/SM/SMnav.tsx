@@ -374,6 +374,7 @@ export default function SMnav() {
         value: "all",
         new: "0"
     };
+    const unreadMessages = chatsFilters.find(filter => filter.value === "chats")?.new || "";
 
     useEffect(
         () => {
@@ -546,7 +547,7 @@ export default function SMnav() {
                 {(extraMenu === "chats" || extraMenu === "habits") && <span className="SMextraSeparator" />}
                 {(extraMenu === "chats" || extraMenu === "habits") && (extraMenu === "chats" ? chatsFilters : habitsFilters).map(
                     filter => <div
-                        className={`filterItem ${(extraMenu === "chats" ? messageSelectedValue : habitsSelectedValue) === filter.value ? "selected" : ""}`}
+                        className={`filterItem smFilterOption ${(extraMenu === "chats" ? messageSelectedValue : habitsSelectedValue) === filter.value ? "selected" : ""}`}
                         key={filter.value}
                         data-value={filter.value}
                         data-type={extraMenu}
@@ -566,8 +567,8 @@ export default function SMnav() {
 
                         {filter.label}
 
-                        {extraMenu === "chats" && filter.new && <span className="new">
-                            {` ${filter.new}`}
+                        {extraMenu === "chats" && filter.new && <span className="smUnreadBadge new">
+                            {filter.new}
                         </span>}
                     </div>
                 )}
@@ -592,6 +593,7 @@ export default function SMnav() {
                     onTouchMove={handleNavTouchMove}
                 >
                     <ChatTeardropIcon weight="fill" />
+                    {unreadMessages && <span className="smUnreadBadge smNavUnread">{unreadMessages}</span>}
                 </div>
 
                 <div

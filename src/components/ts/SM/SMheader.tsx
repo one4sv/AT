@@ -233,7 +233,7 @@ export default function SMheader() {
                             <SortAscendingIcon />
                             {messageSelected.label}
                             {messageSelected.new && (
-                                <span className="headerBadge">{messageSelected.new}</span>
+                                <span className="smUnreadBadge headerBadge">{messageSelected.new}</span>
                             )}
                         </div>
                     </div>
@@ -278,7 +278,7 @@ export default function SMheader() {
                 {currentFilters.map((filter) => (
                     <div
                         key={filter.value}
-                        className={`filterItem ${currentSelected === filter.value ? "selected" : ""}`}
+                        className={`filterItem smFilterOption ${currentSelected === filter.value ? "selected" : ""}`}
                         data-value={filter.value}
                         onMouseDown={(e) => {
                             e.stopPropagation()
@@ -290,7 +290,7 @@ export default function SMheader() {
                         <SortAscendingIcon size={16} />
                         {filter.label}
                         {openFilters === "chats" && filter.new && (
-                            <span className="new">{filter.new}</span>
+                            <span className="smUnreadBadge new">{filter.new}</span>
                         )}
                     </div>
                 ))}

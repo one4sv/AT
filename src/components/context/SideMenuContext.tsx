@@ -80,9 +80,11 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [chatsFilters, setChatsFilters] = useState<FilterItem[]>([]);
     const [habitsFilters, setHabitsFilters] = useState<FilterItem[]>([]);
 
-    const newLength = list.filter(
-        (c) => c.unread_count > 0 && !c.is_blocked && c.note
-    ).length;
+    const countUnread = (contacts: typeof list) => contacts.reduce(
+        (total, contact) => total + (!contact.is_blocked && contact.note ? contact.unread_count : 0),
+        0
+    );
+    const newLength = countUnread(list);
 
     // Фильтры чатов
     useEffect(() => {
@@ -97,9 +99,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
 
         const privateChats = list.filter((c) => !c.is_group);
         if (privateChats.length > 0) {
-            const privateNewCount = privateChats.filter(
-                (c) => c.unread_count > 0 && !c.is_blocked && c.note
-            ).length;
+            const privateNewCount = countUnread(privateChats);
             const privateNew =
                 privateNewCount > 99 ? "99+" : privateNewCount > 0 ? String(privateNewCount) : "";
             filters.push({
@@ -111,9 +111,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
 
         const groupChats = list.filter((c) => c.is_group);
         if (groupChats.length > 0) {
-            const groupNewCount = groupChats.filter(
-                (c) => c.unread_count > 0 && !c.is_blocked && c.note
-            ).length;
+            const groupNewCount = countUnread(groupChats);
             const groupNew =
                 groupNewCount > 99 ? "99+" : groupNewCount > 0 ? String(groupNewCount) : "";
             filters.push({
