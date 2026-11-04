@@ -2,7 +2,7 @@ import { useSettings } from "../../hooks/SettingsHook";
 import type { BackgroundEffects, ContourPattern } from "../../context/SettingsContext";
 import BackIconsScene from "./BackIconsScene";
 import { getBackgroundFilter } from "./backgroundFilter";
-import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "./BackgroundScene";
+import { BackgroundScene, type StockScene, isStockScene } from "./BackgroundScene";
 import "../../../scss/landingBackground.scss";
 
 export function Background({ previewBg, previewUrl, previewEffects, previewContourPattern, previewContourSize }: { previewBg?: string; previewUrl?: string; previewEffects?: BackgroundEffects; previewContourPattern?: ContourPattern; previewContourSize?: number } = {}) {
@@ -19,8 +19,6 @@ export function Background({ previewBg, previewUrl, previewEffects, previewConto
   const running = effectsState.movement && speed > 0;
   const effects = {
     filter: getBackgroundFilter(effectsState),
-    animation: running && supportsBackgroundMotion(selectedBg) && !isStockScene(selectedBg)
-      ? `atBackgroundDrift ${24 / speed}s ease-in-out infinite alternate` : undefined,
     "--scene-duration": `${18 / Math.max(speed, .25)}s`
   } as React.CSSProperties;
 

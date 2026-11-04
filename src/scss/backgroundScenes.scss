@@ -536,3 +536,10 @@
 @media (prefers-reduced-motion: reduce) {
     .atScene--running *, .atScene--running *::after { animation: none !important; }
 }
+
+/* SectionArt has its own keyframes; only animate motifs when movement is enabled. */
+.atScene--art:not(.atScene--running) .sectionArt *,
+.atScene--art:not(.atScene--running) .sectionArt *::before,
+.atScene--art:not(.atScene--running) .sectionArt *::after {
+    animation: none !important;
+}

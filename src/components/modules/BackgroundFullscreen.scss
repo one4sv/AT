@@ -433,3 +433,46 @@
     flex: 0 0 auto;
     min-height: 4.5dvh;
 }
+
+/* Footer controls are one centered, clickable group on desktop and mobile. */
+.backgroundFullscreenBottom {
+    gap: .75vw;
+    pointer-events: none;
+}
+
+.backgroundFullscreenBottom > .backgroundFullscreenExit {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    flex: 0 0 5dvh;
+    align-self: center;
+    pointer-events: auto;
+}
+
+.backgroundFullscreenBottom > .backgroundFullscreenInfo {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    flex: 0 1 27vw;
+    width: 27vw;
+    max-width: 65vw;
+    min-width: 0;
+    margin: 0;
+    align-self: center;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+@media (max-width: 800px) {
+    .backgroundFullscreenBottom {
+        gap: 2vw;
+    }
+
+    .backgroundFullscreenBottom > .backgroundFullscreenInfo {
+        flex: 0 1 64vw;
+        width: 64vw;
+        max-width: 68vw;
+    }
+}

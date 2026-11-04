@@ -2,6 +2,7 @@ export const backgroundGroups = [
     { id: "essential", items: [
         { id: "landing", labelKey: "personalization.landingBackground" },
         { id: "default", labelKey: "personalization.contourShapes" },
+        { id: "art", labelKey: "backgroundLibrary.art" },
         { id: "color", labelKey: "personalization.solidColor" }
     ] },
     { id: "atmospheric", items: [
@@ -19,7 +20,6 @@ export const backgroundGroups = [
         { id: "glitch", labelKey: "backgroundLibrary.glitch" }
     ] },
     { id: "abstract", items: [
-        { id: "art", labelKey: "backgroundLibrary.art" },
         { id: "paintSplash", labelKey: "backgroundLibrary.paintSplash" },
         { id: "liquid", labelKey: "backgroundLibrary.liquid" },
         { id: "prism", labelKey: "backgroundLibrary.prism" }
