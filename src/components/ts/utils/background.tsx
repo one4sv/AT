@@ -1,20 +1,23 @@
 import { useSettings } from "../../hooks/SettingsHook";
+import type { BackgroundEffects, ContourPattern } from "../../context/SettingsContext";
 import BackIconsScene from "./BackIconsScene";
 import { getBackgroundFilter } from "./backgroundFilter";
 import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "./BackgroundScene";
 import "../../../scss/landingBackground.scss";
 
-export function Background({ previewBg, previewUrl }: { previewBg?: string; previewUrl?: string } = {}) {
-  const { bg, bgUrl, bgEffects, bgEffectsReady } = useSettings();
+export function Background({ previewBg, previewUrl, previewEffects, previewContourPattern }: { previewBg?: string; previewUrl?: string; previewEffects?: BackgroundEffects; previewContourPattern?: ContourPattern } = {}) {
+  const { bg, bgUrl, bgEffects, bgEffectsReady, contourPattern } = useSettings();
+  const effectsState = previewEffects ?? bgEffects;
+  const selectedPattern = previewContourPattern ?? contourPattern;
   const selectedBg = previewBg ?? bg;
   const selectedUrl = previewUrl ?? bgUrl;
 
-  if (!bgEffectsReady || selectedBg === "color") return null;
+  if (!bgEffectsReady) return null;
 
-  const speed = Math.min(3, Math.max(0, bgEffects.speed ?? 1));
-  const running = bgEffects.movement && speed > 0;
+  const speed = Math.min(3, Math.max(0, effectsState.speed ?? 1));
+  const running = effectsState.movement && speed > 0;
   const effects = {
-    filter: getBackgroundFilter(bgEffects),
+    filter: getBackgroundFilter(effectsState),
     animation: running && supportsBackgroundMotion(selectedBg) && !isStockScene(selectedBg)
       ? `atBackgroundDrift ${24 / speed}s ease-in-out infinite alternate` : undefined,
     "--scene-duration": `${18 / Math.max(speed, .25)}s`
@@ -23,7 +26,7 @@ export function Background({ previewBg, previewUrl }: { previewBg?: string; prev
   // Keep the clipping frame still. Filtering or transforming the frame itself
   // cuts off blurred pixels and can expose its parent while it moves.
   const frameStyle = {
-    "--background-bleed": `${Math.ceil(bgEffects.blur * 2 + 24)}px`
+    "--background-bleed": `${Math.ceil(effectsState.blur * 2 + 24)}px`
   } as React.CSSProperties;
 
   let canvas: React.ReactNode = null;
@@ -31,11 +34,13 @@ export function Background({ previewBg, previewUrl }: { previewBg?: string; prev
   if (selectedBg === "landing") {
     canvas = <div className="backgroundCanvas landingBackground" style={effects}/>;
   } else if (selectedBg === "default") {
-    canvas = <div className="backgroundCanvas" style={effects}><BackIconsScene/></div>;
+    canvas = <div className="backgroundCanvas" style={effects}><BackIconsScene pattern={selectedPattern}/></div>;
   } else if (isStockScene(selectedBg)) {
     canvas = <div className="backgroundCanvas" style={effects}>
       <BackgroundScene variant={selectedBg as StockScene} motion={running}/>
     </div>;
+  } else if (selectedBg === "color") {
+    canvas = <div className="backgroundCanvas" style={effects}/>;
   } else if (selectedBg === "custom") {
     canvas = <div className="backgroundCanvas bgImg"
       style={{ ...effects, backgroundImage: `url("${selectedUrl}")` }}/>;

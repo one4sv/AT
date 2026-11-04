@@ -10,6 +10,7 @@ import { getBackgroundFilter } from "../ts/utils/backgroundFilter";
 import Selector from "../ts/Selector";
 import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "../ts/utils/BackgroundScene";
 import { api } from "../ts/api";
+import { Film, Palette } from "lucide-react";
 import "./BackgroundLibrary.scss";
 import "../../scss/Loading.scss";
 
@@ -29,7 +30,7 @@ function CustomBackgroundThumb({ url }: { url: string }) {
 
 export default function BackgroundLibrary() {
     const { t } = useTranslation("settings");
-    const { bg, bgUrl, bgGallery, bgEffects, setBgEffects, settingsLoaded, refetchSettings } = useSettings();
+    const { bg, bgUrl, bgGallery, bgEffects, contourPattern, settingsLoaded, refetchSettings } = useSettings();
     const { setNewBg } = useUpSettings();
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
@@ -108,18 +109,8 @@ export default function BackgroundLibrary() {
     const selectStock = (id: string) => {
         if (saving) return;
         setNewBg(id);
-
-        if (!supportsBackgroundMotion(id) || bgEffects.movement) return;
-
-        const next = { ...bgEffects, movement: true };
-        setBgEffects(next);
-        void api.post("updatesettings", { bg_effects: next }).then(res => {
-            if (!res.data?.success) throw new Error();
-        }).catch(() => {
-            showNotification("error", t("backgroundLibrary.error"));
-            void refetchSettings();
-        });
     };
+
 
     return (
         <div className="backgroundLibraryModal" role="dialog" aria-modal="true" aria-label={t("backgroundLibrary.title")}>
@@ -162,13 +153,19 @@ export default function BackgroundLibrary() {
                                                 {item.id === "landing" ?
                                                 <div className="bgImg bgMini landingBackground" style={previewStyle}/> :
                                                 item.id === "default" ?
-                                                    <div className="bgImg bgMini" style={previewStyle}><BackIconsScene/></div> :
+                                                    <div className="bgImg bgMini" style={previewStyle}><BackIconsScene pattern={contourPattern}/></div> :
                                                     isStockScene(item.id) ?
                                                         <div className="bgImg bgMini" style={{ ...previewStyle, "--scene-duration": `${18 / Math.max(.25, Math.min(3, bgEffects.speed ?? 1))}s` } as CSSProperties}>
-                                                            <BackgroundScene variant={item.id as StockScene} motion={supportsBackgroundMotion(item.id) && (bgEffects.speed ?? 1) > 0}/>
+                                                            <BackgroundScene variant={item.id as StockScene} motion={supportsBackgroundMotion(item.id) && bgEffects.movement && (bgEffects.speed ?? 1) > 0}/>
                                                         </div> :
                                                         <div className="bgImg bgMini" style={previewStyle}/>}
-                                                <span className={bg === item.id ? "bgSpanChoosen" : ""}>{item.label}</span>
+                                                <span className={`backgroundLibraryName ${bg === item.id ? "bgSpanChoosen" : ""}`}>
+                                                    {item.label}
+                                                    {supportsBackgroundMotion(item.id) && <Film size={15} className="backgroundLibraryCapability"
+                                                        title={t("backgroundLibrary.motionAvailable")} aria-label={t("backgroundLibrary.motionAvailable")}/>}
+                                                    <Palette size={15} className="backgroundLibraryCapability"
+                                                        title={t("backgroundLibrary.themeAware")} aria-label={t("backgroundLibrary.themeAware")}/>
+                                                </span>
                                                 {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
                                             </button>
                                             <button type="button" className="backgroundLibraryPreview"

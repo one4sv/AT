@@ -15,6 +15,7 @@ export type ChatWelcomeSettings = { enabled: boolean; text: string };
 export type QuickActionType = "feed" | "settings" | "profile" | "habits" | "habit" | "chat";
 export type QuickAction = { type: QuickActionType; target?: string; label?: string };
 export type SavedBackground = { url: string; path: string | null };
+export type ContourPattern = "order" | "chaos";
 export type BackgroundEffects = {
     blur: number;
     movement: boolean;
@@ -63,6 +64,8 @@ export interface SettingsContextType {
     setBgGallery: React.Dispatch<React.SetStateAction<SavedBackground[]>>;
     bgEffects: BackgroundEffects;
     bgEffectsReady: boolean;
+    contourPattern: ContourPattern;
+    setContourPattern: React.Dispatch<React.SetStateAction<ContourPattern>>;
     setBgEffects: React.Dispatch<React.SetStateAction<BackgroundEffects>>;
     privateShow: PrivateSettings;
     setPrivate: React.Dispatch<React.SetStateAction<PrivateSettings>>;
@@ -115,6 +118,7 @@ const LOCAL_KEYS = {
     layout: "settings_layout",
     bg: "settings_bg",
     bgEffects: "settings_bg_effects",
+    contourPattern: "settings_contour_pattern",
     decor: "settings_decor",
     emote:"settings_emote",
     messdb:"settings_messdb",
@@ -133,6 +137,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ blur, setBlur ] = useLocalStorage(LOCAL_KEYS.blur, 6);
     const [ layout, setLayout ] = useLocalStorage(LOCAL_KEYS.layout, "always");
     const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "landing");
+    const [ contourPattern, setContourPattern ] = useLocalStorage<ContourPattern>(LOCAL_KEYS.contourPattern, "order");
     const [ storedBgEffects, setStoredBgEffects ] = useLocalStorage<BackgroundEffects>(LOCAL_KEYS.bgEffects, defaultBackgroundEffects);
     const bgEffects = useMemo(() => normalizeBackgroundEffects(storedBgEffects), [storedBgEffects]);
     const setBgEffects = useCallback<React.Dispatch<React.SetStateAction<BackgroundEffects>>>(next => {
@@ -251,7 +256,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             layout, setLayout,
             bg, setBg,
             decor, setDecor,
-            bgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, lang, setLang,
+            bgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, contourPattern, setContourPattern, lang, setLang,
             privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
             twoAuth, setTwoAuth,
             note, setNote,

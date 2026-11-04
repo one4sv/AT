@@ -8,10 +8,11 @@ import SeekBar from "../SeekBar";
 import HighlightText from "../../../../components/ts/HighlightText";
 import type { BackgroundEffects } from "../../../../components/context/SettingsContext";
 import { supportsBackgroundMotion } from "../../../../components/ts/utils/BackgroundScene";
+import { ContourPatternPicker } from "./ContourPatternPicker";
 
 export default function BackgroundEffectsSettings({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { bg, bgEffects, setBgEffects, refetchSettings } = useSettings();
+    const { bg, bgEffects, setBgEffects, refetchSettings, contourPattern, setContourPattern } = useSettings();
     const { showNotification } = useNote();
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -38,6 +39,7 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
 
     return (
         <>
+            {bg === "default" && <ContourPatternPicker value={contourPattern} onChange={setContourPattern}/>}
             <div className="settingInnerWrapper" data-setting-id="backgroundBlur">
                 <div className="settingSpan">
                     <HighlightText text={t("backgroundLibrary.blurBackground")} search={search}/>
@@ -49,7 +51,7 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
                 <div className={`settingTogglerDiv ${!motionAvailable ? "disabled" : ""}`}
                     onClick={() => { if (motionAvailable) update({ ...bgEffects, movement: !bgEffects.movement }); }}>
                     <HighlightText text={t("backgroundLibrary.movement")} search={search}/>
-                    <Toggler state={motionAvailable && bgEffects.movement}/>
+                    <Toggler state={motionAvailable && bgEffects.movement} disable={!motionAvailable}/>
                 </div>
             </div>
             <div className="settingInnerWrapper" data-setting-id="backgroundSpeed">
