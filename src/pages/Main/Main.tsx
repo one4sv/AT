@@ -13,6 +13,7 @@ import { isMobile } from "react-device-detect";
 import { usePageTitle } from "../../components/hooks/PageContextHook.ts";
 import { useNavigate } from "react-router";
 import FirstSteps from "./components/FirstSteps.tsx";
+import { CONTENT_REFRESH_EVENT, type ContentRefreshEvent } from "../../components/ts/utils/contentRefresh";
 export default function Feed() {
     const { t } = useTranslation("acc");
     const {
@@ -51,6 +52,15 @@ export default function Feed() {
 
     useEffect(() => {
         if (user.id) postFor();
+    }, [user.id]);
+
+    useEffect(() => {
+        const onRefresh = (event: Event) => {
+            const { scope, pathname } = (event as ContentRefreshEvent).detail;
+            if (scope === "page" && pathname === "/" && user.id) void postFor();
+        };
+        window.addEventListener(CONTENT_REFRESH_EVENT, onRefresh);
+        return () => window.removeEventListener(CONTENT_REFRESH_EVENT, onRefresh);
     }, [user.id]);
     const diffDays = user.reg_date ? Math.floor((Date.now() - new Date(user.reg_date).getTime()) / (1000 * 60 * 60 * 24)) : Infinity;
     if (initialLoading || postLoading) return <Skeleton type="feed" count={3} />;

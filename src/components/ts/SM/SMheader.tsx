@@ -5,6 +5,7 @@ import { useSettings } from "../../hooks/SettingsHook"
 import { QrCodeIcon, ShareFatIcon, SortAscendingIcon } from "@phosphor-icons/react"
 import { useEffect, useRef, useState } from "react"
 import { useBlackout } from "../../hooks/BlackoutHook"
+import { requestContentRefresh } from "../utils/contentRefresh";
 
 export default function SMheader() {
     const isMobile = useCompactLayout();
@@ -211,7 +212,7 @@ export default function SMheader() {
         if (slide && slide.scrollTop > 2) {
             slide.scrollTo({ top: 0, behavior: "smooth" });
         } else {
-            window.location.reload();
+            requestContentRefresh(tab);
         }
     };
 

@@ -1,6 +1,9 @@
 import { useEffect } from "react";
+import { requestContentRefresh, type ContentRefreshScope } from "../../ts/utils/contentRefresh";
 
 type PullStart = {
+    isSideMenu: boolean;
+    slideIndex: number;
     x: number;
     y: number;
     scrollElement: HTMLElement | null;
@@ -43,15 +46,17 @@ export default function usePullToRefresh(pathname: string) {
             const target = element instanceof HTMLElement ? element : element.parentElement;
             if (!target) return;
 
-            if (pathname.startsWith("/acc") && root.classList.contains("page-content")) {
-                const activeSlide = target.closest<HTMLElement>(".accContentSlide");
-                if (!activeSlide || window.getComputedStyle(activeSlide).pointerEvents === "none") return;
-            }
+            // Acc owns its own pull gesture: it must not conflict with the info collapse.
+            if (pathname.startsWith("/acc") && root.classList.contains("page-content")) return;
 
             const scroller = findScroll(target, root);
             if (scroller ? scroller.scrollTop > 2 : window.scrollY > 2) return;
 
+            const sideSlide = target.closest(".sideMenu .slider > .slide");
+            const slides = sideSlide ? Array.from(sideSlide.parentElement?.children ?? []) : [];
             start = {
+                isSideMenu: root.classList.contains("sideMenu"),
+                slideIndex: sideSlide ? slides.indexOf(sideSlide) : -1,
                 x: event.touches[0].clientX,
                 y: event.touches[0].clientY,
                 scrollElement: scroller,
@@ -94,7 +99,13 @@ export default function usePullToRefresh(pathname: string) {
 
             if (current.ready && deltaY >= 95 && deltaY > Math.abs(deltaX) * 1.6 &&
                 (!current.scrollElement || current.scrollElement.scrollTop <= 2)) {
-                window.location.reload();
+                if (current.isSideMenu) {
+                    const scopes: ContentRefreshScope[] = ["chats", "habits", "spots", "user"];
+                    const scope = scopes[current.slideIndex];
+                    if (scope) requestContentRefresh(scope, pathname);
+                } else {
+                    requestContentRefresh("page", pathname);
+                }
             }
         };
 

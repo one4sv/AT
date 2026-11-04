@@ -12,6 +12,7 @@ import { usePageTitle } from "../../components/hooks/PageContextHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
 import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
+import { CONTENT_REFRESH_EVENT, requestContentRefresh, type ContentRefreshEvent } from "../../components/ts/utils/contentRefresh";
 
 export default function Acc() {
     const { t } = useTranslation("acc");
@@ -100,6 +101,7 @@ export default function Acc() {
     const line = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const slideRefs = useRef<(HTMLDivElement | null)[]>([null, null]);
+    const pullRefresh = useRef<{ y: number; x: number; active: boolean } | null>(null);
 
     const tabs: { tab: "habits" | "posts", name: string, nameMy?: string }[] = [
         { tab: "posts", name: t("tabs.posts") },
@@ -124,6 +126,17 @@ export default function Acc() {
 
         Promise.all([refetchAcc(nick), refetchPosts(nick)]);
     }, [nick, user.nick, user.id]);
+
+    useEffect(() => {
+        const onRefresh = (event: Event) => {
+            const { scope, pathname } = (event as ContentRefreshEvent).detail;
+            if (scope !== "page" || !pathname.startsWith("/acc") || !nick) return;
+
+            void Promise.all([refetchAcc(nick, true), refetchPosts(nick, true)]);
+        };
+        window.addEventListener(CONTENT_REFRESH_EVENT, onRefresh);
+        return () => window.removeEventListener(CONTENT_REFRESH_EVENT, onRefresh);
+    }, [nick, refetchAcc, refetchPosts]);
 
     useEffect(() => {
         if (acc && !loading && acc.nick) {
@@ -195,6 +208,11 @@ export default function Acc() {
         gestureBlocked.current = dontHandleOther;
         sliderGesture.current = false;
         sliderOwnsGesture.current = false;
+        const target = e.target as Element;
+        pullRefresh.current = collapsedRef.current >= 0.98 && getActiveSlideScrollTop() <= 2 &&
+            !dontHandleOther && !!target.closest(".accContentSlide")
+            ? { y: e.touches[0].clientY, x: e.touches[0].clientX, active: false }
+            : null;
     };
 
     const touchSliderStart = (e: React.TouchEvent<HTMLDivElement>) => {
@@ -222,6 +240,23 @@ export default function Acc() {
         const currentX = e.touches[0].clientX;
         const deltaY = touchStartY.current - currentY;
         const deltaX = currentX - touchStartX.current;
+
+        if (pullRefresh.current) {
+            const down = currentY - pullRefresh.current.y;
+            const horizontal = Math.abs(currentX - pullRefresh.current.x);
+            if (!pullRefresh.current.active && (down < -8 || horizontal > down)) {
+                pullRefresh.current = null;
+            } else if (down > 8 && down > horizontal * 1.5) {
+                pullRefresh.current.active = true;
+            }
+
+            if (pullRefresh.current?.active && getActiveSlideScrollTop() <= 2) {
+                gestureMoved.current = true;
+                e.stopPropagation();
+                if (e.cancelable) e.preventDefault();
+                return;
+            }
+        }
 
         if (!expanded.current) {
             if (Math.abs(deltaY) < 8 && Math.abs(deltaX) < 8) return;
@@ -312,6 +347,26 @@ export default function Acc() {
     });
 
     const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+        const pull = pullRefresh.current;
+        pullRefresh.current = null;
+
+        if (pull?.active) {
+            const touch = e.changedTouches[0];
+            const down = touch ? touch.clientY - pull.y : 0;
+            const horizontal = touch ? Math.abs(touch.clientX - pull.x) : 0;
+
+            if (down >= 95 && down > horizontal * 1.5 && nick) {
+                requestContentRefresh("page", `/acc/${nick}`);
+            }
+
+            expanded.current = false;
+            sliderGesture.current = false;
+            sliderOwnsGesture.current = false;
+            isCollapsingGesture.current = false;
+            e.stopPropagation();
+            return;
+        }
+
         const wasCollapsingGesture = isCollapsingGesture.current;
         const ownedGesture = sliderOwnsGesture.current || wasCollapsingGesture;
 

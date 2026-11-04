@@ -7,6 +7,7 @@ import { useSettings } from "../hooks/SettingsHook";
 import { TextIndentIcon } from "@phosphor-icons/react";
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { getHeaderScrollTarget } from "../ts/utils/pageScroll";
+import { requestContentRefresh } from "../ts/utils/contentRefresh";
 export default function Header() {
     const isMobile = useCompactLayout();
     const { openSideMenu } = useSideMenu();
@@ -33,7 +34,7 @@ export default function Header() {
             return;
         }
 
-        window.location.reload();
+        requestContentRefresh("page", location.pathname);
     };
 
     return (

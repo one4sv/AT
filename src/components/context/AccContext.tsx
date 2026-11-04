@@ -25,8 +25,8 @@ export type PostType = {
     comments_count:number
 }
 export interface AccContextType {
-    refetchAcc:(nick:string) => Promise<void>
-    refetchPosts:(nick:string) => Promise<void>
+    refetchAcc:(nick:string, silent?: boolean) => Promise<void>
+    refetchPosts:(nick:string, silent?: boolean) => Promise<void>
     acc:User | undefined,
     habits:Habit[] | undefined,
     loading:boolean,
@@ -57,9 +57,9 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
 
     const API_URL = import.meta.env.VITE_API_URL;
 
-    const refetchAcc = useCallback(async (nick: string) => {
+    const refetchAcc = useCallback(async (nick: string, silent = false) => {
         if (!nick) return;
-        setAccLoading(true);
+        if (!silent) setAccLoading(true);
         try {
             const res = await api.get(`acc/${nick}`);
             if (res.data.success) {
@@ -78,9 +78,9 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [API_URL, showNotification]);
 
-    const refetchPosts = useCallback(async (nick: string) => {
+    const refetchPosts = useCallback(async (nick: string, silent = false) => {
         if (!nick) return;
-        setPostsLoading(true);
+        if (!silent) setPostsLoading(true);
         try {
             const res = await api.get(`posts/${nick}`);
             if (res.data.success) {

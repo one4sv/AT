@@ -13,6 +13,7 @@ import PostComments from "./PostComments";
 import "../../scss/Loading.scss";
 import "../Acc/scss/AccPostComments.scss";
 import "./scss/postPage.scss";
+import { CONTENT_REFRESH_EVENT, type ContentRefreshEvent } from "../../components/ts/utils/contentRefresh";
 
 export default function PostPage() {
     const { t } = useTranslation("acc");
@@ -42,6 +43,23 @@ export default function PostPage() {
             });
         return () => controller.abort();
     }, [postId, retry]);
+
+    useEffect(() => {
+        if (!postId) return;
+        const refresh = (event: Event) => {
+            const { scope, pathname } = (event as ContentRefreshEvent).detail;
+            if (scope !== "page" || pathname !== `/post/${postId}`) return;
+
+            void api.get(`post/${postId}`).then(res => {
+                if (res.data.success && res.data.post) {
+                    setPost(res.data.post);
+                    setError("");
+                }
+            }).catch(() => setError("post.loadFailed"));
+        };
+        window.addEventListener(CONTENT_REFRESH_EVENT, refresh);
+        return () => window.removeEventListener(CONTENT_REFRESH_EVENT, refresh);
+    }, [postId]);
 
     const likePost = async () => {
         if (!user.id) {

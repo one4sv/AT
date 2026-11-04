@@ -17,13 +17,22 @@ import { todayStrFunc } from "../ts/utils/dateToStr";
 import SMnav from "../ts/SM/SMnav";
 import SMheader from "../ts/SM/SMheader";
 import usePullToRefresh from "../hooks/utils/usePullToRefresh";
+import { CONTENT_REFRESH_EVENT, type ContentRefreshEvent } from "../ts/utils/contentRefresh";
+import { useHabits } from "../hooks/HabitsHook";
+import { useSchedule } from "../hooks/ScheduleHook";
+import { useCalendar } from "../hooks/CalendarHook";
 
 interface LayoutProps {
   children?: ReactNode;
 }
 
 export default function MainLayout({ children }: LayoutProps) {
-  const { user } = useUser()
+  const { user, refetchUser } = useUser()
+  const { refetchContactsWTLoading } = useContacts()
+  const { refetchHabits } = useHabits()
+  const { refetchSettings } = useSettings()
+  const { refreshSchedules } = useSchedule()
+  const { fetchCalendarUser } = useCalendar()
   const { decor } = useSettings();
   const { chosenDay, setChosenDay } = useCalendar()
   const { blackout, setBlackout } = useBlackout()
@@ -36,6 +45,27 @@ export default function MainLayout({ children }: LayoutProps) {
   const navigate = useNavigate()
   const location = useLocation()
   usePullToRefresh(location.pathname)
+  useEffect(() => {
+    const refresh = (event: Event) => {
+      const { scope, pathname } = (event as ContentRefreshEvent).detail;
+      if (scope === "chats") {
+        void refetchContactsWTLoading();
+      } else if (scope === "habits") {
+        void Promise.all([refetchHabits(), refreshSchedules()]);
+      } else if (scope === "user") {
+        void Promise.all([refetchUser(), refetchSettings()]);
+      } else if (scope === "page" && pathname === location.pathname) {
+        if (pathname === "/habit") {
+          void Promise.all([refetchHabits(), refreshSchedules()]);
+          fetchCalendarUser();
+        } else if (pathname.startsWith("/settings")) {
+          void refetchSettings();
+        }
+      }
+    };
+    window.addEventListener(CONTENT_REFRESH_EVENT, refresh);
+    return () => window.removeEventListener(CONTENT_REFRESH_EVENT, refresh);
+  }, [location.pathname, refetchContactsWTLoading, refetchHabits, refetchSettings, refetchUser, refreshSchedules, fetchCalendarUser])
   const needDrag = location.pathname.startsWith("/post") || location.pathname.startsWith("/chat")
   const hideHeader = location.pathname.startsWith("/chat") || location.pathname.startsWith("/habit/")
   
