@@ -3,7 +3,7 @@
     border: 1px solid var(--block_border);
     box-sizing: border-box;
     width: 100%;
-    min-height: 70dvh;
+    min-height: 56dvh;
     height: auto;
     display: flex;
     flex-direction: column;
@@ -14,7 +14,7 @@
     -webkit-backdrop-filter: blur(var(--blur));
 
     @media (max-width: 800px) {
-        min-height: 108dvh;
+        min-height: 90dvh;
         padding: .7dvh 2vw;
         margin-bottom: 1dvh;
     }
@@ -22,17 +22,13 @@
 
 .statsDivWrapper {
     display: flex;
-    flex: 1;
-    min-height: 62dvh;
+    flex: 1 0 auto;
+    min-height: 0;
     width: 100%;
     overflow: hidden;
     position: relative;
     scrollbar-width: none;
     touch-action: pan-y;
-
-    @media (max-width: 800px) {
-        min-height: 100dvh;
-    }
 }
 .statsDivSlider {
     display: flex;
@@ -52,9 +48,8 @@
     flex: 0 0 50%;
     padding: .5dvh .6vw 1.5dvh;
     min-height: 0;
-    overflow-y: auto;
+    overflow-y: visible;
     box-sizing: border-box;
-    scrollbar-width: thin;
 }
 .statsTitle {
     padding: 1dvh 1vw;
