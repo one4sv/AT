@@ -100,15 +100,6 @@ export function BackgroundScene({ variant, motion = false }: { variant: StockSce
                 <div className="atRetroSun"/>
                 <div className="atRetroMountains"/>
                 <div className="atRetroRoad"/>
-                <div className="atRetroCar">
-                    <svg viewBox="0 0 180 80" fill="none" focusable="false">
-                        <path d="M12 42h18l26-23h63l27 23h18v21H12Z" fill="var(--accent)"/>
-                        <path d="m58 24-18 18h42V24Zm31 0v18h48l-20-18Z" fill="var(--bgc)" opacity=".9"/>
-                        <path d="M17 53h146" stroke="var(--grad)" strokeWidth="7"/>
-                        <circle cx="49" cy="62" r="14" fill="var(--bgc)" stroke="var(--grad)" strokeWidth="5"/>
-                        <circle cx="133" cy="62" r="14" fill="var(--bgc)" stroke="var(--grad)" strokeWidth="5"/>
-                    </svg>
-                </div>
             </>}
             {variant === "neonCity" && <>
                 <div className="atNeonMoon"/>

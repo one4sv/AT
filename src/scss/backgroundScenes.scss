@@ -228,23 +228,8 @@
             transparent 0 12%, color-mix(in srgb, var(--accent) 78%, transparent) 12% 14%, transparent 14% 30%);
     }
 }
-.atRetroCar {
-    position: absolute;
-    bottom: 13%;
-    left: -30%;
-    width: 29%;
-    filter: drop-shadow(0 1dvh 1vw var(--bgc));
-    svg { width: 100%; height: auto; }
-}
-.atScene--running .atRetroCar {
-    animation: atDrive calc(var(--scene-duration, 18s) * 1.1) linear infinite;
-}
 .atScene--running .atRetroRoad::after {
     animation: atRoadScroll calc(var(--scene-duration, 18s) / 4) linear infinite;
-}
-@keyframes atDrive {
-    0% { translate: 0 0; }
-    100% { translate: 480% 0; }
 }
 @keyframes atRoadScroll {
     to { background-position: 0 18dvh; }

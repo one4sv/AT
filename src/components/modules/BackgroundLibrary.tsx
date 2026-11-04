@@ -158,8 +158,8 @@ export default function BackgroundLibrary() {
                                                 item.id === "default" ?
                                                     <div className="bgImg bgMini" style={previewStyle}><BackIconsScene/></div> :
                                                     isStockScene(item.id) ?
-                                                        <div className="bgImg bgMini" style={{ ...previewStyle, "--scene-duration": `${18 / Math.max(.5, Math.min(3, bgEffects.speed ?? 1))}s` } as CSSProperties}>
-                                                            <BackgroundScene variant={item.id as StockScene} motion={supportsBackgroundMotion(item.id)}/>
+                                                        <div className="bgImg bgMini" style={{ ...previewStyle, "--scene-duration": `${18 / Math.max(.25, Math.min(3, bgEffects.speed ?? 1))}s` } as CSSProperties}>
+                                                            <BackgroundScene variant={item.id as StockScene} motion={supportsBackgroundMotion(item.id) && (bgEffects.speed ?? 1) > 0}/>
                                                         </div> :
                                                         <div className="bgImg bgMini" style={previewStyle}/>}
                                             <span className={bg === item.id ? "bgSpanChoosen" : ""}>{item.label}</span>

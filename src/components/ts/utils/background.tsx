@@ -7,12 +7,13 @@ import "../../../scss/landingBackground.scss";
 export function Background() {
   const { bg, bgUrl, bgEffects } = useSettings();
 
-  const speed = Math.min(3, Math.max(.5, bgEffects.speed ?? 1));
+  const speed = Math.min(3, Math.max(0, bgEffects.speed ?? 1));
+  const running = bgEffects.movement && speed > 0;
   const effects = {
     filter: getBackgroundFilter(bgEffects),
-    animation: bgEffects.movement && supportsBackgroundMotion(bg) && !isStockScene(bg)
+    animation: running && supportsBackgroundMotion(bg) && !isStockScene(bg)
       ? `atBackgroundDrift ${24 / speed}s ease-in-out infinite alternate` : undefined,
-    "--scene-duration": `${18 / speed}s`
+    "--scene-duration": `${18 / Math.max(speed, .25)}s`
   } as React.CSSProperties;
 
   if (bg === "landing") {
@@ -29,7 +30,7 @@ export function Background() {
 
   if (isStockScene(bg)) {
     return <div className="background" style={effects} aria-hidden="true">
-      <BackgroundScene variant={bg as StockScene} motion={bgEffects.movement}/>
+      <BackgroundScene variant={bg as StockScene} motion={running}/>
     </div>;
   }
 

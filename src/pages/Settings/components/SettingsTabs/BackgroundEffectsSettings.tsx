@@ -42,7 +42,7 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
                 <div className="settingSpan">
                     <HighlightText text={t("backgroundLibrary.blurBackground")} search={search}/>
                 </div>
-                <SeekBar id="backgroundBlur" min={0} max={30} value={bgEffects.blur}
+                <SeekBar id="backgroundBlur" min={0} max={30} value={bgEffects.blur} unit="px"
                     onChange={value => update({ ...bgEffects, blur: value })} disabled={false} step={1}/>
             </div>
             <div className="settingInnerWrapper" data-setting-id="backgroundMovement">
@@ -54,9 +54,9 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
             </div>
             <div className="settingInnerWrapper" data-setting-id="backgroundSpeed">
                 <div className={`settingSpan ${!motionAvailable ? "disabled" : ""}`}>
-                    <HighlightText text={t("backgroundLibrary.speed")} search={search}/> — {(bgEffects.speed ?? 1).toFixed(2)}×
+                    <HighlightText text={t("backgroundLibrary.speed")} search={search}/>
                 </div>
-                <SeekBar id="backgroundSpeed" min={0.5} max={3} step={0.25} value={bgEffects.speed ?? 1}
+                <SeekBar id="backgroundSpeed" min={0} max={3} step={0.25} value={bgEffects.speed ?? 1} unit="×"
                     disabled={!motionAvailable}
                     onChange={speed => update({ ...bgEffects, speed })}/>
             </div>
