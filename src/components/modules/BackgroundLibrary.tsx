@@ -1,4 +1,5 @@
-import { useRef, useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties, type PointerEvent } from "react";
+import { animate, motion, useMotionValue, useReducedMotion } from "framer-motion";
 import { ArrowsOutIcon, CheckCircleIcon, PlusCircleIcon, TrashIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../hooks/SettingsHook";
@@ -36,13 +37,95 @@ export default function BackgroundLibrary() {
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
     const [ tab, setTab ] = useState<"stock" | "custom">("stock");
+    const sliderRef = useRef<HTMLDivElement>(null);
+    const sliderX = useMotionValue("0%");
+    const reduceMotion = useReducedMotion();
+    const swipeStart = useRef<{ id: number; x: number; y: number; horizontal: boolean } | null>(null);
+    const suppressClick = useRef(false);
     const [ saving, setSaving ] = useState(false);
     const [ collapsedGroups, setCollapsedGroups ] = useState<string[]>([]);
     const fileRef = useRef<HTMLInputElement | null>(null);
     const previewStyle = { filter: getBackgroundFilter(bgEffects, .24) };
+    const changeTab = (next: "stock" | "custom") => {
+        setTab(next);
+        animate(sliderX, next === "custom" ? "-50%" : "0%", {
+            duration: reduceMotion ? 0 : .3,
+            ease: [.22, 1, .36, 1]
+        });
+    };
+
+    const handleSlidePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+        if (event.button !== 0) return;
+        suppressClick.current = false;
+        swipeStart.current = {
+            id: event.pointerId,
+            x: event.clientX,
+            y: event.clientY,
+            horizontal: false
+        };
+    };
+
+    const handleSlidePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+        const start = swipeStart.current;
+        if (!start || start.id !== event.pointerId) return;
+        const dx = event.clientX - start.x;
+        const dy = event.clientY - start.y;
+
+        if (!start.horizontal && Math.max(Math.abs(dx), Math.abs(dy)) > 8) {
+            if (Math.abs(dy) >= Math.abs(dx)) {
+                swipeStart.current = null;
+                return;
+            }
+            start.horizontal = true;
+            suppressClick.current = true;
+            event.currentTarget.setPointerCapture(event.pointerId);
+        }
+
+        if (start.horizontal) {
+            const width = sliderRef.current?.clientWidth ?? 1;
+            const beyondEdge = tab === "stock" ? dx > 0 : dx < 0;
+            const delta = (beyondEdge ? dx * .2 : dx) / (2 * width) * 100;
+            sliderX.set(`${(tab === "custom" ? -50 : 0) + delta}%`);
+        }
+    };
+
+    const handleSlidePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+        const start = swipeStart.current;
+        if (!start || start.id !== event.pointerId) return;
+        swipeStart.current = null;
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+        const dx = event.clientX - start.x;
+        if (start.horizontal && Math.abs(dx) > 45) {
+            if (tab === "stock" && dx < 0) {
+                changeTab("custom");
+                return;
+            }
+            if (tab === "custom" && dx > 0) {
+                changeTab("stock");
+                return;
+            }
+        }
+        animate(sliderX, tab === "custom" ? "-50%" : "0%", {
+            duration: reduceMotion ? 0 : .25,
+            ease: [.22, 1, .36, 1]
+        });
+    };
+
+    const handleSlidePointerCancel = (event: PointerEvent<HTMLDivElement>) => {
+        swipeStart.current = null;
+        animate(sliderX, tab === "custom" ? "-50%" : "0%", {
+            duration: reduceMotion ? 0 : .2
+        });
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+    };
+
     const tabs = [
-        { value: "stock" as const, label: t("backgroundLibrary.stock"), func: setTab },
-        { value: "custom" as const, label: `${t("backgroundLibrary.custom")} (${bgGallery.length}/6)`, func: setTab }
+        { value: "stock" as const, label: t("backgroundLibrary.stock"), func: changeTab },
+        { value: "custom" as const, label: `${t("backgroundLibrary.custom")} (${bgGallery.length}/6)`, func: changeTab }
     ];
 
     const selectCustom = async (url: string) => {
@@ -95,30 +178,30 @@ export default function BackgroundLibrary() {
         <div className="backgroundLibraryModal" role="dialog" aria-modal="true" aria-label={t("backgroundLibrary.title")}>
             <div className="backgroundLibraryTitle">{t("backgroundLibrary.title")}</div>
             <Selector arr={tabs} selected={tab}/>
-            <div className="backgroundLibraryScroll" key={tab}>
-                {tab === "custom" && bgGallery.length < 6 && settingsLoaded && (
-                    <button type="button" className="backgroundLibraryAdd" onClick={() => fileRef.current?.click()}>
-                        <PlusCircleIcon size={24} weight="fill"/>
-                        {t("backgroundLibrary.add")}
-                    </button>
-                )}
-                {tab === "custom" && <input ref={fileRef} type="file"
-                    accept="image/jpeg,image/png,image/webp,image/gif,image/avif" hidden
-                    onChange={event => {
-                        const file = event.target.files?.[0];
-                        event.target.value = "";
-                        if (file) setBlackout({ seted: true, module: "BgHandler", bg: file });
-                    }}/>}
-                {!settingsLoaded ? (
-                    <div className="backgroundLibraryGrid" role="status" aria-busy="true" aria-label={t("post.loading")}>
-                        {Array.from({ length: tab === "custom" ? 2 : 3 }, (_, i) => (
-                            <div className="backgroundLibrarySkeleton" key={i}>
-                                <div className="skeletonBlock"/>
-                                <div className="skeletonLine skeletonShort"/>
-                            </div>
-                        ))}
-                    </div>
-                ) : tab === "stock" ? (
+            <div className="backgroundLibrarySlidesViewport" ref={sliderRef}
+                onPointerDown={handleSlidePointerDown}
+                onPointerMove={handleSlidePointerMove}
+                onPointerUp={handleSlidePointerUp}
+                onPointerCancel={handleSlidePointerCancel}
+                onClickCapture={event => {
+                    if (!suppressClick.current) return;
+                    event.preventDefault();
+                    event.stopPropagation();
+                    suppressClick.current = false;
+                }}>
+                <motion.div className="backgroundLibrarySlidesTrack" style={{ x: sliderX }}>
+                    <div className="backgroundLibrarySlide">
+                        <div className="backgroundLibraryScroll">
+                            {!settingsLoaded ? (
+                                <div className="backgroundLibraryGrid" role="status" aria-busy="true">
+                                    {Array.from({ length: 3 }, (_, i) => (
+                                        <div className="backgroundLibrarySkeleton" key={i}>
+                                            <div className="skeletonBlock"/>
+                                            <div className="skeletonLine skeletonShort"/>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
                     <div className="backgroundLibrarySections">
                         {stockGroups.map(group => (
                             <section className="backgroundLibrarySection" key={group.id}>
@@ -174,7 +257,34 @@ export default function BackgroundLibrary() {
                             </section>
                         ))}
                     </div>
-                ) : (
+                            )}
+                        </div>
+                    </div>
+                    <div className="backgroundLibrarySlide">
+                        <div className="backgroundLibraryScroll">
+                            {bgGallery.length < 6 && settingsLoaded && (
+                                <button type="button" className="backgroundLibraryAdd" onClick={() => fileRef.current?.click()}>
+                                    <PlusCircleIcon size={24} weight="fill"/>
+                                    {t("backgroundLibrary.add")}
+                                </button>
+                            )}
+                            <input ref={fileRef} type="file"
+                                accept="image/jpeg,image/png,image/webp,image/gif,image/avif" hidden
+                                onChange={event => {
+                                    const file = event.target.files?.[0];
+                                    event.target.value = "";
+                                    if (file) setBlackout({ seted: true, module: "BgHandler", bg: file });
+                                }}/>
+                            {!settingsLoaded ? (
+                                <div className="backgroundLibraryGrid" role="status" aria-busy="true">
+                                    {Array.from({ length: 2 }, (_, i) => (
+                                        <div className="backgroundLibrarySkeleton" key={i}>
+                                            <div className="skeletonBlock"/>
+                                            <div className="skeletonLine skeletonShort"/>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
                     <div className="backgroundLibraryGrid">
                         {bgGallery.map(item => (
                             <div key={item.url} className={`bgPick backgroundLibraryTile ${bg === "custom" && bgUrl === item.url ? "active" : ""}`}>
@@ -197,11 +307,14 @@ export default function BackgroundLibrary() {
                             </div>
                         ))}
                     </div>
-                )}
-                {tab === "custom" && settingsLoaded && bgGallery.length >= 6 &&
-                    <div className="settingHint">{t("backgroundLibrary.limit")}</div>}
-                {tab === "custom" && settingsLoaded && !bgGallery.length &&
-                    <div className="settingHint">{t("backgroundLibrary.empty")}</div>}
+                            )}
+                            {settingsLoaded && bgGallery.length >= 6 &&
+                                <div className="settingHint">{t("backgroundLibrary.limit")}</div>}
+                            {settingsLoaded && !bgGallery.length &&
+                                <div className="settingHint">{t("backgroundLibrary.empty")}</div>}
+                        </div>
+                    </div>
+                </motion.div>
             </div>
         </div>
     );

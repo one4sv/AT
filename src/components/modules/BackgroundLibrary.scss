@@ -74,7 +74,8 @@
     gap: .75dvh;
     align-items: center;
     justify-content: flex-start;
-    border: none;
+    border: 1px solid transparent;
+    box-sizing: border-box;
     background: transparent;
     color: var(--borderWh);
     cursor: pointer;
@@ -275,8 +276,15 @@
     .backgroundLibraryTile:hover,
     .backgroundLibraryTile:active {
         background: transparent;
-        border: none;
+        border: 1px solid transparent;
+        box-sizing: border-box;
         border-radius: 24px;
+    }
+
+    .backgroundLibraryTile.active,
+    .backgroundLibraryTile.active:hover,
+    .backgroundLibraryTile.active:active {
+        border-color: var(--accent);
     }
 
     .backgroundLibraryTile > .bgMini,
@@ -453,4 +461,35 @@
 }
 @media (prefers-reduced-motion: reduce) {
     .backgroundLibrarySectionTitle > svg { transition: none; }
+}
+
+.backgroundLibrarySlidesViewport {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+    touch-action: pan-y;
+}
+
+.backgroundLibrarySlidesTrack {
+    display: flex;
+    height: 100%;
+    width: 200%;
+}
+
+.backgroundLibrarySlide {
+    width: 50%;
+    flex: 0 0 50%;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+
+    > .backgroundLibraryScroll {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        touch-action: pan-y;
+    }
 }
