@@ -295,6 +295,9 @@
     "previous": "Previous background",
     "next": "Next background",
     "appearanceAware": "Depends on appearance",
-    "contourSize": "Contour size"
+    "contourSize": "Contour size",
+    "patternAvailable": "Pattern arrangement and size can be customized",
+    "artPattern": "Drawing arrangement",
+    "artSize": "Drawing size"
   }
 }

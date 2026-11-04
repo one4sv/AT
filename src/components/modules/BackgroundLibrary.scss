@@ -420,3 +420,37 @@
         gap: 1vw;
     }
 }
+
+.backgroundLibrarySectionTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: var(--interact);
+    border: 0;
+    border-radius: 16px;
+    padding: 1dvh 1vw;
+    color: var(--tc);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    > svg {
+        transition: transform .22s ease;
+        &.collapsed { transform: rotate(-90deg); }
+    }
+
+    @media (hover: hover) {
+        &:hover { background: var(--menuButtHover); }
+    }
+
+    @media (max-width: 800px) {
+        padding: 1.2dvh 3vw;
+    }
+}
+.backgroundLibraryGrid[hidden] {
+    display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .backgroundLibrarySectionTitle > svg { transition: none; }
+}

@@ -9,15 +9,15 @@ const createContours = (mode: ContourPattern) => {
         return seed / 4294967296;
     };
 
-    return Array.from({ length: mode === "order" ? 54 : 44 }, (_, index) => {
-        const column = index % (mode === "order" ? 9 : 8);
-        const row = Math.floor(index / (mode === "order" ? 9 : 8));
+    return Array.from({ length: mode === "order" ? 54 : 54 }, (_, index) => {
+        const column = index % 9;
+        const row = Math.floor(index / 9);
         return {
-            x: mode === "order" ? (column + .4 + random() * .4) / 9 * 100 : (column + .15 + random() * .7) / 8 * 100,
-            y: mode === "order" ? (row + .4 + random() * .4) / 6 * 100 : (row + .1 + random() * .8) / 6 * 100,
-            size: mode === "order" ? 6 + random() * 4 : 4 + random() * 5,
+            x: mode === "order" ? (column + .4 + random() * .4) / 9 * 100 : (column + .43 + random() * .14) / 9 * 100,
+            y: mode === "order" ? (row + .4 + random() * .4) / 6 * 100 : (row + .43 + random() * .14) / 6 * 100,
+            size: mode === "order" ? 6 + random() * 4 : 9.5 + random() * 3,
             rotate: mode === "order" ? random() * 70 - 35 : random() * 360,
-            opacity: mode === "chaos" ? .075 + random() * .095 : .12 + random() * .13,
+            opacity: mode === "chaos" ? .07 + random() * .075 : .12 + random() * .13,
             index: Math.floor(random() * backPattern.length)
         };
     });

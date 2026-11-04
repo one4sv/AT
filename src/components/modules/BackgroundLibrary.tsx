@@ -10,7 +10,7 @@ import { getBackgroundFilter } from "../ts/utils/backgroundFilter";
 import Selector from "../ts/Selector";
 import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "../ts/utils/BackgroundScene";
 import { api } from "../ts/api";
-import { Film, Palette, WandSparkles } from "lucide-react";
+import { ChevronDown, Film, LayoutGrid, Palette, WandSparkles } from "lucide-react";
 import { backgroundGroups } from "../ts/utils/backgroundCatalog";
 import "./BackgroundLibrary.scss";
 import "../../scss/Loading.scss";
@@ -31,12 +31,13 @@ function CustomBackgroundThumb({ url }: { url: string }) {
 
 export default function BackgroundLibrary() {
     const { t } = useTranslation("settings");
-    const { bg, bgUrl, bgGallery, bgEffects, contourPattern, contourSize, settingsLoaded, refetchSettings } = useSettings();
+    const { bg, bgUrl, bgGallery, bgEffects, contourPattern, contourSize, artPattern, artSize, settingsLoaded, refetchSettings } = useSettings();
     const { setNewBg } = useUpSettings();
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
     const [ tab, setTab ] = useState<"stock" | "custom">("stock");
     const [ saving, setSaving ] = useState(false);
+    const [ collapsedGroups, setCollapsedGroups ] = useState<string[]>([]);
     const fileRef = useRef<HTMLInputElement | null>(null);
     const previewStyle = { filter: getBackgroundFilter(bgEffects, .24) };
     const tabs = [
@@ -121,8 +122,14 @@ export default function BackgroundLibrary() {
                     <div className="backgroundLibrarySections">
                         {stockGroups.map(group => (
                             <section className="backgroundLibrarySection" key={group.id}>
-                                <div className="backgroundLibrarySectionTitle">{t(`backgroundLibrary.${group.id}`)}</div>
-                                <div className="backgroundLibraryGrid">
+                                <button type="button" className="backgroundLibrarySectionTitle"
+                                    aria-expanded={!collapsedGroups.includes(group.id)}
+                                    onClick={() => setCollapsedGroups(current => current.includes(group.id)
+                                        ? current.filter(id => id !== group.id) : [...current, group.id])}>
+                                    <span>{t(`backgroundLibrary.${group.id}`)}</span>
+                                    <ChevronDown size={20} className={collapsedGroups.includes(group.id) ? "collapsed" : ""}/>
+                                </button>
+                                <div className="backgroundLibraryGrid" hidden={collapsedGroups.includes(group.id)}>
                                     {group.items.map(item => (
                                         <div key={item.id}
                                             className={`bgPick backgroundLibraryTile ${bg === item.id ? "active" : ""}`}>
@@ -134,7 +141,8 @@ export default function BackgroundLibrary() {
                                                     <div className="bgImg bgMini" style={previewStyle}><BackIconsScene pattern={contourPattern} size={contourSize}/></div> :
                                                     isStockScene(item.id) ?
                                                         <div className="bgImg bgMini" style={{ ...previewStyle, "--scene-duration": `${18 / Math.max(.25, Math.min(3, bgEffects.speed ?? 1))}s` } as CSSProperties}>
-                                                            <BackgroundScene variant={item.id as StockScene} motion={supportsBackgroundMotion(item.id) && bgEffects.movement && (bgEffects.speed ?? 1) > 0}/>
+                                                            <BackgroundScene variant={item.id as StockScene} motion={supportsBackgroundMotion(item.id) && bgEffects.movement && (bgEffects.speed ?? 1) > 0}
+                                                                artPattern={artPattern} artSize={artSize}/>
                                                         </div> :
                                                         <div className="bgImg bgMini" style={previewStyle}/>}
                                                 <span className={`backgroundLibraryName ${bg === item.id ? "bgSpanChoosen" : ""}`}>
@@ -148,6 +156,10 @@ export default function BackgroundLibrary() {
                                                     {item.id === "art" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.appearanceAware")}>
                                                         <WandSparkles size={15} aria-label={t("backgroundLibrary.appearanceAware")}/>
                                                     </span>}
+                                                    {(item.id === "default" || item.id === "art") &&
+                                                        <span className="backgroundLibraryCapability" title={t("backgroundLibrary.patternAvailable")}>
+                                                            <LayoutGrid size={15} aria-label={t("backgroundLibrary.patternAvailable")}/>
+                                                        </span>}
                                                 </span>
                                                 {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
                                             </button>

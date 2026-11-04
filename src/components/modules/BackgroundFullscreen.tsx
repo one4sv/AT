@@ -22,10 +22,12 @@ type PreviewItem = { id: string; url?: string; label: string };
 export default function BackgroundFullscreen() {
     const { t } = useTranslation("settings");
     const { blackout, setBlackout } = useBlackout();
-    const { bgGallery, bgEffects, contourPattern, contourSize } = useSettings();
+    const { bgGallery, bgEffects, contourPattern, contourSize, artPattern, artSize } = useSettings();
     const [ previewEffects, setPreviewEffects ] = useState<BackgroundEffects>(() => ({ ...bgEffects }));
     const [ previewPattern, setPreviewPattern ] = useState<ContourPattern>(() => contourPattern);
     const [ previewContourSize, setPreviewContourSize ] = useState(() => contourSize);
+    const [ previewArtPattern, setPreviewArtPattern ] = useState<ContourPattern>(() => artPattern);
+    const [ previewArtSize, setPreviewArtSize ] = useState(() => artSize);
     const [ panelTab, setPanelTab ] = useState<"backgrounds" | "settings">("backgrounds");
     const [ galleryPage, setGalleryPage ] = useState(0);
     const [ panelOpen, setPanelOpen ] = useState(false);
@@ -164,7 +166,8 @@ export default function BackgroundFullscreen() {
         return <div key={offset} className="backgroundFullscreenSlide"
             style={{ left: `${offset * 100}%` }}>
             <Background previewBg={item.id} previewUrl={item.url}
-                previewEffects={previewEffects} previewContourPattern={previewPattern} previewContourSize={previewContourSize}/>
+                previewEffects={previewEffects} previewContourPattern={previewPattern} previewContourSize={previewContourSize}
+                previewArtPattern={previewArtPattern} previewArtSize={previewArtSize}/>
         </div>;
     };
 
@@ -212,7 +215,8 @@ export default function BackgroundFullscreen() {
                             }}>
                             <span className="backgroundFullscreenChoiceThumb">
                                 <Background previewBg={item.id} previewUrl={item.url}
-                                    previewEffects={previewEffects} previewContourPattern={previewPattern} previewContourSize={previewContourSize}/>
+                                    previewEffects={previewEffects} previewContourPattern={previewPattern} previewContourSize={previewContourSize}
+                                    previewArtPattern={previewArtPattern} previewArtSize={previewArtSize}/>
                             </span>
                             <span>{item.label}</span>
                         </button>;
@@ -235,12 +239,16 @@ export default function BackgroundFullscreen() {
                         setPreviewEffects({ ...bgEffects });
                         setPreviewPattern(contourPattern);
                         setPreviewContourSize(contourSize);
+                        setPreviewArtPattern(artPattern);
+                        setPreviewArtSize(artSize);
                     }} title={t("backgroundLibrary.previewReset")}>
                     <RotateCcw size={16}/> {t("backgroundLibrary.previewReset")}
                 </button>
             </div>
             {current.id === "default" && <ContourPatternPicker value={previewPattern} onChange={setPreviewPattern}
                 size={previewContourSize} onSizeChange={setPreviewContourSize}/>}
+            {current.id === "art" && <ContourPatternPicker value={previewArtPattern} onChange={setPreviewArtPattern}
+                size={previewArtSize} onSizeChange={setPreviewArtSize} subject="art"/>}
             <div className="backgroundFullscreenControl">
                 <span>{t("backgroundLibrary.blurBackground")}</span>
                 <SeekBar id="previewBlur" min={0} max={30} step={1} unit="px"
