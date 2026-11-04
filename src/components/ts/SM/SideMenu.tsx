@@ -67,7 +67,7 @@ export default function SideMenu() {
     };
     const handleTouchMove = (e: React.TouchEvent) => {
         // Header gestures have priority over SideMenu horizontal swipe.
-        if (dontHandleOther) return;
+        if (dontHandleOther && !horizontalSwipe.current) return;
         const clientX = e.touches[0].clientX;
         const clientY = e.touches[0].clientY;
         const diffPx = clientX - startX.current;
@@ -101,7 +101,7 @@ export default function SideMenu() {
         }
         setIsDragging(false);
         setDontHandle(false);
-        if (currentTranslate.current < -40) closeMenu();
+        if (currentTranslate.current < -18) closeMenu();
         else openSideMenu();
         horizontalSwipe.current = false;
         verticalScroll.current = false;
