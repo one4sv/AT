@@ -390,6 +390,9 @@
 
 .customPaletteOpen {
     align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: .7vw;
     background: var(--interact);
     color: var(--accent_text);
     border: none;
@@ -397,8 +400,17 @@
     font: inherit;
     padding: .6dvh 1vw;
     cursor: pointer;
+    &.active { background: var(--menuButtHover); }
     @media (hover: hover) { &:hover { background: var(--menuButtHover); } }
-    @media (max-width: 800px) { padding: .9dvh 3vw; }
+    @media (max-width: 800px) { padding: .9dvh 3vw; gap: 2vw; }
+}
+.customPaletteSwatch {
+    display: inline-block;
+    width: 2dvh;
+    height: 2dvh;
+    flex: 0 0 2dvh;
+    border-radius: 50%;
+    border: 1px solid var(--block_border);
 }
 .colorSelector:has(.customPaletteOpen) {
     height: auto;

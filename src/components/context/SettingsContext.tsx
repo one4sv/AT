@@ -5,6 +5,7 @@ import { useUser } from "../hooks/UserHook";
 import useLocalStorage from "../hooks/utils/useLocalStorage";
 import i18n from "../../i18n/i18n";
 import { api } from "../ts/api";
+import { applyCustomPalette } from "../ts/utils/customPalette";
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
@@ -224,6 +225,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         document.documentElement.setAttribute("data-accent", accent);
         document.documentElement.setAttribute("data-grad", grad);
         document.documentElement.setAttribute("data-decor", decor);
+        applyCustomPalette(accent, grad);
     }, [isDark, accent, grad, decor]);
 
     return (

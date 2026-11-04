@@ -134,6 +134,11 @@
     "background": "Задний фон",
     "landingBackground": "Акцентное свечение",
     "addCustom": "Добавить свой",
+        "customAccent": "Свой акцентный цвет",
+        "customGrad": "Свой цвет градиента",
+        "pickColor": "Выбрать цвет",
+        "hexColor": "Цвет в HEX",
+        "saveColor": "Сохранить цвет",
     "contourShapes": "Контурные фигуры",
     "solidColor": "Сплошной цвет",
     "yourBg": "Ваш фон"

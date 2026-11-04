@@ -237,6 +237,7 @@ export default function ColorSelector({
                     backgroundPosition: `${-indicator}px center`,
                     backgroundImage: gradientObj.bgImage,
                     backgroundSize: gradientObj.bgSize,
+                    opacity: index < 0 ? 0 : 1,
                     transition: isInitial.current
                         ? "none"
                         : "transform 0.3s ease, background-position 0.3s ease"

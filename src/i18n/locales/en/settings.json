@@ -134,6 +134,11 @@
     "background": "Background",
     "landingBackground": "Accent glow",
     "addCustom": "Add custom",
+        "customAccent": "Custom accent color",
+        "customGrad": "Custom gradient color",
+        "pickColor": "Choose color",
+        "hexColor": "Color in HEX",
+        "saveColor": "Save color",
     "contourShapes": "Contour shapes",
     "solidColor": "Solid color",
     "yourBg": "Your background"

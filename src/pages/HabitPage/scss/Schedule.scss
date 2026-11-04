@@ -4,8 +4,8 @@
     box-sizing: border-box;
     width: 100%;
     height: 42dvh;
-    min-height: 35dvh;
-    max-height: 72dvh;
+    min-height: 42dvh;
+    flex: 0 0 42dvh;
     background-color: var(--mc);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
@@ -14,10 +14,10 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    flex-shrink: 0;
     @media (max-width: 800px) {
         height: 48dvh;
-        min-height: 40dvh;
+        min-height: 48dvh;
+        flex-basis: 48dvh;
         padding: 1vh 0;
         margin-top: 1vh;
     }
@@ -26,7 +26,7 @@
 .schedule {
     display: flex;
     justify-content: space-around;
-    flex: 1;
+    flex: 1 1 0;
     min-height: 0;
     min-width: 0;
     .scheduleWrapper:first-child .scheduleInfo {
@@ -35,6 +35,7 @@
 }
 
 .scheduleOptions {
+    flex: 0 0 auto;
     display: flex;
     padding: 2px 0.5vw 5px;
     justify-content: space-between;
@@ -146,8 +147,10 @@
     justify-content: start;
     align-items: center;
     overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
     width: 100%;
-    flex: 1;
+    flex: 1 1 0;
     min-height: 0;
     min-width: 0;
     max-height: 100%;
