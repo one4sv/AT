@@ -161,10 +161,12 @@ export default function BackgroundLibrary() {
                                                         <div className="bgImg bgMini" style={previewStyle}/>}
                                                 <span className={`backgroundLibraryName ${bg === item.id ? "bgSpanChoosen" : ""}`}>
                                                     {item.label}
-                                                    {supportsBackgroundMotion(item.id) && <Film size={15} className="backgroundLibraryCapability"
-                                                        title={t("backgroundLibrary.motionAvailable")} aria-label={t("backgroundLibrary.motionAvailable")}/>}
-                                                    <Palette size={15} className="backgroundLibraryCapability"
-                                                        title={t("backgroundLibrary.themeAware")} aria-label={t("backgroundLibrary.themeAware")}/>
+                                                    {supportsBackgroundMotion(item.id) && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.motionAvailable")}>
+                                                        <Film size={15} aria-label={t("backgroundLibrary.motionAvailable")}/>
+                                                    </span>}
+                                                    <span className="backgroundLibraryCapability" title={t("backgroundLibrary.themeAware")}>
+                                                        <Palette size={15} aria-label={t("backgroundLibrary.themeAware")}/>
+                                                    </span>
                                                 </span>
                                                 {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
                                             </button>

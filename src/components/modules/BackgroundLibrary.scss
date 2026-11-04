@@ -401,3 +401,22 @@
         transition: none;
     }
 }
+
+.backgroundLibraryName {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: .35vw;
+}
+
+.backgroundLibraryCapability {
+    display: inline-flex;
+    align-items: center;
+    color: var(--borderWh);
+    cursor: help;
+
+    @media (max-width: 800px) {
+        gap: 1vw;
+    }
+}
