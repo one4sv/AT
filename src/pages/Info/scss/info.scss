@@ -168,7 +168,8 @@
     }
     &.active {
         color: var(--inner_text);
-        background: linear-gradient(135deg, var(--accent), var(--grad))
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        border: none;
     }
 }
 

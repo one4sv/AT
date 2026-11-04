@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import type { Setting } from "../Settings";
 
 import SectionArt from "../../../components/ts/SectionArt";
+import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 
 interface SettingsButtsProps {
   settings: Setting[];
@@ -30,12 +31,20 @@ export default function SettingsButts({
 }: SettingsButtsProps) {
   const { t } = useTranslation("settings");
   const navigate = useNavigate();
+  const { openMenu } = useContextMenu();
+  const openSettingsMenu = (e: React.MouseEvent<HTMLElement>, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openMenu(e.clientX, e.clientY, "settingsSection", { id });
+  };
 
   return (
     <>
       {/* Кнопка аккаунта */}
       <div
         className="settingButt settingButtAcc"
+        data-context-menu="true"
+        onContextMenu={e => openSettingsMenu(e, "acc")}
         onClick={() => {
           navigate(`/settings/${accTab.tab}`);
           setActiveTab(accTab);
@@ -66,6 +75,8 @@ export default function SettingsButts({
         <div
           key={s.tab}
           className="settingButt"
+          data-context-menu="true"
+          onContextMenu={e => openSettingsMenu(e, s.tab)}
           onClick={() => {
             setActiveTab(s);
             navigate(`/settings/${s.tab}`);
@@ -83,6 +94,8 @@ export default function SettingsButts({
       {/* Кнопка "Информация" */}
       <div
         className="settingButt"
+        data-context-menu="true"
+        onContextMenu={e => openSettingsMenu(e, "info")}
         onClick={() => {
           navigate("/info");
         }}

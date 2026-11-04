@@ -276,6 +276,7 @@
     justify-content: center;
     gap: 2px;
     background: linear-gradient(135deg, var(--accent), var(--grad));
+    border: none;
         @media (hover: hover) {
         &:hover {
             box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
@@ -307,6 +308,7 @@
         aspect-ratio: 1/1;
         &.active {
             background:linear-gradient(135deg, var(--accent), var(--grad));
+            border: none;
             color: var(--tc);
         }
         &.was {

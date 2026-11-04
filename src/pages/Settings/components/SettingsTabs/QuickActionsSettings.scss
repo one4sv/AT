@@ -278,3 +278,46 @@
     color: var(--borderHabit);
     padding: 1dvh 1vw;
 }
+
+.quickActionFilters, .postHabitFilters {
+    display: flex;
+    gap: .4vw;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex-shrink: 0;
+
+    > button {
+        border: none;
+        border-radius: 24px;
+        background: var(--interact);
+        color: var(--borderWh);
+        white-space: nowrap;
+        padding: .65dvh .85vw;
+        cursor: pointer;
+
+        &.active {
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            color: var(--inner_text);
+            border: none;
+        }
+
+        @media (hover: hover) {
+            &:not(.active):hover {
+                background: var(--menuButtHover);
+                color: var(--tc);
+            }
+        }
+
+        @media (hover: none) {
+            &:not(.active):active {
+                background: var(--menuButtHover);
+                color: var(--tc);
+            }
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 1.5vw;
+        > button { padding: 1dvh 3vw; }
+    }
+}

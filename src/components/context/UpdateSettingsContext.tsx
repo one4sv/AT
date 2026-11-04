@@ -18,7 +18,7 @@ export type UpdateSettingsContextType = {
     setNewMessdb: (val:string)=> void;
     setNewEmote: (val:string)=> void;
     setNewDecor: (val:string)=> void;
-    setBgUrl:(val:File) => void;
+    setBgUrl:(val:File) => Promise<boolean>;
     setNewNote:(val:boolean) => void;
     setNewMessNote:(val:boolean) => void;
     setNewHabitsNote:(val:boolean) => void;
@@ -137,13 +137,14 @@ export const UpdateSettingsProvider = ({ children }: { children: ReactNode }) =>
             });
             if (upRes.data?.success) {
                 await refetchSettings();
+                return true;
             } else {
-                showNotification("error", upRes.data?.error || "Не удалось загрузить аватар");
-                return;
+                showNotification("error", upRes.data?.error || "Не удалось загрузить фон");
+                return false;
             }
-        } catch {
-            showNotification("error", "Не удалось загрузить аватар");
-            return;
+        } catch (error) {
+            showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Не удалось загрузить фон" : "Не удалось загрузить фон");
+            return false;
         }
     }
 

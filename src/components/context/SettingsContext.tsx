@@ -12,6 +12,12 @@ export type GroupInviteRules = { contacts: "direct" | "message" | "none"; others
 export type ChatWelcomeSettings = { enabled: boolean; text: string };
 export type QuickActionType = "feed" | "settings" | "profile" | "habits" | "habit" | "chat";
 export type QuickAction = { type: QuickActionType; target?: string; label?: string };
+export type SavedBackground = { url: string; path: string | null };
+export type BackgroundEffects = {
+    blur: number;
+    movement: boolean;
+    filter: "none" | "grayscale" | "sepia" | "invert" | "contrast" | "saturate";
+};
 
 export interface SettingsContextType {
     groupInvites: GroupInviteRules;
@@ -50,6 +56,10 @@ export interface SettingsContextType {
     messNote: boolean;
     setMessNote: React.Dispatch<React.SetStateAction<boolean>>;
     bgUrl: string;
+    bgGallery: SavedBackground[];
+    setBgGallery: React.Dispatch<React.SetStateAction<SavedBackground[]>>;
+    bgEffects: BackgroundEffects;
+    setBgEffects: React.Dispatch<React.SetStateAction<BackgroundEffects>>;
     privateShow: PrivateSettings;
     setPrivate: React.Dispatch<React.SetStateAction<PrivateSettings>>;
     tab: string;
@@ -79,6 +89,8 @@ interface SettingsResponse {
     show_archived_in_acc: boolean;
     week_start: string;
     bg_url: string;
+    bg_gallery?: SavedBackground[];
+    bg_effects?: BackgroundEffects;
 }
 
 export interface PrivateSettings {
@@ -139,6 +151,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             return "";
         }
     });
+    const [ bgGallery, setBgGallery ] = useState<SavedBackground[]>([]);
+    const [ bgEffects, setBgEffects ] = useState<BackgroundEffects>({ blur: 0, movement: false, filter: "none" });
     const [ groupInvites, setGroupInvites ] = useState<GroupInviteRules>({ contacts: "message", others: "none" });
     const [ chatWelcome, setChatWelcome ] = useState<ChatWelcomeSettings>({ enabled: false, text: "" });
     const [ quickActions, setQuickActions ] = useState<QuickAction[]>([]);
@@ -172,6 +186,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setShowArchivedInAcc(res.data.show_archived_in_acc ?? false);
                 setWeekStart(res.data.week_start ?? null);
                 setBgUrl(res.data.bg_url ?? "");
+                setBgGallery(Array.isArray(res.data.bg_gallery) ? res.data.bg_gallery.slice(0, 5) : []);
+                setBgEffects(res.data.bg_effects ?? { blur: 0, movement: false, filter: "none" });
                 localStorage.setItem(
                     "settings_bg_url",
                     JSON.stringify(res.data.bg_url ?? "")
@@ -219,7 +235,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             layout, setLayout,
             bg, setBg,
             decor, setDecor,
-            bgUrl, lang, setLang,
+            bgUrl, bgGallery, setBgGallery, bgEffects, setBgEffects, lang, setLang,
             privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
             twoAuth, setTwoAuth,
             note, setNote,

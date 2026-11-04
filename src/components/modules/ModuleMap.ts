@@ -20,6 +20,7 @@ import HabitDayActivityHistory from './HabitDayActivityHistory';
 import HabitTaskEditor from './HabitTaskEditor';
 import WelcomeMessageInfo from './WelcomeMessageInfo';
 import QuickActionPicker from './QuickActionPicker';
+import BackgroundLibrary from './BackgroundLibrary';
 
 const ModuleMap: Record<string, React.FC> = {
     ConfirmAction:ConfirmAction,
@@ -43,6 +44,7 @@ const ModuleMap: Record<string, React.FC> = {
     HabitTaskEditor:HabitTaskEditor,
     WelcomeMessageInfo:WelcomeMessageInfo,
     QuickActionPicker:QuickActionPicker,
+    BackgroundLibrary:BackgroundLibrary,
     Table:Table
 };
 

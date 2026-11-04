@@ -42,6 +42,7 @@ type MenuState = {
     y: number,
     point: string,
     visible: boolean,
+    originSide?: { left: number; right: number },
     habit?:Habit,
     options: MenuOptions,
     chatInfo?:chatInfoType,
@@ -60,7 +61,6 @@ export type ContextMenuContextType = {
 }
 
 export function ContextMenuProvider({ children }:{ children: ReactNode }) {
-    useLongPressContextMenu()
     const [menu, setMenu] = useState<MenuState>({
         x: -1000,
         y: 0,
@@ -71,12 +71,19 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
     const menuRef = useRef<HTMLDivElement>(null);
 
     const openMenu = (x:number, y:number, point:string, options:MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType, memberInfo?:MemberType ) => {
-        setMenu({ x, y, point, habit, options, chatInfo, visible: true, curChat, memberInfo })
+        const side = document.elementFromPoint(x, y)?.closest<HTMLElement>(".sideMenu");
+        const bounds = side?.getBoundingClientRect();
+        setMenu({
+            x, y, point, habit, options, chatInfo, visible: true, curChat, memberInfo,
+            originSide: bounds ? { left: bounds.left, right: bounds.right } : undefined
+        })
     }
 
     const closeMenu = () => {
         setMenu({ x: -1000, visible: false, y: 0, point: "", options: {id: "", name: ""}})
     }
+
+    useLongPressContextMenu({ closeMenu, menuRef });
 
     useEffect(() => {
         const close = () => closeMenu()

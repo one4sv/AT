@@ -221,5 +221,37 @@
     "confirmTrust": "Quick sign-in on this device will be disabled.",
     "confirmOthers": "All other sessions and quick sign-in devices will be revoked.",
     "legacy": "This sign-in predates device tracking. Sign in again to make it appear in your sessions."
+  },
+  "quickFilters": {
+    "all": "All",
+    "mine": "Mine",
+    "shared": "Shared",
+    "private": "Private",
+    "group": "Groups",
+    "active": "Active",
+    "search": "Search..."
+  },
+  "backgroundLibrary": {
+    "title": "Background",
+    "change": "Change background",
+    "stock": "Built-in",
+    "custom": "My backgrounds",
+    "add": "Add background",
+    "limit": "You can store at most five backgrounds",
+    "delete": "Delete background",
+    "deleteQuestion": "Delete this background?",
+    "deleteHint": "The image will be removed from your library.",
+    "blur": "Blur",
+    "movement": "Background movement",
+    "filter": "Filter",
+    "none": "None",
+    "grayscale": "Grayscale",
+    "sepia": "Sepia",
+    "invert": "Invert",
+    "contrast": "Contrast",
+    "saturate": "Saturation",
+    "error": "Couldn't save background",
+    "empty": "No custom backgrounds yet",
+    "selected": "Selected"
   }
 }

@@ -202,3 +202,9 @@ setBlackout({
 **Права и даты**: `DoneContext` отвечает за состояние возможности выполнить день; реальная авторизация — в backend `getHabitAccess`. Для активности беседы `completion_start_date` определяется из `chat_members.joined_at`. Поэтому новая кнопка выполнения не должна обходить общую проверку.
 
 Подробнее: [SVG_ART.md](SVG_ART.md), [I18N.md](I18N.md), [ARCHITECTURE.md](ARCHITECTURE.md), [COLLABORATION_AND_PERMISSIONS.md](COLLABORATION_AND_PERMISSIONS.md).
+
+## Контекстные меню и фоновые модалки — конкретные стандарты
+
+`useLongPressContextMenu` — общий обработчик обычных `data-context-menu` с `pointerdown/pointermove/pointerup`; удержание 350 мс открывает меню, отпускание на исходном элементе оставляет его, скольжение подсвечивает `ContextMenuButt.touchHover`. Хедеры используют отдельный `useHeaderMenuGestures` и связаны **только внутри хедера**. Не создавать изолированные реализации для `.settingButt`, `.contactsUser`, карточек и прочего.
+
+`BackgroundLibrary` — модальное управление стандартными и пользовательскими фонами (до 5, хранение в Supabase); `BgHandler` — кадрирование перед загрузкой. `Blackout` не закрывает модалку во время внутренней прокрутки, пока список не был наверху в начале жеста. Внешняя поверхность модалки — `var(--mc)` с blur.

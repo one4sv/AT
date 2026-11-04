@@ -23,6 +23,7 @@ export default function Blackout() {
     const closingIndex = useRef<number | null>(null);
     const wasOpen = useRef(false);
     const horizontalSwipe = useRef(false);
+    const canDismiss = useRef(true);
 
     const topIndex = visibleStack.length - 1;
 
@@ -216,6 +217,20 @@ export default function Blackout() {
 
         horizontalSwipe.current = false;
 
+        const module = moduleRefs.current.get(index);
+        let scrollable = target;
+        canDismiss.current = true;
+        while (module && module.contains(scrollable)) {
+            const style = window.getComputedStyle(scrollable);
+            if ((style.overflowY === "auto" || style.overflowY === "scroll") &&
+                scrollable.scrollHeight > scrollable.clientHeight + 2) {
+                canDismiss.current = scrollable.scrollTop <= 2;
+                break;
+            }
+            if (!scrollable.parentElement) break;
+            scrollable = scrollable.parentElement;
+        }
+
         if (isImagePreview) {
             const touch = e.touches[0];
             const startX = touch.clientX;
@@ -245,7 +260,11 @@ export default function Blackout() {
         currentY.current = startY.current;
         dragging.current = true;
 
-        const module = moduleRefs.current.get(index);
+        if (!canDismiss.current) {
+            dragging.current = false;
+            return;
+        }
+
         if (module) module.style.transition = "none";
 
         if (index === 0) {
@@ -261,7 +280,8 @@ export default function Blackout() {
             index !== topIndex ||
             !dragging.current ||
             isClosing.current ||
-            horizontalSwipe.current
+            horizontalSwipe.current ||
+            !canDismiss.current
         ) return;
 
         const module = moduleRefs.current.get(index);

@@ -29,6 +29,7 @@ import SearchUnstarted from "./components/Search/SearchUnstarted";
 import SearchedButts from "./components/Search/SearchedButts";
 import { AnimatePresence, motion } from "motion/react";
 import useLocalStorage from "../../components/hooks/utils/useLocalStorage";
+import { useContextMenu } from "../../components/hooks/ContextMenuHook";
 
 export interface Setting {
     name: string;
@@ -64,6 +65,12 @@ export default function Settings() {
     const location = useLocation();
     
     const navigate = useNavigate();
+    const { openMenu } = useContextMenu();
+    const openBackMenu = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openMenu(e.clientX, e.clientY, "settingsBack", { id: tab || "" });
+    };
     const settings = useSettingsTabs();
     const searchableSettings = useSearchableSettings();
 
@@ -262,6 +269,8 @@ export default function Settings() {
                                     <div className="settingTop">
                                         <div
                                             className="settingBack"
+                                            data-context-menu="true"
+                                            onContextMenu={openBackMenu}
                                             onClick={() => navigate("/settings")}
                                         >
                                             <ArrowLeftIcon />
@@ -273,7 +282,7 @@ export default function Settings() {
                                 {tabs[activeTab.tab as keyof typeof tabs]}
 
                                 {isMobile && (
-                                    <PageBottom className="settingBackWrapper" onBack={() => navigate("/settings")}>
+                                    <PageBottom className="settingBackWrapper" onBack={() => navigate("/settings")} onBackContextMenu={openBackMenu}>
                                         {settingSearch()}
                                     </PageBottom>
                                 )}

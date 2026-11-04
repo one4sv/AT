@@ -12,6 +12,8 @@ import MediaMenu from "./menus/MediaMenu";
 import MessBarMenu from "./menus/MessBarMenu";
 import HeaderQuickActionMenu from "./menus/HeaderQuickActionMenu";
 import HabitHeaderMenu from "./menus/HabitHeaderMenu";
+import SettingsBackMenu from "./menus/SettingsBackMenu";
+import SettingsSectionMenu from "./menus/SettingsSectionMenu";
 export default function ContextMenu() {
     const {
         menu,
@@ -43,7 +45,9 @@ export default function ContextMenu() {
             const viewportHeight = viewport?.height ?? window.innerHeight;
             const offsetLeft = viewport?.offsetLeft ?? 0;
             const offsetTop = viewport?.offsetTop ?? 0;
-            const left = Math.max(offsetLeft + 10, Math.min(menu.x, offsetLeft + viewportWidth - menuWidth - 10));
+            const minLeft = menu.originSide ? Math.max(offsetLeft + 10, menu.originSide.left + 10) : offsetLeft + 10;
+            const maxRight = menu.originSide ? Math.min(offsetLeft + viewportWidth - 10, menu.originSide.right - 10) : offsetLeft + viewportWidth - 10;
+            const left = Math.max(minLeft, Math.min(menu.x, Math.max(minLeft, maxRight - menuWidth)));
             const top = Math.max(offsetTop + 10, Math.min(menu.y, offsetTop + viewportHeight - menuHeight - 10));
             setPos({
                 top,
@@ -100,6 +104,10 @@ export default function ContextMenu() {
                 return <HeaderQuickActionMenu />;
             case "habitHeader":
                 return <HabitHeaderMenu />;
+            case "settingsBack":
+                return <SettingsBackMenu />;
+            case "settingsSection":
+                return <SettingsSectionMenu />;
             default:
                 return null;
         }

@@ -78,6 +78,7 @@
 
     > .composerSend {
         background: linear-gradient(135deg, var(--accent), var(--grad));
+        border: none;
         color: var(--inner_text);
         &:disabled { opacity: 1; }
     }

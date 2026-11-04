@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../hooks/SettingsHook";
+import { useUser } from "../hooks/UserHook";
 import { useHabits } from "../hooks/HabitsHook";
 import { useContacts } from "../hooks/ContactsHook";
 import { useBlackout } from "../hooks/BlackoutHook";
@@ -16,10 +17,12 @@ export default function QuickActionPicker() {
     const { quickActions, setQuickActions, settingsLoaded } = useSettings();
     const { habits } = useHabits();
     const { list } = useContacts();
+    const { user } = useUser();
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
     const [ kind, setKind ] = useState<"habit" | "chat" | null>(null);
     const [ query, setQuery ] = useState("");
+    const [ filter, setFilter ] = useState("all");
     const [ saving, setSaving ] = useState(false);
     const savingRef = useRef(false);
 
@@ -54,13 +57,20 @@ export default function QuickActionPicker() {
         if (type === "habit" || type === "chat") {
             setKind(type);
             setQuery("");
+            setFilter("all");
             return;
         }
         void add({ type });
     };
 
-    const filteredHabits = (habits ?? []).filter(item => item.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
-    const filteredChats = list.filter(item => (item.name || item.nick).toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+    const filteredHabits = (habits ?? []).filter(item =>
+        item.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()) &&
+        (filter === "all" || (filter === "mine" ? item.user_id === user.id : item.user_id !== user.id))
+    );
+    const filteredChats = list.filter(item =>
+        (item.name || item.nick).toLocaleLowerCase().includes(query.toLocaleLowerCase()) &&
+        (filter === "all" || (filter === "group" ? item.is_group : !item.is_group))
+    );
 
     return (
         <div className="quickActionModal" role="dialog" aria-modal="true" aria-label={t("general.quickActionsTitle")}>
@@ -83,6 +93,15 @@ export default function QuickActionPicker() {
                     onChange={e => setQuery(e.target.value)}
                 />
             )}
+            {kind && <div className="quickActionFilters">
+                {(kind === "habit"
+                    ? [["all", t("quickFilters.all")], ["mine", t("quickFilters.mine")], ["shared", t("quickFilters.shared")]]
+                    : [["all", t("quickFilters.all")], ["private", t("quickFilters.private")], ["group", t("quickFilters.group")]]
+                ).map(([value, label]) => (
+                    <button key={value} type="button" className={filter === value ? "active" : ""}
+                        onClick={() => setFilter(value)}>{label}</button>
+                ))}
+            </div>}
             <div className="quickActionModalList">
                 {!kind && choices.map(({ type }) => {
                     const action: QuickAction = { type };

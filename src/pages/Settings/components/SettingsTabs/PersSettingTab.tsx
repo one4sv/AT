@@ -1,11 +1,11 @@
-import { useRef } from "react";
-import { MoonStarsIcon, PlusCircle, SunIcon } from "@phosphor-icons/react";
+
+import { MoonStarsIcon, SunIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import PreviewAccent from "../PreviewAccent.tsx";
 import { useTranslation } from "react-i18next";
-import { useBackIconsPattern } from "../../../../components/hooks/utils/useBackIconsPattern.tsx";
+
 import SeekBar from "../SeekBar.tsx";
 import { isMobile } from "react-device-detect";
 import Selector from "../../../../components/ts/Selector.tsx";
@@ -20,14 +20,7 @@ export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { setBlackout } = useBlackout();
     const { isDark, accent, bg, bgUrl, decor, grad, blur, layout } = useSettings();
-    const { setNewTheme, setNewAccent, setNewBg, setNewDecor, setNewGrad, setNewBlur, setNewLayout } = useUpSettings();
-    const backIconsPattern = useBackIconsPattern({
-        width: window.innerWidth * 0.08,
-        height: window.innerHeight * 0.08,
-        minSize: 40,
-        maxSize: 80,
-    });
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { setNewTheme, setNewAccent, setNewDecor, setNewGrad, setNewBlur, setNewLayout } = useUpSettings();
 
     const themeArr = [
         { label: t("personalization.dark"), value: "dark", icon: MoonStarsIcon, func:setNewTheme },
@@ -99,46 +92,20 @@ export default function PersSettingTab({ search }: { search: string }) {
                     </div>
             </div>
             <div className="settingInnerDiv" data-setting-id="bg">
-                <div className="settingHeader"><HighlightText text={t("personalization.background")} search={search} /></div>
+                <div className="settingHeader"><HighlightText text={t("personalization.background")} search={search}/></div>
                 <div className="settingInnerWrapper">
-                    <div className="bgPicker">
-                        <div className="bgPick">
-                            <div className="bgCustom bgMini" onClick={() => fileInputRef.current?.click()}>
-                                <input
-                                    type="file"
-                                    className="accPicksfileInput"
-                                    accept="image/*"
-                                    ref={fileInputRef}
-                                    onChange={(e) => {
-                                        if (!e.target.files) return;
-                                        setBlackout({ seted: true, module: "BgHandler", bg: e.target.files[0] });
-                                    }}
-                                />
-                                <PlusCircle />
-                            </div>
-                            <span>{t("personalization.addCustom")}</span>
-                        </div>
-                        <div className="bgPick" role="button" tabIndex={0} aria-pressed={bg === "landing"} onClick={() => setNewBg("landing")} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setNewBg("landing"); } }}>
-                            <div className={`bgImg bgMini landingBackground ${bg === "landing" ? "choosen" : ""}`} />
-                            <span className={bg === "landing" ? "bgSpanChoosen" : ""}>{t("personalization.landingBackground")}</span>
-                        </div>
-                        <div className="bgPick" onClick={() => setNewBg("default")}>
-                            <div className={`bgImg bgMini ${bg === "default" ? "choosen" : ""}`}>
-                                {backIconsPattern}
-                            </div>
-                            <span className={bg === "default" ? "bgSpanChoosen" : ""}>{t("personalization.contourShapes")}</span>
-                        </div>                        
-                        <div className="bgPick" onClick={() => setNewBg("color")}>
-                            <div className={`bgImg bgMini ${bg === "color" ? "choosen" : ""}`} />
-                            <span className={bg === "color" ? "bgSpanChoosen" : ""}>{t("personalization.solidColor")}</span>
-                        </div>
-                        {bgUrl ? (
-                            <div className="bgPick" onClick={() => setNewBg("custom")}>
-                                <img src={bgUrl} className={`bgImg bgMini ${bg === "custom" ? "choosen" : ""}`} />
-                                <span className={bg === "custom" ? "bgSpanChoosen" : ""}>{t("personalization.yourBg")}</span>
-                            </div>
-                        ) : null}
+                    <div className="bgCurrent">
+                        {bg === "custom" && bgUrl ?
+                            <img src={bgUrl} alt=""/> :
+                            <div className={`bgCurrentPreview ${bg === "landing" ? "landingBackground" : ""}`} />}
+                        <span>{bg === "custom" ? t("personalization.yourBg") :
+                            bg === "landing" ? t("personalization.landingBackground") :
+                            bg === "default" ? t("personalization.contourShapes") : t("personalization.solidColor")}</span>
                     </div>
+                    <button type="button" className="bgManageButton"
+                        onClick={() => setBlackout({ seted: true, module: "BackgroundLibrary" })}>
+                        {t("backgroundLibrary.change")}
+                    </button>
                 </div>
             </div>
             {!isMobile ? (

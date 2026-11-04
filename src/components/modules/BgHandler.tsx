@@ -24,9 +24,9 @@ export const BgHandler = () => {
 
     try {
       const croppedFile = await getCroppedImg(blackout.bg, croppedAreaPixels, blur);
+      const saved = await setBgUrl(croppedFile);
+      if (!saved) return;
       setNewBg("custom");
-      setBgUrl(croppedFile);
-
       setBlackout({ seted: false });
     } catch (err) {
       console.error("Ошибка при кропе:", err);

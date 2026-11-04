@@ -92,3 +92,21 @@
         margin-right: 0;
     }
 }
+
+.ContextMenuButt > svg,
+.SMextraMenuButt > svg,
+.SMnavExtraDiv .filterItem > svg {
+    color: var(--accent_text);
+}
+
+.ContextMenuButt.delete > svg,
+.SMextraMenuButt.logout > svg {
+    color: var(--notValid);
+}
+
+.ContextMenuButt > .toggler {
+    margin-left: auto;
+    pointer-events: none;
+    flex-shrink: 0;
+    transform: scale(.78);
+}

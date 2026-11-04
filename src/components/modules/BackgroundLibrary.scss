@@ -1,0 +1,244 @@
+.backgroundLibraryModal {
+    width: 52vw;
+    max-height: 82dvh;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+    background: var(--mc);
+    color: var(--tc);
+    border-radius: 24px;
+    padding: 2dvh 1.5vw;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    @media (max-width: 800px) {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        max-width: 100%;
+        max-height: 85dvh;
+        border-radius: 24px 24px 0 0;
+        padding: 2dvh 4vw calc(2dvh + env(safe-area-inset-bottom));
+    }
+}
+
+.backgroundLibraryTitle { font-size: 20px; flex-shrink: 0; }
+
+.backgroundLibraryTabs {
+    display: flex;
+    background: var(--interact);
+    padding: .3dvh .3vw;
+    border-radius: 24px;
+    gap: .35vw;
+    flex-shrink: 0;
+
+    > button {
+        border: none;
+        flex: 1;
+        padding: 1dvh 1vw;
+        border-radius: 24px;
+        cursor: pointer;
+        color: var(--tc);
+        background: transparent;
+
+        &.active {
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            color: var(--inner_text);
+            border: none;
+        }
+    }
+}
+
+.backgroundLibraryScroll {
+    min-height: 0;
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5dvh;
+}
+
+.backgroundLibraryGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .75vw;
+
+    @media (max-width: 800px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 2vw;
+    }
+}
+
+.backgroundLibraryTile {
+    background: var(--interact);
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+    padding: .65dvh;
+    color: var(--tc);
+    position: relative;
+    min-width: 0;
+    cursor: pointer;
+    text-align: start;
+
+    &.active {
+        border: none;
+        background: var(--menuButtHover);
+    }
+
+    > svg { color: var(--accent_text); }
+
+    @media (hover: hover) {
+        &:hover { background: var(--menuButtHover); }
+    }
+
+    @media (hover: none) {
+        &:active { background: var(--menuButtHover); }
+    }
+}
+
+.backgroundLibraryThumb, .backgroundLibraryChoose > img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 16px;
+    object-fit: cover;
+    display: block;
+    background: var(--bgc);
+}
+
+.backgroundThumb-landing {
+    background:
+        radial-gradient(circle at 25% 35%, var(--accent), transparent 60%),
+        radial-gradient(circle at 70% 70%, var(--grad), transparent 60%),
+        var(--bgc);
+}
+.backgroundThumb-default {
+    background: repeating-linear-gradient(45deg, var(--borderHabit), var(--bgc) 12%, var(--bgc) 25%);
+}
+
+.backgroundThumb-color { background: var(--bgc); }
+
+.backgroundLibraryChoose {
+    background: transparent;
+    border: none;
+    color: var(--tc);
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+    align-items: flex-start;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    cursor: pointer;
+
+    > svg { color: var(--accent_text); }
+}
+
+.backgroundLibraryDelete {
+    position: absolute;
+    top: .8dvh;
+    right: .7vw;
+    color: var(--notValid);
+    background: var(--mc);
+    border: 1px solid var(--notValid);
+    border-radius: 24px;
+    cursor: pointer;
+    padding: .6dvh;
+    display: flex;
+
+    @media (hover: hover) {
+        &:hover { background: var(--notValidBg); }
+    }
+
+    @media (hover: none) {
+        &:active { background: var(--notValidBg); }
+    }
+
+    @media (max-width: 800px) {
+        right: 2vw;
+    }
+}
+
+.backgroundLibraryAdd {
+    display: flex;
+    align-items: center;
+    gap: .75vw;
+    background: var(--interact);
+    color: var(--tc);
+    border: none;
+    border-radius: 24px;
+    padding: 1.25dvh 1vw;
+    cursor: pointer;
+    > svg { color: var(--accent_text); }
+
+    @media (hover: hover) {
+        &:hover { background: var(--menuButtHover); }
+    }
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+        padding: 1.3dvh 3vw;
+    }
+}
+
+.backgroundLibraryEffects {
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+    padding: 1dvh 1vw;
+    border-radius: 24px;
+    background: var(--interact);
+
+    @media (max-width: 800px) {
+        padding: 1dvh 3vw;
+    }
+}
+
+.backgroundLibraryLabel { color: var(--tc); }
+
+.backgroundLibraryToggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+
+    > .toggler { pointer-events: none; }
+}
+
+.backgroundLibraryFilters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5vw;
+
+    > button {
+        border: none;
+        border-radius: 24px;
+        background: var(--mc);
+        color: var(--tc);
+        padding: .75dvh .8vw;
+        cursor: pointer;
+
+        &.active {
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            border: none;
+            color: var(--inner_text);
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 1.5vw;
+        > button { padding: 1dvh 3vw; }
+    }
+}

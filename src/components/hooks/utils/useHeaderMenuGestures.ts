@@ -184,7 +184,8 @@ export default function useHeaderMenuGestures() {
         const element = document.elementFromPoint(touch.clientX, touch.clientY);
         const item = element?.closest<HTMLElement>(".ContextMenuWrapper .ContextMenuButt") ?? null;
         suppressUntil.current = performance.now() + 1100;
-        reset(!item);
+        const onOriginal = element === press.original || !!(element && press.original.contains(element));
+        reset(!item && !onOriginal);
         if (item) item.click();
         if (e.cancelable) e.preventDefault();
     };
