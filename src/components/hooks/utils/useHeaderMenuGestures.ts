@@ -11,6 +11,7 @@ type PressState = {
     kind: HeaderGesture | null;
     timer: ReturnType<typeof setTimeout> | null;
     pointerId?: number;
+    trigger: HTMLElement;
 };
 
 export default function useHeaderMenuGestures() {
@@ -24,6 +25,7 @@ export default function useHeaderMenuGestures() {
         let press: PressState | null = null;
         let hovered: HTMLElement | null = null;
         let suppressUntil = 0;
+        let touchSuppressUntil = 0;
 
         const clearHover = () => {
             hovered?.classList.remove("touchHover");
@@ -102,11 +104,13 @@ export default function useHeaderMenuGestures() {
             handlers.current.setDontHandleOther(true);
         };
 
-        const start = (x: number, y: number, pointerId?: number) => {
+        const start = (x: number, y: number, pointerId?: number, target?: Element | null) => {
             if (press) reset();
-            const trigger = findTrigger(x, y);
+            // A gesture may start only on an actual header control, not on its expanded hit area.
+            const trigger = target?.closest<HTMLElement>("[data-header-gesture]") ??
+                (pointerId !== undefined ? findTrigger(x, y) : null);
             if (!trigger) return false;
-            press = { x, y, active: false, kind: null, pointerId, timer: null };
+            press = { x, y, active: false, kind: null, pointerId, timer: null, trigger };
             const current = press;
             current.timer = setTimeout(() => {
                 if (press !== current || !trigger.isConnected) return;
@@ -137,24 +141,42 @@ export default function useHeaderMenuGestures() {
             }
         };
 
-        const end = (x: number, y: number, cancelled: boolean) => {
+        const end = (x: number, y: number, cancelled: boolean, touch = false) => {
             if (!press) return;
             const wasActive = press.active;
+            const original = press.trigger;
             const target = document.elementFromPoint(x, y);
-            const item = !cancelled && wasActive ? target?.closest<HTMLElement>(".ContextMenuButt") : null;
+            const item = !cancelled && wasActive ? target?.closest<HTMLElement>(".ContextMenuWrapper .ContextMenuButt") : null;
+            const shortTap = !cancelled && !wasActive &&
+                target?.closest("[data-header-gesture]") === original &&
+                Math.hypot(x - press.x, y - press.y) < 26;
 
-            if (wasActive) suppressUntil = performance.now() + 1100;
+            if (touch || wasActive) suppressUntil = performance.now() + 1100;
             reset(wasActive && !item);
-            if (item) item.click();
+
+            if (item) {
+                item.click();
+            } else if (touch && shortTap && original.isConnected) {
+                // touchstart.preventDefault() suppresses the browser's delayed synthetic click.
+                // Dispatch one click ourselves only for a genuine short tap.
+                original.click();
+            }
         };
 
         const touchStart = (event: TouchEvent) => {
             if (event.touches.length !== 1) return;
+            const target = event.target instanceof Element ? event.target : null;
+            const trigger = target?.closest<HTMLElement>("[data-header-gesture]");
+            if (!trigger) return;
+
             const touch = event.touches[0];
-            if (start(touch.clientX, touch.clientY)) {
-                // Do not let the SideMenu outside-touch or horizontal-swipe logic claim this gesture.
-                event.stopPropagation();
-            }
+            if (!start(touch.clientX, touch.clientY, undefined, trigger)) return;
+
+            // iOS Safari otherwise generates contextmenu/click after finger release.
+            // Own the entire touch lifecycle from touchstart, like SMnav.
+            touchSuppressUntil = performance.now() + 1200;
+            if (event.cancelable) event.preventDefault();
+            event.stopPropagation();
         };
 
         const touchMove = (event: TouchEvent) => {
@@ -173,14 +195,14 @@ export default function useHeaderMenuGestures() {
             if (!press) return;
             const touch = event.changedTouches[0];
             event.stopPropagation();
-            if (touch) end(touch.clientX, touch.clientY, false);
+            if (touch) end(touch.clientX, touch.clientY, false, true);
             else reset(true);
         };
 
         const touchCancel = (event: TouchEvent) => {
             if (!press) return;
             event.stopPropagation();
-            end(press.x, press.y, true);
+            end(press.x, press.y, true, true);
         };
 
         const pointerDown = (event: PointerEvent) => {
@@ -204,7 +226,15 @@ export default function useHeaderMenuGestures() {
             event.stopImmediatePropagation();
         };
 
-        document.addEventListener("touchstart", touchStart, { capture: true, passive: true });
+        const suppressNativeContext = (event: MouseEvent) => {
+            if (!event.isTrusted || performance.now() > touchSuppressUntil) return;
+            const target = event.target instanceof Element ? event.target : null;
+            if (!press && !target?.closest("[data-header-gesture]")) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        };
+
+        document.addEventListener("touchstart", touchStart, { capture: true, passive: false });
         document.addEventListener("touchmove", touchMove, { capture: true, passive: false });
         document.addEventListener("touchend", touchEnd, true);
         document.addEventListener("touchcancel", touchCancel, true);
@@ -213,7 +243,7 @@ export default function useHeaderMenuGestures() {
         document.addEventListener("pointerup", pointerEnd, true);
         document.addEventListener("pointercancel", pointerEnd, true);
         document.addEventListener("click", suppress, true);
-        document.addEventListener("contextmenu", suppress, true);
+        document.addEventListener("contextmenu", suppressNativeContext, true);
 
         return () => {
             reset();
@@ -226,7 +256,7 @@ export default function useHeaderMenuGestures() {
             document.removeEventListener("pointerup", pointerEnd, true);
             document.removeEventListener("pointercancel", pointerEnd, true);
             document.removeEventListener("click", suppress, true);
-            document.removeEventListener("contextmenu", suppress, true);
+            document.removeEventListener("contextmenu", suppressNativeContext, true);
         };
     }, []);
 }
