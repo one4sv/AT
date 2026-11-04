@@ -20,6 +20,7 @@ import usePullToRefresh from "../hooks/utils/usePullToRefresh";
 import { CONTENT_REFRESH_EVENT, type ContentRefreshEvent } from "../ts/utils/contentRefresh";
 import { useHabits } from "../hooks/HabitsHook";
 import { useSchedule } from "../hooks/ScheduleHook";
+import useHeaderMenuGestures from "../hooks/utils/useHeaderMenuGestures";
 
 interface LayoutProps {
   children?: ReactNode;
@@ -43,6 +44,7 @@ export default function MainLayout({ children }: LayoutProps) {
 
   const navigate = useNavigate()
   const location = useLocation()
+  useHeaderMenuGestures()
   usePullToRefresh(location.pathname)
   useEffect(() => {
     const refresh = (event: Event) => {

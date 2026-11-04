@@ -9,6 +9,7 @@ import { useNote } from "../../../../components/hooks/NoteHook";
 import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
+import QuickActionsSettings from "./QuickActionsSettings";
 
 export default function GeneralTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
@@ -69,6 +70,7 @@ export default function GeneralTab({ search }: { search: string }) {
                     <RadioGroup list={timeChanger} val={"twentyFour"} id="timeFormat"/>
                 </div>
             </div>
+            <QuickActionsSettings search={search}/>
             <div className="settingInnerDiv" data-setting-id="language">
                 <div className="settingHeader">
                     <HighlightText text={t("general.language")} search={search} />

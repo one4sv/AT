@@ -10,10 +10,14 @@ const SettingsContext = createContext<SettingsContextType | null>(null);
 
 export type GroupInviteRules = { contacts: "direct" | "message" | "none"; others: "direct" | "message" | "none" };
 export type ChatWelcomeSettings = { enabled: boolean; text: string };
+export type QuickActionType = "feed" | "settings" | "profile" | "habits" | "habit" | "chat";
+export type QuickAction = { type: QuickActionType; target?: string; label?: string };
 
 export interface SettingsContextType {
     groupInvites: GroupInviteRules;
     chatWelcome: ChatWelcomeSettings;
+    quickActions: QuickAction[];
+    setQuickActions: React.Dispatch<React.SetStateAction<QuickAction[]>>;
     setChatWelcome: React.Dispatch<React.SetStateAction<ChatWelcomeSettings>>;
     orderHabits: string[  ] | null;
     setOrderHabits: React.Dispatch<React.SetStateAction<string[  ] | null>>;
@@ -64,6 +68,7 @@ export interface SettingsContextType {
 interface SettingsResponse {
     group_invites: GroupInviteRules;
     chat_welcome?: ChatWelcomeSettings;
+    quick_actions?: QuickAction[];
     success: boolean;
     order: string[  ];
     private: PrivateSettings;
@@ -136,6 +141,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     });
     const [ groupInvites, setGroupInvites ] = useState<GroupInviteRules>({ contacts: "message", others: "none" });
     const [ chatWelcome, setChatWelcome ] = useState<ChatWelcomeSettings>({ enabled: false, text: "" });
+    const [ quickActions, setQuickActions ] = useState<QuickAction[]>([]);
     const [ twoAuth, setTwoAuth ] = useState<boolean | null>(null);
     const [ privateShow, setPrivate ] = useState<PrivateSettings>({ number: "", mail: "", habits: "", posts: "" });
     const [ showArchived, setShowArchived ] = useState<boolean>(false);
@@ -157,6 +163,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setOrderHabits(res.data.order ?? [ "everyday", "weekly", "sometimes" ]);
                 setGroupInvites(res.data.group_invites ?? { contacts: "message", others: "none" });
                 setChatWelcome(res.data.chat_welcome ?? { enabled: false, text: "" });
+                setQuickActions(Array.isArray(res.data.quick_actions) ? res.data.quick_actions.slice(0, 3) : []);
                 setPrivate(res.data.private ?? { number: "contacts", mail: "contacts", habits: "all", posts: "all" });
                 setTwoAuth(res.data.twoAuth ?? false);
                 setNote(res.data.all_note ?? true);
@@ -213,7 +220,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             bg, setBg,
             decor, setDecor,
             bgUrl, lang, setLang,
-            privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome,
+            privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
             twoAuth, setTwoAuth,
             note, setNote,
             messNote, setMessNote,

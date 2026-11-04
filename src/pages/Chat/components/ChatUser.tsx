@@ -108,6 +108,11 @@ export default function ChatUser() {
         <div className="headerDiv" ref={chatUserRef}>
             {isMobile || layout === "hidden" ? (
                 <div className="headerButt"
+                    data-header-gesture="quick"
+                    onContextMenu={e => {
+                        e.preventDefault();
+                        openMenu(e.clientX, e.clientY, "headerQuickAction", { id: "headerQuickAction" });
+                    }}
                     onMouseDown={(e) => e.stopPropagation()}
                     onTouchStart={(e) => e.stopPropagation()}
                     onClick={() => openSideMenu()}
@@ -176,7 +181,10 @@ export default function ChatUser() {
                 ) : ""}
                 
             </div>
-            <div className="headerButt" onClick={handleMenuClick}>
+            <div className="headerButt" data-header-gesture="chat" onContextMenu={e => {
+                e.preventDefault();
+                handleMenuClick(e);
+            }} onClick={handleMenuClick}>
                 <DotsThreeOutlineVerticalIcon weight="fill"/>
             </div>
         </div>

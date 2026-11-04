@@ -127,6 +127,12 @@ export function useSearchableSettings(): SearchableSection[] {
                     category: t("general.text"),
                 },
                 {
+                    id: "quickActions",
+                    name: t("general.quickActionsTitle"),
+                    icon: WrenchIcon,
+                    category: t("settings.general"),
+                },
+                {
                     id: "language",
                     name: t("general.language"),
                     icon: TranslateIcon,

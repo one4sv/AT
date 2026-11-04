@@ -72,3 +72,22 @@
 [data-context-menu] { -webkit-touch-callout: none; }
 .ContextMenuWrapper { max-height: calc(var(--vv-height, 100dvh) - 20px); max-width: calc(100vw - 20px); overflow-y: auto; overscroll-behavior: contain; -webkit-backdrop-filter: blur(12px); }
 .ContextMenuButt { min-height: 40px; box-sizing: border-box; }
+
+.ContextMenuButt.touchHover {
+    color: var(--tc);
+    background: var(--accent_hov);
+}
+
+.quickActionMenuButt {
+    min-width: 13vw;
+    gap: .6vw;
+
+    .quickActionVisual {
+        width: 100%;
+    }
+
+    @media (max-width: 800px) {
+        min-width: 50vw;
+        gap: 2vw;
+    }
+}

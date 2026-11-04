@@ -42,7 +42,7 @@ export default function Header() {
             <div className={`headerDiv ${hideHeader ? "hide" : ""}`}>
                 {isMobile || layout === "hidden" ? <div
                     className="headerButt"
-                    data-context-menu="true"
+                    data-header-gesture="quick"
                     onContextMenu={e => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -56,6 +56,11 @@ export default function Header() {
                 </div> : ""}
                 <div
                     className={`header headerTitle ${isInInfo || isInfo ? "headerInfo" : ""}`}
+                    data-header-gesture="quick"
+                    onContextMenu={e => {
+                        e.preventDefault();
+                        openMenu(e.clientX, e.clientY, "headerQuickAction", { id: "headerQuickAction" });
+                    }}
                     onClick={handleHeaderClick}
                 >
                     {title}

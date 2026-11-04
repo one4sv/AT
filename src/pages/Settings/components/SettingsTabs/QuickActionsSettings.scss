@@ -1,0 +1,152 @@
+.quickActionsSettings {
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+    min-width: 0;
+}
+
+.quickActionSelected, .quickActionPicker {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+    border-radius: 24px;
+    padding: 1dvh .85vw;
+    background: var(--interact);
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+        padding: 1.25dvh 3vw;
+    }
+}
+
+.quickActionVisual {
+    flex: 1;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: .65vw;
+    color: var(--tc);
+
+    > img, > svg {
+        width: 3dvh;
+        height: 3dvh;
+        object-fit: cover;
+        flex-shrink: 0;
+        border-radius: 50%;
+    }
+
+    > span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+    }
+}
+
+.quickActionControls {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: .35vw;
+
+    > button {
+        width: 3.5dvh;
+        height: 3.5dvh;
+        border: none;
+        border-radius: 24px;
+        background: var(--mc);
+        color: var(--borderWh);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &:disabled {
+            opacity: .35;
+            cursor: default;
+        }
+
+        @media (hover: hover) {
+            &:not(:disabled):hover {
+                background: var(--menuButtHover);
+                color: var(--tc);
+            }
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 1vw;
+    }
+}
+
+.quickActionPicker {
+    > svg {
+        flex-shrink: 0;
+        color: var(--accent_text);
+    }
+
+    .quickActionsSelect {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+.quickActionCandidates {
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+    min-width: 0;
+
+    > input {
+        border: 1px solid var(--block_border);
+        border-radius: 24px;
+        box-sizing: border-box;
+        background: var(--interact);
+        color: var(--tc);
+        padding: 1dvh 1vw;
+        width: 100%;
+        outline: none;
+
+        @media (max-width: 800px) {
+            padding: 1.25dvh 3vw;
+        }
+    }
+}
+
+.quickActionCandidatesList {
+    max-height: 30dvh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: .25dvh;
+
+    > button {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        min-width: 0;
+        border: none;
+        border-radius: 24px;
+        background: var(--interact);
+        cursor: pointer;
+        padding: 1dvh 1vw;
+
+        &:disabled {
+            opacity: .4;
+            cursor: default;
+        }
+
+        @media (hover: hover) {
+            &:not(:disabled):hover {
+                background: var(--menuButtHover);
+            }
+        }
+        @media (max-width: 800px) {
+            padding: 1dvh 3vw;
+        }
+    }
+}
