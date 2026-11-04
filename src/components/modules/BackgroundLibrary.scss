@@ -74,8 +74,7 @@
     gap: .75dvh;
     align-items: center;
     justify-content: flex-start;
-    border: 1px solid transparent;
-    box-sizing: border-box;
+    border: none;
     background: transparent;
     color: var(--borderWh);
     cursor: pointer;
@@ -276,15 +275,13 @@
     .backgroundLibraryTile:hover,
     .backgroundLibraryTile:active {
         background: transparent;
-        border: 1px solid transparent;
-        box-sizing: border-box;
+        border: none;
         border-radius: 24px;
     }
 
-    .backgroundLibraryTile.active,
-    .backgroundLibraryTile.active:hover,
-    .backgroundLibraryTile.active:active {
-        border-color: var(--accent);
+    .backgroundLibraryTile.active .backgroundLibraryChoose > .bgMini {
+        outline: 1px solid var(--accent);
+        outline-offset: -1px;
     }
 
     .backgroundLibraryTile > .bgMini,

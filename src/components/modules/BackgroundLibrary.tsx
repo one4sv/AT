@@ -43,6 +43,9 @@ export default function BackgroundLibrary() {
     const swipeStart = useRef<{ id: number; x: number; y: number; horizontal: boolean } | null>(null);
     const suppressClick = useRef(false);
     const [ saving, setSaving ] = useState(false);
+    const [ selectedLocal, setSelectedLocal ] = useState<{ bg: string; url: string } | null>(null);
+    const selectedBg = selectedLocal?.bg ?? bg;
+    const selectedUrl = selectedLocal?.url ?? bgUrl;
     const [ collapsedGroups, setCollapsedGroups ] = useState<string[]>([]);
     const fileRef = useRef<HTMLInputElement | null>(null);
     const previewStyle = { filter: getBackgroundFilter(bgEffects, .24) };
@@ -131,12 +134,15 @@ export default function BackgroundLibrary() {
     const selectCustom = async (url: string) => {
         if (saving) return;
         setSaving(true);
+        const previous = selectedLocal;
+        setSelectedLocal({ bg: "custom", url });
         try {
             const res = await api.post("backgrounds/select", { url });
             if (!res.data?.success) throw new Error();
             setNewBg("custom");
             await refetchSettings();
         } catch {
+            setSelectedLocal(previous);
             showNotification("error", t("backgroundLibrary.error"));
         } finally {
             setSaving(false);
@@ -170,6 +176,7 @@ export default function BackgroundLibrary() {
 
     const selectStock = (id: string) => {
         if (saving) return;
+        setSelectedLocal({ bg: id, url: "" });
         setNewBg(id);
     };
 
@@ -215,7 +222,7 @@ export default function BackgroundLibrary() {
                                             <div className="backgroundLibraryGrid" hidden={collapsedGroups.includes(group.id)}>
                                                 {group.items.map(item => (
                                                     <div key={item.id}
-                                                        className={`bgPick backgroundLibraryTile ${bg === item.id ? "active" : ""}`}>
+                                                        className={`bgPick backgroundLibraryTile ${selectedBg === item.id ? "active" : ""}`}>
                                                         <button type="button" className="backgroundLibraryChoose"
                                                             onClick={() => selectStock(item.id)}>
                                                             {item.id === "landing" ?
@@ -228,7 +235,7 @@ export default function BackgroundLibrary() {
                                                                             artPattern={artPattern} artSize={artSize}/>
                                                                     </div> :
                                                                     <div className="bgImg bgMini" style={previewStyle}/>}
-                                                            <span className={`backgroundLibraryName ${bg === item.id ? "bgSpanChoosen" : ""}`}>
+                                                            <span className={`backgroundLibraryName ${selectedBg === item.id ? "bgSpanChoosen" : ""}`}>
                                                                 {item.label}
                                                                 {supportsBackgroundMotion(item.id) && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.motionAvailable")}>
                                                                     <Film size={15} aria-label={t("backgroundLibrary.motionAvailable")}/>
@@ -244,7 +251,7 @@ export default function BackgroundLibrary() {
                                                                         <LayoutGrid size={15} aria-label={t("backgroundLibrary.patternAvailable")}/>
                                                                     </span>}
                                                             </span>
-                                                            {bg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
+                                                            {selectedBg === item.id && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
                                                         </button>
                                                         <button type="button" className="backgroundLibraryPreview"
                                                             aria-label={t("backgroundLibrary.preview")} title={t("backgroundLibrary.preview")}
@@ -287,11 +294,11 @@ export default function BackgroundLibrary() {
                             ) : (
                                 <div className="backgroundLibraryGrid">
                                     {bgGallery.map(item => (
-                                        <div key={item.url} className={`bgPick backgroundLibraryTile ${bg === "custom" && bgUrl === item.url ? "active" : ""}`}>
+                                        <div key={item.url} className={`bgPick backgroundLibraryTile ${selectedBg === "custom" && selectedUrl === item.url ? "active" : ""}`}>
                                             <button type="button" className="backgroundLibraryChoose" disabled={saving}
                                                 onClick={() => void selectCustom(item.url)}>
                                                 <CustomBackgroundThumb url={item.url}/>
-                                                 {bg === "custom" && bgUrl === item.url && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
+                                                 {selectedBg === "custom" && selectedUrl === item.url && <CheckCircleIcon className="backgroundLibraryCheck" size={20} weight="fill"/>}
                                             </button>
                                             <button type="button" className="backgroundLibraryDelete"
                                                 disabled={saving} aria-label={t("backgroundLibrary.delete")}
