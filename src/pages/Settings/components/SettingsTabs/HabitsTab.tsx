@@ -69,8 +69,8 @@ export default function HabitsTab({ search }: { search: string }) {
         }
 
         if (cancelled) {
-            currentOrder.current = [...orderHabits];
-            setDisplayOrder([...orderHabits]);
+            currentOrder.current = Array.isArray(orderHabits) ? [...orderHabits] : [];
+            setDisplayOrder(currentOrder.current);
         } else if (active.changed) {
             setNewOrder(currentOrder.current);
         }
