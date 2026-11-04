@@ -46,6 +46,9 @@
 }
 
 .settingsButtsWrapper {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
     width: 100%;
     padding: 0 1%;
     gap: 1vh;

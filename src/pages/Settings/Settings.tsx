@@ -235,13 +235,6 @@ export default function Settings() {
                                 animate={{ y: 0, scale: 1 }}
                                 exit={{ y: -18, scale: 0.97 }}
                                 transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-                                style={{
-                                    flex: 1,
-                                    minHeight: 0,
-                                    overflowY: "auto",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                }}
                             >
                                 {contentKey === "searched" && (
                                     <SearchedButts search={search} selectSetting={selectSetting} />

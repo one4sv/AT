@@ -10,6 +10,7 @@ import MemberMenu from "./menus/MemberMenu";
 import MessMenu from "./menus/MessMenu";
 import MediaMenu from "./menus/MediaMenu";
 import MessBarMenu from "./menus/MessBarMenu";
+import HeaderQuickActionMenu from "./menus/HeaderQuickActionMenu";
 export default function ContextMenu() {
     const {
         menu,
@@ -94,6 +95,8 @@ export default function ContextMenu() {
                 return <MediaMenu />;
             case "messBar":
                 return <MessBarMenu />;
+            case "headerQuickAction":
+                return <HeaderQuickActionMenu />;
             default:
                 return null;
         }

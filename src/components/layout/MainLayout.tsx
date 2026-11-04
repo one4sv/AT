@@ -16,6 +16,7 @@ import { useCalendar } from "../hooks/CalendarHook";
 import { todayStrFunc } from "../ts/utils/dateToStr";
 import SMnav from "../ts/SM/SMnav";
 import SMheader from "../ts/SM/SMheader";
+import usePullToRefresh from "../hooks/utils/usePullToRefresh";
 
 interface LayoutProps {
   children?: ReactNode;
@@ -34,6 +35,7 @@ export default function MainLayout({ children }: LayoutProps) {
 
   const navigate = useNavigate()
   const location = useLocation()
+  usePullToRefresh(location.pathname)
   const needDrag = location.pathname.startsWith("/post") || location.pathname.startsWith("/chat")
   const hideHeader = location.pathname.startsWith("/chat") || location.pathname.startsWith("/habit/")
   

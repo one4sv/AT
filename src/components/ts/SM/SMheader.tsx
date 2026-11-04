@@ -204,6 +204,17 @@ export default function SMheader() {
         setOpenFilters(null)
     }
 
+    const handleTitleClick = (tab: "chats" | "habits" | "spots" | "user") => {
+        const index = ["chats", "habits", "spots", "user"].indexOf(tab);
+        const slide = document.querySelectorAll<HTMLElement>(".sideMenu .slider > .slide")[index];
+
+        if (slide && slide.scrollTop > 2) {
+            slide.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+            window.location.reload();
+        }
+    };
+
     const currentFilters = openFilters === "chats" ? chatsFilters : openFilters === "habits" ? habitsFilters : []
     const currentSelected = openFilters === "chats" ? messageSelectedValue : habitsSelectedValue
 
@@ -222,7 +233,7 @@ export default function SMheader() {
                     style={{ transform: `translateX(${translateSlider}%)` }}
                 >
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle">Чаты</div>
+                        <div className="smHeaderTitle" onClick={() => handleTitleClick("chats")}>Чаты</div>
                         <div
                             className={`smHeaderSelected ${openFilters === "chats" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("chats")}
@@ -239,7 +250,7 @@ export default function SMheader() {
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle">Активности</div>
+                        <div className="smHeaderTitle" onClick={() => handleTitleClick("habits")}>Активности</div>
                         <div
                             className={`smHeaderSelected ${openFilters === "habits" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("habits")}
@@ -253,11 +264,11 @@ export default function SMheader() {
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle">Споты</div>
+                        <div className="smHeaderTitle" onClick={() => handleTitleClick("spots")}>Споты</div>
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle">{user.nick ?? "Загрузка"}</div>
+                        <div className="smHeaderTitle" onClick={() => handleTitleClick("user")}>{user.nick ?? "Загрузка"}</div>
                         <div
                             className={`smHeaderSelected`}
                             onClick={() => setBlackout({seted:true, module:"ShareAcc", options:{name:user.username ?? "", nick:user.nick ?? "", url:user.avatar_url ?? ""}})}
