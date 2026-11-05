@@ -1,8 +1,10 @@
 import { CalendarSync } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { formatDateLabel, todayStrFunc } from "../../../components/ts/utils/dateToStr";
 import { useCalendar } from "../../../components/hooks/CalendarHook";
 
 export default function ChosenDayDate () {
+    useTranslation("common");
     const { chosenDay, setChosenDay, selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } = useCalendar()
     const date = new Date(chosenDay)
     const showReturn = chosenDay !== todayStrFunc() || selectedMonth !== date.getMonth() || selectedYear !== date.getFullYear()
