@@ -65,13 +65,13 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const { showArchived, layout } = useSettings();
     const isCompact = useCompactLayout();
 
-    const [showSideMenu, setShowSideMenu] = useState(() => isCompact || layout !== "hidden");
+    const [showSideMenu, setShowSideMenu] = useState(() => window.location.pathname.startsWith("/wallpapers") || isCompact || layout !== "hidden");
     const [red, setRed] = useState(false);
     const [showHabitMenu, setShowHabitMenu] = useState(false);
     const [showSlide, setShowSlide] = useState<slides>(null);
     const [activeTab, setActiveTab] = useState<tab>("chats");
     const [settingsSearch, setSettingsSearch] = useState("");
-    const [translateX, setTranslateX] = useState(() => isCompact || layout !== "hidden" ? 0 : -100);
+    const [translateX, setTranslateX] = useState(() => window.location.pathname.startsWith("/wallpapers") || isCompact || layout !== "hidden" ? 0 : -100);
     const [isDragging, setIsDragging] = useState(false);
     const [dontHandle, setDontHandle] = useState(false);
     const [dontHandleOther, setDontHandleOther] = useState(false);
@@ -282,31 +282,37 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         });
     }, [animateTo]);
 
-    // Desktop layout is a local preference. On compact layouts the same
-    // SideMenu keeps its existing full-screen gesture/navigation behavior.
+    // Wallpaper Studio is always a manual overlay on desktop, regardless
+    // of settings_layout. Initialize it once on entry and keep user choices.
     const previousMode = useRef<string | null>(null);
+    const studio = location.pathname.startsWith("/wallpapers");
 
     useEffect(() => {
-        const mode = `${isCompact ? "compact" : "desktop"}:${layout}`;
+        const mode = studio ? `wallpapers:${isCompact}` : `${isCompact ? "compact" : "desktop"}:${layout}`;
         if (previousMode.current === mode) return;
         previousMode.current = mode;
-        if (isCompact) return;
 
+        if (studio) {
+            if (isCompact) closeMenu();
+            else openSideMenu();
+            return;
+        }
+        if (isCompact) return;
         if (layout === "hidden") closeMenu();
         else openSideMenu();
-    }, [isCompact, layout, closeMenu, openSideMenu]);
+    }, [isCompact, layout, studio, closeMenu, openSideMenu]);
 
     useEffect(() => {
         if (previousPath.current === null) {
             previousPath.current = location.pathname;
-            if (location.pathname.startsWith("/info") && (isCompact || layout === "hidden")) closeMenu();
+            if (!studio && location.pathname.startsWith("/info") && (isCompact || layout === "hidden")) closeMenu();
             return;
         }
         if (previousPath.current !== location.pathname) {
             previousPath.current = location.pathname;
-            if (isCompact || layout === "hidden") closeMenu();
+            if (!studio && (isCompact || layout === "hidden")) closeMenu();
         }
-    }, [location.pathname, closeMenu, isCompact, layout]);
+    }, [location.pathname, closeMenu, isCompact, layout, studio]);
 
     return (
         <SideMenuContext.Provider
