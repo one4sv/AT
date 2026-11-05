@@ -34,6 +34,7 @@ export function BackgroundHelpButton({ className = "" }: { className?: string })
 
 export default function BackgroundHelp() {
     const { t } = useTranslation("settings");
+    const helpText = useBackgroundHelpText();
     const { setBlackout } = useBlackout();
 
     const items = [
