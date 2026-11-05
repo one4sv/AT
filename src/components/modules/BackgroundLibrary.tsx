@@ -8,7 +8,7 @@ import { useBlackout } from "../hooks/BlackoutHook";
 import BackIconsScene from "../ts/utils/BackIconsScene";
 import { getBackgroundFilter } from "../ts/utils/backgroundFilter";
 import Selector from "../ts/Selector";
-import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotion } from "../ts/utils/BackgroundScene";
+import { BackgroundScene, type StockScene, isStockScene, isPhotographicScene, supportsBackgroundMotion } from "../ts/utils/BackgroundScene";
 import { api } from "../ts/api";
 import { ChevronDown, Film, LayoutGrid, Palette, WandSparkles } from "lucide-react";
 import { backgroundGroups } from "../ts/utils/backgroundCatalog";
@@ -235,7 +235,7 @@ export default function BackgroundLibrary() {
                                                                 {supportsBackgroundMotion(item.id) && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.motionAvailable")}>
                                                                     <Film size={15} aria-label={t("backgroundLibrary.motionAvailable")}/>
                                                                 </span>}
-                                                                {item.id !== "japaneseNinja" && item.id !== "color" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.themeAware")}>
+                                                                {!isPhotographicScene(item.id) && item.id !== "color" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.themeAware")}>
                                                                     <Palette size={15} aria-label={t("backgroundLibrary.themeAware")}/>
                                                                 </span>}
                                                                 {item.id === "art" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.appearanceAware")}>
