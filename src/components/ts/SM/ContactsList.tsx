@@ -32,7 +32,7 @@ export default function ContactsList({filter, searchRef} : {filter: string, sear
                         <a>{t("contactsList.findInterlocutor")}</a>
                     </div>
                     <div className="wtbgButt" onClick={() => refetchContacts()}>
-                        Обновить
+                        {t("contactsList.refresh")}
                     </div>
                 </div>
             )}
