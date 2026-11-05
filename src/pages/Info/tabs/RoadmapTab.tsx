@@ -103,7 +103,7 @@ export default function RoadmapTab() {
                         {releaseList([...roadmapHistory].reverse())}
                         <div className="roadmapBeginning">
                             <h3 className="roadmapReleaseHeading">
-                                <span className="roadmapVersion">{`0.0 ${t("roadmap.beginning")}`}</span>
+                                <span className="roadmapVersion">{`0.0 The Beginning`}</span>
                             </h3>
                             <time dateTime="2025-07-14">14.07.2025</time>
                         </div>
