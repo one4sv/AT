@@ -221,7 +221,7 @@ export default function Calendar() {
                         </div>
 
                         <div className={`monthsList ${showList.months ? "active" : ""}`}>
-                            {months.map((monthName, idx) => (
+                            {months.map((_, idx) => (
                                 <div
                                     key={idx}
                                     className={`monthListElem ${idx === selectedMonth ? "active" : ""}`}
