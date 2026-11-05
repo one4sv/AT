@@ -94,7 +94,7 @@ export default function Contact({ contact }: ContactType) {
     }
 
     const getName = () => {
-        if (isFavorite) return "Избранное";
+        if (isFavorite) return t("chatUi.favorites");
         if (contact.name) return contact.name;
         return contact.nick;
     };
