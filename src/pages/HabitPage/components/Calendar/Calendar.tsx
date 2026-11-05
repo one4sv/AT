@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
@@ -11,14 +12,18 @@ import { buildSlide } from "../../utils/buildSlide";
 import { CalendarSlide } from "./CalendarSlide";
 import { todayStrFunc } from "../../../../components/ts/utils/dateToStr";
 
-const MONTHS = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
-
-const DAY_WEEK = [
-    { value: 1, label: "пн" }, { value: 2, label: "вт" }, { value: 3, label: "ср" },
-    { value: 4, label: "чт" }, { value: 5, label: "пт" }, { value: 6, label: "сб" }, { value: 0, label: "вс" }
-];
+const DAY_WEEK = [1, 2, 3, 4, 5, 6, 0];
 
 export default function Calendar() {
+    const { i18n } = useTranslation("common");
+    const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
+    const months = useMemo(() => Array.from({ length: 12 }, (_, month) => {
+        const name = new Intl.DateTimeFormat(locale, { month: "long" }).format(new Date(2024, month, 1));
+        return name[0].toUpperCase() + name.slice(1);
+    }), [locale]);
+    const monthShort = useMemo(() => Array.from({ length: 12 }, (_, month) =>
+        new Intl.DateTimeFormat(locale, { month: "short" }).format(new Date(2024, month, 1))
+    ), [locale]);
     const { calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, chosenDay } = useCalendar();
     const { habit: h } = useTheHabit();
     const { habits } = useHabits();
@@ -206,7 +211,7 @@ export default function Calendar() {
                             className="selectedDate"
                             onClick={() => setShowList({ months: !showList.months, years: false })}
                         >
-                            {MONTHS[selectedMonth]}
+                            {months[selectedMonth]}
                             <ChevronDown
                                 style={{
                                     transform: `rotate(${showList.months ? "180deg" : "0deg"})`,
@@ -216,13 +221,13 @@ export default function Calendar() {
                         </div>
 
                         <div className={`monthsList ${showList.months ? "active" : ""}`}>
-                            {MONTHS.map((monthName, idx) => (
+                            {months.map((monthName, idx) => (
                                 <div
                                     key={idx}
                                     className={`monthListElem ${idx === selectedMonth ? "active" : ""}`}
                                     onClick={() => setSelectedMonth(idx)}
                                 >
-                                    {monthName.slice(0, 3)}.
+                                    {monthShort[idx]}
                                 </div>
                             ))}
                         </div>
@@ -261,9 +266,9 @@ export default function Calendar() {
                 </div>
 
                 <div className="weekPattern">
-                    {DAY_WEEK.map((day) => (
-                        <div className="weekDays" key={day.value}>
-                            {day.label}
+                    {DAY_WEEK.map((day, idx) => (
+                        <div className="weekDays" key={day}>
+                            {new Intl.DateTimeFormat(locale, { weekday: "short" }).format(new Date(2024, 0, 1 + idx)).replace(".", "")}
                         </div>
                     ))}
                 </div>
