@@ -271,7 +271,7 @@ export default function SMheader() {
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>{user.nick ?? "Загрузка"}</div>
+                        <div className="smHeaderTitle" onClick={handleTitleClick}>{user.nick ?? t("sideMenu.loading")}</div>
                         <div
                             className={`smHeaderSelected`}
                             onClick={() => setBlackout({seted:true, module:"ShareAcc", options:{name:user.username ?? "", nick:user.nick ?? "", url:user.avatar_url ?? ""}})}
