@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { User } from "@phosphor-icons/react"
 import type { message } from "../../../components/context/ChatContext"
 import { useUser } from "../../../components/hooks/UserHook"
@@ -9,6 +10,7 @@ interface ChatUserListType {
     m:message
 }
 export default function UserInChatUserList({m}:ChatUserListType) {
+    const { t, i18n } = useTranslation("common");
     const { user } = useUser()
     const { chatWith } = useChat()
     const { searchMess } = useChat()
@@ -32,8 +34,8 @@ export default function UserInChatUserList({m}:ChatUserListType) {
             </div>
             <div className="chatSearchItemInfo">
                 <div className="chatSearcSender">
-                    <span className="chatSearchName">{isMy ? "Вы" : (m.sender_name || m.sender_nick)}</span>
-                    <span className="chatSearchDate">{new Date(m.created_at).toLocaleDateString("ru-RU")}</span>
+                    <span className="chatSearchName">{isMy ? t("chatUi.you") : (m.sender_name || m.sender_nick)}</span>
+                    <span className="chatSearchDate">{new Date(m.created_at).toLocaleDateString(i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU")}</span>
                 </div>
                 <div className="chatSearchText">
                     <span>
@@ -41,7 +43,7 @@ export default function UserInChatUserList({m}:ChatUserListType) {
                             ? <HighlightText text={m.content} search={searchMess}/>
                             : m.files && m.files.length > 0
                                 ? `${m.files?.length} mediafiles`
-                                : "Пересланное сообщение"}</span>
+                                : t("chatUi.forwarded")}</span>
                 </div>
             </div>
         </>

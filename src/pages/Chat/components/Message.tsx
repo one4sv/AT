@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { CheckCircle, ShareFat, PushPin, ClockCountdownIcon } from "@phosphor-icons/react";
 import { useChat } from "../../../components/hooks/ChatHook";
 import React, { useLayoutEffect, useRef, useState } from "react";
@@ -56,6 +57,7 @@ export default function Message({
         setChosenMess,
         setAnswer
     } = useMessages();
+    const { t } = useTranslation("common");
     const { user } = useUser();
     const {
         openMenu,
@@ -117,7 +119,7 @@ export default function Message({
                 isReacted,
                 isMy: m.sender_id === user.id,
                 text: m.content,
-                previewText: m.content || (m.files && m.files.length > 0 ? `${m.files.length} mediafile` : "Пересланное сообщение"),
+                previewText: m.content || (m.files && m.files.length > 0 ? `${m.files.length} mediafile` : t("chatUi.forwarded")),
                 sender: m.sender_name,
                 files: m.files || undefined,
                 is_pinned: m.is_pinned
@@ -172,7 +174,7 @@ export default function Message({
                             id: m.id.toString(),
                             sender: m.sender_name,
                             text: m.content,
-                            previewText: m.content || (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : "Пересланное сообщение")
+                            previewText: m.content || (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : t("chatUi.forwarded"))
                         }
                     );
                 } else if (messdb === "select") {
@@ -214,7 +216,7 @@ export default function Message({
                 {m.redirected_id && <div className="redirectedMess">
                     <div className="redirectSign">
                         <ShareFat weight="fill" />
-                        {`Переслано ${m.redirected_name ? "от" : ""}`}&nbsp;
+                        {t("chatUi.forwarded")}{m.redirected_name ? ` ${t("chatUi.from")}` : ""}&nbsp;
                         <span onClick={() => navigate(`/acc/${m.redirected_nick}`)}>
                             {m.redirected_name}
                         </span>
@@ -233,7 +235,7 @@ export default function Message({
                             {messageGetTime(m.created_at)}
                         </span>
                         {m.is_pinned && <PushPin weight="fill" className="messBarSvg" />}
-                        {m.edited && <span className="editedMess">изменено</span>}
+                        {m.edited && <span className="editedMess">{t("chatUi.edited")}</span>}
                         {m.reactions && m.reactions.length > 0 && <div className="reactions" onClick={() => setReaction(m.id, "Heart")}>
                             {Object.entries(
                                 m.reactions.reduce(

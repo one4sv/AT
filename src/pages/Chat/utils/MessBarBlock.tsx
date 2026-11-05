@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { X } from "@phosphor-icons/react";
 import { useMessages } from "../../../components/hooks/MessagesHook";
 import { useChat } from "../../../components/hooks/ChatHook";
@@ -9,16 +10,17 @@ export function MessBarBlock({ object, scrollToMessage }: {
     object: { id: string, sender?: string, previewText:string },
     scrollToMessage: (id: number) => void
 }) {
+    const { t } = useTranslation("common");
     const { answer, setAnswer, editing, setEditing, redirect, setRedirect, setChosenMess, showNames } = useMessages();
     const { setBlackout } = useBlackout() 
     const { messages, setActiveHeader } = useChat()
     const { openMenu } = useContextMenu()
     
     let barType = "";
-    if (editing) barType = "Редактировать: ";
-    else if (answer) barType = "Ответ: ";
-    else if (redirect && showNames) barType = "Переслать от: ";
-    else if (redirect && !showNames) barType = "Переслать от: ";
+    if (editing) barType = t("chatUi.editPrefix") + " ";
+    else if (answer) barType = t("chatUi.replyPrefix") + " ";
+    else if (redirect && showNames) barType = t("chatUi.forwardPrefix") + " ";
+    else if (redirect && !showNames) barType = t("chatUi.forwardPrefix") + " ";
 
     return (
         <div className={`answerDiv ${isMobile && "mobile"}`} data-context-menu="true" onContextMenu={(e) => {

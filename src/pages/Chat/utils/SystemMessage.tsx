@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import type { message } from "../../../components/context/ChatContext";
@@ -11,6 +12,7 @@ interface SystemMessageType {
 }
 
 export default function SystemMessage({m, answer, scrollToMessage}: SystemMessageType) {
+    const { t } = useTranslation("common");
     const navigate = useNavigate();
     const { identified:targetAccount } = useIdentify(m.target_id?.toString())
 
@@ -23,7 +25,7 @@ export default function SystemMessage({m, answer, scrollToMessage}: SystemMessag
 
     const displayTargetName = targetAccount
         ? (targetAccount.name || targetAccount.nick)
-        : "пользователя";
+        : t("chatUi.user");
 
     return (
         <div className="messageWrapper">

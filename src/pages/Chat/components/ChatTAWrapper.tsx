@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "motion/react";
 import { CaretDoubleDown, Prohibit } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type SetStateAction } from "react";
@@ -22,6 +23,7 @@ interface ChatTAProps {
     searchedMessages:message[]
 }
 export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, setMess, activeHeader, searchedMessages } : ChatTAProps) {
+    const { t } = useTranslation("common");
     const { scrollToMessage } = useChatMessageScroll()
     const { chatWith, searchMess } = useChat()
 
@@ -44,7 +46,7 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, set
                     return (
                         <div className="chatIsBlocked">
                             <Prohibit/>
-                            {chatWith.am_i_blocked ? <span>Данный пользователь заблокировал вас</span> : <span>Вы заблокировали данного пользователя</span>}
+                            {chatWith.am_i_blocked ? <span>{t("chatUi.blockedBy")}</span> : <span>{t("chatUi.blockedYou")}</span>}
                         </div>
                     )
                 } else return (
