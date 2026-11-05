@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { api } from "../../../../components/ts/api";
 import { Link } from "react-router-dom";
@@ -10,6 +11,7 @@ interface Invitation {
 }
 
 export default function HabitInvitations() {
+    const { t } = useTranslation("common");
     const { refetchHabits } = useHabits();
     const [ invitations, setInvitations ] = useState<Invitation[]>([]);
     const [ busy, setBusy ] = useState<number | null>(null);
@@ -20,7 +22,7 @@ export default function HabitInvitations() {
         api.get("habits/invitations").then(res => {
             if (active && res.data.success) setInvitations(res.data.invitations || []);
         }).catch(() => {
-            if (active) setError("Не удалось загрузить приглашения");
+            if (active) setError(t("habitExtra.invitesFailed"));
         });
         return () => { active = false; };
     }, []);
@@ -36,7 +38,7 @@ export default function HabitInvitations() {
                 ? previous.map(item => item.habit_id === id ? { ...item, status } : item)
                 : previous.filter(item => item.habit_id !== id));
         } catch {
-            setError("Не удалось обработать приглашение");
+            setError(t("habitExtra.inviteActionFailed"));
         } finally {
             setBusy(null);
         }
@@ -45,13 +47,13 @@ export default function HabitInvitations() {
     if (!invitations.length && !error) return null;
     return (
         <section className="habitInvitations">
-            <h3>Совместные активности</h3>
+            <h3>{t("habitExtra.sharedActivities")}</h3>
             {error && <p role="alert">{error}</p>}
             {invitations.map(item => <div key={item.habit_id} className="habitInvitation">
-                {item.status === "accepted" ? <Link to={`/habit/${item.habit_id}`}>{item.habit?.name || "Активность"}</Link> : <>
-                    <span>{item.habit?.name || "Активность"}</span>
-                    <button type="button" disabled={busy !== null} onClick={() => void respond(item.habit_id, "accepted")}>Принять</button>
-                    <button type="button" disabled={busy !== null} onClick={() => void respond(item.habit_id, "declined")}>Отклонить</button>
+                {item.status === "accepted" ? <Link to={`/habit/${item.habit_id}`}>{item.habit?.name || t("habitExtra.activity")}</Link> : <>
+                    <span>{item.habit?.name || t("habitExtra.activity")}</span>
+                    <button type="button" disabled={busy !== null} onClick={() => void respond(item.habit_id, "accepted")}>{t("habitExtra.accept")}</button>
+                    <button type="button" disabled={busy !== null} onClick={() => void respond(item.habit_id, "declined")}>{t("habitExtra.decline")}</button>
                 </>}
             </div>)}
         </section>
