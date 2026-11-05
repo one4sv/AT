@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
 import { cards } from "../../../utils/filters"
@@ -21,6 +22,7 @@ export default function OverallStats({
         }>
     >
 }) {
+    const { t } = useTranslation("common")
     const { calendar } = useCalendar()
     const { habitId: id } = useParams()
     const { habits } = useHabits()
@@ -44,7 +46,7 @@ export default function OverallStats({
     }, [id, calendar, days, overallStats])
 
     if (!stats) {
-        return <div className="overallStats overallStatsLoading" role="status" aria-label="Загрузка статистики">
+        return <div className="overallStats overallStatsLoading" role="status" aria-label={t("statsUi.loading")}>
             {Array.from({ length: 4 }, (_, i) => <div key={i} className="overallSkeleton skeletonBlock"/>)}
         </div>
     }
@@ -54,9 +56,9 @@ export default function OverallStats({
         const hours = Math.floor(seconds / 3600)
         const minutes = Math.floor((seconds % 3600) / 60)
         const secs = seconds % 60
-        if (hours > 0) return minutes > 0 ? `${hours} ч ${minutes} мин` : `${hours} ч`
-        if (minutes > 0) return secs > 0 ? `${minutes} мин ${secs} с` : `${minutes} мин`
-        return `${secs} с`
+        if (hours > 0) return minutes > 0 ? `${hours} ${t("statsUi.units.hours")} ${minutes} ${t("statsUi.units.minutes")}` : `${hours} ${t("statsUi.units.hours")}`
+        if (minutes > 0) return secs > 0 ? `${minutes} ${t("statsUi.units.minutes")} ${secs} ${t("statsUi.units.seconds")}` : `${minutes} ${t("statsUi.units.minutes")}`
+        return `${secs} ${t("statsUi.units.seconds")}`
     }
 
     return (
@@ -65,19 +67,19 @@ export default function OverallStats({
                 <div className="overallRing" style={{ "--progress": `${percent}%` } as CSSProperties}>
                     <div className="overallRingCore">
                         <strong>{percent}%</strong>
-                        <span>Выполнено</span>
+                        <span>{t("statsUi.completed")}</span>
                     </div>
                 </div>
                 <div className="overallSummaryDetails">
-                    <div className="overallSummaryTitle">Ваш прогресс</div>
-                    <div className="overallSummarySub">За всё время активности</div>
+                    <div className="overallSummaryTitle">{t("statsUi.progress")}</div>
+                    <div className="overallSummarySub">{t("statsUi.allTime")}</div>
                     <div className="overallSummaryNumbers">
-                        <div><CalendarCheckIcon size={19}/><strong>{stats.compCount}</strong><span>выполнено</span></div>
-                        <div><ChartLineUpIcon size={19}/><strong>{stats.skipCount}</strong><span>пропущено</span></div>
-                        <div><FireIcon size={19}/><strong>{stats.streakMax}</strong><span>лучший стрик</span></div>
+                        <div><CalendarCheckIcon size={19}/><strong>{stats.compCount}</strong><span>{t("statsUi.completed")}</span></div>
+                        <div><ChartLineUpIcon size={19}/><strong>{stats.skipCount}</strong><span>{t("statsUi.skipped")}</span></div>
+                        <div><FireIcon size={19}/><strong>{stats.streakMax}</strong><span>{t("statsUi.bestStreak")}</span></div>
                     </div>
                     <div className="overallProgressTrack"><div style={{ width: `${percent}%` }}/></div>
-                    <span className="overallSummaryFootnote">Всего дней в статистике: {stats.allCount}</span>
+                    <span className="overallSummaryFootnote">{t("statsUi.totalDays", { count: stats.allCount })}</span>
                 </div>
             </div>
             <div className="overallCards">
@@ -99,7 +101,7 @@ export default function OverallStats({
                             typeof raw === "number" ? formatTimer(raw) : raw ?? "—"
                         const extra = prop.value === "streakMax" ? extras.streakMax :
                             prop.value === "breakMax" ? extras.breakMax : ""
-                        return { label: prop.label, value, extra }
+                        return { label: t(`statsUi.metrics.${prop.value}`), value, extra }
                     }))
                     return (
                         <button type="button" key={c.value}
@@ -107,10 +109,10 @@ export default function OverallStats({
                             disabled={!canOpen}
                             onClick={() => {
                                 if (!canOpen) return
-                                setSlide({ label: c.label, value: c.value, slide: true })
+                                setSlide({ label: t(`statsUi.cards.${c.value}`), value: c.value, slide: true })
                             }}>
                             <div className="overallCardHeader">
-                                <span>{c.label}</span>
+                                <span>{t(`statsUi.cards.${c.value}`)}</span>
                                 {canOpen && <ArrowUpRightIcon size={20}/>}
                             </div>
                             <div className="overallCardValues">
@@ -128,8 +130,8 @@ export default function OverallStats({
                 })}
             </div>
             <button type="button" className="overallDetailButt"
-                onClick={() => setSlide({ label: "Выполнения", value: "comp", slide: true })}>
-                <ChartLineUpIcon size={20}/> Подробная статистика выполнений <ArrowUpRightIcon size={19}/>
+                onClick={() => setSlide({ label: t("statsUi.cards.comp"), value: "comp", slide: true })}>
+                <ChartLineUpIcon size={20}/> {t("statsUi.details")} <ArrowUpRightIcon size={19}/>
             </button>
         </div>
     )
