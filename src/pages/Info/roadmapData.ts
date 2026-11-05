@@ -45,7 +45,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.1",
         date: "2025-08-26",
-        title: "Foundation",
+        title: "The Foundation",
         features: [
             { ru: "Основа приложения и навигации", en: "Core application and navigation" }
         ]
@@ -340,7 +340,7 @@ export const roadmapHistory: RoadmapRelease[] = [
 export const roadmapCurrent: RoadmapRelease = {
     version: "0.6.2",
     date: "2026-11-04",
-    title: "New Palette",
+    title: "The New Palette",
     features: [
         { ru: "Новая статистика активностей и исправление расписания", en: "Refreshed activity statistics and schedule layout fixes" },
         { ru: "Собственные цвета акцента и градиента", en: "Custom accent and gradient colors" },
