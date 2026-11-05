@@ -231,9 +231,9 @@ export default function BackgroundLibrary() {
                                                                 {supportsBackgroundMotion(item.id) && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.motionAvailable")}>
                                                                     <Film size={15} aria-label={t("backgroundLibrary.motionAvailable")}/>
                                                                 </span>}
-                                                                <span className="backgroundLibraryCapability" title={t("backgroundLibrary.themeAware")}>
+                                                                {item.id !== "japaneseNinja" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.themeAware")}>
                                                                     <Palette size={15} aria-label={t("backgroundLibrary.themeAware")}/>
-                                                                </span>
+                                                                </span>}
                                                                 {item.id === "art" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.appearanceAware")}>
                                                                     <WandSparkles size={15} aria-label={t("backgroundLibrary.appearanceAware")}/>
                                                                 </span>}

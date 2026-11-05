@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
 import type { ContourPattern } from "../../context/SettingsContext";
 import "../../../scss/backgroundScenes.scss";
 
-export const stockScenes = ["art", "aurora", "nebula", "sunset", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals"] as const;
+export const stockScenes = ["art", "aurora", "nebula", "sunset", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals", "japaneseNinja"] as const;
 export type StockScene = typeof stockScenes[number];
 export const isStockScene = (id: string): id is StockScene =>
     (stockScenes as readonly string[]).includes(id);
@@ -55,7 +55,8 @@ const patterns: Record<StockScene, Particle[]> = {
     waves: createPattern(5999, 15),
     orbit: createPattern(6882, 15),
     glitch: createPattern(7765, 15),
-    petals: createPattern(8648, 24)
+    petals: createPattern(8648, 24),
+    japaneseNinja: []
 };
 
 // All available SectionArt motifs can appear in the chaotic wallpaper.
@@ -129,6 +130,10 @@ export function BackgroundScene({ variant, motion = false, artPattern = "order",
                     />
                 ))}
             </div>
+            {variant === "japaneseNinja" && <picture className="atScenePhoto">
+                <source media="(max-width: 800px)" srcSet="/wallpapers/japanese-ninja-mobile.webp" type="image/webp"/>
+                <img src="/wallpapers/japanese-ninja-desktop.webp" alt="" decoding="async" loading="lazy"/>
+            </picture>}
             {variant === "art" && (artPattern === "chaos" ?
                 chaoticArtwork.map((item, index) => (
                     <div key={item.theme} className="atSceneArt atSceneArt--scattered"
