@@ -12,12 +12,6 @@ export const backgroundGroups = [
         { id: "waves", labelKey: "backgroundLibrary.waves" },
         { id: "petals", labelKey: "backgroundLibrary.petals" }
     ] },
-    { id: "japanese", items: [
-        { id: "japaneseNinja", labelKey: "backgroundLibrary.japaneseNinja" },
-        { id: "japaneseSakura", labelKey: "backgroundLibrary.japaneseSakura" },
-        { id: "japaneseAlley", labelKey: "backgroundLibrary.japaneseAlley" },
-        { id: "japaneseTorii", labelKey: "backgroundLibrary.japaneseTorii" }
-    ] },
     { id: "retro", items: [
         { id: "retroDrive", labelKey: "backgroundLibrary.retroDrive" },
         { id: "neonCity", labelKey: "backgroundLibrary.neonCity" },
@@ -29,5 +23,11 @@ export const backgroundGroups = [
         { id: "paintSplash", labelKey: "backgroundLibrary.paintSplash" },
         { id: "liquid", labelKey: "backgroundLibrary.liquid" },
         { id: "prism", labelKey: "backgroundLibrary.prism" }
+    ] },
+    { id: "japanese", items: [
+        { id: "japaneseNinja", labelKey: "backgroundLibrary.japaneseNinja" },
+        { id: "japaneseSakura", labelKey: "backgroundLibrary.japaneseSakura" },
+        { id: "japaneseAlley", labelKey: "backgroundLibrary.japaneseAlley" },
+        { id: "japaneseTorii", labelKey: "backgroundLibrary.japaneseTorii" }
     ] }
 ] as const;
