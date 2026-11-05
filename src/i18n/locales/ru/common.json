@@ -233,6 +233,17 @@
     }
   },
   "habitPageUi": {
+    "charts": {
+      "weekLabel": "{{week}} нед. {{month}}",
+      "andMore": "и ещё {{count}}",
+      "noCompleted": "Нет выполненных",
+      "noSkipped": "Нет пропусков",
+      "noFree": "Нет свободных",
+      "streakLength": "Длина стрика",
+      "streakTooltip": "Стрик: {{days}} дн.",
+      "breakLength": "Длина перерыва",
+      "breakTooltip": "Перерыв: {{days}} дн."
+    },
     "progress": {
       "noSession": "Сессия не начата",
       "startedAt": "начало сессии в {{time}}",
