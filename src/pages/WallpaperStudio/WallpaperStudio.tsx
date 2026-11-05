@@ -349,7 +349,7 @@ export default function WallpaperStudio() {
 
     const tile = (item: WallpaperItem, index: number) => (
         <div key={item.id + (item.url ?? "")} className="wallpaperStudioTile">
-            <button type="button" className={"wallpaperStudioTileChoose" + (index === currentIndex ? " selected" : "") + (isApplied && index === currentIndex ? " applied" : "")}
+            <button type="button" className={"wallpaperStudioTileChoose" + (index === currentIndex ? " selected" : "") + (item.id === bg && (item.id !== "custom" || item.url === bgUrl) ? " applied" : "")}
                 disabled={busy}
                 onClick={() => view(index)}
                 aria-label={t("backgroundLibrary.chooseWallpaper", { name: item.label })}
@@ -357,6 +357,10 @@ export default function WallpaperStudio() {
                 <span className="wallpaperStudioTileImage">
                     <Background previewBg={item.id} previewUrl={item.url}/>
                 </span>
+                {item.id === bg && (item.id !== "custom" || item.url === bgUrl) &&
+                    <span className="wallpaperStudioApplied" aria-label={t("backgroundLibrary.selected")}>
+                        <CircleCheck size={21}/>
+                    </span>}
             </button>
             {item.id === "custom" && <button type="button" className="wallpaperStudioDelete"
                 title={t("backgroundLibrary.delete")} aria-label={t("backgroundLibrary.delete")}
@@ -453,7 +457,8 @@ export default function WallpaperStudio() {
                         <div className="wallpaperStudioGrid">
                             {items.map((item, index) => ({ item, index })).filter(({ item }) => item.group === "custom").map(({ item, index }) => tile(item, index))}
                             {bgGallery.length < 6 && <button type="button" className="wallpaperStudioAdd"
-                                onClick={() => fileRef.current?.click()}><ImagePlus size={23}/>{t("backgroundLibrary.add")}</button>}
+                                aria-label={t("backgroundLibrary.add")} title={t("backgroundLibrary.add")}
+                                onClick={() => fileRef.current?.click()}><ImagePlus size={23}/></button>}
                         </div>
                     </section>
                     <input ref={fileRef} type="file" hidden accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
