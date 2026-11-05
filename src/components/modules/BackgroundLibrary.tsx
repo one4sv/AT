@@ -12,6 +12,7 @@ import { BackgroundScene, type StockScene, isStockScene, supportsBackgroundMotio
 import { api } from "../ts/api";
 import { ChevronDown, Film, LayoutGrid, Palette, WandSparkles } from "lucide-react";
 import { backgroundGroups } from "../ts/utils/backgroundCatalog";
+import { BackgroundHelpButton } from "./BackgroundHelp";
 import "./BackgroundLibrary.scss";
 import "../../scss/Loading.scss";
 
@@ -174,7 +175,10 @@ export default function BackgroundLibrary() {
 
     return (
         <div className="backgroundLibraryModal" role="dialog" aria-modal="true" aria-label={t("backgroundLibrary.title")}>
-            <div className="backgroundLibraryTitle">{t("backgroundLibrary.title")}</div>
+            <div className="backgroundLibraryHeader">
+                <BackgroundHelpButton/>
+                <div className="backgroundLibraryTitle">{t("backgroundLibrary.title")}</div>
+            </div>
             <Selector arr={tabs} selected={tab}/>
             <div className="backgroundLibrarySlidesViewport" ref={sliderRef}
                 onPointerDown={handleSlidePointerDown}
@@ -231,7 +235,7 @@ export default function BackgroundLibrary() {
                                                                 {supportsBackgroundMotion(item.id) && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.motionAvailable")}>
                                                                     <Film size={15} aria-label={t("backgroundLibrary.motionAvailable")}/>
                                                                 </span>}
-                                                                {item.id !== "japaneseNinja" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.themeAware")}>
+                                                                {item.id !== "japaneseNinja" && item.id !== "color" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.themeAware")}>
                                                                     <Palette size={15} aria-label={t("backgroundLibrary.themeAware")}/>
                                                                 </span>}
                                                                 {item.id === "art" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.appearanceAware")}>
