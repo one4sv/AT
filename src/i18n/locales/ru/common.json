@@ -233,6 +233,63 @@
     }
   },
   "habitPageUi": {
+    "save": {
+      "reminder": "Не забудьте сохранить!",
+      "back": "Назад"
+    },
+    "done": {
+      "beforeJoining": "До вступления",
+      "waiting": "Ожидаем",
+      "planned": "Запланировано",
+      "plan": "Запланировать"
+    },
+    "counter": {
+      "goal": "Цель"
+    },
+    "tasks": {
+      "saveFailed": "Ошибка сохранения",
+      "error": "Ошибка",
+      "toggleFailed": "Не удалось отметить задачу",
+      "addedBy": "Добавил: {{name}}",
+      "completedBy": "Выполнил: {{name}}",
+      "unmark": "Снять выполнение задачи",
+      "mark": "Отметить задачу выполненной"
+    },
+    "journal": {
+      "memberActions": "Действия участников",
+      "loadFailed": "Не удалось загрузить действия участников",
+      "empty": "Пока нет действий участников",
+      "joined": "Присоединился к активности",
+      "left": "Покинул активность",
+      "invited": "Получил приглашение",
+      "declined": "Отклонил приглашение",
+      "settings_changed": "Изменены настройки активности",
+      "completion_removed": "Отменил выполнение за {{date}}",
+      "unspecifiedDate": "указанную дату",
+      "completed": "Выполнил активность за {{date}}",
+      "recorded": "отм. {{date}}"
+    },
+    "streak": {
+      "unavailable": "Стрик недоступен",
+      "restToday": "Сегодня можно отдохнуть.",
+      "restDay": "Сегодня выходной",
+      "keepStreak": "Не потеряйте стрик!",
+      "notCompleted": "Сегодня не выполнено",
+      "neverTooLate": "Никогда не поздно начать!",
+      "zero": "Стрик: 0",
+      "maximum": "Максимальная серия!",
+      "epic": "Эпическое достижение!",
+      "progress": "Уверенный прогресс!",
+      "pace": "Отличный темп!",
+      "onFire": "Да вы в ударе!",
+      "started": "Начало положено!",
+      "archived": "В архиве",
+      "label": "Стрик",
+      "days_one": "день",
+      "days_few": "дня",
+      "days_many": "дней",
+      "days_other": "дня"
+    },
     "saving": "Сохранение…",
     "day": {
       "fromTo": "с {{start}} до {{end}}",
@@ -248,6 +305,10 @@
       "participantActivity": "Активность участников"
     },
     "schedule": {
+      "from": "с",
+      "to": "до",
+      "timePlaceholder": "чч:мм",
+      "addBlock": "Добавить блок",
       "withoutParity": "Без чётности",
       "withParity": "С чётностью",
       "fromToday": "От сегодняшнего дня",
