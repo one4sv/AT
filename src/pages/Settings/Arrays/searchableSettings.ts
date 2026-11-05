@@ -76,12 +76,12 @@ export function useSearchableSettings(): SearchableSection[] {
                     icon: ImageIcon,
                     category: t("settings.personalization"),
                 },
-                {
+                ...(!isMobile ? [{
                     id: "layout",
                     name: t("personalization.sideMenu"),
                     icon: TextIndentIcon,
                     category: t("settings.personalization"),
-                },
+                }] : []),
             ],
         },
         {
