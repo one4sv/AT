@@ -232,6 +232,35 @@
       "middleSchedule": "Average"
     }
   },
+  "habitPageUi": {
+    "saving": "Saving…",
+    "day": {
+      "fromTo": "from {{start}} to {{end}}",
+      "at": "at {{time}}",
+      "until": "until {{time}}",
+      "commentPlaceholder": "Comment",
+      "historyFailed": "Could not load activity history",
+      "participantActionsLabel": "Participant comments and completions",
+      "participant": "Member",
+      "completedTask": "Completed task: {{name}}",
+      "noActions": "No activity recorded for this day",
+      "showAll": "Show all",
+      "participantActivity": "Member activity"
+    },
+    "schedule": {
+      "withoutParity": "No week parity",
+      "withParity": "Odd/even weeks",
+      "fromToday": "Starting today",
+      "oddWeek": "Odd week",
+      "evenWeek": "Even week",
+      "currentWeek": "Current week",
+      "loading": "Loading",
+      "reset": "Reset",
+      "save": "Save",
+      "oddWeekSign": "Odd week:",
+      "evenWeekSign": "Even week:"
+    }
+  },
   "habitUi": {
     "period": {
       "everyday": "Every day",
