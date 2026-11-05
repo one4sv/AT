@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ChatTeardrop } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
@@ -5,6 +6,7 @@ import { useMessages } from "../../../hooks/MessagesHook";
 import { DownloadButt } from "../buttons/DownloadButt";
 
 export default function MediaMenu() {
+    const { t } = useTranslation("common");
     const { menu } = useContextMenu();
     const { setPendingScrollId } = useMessages();
     const navigate = useNavigate();
@@ -23,7 +25,7 @@ export default function MediaMenu() {
                 }}
             >
                 <ChatTeardrop style={{ transform: "scaleX(-1)" }} />
-                Показать в чате
+                {t("chatMenu.showInChat")}
             </div>
         </>
     );

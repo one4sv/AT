@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ChatTeardrop, Prohibit, User, UserMinus } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
@@ -6,6 +7,7 @@ import { useDelete } from "../../../hooks/DeleteHook";
 import LinkButton from "../buttons/LinkButton";
 
 export default function MemberMenu() {
+    const { t } = useTranslation("common");
     const { menu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { setDeleteConfirm } = useDelete();
@@ -22,7 +24,7 @@ export default function MemberMenu() {
                 onClick={() => navigate(`/acc/${options.nick}`)}
             >
                 <User />
-                Открыть профиль
+                {t("chatUi.openProfile")}
             </div>
 
             <div
@@ -30,7 +32,7 @@ export default function MemberMenu() {
                 onClick={() => navigate(`/chat/${options.nick}`)}
             >
                 <ChatTeardrop />
-                Открыть чат
+                {t("chatMenu.openChat")}
             </div>
 
             <LinkButton />
@@ -48,7 +50,7 @@ export default function MemberMenu() {
                     }}
                 >
                     <UserMinus />
-                    Исключить из группы
+                    {t("chatMenu.removeMember")}
                 </div>
             )}
 
@@ -65,7 +67,7 @@ export default function MemberMenu() {
                     }}
                 >
                     <Prohibit />
-                    Заблокировать
+                    {t("chatMenu.block")}
                 </div>
             )}
         </>

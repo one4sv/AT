@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { GearSix, NotebookIcon, Target, UserCircleIcon, UsersIcon } from "@phosphor-icons/react";
 import { UserRoundPlus } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -9,6 +10,7 @@ import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import useHabitMembers from "../../../../pages/HabitPage/components/HabitInfo/useHabitMembers";
 
 export default function HabitHeaderMenu() {
+    const { t } = useTranslation("common");
     const { habit } = useTheHabit();
     const { user } = useUser();
     const { closeMenu } = useContextMenu();
@@ -35,7 +37,7 @@ export default function HabitHeaderMenu() {
                     {data?.member_count || habit.chat_id ?
                         <UsersIcon weight="fill"/> : <UserRoundPlus/>}
                     {data?.member_count || habit.chat_id ?
-                        "Настройки совместной активности" : "Пригласить в активность"}
+                        t("habitUi.collaboration") : t("habitUi.invite")}
                 </div>
             ) : data?.owner && (
                 <div className="ContextMenuButt" onClick={() => {
@@ -48,18 +50,18 @@ export default function HabitHeaderMenu() {
             )}
             {isMy && <div className="ContextMenuButt" onClick={() => openSlide("settings")}>
                 <GearSix weight="fill"/>
-                Настройки
+                {t("habitUi.settings")}
             </div>}
             {isMy && <div className="ContextMenuButt" onClick={() => {
                 closeMenu();
                 showDevNote();
             }}>
                 <Target weight="fill"/>
-                Добавить цель
+                {t("habitUi.addGoal")}
             </div>}
             {isMember && <div className="ContextMenuButt" onClick={() => openSlide("journal")}>
                 <NotebookIcon weight="fill"/>
-                Журнал активности
+                {t("habitUi.journal")}
             </div>}
         </>
     );

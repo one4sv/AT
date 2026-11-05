@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
 import { useMessages } from "../../../hooks/MessagesHook";
 
 export default function MessBarMenu() {
+    const { t } = useTranslation("common");
     const { showNames, setShowNames } = useMessages();
 
     return (
@@ -10,7 +12,7 @@ export default function MessBarMenu() {
             onClick={() => setShowNames(!showNames)}
         >
             {showNames ? <EyeSlash /> : <Eye />}
-            {showNames ? "Скрыть имена" : "Показать имена"}
+            {t(showNames ? "chatMenu.hideNames" : "chatMenu.showNames")}
         </div>
     );
 }

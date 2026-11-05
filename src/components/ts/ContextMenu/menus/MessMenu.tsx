@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
     CheckCircle,
     Circle,
@@ -18,6 +19,7 @@ import { useSendMess } from "../../../hooks/SendMessHook";
 import { DownloadButt } from "../buttons/DownloadButt";
 
 export default function MessMenu() {
+    const { t } = useTranslation("common");
     const { menu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { setDeleteConfirm, setDeleteMess } = useDelete();
@@ -47,7 +49,7 @@ export default function MessMenu() {
                     ) : (
                         <Heart />
                     )}
-                    Реакция
+                    {t("chatMenu.reaction")}
                 </div>
             )}
 
@@ -64,7 +66,7 @@ export default function MessMenu() {
                     }}
                 >
                     <PencilSimple />
-                    Изменить
+                    {t("chatMenu.edit")}
                 </div>
             )}
 
@@ -85,7 +87,7 @@ export default function MessMenu() {
                 }}
             >
                 {isChose ? <Circle /> : <CheckCircle />}
-                {isChose ? "Отменить выбор" : "Выбрать"}
+                {isChose ? t("chatMenu.cancelSelection") : t("chatMenu.select")}
             </div>
 
             {!isChose && (
@@ -101,7 +103,7 @@ export default function MessMenu() {
                     }}
                 >
                     <ShareFat style={{ transform: "scaleX(-1)" }} />
-                    Ответить
+                    {t("chatMenu.reply")}
                 </div>
             )}
 
@@ -121,8 +123,8 @@ export default function MessMenu() {
             >
                 <CopySimple />
                 {chosenMess.length > 0
-                    ? "Копировать выбранное"
-                    : "Копировать"}
+                    ? t("chatMenu.copySelected")
+                    : t("chatMenu.copy")}
             </div>
 
             <div
@@ -130,7 +132,7 @@ export default function MessMenu() {
                 onClick={() => pinMess(options.id)}
             >
                 {curChat.is_pinned ? <PushPinSlash /> : <PushPin />}
-                {curChat.is_pinned ? "Открепить" : "Закрепить"}
+                {curChat.is_pinned ? t("chatMenu.unpin") : t("chatMenu.pin")}
             </div>
 
             <div
@@ -152,8 +154,8 @@ export default function MessMenu() {
             >
                 <ShareFat />
                 {chosenMess.length > 0
-                    ? "Переслать выбранное"
-                    : "Переслать"}
+                    ? t("chatMenu.forwardSelected")
+                    : t("chatMenu.forward")}
             </div>
 
             <div
@@ -163,14 +165,14 @@ export default function MessMenu() {
                         setDeleteConfirm({
                             goal: point,
                             id: "",
-                            name: "сообщений",
+                            name: t("chatMenu.messages"),
                         });
                         setDeleteMess(chosenMess.map((m) => m.id));
                     } else {
                         setDeleteConfirm({
                             goal: point,
                             id: options.id,
-                            name: "сообщений",
+                            name: t("chatMenu.messages"),
                         });
                     }
                     setBlackout({ seted: true, module: "Delete" });
@@ -178,8 +180,8 @@ export default function MessMenu() {
             >
                 <Trash />
                 {chosenMess.length > 0
-                    ? "Удалить выбранное"
-                    : "Удалить"}
+                    ? t("chatMenu.deleteSelected")
+                    : t("chatMenu.delete")}
             </div>
         </>
     );

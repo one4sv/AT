@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ChatTeardropIcon, CheckCircle, Circle, MagnifyingGlassIcon, PushPinIcon, SignOut } from "@phosphor-icons/react";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import { useBlackout } from "../../../hooks/BlackoutHook";
@@ -8,6 +9,7 @@ import PersonButtons from "../buttons/PersonButtons";
 import { useChat } from "../../../hooks/ChatHook";
 
 export default function AccMenu() {
+    const { t } = useTranslation("common");
     const { menu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { setDeleteConfirm } = useDelete();
@@ -26,7 +28,7 @@ export default function AccMenu() {
                 }}
             >
                 {header === "search" ? <ChatTeardropIcon weight="fill" /> : <MagnifyingGlassIcon />}
-                {header === "search" ? "Сообщение" : "Поиск сообщений"}
+                {t(header === "search" ? "chatUi.message" : "chatUi.searchMessages")}
             </div>            
             {messages.find(m => m.is_pinned) ? (
                 <div
@@ -37,7 +39,7 @@ export default function AccMenu() {
                     }}
                 >
                     {header === "pinned" ? <ChatTeardropIcon weight="fill" /> : <PushPinIcon weight="fill"/>}
-                    {header === "pinned" ? "Сообщение" : `${messages.filter(m => m.is_pinned).length} Закреплённые`}
+                    {header === "pinned" ? t("chatUi.message") : t("chatUi.pinnedCount", { count: messages.filter(m => m.is_pinned).length })}
                 </div>
             ) : ""}
             <div
@@ -49,7 +51,7 @@ export default function AccMenu() {
                 }}
             >
                 {header === "choosing" ? <Circle /> : <CheckCircle />}
-                {header === "choosing" ? "Отменить выбор" : "Выбрать сообщения"}
+                {t(header === "choosing" ? "chatUi.cancelSelection" : "chatUi.selectMessages")}
             </div>
 
             <LinkButton />
@@ -68,7 +70,7 @@ export default function AccMenu() {
                     }}
                 >
                     <SignOut />
-                    Покинуть беседу
+                    {t("chatUi.leave")}
                 </div>
             )}
         </>
