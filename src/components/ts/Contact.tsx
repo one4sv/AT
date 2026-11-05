@@ -145,8 +145,8 @@ export default function Contact({ contact }: ContactType) {
         const msg = contact.lastMessage;
 
         if (msg.is_system) {
-            if (partsLast && targetForLast) {
-                return `${partsLast.before}${targetForLast.name || targetForLast.nick}${partsLast.after}`;
+            if (partsLast) {
+                return `${partsLast.before}${targetForLast?.name || targetForLast?.nick || t("chatUi.user")}${partsLast.after}`;
             }
             return localizedLast;
         }
