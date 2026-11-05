@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react"
+import { useTranslation } from "react-i18next"
 import "../../scss/Schedule.scss"
 import { useHabits } from "../../../../components/hooks/HabitsHook"
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook"
@@ -23,6 +24,8 @@ export type CountInpsType = {
 }
 
 export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
+    const { t, i18n } = useTranslation("common")
+    const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU"
     const { habits } = useHabits()
     const { habit } = useTheHabit()
     const { weekStart } = useSettings()
@@ -72,21 +75,21 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
             result.push({
                 date: new Date(date),
                 value: date.getDay(),
-                label: date.toLocaleDateString("ru-RU", { weekday: "short" }),
-                dateStr: date.toLocaleDateString("ru-RU", { day: "numeric", month: "short" }),
+                label: date.toLocaleDateString(locale, { weekday: "short" }),
+                dateStr: date.toLocaleDateString(locale, { day: "numeric", month: "short" }),
                 fullDate: date.toISOString().split("T")[0]
             })
         }
         return result
     }
 
-    const week = useMemo(() => createWeek(new Date()), [isWeek]);
+    const week = useMemo(() => createWeek(new Date()), [isWeek, locale]);
     const secondWeekStart = useMemo(() => {
         const d = new Date();
         d.setDate(d.getDate() + 7);
         return d;
     }, []);
-    const secondWeek = useMemo(() => createWeek(secondWeekStart), [isWeek, secondWeekStart]);
+    const secondWeek = useMemo(() => createWeek(secondWeekStart), [isWeek, secondWeekStart, locale]);
 
     const sortHabits = (a: Habit, b: Habit) => {
         const getPriority = (h: Habit) => {
@@ -169,25 +172,24 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                 >
                     {edit && id ? (
                         <>
-                            <span className={!weekSeparator ? "white" : ""}>Без чётности</span> /{" "}
-                            <span className={weekSeparator ? "white" : ""}>С чётностью</span>
+                            <span className={!weekSeparator ? "white" : ""}>{t("habitPageUi.schedule.withoutParity")}</span> /{" "}
+                            <span className={weekSeparator ? "white" : ""}>{t("habitPageUi.schedule.withParity")}</span>
                         </>
                     ) : (
                         <>
-                            <span className={isWeek ? "white" : ""}>От сегодняшнего дня</span> /{" "}
+                            <span className={isWeek ? "white" : ""}>{t("habitPageUi.schedule.fromToday")}</span> /{" "}
                             <span className={!isWeek ? "white" : ""}>{
-                                hasAnySeparated === true ? (
-                                    isOddWeek(weekStart, week[0].date) ? "Нечётная " : "Чётная "
-                                ) : "Текущая "
-                            }
-                            неделя</span>
+                                hasAnySeparated === true
+                                    ? (isOddWeek(weekStart, week[0].date) ? t("habitPageUi.schedule.oddWeek") : t("habitPageUi.schedule.evenWeek"))
+                                    : t("habitPageUi.schedule.currentWeek")
+                            }</span>
                         </>
                     )}
                 </div>
                 {(isMy && !id || (isMy && habit && id === String(habit.id) && habit.ongoing)) && (
                     <div className="scheduleOptionsButts">
                         {loading ? (
-                            <div className="scheduleOpt loading">Загрузка</div>
+                            <div className="scheduleOpt loading">{t("habitPageUi.schedule.loading")}</div>
                         ) : (
                             <>
                                 {edit && (
@@ -200,7 +202,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                                             setWeekSeparator(false)
                                         }}
                                     >
-                                        сбросить
+                                        {t("habitPageUi.schedule.reset")}
                                     </div>
                                 )}
                                 <div
@@ -215,14 +217,14 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                                         }
                                     }}
                                 >
-                                    {edit ? "сохранить" : <Pencil fill="currentColor" />}
+                                    {edit ? t("habitPageUi.schedule.save") : <Pencil fill="currentColor" />}
                                 </div>
                             </>
                         )}
                     </div>
                 )}
             </div>
-            {weekSeparator && edit && id && <div className="scheduleWeekSign odd">Нечётная неделя:</div>}
+            {weekSeparator && edit && id && <div className="scheduleWeekSign odd">{t("habitPageUi.schedule.oddWeekSign")}</div>}
             <div className="schedule">
                 {week.map(d => (
                     <div className="scheduleWrapper" key={d.fullDate}>
@@ -279,7 +281,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                     </div>
                 ))}
             </div>
-            {weekSeparator && edit && id && <div className="scheduleWeekSign even">Чётная неделя:</div>}
+            {weekSeparator && edit && id && <div className="scheduleWeekSign even">{t("habitPageUi.schedule.evenWeekSign")}</div>}
             {id && weekSeparator && edit && (
                 <div className="schedule">
                     {secondWeek.map(d => (
