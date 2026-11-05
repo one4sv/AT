@@ -233,6 +233,61 @@
     }
   },
   "habitPageUi": {
+    "save": {
+      "reminder": "Remember to save!",
+      "back": "Back"
+    },
+    "done": {
+      "beforeJoining": "Before joining",
+      "waiting": "Waiting",
+      "planned": "Planned",
+      "plan": "Plan"
+    },
+    "counter": {
+      "goal": "Goal"
+    },
+    "tasks": {
+      "saveFailed": "Could not save changes",
+      "error": "An error occurred",
+      "toggleFailed": "Could not update the task",
+      "addedBy": "Added by: {{name}}",
+      "completedBy": "Completed by: {{name}}",
+      "unmark": "Mark task as incomplete",
+      "mark": "Mark task as completed"
+    },
+    "journal": {
+      "memberActions": "Member activity",
+      "loadFailed": "Could not load member activity",
+      "empty": "No member activity yet",
+      "joined": "Joined the activity",
+      "left": "Left the activity",
+      "invited": "Received an invitation",
+      "declined": "Declined the invitation",
+      "settings_changed": "Activity settings changed",
+      "completion_removed": "Undid completion for {{date}}",
+      "unspecifiedDate": "the specified date",
+      "completed": "Completed the activity for {{date}}",
+      "recorded": "marked {{date}}"
+    },
+    "streak": {
+      "unavailable": "Streak unavailable",
+      "restToday": "You can rest today.",
+      "restDay": "Rest day",
+      "keepStreak": "Don't lose your streak!",
+      "notCompleted": "Not completed today",
+      "neverTooLate": "It's never too late to start!",
+      "zero": "Streak: 0",
+      "maximum": "Maximum streak!",
+      "epic": "Epic achievement!",
+      "progress": "Steady progress!",
+      "pace": "Great pace!",
+      "onFire": "You're on fire!",
+      "started": "A great start!",
+      "archived": "Archived",
+      "label": "Streak",
+      "days_one": "day",
+      "days_other": "days"
+    },
     "saving": "Saving…",
     "day": {
       "fromTo": "from {{start}} to {{end}}",
@@ -248,6 +303,10 @@
       "participantActivity": "Member activity"
     },
     "schedule": {
+      "from": "from",
+      "to": "to",
+      "timePlaceholder": "hh:mm",
+      "addBlock": "Add block",
       "withoutParity": "No week parity",
       "withParity": "Odd/even weeks",
       "fromToday": "Starting today",
