@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { SignOut, User, Users } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
@@ -9,6 +10,7 @@ import LinkButton from "../buttons/LinkButton";
 import PersonButtons from "../buttons/PersonButtons";
 
 export default function ChatMenu() {
+    const { t } = useTranslation("common");
     const { menu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { setDeleteConfirm } = useDelete();
@@ -26,7 +28,7 @@ export default function ChatMenu() {
                     onClick={() => navigate(`/room/${options.id}`)}
                 >
                     <Users />
-                    Информация о чате
+                    {t("chatUi.info")}
                 </div>
             ) : (
                 <div
@@ -34,7 +36,7 @@ export default function ChatMenu() {
                     onClick={() => navigate(`/acc/${options.nick}`)}
                 >
                     <User />
-                    Открыть профиль
+                    {t("chatUi.openProfile")}
                 </div>
             )}
 
@@ -56,7 +58,7 @@ export default function ChatMenu() {
                     }}
                 >
                     <SignOut />
-                    Покинуть беседу
+                    {t("chatUi.leave")}
                 </div>
             )}
         </>

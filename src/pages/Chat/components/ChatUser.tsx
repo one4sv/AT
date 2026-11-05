@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useChat } from "../../../components/hooks/ChatHook";
 import { useRef } from "react";
@@ -14,6 +15,7 @@ import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import useHeaderMenuGestures from "../../../components/hooks/utils/useHeaderMenuGestures";
 
 export default function ChatUser() {
+    const { t } = useTranslation("common");
     const { user } = useUser()
     const headerGestures = useHeaderMenuGestures();
     const { chatWith, typingMap, messages, activeHeader, setActiveHeader } = useChat();
@@ -57,14 +59,14 @@ export default function ChatUser() {
     const typingText =
         typingNames.length > 0
             ? chatWith?.is_group
-                ? `${typingNames.slice(0, 3).join(", ")}${typingNames.length > 3 ? "…" : ""} печатает...`
-                : "Печатает..."
+                ? t("chatUi.typingNames", { names: `${typingNames.slice(0, 3).join(", ")}${typingNames.length > 3 ? "…" : ""}` })
+                : t("chatUi.typing")
             : null;
 
     const curOnline = chatWith ? chatWith.members.filter(m => onlineMap[m.id]).length - 1 : 0
 
     const name = () => {
-        if (isFavorite) return "Избранное"
+        if (isFavorite) return t("chatUi.favorites")
         else if (chatWith) return chatWith.name || chatWith.nick
         else return ""
     }
@@ -92,17 +94,14 @@ export default function ChatUser() {
         if (chatWith.is_group) {
             if (typingText) return typingText
 
-            return `${chatWith.members.length} ${
-                chatWith.members.length > 5
-                    ? "участников"
-                    : "участника"
-            }${curOnline > 0 ? `, ${curOnline} в сети` : ""}`
+            return t("chatUi.members", { count: chatWith.members.length }) +
+                (curOnline > 0 ? t("chatUi.onlineCount", { count: curOnline }) : "")
         }
 
         if (typingText) return typingText
 
         return onlineMap[chatWith.id || ""]
-            ? "онлайн"
+            ? t("chatUi.online")
             : formatLastOnline(chatWith.last_online)
     }
 
@@ -173,7 +172,7 @@ export default function ChatUser() {
                             className="chatUserMenuButt" 
                             onClick={() => {
                                 setActiveHeader("text")
-                                showNotification("info", "В разработке")
+                                showNotification("info", t("sideMenu.inDevelopment"))
                             }}
                         >
                             {activeHeader === "habit" ? <ChatTeardropIcon weight="fill" size={22}/> : <CalendarCheckIcon weight="fill" size={22}/>}

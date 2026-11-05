@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ChatTeardropIcon, CheckCircle, Circle, MagnifyingGlassIcon, PushPinIcon, UserIcon } from "@phosphor-icons/react"
 import "../../scss/modules/ChatWithInfo.scss"
 import "../../pages/Acc/scss/Acc.scss"
@@ -9,6 +10,7 @@ import { useNavigate } from "react-router"
 import ChatMedia from "./components/ChatMedia"
 
 export default function ChatWithInfo() {
+    const { t } = useTranslation("common");
     const { chatWith, activeHeader:header, setActiveHeader:setHeader, messages } = useChat()
     const { setBlackout } = useBlackout()
     const { setChosenMess } = useMessages();
@@ -53,7 +55,7 @@ export default function ChatWithInfo() {
                     }}
                 >
                     {header === "search" ? <ChatTeardropIcon weight="fill" /> : <MagnifyingGlassIcon />}
-                    {header === "search" ? "Сообщение" : "Поиск сообщений"}
+                    {t(header === "search" ? "chatUi.message" : "chatUi.searchMessages")}
                 </div>            
                 {messages.find(m => m.is_pinned) ? (
                     <div
@@ -65,7 +67,7 @@ export default function ChatWithInfo() {
                         }}
                     >
                         {header === "pinned" ? <ChatTeardropIcon weight="fill" /> : <PushPinIcon weight="fill"/>}
-                        {header === "pinned" ? "Сообщение" : `${messages.filter(m => m.is_pinned).length} Закреплённые`}
+                        {header === "pinned" ? t("chatUi.message") : t("chatUi.pinnedCount", { count: messages.filter(m => m.is_pinned).length })}
                     </div>
                 ) : ""}
                 <div
@@ -78,7 +80,7 @@ export default function ChatWithInfo() {
                     }}
                 >
                     {header === "choosing" ? <Circle /> : <CheckCircle />}
-                    {header === "choosing" ? "Отменить выбор" : "Выбрать сообщения"}
+                    {t(header === "choosing" ? "chatUi.cancelSelection" : "chatUi.selectMessages")}
                 </div>
             </div>
             <ChatMedia/>

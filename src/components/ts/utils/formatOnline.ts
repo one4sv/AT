@@ -1,3 +1,4 @@
+import i18n from "../../../i18n";
 export default function formatLastOnline(lastOnline: string | null | undefined) {
   if (!lastOnline) return "";
 
@@ -10,27 +11,27 @@ export default function formatLastOnline(lastOnline: string | null | undefined) 
   const diffMin = Math.floor(diffSec / 60);
   const diffHour = Math.floor(diffMin / 60);
 
-  if (diffSec < 60) return "в сети только что";
-  if (diffMin < 2) return "в сети минуту назад";
-  if (diffMin < 60) return `в сети ${diffMin} минут назад`;
-  if (diffHour < 2) return "в сети час назад";
-  if (diffHour < 5) return `в сети ${diffHour} часа назад`;
-  if (diffHour < 24) return `в сети ${diffHour} часов назад`;
+  if (diffSec < 60) return i18n.t("chatUi.justNow", { ns: "common" });
+  if (diffMin < 2) return i18n.t("chatUi.minute", { ns: "common" });
+  if (diffMin < 60) return i18n.t("chatUi.minutes", { ns: "common", count: diffMin });
+  if (diffHour < 2) return i18n.t("chatUi.hour", { ns: "common" });
+  if (diffHour < 5) return i18n.t("chatUi.hours", { ns: "common", count: diffHour });
+  if (diffHour < 24) return i18n.t("chatUi.hours", { ns: "common", count: diffHour });
 
   const yesterday = new Date();
   yesterday.setDate(now.getDate() - 1);
 
-  const timeStr = lastDate.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+  const timeStr = lastDate.toLocaleTimeString(i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU", { hour: "2-digit", minute: "2-digit" });
 
   if (
     lastDate.getDate() === yesterday.getDate() &&
     lastDate.getMonth() === yesterday.getMonth() &&
     lastDate.getFullYear() === yesterday.getFullYear()
   ) {
-    return `в сети вчера в ${timeStr}`;
+    return i18n.t("chatUi.yesterday", { ns: "common", time: timeStr });
   }
 
   const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short" };
-  const dateStr = lastDate.toLocaleDateString("ru-RU", options);
-  return `в сети ${dateStr} в ${timeStr}`;
+  const dateStr = lastDate.toLocaleDateString(i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU", options);
+  return i18n.t("chatUi.lastSeen", { ns: "common", date: dateStr, time: timeStr });
 }

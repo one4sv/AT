@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { CaretDownIcon, CaretUpIcon, List, MagnifyingGlassIcon, X } from "@phosphor-icons/react";
 import { useChat } from "../../../../components/hooks/ChatHook";
 import type { message } from "../../../../components/context/ChatContext";
@@ -5,7 +6,8 @@ import { useChatMessageScroll } from "../../../../components/hooks/utils/useChat
 import type { SetStateAction } from "react";
 import type React from "react";
 
-export default function ChatSearch ({searchedMessages, selectedIndex, setSelectedIndex, isOpen, setIsOpen}:{searchedMessages:message[], selectedIndex:number, setSelectedIndex:React.Dispatch<SetStateAction<number>>, isOpen:boolean, setIsOpen:React.Dispatch<SetStateAction<boolean>>}) {
+export default function ChatSearch ({
+    const { t } = useTranslation("common");searchedMessages, selectedIndex, setSelectedIndex, isOpen, setIsOpen}:{searchedMessages:message[], selectedIndex:number, setSelectedIndex:React.Dispatch<SetStateAction<number>>, isOpen:boolean, setIsOpen:React.Dispatch<SetStateAction<boolean>>}) {
     const { scrollToMessage, setHighlightedId } = useChatMessageScroll()
     const { searchMess, setSearchMess } = useChat()
 
@@ -52,7 +54,7 @@ export default function ChatSearch ({searchedMessages, selectedIndex, setSelecte
                 <div className="chatSearch">
                     <input
                         type="text"
-                        placeholder="Поиск по сообщениям"
+                        placeholder={t("chatUi.search")}
                         value={searchMess}
                         onChange={(e) => { setSearchMess(e.target.value); setIsOpen(true)}}
                         onKeyDown={handleSearchKeyDown}

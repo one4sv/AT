@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useMessages } from "../../../../components/hooks/MessagesHook"
 import { useChat } from "../../../../components/hooks/ChatHook"
 import { CopySimpleIcon, ShareFatIcon, TrashIcon } from "@phosphor-icons/react"
@@ -5,6 +6,7 @@ import { useBlackout } from "../../../../components/hooks/BlackoutHook"
 import { useDelete } from "../../../../components/hooks/DeleteHook"
 
 export default function ChatChoosingMess() {
+    const { t } = useTranslation("common");
     const { chosenMess, setChosenMess, setRedirect } = useMessages()
     const { setActiveHeader, messages } = useChat() 
     const { setBlackout } = useBlackout()
@@ -19,7 +21,7 @@ export default function ChatChoosingMess() {
                         setChosenMess([])
                     }}
                 >
-                    Выбрано: {chosenMess.length} сообщений
+                    {t("chatUi.selected", { count: chosenMess.length })}
                 </div>
                 <div className="ChosenCountButt" onClick={() => {
                     if (chosenMess.length === 0) return 
@@ -39,7 +41,7 @@ export default function ChatChoosingMess() {
                 </div>
                 <div className="ChosenCountButt delete" onClick={() => {
                     if (chosenMess.length === 0) return
-                    setDeleteConfirm({goal:"mess", id:"", name:"сообщений"})
+                    setDeleteConfirm({goal:"mess", id:"", name:t("chatUi.selectedNoun")})
                     setDeleteMess(chosenMess.map((m) => m.id))
                     setBlackout({seted:true, module:"Delete"})
                 }}>

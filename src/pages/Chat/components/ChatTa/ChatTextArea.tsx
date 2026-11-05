@@ -64,6 +64,7 @@ export default function ChatTextArea({
     } = useMessages();
     const { user } = useUser();
     const { t } = useTranslation("acc");
+    const { t: tc } = useTranslation("common");
     const sending = useRef(false);
     const routeRef = useRef("");
     const [oldMess, setOldMess] = useState<string>("");
@@ -256,13 +257,13 @@ export default function ChatTextArea({
                         object={redirect?.length === 1 ? {
                             id: String(redirect[0].id),
                             sender: redirect[0].sender_name,
-                            previewText: redirect[0].content.length > 0 ? redirect[0].content : redirect[0].files?.length ? `${redirect[0].files?.length} mediafile` : "Пересланное сообщение"
+                            previewText: redirect[0].content.length > 0 ? redirect[0].content : redirect[0].files?.length ? `${redirect[0].files?.length} mediafile` : tc("chatUi.forwarded")
                         } : {
                             id: "0",
                             sender: [...new Set(redirect.filter(m => m.sender_name === m.sender_name).map(m => m.sender_name))].join(
                                 ',  '
                             ),
-                            previewText: `${redirect.length} сообщения`
+                            previewText: tc("chatUi.forwardedCount", { count: redirect.length })
                         }}
                         scrollToMessage={scrollToMessage}
                     />}
@@ -288,7 +289,7 @@ export default function ChatTextArea({
                             if (!editing) handleTyping(chatWith ? chatWith.id : "");
                         }}
                         onKeyDown={handleKeyDown}
-                        placeholder="Напишите сообщение..."
+                        placeholder={tc("chatUi.placeholder")}
                         onPaste={handlePaste}
                     />
                 </div>

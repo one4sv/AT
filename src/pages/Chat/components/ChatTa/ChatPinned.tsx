@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import { List } from "@phosphor-icons/react"
 import { usePinnedMessages } from "../../../../components/hooks/PinnedMessagesHook"
 import { useUser } from "../../../../components/hooks/UserHook"
 
 export default function ChatPinned() {
+    const { t } = useTranslation("common");
     const { user } = useUser()
     const {
         pms,
@@ -21,7 +23,7 @@ export default function ChatPinned() {
             <div className="pmsMain">
                 <div className="pmsShowNow" onClick={() => scrollToPin(currentpm, showNow)}>
                     <span className="pmsSender">
-                        {currentpm?.sender_id === user.id ? "Вы" : currentpm?.sender_name || currentpm?.sender_nick}: 
+                        {currentpm?.sender_id === user.id ? t("chatUi.you") : currentpm?.sender_name || currentpm?.sender_nick}: 
                     </span>
                     &nbsp;
                     <span className="pmsText">
@@ -29,7 +31,7 @@ export default function ChatPinned() {
                             ? currentpm?.content
                             : currentpm?.files && currentpm?.files.length > 0
                                 ? `${currentpm.files?.length} mediafiles`
-                                : "Пересланное сообщение"}
+                                : t("chatUi.forwarded")}
                     </span>
                 </div>
                 <div className="pmShowInfo" onMouseDown={mouseDown}
