@@ -4,8 +4,8 @@
   "version": "0.6.2-dev.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "node scripts/build-desktop-wallpapers.mjs && vite",
+    "build": "node scripts/build-desktop-wallpapers.mjs && tsc -b && vite build",
     "lint": "eslint .",
     "check:release": "node scripts/check-release.mjs",
     "preview": "vite preview"
@@ -55,6 +55,7 @@
     "sass": "^1.89.2",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
-    "vite": "^7.0.4"
+    "vite": "^7.0.4",
+    "sharp": "^0.34.4"
   }
 }

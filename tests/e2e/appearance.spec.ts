@@ -59,32 +59,56 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(apply).toHaveAttribute("aria-pressed", "true");
     });
 
-    test("wallpaper sheet handle supports vertical dragging", async ({ page }) => {
+    test("wallpaper sheet follows finger movement from bottom to top", async ({ page }) => {
         await page.goto("/wallpapers");
-        const handle = page.locator(".wallpaperStudioHandle");
-        await expect(handle).not.toBeInViewport();
-        await page.locator(".wallpaperStudioSettingsButton").click();
-        await expect(handle).toBeVisible();
-        let bounds = await handle.boundingBox();
-        expect(bounds).not.toBeNull();
-        if (!bounds) return;
-        const x = bounds.x + bounds.width / 2;
-        const y = bounds.y + bounds.height / 2;
-        await page.mouse.move(x, y);
+        const surface = page.locator(".wallpaperStudioGestureSurface");
+        const sheet = page.locator(".wallpaperStudioSheet");
+        const screenHeight = page.viewportSize()?.height ?? 900;
+        await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
+
+        await page.mouse.move(300, screenHeight - 120);
         await page.mouse.down();
-        await page.mouse.move(x, y + 110, { steps: 6 });
+        await page.mouse.move(300, screenHeight - 370, { steps: 8 });
+        const dragging = await sheet.boundingBox();
+        expect(dragging).not.toBeNull();
+        if (dragging) {
+            expect(dragging.y).toBeLessThan(screenHeight);
+            expect(dragging.y).toBeGreaterThan(screenHeight * .15);
+        }
         await page.mouse.up();
         await expect(page.locator(".wallpaperStudio.expanded")).toBeVisible();
 
-        bounds = await handle.boundingBox();
+        const handle = page.locator(".wallpaperStudioHandle");
+        const bounds = await handle.boundingBox();
         if (!bounds) return;
-        const nextX = bounds.x + bounds.width / 2;
-        const nextY = bounds.y + bounds.height / 2;
-        await page.mouse.move(nextX, nextY);
+        await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
         await page.mouse.down();
-        await page.mouse.move(nextX, nextY - 110, { steps: 6 });
+        await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2 + 160, { steps: 8 });
         await page.mouse.up();
         await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
+        await expect(handle).not.toBeInViewport();
+        await expect(surface).toBeVisible();
+    });
+
+    test("wallpaper preview reveals its neighbor before releasing a drag", async ({ page }, testInfo) => {
+        test.skip(testInfo.project.name !== "chromium-desktop", "Desktop pointer drag only");
+        await page.goto("/wallpapers");
+        const title = page.locator(".wallpaperStudio > .headerDiv .headerCustomText");
+        const before = await title.innerText();
+        const surface = page.locator(".wallpaperStudioGestureSurface");
+        const bound = await surface.boundingBox();
+        expect(bound).not.toBeNull();
+        if (!bound) return;
+        const x = bound.x + bound.width * .6;
+        const y = bound.y + bound.height * .4;
+        await page.mouse.move(x, y);
+        await page.mouse.down();
+        await page.mouse.move(x - 190, y, { steps: 8 });
+        const next = await page.locator(".wallpaperStudioFrame").nth(2).boundingBox();
+        expect(next).not.toBeNull();
+        if (next) expect(next.x).toBeLessThan(bound.width);
+        await page.mouse.up();
+        await expect(title).not.toHaveText(before);
     });
 
     test("closed catalog is completely offscreen and clicking free preview closes it", async ({ page }) => {
@@ -149,14 +173,14 @@ test.describe("appearance and wallpaper controls", () => {
         test.skip(testInfo.project.name !== "chromium-desktop", "Desktop studio only");
         await page.goto("/wallpapers");
         await page.mouse.move(200, 200);
-        await page.mouse.wheel(0, 180);
+        await page.mouse.wheel(0, -180);
         await expect(page.locator(".wallpaperStudio.expanded")).toBeVisible();
         await page.waitForTimeout(270);
-        await page.mouse.wheel(0, -180);
+        await page.mouse.wheel(0, 180);
         await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
     });
 
-    test("mobile wallpaper gallery has four portrait columns and no card labels", async ({ page }, testInfo) => {
+    test("mobile wallpaper gallery has five portrait columns and no card labels", async ({ page }, testInfo) => {
         test.skip(testInfo.project.name !== "webkit-mobile", "Mobile only");
         await page.goto("/wallpapers");
         await page.locator(".wallpaperStudioSettingsButton").click();
@@ -169,7 +193,7 @@ test.describe("appearance and wallpaper controls", () => {
         expect(bounds.height).toBeGreaterThan(bounds.width);
         const grid = page.locator(".wallpaperStudioGrid").first();
         const columns = await grid.evaluate(element => getComputedStyle(element).gridTemplateColumns.split(" ").length);
-        expect(columns).toBe(4);
+        expect(columns).toBe(5);
     });
 });
 
@@ -177,7 +201,10 @@ test("Japanese wallpaper assets are complete, decodable WebP containers", async 
     for (const scene of ["ninja", "sakura", "alley", "torii"]) {
         for (const size of ["desktop", "mobile"]) {
             const label = `${scene}-${size}`;
-            const response = await request.get(`/wallpapers/japanese-${label}.webp`);
+            const url = scene === "ninja" || size === "mobile"
+                ? `/wallpapers/japanese-${label}.webp`
+                : `/wallpapers/generated/japanese-${label}.webp`;
+            const response = await request.get(url);
             expect(response.ok(), `Missing Japanese wallpaper ${label}`).toBeTruthy();
             expect(response.headers()["content-type"]).toContain("image/webp");
 

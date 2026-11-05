@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent, CSSProperties } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useMotionValue, animate, useReducedMotion } from "framer-motion";
+import { flushSync } from "react-dom";
 import { ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleHelp, ImagePlus, Trash2, Film, Palette, LayoutGrid, WandSparkles, Settings2, Images } from "lucide-react";
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
@@ -31,10 +32,14 @@ export default function WallpaperStudio() {
     const reduceMotion = useReducedMotion();
     const [ open, setOpen ] = useState(false);
     const [ preview, setPreview ] = useState(0);
-    const [ direction, setDirection ] = useState(1);
     const [ collapsedGroups, setCollapsedGroups ] = useState<string[]>([]);
     const [ busy, setBusy ] = useState(false);
     const [ sheetDrag, setSheetDrag ] = useState(0);
+    const dragX = useMotionValue(0);
+    const canvasRef = useRef<HTMLDivElement>(null);
+    const changing = useRef(false);
+    const slideAnimation = useRef<ReturnType<typeof animate> | null>(null);
+    const canvasGesture = useRef<{ pointerId: number; x: number; y: number; axis: "none" | "horizontal" | "vertical"; moved: boolean } | null>(null);
     const handleDrag = useRef<HandleDrag | null>(null);
     const suppressClick = useRef(false);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -42,7 +47,6 @@ export default function WallpaperStudio() {
     const fileRef = useRef<HTMLInputElement>(null);
     const initialized = useRef(false);
     const wheelGesture = useRef({ total: 0, last: 0 });
-    const previewSwipe = useRef<{ x: number; y: number } | null>(null);
 
     const items = useMemo<WallpaperItem[]>(() => [
         ...backgroundGroups.flatMap(group => group.items.map(item => ({
@@ -67,23 +71,42 @@ export default function WallpaperStudio() {
         navigate("/wallpapers", { replace: true });
     }, [settingsPage]);
 
-    const view = useCallback((index: number) => {
-        if (!items.length) return;
-        const next = (index + items.length) % items.length;
-        setDirection(next >= currentIndex ? 1 : -1);
-        setPreview(next);
-    }, [items.length, currentIndex]);
-
     const change = useCallback((step: number) => {
-        if (!items.length) return;
-        setDirection(step > 0 ? 1 : -1);
-        setPreview(index => (index + step + items.length) % items.length);
-    }, [items.length]);
+        if (items.length < 2 || changing.current) return;
+        changing.current = true;
+        slideAnimation.current?.stop();
+        const width = canvasRef.current?.clientWidth || window.innerWidth;
+        slideAnimation.current = animate(dragX, step > 0 ? -width : width, {
+            duration: reduceMotion ? 0 : .32,
+            ease: [.22, 1, .36, 1],
+            onComplete: () => {
+                flushSync(() => setPreview(index => (index + step + items.length) % items.length));
+                dragX.set(0);
+                changing.current = false;
+            }
+        });
+    }, [items.length, dragX, reduceMotion]);
+
+    const view = (index: number) => {
+        if (changing.current || !items.length) return;
+        const next = (index + items.length) % items.length;
+        if (next === currentIndex) return;
+        if (next === (currentIndex + 1) % items.length) change(1);
+        else if (next === (currentIndex - 1 + items.length) % items.length) change(-1);
+        else {
+            slideAnimation.current?.stop();
+            dragX.set(0);
+            setPreview(next);
+        }
+    };
+
+    useEffect(() => () => {
+        slideAnimation.current?.stop();
+    }, []);
 
     const apply = (index: number) => {
         const item = items[index];
         if (!item || busy) return;
-        setDirection(index >= currentIndex ? 1 : -1);
         setPreview(index);
         if (item.id === "custom") {
             setBgUrl(item.url ?? "");
@@ -145,28 +168,66 @@ export default function WallpaperStudio() {
         if (now - wheelGesture.current.last < 240) return;
         wheelGesture.current.total += event.deltaY;
         if (Math.abs(wheelGesture.current.total) < 40) return;
-        setOpen(wheelGesture.current.total > 0);
+        setOpen(wheelGesture.current.total < 0);
         wheelGesture.current.last = now;
         wheelGesture.current.total = 0;
     };
 
-    const handlePreviewTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    const handleCanvasDown = (event: PointerEvent<HTMLDivElement>) => {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        if (changing.current) return;
+        slideAnimation.current?.stop();
         previewClickSuppressed.current = false;
-        previewSwipe.current = event.touches.length === 1
-            ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null;
+        canvasGesture.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, axis: "none", moved: false };
+        event.currentTarget.setPointerCapture(event.pointerId);
     };
 
-    const handlePreviewTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
-        const start = previewSwipe.current;
-        previewSwipe.current = null;
-        if (!start || !event.changedTouches.length) return;
-        const dx = event.changedTouches[0].clientX - start.x;
-        const dy = event.changedTouches[0].clientY - start.y;
-        if (Math.max(Math.abs(dx), Math.abs(dy)) > 10) previewClickSuppressed.current = true;
-        if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) {
-            change(dx < 0 ? 1 : -1);
-        } else if (Math.abs(dy) > 65 && Math.abs(dy) > Math.abs(dx)) {
-            setOpen(dy > 0);
+    const handleCanvasMove = (event: PointerEvent<HTMLDivElement>) => {
+        const gesture = canvasGesture.current;
+        if (!gesture || gesture.pointerId !== event.pointerId) return;
+        const dx = event.clientX - gesture.x;
+        const dy = event.clientY - gesture.y;
+
+        if (gesture.axis === "none") {
+            if (Math.max(Math.abs(dx), Math.abs(dy)) < 7) return;
+            gesture.axis = Math.abs(dx) > Math.abs(dy) ? "horizontal" : "vertical";
+        }
+        if (gesture.axis === "horizontal") {
+            gesture.moved = true;
+            const width = canvasRef.current?.clientWidth || window.innerWidth;
+            dragX.set(Math.max(-width, Math.min(width, dx)));
+        } else if ((!open && dy < 0) || (open && dy > 0)) {
+            gesture.moved = true;
+            const height = window.innerHeight * .9;
+            setSheetDrag(Math.max(-height, Math.min(height, dy)));
+        }
+    };
+
+    const handleCanvasEnd = (event: PointerEvent<HTMLDivElement>) => {
+        const gesture = canvasGesture.current;
+        if (!gesture || gesture.pointerId !== event.pointerId) return;
+        canvasGesture.current = null;
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+        const dx = event.clientX - gesture.x;
+        const dy = event.clientY - gesture.y;
+        if (gesture.moved) previewClickSuppressed.current = true;
+
+        if (gesture.axis === "horizontal") {
+            const width = canvasRef.current?.clientWidth || window.innerWidth;
+            const threshold = Math.min(110, width * .2);
+            if (event.type !== "pointercancel" && Math.abs(dx) >= threshold) {
+                change(dx < 0 ? 1 : -1);
+            } else {
+                slideAnimation.current = animate(dragX, 0, { type: "spring", stiffness: 420, damping: 34 });
+            }
+        } else if (gesture.axis === "vertical") {
+            if (event.type !== "pointercancel" && Math.abs(dy) > 65) {
+                if (!open && dy < 0) setOpen(true);
+                else if (open && dy > 0) setOpen(false);
+            }
+            setSheetDrag(0);
         }
     };
 
@@ -305,22 +366,22 @@ export default function WallpaperStudio() {
 
     return <main className={"wallpaperStudio" + (open ? " expanded" : " collapsed")}
         onWheel={handlePreviewWheel}>
-        <div className="wallpaperStudioCanvas" aria-hidden="true">
-            <AnimatePresence initial={false} custom={direction}>
-                <motion.div className="wallpaperStudioFrame" key={current.id + (current.url ?? "")}
-                    custom={direction}
-                    initial={{ x: reduceMotion ? "0%" : (direction > 0 ? "100%" : "-100%"), opacity: reduceMotion ? 1 : .7 }}
-                    animate={{ x: "0%", opacity: 1 }}
-                    exit={{ x: reduceMotion ? "0%" : (direction > 0 ? "-100%" : "100%"), opacity: reduceMotion ? 1 : .7 }}
-                    transition={{ duration: reduceMotion ? 0 : .32, ease: [.22, 1, .36, 1] }}>
-                    <Background previewBg={current.id} previewUrl={current.url}/>
-                </motion.div>
-            </AnimatePresence>
+        <div className="wallpaperStudioCanvas" ref={canvasRef} aria-hidden="true">
+            {[-1, 0, 1].map(offset => {
+                const index = (currentIndex + offset + items.length) % items.length;
+                const item = items[index];
+                return <motion.div key={offset + ":" + item.id + (item.url ?? "")}
+                    className="wallpaperStudioFrame"
+                    style={{ x: dragX, left: offset * 100 + "%" }}>
+                    <Background previewBg={item.id} previewUrl={item.url}/>
+                </motion.div>;
+            })}
         </div>
         <div className="wallpaperStudioGestureSurface"
-            onTouchStart={handlePreviewTouchStart}
-            onTouchEnd={handlePreviewTouchEnd}
-            onTouchCancel={() => { previewSwipe.current = null; }}
+            onPointerDown={handleCanvasDown}
+            onPointerMove={handleCanvasMove}
+            onPointerUp={handleCanvasEnd}
+            onPointerCancel={handleCanvasEnd}
             onClick={() => {
                 if (previewClickSuppressed.current) {
                     previewClickSuppressed.current = false;
@@ -353,7 +414,7 @@ export default function WallpaperStudio() {
             aria-label={t("backgroundLibrary.next")} onClick={() => change(1)}><ChevronRight/></button>
 
         <div className={"wallpaperStudioSheet" + (sheetDrag ? " dragging" : "")}
-            style={{ "--studio-drag": sheetDrag + "px" } as CSSProperties} aria-hidden={!open}>
+            style={{ "--studio-drag": sheetDrag + "px" } as CSSProperties} aria-hidden={!open && !sheetDrag}>
             <button type="button" className="landingFooterHandle wallpaperStudioHandle"
                 aria-label={t(open ? "backgroundLibrary.collapsePanel" : "backgroundLibrary.expandPanel")}
                 aria-expanded={open} aria-controls="wallpaperStudioContent"
@@ -362,7 +423,7 @@ export default function WallpaperStudio() {
                 onClick={onHandleClick}>
                 <span/>
             </button>
-            <div id="wallpaperStudioContent" className="wallpaperStudioSheetContent" inert={!open}>
+            <div id="wallpaperStudioContent" className="wallpaperStudioSheetContent" inert={!open && !sheetDrag}>
                 <div className="wallpaperStudioTabs">
                     <span>{t("backgroundLibrary.previewBackgrounds")}</span>
                     <button type="button" className="wallpaperStudioHelp" aria-label={t("backgroundLibrary.help")}
