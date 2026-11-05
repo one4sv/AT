@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import SeekBar from "../SeekBar.tsx";
+import BackgroundEffectsSettings from "./BackgroundEffectsSettings";
 import useCompactLayout from "../../../../components/hooks/utils/useCompactLayout";
 import Selector from "../../../../components/ts/Selector.tsx";
 import { MirrorRectangular, PaintBucket, PanelLeft, PanelLeftClose } from "lucide-react";
@@ -116,20 +117,16 @@ export default function PersSettingTab({ search }: { search: string }) {
                         <span>{t("backgroundLibrary.change")}</span>
                     </button>
                 </div>
-                <button type="button" className="bgManageButton" onClick={() => navigate("/wallpapers/settings")}>
-                    {t("backgroundLibrary.previewSettings")}
-                </button>
+                <BackgroundEffectsSettings search={search}/>
             </div>
-            <div className="settingInnerDiv" data-setting-id="layout">
+            {!isMobile && <div className="settingInnerDiv" data-setting-id="layout">
                 <div className="settingHeader">
                     <HighlightText text={t("personalization.sideMenu")} search={search} />
                 </div>
                 <div className="settingInnerWrapper">
-                    {isMobile ?
-                        <div className="settingHint">{t("personalization.sideMenuMobileHint")}</div> :
-                        <Selector arr={layoutArr} selected={layout}/>}
+                    <Selector arr={layoutArr} selected={layout}/>
                 </div>
-            </div>
+            </div>}
             
         </div>
     );
