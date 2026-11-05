@@ -1,4 +1,5 @@
 import TA from "../../../../components/ts/TA";
+import { useTranslation } from "react-i18next";
 import { CheckCircleIcon, Plus } from "@phosphor-icons/react"
 import { formatHabitTime } from "../../../../components/ts/utils/formatHabitTime"
 import type { Habit } from "../../../../components/context/HabitsContext"
@@ -43,6 +44,7 @@ export default function ScheduleBlock({
     extraBlocks = [],
     isSeparated = false,
 }: ScheduleBlock) {
+    const { t } = useTranslation("common");
     const { weekStart } = useSettings()
     const { calendar } = useCalendar()
     const today = new Date()
@@ -120,7 +122,7 @@ export default function ScheduleBlock({
                                     <div className="scheduleExtraBlock">
                                         <span className="scheduleHabitTime">
                                             {block.start_time && block.end_time 
-                                                ? `с ${block.start_time} до ${block.end_time}` 
+                                                ? t("habitPageUi.day.fromTo", { start: block.start_time, end: block.end_time }) 
                                                 : block.start_time || ""}
                                         </span>
                                         <span className="scheduleHabitName">{block.name}</span>
@@ -139,11 +141,11 @@ export default function ScheduleBlock({
                     .map((i) => (
                         <div className="scheduleExtraBlock" key={`${i.fullDate}-${i.tempId ?? i.id}`}>
                             <div className="scheduleInpTime">
-                                с
+                                {t("habitPageUi.schedule.from")}
                                 <input
                                     type="text"
                                     className="scheduleInp"
-                                    placeholder="чч:мм"
+                                    placeholder={t("habitPageUi.schedule.timePlaceholder")}
                                     value={i.start_time}
                                     onChange={(e) =>
                                         setCountInps?.(prev =>
@@ -159,11 +161,11 @@ export default function ScheduleBlock({
                                         )
                                     }
                                 />
-                                до
+                                {t("habitPageUi.schedule.to")}
                                 <input
                                     type="text"
                                     className="scheduleInp"
-                                    placeholder="чч:мм"
+                                    placeholder={t("habitPageUi.schedule.timePlaceholder")}
                                     value={i.end_time}
                                     onChange={(e) =>
                                         setCountInps?.(prev =>
@@ -208,7 +210,7 @@ export default function ScheduleBlock({
                     className="scheduleBlockAdd"
                     onClick={() => setBlackout({ seted: true, module: "HabitTaskEditor", point: "schedule", options: { id: d.fullDate } })}
                 >
-                    <Plus/>Добавить блок
+                    <Plus/>{t("habitPageUi.schedule.addBlock")}
                 </button>
             )}
         </div>
