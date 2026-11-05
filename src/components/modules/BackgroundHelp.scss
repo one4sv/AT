@@ -1,0 +1,139 @@
+@use "../../scss/mixins.scss" as var;
+
+.backgroundHelpButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 4dvh;
+    height: 4dvh;
+    padding: .7dvh;
+    box-sizing: border-box;
+    border: 1px solid var(--block_border);
+    border-radius: 50%;
+    background: var(--interact);
+    color: var(--tc);
+    cursor: pointer;
+
+    > svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--menuButtHover);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background: var(--menuButtHover);
+        }
+    }
+
+    &:focus-visible {
+        outline: 1px solid var(--accent);
+        outline-offset: 2px;
+    }
+}
+
+.backgroundHelpModal {
+    @include var.centerModal;
+    display: flex;
+    flex-direction: column;
+    width: 34vw;
+    max-width: 90vw;
+    max-height: 78dvh;
+    min-height: 0;
+    gap: 1.5dvh;
+    padding: 2dvh 1.5vw;
+    box-sizing: border-box;
+    border-radius: 24px;
+    background: var(--mc);
+    color: var(--tc);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+
+    > p {
+        margin: 0;
+        color: var(--borderWh);
+        line-height: 1.45;
+    }
+
+    @media (max-width: 800px) {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        max-width: 100%;
+        max-height: 85dvh;
+        align-self: stretch;
+        border-radius: 24px 24px 0 0;
+        padding: 2.5dvh 4vw calc(2dvh + env(safe-area-inset-bottom));
+    }
+}
+
+.backgroundHelpTitle {
+    font-size: 20px;
+}
+
+.backgroundHelpItems {
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+}
+
+.backgroundHelpItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 1vw;
+    padding: 1dvh 1vw;
+    border-radius: 16px;
+    background: var(--interact);
+
+    @media (max-width: 800px) {
+        gap: 3vw;
+        padding: 1.5dvh 3vw;
+    }
+}
+
+.backgroundHelpIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 3dvh;
+    height: 3dvh;
+    color: var(--accent_text);
+}
+
+.backgroundHelpText {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .25dvh;
+
+    > p {
+        margin: 0;
+        color: var(--borderWh);
+        line-height: 1.35;
+    }
+}
+
+.backgroundHelpClose {
+    flex-shrink: 0;
+    padding: 1.25dvh 1vw;
+    border: none;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--inner_text);
+    font: inherit;
+    cursor: pointer;
+
+    @media (max-width: 800px) {
+        padding: 1.5dvh 3vw;
+    }
+}
