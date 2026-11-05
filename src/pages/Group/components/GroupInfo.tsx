@@ -1,4 +1,5 @@
 import TA from "../../../components/ts/TA";
+import { useTranslation } from "react-i18next";
 import { CircleIcon, Camera, ChatTeardropText, FloppyDiskBack, PencilSimple, Users, X } from "@phosphor-icons/react";
 import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +17,7 @@ export default function GroupInfo({
     group: Group;
     collapsed: number;
 }) {
+    const { t } = useTranslation("common");
     const { setBlackout } = useBlackout();
     const {
         refetchGroup,
@@ -106,7 +108,7 @@ export default function GroupInfo({
         event.preventDefault();
         if (saving) return;
         if (myPerms?.change_name && !name.trim()) {
-            showNotification("error", "Введите название группы");
+            showNotification("error", t("groupUi.enterName"));
             nameRef.current?.focus();
             return;
         }
@@ -129,7 +131,7 @@ export default function GroupInfo({
                 data.append("avatar", newAva);
                 data.append("group", String(group.id));
                 const response = await api.post("uploadavatar", data);
-                if (!response.data?.success) throw new Error(response.data?.error || "Не удалось загрузить аватар");
+                if (!response.data?.success) throw new Error(response.data?.error || t("groupUi.avatarFailed"));
                 // The avatar is already saved; don't upload it again if the next request fails.
                 setNewAva(undefined);
                 await refetchGroup(String(group.id));
@@ -142,14 +144,14 @@ export default function GroupInfo({
                         updates
                     }
                 );
-                if (!response.data?.success) throw new Error(response.data?.error || "Не удалось сохранить изменения");
+                if (!response.data?.success) throw new Error(response.data?.error || t("groupUi.saveFailed"));
             }
             await refetchGroup(String(group.id));
             await refetchContactsWTLoading();
             setEditing(false);
-            showNotification("success", "Изменения сохранены");
+            showNotification("success", t("groupUi.saved"));
         } catch (error) {
-            const message = axios.isAxiosError(error) ? error.response?.data?.error || "Не удалось сохранить изменения. Попробуйте ещё раз." : error instanceof Error ? error.message : "Не удалось сохранить изменения";
+            const message = axios.isAxiosError(error) ? error.response?.data?.error || t("groupUi.saveFailedRetry") : error instanceof Error ? error.message : "Не удалось сохранить изменения";
             showNotification("error", message);
         } finally {
             setSaving(false);
@@ -176,7 +178,7 @@ export default function GroupInfo({
                         type="button"
                         className="accPic groupAvatar"
                         disabled={saving || (editing ? !myPerms?.change_avatar : !avatar)}
-                        aria-label={editing ? "Изменить аватар группы" : "Открыть аватар группы"}
+                        aria-label={editing ? t("groupUi.editAvatar") : t("groupUi.openAvatar")}
                         onClick={() => {
                             if (editing) inputRef.current?.click(); else if (avatar) setBlackout(
                                 {
@@ -211,26 +213,26 @@ export default function GroupInfo({
                             <input
                                 ref={nameRef}
                                 className={`accInput nameInput ${!editing || !myPerms?.change_name ? "dis" : ""}`}
-                                aria-label="Название группы"
+                                aria-label={t("groupUi.name")}
                                 value={editing ? name : group.name}
                                 readOnly={!editing || !myPerms?.change_name}
                                 onChange={event => setName(event.target.value)}
                                 disabled={saving}
                             />
                         </div>
-                        <div className="accNickStr groupMemberCount">{"Участников: "}{members.length}
+                        <div className="accNickStr groupMemberCount">{t("groupUi.members", { count: members.length })}
                         </div>
                     </div>
                     <div className="accInfoWrapper">
                         <div className={`accOnlineStauts ${onlineCount ? "online" : "offline"}`}>
                             <CircleIcon size={16} weight="fill" aria-hidden="true" />
-                            {onlineCount ? `В сети: ${onlineCount}` : "Группа"}
+                            {onlineCount ? t("groupUi.online", { count: onlineCount }) : t("groupUi.group")}
                         </div>
                     </div>
                 </div>
                 <div className="accInfoWrapper">
                     {(group.desc || editing) && <div className="accExtraInfoWrapper">
-                        <label htmlFor="group-description">Описание</label>
+                        <label htmlFor="group-description">{t("groupUi.description")}</label>
                         <TA
                             taRef={bioRef}
                             id="group-description"
@@ -246,17 +248,17 @@ export default function GroupInfo({
                             {editing ? <>
                                 <button type="submit" className="settingInnerButt" disabled={saving}>
                                     <FloppyDiskBack size={20} weight="fill" />
-                                    {saving ? "Сохраняем…" : "Сохранить"}
+                                    {saving ? t("groupUi.saving") : t("groupUi.save")}
                                 </button>
                                 <button type="button" className="settingInnerButt" onClick={cancelEditing} disabled={saving}>
-                                    <X size={20} />Отмена
+                                    <X size={20} />{t("groupUi.cancel")}
                                 </button>
                             </> : <>
                                 {canEdit && <button type="button" className="settingInnerButt" onClick={startEditing}>
-                                    <PencilSimple size={20} weight="fill" />Редактировать
+                                    <PencilSimple size={20} weight="fill" />{t("groupUi.edit")}
                                 </button>}
                                 <button type="button" className="settingInnerButt" onClick={() => navigate(`/chat/g/${group.id}`)}>
-                                    <ChatTeardropText size={20} weight="fill" />Написать сообщение
+                                    <ChatTeardropText size={20} weight="fill" />{t("groupUi.message")}
                                 </button>
                             </>}
                         </div>

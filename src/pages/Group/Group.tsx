@@ -1,4 +1,5 @@
 import { CalendarBlankIcon } from "@phosphor-icons/react";
+import { useTranslation } from "react-i18next";
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { isMobile } from "react-device-detect";
@@ -14,6 +15,7 @@ import GroupInfo from "./components/GroupInfo";
 import GroupMembers from "./components/GroupMembers";
 import "./scss/Group.scss";
 export default function Group() {
+    const { t } = useTranslation("common");
     const {
         group,
         members,
@@ -99,10 +101,10 @@ export default function Group() {
     const slideRefs = useRef<(HTMLDivElement | null)[]>([null, null]);
     const tabs = [{
         tab: "habits",
-        name: "Активности"
+        name: t("sideMenu.activities")
     }, {
         tab: "members",
-        name: "Участники"
+        name: t("groupUi.participants")
     }];
 
     useEffect(
@@ -378,7 +380,7 @@ export default function Group() {
                 />
                 <div className="accContentSelector">
                     <div className="accContentIndicator" ref={line} />
-                    <div className="accContentSelect" role="tablist" aria-label="Разделы группы">
+                    <div className="accContentSelect" role="tablist" aria-label={t("groupUi.sections")}>
                         {tabs.map(
                             (tab, i) => <button
                                 key={tab.tab}
@@ -422,7 +424,7 @@ export default function Group() {
                             {habits.length ? <>
                                 <AccHabits habits={habits} />
                                 {habits.filter(h => h.chat_participation_mode === "optional" && !myHabits?.some(my => my.id === h.id)).map(h => <div className="settingInnerList" key={h.id}>
-                                    <span>{h.name} — участие по желанию</span>
+                                    <span>{h.name} — {t("groupUi.optional")}</span>
                                     <button type="button" className="settingInnerButt" disabled={joiningActivity !== null} onClick={async event => {
                                         event.stopPropagation();
                                         setJoiningActivity(h.id);
@@ -430,17 +432,17 @@ export default function Group() {
                                             const response = await api.post(`habits/${h.id}/join-chat`);
                                             if (!response.data.success) throw new Error();
                                             await refetchHabits();
-                                            showNotification("success", "Вы присоединились к активности");
+                                            showNotification("success", t("groupUi.joined"));
                                         } catch {
-                                            showNotification("error", "Не удалось присоединиться к активности");
+                                            showNotification("error", t("groupUi.joinFailed"));
                                         } finally {
                                             setJoiningActivity(null);
                                         }
-                                    }}>{joiningActivity === h.id ? "Присоединяемся..." : "Присоединиться"}</button>
+                                    }}>{joiningActivity === h.id ? t("groupUi.joining") : t("groupUi.join")}</button>
                                 </div>)}
                             </> : <div className="accNoPrivateAccess">
                                 <CalendarBlankIcon size={28} aria-hidden="true" />
-                                <span>Пока нет активностей</span>
+                                <span>{t("groupUi.noActivities")}</span>
                             </div>}
                         </div>
                     </div>

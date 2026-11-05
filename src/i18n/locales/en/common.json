@@ -440,5 +440,32 @@
     "mb": "MB",
     "empty": "Nothing here yet",
     "retry": "Retry"
+  },
+  "groupUi": {
+    "participants": "Members",
+    "sections": "Group sections",
+    "optional": "Optional participation",
+    "joined": "You joined the activity",
+    "joinFailed": "Could not join the activity",
+    "joining": "Joining…",
+    "join": "Join",
+    "noActivities": "No activities yet",
+    "enterName": "Enter a group name",
+    "avatarFailed": "Could not upload the avatar",
+    "saveFailed": "Could not save changes",
+    "saveFailedRetry": "Could not save changes. Please try again.",
+    "saved": "Changes saved",
+    "editAvatar": "Change group avatar",
+    "openAvatar": "Open group avatar",
+    "name": "Group name",
+    "members": "Members: {{count}}",
+    "online": "Online: {{count}}",
+    "group": "Group",
+    "description": "Description",
+    "saving": "Saving…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "message": "Send message"
   }
 }
