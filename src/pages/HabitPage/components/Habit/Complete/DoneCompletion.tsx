@@ -118,13 +118,13 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                     setBlocks(prev => prev.filter(x => x.id !== b.id))
                 }
             } else {
-                showNotification("error", res.data.error || "Ошибка сохранения")
+                showNotification("error", res.data.error || t("habitPageUi.tasks.saveFailed"))
             }
         } catch (err) {
             if (!mounted.current || !axios.isAxiosError(err)) return
             showNotification(
                 "error",
-                err.response?.data?.error || "Ошибка"
+                err.response?.data?.error || t("habitPageUi.tasks.error")
             )
         } finally {
             saving.current.delete(b.id)
@@ -143,13 +143,13 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
         setCompleting(previous => new Set(previous).add(block.id));
         try {
             const response = await api.post("checklist/toggle", { id: block.id });
-            if (!response.data.success) throw new Error("Не удалось отметить задачу");
+            if (!response.data.success) throw new Error(t("habitPageUi.tasks.toggleFailed"));
             await loadHabit(String(habit.id));
             window.dispatchEvent(new Event("habit-day-comment-updated"));
         } catch (error) {
             showNotification("error", axios.isAxiosError(error)
-                ? error.response?.data?.error || "Не удалось отметить задачу"
-                : "Не удалось отметить задачу");
+                ? error.response?.data?.error || t("habitPageUi.tasks.toggleFailed")
+                : t("habitPageUi.tasks.toggleFailed"));
         } finally {
             setCompleting(previous => {
                 const next = new Set(previous);
@@ -176,7 +176,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
     return (
         <div className="doneCompletionDiv">
             <div className="doneComps">
-                {!filteredBlocks.length && <div className="completionEmpty"><ListChecksIcon size={32}/><span>На этот день пока нет задач</span></div>}
+                {!filteredBlocks.length && <div className="completionEmpty"><ListChecksIcon size={32}/><span>{t("activityCompletion.noTasks")}</span></div>}
                 {filteredBlocks.map(b => {
                     const isEditing = editing.has(b.id)
                     const isLoading = loading.has(b.id)
@@ -195,7 +195,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                 {isEditing ? (
                                     <div className="doneCompTimeRow">
                                         <label className="doneCompTimeField">
-                                            <span>С</span>
+                                            <span>{t("habitPageUi.schedule.from")}</span>
                                             <input
                                                 type="time"
                                                 aria-label={t("activityCompletion.startTime")}
@@ -206,7 +206,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                             />
                                         </label>
                                         <label className="doneCompTimeField">
-                                            <span>До</span>
+                                            <span>{t("habitPageUi.schedule.to")}</span>
                                             <input
                                                 type="time"
                                                 aria-label={t("activityCompletion.endTime")}
@@ -236,8 +236,8 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                     <span className="doneCompName">{b.name}</span>
                                 )}
                                 {habit?.metric_progress_mode === "shared" && (b.creator_name || b.completer_name) && <span className="sharedTaskAttribution">
-                                    {b.creator_name && <span>Добавил: {b.creator_name}</span>}
-                                    {b.completed_at && b.completer_name && <span>Выполнил: {b.completer_name}</span>}
+                                    {b.creator_name && <span>{t("habitPageUi.tasks.addedBy", { name: b.creator_name })}</span>}
+                                    {b.completed_at && b.completer_name && <span>{t("habitPageUi.tasks.completedBy", { name: b.completer_name })}</span>}
                                 </span>}
                             </div>
 
@@ -246,7 +246,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                     {!isEditing && !b.isNew && <button
                                         type="button"
                                         className="doneCompControler doneCompComplete"
-                                        aria-label={b.completed_at ? "Снять выполнение задачи" : "Отметить задачу выполненной"}
+                                        aria-label={b.completed_at ? t("habitPageUi.tasks.unmark") : t("habitPageUi.tasks.mark")}
                                         aria-pressed={!!b.completed_at}
                                         disabled={completing.has(b.id) || isLoading}
                                         onClick={() => void toggleComplete(b)}
@@ -320,7 +320,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
 
             {isMy && (
                 <button type="button" className="doneCompAdd" onClick={addBlock}>
-                    <PlusIcon /> Добавить задачу
+                    <PlusIcon /> {t("habitDialog.addTask")}
                 </button>
             )}
         </div>
