@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { PlusIcon, TrashIcon, XIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
@@ -15,6 +16,7 @@ type TaskDraft = { name: string; start_time: string; end_time: string };
 const emptyTask = (): TaskDraft => ({ name: "", start_time: "", end_time: "" });
 
 export default function HabitTaskEditor() {
+    const { t } = useTranslation("common");
     const { blackout, setBlackout } = useBlackout();
     const { habit, loadHabit } = useTheHabit();
     const { chosenDay } = useCalendar();
@@ -59,7 +61,7 @@ export default function HabitTaskEditor() {
                     }))
                 ];
                 const saved = await saveHabitSchedule(habitId, payload, isSeparated);
-                if (!saved) throw new Error("Не удалось сохранить расписание");
+                if (!saved) throw new Error(t("habitDialog.scheduleFailed"));
                 savedCount = filled.length;
             } else {
                 for (const task of filled) {
@@ -73,21 +75,21 @@ export default function HabitTaskEditor() {
             }
             window.dispatchEvent(new CustomEvent("habit-tasks-updated", { detail: { habitId: habit.id } }));
             setBlackout({ seted: false });
-            showNotification("success", savedCount === 1 ? "Задача добавлена" : `Добавлено задач: ${savedCount}`);
+            showNotification("success", savedCount === 1 ? t("habitDialog.taskAdded") : t("habitDialog.tasksAdded", { count: savedCount }));
         } catch {
             if (savedCount) await loadHabit(String(habit.id));
             showNotification("error", savedCount
-                ? `Сохранено ${savedCount} из ${filled.length} задач. Остальные не удалось добавить.`
-                : "Не удалось добавить задачи");
+                ? t("habitDialog.tasksPartial", { count: savedCount, total: filled.length })
+                : t("habitDialog.tasksFailed"));
         } finally {
             setSaving(false);
         }
     };
 
-    return <div className="habitCollaborationModal habitTaskEditor" role="dialog" aria-modal="true" aria-label="Добавить задачи">
+    return <div className="habitCollaborationModal habitTaskEditor" role="dialog" aria-modal="true" aria-label={t("habitDialog.addTasks")}>
         <div className="habitCollaborationHeader">
-            <span>Задачи на {day}.{month}.{year}</span>
-            <button type="button" aria-label="Закрыть" onClick={() => setBlackout({ seted: false })}><XIcon /></button>
+            <span>{t("habitDialog.tasksFor", { date: `${day}.${month}.${year}` })}</span>
+            <button type="button" aria-label={t("habitDialog.close")} onClick={() => setBlackout({ seted: false })}><XIcon /></button>
         </div>
         <div className="habitTaskFields">
             {tasks.map((task, index) => <div className="habitTaskFieldsRow" key={index}>
@@ -97,23 +99,23 @@ export default function HabitTaskEditor() {
                         type="text"
                         maxLength={1000}
                         value={task.name}
-                        placeholder="Название задачи"
-                        aria-label={`Название задачи ${index + 1}`}
+                        placeholder={t("habitDialog.taskName")}
+                        aria-label={t("habitDialog.taskNameIndex", { index: index + 1 })}
                         onChange={event => editTask(index, "name", event.target.value)}
                     />
-                    {tasks.length > 1 && <button type="button" aria-label="Убрать задачу" onClick={() => setTasks(current => current.filter((_, i) => i !== index))}><TrashIcon /></button>}
+                    {tasks.length > 1 && <button type="button" aria-label={t("habitDialog.removeTask")} onClick={() => setTasks(current => current.filter((_, i) => i !== index))}><TrashIcon /></button>}
                 </div>
                 <div className="habitTaskTimes">
-                    <label>С <input type="time" value={task.start_time} onChange={event => editTask(index, "start_time", event.target.value)} /></label>
-                    <label>До <input type="time" value={task.end_time} onChange={event => editTask(index, "end_time", event.target.value)} /></label>
+                    <label>{t("habitDialog.from")} <input type="time" value={task.start_time} onChange={event => editTask(index, "start_time", event.target.value)} /></label>
+                    <label>{t("habitDialog.to")} <input type="time" value={task.end_time} onChange={event => editTask(index, "end_time", event.target.value)} /></label>
                 </div>
             </div>)}
             <button type="button" className="habitTaskAddAnother" onClick={() => setTasks(current => [...current, emptyTask()])}>
-                <PlusIcon /> Добавить ещё задачу
+                <PlusIcon /> {t("habitDialog.addAnother")}
             </button>
         </div>
         <button type="button" className="habitCollaborationClose" disabled={!canCreate || !validDate || !filled.length || saving} onClick={() => void save()}>
-            {saving ? "Сохраняем…" : filled.length > 1 ? `Добавить задачи (${filled.length})` : "Добавить задачу"}
+            {saving ? t("habitDialog.saving") : filled.length > 1 ? t("habitDialog.addTasksCount", { count: filled.length }) : t("habitDialog.addTask")}
         </button>
     </div>;
 }

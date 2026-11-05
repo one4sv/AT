@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { CheckCircleIcon, CircleIcon, UserCircleIcon, XIcon } from "@phosphor-icons/react";
 import { SearchIcon } from "lucide-react";
@@ -13,6 +14,7 @@ import axios from "axios";
 import useHabitMembers from "../../pages/HabitPage/components/HabitInfo/useHabitMembers";
 
 export default function HabitParticipantPicker() {
+    const { t } = useTranslation("common");
     const { blackout, setBlackout } = useBlackout();
     const { habit, loadHabit } = useTheHabit();
     const { findContacts } = useContacts();
@@ -46,7 +48,7 @@ export default function HabitParticipantPicker() {
             findContactsRef.current(search, controller, mode === "group" ? "group" : "personal").then(contacts => {
                 if (controller.signal.aborted) return;
                 if (!contacts) {
-                    setListError("Не удалось загрузить контакты");
+                    setListError(t("habitDialog.contactsFailed"));
                     setList([]);
                     return;
                 }
@@ -58,8 +60,8 @@ export default function HabitParticipantPicker() {
                 ));
             }).catch(() => {
                 if (!controller.signal.aborted) {
-                    setListError("Не удалось загрузить контакты");
-                    notifyRef.current("error", "Не удалось загрузить контакты");
+                    setListError(t("habitDialog.contactsFailed"));
+                    notifyRef.current("error", t("habitDialog.contactsFailed"));
                 }
             }).finally(() => {
                 if (!controller.signal.aborted) setLoading(false);
@@ -79,45 +81,45 @@ export default function HabitParticipantPicker() {
                 await api.post(`habits/${habit.id}/members`, { user_id: selected[0].id });
             } else {
                 const chatId = Number(selected[0].id);
-                if (!Number.isSafeInteger(chatId) || chatId <= 0) throw new Error("Выберите беседу");
+                if (!Number.isSafeInteger(chatId) || chatId <= 0) throw new Error(t("habitDialog.selectGroup"));
                 const response = await api.patch(`habits/${habit.id}/chat`, { chat_id: chatId });
                 if (response.data.invited_partner) {
-                    showNotification("success", "Второму участнику отправлено приглашение в беседу");
+                    showNotification("success", t("habitDialog.partnerInvited"));
                 }
             }
             await loadHabit(String(habit.id));
             window.dispatchEvent(new Event("habit-members-updated"));
             setBlackout({ seted: false });
-            if (mode === "activity") showNotification("success", "Приглашение отправлено в чат");
-            else showNotification("success", "Активность связана с беседой");
+            if (mode === "activity") showNotification("success", t("habitDialog.inviteSent"));
+            else showNotification("success", t("habitDialog.linked"));
         } catch (error) {
-            showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || "Не удалось сохранить участников" : "Не удалось сохранить участников. Проверьте права и выбор беседы.");
+            showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || t("habitDialog.membersFailed") : t("habitDialog.membersCheck"));
         } finally {
             submitting.current = false;
             setSaving(false);
         }
     };
-    return <div className="habitCollaborationModal habitParticipantPicker" role="dialog" aria-modal="true" aria-label="Добавить участников">
-        <div className="habitCollaborationHeader">Добавить участников</div>
+    return <div className="habitCollaborationModal habitParticipantPicker" role="dialog" aria-modal="true" aria-label={t("habitDialog.addMembers")}>
+        <div className="habitCollaborationHeader">{t("habitDialog.addMembers")}</div>
         <div className="habitCollaborationBody">
             {isOwner ? <RadioGroup
                 list={[
-                    ...(canDirectInvite ? [{ label: "Пригласить в активность", value: "activity" }] : []),
-                    { label: "Добавить в существующую беседу", value: "group" }
+                    ...(canDirectInvite ? [{ label: t("habitDialog.invite"), value: "activity" }] : []),
+                    { label: t("habitDialog.addToGroup"), value: "group" }
                 ]}
                 id="participantMode"
                 val={mode}
                 disabled={saving}
                 newVal={value => { setMode(value); setSelected([]); }}
-            /> : <div className="settingSpan">Пригласить в активность</div>}
-            {isOwner && <button type="button" className="addGoalButtDiv habitPickerCreate" disabled={saving} onClick={() => setBlackout({ seted: true, module: "HabitCreateChat" })}>Создать новую беседу</button>}
+            /> : <div className="settingSpan">{t("habitDialog.invite")}</div>}
+            {isOwner && <button type="button" className="addGoalButtDiv habitPickerCreate" disabled={saving} onClick={() => setBlackout({ seted: true, module: "HabitCreateChat" })}>{t("habitDialog.createNewGroup")}</button>}
             {selected.length > 0 && <div className="createChatChosenCons">
                 {selected.map(contact => <button
                     key={contact.id}
                     type="button"
                     className="createChatChosenCon"
                     disabled={saving}
-                    aria-label={`Убрать ${contact.name || contact.nick} из выбранных`}
+                    aria-label={t("habitDialog.removeSelected", { name: contact.name || contact.nick })}
                     onClick={() => setSelected(current => current.filter(item => item.id !== contact.id))}
                 >
                     <div className="creteChatConPick">
@@ -127,16 +129,16 @@ export default function HabitParticipantPicker() {
                     <XIcon className="createChatConRemove" />
                 </button>)}
             </div>}
-            <div className="createChatSearch"><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Поиск контактов" aria-label="Поиск контактов" /><SearchIcon /></div>
+            <div className="createChatSearch"><input value={search} onChange={event => setSearch(event.target.value)} placeholder={t("habitDialog.contactsSearch")} aria-label={t("habitDialog.contactsSearch")} /><SearchIcon /></div>
             <div className="habitPickerContacts">
-                {loading ? <div className="habitMembersSkeleton" role="status" aria-label="Загрузка контактов"><div /><div /></div> : listError ? <p role="alert">{listError}</p> : list.length === 0 ? <div className="habitSettingValue">Контакты не найдены</div> : list.map(contact => <button key={contact.id} type="button" className="contactsUser" disabled={saving} onClick={() => setSelected([contact])}>
+                {loading ? <div className="habitMembersSkeleton" role="status" aria-label={t("habitDialog.contactsLoading")}><div /><div /></div> : listError ? <p role="alert">{listError}</p> : list.length === 0 ? <div className="habitSettingValue">{t("habitDialog.contactsNotFound")}</div> : list.map(contact => <button key={contact.id} type="button" className="contactsUser" disabled={saving} onClick={() => setSelected([contact])}>
                     <div className="contactsUserPic">{contact.avatar_url ? <img className="contactsUserAvatar" src={contact.avatar_url} alt="" /> : <UserCircleIcon />}</div>
                     <div className="contactsUserInfo"><div className="contactsUserStr"><span className="nameSpan">{contact.name || contact.nick}</span>{selected.some(item => item.id === contact.id) ? <CheckCircleIcon weight="fill" /> : <CircleIcon />}</div></div>
                 </button>)}
             </div>
         </div>
         <div className="habitConfirmActions">
-            <button type="button" className="accept" disabled={saving || !selected.length || (mode === "activity" && !canDirectInvite) || (mode === "group" && !isOwner)} onClick={() => void save()}>{saving ? "Сохраняется…" : "Сохранить"}</button>
+            <button type="button" className="accept" disabled={saving || !selected.length || (mode === "activity" && !canDirectInvite) || (mode === "group" && !isOwner)} onClick={() => void save()}>{saving ? t("habitDialog.saving") : t("habitDialog.save")}</button>
         </div>
     </div>;
 }
