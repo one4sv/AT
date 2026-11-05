@@ -13,7 +13,10 @@ export const backgroundGroups = [
         { id: "petals", labelKey: "backgroundLibrary.petals" }
     ] },
     { id: "japanese", items: [
-        { id: "japaneseNinja", labelKey: "backgroundLibrary.japaneseNinja" }
+        { id: "japaneseNinja", labelKey: "backgroundLibrary.japaneseNinja" },
+        { id: "japaneseSakura", labelKey: "backgroundLibrary.japaneseSakura" },
+        { id: "japaneseAlley", labelKey: "backgroundLibrary.japaneseAlley" },
+        { id: "japaneseTorii", labelKey: "backgroundLibrary.japaneseTorii" }
     ] },
     { id: "retro", items: [
         { id: "retroDrive", labelKey: "backgroundLibrary.retroDrive" },
