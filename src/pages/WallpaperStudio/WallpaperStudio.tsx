@@ -3,7 +3,7 @@ import type { PointerEvent, CSSProperties } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ChevronDown, ChevronLeft, ChevronRight, Check, CircleCheck, CircleHelp, ImagePlus, Trash2, Film, Palette, LayoutGrid, WandSparkles, Settings2, Images } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleHelp, ImagePlus, Trash2, Film, Palette, LayoutGrid, WandSparkles, Settings2, Images } from "lucide-react";
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
 import Header from "../../components/ts/Header";
@@ -37,6 +37,8 @@ export default function WallpaperStudio() {
     const [ sheetDrag, setSheetDrag ] = useState(0);
     const handleDrag = useRef<HandleDrag | null>(null);
     const suppressClick = useRef(false);
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const previewClickSuppressed = useRef(false);
     const fileRef = useRef<HTMLInputElement>(null);
     const initialized = useRef(false);
     const wheelGesture = useRef({ total: 0, last: 0 });
@@ -108,7 +110,7 @@ export default function WallpaperStudio() {
         }
         if (start.direction !== "vertical") return;
         start.moved = true;
-        setSheetDrag(open ? Math.max(0, -dy) : -Math.max(0, dy));
+        setSheetDrag(Math.min(window.innerHeight * .9, Math.max(0, dy)));
     };
 
     const onHandleEnd = (event: PointerEvent<HTMLButtonElement>) => {
@@ -118,7 +120,7 @@ export default function WallpaperStudio() {
         if (start.moved) suppressClick.current = true;
         if (event.type !== "pointercancel" && start.direction === "vertical") {
             const dy = event.clientY - start.y;
-            if (Math.abs(dy) > 55) setOpen(dy > 0);
+            if (dy > 65) setOpen(false);
         }
         setSheetDrag(0);
         if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -149,6 +151,7 @@ export default function WallpaperStudio() {
     };
 
     const handlePreviewTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+        previewClickSuppressed.current = false;
         previewSwipe.current = event.touches.length === 1
             ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null;
     };
@@ -159,12 +162,86 @@ export default function WallpaperStudio() {
         if (!start || !event.changedTouches.length) return;
         const dx = event.changedTouches[0].clientX - start.x;
         const dy = event.changedTouches[0].clientY - start.y;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) > 10) previewClickSuppressed.current = true;
         if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) {
             change(dx < 0 ? 1 : -1);
         } else if (Math.abs(dy) > 65 && Math.abs(dy) > Math.abs(dx)) {
             setOpen(dy > 0);
         }
     };
+
+    useEffect(() => {
+        const scroll = scrollRef.current;
+        if (!open || !scroll) return;
+
+        let gesture: { x: number; y: number; distance: number; owns: boolean; canClose: boolean } | null = null;
+
+        const start = (event: TouchEvent) => {
+            if (event.touches.length !== 1) {
+                gesture = null;
+                return;
+            }
+            gesture = {
+                x: event.touches[0].clientX,
+                y: event.touches[0].clientY,
+                distance: 0,
+                owns: false,
+                canClose: scroll.scrollTop <= 2
+            };
+        };
+
+        const move = (event: TouchEvent) => {
+            if (!gesture || event.touches.length !== 1) return;
+            const dx = event.touches[0].clientX - gesture.x;
+            const dy = event.touches[0].clientY - gesture.y;
+
+            if (!gesture.owns) {
+                if (Math.max(Math.abs(dx), Math.abs(dy)) < 8) return;
+                if (!gesture.canClose || dy <= 0 || Math.abs(dx) > Math.abs(dy) || scroll.scrollTop > 2) {
+                    gesture.canClose = false;
+                    return;
+                }
+                gesture.owns = true;
+            }
+
+            gesture.distance = Math.max(0, Math.min(window.innerHeight * .9, dy));
+            event.stopPropagation();
+            if (event.cancelable) event.preventDefault();
+            setSheetDrag(gesture.distance);
+        };
+
+        const finish = (event: TouchEvent) => {
+            if (gesture?.owns) {
+                event.stopPropagation();
+                if (event.type !== "touchcancel" && gesture.distance > 65) setOpen(false);
+                setSheetDrag(0);
+            }
+            gesture = null;
+        };
+
+        const wheel = (event: WheelEvent) => {
+            if (event.ctrlKey || Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
+            if (scroll.scrollTop <= 2 && event.deltaY < -30) {
+                event.preventDefault();
+                setOpen(false);
+            }
+        };
+
+        scroll.addEventListener("touchstart", start, { passive: true });
+        scroll.addEventListener("touchmove", move, { passive: false });
+        scroll.addEventListener("touchend", finish);
+        scroll.addEventListener("touchcancel", finish);
+        scroll.addEventListener("wheel", wheel, { passive: false });
+
+        return () => {
+            scroll.removeEventListener("touchstart", start);
+            scroll.removeEventListener("touchmove", move);
+            scroll.removeEventListener("touchend", finish);
+            scroll.removeEventListener("touchcancel", finish);
+            scroll.removeEventListener("wheel", wheel);
+            setSheetDrag(0);
+        };
+    }, [open]);
 
     useEffect(() => {
         const onKey = (event: KeyboardEvent) => {
@@ -217,22 +294,6 @@ export default function WallpaperStudio() {
                 <span className="wallpaperStudioTileImage">
                     <Background previewBg={item.id} previewUrl={item.url}/>
                 </span>
-                <span className="wallpaperStudioTileLabel">{item.label}</span>
-                <span className="wallpaperStudioTileCapabilities">
-                    {supportsBackgroundMotion(item.id) && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.motionAvailable")}>
-                        <Film size={15} aria-label={t("backgroundLibrary.motionAvailable")}/>
-                    </span>}
-                    {!isPhotographicScene(item.id) && item.id !== "color" && item.id !== "custom" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.themeAware")}>
-                        <Palette size={15} aria-label={t("backgroundLibrary.themeAware")}/>
-                    </span>}
-                    {item.id === "art" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.appearanceAware")}>
-                        <WandSparkles size={15} aria-label={t("backgroundLibrary.appearanceAware")}/>
-                    </span>}
-                    {(item.id === "art" || item.id === "default") && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.patternAvailable")}>
-                        <LayoutGrid size={15} aria-label={t("backgroundLibrary.patternAvailable")}/>
-                    </span>}
-                </span>
-                {item.id === bg && (item.id !== "custom" || item.url === bgUrl) && <Check size={18} className="wallpaperStudioApplied"/>}
             </button>
             {item.id === "custom" && <button type="button" className="wallpaperStudioDelete"
                 title={t("backgroundLibrary.delete")} aria-label={t("backgroundLibrary.delete")}
@@ -260,6 +321,13 @@ export default function WallpaperStudio() {
             onTouchStart={handlePreviewTouchStart}
             onTouchEnd={handlePreviewTouchEnd}
             onTouchCancel={() => { previewSwipe.current = null; }}
+            onClick={() => {
+                if (previewClickSuppressed.current) {
+                    previewClickSuppressed.current = false;
+                    return;
+                }
+                if (open) setOpen(false);
+            }}
             aria-hidden="true"/>
 
         <Header titleOverride={current.label} hideMenuButton={!isMobile}
@@ -285,7 +353,7 @@ export default function WallpaperStudio() {
             aria-label={t("backgroundLibrary.next")} onClick={() => change(1)}><ChevronRight/></button>
 
         <div className={"wallpaperStudioSheet" + (sheetDrag ? " dragging" : "")}
-            style={{ "--studio-drag": sheetDrag + "px" } as CSSProperties}>
+            style={{ "--studio-drag": sheetDrag + "px" } as CSSProperties} aria-hidden={!open}>
             <button type="button" className="landingFooterHandle wallpaperStudioHandle"
                 aria-label={t(open ? "backgroundLibrary.collapsePanel" : "backgroundLibrary.expandPanel")}
                 aria-expanded={open} aria-controls="wallpaperStudioContent"
@@ -301,7 +369,7 @@ export default function WallpaperStudio() {
                         title={t("backgroundLibrary.help")}
                         onClick={() => setBlackout({ seted: true, module: "BackgroundHelp" })}><CircleHelp size={20}/></button>
                 </div>
-                <div className="wallpaperStudioScroll">
+                <div className="wallpaperStudioScroll" ref={scrollRef}>
                     {backgroundGroups.map(group => {
                         const groupItems = items.map((item, index) => ({ item, index })).filter(({ item }) => item.group === group.id);
                         return <section className="wallpaperStudioGroup" key={group.id}>

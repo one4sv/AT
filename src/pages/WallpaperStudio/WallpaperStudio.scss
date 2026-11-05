@@ -158,13 +158,13 @@
     z-index: 13;
     bottom: 0;
     left: 0;
-    transform: none;
+    transform: translate3d(0, var(--studio-drag, 0px), 0);
     display: flex;
     flex-direction: column;
     width: 100%;
     max-width: 100%;
     min-height: 0;
-    height: calc(90dvh - var(--studio-drag, 0px));
+    height: 90dvh;
     border: 1px solid var(--block_border);
     border-bottom: 0;
     border-radius: 24px 24px 0 0;
@@ -173,14 +173,15 @@
     background: var(--mc);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    transition: height .34s cubic-bezier(.22, 1, .36, 1);
+    transition: transform .32s cubic-bezier(.22, 1, .36, 1);
 
     &.dragging {
         transition: none;
     }
 
     .wallpaperStudio.collapsed & {
-        height: calc(4dvh - var(--studio-drag, 0px));
+        transform: translate3d(0, calc(100% + 1px), 0);
+        pointer-events: none;
     }
 
     @media (max-width: 800px) {
@@ -313,7 +314,7 @@
 .wallpaperStudioGrid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: .8vw;
+    gap: .4vw;
 
     @media (max-width: 1100px) {
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -335,13 +336,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: .7dvh;
     width: 100%;
-    padding: .75dvh;
+    padding: .2dvh;
     border: 1px solid transparent;
     box-sizing: border-box;
-    border-radius: 16px;
-    background: var(--interact);
+    border-radius: 12px;
+    background: transparent;
     color: var(--tc);
     font: inherit;
     cursor: pointer;
@@ -351,25 +351,6 @@
 
     &.selected {
         border-color: var(--accent);
-    }
-
-    @media (max-width: 800px) {
-        padding: .2dvh;
-        gap: 0;
-        background: transparent;
-        border-radius: 12px;
-
-        @media (hover: hover) {
-            &:hover {
-                background: transparent;
-            }
-        }
-    }
-
-    @media (hover: hover) {
-        &:hover {
-            background: var(--menuButtHover);
-        }
     }
 }
 
@@ -392,48 +373,6 @@
         aspect-ratio: 9 / 16;
         border-radius: 10px;
     }
-}
-
-.wallpaperStudioTileLabel {
-    display: block;
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-    font-size: 14px;
-    pointer-events: none;
-
-    @media (max-width: 800px) {
-        display: none;
-    }
-}
-
-.wallpaperStudioTileCapabilities {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .4vw;
-    min-height: 1.8dvh;
-
-    > .backgroundLibraryCapability {
-        display: flex;
-        color: var(--accent_text);
-    }
-
-    @media (max-width: 800px) {
-        display: none;
-    }
-}
-
-.wallpaperStudioApplied {
-    position: absolute;
-    top: 1.5dvh;
-    right: 1dvh;
-    padding: .3dvh;
-    border-radius: 50%;
-    background: var(--accent);
-    color: var(--inner_text);
 }
 
 .wallpaperStudioDelete {
@@ -470,6 +409,10 @@
     min-height: 14dvh;
     color: var(--accent_text);
     gap: 1dvh;
+
+    @media (max-width: 800px) {
+        background: var(--mc);
+    }
 }
 
 .mobile-layout:has(.wallpaperStudio) {
