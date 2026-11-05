@@ -13,6 +13,7 @@ import { useContacts } from "../hooks/ContactsHook";
 import { useHabits } from "../hooks/HabitsHook";
 import { useSettings } from "../hooks/SettingsHook";
 import { filterHabitsByOrder } from "../ts/utils/filteredHabitsByOrder";
+import useCompactLayout from "../hooks/utils/useCompactLayout";
 
 export type tab = "chats" | "habits" | "spots" | "user";
 export type slides = "settings" | "chat" | "journal" | null;
@@ -61,15 +62,16 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const { t, i18n } = useTranslation("common");
     const { list } = useContacts()
     const { habits, newOrderHabits } = useHabits()
-    const { showArchived } = useSettings();
+    const { showArchived, layout } = useSettings();
+    const isCompact = useCompactLayout();
 
-    const [showSideMenu, setShowSideMenu] = useState(true);
+    const [showSideMenu, setShowSideMenu] = useState(() => isCompact || layout !== "hidden");
     const [red, setRed] = useState(false);
     const [showHabitMenu, setShowHabitMenu] = useState(false);
     const [showSlide, setShowSlide] = useState<slides>(null);
     const [activeTab, setActiveTab] = useState<tab>("chats");
     const [settingsSearch, setSettingsSearch] = useState("");
-    const [translateX, setTranslateX] = useState(0);
+    const [translateX, setTranslateX] = useState(() => isCompact || layout !== "hidden" ? 0 : -100);
     const [isDragging, setIsDragging] = useState(false);
     const [dontHandle, setDontHandle] = useState(false);
     const [dontHandleOther, setDontHandleOther] = useState(false);
@@ -280,17 +282,31 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         });
     }, [animateTo]);
 
+    // Desktop layout is a local preference. On compact layouts the same
+    // SideMenu keeps its existing full-screen gesture/navigation behavior.
+    const previousMode = useRef<string | null>(null);
+
+    useEffect(() => {
+        const mode = `${isCompact ? "compact" : "desktop"}:${layout}`;
+        if (previousMode.current === mode) return;
+        previousMode.current = mode;
+        if (isCompact) return;
+
+        if (layout === "hidden") closeMenu();
+        else openSideMenu();
+    }, [isCompact, layout, closeMenu, openSideMenu]);
+
     useEffect(() => {
         if (previousPath.current === null) {
             previousPath.current = location.pathname;
-            if (location.pathname.startsWith("/info")) closeMenu();
+            if (location.pathname.startsWith("/info") && (isCompact || layout === "hidden")) closeMenu();
             return;
         }
         if (previousPath.current !== location.pathname) {
             previousPath.current = location.pathname;
-            closeMenu();
+            if (isCompact || layout === "hidden") closeMenu();
         }
-    }, [location.pathname, closeMenu]);
+    }, [location.pathname, closeMenu, isCompact, layout]);
 
     return (
         <SideMenuContext.Provider
