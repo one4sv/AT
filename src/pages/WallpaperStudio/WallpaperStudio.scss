@@ -33,45 +33,65 @@
     }
 }
 
-.wallpaperStudioHeader {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 25;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1vw;
-    min-height: 8dvh;
-    padding: max(1dvh, env(safe-area-inset-top)) 2vw 1dvh;
+.wallpaperStudio > .headerDiv {
+    z-index: 30 !important;
+    width: 100%;
     box-sizing: border-box;
-    background: linear-gradient(180deg, var(--mc), transparent);
-    pointer-events: none;
 
-    > * {
-        pointer-events: auto;
+    .headerCustomTitle {
+        cursor: default;
+        gap: .75vw;
+    }
+
+    .headerCustomText {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .wallpaperHeaderCapabilities {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        gap: .5vw;
+
+        > span {
+            display: inline-flex;
+            color: var(--accent_text);
+        }
+    }
+
+    .wallpaperHeaderApply {
+        color: var(--borderWh);
+
+        > svg {
+            color: inherit;
+        }
+
+        &.active {
+            border: none;
+            background: linear-gradient(135deg, var(--accent_highlight), var(--grad_highlight));
+
+            > svg {
+                color: var(--accent);
+            }
+        }
     }
 
     @media (max-width: 800px) {
-        padding: max(1dvh, env(safe-area-inset-top)) 3vw 1dvh;
-        gap: 2vw;
+        .headerCustomTitle {
+            gap: 2vw;
+        }
+
+        .wallpaperHeaderCapabilities {
+            gap: 2vw;
+        }
     }
 }
 
-.wallpaperStudioHeaderLeft {
-    display: flex;
-    align-items: center;
-    gap: .6vw;
-
-    @media (max-width: 800px) {
-        gap: 2vw;
-    }
-}
-
-.wallpaperStudioIcon,
 .wallpaperStudioArrow {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     width: 5dvh;
@@ -96,63 +116,6 @@
         &:hover {
             background: var(--menuButtHover);
         }
-    }
-}
-
-.wallpaperStudioHeading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 0;
-    gap: .2dvh;
-    text-align: center;
-
-    > span {
-        font-size: 20px;
-    }
-
-    > small {
-        display: block;
-        max-width: 30vw;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        color: var(--borderWh);
-    }
-
-    @media (max-width: 800px) {
-        > span {
-            font-size: 16px;
-        }
-
-        > small {
-            max-width: 34vw;
-        }
-    }
-}
-
-.wallpaperStudioApply {
-    min-width: 8vw;
-    min-height: 4.5dvh;
-    padding: .8dvh 1vw;
-    border-radius: 24px;
-    border: 1px solid var(--block_border);
-    box-sizing: border-box;
-    color: var(--inner_text);
-    background: linear-gradient(135deg, var(--accent), var(--grad));
-    cursor: pointer;
-    font: inherit;
-
-    &:disabled {
-        cursor: default;
-        background: var(--interact);
-        color: var(--borderWh);
-    }
-
-    @media (max-width: 800px) {
-        min-width: 0;
-        padding: .8dvh 2vw;
-        font-size: 14px;
     }
 }
 
@@ -187,11 +150,11 @@
     position: absolute;
     z-index: 13;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    transform: none;
     display: flex;
     flex-direction: column;
-    width: min(76vw, 76rem);
+    width: 100%;
     max-width: 100%;
     min-height: 0;
     height: calc(50dvh - var(--studio-drag, 0px));
@@ -214,9 +177,6 @@
     }
 
     @media (max-width: 800px) {
-        left: 0;
-        transform: none;
-        width: 100%;
         height: calc(100dvh - var(--studio-drag, 0px));
         border-left: none;
         border-right: none;
@@ -224,6 +184,10 @@
 
         .wallpaperStudio.collapsed & {
             height: calc(9dvh + env(safe-area-inset-bottom) - var(--studio-drag, 0px));
+        }
+
+        .wallpaperStudio.expanded & {
+            padding-top: 7dvh;
         }
     }
 }
@@ -367,48 +331,27 @@
 .wallpaperStudioTabs {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 1vw;
     padding: 1dvh 1vw;
     flex-shrink: 0;
-
-    > button {
-        padding: 1dvh 1vw;
-        color: var(--tc);
-        border: 1px solid transparent;
-        border-radius: 24px;
-        background: var(--interact);
-        cursor: pointer;
-        font: inherit;
-
-        &.active {
-            border-color: var(--accent);
-        }
-
-        @media (hover: hover) {
-            &:not(.active):hover {
-                background: var(--menuButtHover);
-            }
-        }
-    }
 
     > .wallpaperStudioHelp {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: .8dvh;
-        margin-left: auto;
-        border: 1px solid var(--block_border);
+        width: 4dvh;
+        height: 4dvh;
+        padding: .5dvh;
+        background: var(--interact);
+        color: var(--tc);
+        border: none;
         border-radius: 50%;
+        cursor: pointer;
     }
 
     @media (max-width: 800px) {
-        gap: 2vw;
-        padding: 1.5dvh 3vw;
-
-        > button {
-            padding: 1dvh 2.5vw;
-            font-size: 14px;
-        }
+        padding: 1dvh 2vw;
     }
 }
 
@@ -421,12 +364,12 @@
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    padding: 0 1vw calc(2dvh + env(safe-area-inset-bottom));
+    padding: 0 1vw calc(9dvh + env(safe-area-inset-bottom));
     gap: 1dvh;
 
     @media (max-width: 800px) {
-        padding: 0 3vw calc(3dvh + env(safe-area-inset-bottom));
-        gap: 2dvh;
+        padding: 0 1.5vw calc(10dvh + env(safe-area-inset-bottom));
+        gap: 1dvh;
     }
 }
 
@@ -470,8 +413,8 @@
     }
 
     @media (max-width: 800px) {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 2vw;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: .6vw;
     }
 }
 
@@ -503,6 +446,19 @@
         border-color: var(--accent);
     }
 
+    @media (max-width: 800px) {
+        padding: .2dvh;
+        gap: 0;
+        background: transparent;
+        border-radius: 12px;
+
+        @media (hover: hover) {
+            &:hover {
+                background: transparent;
+            }
+        }
+    }
+
     @media (hover: hover) {
         &:hover {
             background: var(--menuButtHover);
@@ -525,7 +481,9 @@
     }
 
     @media (max-width: 800px) {
-        height: 13dvh;
+        height: auto;
+        aspect-ratio: 9 / 16;
+        border-radius: 10px;
     }
 }
 
@@ -538,6 +496,10 @@
     text-align: center;
     font-size: 14px;
     pointer-events: none;
+
+    @media (max-width: 800px) {
+        display: none;
+    }
 }
 
 .wallpaperStudioTileCapabilities {
@@ -553,7 +515,7 @@
     }
 
     @media (max-width: 800px) {
-        gap: 1.5vw;
+        display: none;
     }
 }
 
@@ -576,11 +538,23 @@
     justify-content: center;
     width: 3dvh;
     height: 3dvh;
-    border: none;
+    border: 1px solid var(--notValid);
     border-radius: 50%;
-    color: var(--tc);
-    background: var(--mc);
+    color: var(--notValid);
+    background: var(--interact);
     cursor: pointer;
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--notValidBg);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background: var(--notValidBg);
+        }
+    }
 }
 
 .wallpaperStudioAdd {
@@ -651,18 +625,38 @@
     }
 }
 
-@media (min-width: 801px) {
-    .mobile-layout:has(> .sideMenu.open) .wallpaperStudioSheet {
-        left: auto;
-        right: 1vw;
-        transform: none;
-        width: calc(100vw - 21.5vw);
-    }
-}
-
 @media (prefers-reduced-motion: reduce) {
     .wallpaperStudioSheet,
     .wallpaperStudioSheetContent {
         transition: none;
+    }
+}
+
+.wallpaperStudioBottom.pageBottom {
+    z-index: 22;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    padding: 0 2vw max(2dvh, env(safe-area-inset-bottom));
+    pointer-events: none;
+
+    > button {
+        pointer-events: auto;
+    }
+
+    .wallpaperStudioSettingsButton {
+        justify-content: center;
+        border: none;
+        gap: .7vw;
+        color: var(--tc);
+    }
+
+    @media (max-width: 800px) {
+        width: 100%;
+        padding: 0 3vw max(3dvh, env(safe-area-inset-bottom));
+
+        .wallpaperStudioSettingsButton {
+            gap: 2vw;
+        }
     }
 }
