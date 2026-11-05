@@ -3,10 +3,12 @@ import type { PointerEvent, CSSProperties } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Check, CircleHelp, ImagePlus, RotateCcw, Trash2, PanelLeft, Film, Palette, LayoutGrid, WandSparkles } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Check, CircleCheck, CircleHelp, ImagePlus, RotateCcw, Trash2, Film, Palette, LayoutGrid, WandSparkles, Settings2, Images } from "lucide-react";
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
-import { useSideMenu } from "../../components/hooks/SideMenuHook";
+import Header from "../../components/ts/Header";
+import PageBottom from "../../components/ts/PageBottom";
+import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { useNote } from "../../components/hooks/NoteHook";
 import { api } from "../../components/ts/api";
@@ -30,7 +32,7 @@ export default function WallpaperStudio() {
     const { t } = useTranslation("settings");
     const { bg, bgUrl, bgGallery, bgEffects, setBgEffects, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, setBgUrl, refetchSettings } = useSettings();
     const { setNewBg } = useUpSettings();
-    const { toggleMenu } = useSideMenu();
+    const isMobile = useCompactLayout();
     const { blackout, setBlackout } = useBlackout();
     const { showNotification } = useNote();
     const reduceMotion = useReducedMotion();
@@ -48,6 +50,8 @@ export default function WallpaperStudio() {
     const fileRef = useRef<HTMLInputElement>(null);
     const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const initialized = useRef(false);
+    const wheelGesture = useRef({ total: 0, last: 0 });
+    const previewSwipe = useRef<{ x: number; y: number } | null>(null);
 
     const items = useMemo<WallpaperItem[]>(() => [
         ...backgroundGroups.flatMap(group => group.items.map(item => ({
@@ -140,7 +144,7 @@ export default function WallpaperStudio() {
             suppressClick.current = false;
             return;
         }
-        apply(index);
+        view(index);
     };
 
     const onPeekDown = (event: PointerEvent<HTMLButtonElement>) => {
@@ -183,6 +187,35 @@ export default function WallpaperStudio() {
         setSheetDrag(0);
         peekDrag.current = null;
         if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    };
+
+    const handlePreviewWheel = (event: React.WheelEvent<HTMLElement>) => {
+        const target = event.target as Element;
+        if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) ||
+            target.closest(".wallpaperStudioSheet, .headerDiv, .pageBottom, .wallpaperStudioArrow")) return;
+        const now = Date.now();
+        if (now - wheelGesture.current.last < 240) return;
+        wheelGesture.current.total += event.deltaY;
+        if (Math.abs(wheelGesture.current.total) < 40) return;
+        setOpen(wheelGesture.current.total > 0);
+        wheelGesture.current.last = now;
+        wheelGesture.current.total = 0;
+    };
+
+    const handlePreviewTouchStart = (event: React.TouchEvent<HTMLElement>) => {
+        const target = event.target as Element;
+        previewSwipe.current = event.touches.length === 1 &&
+            !target.closest(".wallpaperStudioSheet, .headerDiv, .pageBottom, .wallpaperStudioArrow")
+            ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null;
+    };
+
+    const handlePreviewTouchEnd = (event: React.TouchEvent<HTMLElement>) => {
+        const start = previewSwipe.current;
+        previewSwipe.current = null;
+        if (!start || !event.changedTouches.length) return;
+        const dx = event.changedTouches[0].clientX - start.x;
+        const dy = event.changedTouches[0].clientY - start.y;
+        if (Math.abs(dy) > 65 && Math.abs(dy) > Math.abs(dx)) setOpen(dy > 0);
     };
 
     const updateEffects = (next: BackgroundEffects) => {
@@ -302,7 +335,11 @@ export default function WallpaperStudio() {
 
     if (!current) return null;
 
-    return <main className={"wallpaperStudio" + (open ? " expanded" : " collapsed")} onContextMenu={event => event.preventDefault()}>
+    return <main className={"wallpaperStudio" + (open ? " expanded" : " collapsed")}
+        onContextMenu={event => event.preventDefault()}
+        onWheel={handlePreviewWheel}
+        onTouchStart={handlePreviewTouchStart} onTouchEnd={handlePreviewTouchEnd}
+        onTouchCancel={() => { previewSwipe.current = null; }}>
         <div className="wallpaperStudioCanvas" aria-hidden="true">
             <AnimatePresence initial={false} custom={direction}>
                 <motion.div className="wallpaperStudioFrame" key={current.id + (current.url ?? "")}
@@ -316,23 +353,22 @@ export default function WallpaperStudio() {
             </AnimatePresence>
         </div>
 
-        <header className="wallpaperStudioHeader">
-            <div className="wallpaperStudioHeaderLeft">
-                <button type="button" className="wallpaperStudioIcon" onClick={toggleMenu}
-                    aria-label={t("backgroundLibrary.sideMenu")}><PanelLeft size={21}/></button>
-                <button type="button" className="wallpaperStudioIcon" onClick={() => navigate("/settings/pers")}
-                    aria-label={t("backgroundLibrary.backToSettings")}><ArrowLeft size={21}/></button>
-            </div>
-            <div className="wallpaperStudioHeading">
-                <span>{t(settingsPage ? "backgroundLibrary.previewSettings" : "backgroundLibrary.title")}</span>
-                <small>{current.label}</small>
-            </div>
-            <button type="button" className="wallpaperStudioApply"
-                disabled={Boolean(isApplied)}
-                onClick={() => apply(currentIndex)}>
-                {isApplied ? t("backgroundLibrary.selected") : t("backgroundLibrary.apply")}
-            </button>
-        </header>
+        <Header titleOverride={current.label} hideMenuButton={!isMobile}
+            titleSuffix={<span className="wallpaperHeaderCapabilities">
+                {supportsBackgroundMotion(current.id) && <span title={t("backgroundLibrary.motionAvailable")}><Film size={16}/></span>}
+                {!isPhotographicScene(current.id) && current.id !== "color" && current.id !== "custom" &&
+                    <span title={t("backgroundLibrary.themeAware")}><Palette size={16}/></span>}
+                {current.id === "art" && <span title={t("backgroundLibrary.appearanceAware")}><WandSparkles size={16}/></span>}
+                {(current.id === "art" || current.id === "default") &&
+                    <span title={t("backgroundLibrary.patternAvailable")}><LayoutGrid size={16}/></span>}
+            </span>}
+            rightAction={<button type="button"
+                className={`headerButt wallpaperHeaderApply ${isApplied ? "active" : ""}`}
+                aria-label={t(isApplied ? "backgroundLibrary.selected" : "backgroundLibrary.apply")}
+                aria-pressed={Boolean(isApplied)}
+                onClick={() => { if (!isApplied) apply(currentIndex); }}>
+                <CircleCheck size={25}/>
+            </button>}/>
 
         <button type="button" className="wallpaperStudioArrow wallpaperStudioArrowLeft"
             aria-label={t("backgroundLibrary.previous")} onClick={() => change(-1)}><ChevronLeft/></button>
@@ -349,7 +385,7 @@ export default function WallpaperStudio() {
                     onWheel={event => {
                         if (Math.abs(event.deltaY) < 40 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
                         event.preventDefault();
-                        setOpen(event.deltaY < 0);
+                        setOpen(event.deltaY > 0);
                     }}
                     onClick={event => {
                         if (suppressClick.current) {
@@ -375,17 +411,12 @@ export default function WallpaperStudio() {
                 </div>
             </div>
             <div id="wallpaperStudioContent" className="wallpaperStudioSheetContent" inert={!open}>
-                <nav className="wallpaperStudioTabs" aria-label={t("backgroundLibrary.title")}>
-                    <button type="button" className={!settingsPage ? "active" : ""}
-                        aria-current={!settingsPage ? "page" : undefined}
-                        onClick={() => navigate("/wallpapers")}>{t("backgroundLibrary.previewBackgrounds")}</button>
-                    <button type="button" className={settingsPage ? "active" : ""}
-                        aria-current={settingsPage ? "page" : undefined}
-                        onClick={() => navigate("/wallpapers/settings")}>{t("backgroundLibrary.previewSettings")}</button>
+                <div className="wallpaperStudioTabs">
+                    <span>{t(settingsPage ? "backgroundLibrary.previewSettings" : "backgroundLibrary.previewBackgrounds")}</span>
                     <button type="button" className="wallpaperStudioHelp" aria-label={t("backgroundLibrary.help")}
                         title={t("backgroundLibrary.help")}
                         onClick={() => setBlackout({ seted: true, module: "BackgroundHelp" })}><CircleHelp size={20}/></button>
-                </nav>
+                </div>
 
                 {!settingsPage ? <div className="wallpaperStudioScroll">
                     {backgroundGroups.map(group => {
@@ -456,6 +487,13 @@ export default function WallpaperStudio() {
                 </div>}
             </div>
         </div>
+        <PageBottom className="wallpaperStudioBottom" onBack={() => navigate("/settings/pers")}>
+            <button type="button" className="pageBottomAction wallpaperStudioSettingsButton"
+                onClick={() => navigate(settingsPage ? "/wallpapers" : "/wallpapers/settings")}>
+                {settingsPage ? <Images size={21}/> : <Settings2 size={21}/>}
+                {t(settingsPage ? "backgroundLibrary.previewBackgrounds" : "backgroundLibrary.previewSettings")}
+            </button>
+        </PageBottom>
         {holding && <div className="wallpaperStudioHoldState" aria-live="polite">{t("backgroundLibrary.releaseToPreview")}</div>}
     </main>;
 }
