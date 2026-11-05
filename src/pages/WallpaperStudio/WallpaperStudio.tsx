@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { PointerEvent } from "react";
+import type { PointerEvent, CSSProperties } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -21,7 +21,7 @@ import "./WallpaperStudio.scss";
 
 type WallpaperItem = { id: string; url?: string; label: string; group: string };
 type Hold = { pointerId: number; x: number; y: number; index: number; triggered: boolean; moved: boolean };
-type PeekDrag = { pointerId: number; x: number; lastStep: number; moved: boolean };
+type PeekDrag = { pointerId: number; x: number; y: number; lastStep: number; moved: boolean; direction: "none" | "horizontal" | "vertical" };
 
 export default function WallpaperStudio() {
     const { tab } = useParams<{ tab?: string }>();
@@ -40,6 +40,7 @@ export default function WallpaperStudio() {
     const [ collapsedGroups, setCollapsedGroups ] = useState<string[]>([]);
     const [ busy, setBusy ] = useState(false);
     const [ holding, setHolding ] = useState(false);
+    const [ sheetDrag, setSheetDrag ] = useState(0);
     const hold = useRef<Hold | null>(null);
     const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const peekDrag = useRef<PeekDrag | null>(null);
@@ -145,15 +146,26 @@ export default function WallpaperStudio() {
     const onPeekDown = (event: PointerEvent<HTMLButtonElement>) => {
         if (event.button !== 0) return;
         suppressClick.current = false;
-        peekDrag.current = { pointerId: event.pointerId, x: event.clientX, lastStep: 0, moved: false };
+        peekDrag.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, lastStep: 0, moved: false, direction: "none" };
         event.currentTarget.setPointerCapture(event.pointerId);
     };
 
     const onPeekMove = (event: PointerEvent<HTMLButtonElement>) => {
         const start = peekDrag.current;
-        if (!start || start.pointerId !== event.pointerId || open) return;
+        if (!start || start.pointerId !== event.pointerId) return;
         const dx = event.clientX - start.x;
-        if (Math.abs(dx) > 12) start.moved = true;
+        const dy = event.clientY - start.y;
+        if (start.direction === "none" && Math.max(Math.abs(dx), Math.abs(dy)) > 8) {
+            start.direction = Math.abs(dy) > Math.abs(dx) ? "vertical" : "horizontal";
+        }
+        if (start.direction === "vertical") {
+            start.moved = true;
+            const distance = open ? Math.max(0, dy) : Math.min(0, dy);
+            setSheetDrag(Math.max(-window.innerHeight * .75, Math.min(window.innerHeight * .75, distance)));
+            return;
+        }
+        if (start.direction !== "horizontal" || open) return;
+        start.moved = true;
         const step = Math.trunc(dx / 55);
         if (step !== start.lastStep) {
             const delta = step - start.lastStep;
@@ -163,8 +175,12 @@ export default function WallpaperStudio() {
     };
 
     const onPeekEnd = (event: PointerEvent<HTMLButtonElement>) => {
-        if (peekDrag.current?.pointerId !== event.pointerId) return;
-        if (peekDrag.current.moved) suppressClick.current = true;
+        const start = peekDrag.current;
+        if (!start || start.pointerId !== event.pointerId) return;
+        if (start.moved) suppressClick.current = true;
+        if (event.type !== "pointercancel" && start.direction === "vertical" &&
+            Math.abs(event.clientY - start.y) > 55) setOpen(event.clientY < start.y);
+        setSheetDrag(0);
         peekDrag.current = null;
         if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
     };
@@ -323,12 +339,18 @@ export default function WallpaperStudio() {
         <button type="button" className="wallpaperStudioArrow wallpaperStudioArrowRight"
             aria-label={t("backgroundLibrary.next")} onClick={() => change(1)}><ChevronRight/></button>
 
-        <div className="wallpaperStudioSheet">
+        <div className={"wallpaperStudioSheet" + (sheetDrag ? " dragging" : "")}
+            style={{ "--studio-drag": sheetDrag + "px" } as CSSProperties}>
             <div className="wallpaperStudioPeek">
                 <button className="wallpaperStudioPeekButton" type="button"
                     aria-expanded={open} aria-controls="wallpaperStudioContent"
                     onPointerDown={onPeekDown} onPointerMove={onPeekMove}
                     onPointerUp={onPeekEnd} onPointerCancel={onPeekEnd}
+                    onWheel={event => {
+                        if (Math.abs(event.deltaY) < 40 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+                        event.preventDefault();
+                        setOpen(event.deltaY < 0);
+                    }}
                     onClick={event => {
                         if (suppressClick.current) {
                             event.preventDefault();
