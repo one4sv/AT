@@ -196,10 +196,12 @@ export default function WallpaperStudio() {
             gesture.moved = true;
             const width = canvasRef.current?.clientWidth || window.innerWidth;
             dragX.set(Math.max(-width, Math.min(width, dx)));
-        } else if ((!open && dy < 0) || (open && dy > 0)) {
+        } else {
             gesture.moved = true;
-            const height = window.innerHeight * .9;
-            setSheetDrag(Math.max(-height, Math.min(height, dy)));
+            if ((!open && dy < 0) || (open && dy > 0)) {
+                const height = window.innerHeight * .9;
+                setSheetDrag(Math.max(-height, Math.min(height, dy)));
+            }
         }
     };
 

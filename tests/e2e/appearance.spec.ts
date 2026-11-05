@@ -176,6 +176,7 @@ test.describe("appearance and wallpaper controls", () => {
         await page.mouse.wheel(0, -180);
         await expect(page.locator(".wallpaperStudio.expanded")).toBeVisible();
         await page.waitForTimeout(270);
+        await page.mouse.move(200, 65);
         await page.mouse.wheel(0, 180);
         await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
     });
