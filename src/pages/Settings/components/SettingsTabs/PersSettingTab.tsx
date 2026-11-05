@@ -7,7 +7,7 @@ import PreviewAccent from "../PreviewAccent.tsx";
 import { useTranslation } from "react-i18next";
 
 import SeekBar from "../SeekBar.tsx";
-import { isMobile } from "react-device-detect";
+import useCompactLayout from "../../../../components/hooks/utils/useCompactLayout";
 import Selector from "../../../../components/ts/Selector.tsx";
 import { MirrorRectangular, PaintBucket, PanelLeft, PanelLeftClose } from "lucide-react";
 import ColorSelector from "../ColorSelector.tsx";
@@ -22,6 +22,7 @@ import { getBackgroundFilter } from "../../../../components/ts/utils/backgroundF
 
 export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
+    const isMobile = useCompactLayout();
     const { setBlackout } = useBlackout();
     const { isDark, accent, bg, bgUrl, bgEffects, contourPattern, contourSize, artPattern, artSize, decor, grad, blur, layout } = useSettings();
     const { setNewTheme, setNewAccent, setNewDecor, setNewGrad, setNewBlur, setNewLayout } = useUpSettings();
@@ -36,8 +37,8 @@ export default function PersSettingTab({ search }: { search: string }) {
         { label: t("personalization.glass"), value: "glass", icon: MirrorRectangular, func:setNewDecor },
     ];    
     const layoutArr = [
-        { label: "Всегда", value: "always", func:setNewLayout, icon:PanelLeft },
-        { label: "По нажатию кнопки", value: "hidden", func:setNewLayout, icon:PanelLeftClose },
+        { label: t("personalization.sideMenuAlways"), value: "always", func:setNewLayout, icon:PanelLeft },
+        { label: t("personalization.sideMenuButton"), value: "hidden", func:setNewLayout, icon:PanelLeftClose },
     ];
 
     const accentArr = [
@@ -116,16 +117,16 @@ export default function PersSettingTab({ search }: { search: string }) {
                 </div>
                 <BackgroundEffectsSettings search={search}/>
             </div>
-            {!isMobile ? (
-                <div className="settingInnerDiv" data-setting-id="layout">
-                    <div className="settingHeader">
-                        <HighlightText text="Боковое меню" search={search} />
-                    </div>
-                    <div className="settingInnerWrapper">
-                        <Selector arr={layoutArr} selected={layout}/>
-                    </div>
+            <div className="settingInnerDiv" data-setting-id="layout">
+                <div className="settingHeader">
+                    <HighlightText text={t("personalization.sideMenu")} search={search} />
                 </div>
-            ) : ""}
+                <div className="settingInnerWrapper">
+                    {isMobile ?
+                        <div className="settingHint">{t("personalization.sideMenuMobileHint")}</div> :
+                        <Selector arr={layoutArr} selected={layout}/>}
+                </div>
+            </div>
             
         </div>
     );
