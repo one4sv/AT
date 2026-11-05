@@ -107,7 +107,7 @@ export default function RoadmapTab() {
                         {releaseList([...roadmapHistory].reverse())}
                         <div className="roadmapBeginning">
                             <h3>{t("roadmap.beginning")}</h3>
-                            <time dateTime="2025-07-14">{new Date("2025-07-14T12:00:00").toLocaleDateString(language === "en" ? "en-GB" : "ru-RU", { day: "numeric", month: "long", year: "numeric" })}</time>
+                            <time dateTime="2025-07-14">14.07.2025</time>
                         </div>
                     </div>
                 </section>
