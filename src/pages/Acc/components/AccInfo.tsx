@@ -229,7 +229,7 @@ export default function AccInfo({
                                     <PencilSimpleIcon size={20} weight="fill" />
                                     {t("edit")}
                                 </> : <>
-                                    <ChatTeardropTextIcon size={20} weight="fill" />Написать сообщение
+                                    <ChatTeardropTextIcon size={20} weight="fill" />{t("message")}
                                 </>}
                             </div>
                             <div
@@ -246,7 +246,7 @@ export default function AccInfo({
                                     }
                                 )}
                             >
-                                <ShareFatIcon weight="fill" /> Поделится
+                                <ShareFatIcon weight="fill" /> {t("share")}
                             </div>
                         </div>
                     </div>

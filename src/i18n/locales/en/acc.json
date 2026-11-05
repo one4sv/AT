@@ -95,5 +95,7 @@
         "like": "Like",
         "likeFailed": "Could not update the like. Please try again.",
         "fileLimit": "Up to 20 files per post, each no larger than 100 MB."
-    }
+    },
+    "message": "Send message",
+    "share": "Share"
 }

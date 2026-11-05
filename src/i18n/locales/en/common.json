@@ -104,5 +104,11 @@
         "policy": "Privacy policy",
         "manage": "Manage cookies",
         "saveError": "Could not disable quick sign-in. Check your connection and try again."
+    },
+    "share": {
+        "account": "Share account",
+        "group": "Invite to group chat",
+        "sendToChat": "Send to chat",
+        "qrCode": "QR code"
     }
 }

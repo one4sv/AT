@@ -1,5 +1,6 @@
 
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { ChatTeardropIcon, CopyIcon, UserIcon, UsersIcon } from "@phosphor-icons/react";
 import "../../scss/modules/ShareAccDiv.scss"
 import { useBlackout } from "../hooks/BlackoutHook";
@@ -7,6 +8,7 @@ import { useNote } from "../hooks/NoteHook";
 import { QRCodeSVG } from "qrcode.react";
 
 export default function ShareAcc() {
+    const { t } = useTranslation("common");
     const { blackout } = useBlackout()
     const { showNotification } = useNote()
     const nick = blackout.options?.nick
@@ -27,27 +29,27 @@ export default function ShareAcc() {
     const copyLink = async () => {
         try {
             await navigator.clipboard.writeText(link)
-            showNotification("success", "Ссылка скопирована")
+            showNotification("success", t("links.copied"))
         } catch {
-            showNotification("error", "Не удалось скопировать ссылку")
+            showNotification("error", t("links.copyFailed"))
         }
     }
 
     return (
         <div className="shareAccDiv">
             <div className="moduleName">
-                {isGroup ? "Приглашение в беседу" : "Поделиться аккаунтом"}
+                {t(isGroup ? "share.group" : "share.account")}
             </div>
             <div className="settingInnerList">
                 <div className="settingInnerButt" onClick={copyLink}>
-                    <CopyIcon weight="fill"/> Скопировать ссылку
+                    <CopyIcon weight="fill"/> {t("links.copy")}
                 </div>
-                {!isGroup && <div className="settingInnerButt" onClick={() => showNotification("info", "В разработке")}>
-                    <ChatTeardropIcon weight="fill"/> Отправить в чат
+                {!isGroup && <div className="settingInnerButt" onClick={() => showNotification("info", t("sideMenu.inDevelopment"))}>
+                    <ChatTeardropIcon weight="fill"/> {t("share.sendToChat")}
                 </div>}
             </div>
             <div className="moduleName">
-                QR - код
+                {t("share.qrCode")}
             </div>
             <div className="qrCodeWrap">
                 <svg className="qrGradientDefs" aria-hidden="true">

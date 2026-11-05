@@ -209,7 +209,7 @@ export default function Acc() {
         sliderGesture.current = false;
         sliderOwnsGesture.current = false;
         const target = e.target as Element;
-        pullRefresh.current = collapsedRef.current >= 0.98 && getActiveSlideScrollTop() <= 2 &&
+        pullRefresh.current = collapsedRef.current < 0.98 && getActiveSlideScrollTop() <= 2 &&
             !dontHandleOther && !!target.closest(".accContentSlide")
             ? { y: e.touches[0].clientY, x: e.touches[0].clientX, active: false }
             : null;
@@ -386,20 +386,6 @@ export default function Acc() {
         }
     };
 
-    const handleSlideClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (
-            dontHandleOther ||
-            gestureBlocked.current ||
-            gestureMoved.current
-        ) return;
-
-        if (collapsedRef.current < 1) {
-            e.preventDefault();
-            e.stopPropagation();
-            animateCollapse(1);
-        }
-    };
-
     const handleSelectorClick = (i: number) => {
         if (dontHandleOther || !contentRef.current) return;
 
@@ -461,7 +447,7 @@ export default function Acc() {
                     onScroll={handleScroll}
                     onTouchStartCapture={touchSliderStart}
                 >
-                    <div className="accSlide" onClickCapture={handleSlideClick}>
+                    <div className="accSlide">
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[0] = el; }}
@@ -475,7 +461,7 @@ export default function Acc() {
                             />
                         </div>
                     </div>
-                    <div className="accSlide" onClickCapture={handleSlideClick}>
+                    <div className="accSlide">
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[1] = el; }}
