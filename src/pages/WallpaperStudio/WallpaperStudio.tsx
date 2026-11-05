@@ -3,7 +3,7 @@ import type { PointerEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Check, CircleHelp, ImagePlus, RotateCcw, Trash2, PanelLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Check, CircleHelp, ImagePlus, RotateCcw, Trash2, PanelLeft, Film, Palette, LayoutGrid, WandSparkles } from "lucide-react";
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
@@ -103,6 +103,7 @@ export default function WallpaperStudio() {
         stopHold();
         suppressClick.current = false;
         hold.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, index, triggered: false, moved: false };
+        event.currentTarget.setPointerCapture(event.pointerId);
         holdTimer.current = setTimeout(() => {
             if (!hold.current || hold.current.index !== index || hold.current.moved) return;
             hold.current.triggered = true;
@@ -126,6 +127,7 @@ export default function WallpaperStudio() {
         if (hold.current?.pointerId !== event.pointerId) return;
         if (hold.current.triggered || hold.current.moved) suppressClick.current = true;
         hold.current = null;
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
         stopHold();
         setHolding(false);
     };
@@ -260,8 +262,21 @@ export default function WallpaperStudio() {
                     <Background previewBg={item.id} previewUrl={item.url}/>
                 </span>
                 <span className="wallpaperStudioTileLabel">{item.label}</span>
+                <span className="wallpaperStudioTileCapabilities">
+                    {supportsBackgroundMotion(item.id) && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.motionAvailable")}>
+                        <Film size={15} aria-label={t("backgroundLibrary.motionAvailable")}/>
+                    </span>}
+                    {!isPhotographicScene(item.id) && item.id !== "color" && item.id !== "custom" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.themeAware")}>
+                        <Palette size={15} aria-label={t("backgroundLibrary.themeAware")}/>
+                    </span>}
+                    {item.id === "art" && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.appearanceAware")}>
+                        <WandSparkles size={15} aria-label={t("backgroundLibrary.appearanceAware")}/>
+                    </span>}
+                    {(item.id === "art" || item.id === "default") && <span className="backgroundLibraryCapability" title={t("backgroundLibrary.patternAvailable")}>
+                        <LayoutGrid size={15} aria-label={t("backgroundLibrary.patternAvailable")}/>
+                    </span>}
+                </span>
                 {item.id === bg && (item.id !== "custom" || item.url === bgUrl) && <Check size={18} className="wallpaperStudioApplied"/>}
-                {!isPhotographicScene(item.id) && item.id !== "color" && item.id !== "custom" && <span className="wallpaperStudioThemeDot" aria-hidden="true"/>}
             </button>
             {item.id === "custom" && <button type="button" className="wallpaperStudioDelete"
                 title={t("backgroundLibrary.delete")} aria-label={t("backgroundLibrary.delete")}
