@@ -215,7 +215,7 @@ export default function Acc() {
             : null;
     };
 
-    const touchSliderStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const touchSliderStart = () => {
         sliderGesture.current = true;
         sliderStartLeft.current = contentRef.current?.scrollLeft ?? 0;
 
