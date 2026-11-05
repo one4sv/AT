@@ -52,7 +52,8 @@
   "contactsList": {
     "usersNotFound": "Users not found",
     "noOneHere": "Oops! There's no one here!",
-    "findInterlocutor": "Find an interlocutor"
+    "findInterlocutor": "Find an interlocutor",
+    "refresh": "Refresh"
   },
   "contact": {
     "typing": "Typing...",
