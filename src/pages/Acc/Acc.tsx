@@ -210,7 +210,7 @@ export default function Acc() {
         sliderGesture.current = false;
         sliderOwnsGesture.current = false;
         const target = e.target as Element;
-        pullRefresh.current = collapsedRef.current < 0.98 && getActiveSlideScrollTop() <= 2 &&
+        pullRefresh.current = collapsedRef.current <= 0.02 && getActiveSlideScrollTop() <= 2 &&
             !dontHandleOther && !!target.closest(".accContentSlide")
             ? { y: e.touches[0].clientY, x: e.touches[0].clientX, active: false }
             : null;
