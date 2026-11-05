@@ -651,6 +651,15 @@
     }
 }
 
+@media (min-width: 801px) {
+    .mobile-layout:has(> .sideMenu.open) .wallpaperStudioSheet {
+        left: auto;
+        right: 1vw;
+        transform: none;
+        width: calc(100vw - 21.5vw);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .wallpaperStudioSheet,
     .wallpaperStudioSheetContent {
