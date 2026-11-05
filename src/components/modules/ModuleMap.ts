@@ -22,6 +22,7 @@ import WelcomeMessageInfo from './WelcomeMessageInfo';
 import QuickActionPicker from './QuickActionPicker';
 import BackgroundLibrary from './BackgroundLibrary';
 import BackgroundFullscreen from './BackgroundFullscreen';
+import BackgroundHelp from './BackgroundHelp';
 import CustomThemeColor from './CustomThemeColor';
 
 const ModuleMap: Record<string, React.FC> = {
@@ -48,6 +49,7 @@ const ModuleMap: Record<string, React.FC> = {
     QuickActionPicker:QuickActionPicker,
     BackgroundLibrary:BackgroundLibrary,
     BackgroundFullscreen:BackgroundFullscreen,
+    BackgroundHelp:BackgroundHelp,
     CustomThemeColor:CustomThemeColor,
     Table:Table
 };
