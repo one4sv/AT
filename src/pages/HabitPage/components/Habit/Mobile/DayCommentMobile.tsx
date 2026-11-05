@@ -1,4 +1,5 @@
 import { isMobile } from "react-device-detect";
+import { useTranslation } from "react-i18next";
 import EmojiButton from "../../../../../components/ts/utils/EmojiButton";
 import EmojiBar from "../../../../../components/ts/utils/EmojiBar";
 import TA from "../../../../../components/ts/TA";
@@ -17,6 +18,7 @@ interface DayCommentProps {
 }
 
 export default function DayCommentMobile({ id, isMy, open, setOpen }: DayCommentProps) {
+    const { t } = useTranslation("common");
     const { sendDayComment, waitComAnswer } = useDone();
     const { dayComment, habit,  } = useTheHabit();
     const { chosenDay } = useCalendar();
@@ -76,7 +78,7 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
                     <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!isMy || !habit?.ongoing || syncing} />
                     <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar} setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef} />
                     <TA
-                        placeholder="Комментарий"
+                        placeholder={t("habitPageUi.day.commentPlaceholder")}
                         taRef={textAreaRef}
                         readOnly={!isMy || (habit && !habit.ongoing)}
                         onChange={handleTextareaChange}
