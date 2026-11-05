@@ -4,7 +4,7 @@ import type { SearchableSetting } from "../Settings";
 import type { ElementType } from "react";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import { MirrorRectangularIcon } from "lucide-react";
-import { isMobile } from "react-device-detect";
+import useCompactLayout from "../../../components/hooks/utils/useCompactLayout";
 import { reactionsArr } from "../../../components/ts/utils/emojies";
 import { ChatCircleIcon, ListNumbersIcon } from "@phosphor-icons/react/dist/ssr";
 
@@ -18,6 +18,7 @@ export interface SearchableSection {
 export function useSearchableSettings(): SearchableSection[] {
     const { t } = useTranslation("settings");
     const { isDark, decor, blur, emote, lang } = useSettings();
+    const isMobile = useCompactLayout();
 
     return [
         {
