@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../scss/ChosenDay.scss"
@@ -11,6 +12,7 @@ import { todayStrFunc } from "../../../../components/ts/utils/dateToStr";
 import ChosenDayDate from "../../utils/ChosenDayDate";
 
 export default function ChosenDay() {
+    const { t } = useTranslation("common");
     const { chosenDay, calendar } = useCalendar()
     const { markDone } = useDone()
     const { habits } = useHabits()
@@ -54,10 +56,10 @@ export default function ChosenDay() {
         const et = habit?.end_time;
 
         if (st && et && st !== null) {
-            return ` с ${st} до ${et}`;
+            return ` ${t("habitPageUi.day.fromTo", { start: st, end: et })}`;
         }
         if (st || et) {
-            return st ? `в ${st}` : `до ${et}`
+            return st ? t("habitPageUi.day.at", { time: st }) : t("habitPageUi.day.until", { time: et })
         }
         return "";
     };
