@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import "../../scss/HabitSettings.scss";
 import { useState, useCallback, useEffect } from "react";
 import Toggler from "../../../../components/ts/Toggler";
@@ -15,6 +16,7 @@ function SettingHint({ text }: { text: string }) {
 }
 
 export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlideProps) {
+    const { t } = useTranslation("common");
     const { habitSettings, habitTimer, habit } = useTheHabit();
     const { setNewMetricType, setNewScheduleBool, setNewAutoScheduleCompletion, setNewOngoing } = useUpHabit();
     const { setDeleteConfirm } = useDelete()
@@ -34,11 +36,11 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
     }, [habitSettings.auto_schedule_completion]);
 
     const metrics: Option[] = [
-        { label: "Таймер", value: "timer"},
-        { label: "Счётчик", value: "counter"},
-        { label: "Расписание", value: "schedule"},
-        { label: "Список задач", value: "checklist"},
-        { label: "Нет", value: "done"},
+        { label: t("habitUi.metric.timer"), value: "timer"},
+        { label: t("habitUi.metric.counter"), value: "counter"},
+        { label: t("habitUi.metric.schedule"), value: "schedule"},
+        { label: t("habitUi.metric.checklist"), value: "checklist"},
+        { label: t("habitUi.metric.done"), value: "done"},
     ];
 
     const availableMetrics = metrics.filter((m) => {
@@ -47,9 +49,9 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
     });
 
     const autoOptions: Option[] = [
-        { label: "Выполнен один блок расписания", value: "one" },
-        { label: "Выполнены все блоки расписания", value: "all" },
-        { label: "Никогда", value: "none" },
+        { label: t("habitUi.auto.one"), value: "one" },
+        { label: t("habitUi.auto.all"), value: "all" },
+        { label: t("habitUi.auto.none"), value: "none" },
     ];
 
     const handleMetricChange = (value: string) => {
@@ -76,11 +78,11 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
         setNewAutoScheduleCompletion(habit.id, val);
     };
     const metricText: Record<metricsType, string> = {
-        timer: "Фиксирует продолжительность выполнения.",
-        counter: "Подходит для количественных привычек.",
-        schedule: "Выполнение заданных в расписании блоков.",
-        checklist: "Фиксированный список задач.",
-        done: "Без измерения. Возможность создавать список задач на день."
+        timer: t("habitUi.metricHint.timer"),
+        counter: t("habitUi.metricHint.counter"),
+        schedule: t("habitUi.metricHint.schedule"),
+        checklist: t("habitUi.metricHint.checklist"),
+        done: t("habitUi.metricHint.done")
     };
 
     if (!habit) return null;
@@ -90,7 +92,7 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
             {/* Расписание */}
             <div className="redHabitBlock but" onClick={() => handleScheduleChange(!scheduleToggle)}>
                 <div className="redHabitStr">
-                    <span className="redHabitSpan">Расписание:</span>
+                    <span className="redHabitSpan">{t("habitUi.schedule")}</span>
                     <span className="redHabitToggler">
                         <Toggler
                             state={scheduleToggle}
@@ -100,15 +102,15 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
                     </span>
                 </div>
                 {habit?.periodicity === "sometimes" ? (
-                    <SettingHint text="Расписание недоступно для периодичности «иногда»." />
+                    <SettingHint text={t("habitUi.scheduleUnavailable")} />
                 ) : (
-                    <SettingHint text="Позволяет создать набор временных интервалов, привязанных к дням недели, с поддержкой раздельной настройки для чётных и нечётных недель." />
+                    <SettingHint text={t("habitUi.scheduleHint")} />
                 )}
             </div>
 
             {/* Тип измерения */}
             <div className={`redHabitBlock ${isMetricDisabled ? "disabled" : ""}`}>
-                <span className="redHabitSpan">Тип измерения:</span>
+                <span className="redHabitSpan">{t("habitUi.metricType")}</span>
                 <SelectList
                     className="redHabitSL habitSettingsSL"
                     arr={availableMetrics}
@@ -118,7 +120,7 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
                     id="habitSettingsSLMetric"
                 />
                 {isMetricDisabled ? (
-                    <SettingHint text="Нельзя изменить пока запущен таймер." />
+                    <SettingHint text={t("habitUi.timerRunning")} />
                 ) : (
                     <SettingHint
                         text={metricText[metric_type] ?? metricText.done}
@@ -129,7 +131,7 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
             {/* Автоматически выполнить */}
             {metric_type === "schedule" && (
                 <div className="redHabitBlock">
-                    <span className="redHabitSpan">Автоматически выполнить, если:</span>
+                    <span className="redHabitSpan">{t("habitUi.autoCompletion")}</span>
                     <SelectList
                         className="redHabitSL"
                         arr={autoOptions}
@@ -141,10 +143,10 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
                     <SettingHint
                         text={
                             autoCompleteMode === "one"
-                                ? "Автоматически считает активность выполненной в этот день, если выполнен один блок расписания."
+                                ? t("habitUi.autoHint.one")
                                 : autoCompleteMode === "all"
-                                ? "Автоматически считает активность выполненной в этот день, если выполнены все блоки расписания."
-                                : "Выполнение фиксируется только вручную, независимо от блоков в расписании."
+                                ? t("habitUi.autoHint.all")
+                                : t("habitUi.autoHint.none")
                         }
                     />
                 </div>
@@ -155,22 +157,22 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
                         <div className="redHabitBlock but danger" onClick={() => isArchived !== undefined && setNewOngoing(habit.id, isArchived)}>
                             {!isArchived ? (
                                 <>
-                                    <span className="redHabitSpan but"> <BoxArrowDownIcon/> Завершить и архивировать</span>
+                                    <span className="redHabitSpan but"> <BoxArrowDownIcon/> {t("habitUi.archive")}</span>
                                     <div className="habitSettingHint">
-                                        Активность будет завершена и перемещена в архив. Статистика сохранится и будет доступна для просмотра, новые выполнения отмечать нельзя.
+                                        {t("habitUi.archiveHint")}
                                     </div>
                                 </>
                             ) : (
                                 <>
-                                    <span className="redHabitSpan but"> <BoxArrowDownIcon/> Разархивировать</span>
+                                    <span className="redHabitSpan but"> <BoxArrowDownIcon/> {t("habitUi.unarchive")}</span>
                                     <div className="habitSettingHint">
-                                        Активность снова станет выполнимой и вернётся в список текущих.
+                                        {t("habitUi.unarchiveHint")}
                                     </div>
                                 </>
                             )}
                         </div>
                     
-                    {/* Удалить */}
+                    {/* {t("habitUi.delete")} */}
                     <div className="redHabitBlock but danger" onClick={() => {
                         setDeleteConfirm({goal:"habit", id:habit.id, name:habit.name})
                         setBlackout({seted:true, module:"Delete"})
@@ -179,7 +181,7 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
                             <Trash/> Удалить
                         </span>
                         <div className="habitSettingHint">
-                            Активность и вся связанная статистика будут удалены без возможности восстановления.
+                            {t("habitUi.deleteHint")}
                         </div>
                     </div>
                 </>
