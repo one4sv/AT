@@ -74,6 +74,31 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(page.locator(".wallpaperStudioApply")).toBeEnabled();
     });
 
+    test("wallpaper sheet can be collapsed and expanded by a vertical drag", async ({ page }) => {
+        await page.goto("/wallpapers");
+        const peek = page.locator(".wallpaperStudioPeekButton");
+        const bounds = await peek.boundingBox();
+        expect(bounds).not.toBeNull();
+        if (!bounds) return;
+        const x = bounds.x + bounds.width / 2;
+        const y = bounds.y + bounds.height / 2;
+        await page.mouse.move(x, y);
+        await page.mouse.down();
+        await page.mouse.move(x, y + 95, { steps: 6 });
+        await page.mouse.up();
+        await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
+
+        const nextBounds = await peek.boundingBox();
+        if (!nextBounds) return;
+        const nextX = nextBounds.x + nextBounds.width / 2;
+        const nextY = nextBounds.y + nextBounds.height / 2;
+        await page.mouse.move(nextX, nextY);
+        await page.mouse.down();
+        await page.mouse.move(nextX, nextY - 110, { steps: 6 });
+        await page.mouse.up();
+        await expect(page.locator(".wallpaperStudio.expanded")).toBeVisible();
+    });
+
     test("studio has a separate wallpaper settings route and a responsive sliding sheet", async ({ page }, testInfo) => {
         await page.goto("/wallpapers");
         await expect(page.locator(".wallpaperStudioSheet")).toBeVisible();
@@ -91,6 +116,8 @@ test.describe("appearance and wallpaper controls", () => {
 
     test("studio desktop sidebar stays under manual control regardless of setting", async ({ page }, testInfo) => {
         test.skip(testInfo.project.name !== "chromium-desktop", "Desktop studio only");
+        await page.goto("/settings/pers");
+        await page.locator('[data-setting-id="layout"] .selectorElement').nth(1).click();
         await page.goto("/wallpapers");
         await expect(page.locator(".sideMenu.open")).toBeVisible();
         await page.locator(".wallpaperStudioHeaderLeft .wallpaperStudioIcon").first().click();
