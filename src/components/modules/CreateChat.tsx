@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 
 export default function CreateChat() {
     const { t } = useTranslation("settings");
+    const { t: tc } = useTranslation("common");
     const { search, refetchContacts, findContacts } = useContacts();
     const { setBlackout, blackout } = useBlackout();
     const { members, refetchGroup, group } = useGroup();
@@ -54,7 +55,7 @@ export default function CreateChat() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             if (error?.name === "CanceledError" || error?.code === "ERR_CANCELED") return;
-            showNotification("error", error?.response?.data?.error || "Ошибка загрузки");
+            showNotification("error", error?.response?.data?.error || tc("chatMenu.loadFailed"));
         } finally {
             if (!controller.signal.aborted) {
                 setLoadingList(false);
@@ -82,12 +83,12 @@ export default function CreateChat() {
             path = "group/addusers";
         } else {
             if (!name.trim()) {
-                showNotification("error", "Введите название чата");
+                showNotification("error", tc("chatMenu.enterChatName"));
                 setLoadingCreateChat(false);
                 return;
             }
             if (chosenCons.length < 1) {
-                showNotification("error", "Выберите хотя бы одного участника");
+                showNotification("error", tc("chatMenu.selectMember"));
                 setLoadingCreateChat(false);
                 return;
             }
@@ -116,7 +117,7 @@ export default function CreateChat() {
             refetchContacts();
         } catch (error) {
             const err = error as { response?: { data?: { error?: string } } };
-            showNotification("error", err?.response?.data?.error || "Не удалось создать чат");
+            showNotification("error", err?.response?.data?.error || tc("chatMenu.createFailed"));
         } finally {
             setLoadingCreateChat(false);
         }
@@ -233,9 +234,9 @@ export default function CreateChat() {
                 {loadingCreateChat ? (
                     <LoaderSmall />
                 ) : blackout.point === "InviteUser" ? (
-                    "Подтвердить"
+                    tc("chatMenu.confirm")
                 ) : (
-                    "Создать"
+                    tc("chatMenu.create")
                 )}
             </button>
         </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CheckIcon, XIcon, ArrowClockwiseIcon, FlagIcon } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
@@ -21,6 +22,7 @@ interface Invitation {
 }
 
 export default function HabitInvitation({ messageId, recipientId }: { messageId: number; recipientId: string }) {
+    const { t } = useTranslation("common");
     const [ invitation, setInvitation ] = useState<Invitation | null>(null);
     const [ loading, setLoading ] = useState(true);
     const [ saving, setSaving ] = useState(false);
@@ -40,7 +42,7 @@ export default function HabitInvitation({ messageId, recipientId }: { messageId:
             setInvitation(res.data.invitation);
             setError("");
         } catch {
-            if (!controller.signal.aborted) setError("Не удалось загрузить приглашение");
+            if (!controller.signal.aborted) setError(t("chatMenu.invitationLoadFailed"));
         } finally {
             if (!controller.signal.aborted) setLoading(false);
         }
@@ -77,7 +79,7 @@ export default function HabitInvitation({ messageId, recipientId }: { messageId:
             if (status === "accepted") await refetchHabits();
         } catch {
             await load();
-            setError("Не удалось ответить на приглашение. Попробуйте ещё раз.");
+            setError(t("chatMenu.invitationRespondFailed"));
         } finally {
             submitting.current = false;
             setSaving(false);
@@ -86,28 +88,28 @@ export default function HabitInvitation({ messageId, recipientId }: { messageId:
 
     const Icon = tags.find(tag => tag.value === invitation?.habit.tag)?.icon || FlagIcon;
     const time = [invitation?.habit.start_time, invitation?.habit.end_time].filter(Boolean).join(" — ");
-    const statusText = invitation?.status === "accepted" ? "Приглашение принято" : invitation?.status === "declined" ? "Приглашение отклонено" : invitation?.status === "cancelled" ? "Приглашение отменено" : "Ожидает ответа";
+    const statusText = invitation?.status === "accepted" ? t("chatMenu.invitationAccepted") : invitation?.status === "declined" ? t("chatMenu.invitationDeclined") : invitation?.status === "cancelled" ? t("chatMenu.invitationCancelled") : t("chatMenu.invitationPending");
 
     return (
         <div className="habitInvitation" onDoubleClick={event => event.stopPropagation()}>
-            <div className="habitInvitationTitle">Приглашение в активность</div>
-            {loading && <div role="status">Загрузка…</div>}
+            <div className="habitInvitationTitle">{t("chatMenu.invitationTitle")}</div>
+            {loading && <div role="status">{t("chatMenu.loading")}</div>}
             {invitation && <>
                 <Link className="habit habitInvitationHabit" to={`/habit/${invitation.habit.id}`}>
                     <div className="habitIcon"><Icon className="habitIconSvg" /></div>
                     <div className="habitInfo">
                         <div className="habitName">{invitation.habit.name}</div>
-                        <div className="habitPer">{time || (invitation.habit.periodicity === "everyday" ? "Каждый день" : "Совместная активность")}</div>
+                        <div className="habitPer">{time || (invitation.habit.periodicity === "everyday" ? t("habitUi.period.everyday") : t("chatMenu.sharedActivity"))}</div>
                     </div>
                 </Link>
                 {invitation.can_respond ? <div className="habitInvitationActions">
-                    <button type="button" className="habitInvationButt cancel" disabled={saving} onClick={() => void respond("declined")}><XIcon size={18}/>Отклонить</button>
-                    <button type="button" className="habitInvationButt accept" disabled={saving} onClick={() => void respond("accepted")}><CheckIcon size={18}/>Принять</button>
+                    <button type="button" className="habitInvationButt cancel" disabled={saving} onClick={() => void respond("declined")}><XIcon size={18}/>{t("chatMenu.decline")}</button>
+                    <button type="button" className="habitInvationButt accept" disabled={saving} onClick={() => void respond("accepted")}><CheckIcon size={18}/>{t("chatMenu.accept")}</button>
                 </div> : <div className="habitInvitationStatus" role="status">{statusText}</div>}
             </>}
             {error && <div className="habitInvitationError" role="alert">
                 <span>{error}</span>
-                <button type="button" onClick={() => void load()} aria-label="Повторить загрузку"><ArrowClockwiseIcon /></button>
+                <button type="button" onClick={() => void load()} aria-label={t("chatMenu.retry")}><ArrowClockwiseIcon /></button>
             </div>}
         </div>
     );
