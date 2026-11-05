@@ -212,3 +212,5 @@
 - Account: first/second tab must allow vertical swipe-down to reveal AccInfo; the second tab must not stop touchstart propagation before direction detection. Clicking active tab should only scroll content to top, not toggle Info.
 - EN/RU: verify ShareAcc, ConfirmAction, HabitSettings and HabitPage, chat message replies and chat search dates. Modal error/action labels must be translated; no hardcoded Russian UI strings.
 - Real iPhone/desktop QA required; TypeScript/Vite alone cannot validate touch events.
+
+- [ ] Инвариант английских названий: `0.0 The Beginning` (14.07.2025), `0.1 The Foundation`, `0.6.2 The New Palette`, `0.7 The Castle` одинаковы на RU и EN.
