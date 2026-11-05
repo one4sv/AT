@@ -98,8 +98,10 @@ export default function MobileLayout({ children }: LayoutProps) {
     });
 
     useEffect(() => {
-        setDontHandleOther(translateX > -100);
-    }, [setDontHandleOther, translateX]);
+        // In wallpaper studio the desktop SideMenu is non-modal: page
+        // sliders, selectors and preview gestures must remain usable.
+        setDontHandleOther(location.pathname.startsWith("/wallpapers") ? false : translateX > -100);
+    }, [setDontHandleOther, translateX, location.pathname]);
 
     const hideHeader =
         location.pathname.startsWith("/chat") ||
