@@ -52,7 +52,8 @@
   "contactsList": {
     "usersNotFound": "Пользователи не найдены",
     "noOneHere": "Упс! А здесь никого нет!",
-    "findInterlocutor": "Найти собеседника"
+    "findInterlocutor": "Найти собеседника",
+    "refresh": "Обновить"
   },
   "contact": {
     "typing": "Печатает...",
