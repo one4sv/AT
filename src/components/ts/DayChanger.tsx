@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 export default function DayChanger({
     chosenDays,
     toggleDay,
@@ -9,9 +10,10 @@ export default function DayChanger({
     showOnly?: boolean | undefined;
     chosenArr?: number[] | null;
 }) {
+    const { t } = useTranslation("common");
     return (
         <div className="dayChanger">
-            {chosenDays.map(({ value, label, chosen }) => {
+            {chosenDays.map(({ value, chosen }) => {
                 const wasChosen = chosenArr?.some(c => c === value);
                 return (
                     <button
@@ -20,7 +22,7 @@ export default function DayChanger({
                         disabled={!!showOnly}
                         className={chosen ? "active" : wasChosen ? "was" : ""}
                     >
-                        {label}
+                        {t(`habitUi.weekdays.${value}`)}
                     </button>
                 );
             })}

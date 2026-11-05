@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { CheckCircle, Circle, PushPin, PushPinSlash } from "@phosphor-icons/react";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import { useDone } from "../../../hooks/DoneHook";
@@ -6,6 +7,7 @@ import DeleteButton from "../buttons/DeleteButton";
 import LinkButton from "../buttons/LinkButton";
 
 export default function HabitMenu() {
+    const { t } = useTranslation("common");
     const { menu } = useContextMenu();
     const { markDone } = useDone();
     const { setPin } = useUpHabit();
@@ -26,7 +28,7 @@ export default function HabitMenu() {
                     onClick={() => markDone(habit.id, dateStr)}
                 >
                     {habit.done ? <CheckCircle weight="fill" /> : <Circle />}
-                    {habit.done ? "Выполнено" : "Выполнить"}
+                    {habit.done ? t("habitUi.done") : t("habitUi.complete")}
                 </div>
             )}
 
@@ -38,7 +40,7 @@ export default function HabitMenu() {
                     onClick={() => setPin(habit.id, !habit.pinned)}
                 >
                     {habit.pinned ? <PushPinSlash /> : <PushPin />}
-                    {habit.pinned ? "Открепить" : "Закрепить"}
+                    {habit.pinned ? t("habitUi.unpin") : t("habitUi.pin")}
                 </div>
             )}
 

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { BoxArrowDownIcon } from "@phosphor-icons/react";
 import HabitSave from "./HabitSave";
@@ -12,6 +13,7 @@ import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import { useEffect, useRef, useState } from "react";
 
 export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean, isArchived:boolean, isReadOnly: boolean}) {
+    const { t } = useTranslation("common");
     const { habit } = useTheHabit()
     const { blackout } = useBlackout()
     const { showSlide, showHabitMenu, setShowHabitMenu, dontHandleOther, setDontHandle } = useSideMenu()
@@ -156,12 +158,11 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
                         >
                             <span className="redHabitSpan but">
                                 <BoxArrowDownIcon />
-                                Разархивировать
+                                {t("habitUi.unarchive")}
                             </span>
 
                             <div className="habitSettingHint">
-                                Активность снова станет выполнимой и
-                                вернётся в список текущих.
+                                {t("habitUi.unarchiveHint")}
                             </div>
                         </div>
                     )}

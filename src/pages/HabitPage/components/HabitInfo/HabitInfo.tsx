@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import TA from "../../../../components/ts/TA";
 import { useState, useEffect } from "react";
 import SelectList from "../../../../components/ts/SelectList";
@@ -9,7 +10,7 @@ import { initialChosenDays } from "../../../../components/ts/initialChosenDays";
 import { WarningCircle } from "@phosphor-icons/react";
 import { TagIcon } from "../../utils/TagIcon";
 import { dateToStrFormat } from "../../../../components/ts/utils/dateToStr";
-import { perHint } from "../../../../components/ts/utils/perHont";
+
 
 interface RedHabitProps {
     habit: Habit;
@@ -17,6 +18,7 @@ interface RedHabitProps {
 }
 
 export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
+    const { t } = useTranslation("common");
     const {
         setNewName, setNewDescription, setNewPeriodicity,
         setNewDays, setNewStartTime, setNewEndTime, setNewTag,
@@ -70,10 +72,10 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     }, [habit]);
     
     const periodicityArr = [
-        { label: "каждый день", value: "everyday" },
-        { label: "несколько дней в неделю", value: "weekly" },
-        { label: "циклическая", value: "cycle"},
-        { label: "иногда", value: "sometimes" },
+        { label: t("habitUi.period.everyday"), value: "everyday" },
+        { label: t("habitUi.period.weekly"), value: "weekly" },
+        { label: t("habitUi.period.cycle"), value: "cycle"},
+        { label: t("habitUi.period.sometimes"), value: "sometimes" },
     ];
 
     const infoReadOnly = !(habit.access?.can_edit_info ?? !readOnly) || !ongoing;
@@ -114,8 +116,8 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         <WarningCircle />
                     </div>
                     <div className="thisarchivedText">
-                        <span className="thisarchived1str">Активность перенесена в архив.</span>
-                        {!readOnly && <span className="thisarchived2str">Её невозможно обновить.</span>}
+                        <span className="thisarchived1str">{t("habitUi.archived")}</span>
+                        {!readOnly && <span className="thisarchived2str">{t("habitUi.archivedReadOnly")}</span>}
                     </div>
                 </div>
             )}
@@ -126,7 +128,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     </div>
                 )}
                 <div className="addHabitWrapper">
-                    <label htmlFor="redHabitName">Название</label>
+                    <label htmlFor="redHabitName">{t("habitUi.name")}</label>
                     <input
                         id="redHabitName"
                         type="text"
@@ -144,7 +146,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                 </div>
             </div>
             <div className="addHabitWrapper">
-                <label htmlFor="redHabitDesc">Описание</label>
+                <label htmlFor="redHabitDesc">{t("habitUi.description")}</label>
                 <TA
                     id="redHabitDesc"
                     className="addHabitInput redHabitDesc"
@@ -163,7 +165,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             </div>
 
             <div className="inpWrapperRedHabit">
-                <label>Периодичность</label>
+                <label>{t("habitUi.periodicity")}</label>
                 <SelectList
                     placeholder=""
                     className="redHabitSL"
@@ -176,13 +178,13 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     selected={periodicity || habit.periodicity}
                 />
                 <div className="settingHint">
-                    {perHint[(periodicity || habit.periodicity) as keyof typeof perHint]}
+                    {t(`habitUi.periodHint.${periodicity || habit.periodicity}`)}
                 </div>
             </div>
             {(periodicity || habit.periodicity) === "cycle" && (
                 <div className="addHabitTimeWrapper">
                     <div className="addHabitWrapper time">
-                        <label htmlFor="inputActive">Активных дней</label>
+                        <label htmlFor="inputActive">{t("habitUi.activeDays")}</label>
                         <input
                             type="number"
                             id="inputActive"
@@ -200,7 +202,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     </div>
 
                     <div className="addHabitWrapper time">
-                        <label htmlFor="inputRest">Дней отдыха</label>
+                        <label htmlFor="inputRest">{t("habitUi.restDays")}</label>
                         <input
                             type="number"
                             id="inputRest"
@@ -223,10 +225,10 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             )}
             <div className="addHabitTimeWrapper">
                 <div className="addHabitWrapper time">
-                    <label>Время (начало)</label>
+                    <label>{t("habitUi.startTime")}</label>
                     <input
                         type="text"
-                        placeholder="чч:мм"
+                        placeholder="hh:mm"
                         className="addHabitInput"
                         value={startTime}
                         readOnly={readOnly || !ongoing}
@@ -238,10 +240,10 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     />
                 </div>
                 <div className="addHabitWrapper time">
-                    <label>Время (конец)</label>
+                    <label>{t("habitUi.endTime")}</label>
                     <input
                         type="text"
-                        placeholder="чч:мм"
+                        placeholder="hh:mm"
                         className="addHabitInput"
                         value={endTime}
                         readOnly={readOnly || !ongoing}
@@ -255,12 +257,12 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             </div>
             <div className="addHabitWrapper">
                 <div className="addHabitWrapper date">
-                    <div className="AddHabitDateSpan">Дата начала:</div>
+                    <div className="AddHabitDateSpan">{t("habitUi.startDate")}</div>
                     <div className="AddHabitDateSpan">{dateToStrFormat(startDate)}</div>
                 </div>
                 {endDate && (
                     <div className="addHabitWrapper date">
-                        <div className="AddHabitDateSpan">Дата окончания:</div>
+                        <div className="AddHabitDateSpan">{t("habitUi.endDate")}</div>
                         <div className="AddHabitDateSpan">{dateToStrFormat(endDate)}</div>
                     </div>
                 )}

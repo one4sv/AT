@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import TA from "../ts/TA";
 import { useState, useEffect } from "react"
 import "../../scss/modules/addHabit.scss"
@@ -11,10 +12,11 @@ import TagSelector from "../ts/TagSelector"
 import DayChanger from "../ts/DayChanger"
 import { initialChosenDays } from "../ts/initialChosenDays"
 import { isMobile } from "react-device-detect"
-import { perHint } from "../ts/utils/perHont";
+
 import { api } from "../ts/api";
 
 const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
+    const { t } = useTranslation("common");
     const { refetchHabits } = useHabits()
     const { setBlackout } = useBlackout()
     const { showNotification } = useNote()
@@ -30,10 +32,10 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     const [ chosenDays, setChosenDays ] = useState(initialChosenDays)
 
     const periodicityArr = [
-        { label: "каждый день", value: "everyday" },
-        { label: "несколько дней в неделю", value: "weekly" },
-        { label: "циклическая", value: "cycle"},
-        { label: "иногда", value: "sometimes" },
+        { label: t("habitUi.period.everyday"), value: "everyday" },
+        { label: t("habitUi.period.weekly"), value: "weekly" },
+        { label: t("habitUi.period.cycle"), value: "cycle"},
+        { label: t("habitUi.period.sometimes"), value: "sometimes" },
     ];
 
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -76,37 +78,37 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             cycle_days_rest:Number(cycle_days_rest) || null,
         };
         if (!name || !selectedperiodicity || (selectedperiodicity === "weekly" && !chosenDays)) {
-            showNotification("error", "Заполните все поля")
+            showNotification("error", t("habitUi.fillFields"))
             return
         }
         if (startTime && !timeInputPattern.test(startTime)) {
-            showNotification("error", "Неверный формат времени начала");
+            showNotification("error", t("habitUi.invalidStart"));
             return;
         }
         if (endTime && !timeInputPattern.test(endTime)) {
-            showNotification("error", "Неверный формат времени конца");
+            showNotification("error", t("habitUi.invalidEnd"));
             return;
         }
         if (!startTime && endTime) {
-            showNotification("error", "Заполните время начала");
+            showNotification("error", t("habitUi.enterStart"));
             return;
         }
         if (
             selectedperiodicity === "cycle" && (!cycle_days_active || !cycle_days_rest)
         ) {
-            showNotification("error", "Укажите дни активности и отдыха");
+            showNotification("error", t("habitUi.enterCycle"));
             return;
         }
         try {
             const res = await api.post(`addhabit`, payload);
             if (res.data.success) {
                 setBlackout({ seted: false, module: undefined });
-                showNotification("success", "Успешно добавлено")
+                showNotification("success", t("habitUi.added"))
             }
             refetchHabits()
         } catch (err) {
             console.error("Ошибка при отправке:", err);
-            showNotification("error", "Не удалось добавить");
+            showNotification("error", t("habitUi.addFailed"));
         }
     };
     function toggleDay(value: number) {
@@ -127,12 +129,12 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     return (
         <div className={`addHabitDiv ${isMobile ? "mobile" : ""}`} ref={ref}>
             <div className="addHabitWrapper">
-                <label htmlFor="inputName">Название</label>
+                <label htmlFor="inputName">{t("habitUi.name")}</label>
                 <input type="text" id="inputName" className="inputName addHabitInput" maxLength={40} onChange={(e)=>setName(e.currentTarget.value)}/>
                 <span>{name.length}/40</span>
             </div>
             <div className="addHabitWrapper">
-                <label htmlFor="inputDesc">Описание</label>
+                <label htmlFor="inputDesc">{t("habitUi.description")}</label>
                 <TA id="inputDesc" className="inputDesc addHabitInput" maxLength={120} taRef={textAreaRef}onChange={(e) => setDescription(e.currentTarget.value)}></TA>
                 <span>{desc.length}/120</span>
             </div>            
@@ -140,16 +142,16 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
                 <TagSelector selectedTag={selectedTag} setSelectedTag={setSelectedTag}/>
             </div>
             <div className="inpWrapperAddHabit">
-                <label htmlFor="addHabitSL">Переодичность</label>
+                <label htmlFor="addHabitSL">{t("habitUi.periodicity")}</label>
                 <SelectList id="addHabitSL" placeholder="" className="redHabitSL" chevron={true} arr={periodicityArr} hide={true} prop={setSelectedperiodicity} readOnly={true} extraFunction={clearInputPer} selected={undefined}/>
                 <div className="settingHint">
-                    {perHint[selectedperiodicity as keyof typeof perHint]}
+                    {selectedperiodicity && t(`habitUi.periodHint.${selectedperiodicity}`)}
                 </div>
             </div>
             {selectedperiodicity === "cycle" && (
                 <div className="addHabitTimeWrapper">
                     <div className="addHabitWrapper time">
-                        <label htmlFor="inputActive">Активных дней</label>
+                        <label htmlFor="inputActive">{t("habitUi.activeDays")}</label>
                         <input
                             type="number"
                             id="inputActive"
@@ -163,7 +165,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
                     </div>
 
                     <div className="addHabitWrapper time">
-                        <label htmlFor="inputRest">Дней отдыха</label>
+                        <label htmlFor="inputRest">{t("habitUi.restDays")}</label>
                         <input
                             type="number"
                             id="inputRest"
@@ -182,7 +184,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             )}
             <div className="addHabitTimeWrapper">
                 <div className="addHabitWrapper time">
-                    <label htmlFor="inputStartTime">Время(начало)</label>
+                    <label htmlFor="inputStartTime">{t("habitUi.startTime")}</label>
                     <input type="text" id="inputStartTime" className="inputStartTime addHabitInput" value={startTime} onChange={(e) => {
                         const formatted = formatTimeInput(e.target.value);
                         if (formatted.length <= 5) {
@@ -191,7 +193,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
                     }}/>
                 </div>
                 <div className="addHabitWrapper time">
-                    <label htmlFor="inputEndTime">Время(конец)</label>
+                    <label htmlFor="inputEndTime">{t("habitUi.endTime")}</label>
                     <input type="text" id="inputEndTime" className="inputEndTime addHabitInput" value={endTime} onChange={(e) => {
                         const formatted = formatTimeInput(e.target.value);
                         if (formatted.length <= 5) {
@@ -200,8 +202,8 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
                     }}/>
                 </div>
             </div>
-            <button className="addHabitGoal">Добавить цель</button>
-            <button className="addHabitSave" onClick={fetchAddHabit}>Сохранить</button>
+            <button className="addHabitGoal">{t("habitUi.addGoal")}</button>
+            <button className="addHabitSave" onClick={fetchAddHabit}>{t("habitUi.save")}</button>
         </div>
     )
 })
