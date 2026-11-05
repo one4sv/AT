@@ -10,6 +10,7 @@ import { useSettings } from "../hooks/SettingsHook";
 import type { BackgroundEffects, ContourPattern } from "../context/SettingsContext";
 import { Background } from "../ts/utils/background";
 import { backgroundGroups } from "../ts/utils/backgroundCatalog";
+import { BackgroundHelpButton } from "./BackgroundHelp";
 import { supportsBackgroundMotion } from "../ts/utils/BackgroundScene";
 import { ContourPatternPicker } from "../../pages/Settings/components/SettingsTabs/ContourPatternPicker";
 import SeekBar from "../../pages/Settings/components/SeekBar";
@@ -201,6 +202,7 @@ export default function BackgroundFullscreen() {
 
     useEffect(() => {
         const onKeyDown = (event: KeyboardEvent) => {
+            if (blackout.module !== "BackgroundFullscreen") return;
             if ((event.target as HTMLElement)?.closest("input, textarea, select")) return;
             if (event.key === "Escape") {
                 event.stopPropagation();
@@ -218,7 +220,7 @@ export default function BackgroundFullscreen() {
         };
         document.addEventListener("keydown", onKeyDown, true);
         return () => document.removeEventListener("keydown", onKeyDown, true);
-    }, [changeSlide, close, panelOpen]);
+    }, [blackout.module, changeSlide, close, panelOpen]);
 
     useEffect(() => () => {
         if (timer.current) clearTimeout(timer.current);
@@ -352,7 +354,10 @@ export default function BackgroundFullscreen() {
             {panelTab === "backgrounds" ? <>
                 <div className="backgroundFullscreenPanelHeader">
                     <span>{t("backgroundLibrary.previewBackgrounds")}</span>
-                    <span>{t("backgroundLibrary.previewOnly")}</span>
+                    <div className="backgroundFullscreenPanelMeta">
+                        <span>{t("backgroundLibrary.previewOnly")}</span>
+                        <BackgroundHelpButton/>
+                    </div>
                 </div>
                 <div className="backgroundFullscreenChoicesViewport" ref={galleryViewport}
                     onPointerDown={handleGalleryPointerDown}
