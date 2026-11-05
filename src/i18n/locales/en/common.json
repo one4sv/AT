@@ -233,6 +233,17 @@
     }
   },
   "habitPageUi": {
+    "charts": {
+      "weekLabel": "Week {{week}}, {{month}}",
+      "andMore": "and {{count}} more",
+      "noCompleted": "No completions",
+      "noSkipped": "No missed activities",
+      "noFree": "No free days",
+      "streakLength": "Streak length",
+      "streakTooltip": "Streak: {{days}} days",
+      "breakLength": "Break length",
+      "breakTooltip": "Break: {{days}} days"
+    },
     "progress": {
       "noSession": "Session not started",
       "startedAt": "session started at {{time}}",
