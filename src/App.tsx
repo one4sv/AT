@@ -22,6 +22,8 @@ import Settings from './pages/Settings/Settings';
 import Landing from './pages/Landing/Landing';
 import Info from './pages/Info/Info';
 import Language from './pages/Settings/Language';
+import WallpaperStudio from "./pages/WallpaperStudio/WallpaperStudio";
+import MobileLayout from "./components/layout/MobileLayout";
 import PasswordAccess from './pages/Settings/PasswordAccess';
 import AuthorizedDevices from './pages/Settings/AuthorizedDevices';
 import CookieConsent from './components/ts/CookieConsent';
@@ -48,6 +50,7 @@ function App() {
                     <Route path="/settings/password" element={<PasswordAccess />} />
                     <Route path="/settings/devices" element={<AuthorizedDevices />} />
                     {window.location.hostname === "localhost" && <Route path="/admin" element={<Admin />} />}
+                    <Route path="/wallpapers/:tab?" element={<MobileLayout><WallpaperStudio/></MobileLayout>}/>
                     <Route path="/" element={<ResponsiveLayout />}>
                         <Route index element={<Main />} />
                         <Route path="post/new" element={<PostEditor />} />
