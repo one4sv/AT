@@ -1,4 +1,5 @@
 import type { Habit } from "../../../components/context/HabitsContext";
+import i18n from "../../../i18n/i18n";
 
 export type StreakView = {
     cl: string;
@@ -17,7 +18,7 @@ export const getStreakView = (
     if (habit.periodicity === "sometimes") {
         return {
             cl: "null",
-            text: "Стрик недоступен",
+            text: i18n.t("habitPageUi.streak.unavailable", { ns: "common" }),
             showCount: false,
             count:0
         };
@@ -30,7 +31,7 @@ export const getStreakView = (
     ) {
         return {
             cl: "start",
-            text: isMy ? "Сегодня можно отдохнуть." : "Сегодня выходной",
+            text: isMy ? i18n.t("habitPageUi.streak.restToday", { ns: "common" }) : i18n.t("habitPageUi.streak.restDay", { ns: "common" }),
             showCount: true,
             count: streak,
         };
@@ -39,7 +40,7 @@ export const getStreakView = (
     if (showYesterdayWarning) {
         return {
             cl: "warn",
-            text: isMy ? "Не потеряйте стрик!" : "Сегодня не выполнено",
+            text: isMy ? i18n.t("habitPageUi.streak.keepStreak", { ns: "common" }) : i18n.t("habitPageUi.streak.notCompleted", { ns: "common" }),
             showCount: true,
             count: streakUntilYesterday,
         };
@@ -48,21 +49,21 @@ export const getStreakView = (
     if (streak === 0) {
         return {
             cl: "null",
-            text: isMy ? "Никогда не поздно начать!" : "streak: 0",
+            text: isMy ? i18n.t("habitPageUi.streak.neverTooLate", { ns: "common" }) : i18n.t("habitPageUi.streak.zero", { ns: "common" }),
             showCount: false,
             count:0
         };
     }
 
-    if (streak >= 90) return { cl: "max", text: isMy ? "Максимальная серия!" : undefined, showCount: true, count: streak };
-    if (streak >= 60) return { cl: "comp", text: isMy ? "Эпическое достижение!" : undefined, showCount: true, count: streak };
-    if (streak >= 30) return { cl: "month", text: isMy ? "Уверенный прогресс!" : undefined, showCount: true, count: streak };
-    if (streak >= 15) return { cl: "half", text: isMy ? "Отличный темп!" : undefined, showCount: true, count: streak };
-    if (streak >= 7)  return { cl: "week", text: isMy ? "Да вы в ударе!" : undefined, showCount: true, count: streak };
+    if (streak >= 90) return { cl: "max", text: isMy ? i18n.t("habitPageUi.streak.maximum", { ns: "common" }) : undefined, showCount: true, count: streak };
+    if (streak >= 60) return { cl: "comp", text: isMy ? i18n.t("habitPageUi.streak.epic", { ns: "common" }) : undefined, showCount: true, count: streak };
+    if (streak >= 30) return { cl: "month", text: isMy ? i18n.t("habitPageUi.streak.progress", { ns: "common" }) : undefined, showCount: true, count: streak };
+    if (streak >= 15) return { cl: "half", text: isMy ? i18n.t("habitPageUi.streak.pace", { ns: "common" }) : undefined, showCount: true, count: streak };
+    if (streak >= 7)  return { cl: "week", text: isMy ? i18n.t("habitPageUi.streak.onFire", { ns: "common" }) : undefined, showCount: true, count: streak };
 
     return {
         cl: "start",
-        text: isMy ? "Начало положено!" : undefined,
+        text: isMy ? i18n.t("habitPageUi.streak.started", { ns: "common" }) : undefined,
         showCount: true,
         count: streak,
     };
