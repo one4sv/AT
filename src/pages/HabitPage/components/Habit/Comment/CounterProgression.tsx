@@ -1,4 +1,5 @@
 import TA from "../../../../../components/ts/TA";
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { timeToStr, todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 import { placeholders } from "../../../utils/placeholders";
@@ -8,6 +9,7 @@ import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 
 export default function CounterProgression() {
+    const { t } = useTranslation("common");
     const { habit, loadCounter, setHabitCounter, habitCounter, showCounter } = useTheHabit()
     const { chosenDay } = useCalendar()
     const [ editingIndices, setEditingIndices ] = useState<number[]>([])
@@ -69,7 +71,7 @@ export default function CounterProgression() {
     if (!events) {
         return (
             <div className="completionProgress">
-                <div className="eventStr emptyEvents">Сессия не начата</div>
+                <div className="eventStr emptyEvents">{t("habitPageUi.progress.noSession")}</div>
             </div>
         )
     }
@@ -83,12 +85,12 @@ export default function CounterProgression() {
                 const isEditing = editingIndices.includes(index)
                 return (
                     <div className="eventStr eventCounter" key={key}>
-                        <span className="eventTime">{timeToStr(event.time)}</span> значение изменено на {event.count}
+                        <span className="eventTime">{timeToStr(event.time)}</span> {t("habitPageUi.progress.valueChanged", { count: event.count })}
                         {isEditing ? (
                             <div className="circleEditWrapper">
                                 <TA minHeight={2}
                                     className="circleTA"
-                                    placeholder={currentValue ? "" : placeholderMap[key]}
+                                    placeholder={currentValue ? "" : placeholderMap[key] ? t(placeholderMap[key]) : ""}
                                     maxLength={200}
                                     value={currentValue}
                                     onFocus={(e) => {
