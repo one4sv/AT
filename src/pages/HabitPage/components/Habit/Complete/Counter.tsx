@@ -1,4 +1,5 @@
 import "../../../scss/Counter.scss"
+import { useTranslation } from "react-i18next"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
 import { useState, useEffect, useRef } from "react"
@@ -14,6 +15,7 @@ interface FlyingNumber {
 }
 
 export default function Counter({ isMy }: { isMy:boolean }) {
+    const { t } = useTranslation("common")
     const { habit, showCounter, habitCounter, counterSettings, loadHabit } = useTheHabit()
     const { chosenDay } = useCalendar()
 
@@ -125,7 +127,7 @@ export default function Counter({ isMy }: { isMy:boolean }) {
                 ))}
             </div>
             <div className="counterMin">
-                цель: <span
+                {t("habitPageUi.counter.goal")}: <span
                     contentEditable={!isHistorical && isMy}
                     suppressContentEditableWarning
                     onKeyDown={(e) => {
