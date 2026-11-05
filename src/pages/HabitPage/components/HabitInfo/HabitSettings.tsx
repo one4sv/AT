@@ -178,7 +178,7 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
                         setBlackout({seted:true, module:"Delete"})
                     }}>
                         <span className="redHabitSpan but"> 
-                            <Trash/> Удалить
+                            <Trash/> {t("habitUi.delete")}
                         </span>
                         <div className="habitSettingHint">
                             {t("habitUi.deleteHint")}

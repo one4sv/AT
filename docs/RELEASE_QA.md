@@ -206,3 +206,9 @@
 - Проверить `h3` для всех major `0.x` (0.1–0.7), нейтральный цвет цифрового номера, единые англоязычные заголовки без RU-перевода: Foundation, Act, Dialogue, Firework, Aphrodite, Affinity, The Castle.
 - Для 0.3 пункт «Личные чаты» буквальный и на RU, и на EN. Исторические даты выводятся в `time[dateTime]`, основаны на характерных коммитах, а не объявляются официальными релизами; будущая 0.7 без даты.
 - В истории есть подтверждённый `0.4.7.2` (исправления групповых бесед); не создавать номера версий без коммитов. Проверить типографику на ПК/телефоне, сворачивание истории и будущих версий, градиенты major и текущего релиза.
+
+### 05.11.2026 — account gestures and i18n follow-up
+
+- Account: first/second tab must allow vertical swipe-down to reveal AccInfo; the second tab must not stop touchstart propagation before direction detection. Clicking active tab should only scroll content to top, not toggle Info.
+- EN/RU: verify ShareAcc, ConfirmAction, HabitSettings and HabitPage, chat message replies and chat search dates. Modal error/action labels must be translated; no hardcoded Russian UI strings.
+- Real iPhone/desktop QA required; TypeScript/Vite alone cannot validate touch events.

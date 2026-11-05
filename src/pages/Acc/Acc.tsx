@@ -221,11 +221,7 @@ export default function Acc() {
 
         if (dontHandleOther) return;
 
-        if (sliderStartLeft.current > 1) {
-            sliderOwnsGesture.current = true;
-            setDontHandle(true);
-            e.stopPropagation();
-        }
+        // Let vertical gestures reach the parent. Horizontal ownership is decided on move.
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -398,8 +394,6 @@ export default function Acc() {
         if (currentIdx === i) {
             if (activeSlide && activeSlide.scrollTop > 0) {
                 activeSlide.scrollTo({ top: 0, behavior: "smooth" });
-            } else {
-                animateCollapse(collapsedRef.current === 0 ? 1 : 0);
             }
             return;
         }

@@ -1,8 +1,10 @@
 import "../../scss/modules/confirmAction.scss";
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
 
 export default function ConfirmAction() {
+    const { t } = useTranslation("common");
     const { blackout, setBlackout } = useBlackout();
     const [ saving, setSaving ] = useState(false);
     const [ error, setError ] = useState("");
@@ -16,7 +18,7 @@ export default function ConfirmAction() {
             {error && <p role="alert">{error}</p>}
         </div>
         <div className="confirmActionButtons">
-            <button type="button" disabled={saving} onClick={() => setBlackout({ seted: false })}>Отмена</button>
+            <button type="button" disabled={saving} onClick={() => setBlackout({ seted: false })}>{t("dialog.cancel")}</button>
             <button type="button" className="danger" disabled={saving} onClick={async () => {
                 if (submitting.current) return;
                 submitting.current = true;
@@ -25,12 +27,12 @@ export default function ConfirmAction() {
                     await action.run();
                     setBlackout({ seted: false });
                 } catch {
-                    setError("Не удалось выполнить действие");
+                    setError(t("dialog.actionFailed"));
                 } finally {
                     submitting.current = false;
                     setSaving(false);
                 }
-            }}>{saving ? "Подождите…" : action.label || "Удалить"}</button>
+            }}>{saving ? t("dialog.saving") : action.label || t("habitUi.delete")}</button>
         </div>
     </div>;
 }

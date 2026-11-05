@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 import { useUser } from "../../components/hooks/UserHook";
 import { useTheHabit } from "../../components/hooks/TheHabitHook";
@@ -30,6 +31,7 @@ export interface HabitSlideProps {
     isMy?: boolean;
 }
 export default function Habit() {
+    const { t } = useTranslation("common");
     const {
         fetchCalendarHabitWLoading,
         fetchCalendarWLoading,
@@ -85,10 +87,10 @@ export default function Habit() {
             if (habitId && habit) {
                 setTitle(habit.name);
             } else if (!habitId) {
-                setTitle("Активности");
+                setTitle(t("sideMenu.activities"));
             }
         },
-        [habitId, habit, habit?.name, loadingHabit, setTitle]
+        [habitId, habit, habit?.name, loadingHabit, setTitle, t]
     );
     const shouldShowSchedule = !habitId && Object.values(schedules).some(arr => arr.length > 0) || habit && habitId === String(habit.id) && habit.periodicity !== "sometimes" && habitSettings.schedule;
     if (habitId && loadingHabit || loadingHabits || calendarLoading) {

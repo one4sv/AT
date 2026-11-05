@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useChat } from "../../components/hooks/ChatHook";
 import { useMessages } from "../../components/hooks/MessagesHook";
 import { useUser } from "../../components/hooks/UserHook";
@@ -20,6 +21,7 @@ import { LoaderSmall } from "../../components/ts/LoaderSmall";
 import WelcomeMessage from "./components/WelcomeMessage";
 import { useChatMessageScroll } from "../../components/hooks/utils/useChatMessageScroll";
 export default function Chat() {
+    const { t, i18n } = useTranslation("common");
     const {
         user,
         loadingUser
@@ -107,10 +109,10 @@ export default function Chat() {
         () => {
             if (!search.trim()) return [];
             return messages.filter(
-                m => (m.content.toLowerCase().includes(search.toLowerCase()) || new Date(m.created_at).toLocaleDateString("ru-RU").includes(search)) && !m.is_system
+                m => (m.content.toLowerCase().includes(search.toLowerCase()) || new Date(m.created_at).toLocaleDateString(i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU").includes(search)) && !m.is_system
             ).reverse();
         },
-        [messages, search]
+        [messages, search, i18n.resolvedLanguage]
     );
 
     useEffect(
@@ -256,13 +258,13 @@ export default function Chat() {
                                 const answer = find ? {
                                     id: find.id,
                                     name: find.sender_name,
-                                    text: find.content || (find.files?.length ? `${find.files.length} mediafile` : "Пересланное сообщение")
+                                    text: find.content || (find.files?.length ? t("chatUi.mediaCount", { count: find.files.length }) : t("chatUi.forwardedMessage"))
                                 } : undefined;
                                 const redir_find = messages.find(mess => mess.id === m.redirected_answer || mess.redirected_id === m.redirected_answer);
                                 const redir_answer = redir_find ? {
                                     id: redir_find.id,
                                     name: redir_find.redirected_name || "",
-                                    text: redir_find.content || (redir_find.files?.length ? `${redir_find.files.length} mediafile` : "Пересланное сообщение")
+                                    text: redir_find.content || (redir_find.files?.length ? t("chatUi.mediaCount", { count: redir_find.files.length }) : t("chatUi.forwardedMessage"))
                                 } : undefined;
                                 return m.is_system ? <SystemMessage key={m.id} m={m} answer={answer} /> : <Message
                                     key={m.clientId ?? m.id}
