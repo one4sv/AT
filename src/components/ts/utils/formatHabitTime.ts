@@ -1,4 +1,5 @@
 import type { Habit } from "../../context/HabitsContext";
+import i18n from "../../../i18n/i18n";
 
 export const formatHabitTime = (habit:Habit) => {
     const { start_time:st, end_time:et } = habit
@@ -6,7 +7,7 @@ export const formatHabitTime = (habit:Habit) => {
         return ` ${st} - ${et}`;
     }
     if (st || et) {
-        return st ? ` в ${st}` : ` до ${et}`
+        return st ? ` ${i18n.t("habitPageUi.day.at", { ns: "common", time: st })}` : ` ${i18n.t("habitPageUi.day.until", { ns: "common", time: et })}`
     }
     return "";
 };
