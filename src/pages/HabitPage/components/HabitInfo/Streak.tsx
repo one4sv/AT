@@ -1,4 +1,5 @@
 import { Fire } from "@phosphor-icons/react";
+import { useTranslation } from "react-i18next";
 import type { Calendar } from "../../../../components/context/CalendarContext";
 import type { Habit } from "../../../../components/context/HabitsContext";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
@@ -13,6 +14,7 @@ export interface StreakType {
 }
 
 export default function Streak({ habit, calendar }: StreakType) {
+    const { t } = useTranslation("common");
     const { habits } = useHabits()
     const [ isMy, setIsMy ] = useState(false)
 
@@ -58,15 +60,6 @@ export default function Streak({ habit, calendar }: StreakType) {
     const streak = checkStreak(today);
     const streakUntilYesterday = checkStreak(yesterday);
 
-    const pluralizeDay = (streak: number) => {
-        const n = Math.abs(streak) % 100;
-        const lastDigit = n % 10;
-        if (n > 10 && n < 20) return "дней";
-        if (lastDigit === 1) return "день";
-        if (lastDigit >= 2 && lastDigit <= 4) return "дня";
-        return "дней";
-    };
-
     const todayDayOfWeek = today.getDay();
     const isTodayChosenWeekly =
         habit.periodicity === "weekly" &&
@@ -91,7 +84,7 @@ export default function Streak({ habit, calendar }: StreakType) {
     if (!view) return null
     if (!habit.ongoing) return (
         <div className="streakStr">
-            В архиве
+            {t("habitPageUi.streak.archived")}
         </div>
     )
 
@@ -101,8 +94,8 @@ export default function Streak({ habit, calendar }: StreakType) {
             {text && `${text} `}
             {showCount && count && (
                 <>
-                    Streak:&nbsp;<span>{count}</span>&nbsp;
-                    {pluralizeDay(count)}
+                    {t("habitPageUi.streak.label")}:&nbsp;<span>{count}</span>&nbsp;
+                    {t("habitPageUi.streak.days", { count })}
                 </>
             )}
         </div>
