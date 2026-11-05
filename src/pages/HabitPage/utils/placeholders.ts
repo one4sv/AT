@@ -1,4 +1,6 @@
 export const placeholders = [
-    "Что произошло?", "Что случилось?", "Что сделали?", "Ну как оно там?", "Что получилось?", "Как успехи?",
-    "Расскажи, что было?", "Что нового?", "Что интересного?", "Что дальше?", "Какое впечатление?", "Что изменилось?"
-]
+    "habitPageUi.placeholders.0", "habitPageUi.placeholders.1", "habitPageUi.placeholders.2",
+    "habitPageUi.placeholders.3", "habitPageUi.placeholders.4", "habitPageUi.placeholders.5",
+    "habitPageUi.placeholders.6", "habitPageUi.placeholders.7", "habitPageUi.placeholders.8",
+    "habitPageUi.placeholders.9", "habitPageUi.placeholders.10", "habitPageUi.placeholders.11"
+];
