@@ -13,6 +13,7 @@ import { useMemo } from "react";
 import { useSideMenu } from "../hooks/SideMenuHook";
 import { useTranslation } from "react-i18next";
 import { useContacts } from "../hooks/ContactsHook";
+import localizeSystemMessage from "../../pages/Chat/utils/localizeSystemMessage";
 
 export interface ContactType {
     contact: Contact;
@@ -38,6 +39,10 @@ export default function Contact({ contact }: ContactType) {
             : null
     );
 
+    const localizedLast = contact.lastMessage?.is_system
+        ? localizeSystemMessage(contact.lastMessage.content)
+        : "";
+
     const partsLast = useMemo(() => {
         if (
             !contact.lastMessage?.is_system ||
@@ -47,12 +52,12 @@ export default function Contact({ contact }: ContactType) {
             return null;
         }
 
-        const split = contact.lastMessage.content.split("{}");
+        const split = localizedLast.split("{}");
         if (split.length === 2) {
             return { before: split[0], after: split[1] };
         }
         return null;
-    }, [contact.lastMessage?.content, contact.lastMessage?.is_system, contact.lastMessage?.target_id]);
+    }, [localizedLast, contact.lastMessage?.is_system, contact.lastMessage?.target_id]);
 
     const messageGetTime = (date: Date) => {
         const d = new Date(date);
@@ -143,7 +148,7 @@ export default function Contact({ contact }: ContactType) {
             if (partsLast && targetForLast) {
                 return `${partsLast.before}${targetForLast.name || targetForLast.nick}${partsLast.after}`;
             }
-            return msg.content;
+            return localizedLast;
         }
 
         if (msg.content) {
