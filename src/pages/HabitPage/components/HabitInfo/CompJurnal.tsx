@@ -1,4 +1,5 @@
 import { Virtuoso } from "react-virtuoso";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import "../../scss/CompJurnal.scss";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
@@ -17,6 +18,8 @@ interface ActivityEvent {
 }
 
 export default function CompJurnal() {
+    const { t, i18n } = useTranslation("common");
+    const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
     const { calendar } = useCalendar()
     const { setDayComment, setIsDone, habit } = useTheHabit()
     const { setChosenDay, setSelectedYear, setSelectedMonth } = useCalendar();
@@ -43,6 +46,12 @@ export default function CompJurnal() {
         return () => { active = false; };
     }, [habit?.id])
 
+    const describeEvent = (event: ActivityEvent) => {
+        if (event.type === "completion_removed") return t("habitPageUi.journal.completionRemoved", { date: event.date || t("habitPageUi.journal.unspecifiedDate") });
+        if (event.type === "completion") return t("habitPageUi.journal.completed", { date: event.date });
+        return t(`habitPageUi.journal.${event.type}`);
+    };
+
     const sortedCalendar = [...calendar]
         .filter(c => jurnalSearch.trim().length > 0 ? (c.comment?.includes(jurnalSearch) || formatDateFromString(c.date).includes(jurnalSearch)) && c.isDone : c.isDone)
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -59,15 +68,15 @@ export default function CompJurnal() {
                     )}
             </div>
             {habit && <div className="settingInnerWrapper">
-                <div className="settingSpan">Действия участников</div>
-                {memberEventsError && <div className="settingHint">Не удалось загрузить действия участников</div>}
-                {!memberEventsError && memberEvents.length === 0 && <div className="settingHint">Пока нет действий участников</div>}
+                <div className="settingSpan">{t("habitPageUi.journal.memberActions")}</div>
+                {memberEventsError && <div className="settingHint">{t("habitPageUi.journal.loadFailed")}</div>}
+                {!memberEventsError && memberEvents.length === 0 && <div className="settingHint">{t("habitPageUi.journal.empty")}</div>}
                 {memberEvents.filter(event => !jurnalSearch.trim() || [event.user?.username, event.user?.nick, event.date].some(value => value?.toLowerCase().includes(jurnalSearch.trim().toLowerCase()))).slice(0, 30).map(event => <div className="CJrecord" key={event.id}>
                     <div className="CJdates">
-                        <div className="CJdate">{event.user?.username || event.user?.nick || "Участник"}</div>
-                        <div className="CJcreated">{new Date(event.created_at).toLocaleString("ru-RU")}</div>
+                        <div className="CJdate">{event.user?.username || event.user?.nick || t("habitPageUi.day.participant")}</div>
+                        <div className="CJcreated">{new Date(event.created_at).toLocaleString(locale)}</div>
                     </div>
-                    <div className="CJcomment">{event.type === "joined" ? "Присоединился к активности" : event.type === "left" ? "Покинул активность" : event.type === "invited" ? "Получил приглашение" : event.type === "declined" ? "Отклонил приглашение" : event.type === "settings_changed" ? "Изменены настройки активности" : event.type === "completion_removed" ? `Отменил выполнение за ${event.date || "указанную дату"}` : `Выполнил активность за ${event.date}`}</div>
+                    <div className="CJcomment">{describeEvent(event)}</div>
                 </div>)}
             </div>}
             <div className="compJurnalMain">
@@ -80,7 +89,7 @@ export default function CompJurnal() {
                         const { date, comment, habitName, habitId, created_at } = day;
                         const created =
                             created_at &&
-                            new Date(created_at).toLocaleDateString("ru-RU", {
+                            new Date(created_at).toLocaleDateString(locale, {
                                 day: "2-digit",
                                 month: "2-digit",
                                 year: "numeric",
@@ -104,7 +113,7 @@ export default function CompJurnal() {
                                         <div className="calendarDot comp"></div>
                                         {formatDateFromString(date)}
                                     </div>
-                                    <div className="CJcreated">отм. {created}</div>
+                                    <div className="CJcreated">{t("habitPageUi.journal.recorded", { date: created })}</div>
                                 </div>
 
                                 <div className="CJhabit">{habitName}</div>
