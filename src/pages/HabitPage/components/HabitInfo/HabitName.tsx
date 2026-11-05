@@ -1,4 +1,5 @@
 import { useRef, type SetStateAction } from "react"
+import { useTranslation } from "react-i18next"
 import type { Habit } from "../../../../components/context/HabitsContext"
 import "../../scss/HabitName.scss"
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook"
@@ -18,6 +19,7 @@ interface HabitNameProps {
     isReadOnly:boolean,
 }
 export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:HabitNameProps) {
+    const { t } = useTranslation("common")
     const { isUpdating } = useUpHabit()
     const { calendar } = useCalendar()
     const { openSideMenu } = useSideMenu()
@@ -61,7 +63,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:Habit
                         className="spanSaveHabit"
                         style={{ display: isUpdating.includes(`habit_${habit.id}`) ? "block" : "none" }}
                     >
-                        Сохранение...
+                        {t("habitPageUi.saving")}
                     </span>
                 </div>
             </div>
