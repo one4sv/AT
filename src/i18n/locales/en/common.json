@@ -140,5 +140,94 @@
         "hours": "last seen {{count}} hours ago",
         "yesterday": "last seen yesterday at {{time}}",
         "lastSeen": "last seen {{date}} at {{time}}"
+    },
+    "habitUi": {
+        "period": {
+            "everyday": "Every day",
+            "weekly": "Several days a week",
+            "cycle": "Cyclic",
+            "sometimes": "Sometimes"
+        },
+        "periodHint": {
+            "everyday": "Complete the activity every day.",
+            "weekly": "Choose which days of the week to do this activity.",
+            "sometimes": "Do this activity whenever you wish.",
+            "cycle": "Set the number of active and rest days in a repeating cycle."
+        },
+        "weekdays": {
+            "0": "Sun",
+            "1": "Mon",
+            "2": "Tue",
+            "3": "Wed",
+            "4": "Thu",
+            "5": "Fri",
+            "6": "Sat"
+        },
+        "name": "Name",
+        "description": "Description",
+        "periodicity": "Frequency",
+        "activeDays": "Active days",
+        "restDays": "Rest days",
+        "startTime": "Start time",
+        "endTime": "End time",
+        "startDate": "Start date:",
+        "endDate": "End date:",
+        "archived": "Activity moved to the archive.",
+        "archivedReadOnly": "It can no longer be updated.",
+        "addGoal": "Add goal",
+        "save": "Save",
+        "fillFields": "Fill in all fields",
+        "invalidStart": "Invalid start time format",
+        "invalidEnd": "Invalid end time format",
+        "enterStart": "Enter a start time",
+        "enterCycle": "Specify active and rest days",
+        "added": "Activity added",
+        "addFailed": "Could not add activity",
+        "schedule": "Schedule:",
+        "metricType": "Tracking method:",
+        "autoCompletion": "Complete automatically if:",
+        "metric": {
+            "timer": "Timer",
+            "counter": "Counter",
+            "schedule": "Schedule",
+            "checklist": "Checklist",
+            "done": "None"
+        },
+        "auto": {
+            "one": "One schedule block completed",
+            "all": "All schedule blocks completed",
+            "none": "Never"
+        },
+        "metricHint": {
+            "timer": "Tracks how long the activity takes.",
+            "counter": "For activities measured in numbers.",
+            "schedule": "Tracks completion of scheduled blocks.",
+            "checklist": "A fixed task checklist.",
+            "done": "No tracking metric. You can create tasks for the day."
+        },
+        "scheduleUnavailable": "Schedules are unavailable for the Sometimes frequency.",
+        "scheduleHint": "Create weekly time blocks with separate settings for odd and even weeks.",
+        "timerRunning": "Cannot change this while the timer is running.",
+        "autoHint": {
+            "one": "Completes the activity automatically when one schedule block is completed.",
+            "all": "Completes the activity automatically when all schedule blocks are completed.",
+            "none": "Completion is recorded manually, regardless of schedule blocks."
+        },
+        "archive": "Complete and archive",
+        "unarchive": "Restore from archive",
+        "archiveHint": "The activity will be archived while its statistics are preserved.",
+        "unarchiveHint": "The activity can be completed again and will return to the active list.",
+        "delete": "Delete",
+        "deleteHint": "The activity and related statistics will be permanently deleted.",
+        "collaboration": "Shared activity settings",
+        "invite": "Invite to activity",
+        "owner": "Owner",
+        "groupSuffix": " + group chat",
+        "settings": "Settings",
+        "journal": "Activity journal",
+        "done": "Completed",
+        "complete": "Complete",
+        "pin": "Pin",
+        "unpin": "Unpin"
     }
 }
