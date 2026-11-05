@@ -9,7 +9,15 @@ import { useContextMenu } from "../hooks/ContextMenuHook";
 import { getHeaderScrollTarget } from "../ts/utils/pageScroll";
 import { requestContentRefresh } from "../ts/utils/contentRefresh";
 import useHeaderMenuGestures from "../hooks/utils/useHeaderMenuGestures";
-export default function Header() {
+import type { ReactNode } from "react";
+interface HeaderProps {
+    titleOverride?: string;
+    titleSuffix?: ReactNode;
+    rightAction?: ReactNode;
+    hideMenuButton?: boolean;
+}
+
+export default function Header({ titleOverride, titleSuffix, rightAction, hideMenuButton = false }: HeaderProps = {}) {
     const isMobile = useCompactLayout();
     const headerGestures = useHeaderMenuGestures();
     const { openSideMenu } = useSideMenu();
@@ -24,6 +32,7 @@ export default function Header() {
     const isInInfo = location.pathname.startsWith("/info/");
     const isInfo = location.pathname === "/info";
     const handleHeaderClick = () => {
+        if (titleOverride !== undefined) return;
         const scroller = getHeaderScrollTarget(location.pathname);
 
         if (scroller && scroller.scrollTop > 2) {
@@ -42,7 +51,7 @@ export default function Header() {
     return (
         <>
             <div className={`headerDiv ${hideHeader ? "hide" : ""}`} {...headerGestures}>
-                {isMobile || layout === "hidden" ? <div
+                {!hideMenuButton && (isMobile || layout === "hidden") ? <div
                     className="headerButt"
                     data-header-gesture="quick"
                     onContextMenu={e => {
@@ -56,7 +65,7 @@ export default function Header() {
                     <TextIndentIcon />
                 </div> : ""}
                 <div
-                    className={`header headerTitle ${isInInfo || isInfo ? "headerInfo" : ""}`}
+                    className={`header headerTitle ${isInInfo || isInfo ? "headerInfo" : ""} ${titleOverride !== undefined ? "headerCustomTitle" : ""}`}
                     data-header-gesture="quick"
                     onContextMenu={e => {
                         e.preventDefault();
@@ -64,8 +73,10 @@ export default function Header() {
                     }}
                     onClick={handleHeaderClick}
                 >
-                    {title}
+                    <span className="headerCustomText">{titleOverride ?? title}</span>
+                    {titleSuffix}
                 </div>
+                {rightAction}
             </div>
         </>
     );
