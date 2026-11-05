@@ -173,12 +173,19 @@ test.describe("appearance and wallpaper controls", () => {
     });
 });
 
-test("built-in Japanese wallpapers have desktop and mobile assets", async ({ request }) => {
-    for (const scene of ["sakura", "alley", "torii"]) {
+test("Japanese wallpaper assets are complete, decodable WebP containers", async ({ request }) => {
+    for (const scene of ["ninja", "sakura", "alley", "torii"]) {
         for (const size of ["desktop", "mobile"]) {
-            const response = await request.get(`/wallpapers/japanese-${scene}-${size}.webp`);
-            expect(response.ok(), `Missing Japanese wallpaper ${scene}-${size}`).toBeTruthy();
+            const label = `${scene}-${size}`;
+            const response = await request.get(`/wallpapers/japanese-${label}.webp`);
+            expect(response.ok(), `Missing Japanese wallpaper ${label}`).toBeTruthy();
             expect(response.headers()["content-type"]).toContain("image/webp");
+
+            const bytes = await response.body();
+            expect(bytes.length, `Truncated Japanese wallpaper ${label}`).toBeGreaterThan(100_000);
+            expect(bytes.subarray(0, 4).toString("ascii")).toBe("RIFF");
+            expect(bytes.subarray(8, 12).toString("ascii")).toBe("WEBP");
+            expect(bytes.readUInt32LE(4) + 8, `Broken RIFF size for ${label}`).toBe(bytes.length);
         }
     }
 });
