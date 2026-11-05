@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { ArrowSquareOutIcon, CheckCircleIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { useUser } from "../../../../../components/hooks/UserHook";
@@ -27,16 +28,18 @@ interface DayTaskCompletion extends DayAction { name: string; }
 
 type FeedItem = (DayComment & { type: "comment" }) | (DayCompletion & { type: "completion" }) | (DayTaskCompletion & { type: "task" });
 
-const formatEventDate = (date: string) => {
+const formatEventDate = (date: string, locale: string) => {
     const parsed = new Date(date);
     if (Number.isNaN(parsed.getTime())) return "";
-    return new Intl.DateTimeFormat("ru-RU", {
+    return new Intl.DateTimeFormat(locale, {
         day: "2-digit", month: "2-digit", year: "numeric",
         hour: "2-digit", minute: "2-digit"
     }).format(parsed);
 };
 
 export default function SharedDayComments({ mobile = false, expanded = false }: { mobile?: boolean; expanded?: boolean }) {
+    const { t, i18n } = useTranslation("common");
+    const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
     const { habit, dayComment } = useTheHabit();
     const { user } = useUser();
     const { data } = useHabitMembers(habit?.id);
@@ -63,9 +66,9 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
                 setError("");
             }
         } catch {
-            if (!signal?.aborted) setError("Не удалось загрузить историю активности");
+            if (!signal?.aborted) setError(t("habitPageUi.day.historyFailed"));
         }
-    }, [habit?.id, chosenDay, isShared]);
+    }, [habit?.id, chosenDay, isShared, t]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -125,7 +128,7 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
 
     if (!isShared || (!expanded && !feed.length && !error)) return null;
 
-    const content = <div className="sharedDayComments" ref={feedRef} aria-label="Комментарии и отметки выполнения участников">
+    const content = <div className="sharedDayComments" ref={feedRef} aria-label={t("habitPageUi.day.participantActionsLabel")}>
         <div className="dayActivityEntries" ref={entriesRef}>
             {error && <div role="alert">{error}</div>}
             {feed.map(item => <article
@@ -140,15 +143,15 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
                         <span>{item.user.username || item.user.nick}</span>
                     </Link> : <div className="commentUser">
                         <div className="commentAvatar"><UserCircleIcon /></div>
-                        <span>Участник</span>
+                        <span>{t("habitPageUi.day.participant")}</span>
                     </div>}
-                    <span className="commentDate">{formatEventDate(item.created_at)}</span>
-                    {item.type !== "comment" && <CheckCircleIcon className="dayCompletionIcon" weight="fill" aria-label="Выполнено" />}
+                    <span className="commentDate">{formatEventDate(item.created_at, locale)}</span>
+                    {item.type !== "comment" && <CheckCircleIcon className="dayCompletionIcon" weight="fill" aria-label={t("habitUi.done")} />}
                 </div>
                 {item.type === "comment" && <div className="commentText">{item.comment}</div>}
-                {item.type === "task" && <div className="commentText sharedTaskEventName">Выполнил задачу: {item.name}</div>}
+                {item.type === "task" && <div className="commentText sharedTaskEventName">{t("habitPageUi.day.completedTask", { name: item.name })}</div>}
             </article>)}
-            {expanded && !feed.length && !error && <div className="habitSettingValue">За этот день действий пока нет</div>}
+            {expanded && !feed.length && !error && <div className="habitSettingValue">{t("habitPageUi.day.noActions")}</div>}
         </div>
     </div>;
 
@@ -161,8 +164,8 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
             onClick={() => setBlackout({ seted: true, module: "HabitDayActivityHistory" })}
         >
             <ArrowSquareOutIcon weight="bold" />
-            Показать все
+            {t("habitPageUi.day.showAll")}
         </button>}
     </div>;
-    return mobile ? <div className="dayCommentDiv mobileSharedDayComments"><div className="statsTitle">Активность участников</div>{preview}</div> : preview;
+    return mobile ? <div className="dayCommentDiv mobileSharedDayComments"><div className="statsTitle">{t("habitPageUi.day.participantActivity")}</div>{preview}</div> : preview;
 }
