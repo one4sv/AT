@@ -311,6 +311,31 @@
     }
 }
 
+.wallpaperStudioPeekNav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4vw;
+    flex-shrink: 0;
+
+    > button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.2dvh;
+        height: 3.2dvh;
+        border: 1px solid var(--block_border);
+        border-radius: 50%;
+        background: var(--interact);
+        color: var(--tc);
+        cursor: pointer;
+    }
+
+    @media (max-width: 800px) {
+        gap: 1vw;
+    }
+}
+
 .wallpaperStudioCounter {
     display: flex;
     align-items: center;
@@ -511,6 +536,23 @@
     pointer-events: none;
 }
 
+.wallpaperStudioTileCapabilities {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4vw;
+    min-height: 1.8dvh;
+
+    > .backgroundLibraryCapability {
+        display: flex;
+        color: var(--accent_text);
+    }
+
+    @media (max-width: 800px) {
+        gap: 1.5vw;
+    }
+}
+
 .wallpaperStudioApplied {
     position: absolute;
     top: 1.5dvh;
@@ -535,10 +577,6 @@
     color: var(--tc);
     background: var(--mc);
     cursor: pointer;
-}
-
-.wallpaperStudioThemeDot {
-    display: none;
 }
 
 .wallpaperStudioAdd {
