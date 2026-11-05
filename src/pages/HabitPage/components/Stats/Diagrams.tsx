@@ -1,4 +1,5 @@
 import StatsFilters from "./StatsFilters";
+import { useTranslation } from "react-i18next";
 import "../../scss/Diagrams.scss"
 import React, { useEffect, useRef, useState } from "react";
 import OverallStats from "./Diagrams/OverallStats";
@@ -21,10 +22,11 @@ export default function Diagrams({
     mainRef: React.RefObject<HTMLDivElement | null>
 }) {
     const { setDontHandle } = useSideMenu();
+    const { t } = useTranslation("common");
     const touchStart = useRef<{ x: number; y: number } | null>(null);
     const gesture = useRef<"none" | "vertical" | "horizontal">("none");
 
-    const [slide, setSlide] = useState<StatsSlide>({ label: "Выполнено", value: "comp", slide: false });
+    const [slide, setSlide] = useState<StatsSlide>({ label: t("statsUi.completed"), value: "comp", slide: false });
     const [period, setPeriod] = useState(periods[0].value);
     const [metric, setMetric] = useState(metrics[0].value);
     const [group, setGroup] = useState(groups[0].value);
@@ -87,7 +89,7 @@ export default function Diagrams({
                 {slide.slide ? <>
                     <CaretLeftIcon/>
                     {slide.label}
-                </> : "Статистика"}
+                </> : t("statsUi.title")}
             </div>
 
             <div className="statsDivWrapper"
