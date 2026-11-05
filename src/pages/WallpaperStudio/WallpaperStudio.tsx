@@ -31,7 +31,7 @@ export default function WallpaperStudio() {
     const { bg, bgUrl, bgGallery, bgEffects, setBgEffects, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, setBgUrl, refetchSettings } = useSettings();
     const { setNewBg } = useUpSettings();
     const { toggleMenu } = useSideMenu();
-    const { setBlackout } = useBlackout();
+    const { blackout, setBlackout } = useBlackout();
     const { showNotification } = useNote();
     const reduceMotion = useReducedMotion();
     const [ open, setOpen ] = useState(true);
@@ -142,6 +142,7 @@ export default function WallpaperStudio() {
 
     const onPeekDown = (event: PointerEvent<HTMLButtonElement>) => {
         if (event.button !== 0) return;
+        suppressClick.current = false;
         peekDrag.current = { pointerId: event.pointerId, x: event.clientX, lastStep: 0, moved: false };
         event.currentTarget.setPointerCapture(event.pointerId);
     };
@@ -180,13 +181,25 @@ export default function WallpaperStudio() {
         }, 450);
     };
 
-    useEffect(() => () => {
-        stopHold();
-        if (saveTimer.current) clearTimeout(saveTimer.current);
+    useEffect(() => {
+        const finish = () => {
+            hold.current = null;
+            stopHold();
+            setHolding(false);
+        };
+        document.addEventListener("pointerup", finish);
+        document.addEventListener("pointercancel", finish);
+        return () => {
+            document.removeEventListener("pointerup", finish);
+            document.removeEventListener("pointercancel", finish);
+            stopHold();
+            if (saveTimer.current) clearTimeout(saveTimer.current);
+        };
     }, []);
 
     useEffect(() => {
         const onKey = (event: KeyboardEvent) => {
+            if (blackout.seted) return;
             if ((event.target as Element)?.closest("input,textarea,select,[contenteditable='true']")) return;
             if (event.key === "Escape") {
                 if (open) setOpen(false);
@@ -199,7 +212,7 @@ export default function WallpaperStudio() {
         };
         document.addEventListener("keydown", onKey);
         return () => document.removeEventListener("keydown", onKey);
-    }, [open, navigate, change]);
+    }, [open, navigate, change, blackout.seted]);
 
     const deleteCustom = (url: string) => {
         if (busy) return;
@@ -369,7 +382,7 @@ export default function WallpaperStudio() {
                     {current.id === "art" && <ContourPatternPicker value={artPattern} onChange={setArtPattern} size={artSize} onSizeChange={setArtSize} subject="art"/>}
                     <div className="backgroundFullscreenControl">
                         <span>{t("backgroundLibrary.blurBackground")}</span>
-                        <SeekBar id="studioBlur" min={0} max={30} step={1} unit="px" value={bgEffects.blur}
+                        <SeekBar id="studioBlur" min={0} max={30} step={1} unit="px" value={bgEffects.blur} disabled={false}
                             onChange={blur => updateEffects({ ...bgEffects, blur })}/>
                     </div>
                     <button type="button" className={"backgroundFullscreenMovement" + (!motionAvailable ? " disabled" : "")}
