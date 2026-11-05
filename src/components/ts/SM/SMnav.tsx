@@ -12,8 +12,10 @@ import useCompactLayout from "../../hooks/utils/useCompactLayout";
 import { useSettings } from "../../hooks/SettingsHook";
 import { useContacts } from "../../hooks/ContactsHook";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 export default function SMnav() {
     const isMobile = useCompactLayout();
+    const studio = useLocation().pathname.startsWith("/wallpapers");
     const {
         user,
         logOut,
@@ -524,7 +526,7 @@ export default function SMnav() {
         <div
             className={`SMnavDiv ${showSideMenu ? "open" : ""}`}
             style={{
-                transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none"
+                transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none"
             }}
             role="status"
             aria-label={t("sideMenu.loadingNavigation")}
