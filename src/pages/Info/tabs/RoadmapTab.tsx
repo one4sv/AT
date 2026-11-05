@@ -25,12 +25,12 @@ export default function RoadmapTab() {
                     {/^0\.\d+$/.test(release.version) ? (
                         <h3 className="roadmapReleaseHeading">
                             <span className="roadmapVersion">{release.version}</span>
-                            {release.title && <span>{release.title}</span>}
+                            {release.title && <span> {release.title}</span>}
                         </h3>
                     ) : (
                         <div className="roadmapReleaseHeading">
                             <span className="roadmapVersion">{release.version}</span>
-                            {release.title && <span>{release.title}</span>}
+                            {release.title && <span> {release.title}</span>}
                         </div>
                     )}
                     {release.date && <time className="roadmapDate" dateTime={release.date}>
@@ -72,7 +72,7 @@ export default function RoadmapTab() {
                     <div className="roadmapCurrentContent">
                         <span className="roadmapStatus">{t("roadmap.current")}</span>
                         <h3><span className="roadmapVersion">{roadmapCurrent.version}</span>
-                            {roadmapCurrent.title && <> — {roadmapCurrent.title}</>}
+                            {roadmapCurrent.title && <> {roadmapCurrent.title}</>}
                         </h3>
                         {roadmapCurrent.date && <time className="roadmapDate" dateTime={roadmapCurrent.date}>
                             {new Date(`${roadmapCurrent.date}T12:00:00`).toLocaleDateString(language === "en" ? "en-GB" : "ru-RU", {

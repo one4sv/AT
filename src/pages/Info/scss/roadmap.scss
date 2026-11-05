@@ -114,7 +114,7 @@
         display: flex;
         align-items: baseline;
         flex-wrap: wrap;
-        gap: 1vw;
+        gap: 0;
         min-width: 0;
         color: var(--tc);
     }
@@ -211,7 +211,7 @@
         }
 
         .roadmapReleaseHeading {
-            gap: 2vw;
+            gap: 0;
         }
 
         :is(.roadmapCurrentContent, .roadmapReleaseMajor) {
@@ -261,6 +261,8 @@
     .roadmapBeginning {
         margin: 1.5dvh .5vw;
         padding: 2dvh 1.5vw;
+        border: 1px solid var(--accent);
+        box-sizing: border-box;
         border-radius: 24px;
         background: linear-gradient(135deg, var(--accent_hov), var(--grad_hov));
         color: var(--tc);
