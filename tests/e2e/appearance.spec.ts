@@ -22,13 +22,12 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(page.locator(".app-layout")).toBeVisible();
     });
 
-    test("on phones the side menu has a native full-screen explanation", async ({ page }, testInfo) => {
+    test("on phones the side menu setting is absent", async ({ page }, testInfo) => {
         test.skip(testInfo.project.name !== "webkit-mobile", "Compact layout only");
 
         await page.goto("/settings/pers");
         const layout = page.locator('[data-setting-id="layout"]');
-        await expect(layout.locator(".settingHint")).toBeVisible();
-        await expect(layout.locator(".selector")).toHaveCount(0);
+        await expect(layout).toHaveCount(0);
     });
 
     test("wallpaper help opens from its own page", async ({ page }) => {
@@ -47,8 +46,12 @@ test.describe("appearance and wallpaper controls", () => {
         const tiles = page.locator(".wallpaperStudioTileChoose");
         await expect(tiles.nth(1)).toBeVisible();
 
-        await tiles.first().click();
-        await expect(page.locator(".wallpaperStudioApply")).toBeDisabled();
+        const apply = page.locator(".wallpaperHeaderApply");
+        const initialSelected = await apply.getAttribute("aria-pressed");
+        await tiles.nth(1).click();
+        await expect(apply).toHaveAttribute("aria-pressed", "false");
+        await expect(page.locator(".wallpaperStudioTileChoose").nth(1)).toHaveClass(/selected/);
+        expect(initialSelected).toBeTruthy();
 
         const box = await tiles.nth(1).boundingBox();
         expect(box).not.toBeNull();
@@ -60,8 +63,8 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
         await page.mouse.up();
 
-        await expect(page.locator(".wallpaperStudioApply")).toBeEnabled();
-        const before = await page.locator(".wallpaperStudioHeading small").innerText();
+        await expect(apply).toHaveAttribute("aria-pressed", "false");
+        const before = await page.locator(".headerCustomText").innerText();
         const strip = page.locator(".wallpaperStudioPeekButton");
         const bounds = await strip.boundingBox();
         if (!bounds) return;
@@ -70,8 +73,10 @@ test.describe("appearance and wallpaper controls", () => {
         await page.mouse.down();
         await page.mouse.move(bounds.x + bounds.width / 2 - 80, bounds.y + bounds.height / 2, { steps: 4 });
         await page.mouse.up();
-        await expect.poll(async () => page.locator(".wallpaperStudioHeading small").innerText()).not.toBe(before);
-        await expect(page.locator(".wallpaperStudioApply")).toBeEnabled();
+        await expect.poll(async () => page.locator(".headerCustomText").innerText()).not.toBe(before);
+        await expect(apply).toHaveAttribute("aria-pressed", "false");
+        await apply.click();
+        await expect(apply).toHaveAttribute("aria-pressed", "true");
     });
 
     test("wallpaper sheet can be collapsed and expanded by a vertical drag", async ({ page }) => {
@@ -102,7 +107,7 @@ test.describe("appearance and wallpaper controls", () => {
     test("studio has a separate wallpaper settings route and a responsive sliding sheet", async ({ page }, testInfo) => {
         await page.goto("/wallpapers");
         await expect(page.locator(".wallpaperStudioSheet")).toBeVisible();
-        await page.locator(".wallpaperStudioTabs button").nth(1).click();
+        await page.locator(".wallpaperStudioSettingsButton").click();
         await expect(page).toHaveURL(/\\/wallpapers\\/settings$/);
         await expect(page.locator(".wallpaperStudioSettings")).toBeVisible();
         const sheet = await page.locator(".wallpaperStudioSheet").boundingBox();
@@ -114,18 +119,43 @@ test.describe("appearance and wallpaper controls", () => {
         }
     });
 
-    test("studio desktop sidebar stays under manual control regardless of setting", async ({ page }, testInfo) => {
+    test("desktop studio has no SideMenu and uses native Header and PageBottom", async ({ page }, testInfo) => {
         test.skip(testInfo.project.name !== "chromium-desktop", "Desktop studio only");
-        await page.goto("/settings/pers");
-        await page.locator('[data-setting-id="layout"] .selectorElement').nth(1).click();
         await page.goto("/wallpapers");
-        await expect(page.locator(".sideMenu.open")).toBeVisible();
-        await page.locator(".wallpaperStudioHeaderLeft .wallpaperStudioIcon").first().click();
-        await expect(page.locator(".sideMenu:not(.open)")).toBeVisible();
-        await page.locator(".wallpaperStudioTabs button").nth(1).click();
-        await expect(page.locator(".sideMenu:not(.open)")).toBeVisible();
-        await page.locator(".wallpaperStudioHeaderLeft .wallpaperStudioIcon").first().click();
-        await expect(page.locator(".sideMenu.open")).toBeVisible();
+        await expect(page.locator(".sideMenu")).toHaveCount(0);
+        await expect(page.locator(".smHeader")).toHaveCount(0);
+        await expect(page.locator(".wallpaperStudio > .headerDiv")).toBeVisible();
+        await expect(page.locator(".wallpaperStudioBottom.pageBottom")).toBeVisible();
+        const sheet = await page.locator(".wallpaperStudioSheet").boundingBox();
+        expect(sheet).not.toBeNull();
+        if (sheet) expect(sheet.width).toBeGreaterThan((page.viewportSize()?.width ?? 1000) * .95);
+        await page.locator(".wallpaperStudioSettingsButton").click();
+        await expect(page.locator(".sideMenu")).toHaveCount(0);
+    });
+
+    test("desktop canvas wheel hides the catalogue upward and reveals it downward", async ({ page }, testInfo) => {
+        test.skip(testInfo.project.name !== "chromium-desktop", "Desktop studio only");
+        await page.goto("/wallpapers");
+        await page.mouse.move(200, 200);
+        await page.mouse.wheel(0, -180);
+        await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
+        await page.waitForTimeout(270);
+        await page.mouse.wheel(0, 180);
+        await expect(page.locator(".wallpaperStudio.expanded")).toBeVisible();
+    });
+
+    test("mobile wallpaper gallery has four portrait columns and no card labels", async ({ page }, testInfo) => {
+        test.skip(testInfo.project.name !== "webkit-mobile", "Mobile only");
+        await page.goto("/wallpapers");
+        await expect(page.locator(".wallpaperStudioTileLabel").first()).toBeHidden();
+        const tile = page.locator(".wallpaperStudioTileImage").first();
+        const bounds = await tile.boundingBox();
+        expect(bounds).not.toBeNull();
+        if (!bounds) return;
+        expect(bounds.height).toBeGreaterThan(bounds.width);
+        const grid = page.locator(".wallpaperStudioGrid").first();
+        const columns = await grid.evaluate(element => getComputedStyle(element).gridTemplateColumns.split(" ").length);
+        expect(columns).toBe(4);
     });
 });
 
