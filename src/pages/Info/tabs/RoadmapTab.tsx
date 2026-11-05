@@ -15,10 +15,22 @@ export default function RoadmapTab() {
         <div className="roadmapReleases">
             {releases.map(release => (
                 <div className={`roadmapRelease ${/^0\.\d+$/.test(release.version) ? "roadmapReleaseMajor" : ""}`} key={release.version}>
-                    <div className="roadmapReleaseHeading">
-                        <span className="roadmapVersion">{release.version}</span>
-                        {release.title && <span>{release.title[language]}</span>}
-                    </div>
+                    {/^(0\\.\\d+)$/.test(release.version) ? (
+                        <h3 className="roadmapReleaseHeading">
+                            <span className="roadmapVersion">{release.version}</span>
+                            {release.title && <span>{release.title[language]}</span>}
+                        </h3>
+                    ) : (
+                        <div className="roadmapReleaseHeading">
+                            <span className="roadmapVersion">{release.version}</span>
+                            {release.title && <span>{release.title[language]}</span>}
+                        </div>
+                    )}
+                    {release.date && <time className="roadmapDate" dateTime={release.date}>
+                        {new Date(`${release.date}T12:00:00`).toLocaleDateString(language === "en" ? "en-GB" : "ru-RU", {
+                            day: "numeric", month: "long", year: "numeric"
+                        })}
+                    </time>
                     <ul>
                         {release.features.map((feature, index) => (
                             <li key={index}>{feature[language]}</li>
@@ -52,7 +64,14 @@ export default function RoadmapTab() {
                 <section className="roadmapBranch roadmapBranchCurrent">
                     <div className="roadmapCurrentContent">
                         <span className="roadmapStatus">{t("roadmap.current")}</span>
-                        <h3>{roadmapCurrent.version}{roadmapCurrent.title && <> — {roadmapCurrent.title[language]}</>}</h3>
+                        <h3><span className="roadmapVersion">{roadmapCurrent.version}</span>
+                            {roadmapCurrent.title && <> — {roadmapCurrent.title[language]}</>}
+                        </h3>
+                        {roadmapCurrent.date && <time className="roadmapDate" dateTime={roadmapCurrent.date}>
+                            {new Date(`${roadmapCurrent.date}T12:00:00`).toLocaleDateString(language === "en" ? "en-GB" : "ru-RU", {
+                                day: "numeric", month: "long", year: "numeric"
+                            })}
+                        </time>
                         <ul>
                             {roadmapCurrent.features.map((feature, index) => (
                                 <li key={index}>{feature[language]}</li>

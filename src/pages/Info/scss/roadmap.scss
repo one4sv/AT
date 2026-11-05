@@ -120,12 +120,26 @@
     }
 
     .roadmapVersion {
-        color: var(--accent_text);
+        color: var(--tc);
         font-variant-numeric: tabular-nums;
     }
 
-    .roadmapBranchFuture .roadmapVersion {
+    .roadmapReleaseHeading:is(h3) {
+        margin: .5dvh 0 .25dvh;
+        padding: 0;
+        font-size: 20px;
+        color: var(--tc);
+    }
+
+    .roadmapDate {
+        display: block;
+        margin-top: .25dvh;
         color: var(--borderWh);
+        font-size: 13px;
+    }
+
+    .roadmapBranchFuture .roadmapVersion {
+        color: var(--tc);
     }
 
     :is(.roadmapCurrentContent, .roadmapReleaseMajor) {
