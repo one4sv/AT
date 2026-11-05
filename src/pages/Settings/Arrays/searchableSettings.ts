@@ -78,10 +78,9 @@ export function useSearchableSettings(): SearchableSection[] {
                 },
                 {
                     id: "layout",
-                    name: "Боковое меню",
+                    name: t("personalization.sideMenu"),
                     icon: TextIndentIcon,
                     category: t("settings.personalization"),
-                    options: {mobileOnly:true}
                 },
             ],
         },
