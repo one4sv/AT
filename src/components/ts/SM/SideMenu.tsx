@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import "../../../scss/SM/sideMenu.scss";
 import HabitsList from "./HabitsList.tsx";
 import { useUser } from "../../hooks/UserHook.ts";
@@ -16,6 +17,7 @@ import AccountList from "./AccountList.tsx";
 import SpotsList from "./SpotsList.tsx";
 export default function SideMenu() {
     const isMobile = useCompactLayout();
+    const studio = useLocation().pathname.startsWith("/wallpapers");
     const {
         user,
         isAuthenticated,
@@ -137,7 +139,7 @@ export default function SideMenu() {
     useEffect(
         () => {
             const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-                if (layout !== "hidden" || !showSideMenu || menu.visible) return;
+                if ((!isMobile && studio) || (layout !== "hidden" && !studio) || !showSideMenu || menu.visible) return;
                 if (sideMenuRef.current && !sideMenuRef.current.contains(event.target as Node)) {
                     closeMenu();
                 }
@@ -149,7 +151,7 @@ export default function SideMenu() {
                 document.removeEventListener("touchstart", handleClickOutside);
             };
         },
-        [layout, showSideMenu, closeMenu, menu.visible]
+        [layout, showSideMenu, closeMenu, menu.visible, isMobile, studio]
     );
     if (!isAuthenticated && !loadingUser) {
         return <SideMenuUnAunthificated
@@ -185,7 +187,7 @@ export default function SideMenu() {
                 if (!menu.visible) setTranslateX(showSideMenu ? 0 : -100);
             }}
             style={{
-                transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none"
+                transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none"
             }}
         >
             <div className="ListWrapper">
