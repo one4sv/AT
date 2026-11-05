@@ -31,17 +31,74 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(layout.locator(".selector")).toHaveCount(0);
     });
 
-    test("wallpaper help opens and returns to the background library", async ({ page }) => {
+    test("wallpaper help opens from its own page", async ({ page }) => {
         await page.goto("/settings/pers");
-        await page.locator(".bgManageButton").click();
-        await expect(page.locator(".backgroundLibraryModal")).toBeVisible();
-        await page.locator(".backgroundLibraryHeader .backgroundHelpButton").click();
+        await page.locator(".bgManageButton").first().click();
+        await expect(page.locator(".wallpaperStudio")).toBeVisible();
+        await page.locator(".wallpaperStudioHelp").click();
         await expect(page.locator(".backgroundHelpModal")).toBeVisible();
         await expect(page.locator(".backgroundHelpModal")).not.toContainText("backgroundLibrary.");
-        await expect(page.locator(".backgroundHelpTitle")).not.toBeEmpty();
         await page.locator(".backgroundHelpClose").click();
-        await expect(page.locator(".backgroundLibraryModal")).toBeVisible();
-        await expect(page.locator(".backgroundHelpModal")).toHaveCount(0);
+        await expect(page.locator(".wallpaperStudio")).toBeVisible();
+    });
+
+    test("holding a thumbnail previews without applying and the compact strip can browse", async ({ page }) => {
+        await page.goto("/wallpapers");
+        const tiles = page.locator(".wallpaperStudioTileChoose");
+        await expect(tiles.nth(1)).toBeVisible();
+
+        await tiles.first().click();
+        await expect(page.locator(".wallpaperStudioApply")).toBeDisabled();
+
+        const box = await tiles.nth(1).boundingBox();
+        expect(box).not.toBeNull();
+        if (!box) return;
+
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.mouse.down();
+        await page.waitForTimeout(400);
+        await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
+        await page.mouse.up();
+
+        await expect(page.locator(".wallpaperStudioApply")).toBeEnabled();
+        const before = await page.locator(".wallpaperStudioHeading small").innerText();
+        const strip = page.locator(".wallpaperStudioPeekButton");
+        const bounds = await strip.boundingBox();
+        if (!bounds) return;
+
+        await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(bounds.x + bounds.width / 2 - 80, bounds.y + bounds.height / 2, { steps: 4 });
+        await page.mouse.up();
+        await expect.poll(async () => page.locator(".wallpaperStudioHeading small").innerText()).not.toBe(before);
+        await expect(page.locator(".wallpaperStudioApply")).toBeEnabled();
+    });
+
+    test("studio has a separate wallpaper settings route and a responsive sliding sheet", async ({ page }, testInfo) => {
+        await page.goto("/wallpapers");
+        await expect(page.locator(".wallpaperStudioSheet")).toBeVisible();
+        await page.locator(".wallpaperStudioTabs button").nth(1).click();
+        await expect(page).toHaveURL(/\\/wallpapers\\/settings$/);
+        await expect(page.locator(".wallpaperStudioSettings")).toBeVisible();
+        const sheet = await page.locator(".wallpaperStudioSheet").boundingBox();
+        if (!sheet) return;
+        if (testInfo.project.name === "webkit-mobile") {
+            expect(sheet.height).toBeGreaterThan((page.viewportSize()?.height ?? 600) * .9);
+        } else {
+            expect(sheet.height).toBeLessThan((page.viewportSize()?.height ?? 1000) * .65);
+        }
+    });
+
+    test("studio desktop sidebar stays under manual control regardless of setting", async ({ page }, testInfo) => {
+        test.skip(testInfo.project.name !== "chromium-desktop", "Desktop studio only");
+        await page.goto("/wallpapers");
+        await expect(page.locator(".sideMenu.open")).toBeVisible();
+        await page.locator(".wallpaperStudioHeaderLeft .wallpaperStudioIcon").first().click();
+        await expect(page.locator(".sideMenu:not(.open)")).toBeVisible();
+        await page.locator(".wallpaperStudioTabs button").nth(1).click();
+        await expect(page.locator(".sideMenu:not(.open)")).toBeVisible();
+        await page.locator(".wallpaperStudioHeaderLeft .wallpaperStudioIcon").first().click();
+        await expect(page.locator(".sideMenu.open")).toBeVisible();
     });
 });
 
