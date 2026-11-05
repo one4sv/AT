@@ -1,4 +1,5 @@
 import useCompactLayout from "../../hooks/utils/useCompactLayout";
+import { useLocation } from "react-router-dom";
 import { useSideMenu } from "../../hooks/SideMenuHook"
 import { useUser } from "../../hooks/UserHook"
 import { useSettings } from "../../hooks/SettingsHook"
@@ -10,6 +11,7 @@ import { useTranslation } from "react-i18next";
 
 export default function SMheader() {
     const isMobile = useCompactLayout();
+    const studio = useLocation().pathname.startsWith("/wallpapers");
     const { t } = useTranslation("common");
     const { user } = useUser()
     const {
@@ -227,7 +229,7 @@ export default function SMheader() {
         <div
             className={`smHeader ${openFilters ? "filtersOpen" : ""}`}
             style={{
-                transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none",
+                transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none",
             }}
         >
             <div className="smHeaderSliderWrapper">
