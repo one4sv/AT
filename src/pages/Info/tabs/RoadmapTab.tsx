@@ -24,13 +24,11 @@ export default function RoadmapTab() {
                 <div className={`roadmapRelease ${/^0\.\d+$/.test(release.version) ? "roadmapReleaseMajor" : ""}`} key={release.version}>
                     {/^0\.\d+$/.test(release.version) ? (
                         <h3 className="roadmapReleaseHeading">
-                            <span className="roadmapVersion">{release.version}</span>
-                            {release.title && <span> {release.title}</span>}
+                            <span className="roadmapVersion">{release.version}{release.title ? ` ${release.title}` : ""}</span>
                         </h3>
                     ) : (
                         <div className="roadmapReleaseHeading">
-                            <span className="roadmapVersion">{release.version}</span>
-                            {release.title && <span> {release.title}</span>}
+                            <span className="roadmapVersion">{release.version}{release.title ? ` ${release.title}` : ""}</span>
                         </div>
                     )}
                     {release.date && <time className="roadmapDate" dateTime={release.date}>
@@ -71,9 +69,7 @@ export default function RoadmapTab() {
                 <section className="roadmapBranch roadmapBranchCurrent">
                     <div className="roadmapCurrentContent">
                         <span className="roadmapStatus">{t("roadmap.current")}</span>
-                        <h3><span className="roadmapVersion">{roadmapCurrent.version}</span>
-                            {roadmapCurrent.title && <> {roadmapCurrent.title}</>}
-                        </h3>
+                        <h3><span className="roadmapVersion">{roadmapCurrent.version}{roadmapCurrent.title ? ` ${roadmapCurrent.title}` : ""}</span></h3>
                         {roadmapCurrent.date && <time className="roadmapDate" dateTime={roadmapCurrent.date}>
                             {new Date(`${roadmapCurrent.date}T12:00:00`).toLocaleDateString(language === "en" ? "en-GB" : "ru-RU", {
                                 day: "numeric", month: "long", year: "numeric"
@@ -106,7 +102,9 @@ export default function RoadmapTab() {
                     <div hidden={!showPast} className="roadmapPastContent">
                         {releaseList([...roadmapHistory].reverse())}
                         <div className="roadmapBeginning">
-                            <h3>{t("roadmap.beginning")}</h3>
+                            <h3 className="roadmapReleaseHeading">
+                                <span className="roadmapVersion">{`0.0 ${t("roadmap.beginning")}`}</span>
+                            </h3>
                             <time dateTime="2025-07-14">14.07.2025</time>
                         </div>
                     </div>
