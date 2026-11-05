@@ -120,7 +120,7 @@
         "online": "Online",
         "search": "Search messages",
         "placeholder": "Write a message...",
-        "forwarded": "Forwarded message",
+        "forwarded": "Forwarded",
         "forwardedCount": "{{count}} messages",
         "you": "You",
         "selected": "Selected: {{count}} messages",
@@ -139,7 +139,16 @@
         "hour": "last seen an hour ago",
         "hours": "last seen {{count}} hours ago",
         "yesterday": "last seen yesterday at {{time}}",
-        "lastSeen": "last seen {{date}} at {{time}}"
+        "lastSeen": "last seen {{date}} at {{time}}",
+        "from": "from",
+        "edited": "edited",
+        "blockedBy": "This user has blocked you",
+        "blockedYou": "You have blocked this user",
+        "results": "{{count}} results",
+        "editPrefix": "Edit:",
+        "replyPrefix": "Reply:",
+        "forwardPrefix": "Forward from:",
+        "user": "user"
     },
     "habitUi": {
         "period": {

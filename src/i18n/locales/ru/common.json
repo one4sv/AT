@@ -120,7 +120,7 @@
         "online": "В сети",
         "search": "Поиск по сообщениям",
         "placeholder": "Напишите сообщение...",
-        "forwarded": "Пересланное сообщение",
+        "forwarded": "Переслано",
         "forwardedCount": "{{count}} сообщения",
         "you": "Вы",
         "selected": "Выбрано: {{count}} сообщений",
@@ -139,7 +139,16 @@
         "hour": "в сети час назад",
         "hours": "в сети {{count}} ч назад",
         "yesterday": "в сети вчера в {{time}}",
-        "lastSeen": "в сети {{date}} в {{time}}"
+        "lastSeen": "в сети {{date}} в {{time}}",
+        "from": "от",
+        "edited": "изменено",
+        "blockedBy": "Этот пользователь вас заблокировал",
+        "blockedYou": "Вы заблокировали этого пользователя",
+        "results": "{{count}} результатов",
+        "editPrefix": "Редактировать:",
+        "replyPrefix": "Ответ:",
+        "forwardPrefix": "Переслать от:",
+        "user": "пользователя"
     },
     "habitUi": {
         "period": {
