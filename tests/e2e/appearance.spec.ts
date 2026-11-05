@@ -37,8 +37,20 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(page.locator(".backgroundLibraryModal")).toBeVisible();
         await page.locator(".backgroundLibraryHeader .backgroundHelpButton").click();
         await expect(page.locator(".backgroundHelpModal")).toBeVisible();
+        await expect(page.locator(".backgroundHelpModal")).not.toContainText("backgroundLibrary.");
+        await expect(page.locator(".backgroundHelpTitle")).not.toBeEmpty();
         await page.locator(".backgroundHelpClose").click();
         await expect(page.locator(".backgroundLibraryModal")).toBeVisible();
         await expect(page.locator(".backgroundHelpModal")).toHaveCount(0);
     });
+});
+
+test("built-in Japanese wallpapers have desktop and mobile assets", async ({ request }) => {
+    for (const scene of ["sakura", "alley", "torii"]) {
+        for (const size of ["desktop", "mobile"]) {
+            const response = await request.get(`/wallpapers/japanese-${scene}-${size}.webp`);
+            expect(response.ok(), `Missing Japanese wallpaper ${scene}-${size}`).toBeTruthy();
+            expect(response.headers()["content-type"]).toContain("image/webp");
+        }
+    }
 });
