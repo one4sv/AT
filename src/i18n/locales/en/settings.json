@@ -143,7 +143,11 @@
     "saveColor": "Save color",
     "contourShapes": "Contour shapes",
     "solidColor": "Solid color",
-    "yourBg": "Your background"
+    "yourBg": "Your background",
+    "sideMenu": "Side menu",
+    "sideMenuAlways": "Always visible",
+    "sideMenuButton": "By button",
+    "sideMenuMobileHint": "On phones, open the side menu with the header button or a swipe. It fills the screen, so pinning is only available on desktop. Your desktop preference is saved locally in that browser."
   },
   "privacy": {
     "accountInfo": "Account information",
