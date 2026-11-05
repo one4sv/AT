@@ -30,7 +30,7 @@ export default function RoadmapTab() {
                         {new Date(`${release.date}T12:00:00`).toLocaleDateString(language === "en" ? "en-GB" : "ru-RU", {
                             day: "numeric", month: "long", year: "numeric"
                         })}
-                    </time>
+                    </time>}
                     <ul>
                         {release.features.map((feature, index) => (
                             <li key={index}>{feature[language]}</li>
@@ -71,7 +71,7 @@ export default function RoadmapTab() {
                             {new Date(`${roadmapCurrent.date}T12:00:00`).toLocaleDateString(language === "en" ? "en-GB" : "ru-RU", {
                                 day: "numeric", month: "long", year: "numeric"
                             })}
-                        </time>
+                        </time>}
                         <ul>
                             {roadmapCurrent.features.map((feature, index) => (
                                 <li key={index}>{feature[language]}</li>
