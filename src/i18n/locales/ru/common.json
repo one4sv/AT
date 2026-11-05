@@ -156,6 +156,70 @@
     "today": "Сегодня",
     "yesterdayShort": "Вчера"
   },
+  "statsUi": {
+    "title": "Статистика",
+    "completed": "Выполнено",
+    "skipped": "Пропущено",
+    "bestStreak": "Лучший стрик",
+    "progress": "Ваш прогресс",
+    "allTime": "За всё время активности",
+    "totalDays": "Всего дней в статистике: {{count}}",
+    "loading": "Загрузка статистики",
+    "details": "Подробная статистика выполнений",
+    "units": {
+      "hours": "ч",
+      "minutes": "мин",
+      "seconds": "с"
+    },
+    "periods": {
+      "thirty": "30 дней",
+      "week": "7 дней",
+      "ninety": "90 дней",
+      "year": "365 дней",
+      "all": "Всё время"
+    },
+    "filters": {
+      "comp": "Выполнения",
+      "all": "Все",
+      "skip": "Пропуски",
+      "free": "Свободно"
+    },
+    "groups": {
+      "day": "По дням",
+      "week": "По неделям",
+      "month": "По месяцам"
+    },
+    "cards": {
+      "comp": "Выполнения",
+      "streak": "Стрики",
+      "break": "Перерывы",
+      "all": "Всего",
+      "counter": "Счётчик",
+      "timer": "Таймер",
+      "schedule": "Расписание"
+    },
+    "metrics": {
+      "compCount": "Дней",
+      "compProcent": "В процентах",
+      "skipCount": "Дней",
+      "skipProcent": "В процентах",
+      "streakCount": "Всего серий",
+      "streakMax": "Максимальный",
+      "streakMiddle": "В среднем",
+      "breakMax": "Максимальный",
+      "breakMiddle": "В среднем",
+      "allCount": "Дней в трекинге",
+      "fullCounter": "Всего",
+      "maxCounter": "Максимальный",
+      "middleCounter": "Средний",
+      "fullTimer": "Всего",
+      "maxTimer": "Максимальный",
+      "middleTimer": "Средний",
+      "fullSchedule": "Всего",
+      "maxSchedule": "Максимальный",
+      "middleSchedule": "Средний"
+    }
+  },
   "habitUi": {
     "period": {
       "everyday": "каждый день",
