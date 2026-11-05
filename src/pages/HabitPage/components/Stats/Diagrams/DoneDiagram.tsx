@@ -1,4 +1,6 @@
 import "../../../scss/Diagrams.scss"
+import { useTranslation } from "react-i18next"
+import i18n from "../../../../../i18n/i18n"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
 import { useHabits } from "../../../../../components/hooks/HabitsHook"
@@ -31,7 +33,7 @@ import {
     getMonthStart,
     groupDays,
 } from "../../../utils/DiagramDate"
-import { formatShortDateFromString, weekDay } from "../../../../../components/ts/utils/dateToStr"
+import { formatShortDateFromString } from "../../../../../components/ts/utils/dateToStr"
 import type { Calendar } from "../../../../../components/context/CalendarContext"
 import type { Habit } from "../../../../../components/context/HabitsContext"
 import { isMobile } from "react-device-detect"
@@ -75,7 +77,7 @@ function getAnchorDate(groupType: string, day: string): string {
     return day
 }
 
-function formatGroupLabel(groupType: string, day: string): string {
+function formatGroupLabel(groupType: string, day: string, locale: string): string {
     const date = new Date(getAnchorDate(groupType, day))
 
     const month = String(date.getMonth() + 1).padStart(2, "0")
@@ -87,10 +89,10 @@ function formatGroupLabel(groupType: string, day: string): string {
 
     if (groupType === "week") {
         const week = Math.ceil(date.getDate() / 7)
-        return `${week} нед. ${month}`
+        return i18n.t("habitPageUi.charts.weekLabel", { ns: "common", week, month })
     }
 
-    return `${formatShortDateFromString(day)} ${weekDay(day)}`
+    return `${formatShortDateFromString(day)} ${new Intl.DateTimeFormat(locale, { weekday: "short" }).format(new Date(day)).replace(".", "")}`
 }
 
 function buildCalendarIndex(calendar: Calendar[]) {
@@ -104,6 +106,8 @@ function buildCalendarIndex(calendar: Calendar[]) {
 }
 
 export default function DoneDiagram({ group, period, metric, mainRef} : {group: string, period:string, metric: string, mainRef:React.RefObject<HTMLDivElement | null> }) {
+    const { t, i18n: language } = useTranslation("common")
+    const locale = language.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU"
     const { calendar, setChosenDay, setSelectedMonth, setSelectedYear } = useCalendar()
     const { habit } = useTheHabit()
     const { habits } = useHabits()
@@ -251,7 +255,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
 
         if (metric === "all" || metric === "comp") {
             datasets.push({
-                label: "Выполнено",
+                label: t("statsUi.completed"),
                 data: donePerDay,
                 borderColor: "#129e12",
                 backgroundColor: "#129e12",
@@ -263,7 +267,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
 
         if (metric === "all" || metric === "skip") {
             datasets.push({
-                label: "Пропущено",
+                label: t("statsUi.skipped"),
                 data: skipPerDay,
                 borderColor: "#646464",
                 backgroundColor: "#646464",
@@ -275,7 +279,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
 
         if (id && (metric === "all" || metric === "free")) {
             datasets.push({
-                label: "Свободно",
+                label: t("statsUi.filters.free"),
                 data: freePerDay,
                 borderColor: "#111111",
                 backgroundColor: "#111111",
@@ -288,7 +292,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
         return {
             data: {
                 labels: groupsDays.map(g =>
-                    formatGroupLabel(effectiveGroup, g.days[0])
+                    formatGroupLabel(effectiveGroup, g.days[0], locale)
                 ),
                 datasets,
             },
@@ -296,7 +300,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
             effectiveGroup,
             groupStats,
         }
-    }, [calendar, habit, habits, period, metric, id, group])
+    }, [calendar, habit, habits, period, metric, id, group, locale, t])
 
     const maxValue = Math.max(2, ...data.datasets.flatMap(d => d.data)) + 1
 
@@ -334,28 +338,28 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
 
                         if (!group) return []
 
-                        if (ctx.dataset.label === "Выполнено") {
+                        if (ctx.dataset.label === t("statsUi.completed")) {
                             const shown = group.doneNames.slice(0, 3)
                             const more = group.doneNames.length - shown.length
 
-                            if (more > 0) shown.push(`и ещё ${more}`)
+                            if (more > 0) shown.push(t("habitPageUi.charts.andMore", { count: more }))
 
-                            return shown.length ? shown : ["Нет выполненных"]
+                            return shown.length ? shown : [t("habitPageUi.charts.noCompleted")]
                         }
 
-                        if (ctx.dataset.label === "Пропущено") {
+                        if (ctx.dataset.label === t("statsUi.skipped")) {
                             const shown = group.skipNames.slice(0, 3)
                             const more = group.skipNames.length - shown.length
 
-                            if (more > 0) shown.push(`и ещё ${more}`)
+                            if (more > 0) shown.push(t("habitPageUi.charts.andMore", { count: more }))
 
-                            return shown.length ? shown : ["Нет пропусков"]
+                            return shown.length ? shown : [t("habitPageUi.charts.noSkipped")]
                         }
 
-                        if (ctx.dataset.label === "Свободно") {
+                        if (ctx.dataset.label === t("statsUi.filters.free")) {
                             return group.free > 0
-                                ? ["Свободно"]
-                                : ["Нет свободных"]
+                                ? [t("statsUi.filters.free")]
+                                : [t("habitPageUi.charts.noFree")]
                         }
 
                         return []
