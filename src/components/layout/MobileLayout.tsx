@@ -39,7 +39,7 @@ export default function MobileLayout({ children }: LayoutProps) {
 
     const handleTouchStart = (e: React.TouchEvent) => {
         gesture.current = "none";
-        if (e.touches.length !== 1 || dontHandle || contextMenu.visible || blackout.seted) {
+        if (location.pathname.startsWith("/wallpapers") || e.touches.length !== 1 || dontHandle || contextMenu.visible || blackout.seted) {
             gesture.current = "scroll";
             return;
         }
@@ -103,7 +103,8 @@ export default function MobileLayout({ children }: LayoutProps) {
 
     const hideHeader =
         location.pathname.startsWith("/chat") ||
-        location.pathname.startsWith("/habit/");
+        location.pathname.startsWith("/habit/") ||
+        location.pathname.startsWith("/wallpapers");
 
     const backgroundWidth =
         decor === "glass"
