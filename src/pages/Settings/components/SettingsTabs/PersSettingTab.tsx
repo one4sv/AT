@@ -5,6 +5,7 @@ import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import PreviewAccent from "../PreviewAccent.tsx";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 import SeekBar from "../SeekBar.tsx";
 import useCompactLayout from "../../../../components/hooks/utils/useCompactLayout";
@@ -15,13 +16,13 @@ import HighlightText from "../../../../components/ts/HighlightText.tsx";
 import "../../../../scss/landingBackground.scss";
 
 import SectionArt from "../../../../components/ts/SectionArt";
-import BackgroundEffectsSettings from "./BackgroundEffectsSettings";
 import { BackgroundScene, type StockScene, isStockScene } from "../../../../components/ts/utils/BackgroundScene";
 import BackIconsScene from "../../../../components/ts/utils/BackIconsScene";
 import { getBackgroundFilter } from "../../../../components/ts/utils/backgroundFilter";
 
 export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
+    const navigate = useNavigate();
     const isMobile = useCompactLayout();
     const { setBlackout } = useBlackout();
     const { isDark, accent, bg, bgUrl, bgEffects, contourPattern, contourSize, artPattern, artSize, decor, grad, blur, layout } = useSettings();
@@ -105,7 +106,7 @@ export default function PersSettingTab({ search }: { search: string }) {
                 <div className="settingHeader"><HighlightText text={t("personalization.background")} search={search}/></div>
                 <div className="settingInnerWrapper">
                     <button type="button" className="bgManageButton"
-                        onClick={() => setBlackout({ seted: true, module: "BackgroundLibrary" })}>
+                        onClick={() => navigate("/wallpapers")}>
                         {bg === "custom" && bgUrl ?
                             <img className="bgManagePreview" src={bgUrl} alt="" style={{ filter: getBackgroundFilter(bgEffects, .24) }}/> :
                             <div className={`bgManagePreview ${bg === "landing" ? "landingBackground" : ""}`} style={{ filter: getBackgroundFilter(bgEffects, .24) }}>
@@ -115,7 +116,9 @@ export default function PersSettingTab({ search }: { search: string }) {
                         <span>{t("backgroundLibrary.change")}</span>
                     </button>
                 </div>
-                <BackgroundEffectsSettings search={search}/>
+                <button type="button" className="bgManageButton" onClick={() => navigate("/wallpapers/settings")}>
+                    {t("backgroundLibrary.previewSettings")}
+                </button>
             </div>
             <div className="settingInnerDiv" data-setting-id="layout">
                 <div className="settingHeader">
