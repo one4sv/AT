@@ -1,4 +1,4 @@
-const WEEK_DAYS = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
+import i18n from "../../../i18n/i18n";
 /**
  * Возвращает сегодняшнюю дату в формате YYYY-MM-DD
  */
@@ -91,17 +91,15 @@ export const formatDateLabel = (dateStr: string) => {
 
     let prefix = "";
 
-    if (diffDays === 0) prefix = "Сегодня";
-    else if (diffDays === 1) prefix = "Завтра";
-    else if (diffDays === -1) prefix = "Вчера";
+    if (diffDays === 0) prefix = i18n.t("chatUi.today", { ns: "common" });
+    else if (diffDays === 1) prefix = i18n.t("sideMenu.tomorrow", { ns: "common" });
+    else if (diffDays === -1) prefix = i18n.t("chatUi.yesterdayShort", { ns: "common" });
 
-    const dd = String(date.getDate()).padStart(2, "0");
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const yyyy = date.getFullYear();
+    const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
+    const dateLabel = date.toLocaleDateString(locale, { day: "2-digit", month: "2-digit", year: "numeric" });
+    const weekday = date.toLocaleDateString(locale, { weekday: "short" }).replace(".", "");
 
-    const weekDay = WEEK_DAYS[date.getDay()];
-
-    return `${prefix ? prefix + ", " : ""}${dd}.${mm}.${yyyy}, ${weekDay}`;
+    return `${prefix ? prefix + ", " : ""}${dateLabel}, ${weekday}`;
 };
 
 /**
