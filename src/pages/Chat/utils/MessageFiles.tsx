@@ -1,4 +1,5 @@
 import type { Media, message } from "../../../components/context/ChatContext";
+import { useTranslation } from "react-i18next";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useChat } from "../../../components/hooks/ChatHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
@@ -6,6 +7,7 @@ import { useUser } from "../../../components/hooks/UserHook";
 import GetIconByType from "./getIconByType";
 
 export default function MessageFiles({files, m} : {files:Media[], m:message}) {
+    const { t } = useTranslation("common");
     const { chatWith } = useChat()
     const { setBlackout } = useBlackout()
     const { user } = useUser()
@@ -77,7 +79,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                                     return reaction ? reaction.reaction : "none";
                                 })();
                                 openMenu(e.clientX, e.clientY, "mess", { id:String(m.id), name:file.name, url:file.url }, undefined, undefined,
-                                    { isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content ?? (m.files && m.files?.length > 0 ? `${m.files?.length} mediafile` : "Пересланное сообщение"),
+                                    { isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content ?? (m.files && m.files?.length > 0 ? t("chatUi.mediaCount", { count: m.files?.length }) : t("chatUi.forwardedMessage")),
                                     sender:m.sender_name }
                                 )
                             }}/>

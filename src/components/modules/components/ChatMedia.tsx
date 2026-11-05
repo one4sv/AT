@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "framer-motion";
 import {
     LinkIcon,
@@ -27,10 +28,10 @@ interface ChatMediaItem {
 }
 
 const filters: { id: MediaCategory; label: string }[] = [
-    { id: "photo", label: "Фото" },
-    { id: "video", label: "Видео" },
-    { id: "link", label: "Ссылки" },
-    { id: "file", label: "Файлы" }
+    { id: "photo", label: "photo" },
+    { id: "video", label: "video" },
+    { id: "link", label: "link" },
+    { id: "file", label: "file" }
 ];
 
 const skeletons = Array.from({ length: 3 }, (_, index) => index);
@@ -54,6 +55,7 @@ const cardVariants = {
 };
 
 export default function ChatMedia() {
+    const { t } = useTranslation("common");
     const openLink = useOpenLink();
     const { chatWith } = useChat();
     const { setBlackout } = useBlackout();
@@ -99,7 +101,7 @@ export default function ChatMedia() {
 
             const data = response.data;
 
-            if (!data.success) throw new Error("Не удалось загрузить медиа");
+            if (!data.success) throw new Error(t("chatMedia.loadFailed"));
 
             const pageItems = data.items as ChatMediaItem[];
 
@@ -125,7 +127,7 @@ export default function ChatMedia() {
             setHasMore(Boolean(data.hasMore));
         } catch {
             if (requestId === requestRef.current) {
-                setError("Не удалось загрузить медиа");
+                setError(t("chatMedia.loadFailed"));
             }
         } finally {
             if (requestId === requestRef.current) {
@@ -133,7 +135,7 @@ export default function ChatMedia() {
                 setLoading(false);
             }
         }
-    }, [chatWith, activeFilter]);
+    }, [chatWith, activeFilter, t]);
 
     useEffect(() => {
         requestRef.current++;
@@ -218,10 +220,10 @@ export default function ChatMedia() {
 
     const formatSize = (size: number) => {
         if (!size) return "";
-        if (size < 1024) return `${size} Б`;
-        if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} КБ`;
+        if (size < 1024) return `${size} ${t("chatMedia.bytes")}`;
+        if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} ${t("chatMedia.kb")}`;
 
-        return `${(size / (1024 * 1024)).toFixed(1)} МБ`;
+        return `${(size / (1024 * 1024)).toFixed(1)} ${t("chatMedia.mb")}`;
     };
 
     const renderSkeletons = () => (
@@ -277,7 +279,7 @@ export default function ChatMedia() {
                         className={`chatMediaFilter ${activeFilter === filter.id ? "active" : ""}`}
                         onClick={() => setActiveFilter(filter.id)}
                     >
-                        {filter.label}
+                        {t(`chatMedia.${filter.id}`)}
                     </div>
                 ))}
             </div>
@@ -374,7 +376,7 @@ export default function ChatMedia() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2 }}
                         >
-                            {error || "Здесь пока ничего нет"}
+                            {error || t("chatMedia.empty")}
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -396,7 +398,7 @@ export default function ChatMedia() {
                             type="button"
                             onClick={() => void loadPage()}
                         >
-                            Повторить
+                            {t("chatMedia.retry")}
                         </button>
                     </motion.div>
                 )}

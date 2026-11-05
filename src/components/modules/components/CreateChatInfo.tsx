@@ -1,4 +1,5 @@
 import TA from "../../ts/TA";
+import { useTranslation } from "react-i18next";
 import { Camera } from "@phosphor-icons/react";
 import React, { useRef } from "react";
 
@@ -12,6 +13,7 @@ interface CreateChatInfoProps {
 }
 
 export default function CreateChatInfo({pick, setPick, name, setName, desc, setDesc}: CreateChatInfoProps) {
+    const { t } = useTranslation("common");
     const inputFileRef =  useRef<HTMLInputElement>(null);
     
     return (
@@ -27,14 +29,14 @@ export default function CreateChatInfo({pick, setPick, name, setName, desc, setD
                     ) : <Camera />}
                 </div>
                 <div className="createChatWrapper">
-                    <label htmlFor="createChatname">Название</label>
+                    <label htmlFor="createChatname">{t("chatUi.name")}</label>
                     <input type="text" id="createChatname" className='createChatname' value={name} onChange={(e) => setName(e.target.value)} maxLength={40} minLength={3}/>
                     <span>{name.length}/40</span>
                 </div>
             </div>
             <div className="creteChatStr">
                 <div className="createChatWrapper">
-                    <label htmlFor="createChatDesc">Описание</label>
+                    <label htmlFor="createChatDesc">{t("chatUi.description")}</label>
                     <TA id="createChatDesc" className='createChatDesc' value={desc} onChange={(e) => setDesc(e.target.value)} maxLength={150}/>
                     <span>{desc.length}/150</span>
                 </div>

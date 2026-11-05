@@ -150,7 +150,11 @@
     "forwardPrefix": "Переслать от:",
     "user": "пользователя",
     "mediaCount": "Медиафайлов: {{count}}",
-    "forwardedMessage": "Пересланное сообщение"
+    "forwardedMessage": "Пересланное сообщение",
+    "name": "Название",
+    "description": "Описание",
+    "today": "Сегодня",
+    "yesterdayShort": "Вчера"
   },
   "habitUi": {
     "period": {
@@ -424,5 +428,17 @@
     "createAndCopy": "Создать и скопировать ссылку",
     "createLink": "Создать ссылку",
     "showQr": "Показать QR-код беседы"
+  },
+  "chatMedia": {
+    "photo": "Фото",
+    "video": "Видео",
+    "link": "Ссылки",
+    "file": "Файлы",
+    "loadFailed": "Не удалось загрузить медиа",
+    "bytes": "Б",
+    "kb": "КБ",
+    "mb": "МБ",
+    "empty": "Здесь пока ничего нет",
+    "retry": "Повторить"
   }
 }
