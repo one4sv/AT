@@ -233,6 +233,30 @@
     }
   },
   "habitPageUi": {
+    "progress": {
+      "noSession": "Session not started",
+      "startedAt": "session started at {{time}}",
+      "pauseFromTo": "paused from {{start}} to {{end}}",
+      "now": "now",
+      "duration": "(duration {{duration}})",
+      "circleCompleted": "lap completed",
+      "endedAt": "session ended at {{time}}",
+      "valueChanged": "value changed to {{count}}"
+    },
+    "placeholders": {
+      "0": "What happened?",
+      "1": "What did you do?",
+      "2": "What did you accomplish?",
+      "3": "How did it go?",
+      "4": "What worked out?",
+      "5": "How is it going?",
+      "6": "Tell us about it",
+      "7": "What's new?",
+      "8": "Anything interesting?",
+      "9": "What's next?",
+      "10": "What was your impression?",
+      "11": "What changed?"
+    },
     "save": {
       "reminder": "Remember to save!",
       "back": "Back"
