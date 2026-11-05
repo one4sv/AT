@@ -527,7 +527,7 @@ export default function SMnav() {
                 transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none"
             }}
             role="status"
-            aria-label=t("sideMenu.loadingNavigation")
+            aria-label={t("sideMenu.loadingNavigation")}
         >
             <div className="SMnav" aria-hidden="true">
                 {Array.from(
