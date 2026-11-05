@@ -156,6 +156,70 @@
     "today": "Today",
     "yesterdayShort": "Yesterday"
   },
+  "statsUi": {
+    "title": "Statistics",
+    "completed": "Completed",
+    "skipped": "Skipped",
+    "bestStreak": "Best streak",
+    "progress": "Your progress",
+    "allTime": "Across all activity history",
+    "totalDays": "Total days in statistics: {{count}}",
+    "loading": "Loading statistics",
+    "details": "Detailed completion statistics",
+    "units": {
+      "hours": "h",
+      "minutes": "min",
+      "seconds": "s"
+    },
+    "periods": {
+      "thirty": "30 days",
+      "week": "7 days",
+      "ninety": "90 days",
+      "year": "365 days",
+      "all": "All time"
+    },
+    "filters": {
+      "comp": "Completions",
+      "all": "All",
+      "skip": "Skipped",
+      "free": "Free"
+    },
+    "groups": {
+      "day": "By day",
+      "week": "By week",
+      "month": "By month"
+    },
+    "cards": {
+      "comp": "Completions",
+      "streak": "Streaks",
+      "break": "Breaks",
+      "all": "Total",
+      "counter": "Counter",
+      "timer": "Timer",
+      "schedule": "Schedule"
+    },
+    "metrics": {
+      "compCount": "Days",
+      "compProcent": "Percentage",
+      "skipCount": "Days",
+      "skipProcent": "Percentage",
+      "streakCount": "Total streaks",
+      "streakMax": "Longest",
+      "streakMiddle": "Average",
+      "breakMax": "Longest",
+      "breakMiddle": "Average",
+      "allCount": "Tracked days",
+      "fullCounter": "Total",
+      "maxCounter": "Maximum",
+      "middleCounter": "Average",
+      "fullTimer": "Total",
+      "maxTimer": "Maximum",
+      "middleTimer": "Average",
+      "fullSchedule": "Total",
+      "maxSchedule": "Maximum",
+      "middleSchedule": "Average"
+    }
+  },
   "habitUi": {
     "period": {
       "everyday": "Every day",
