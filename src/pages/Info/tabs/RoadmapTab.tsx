@@ -15,7 +15,7 @@ export default function RoadmapTab() {
         <div className="roadmapReleases">
             {releases.map(release => (
                 <div className={`roadmapRelease ${/^0\.\d+$/.test(release.version) ? "roadmapReleaseMajor" : ""}`} key={release.version}>
-                    {/^(0\\.\\d+)$/.test(release.version) ? (
+                    {/^0\.\d+$/.test(release.version) ? (
                         <h3 className="roadmapReleaseHeading">
                             <span className="roadmapVersion">{release.version}</span>
                             {release.title && <span>{release.title[language]}</span>}
