@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMemo } from "react";
+import localizeSystemMessage from "./localizeSystemMessage";
 import type { message } from "../../../components/context/ChatContext";
 import { useIdentify } from "../../../components/hooks/utils/useIdentify";
 import { isMobile } from "react-device-detect";
@@ -16,12 +16,11 @@ export default function SystemMessage({m, answer, scrollToMessage}: SystemMessag
     const navigate = useNavigate();
     const { identified:targetAccount } = useIdentify(m.target_id?.toString())
 
-    const parts = useMemo(() => {
-        const split = m.content.split("{}");
-        return split.length === 2
-            ? { before: split[0], after: split[1] }
-            : null;
-    }, [m.content]);
+    const content = localizeSystemMessage(m.content);
+    const split = content.split("{}");
+    const parts = split.length === 2
+        ? { before: split[0], after: split[1] }
+        : null;
 
     const displayTargetName = targetAccount
         ? (targetAccount.name || targetAccount.nick)
@@ -42,7 +41,7 @@ export default function SystemMessage({m, answer, scrollToMessage}: SystemMessag
                         {parts.after}
                     </span>
                 ) : (
-                    <span>{m.content}</span>
+                    <span>{content}</span>
                 )}
                 {answer && scrollToMessage && (
                     <div>
