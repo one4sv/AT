@@ -21,6 +21,7 @@ export default function MobileLayout({ children }: LayoutProps) {
     const { menu: contextMenu } = useContextMenu();
     const { blackout } = useBlackout();
     const location = useLocation();
+    const wallpaperStudio = location.pathname.startsWith("/wallpapers");
     const {
         toggleMenu,
         translateX,
@@ -126,9 +127,11 @@ export default function MobileLayout({ children }: LayoutProps) {
                 </div>
             ) : null}
 
-            <SMheader/>
-            <SideMenu />
-            <SMnav />
+            {(!wallpaperStudio || isMobile) && <>
+                <SMheader/>
+                <SideMenu />
+                <SMnav />
+            </>}
 
             {decor === "glass" && <Background />}
 
