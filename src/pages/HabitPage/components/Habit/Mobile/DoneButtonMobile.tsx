@@ -15,7 +15,7 @@ interface DoneButtonProps {
 
 export default function DoneButton({ habitId, open, setOpen }: DoneButtonProps) {
     const { t } = useTranslation("common");
-  const { todayDone, isDone, doable, planable, isPlanned, habit } = useTheHabit();
+    const { todayDone, isDone, doable, planable, isPlanned, habit } = useTheHabit();
     const { markDoneWLoading, waitDoneAnswer } = useDone();
     const { waitPlanAnswer, markPlanWLoading } = usePlanned()
     const { chosenDay } = useCalendar();
