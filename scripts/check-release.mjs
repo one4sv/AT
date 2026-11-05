@@ -38,8 +38,9 @@ const leafKeys = (value, prefix = "") => Object.entries(value).flatMap(([key, ch
 for (const ns of localeNames) {
     const ru = JSON.parse(read(`src/i18n/locales/ru/${ns}.json`));
     const en = JSON.parse(read(`src/i18n/locales/en/${ns}.json`));
-    const ruKeys = new Set(leafKeys(ru));
-    const enKeys = new Set(leafKeys(en));
+    const normalizePlural = key => key.replace(/_(?:zero|one|two|few|many|other)$/, "_plural");
+    const ruKeys = new Set(leafKeys(ru).map(normalizePlural));
+    const enKeys = new Set(leafKeys(en).map(normalizePlural));
     for (const key of ruKeys) if (!enKeys.has(key)) errors.push(`Missing en ${ns}.${key}`);
     for (const key of enKeys) if (!ruKeys.has(key)) errors.push(`Missing ru ${ns}.${key}`);
 }
