@@ -73,7 +73,8 @@
     background-color: var(--interact);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    border: none;
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
     user-select: none;
     pointer-events: all;
     bottom: 2vh;
@@ -133,7 +134,8 @@
     background: var(--interact);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    border: none;
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
     overflow: hidden;
     cursor: pointer;
     z-index: 3;
