@@ -35,7 +35,19 @@
         "home": "Главная",
         "add": "Добавить",
         "notLoggedIn": "Вы не вошли в аккаунт",
-        "signIn": "войти"
+        "signIn": "войти",
+        "chats": "Чаты",
+        "spots": "Споты",
+        "loading": "Загрузка",
+        "newChat": "Новый чат",
+        "newActivity": "Новая активность",
+        "newSpot": "Новый спот",
+        "inDevelopment": "В разработке",
+        "profile": "Профиль",
+        "feed": "Лента",
+        "confirmLogOut": "Да, выйти",
+        "loadingNavigation": "Загрузка навигации",
+        "photo": "Фото"
     },
     "contactsList": {
         "usersNotFound": "Пользователи не найдены",

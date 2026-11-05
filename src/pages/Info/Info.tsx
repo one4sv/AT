@@ -313,10 +313,16 @@ export default function Info() {
 
                                             if (!heading || !container) return;
 
-                                            container.scrollTo({
-                                                top: container.scrollTop + heading.getBoundingClientRect().top - container.getBoundingClientRect().top - 10,
-                                                behavior: "smooth",
-                                            });
+                                            if (heading.closest(".roadmapPastContent[hidden]")) {
+                                                window.dispatchEvent(new Event("roadmap-open-history"));
+                                            }
+
+                                            requestAnimationFrame(() => requestAnimationFrame(() => {
+                                                container.scrollTo({
+                                                    top: container.scrollTop + heading.getBoundingClientRect().top - container.getBoundingClientRect().top - 10,
+                                                    behavior: "smooth",
+                                                });
+                                            }));
 
                                             heading.classList.remove("table-highlight");
                                             void heading.offsetWidth;

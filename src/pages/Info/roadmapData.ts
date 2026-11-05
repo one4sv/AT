@@ -6,7 +6,7 @@ export interface RoadmapText {
 export interface RoadmapRelease {
     version: string;
     date?: string;
-    title?: RoadmapText;
+    title?: string;
     features: RoadmapText[];
     notice?: RoadmapText;
 }
@@ -45,7 +45,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.1",
         date: "2025-08-26",
-        title: { ru: "Foundation", en: "Foundation" },
+        title: "Foundation",
         features: [
             { ru: "Основа приложения и навигации", en: "Core application and navigation" }
         ]
@@ -72,7 +72,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.2",
         date: "2025-09-22",
-        title: { ru: "Act", en: "Act" },
+        title: "Act",
         features: [
             { ru: "Основные инструменты привычек", en: "Core habit tools" }
         ]
@@ -106,9 +106,9 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.3",
         date: "2025-10-14",
-        title: { ru: "Dialogue", en: "Dialogue" },
+        title: "Dialogue",
         features: [
-            { ru: "Личные чаты", en: "Личные чаты" }
+            { ru: "Личные чаты", en: "Private chats" }
         ]
     },
     {
@@ -152,7 +152,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.4",
         date: "2025-10-23",
-        title: { ru: "Firework", en: "Firework" },
+        title: "Firework",
         features: [
             { ru: "Публикации и взаимодействия", en: "Posts and interactions" }
         ]
@@ -230,7 +230,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.5",
         date: "2026-01-25",
-        title: { ru: "Aphrodite", en: "Aphrodite" },
+        title: "Aphrodite",
         features: [
             { ru: "Улучшение интерфейса", en: "Interface improvements" },
             { ru: "Групповые беседы", en: "Group chats" },
@@ -318,7 +318,7 @@ export const roadmapHistory: RoadmapRelease[] = [
     {
         version: "0.6",
         date: "2026-10-31",
-        title: { ru: "Affinity", en: "Affinity" },
+        title: "Affinity",
         features: [
             { ru: "Совместные активности и активности внутри бесед", en: "Shared activities and activities in group chats" },
             { ru: "Приглашения и управление участниками совместных активностей", en: "Shared activity invitations and member management" },
@@ -340,7 +340,7 @@ export const roadmapHistory: RoadmapRelease[] = [
 export const roadmapCurrent: RoadmapRelease = {
     version: "0.6.2",
     date: "2026-11-04",
-    title: { ru: "Новая палитра", en: "New palette" },
+    title: "New Palette",
     features: [
         { ru: "Новая статистика активностей и исправление расписания", en: "Refreshed activity statistics and schedule layout fixes" },
         { ru: "Собственные цвета акцента и градиента", en: "Custom accent and gradient colors" },
@@ -358,7 +358,7 @@ export const roadmapCurrent: RoadmapRelease = {
 export const roadmapFuture: RoadmapRelease[] = [
     {
         version: "0.7",
-        title: { ru: "The Castle", en: "The Castle" },
+        title: "The Castle",
         features: [
             { ru: "Споты — пространства для сообществ и интересов", en: "Spots — spaces for communities and shared interests" },
             { ru: "Публикации и обсуждения внутри спотов", en: "Posts and discussions within spots" },

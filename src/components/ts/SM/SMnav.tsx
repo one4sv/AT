@@ -261,7 +261,7 @@ export default function SMnav() {
                 );
             }
             if (action === "new-spot") {
-                showNotification("info", "В разработке");
+                showNotification("info", t("sideMenu.inDevelopment"));
             }
             if (action === "posts") {
                 closeMenu();
@@ -378,12 +378,12 @@ export default function SMnav() {
         touchHoverRef.current = element;
     };
     const messageSelected = chatsFilters.find(f => f.value === messageSelectedValue) ?? {
-        label: "Все",
+        label: t("sideMenu.all"),
         value: "chats",
         new: ""
     };
     const habitsSelected = habitsFilters.find(f => f.value === habitsSelectedValue) ?? {
-        label: "Все",
+        label: t("sideMenu.all"),
         value: "all",
         new: "0"
     };
@@ -422,7 +422,7 @@ export default function SMnav() {
                             setIsExtraOpen(false);
                         }}
                     >
-                        <PlusIcon size={20} /> Новая беседа
+                        <PlusIcon size={20} /> {t("sideMenu.newChat")}
                     </div>
                 );
             case "habits":
@@ -440,7 +440,7 @@ export default function SMnav() {
                         }}
                         data-action="add-habit"
                     >
-                        <PlusIcon size={20} /> Новая активность
+                        <PlusIcon size={20} /> {t("sideMenu.newActivity")}
                     </div>
                 );
             case "spots":
@@ -448,12 +448,12 @@ export default function SMnav() {
                     <div
                         className="SMextraMenuButt"
                         onMouseUp={() => {
-                            showNotification("info", "В разработке");
+                            showNotification("info", t("sideMenu.inDevelopment"));
                             setIsExtraOpen(false);
                         }}
                         data-action="new-spot"
                     >
-                        <PlusIcon size={20} /> Новый спот
+                        <PlusIcon size={20} /> {t("sideMenu.newSpot")}
                     </div>
                 );
             case "user":
@@ -467,7 +467,7 @@ export default function SMnav() {
                             }}
                             data-action="profile"
                         >
-                            <UserIcon weight="fill" size={20} /> Профиль
+                            <UserIcon weight="fill" size={20} /> {t("sideMenu.profile")}
                         </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname === "/" ? "selected" : ""}`}
@@ -477,7 +477,7 @@ export default function SMnav() {
                             }}
                             data-action="posts"
                         >
-                            <NewspaperIcon weight="fill" size={20} /> Лента
+                            <NewspaperIcon weight="fill" size={20} /> {t("sideMenu.feed")}
                         </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname === "/habit" ? "selected" : ""}`}
@@ -487,7 +487,7 @@ export default function SMnav() {
                             }}
                             data-action="habits"
                         >
-                            <SneakerMoveIcon weight="fill" size={20} /> Активности
+                            <SneakerMoveIcon weight="fill" size={20} /> {t("sideMenu.activities")}
                         </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname.includes("/settings") ? "selected" : ""}`}
@@ -497,7 +497,7 @@ export default function SMnav() {
                             }}
                             data-action="settings"
                         >
-                            <GearIcon weight="fill" size={20} /> Настройки
+                            <GearIcon weight="fill" size={20} /> {t("sideMenu.settings")}
                         </div>
                         <span className="SMextraSeparator" />
                         <div
@@ -511,9 +511,9 @@ export default function SMnav() {
                             data-action="logout"
                         >
                             {!confirmLogout ? <>
-                                <SignOutIcon weight="fill" size={20} /> Выйти
+                                <SignOutIcon weight="fill" size={20} /> {t("sideMenu.logOut")}
                             </> : <>
-                                <CheckIcon size={20} /> Да, выйти
+                                <CheckIcon size={20} /> {t("sideMenu.confirmLogOut")}
                             </>}
                         </div>
                     </>
@@ -527,7 +527,7 @@ export default function SMnav() {
                 transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none"
             }}
             role="status"
-            aria-label="Загрузка навигации"
+            aria-label=t("sideMenu.loadingNavigation")
         >
             <div className="SMnav" aria-hidden="true">
                 {Array.from(
@@ -658,7 +658,7 @@ export default function SMnav() {
                     onTouchStart={e => handleNavTouchStart("user", e)}
                     onTouchMove={handleNavTouchMove}
                 >
-                    {user?.avatar_url ? <img src={user.avatar_url} alt={user.username ?? user.nick ?? "фото"} /> : <CircleUserRound />}
+                    {user?.avatar_url ? <img src={user.avatar_url} alt={user.username ?? user.nick ?? t("sideMenu.photo")} /> : <CircleUserRound />}
                 </div>
             </div>
             <div className={`smNavSearch ${isSearch ? "active" : "dis"}`}>

@@ -6,9 +6,11 @@ import { QrCodeIcon, ShareFatIcon, SortAscendingIcon } from "@phosphor-icons/rea
 import { useEffect, useRef, useState } from "react"
 import { useBlackout } from "../../hooks/BlackoutHook"
 import { requestContentRefresh } from "../utils/contentRefresh";
+import { useTranslation } from "react-i18next";
 
 export default function SMheader() {
     const isMobile = useCompactLayout();
+    const { t } = useTranslation("common");
     const { user } = useUser()
     const {
         activeTab,
@@ -41,10 +43,10 @@ export default function SMheader() {
         0
 
     const messageSelected = chatsFilters.find(f => f.value === messageSelectedValue)
-        ?? { label: "Чаты", value: "chats", new: "" }
+        ?? { label: t("sideMenu.chats"), value: "chats", new: "" }
 
     const habitsSelected = habitsFilters.find(f => f.value === habitsSelectedValue)
-        ?? { label: "Актив", value: "all", new: "0" }
+        ?? { label: t("sideMenu.all"), value: "all", new: "0" }
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent | TouchEvent) => {
@@ -234,7 +236,7 @@ export default function SMheader() {
                     style={{ transform: `translateX(${translateSlider}%)` }}
                 >
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>Чаты</div>
+                        <div className="smHeaderTitle" onClick={handleTitleClick}>{t("sideMenu.chats")}</div>
                         <div
                             className={`smHeaderSelected ${openFilters === "chats" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("chats")}
@@ -251,7 +253,7 @@ export default function SMheader() {
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>Активности</div>
+                        <div className="smHeaderTitle" onClick={handleTitleClick}>{t("sideMenu.activities")}</div>
                         <div
                             className={`smHeaderSelected ${openFilters === "habits" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("habits")}
@@ -265,7 +267,7 @@ export default function SMheader() {
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>Споты</div>
+                        <div className="smHeaderTitle" onClick={handleTitleClick}>{t("sideMenu.spots")}</div>
                     </div>
 
                     <div className="smHeaderPart">

@@ -254,3 +254,29 @@
         gap: 2vw;
     }
 }
+
+.roadmapPage {
+    .roadmapPastContent[hidden] { display: none; }
+
+    .roadmapBeginning {
+        margin: 1.5dvh .5vw;
+        padding: 2dvh 1.5vw;
+        border-radius: 24px;
+        background: linear-gradient(135deg, var(--accent_hov), var(--grad_hov));
+        color: var(--tc);
+
+        h3 {
+            margin: 0 0 .75dvh;
+            color: var(--tc);
+        }
+
+        time {
+            color: var(--borderWh);
+        }
+
+        @media (max-width: 800px) {
+            margin: 1.5dvh 2vw;
+            padding: 2dvh 3vw;
+        }
+    }
+}

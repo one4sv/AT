@@ -78,13 +78,13 @@ export default function AccountList() {
                 </Link>
                 <div className="SMcreateDiv">
                     <div className="SMcreateButt" onClick={() => setBlackout({ seted: true, module: "CreateChat" })}>
-                        <ChatTeardropIcon size={18} weight="fill"/> Новый чат
+                        <ChatTeardropIcon size={18} weight="fill"/> {t("sideMenu.newChat")}
                     </div>                    
                     <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddHabit"})}>
-                        <CalendarCheckIcon size={18} weight="fill"/> Новая активность
+                        <CalendarCheckIcon size={18} weight="fill"/> {t("sideMenu.newActivity")}
                     </div>                    
-                    <div className="SMcreateButt" onClick={() => showNotification("info", "В разработке")}>
-                        <Megaphone size={18} fill="currentColor"/> Новый спот
+                    <div className="SMcreateButt" onClick={() => showNotification("info", t("sideMenu.inDevelopment"))}>
+                        <Megaphone size={18} fill="currentColor"/> {t("sideMenu.newSpot")}
                     </div>
                 </div>
                 <button type="button" className="SMaccountButt logout" onClick={() => logoutConfirm ? logOut() : setLogoutConfirm(true)} ref={logoutRef}>

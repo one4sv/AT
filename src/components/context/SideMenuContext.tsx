@@ -91,7 +91,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         const filters: FilterItem[] = [];
 
         const totalNew = newLength > 99 ? "99+" : newLength > 0 ? String(newLength) : "";
-        filters.push({ label: "Все", value: "chats", new: totalNew });
+        filters.push({ label: t("sideMenu.all"), value: "chats", new: totalNew });
 
         if (newLength > 0) {
             filters.push({ label: t("sideMenu.new"), value: "new", new: totalNew });
@@ -131,7 +131,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     // Фильтры привычек
     useEffect(() => {
         const filters: FilterItem[] = [];
-        filters.push({ label: "Все", value: "all", new: "0" });
+        filters.push({ label: t("sideMenu.all"), value: "all", new: "0" });
 
         if (newOrderHabits && habits) {
             const groupLabels: Record<string, string> = {

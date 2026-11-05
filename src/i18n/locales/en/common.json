@@ -35,7 +35,19 @@
         "home": "Home",
         "add": "Add",
         "notLoggedIn": "You are not logged in",
-        "signIn": "Sign in"
+        "signIn": "Sign in",
+        "chats": "Chats",
+        "spots": "Spots",
+        "loading": "Loading",
+        "newChat": "New chat",
+        "newActivity": "New activity",
+        "newSpot": "New spot",
+        "inDevelopment": "In development",
+        "profile": "Profile",
+        "feed": "Feed",
+        "confirmLogOut": "Yes, sign out",
+        "loadingNavigation": "Loading navigation",
+        "photo": "Photo"
     },
     "contactsList": {
         "usersNotFound": "Users not found",
