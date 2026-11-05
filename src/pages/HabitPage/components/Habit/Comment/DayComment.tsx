@@ -2,6 +2,7 @@ import EmojiButton from "../../../../../components/ts/utils/EmojiButton";
 import EmojiBar from "../../../../../components/ts/utils/EmojiBar";
 import TA from "../../../../../components/ts/TA";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ArrowBendDownLeftIcon, ClockCountdownIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
 import { useDone } from "../../../../../components/hooks/DoneHook";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
@@ -15,6 +16,7 @@ interface DayCommentProps {
 }
 
 export default function DayComment({ id, isMy }: DayCommentProps) {
+  const { t } = useTranslation("common");
   const { sendDayComment, waitComAnswer } = useDone();
   const { dayComment, habit,  } = useTheHabit();
   const { chosenDay } = useCalendar();
@@ -68,7 +70,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
       <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!isMy || !habit?.ongoing || syncing} />
       <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar} setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef} />
       <TA
-        placeholder="Комментарий"
+        placeholder={t("habitPageUi.day.commentPlaceholder")}
         taRef={textAreaRef}
         readOnly={!isMy || (habit && !habit.ongoing)}
         onChange={handleTextareaChange}
