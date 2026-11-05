@@ -1,4 +1,6 @@
 import "../../../scss/Diagrams.scss"
+import { useTranslation } from "react-i18next"
+import i18n from "../../../../../i18n/i18n"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
 import { useHabits } from "../../../../../components/hooks/HabitsHook"
@@ -28,7 +30,7 @@ import {
     getMonthStart,
     groupDays,
 } from "../../../utils/DiagramDate"
-import { formatShortDateFromString, weekDay } from "../../../../../components/ts/utils/dateToStr"
+import { formatShortDateFromString } from "../../../../../components/ts/utils/dateToStr"
 import { isMobile } from "react-device-detect"
 import { getBreakLengthSeries } from "../../../utils/diagramsFuncs"
 
@@ -52,7 +54,7 @@ function getAnchorDate(groupType: string, day: string): string {
     return day
 }
 
-function formatGroupLabel(groupType: string, day: string): string {
+function formatGroupLabel(groupType: string, day: string, locale: string): string {
     const date = new Date(getAnchorDate(groupType, day))
     const month = String(date.getMonth() + 1).padStart(2, "0")
     const year = date.getFullYear()
@@ -60,9 +62,9 @@ function formatGroupLabel(groupType: string, day: string): string {
     if (groupType === "month") return `${month}.${year}`
     if (groupType === "week") {
         const week = Math.ceil(date.getDate() / 7)
-        return `${week} нед. ${month}`
+        return i18n.t("habitPageUi.charts.weekLabel", { ns: "common", week, month })
     }
-    return `${formatShortDateFromString(day)} ${weekDay(day)}`
+    return `${formatShortDateFromString(day)} ${new Intl.DateTimeFormat(locale, { weekday: "short" }).format(new Date(day)).replace(".", "")}`
 }
 
 export default function BreakDiagram({
@@ -74,7 +76,9 @@ export default function BreakDiagram({
     period: string
     mainRef: React.RefObject<HTMLDivElement | null>
 }) {
-        const { calendar, setChosenDay, setSelectedMonth, setSelectedYear } = useCalendar()
+        const { t, i18n: language } = useTranslation("common")
+    const locale = language.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU"
+    const { calendar, setChosenDay, setSelectedMonth, setSelectedYear } = useCalendar()
         const { habit } = useTheHabit()
         const { habits } = useHabits()
         const { habitId: id } = useParams<{ habitId: string }>()
@@ -108,7 +112,7 @@ export default function BreakDiagram({
 
             const datasets: ChartDataset<"line", number[]>[] = [
                 {
-                    label: "Длина перерыва",
+                    label: t("habitPageUi.charts.breakLength"),
                     data: breakPerGroup,
                     borderColor: "#991b1b",
                     backgroundColor: "#991b1b",
@@ -121,14 +125,14 @@ export default function BreakDiagram({
             return {
             data: {
                 labels: groupsDays.map(g =>
-                    formatGroupLabel(effectiveGroup, g.days[0])
+                    formatGroupLabel(effectiveGroup, g.days[0], locale)
                 ),
                 datasets,
             } as ChartData<"line", number[], string>,
             groupsDays,
             effectiveGroup,
         }
-    }, [calendar, habit, habits, period, id, group])
+    }, [calendar, habit, habits, period, id, group, locale, t])
 
     const maxValue = Math.max(2, ...data.datasets.flatMap(d => d.data)) + 1
 
@@ -156,7 +160,7 @@ export default function BreakDiagram({
             legend: { display: true },
             tooltip: {
                 callbacks: {
-                    label: ctx => `Перерыв: ${ctx.raw} дн.`,
+                    label: ctx => t("habitPageUi.charts.breakTooltip", { days: ctx.raw }),
                 },
             },
         },
