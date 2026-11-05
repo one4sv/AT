@@ -413,5 +413,16 @@
     "cancel": "Cancel",
     "actionFailed": "Could not complete the action",
     "saving": "Please wait…"
+  },
+  "invite": {
+    "createFailed": "Could not generate the invitation link. Check chat permissions.",
+    "expires": "Link expires {{time}}",
+    "validForDay": "The link is valid for 24 hours after creation.",
+    "label": "Invitation link",
+    "generating": "Creating link…",
+    "tapToGenerate": "Tap to create a link",
+    "createAndCopy": "Create and copy link",
+    "createLink": "Create link",
+    "showQr": "Show group chat QR code"
   }
 }

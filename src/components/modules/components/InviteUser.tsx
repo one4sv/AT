@@ -5,9 +5,11 @@ import { api } from "../../ts/api";
 import { useNote } from "../../hooks/NoteHook";
 import { useEffect, useState } from "react";
 import { formatDistanceToNow, isPast } from "date-fns";
-import { ru } from "date-fns/locale";
+import { enUS, ru } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 export default function InviteUser() {
+    const { t, i18n } = useTranslation("common");
     const { group, refetchGroup } = useGroup();
     const { showNotification } = useNote();
     const { setBlackout } = useBlackout();
@@ -36,7 +38,7 @@ export default function InviteUser() {
             await refetchGroup(group.id);
             return res.data.link as string;
         } catch {
-            showNotification("error", "Не удалось создать ссылку. Проверьте права в беседе.");
+            showNotification("error", t("invite.createFailed"));
             return "";
         } finally {
             setLoading(false);
@@ -51,7 +53,7 @@ export default function InviteUser() {
             setShowCopied(true);
             setTimeout(() => setShowCopied(false), 1200);
         } catch {
-            showNotification("error", "Не удалось скопировать ссылку");
+            showNotification("error", t("links.copyFailed"));
         }
     };
 
@@ -70,12 +72,12 @@ export default function InviteUser() {
     };
 
     const timeLeftText = expiresAt && !isExpired
-        ? `Ссылка истекает ${formatDistanceToNow(expiresAt, { locale: ru, addSuffix: true })}`
-        : "Ссылка действует 24 часа с момента создания.";
+        ? t("invite.expires", { time: formatDistanceToNow(expiresAt, { locale: i18n.resolvedLanguage?.startsWith("en") ? enUS : ru, addSuffix: true }) })
+        : t("invite.validForDay");
 
     return (
         <div className="inviteUser">
-            <label htmlFor="inviteUserLink">Ссылка-приглашение</label>
+            <label htmlFor="inviteUserLink">{t("invite.label")}</label>
             <div className="InviteUserWrapper">
                 <input
                     type="text"
@@ -83,7 +85,7 @@ export default function InviteUser() {
                     id="inviteUserLink"
                     readOnly
                     value={linked}
-                    placeholder={loading ? "Создаём ссылку…" : "Нажмите, чтобы создать ссылку"}
+                    placeholder={loading ? t("invite.generating") : t("invite.tapToGenerate")}
                     onClick={() => {
                         if (!linked) void ensureLink();
                     }}
@@ -92,13 +94,13 @@ export default function InviteUser() {
                     type="button"
                     disabled={loading}
                     onClick={() => void copyLink()}
-                    aria-label={linked ? "Скопировать ссылку" : "Создать и скопировать ссылку"}
-                    title={linked ? "Скопировать ссылку" : "Создать ссылку"}
+                    aria-label={linked ? t("links.copy") : t("invite.createAndCopy")}
+                    title={linked ? t("links.copy") : t("invite.createLink")}
                 >
                     {linked ? <CopyIcon weight="bold" /> : <LinkIcon weight="bold" />}
                 </button>
             </div>
-            {showCopied && <span className="copiedToast" role="status">Ссылка скопирована</span>}
+            {showCopied && <span className="copiedToast" role="status">{t("links.copied")}</span>}
             <span className="inviteUserHint">{timeLeftText}</span>
             <button
                 type="button"
@@ -107,7 +109,7 @@ export default function InviteUser() {
                 onClick={() => void openQr()}
             >
                 <QrCodeIcon weight="fill" />
-                Показать QR-код беседы
+                {t("invite.showQr")}
             </button>
         </div>
     );
