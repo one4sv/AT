@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useRef, useState } from "react";
 import axios from "axios";
 import CreateChatInfo from "./components/CreateChatInfo";
@@ -9,6 +10,7 @@ import "../../scss/modules/CreateChat.scss";
 import "../../pages/HabitPage/scss/HabitChatMenu.scss";
 
 export default function HabitCreateChat() {
+    const { t } = useTranslation("common");
     const { habit, loadHabit } = useTheHabit();
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
@@ -30,33 +32,33 @@ export default function HabitCreateChat() {
             form.append("desc", desc.trim());
             if (pick) form.append("pick", pick);
             const result = await api.post("createchat", form);
-            if (!result.data.success || !result.data.chat_id) throw new Error("Не удалось создать беседу");
+            if (!result.data.success || !result.data.chat_id) throw new Error(t("habitDialog.createFailed"));
             await loadHabit(String(habit.id));
             window.dispatchEvent(new Event("habit-members-updated"));
             setBlackout({ seted: false });
             setBlackout({ seted: false });
             showNotification("success", result.data.invited
-                ? "Беседа создана. Второму участнику отправлено приглашение."
-                : "Беседа создана и привязана к активности");
+                ? t("habitDialog.createdWithInvite")
+                : t("habitDialog.createdLinked"));
         } catch (error) {
             showNotification("error", axios.isAxiosError(error)
-                ? error.response?.data?.error || "Не удалось создать беседу"
-                : "Не удалось создать беседу");
+                ? error.response?.data?.error || t("habitDialog.createFailed")
+                : t("habitDialog.createFailed"));
         } finally {
             submitting.current = false;
             setSaving(false);
         }
     };
 
-    return <div className="habitCollaborationModal habitCreateChat" role="dialog" aria-modal="true" aria-label="Создать беседу">
-        <div className="habitCollaborationHeader">Создать беседу</div>
+    return <div className="habitCollaborationModal habitCreateChat" role="dialog" aria-modal="true" aria-label={t("habitDialog.createChat")}>
+        <div className="habitCollaborationHeader">{t("habitDialog.createChat")}</div>
         <div className="habitCollaborationBody">
             <CreateChatInfo name={name} setName={setName} desc={desc} setDesc={setDesc} pick={pick} setPick={setPick} />
-            <div className="habitSettingValue">Участников можно пригласить из созданной беседы. Если в активности уже есть второй участник, ему будет отправлено приглашение автоматически.</div>
+            <div className="habitSettingValue">{t("habitDialog.createChatHint")}</div>
         </div>
         <div className="habitConfirmActions">
             <button type="button" className="accept" disabled={saving || name.trim().length < 3} onClick={() => void save()}>
-                {saving ? "Создаётся…" : "Создать"}
+                {saving ? t("habitDialog.creating") : t("habitDialog.create")}
             </button>
         </div>
     </div>;
