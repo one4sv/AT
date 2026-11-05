@@ -161,6 +161,7 @@ export default function Acc() {
         if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
         if ((e.target as Element).closest("input, textarea, [contenteditable='true'], .react-datepicker-popper")) return;
         if (getActiveSlideScrollTop() > 0) return;
+        if (e.deltaY > 0 && (e.target as Element).closest(".accContentSlide")) return;
 
         const target = e.deltaY > 0 ? 1 : 0;
         if (collapsedRef.current === target && collapseFrame.current === null) return;
@@ -290,11 +291,11 @@ export default function Acc() {
         }
 
         if (!isCollapsingGesture.current) {
-            if (deltaY > 0 && collapsed < 1 && scrollTop === 0) {
+            if (deltaY > 0 && collapsedRef.current < 1 && scrollTop === 0) {
                 isCollapsingGesture.current = true;
             } else if (
                 deltaY < 0 &&
-                collapsed > 0 &&
+                collapsedRef.current > 0 &&
                 canExpand.current &&
                 scrollTop === 0
             ) {
@@ -412,6 +413,7 @@ export default function Acc() {
                 className="acc"
                 ref={accRef}
                 onTouchStartCapture={handleTouchStart}
+                onClick={e => e.stopPropagation()}
                 onTouchEndCapture={handleTouchEnd}
                 onTouchCancelCapture={handleTouchEnd}
             >
