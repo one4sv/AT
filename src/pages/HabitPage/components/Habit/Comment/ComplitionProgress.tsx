@@ -1,4 +1,5 @@
 import TA from "../../../../../components/ts/TA";
+import { useTranslation } from "react-i18next";
 import { Send } from "lucide-react"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
 import { useEffect, useMemo, useState } from "react"
@@ -22,11 +23,13 @@ const timeToSeconds = (time: string): number => {
     return h * 3600 + m * 60 + s
 }
 
-const formatTime = (iso: string): string => {
-    return new Date(iso).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+const formatTime = (iso: string, locale: string): string => {
+    return new Date(iso).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit" })
 }
 
 export default function CompletionProgress() {
+    const { t, i18n } = useTranslation("common");
+    const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
     const { habit, loadTimer, setHabitTimer, parseTimer, showTimer, habitTimer } = useTheHabit()
     const { chosenDay } = useCalendar()
     const { ws } = useWebSocket()
@@ -203,7 +206,7 @@ export default function CompletionProgress() {
     if (!currentTimer) {
         return (
             <div className="completionProgress">
-                <div className="eventStr emptyEvents">Сессия не начата</div>
+                <div className="eventStr emptyEvents">{t("habitPageUi.progress.noSession")}</div>
             </div>
         )
     }
@@ -216,13 +219,13 @@ export default function CompletionProgress() {
                 if (event.type === "start") {
                     return (
                         <div key={key} className="eventStr startStr">
-                            <span className="eventTime">{event.time}</span>: начало сессии в {formatTime(event.start!)}
+                            <span className="eventTime">{event.time}</span>: {t("habitPageUi.progress.startedAt", { time: formatTime(event.start!, locale) })}
                         </div>
                     )
                 }
 
                 if (event.type === "pause") {
-                    const startTime = formatTime(event.start!);
+                    const startTime = formatTime(event.start!, locale);
                     const isOpen = !event.end;
 
                     let durationMs: number;
@@ -240,11 +243,12 @@ export default function CompletionProgress() {
                     const duration = formatCurrentMs(durationMs);
                     return (
                         <div key={key} className="eventStr pauseStr">
-                            <span className="eventTime">{event.time}</span>: пауза с {startTime} до{" "}
-                            {isOpen
-                                ? (currentTimer.status === "ended" || isHistorical ? formatTime(currentTimer.end_at.toISOString()) : "сейчас") 
-                                : formatTime(event.end!)
-                            } {event.end && `(длительность ${duration})`}
+                            <span className="eventTime">{event.time}</span>: {t("habitPageUi.progress.pauseFromTo", {
+                                start: startTime,
+                                end: isOpen
+                                    ? (currentTimer.status === "ended" || isHistorical ? formatTime(currentTimer.end_at.toISOString(), locale) : t("habitPageUi.progress.now"))
+                                    : formatTime(event.end!, locale)
+                            })} {event.end && t("habitPageUi.progress.duration", { duration })}
                         </div>
                     );
                 }
@@ -259,14 +263,14 @@ export default function CompletionProgress() {
                     return (
                         <div key={key} className="eventStr circleStr">
                             <div className="circleInfo">
-                                <span className="eventTime">{event.time}</span>: круг завершён
+                                <span className="eventTime">{event.time}</span>: {t("habitPageUi.progress.circleCompleted")}
                             </div>
 
                             {isEditing && canEdit ? (
                                 <div className="circleEditWrapper">
                                     <TA minHeight={2}
                                         className="circleTA"
-                                        placeholder={currentValue ? "" : placeholderMap[event.time]}
+                                        placeholder={currentValue ? "" : placeholderMap[event.time] ? t(placeholderMap[event.time]) : ""}
                                         maxLength={200}
                                         value={currentValue}
                                         onFocus={(e) => {
@@ -331,7 +335,7 @@ export default function CompletionProgress() {
                 if (event.type === "end") {
                     return (
                         <div key={key} className="eventStr endStr">
-                            <span className="eventTime">{event.time}</span>: сессия завершена в {formatTime(event.end!)}
+                            <span className="eventTime">{event.time}</span>: {t("habitPageUi.progress.endedAt", { time: formatTime(event.end!, locale) })}
                         </div>
                     )
                 }
