@@ -232,6 +232,35 @@
       "middleSchedule": "Средний"
     }
   },
+  "habitPageUi": {
+    "saving": "Сохранение…",
+    "day": {
+      "fromTo": "с {{start}} до {{end}}",
+      "at": "в {{time}}",
+      "until": "до {{time}}",
+      "commentPlaceholder": "Комментарий",
+      "historyFailed": "Не удалось загрузить историю активности",
+      "participantActionsLabel": "Комментарии и отметки выполнения участников",
+      "participant": "Участник",
+      "completedTask": "Выполнил задачу: {{name}}",
+      "noActions": "За этот день действий пока нет",
+      "showAll": "Показать все",
+      "participantActivity": "Активность участников"
+    },
+    "schedule": {
+      "withoutParity": "Без чётности",
+      "withParity": "С чётностью",
+      "fromToday": "От сегодняшнего дня",
+      "oddWeek": "Нечётная неделя",
+      "evenWeek": "Чётная неделя",
+      "currentWeek": "Текущая неделя",
+      "loading": "Загрузка",
+      "reset": "Сбросить",
+      "save": "Сохранить",
+      "oddWeekSign": "Нечётная неделя:",
+      "evenWeekSign": "Чётная неделя:"
+    }
+  },
   "habitUi": {
     "period": {
       "everyday": "каждый день",
