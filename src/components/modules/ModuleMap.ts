@@ -23,6 +23,7 @@ import QuickActionPicker from './QuickActionPicker';
 import BackgroundLibrary from './BackgroundLibrary';
 import BackgroundFullscreen from './BackgroundFullscreen';
 import BackgroundHelp from './BackgroundHelp';
+import WallpaperSettings from './WallpaperSettings';
 import CustomThemeColor from './CustomThemeColor';
 
 const ModuleMap: Record<string, React.FC> = {
@@ -50,6 +51,7 @@ const ModuleMap: Record<string, React.FC> = {
     BackgroundLibrary:BackgroundLibrary,
     BackgroundFullscreen:BackgroundFullscreen,
     BackgroundHelp:BackgroundHelp,
+    WallpaperSettings:WallpaperSettings,
     CustomThemeColor:CustomThemeColor,
     Table:Table
 };

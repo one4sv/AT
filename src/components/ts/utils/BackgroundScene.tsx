@@ -12,9 +12,9 @@ export const isPhotographicScene = (id: string) =>
 
 const photoSources: Partial<Record<StockScene, { desktop: string; mobile: string }>> = {
     japaneseNinja: { desktop: "/wallpapers/japanese-ninja-desktop.webp", mobile: "/wallpapers/japanese-ninja-mobile.webp" },
-    japaneseSakura: { desktop: "/wallpapers/japanese-sakura-desktop.webp", mobile: "/wallpapers/japanese-sakura-mobile.webp" },
-    japaneseAlley: { desktop: "/wallpapers/japanese-alley-desktop.webp", mobile: "/wallpapers/japanese-alley-mobile.webp" },
-    japaneseTorii: { desktop: "/wallpapers/japanese-torii-desktop.webp", mobile: "/wallpapers/japanese-torii-mobile.webp" }
+    japaneseSakura: { desktop: "/wallpapers/japanese-sakura-desktop.svg", mobile: "/wallpapers/japanese-sakura-mobile.svg" },
+    japaneseAlley: { desktop: "/wallpapers/japanese-alley-desktop.svg", mobile: "/wallpapers/japanese-alley-mobile.svg" },
+    japaneseTorii: { desktop: "/wallpapers/japanese-torii-desktop.svg", mobile: "/wallpapers/japanese-torii-mobile.svg" }
 };
 
 export const isStockScene = (id: string): id is StockScene =>
@@ -146,7 +146,7 @@ export function BackgroundScene({ variant, motion = false, artPattern = "order",
                 ))}
             </div>
             {photo && <picture className="atScenePhoto">
-                <source media="(max-width: 800px)" srcSet={photo.mobile} type="image/webp"/>
+                <source media="(max-width: 800px)" srcSet={photo.mobile} type={photo.mobile.endsWith(".svg") ? "image/svg+xml" : "image/webp"}/>
                 <img src={photo.desktop} alt="" decoding="async" loading="lazy"/>
             </picture>}
             {variant === "art" && (artPattern === "chaos" ?

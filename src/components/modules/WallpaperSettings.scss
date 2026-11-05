@@ -1,0 +1,104 @@
+@use "../../scss/mixins.scss" as var;
+
+.wallpaperSettingsModal {
+    @include var.centerModal;
+    display: flex;
+    flex-direction: column;
+    width: 36vw;
+    max-width: 92vw;
+    max-height: 82dvh;
+    min-height: 0;
+    gap: 1.5dvh;
+    padding: 2dvh 1.5vw;
+    box-sizing: border-box;
+    border-radius: 24px;
+    background: var(--mc);
+    color: var(--tc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+
+    @media (max-width: 800px) {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        align-self: stretch;
+        width: 100%;
+        max-width: 100%;
+        max-height: 90dvh;
+        padding: 2dvh 4vw calc(2dvh + env(safe-area-inset-bottom));
+        border-radius: 24px 24px 0 0;
+    }
+}
+
+.wallpaperSettingsModalHeader {
+    display: flex;
+    align-items: center;
+    min-height: 4dvh;
+    flex-shrink: 0;
+    font-size: 20px;
+}
+
+.wallpaperSettingsModalScroll {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    gap: 2dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+
+    > .backgroundFullscreenControl {
+        padding: .5dvh 0;
+    }
+}
+
+.wallpaperSettingsFilters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5vw;
+    padding: .5dvh 0;
+
+    > button {
+        padding: .75dvh .8vw;
+        border: none;
+        border-radius: 24px;
+        background: var(--interact);
+        color: var(--tc);
+        font: inherit;
+        cursor: pointer;
+
+        &.active {
+            color: var(--inner_text);
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+        }
+
+        @media (hover: hover) {
+            &:not(.active):hover {
+                background: var(--menuButtHover);
+            }
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 1.5vw;
+
+        > button {
+            padding: 1dvh 3vw;
+            font-size: 16px;
+        }
+    }
+}
+
+.wallpaperSettingsModalClose {
+    width: 100%;
+    flex-shrink: 0;
+    min-height: 5dvh;
+    border: none;
+    border-radius: 24px;
+    background: var(--interact);
+    color: var(--tc);
+    font: inherit;
+    font-size: 16px;
+    cursor: pointer;
+}

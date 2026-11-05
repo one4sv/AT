@@ -19,6 +19,13 @@
     z-index: 0;
 }
 
+.wallpaperStudioGestureSurface {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    touch-action: none;
+}
+
 .wallpaperStudioFrame {
     position: absolute;
     inset: 0;
@@ -157,7 +164,7 @@
     width: 100%;
     max-width: 100%;
     min-height: 0;
-    height: calc(50dvh - var(--studio-drag, 0px));
+    height: calc(90dvh - var(--studio-drag, 0px));
     border: 1px solid var(--block_border);
     border-bottom: 0;
     border-radius: 24px 24px 0 0;
@@ -173,144 +180,44 @@
     }
 
     .wallpaperStudio.collapsed & {
-        height: calc(8dvh - var(--studio-drag, 0px));
+        height: calc(4dvh - var(--studio-drag, 0px));
     }
 
     @media (max-width: 800px) {
-        height: calc(100dvh - var(--studio-drag, 0px));
         border-left: none;
         border-right: none;
-        border-radius: 24px 24px 0 0;
-
-        .wallpaperStudio.collapsed & {
-            height: calc(9dvh + env(safe-area-inset-bottom) - var(--studio-drag, 0px));
-        }
-
-        .wallpaperStudio.expanded & {
-            padding-top: 7dvh;
-        }
     }
 }
 
-.wallpaperStudioPeek {
+.wallpaperStudioHandle.landingFooterHandle {
+    position: sticky;
+    top: 0;
+    z-index: 1;
     display: flex;
-    align-items: stretch;
-    gap: 1vw;
-    flex-shrink: 0;
-    height: 8dvh;
-    min-height: 0;
-    padding: .7dvh 1vw;
-    box-sizing: border-box;
-    border-bottom: 1px solid var(--block_border);
-
-    @media (max-width: 800px) {
-        height: 9dvh;
-        gap: 2vw;
-        padding: 1dvh 3vw;
-    }
-}
-
-.wallpaperStudioPeekButton {
-    display: flex;
+    flex: 0 0 4dvh;
     align-items: center;
     justify-content: center;
-    flex: 1;
-    gap: .7vw;
-    min-width: 0;
+    width: 100%;
+    min-height: 4dvh;
+    padding: 0;
     border: none;
-    border-radius: 16px;
-    box-sizing: border-box;
-    padding: .5dvh .7vw;
-    color: var(--tc);
-    background: var(--interact);
-    font: inherit;
-    cursor: pointer;
+    border-radius: 24px 24px 0 0;
+    background: transparent;
+    cursor: grab;
     touch-action: none;
     user-select: none;
 
-    @media (hover: hover) {
-        &:hover {
-            background: var(--menuButtHover);
-        }
+    > span {
+        width: 40px;
+        height: 4px;
+        border-radius: 4px;
+        background: var(--borderWh);
+        opacity: .65;
     }
 
-    @media (max-width: 800px) {
-        gap: 1.5vw;
-        padding: .5dvh 2vw;
+    &:active {
+        cursor: grabbing;
     }
-}
-
-.wallpaperStudioMini {
-    position: relative;
-    width: 4.5dvh;
-    height: 4.5dvh;
-    flex-shrink: 0;
-    overflow: hidden;
-    border-radius: 8px;
-    background: var(--bgc);
-    pointer-events: none;
-
-    > .background {
-        position: absolute;
-        inset: 0;
-    }
-
-    @media (max-width: 800px) {
-        width: 4dvh;
-        height: 4dvh;
-    }
-}
-
-.wallpaperStudioPeekTitle {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    align-items: flex-start;
-    gap: .1dvh;
-    min-width: 0;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    text-align: left;
-
-    > small {
-        color: var(--borderWh);
-        font-size: 11px;
-    }
-}
-
-.wallpaperStudioPeekNav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .4vw;
-    flex-shrink: 0;
-
-    > button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 3.2dvh;
-        height: 3.2dvh;
-        border: 1px solid var(--block_border);
-        border-radius: 50%;
-        background: var(--interact);
-        color: var(--tc);
-        cursor: pointer;
-    }
-
-    @media (max-width: 800px) {
-        gap: 1vw;
-    }
-}
-
-.wallpaperStudioCounter {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 4vw;
-    white-space: nowrap;
-    color: var(--borderWh);
 }
 
 .wallpaperStudioSheetContent {
@@ -565,54 +472,6 @@
     gap: 1dvh;
 }
 
-.wallpaperStudioHoldHint {
-    color: var(--borderWh);
-    margin: 0;
-    padding: 1dvh;
-    text-align: center;
-}
-
-.wallpaperStudioSettings {
-    gap: 1.5dvh;
-
-    > .settingInnerWrapper {
-        margin: 0;
-    }
-
-    > .backgroundFullscreenControl {
-        padding: .5dvh 1vw;
-    }
-}
-
-.wallpaperStudioReset {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: .6vw;
-    margin-top: 1dvh;
-    width: fit-content;
-    padding: 1dvh 1.5vw;
-    border: 1px solid var(--block_border);
-    border-radius: 24px;
-    color: var(--tc);
-    background: var(--interact);
-    cursor: pointer;
-    font: inherit;
-}
-
-.wallpaperStudioHoldState {
-    position: absolute;
-    bottom: 10dvh;
-    left: 50%;
-    translate: -50% 0;
-    z-index: 15;
-    padding: 1dvh 2vw;
-    border-radius: 24px;
-    background: var(--mc);
-    color: var(--tc);
-    pointer-events: none;
-}
-
 .mobile-layout:has(.wallpaperStudio) {
     > .page-content {
         overflow: hidden;
@@ -633,7 +492,7 @@
 }
 
 .wallpaperStudioBottom.pageBottom {
-    z-index: 22;
+    z-index: 14;
     left: 50%;
     transform: translateX(-50%);
     width: 50%;
@@ -646,14 +505,21 @@
 
     .wallpaperStudioSettingsButton {
         justify-content: center;
-        border: none;
+        border: 1px solid var(--block_border);
         gap: .7vw;
+        color: var(--tc);
+        font-size: 16px;
+    }
+
+    .wallpaperStudioGearButton {
+        flex-shrink: 0;
         color: var(--tc);
     }
 
     @media (max-width: 800px) {
         width: 100%;
         padding: 0 3vw max(3dvh, env(safe-area-inset-bottom));
+        gap: 2vw;
 
         .wallpaperStudioSettingsButton {
             gap: 2vw;
