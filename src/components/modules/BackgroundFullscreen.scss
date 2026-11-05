@@ -185,6 +185,21 @@
     }
 }
 
+.backgroundFullscreenPanelMeta {
+    display: flex;
+    align-items: center;
+    gap: .75vw;
+
+    > span {
+        font-size: 12px;
+        color: var(--borderWh);
+    }
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+    }
+}
+
 .backgroundFullscreenChoicesTrack {
     position: absolute;
     inset: 0;
