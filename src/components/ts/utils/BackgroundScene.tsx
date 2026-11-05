@@ -4,8 +4,19 @@ import type { CSSProperties } from "react";
 import type { ContourPattern } from "../../context/SettingsContext";
 import "../../../scss/backgroundScenes.scss";
 
-export const stockScenes = ["art", "aurora", "nebula", "sunset", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals", "japaneseNinja"] as const;
+export const stockScenes = ["art", "aurora", "nebula", "sunset", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals", "japaneseNinja", "japaneseSakura", "japaneseAlley", "japaneseTorii"] as const;
 export type StockScene = typeof stockScenes[number];
+export const photographicScenes = ["japaneseNinja", "japaneseSakura", "japaneseAlley", "japaneseTorii"] as const;
+export const isPhotographicScene = (id: string) =>
+    (photographicScenes as readonly string[]).includes(id);
+
+const photoSources: Partial<Record<StockScene, { desktop: string; mobile: string }>> = {
+    japaneseNinja: { desktop: "/wallpapers/japanese-ninja-desktop.webp", mobile: "/wallpapers/japanese-ninja-mobile.webp" },
+    japaneseSakura: { desktop: "/wallpapers/japanese-sakura-desktop.webp", mobile: "/wallpapers/japanese-sakura-mobile.webp" },
+    japaneseAlley: { desktop: "/wallpapers/japanese-alley-desktop.webp", mobile: "/wallpapers/japanese-alley-mobile.webp" },
+    japaneseTorii: { desktop: "/wallpapers/japanese-torii-desktop.webp", mobile: "/wallpapers/japanese-torii-mobile.webp" }
+};
+
 export const isStockScene = (id: string): id is StockScene =>
     (stockScenes as readonly string[]).includes(id);
 const animated: readonly string[] = ["art", "aurora", "nebula", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals"];
@@ -56,7 +67,10 @@ const patterns: Record<StockScene, Particle[]> = {
     orbit: createPattern(6882, 15),
     glitch: createPattern(7765, 15),
     petals: createPattern(8648, 24),
-    japaneseNinja: []
+    japaneseNinja: [],
+    japaneseSakura: [],
+    japaneseAlley: [],
+    japaneseTorii: []
 };
 
 // All available SectionArt motifs can appear in the chaotic wallpaper.
@@ -112,6 +126,7 @@ const neonTowers = [
 ];
 
 export function BackgroundScene({ variant, motion = false, artPattern = "order", artSize = 1 }: { variant: StockScene; motion?: boolean; artPattern?: ContourPattern; artSize?: number }) {
+    const photo = photoSources[variant];
     return (
         <div className={`atScene atScene--${variant} ${motion ? "atScene--running" : ""} ${variant === "art" ? `atScene--art-${artPattern}` : ""}`}
             style={{ "--art-size": artSize } as CSSProperties} aria-hidden="true">
@@ -130,9 +145,9 @@ export function BackgroundScene({ variant, motion = false, artPattern = "order",
                     />
                 ))}
             </div>
-            {variant === "japaneseNinja" && <picture className="atScenePhoto">
-                <source media="(max-width: 800px)" srcSet="/wallpapers/japanese-ninja-mobile.webp" type="image/webp"/>
-                <img src="/wallpapers/japanese-ninja-desktop.webp" alt="" decoding="async" loading="lazy"/>
+            {photo && <picture className="atScenePhoto">
+                <source media="(max-width: 800px)" srcSet={photo.mobile} type="image/webp"/>
+                <img src={photo.desktop} alt="" decoding="async" loading="lazy"/>
             </picture>}
             {variant === "art" && (artPattern === "chaos" ?
                 chaoticArtwork.map((item, index) => (
