@@ -1,0 +1,617 @@
+@use "../../scss/mixins.scss" as var;
+
+.wallpaperStudio {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    background: var(--bgc);
+    color: var(--tc);
+    touch-action: pan-y;
+}
+
+.wallpaperStudioCanvas {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.wallpaperStudioFrame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+
+    > .background {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.wallpaperStudioHeader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 25;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+    min-height: 8dvh;
+    padding: max(1dvh, env(safe-area-inset-top)) 2vw 1dvh;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, var(--mc), transparent);
+    pointer-events: none;
+
+    > * {
+        pointer-events: auto;
+    }
+
+    @media (max-width: 800px) {
+        padding: max(1dvh, env(safe-area-inset-top)) 3vw 1dvh;
+        gap: 2vw;
+    }
+}
+
+.wallpaperStudioHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: .6vw;
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+    }
+}
+
+.wallpaperStudioIcon,
+.wallpaperStudioArrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 5dvh;
+    height: 5dvh;
+    flex-shrink: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background: var(--interact);
+    border: 1px solid var(--block_border);
+    border-radius: 50%;
+    color: var(--tc);
+    cursor: pointer;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+
+    > svg {
+        width: 2.6dvh;
+        height: 2.6dvh;
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--menuButtHover);
+        }
+    }
+}
+
+.wallpaperStudioHeading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    gap: .2dvh;
+    text-align: center;
+
+    > span {
+        font-size: 20px;
+    }
+
+    > small {
+        display: block;
+        max-width: 30vw;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--borderWh);
+    }
+
+    @media (max-width: 800px) {
+        > span {
+            font-size: 16px;
+        }
+
+        > small {
+            max-width: 34vw;
+        }
+    }
+}
+
+.wallpaperStudioApply {
+    min-width: 8vw;
+    min-height: 4.5dvh;
+    padding: .8dvh 1vw;
+    border-radius: 24px;
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
+    color: var(--inner_text);
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    cursor: pointer;
+    font: inherit;
+
+    &:disabled {
+        cursor: default;
+        background: var(--interact);
+        color: var(--borderWh);
+    }
+
+    @media (max-width: 800px) {
+        min-width: 0;
+        padding: .8dvh 2vw;
+        font-size: 14px;
+    }
+}
+
+.wallpaperStudioArrow {
+    position: absolute;
+    z-index: 4;
+    top: 44%;
+    transform: translateY(-50%);
+
+    &Left {
+        left: 2vw;
+    }
+
+    &Right {
+        right: 2vw;
+    }
+
+    @media (max-width: 800px) {
+        top: 42%;
+
+        &Left {
+            left: 3vw;
+        }
+
+        &Right {
+            right: 3vw;
+        }
+    }
+}
+
+.wallpaperStudioSheet {
+    position: absolute;
+    z-index: 13;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    width: min(76vw, 76rem);
+    max-width: 100%;
+    min-height: 0;
+    height: 50dvh;
+    border: 1px solid var(--block_border);
+    border-bottom: 0;
+    border-radius: 24px 24px 0 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    transition: height .34s cubic-bezier(.22, 1, .36, 1);
+
+    .wallpaperStudio.collapsed & {
+        height: 8dvh;
+    }
+
+    @media (max-width: 800px) {
+        left: 0;
+        transform: none;
+        width: 100%;
+        height: 100dvh;
+        border-left: none;
+        border-right: none;
+        border-radius: 24px 24px 0 0;
+
+        .wallpaperStudio.collapsed & {
+            height: calc(9dvh + env(safe-area-inset-bottom));
+        }
+    }
+}
+
+.wallpaperStudioPeek {
+    display: flex;
+    align-items: stretch;
+    gap: 1vw;
+    flex-shrink: 0;
+    height: 8dvh;
+    min-height: 0;
+    padding: .7dvh 1vw;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--block_border);
+
+    @media (max-width: 800px) {
+        height: 9dvh;
+        gap: 2vw;
+        padding: 1dvh 3vw;
+    }
+}
+
+.wallpaperStudioPeekButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: .7vw;
+    min-width: 0;
+    border: none;
+    border-radius: 16px;
+    box-sizing: border-box;
+    padding: .5dvh .7vw;
+    color: var(--tc);
+    background: var(--interact);
+    font: inherit;
+    cursor: pointer;
+    touch-action: pan-y;
+    user-select: none;
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--menuButtHover);
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 1.5vw;
+        padding: .5dvh 2vw;
+    }
+}
+
+.wallpaperStudioMini {
+    position: relative;
+    width: 4.5dvh;
+    height: 4.5dvh;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--bgc);
+    pointer-events: none;
+
+    > .background {
+        position: absolute;
+        inset: 0;
+    }
+
+    @media (max-width: 800px) {
+        width: 4dvh;
+        height: 4dvh;
+    }
+}
+
+.wallpaperStudioPeekTitle {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    align-items: flex-start;
+    gap: .1dvh;
+    min-width: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+
+    > small {
+        color: var(--borderWh);
+        font-size: 11px;
+    }
+}
+
+.wallpaperStudioCounter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4vw;
+    white-space: nowrap;
+    color: var(--borderWh);
+}
+
+.wallpaperStudioSheetContent {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    transition: opacity .2s ease, transform .25s ease;
+
+    .wallpaperStudio.collapsed & {
+        opacity: 0;
+        transform: translateY(1.5dvh);
+        pointer-events: none;
+    }
+}
+
+.wallpaperStudioTabs {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+    padding: 1dvh 1vw;
+    flex-shrink: 0;
+
+    > button {
+        padding: 1dvh 1vw;
+        color: var(--tc);
+        border: 1px solid transparent;
+        border-radius: 24px;
+        background: var(--interact);
+        cursor: pointer;
+        font: inherit;
+
+        &.active {
+            border-color: var(--accent);
+        }
+
+        @media (hover: hover) {
+            &:not(.active):hover {
+                background: var(--menuButtHover);
+            }
+        }
+    }
+
+    > .wallpaperStudioHelp {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: .8dvh;
+        margin-left: auto;
+        border: 1px solid var(--block_border);
+        border-radius: 50%;
+    }
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+        padding: 1.5dvh 3vw;
+
+        > button {
+            padding: 1dvh 2.5vw;
+            font-size: 14px;
+        }
+    }
+}
+
+.wallpaperStudioScroll {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding: 0 1vw calc(2dvh + env(safe-area-inset-bottom));
+    gap: 1dvh;
+
+    @media (max-width: 800px) {
+        padding: 0 3vw calc(3dvh + env(safe-area-inset-bottom));
+        gap: 2dvh;
+    }
+}
+
+.wallpaperStudioGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+}
+
+.wallpaperStudioGroupHeading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+    width: 100%;
+    padding: 1dvh 1vw;
+    background: var(--interact);
+    border: none;
+    border-radius: 16px;
+    color: var(--tc);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &[aria-expanded="false"] > svg {
+        transform: rotate(-90deg);
+    }
+
+    @media (max-width: 800px) {
+        padding: 1.5dvh 3vw;
+    }
+}
+
+.wallpaperStudioGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .8vw;
+
+    @media (max-width: 1100px) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (max-width: 800px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 2vw;
+    }
+}
+
+.wallpaperStudioTile {
+    position: relative;
+    min-width: 0;
+}
+
+.wallpaperStudioTileChoose,
+.wallpaperStudioAdd {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .7dvh;
+    width: 100%;
+    padding: .75dvh;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    border-radius: 16px;
+    background: var(--interact);
+    color: var(--tc);
+    font: inherit;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+
+    &.selected {
+        border-color: var(--accent);
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--menuButtHover);
+        }
+    }
+}
+
+.wallpaperStudioTileImage {
+    position: relative;
+    width: 100%;
+    height: 10dvh;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bgc);
+    pointer-events: none;
+
+    > .background {
+        position: absolute;
+        inset: 0;
+    }
+
+    @media (max-width: 800px) {
+        height: 13dvh;
+    }
+}
+
+.wallpaperStudioTileLabel {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.wallpaperStudioApplied {
+    position: absolute;
+    top: 1.5dvh;
+    right: 1dvh;
+    padding: .3dvh;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--inner_text);
+}
+
+.wallpaperStudioDelete {
+    position: absolute;
+    top: 1dvh;
+    left: 1dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3dvh;
+    height: 3dvh;
+    border: none;
+    border-radius: 50%;
+    color: var(--tc);
+    background: var(--mc);
+    cursor: pointer;
+}
+
+.wallpaperStudioThemeDot {
+    display: none;
+}
+
+.wallpaperStudioAdd {
+    justify-content: center;
+    height: 100%;
+    min-height: 14dvh;
+    color: var(--accent_text);
+    gap: 1dvh;
+}
+
+.wallpaperStudioHoldHint {
+    color: var(--borderWh);
+    margin: 0;
+    padding: 1dvh;
+    text-align: center;
+}
+
+.wallpaperStudioSettings {
+    gap: 1.5dvh;
+
+    > .settingInnerWrapper {
+        margin: 0;
+    }
+
+    > .backgroundFullscreenControl {
+        padding: .5dvh 1vw;
+    }
+}
+
+.wallpaperStudioReset {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .6vw;
+    margin-top: 1dvh;
+    width: fit-content;
+    padding: 1dvh 1.5vw;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    color: var(--tc);
+    background: var(--interact);
+    cursor: pointer;
+    font: inherit;
+}
+
+.wallpaperStudioHoldState {
+    position: absolute;
+    bottom: 10dvh;
+    left: 50%;
+    translate: -50% 0;
+    z-index: 15;
+    padding: 1dvh 2vw;
+    border-radius: 24px;
+    background: var(--mc);
+    color: var(--tc);
+    pointer-events: none;
+}
+
+.mobile-layout:has(.wallpaperStudio) {
+    > .page-content {
+        overflow: hidden;
+    }
+
+    > .sideMenu,
+    > .smHeader,
+    > .SMnavDiv {
+        z-index: 21;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wallpaperStudioSheet,
+    .wallpaperStudioSheetContent {
+        transition: none;
+    }
+}
