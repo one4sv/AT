@@ -1,10 +1,12 @@
 import { ArrowLeftIcon, XIcon } from "@phosphor-icons/react";
+import { useTranslation } from "react-i18next";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 
 export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolean, setMenuTranslate:Dispatch<SetStateAction<number>>}) {
+    const { t } = useTranslation("common")
     const { habit } = useTheHabit()
     const { saveHabit, localChanges, isUpdating } = useUpHabit()
     const { setShowSlide, showSlide, setShowHabitMenu } = useSideMenu()
@@ -32,10 +34,10 @@ export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolea
         <div className="habitSaveDiv">
             {shouldShowSaveHint && (
                 <div className="habitSaveHint">
-                    Не забудьте сохранить!
+                    {t("habitPageUi.save.reminder")}
                 </div>
             )}
-            <button type="button" className="habitSlideBack" onClick={menuBack} aria-label={showSlide ? "Назад" : "Закрыть"}>
+            <button type="button" className="habitSlideBack" onClick={menuBack} aria-label={showSlide ? t("habitPageUi.save.back") : t("habitDialog.close")}>
                 {showSlide ? <ArrowLeftIcon size={24}/> : <XIcon size={24}/>}
             </button>
             {!readOnly && habit?.ongoing && (
@@ -47,7 +49,7 @@ export default function HabitSave ({readOnly, setMenuTranslate}:{readOnly:boolea
                         if (showSlide === "chat") window.dispatchEvent(new CustomEvent("habit-chat-save", { detail: { habitId: habit.id } }));
                     }}
                 >
-                    {isThisUpdating ? "Сохраняется..." : "Сохранить"}
+                    {isThisUpdating ? t("habitDialog.saving") : t("habitUi.save")}
                 </div>
             )}
         </div>
