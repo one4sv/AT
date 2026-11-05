@@ -112,6 +112,17 @@
     "sendToChat": "Send to chat",
     "qrCode": "QR code"
   },
+  "systemMessages": {
+    "added": "added {} to the group",
+    "removed": "removed {} from the group",
+    "left": "left the group",
+    "joinedByLink": "joined via an invitation link",
+    "updatedName": "changed the group name",
+    "updatedDescription": "changed the group description",
+    "updatedNameAndDescription": "changed the group name and description",
+    "updatedAvatar": "changed the group avatar",
+    "created": "created the group “{{name}}”"
+  },
   "chatUi": {
     "typing": "Typing...",
     "typingNames": "{{names}} are typing...",
