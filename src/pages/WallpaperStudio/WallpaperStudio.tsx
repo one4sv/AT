@@ -346,7 +346,11 @@ export default function WallpaperStudio() {
                     </span>
                     {open ? <ChevronDown size={20}/> : <ChevronUp size={20}/>}
                 </button>
-                <span className="wallpaperStudioCounter">{currentIndex + 1} / {items.length}</span>
+                <div className="wallpaperStudioPeekNav">
+                    <button type="button" aria-label={t("backgroundLibrary.previous")} onClick={() => change(-1)}><ChevronLeft size={18}/></button>
+                    <span className="wallpaperStudioCounter">{currentIndex + 1} / {items.length}</span>
+                    <button type="button" aria-label={t("backgroundLibrary.next")} onClick={() => change(1)}><ChevronRight size={18}/></button>
+                </div>
             </div>
             <div id="wallpaperStudioContent" className="wallpaperStudioSheetContent" inert={!open}>
                 <nav className="wallpaperStudioTabs" aria-label={t("backgroundLibrary.title")}>
