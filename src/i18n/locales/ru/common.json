@@ -112,6 +112,17 @@
     "sendToChat": "Отправить в чат",
     "qrCode": "QR-код"
   },
+  "systemMessages": {
+    "added": "добавил {} в беседу",
+    "removed": "исключил {} из беседы",
+    "left": "покинул беседу",
+    "joinedByLink": "присоединился по ссылке-приглашению",
+    "updatedName": "обновил название беседы",
+    "updatedDescription": "обновил описание беседы",
+    "updatedNameAndDescription": "обновил название и описание беседы",
+    "updatedAvatar": "обновил аватарку беседы",
+    "created": "создал беседу «{{name}}»"
+  },
   "chatUi": {
     "typing": "Печатает...",
     "typingNames": "{{names}} печатают...",
