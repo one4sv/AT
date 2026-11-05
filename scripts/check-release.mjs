@@ -8,6 +8,8 @@ const errors = [];
 const pkg = JSON.parse(read("package.json"));
 const roadmap = read("src/pages/Info/roadmapData.ts");
 const about = read("src/pages/Info/tabs/AboutTab.tsx");
+const roadmapTab = read("src/pages/Info/tabs/RoadmapTab.tsx");
+const localeNames = ["common", "sign", "info", "settings", "acc"];
 const docs = ["AGENTS.md", "docs/ROADMAP_PROPOSAL.md", "docs/V0_6_FEATURES_AND_QA.md", "docs/RELEASE_QA.md"];
 
 const version = pkg.version.match(/^(\d+\.\d+\.\d+)(?:-dev(?:\.\d+)?)?$/)?.[1];
@@ -19,10 +21,28 @@ const duplicates = versions.filter((value, index) => versions.indexOf(value) !==
 if (duplicates.length) errors.push(`Repeated roadmap versions: ${[...new Set(duplicates)].join(", ")}`);
 if (versions.filter(value => value === version).length !== 1) errors.push("Current version must occur exactly once");
 if (!about.includes("roadmap")) errors.push("About page must link to roadmap");
+if (!about.includes(`dev ${version}`)) errors.push("About version differs from package");
+if (!roadmapTab.includes("0.0 The Beginning")) errors.push("Roadmap beginning title must be invariant English");
+if (!roadmapTab.includes("2025-07-14")) errors.push("Roadmap beginning date must remain 14.07.2025");
+for (const title of ["The Foundation", "Act", "Dialogue", "Firework", "Aphrodite", "Affinity", "The New Palette", "The Castle"]) {
+    if (!roadmap.includes(`title: "${title}"`)) errors.push(`Missing invariant roadmap title: ${title}`);
+}
 for (const doc of docs) {
     if (!read(doc).includes(version)) errors.push(`${doc}: current version ${version} is missing`);
 }
 if (/title:\s*\{\s*ru:/.test(roadmap)) errors.push("Release titles must be invariant English strings");
+const leafKeys = (value, prefix = "") => Object.entries(value).flatMap(([key, child]) => {
+    const name = prefix ? `${prefix}.${key}` : key;
+    return child && typeof child === "object" && !Array.isArray(child) ? leafKeys(child, name) : [name];
+});
+for (const ns of localeNames) {
+    const ru = JSON.parse(read(`src/i18n/locales/ru/${ns}.json`));
+    const en = JSON.parse(read(`src/i18n/locales/en/${ns}.json`));
+    const ruKeys = new Set(leafKeys(ru));
+    const enKeys = new Set(leafKeys(en));
+    for (const key of ruKeys) if (!enKeys.has(key)) errors.push(`Missing en ${ns}.${key}`);
+    for (const key of enKeys) if (!ruKeys.has(key)) errors.push(`Missing ru ${ns}.${key}`);
+}
 if (errors.length) {
     console.error("Release consistency failed:\n" + errors.map(error => "- " + error).join("\n"));
     process.exitCode = 1;
