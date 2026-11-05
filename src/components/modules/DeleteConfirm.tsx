@@ -6,6 +6,7 @@ import { useNote } from "../hooks/NoteHook";
 import "../../scss/modules/deleteConfirm.scss";
 import { useAcc } from "../hooks/AccHook";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
 import Toggler from "../ts/Toggler";
@@ -16,6 +17,7 @@ import { useContacts } from "../hooks/ContactsHook";
 import { useChat } from "../hooks/ChatHook";
 
 export default function DeleteConfirm() {
+    const { t } = useTranslation("common");
     const { user } = useUser()
     const { refetchHabits } = useHabits();
     const { refetchContacts, refetchContactsWTLoading } = useContacts();
@@ -33,16 +35,16 @@ export default function DeleteConfirm() {
     const [ delForAll, setDelForAll ] = useState(false)
     
     useEffect(() => {
-        if (deleteConfirm.goal === "post") setDelThing("пост");
-        else if (deleteConfirm.goal === "habit") setDelThing("привычку");
-        else if (deleteConfirm.goal === "chat") setDelThing("диалог с");
+        if (deleteConfirm.goal === "post") setDelThing(t("deleteDialog.post"));
+        else if (deleteConfirm.goal === "habit") setDelThing(t("deleteDialog.habit"));
+        else if (deleteConfirm.goal === "chat") setDelThing(t("deleteDialog.chat"));
         else if (deleteConfirm.goal === "mess" && deleteMess && deleteMess.length > 0) setDelThing(String(deleteMess?.length));
-        else if (deleteConfirm.goal === "mess" && deleteMess && deleteMess.length === 0) setDelThing("это");
+        else if (deleteConfirm.goal === "mess" && deleteMess && deleteMess.length === 0) setDelThing(t("deleteDialog.this"));
         else if (deleteConfirm.goal === "member") setDelThing(`${deleteConfirm.name}`);
         else if (deleteConfirm.goal === "leave") setDelThing(`${deleteConfirm.name}`);
-        else setDelThing("объект");
+        else setDelThing(t("deleteDialog.item"));
 
-    }, [deleteConfirm.goal, deleteConfirm.name, deleteMess]);
+    }, [deleteConfirm.goal, deleteConfirm.name, deleteMess, t]);
 
     const deleteThis = async () => {
         const { goal, id } = deleteConfirm;
@@ -73,31 +75,31 @@ export default function DeleteConfirm() {
                 }
                 setBlackout({ seted: false });
             } else {
-                showNotification("error", res.data.message || "Не удалось удалить");
+                showNotification("error", res.data.message || t("deleteDialog.deleteFailed"));
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                showNotification("error", error.response?.data?.error || "Не удалось получить данные группы");
+                showNotification("error", error.response?.data?.error || t("deleteDialog.groupFailed"));
             }
-            showNotification("error", "Не удалось удалить");
+            showNotification("error", t("deleteDialog.deleteFailed"));
         }
     };
 
     return (
-        <div className="deleteDiv" role="dialog" aria-modal="true" aria-label="Подтвердите действие">
-            <div className="deleteTitle">Подтвердите действие</div>
+        <div className="deleteDiv" role="dialog" aria-modal="true" aria-label={t("deleteDialog.confirmAction")}>
+            <div className="deleteTitle">{t("deleteDialog.confirmAction")}</div>
             <div className="deleteSpan">
                 {deleteConfirm.goal === "member"
-                    ? `Вы действительно хотите исключить пользователя ${deleteConfirm.name} из беседы ${group.name}?`
+                    ? t("deleteDialog.removeMember", { name: deleteConfirm.name, group: group?.name })
                     : deleteConfirm.goal === "leave"
-                            ? `Вы действительно хотите покинуть беседу ${delThing}?`
-                            : `Вы действительно хотите удалить ${delThing} ${deleteConfirm.name}?`
+                            ? t("deleteDialog.leave", { name: delThing })
+                            : t("deleteDialog.delete", { type: delThing, name: deleteConfirm.name })
                 }
             </div>
             {deleteConfirm.goal === "mess" && (
                 <div className={`deleteMessForAll ${delForAll ? "on" : ""}`}>
                     <Toggler state={delForAll} setState={setDelForAll}/>
-                    <span onClick={() => setDelForAll(prev => !prev)}>Удалить эти сообщения для всех</span>
+                    <span onClick={() => setDelForAll(prev => !prev)}>{t("deleteDialog.forAll")}</span>
                 </div>
             )}
             <div className="deleteButts">
@@ -105,10 +107,10 @@ export default function DeleteConfirm() {
                     className="deleteCancel"
                     onClick={() => setBlackout({ seted: false })}
                 >
-                    Отмена
+                    {t("deleteDialog.cancel")}
                 </button>
                 <button className="deleteConfirm" onClick={deleteThis}>
-                    {deleteConfirm.goal === "member" || deleteConfirm.goal === "leave" ? "Подтвердить" : "Удалить"}
+                    {deleteConfirm.goal === "member" || deleteConfirm.goal === "leave" ? t("deleteDialog.confirm") : t("deleteDialog.remove")}
                 </button>
             </div>
         </div>

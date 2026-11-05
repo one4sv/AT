@@ -467,5 +467,28 @@
     "cancel": "Cancel",
     "edit": "Edit",
     "message": "Send message"
+  },
+  "deleteDialog": {
+    "post": "post",
+    "habit": "activity",
+    "chat": "conversation with",
+    "this": "this message",
+    "item": "item",
+    "deleteFailed": "Could not delete",
+    "groupFailed": "Could not load group details",
+    "confirmAction": "Confirm action",
+    "removeMember": "Remove {{name}} from {{group}}?",
+    "leave": "Leave group chat {{name}}?",
+    "delete": "Delete {{type}} {{name}}?",
+    "forAll": "Delete these messages for everyone",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "remove": "Delete"
+  },
+  "imagePreview": {
+    "previous": "Previous photo",
+    "next": "Next photo",
+    "toMessage": "Go to message",
+    "download": "Download"
   }
 }

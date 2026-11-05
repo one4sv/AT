@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, useMotionValue, animate } from "framer-motion";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useNavigate } from "react-router";
@@ -7,6 +8,7 @@ import { ArrowDownToLine, ChevronLeft, ChevronRight, MessageCircleReply } from "
 import { UserIcon } from "@phosphor-icons/react";
 
 export default function ImgPrev() {
+    const { t } = useTranslation("common");
     const { blackout, setBlackout, setBlackoutStack } = useBlackout();
     const { setPendingScrollId } = useMessages();
     const navigate = useNavigate();
@@ -252,7 +254,7 @@ export default function ImgPrev() {
                     <button
                         type="button"
                         className="imgPrevArrow imgPrevArrowLeft"
-                        title="Предыдущее фото"
+                        title={t("imagePreview.previous")}
                         onClick={event => {
                             event.stopPropagation();
                             changeImage(-1);
@@ -264,7 +266,7 @@ export default function ImgPrev() {
                     <button
                         type="button"
                         className="imgPrevArrow imgPrevArrowRight"
-                        title="Следующее фото"
+                        title={t("imagePreview.next")}
                         onClick={event => {
                             event.stopPropagation();
                             changeImage(1);
@@ -283,7 +285,7 @@ export default function ImgPrev() {
                 {nick && id && (
                     <div
                         className="imgPrevToMessage imgPrevMenuButt"
-                        title="Перейти к сообщению"
+                        title={t("imagePreview.toMessage")}
                         onClick={() => {
                             navigate(`/chat/${nick}`);
                             setPendingScrollId(Number(id));
@@ -318,7 +320,7 @@ export default function ImgPrev() {
 
                 <div
                     className="imgPrevToMessage imgPrevMenuButt"
-                    title="Скачать"
+                    title={t("imagePreview.download")}
                     onClick={() => void handleDownload()}
                 >
                     <ArrowDownToLine size={22} />
