@@ -1,4 +1,5 @@
 import { useSchedule } from "../../../../../components/hooks/ScheduleHook";
+import { useTranslation } from "react-i18next";
 import { useBlackout } from "../../../../../components/hooks/BlackoutHook";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
 import { useParams } from "react-router";
@@ -11,6 +12,7 @@ import { useScheduleCompleted } from "../../../../../components/hooks/utils/useS
 
 
 export default function ScheduleCompletion({ isMy }: { isMy: boolean }) {
+    const { t } = useTranslation("common");
     const { scheduleComplete, loadingComp, loading } = useSchedule();
     const { chosenDay } = useCalendar();
     const { setBlackout } = useBlackout();
@@ -24,7 +26,7 @@ export default function ScheduleCompletion({ isMy }: { isMy: boolean }) {
     return (
         <div className="scheduleCompilition" aria-busy={loading}>
             {loading && scheduleCompleted.length === 0 && <div className="completionEmpty" role="status"><LoaderSmall/></div>}
-            {!loading && scheduleCompleted.length === 0 && <div className="completionEmpty"><ListChecksIcon size={32}/><span>На этот день пока нет задач</span></div>}
+            {!loading && scheduleCompleted.length === 0 && <div className="completionEmpty"><ListChecksIcon size={32}/><span>{t("activityCompletion.noTasks")}</span></div>}
             {scheduleCompleted.map(block => {
                 const key = `${block.id} - ${date}`;
                 const pending = loadingComp.includes(key);
@@ -35,8 +37,8 @@ export default function ScheduleCompletion({ isMy }: { isMy: boolean }) {
                             {time && <span className="scheduleButtSpan">{time}</span>}
                             <span>{block.name}</span>
                             {habit?.schedule_blocks_mode === "shared" && (block.creator_name || block.actor_name) && <span className="sharedTaskAttribution">
-                                {block.creator_name && <span>Добавил: {block.creator_name}</span>}
-                                {block.completed && block.actor_name && <span>Выполнил: {block.actor_name}</span>}
+                                {block.creator_name && <span>{t("habitPageUi.tasks.addedBy", { name: block.creator_name })}</span>}
+                                {block.completed && block.actor_name && <span>{t("habitPageUi.tasks.completedBy", { name: block.actor_name })}</span>}
                             </span>}
                         </span>
                         <span className="scheduleButtSvg" aria-hidden="true">{pending ? <LoaderSmall/> : block.completed ? <CheckCircleIcon weight="fill" className="scsvg"/> : <CircleIcon/>}</span>
@@ -47,7 +49,7 @@ export default function ScheduleCompletion({ isMy }: { isMy: boolean }) {
                 type="button"
                 className="doneCompAdd scheduleTaskAdd"
                 onClick={() => setBlackout({ seted: true, module: "HabitTaskEditor", point: "schedule", options: { id: date } })}
-            ><PlusIcon /> Добавить задачу</button>}
+            ><PlusIcon /> {t("habitDialog.addTask")}</button>}
         </div>
     );
 }
