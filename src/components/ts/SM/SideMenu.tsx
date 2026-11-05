@@ -71,6 +71,10 @@ export default function SideMenu() {
         setTranslateX(showSideMenu ? 0 : -100);
     }, [menu.visible, showSideMenu, setIsDragging, setTranslateX]);
     const handleTouchStart = (e: React.TouchEvent) => {
+        if (studio && !isMobile) {
+            contextGesture.current = true;
+            return;
+        }
         contextGesture.current = menu.visible ||
             !!(e.target instanceof Element && e.target.closest("[data-context-menu], [data-header-gesture], .selector, .ContextMenuWrapper, .blackout"));
         if (contextGesture.current || e.touches.length !== 1) return;
