@@ -1,5 +1,6 @@
 import { CalendarBlankIcon, CalendarCheckIcon, CheckCircleIcon, Circle, ClockIcon } from "@phosphor-icons/react";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
+import { useTranslation } from "react-i18next";
 import { useDone } from "../../../../../components/hooks/DoneHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
@@ -13,7 +14,8 @@ interface DoneButtonProps {
 }
 
 export default function DoneButton({ habitId, open, setOpen }: DoneButtonProps) {
-    const { todayDone, isDone, doable, planable, isPlanned, habit } = useTheHabit();
+    const { t } = useTranslation("common");
+  const { todayDone, isDone, doable, planable, isPlanned, habit } = useTheHabit();
     const { markDoneWLoading, waitDoneAnswer } = useDone();
     const { waitPlanAnswer, markPlanWLoading } = usePlanned()
     const { chosenDay } = useCalendar();
@@ -45,7 +47,7 @@ export default function DoneButton({ habitId, open, setOpen }: DoneButtonProps) 
                         onClick={() => markPlanWLoading(habitId, chosenDay)}
                     >
                         {displayPlan ? <CalendarCheckIcon size={22}/> : <CalendarBlankIcon size={22}/>}
-                        {waitPlanAnswer ? <LoaderSmall/> : displayPlan ? "Запланировано" : "Запланировать"}
+                        {waitPlanAnswer ? <LoaderSmall/> : displayPlan ? t("habitPageUi.done.planned") : t("habitPageUi.done.plan")}
                     </button>
                 ) : doable ? (
                     <button
@@ -53,7 +55,7 @@ export default function DoneButton({ habitId, open, setOpen }: DoneButtonProps) 
                         onClick={() => markDoneWLoading(habitId, chosenDay)}
                     >
                         {displayDone ? <CheckCircleIcon weight="fill" size={22}/> : <Circle size={22}/>}
-                        {waitDoneAnswer ? <LoaderSmall/> : displayDone ? "Выполнено" : "Выполнить"}
+                        {waitDoneAnswer ? <LoaderSmall/> : displayDone ? t("habitUi.done") : t("habitUi.complete")}
                     </button>
                 ) : (
                     <button
@@ -61,7 +63,7 @@ export default function DoneButton({ habitId, open, setOpen }: DoneButtonProps) 
                         onClick={() => undefined}
                     >
                         <ClockIcon size={22}/>
-                        {beforeJoining ? "До вступления" : "Ожидаем"}
+                        {beforeJoining ? t("habitPageUi.done.beforeJoining") : t("habitPageUi.done.waiting")}
                     </button>
                 )
             )}
