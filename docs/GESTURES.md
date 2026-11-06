@@ -37,4 +37,4 @@
 
 ## QA
 
-Проверить: iPhone Safari, Android Chrome, ПК мышь/тачпад, появление клавиатуры, горизонтальные/вертикальные конфликты, последовательное удержание и отпускание, быстрый tap по backdrop, выбор элемента сразу под backdrop, смена desktop/mobile при открытом SideMenu, reduced motion и touchcancel.
+Проверить: iPhone Safari, Android Chrome, ПК мышь/тачпад, появление клавиатуры, горизонтальные/вертикальные конфликты, последовательное удержание и отпускание, касания вне SideMenu без нового backdrop, смена desktop/mobile при открытом SideMenu, reduced motion и touchcancel.
