@@ -263,3 +263,10 @@
 - `scripts/build-desktop-wallpapers.mjs` reconstructs and validates both sizes, outputs six actual WebP files under `public/wallpapers/`; **desktop images are never cropped from mobile ones**. The build verifies WebP RIFF size and decoded dimensions.
 - `.github/workflows/compile-japanese-wallpapers.yml` commits the six WebP assets to `main` with GitHub Actions when repository workflow write permissions allow it.
 - The desktop images are AI-generated wide variants guided by the mobile scenes, not pixel-identical outpainting. Keep this distinction explicit.
+
+### 06.11.2026 — действующая модалка BackgroundLibrary и 5 пользовательских обоев
+
+- Модалка `BackgroundLibrary` **используется** из `SettingsSectionMenu` → контекстное меню «Интерфейс» → «Задний фон». Удалять и заменять её переходом на `/wallpapers` нельзя. Вкладки `Selector`, свайп и просмотр/удаление сохранены.
+- Миниатюры приведены к каталогу Studio: 5 колонок, 16:9 desktop / 9:16 mobile, названия через tooltip/aria-label вместо подписи, применённый фон отмечен галочкой, отдельный SVG `ImagePlus` для загрузки.
+- `MAX_CUSTOM_BACKGROUNDS=5` используется в клиенте, `uploadbg.js` отклоняет шестой файл, Supabase — `settings_bg_gallery_max5` (миграция `background_gallery_limit_5_20261106` успешно применена). Перед переходом максимум галереи был 3, ни один пользовательский файл не удалён.
+- В сервере также увеличен лимит HTTP-загрузки до 25 MiB, чтобы он соответствовал `BgHandler`. Варианты с шестью пользовательскими изображениями выше — исторические, не актуальные. Не путать это ограничение с пагинацией **по 6 элементов** в `BackgroundFullscreen`.
