@@ -55,7 +55,8 @@ export default function BackgroundFullscreen() {
 
     const items = useMemo<PreviewItem[]>(() => [
         ...backgroundGroups.reduce<PreviewItem[]>((list, group) => {
-            group.items.forEach(item => list.push({ id: item.id, label: t(item.id === "color" && wallpaperStyle.fillMode === "gradient" ? "backgroundLibrary.gradientBackground" : item.labelKey) }));
+            group.items.forEach(item => list.push({ id: item.id, label: t(item.id === "color" ? (wallpaperStyle.logoEnabled ? "backgroundLibrary.logo" :
+                wallpaperStyle.fillMode === "gradient" ? "backgroundLibrary.gradientBackground" : "personalization.solidColor") : item.labelKey) }));
             return list;
         }, []),
         ...bgGallery.map(item => ({
@@ -63,7 +64,7 @@ export default function BackgroundFullscreen() {
             url: item.url,
             label: t("backgroundLibrary.customWallpaper")
         }))
-    ], [bgGallery, t, wallpaperStyle.fillMode]);
+    ], [bgGallery, t, wallpaperStyle.fillMode, wallpaperStyle.logoEnabled]);
 
     const currentIndex = Math.min(index, items.length - 1);
     const current = items[currentIndex];

@@ -177,6 +177,21 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         logoGrad: "#916cf2",
         logoGlow: 32
     });
+    // Migrate the old blue-tinted built-in defaults without overriding user palettes.
+    useEffect(() => {
+        if (wallpaperStyle.fillColor === "#101018" && wallpaperStyle.fillGrad === "#303052") {
+            setWallpaperStyle(current => ({
+                ...current, fillColor: "#151515", fillGrad: "#303030"
+            }));
+        }
+    }, [wallpaperStyle.fillColor, wallpaperStyle.fillGrad, setWallpaperStyle]);
+
+    useEffect(() => {
+        if (bg === "logo" && !wallpaperStyle.logoEnabled) {
+            setWallpaperStyle(current => ({ ...current, logoEnabled: true }));
+        }
+    }, [bg, wallpaperStyle.logoEnabled, setWallpaperStyle]);
+
     const bgEffects = useMemo(() => normalizeBackgroundEffects(storedBgEffects), [storedBgEffects]);
     const setBgEffects = useCallback<React.Dispatch<React.SetStateAction<BackgroundEffects>>>(next => {
         setStoredBgEffects(previous => normalizeBackgroundEffects(

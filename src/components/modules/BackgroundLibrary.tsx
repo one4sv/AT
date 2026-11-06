@@ -161,7 +161,8 @@ export default function BackgroundLibrary() {
 
     const stockGroups = backgroundGroups.map(group => ({
         id: group.id,
-        items: group.items.map(item => ({ id: item.id, label: t(item.id === "color" && wallpaperStyle.fillMode === "gradient" ? "backgroundLibrary.gradientBackground" : item.labelKey) }))
+        items: group.items.map(item => ({ id: item.id, label: t(item.id === "color" ? (wallpaperStyle.logoEnabled ? "backgroundLibrary.logo" :
+            wallpaperStyle.fillMode === "gradient" ? "backgroundLibrary.gradientBackground" : "personalization.solidColor") : item.labelKey) }))
     }));
 
     const selectStock = (id: string) => {

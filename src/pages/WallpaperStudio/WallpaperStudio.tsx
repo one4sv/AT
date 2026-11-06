@@ -360,7 +360,7 @@ export default function WallpaperStudio() {
 
     const tile = (item: WallpaperItem, index: number) => (
         <div key={item.id + (item.url ?? "")} className="wallpaperStudioTile">
-            <button type="button" className={"wallpaperStudioTileChoose" + (index === currentIndex ? " selected" : "") + (item.id === bg && (item.id !== "custom" || item.url === bgUrl) ? " applied" : "")}
+            <button type="button" className={"wallpaperStudioTileChoose" + (index === currentIndex ? " selected" : "") + ((item.id === bg || (bg === "logo" && item.id === "color")) && (item.id !== "custom" || item.url === bgUrl) ? " applied" : "")}
                 disabled={busy}
                 onClick={() => view(index)}
                 aria-label={t("backgroundLibrary.chooseWallpaper", { name: item.label })}
