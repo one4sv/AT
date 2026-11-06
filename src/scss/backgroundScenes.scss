@@ -23,9 +23,11 @@
 
     &--nebula {
         background:
-            radial-gradient(ellipse at 65% 55%, #202e60 0%, transparent 42%),
-            radial-gradient(ellipse at 10% 90%, #172147 0%, transparent 56%),
-            #030713;
+            radial-gradient(ellipse at 65% 55%,
+                color-mix(in srgb, var(--accent) 24%, transparent), transparent 47%),
+            radial-gradient(ellipse at 10% 90%,
+                color-mix(in srgb, var(--grad) 20%, transparent), transparent 58%),
+            color-mix(in srgb, var(--bgc) 92%, black);
     }
 
     &--sunset {
@@ -579,17 +581,40 @@
     }
 }
 
-// Starfield intentionally differs from aurora: sharp scattered stars.
+// Starfield is a theme-aware non-photographic scene: sharp stars rather than
+// aurora ribbons. No fixed blue/violet palette is allowed here.
 .atScene--nebula .atScenePattern {
     inset: 0;
     opacity: .95;
     background-image:
-        radial-gradient(1.2px 1.2px at 13% 23%, #fff 98%, transparent),
-        radial-gradient(1px 1px at 58% 18%, #d0dbff 98%, transparent),
-        radial-gradient(1.5px 1.5px at 77% 65%, #fff 98%, transparent),
-        radial-gradient(1px 1px at 38% 76%, #99baf5 98%, transparent),
-        radial-gradient(2px 2px at 91% 37%, #fff 98%, transparent),
-        radial-gradient(1px 1px at 24% 57%, #c0d8ff 98%, transparent);
+        radial-gradient(1.2px 1.2px at 13% 23%, color-mix(in srgb, var(--accent) 70%, white) 98%, transparent),
+        radial-gradient(1px 1px at 58% 18%, color-mix(in srgb, var(--grad) 65%, white) 98%, transparent),
+        radial-gradient(1.5px 1.5px at 77% 65%, color-mix(in srgb, var(--accent) 56%, white) 98%, transparent),
+        radial-gradient(1px 1px at 38% 76%, color-mix(in srgb, var(--grad) 72%, white) 98%, transparent),
+        radial-gradient(2px 2px at 91% 37%, color-mix(in srgb, var(--accent) 80%, white) 98%, transparent),
+        radial-gradient(1px 1px at 24% 57%, color-mix(in srgb, var(--grad) 53%, white) 98%, transparent);
     background-size: 31% 38%, 43% 51%, 37% 49%, 23% 45%, 52% 55%, 35% 39%;
 }
 .atScene--nebula .atSceneParticle { opacity: 0 !important; }
+
+// The 43 vector illustrations were authored as fixed-color SVGs. Their original
+// luminance remains visible, but their displayed chroma must come exclusively
+// from the user's accent/gradient. This affects both responsive crops and previews.
+// Photographic Japanese WebP wallpapers deliberately do not use this treatment.
+.atScenePhoto--themeAware {
+    isolation: isolate;
+    background: var(--bgc);
+
+    > img {
+        filter: grayscale(1) contrast(1.12);
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        mix-blend-mode: color;
+    }
+}

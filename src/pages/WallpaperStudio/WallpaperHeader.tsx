@@ -1,0 +1,57 @@
+import { CircleCheck, Film, LayoutGrid, Palette, WandSparkles } from "lucide-react";
+import { TextIndentIcon } from "@phosphor-icons/react";
+import { useTranslation } from "react-i18next";
+import { useSideMenu } from "../../components/hooks/SideMenuHook";
+import { useContextMenu } from "../../components/hooks/ContextMenuHook";
+import useHeaderMenuGestures from "../../components/hooks/utils/useHeaderMenuGestures";
+import { isPhotographicScene, supportsBackgroundMotion } from "../../components/ts/utils/BackgroundScene";
+import "../../scss/header.scss";
+
+export default function WallpaperHeader({ id, name, applied, onApply }: {
+    id: string;
+    name: string;
+    applied: boolean;
+    onApply: () => void;
+}) {
+    const { t } = useTranslation("settings");
+    const { openSideMenu } = useSideMenu();
+    const { openMenu } = useContextMenu();
+    const headerGestures = useHeaderMenuGestures();
+    const themeAware = !isPhotographicScene(id) && id !== "custom" && id !== "color" && id !== "logo";
+
+    const openQuickActions = (event: React.MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        openMenu(event.clientX, event.clientY, "headerQuickAction", { id: "headerQuickAction" });
+    };
+
+    return <div className="headerDiv wallpaperHeader" {...headerGestures}>
+        <button type="button" className="headerButt wallpaperHeaderMenu"
+            data-header-gesture="quick"
+            title={t("backgroundLibrary.openSideMenu")}
+            aria-label={t("backgroundLibrary.openSideMenu")}
+            onMouseDown={event => event.stopPropagation()}
+            onContextMenu={openQuickActions}
+            onClick={() => openSideMenu()}>
+            <TextIndentIcon/>
+        </button>
+        <div className="header wallpaperHeaderInfo" data-header-gesture="quick"
+            onContextMenu={openQuickActions}>
+            <span className="wallpaperHeaderName" title={name}>{name}</span>
+            <span className="wallpaperHeaderCapabilities">
+                {supportsBackgroundMotion(id) && <span title={t("backgroundLibrary.motionAvailable")}><Film size={16}/></span>}
+                {themeAware && <span title={t("backgroundLibrary.themeAware")}><Palette size={16}/></span>}
+                {id === "art" && <span title={t("backgroundLibrary.appearanceAware")}><WandSparkles size={16}/></span>}
+                {(id === "art" || id === "default") &&
+                    <span title={t("backgroundLibrary.patternAvailable")}><LayoutGrid size={16}/></span>}
+            </span>
+        </div>
+        <button type="button"
+            className={`headerButt wallpaperHeaderApply ${applied ? "active" : ""}`}
+            aria-label={t(applied ? "backgroundLibrary.selected" : "backgroundLibrary.apply")}
+            aria-pressed={applied}
+            onClick={onApply}>
+            <CircleCheck size={25}/>
+        </button>
+    </div>;
+}

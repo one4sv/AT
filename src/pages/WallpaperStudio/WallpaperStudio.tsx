@@ -4,10 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, useMotionValue, animate, useReducedMotion } from "framer-motion";
 import { flushSync } from "react-dom";
-import { ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleHelp, ImagePlus, Trash2, Film, Palette, LayoutGrid, WandSparkles, Settings2, Images } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleHelp, ImagePlus, Trash2, Settings2, Images } from "lucide-react";
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
-import Header from "../../components/ts/Header";
+import WallpaperHeader from "./WallpaperHeader";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import PageBottom from "../../components/ts/PageBottom";
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
@@ -15,7 +15,6 @@ import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { api } from "../../components/ts/api";
 import { Background } from "../../components/ts/utils/background";
 import { backgroundGroups, MAX_CUSTOM_BACKGROUNDS } from "../../components/ts/utils/backgroundCatalog";
-import { supportsBackgroundMotion, isPhotographicScene } from "../../components/ts/utils/BackgroundScene";
 import "./WallpaperStudio.scss";
 
 type WallpaperItem = { id: string; url?: string; label: string; group: string };
@@ -27,7 +26,7 @@ export default function WallpaperStudio() {
     const settingsPage = tab === "settings";
     const navigate = useNavigate();
     const { t } = useTranslation("settings");
-    const { bg, bgUrl, bgGallery, setBgUrl, refetchSettings, layout, wallpaperStyle } = useSettings();
+    const { bg, bgUrl, bgGallery, setBgUrl, refetchSettings, wallpaperStyle } = useSettings();
     const { setNewBg } = useUpSettings();
     const isMobile = useCompactLayout();
     const { blackout, setBlackout } = useBlackout();
@@ -408,22 +407,8 @@ export default function WallpaperStudio() {
             }}
             aria-hidden="true"/>
 
-        <Header titleOverride={t("backgroundLibrary.catalog")} hideMenuButton={!isMobile && layout !== "hidden"}
-            titleSuffix={<span className="wallpaperHeaderCapabilities"><span className="wallpaperCurrentName">{current.label}</span>
-                {supportsBackgroundMotion(current.id) && <span title={t("backgroundLibrary.motionAvailable")}><Film size={16}/></span>}
-                {!isPhotographicScene(current.id) && current.id !== "color" && current.id !== "custom" &&
-                    <span title={t("backgroundLibrary.themeAware")}><Palette size={16}/></span>}
-                {current.id === "art" && <span title={t("backgroundLibrary.appearanceAware")}><WandSparkles size={16}/></span>}
-                {(current.id === "art" || current.id === "default") &&
-                    <span title={t("backgroundLibrary.patternAvailable")}><LayoutGrid size={16}/></span>}
-            </span>}
-            rightAction={<button type="button"
-                className={`headerButt wallpaperHeaderApply ${isApplied ? "active" : ""}`}
-                aria-label={t(isApplied ? "backgroundLibrary.selected" : "backgroundLibrary.apply")}
-                aria-pressed={Boolean(isApplied)}
-                onClick={() => { if (!isApplied) apply(currentIndex); }}>
-                <CircleCheck size={25}/>
-            </button>}/>
+        <WallpaperHeader id={current.id} name={current.label} applied={Boolean(isApplied)}
+            onApply={() => { if (!isApplied) apply(currentIndex); }}/>
 
         <button type="button" className="wallpaperStudioArrow wallpaperStudioArrowLeft"
             aria-label={t("backgroundLibrary.previous")} onClick={() => change(-1)}><ChevronLeft/></button>

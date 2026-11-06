@@ -6,7 +6,7 @@ import "../../../scss/backgroundScenes.scss";
 
 export const stockScenes = ["art", "aurora", "nebula", "sunset", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals", "japaneseNinja", "japaneseSakura", "japaneseAlley", "japaneseTorii", "greekStatue", "greekTemple", "greekGladiator", "greekColumns", "greekRuins", "mythOlympus", "mythDragon", "mythTree", "mythUnderworld", "mythPegasus", "modernParis", "modernDubai", "modernSingapore", "modernTokyo", "modernNewYork", "oceanWhale", "oceanAtlantis", "oceanJellyfish", "oceanReef", "oceanDeep", "gothicCastle", "gothicCathedral", "gothicLibrary", "gothicTower", "gothicGarden", "elementVolcano", "elementStorm", "elementSnow", "elementDesert", "elementWaterfall", "neonStreet", "neonHighway", "neonMetropolis", "neonTunnel", "neonArcade", "cosmicSaturn", "cosmicGalaxy", "cosmicEclipse", "cosmicMoon", "cosmicCloud", "japaneseGarden", "abstractSilk", "abstractGlass"] as const;
 export type StockScene = typeof stockScenes[number];
-export const photographicScenes = ["japaneseNinja", "japaneseSakura", "japaneseAlley", "japaneseTorii", "greekStatue", "greekTemple", "greekGladiator", "greekColumns", "greekRuins", "mythOlympus", "mythDragon", "mythTree", "mythUnderworld", "mythPegasus", "modernParis", "modernDubai", "modernSingapore", "modernTokyo", "modernNewYork", "oceanWhale", "oceanAtlantis", "oceanJellyfish", "oceanReef", "oceanDeep", "gothicCastle", "gothicCathedral", "gothicLibrary", "gothicTower", "gothicGarden", "elementVolcano", "elementStorm", "elementSnow", "elementDesert", "elementWaterfall", "neonStreet", "neonHighway", "neonMetropolis", "neonTunnel", "neonArcade", "cosmicSaturn", "cosmicGalaxy", "cosmicEclipse", "cosmicMoon", "cosmicCloud", "japaneseGarden", "abstractSilk", "abstractGlass"] as const;
+export const photographicScenes = ["japaneseNinja", "japaneseSakura", "japaneseAlley", "japaneseTorii"] as const;
 export const isPhotographicScene = (id: string) =>
     (photographicScenes as readonly string[]).includes(id);
 
@@ -59,6 +59,9 @@ const photoSources: Partial<Record<StockScene, { desktop: string; mobile: string
     abstractSilk: { desktop: "/wallpapers/abstractSilk-desktop.svg", mobile: "/wallpapers/abstractSilk-mobile.svg" },
     abstractGlass: { desktop: "/wallpapers/abstractGlass-desktop.svg", mobile: "/wallpapers/abstractGlass-mobile.svg" }
 };
+
+export const isThemeAwareVectorScene = (id: string) =>
+    photoSources[id as StockScene]?.desktop.endsWith(".svg") ?? false;
 
 export const isStockScene = (id: string): id is StockScene =>
     (stockScenes as readonly string[]).includes(id);
@@ -231,7 +234,7 @@ export function BackgroundScene({ variant, motion = false, artPattern = "order",
                     />
                 ))}
             </div>
-            {photo && <picture className="atScenePhoto">
+            {photo && <picture className={`atScenePhoto ${isThemeAwareVectorScene(variant) ? "atScenePhoto--themeAware" : ""}`}>
                 <source media="(max-width: 800px)" srcSet={photo.mobile} type={photo.mobile.endsWith(".svg") ? "image/svg+xml" : "image/webp"}/>
                 <img src={photo.desktop} alt="" decoding="sync" loading="eager"/>
             </picture>}

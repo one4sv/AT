@@ -40,21 +40,45 @@
     }
 }
 
-.wallpaperStudio > .headerDiv {
+.wallpaperStudio > .wallpaperHeader.headerDiv {
     z-index: 30 !important;
     width: 100%;
     box-sizing: border-box;
 
-    .headerCustomTitle {
-        cursor: default;
-        gap: .75vw;
+    .wallpaperHeaderMenu,
+    .wallpaperHeaderApply {
+        appearance: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 4dvh;
+        height: 4dvh;
+        min-width: 4dvh;
+        min-height: 4dvh;
+        max-width: 4dvh;
+        max-height: 4dvh;
+        flex: 0 0 4dvh;
+        aspect-ratio: 1 / 1;
+        box-sizing: border-box;
+        border-radius: 50%;
     }
 
-    .headerCustomText {
-        flex: 1;
+    .wallpaperHeaderInfo {
         min-width: 0;
+        gap: .75vw;
+        padding: 0 1vw;
+        cursor: default;
+    }
+
+    .wallpaperHeaderName {
+        min-width: 0;
+        flex: 1;
         overflow: hidden;
+        white-space: nowrap;
         text-overflow: ellipsis;
+        font-size: 22px;
     }
 
     .wallpaperHeaderCapabilities {
@@ -73,11 +97,13 @@
         color: var(--borderWh);
 
         > svg {
+            width: 2.5dvh;
+            height: 2.5dvh;
+            flex-shrink: 0;
             color: inherit;
         }
 
         &.active {
-            border: none;
             background: linear-gradient(135deg, var(--accent_highlight), var(--grad_highlight));
 
             > svg {
@@ -87,12 +113,33 @@
     }
 
     @media (max-width: 800px) {
-        .headerCustomTitle {
+        .wallpaperHeaderMenu,
+        .wallpaperHeaderApply {
+            width: 5dvh;
+            height: 5dvh;
+            min-width: 5dvh;
+            min-height: 5dvh;
+            max-width: 5dvh;
+            max-height: 5dvh;
+            flex-basis: 5dvh;
+        }
+
+        .wallpaperHeaderInfo {
             gap: 2vw;
+            padding: 0 3vw;
+        }
+
+        .wallpaperHeaderName {
+            font-size: 20px;
         }
 
         .wallpaperHeaderCapabilities {
             gap: 2vw;
+        }
+
+        .wallpaperHeaderApply > svg {
+            width: 3dvh;
+            height: 3dvh;
         }
     }
 }
