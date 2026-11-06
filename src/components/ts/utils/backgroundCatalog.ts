@@ -1,3 +1,5 @@
+export const MAX_CUSTOM_BACKGROUNDS = 5;
+
 export const backgroundGroups = [
     { id: "essential", items: [
         { id: "landing", labelKey: "personalization.landingBackground" },
