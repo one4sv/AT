@@ -17,15 +17,13 @@ interface LayoutProps {
 
 export default function MobileLayout({ children }: LayoutProps) {
     const isMobile = useCompactLayout();
-    const { decor } = useSettings();
+    const { decor, layout } = useSettings();
     const { menu: contextMenu } = useContextMenu();
     const { blackout } = useBlackout();
     const location = useLocation();
     const wallpaperStudio = location.pathname.startsWith("/wallpapers");
     const {
         toggleMenu,
-        showSideMenu,
-        closeMenu,
         translateX,
         setIsDragging,
         setTranslateX,
@@ -129,19 +127,7 @@ export default function MobileLayout({ children }: LayoutProps) {
                 </div>
             ) : null}
 
-            {showSideMenu && !wallpaperStudio && <div className="sideMenuDismissLayer"
-                role="presentation"
-                onPointerDown={event => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    closeMenu();
-                }}
-                onTouchStart={event => event.stopPropagation()}
-                onClick={event => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }}/>}
-            {(!wallpaperStudio || isMobile) && <>
+            {(!wallpaperStudio || isMobile || layout === "hidden") && <>
                 <SMheader/>
                 <SideMenu />
                 <SMnav />
