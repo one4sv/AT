@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
@@ -130,18 +130,34 @@ export default function Calendar() {
         }
     }, [selectedMonth, setSelectedMonth, setSelectedYear]);
 
-    // Сбрасываем позицию слайдера в центр после смены месяца
-    useEffect(() => {
+    // Сбрасываем прокрутку до отрисовки нового месяца, без промежуточного кадра.
+    useLayoutEffect(() => {
         const el = sliderRef.current;
         if (!el) return;
 
         isAnimatingRef.current = true;
-        requestAnimationFrame(() => {
-            el.scrollTo({ left: el.clientWidth, behavior: "auto" });
+        const previousSnap = el.style.scrollSnapType;
+        const previousBehavior = el.style.scrollBehavior;
+        el.style.scrollSnapType = "none";
+        el.style.scrollBehavior = "auto";
+        el.scrollLeft = el.clientWidth;
+
+        const frame = requestAnimationFrame(() => {
+            el.style.scrollSnapType = previousSnap;
+            el.style.scrollBehavior = previousBehavior;
+        });
+        const release = requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 isAnimatingRef.current = false;
             });
         });
+
+        return () => {
+            cancelAnimationFrame(frame);
+            cancelAnimationFrame(release);
+            el.style.scrollSnapType = previousSnap;
+            el.style.scrollBehavior = previousBehavior;
+        };
     }, [selectedMonth, selectedYear]);
 
     // Обработка свайпа + кнопок
