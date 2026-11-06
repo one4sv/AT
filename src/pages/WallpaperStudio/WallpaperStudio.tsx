@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, useMotionValue, animate, useReducedMotion } from "framer-motion";
 import { flushSync } from "react-dom";
-import { ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleHelp, ImagePlus, Trash2, Images, Settings2 } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleHelp, ImagePlus, Trash2, Images } from "lucide-react";
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
 import WallpaperHeader from "./WallpaperHeader";
@@ -26,13 +26,13 @@ export default function WallpaperStudio() {
     const settingsPage = tab === "settings";
     const navigate = useNavigate();
     const { t } = useTranslation("settings");
-    const { bg, bgUrl, bgGallery, setBgUrl, refetchSettings, wallpaperStyle } = useSettings();
+    const { bg, bgUrl, bgGallery, setBgUrl, refetchSettings, wallpaperStyle, settingsLoaded } = useSettings();
     const { setNewBg } = useUpSettings();
     const isMobile = useCompactLayout();
     const { blackout, setBlackout } = useBlackout();
     const reduceMotion = useReducedMotion();
     const [ open, setOpen ] = useState(true);
-    const [ preview, setPreview ] = useState(0);
+    const [ preview, setPreview ] = useState<number | null>(null);
     const [ collapsedGroups, setCollapsedGroups ] = useState<string[]>([]);
     const [ busy, setBusy ] = useState(false);
     const [ sheetDrag, setSheetDrag ] = useState(0);
@@ -62,22 +62,23 @@ export default function WallpaperStudio() {
         setTitle(t("backgroundLibrary.catalog"));
     }, [setTitle, t]);
 
-    useEffect(() => {
-        if (initialized.current || !items.length) return;
-        initialized.current = true;
-        const index = items.findIndex(item => (bg === "logo" ? item.id === "color" : item.id === bg) && (bg !== "custom" || item.url === bgUrl));
-        setPreview(Math.max(index, 0));
-    }, [bg, bgUrl, items]);
+    const appliedIndex = useMemo(() => items.findIndex(item =>
+        (bg === "logo" ? item.id === "color" : item.id === bg) &&
+        (bg !== "custom" || item.url === bgUrl)
+    ), [bg, bgUrl, items]);
 
-    const currentIndex = Math.min(preview, Math.max(items.length - 1, 0));
+    useEffect(() => {
+        if (initialized.current || !settingsLoaded || !items.length) return;
+        initialized.current = true;
+        setPreview(Math.max(appliedIndex, 0));
+    }, [appliedIndex, items.length, settingsLoaded]);
+
+    const currentIndex = Math.min(preview ?? Math.max(appliedIndex, 0), Math.max(items.length - 1, 0));
 
     // Open by default. After the applied tile mounts, center it in the sheet
     // exactly once without interrupting subsequent manual scrolling.
     useEffect(() => {
-        if (!open || initialScrollCentered.current || !initialized.current) return;
-        const appliedIndex = items.findIndex(item =>
-            (bg === "logo" ? item.id === "color" : item.id === bg) &&
-            (bg !== "custom" || item.url === bgUrl));
+        if (!open || !settingsLoaded || initialScrollCentered.current || !initialized.current) return;
         if (appliedIndex < 0 || currentIndex !== appliedIndex) return;
         let secondFrame = 0;
         const firstFrame = requestAnimationFrame(() => {
@@ -97,7 +98,7 @@ export default function WallpaperStudio() {
             cancelAnimationFrame(firstFrame);
             cancelAnimationFrame(secondFrame);
         };
-    }, [open, currentIndex, bg, bgUrl, items]);
+    }, [open, currentIndex, appliedIndex, settingsLoaded]);
     const current = items[currentIndex];
     const isApplied = current && (current.id === bg || (bg === "logo" && current.id === "color")) && (bg !== "custom" || current.url === bgUrl);
     useEffect(() => {
@@ -397,7 +398,7 @@ export default function WallpaperStudio() {
                 <span className="wallpaperStudioTileImage">
                     <Background previewBg={item.id} previewUrl={item.url}/>
                 </span>
-                {item.id === bg && (item.id !== "custom" || item.url === bgUrl) &&
+                {(item.id === bg || (bg === "logo" && item.id === "color")) && (item.id !== "custom" || item.url === bgUrl) &&
                     <span className="wallpaperStudioApplied" aria-label={t("backgroundLibrary.selected")}>
                         <CircleCheck size={21}/>
                     </span>}
@@ -408,7 +409,7 @@ export default function WallpaperStudio() {
         </div>
     );
 
-    if (!current) return null;
+    if (!current || (!settingsLoaded && bg === "custom" && appliedIndex < 0)) return null;
 
     return <main className={"wallpaperStudio" + (open ? " expanded" : " collapsed")}
         onWheel={handlePreviewWheel}>
@@ -437,8 +438,8 @@ export default function WallpaperStudio() {
             }}
             aria-hidden="true"/>
 
-        <WallpaperHeader id={current.id} name={current.label} applied={Boolean(isApplied)}
-            onApply={() => { if (!isApplied) apply(currentIndex); }}/>
+        <WallpaperHeader id={current.id} name={current.label}
+            onSettings={() => setBlackout({ seted: true, module: "WallpaperSettings", options: { id: current.id } })}/>
 
         <button type="button" className="wallpaperStudioArrow wallpaperStudioArrowLeft"
             aria-label={t("backgroundLibrary.previous")} onClick={() => change(-1)}><ChevronLeft/></button>
@@ -503,11 +504,12 @@ export default function WallpaperStudio() {
                 <Images size={21}/>
                 {t("backgroundLibrary.previewBackgrounds")}
             </button>
-            <button type="button" className="pageBottomBack wallpaperStudioGearButton"
-                aria-label={t("backgroundLibrary.previewSettings")}
-                title={t("backgroundLibrary.previewSettings")}
-                onClick={() => setBlackout({ seted: true, module: "WallpaperSettings", options: { id: current.id } })}>
-                <Settings2 size={22}/>
+            <button type="button" className={`pageBottomBack wallpaperHeaderApply ${isApplied ? "active" : ""}`}
+                title={t(isApplied ? "backgroundLibrary.selected" : "backgroundLibrary.apply")}
+                aria-label={t(isApplied ? "backgroundLibrary.selected" : "backgroundLibrary.apply")}
+                aria-pressed={Boolean(isApplied)}
+                onClick={() => { if (!isApplied) apply(currentIndex); }}>
+                <CircleCheck size={25}/>
             </button>
         </PageBottom>
     </main>;

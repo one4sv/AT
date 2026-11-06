@@ -42,6 +42,21 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(page.locator(".wallpaperStudio")).toBeVisible();
     });
 
+    test("initial preview follows the saved wallpaper and actions have their new positions", async ({ page }) => {
+        await page.goto("/settings/pers");
+        await page.evaluate(() => localStorage.setItem("settings_bg", JSON.stringify("mythDragon")));
+        await page.goto("/wallpapers");
+
+        await expect(page.locator(".wallpaperStudioFrame").nth(1).locator(".atScene--mythDragon")).toBeAttached();
+        await expect(page.locator(".wallpaperStudioTileChoose.selected")).toHaveClass(/applied/);
+        await expect(page.locator(".wallpaperHeader .wallpaperStudioGearButton")).toBeVisible();
+        const apply = page.locator(".wallpaperStudioBottom .wallpaperHeaderApply");
+        await expect(apply).toHaveAttribute("aria-pressed", "true");
+        expect(await apply.evaluate(button => getComputedStyle(button).borderTopStyle)).toBe("none");
+        expect(await apply.locator("svg").evaluate(svg => getComputedStyle(svg).color))
+            .toBe(await apply.evaluate(button => getComputedStyle(button).color));
+    });
+
     test("thumbnail click changes preview without applying, long press is not required", async ({ page }) => {
         await page.goto("/wallpapers");
         await page.locator(".wallpaperStudioSettingsButton").click();

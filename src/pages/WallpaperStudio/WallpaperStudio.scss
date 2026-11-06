@@ -46,7 +46,7 @@
     box-sizing: border-box;
 
     .wallpaperHeaderMenu,
-    .wallpaperHeaderApply {
+    .wallpaperStudioGearButton {
         appearance: none;
         padding: 0;
         margin: 0;
@@ -90,7 +90,7 @@
         }
     }
 
-    .wallpaperHeaderApply {
+    .wallpaperStudioGearButton {
         color: var(--tc);
         border: 1px solid var(--block_border);
 
@@ -99,17 +99,11 @@
             height: 2.5dvh;
             flex-shrink: 0;
         }
-
-        &.active {
-            background: linear-gradient(135deg, var(--accent), var(--grad));
-            border-color: transparent;
-            color: var(--inner_text);
-        }
     }
 
     @media (max-width: 800px) {
         .wallpaperHeaderMenu,
-        .wallpaperHeaderApply {
+        .wallpaperStudioGearButton {
             width: 5dvh;
             height: 5dvh;
             min-width: 5dvh;
@@ -132,7 +126,7 @@
             gap: 2vw;
         }
 
-        .wallpaperHeaderApply > svg {
+        .wallpaperStudioGearButton > svg {
             width: 3dvh;
             height: 3dvh;
         }
@@ -515,7 +509,7 @@
         font-size: 16px;
     }
 
-    .wallpaperStudioGearButton {
+    .wallpaperHeaderApply {
         flex-shrink: 0;
         display: flex;
         align-items: center;
@@ -528,6 +522,17 @@
 
         > svg {
             flex-shrink: 0;
+            color: inherit;
+        }
+
+        &.active {
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            border: none;
+            color: var(--inner_text);
+
+            > svg {
+                color: var(--inner_text);
+            }
         }
     }
 
