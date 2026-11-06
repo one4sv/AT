@@ -15,6 +15,9 @@
 
 ## Интерфейс и содержимое
 
+- [Система жестов и владение касанием](GESTURES.md) — ContextMenu, SideMenu, Selector, модалки, Studio.
+- [Фоны и Wallpaper Studio](WALLPAPERS.md) — выбор, загрузка, форматы, обработка и ограничения.
+- [Решения из обсуждений ноября 2026](CONVERSATION_DECISIONS_2026-11.md) — основные требования и запреты.
 - [Язык и переводы RU/EN](I18N.md) — namespaces, локали, смена языка, FAQ.
 - [Рисованные SVG и анимации](SVG_ART.md) — `SectionArt`, темы и создание нового сюжета.
 - [Совместные активности и права](COLLABORATION_AND_PERMISSIONS.md) — три режима, вступление в беседу, owner, разрешения.
