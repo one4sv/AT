@@ -143,16 +143,14 @@ export default function SideMenu() {
     useEffect(
         () => {
             const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-                if ((!isMobile && studio) || (!isMobile && layout !== "hidden" && !studio) || !showSideMenu || menu.visible) return;
+                if (isMobile || layout !== "hidden" || !showSideMenu || menu.visible) return;
                 if (sideMenuRef.current && !sideMenuRef.current.contains(event.target as Node)) {
                     closeMenu();
                 }
             };
             document.addEventListener("mousedown", handleClickOutside);
-            // The dismissal layer consumes outside pointer events before page controls receive them.
             return () => {
                 document.removeEventListener("mousedown", handleClickOutside);
-
             };
         },
         [layout, showSideMenu, closeMenu, menu.visible, isMobile, studio]
