@@ -111,6 +111,26 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(title).not.toHaveText(before);
     });
 
+    test("Japanese wallpaper image survives the frame handoff without remounting", async ({ page }) => {
+        await page.goto("/wallpapers");
+        await page.locator(".wallpaperStudioSettingsButton").click();
+
+        const ninja = page.locator(".wallpaperStudioTileChoose").filter({ has: page.locator(".atScene--japaneseNinja") });
+        await ninja.click();
+        await page.locator(".wallpaperStudioSettingsButton").click();
+
+        const sakura = page.locator(".wallpaperStudioFrame .atScene--japaneseSakura img");
+        await expect(sakura).toHaveCount(1);
+        await expect.poll(() => sakura.evaluate(img => (img as HTMLImageElement).complete && (img as HTMLImageElement).naturalWidth > 0)).toBe(true);
+
+        const original = await sakura.elementHandle();
+        expect(original).not.toBeNull();
+        await page.locator(".wallpaperStudioArrowRight").click();
+
+        await expect(page.locator(".wallpaperStudioFrame").nth(1).locator(".atScene--japaneseSakura")).toBeVisible();
+        expect(await original!.evaluate(img => img.isConnected)).toBe(true);
+    });
+
     test("closed catalog is completely offscreen and clicking free preview closes it", async ({ page }) => {
         await page.goto("/wallpapers");
         const sheet = page.locator(".wallpaperStudioSheet");
@@ -130,14 +150,14 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(handle).not.toBeInViewport();
     });
 
-    test("wheel at the top of the open catalog closes it", async ({ page }, testInfo) => {
+    test("wheel at the top of the open catalog keeps it open", async ({ page }, testInfo) => {
         test.skip(testInfo.project.name !== "chromium-desktop", "Desktop wheel only");
         await page.goto("/wallpapers");
         await page.locator(".wallpaperStudioSettingsButton").click();
         await page.locator(".wallpaperStudioScroll").evaluate(el => { el.scrollTop = 0; });
         await page.locator(".wallpaperStudioScroll").hover({ position: { x: 30, y: 40 } });
         await page.mouse.wheel(0, -180);
-        await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
+        await expect(page.locator(".wallpaperStudio.expanded")).toBeVisible();
     });
 
     test("wallpaper settings use a modal, while the catalog remains a 90dvh sheet", async ({ page }) => {
