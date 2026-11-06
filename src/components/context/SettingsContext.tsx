@@ -7,6 +7,7 @@ import i18n from "../../i18n/i18n";
 import { api } from "../ts/api";
 import { applyCustomPalette } from "../ts/utils/customPalette";
 import { defaultBackgroundEffects, hasCachedBackgroundEffects, normalizeBackgroundEffects } from "../ts/utils/backgroundEffects";
+import { MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
@@ -218,7 +219,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setShowArchived(res.data.show_archived ?? false);
                 setShowArchivedInAcc(res.data.show_archived_in_acc ?? false);
                 setWeekStart(res.data.week_start ?? null);
-                setBgGallery(Array.isArray(res.data.bg_gallery) ? res.data.bg_gallery.slice(0, 6) : []);
+                setBgGallery(Array.isArray(res.data.bg_gallery) ? res.data.bg_gallery.slice(0, MAX_CUSTOM_BACKGROUNDS) : []);
                 if (hydratedBgEffectsFor.current !== user.nick) {
                     if (!hasLocalBgEffects) setBgEffects(normalizeBackgroundEffects(res.data.bg_effects));
                     hydratedBgEffectsFor.current = user.nick;
