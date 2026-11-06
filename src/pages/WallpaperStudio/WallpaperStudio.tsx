@@ -25,7 +25,7 @@ export default function WallpaperStudio() {
     const settingsPage = tab === "settings";
     const navigate = useNavigate();
     const { t } = useTranslation("settings");
-    const { bg, bgUrl, bgGallery, setBgUrl, refetchSettings } = useSettings();
+    const { bg, bgUrl, bgGallery, setBgUrl, refetchSettings, layout } = useSettings();
     const { setNewBg } = useUpSettings();
     const isMobile = useCompactLayout();
     const { blackout, setBlackout } = useBlackout();
@@ -282,26 +282,16 @@ export default function WallpaperStudio() {
             gesture = null;
         };
 
-        const wheel = (event: WheelEvent) => {
-            if (event.ctrlKey || Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
-            if (scroll.scrollTop <= 2 && event.deltaY < -30) {
-                event.preventDefault();
-                setOpen(false);
-            }
-        };
-
         scroll.addEventListener("touchstart", start, { passive: true });
         scroll.addEventListener("touchmove", move, { passive: false });
         scroll.addEventListener("touchend", finish);
         scroll.addEventListener("touchcancel", finish);
-        scroll.addEventListener("wheel", wheel, { passive: false });
 
         return () => {
             scroll.removeEventListener("touchstart", start);
             scroll.removeEventListener("touchmove", move);
             scroll.removeEventListener("touchend", finish);
             scroll.removeEventListener("touchcancel", finish);
-            scroll.removeEventListener("wheel", wheel);
             setSheetDrag(0);
         };
     }, [open]);
@@ -397,7 +387,7 @@ export default function WallpaperStudio() {
             }}
             aria-hidden="true"/>
 
-        <Header titleOverride={current.label} hideMenuButton={!isMobile}
+        <Header titleOverride={current.label} hideMenuButton={!isMobile && layout !== "hidden"}
             titleSuffix={<span className="wallpaperHeaderCapabilities">
                 {supportsBackgroundMotion(current.id) && <span title={t("backgroundLibrary.motionAvailable")}><Film size={16}/></span>}
                 {!isPhotographicScene(current.id) && current.id !== "color" && current.id !== "custom" &&
