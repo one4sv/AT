@@ -23,10 +23,9 @@
 
     &--nebula {
         background:
-            radial-gradient(ellipse at 28% 26%, color-mix(in srgb, var(--accent) 60%, transparent), transparent 57%),
-            radial-gradient(ellipse at 79% 72%, color-mix(in srgb, var(--grad) 60%, transparent), transparent 60%),
-            radial-gradient(ellipse at 55% 52%, color-mix(in srgb, var(--accent) 27%, transparent), transparent 75%),
-            var(--bgc);
+            radial-gradient(ellipse at 65% 55%, #202e60 0%, transparent 42%),
+            radial-gradient(ellipse at 10% 90%, #172147 0%, transparent 56%),
+            #030713;
     }
 
     &--sunset {
@@ -579,3 +578,18 @@
         object-position: center center;
     }
 }
+
+// Starfield intentionally differs from aurora: sharp scattered stars.
+.atScene--nebula .atScenePattern {
+    inset: 0;
+    opacity: .95;
+    background-image:
+        radial-gradient(1.2px 1.2px at 13% 23%, #fff 98%, transparent),
+        radial-gradient(1px 1px at 58% 18%, #d0dbff 98%, transparent),
+        radial-gradient(1.5px 1.5px at 77% 65%, #fff 98%, transparent),
+        radial-gradient(1px 1px at 38% 76%, #99baf5 98%, transparent),
+        radial-gradient(2px 2px at 91% 37%, #fff 98%, transparent),
+        radial-gradient(1px 1px at 24% 57%, #c0d8ff 98%, transparent);
+    background-size: 31% 38%, 43% 51%, 37% 49%, 23% 45%, 52% 55%, 35% 39%;
+}
+.atScene--nebula .atSceneParticle { opacity: 0 !important; }

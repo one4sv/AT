@@ -298,7 +298,7 @@
     "releaseToPreview": "Просмотр без применения",
     "art": "Рисунки AchieveTogether",
     "aurora": "Северное сияние",
-    "nebula": "Туманность",
+    "nebula": "Звёздное небо",
     "sunset": "Закат",
     "retroDrive": "Ретро-шоссе",
     "neonCity": "Неоновый город",
@@ -340,6 +340,20 @@
     "uploadCancel": "Отмена",
     "uploadSave": "Сохранить фон",
     "uploadSaving": "Сохранение…",
-    "uploadProcessingError": "Не удалось обработать фон"
+    "uploadProcessingError": "Не удалось обработать фон",
+    "catalog": "Каталог фонов",
+    "customWallpaper": "Пользовательский фон",
+    "logo": "Логотип AT",
+    "gradientBackground": "Градиентная заливка",
+    "solid": "Сплошная",
+    "gradient": "Градиент",
+    "logoFill": "Заливка значка",
+    "backgroundFill": "Заливка фона",
+    "logoColor": "Цвет значка",
+    "fillColor": "Цвет фона",
+    "gradientColor": "Цвет градиента",
+    "logoGlow": "Освещение значка",
+    "logoPalette": "Свои цвета значка",
+    "fillPalette": "Свои цвета фона"
   }
 }

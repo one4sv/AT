@@ -298,7 +298,7 @@
     "releaseToPreview": "Preview only",
     "art": "AchieveTogether art",
     "aurora": "Northern lights",
-    "nebula": "Nebula",
+    "nebula": "Starfield",
     "sunset": "Sunset",
     "retroDrive": "Retro highway",
     "neonCity": "Neon city",
@@ -340,6 +340,20 @@
     "uploadCancel": "Cancel",
     "uploadSave": "Save background",
     "uploadSaving": "Saving…",
-    "uploadProcessingError": "Could not process the background"
+    "uploadProcessingError": "Could not process the background",
+    "catalog": "Wallpaper catalog",
+    "customWallpaper": "Custom wallpaper",
+    "logo": "AT Logo",
+    "gradientBackground": "Gradient fill",
+    "solid": "Solid",
+    "gradient": "Gradient",
+    "logoFill": "Logo fill",
+    "backgroundFill": "Background fill",
+    "logoColor": "Logo color",
+    "fillColor": "Background color",
+    "gradientColor": "Gradient color",
+    "logoGlow": "Logo glow",
+    "logoPalette": "Custom logo colors",
+    "fillPalette": "Custom background colors"
   }
 }

@@ -33,7 +33,7 @@ export default function BackgroundLibrary() {
     const { bg, bgUrl, setBgUrl, bgGallery, settingsLoaded, refetchSettings } = useSettings();
     const { setNewBg } = useUpSettings();
     const { setBlackout } = useBlackout();
-    const [ tab, setTab ] = useState<"stock" | "custom">("stock");
+    const [ tab, setTab ] = useState<"stock" | "custom">("custom");
     const sliderRef = useRef<HTMLDivElement>(null);
     const sliderX = useMotionValue("0%");
     const reduceMotion = useReducedMotion();
@@ -44,7 +44,7 @@ export default function BackgroundLibrary() {
     const fileRef = useRef<HTMLInputElement | null>(null);
     const changeTab = (next: "stock" | "custom") => {
         setTab(next);
-        animate(sliderX, next === "custom" ? "-50%" : "0%", {
+        animate(sliderX, next === "stock" ? "-50%" : "0%", {
             duration: reduceMotion ? 0 : .3,
             ease: [.22, 1, .36, 1]
         });
@@ -79,9 +79,9 @@ export default function BackgroundLibrary() {
 
         if (start.horizontal) {
             const width = sliderRef.current?.clientWidth ?? 1;
-            const beyondEdge = tab === "stock" ? dx > 0 : dx < 0;
+            const beyondEdge = tab === "custom" ? dx > 0 : dx < 0;
             const delta = (beyondEdge ? dx * .2 : dx) / (2 * width) * 100;
-            sliderX.set(`${(tab === "custom" ? -50 : 0) + delta}%`);
+            sliderX.set(`${(tab === "stock" ? -50 : 0) + delta}%`);
         }
     };
 
@@ -94,16 +94,16 @@ export default function BackgroundLibrary() {
         }
         const dx = event.clientX - start.x;
         if (start.horizontal && Math.abs(dx) > 45) {
-            if (tab === "stock" && dx < 0) {
-                changeTab("custom");
-                return;
-            }
-            if (tab === "custom" && dx > 0) {
+            if (tab === "custom" && dx < 0) {
                 changeTab("stock");
                 return;
             }
+            if (tab === "stock" && dx > 0) {
+                changeTab("custom");
+                return;
+            }
         }
-        animate(sliderX, tab === "custom" ? "-50%" : "0%", {
+        animate(sliderX, tab === "stock" ? "-50%" : "0%", {
             duration: reduceMotion ? 0 : .25,
             ease: [.22, 1, .36, 1]
         });
@@ -111,7 +111,7 @@ export default function BackgroundLibrary() {
 
     const handleSlidePointerCancel = (event: PointerEvent<HTMLDivElement>) => {
         swipeStart.current = null;
-        animate(sliderX, tab === "custom" ? "-50%" : "0%", {
+        animate(sliderX, tab === "stock" ? "-50%" : "0%", {
             duration: reduceMotion ? 0 : .2
         });
         if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -120,8 +120,8 @@ export default function BackgroundLibrary() {
     };
 
     const tabs = [
-        { value: "stock" as const, label: t("backgroundLibrary.stock"), func: changeTab },
-        { value: "custom" as const, label: `${t("backgroundLibrary.custom")} (${bgGallery.length}/${MAX_CUSTOM_BACKGROUNDS})`, func: changeTab }
+        { value: "custom" as const, label: `${t("backgroundLibrary.custom")} (${bgGallery.length}/${MAX_CUSTOM_BACKGROUNDS})`, func: changeTab },
+        { value: "stock" as const, label: t("backgroundLibrary.stock"), func: changeTab }
     ];
 
     const selectCustom = (url: string) => {
@@ -189,7 +189,7 @@ export default function BackgroundLibrary() {
                     suppressClick.current = false;
                 }}>
                 <motion.div className="backgroundLibrarySlidesTrack" style={{ x: sliderX }}>
-                    <div className="backgroundLibrarySlide">
+                    <div className="backgroundLibrarySlide" style={{ order: 1 }}>
                         <div className="backgroundLibraryScroll">
                             {!settingsLoaded ? (
                                 <div className="backgroundLibraryGrid" role="status" aria-busy="true">
@@ -241,7 +241,7 @@ export default function BackgroundLibrary() {
                             )}
                         </div>
                     </div>
-                    <div className="backgroundLibrarySlide">
+                    <div className="backgroundLibrarySlide" style={{ order: 0 }}>
                         <div className="backgroundLibraryScroll">
                             <input ref={fileRef} type="file"
                                 accept="image/jpeg,image/png,image/webp,image/gif,image/avif" hidden
@@ -266,8 +266,8 @@ export default function BackgroundLibrary() {
                                                 className={"backgroundLibraryChoose" + (bg === "custom" && bgUrl === item.url ? " selected" : "")}
                                                 aria-pressed={bg === "custom" && bgUrl === item.url}
                                                 disabled={saving}
-                                                aria-label={t("backgroundLibrary.chooseWallpaper", { name: t("backgroundLibrary.custom") })}
-                                                title={t("backgroundLibrary.custom")}
+                                                aria-label={t("backgroundLibrary.chooseWallpaper", { name: t("backgroundLibrary.customWallpaper") })}
+                                                title={t("backgroundLibrary.customWallpaper")}
                                                 onClick={() => selectCustom(item.url)}>
                                                 <CustomBackgroundThumb url={item.url}/>
                                                 {bg === "custom" && bgUrl === item.url && <span className="backgroundLibraryCheck" aria-label={t("backgroundLibrary.selected")}>

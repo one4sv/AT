@@ -8,6 +8,7 @@ import { ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleHelp, ImageP
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
 import Header from "../../components/ts/Header";
+import { usePageTitle } from "../../components/hooks/PageContextHook";
 import PageBottom from "../../components/ts/PageBottom";
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import { useBlackout } from "../../components/hooks/BlackoutHook";
@@ -22,6 +23,7 @@ type HandleDrag = { pointerId: number; x: number; y: number; moved: boolean; dir
 
 export default function WallpaperStudio() {
     const { tab } = useParams<{ tab?: string }>();
+    const { setTitle } = usePageTitle();
     const settingsPage = tab === "settings";
     const navigate = useNavigate();
     const { t } = useTranslation("settings");
@@ -49,11 +51,15 @@ export default function WallpaperStudio() {
     const wheelGesture = useRef({ total: 0, last: 0 });
 
     const items = useMemo<WallpaperItem[]>(() => [
+        ...bgGallery.map(item => ({ id: "custom", url: item.url, label: t("backgroundLibrary.customWallpaper"), group: "custom" })),
         ...backgroundGroups.flatMap(group => group.items.map(item => ({
             id: item.id, label: t(item.labelKey), group: group.id
-        }))),
-        ...bgGallery.map(item => ({ id: "custom", url: item.url, label: t("backgroundLibrary.custom"), group: "custom" }))
+        })))
     ], [bgGallery, t]);
+
+    useEffect(() => {
+        setTitle(t("backgroundLibrary.catalog"));
+    }, [setTitle, t]);
 
     useEffect(() => {
         if (initialized.current || !items.length) return;
@@ -402,8 +408,8 @@ export default function WallpaperStudio() {
             }}
             aria-hidden="true"/>
 
-        <Header titleOverride={current.label} hideMenuButton={!isMobile && layout !== "hidden"}
-            titleSuffix={<span className="wallpaperHeaderCapabilities">
+        <Header titleOverride={t("backgroundLibrary.catalog")} hideMenuButton={!isMobile && layout !== "hidden"}
+            titleSuffix={<span className="wallpaperHeaderCapabilities"><span className="wallpaperCurrentName">{current.label}</span>
                 {supportsBackgroundMotion(current.id) && <span title={t("backgroundLibrary.motionAvailable")}><Film size={16}/></span>}
                 {!isPhotographicScene(current.id) && current.id !== "color" && current.id !== "custom" &&
                     <span title={t("backgroundLibrary.themeAware")}><Palette size={16}/></span>}
@@ -442,6 +448,17 @@ export default function WallpaperStudio() {
                         onClick={() => setBlackout({ seted: true, module: "BackgroundHelp" })}><CircleHelp size={20}/></button>
                 </div>
                 <div className="wallpaperStudioScroll" ref={scrollRef}>
+                    <section className="wallpaperStudioGroup">
+                        <div className="wallpaperStudioGroupHeading">
+                            {t("backgroundLibrary.custom")} ({bgGallery.length}/${MAX_CUSTOM_BACKGROUNDS})
+                        </div>
+                        <div className="wallpaperStudioGrid">
+                            {items.map((item, index) => ({ item, index })).filter(({ item }) => item.group === "custom").map(({ item, index }) => tile(item, index))}
+                            {bgGallery.length < MAX_CUSTOM_BACKGROUNDS && <button type="button" className="wallpaperStudioAdd"
+                                aria-label={t("backgroundLibrary.add")} title={t("backgroundLibrary.add")}
+                                onClick={() => fileRef.current?.click()}><ImagePlus size={23}/></button>}
+                        </div>
+                    </section>
                     {backgroundGroups.map(group => {
                         const groupItems = items.map((item, index) => ({ item, index })).filter(({ item }) => item.group === group.id);
                         return <section className="wallpaperStudioGroup" key={group.id}>
@@ -455,17 +472,6 @@ export default function WallpaperStudio() {
                             </div>}
                         </section>;
                     })}
-                    <section className="wallpaperStudioGroup">
-                        <div className="wallpaperStudioGroupHeading">
-                            {t("backgroundLibrary.custom")} ({bgGallery.length}/${MAX_CUSTOM_BACKGROUNDS})
-                        </div>
-                        <div className="wallpaperStudioGrid">
-                            {items.map((item, index) => ({ item, index })).filter(({ item }) => item.group === "custom").map(({ item, index }) => tile(item, index))}
-                            {bgGallery.length < MAX_CUSTOM_BACKGROUNDS && <button type="button" className="wallpaperStudioAdd"
-                                aria-label={t("backgroundLibrary.add")} title={t("backgroundLibrary.add")}
-                                onClick={() => fileRef.current?.click()}><ImagePlus size={23}/></button>}
-                        </div>
-                    </section>
                     <input ref={fileRef} type="file" hidden accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
                         onChange={event => {
                             const file = event.target.files?.[0];
