@@ -65,13 +65,13 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const { showArchived, layout } = useSettings();
     const isCompact = useCompactLayout();
 
-    const [showSideMenu, setShowSideMenu] = useState(() => window.location.pathname.startsWith("/wallpapers") || isCompact || layout !== "hidden");
+    const [showSideMenu, setShowSideMenu] = useState(() => isCompact || layout !== "hidden");
     const [red, setRed] = useState(false);
     const [showHabitMenu, setShowHabitMenu] = useState(false);
     const [showSlide, setShowSlide] = useState<slides>(null);
     const [activeTab, setActiveTab] = useState<tab>("chats");
     const [settingsSearch, setSettingsSearch] = useState("");
-    const [translateX, setTranslateX] = useState(() => window.location.pathname.startsWith("/wallpapers") || isCompact || layout !== "hidden" ? 0 : -100);
+    const [translateX, setTranslateX] = useState(() => isCompact || layout !== "hidden" ? 0 : -100);
     const [isDragging, setIsDragging] = useState(false);
     const [dontHandle, setDontHandle] = useState(false);
     const [dontHandleOther, setDontHandleOther] = useState(false);
@@ -288,12 +288,12 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const studio = location.pathname.startsWith("/wallpapers");
 
     useEffect(() => {
-        const mode = studio ? `wallpapers:${isCompact}` : `${isCompact ? "compact" : "desktop"}:${layout}`;
+        const mode = studio ? `wallpapers:${isCompact ? "compact" : layout}` : `${isCompact ? "compact" : "desktop"}:${layout}`;
         if (previousMode.current === mode) return;
         previousMode.current = mode;
 
         if (studio) {
-            if (isCompact) closeMenu();
+            if (isCompact || layout === "hidden") closeMenu();
             else openSideMenu();
             return;
         }
