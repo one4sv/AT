@@ -34,7 +34,7 @@
 | [COLLABORATION_AND_PERMISSIONS.md](COLLABORATION_AND_PERMISSIONS.md) | Версия заголовка синхронизирована; server/E2E требует отдельной проверки |
 | [CONTINUE.md](CONTINUE.md) | Исторические варианты помечены заменёнными, исправлены ключевые противоречия Studio, SideMenu, источников WebP |
 | [CONVERSATION_DECISIONS_2026-11.md](CONVERSATION_DECISIONS_2026-11.md) | Дополнены текущие desktop wheel и ссылка на все слайдеры |
-| [CUSTOM_COMPONENTS.md](CUSTOM_COMPONENTS.md) | Лимит 6, основной WallpaperStudio, current Info и ссылка на полную карту |
+| [CUSTOM_COMPONENTS.md](CUSTOM_COMPONENTS.md) | Лимит 5, действующая модалка BackgroundLibrary, основной WallpaperStudio, текущая Info и карта слайдеров |
 | [DEPLOYMENT.md](DEPLOYMENT.md) | Добавлен порядок проверки SHA/READY отдельно от E2E |
 | [GESTURES.md](GESTURES.md) | Арбитраж, новые ссылки, исправлена привязка wheel только к ПК |
 | [I18N.md](I18N.md) | Текущая версия 0.6.2 и редактор с RU/EN ключами |
