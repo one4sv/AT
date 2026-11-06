@@ -325,6 +325,21 @@
     "contourSize": "Contour size",
     "patternAvailable": "Pattern arrangement and size can be customized",
     "artPattern": "Drawing arrangement",
-    "artSize": "Drawing size"
+    "artSize": "Drawing size",
+    "uploadTitle": "Add a custom background",
+    "uploadRatio": "Aspect ratio",
+    "uploadOriginal": "Original",
+    "uploadPortrait": "Portrait",
+    "uploadLandscape": "Landscape",
+    "uploadSquare": "Square",
+    "uploadZoom": "Zoom",
+    "uploadReset": "Reset",
+    "uploadHint": "Move and zoom the image to frame it. JPG, PNG, WebP, AVIF and GIF up to 25 MB are accepted. The output is saved as WebP.",
+    "uploadGifHint": "Cropping a GIF keeps only its first frame.",
+    "uploadInvalid": "Unable to open image: unsupported format or file larger than 25 MB.",
+    "uploadCancel": "Cancel",
+    "uploadSave": "Save background",
+    "uploadSaving": "Saving…",
+    "uploadProcessingError": "Could not process the background"
   }
 }
