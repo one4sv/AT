@@ -6,7 +6,7 @@ import enSettings from "../../i18n/locales/en/settings.json";
 import "./BackgroundHelp.scss";
 
 type HelpKey = "help" | "helpTitle" | "helpIntro" | "helpMotion" | "helpTheme" |
-    "helpAppearance" | "helpPattern" | "helpPreview" | "helpSelect" | "helpClose";
+    "helpAppearance" | "helpPattern" | "helpColorTitle" | "helpColorPattern" | "helpPreview" | "helpSelect" | "helpClose";
 
 function useBackgroundHelpText() {
     const { t, i18n } = useTranslation("settings");
@@ -41,7 +41,8 @@ export default function BackgroundHelp() {
         { icon: <Film size={20}/>, title: t("backgroundLibrary.motionAvailable"), detail: helpText("helpMotion") },
         { icon: <Palette size={20}/>, title: t("backgroundLibrary.themeAware"), detail: helpText("helpTheme") },
         { icon: <WandSparkles size={20}/>, title: t("backgroundLibrary.appearanceAware"), detail: helpText("helpAppearance") },
-        { icon: <LayoutGrid size={20}/>, title: t("backgroundLibrary.patternAvailable"), detail: helpText("helpPattern") }
+        { icon: <LayoutGrid size={20}/>, title: t("backgroundLibrary.patternAvailable"), detail: helpText("helpPattern") },
+        { icon: <LayoutGrid size={20}/>, title: helpText("helpColorTitle"), detail: helpText("helpColorPattern") }
     ];
 
     return (
