@@ -6,7 +6,7 @@ import "../../../scss/backgroundScenes.scss";
 
 export const stockScenes = ["art", "aurora", "nebula", "sunset", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals", "japaneseNinja", "japaneseSakura", "japaneseAlley", "japaneseTorii", "greekStatue", "greekTemple", "greekGladiator", "greekColumns", "greekRuins", "mythOlympus", "mythDragon", "mythTree", "mythUnderworld", "mythPegasus", "modernParis", "modernDubai", "modernSingapore", "modernTokyo", "modernNewYork", "oceanWhale", "oceanAtlantis", "oceanJellyfish", "oceanReef", "oceanDeep", "gothicCastle", "gothicCathedral", "gothicLibrary", "gothicTower", "gothicGarden", "elementVolcano", "elementStorm", "elementSnow", "elementDesert", "elementWaterfall", "neonStreet", "neonHighway", "neonMetropolis", "neonTunnel", "neonArcade", "cosmicSaturn", "cosmicGalaxy", "cosmicEclipse", "cosmicMoon", "cosmicCloud", "japaneseGarden", "abstractSilk", "abstractGlass"] as const;
 export type StockScene = typeof stockScenes[number];
-export const photographicScenes = ["japaneseNinja", "japaneseSakura", "japaneseAlley", "japaneseTorii", "japaneseGarden", "greekStatue", "greekTemple", "greekGladiator", "greekColumns", "greekRuins"] as const;
+export const photographicScenes = ["japaneseNinja", "japaneseSakura", "japaneseAlley", "japaneseTorii", "japaneseGarden", "greekStatue", "greekTemple", "greekGladiator", "greekColumns", "greekRuins", "mythOlympus", "mythDragon", "mythTree", "mythUnderworld", "mythPegasus"] as const;
 export const isPhotographicScene = (id: string) =>
     (photographicScenes as readonly string[]).includes(id);
 
@@ -20,11 +20,11 @@ const photoSources: Partial<Record<StockScene, { desktop: string; mobile: string
     greekGladiator: { desktop: "/wallpapers/greekGladiator-desktop.webp", mobile: "/wallpapers/greekGladiator-mobile.webp" },
     greekColumns: { desktop: "/wallpapers/greekColumns-desktop.webp", mobile: "/wallpapers/greekColumns-mobile.webp" },
     greekRuins: { desktop: "/wallpapers/greekRuins-desktop.webp", mobile: "/wallpapers/greekRuins-mobile.webp" },
-    mythOlympus: { desktop: "/wallpapers/mythOlympus-desktop.svg", mobile: "/wallpapers/mythOlympus-mobile.svg" },
-    mythDragon: { desktop: "/wallpapers/mythDragon-desktop.svg", mobile: "/wallpapers/mythDragon-mobile.svg" },
-    mythTree: { desktop: "/wallpapers/mythTree-desktop.svg", mobile: "/wallpapers/mythTree-mobile.svg" },
-    mythUnderworld: { desktop: "/wallpapers/mythUnderworld-desktop.svg", mobile: "/wallpapers/mythUnderworld-mobile.svg" },
-    mythPegasus: { desktop: "/wallpapers/mythPegasus-desktop.svg", mobile: "/wallpapers/mythPegasus-mobile.svg" },
+    mythOlympus: { desktop: "/wallpapers/mythOlympus-desktop.webp", mobile: "/wallpapers/mythOlympus-mobile.webp" },
+    mythDragon: { desktop: "/wallpapers/mythDragon-desktop.webp", mobile: "/wallpapers/mythDragon-mobile.webp" },
+    mythTree: { desktop: "/wallpapers/mythTree-desktop.webp", mobile: "/wallpapers/mythTree-mobile.webp" },
+    mythUnderworld: { desktop: "/wallpapers/mythUnderworld-desktop.webp", mobile: "/wallpapers/mythUnderworld-mobile.webp" },
+    mythPegasus: { desktop: "/wallpapers/mythPegasus-desktop.webp", mobile: "/wallpapers/mythPegasus-mobile.webp" },
     modernParis: { desktop: "/wallpapers/modernParis-desktop.svg", mobile: "/wallpapers/modernParis-mobile.svg" },
     modernDubai: { desktop: "/wallpapers/modernDubai-desktop.svg", mobile: "/wallpapers/modernDubai-mobile.svg" },
     modernSingapore: { desktop: "/wallpapers/modernSingapore-desktop.svg", mobile: "/wallpapers/modernSingapore-mobile.svg" },
