@@ -9,11 +9,14 @@ import Cropper from "react-easy-crop";
 import type { Area } from "react-easy-crop";
 import getCroppedImg from "../ts/utils/cropImage";
 import SeekBar from "../../pages/Settings/components/SeekBar";
+import { MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
+import { useSettings } from "../hooks/SettingsHook";
 
 type Ratio = "free" | "portrait" | "landscape" | "square";
 
 export const BgHandler = () => {
     const { t } = useTranslation("settings");
+    const { bgGallery } = useSettings();
     const { blackout, setBlackout } = useBlackout();
     const { setNewBg, setBgUrl } = useUpSettings();
     const { showNotification } = useNote();
@@ -46,7 +49,7 @@ export const BgHandler = () => {
     };
 
     const cropImageHandler = async () => {
-        if (!file || !valid || !croppedAreaPixels || saving) return;
+        if (!file || !valid || !croppedAreaPixels || saving || bgGallery.length >= MAX_CUSTOM_BACKGROUNDS) return;
         setSaving(true);
         try {
             const croppedFile = await getCroppedImg(file, croppedAreaPixels);
@@ -103,10 +106,11 @@ export const BgHandler = () => {
                 {file?.type === "image/gif" && <div className="backgroundHandlerHint">{t("backgroundLibrary.uploadGifHint")}</div>}
             </div>
         </> : <div className="backgroundHandlerHint">{t("backgroundLibrary.uploadInvalid")}</div>}
+        {bgGallery.length >= MAX_CUSTOM_BACKGROUNDS && <div className="backgroundHandlerHint">{t("backgroundLibrary.limit")}</div>}
         <div className="backgroundHandlerButts">
             <button type="button" className="backgroundHandlerCancel" disabled={saving}
                 onClick={() => setBlackout({ seted: false })}>{t("backgroundLibrary.uploadCancel")}</button>
-            <button type="button" className="backgroundHandlerConfirm" disabled={saving || !valid || !croppedAreaPixels}
+            <button type="button" className="backgroundHandlerConfirm" disabled={saving || !valid || !croppedAreaPixels || bgGallery.length >= MAX_CUSTOM_BACKGROUNDS}
                 onClick={() => void cropImageHandler()}>{saving ? t("backgroundLibrary.uploadSaving") : t("backgroundLibrary.uploadSave")}</button>
         </div>
     </div>;
