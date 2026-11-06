@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, useMotionValue, animate, useReducedMotion } from "framer-motion";
 import { flushSync } from "react-dom";
-import { ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleHelp, ImagePlus, Trash2, Images } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleHelp, ImagePlus, Trash2, Images, Settings2 } from "lucide-react";
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
 import WallpaperHeader from "./WallpaperHeader";
@@ -71,24 +71,32 @@ export default function WallpaperStudio() {
 
     const currentIndex = Math.min(preview, Math.max(items.length - 1, 0));
 
-    // Center the applied wallpaper once its group and tiles have been mounted.
-    // Never override later manual catalog scrolling.
+    // Open by default. After the applied tile mounts, center it in the sheet
+    // exactly once without interrupting subsequent manual scrolling.
     useEffect(() => {
         if (!open || initialScrollCentered.current || !initialized.current) return;
         const appliedIndex = items.findIndex(item =>
             (bg === "logo" ? item.id === "color" : item.id === bg) &&
             (bg !== "custom" || item.url === bgUrl));
-        if (appliedIndex >= 0 && currentIndex !== appliedIndex) return;
-        const frame = requestAnimationFrame(() => {
-            const scroll = scrollRef.current;
-            const selected = scroll?.querySelector<HTMLElement>('[data-wallpaper-index="' + currentIndex + '"]');
-            if (!scroll || !selected) return;
-            const top = selected.getBoundingClientRect().top - scroll.getBoundingClientRect().top +
-                scroll.scrollTop - (scroll.clientHeight - selected.clientHeight) / 2;
-            scroll.scrollTop = Math.max(0, top);
-            initialScrollCentered.current = true;
+        if (appliedIndex < 0 || currentIndex !== appliedIndex) return;
+        let secondFrame = 0;
+        const firstFrame = requestAnimationFrame(() => {
+            secondFrame = requestAnimationFrame(() => {
+                const scroll = scrollRef.current;
+                const selected = scroll?.querySelector<HTMLElement>(`[data-wallpaper-index="${appliedIndex}"]`);
+                if (!scroll || !selected) return;
+                const selectedBox = selected.getBoundingClientRect();
+                const scrollBox = scroll.getBoundingClientRect();
+                const top = scroll.scrollTop + selectedBox.top - scrollBox.top -
+                    (scroll.clientHeight - selectedBox.height) / 2;
+                scroll.scrollTop = Math.max(0, Math.min(top, scroll.scrollHeight - scroll.clientHeight));
+                initialScrollCentered.current = true;
+            });
         });
-        return () => cancelAnimationFrame(frame);
+        return () => {
+            cancelAnimationFrame(firstFrame);
+            cancelAnimationFrame(secondFrame);
+        };
     }, [open, currentIndex, bg, bgUrl, items]);
     const current = items[currentIndex];
     const isApplied = current && (current.id === bg || (bg === "logo" && current.id === "color")) && (bg !== "custom" || current.url === bgUrl);
@@ -429,8 +437,8 @@ export default function WallpaperStudio() {
             }}
             aria-hidden="true"/>
 
-        <WallpaperHeader id={current.id} name={current.label}
-            onSettings={() => setBlackout({ seted: true, module: "WallpaperSettings", options: { id: current.id } })}/>
+        <WallpaperHeader id={current.id} name={current.label} applied={Boolean(isApplied)}
+            onApply={() => { if (!isApplied) apply(currentIndex); }}/>
 
         <button type="button" className="wallpaperStudioArrow wallpaperStudioArrowLeft"
             aria-label={t("backgroundLibrary.previous")} onClick={() => change(-1)}><ChevronLeft/></button>
@@ -495,11 +503,11 @@ export default function WallpaperStudio() {
                 <Images size={21}/>
                 {t("backgroundLibrary.previewBackgrounds")}
             </button>
-            <button type="button" className={`pageBottomBack wallpaperHeaderApply ${isApplied ? "active" : ""}`}
-                aria-label={t(isApplied ? "backgroundLibrary.selected" : "backgroundLibrary.apply")}
-                aria-pressed={Boolean(isApplied)}
-                onClick={() => { if (!isApplied) apply(currentIndex); }}>
-                <CircleCheck size={22}/>
+            <button type="button" className="pageBottomBack wallpaperStudioGearButton"
+                aria-label={t("backgroundLibrary.previewSettings")}
+                title={t("backgroundLibrary.previewSettings")}
+                onClick={() => setBlackout({ seted: true, module: "WallpaperSettings", options: { id: current.id } })}>
+                <Settings2 size={22}/>
             </button>
         </PageBottom>
     </main>;

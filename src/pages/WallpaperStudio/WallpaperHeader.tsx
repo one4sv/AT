@@ -1,4 +1,4 @@
-import { Film, LayoutGrid, Palette, WandSparkles, Sun, Settings2 } from "lucide-react";
+import { Film, LayoutGrid, Palette, WandSparkles, Sun, CircleCheck } from "lucide-react";
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { WallpaperLogoIcon, WallpaperFillIcon } from "../../components/ts/utils/WallpaperCapabilityIcons";
 import { TextIndentIcon } from "@phosphor-icons/react";
@@ -9,10 +9,11 @@ import useHeaderMenuGestures from "../../components/hooks/utils/useHeaderMenuGes
 import { isPhotographicScene, supportsBackgroundMotion } from "../../components/ts/utils/BackgroundScene";
 import "../../scss/header.scss";
 
-export default function WallpaperHeader({ id, name, onSettings }: {
+export default function WallpaperHeader({ id, name, applied, onApply }: {
     id: string;
     name: string;
-    onSettings: () => void;
+    applied: boolean;
+    onApply: () => void;
 }) {
     const { t } = useTranslation("settings");
     const { wallpaperStyle } = useSettings();
@@ -51,11 +52,12 @@ export default function WallpaperHeader({ id, name, onSettings }: {
                     <span title={t("backgroundLibrary.patternAvailable")}><LayoutGrid size={16}/></span>}
             </span>
         </div>
-        <button type="button" className="headerButt wallpaperStudioGearButton"
-            title={t("backgroundLibrary.previewSettings")}
-            aria-label={t("backgroundLibrary.previewSettings")}
-            onClick={onSettings}>
-            <Settings2 size={25}/>
+        <button type="button" className={`headerButt wallpaperHeaderApply ${applied ? "active" : ""}`}
+            title={t(applied ? "backgroundLibrary.selected" : "backgroundLibrary.apply")}
+            aria-label={t(applied ? "backgroundLibrary.selected" : "backgroundLibrary.apply")}
+            aria-pressed={applied}
+            onClick={onApply}>
+            <CircleCheck size={25}/>
         </button>
     </div>;
 }
