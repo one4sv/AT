@@ -80,8 +80,12 @@ export default function WallpaperStudio() {
             duration: reduceMotion ? 0 : .32,
             ease: [.22, 1, .36, 1],
             onComplete: () => {
-                flushSync(() => setPreview(index => (index + step + items.length) % items.length));
-                dragX.set(0);
+                // Preserve the rendered neighboring image while it becomes the center frame.
+                // Reset the offset in the same synchronous commit to avoid an empty paint.
+                flushSync(() => {
+                    dragX.set(0);
+                    setPreview(index => (index + step + items.length) % items.length);
+                });
                 changing.current = false;
             }
         });
@@ -366,7 +370,7 @@ export default function WallpaperStudio() {
             {[-1, 0, 1].map(offset => {
                 const index = (currentIndex + offset + items.length) % items.length;
                 const item = items[index];
-                return <motion.div key={offset + ":" + item.id + (item.url ?? "")}
+                return <motion.div key={item.id + (item.url ?? "")}
                     className="wallpaperStudioFrame"
                     style={{ x: dragX, left: offset * 100 + "%" }}>
                     <Background previewBg={item.id} previewUrl={item.url}/>
