@@ -56,7 +56,7 @@ export default function CustomThemeColor() {
     return <div className="customThemeColor" role="dialog" aria-modal="true" aria-label={title}>
         <div className="settingHeader">{title}</div>
         {!wallpaperColors && <div className="customThemeColorPreview" aria-hidden="true"
-            style={{ background: `linear-gradient(135deg, ${validAccent ? accentHex : "var(--accent)"}, ${validGrad ? gradHex : "var(--grad)"})` }}/>
+            style={{ background: `linear-gradient(135deg, ${validAccent ? accentHex : "var(--accent)"}, ${validGrad ? gradHex : "var(--grad)"})` }}/>}
         <div className="customThemeColorGroup">
             <div className="customThemeColorLabel">{t("personalization.mainColor")}</div>
             <div className="customThemeColorInputs">
