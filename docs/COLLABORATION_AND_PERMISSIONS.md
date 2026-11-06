@@ -1,6 +1,6 @@
 # Совместные активности, беседы и права доступа
 
-Техническая памятка для AT dev 0.6.1. Основана на текущем клиенте `one4sv/AT` и сервере `one4sv/achievetogether-server`. Это правила модели и проверки — не заявление о полностью пройденном E2E. См. [habit-invitations.md](habit-invitations.md) и [RELEASE_QA.md](RELEASE_QA.md).
+Техническая памятка для AT dev 0.6.2 (первоначально составлена для 0.6.1). Основана на текущем клиенте `one4sv/AT` и сервере `one4sv/achievetogether-server`. Это правила модели и проверки — не заявление о полностью пройденном E2E. См. [habit-invitations.md](habit-invitations.md) и [RELEASE_QA.md](RELEASE_QA.md).
 
 ## Основные сущности
 
