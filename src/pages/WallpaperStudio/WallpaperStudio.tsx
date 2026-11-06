@@ -173,7 +173,7 @@ export default function WallpaperStudio() {
         if (now - wheelGesture.current.last < 240) return;
         wheelGesture.current.total += event.deltaY;
         if (Math.abs(wheelGesture.current.total) < 40) return;
-        setOpen(wheelGesture.current.total < 0);
+        setOpen(wheelGesture.current.total > 0);
         wheelGesture.current.last = now;
         wheelGesture.current.total = 0;
     };
