@@ -6,7 +6,7 @@ import "../../../scss/backgroundScenes.scss";
 
 export const stockScenes = ["art", "aurora", "nebula", "sunset", "retroDrive", "neonCity", "paintSplash", "liquid", "prism", "laser", "waves", "orbit", "glitch", "petals", "japaneseNinja", "japaneseSakura", "japaneseAlley", "japaneseTorii", "greekStatue", "greekTemple", "greekGladiator", "greekColumns", "greekRuins", "mythOlympus", "mythDragon", "mythTree", "mythUnderworld", "mythPegasus", "modernParis", "modernDubai", "modernSingapore", "modernTokyo", "modernNewYork", "oceanWhale", "oceanAtlantis", "oceanJellyfish", "oceanReef", "oceanDeep", "gothicCastle", "gothicCathedral", "gothicLibrary", "gothicTower", "gothicGarden", "elementVolcano", "elementStorm", "elementSnow", "elementDesert", "elementWaterfall", "neonStreet", "neonHighway", "neonMetropolis", "neonTunnel", "neonArcade", "cosmicSaturn", "cosmicGalaxy", "cosmicEclipse", "cosmicMoon", "cosmicCloud", "japaneseGarden", "abstractSilk", "abstractGlass"] as const;
 export type StockScene = typeof stockScenes[number];
-export const photographicScenes = ["japaneseNinja", "japaneseSakura", "japaneseAlley", "japaneseTorii"] as const;
+export const photographicScenes = ["japaneseNinja", "japaneseSakura", "japaneseAlley", "japaneseTorii", "japaneseGarden", "greekStatue", "greekTemple", "greekGladiator", "greekColumns", "greekRuins"] as const;
 export const isPhotographicScene = (id: string) =>
     (photographicScenes as readonly string[]).includes(id);
 
@@ -15,11 +15,11 @@ const photoSources: Partial<Record<StockScene, { desktop: string; mobile: string
     japaneseSakura: { desktop: "/wallpapers/japanese-sakura-desktop.webp?v=20261106-full", mobile: "/wallpapers/japanese-sakura-mobile.webp?v=20261106-full" },
     japaneseAlley: { desktop: "/wallpapers/japanese-alley-desktop.webp?v=20261106-full", mobile: "/wallpapers/japanese-alley-mobile.webp?v=20261106-full" },
     japaneseTorii: { desktop: "/wallpapers/japanese-torii-desktop.webp?v=20261106-full", mobile: "/wallpapers/japanese-torii-mobile.webp?v=20261106-full" },
-    greekStatue: { desktop: "/wallpapers/greekStatue-desktop.svg", mobile: "/wallpapers/greekStatue-mobile.svg" },
-    greekTemple: { desktop: "/wallpapers/greekTemple-desktop.svg", mobile: "/wallpapers/greekTemple-mobile.svg" },
-    greekGladiator: { desktop: "/wallpapers/greekGladiator-desktop.svg", mobile: "/wallpapers/greekGladiator-mobile.svg" },
-    greekColumns: { desktop: "/wallpapers/greekColumns-desktop.svg", mobile: "/wallpapers/greekColumns-mobile.svg" },
-    greekRuins: { desktop: "/wallpapers/greekRuins-desktop.svg", mobile: "/wallpapers/greekRuins-mobile.svg" },
+    greekStatue: { desktop: "/wallpapers/greekStatue-desktop.webp", mobile: "/wallpapers/greekStatue-mobile.webp" },
+    greekTemple: { desktop: "/wallpapers/greekTemple-desktop.webp", mobile: "/wallpapers/greekTemple-mobile.webp" },
+    greekGladiator: { desktop: "/wallpapers/greekGladiator-desktop.webp", mobile: "/wallpapers/greekGladiator-mobile.webp" },
+    greekColumns: { desktop: "/wallpapers/greekColumns-desktop.webp", mobile: "/wallpapers/greekColumns-mobile.webp" },
+    greekRuins: { desktop: "/wallpapers/greekRuins-desktop.webp", mobile: "/wallpapers/greekRuins-mobile.webp" },
     mythOlympus: { desktop: "/wallpapers/mythOlympus-desktop.svg", mobile: "/wallpapers/mythOlympus-mobile.svg" },
     mythDragon: { desktop: "/wallpapers/mythDragon-desktop.svg", mobile: "/wallpapers/mythDragon-mobile.svg" },
     mythTree: { desktop: "/wallpapers/mythTree-desktop.svg", mobile: "/wallpapers/mythTree-mobile.svg" },
@@ -55,7 +55,7 @@ const photoSources: Partial<Record<StockScene, { desktop: string; mobile: string
     cosmicEclipse: { desktop: "/wallpapers/cosmicEclipse-desktop.svg", mobile: "/wallpapers/cosmicEclipse-mobile.svg" },
     cosmicMoon: { desktop: "/wallpapers/cosmicMoon-desktop.svg", mobile: "/wallpapers/cosmicMoon-mobile.svg" },
     cosmicCloud: { desktop: "/wallpapers/cosmicCloud-desktop.svg", mobile: "/wallpapers/cosmicCloud-mobile.svg" },
-    japaneseGarden: { desktop: "/wallpapers/japaneseGarden-desktop.svg", mobile: "/wallpapers/japaneseGarden-mobile.svg" },
+    japaneseGarden: { desktop: "/wallpapers/japaneseGarden-desktop.webp", mobile: "/wallpapers/japaneseGarden-mobile.webp" },
     abstractSilk: { desktop: "/wallpapers/abstractSilk-desktop.svg", mobile: "/wallpapers/abstractSilk-mobile.svg" },
     abstractGlass: { desktop: "/wallpapers/abstractGlass-desktop.svg", mobile: "/wallpapers/abstractGlass-mobile.svg" }
 };
