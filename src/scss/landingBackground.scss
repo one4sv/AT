@@ -16,3 +16,13 @@
 @media (prefers-reduced-motion: reduce) {
     .background { animation: none !important; }
 }
+
+.wallpaperAccentGlow {
+    background-color: var(--bgc);
+    background-image:
+        radial-gradient(ellipse 42% 42% at 50% 40%,
+            color-mix(in srgb, var(--accent) 43%, transparent), transparent 85%),
+        radial-gradient(ellipse 52% 40% at 66% 64%,
+            color-mix(in srgb, var(--grad) 32%, transparent), transparent 85%);
+    background-repeat: no-repeat;
+}

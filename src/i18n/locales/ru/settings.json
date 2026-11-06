@@ -355,7 +355,7 @@
     "logoGlow": "Освещение значка",
     "logoPalette": "Свои цвета значка",
     "fillPalette": "Свои цвета фона",
-    "greek": "Древняя Греция",
+    "greek": "Античность",
     "greekStatue": "Мраморная богиня",
     "greekTemple": "Храм на закате",
     "greekGladiator": "Гладиатор",
@@ -407,6 +407,7 @@
     "abstractSilk": "Шёлковые волны",
     "abstractGlass": "Стеклянные грани",
     "openSideMenu": "Открыть боковое меню",
-    "showLogo": "Показывать логотип AT"
+    "showLogo": "Показывать логотип AT",
+    "accentGlow": "Акцентное свечение"
   }
 }

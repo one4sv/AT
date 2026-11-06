@@ -17,11 +17,10 @@ interface LayoutProps {
 
 export default function MobileLayout({ children }: LayoutProps) {
     const isMobile = useCompactLayout();
-    const { decor, layout } = useSettings();
+    const { decor } = useSettings();
     const { menu: contextMenu } = useContextMenu();
     const { blackout } = useBlackout();
     const location = useLocation();
-    const wallpaperStudio = location.pathname.startsWith("/wallpapers");
     const {
         toggleMenu,
         translateX,

@@ -355,7 +355,7 @@
     "logoGlow": "Logo glow",
     "logoPalette": "Custom logo colors",
     "fillPalette": "Custom background colors",
-    "greek": "Ancient Greece",
+    "greek": "Antiquity",
     "greekStatue": "Marble Goddess",
     "greekTemple": "Temple at Sunset",
     "greekGladiator": "Gladiator",
@@ -407,6 +407,7 @@
     "abstractSilk": "Silk Waves",
     "abstractGlass": "Glass Facets",
     "openSideMenu": "Open side menu",
-    "showLogo": "Show AT logo"
+    "showLogo": "Show AT logo",
+    "accentGlow": "Accent Glow"
   }
 }

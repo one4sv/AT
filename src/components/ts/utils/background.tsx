@@ -42,6 +42,8 @@ export function Background({ previewBg, previewUrl, previewEffects, previewConto
       <BackgroundScene variant={selectedBg as StockScene} motion={running}
         artPattern={selectedArtPattern} artSize={selectedArtSize}/>
     </div>;
+  } else if (selectedBg === "accentGlow") {
+    canvas = <div className="backgroundCanvas wallpaperAccentGlow" style={effects}/>;
   } else if (selectedBg === "color" || selectedBg === "logo") {
     const fill = wallpaperStyle.fillMode === "gradient"
       ? `linear-gradient(135deg, ${wallpaperStyle.fillColor}, ${wallpaperStyle.fillGrad})`

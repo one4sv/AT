@@ -29,7 +29,7 @@ export default function WallpaperColorControls({ target }: { target: "fill" | "l
     return <div className="wallpaperColorControls">
         {target === "fill" && <button type="button" className="wallpaperColorLogoToggle"
             onClick={() => save("logoEnabled", !wallpaperStyle.logoEnabled)}>
-            {t("backgroundLibrary.showLogo")}
+            {t("backgroundLibrary.showLogo", { defaultValue: "Показывать логотип AT" })}
             <Toggler state={Boolean(wallpaperStyle.logoEnabled)}/>
         </button>}
         <div className="wallpaperColorHeading">
