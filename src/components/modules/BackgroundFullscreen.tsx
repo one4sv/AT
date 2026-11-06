@@ -61,9 +61,9 @@ export default function BackgroundFullscreen() {
         ...bgGallery.map(item => ({
             id: "custom",
             url: item.url,
-            label: t("backgroundLibrary.custom")
+            label: t("backgroundLibrary.customWallpaper")
         }))
-    ], [bgGallery, t]);
+    ], [bgGallery, t, wallpaperStyle.fillMode]);
 
     const currentIndex = Math.min(index, items.length - 1);
     const current = items[currentIndex];
