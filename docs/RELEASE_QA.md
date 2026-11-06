@@ -328,3 +328,8 @@
 - [ ] Settings2 в хедере, CircleCheck в нижнем PageBottom; активный CircleCheck использует именно `linear-gradient(var(--accent), var(--grad))`. Визуально проверить ПК и iPhone.
 - [ ] Нажатие настроек открывает WallpaperSettings для preview id, а применение сохраняет текущий preview, не затрагивая другие настройки.
 - [ ] Desktop WebP для greekStatue, greekGladiator, greekRuins, mythOlympus, mythDragon, mythTree, mythUnderworld, mythPegasus сравнить со старыми кадрами при 100% zoom и проверить реальную детализацию исходников. Не выдавать увеличение за разрешение.
+
+### Проверка обновлённых desktop-исходников (06.11.2026)
+- [ ] Сравнить `greekStatue` и `greekGladiator` на ПК при 100%: самостоятельные горизонтальные исходники 1672×941, без коллажных границ. Версия `?v=20261106-hires`.
+- [ ] Проверить, что 10 mobile WebP и качественные `greekTemple`/`greekColumns` и японские desktop не изменились.
+- [ ] **Незавершено:** заменить шесть оставшихся слабых desktop-сцен на полноценные отдельные 16:9 оригиналы, не подменяя задачу ресайзом.
