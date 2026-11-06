@@ -147,7 +147,7 @@ export function BackgroundScene({ variant, motion = false, artPattern = "order",
             </div>
             {photo && <picture className="atScenePhoto">
                 <source media="(max-width: 800px)" srcSet={photo.mobile} type={photo.mobile.endsWith(".svg") ? "image/svg+xml" : "image/webp"}/>
-                <img src={photo.desktop} alt="" decoding="async" loading="lazy"/>
+                <img src={photo.desktop} alt="" decoding="sync" loading="eager"/>
             </picture>}
             {variant === "art" && (artPattern === "chaos" ?
                 chaoticArtwork.map((item, index) => (
