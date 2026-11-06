@@ -18,6 +18,7 @@ export type QuickAction = { type: QuickActionType; target?: string; label?: stri
 export type SavedBackground = { url: string; path: string | null };
 export type ContourPattern = "order" | "chaos";
 export type WallpaperStyle = {
+    logoEnabled: boolean;
     fillMode: "solid" | "gradient";
     fillColor: string;
     fillGrad: string;
@@ -168,8 +169,9 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ storedBgEffects, setStoredBgEffects ] = useLocalStorage<BackgroundEffects>(LOCAL_KEYS.bgEffects, defaultBackgroundEffects);
     const [ wallpaperStyle, setWallpaperStyle ] = useLocalStorage<WallpaperStyle>(LOCAL_KEYS.wallpaperStyle, {
         fillMode: "solid",
-        fillColor: "#101018",
-        fillGrad: "#303052",
+        logoEnabled: false,
+        fillColor: "#151515",
+        fillGrad: "#303030",
         logoMode: "gradient",
         logoColor: "#f5f2ff",
         logoGrad: "#916cf2",

@@ -24,3 +24,5 @@
     .wallpaperColorControls .customPaletteOpen { gap: 2vw; }
     .wallpaperColorHeading, .wallpaperColorGlow > span { gap: 2vw; }
 }
+
+.wallpaperColorLogoToggle { display:flex; align-items:center; justify-content:space-between; gap:1vw; width:100%; padding:1dvh 1vw; border:0; border-radius:16px; background:var(--interact); color:var(--tc); cursor:pointer; }

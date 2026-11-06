@@ -49,7 +49,6 @@ export default function WallpaperSettings() {
             </div>
             <div className="wallpaperSettingsModalScroll">
                 {(currentId === "color" || currentId === "logo") && <WallpaperColorControls target="fill"/>}
-                {currentId === "logo" && <WallpaperColorControls target="logo"/>}
                 {currentId === "default" && <ContourPatternPicker value={contourPattern}
                     onChange={setContourPattern} size={contourSize} onSizeChange={setContourSize}/>}
                 {currentId === "art" && <ContourPatternPicker value={artPattern}

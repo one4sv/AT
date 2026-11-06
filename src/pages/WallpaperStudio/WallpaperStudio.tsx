@@ -52,9 +52,10 @@ export default function WallpaperStudio() {
     const items = useMemo<WallpaperItem[]>(() => [
         ...bgGallery.map(item => ({ id: "custom", url: item.url, label: t("backgroundLibrary.customWallpaper"), group: "custom" })),
         ...backgroundGroups.flatMap(group => group.items.map(item => ({
-            id: item.id, label: t(item.id === "color" && wallpaperStyle.fillMode === "gradient" ? "backgroundLibrary.gradientBackground" : item.labelKey), group: group.id
+            id: item.id, label: t(item.id === "color" ? (wallpaperStyle.logoEnabled ? "backgroundLibrary.logo" :
+                wallpaperStyle.fillMode === "gradient" ? "backgroundLibrary.gradientBackground" : "personalization.solidColor") : item.labelKey), group: group.id
         })))
-    ], [bgGallery, t, wallpaperStyle.fillMode]);
+    ], [bgGallery, t, wallpaperStyle.fillMode, wallpaperStyle.logoEnabled]);
 
     useEffect(() => {
         setTitle(t("backgroundLibrary.catalog"));
@@ -63,13 +64,13 @@ export default function WallpaperStudio() {
     useEffect(() => {
         if (initialized.current || !items.length) return;
         initialized.current = true;
-        const index = items.findIndex(item => item.id === bg && (bg !== "custom" || item.url === bgUrl));
+        const index = items.findIndex(item => (bg === "logo" ? item.id === "color" : item.id === bg) && (bg !== "custom" || item.url === bgUrl));
         setPreview(Math.max(index, 0));
     }, [bg, bgUrl, items]);
 
     const currentIndex = Math.min(preview, Math.max(items.length - 1, 0));
     const current = items[currentIndex];
-    const isApplied = current && current.id === bg && (bg !== "custom" || current.url === bgUrl);
+    const isApplied = current && (current.id === bg || (bg === "logo" && current.id === "color")) && (bg !== "custom" || current.url === bgUrl);
     useEffect(() => {
         if (!settingsPage) return;
         setBlackout({ seted: true, module: "WallpaperSettings", options: { id: current?.id ?? bg } });

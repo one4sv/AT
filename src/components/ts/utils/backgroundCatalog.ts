@@ -5,8 +5,7 @@ export const backgroundGroups = [
         { id: "landing", labelKey: "personalization.landingBackground" },
         { id: "default", labelKey: "personalization.contourShapes" },
         { id: "art", labelKey: "backgroundLibrary.art" },
-        { id: "color", labelKey: "personalization.solidColor" },
-        { id: "logo", labelKey: "backgroundLibrary.logo" }
+        { id: "color", labelKey: "personalization.solidColor" }
     ] },
     { id: "atmospheric", items: [
         { id: "aurora", labelKey: "backgroundLibrary.aurora" },

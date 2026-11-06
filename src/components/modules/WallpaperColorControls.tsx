@@ -6,10 +6,11 @@ import ColorSelector from "../../pages/Settings/components/ColorSelector";
 import Selector from "../ts/Selector";
 import SeekBar from "../../pages/Settings/components/SeekBar";
 import { Palette, Sun, Layers2 } from "lucide-react";
+import Toggler from "../ts/Toggler";
 import type { WallpaperStyle } from "../context/SettingsContext";
 import "./WallpaperColorControls.scss";
 
-const swatches = ["#101018", "#303052", "#f5f2ff", "#916cf2", "#007bff", "#ff6b00", "#20b98d", "#ff3b3b"];
+const swatches = ["#151515", "#303030", "#f5f2ff", "#916cf2", "#007bff", "#ff6b00", "#20b98d", "#ff3b3b"];
 
 export default function WallpaperColorControls({ target }: { target: "fill" | "logo" }) {
     const { t } = useTranslation("settings");
@@ -26,6 +27,11 @@ export default function WallpaperColorControls({ target }: { target: "fill" | "l
         .map(value => ({ value, dark: value, light: value })), [wallpaperStyle[mainKey], wallpaperStyle[gradKey]]);
 
     return <div className="wallpaperColorControls">
+        {target === "fill" && <button type="button" className="wallpaperColorLogoToggle"
+            onClick={() => save("logoEnabled", !wallpaperStyle.logoEnabled)}>
+            {t("backgroundLibrary.showLogo")}
+            <Toggler state={Boolean(wallpaperStyle.logoEnabled)}/>
+        </button>}
         <div className="wallpaperColorHeading">
             {target === "logo" ? <Sun size={20}/> : <Layers2 size={20}/>}
             {t(target === "logo" ? "backgroundLibrary.logoFill" : "backgroundLibrary.backgroundFill")}
@@ -49,6 +55,7 @@ export default function WallpaperColorControls({ target }: { target: "fill" | "l
             <Palette size={20}/>
             {t("personalization.customColors")}
         </button>
+        {target === "fill" && wallpaperStyle.logoEnabled && <WallpaperColorControls target="logo"/>}
         {target === "logo" && <div className="wallpaperColorGlow">
             <span><Sun size={19}/>{t("backgroundLibrary.logoGlow")}</span>
             <SeekBar id="wallpaperLogoGlow" min={0} max={100} step={5}

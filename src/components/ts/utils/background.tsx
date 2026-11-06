@@ -47,7 +47,7 @@ export function Background({ previewBg, previewUrl, previewEffects, previewConto
       ? `linear-gradient(135deg, ${wallpaperStyle.fillColor}, ${wallpaperStyle.fillGrad})`
       : wallpaperStyle.fillColor;
     canvas = <div className="backgroundCanvas wallpaperSolidCanvas" style={{ ...effects, background: fill }}>
-      {selectedBg === "logo" && <WallpaperMark style={wallpaperStyle}/>}
+      {(selectedBg === "logo" || (selectedBg === "color" && wallpaperStyle.logoEnabled)) && <WallpaperMark style={wallpaperStyle}/>}
     </div>;
   } else if (selectedBg === "custom") {
     canvas = <div className="backgroundCanvas bgImg"
