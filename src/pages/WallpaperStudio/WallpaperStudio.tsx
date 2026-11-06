@@ -457,11 +457,11 @@ export default function WallpaperStudio() {
                     })}
                     <section className="wallpaperStudioGroup">
                         <div className="wallpaperStudioGroupHeading">
-                            {t("backgroundLibrary.custom")} ({bgGallery.length}/5)
+                            {t("backgroundLibrary.custom")} ({bgGallery.length}/${MAX_CUSTOM_BACKGROUNDS})
                         </div>
                         <div className="wallpaperStudioGrid">
                             {items.map((item, index) => ({ item, index })).filter(({ item }) => item.group === "custom").map(({ item, index }) => tile(item, index))}
-                            {bgGallery.length < 5 && <button type="button" className="wallpaperStudioAdd"
+                            {bgGallery.length < MAX_CUSTOM_BACKGROUNDS && <button type="button" className="wallpaperStudioAdd"
                                 aria-label={t("backgroundLibrary.add")} title={t("backgroundLibrary.add")}
                                 onClick={() => fileRef.current?.click()}><ImagePlus size={23}/></button>}
                         </div>
