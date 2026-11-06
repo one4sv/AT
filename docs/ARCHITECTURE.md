@@ -1,6 +1,6 @@
 # Архитектура AchieveTogether
 
-Краткая карта кода для новых разработчиков и агентов. Состояние на 2 ноября 2026 года; перед правкой изучать текущую ветку `main`. Репозитории: [клиент](https://github.com/one4sv/AT) и [сервер](https://github.com/one4sv/achievetogether-server).
+Краткая карта кода для новых разработчиков и агентов. Сверка клиентской структуры проведена 6 ноября 2026 года; перед правкой изучать текущую ветку `main`. Репозитории: [клиент](https://github.com/one4sv/AT) и [сервер](https://github.com/one4sv/achievetogether-server).
 
 ## Стек и запуск
 
@@ -36,7 +36,7 @@
 
 1. В `SettingsContext` живут тема, акцент, декор, язык; `UpdateSettingsContext` отвечает за их изменение; `theme-init.ts` подставляет CSS-атрибуты до React.
 2. В `HabitsContext` список доступных активностей, `TheHabitContext` — конкретная активность/состояние таймера и счётчика, `CalendarContext` — календарь, `DoneContext` — отправка отметок; `GroupContext` — данные беседы и права.
-3. `SideMenuContext` арбитрирует мобильные жесты; меню/свайп/слайдер/сворачивание не должны конкурировать.
+3. `SideMenuContext` арбитрирует мобильные жесты; меню/свайп/слайдер/сворачивание не должны конкурировать. Режим `settings_layout` относится только к ПК. Все слайдеры и их источники — [SLIDERS.md](SLIDERS.md); выбор фоновых изображений — [WALLPAPERS.md](WALLPAPERS.md).
 4. `BlackoutContext` и `ModuleMap` управляют модалками. Внутренний `PermissionsSettings` не создаёт второй оверлей.
 5. `ChatContext`, `MessagesContext`, `WebSocketContext`, `SendMessContext` отвечают за работу переписки и realtime. Для добавления события сначала разобраться с существующей синхронизацией.
 6. Для внешних ссылок и медиа применять `useOpenLink` и `useImagePreview`; для уведомлений `useNote`.
