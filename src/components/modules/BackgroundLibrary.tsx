@@ -9,7 +9,7 @@ import { Background } from "../ts/utils/background";
 import Selector from "../ts/Selector";
 import { api } from "../ts/api";
 import { ChevronDown, ImagePlus } from "lucide-react";
-import { backgroundGroups } from "../ts/utils/backgroundCatalog";
+import { backgroundGroups, MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
 import { BackgroundHelpButton } from "./BackgroundHelp";
 import "./BackgroundLibrary.scss";
 import "../../scss/Loading.scss";
@@ -121,7 +121,7 @@ export default function BackgroundLibrary() {
 
     const tabs = [
         { value: "stock" as const, label: t("backgroundLibrary.stock"), func: changeTab },
-        { value: "custom" as const, label: `${t("backgroundLibrary.custom")} (${bgGallery.length}/5)`, func: changeTab }
+        { value: "custom" as const, label: `${t("backgroundLibrary.custom")} (${bgGallery.length}/${MAX_CUSTOM_BACKGROUNDS})`, func: changeTab }
     ];
 
     const selectCustom = (url: string) => {
@@ -247,7 +247,7 @@ export default function BackgroundLibrary() {
                                 onChange={event => {
                                     const file = event.target.files?.[0];
                                     event.target.value = "";
-                                    if (file && bgGallery.length < 5) setBlackout({ seted: true, module: "BgHandler", bg: file });
+                                    if (file && bgGallery.length < MAX_CUSTOM_BACKGROUNDS) setBlackout({ seted: true, module: "BgHandler", bg: file });
                                 }}/>
                             {!settingsLoaded ? (
                                 <div className="backgroundLibraryGrid" role="status" aria-busy="true">
@@ -293,7 +293,7 @@ export default function BackgroundLibrary() {
                                     </button>}
                                 </div>
                             )}
-                            {settingsLoaded && bgGallery.length >= 5 &&
+                            {settingsLoaded && bgGallery.length >= MAX_CUSTOM_BACKGROUNDS &&
                                 <div className="settingHint">{t("backgroundLibrary.limit")}</div>}
                             {settingsLoaded && !bgGallery.length &&
                                 <div className="settingHint">{t("backgroundLibrary.empty")}</div>}
