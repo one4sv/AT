@@ -131,3 +131,66 @@
         }
     }
 }
+
+.backgroundHandlerRatio {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .5vw;
+
+    > button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: .5dvh;
+        min-width: 0;
+        min-height: 6dvh;
+        border: 1px solid transparent;
+        border-radius: 16px;
+        background: var(--interact);
+        color: var(--tc);
+        font: inherit;
+        font-size: 14px;
+        cursor: pointer;
+
+        &.active {
+            border-color: var(--accent);
+            color: var(--accent_text);
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 1.5vw;
+    }
+}
+
+.backgroundHandlerReset {
+    display: flex;
+    align-items: center;
+    gap: .5vw;
+    align-self: flex-start;
+    border: 0;
+    border-radius: 16px;
+    padding: 1dvh 1vw;
+    background: var(--interact);
+    color: var(--tc);
+    font: inherit;
+    cursor: pointer;
+}
+
+.backgroundHandlerHint {
+    color: var(--borderWh);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.backgroundHandlerDiv .backgroundHandlerImg {
+    max-height: 48dvh;
+    margin-inline: auto;
+    background: var(--bgc);
+    transition: aspect-ratio .2s ease;
+
+    @media (max-width: 800px) {
+        max-height: 43dvh;
+    }
+}
