@@ -11,15 +11,15 @@ export const isPhotographicScene = (id: string) =>
     (photographicScenes as readonly string[]).includes(id);
 
 const photoSources: Partial<Record<StockScene, { desktop: string; mobile: string }>> = {
-    japaneseNinja: { desktop: "/wallpapers/japanese-ninja-desktop.webp", mobile: "/wallpapers/japanese-ninja-mobile.webp" },
-    japaneseSakura: { desktop: "/wallpapers/japanese-sakura-desktop.webp?v=20261106-full", mobile: "/wallpapers/japanese-sakura-mobile.webp?v=20261106-full" },
-    japaneseAlley: { desktop: "/wallpapers/japanese-alley-desktop.webp?v=20261106-full", mobile: "/wallpapers/japanese-alley-mobile.webp?v=20261106-full" },
-    japaneseTorii: { desktop: "/wallpapers/japanese-torii-desktop.webp?v=20261106-full", mobile: "/wallpapers/japanese-torii-mobile.webp?v=20261106-full" },
-    greekStatue: { desktop: "/wallpapers/greekStatue-desktop.webp?v=20261106-hires", mobile: "/wallpapers/greekStatue-mobile.webp?v=20261106-native-portrait" },
-    greekTemple: { desktop: "/wallpapers/greekTemple-desktop.webp?v=20261106-reframe", mobile: "/wallpapers/greekTemple-mobile.webp?v=20261106-native-portrait" },
-    greekGladiator: { desktop: "/wallpapers/greekGladiator-desktop.webp?v=20261106-hires", mobile: "/wallpapers/greekGladiator-mobile.webp?v=20261106-native-portrait" },
-    greekColumns: { desktop: "/wallpapers/greekColumns-desktop.webp?v=20261106-reframe", mobile: "/wallpapers/greekColumns-mobile.webp?v=20261106-native-portrait" },
-    greekRuins: { desktop: "/wallpapers/greekRuins-desktop.webp", mobile: "/wallpapers/greekRuins-mobile.webp?v=20261106-native-portrait" },
+    japaneseNinja: { desktop: "/wallpapers/japanese-ninja-desktop.webp?v=20261107-nanobanana-pro", mobile: "/wallpapers/japanese-ninja-mobile.webp" },
+    japaneseSakura: { desktop: "/wallpapers/japanese-sakura-desktop.webp?v=20261107-nanobanana-pro", mobile: "/wallpapers/japanese-sakura-mobile.webp?v=20261106-full" },
+    japaneseAlley: { desktop: "/wallpapers/japanese-alley-desktop.webp?v=20261107-nanobanana-pro", mobile: "/wallpapers/japanese-alley-mobile.webp?v=20261106-full" },
+    japaneseTorii: { desktop: "/wallpapers/japanese-torii-desktop.webp?v=20261107-nanobanana-pro", mobile: "/wallpapers/japanese-torii-mobile.webp?v=20261106-full" },
+    greekStatue: { desktop: "/wallpapers/greekStatue-desktop.webp?v=20261107-nanobanana-pro", mobile: "/wallpapers/greekStatue-mobile.webp?v=20261107-nanobanana-pro" },
+    greekTemple: { desktop: "/wallpapers/greekTemple-desktop.webp?v=20261107-nanobanana-pro", mobile: "/wallpapers/greekTemple-mobile.webp?v=20261106-native-portrait" },
+    greekGladiator: { desktop: "/wallpapers/greekGladiator-desktop.webp?v=20261107-nanobanana-pro", mobile: "/wallpapers/greekGladiator-mobile.webp?v=20261106-native-portrait" },
+    greekColumns: { desktop: "/wallpapers/greekColumns-desktop.webp?v=20261107-nanobanana-pro", mobile: "/wallpapers/greekColumns-mobile.webp?v=20261106-native-portrait" },
+    greekRuins: { desktop: "/wallpapers/greekRuins-desktop.webp?v=20261107-nanobanana-pro", mobile: "/wallpapers/greekRuins-mobile.webp?v=20261106-native-portrait" },
     mythOlympus: { desktop: "/wallpapers/mythOlympus-desktop.webp?v=20261107-nanobanana", mobile: "/wallpapers/mythOlympus-mobile.webp?v=20261106-native-portrait" },
     mythDragon: { desktop: "/wallpapers/mythDragon-desktop.webp?v=20261107-nanobanana", mobile: "/wallpapers/mythDragon-mobile.webp?v=20261106-native-portrait" },
     mythTree: { desktop: "/wallpapers/mythTree-desktop.webp?v=20261107-nanobanana", mobile: "/wallpapers/mythTree-mobile.webp?v=20261106-native-portrait" },
@@ -55,7 +55,7 @@ const photoSources: Partial<Record<StockScene, { desktop: string; mobile: string
     cosmicEclipse: { desktop: "/wallpapers/cosmicEclipse-desktop.svg", mobile: "/wallpapers/cosmicEclipse-mobile.svg" },
     cosmicMoon: { desktop: "/wallpapers/cosmicMoon-desktop.svg", mobile: "/wallpapers/cosmicMoon-mobile.svg" },
     cosmicCloud: { desktop: "/wallpapers/cosmicCloud-desktop.svg", mobile: "/wallpapers/cosmicCloud-mobile.svg" },
-    japaneseGarden: { desktop: "/wallpapers/japaneseGarden-desktop.webp?v=20261106-reframe", mobile: "/wallpapers/japaneseGarden-mobile.webp?v=20261106-reframe" },
+    japaneseGarden: { desktop: "/wallpapers/japaneseGarden-desktop.webp?v=20261107-nanobanana-pro", mobile: "/wallpapers/japaneseGarden-mobile.webp?v=20261106-reframe" },
     abstractSilk: { desktop: "/wallpapers/abstractSilk-desktop.svg", mobile: "/wallpapers/abstractSilk-mobile.svg" },
     abstractGlass: { desktop: "/wallpapers/abstractGlass-desktop.svg", mobile: "/wallpapers/abstractGlass-mobile.svg" }
 };
