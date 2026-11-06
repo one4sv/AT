@@ -120,12 +120,12 @@ export default function WallpaperStudio() {
                 // Reset the offset in the same synchronous commit to avoid an empty paint.
                 flushSync(() => {
                     dragX.set(0);
-                    setPreview(index => (index + step + items.length) % items.length);
+                    setPreview(index => ((index ?? currentIndex) + step + items.length) % items.length);
                 });
                 changing.current = false;
             }
         });
-    }, [items.length, dragX, reduceMotion]);
+    }, [items.length, dragX, reduceMotion, currentIndex]);
 
     const view = (index: number) => {
         if (changing.current || !items.length) return;
