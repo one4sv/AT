@@ -179,11 +179,12 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(page.locator(".wallpaperStudio")).toBeVisible();
     });
 
-    test("desktop studio has no SideMenu and uses native Header and PageBottom", async ({ page }, testInfo) => {
+    test("desktop Studio respects the button-mode SideMenu setting and keeps its native layout", async ({ page }, testInfo) => {
         test.skip(testInfo.project.name !== "chromium-desktop", "Desktop studio only");
+        await page.goto("/settings/pers");
+        await page.locator('[data-setting-id="layout"] .selectorElement').nth(1).click();
         await page.goto("/wallpapers");
-        await expect(page.locator(".sideMenu")).toHaveCount(0);
-        await expect(page.locator(".smHeader")).toHaveCount(0);
+        await expect(page.locator(".sideMenu")).toBeAttached();
         await expect(page.locator(".wallpaperStudio > .headerDiv")).toBeVisible();
         await expect(page.locator(".wallpaperStudioBottom.pageBottom")).toBeVisible();
         const sheet = await page.locator(".wallpaperStudioSheet").boundingBox();
