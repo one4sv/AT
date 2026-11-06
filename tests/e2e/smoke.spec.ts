@@ -27,6 +27,38 @@ test.describe("authenticated UI regression", () => {
         await expect.poll(async () => info.evaluate(el => el.getBoundingClientRect().height)).toBeGreaterThan(initialHeight - 2);
     });
 
+    test("calendar recenters the new month before the next paint", async ({ page }) => {
+        test.skip(!process.env.AT_E2E_HABIT_ID, "Set AT_E2E_HABIT_ID to a dedicated test habit");
+        await page.goto(`/habit/${process.env.AT_E2E_HABIT_ID}`);
+        await expect(page.locator(".calendarSlider")).toBeVisible();
+        await page.waitForTimeout(100);
+
+        const centered = await page.evaluate(() => new Promise<boolean>((resolve, reject) => {
+            const slider = document.querySelector<HTMLElement>(".calendarSlider");
+            const title = document.querySelector(".CalendarDateChanger .selectedDate");
+            if (!slider || !title) {
+                reject(new Error("Calendar elements are missing"));
+                return;
+            }
+
+            const timeout = window.setTimeout(() => {
+                observer.disconnect();
+                reject(new Error("Calendar did not update its month"));
+            }, 1800);
+            const observer = new MutationObserver(() => {
+                clearTimeout(timeout);
+                observer.disconnect();
+                resolve(Math.abs(slider.scrollLeft - slider.clientWidth) <= 2);
+            });
+
+            observer.observe(title, { childList: true, characterData: true, subtree: true });
+            slider.scrollLeft = slider.clientWidth * 2;
+            slider.dispatchEvent(new Event("scrollend"));
+        }));
+
+        expect(centered).toBe(true);
+    });
+
     test("habit calendar keeps seven weekday headings, statistics and responsive modal positioning", async ({ page }) => {
         test.skip(!process.env.AT_E2E_HABIT_ID, "Set AT_E2E_HABIT_ID to a dedicated test habit");
         await page.goto(`/habit/${process.env.AT_E2E_HABIT_ID}`);
