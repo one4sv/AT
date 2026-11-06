@@ -165,6 +165,7 @@ export default function WallpaperStudio() {
     };
 
     const handlePreviewWheel = (event: React.WheelEvent<HTMLElement>) => {
+        if (isMobile) return;
         const target = event.target as Element;
         if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) ||
             target.closest(".wallpaperStudioSheet, .headerDiv, .pageBottom, .wallpaperStudioArrow")) return;
