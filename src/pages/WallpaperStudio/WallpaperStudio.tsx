@@ -13,7 +13,7 @@ import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { api } from "../../components/ts/api";
 import { Background } from "../../components/ts/utils/background";
-import { backgroundGroups } from "../../components/ts/utils/backgroundCatalog";
+import { backgroundGroups, MAX_CUSTOM_BACKGROUNDS } from "../../components/ts/utils/backgroundCatalog";
 import { supportsBackgroundMotion, isPhotographicScene } from "../../components/ts/utils/BackgroundScene";
 import "./WallpaperStudio.scss";
 
