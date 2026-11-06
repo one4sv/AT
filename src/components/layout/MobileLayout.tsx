@@ -24,6 +24,8 @@ export default function MobileLayout({ children }: LayoutProps) {
     const wallpaperStudio = location.pathname.startsWith("/wallpapers");
     const {
         toggleMenu,
+        showSideMenu,
+        closeMenu,
         translateX,
         setIsDragging,
         setTranslateX,
@@ -127,6 +129,18 @@ export default function MobileLayout({ children }: LayoutProps) {
                 </div>
             ) : null}
 
+            {showSideMenu && !wallpaperStudio && <div className="sideMenuDismissLayer"
+                role="presentation"
+                onPointerDown={event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    closeMenu();
+                }}
+                onTouchStart={event => event.stopPropagation()}
+                onClick={event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }}/>}
             {(!wallpaperStudio || isMobile) && <>
                 <SMheader/>
                 <SideMenu />
