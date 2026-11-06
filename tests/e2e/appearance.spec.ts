@@ -189,15 +189,15 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(page.locator(".wallpaperSettingsModal")).toBeVisible();
     });
 
-    test("desktop canvas wheel hides the catalogue upward and reveals it downward", async ({ page }, testInfo) => {
+    test("desktop canvas wheel opens catalogue downward and closes it upward", async ({ page }, testInfo) => {
         test.skip(testInfo.project.name !== "chromium-desktop", "Desktop studio only");
         await page.goto("/wallpapers");
         await page.mouse.move(200, 200);
-        await page.mouse.wheel(0, -180);
+        await page.mouse.wheel(0, 180);
         await expect(page.locator(".wallpaperStudio.expanded")).toBeVisible();
         await page.waitForTimeout(270);
         await page.mouse.move(200, 65);
-        await page.mouse.wheel(0, 180);
+        await page.mouse.wheel(0, -180);
         await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
     });
 
