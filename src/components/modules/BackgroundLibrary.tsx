@@ -1,6 +1,6 @@
 import { useRef, useState, type PointerEvent } from "react";
 import { animate, motion, useMotionValue, useReducedMotion } from "framer-motion";
-import { ArrowsOutIcon, CheckCircleIcon, TrashIcon } from "@phosphor-icons/react";
+import { ArrowsOutIcon, TrashIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../hooks/SettingsHook";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
@@ -8,7 +8,7 @@ import { useBlackout } from "../hooks/BlackoutHook";
 import { Background } from "../ts/utils/background";
 import Selector from "../ts/Selector";
 import { api } from "../ts/api";
-import { ChevronDown, ImagePlus } from "lucide-react";
+import { ChevronDown, CircleCheck, ImagePlus } from "lucide-react";
 import { backgroundGroups, MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
 import { BackgroundHelpButton } from "./BackgroundHelp";
 import "./BackgroundLibrary.scss";
@@ -173,8 +173,8 @@ export default function BackgroundLibrary() {
     return (
         <div className="backgroundLibraryModal" role="dialog" aria-modal="true" aria-label={t("backgroundLibrary.title")}>
             <div className="backgroundLibraryHeader">
-                <BackgroundHelpButton/>
                 <div className="backgroundLibraryTitle">{t("backgroundLibrary.title")}</div>
+                <BackgroundHelpButton/>
             </div>
             <Selector arr={tabs} selected={tab}/>
             <div className="backgroundLibrarySlidesViewport" ref={sliderRef}
@@ -215,6 +215,7 @@ export default function BackgroundLibrary() {
                                                     <div key={item.id} className="backgroundLibraryTile">
                                                         <button type="button"
                                                             className={"backgroundLibraryChoose" + (bg === item.id ? " selected" : "")}
+                                                            aria-pressed={bg === item.id}
                                                             aria-label={t("backgroundLibrary.chooseWallpaper", { name: item.label })}
                                                             title={item.label}
                                                             onClick={() => selectStock(item.id)}>
@@ -222,7 +223,7 @@ export default function BackgroundLibrary() {
                                                                 <Background previewBg={item.id}/>
                                                             </div>
                                                             {bg === item.id && <span className="backgroundLibraryCheck" aria-label={t("backgroundLibrary.selected")}>
-                                                                <CheckCircleIcon size={20} weight="fill"/>
+                                                                <CircleCheck size={21}/>
                                                             </span>}
                                                         </button>
                                                         <button type="button" className="backgroundLibraryPreview"
@@ -263,13 +264,14 @@ export default function BackgroundLibrary() {
                                         <div key={item.url} className="backgroundLibraryTile">
                                             <button type="button"
                                                 className={"backgroundLibraryChoose" + (bg === "custom" && bgUrl === item.url ? " selected" : "")}
+                                                aria-pressed={bg === "custom" && bgUrl === item.url}
                                                 disabled={saving}
                                                 aria-label={t("backgroundLibrary.chooseWallpaper", { name: t("backgroundLibrary.custom") })}
                                                 title={t("backgroundLibrary.custom")}
                                                 onClick={() => selectCustom(item.url)}>
                                                 <CustomBackgroundThumb url={item.url}/>
                                                 {bg === "custom" && bgUrl === item.url && <span className="backgroundLibraryCheck" aria-label={t("backgroundLibrary.selected")}>
-                                                    <CheckCircleIcon size={20} weight="fill"/>
+                                                    <CircleCheck size={21}/>
                                                 </span>}
                                             </button>
                                             <button type="button" className="backgroundLibraryDelete"
