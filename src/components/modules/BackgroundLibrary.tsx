@@ -288,7 +288,7 @@ export default function BackgroundLibrary() {
                                             </button>
                                         </div>
                                     ))}
-                                    {bgGallery.length < 5 && <button type="button" className="backgroundLibraryAdd"
+                                    {bgGallery.length < MAX_CUSTOM_BACKGROUNDS && <button type="button" className="backgroundLibraryAdd"
                                         aria-label={t("backgroundLibrary.add")} title={t("backgroundLibrary.add")}
                                         onClick={() => fileRef.current?.click()}>
                                         <ImagePlus size={23}/>
