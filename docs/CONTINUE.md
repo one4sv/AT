@@ -260,3 +260,11 @@
 - Для Sakura/Alley/Torii исходными являются именно мобильные WebP-фотографии. Старые компьютерные версии изображают другие сцены; их нельзя выдавать за совпадающие. `scripts/build-desktop-wallpapers.mjs` автоматически создаёт компьютерные версии 2560×1440 из соответствующих мобильных WebP посредством кадрирования и качественного ресайза в `sharp`. Это *точный фрагмент исходной фотографии*, без выдуманных AI-объектов, но не generative outpainting: за пределами обрезанной области содержание не воссоздаётся.
 - Генерация выполняется в `npm run dev` и `npm run build`, выходные файлы находятся в `public/wallpapers/generated/`, не передаются бинарными GitHub API (предыдущие попытки повреждали WebP). Первые японские обои Ninja остаются прежними.
 - После изменения проверить Vercel-логи, валидность всех WebP, desktop/mobile отображение, pointer/scroll взаимодействия на Chrome и iPhone Safari.
+
+### 2026-11-06: Real desktop and mobile Japanese wallpaper sources
+
+- Sakura, Alley and Torii now have independent **clean mobile** and **generated landscape desktop** source PNG files. Original Ninja images are unchanged.
+- The original image bytes are stored as base64 chunks under `assets/wallpaper-sources/` and verified by byte length and PNG magic before conversion. This avoids binary truncation in the repository connector.
+- `scripts/build-desktop-wallpapers.mjs` reconstructs and validates both sizes, outputs six actual WebP files under `public/wallpapers/`; **desktop images are never cropped from mobile ones**. The build verifies WebP RIFF size and decoded dimensions.
+- `.github/workflows/compile-japanese-wallpapers.yml` commits the six WebP assets to `main` with GitHub Actions when repository workflow write permissions allow it.
+- The desktop images are AI-generated wide variants guided by the mobile scenes, not pixel-identical outpainting. Keep this distinction explicit.

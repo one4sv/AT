@@ -1,0 +1,38 @@
+name: Compile Japanese wallpaper images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/wallpaper-sources/**'
+      - 'scripts/build-desktop-wallpapers.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install image encoder
+        run: npm install --no-audit --no-fund
+      - name: Generate and validate six WebP files
+        run: node scripts/build-desktop-wallpapers.mjs
+      - name: Commit binary wallpaper assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/wallpapers/japanese-sakura-desktop.webp public/wallpapers/japanese-sakura-mobile.webp
+          git add public/wallpapers/japanese-alley-desktop.webp public/wallpapers/japanese-alley-mobile.webp
+          git add public/wallpapers/japanese-torii-desktop.webp public/wallpapers/japanese-torii-mobile.webp
+          if ! git diff --cached --quiet; then
+            git commit -m "Replace Japanese desktop and mobile wallpapers with new image assets"
+            git push
+          fi

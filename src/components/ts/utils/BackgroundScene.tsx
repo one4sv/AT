@@ -12,9 +12,9 @@ export const isPhotographicScene = (id: string) =>
 
 const photoSources: Partial<Record<StockScene, { desktop: string; mobile: string }>> = {
     japaneseNinja: { desktop: "/wallpapers/japanese-ninja-desktop.webp", mobile: "/wallpapers/japanese-ninja-mobile.webp" },
-    japaneseSakura: { desktop: "/wallpapers/generated/japanese-sakura-desktop.webp", mobile: "/wallpapers/japanese-sakura-mobile.webp?v=20261106-original" },
-    japaneseAlley: { desktop: "/wallpapers/generated/japanese-alley-desktop.webp", mobile: "/wallpapers/japanese-alley-mobile.webp?v=20261106-original" },
-    japaneseTorii: { desktop: "/wallpapers/generated/japanese-torii-desktop.webp", mobile: "/wallpapers/japanese-torii-mobile.webp?v=20261106-original" }
+    japaneseSakura: { desktop: "/wallpapers/japanese-sakura-desktop.webp?v=20261106-full", mobile: "/wallpapers/japanese-sakura-mobile.webp?v=20261106-full" },
+    japaneseAlley: { desktop: "/wallpapers/japanese-alley-desktop.webp?v=20261106-full", mobile: "/wallpapers/japanese-alley-mobile.webp?v=20261106-full" },
+    japaneseTorii: { desktop: "/wallpapers/japanese-torii-desktop.webp?v=20261106-full", mobile: "/wallpapers/japanese-torii-mobile.webp?v=20261106-full" }
 };
 
 export const isStockScene = (id: string): id is StockScene =>

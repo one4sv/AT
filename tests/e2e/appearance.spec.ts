@@ -202,9 +202,7 @@ test("Japanese wallpaper assets are complete, decodable WebP containers", async 
     for (const scene of ["ninja", "sakura", "alley", "torii"]) {
         for (const size of ["desktop", "mobile"]) {
             const label = `${scene}-${size}`;
-            const url = scene === "ninja" || size === "mobile"
-                ? `/wallpapers/japanese-${label}.webp`
-                : `/wallpapers/generated/japanese-${label}.webp`;
+            const url = `/wallpapers/japanese-${label}.webp`;
             const response = await request.get(url);
             expect(response.ok(), `Missing Japanese wallpaper ${label}`).toBeTruthy();
             expect(response.headers()["content-type"]).toContain("image/webp");
