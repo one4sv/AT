@@ -30,7 +30,7 @@ function CustomBackgroundThumb({ url }: { url: string }) {
 
 export default function BackgroundLibrary() {
     const { t } = useTranslation("settings");
-    const { bg, bgUrl, setBgUrl, bgGallery, settingsLoaded, refetchSettings } = useSettings();
+    const { bg, bgUrl, setBgUrl, bgGallery, settingsLoaded, refetchSettings, wallpaperStyle } = useSettings();
     const { setNewBg } = useUpSettings();
     const { setBlackout } = useBlackout();
     const [ tab, setTab ] = useState<"stock" | "custom">("custom");
@@ -161,7 +161,7 @@ export default function BackgroundLibrary() {
 
     const stockGroups = backgroundGroups.map(group => ({
         id: group.id,
-        items: group.items.map(item => ({ id: item.id, label: t(item.labelKey) }))
+        items: group.items.map(item => ({ id: item.id, label: t(item.id === "color" && wallpaperStyle.fillMode === "gradient" ? "backgroundLibrary.gradientBackground" : item.labelKey) }))
     }));
 
     const selectStock = (id: string) => {

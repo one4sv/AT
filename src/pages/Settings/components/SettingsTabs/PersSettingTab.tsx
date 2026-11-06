@@ -111,7 +111,7 @@ export default function PersSettingTab({ search }: { search: string }) {
                         onClick={() => navigate("/wallpapers")}>
                         {bg === "custom" && bgUrl ?
                             <img className="bgManagePreview" src={bgUrl} alt="" style={{ filter: getBackgroundFilter(bgEffects, .24) }}/> :
-                            <div className={`bgManagePreview ${bg === "landing" ? "landingBackground" : ""}`} style={{ filter: getBackgroundFilter(bgEffects, .24) }}>
+                            <div className={`bgManagePreview ${bg === "landing" ? "landingBackground" : ""}`} style={{ filter: getBackgroundFilter(bgEffects, .24), ...(bg === "color" || bg === "logo" ? { background: wallpaperStyle.fillMode === "gradient" ? `linear-gradient(135deg, ${wallpaperStyle.fillColor}, ${wallpaperStyle.fillGrad})` : wallpaperStyle.fillColor } : {}) }}>
                                 {bg === "default" ? <BackIconsScene pattern={contourPattern} size={contourSize}/> :
                                     bg === "logo" ? <WallpaperMark style={wallpaperStyle}/> : isStockScene(bg) &&
                                     <BackgroundScene variant={bg as StockScene} artPattern={artPattern} artSize={artSize}/>}

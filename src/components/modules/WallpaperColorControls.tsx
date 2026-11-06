@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
 import { useSettings } from "../hooks/SettingsHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import ColorSelector from "../../pages/Settings/components/ColorSelector";
@@ -21,8 +22,8 @@ export default function WallpaperColorControls({ target }: { target: "fill" | "l
     const save = <K extends keyof WallpaperStyle>(key: K, value: WallpaperStyle[K]) => {
         setWallpaperStyle(previous => ({ ...previous, [key]: value }));
     };
-    const colors = [...new Set([...swatches, wallpaperStyle[mainKey], wallpaperStyle[gradKey]])]
-        .map(value => ({ value, dark: value, light: value }));
+    const colors = useMemo(() => [...new Set([...swatches, wallpaperStyle[mainKey], wallpaperStyle[gradKey]])]
+        .map(value => ({ value, dark: value, light: value })), [wallpaperStyle[mainKey], wallpaperStyle[gradKey]]);
 
     return <div className="wallpaperColorControls">
         <div className="wallpaperColorHeading">

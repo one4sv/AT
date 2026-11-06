@@ -27,7 +27,7 @@ export default function WallpaperStudio() {
     const settingsPage = tab === "settings";
     const navigate = useNavigate();
     const { t } = useTranslation("settings");
-    const { bg, bgUrl, bgGallery, setBgUrl, refetchSettings, layout } = useSettings();
+    const { bg, bgUrl, bgGallery, setBgUrl, refetchSettings, layout, wallpaperStyle } = useSettings();
     const { setNewBg } = useUpSettings();
     const isMobile = useCompactLayout();
     const { blackout, setBlackout } = useBlackout();
@@ -53,9 +53,9 @@ export default function WallpaperStudio() {
     const items = useMemo<WallpaperItem[]>(() => [
         ...bgGallery.map(item => ({ id: "custom", url: item.url, label: t("backgroundLibrary.customWallpaper"), group: "custom" })),
         ...backgroundGroups.flatMap(group => group.items.map(item => ({
-            id: item.id, label: t(item.labelKey), group: group.id
+            id: item.id, label: t(item.id === "color" && wallpaperStyle.fillMode === "gradient" ? "backgroundLibrary.gradientBackground" : item.labelKey), group: group.id
         })))
-    ], [bgGallery, t]);
+    ], [bgGallery, t, wallpaperStyle.fillMode]);
 
     useEffect(() => {
         setTitle(t("backgroundLibrary.catalog"));

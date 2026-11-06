@@ -24,7 +24,7 @@ type PreviewItem = { id: string; url?: string; label: string };
 export default function BackgroundFullscreen() {
     const { t } = useTranslation("settings");
     const { blackout, setBlackout } = useBlackout();
-    const { bgGallery, bgEffects, contourPattern, contourSize, artPattern, artSize } = useSettings();
+    const { bgGallery, bgEffects, contourPattern, contourSize, artPattern, artSize, wallpaperStyle } = useSettings();
     const [ previewEffects, setPreviewEffects ] = useState<BackgroundEffects>(() => ({ ...bgEffects }));
     const [ previewPattern, setPreviewPattern ] = useState<ContourPattern>(() => contourPattern);
     const [ previewContourSize, setPreviewContourSize ] = useState(() => contourSize);
@@ -55,7 +55,7 @@ export default function BackgroundFullscreen() {
 
     const items = useMemo<PreviewItem[]>(() => [
         ...backgroundGroups.reduce<PreviewItem[]>((list, group) => {
-            group.items.forEach(item => list.push({ id: item.id, label: t(item.labelKey) }));
+            group.items.forEach(item => list.push({ id: item.id, label: t(item.id === "color" && wallpaperStyle.fillMode === "gradient" ? "backgroundLibrary.gradientBackground" : item.labelKey) }));
             return list;
         }, []),
         ...bgGallery.map(item => ({
