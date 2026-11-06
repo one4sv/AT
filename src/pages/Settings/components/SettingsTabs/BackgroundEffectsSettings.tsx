@@ -9,6 +9,7 @@ import HighlightText from "../../../../components/ts/HighlightText";
 import type { BackgroundEffects } from "../../../../components/context/SettingsContext";
 import { supportsBackgroundMotion } from "../../../../components/ts/utils/BackgroundScene";
 import { ContourPatternPicker } from "./ContourPatternPicker";
+import WallpaperColorControls from "../../../../components/modules/WallpaperColorControls";
 
 export default function BackgroundEffectsSettings({ search }: { search: string }) {
     const { t } = useTranslation("settings");
@@ -39,6 +40,8 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
 
     return (
         <>
+            {(bg === "color" || bg === "logo") && <WallpaperColorControls target="fill"/>}
+            {bg === "logo" && <WallpaperColorControls target="logo"/>}
             {bg === "default" && <ContourPatternPicker value={contourPattern} onChange={setContourPattern} size={contourSize} onSizeChange={setContourSize}/>}
             {bg === "art" && <ContourPatternPicker value={artPattern} onChange={setArtPattern} size={artSize} onSizeChange={setArtSize} subject="art"/>}
             <div className="settingInnerWrapper" data-setting-id="backgroundBlur">

@@ -4,9 +4,10 @@ import BackIconsScene from "./BackIconsScene";
 import { getBackgroundFilter } from "./backgroundFilter";
 import { BackgroundScene, type StockScene, isStockScene } from "./BackgroundScene";
 import "../../../scss/landingBackground.scss";
+import WallpaperMark from "./WallpaperMark";
 
 export function Background({ previewBg, previewUrl, previewEffects, previewContourPattern, previewContourSize, previewArtPattern, previewArtSize }: { previewBg?: string; previewUrl?: string; previewEffects?: BackgroundEffects; previewContourPattern?: ContourPattern; previewContourSize?: number; previewArtPattern?: ContourPattern; previewArtSize?: number } = {}) {
-  const { bg, bgUrl, bgEffects, bgEffectsReady, contourPattern, contourSize, artPattern, artSize } = useSettings();
+  const { bg, bgUrl, bgEffects, bgEffectsReady, contourPattern, contourSize, artPattern, artSize, wallpaperStyle } = useSettings();
   const effectsState = previewEffects ?? bgEffects;
   const selectedPattern = previewContourPattern ?? contourPattern;
   const selectedContourSize = previewContourSize ?? contourSize;
@@ -41,8 +42,13 @@ export function Background({ previewBg, previewUrl, previewEffects, previewConto
       <BackgroundScene variant={selectedBg as StockScene} motion={running}
         artPattern={selectedArtPattern} artSize={selectedArtSize}/>
     </div>;
-  } else if (selectedBg === "color") {
-    canvas = <div className="backgroundCanvas" style={effects}/>;
+  } else if (selectedBg === "color" || selectedBg === "logo") {
+    const fill = wallpaperStyle.fillMode === "gradient"
+      ? `linear-gradient(135deg, ${wallpaperStyle.fillColor}, ${wallpaperStyle.fillGrad})`
+      : wallpaperStyle.fillColor;
+    canvas = <div className="backgroundCanvas wallpaperSolidCanvas" style={{ ...effects, background: fill }}>
+      {selectedBg === "logo" && <WallpaperMark style={wallpaperStyle}/>}
+    </div>;
   } else if (selectedBg === "custom") {
     canvas = <div className="backgroundCanvas bgImg"
       style={{ ...effects, backgroundImage: `url("${selectedUrl}")` }}/>;

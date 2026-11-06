@@ -20,18 +20,30 @@ const getInitialHex = (part: PalettePart, selected: string) => {
 
 export default function CustomThemeColor() {
     const { t } = useTranslation("settings");
-    const { setBlackout } = useBlackout();
-    const { accent, grad } = useSettings();
+    const { blackout, setBlackout } = useBlackout();
+    const { accent, grad, wallpaperStyle, setWallpaperStyle } = useSettings();
+    const forLogo = blackout.options?.id === "wallpaperLogoColors";
+    const forFill = blackout.options?.id === "wallpaperFillColors";
+    const wallpaperColors = forLogo || forFill;
     const { setNewAccent, setNewGrad } = useUpSettings();
 
-    const [ accentHex, setAccentHex ] = useState(() => getInitialHex("accent", accent));
-    const [ gradHex, setGradHex ] = useState(() => getInitialHex("grad", grad));
+    const [ accentHex, setAccentHex ] = useState(() => wallpaperColors ? (forLogo ? wallpaperStyle.logoColor : wallpaperStyle.fillColor) : getInitialHex("accent", accent));
+    const [ gradHex, setGradHex ] = useState(() => wallpaperColors ? (forLogo ? wallpaperStyle.logoGrad : wallpaperStyle.fillGrad) : getInitialHex("grad", grad));
     const validAccent = validHex(accentHex);
     const validGrad = validHex(gradHex);
-    const title = t("personalization.customColors");
+    const title = t(wallpaperColors ? (forLogo ? "backgroundLibrary.logoPalette" : "backgroundLibrary.fillPalette") : "personalization.customColors");
 
     const save = () => {
         if (!validAccent || !validGrad) return;
+        if (wallpaperColors) {
+            setWallpaperStyle(current => forLogo ? {
+                ...current, logoColor: accentHex.toLowerCase(), logoGrad: gradHex.toLowerCase()
+            } : {
+                ...current, fillColor: accentHex.toLowerCase(), fillGrad: gradHex.toLowerCase()
+            });
+            setBlackout({ seted: false });
+            return;
+        }
 
         localStorage.setItem("customAccentHex", accentHex.toLowerCase());
         localStorage.setItem("customGradHex", gradHex.toLowerCase());
@@ -43,7 +55,7 @@ export default function CustomThemeColor() {
 
     return <div className="customThemeColor" role="dialog" aria-modal="true" aria-label={title}>
         <div className="settingHeader">{title}</div>
-        <div className="customThemeColorPreview" aria-hidden="true"
+        {!wallpaperColors && <div className="customThemeColorPreview" aria-hidden="true"
             style={{ background: `linear-gradient(135deg, ${validAccent ? accentHex : "var(--accent)"}, ${validGrad ? gradHex : "var(--grad)"})` }}/>
         <div className="customThemeColorGroup">
             <div className="customThemeColorLabel">{t("personalization.mainColor")}</div>

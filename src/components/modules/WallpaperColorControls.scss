@@ -1,0 +1,26 @@
+.wallpaperColorControls {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5dvh;
+    padding: 1dvh 0;
+    min-width: 0;
+    > .selector { width: 100%; }
+    > .colorSelector { display: flex; flex-direction: column; gap: .75dvh; }
+    .customPaletteOpen { display: flex; align-items: center; justify-content: center; gap: .75vw; border: none; }
+}
+.wallpaperColorHeading, .wallpaperColorGlow > span {
+    display: flex;
+    align-items: center;
+    gap: .65vw;
+    color: var(--tc);
+    > svg { color: var(--accent_text); flex-shrink: 0; }
+}
+.wallpaperColorGlow {
+    display: flex;
+    flex-direction: column;
+    gap: .75dvh;
+}
+@media (max-width: 800px) {
+    .wallpaperColorControls .customPaletteOpen { gap: 2vw; }
+    .wallpaperColorHeading, .wallpaperColorGlow > span { gap: 2vw; }
+}

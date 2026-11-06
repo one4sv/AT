@@ -9,6 +9,7 @@ import type { BackgroundEffects } from "../context/SettingsContext";
 import { ContourPatternPicker } from "../../pages/Settings/components/SettingsTabs/ContourPatternPicker";
 import SeekBar from "../../pages/Settings/components/SeekBar";
 import Toggler from "../ts/Toggler";
+import WallpaperColorControls from "./WallpaperColorControls";
 import "./WallpaperSettings.scss";
 
 export default function WallpaperSettings() {
@@ -47,6 +48,8 @@ export default function WallpaperSettings() {
                 <span>{t("backgroundLibrary.previewSettings")}</span>
             </div>
             <div className="wallpaperSettingsModalScroll">
+                {(currentId === "color" || currentId === "logo") && <WallpaperColorControls target="fill"/>}
+                {currentId === "logo" && <WallpaperColorControls target="logo"/>}
                 {currentId === "default" && <ContourPatternPicker value={contourPattern}
                     onChange={setContourPattern} size={contourSize} onSizeChange={setContourSize}/>}
                 {currentId === "art" && <ContourPatternPicker value={artPattern}

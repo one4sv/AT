@@ -19,6 +19,7 @@ import "../../../../scss/landingBackground.scss";
 import SectionArt from "../../../../components/ts/SectionArt";
 import { BackgroundScene, type StockScene, isStockScene } from "../../../../components/ts/utils/BackgroundScene";
 import BackIconsScene from "../../../../components/ts/utils/BackIconsScene";
+import WallpaperMark from "../../../../components/ts/utils/WallpaperMark";
 import { getBackgroundFilter } from "../../../../components/ts/utils/backgroundFilter";
 
 export default function PersSettingTab({ search }: { search: string }) {
@@ -26,7 +27,7 @@ export default function PersSettingTab({ search }: { search: string }) {
     const navigate = useNavigate();
     const isMobile = useCompactLayout();
     const { setBlackout } = useBlackout();
-    const { isDark, accent, bg, bgUrl, bgEffects, contourPattern, contourSize, artPattern, artSize, decor, grad, blur, layout } = useSettings();
+    const { isDark, accent, bg, bgUrl, bgEffects, contourPattern, contourSize, artPattern, artSize, decor, grad, blur, layout, wallpaperStyle } = useSettings();
     const { setNewTheme, setNewAccent, setNewDecor, setNewGrad, setNewBlur, setNewLayout } = useUpSettings();
 
     const themeArr = [
@@ -111,7 +112,8 @@ export default function PersSettingTab({ search }: { search: string }) {
                         {bg === "custom" && bgUrl ?
                             <img className="bgManagePreview" src={bgUrl} alt="" style={{ filter: getBackgroundFilter(bgEffects, .24) }}/> :
                             <div className={`bgManagePreview ${bg === "landing" ? "landingBackground" : ""}`} style={{ filter: getBackgroundFilter(bgEffects, .24) }}>
-                                {bg === "default" ? <BackIconsScene pattern={contourPattern} size={contourSize}/> : isStockScene(bg) &&
+                                {bg === "default" ? <BackIconsScene pattern={contourPattern} size={contourSize}/> :
+                                    bg === "logo" ? <WallpaperMark style={wallpaperStyle}/> : isStockScene(bg) &&
                                     <BackgroundScene variant={bg as StockScene} artPattern={artPattern} artSize={artSize}/>}
                             </div>}
                         <span>{t("backgroundLibrary.change")}</span>

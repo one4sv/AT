@@ -17,6 +17,16 @@ export type QuickActionType = "feed" | "settings" | "profile" | "habits" | "habi
 export type QuickAction = { type: QuickActionType; target?: string; label?: string };
 export type SavedBackground = { url: string; path: string | null };
 export type ContourPattern = "order" | "chaos";
+export type WallpaperStyle = {
+    fillMode: "solid" | "gradient";
+    fillColor: string;
+    fillGrad: string;
+    logoMode: "solid" | "gradient";
+    logoColor: string;
+    logoGrad: string;
+    logoGlow: number;
+};
+
 export type BackgroundEffects = {
     blur: number;
     movement: boolean;
@@ -65,6 +75,8 @@ export interface SettingsContextType {
     bgGallery: SavedBackground[];
     setBgGallery: React.Dispatch<React.SetStateAction<SavedBackground[]>>;
     bgEffects: BackgroundEffects;
+    wallpaperStyle: WallpaperStyle;
+    setWallpaperStyle: React.Dispatch<React.SetStateAction<WallpaperStyle>>;
     bgEffectsReady: boolean;
     contourPattern: ContourPattern;
     contourSize: number;
@@ -126,6 +138,7 @@ const LOCAL_KEYS = {
     bg: "settings_bg",
     bgUrl: "settings_bg_url",
     bgEffects: "settings_bg_effects",
+    wallpaperStyle: "settings_wallpaper_style",
     contourPattern: "settings_contour_pattern",
     contourSize: "settings_contour_size",
     artPattern: "settings_art_pattern",
@@ -153,6 +166,15 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ artPattern, setArtPattern ] = useLocalStorage<ContourPattern>(LOCAL_KEYS.artPattern, "order");
     const [ artSize, setArtSize ] = useLocalStorage<number>(LOCAL_KEYS.artSize, 1);
     const [ storedBgEffects, setStoredBgEffects ] = useLocalStorage<BackgroundEffects>(LOCAL_KEYS.bgEffects, defaultBackgroundEffects);
+    const [ wallpaperStyle, setWallpaperStyle ] = useLocalStorage<WallpaperStyle>(LOCAL_KEYS.wallpaperStyle, {
+        fillMode: "solid",
+        fillColor: "#101018",
+        fillGrad: "#303052",
+        logoMode: "gradient",
+        logoColor: "#f5f2ff",
+        logoGrad: "#916cf2",
+        logoGlow: 32
+    });
     const bgEffects = useMemo(() => normalizeBackgroundEffects(storedBgEffects), [storedBgEffects]);
     const setBgEffects = useCallback<React.Dispatch<React.SetStateAction<BackgroundEffects>>>(next => {
         setStoredBgEffects(previous => normalizeBackgroundEffects(
@@ -265,7 +287,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             layout, setLayout,
             bg, setBg,
             decor, setDecor,
-            bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang,
+            bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, wallpaperStyle, setWallpaperStyle, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang,
             privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
             twoAuth, setTwoAuth,
             note, setNote,
