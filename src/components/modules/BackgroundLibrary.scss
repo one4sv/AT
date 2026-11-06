@@ -1,11 +1,12 @@
 .backgroundLibraryModal {
     display: flex;
     flex-direction: column;
-    width: 72vw;
-    height: 82dvh;
-    max-height: 90dvh;
+    width: 86vw;
+    height: 88dvh;
+    max-width: 1480px;
+    max-height: 92dvh;
     min-height: 0;
-    gap: 1.5dvh;
+    gap: 1.2dvh;
     padding: 2dvh 1.5vw;
     box-sizing: border-box;
     position: absolute;
@@ -29,8 +30,8 @@
         transform: none;
         width: 100%;
         max-width: 100%;
-        height: 85dvh;
-        max-height: 85dvh;
+        height: 90dvh;
+        max-height: 90dvh;
         border-radius: 24px 24px 0 0;
         padding: 2dvh 1.5vw calc(2dvh + env(safe-area-inset-bottom));
         gap: 1dvh;
@@ -40,8 +41,10 @@
 .backgroundLibraryHeader {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 1vw;
     flex-shrink: 0;
+    padding: 0 .5vw;
 
     @media (max-width: 800px) {
         gap: 2vw;
@@ -85,7 +88,7 @@
     min-height: 0;
     flex: 1;
     gap: 1dvh;
-    padding: 0 .5vw 2dvh;
+    padding: 0 .5vw calc(3dvh + env(safe-area-inset-bottom));
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
@@ -152,7 +155,7 @@
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: .4vw;
-    padding: .2dvh 0;
+    padding: 0;
 
     &[hidden] {
         display: none;
@@ -332,6 +335,7 @@
     display: flex;
     justify-content: center;
     aspect-ratio: 16 / 9;
+    height: 100%;
     min-height: 0;
     color: var(--accent_text);
     background: var(--mc);
@@ -369,5 +373,43 @@
     .backgroundLibraryDelete,
     .backgroundCustomThumb > img {
         transition: none;
+    }
+}
+
+// Match the Wallpaper Studio catalogue: five image-only tiles per row, with the
+// active background indicated by a reserved accent outline and check badge.
+.backgroundLibraryModal {
+    .backgroundLibraryGrid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .backgroundLibraryChoose {
+        &:focus-visible {
+            border-color: var(--accent);
+            outline: none;
+        }
+    }
+
+    .backgroundLibraryCheck {
+        > svg {
+            display: block;
+        }
+    }
+
+    .backgroundLibraryAdd {
+        > svg {
+            flex-shrink: 0;
+        }
+    }
+
+    @media (max-width: 800px) {
+        .backgroundLibraryGrid {
+            gap: .6vw;
+        }
+
+        .backgroundLibraryPreview {
+            width: 3.5dvh;
+            height: 3.5dvh;
+        }
     }
 }
