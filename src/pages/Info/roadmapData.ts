@@ -346,7 +346,7 @@ export const roadmapCurrent: RoadmapRelease = {
         { ru: "Собственные цвета акцента и градиента", en: "Custom accent and gradient colors" },
         { ru: "Десять новых стандартных фонов и анимации", en: "Ten new built-in backgrounds and animations" },
         { ru: "Настройка скорости анимации фонов", en: "Configurable background animation speed" },
-        { ru: "Переработка интерфейса фоновых изображений", en: "Background image interface redesign" },
+        { ru: "Новый выбор и редактор фоновых изображений", en: "New wallpaper picker and editor" },
         { ru: "Улучшения мобильного интерфейса", en: "Mobile interface improvements" }
     ],
     notice: {
