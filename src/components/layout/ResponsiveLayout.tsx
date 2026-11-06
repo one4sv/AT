@@ -48,7 +48,7 @@ export default function ResponsiveLayout() {
             {outlet}
         </motion.div>
     </AnimatePresence>;
-    if (isMobile || layout === "hidden") {
+    if (isMobile || layout === "hidden" || pathname.startsWith("/wallpapers")) {
         return (
             <MobileLayout>
                 {content}

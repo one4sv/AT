@@ -75,10 +75,7 @@
     .wallpaperHeaderName {
         min-width: 0;
         flex: 1;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        font-size: 22px;
+        padding: 0;
     }
 
     .wallpaperHeaderCapabilities {
@@ -130,7 +127,7 @@
         }
 
         .wallpaperHeaderName {
-            font-size: 20px;
+            padding: 0;
         }
 
         .wallpaperHeaderCapabilities {

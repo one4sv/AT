@@ -549,7 +549,7 @@ export default function SMnav() {
         <div
             className={`SMnavDiv ${showSideMenu ? "open" : ""}`}
             style={{
-                transform: isMobile || layout === "hidden" ? `translateX(${translateX}%)` : "none"
+                transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none"
             }}
             onTouchEnd={handleNavTouchEnd}
             onTouchCancel={cancelTouch}

@@ -293,8 +293,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         previousMode.current = mode;
 
         if (studio) {
-            if (isCompact || layout === "hidden") closeMenu();
-            else openSideMenu();
+            closeMenu();
             return;
         }
         if (isCompact) return;

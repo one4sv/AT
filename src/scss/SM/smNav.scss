@@ -397,3 +397,5 @@
     color: var(--notValid);
 }
 
+
+.mobile-layout:has(.wallpaperStudio) > .SMnavDiv { width: 19.5vw; @media (max-width: 800px) { width: 100%; } }

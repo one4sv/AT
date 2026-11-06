@@ -127,7 +127,7 @@ export default function MobileLayout({ children }: LayoutProps) {
                 </div>
             ) : null}
 
-            {(!wallpaperStudio || isMobile || layout === "hidden") && <>
+            {<>
                 <SMheader/>
                 <SideMenu />
                 <SMnav />

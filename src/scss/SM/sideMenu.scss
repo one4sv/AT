@@ -270,3 +270,7 @@
         padding: 1vh 3vw;
     }
 }
+.mobile-layout:has(.wallpaperStudio) {
+    > .sideMenu { z-index: 60; }
+    > .smHeader, > .SMnavDiv { z-index: 61; }
+}
