@@ -150,14 +150,18 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(handle).not.toBeInViewport();
     });
 
-    test("wheel at the top of the open catalog keeps it open", async ({ page }, testInfo) => {
+    test("wheel scrolls inside the catalog and closes it only when scrolled up to the top", async ({ page }, testInfo) => {
         test.skip(testInfo.project.name !== "chromium-desktop", "Desktop wheel only");
         await page.goto("/wallpapers");
         await page.locator(".wallpaperStudioSettingsButton").click();
-        await page.locator(".wallpaperStudioScroll").evaluate(el => { el.scrollTop = 0; });
-        await page.locator(".wallpaperStudioScroll").hover({ position: { x: 30, y: 40 } });
-        await page.mouse.wheel(0, -180);
+        const scroll = page.locator(".wallpaperStudioScroll");
+        await scroll.evaluate(el => { el.scrollTop = 160; });
+        await scroll.hover({ position: { x: 30, y: 40 } });
+        await page.mouse.wheel(0, -60);
         await expect(page.locator(".wallpaperStudio.expanded")).toBeVisible();
+        await scroll.evaluate(el => { el.scrollTop = 0; });
+        await page.mouse.wheel(0, -180);
+        await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
     });
 
     test("wallpaper settings use a modal, while the catalog remains a 90dvh sheet", async ({ page }) => {
@@ -189,15 +193,15 @@ test.describe("appearance and wallpaper controls", () => {
         await expect(page.locator(".wallpaperSettingsModal")).toBeVisible();
     });
 
-    test("desktop canvas wheel opens catalogue downward and closes it upward", async ({ page }, testInfo) => {
+    test("desktop canvas wheel opens catalogue upward and closes it downward", async ({ page }, testInfo) => {
         test.skip(testInfo.project.name !== "chromium-desktop", "Desktop studio only");
         await page.goto("/wallpapers");
         await page.mouse.move(200, 200);
-        await page.mouse.wheel(0, 180);
+        await page.mouse.wheel(0, -180);
         await expect(page.locator(".wallpaperStudio.expanded")).toBeVisible();
         await page.waitForTimeout(270);
         await page.mouse.move(200, 65);
-        await page.mouse.wheel(0, -180);
+        await page.mouse.wheel(0, 180);
         await expect(page.locator(".wallpaperStudio.collapsed")).toBeVisible();
     });
 
