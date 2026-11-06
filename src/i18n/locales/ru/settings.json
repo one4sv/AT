@@ -325,6 +325,21 @@
     "contourSize": "Размер фигур",
     "patternAvailable": "Можно настроить расположение и размер рисунков",
     "artPattern": "Расположение рисунков",
-    "artSize": "Размер рисунков"
+    "artSize": "Размер рисунков",
+    "uploadTitle": "Добавить свой фон",
+    "uploadRatio": "Пропорции",
+    "uploadOriginal": "Оригинал",
+    "uploadPortrait": "Вертикально",
+    "uploadLandscape": "Горизонтально",
+    "uploadSquare": "Квадрат",
+    "uploadZoom": "Масштаб",
+    "uploadReset": "Сбросить",
+    "uploadHint": "Перемещайте изображение и меняйте масштаб. Поддерживаются JPG, PNG, WebP, AVIF и GIF до 25 МБ. Результат сохраняется в WebP.",
+    "uploadGifHint": "При кадрировании GIF сохранится только первый кадр.",
+    "uploadInvalid": "Не удалось открыть изображение: неподдерживаемый формат или файл больше 25 МБ.",
+    "uploadCancel": "Отмена",
+    "uploadSave": "Сохранить фон",
+    "uploadSaving": "Сохранение…",
+    "uploadProcessingError": "Не удалось обработать фон"
   }
 }
