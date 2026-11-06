@@ -457,11 +457,11 @@ export default function WallpaperStudio() {
                     })}
                     <section className="wallpaperStudioGroup">
                         <div className="wallpaperStudioGroupHeading">
-                            {t("backgroundLibrary.custom")} ({bgGallery.length}/6)
+                            {t("backgroundLibrary.custom")} ({bgGallery.length}/5)
                         </div>
                         <div className="wallpaperStudioGrid">
                             {items.map((item, index) => ({ item, index })).filter(({ item }) => item.group === "custom").map(({ item, index }) => tile(item, index))}
-                            {bgGallery.length < 6 && <button type="button" className="wallpaperStudioAdd"
+                            {bgGallery.length < 5 && <button type="button" className="wallpaperStudioAdd"
                                 aria-label={t("backgroundLibrary.add")} title={t("backgroundLibrary.add")}
                                 onClick={() => fileRef.current?.click()}><ImagePlus size={23}/></button>}
                         </div>
@@ -470,7 +470,7 @@ export default function WallpaperStudio() {
                         onChange={event => {
                             const file = event.target.files?.[0];
                             event.target.value = "";
-                            if (file) setBlackout({ seted: true, module: "BgHandler", bg: file });
+                            if (file && bgGallery.length < 5) setBlackout({ seted: true, module: "BgHandler", bg: file });
                         }}/>
                 </div>
             </div>
