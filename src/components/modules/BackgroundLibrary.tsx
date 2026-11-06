@@ -18,13 +18,13 @@ function CustomBackgroundThumb({ url }: { url: string }) {
     const [ loaded, setLoaded ] = useState(false);
 
     return (
-        <span className="backgroundLibraryThumb backgroundCustomThumb">
+        <div className="backgroundLibraryThumb backgroundCustomThumb">
             {!loaded && <div className="skeletonBlock" aria-hidden="true"/>}
             <img src={url} alt="" loading="lazy"
                 className={loaded ? "loaded" : ""}
                 onLoad={() => setLoaded(true)}
                 onError={() => setLoaded(true)}/>
-        </span>
+        </div>
     );
 }
 
@@ -218,9 +218,9 @@ export default function BackgroundLibrary() {
                                                             aria-label={t("backgroundLibrary.chooseWallpaper", { name: item.label })}
                                                             title={item.label}
                                                             onClick={() => selectStock(item.id)}>
-                                                            <span className="backgroundLibraryThumb">
+                                                            <div className="backgroundLibraryThumb">
                                                                 <Background previewBg={item.id}/>
-                                                            </span>
+                                                            </div>
                                                             {bg === item.id && <span className="backgroundLibraryCheck" aria-label={t("backgroundLibrary.selected")}>
                                                                 <CheckCircleIcon size={20} weight="fill"/>
                                                             </span>}
@@ -247,7 +247,7 @@ export default function BackgroundLibrary() {
                                 onChange={event => {
                                     const file = event.target.files?.[0];
                                     event.target.value = "";
-                                    if (file) setBlackout({ seted: true, module: "BgHandler", bg: file });
+                                    if (file && bgGallery.length < 5) setBlackout({ seted: true, module: "BgHandler", bg: file });
                                 }}/>
                             {!settingsLoaded ? (
                                 <div className="backgroundLibraryGrid" role="status" aria-busy="true">
