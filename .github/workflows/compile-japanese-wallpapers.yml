@@ -6,6 +6,7 @@ on:
     paths:
       - 'assets/wallpaper-sources/**'
       - 'scripts/build-desktop-wallpapers.mjs'
+      - '.github/workflows/compile-japanese-wallpapers.yml'
   workflow_dispatch:
 
 permissions:
