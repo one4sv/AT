@@ -173,7 +173,7 @@ export default function WallpaperStudio() {
         if (now - wheelGesture.current.last < 240) return;
         wheelGesture.current.total += event.deltaY;
         if (Math.abs(wheelGesture.current.total) < 40) return;
-        setOpen(wheelGesture.current.total > 0);
+        setOpen(wheelGesture.current.total < 0);
         wheelGesture.current.last = now;
         wheelGesture.current.total = 0;
     };
@@ -287,19 +287,29 @@ export default function WallpaperStudio() {
             gesture = null;
         };
 
+        const wheel = (event: WheelEvent) => {
+            if (isMobile || event.ctrlKey || Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
+            if (scroll.scrollTop <= 2 && event.deltaY < -30) {
+                event.preventDefault();
+                setOpen(false);
+            }
+        };
+
         scroll.addEventListener("touchstart", start, { passive: true });
         scroll.addEventListener("touchmove", move, { passive: false });
         scroll.addEventListener("touchend", finish);
         scroll.addEventListener("touchcancel", finish);
+        scroll.addEventListener("wheel", wheel, { passive: false });
 
         return () => {
             scroll.removeEventListener("touchstart", start);
             scroll.removeEventListener("touchmove", move);
             scroll.removeEventListener("touchend", finish);
             scroll.removeEventListener("touchcancel", finish);
+            scroll.removeEventListener("wheel", wheel);
             setSheetDrag(0);
         };
-    }, [open]);
+    }, [open, isMobile]);
 
     useEffect(() => {
         const onKey = (event: KeyboardEvent) => {
