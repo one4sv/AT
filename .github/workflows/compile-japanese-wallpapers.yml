@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: '22'
       - name: Install image encoder
-        run: npm install --no-audit --no-fund
+        run: npm install --no-audit --no-fund --legacy-peer-deps
       - name: Generate and validate six WebP files
         run: node scripts/build-desktop-wallpapers.mjs
       - name: Commit binary wallpaper assets
