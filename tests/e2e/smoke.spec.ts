@@ -65,7 +65,8 @@ test("wallpaper studio places SideMenu header above the panel", async ({ page })
 
 test("common page header stays below SideMenu in compact layout", async ({ page }) => {
     await page.setViewportSize({ width: 760, height: 900 });
-    await page.goto("/settings/language");
+    // /settings/language is a standalone route without ResponsiveLayout.
+    await page.goto("/info/roadmap");
     await expect(page.locator(".mobile-layout > .headerDiv")).toBeAttached();
     await expect(page.locator(".sideMenu")).toBeAttached();
 
