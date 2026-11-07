@@ -35,6 +35,8 @@
         "commentReply": "Reply",
         "commentReplying": "Replying to {{name}}",
         "commentCopy": "Copy text",
+    "commentCopyLink": "Copy comment link",
+    "openAuthor": "Open author profile",
         "commentDelete": "Delete",
         "commentDeleteConfirm": "Delete this comment?",
         "commentSave": "Save comment",
