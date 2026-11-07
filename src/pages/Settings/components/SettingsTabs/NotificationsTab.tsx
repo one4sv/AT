@@ -140,8 +140,7 @@ export default function NotificationsTab({ search }: { search: string }) {
                         <Toggler state={messNote} setState={(value) => void togglePreference("new_mess_note", value)} disable={!note} stopPropagation={true} />
                     </div>
                 </div>
-            </div>
-            <div className="notificationPermissionPanel" data-setting-id="browserNotifications">
+                <div className="notificationPermissionPanel" data-setting-id="browserNotifications">
                 <div className={"notificationPermissionStatus " + (permission === "denied" ? "blocked" : "")}>
                     {t("notifications.browserTitle")}: {t("notifications.browser" + (permission === "granted" ? "Granted" : permission === "denied" ? "Denied" : permission === "unsupported" ? "Unsupported" : "Disabled"))}
                 </div>
@@ -164,8 +163,8 @@ export default function NotificationsTab({ search }: { search: string }) {
                     {t("notifications.iosAdd")}
                 </button>
                 <p>{t("notifications.noAdvertising")}</p>
+                </div>
             </div>
-        </div>
             <div className="settingInnerDiv" onClick={() => showDevNote()}>
                 <div className="settingHeader">
                     {t("notifications.reminders")}
