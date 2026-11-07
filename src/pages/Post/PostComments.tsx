@@ -79,16 +79,24 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
     }, [id, retry]);
 
     useEffect(() => {
-        if (!loading && !scrolled.current && window.location.hash === "#comments") {
-            sectionRef.current?.scrollIntoView({ block: "start" });
-            scrolled.current = true;
+        if (!loading && !scrolled.current && (window.location.hash === "#comments" || /^#comment-\d+$/.test(window.location.hash))) {
+            const target = window.location.hash === "#comments" ? sectionRef.current : document.getElementById(window.location.hash.slice(1));
+            target?.scrollIntoView({ block: "start" });
+            if (target) scrolled.current = true;
         }
     }, [loading]);
 
     const openCommentMenu = (comment: Comment, x: number, y: number) => {
         openMenu(x, y, "comment", {
             id: String(comment.id),
+            nick: comment.user?.nick,
+            name: comment.user?.username || comment.user?.nick,
             isMy: !!user.id && user.id === comment.user?.id,
+            onCopyLink: () => {
+                const url = new URL(`/post/${id}#comment-${comment.id}`, window.location.origin).href;
+                void navigator.clipboard.writeText(url);
+                closeMenu();
+            },
             onReply: user.id ? () => { setReplyTo(comment); closeMenu(); } : undefined,
             onCopy: comment.text ? () => { void navigator.clipboard.writeText(comment.text || ""); closeMenu(); } : undefined,
             onEdit: () => { setEditingId(comment.id); setEditText(comment.text || ""); closeMenu(); },
@@ -204,7 +212,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                     </p>}
                     <div className="comments">
                         {comments.map(comment => (
-                            <article className="comment" key={comment.id} data-context-menu="true" onContextMenu={event => { event.preventDefault(); event.stopPropagation(); openCommentMenu(comment, event.clientX, event.clientY); }} style={comment.parent_id ? { marginLeft: "3vw" } : undefined}>
+                            <article className="comment" id={`comment-${comment.id}`} key={comment.id} data-context-menu="true" onContextMenu={event => { event.preventDefault(); event.stopPropagation(); openCommentMenu(comment, event.clientX, event.clientY); }} style={comment.parent_id ? { marginLeft: "3vw" } : undefined}>
                                 {comment.parent_id && <div className="commentReplyParent">
                                     <ArrowBendUpLeftIcon /> {comments.find(item => item.id === comment.parent_id)?.user?.username || comments.find(item => item.id === comment.parent_id)?.user?.nick || t("post.commentReply")}
                                 </div>}
