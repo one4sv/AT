@@ -473,8 +473,10 @@
 .mobile-layout:has(.wallpaperStudio) {
     > .page-content {
         overflow: hidden;
+        z-index: 0;
     }
 
+    // Studio layers must remain below the floating SideMenu header.
     > .sideMenu {
         z-index: 60;
     }
