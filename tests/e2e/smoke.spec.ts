@@ -1,5 +1,11 @@
 import { test, expect } from "@playwright/test";
 
+// The test browser opts out of optional cookies before the application mounts.
+// This avoids the consent banner blocking unrelated controls in smoke tests.
+test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("at-cookie-consent-v1", "necessary"));
+});
+
 test("roadmap uses invariant English release names and its historical beginning date", async ({ page }) => {
     await page.goto("/info/roadmap");
     await expect(page.locator(".roadmapPage")).toBeVisible();
