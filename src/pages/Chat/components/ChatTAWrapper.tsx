@@ -12,6 +12,7 @@ import ChatPinned from "./ChatTa/ChatPinned";
 import PmsList from "./ChatTa/PmsList";
 import SearchList from "./ChatTa/SearchList";
 import ChatChoosingMess from "./ChatTa/ChatChoosingMess";
+import { ToggleBlocked } from "../../../components/ts/ContextMenu/buttons/ToggleBlocked";
 
 interface ChatTAProps {
     showGoDown:boolean, 
@@ -46,7 +47,8 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, set
                     return (
                         <div className="chatIsBlocked">
                             <Prohibit/>
-                            {chatWith.am_i_blocked ? <span>{t("chatUi.blockedBy")}</span> : <span>{t("chatUi.blockedYou")}</span>}
+                            <span>{t(chatWith.am_i_blocked ? "chatUi.blockedBy" : "chatUi.blockedYou")}</span>
+                            {chatWith.is_blocked && !chatWith.am_i_blocked && <ToggleBlocked id={chatWith.id} nick={chatWith.nick} bool={true} className="chatUnblockButt"/>}
                         </div>
                     )
                 } else return (
@@ -94,7 +96,7 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, set
         <div className="chatTAWrapper" ref={chatTARef}>
             {activeHeader === "search" ? <SearchList isOpen={isSearchOpen} searchDivRef={searchDivRef} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} searchedMessages={searchedMessages}/>: ""}
             {activeHeader === "pinned" ? <PmsList/> : ""}
-            {activeHeader === "text" ? <EmojiBar setText={setMess} setShowEmojiBar={setShowEmojiBar} taRef={textAreaRef} showEmojiBar={showEmojiBar} emojiRef={emojiButtRef}/> : ""}
+            {activeHeader === "text" && !chatWith?.is_blocked && !chatWith?.am_i_blocked ? <EmojiBar setText={setMess} setShowEmojiBar={setShowEmojiBar} taRef={textAreaRef} showEmojiBar={showEmojiBar} emojiRef={emojiButtRef}/> : ""}
             {showGoDown && (
                 <div className="goDown" onClick={handleGoDown}>
                     <CaretDoubleDown />
