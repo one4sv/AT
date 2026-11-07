@@ -249,7 +249,7 @@ export default function AccInfo({
                             >
                                 <ShareFatIcon weight="fill" /> {t("share")}
                             </div>
-                            {!isMyAcc && acc?.id && <ToggleBlocked id={acc.id} nick={acc.nick} name={acc.username || acc.nick} className="settingInnerButt blockUserAction"/>}
+                            {!isMyAcc && acc?.id && <ToggleBlocked id={acc.id} nick={acc.nick || undefined} name={acc.username || acc.nick || ""} className="settingInnerButt blockUserAction"/>}
                         </div>
                     </div>
                 </div>
