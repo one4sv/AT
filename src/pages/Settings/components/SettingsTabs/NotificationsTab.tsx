@@ -12,6 +12,7 @@ import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
 import { getPushState, enableWebPush, disableWebPush, isIOS, isStandalonePWA, type PushState } from "../../../../components/ts/utils/webPush";
+import { requestNotificationPermission } from "../../../../components/ts/utils/NoteRequest";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { api } from "../../../../components/ts/api";
 import "./notificationPermission.scss";
@@ -71,6 +72,12 @@ export default function NotificationsTab({ search }: { search: string }) {
         if (busy) return;
         setBusy(true);
         try {
+            if (!push.configured && permission === "default") {
+                const granted = await requestNotificationPermission();
+                if (!granted) throw new Error("Permission denied");
+                showNotification("success", t("notifications.browserGranted"));
+                return;
+            }
             await enableWebPush(push.publicKey);
             setPush(await getPushState());
             showNotification("success", t("notifications.pushSuccess"));
@@ -150,6 +157,10 @@ export default function NotificationsTab({ search }: { search: string }) {
                 {!push.configured && !pushError && <p>{t("notifications.pushUnavailable")}</p>}
                 {push.configured && permission === "granted" && push.supported &&
                     <p>{t(push.subscribed ? "notifications.pushActive" : "notifications.pushInactive")}</p>}
+                {permission === "default" && !iosNeedsInstall && !push.configured && "Notification" in window &&
+                    <button type="button" disabled={busy} onClick={() => void enableBrowserNotifications()}>
+                        {t("notifications.enableBrowser")}
+                    </button>}
                 {push.supported && push.configured && permission !== "denied" && (
                     push.subscribed ?
                         <button type="button" className="notificationPermissionSecondary" disabled={busy}
