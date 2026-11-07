@@ -25,6 +25,8 @@ jobs:
         run: npm run check:release
       - name: Build client
         run: npm run build
+      - name: Enforce entry JavaScript budget
+        run: npm run check:bundle
       - name: Install Playwright
         run: |
           npm install --prefix tests/e2e --no-audit --no-fund

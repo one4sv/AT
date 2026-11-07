@@ -8,6 +8,7 @@
     "build": "node scripts/build-desktop-wallpapers.mjs && tsc -b && vite build",
     "lint": "eslint .",
     "check:release": "node scripts/check-release.mjs",
+    "check:bundle": "node scripts/check-bundle.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
