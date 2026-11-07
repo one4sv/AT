@@ -43,6 +43,8 @@ type MenuState = {
     point: string,
     visible: boolean,
     originSide?: { left: number; right: number },
+    focusSource?: HTMLElement,
+    focusRect?: { width: number; height: number },
     habit?:Habit,
     options: MenuOptions,
     chatInfo?:chatInfoType,
@@ -73,9 +75,15 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
     const openMenu = (x:number, y:number, point:string, options:MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType, memberInfo?:MemberType ) => {
         const side = document.elementFromPoint(x, y)?.closest<HTMLElement>(".sideMenu");
         const bounds = side?.getBoundingClientRect();
+        const target = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-context-menu]");
+        const focusSource = window.matchMedia("(pointer: coarse)").matches && target &&
+            !target.closest(".headerDiv, [data-header-gesture]") ? target : undefined;
+        const focusBounds = focusSource?.getBoundingClientRect();
         setMenu({
             x, y, point, habit, options, chatInfo, visible: true, curChat, memberInfo,
-            originSide: bounds ? { left: bounds.left, right: bounds.right } : undefined
+            originSide: bounds ? { left: bounds.left, right: bounds.right } : undefined,
+            focusSource,
+            focusRect: focusBounds ? { width: focusBounds.width, height: focusBounds.height } : undefined
         })
     }
 
