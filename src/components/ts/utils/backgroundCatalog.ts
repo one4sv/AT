@@ -1,6 +1,6 @@
 export const MAX_CUSTOM_BACKGROUNDS = 5;
 
-export const backgroundGroups = [
+export const allBackgroundGroups = [
     { id: "essential", items: [
         { id: "landing", labelKey: "personalization.landingBackground" },
         { id: "default", labelKey: "personalization.contourShapes" },
@@ -93,3 +93,8 @@ export const backgroundGroups = [
         { id: "cosmicCloud", labelKey: "backgroundLibrary.cosmicCloud" }
     ] }
 ] as const;
+
+// Keep unfinished collections and their assets, but hide them from every wallpaper picker.
+const hiddenBackgroundGroupIds = new Set(["modern", "ocean", "gothic", "element", "neon", "cosmic"]);
+
+export const backgroundGroups = allBackgroundGroups.filter(group => !hiddenBackgroundGroupIds.has(group.id));
