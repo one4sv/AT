@@ -139,7 +139,18 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                     event.stopPropagation();
                     openPostMenu(event.clientX, event.clientY);
                 }}>
-                    <button type="button" className="postUser" onClick={() => navigate('/acc/' + post.user.nick)}>
+                    <button type="button" className="postUser" data-context-menu="true" data-context-menu-allow-button="true"
+                        onClick={() => navigate('/acc/' + post.user.nick)}
+                        onContextMenu={event => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            openMenu(event.clientX, event.clientY, "person", {
+                                id: post.user.id,
+                                nick: post.user.nick,
+                                name: post.user.username || post.user.nick,
+                                isMy: post.user.id === user.id
+                            });
+                        }}>
                         <div className="postAvatar">
                             {post.user.avatar_url ? <img src={post.user.avatar_url} alt="" /> : <UserCircle />}
                         </div>
