@@ -1,3 +1,10 @@
+.contextMenuPress,
+.contextMenuPress * {
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    -webkit-touch-callout: none !important;
+}
+
 @use "./mixins" as var;
 
 .ContextMenuWrapper {
