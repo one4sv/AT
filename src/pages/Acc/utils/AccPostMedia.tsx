@@ -41,10 +41,11 @@ export default function AccPostMedia({
                                             src={file.url}
                                             alt={file.name}
                                             className="postFilePreview"
+                                            loading="lazy" decoding="async"
                                             onClick={event => openImage(file, event)}
                                         />
                                     ) : isVideo ? (
-                                        <video src={file.url} className="postFilePreview" controls />
+                                        <video src={file.url} className="postFilePreview" preload="metadata" controls />
                                     ) : (
                                         <a href={file.url} download={file.name} className="postFileOther">
                                             {GetIconByType(file.name, file.type)}
@@ -75,10 +76,11 @@ export default function AccPostMedia({
                                             src={file.url}
                                             alt={file.name}
                                             className="postFilePreview"
+                                            loading="lazy" decoding="async"
                                             onClick={event => openImage(file, event)}
                                         />
                                     ) : isVideo ? (
-                                        <video src={file.url} className="postFilePreview" controls />
+                                        <video src={file.url} className="postFilePreview" preload="metadata" controls />
                                     ) : (
                                         <div className="postFileOther">
                                             {GetIconByType(file.name, file.type)}
@@ -104,7 +106,7 @@ export default function AccPostMedia({
                                     {isImage ? (
                                         <img src={previewUrl} alt={file.name} className="postFilePreview" />
                                     ) : isVideo ? (
-                                        <video src={previewUrl} className="postFilePreview" controls />
+                                        <video src={previewUrl} className="postFilePreview" preload="metadata" controls />
                                     ) : (
                                         <div className="postFileOther">
                                             {GetIconByType(file.name, file.type)}

@@ -66,7 +66,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                 return (
                     <div key={j} className="messageFile">
                         {isImage ? (
-                            <img src={file.url} alt={file.name} className="messageFilePreview" onClick={event => {
+                            <img src={file.url} alt={file.name} className="messageFilePreview" loading="lazy" decoding="async" onClick={event => {
                                 event.stopPropagation();
                                 openImage(file);
                             }}
@@ -84,7 +84,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                                 )
                             }}/>
                         ) : isVideo ? (
-                            <video src={file.url} className="messageFilePreview" controls />
+                            <video src={file.url} className="messageFilePreview" preload="metadata" controls />
                         ) : (
                             <a href={file.url} download={file.name} className="messageFileOther">
                                 {GetIconByType(file.name, file.type)}

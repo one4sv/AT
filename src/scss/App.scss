@@ -19,3 +19,12 @@
 @include vars.generate-accent-vars();
 @include vars.generate-grad-vars();
 @include vars.generate-decor-vars();
+
+// Shown only while a page is downloaded on demand.
+.appRoutePending {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 40dvh;
+}

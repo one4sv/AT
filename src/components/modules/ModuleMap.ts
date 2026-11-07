@@ -1,59 +1,34 @@
-import ConfirmAction from './ConfirmAction';
-import HabitParticipantPicker from './HabitParticipantPicker';
-import HabitCreateChat from './HabitCreateChat';
-import AddHabit from './AddHabit';
-import DeleteConfirm from './DeleteConfirm';
-import { PickHandler } from './PickHandler';
-import { BgHandler } from './BgHandler';
-import ImgPrev from './ImgPrev';
-import Redirecting from './Redirecting';
-import RedirectMesses from './RedirectMesses';
-import CreateChat from './CreateChat';
-import PermissionsSettings from './PermissionsSettings';
-import ShareAcc from './ShareAcc';
-import LinkConfirm from './LinkConfirm';
-import ChatWithInfo from './ChatWithInfo';
-import Table from './Table';
-import PostSettings from './PostSettings';
-import HabitCollaborationSettings from './HabitCollaborationSettings';
-import HabitDayActivityHistory from './HabitDayActivityHistory';
-import HabitTaskEditor from './HabitTaskEditor';
-import WelcomeMessageInfo from './WelcomeMessageInfo';
-import QuickActionPicker from './QuickActionPicker';
-import BackgroundLibrary from './BackgroundLibrary';
-import BackgroundFullscreen from './BackgroundFullscreen';
-import BackgroundHelp from './BackgroundHelp';
-import WallpaperSettings from './WallpaperSettings';
-import CustomThemeColor from './CustomThemeColor';
+import { lazy, type ComponentType } from "react";
 
-const ModuleMap: Record<string, React.FC> = {
-    ConfirmAction:ConfirmAction,
-    HabitParticipantPicker:HabitParticipantPicker,
-    HabitCreateChat:HabitCreateChat,
-    AddHabit: AddHabit,
-    Delete:DeleteConfirm,
-    PickHandler:PickHandler,
-    BgHandler:BgHandler,
-    ImgPrev:ImgPrev,
-    Redirecting:Redirecting,
-    RedirectMesses:RedirectMesses,
-    CreateChat:CreateChat,
-    PermissionsSettings:PermissionsSettings,
-    ShareAcc:ShareAcc,
-    LinkConfirm:LinkConfirm,
-    ChatWithInfo:ChatWithInfo,
-    PostSettings:PostSettings,
-    HabitCollaborationSettings:HabitCollaborationSettings,
-    HabitDayActivityHistory:HabitDayActivityHistory,
-    HabitTaskEditor:HabitTaskEditor,
-    WelcomeMessageInfo:WelcomeMessageInfo,
-    QuickActionPicker:QuickActionPicker,
-    BackgroundLibrary:BackgroundLibrary,
-    BackgroundFullscreen:BackgroundFullscreen,
-    BackgroundHelp:BackgroundHelp,
-    WallpaperSettings:WallpaperSettings,
-    CustomThemeColor:CustomThemeColor,
-    Table:Table
+// Load each dialog only when it is requested.
+const ModuleMap: Record<string, ComponentType> = {
+    ConfirmAction: lazy(() => import("./ConfirmAction")),
+    HabitParticipantPicker: lazy(() => import("./HabitParticipantPicker")),
+    HabitCreateChat: lazy(() => import("./HabitCreateChat")),
+    AddHabit: lazy(() => import("./AddHabit")),
+    Delete: lazy(() => import("./DeleteConfirm")),
+    PickHandler: lazy(() => import("./PickHandler").then(module => ({ default: module.PickHandler }))),
+    BgHandler: lazy(() => import("./BgHandler").then(module => ({ default: module.BgHandler }))),
+    ImgPrev: lazy(() => import("./ImgPrev")),
+    Redirecting: lazy(() => import("./Redirecting")),
+    RedirectMesses: lazy(() => import("./RedirectMesses")),
+    CreateChat: lazy(() => import("./CreateChat")),
+    PermissionsSettings: lazy(() => import("./PermissionsSettings")),
+    ShareAcc: lazy(() => import("./ShareAcc")),
+    LinkConfirm: lazy(() => import("./LinkConfirm")),
+    ChatWithInfo: lazy(() => import("./ChatWithInfo")),
+    PostSettings: lazy(() => import("./PostSettings")),
+    HabitCollaborationSettings: lazy(() => import("./HabitCollaborationSettings")),
+    HabitDayActivityHistory: lazy(() => import("./HabitDayActivityHistory")),
+    HabitTaskEditor: lazy(() => import("./HabitTaskEditor")),
+    WelcomeMessageInfo: lazy(() => import("./WelcomeMessageInfo")),
+    QuickActionPicker: lazy(() => import("./QuickActionPicker")),
+    BackgroundLibrary: lazy(() => import("./BackgroundLibrary")),
+    BackgroundFullscreen: lazy(() => import("./BackgroundFullscreen")),
+    BackgroundHelp: lazy(() => import("./BackgroundHelp")),
+    WallpaperSettings: lazy(() => import("./WallpaperSettings")),
+    CustomThemeColor: lazy(() => import("./CustomThemeColor")),
+    Table: lazy(() => import("./Table")),
 };
 
 export default ModuleMap;

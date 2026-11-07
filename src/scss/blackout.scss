@@ -366,3 +366,18 @@
         top: 2vh;
     }
 }
+
+.blackoutModulePending {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: min(25vw, 100%);
+    min-height: 20dvh;
+    margin: auto;
+    border-radius: 24px;
+    background: var(--mc);
+
+    @media (max-width: 800px) {
+        width: 100%;
+    }
+}

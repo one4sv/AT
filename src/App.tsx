@@ -1,33 +1,35 @@
-import PostEditor from "./pages/Post/PostEditor";
+import { lazy, Suspense } from "react";
 import './scss/App.scss';
-import PostPage from './pages/Post/PostPage';
 import ConnectionStatus from './components/ts/ConnectionStatus';
-import QrApprove from './pages/QrApprove';
 import TrustedDevice from './components/ts/TrustedDevice';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppProvider } from './components/ts/AppProvider';
-import Main from './pages/Main/Main';
-import Chat from './pages/Chat/Chat';
-import Acc from './pages/Acc/Acc';
-import Admin from './pages/Admin';
-import HabitPage from './pages/HabitPage/HabitPage';
-import Group from './pages/Group/Group';
-import Join from './pages/Join';
 import Notification from "./components/ts/Notification";
 import Blackout from './components/ts/Blackout';
 import ThemeHandler from './components/hooks/themeHook';
-import ResponsiveLayout from './components/layout/ResponsiveLayout';
 import ContextMenu from './components/ts/ContextMenu/ContextMenu';
-import Settings from './pages/Settings/Settings';
-import Landing from './pages/Landing/Landing';
-import Info from './pages/Info/Info';
-import Language from './pages/Settings/Language';
-import WallpaperStudio from "./pages/WallpaperStudio/WallpaperStudio";
-import MobileLayout from "./components/layout/MobileLayout";
-import PasswordAccess from './pages/Settings/PasswordAccess';
-import AuthorizedDevices from './pages/Settings/AuthorizedDevices';
 import CookieConsent from './components/ts/CookieConsent';
 import { useVisualViewport } from './components/hooks/utils/VisualViewportHook';
+const PostEditor = lazy(() => import("./pages/Post/PostEditor"));
+const PostPage = lazy(() => import("./pages/Post/PostPage"));
+const QrApprove = lazy(() => import("./pages/QrApprove"));
+const Main = lazy(() => import("./pages/Main/Main"));
+const Chat = lazy(() => import("./pages/Chat/Chat"));
+const Acc = lazy(() => import("./pages/Acc/Acc"));
+const Admin = lazy(() => import("./pages/Admin"));
+const HabitPage = lazy(() => import("./pages/HabitPage/HabitPage"));
+const Group = lazy(() => import("./pages/Group/Group"));
+const Join = lazy(() => import("./pages/Join"));
+const ResponsiveLayout = lazy(() => import("./components/layout/ResponsiveLayout"));
+const Settings = lazy(() => import("./pages/Settings/Settings"));
+const Landing = lazy(() => import("./pages/Landing/Landing"));
+const Info = lazy(() => import("./pages/Info/Info"));
+const Language = lazy(() => import("./pages/Settings/Language"));
+const WallpaperStudio = lazy(() => import("./pages/WallpaperStudio/WallpaperStudio"));
+const MobileLayout = lazy(() => import("./components/layout/MobileLayout"));
+const PasswordAccess = lazy(() => import("./pages/Settings/PasswordAccess"));
+const AuthorizedDevices = lazy(() => import("./pages/Settings/AuthorizedDevices"));
+
 function App() {
     useVisualViewport();
 
@@ -41,6 +43,7 @@ function App() {
                 <Notification />
                 <Blackout />
                 <ContextMenu />
+                <Suspense fallback={<div className="appRoutePending" role="status" aria-busy="true"><div className="loadingSpinner"/></div>}>
                 <Routes>
                     <Route path="/auth/qr" element={<QrApprove />} />
                     <Route path="/connection" element={<ConnectionStatus standalone />} />
@@ -68,6 +71,7 @@ function App() {
                         <Route path="info/:tab?" element={<Info />} />
                     </Route>
                 </Routes>
+                </Suspense>
             </AppProvider>
         </Router>
     );
