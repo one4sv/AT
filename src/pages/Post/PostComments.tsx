@@ -210,7 +210,18 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                                 </div>}
                                 <div className="commentInfo">
                                     {comment.user && (
-                                        <Link className="commentUser" to={`/acc/${comment.user.nick}`}>
+                                        <Link className="commentUser" to={`/acc/${comment.user.nick}`} data-context-menu="true"
+                                            onContextMenu={event => {
+                                                event.preventDefault();
+                                                event.stopPropagation();
+                                                if (!comment.user) return;
+                                                openMenu(event.clientX, event.clientY, "person", {
+                                                    id: comment.user.id,
+                                                    nick: comment.user.nick,
+                                                    name: comment.user.username || comment.user.nick,
+                                                    isMy: comment.user.id === user.id
+                                                });
+                                            }}>
                                             <div className="commentAvatar">
                                                 {comment.user.avatar_url ? <img src={comment.user.avatar_url} alt="" /> : <UserCircle />}
                                             </div>
