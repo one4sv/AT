@@ -36,6 +36,19 @@ test("language switch keeps roadmap translations and release names consistent", 
     await expect(page.locator(".roadmapBranchCurrent")).toContainText("0.6.2 The New Palette");
 });
 
+test("wallpaper studio places SideMenu header above the panel", async ({ page }) => {
+    await page.goto("/wallpapers");
+    await expect(page.locator(".wallpaperStudio")).toBeAttached();
+    await expect(page.locator(".sideMenu")).toBeAttached();
+    await expect(page.locator(".smHeader")).toBeAttached();
+
+    const layers = await page.evaluate(() => ({
+        side: Number(getComputedStyle(document.querySelector(".sideMenu")!).zIndex),
+        header: Number(getComputedStyle(document.querySelector(".smHeader")!).zIndex)
+    }));
+    expect(layers.header).toBeGreaterThan(layers.side);
+});
+
 test.describe("authenticated UI regression", () => {
     test.skip(!process.env.AT_E2E_STORAGE_STATE, "Requires isolated test account storage state");
 
