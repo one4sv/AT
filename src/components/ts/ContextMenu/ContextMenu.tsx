@@ -92,6 +92,16 @@ export default function ContextMenu() {
         },
         [menu, menuRef]
     );
+    useLayoutEffect(() => {
+        if (!menu.visible || !menuRef.current) return;
+        const actions = Array.from(menuRef.current.querySelectorAll<HTMLElement>(".ContextMenuButt"));
+        actions.forEach(item => {
+            item.setAttribute("role", "menuitem");
+            item.setAttribute("tabindex", "-1");
+        });
+        if (window.matchMedia("(pointer: fine)").matches) actions[0]?.focus({ preventScroll: true });
+    }, [menu.visible, menu.point, menuRef]);
+
     if (!menu.visible) return null;
     const currentPos = isAdjusted ? pos : {
         top: menu.y,
@@ -145,6 +155,26 @@ export default function ContextMenu() {
         </>}
         <div
             className="ContextMenuWrapper"
+            role="menu"
+            aria-label={menu.options.name || undefined}
+            tabIndex={-1}
+            onKeyDown={event => {
+                if (event.key === "Escape") {
+                    event.preventDefault();
+                    closeMenu();
+                    return;
+                }
+                const actions = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(".ContextMenuButt"));
+                const index = actions.indexOf(document.activeElement as HTMLElement);
+                if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                    event.preventDefault();
+                    const direction = event.key === "ArrowDown" ? 1 : -1;
+                    actions[(index + direction + actions.length) % actions.length]?.focus();
+                } else if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    if (index >= 0) actions[index].click();
+                }
+            }}
             ref={menuRef}
             style={{
                 top: currentPos.top,
