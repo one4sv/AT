@@ -247,50 +247,6 @@
         color: var(--accent_text)
     }
 }
-.addHabitGoal {
-    @include var.longButt(85%, 4vh, 0, 0, var(--tr), var(--borderHabit), var(--tr), var(--menuButtHover));
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    @media (hover: hover) {
-        &:hover {
-            color: var(--tc);
-        }
-    }
-    @media (hover: none) {
-        &:active {
-            color: var(--tc);
-        }
-    }
-    @media (max-width: 800px) {
-        width: 100%;
-    }
-}
-.addHabitSave {
-    @include var.longButt(85%, 4vh, 0, 0, none, var(--tc), var(--tr), none);
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    background: linear-gradient(135deg, var(--accent), var(--grad));
-    border: none;
-        @media (hover: hover) {
-        &:hover {
-            box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
-        }
-    }
-    @media (hover: none) {
-        &:active {
-            box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
-        }
-    }
-    @media (max-width: 800px) {
-        width: 100%;
-    }
-}
 .dayChanger {
     position: relative;
     width: 70%;

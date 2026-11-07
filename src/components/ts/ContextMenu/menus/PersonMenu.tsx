@@ -46,7 +46,7 @@ export default function PersonMenu() {
         <div className="ContextMenuButt" onClick={() => open(`/acc/${nick}`)}>
             <UserIcon/> {t("chatUi.openProfile")}
         </div>
-        {options.id !== user.id && <div className="ContextMenuButt" onClick={() => open(`/chat/${nick}`)}>
+        {user.id && options.id !== user.id && <div className="ContextMenuButt" onClick={() => open(`/chat/${nick}`)}>
             <ChatTeardropIcon/> {t("chatMenu.openChat")}
         </div>}
         <div className="ContextMenuButt" onClick={() => void copy()}>
@@ -55,6 +55,6 @@ export default function PersonMenu() {
         <div className="ContextMenuButt" onClick={() => void share()}>
             <ShareNetworkIcon/> {t("chatMenu.shareProfile")}
         </div>
-        {options.id !== user.id && <ToggleBlocked id={options.id} nick={nick} name={options.name}/>}
+        {user.id && options.id !== user.id && <ToggleBlocked id={options.id} nick={nick} name={options.name}/>}
     </>
 }

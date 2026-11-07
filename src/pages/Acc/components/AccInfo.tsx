@@ -6,6 +6,7 @@ import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import useCompactLayout from "../../../components/hooks/utils/useCompactLayout";
 import { useAcc } from "../../../components/hooks/AccHook";
+import { useUser } from "../../../components/hooks/UserHook";
 import { useSideMenu } from "../../../components/hooks/SideMenuHook";
 import type { User } from "../../../components/context/UserContext";
 import type { PrivateSettings } from "../../../components/context/SettingsContext";
@@ -43,6 +44,7 @@ export default function AccInfo({
     } = useUpUser();
     const { onlineMap } = useContacts();
     const { isMyAcc } = useAcc();
+    const { user } = useUser();
     const {
         red,
         setRed
@@ -213,7 +215,7 @@ export default function AccInfo({
                     </div>
                     <div className="accExtraInfoWrapper">
                         <div className="settingInnerList">
-                            <div
+                            {(isMyAcc || user.id) && <div
                                 className="settingInnerButt"
                                 onClick={() => {
                                     if (isMyAcc) {
@@ -232,7 +234,7 @@ export default function AccInfo({
                                 </> : <>
                                     <ChatTeardropTextIcon size={20} weight="fill" />{t("message")}
                                 </>}
-                            </div>
+                            </div>}
                             <div
                                 className="settingInnerButt"
                                 onClick={() => setBlackout(
@@ -249,7 +251,7 @@ export default function AccInfo({
                             >
                                 <ShareFatIcon weight="fill" /> {t("share")}
                             </div>
-                            {!isMyAcc && acc?.id && <ToggleBlocked id={acc.id} nick={acc.nick || undefined} name={acc.username || acc.nick || ""} className="settingInnerButt blockUserAction"/>}
+                            {user.id && !isMyAcc && acc?.id && <ToggleBlocked id={acc.id} nick={acc.nick || undefined} name={acc.username || acc.nick || ""} className="settingInnerButt blockUserAction"/>}
                         </div>
                     </div>
                 </div>

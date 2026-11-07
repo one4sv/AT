@@ -21,7 +21,7 @@ export const ToggleBlocked = ({ nick, id, bool, name, className = "ContextMenuBu
     const location = useLocation()
     const blocked = list.find(contact => !contact.is_group && contact.id === id)?.is_blocked ?? bool ?? false
 
-    if (!id || id === user.id) return null
+    if (!user.id || !id || id === user.id) return null
 
     const changeBlock = async () => {
         const response = await api.post("/toggleblocked", { id })

@@ -111,6 +111,62 @@ test("mobile page shell retains background and SideMenu on internal navigation",
     await expect(sideMenu).toHaveAttribute("data-menu-persistent", "true");
 });
 
+
+test("unauthenticated SideMenu has styled sign-in and theme buttons on direct navigation", async ({ page }) => {
+    await page.goto("/info/roadmap");
+    const signIn = page.locator(".sideMenuUnAthorised .greenButt");
+    await expect(signIn).toBeVisible();
+    await expect(signIn).toHaveAttribute("href", "/sign");
+    await expect(signIn).toHaveCSS("background-image", /linear-gradient/);
+    await expect(signIn).toHaveCSS("display", "flex");
+
+    const theme = page.locator(".sideMenu > .changeSignTheme");
+    await expect(theme).toHaveCSS("position", "absolute");
+    await expect(theme).toHaveCSS("border-radius", "50%");
+});
+
+test("guest profile hides account-only actions while shared action styles load directly", async ({ page }) => {
+    await page.route("**/api/user", route => route.fulfill({ status: 401, contentType: "application/json", body: "{}" }));
+    await page.route("**/api/acc/bob", route => route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({
+            success: true,
+            acc: { id: "public-profile", nick: "bob", username: "Бигбоб", bio: "Привет", avatar_url: null,
+                last_online: "2026-10-24T14:00:00Z", date_of_birth: null },
+            habits: [], media: [], privateRules: { number: "all", mail: "all", habits: "all", posts: "all" }
+        })
+    }));
+    await page.route("**/api/posts/bob", route => route.fulfill({
+        status: 200, contentType: "application/json", body: JSON.stringify({ success: true, posts: [] })
+    }));
+    await page.goto("/acc/bob");
+    const actions = page.locator(".accInfo .settingInnerList");
+    await expect(actions).toBeVisible();
+    await expect(actions).toHaveCSS("display", "flex");
+    await expect(actions.locator(".settingInnerButt")).toHaveCount(1);
+    await expect(actions.locator(".settingInnerButt")).toHaveCSS("display", "flex");
+    await expect(page.locator(".accInfo .blockUserAction")).toHaveCount(0);
+});
+
+test("styles shared by lazy modal buttons exist without visiting their original pages", async ({ page }) => {
+    await page.goto("/info/roadmap");
+    await page.evaluate(() => {
+        const root = document.createElement("div");
+        root.id = "lazy-control-style-regression";
+        root.innerHTML = `<div class="moduleName">Preview</div><div class="settingInnerList">
+            <div class="settingInnerButt">Share</div></div>
+            <button class="addHabitGoal">Cancel</button><button class="addHabitSave">Open</button>
+            <button class="wtbgButt">Refresh</button>`;
+        document.body.append(root);
+    });
+    const fixture = page.locator("#lazy-control-style-regression");
+    await expect(fixture.locator(".moduleName")).toHaveCSS("display", "flex");
+    await expect(fixture.locator(".settingInnerButt")).toHaveCSS("display", "flex");
+    await expect(fixture.locator(".addHabitGoal")).toHaveCSS("display", "flex");
+    await expect(fixture.locator(".addHabitSave")).toHaveCSS("background-image", /linear-gradient/);
+    await expect(fixture.locator(".wtbgButt")).toHaveCSS("display", "inline-flex");
+});
+
 test.describe("authenticated UI regression", () => {
     test.skip(!process.env.AT_E2E_STORAGE_STATE, "Requires isolated test account storage state");
 

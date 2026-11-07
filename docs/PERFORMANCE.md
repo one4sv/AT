@@ -42,3 +42,7 @@ Vercel: `/assets/*` — immutable, `/wallpapers/*` — ограниченный 
 `UserProvider` больше не вызывает `Notification.requestPermission` при входе; разрешение запрашивается только по прямому нажатию в настройках. Mobile Playwright smoke проверяет, что DOM-узлы `.background` и `.sideMenu` не размонтируются при переходе между вкладками Info. Это не заменяет визуальную проверку 1-кадрового мигания в Safari на iPhone.
 
 - Модальные `Suspense` теперь показывают трёхстрочный штатный `Skeleton` внутри `Blackout`, на мобильном — нижний лист без разрыва фоновой сцены. Если CacheStorage недоступен или закончилась квота, встроенная картинка загружается как обычно: ошибка записи в кэш никогда не заменяет успешный ответ сети.
+
+## Профилактика потери стилей при ленивой загрузке (08.11.2026)
+
+После перевода маршрутов и модалок на `React.lazy` общие селекторы `settingInnerDiv`, `settingSpan`, `settingInnerList`, `settingHint`, `settingSL`, `settingInnerButt`, `wtbgButt`, `moduleName`, `addHabitGoal` и `addHabitSave` не должны зависеть от открытия Settings, Landing, ShareAcc либо AddHabit. Их исходные правила вынесены в `src/scss/sharedControls.scss`, подключённый в `App.scss`; дубликаты удалены из CSS отдельных страниц. `SideMenu` содержит собственные гостевые стили входа и переключения темы, а действия блокировки и перехода в чат скрываются у неавторизованных пользователей. Подтверждение — прямые переходы на гостевой `/acc/bob`, `/info/roadmap` и проверки общих кнопок в `tests/e2e/smoke.spec.ts`.
