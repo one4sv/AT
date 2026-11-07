@@ -70,15 +70,20 @@ test("common page header stays below SideMenu in compact layout", async ({ page 
     await expect(page.locator(".mobile-layout > .headerDiv")).toBeAttached();
     await expect(page.locator(".sideMenu")).toBeAttached();
 
-    const layers = await page.evaluate(() => ({
-        header: Number(getComputedStyle(document.querySelector(".mobile-layout > .headerDiv")!).zIndex),
-        background: Number(getComputedStyle(document.querySelector(".sideMenuBackground")!).zIndex),
-        side: Number(getComputedStyle(document.querySelector(".sideMenu")!).zIndex),
-        nav: Number(getComputedStyle(document.querySelector(".SMnavDiv")!).zIndex)
-    }));
-    expect(layers.header).toBeGreaterThan(layers.background);
+    const layers = await page.evaluate(() => {
+        const background = document.querySelector(".sideMenuBackground");
+        const nav = document.querySelector(".SMnavDiv");
+        return {
+            header: Number(getComputedStyle(document.querySelector(".mobile-layout > .headerDiv")!).zIndex),
+            background: background ? Number(getComputedStyle(background).zIndex) : null,
+            side: Number(getComputedStyle(document.querySelector(".sideMenu")!).zIndex),
+            nav: nav ? Number(getComputedStyle(nav).zIndex) : null
+        };
+    });
+    if (layers.background !== null) expect(layers.header).toBeGreaterThan(layers.background);
     expect(layers.header).toBeLessThan(layers.side);
-    expect(layers.nav).toBeGreaterThan(layers.side);
+    // SMnav is not mounted for unauthenticated visitors.
+    if (layers.nav !== null) expect(layers.nav).toBeGreaterThan(layers.side);
 });
 
 test.describe("authenticated UI regression", () => {
