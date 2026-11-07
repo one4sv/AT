@@ -30,6 +30,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
 
         const cancel = (close = false) => {
             if (press?.timer) clearTimeout(press.timer);
+            document.documentElement.classList.remove("contextMenuPress");
             press = null;
             clearHover();
             if (close) latest.current.closeMenu();
@@ -42,6 +43,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
             if (!element || target?.closest("input, textarea, select, [contenteditable=true], [data-header-gesture]") ||
                 target?.closest("button") && !element.hasAttribute("data-context-menu-allow-button")) return;
             cancel();
+            document.documentElement.classList.add("contextMenuPress");
             press = {
                 id: event.pointerId, x: event.clientX, y: event.clientY,
                 startX: event.clientX, startY: event.clientY,
@@ -110,6 +112,11 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
             event.stopImmediatePropagation();
         };
 
+        const stopSelection = (event: Event) => {
+            if (press?.target.isConnected && event.cancelable) event.preventDefault();
+        };
+
+        document.addEventListener("selectstart", stopSelection, true);
         document.addEventListener("pointerdown", down, true);
         document.addEventListener("pointermove", move, true);
         document.addEventListener("pointerup", up, true);
@@ -119,6 +126,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
         document.addEventListener("contextmenu", suppress, true);
         return () => {
             cancel();
+            document.removeEventListener("selectstart", stopSelection, true);
             document.removeEventListener("pointerdown", down, true);
             document.removeEventListener("pointermove", move, true);
             document.removeEventListener("pointerup", up, true);
