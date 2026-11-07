@@ -14,6 +14,7 @@
     "language": "Interface language"
   },
   "sideMenu": {
+    "newPost": "New post",
     "closeSideMenu": "Close side menu",
     "searchPlaceholder": "Search...",
     "messages": "Messages",
