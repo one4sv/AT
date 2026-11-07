@@ -1,6 +1,6 @@
 # SideMenu и жесты навигации AT
 
-Сверено с `main`: . Основные файлы: `src/components/ts/SM/SideMenu.tsx`, `SMnav.tsx`, `SMheader.tsx`, `src/components/context/SideMenuContext.tsx`, `src/components/hooks/utils/useHeaderMenuGestures.ts`, `src/components/ts/ContextMenu/ContextMenu.tsx`.
+Источники в актуальной ветке `main`: `src/components/ts/SM/SideMenu.tsx`, `SMnav.tsx`, `SMheader.tsx`, `src/components/context/SideMenuContext.tsx`, `src/components/hooks/utils/useHeaderMenuGestures.ts`, `src/components/ts/ContextMenu/ContextMenu.tsx`.
 
 ## Состав
 

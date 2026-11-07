@@ -1,6 +1,6 @@
 # Авторизация, почта, пароли и устройства AT
 
-Состояние разработки: . Клиент — `one4sv/AT`, сервер — `one4sv/achievetogether-server`. Это отдельная функциональная область; не смешивать с Supabase Auth: AT использует собственные таблицы `users`, `pending_users`, cookie JWT и bcrypt.
+Актуальный код: клиент — `one4sv/AT`, сервер — `one4sv/achievetogether-server`. Это отдельная функциональная область; не смешивать с Supabase Auth: AT использует собственные таблицы `users`, `pending_users`, cookie JWT и bcrypt.
 
 ## Почта без недельного Google OAuth
 

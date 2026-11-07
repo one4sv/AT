@@ -1,6 +1,6 @@
 # Фоны и Wallpaper Studio
 
-Сверено по `main`: . Жесты и числовые ползунки по конкретным файлам — [SLIDERS.md](SLIDERS.md). Источник истины: src/pages/WallpaperStudio, src/components/modules/BgHandler.tsx, BackgroundLibrary.tsx, src/components/ts/utils/cropImage.ts.
+Актуальную реализацию сверять с `main`. Жесты и числовые ползунки по конкретным файлам — [SLIDERS.md](SLIDERS.md). Источник истины: src/pages/WallpaperStudio, src/components/modules/BgHandler.tsx, BackgroundLibrary.tsx, src/components/ts/utils/cropImage.ts.
 
 ## Архитектура и пользовательский путь
 
