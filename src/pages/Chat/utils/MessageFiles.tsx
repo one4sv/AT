@@ -5,9 +5,12 @@ import { useChat } from "../../../components/hooks/ChatHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useUser } from "../../../components/hooks/UserHook";
 import GetIconByType from "./getIconByType";
+import TrafficImage from "../../../components/ts/TrafficImage";
+import { useSettings } from "../../../components/hooks/SettingsHook";
 
 export default function MessageFiles({files, m} : {files:Media[], m:message}) {
     const { t } = useTranslation("common");
+    const { autoLoadImages, autoPlayGif } = useSettings();
     const { chatWith } = useChat()
     const { setBlackout } = useBlackout()
     const { user } = useUser()
@@ -66,11 +69,10 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                 return (
                     <div key={j} className="messageFile">
                         {isImage ? (
-                            <img src={file.url} alt={file.name} className="messageFilePreview" loading="lazy" decoding="async" onClick={event => {
+                            <TrafficImage src={file.url} alt={file.name} mimeType={file.type} className="messageFilePreview" contextMenu onClick={event => {
                                 event.stopPropagation();
                                 openImage(file);
                             }}
-                            data-context-menu="true"
                             onContextMenu={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()
@@ -84,7 +86,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                                 )
                             }}/>
                         ) : isVideo ? (
-                            <video src={file.url} className="messageFilePreview" preload="metadata" controls />
+                            <video src={file.url} className="messageFilePreview" preload={autoLoadImages && autoPlayGif ? "metadata" : "none"} controls />
                         ) : (
                             <a href={file.url} download={file.name} className="messageFileOther">
                                 {GetIconByType(file.name, file.type)}

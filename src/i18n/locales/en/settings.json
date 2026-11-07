@@ -56,8 +56,8 @@
     "english": "English",
     "traffic": "Data saving",
     "autoLoadImages": "Automatically load images",
-    "autoPlayGif": "Automatically play GIF/video",
-    "useImageCache": "Use image cache",
+    "autoPlayGif": "Preload GIFs and videos",
+    "useImageCache": "Local cache for built-in wallpapers",
     "on": "On",
     "off": "Off",
     "text": "Text",
@@ -85,7 +85,10 @@
     "quickActionsUp": "Move up",
     "quickActionsDown": "Move down",
     "quickActionsSaved": "Quick actions saved",
-    "quickActionsError": "Couldn't save quick actions"
+    "quickActionsError": "Couldn't save quick actions",
+    "trafficHint": "When auto-loading is off, attachments load on tap. The cache stores built-in wallpapers only, never chats or private photos.",
+    "tapToLoad": "Tap to load image",
+    "tapToLoadGif": "Tap to load GIF"
   },
   "habits": {
     "archive": "Archive",

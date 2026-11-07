@@ -1,4 +1,8 @@
 import { lazy, Suspense } from "react";
+import Skeleton from "./components/ts/Skeleton";
+import { Background } from "./components/ts/utils/background";
+import ResponsiveLayout from "./components/layout/ResponsiveLayout";
+import MobileLayout from "./components/layout/MobileLayout";
 import './scss/App.scss';
 import ConnectionStatus from './components/ts/ConnectionStatus';
 import TrustedDevice from './components/ts/TrustedDevice';
@@ -20,13 +24,11 @@ const Admin = lazy(() => import("./pages/Admin"));
 const HabitPage = lazy(() => import("./pages/HabitPage/HabitPage"));
 const Group = lazy(() => import("./pages/Group/Group"));
 const Join = lazy(() => import("./pages/Join"));
-const ResponsiveLayout = lazy(() => import("./components/layout/ResponsiveLayout"));
 const Settings = lazy(() => import("./pages/Settings/Settings"));
 const Landing = lazy(() => import("./pages/Landing/Landing"));
 const Info = lazy(() => import("./pages/Info/Info"));
 const Language = lazy(() => import("./pages/Settings/Language"));
 const WallpaperStudio = lazy(() => import("./pages/WallpaperStudio/WallpaperStudio"));
-const MobileLayout = lazy(() => import("./components/layout/MobileLayout"));
 const PasswordAccess = lazy(() => import("./pages/Settings/PasswordAccess"));
 const AuthorizedDevices = lazy(() => import("./pages/Settings/AuthorizedDevices"));
 
@@ -43,7 +45,7 @@ function App() {
                 <Notification />
                 <Blackout />
                 <ContextMenu />
-                <Suspense fallback={<div className="appRoutePending" role="status" aria-busy="true"><div className="loadingSpinner"/></div>}>
+                <Suspense fallback={<div className="appRoutePending" role="status" aria-busy="true"><Background/><Skeleton type="feed" count={3}/></div>}>
                 <Routes>
                     <Route path="/auth/qr" element={<QrApprove />} />
                     <Route path="/connection" element={<ConnectionStatus standalone />} />
@@ -53,7 +55,7 @@ function App() {
                     <Route path="/settings/password" element={<PasswordAccess />} />
                     <Route path="/settings/devices" element={<AuthorizedDevices />} />
                     {window.location.hostname === "localhost" && <Route path="/admin" element={<Admin />} />}
-                    <Route path="/wallpapers/:tab?" element={<MobileLayout><WallpaperStudio/></MobileLayout>}/>
+                    <Route path="/wallpapers/:tab?" element={<MobileLayout><Suspense fallback={<Skeleton type="feed" count={3}/>}><WallpaperStudio/></Suspense></MobileLayout>}/>
                     <Route path="/" element={<ResponsiveLayout />}>
                         <Route index element={<Main />} />
                         <Route path="post/new" element={<PostEditor />} />

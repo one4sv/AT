@@ -2,6 +2,8 @@ import { X } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import GetIconByType from "../../Chat/utils/getIconByType";
 import useImagePreview from "../../../components/hooks/utils/useImagePreview";
+import TrafficImage from "../../../components/ts/TrafficImage";
+import { useSettings } from "../../../components/hooks/SettingsHook";
 import type { Media } from "../../../components/context/ChatContext";
 
 const emptyNewFiles: File[] = [];
@@ -29,6 +31,7 @@ export default function AccPostMedia({
     inputFileRef
 }: AccPostMediaProps) {
     const openImage = useImagePreview(gallery || (red ? keptMedia : media) || []);
+    const { autoLoadImages, autoPlayGif } = useSettings();
     const [newFilePreviews, setNewFilePreviews] = useState<{ file: File; url: string }[]>([]);
     useEffect(() => {
         if (!red) return;
@@ -47,15 +50,15 @@ export default function AccPostMedia({
                             return (
                                 <div key={j} className="postFileGrid">
                                     {isImage ? (
-                                        <img
+                                        <TrafficImage
                                             src={file.url}
                                             alt={file.name}
+                                            mimeType={file.type}
                                             className="postFilePreview"
-                                            loading="lazy" decoding="async"
                                             onClick={event => openImage(file, event)}
                                         />
                                     ) : isVideo ? (
-                                        <video src={file.url} className="postFilePreview" preload="metadata" controls />
+                                        <video src={file.url} className="postFilePreview" preload={autoLoadImages && autoPlayGif ? "metadata" : "none"} controls />
                                     ) : (
                                         <a href={file.url} download={file.name} className="postFileOther">
                                             {GetIconByType(file.name, file.type)}

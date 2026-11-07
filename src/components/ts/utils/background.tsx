@@ -7,7 +7,7 @@ import "../../../scss/landingBackground.scss";
 import WallpaperMark from "./WallpaperMark";
 
 export function Background({ previewBg, previewUrl, previewEffects, previewContourPattern, previewContourSize, previewArtPattern, previewArtSize }: { previewBg?: string; previewUrl?: string; previewEffects?: BackgroundEffects; previewContourPattern?: ContourPattern; previewContourSize?: number; previewArtPattern?: ContourPattern; previewArtSize?: number } = {}) {
-  const { bg, bgUrl, bgEffects, bgEffectsReady, contourPattern, contourSize, artPattern, artSize, wallpaperStyle } = useSettings();
+  const { bg, bgUrl, bgEffects, contourPattern, contourSize, artPattern, artSize, wallpaperStyle } = useSettings();
   const effectsState = previewEffects ?? bgEffects;
   const selectedPattern = previewContourPattern ?? contourPattern;
   const selectedContourSize = previewContourSize ?? contourSize;
@@ -16,7 +16,6 @@ export function Background({ previewBg, previewUrl, previewEffects, previewConto
   const selectedBg = previewBg ?? bg;
   const selectedUrl = previewUrl ?? bgUrl;
 
-  if (!bgEffectsReady) return null;
 
   const speed = Math.min(3, Math.max(0, effectsState.speed ?? 1));
   const running = effectsState.movement && speed > 0;

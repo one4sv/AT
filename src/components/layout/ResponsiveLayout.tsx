@@ -1,4 +1,5 @@
 import { useOutlet, useLocation } from "react-router-dom";
+import { Suspense } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import "../../scss/routeTransition.scss";
 import useCompactLayout from "../hooks/utils/useCompactLayout";
@@ -24,7 +25,8 @@ export default function ResponsiveLayout() {
     const section = pathname.startsWith("/post/") ? pathname : pathname.startsWith("/info") ? "info" : pathname.startsWith("/settings") ? "settings" : "page";
     const type: SkeletonType = pathname.startsWith("/habit") ? "habit" : pathname.startsWith("/chat") ? "chat" : pathname === "/" ? "feed" : "profile";
     const isPostEditor = pathname === "/post/new" || /^\/post\/[^/]+\/edit\/?$/.test(pathname);
-    const content = initialLoading || !settingsLoaded ? (isPostEditor ? <PostEditorSkeleton /> : <Skeleton type={type} count={type === "chat" ? 5 : 3} overview={pathname === "/habit"} />) : <AnimatePresence mode="wait">
+    const loadingContent = isPostEditor ? <PostEditorSkeleton /> : <Skeleton type={type} count={type === "chat" ? 5 : 3} overview={pathname === "/habit"} />;
+    const content = initialLoading || !settingsLoaded ? loadingContent : <Suspense fallback={loadingContent}><AnimatePresence mode="wait">
         <motion.div
             key={`${user.id ?? "guest"}-${section}`}
             className="routeTransition"
@@ -47,7 +49,7 @@ export default function ResponsiveLayout() {
         >
             {outlet}
         </motion.div>
-    </AnimatePresence>;
+    </AnimatePresence></Suspense>;
     if (isMobile || layout === "hidden" || pathname.startsWith("/wallpapers")) {
         return (
             <MobileLayout>

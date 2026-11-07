@@ -10,11 +10,13 @@ import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
 import QuickActionsSettings from "./QuickActionsSettings";
+import { useSettings } from "../../../../components/hooks/SettingsHook";
 
 export default function GeneralTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { showDevNote } = useNote()
     const [ fontSize, setFontSize ] = useState<number>(16);
+    const { autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache } = useSettings();
 
     const timeChanger = [
         { label: t("general.twentyFour"), value: "twentyFour" },
@@ -33,19 +35,20 @@ export default function GeneralTab({ search }: { search: string }) {
                     {t("general.traffic")}
                 </div>
                 <div className="settingInnerList">
-                    <div className="settingTogglerDiv" data-setting-id="autoLoadImages" onClick={() => showDevNote()}>
+                    <div className="settingTogglerDiv" data-setting-id="autoLoadImages" onClick={() => setAutoLoadImages(!autoLoadImages)}>
                         <HighlightText text={t("general.autoLoadImages")} search={search} />
-                        <Toggler state={true} />
+                        <Toggler state={autoLoadImages} setState={setAutoLoadImages} stopPropagation={true} />
                     </div>
-                    <div className="settingTogglerDiv" data-setting-id="autoPlayGif" onClick={() => showDevNote()}>
+                    <div className="settingTogglerDiv" data-setting-id="autoPlayGif" onClick={() => setAutoPlayGif(!autoPlayGif)}>
                         <HighlightText text={t("general.autoPlayGif")} search={search} />
-                        <Toggler state={true} />
+                        <Toggler state={autoPlayGif} setState={setAutoPlayGif} stopPropagation={true} />
                     </div>
-                    <div className="settingTogglerDiv" data-setting-id="useImageCache" onClick={() => showDevNote()}>
+                    <div className="settingTogglerDiv" data-setting-id="useImageCache" onClick={() => setUseImageCache(!useImageCache)}>
                         <HighlightText text={t("general.useImageCache")} search={search} />
-                        <Toggler state={true} />
+                        <Toggler state={useImageCache} setState={setUseImageCache} stopPropagation={true} />
                     </div>
                 </div>
+                <div className="settingHint">{t("general.trafficHint")}</div>
                 </div>
             <div className="settingInnerDiv">
                 <div className="settingHeader">

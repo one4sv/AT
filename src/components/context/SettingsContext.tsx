@@ -65,6 +65,12 @@ export interface SettingsContextType {
     setMessdb: React.Dispatch<React.SetStateAction<string>>;
     twoAuth: boolean | null;
     setTwoAuth: React.Dispatch<React.SetStateAction<boolean | null>>;
+    autoLoadImages: boolean;
+    setAutoLoadImages: React.Dispatch<React.SetStateAction<boolean>>;
+    autoPlayGif: boolean;
+    setAutoPlayGif: React.Dispatch<React.SetStateAction<boolean>>;
+    useImageCache: boolean;
+    setUseImageCache: React.Dispatch<React.SetStateAction<boolean>>;
     note: boolean;
     setNote: React.Dispatch<React.SetStateAction<boolean>>;    
     habitsNote: boolean;
@@ -147,6 +153,9 @@ const LOCAL_KEYS = {
     decor: "settings_decor",
     emote:"settings_emote",
     messdb:"settings_messdb",
+    autoLoadImages: "settings_auto_load_images",
+    autoPlayGif: "settings_auto_play_gif",
+    useImageCache: "settings_use_image_cache",
     note:"settings_note",
     messnote:"settings_messnote",
     habitsnote:"settings_habitsnote",
@@ -204,6 +213,9 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ lang, setLang ] = useLocalStorage(LOCAL_KEYS.lang, "ru");
     const [ emote, setEmote ] = useLocalStorage(LOCAL_KEYS.emote, "Heart")
     const [ messdb, setMessdb ] = useLocalStorage(LOCAL_KEYS.messdb, "reaction")
+    const [ autoLoadImages, setAutoLoadImages ] = useLocalStorage(LOCAL_KEYS.autoLoadImages, true);
+    const [ autoPlayGif, setAutoPlayGif ] = useLocalStorage(LOCAL_KEYS.autoPlayGif, true);
+    const [ useImageCache, setUseImageCache ] = useLocalStorage(LOCAL_KEYS.useImageCache, true);
     const [ note, setNote ] = useLocalStorage(LOCAL_KEYS.note, true);
     const [ messNote, setMessNote ] = useLocalStorage(LOCAL_KEYS.messnote, true);
     const [ habitsNote, setHabitsNote ] = useLocalStorage(LOCAL_KEYS.habitsnote, true);
@@ -236,6 +248,13 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ loadedSettingsFor, setLoadedSettingsFor ] = useState<string | null>(null);
     const settingsLoaded = !initialLoading && (!user.nick || loadedSettingsFor === user.nick);
     const bgEffectsReady = hasLocalBgEffects || settingsLoaded;
+
+    useEffect(() => {
+        void import("../ts/utils/wallpaperCache").then(({ configureWallpaperCache }) => {
+            const selected = localStorage.getItem("settings_use_image_cache");
+            return configureWallpaperCache(selected === null || selected === "true");
+        });
+    }, [useImageCache]);
 
     useEffect(() => {
         i18n.changeLanguage(lang);
@@ -307,6 +326,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, wallpaperStyle, setWallpaperStyle, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang,
             privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
             twoAuth, setTwoAuth,
+            autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
             note, setNote,
             messNote, setMessNote,
             showArchived, setShowArchived,
