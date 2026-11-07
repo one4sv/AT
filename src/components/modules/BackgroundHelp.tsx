@@ -2,7 +2,6 @@ import { CircleHelp, Film, LayoutGrid, Palette, Sun, WandSparkles } from "lucide
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { WallpaperFillIcon } from "../ts/utils/WallpaperCapabilityIcons";
-import { useSettings } from "../hooks/SettingsHook";
 import ruSettings from "../../i18n/locales/ru/settings.json";
 import enSettings from "../../i18n/locales/en/settings.json";
 import "./BackgroundHelp.scss";
@@ -38,10 +37,9 @@ export default function BackgroundHelp() {
     const { t } = useTranslation("settings");
     const helpText = useBackgroundHelpText();
     const { setBlackout } = useBlackout();
-    const { wallpaperStyle } = useSettings();
 
     const items = [
-        { icon: <WallpaperFillIcon gradient={wallpaperStyle.fillMode === "gradient"}/>, title: t("backgroundLibrary.backgroundFill"), detail: helpText("helpFill") },
+        { icon: <WallpaperFillIcon/>, title: t("backgroundLibrary.backgroundFill"), detail: helpText("helpFill") },
         { icon: <LayoutGrid size={20}/>, title: t("backgroundLibrary.patternAvailable"), detail: helpText("helpPattern") },
         { icon: <Sun size={20}/>, title: t("backgroundLibrary.logoGlow"), detail: helpText("helpGlow") },
         { icon: <Film size={20}/>, title: t("backgroundLibrary.motionAvailable"), detail: helpText("helpMotion") },

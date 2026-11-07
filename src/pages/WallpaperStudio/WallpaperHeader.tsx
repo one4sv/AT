@@ -1,5 +1,4 @@
 import { Film, LayoutGrid, Palette, WandSparkles, Sun, Settings } from "lucide-react";
-import { useSettings } from "../../components/hooks/SettingsHook";
 import { WallpaperFillIcon } from "../../components/ts/utils/WallpaperCapabilityIcons";
 import { TextIndentIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
@@ -15,7 +14,6 @@ export default function WallpaperHeader({ id, name, onSettings }: {
     onSettings: () => void;
 }) {
     const { t } = useTranslation("settings");
-    const { wallpaperStyle } = useSettings();
     const { openSideMenu, closeMenu, showSideMenu } = useSideMenu();
     const { openMenu } = useContextMenu();
     const headerGestures = useHeaderMenuGestures();
@@ -41,9 +39,11 @@ export default function WallpaperHeader({ id, name, onSettings }: {
             onContextMenu={openQuickActions}>
             <span className="wallpaperHeaderName headerTitle" title={name}>{name}</span>
             <span className="wallpaperHeaderCapabilities">
-                {(id === "color" || id === "logo") && <span title={t("backgroundLibrary.backgroundFill")}><WallpaperFillIcon gradient={wallpaperStyle.fillMode === "gradient"}/></span>}
-                {(id === "color" || id === "logo") && (wallpaperStyle.logoEnabled || id === "logo") && <span title={t("backgroundLibrary.patternAvailable")}><LayoutGrid size={16}/></span>}
-                {(id === "color" || id === "logo") && (wallpaperStyle.logoEnabled || id === "logo") && wallpaperStyle.logoGlow > 0 && <span title={t("backgroundLibrary.logoGlow")}><Sun size={16}/></span>}
+                {(id === "color" || id === "logo") && <>
+                    <span title={t("backgroundLibrary.backgroundFill")}><WallpaperFillIcon/></span>
+                    <span title={t("backgroundLibrary.patternAvailable")}><LayoutGrid size={16}/></span>
+                    <span title={t("backgroundLibrary.logoGlow")}><Sun size={16}/></span>
+                </>}}
                 {supportsBackgroundMotion(id) && <span title={t("backgroundLibrary.motionAvailable")}><Film size={16}/></span>}
                 {themeAware && <span title={t("backgroundLibrary.themeAware")}><Palette size={16}/></span>}
                 {id === "art" && <span title={t("backgroundLibrary.appearanceAware")}><WandSparkles size={16}/></span>}

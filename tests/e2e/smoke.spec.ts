@@ -242,6 +242,36 @@ test("activity header styles and stacking are independent of Chat lazy loading",
     await expect(fixture.locator(".habitNameStatus")).toHaveCSS("font-size", "14px");
 });
 
+test("solid fill advertises the same capabilities before and after changing its settings", async ({ page }) => {
+    await page.goto("/wallpapers");
+    const basic = {
+        logoEnabled: false, fillMode: "solid", fillColor: "#151515", fillGrad: "#303030",
+        logoMode: "solid", logoColor: "#f5f2ff", logoGrad: "#916cf2", logoGlow: 0
+    };
+    await page.evaluate(style => {
+        localStorage.setItem("settings_bg", JSON.stringify("color"));
+        localStorage.setItem("settings_wallpaper_style", JSON.stringify(style));
+    }, basic);
+    await page.reload();
+
+    const icons = page.locator(".wallpaperHeaderCapabilities > span");
+    await expect(icons).toHaveCount(3);
+    const before = await icons.evaluateAll(elements =>
+        elements.map(item => ({ title: item.title, svg: item.querySelector("svg")?.outerHTML }))
+    );
+    expect(before.every(item => item.title && item.svg)).toBe(true);
+
+    await page.evaluate(style => {
+        localStorage.setItem("settings_wallpaper_style", JSON.stringify(style));
+    }, { ...basic, logoEnabled: true, fillMode: "gradient", logoGlow: 80 });
+    await page.reload();
+    await expect(icons).toHaveCount(3);
+    const after = await icons.evaluateAll(elements =>
+        elements.map(item => ({ title: item.title, svg: item.querySelector("svg")?.outerHTML }))
+    );
+    expect(after).toEqual(before);
+});
+
 test.describe("authenticated UI regression", () => {
     test.skip(!process.env.AT_E2E_STORAGE_STATE, "Requires isolated test account storage state");
 
