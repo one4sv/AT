@@ -26,6 +26,7 @@ const ModuleMap: Record<string, ComponentType> = {
     BackgroundLibrary: lazy(() => import("./BackgroundLibrary")),
     BackgroundFullscreen: lazy(() => import("./BackgroundFullscreen")),
     BackgroundHelp: lazy(() => import("./BackgroundHelp")),
+    PushInstallHelp: lazy(() => import("./PushInstallHelp")),
     WallpaperSettings: lazy(() => import("./WallpaperSettings")),
     CustomThemeColor: lazy(() => import("./CustomThemeColor")),
     Table: lazy(() => import("./Table")),

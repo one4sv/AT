@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "Achieve Together",
+  "short_name": "AT",
+  "description": "Activities and chat together",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#101014",
+  "theme_color": "#101014",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

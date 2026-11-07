@@ -414,3 +414,118 @@
     border: none;
     background: linear-gradient(135deg, var(--accent), var(--grad));
 }
+
+
+// Preview renders message examples outside the Chat page, so it needs its own
+// scoped message styling rather than depending on the Chat stylesheet loading.
+.previewAccent {
+    .previewMessages {
+        width: 100%;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: .5dvh;
+    }
+
+    .messageWrapper {
+        width: 100%;
+        display: flex;
+        padding: .5dvh .4vw;
+        box-sizing: border-box;
+    }
+
+    .message {
+        max-width: 75%;
+        width: fit-content;
+        padding: .6dvh .6vw;
+        border-radius: 12px;
+        color: var(--tc);
+        overflow-wrap: anywhere;
+
+        &.ur {
+            background-color: var(--mess);
+            border-radius: 12px 12px 12px 0;
+        }
+
+        &.my {
+            margin-left: auto;
+            display: flex;
+            flex-direction: column;
+            color: var(--inner_text);
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            border-radius: 12px 12px 0 12px;
+        }
+    }
+
+    .senderName {
+        color: var(--accent_text);
+        font-size: 14px;
+    }
+
+    .answerMess {
+        min-width: 0;
+        max-width: 100%;
+        padding: .25dvh .4vw;
+        margin: .2dvh 0 .4dvh;
+        background-color: var(--on_con_menu_mess);
+        border-left: 3px solid var(--tc);
+        border-radius: 0 4px 4px 0;
+        overflow: hidden;
+
+        > div {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .messageText {
+        max-width: 100%;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .messageStatusBarDiv {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: .5vw;
+        margin-top: .25dvh;
+        min-height: 2dvh;
+    }
+
+    .messageBar {
+        display: flex;
+        align-items: center;
+        gap: .5vw;
+    }
+
+    .messTime, .editedMess {
+        font-size: 12px;
+    }
+
+    .messageReadSign {
+        display: flex;
+        align-items: center;
+
+        > svg {
+            width: 15px;
+            height: 15px;
+        }
+    }
+
+    @media (max-width: 800px) {
+        .messageWrapper {
+            padding: .5dvh 1vw;
+        }
+
+        .message {
+            max-width: 86%;
+            padding: .75dvh 2vw;
+        }
+
+        .answerMess {
+            padding: .5dvh 2vw;
+        }
+    }
+}

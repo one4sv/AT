@@ -56,3 +56,8 @@
 ## Работа с функциональностью
 
 Любая правка данных совместной активности затрагивает как минимум: API сервера, соответствующий контекст/хук, отображение календаря, права доступа, статистику и UI. Перед коммитом проверить обе модели `personal/shared`, состояние владельца и приглашённого, mobile desktop, прошлое/сегодня/будущее, дату вступления, смену прав, обработку ошибок и realtime.
+
+
+## Web Push
+
+Клиент: `src/components/ts/utils/webPush.ts`, `NotificationsTab.tsx`, общий `public/at-wallpaper-cache-sw.js`, `manifest.webmanifest` и `PushInstallHelp`. Сервер: `routes/settings/push.js`, `services/push.js`, `utils/webPush.js`; состояние устройств — `public.at_push_subscriptions` с закрытым RLS. См. [WEB_PUSH.md](WEB_PUSH.md). Не регистрировать второй root-scope SW.
