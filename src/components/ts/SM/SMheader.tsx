@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useSideMenu } from "../../hooks/SideMenuHook"
 import { useUser } from "../../hooks/UserHook"
 import { useSettings } from "../../hooks/SettingsHook"
-import { QrCodeIcon, ShareFatIcon, SortAscendingIcon } from "@phosphor-icons/react"
+import { QrCodeIcon, ShareFatIcon, SortAscendingIcon, TextIndentIcon } from "@phosphor-icons/react"
 import { useEffect, useRef, useState } from "react"
 import { useBlackout } from "../../hooks/BlackoutHook"
 import { requestContentRefresh } from "../utils/contentRefresh";
@@ -18,6 +18,8 @@ export default function SMheader() {
         activeTab,
         setActiveTab,
         translateX,
+        showSideMenu,
+        closeMenu,
         chatsFilters,
         habitsFilters,
         messageSelectedValue,
@@ -232,6 +234,13 @@ export default function SMheader() {
                 transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none",
             }}
         >
+            {studio && showSideMenu && translateX > -1 &&
+                <button type="button" className="smHeaderCloseSideMenu"
+                    title={t("sideMenu.closeSideMenu")}
+                    aria-label={t("sideMenu.closeSideMenu")}
+                    onClick={closeMenu}>
+                    <TextIndentIcon/>
+                </button>}
             <div className="smHeaderSliderWrapper">
                 <div
                     className="smHeaderSlider"
