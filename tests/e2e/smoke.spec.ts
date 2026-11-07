@@ -53,16 +53,28 @@ test("wallpaper studio places SideMenu header above the panel", async ({ page })
         }
         const result = {
             side: Number(getComputedStyle(document.querySelector(".sideMenu")!).zIndex),
-            header: Number(getComputedStyle(header).zIndex)
+            header: Number(getComputedStyle(header).zIndex),
+            page: Number(getComputedStyle(document.querySelector(".mobile-layout .page-content")!).zIndex)
         };
         if (!active) header.remove();
         return result;
     });
     expect(layers.header).toBeGreaterThan(layers.side);
+    expect(layers.side).toBeGreaterThan(layers.page);
 });
 
 test.describe("authenticated UI regression", () => {
     test.skip(!process.env.AT_E2E_STORAGE_STATE, "Requires isolated test account storage state");
+
+    test("SideMenu navigation and header keep the menu open after clicking", async ({ page }) => {
+        await page.goto("/wallpapers");
+        await page.locator(".wallpaperHeaderMenu").click();
+        await expect(page.locator(".sideMenu")).toHaveClass(/open/);
+        await page.locator('.SMnavButt[data-tab="habits"]').click();
+        await expect(page.locator(".sideMenu")).toHaveClass(/open/);
+        await page.locator(".smHeaderTitle").first().click();
+        await expect(page.locator(".sideMenu")).toHaveClass(/open/);
+    });
 
     test("account content click must not collapse visible profile info", async ({ page }) => {
         test.skip(!process.env.AT_E2E_ACCOUNT_NICK, "Set AT_E2E_ACCOUNT_NICK to the fixture account");
