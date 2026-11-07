@@ -39,6 +39,9 @@
     "react-twemoji": "^0.7.2",
     "react-virtuoso": "^4.17.0"
   },
+  "overrides": {
+    "@tiptap/core": "$@tiptap/core"
+  },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
     "@types/react": "^19.1.8",

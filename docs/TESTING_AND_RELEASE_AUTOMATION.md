@@ -40,3 +40,7 @@ npm run test --prefix tests/e2e
 CI не получает пользовательские cookies или тестовую базу. Сценарии Acc, активности, статистики и календаря с авторизацией в `tests/e2e/smoke.spec.ts` остаются **пропущенными**, пока не настроен изолированный `AT_E2E_STORAGE_STATE` и `AT_E2E_HABIT_ID`. В том числе тест заголовков статистики на RU/EN требует fixture с данными. Пропуск не равен подтверждению успешного E2E.
 
 Для локального авторизованного прогона сначала запустить Vite, затем `AT_E2E_STORAGE_STATE=... AT_E2E_HABIT_ID=... npm run test --prefix tests/e2e -- --project=chromium-desktop smoke.spec.ts`. Дополнительно вручную проверить iPhone Safari: Chromium не заменяет WebKit и реальные жесты.
+
+## Воспроизводимая установка Tiptap (07.11.2026)
+
+Первый запуск CI обнаружил TS2769 в `src/pages/Post/PostEditor.tsx`: при установке без lockfile npm создавал вторую копию `@tiptap/core` внутри `@tiptap/starter-kit`, несовместимую с типами корневой копии. `package.json` теперь содержит npm `overrides["@tiptap/core"] = "$@tiptap/core"`, чтобы все расширения использовали ту же версию, что и редактор. Не скрывать проблему приведением типов к `any`. Проверить новый CI после установки.
