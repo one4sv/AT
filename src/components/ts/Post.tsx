@@ -145,9 +145,9 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                             event.preventDefault();
                             event.stopPropagation();
                             openMenu(event.clientX, event.clientY, "person", {
-                                id: post.user.id,
-                                nick: post.user.nick,
-                                name: post.user.username || post.user.nick,
+                                id: post.user.id || "",
+                                nick: post.user.nick || "",
+                                name: post.user.username || post.user.nick || "",
                                 isMy: post.user.id === user.id
                             });
                         }}>
