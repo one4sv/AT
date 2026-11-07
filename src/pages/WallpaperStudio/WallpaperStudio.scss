@@ -475,10 +475,12 @@
         overflow: hidden;
     }
 
-    > .sideMenu,
-    > .smHeader,
-    > .SMnavDiv {
-        z-index: 21;
+    > .sideMenu {
+        z-index: 60;
+    }
+
+    > .smHeader, > .SMnavDiv {
+        z-index: 61;
     }
 }
 
