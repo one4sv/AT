@@ -10,7 +10,7 @@ const roadmap = read("src/pages/Info/roadmapData.ts");
 const about = read("src/pages/Info/tabs/AboutTab.tsx");
 const roadmapTab = read("src/pages/Info/tabs/RoadmapTab.tsx");
 const localeNames = ["common", "sign", "info", "settings", "acc"];
-const docs = ["AGENTS.md", "docs/ROADMAP_PROPOSAL.md", "docs/V0_6_FEATURES_AND_QA.md", "docs/RELEASE_QA.md"];
+const docs = ["AGENTS.md", "docs/ROADMAP_PROPOSAL.md", "docs/RELEASE_QA.md"];
 
 const version = pkg.version.match(/^(\d+\.\d+\.\d+)(?:-dev(?:\.\d+)?)?$/)?.[1];
 if (!version) errors.push(`Invalid package version: ${pkg.version}`);
