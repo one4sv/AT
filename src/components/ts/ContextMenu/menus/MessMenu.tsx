@@ -107,25 +107,18 @@ export default function MessMenu() {
                 </div>
             )}
 
-            <div
+            {(chosenMess.some(message => !!message.text?.trim()) || !!curChat.text?.trim()) && <div
                 className="ContextMenuButt"
                 onClick={() => {
-                    if (chosenMess.length > 0) {
-                        const result = chosenMess
-                            .sort((a, b) => a.id - b.id)
-                            .map((m) => m.text)
-                            .join("\n");
-                        navigator.clipboard.writeText(result);
-                    } else {
-                        navigator.clipboard.writeText(curChat.text!);
-                    }
+                    const content = chosenMess.length > 0
+                        ? [...chosenMess].sort((a, b) => a.id - b.id).map(message => message.text || "").join("\n")
+                        : curChat.text || "";
+                    void navigator.clipboard.writeText(content);
                 }}
             >
                 <CopySimple />
-                {chosenMess.length > 0
-                    ? t("chatMenu.copySelected")
-                    : t("chatMenu.copy")}
-            </div>
+                {t(chosenMess.length > 0 ? "chatMenu.copySelected" : "chatMenu.copy")}
+            </div>}
 
             <div
                 className="ContextMenuButt"
