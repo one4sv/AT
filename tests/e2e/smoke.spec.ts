@@ -80,7 +80,11 @@ test("common page header stays below SideMenu in compact layout", async ({ page 
             nav: nav ? Number(getComputedStyle(nav).zIndex) : null
         };
     });
-    if (layers.background !== null) expect(layers.header).toBeGreaterThan(layers.background);
+    // Mobile SM's own background must hide the page header as well.
+    if (layers.background !== null) {
+        expect(layers.background).toBeGreaterThan(layers.header);
+        expect(layers.side).toBeGreaterThan(layers.background);
+    }
     expect(layers.header).toBeLessThan(layers.side);
     // SMnav is not mounted for unauthenticated visitors.
     if (layers.nav !== null) expect(layers.nav).toBeGreaterThan(layers.side);

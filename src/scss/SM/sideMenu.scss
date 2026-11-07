@@ -32,7 +32,9 @@
     left: 0;
     height: 100%;
     overflow: hidden;
-    z-index: 5;
+    // Must cover the direct MobileLayout page header (z-index: 6),
+    // while staying behind the SideMenu panel (z-index: 8).
+    z-index: 7;
     pointer-events: none;
     will-change: width;
     transition: none;
