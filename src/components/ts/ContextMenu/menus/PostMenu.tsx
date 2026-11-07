@@ -1,4 +1,4 @@
-import { PencilSimple, LinkSimple, ShareNetwork, ArrowBendUpRight } from "@phosphor-icons/react";
+import { PencilSimple, LinkSimple, ShareNetwork, ArrowBendUpRight, ArrowSquareOut } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import DeleteButton from "../buttons/DeleteButton";
@@ -10,6 +10,9 @@ export default function PostMenu() {
 
     return (
         <>
+            {options.onOpen && <div className="ContextMenuButt" onClick={options.onOpen}>
+                <ArrowSquareOut />{t("post.open")}
+            </div>}
             <div className="ContextMenuButt" onClick={options.onCopy}>
                 <LinkSimple />{t("post.copyLink")}
             </div>
