@@ -10,9 +10,10 @@ export async function configureWallpaperCache(enabled: boolean) {
             (registration.active ?? registration.waiting ?? registration.installing)?.postMessage({ type: "AT_WALLPAPER_CACHE", enabled: true });
         } else {
             const registration = await navigator.serviceWorker.getRegistration("/");
-            if (registration?.active?.scriptURL.endsWith(script)) {
-                registration.active.postMessage({ type: "AT_WALLPAPER_CACHE", enabled: false });
-                await registration.unregister();
+            const worker = registration?.active ?? registration?.waiting ?? registration?.installing;
+            if (worker?.scriptURL.endsWith(script)) {
+                worker.postMessage({ type: "AT_WALLPAPER_CACHE", enabled: false });
+                await registration?.unregister();
             }
             await caches.delete(cacheName);
         }

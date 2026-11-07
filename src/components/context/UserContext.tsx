@@ -2,7 +2,6 @@ import { createContext, useState, useEffect, useCallback } from "react";
 import { type ReactNode } from "react";
 import axios, { isAxiosError } from "axios";
 import { useNote } from "../hooks/NoteHook";
-import { requestNotificationPermission } from "../ts/utils/NoteRequest";
 import { api } from "../ts/api";
 import { useTranslation } from "react-i18next";
 export interface User {
@@ -139,13 +138,6 @@ export const UserProvider = ({
         [initialLoading, refetchUser, user.nick]
     );
 
-    useEffect(
-        () => {
-            if (user.id === null) return;
-            requestNotificationPermission();
-        },
-        [user.id]
-    );
     const logOut = async () => {
         try {
             const res = await api.get(`logout`);

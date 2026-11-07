@@ -50,3 +50,14 @@
   border-radius: 16px;
   cursor: pointer;
 }
+
+.postFileGrid > .trafficMediaPlaceholder {
+  height: 14dvh;
+}
+.messageFile > .trafficMediaPlaceholder {
+  min-height: 0;
+  height: 100%;
+  padding: 1dvh 1vw;
+  box-sizing: border-box;
+  > span { text-align: center; }
+}
