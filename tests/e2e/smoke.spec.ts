@@ -94,8 +94,8 @@ test("mobile page shell retains background and SideMenu on internal navigation",
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/info/roadmap");
     const shell = page.locator(".mobile-layout");
-    const background = shell.locator("> .background");
-    const sideMenu = shell.locator("> .sideMenu");
+    const background = shell.locator(":scope > .background");
+    const sideMenu = shell.locator(":scope > .sideMenu");
     await expect(background).toBeAttached();
     await expect(sideMenu).toBeAttached();
     await background.evaluate(node => node.setAttribute("data-shell-persistent", "true"));
@@ -105,7 +105,8 @@ test("mobile page shell retains background and SideMenu on internal navigation",
         history.pushState({}, "", "/info/faq");
         window.dispatchEvent(new PopStateEvent("popstate"));
     });
-    await expect(page.locator(".infoPage")).toBeAttached();
+    await expect(page).toHaveURL(/\/info\/faq$/);
+    await expect(page.locator(".settingsDiv")).toBeAttached();
     await expect(background).toHaveAttribute("data-shell-persistent", "true");
     await expect(sideMenu).toHaveAttribute("data-menu-persistent", "true");
 });
