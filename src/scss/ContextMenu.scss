@@ -1,3 +1,5 @@
+@use "./mixins" as var;
+
 .contextMenuPress,
 .contextMenuPress * {
     -webkit-user-select: none !important;
@@ -5,7 +7,6 @@
     -webkit-touch-callout: none !important;
 }
 
-@use "./mixins" as var;
 
 .ContextMenuWrapper {
     position: fixed;
