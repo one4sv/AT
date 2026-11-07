@@ -4,12 +4,16 @@ import { Link } from "react-router-dom";
 import { useUser } from "../../../../components/hooks/UserHook";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { api } from "../../../../components/ts/api";
+import { useContextMenu } from "../../../../components/hooks/ContextMenuHook";
+import { useContacts } from "../../../../components/hooks/ContactsHook";
 import type { HabitMembersData, HabitUser } from "./useHabitMembers";
 
 export default function HabitMembers({ habitId, data, loading, error }: { habitId: number; data: HabitMembersData | null; loading: boolean; error: string }) {
     const { t } = useTranslation("common");
     const { user } = useUser();
     const { setBlackout } = useBlackout();
+    const { openMenu } = useContextMenu();
+    const { list } = useContacts();
     const remove = (id: string, name: string, pending: boolean) => setBlackout({
         seted: true,
         module: "ConfirmAction",
@@ -23,11 +27,21 @@ export default function HabitMembers({ habitId, data, loading, error }: { habitI
             }
         }
     });
-    const row = (person: HabitUser | null, id: string, status: string, removable = false, pending = false) => <div className={`contactsUser habitMember ${user.id === id ? "active" : ""}`} key={id}>
+    const row = (person: HabitUser | null, id: string, status: string, removable = false, pending = false) => <div className={`contactsUser habitMember ${user.id === id ? "active" : ""}`} key={id}
+        data-context-menu="true"
+        onContextMenu={event => {
+            if (!person?.nick) return;
+            event.preventDefault();
+            event.stopPropagation();
+            openMenu(event.clientX, event.clientY, "person", {
+                id, nick: person.nick, name: person.username || person.nick,
+                isMy: user.id === id
+            });
+        }}>
         <div className="contactsUserPic">{person?.avatar_url ? <img className="contactsUserAvatar" src={person.avatar_url} alt="" /> : <UserCircleIcon />}</div>
         <div className="contactsUserInfo">
             <div className="contactsUserStr"><Link className="nameSpan" to={`/acc/${person?.nick || id}`}>{person?.username || person?.nick || t("habitExtra.user")}</Link></div>
-            <span className="habitMemberStatus">{status}</span>
+            <span className="habitMemberStatus">{status}{list.some(contact => !contact.is_group && contact.id === id && contact.is_blocked) && ` · ${t("chatMenu.blockedStatus")}`}</span>
         </div>
         {removable && <button type="button" className="habitMemberRemove" aria-label={t(pending ? "habitExtra.cancelInvite" : "habitExtra.removeMember")} onClick={() => remove(id, person?.username || person?.nick || t("habitExtra.member"), pending)}><XIcon /></button>}
     </div>;
