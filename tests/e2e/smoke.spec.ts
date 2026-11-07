@@ -122,9 +122,16 @@ test("unauthenticated SideMenu has styled sign-in and theme buttons on direct na
 
     const theme = page.locator(".sideMenu > .changeSignTheme");
     await expect(theme).toHaveCSS("position", "absolute");
-    await expect(theme).toHaveCSS("top", "auto");
-    await expect(theme).toHaveCSS("right", "auto");
     await expect(theme).toHaveCSS("border-radius", "50%");
+    const placement = await theme.evaluate(element => {
+        const menu = element.closest(".sideMenu")!.getBoundingClientRect();
+        const button = element.getBoundingClientRect();
+        return { bottomGap: menu.bottom - button.bottom, leftGap: button.left - menu.left };
+    });
+    expect(placement.bottomGap).toBeGreaterThanOrEqual(0);
+    expect(placement.bottomGap).toBeLessThan(100);
+    expect(placement.leftGap).toBeGreaterThanOrEqual(0);
+    expect(placement.leftGap).toBeLessThan(100);
 });
 
 test("guest profile hides account-only actions while shared action styles load directly", async ({ page }) => {
