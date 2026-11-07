@@ -16,7 +16,7 @@ export default function WallpaperHeader({ id, name, onSettings }: {
 }) {
     const { t } = useTranslation("settings");
     const { wallpaperStyle } = useSettings();
-    const { openSideMenu } = useSideMenu();
+    const { openSideMenu, closeMenu, showSideMenu } = useSideMenu();
     const { openMenu } = useContextMenu();
     const headerGestures = useHeaderMenuGestures();
     const themeAware = !isPhotographicScene(id) && id !== "custom" && id !== "color" && id !== "logo";
@@ -34,7 +34,7 @@ export default function WallpaperHeader({ id, name, onSettings }: {
             aria-label={t("backgroundLibrary.openSideMenu")}
             onMouseDown={event => event.stopPropagation()}
             onContextMenu={openQuickActions}
-            onClick={() => openSideMenu()}>
+            onClick={() => showSideMenu ? closeMenu() : openSideMenu()}>
             <TextIndentIcon/>
         </button>
         <div className="header wallpaperHeaderInfo" data-header-gesture="quick"
