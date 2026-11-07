@@ -21,9 +21,13 @@ self.addEventListener("fetch", event => {
         try {
             const response = await fetch(event.request);
             if (response.ok && response.type === "basic" && response.headers.get("content-type")?.startsWith("image/")) {
-                await cache.put(event.request, response.clone());
-                const keys = await cache.keys();
-                if (keys.length > LIMIT) await cache.delete(keys[0]);
+                try {
+                    await cache.put(event.request, response.clone());
+                    const keys = await cache.keys();
+                    if (keys.length > LIMIT) await cache.delete(keys[0]);
+                } catch {
+                    // A full or unavailable CacheStorage must never break online images.
+                }
             }
             return response;
         } catch {

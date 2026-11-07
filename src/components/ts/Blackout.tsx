@@ -1,4 +1,5 @@
 import { Suspense, useEffect, useRef, useState } from "react";
+import Skeleton from "./Skeleton";
 import { useBlackout } from "../hooks/BlackoutHook";
 import ModuleMap from "../modules/ModuleMap";
 import { useMessages } from "../hooks/MessagesHook";
@@ -413,7 +414,7 @@ export default function Blackout() {
                         }}
                     >
                         {isTop && isMobile && !item.img && item.module !== "BackgroundFullscreen" && <div className="mobileBar" />}
-                        {Component ? <Suspense fallback={<div className="blackoutModulePending" role="status" aria-busy="true"><div className="loadingSpinner"/></div>}><Component /></Suspense> : null}
+                        {Component ? <Suspense fallback={<div className="blackoutModulePending" role="status" aria-busy="true"><Skeleton type="list" count={3}/></div>}><Component /></Suspense> : null}
                     </div>
                 );
             })}
