@@ -122,6 +122,8 @@ test("unauthenticated SideMenu has styled sign-in and theme buttons on direct na
 
     const theme = page.locator(".sideMenu > .changeSignTheme");
     await expect(theme).toHaveCSS("position", "absolute");
+    await expect(theme).toHaveCSS("top", "auto");
+    await expect(theme).toHaveCSS("right", "auto");
     await expect(theme).toHaveCSS("border-radius", "50%");
 });
 

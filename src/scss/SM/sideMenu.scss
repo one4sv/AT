@@ -96,6 +96,8 @@
 
 .sideMenu > .changeSignTheme {
     position: absolute;
+    top: auto;
+    right: auto;
     bottom: max(1.5dvh, env(safe-area-inset-bottom));
     left: 1vw;
     display: flex;
