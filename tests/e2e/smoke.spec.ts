@@ -183,7 +183,7 @@ test("habit editor form and tag styles load on direct navigation without opening
     await page.evaluate(() => {
         const fixture = document.createElement("div");
         fixture.id = "habit-editor-style-probe";
-        fixture.innerHTML = \`<div class="redHabit">
+        fixture.innerHTML = `<div class="redHabit">
             <div class="addHabitWrapper">
                 <label for="habit-form-probe-name">Название</label>
                 <input class="addHabitInput" id="habit-form-probe-name" value="Тест" />
@@ -197,7 +197,7 @@ test("habit editor form and tag styles load on direct navigation without opening
                 <div class="tagList">Список тегов</div>
             </div>
             <div class="dayChanger"><button>пн</button></div>
-        </div>\`;
+        </div>`;
         document.body.append(fixture);
     });
 
