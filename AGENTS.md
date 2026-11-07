@@ -20,7 +20,7 @@
 - **Авторизация, почта и устройства:** [AUTH_AND_SESSIONS.md](docs/AUTH_AND_SESSIONS.md). Проверка сессий и отзыв доступа обязательны на сервере; не оставлять старые JWT без контроля версий.
 - **Архитектура и контексты:** [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - **Совместные активности, роли, дата вступления:** [COLLABORATION_AND_PERMISSIONS.md](docs/COLLABORATION_AND_PERMISSIONS.md), [habit-invitations.md](docs/habit-invitations.md).
-- **Текущая версия:** [V0_6_FEATURES_AND_QA.md](docs/V0_6_FEATURES_AND_QA.md). В «О проекте» — **dev 0.6.2**; локальная версия package.json может отличаться.
+- **Текущая версия:** [ROADMAP_PROPOSAL.md](docs/ROADMAP_PROPOSAL.md) и [RELEASE_QA.md](docs/RELEASE_QA.md). История изменений и даты — только в [CHANGELOG.md](docs/CHANGELOG.md).
 - **Roadmap:** [ROADMAP_PROPOSAL.md](docs/ROADMAP_PROPOSAL.md). Страница уже есть в `/info/roadmap`; живая синхронизация с Linear — отдельная работа.
 - **Проверки и публикация:** [RELEASE_QA.md](docs/RELEASE_QA.md), [DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
