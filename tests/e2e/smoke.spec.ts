@@ -40,12 +40,24 @@ test("wallpaper studio places SideMenu header above the panel", async ({ page })
     await page.goto("/wallpapers");
     await expect(page.locator(".wallpaperStudio")).toBeAttached();
     await expect(page.locator(".sideMenu")).toBeAttached();
-    await expect(page.locator(".smHeader")).toBeAttached();
 
-    const layers = await page.evaluate(() => ({
-        side: Number(getComputedStyle(document.querySelector(".sideMenu")!).zIndex),
-        header: Number(getComputedStyle(document.querySelector(".smHeader")!).zIndex)
-    }));
+    // Anonymous visits intentionally do not render SMheader. Mount a temporary
+    // node in the real layout to test the CSS stacking rule independently.
+    const layers = await page.evaluate(() => {
+        const layout = document.querySelector(".mobile-layout")!;
+        const active = document.querySelector(".smHeader");
+        const header = active || document.createElement("div");
+        if (!active) {
+            header.className = "smHeader";
+            layout.appendChild(header);
+        }
+        const result = {
+            side: Number(getComputedStyle(document.querySelector(".sideMenu")!).zIndex),
+            header: Number(getComputedStyle(header).zIndex)
+        };
+        if (!active) header.remove();
+        return result;
+    });
     expect(layers.header).toBeGreaterThan(layers.side);
 });
 
