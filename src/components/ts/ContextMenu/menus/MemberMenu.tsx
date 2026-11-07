@@ -5,6 +5,7 @@ import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import { useBlackout } from "../../../hooks/BlackoutHook";
 import { useDelete } from "../../../hooks/DeleteHook";
 import LinkButton from "../buttons/LinkButton";
+import { ToggleBlocked } from "../buttons/ToggleBlocked";
 
 export default function MemberMenu() {
     const { t } = useTranslation("common");
@@ -36,6 +37,7 @@ export default function MemberMenu() {
             </div>
 
             <LinkButton />
+            {!memberInfo.isMe && options.nick && <ToggleBlocked id={options.id} nick={options.nick} name={options.name}/>}
 
             {!memberInfo.isMe && memberInfo.myPerms?.kick_users === true && (
                 <div
@@ -67,7 +69,7 @@ export default function MemberMenu() {
                     }}
                 >
                     <Prohibit />
-                    {t("chatMenu.block")}
+                    {t("chatMenu.banFromGroup")}
                 </div>
             )}
         </>
