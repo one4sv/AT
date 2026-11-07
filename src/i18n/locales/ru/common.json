@@ -14,6 +14,7 @@
     "language": "Язык интерфейса"
   },
   "sideMenu": {
+    "closeSideMenu": "Закрыть боковое меню",
     "searchPlaceholder": "Поиск...",
     "messages": "Сообщения",
     "new": "Новые",
