@@ -1,6 +1,6 @@
 # Авторизация, почта, пароли и устройства AT
 
-Состояние разработки: 2 ноября 2026. Клиент — `one4sv/AT`, сервер — `one4sv/achievetogether-server`. Это отдельная функциональная область; не смешивать с Supabase Auth: AT использует собственные таблицы `users`, `pending_users`, cookie JWT и bcrypt.
+Состояние разработки: . Клиент — `one4sv/AT`, сервер — `one4sv/achievetogether-server`. Это отдельная функциональная область; не смешивать с Supabase Auth: AT использует собственные таблицы `users`, `pending_users`, cookie JWT и bcrypt.
 
 ## Почта без недельного Google OAuth
 
@@ -70,3 +70,8 @@
 6. RU/EN, iPhone Safari, мобильная клавиатура, ошибки сети и отсутствие секретов в логах.
 
 Задачи Linear: [ONE4SV-52](https://linear.app/atone4sv/issue/ONE4SV-52), [ONE4SV-53](https://linear.app/atone4sv/issue/ONE4SV-53), [ONE4SV-54](https://linear.app/atone4sv/issue/ONE4SV-54), [ONE4SV-55](https://linear.app/atone4sv/issue/ONE4SV-55).
+
+## Границы функций авторизации
+
+- Отображаемая в Info метка версии и `package.json.version` независимы; не изменять версию пакета без решения о релизе.
+- Восстановление/смена пароля, авторизованные устройства, работа cookies и WebSocket требуют проверки серверной сессии, а не только видимого экрана. Сценарии клиентского QA указаны в [RELEASE_QA.md](RELEASE_QA.md).

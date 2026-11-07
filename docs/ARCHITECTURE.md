@@ -61,3 +61,8 @@
 ## Web Push
 
 Клиент: `src/components/ts/utils/webPush.ts`, `NotificationsTab.tsx`, общий `public/at-wallpaper-cache-sw.js`, `manifest.webmanifest` и `PushInstallHelp`. Сервер: `routes/settings/push.js`, `services/push.js`, `utils/webPush.js`; состояние устройств — `public.at_push_subscriptions` с закрытым RLS. См. [WEB_PUSH.md](WEB_PUSH.md). Не регистрировать второй root-scope SW.
+
+## Версии, редактор и ответственность модулей
+
+- Редактор публикаций `PostEditor`, `PostToolbar`, `PostMediaNode` использует существующие Tiptap-компоненты, редактор текста — общие `TA`/`AutoDesc` без ручного `resize`. Не создавать второй `Composer` или `Blackout` для решения локальной задачи.
+- Для проверки заявленных функций опираться на соответствующий модуль и его профильный MD; [CHANGELOG.md](CHANGELOG.md) — только краткая история, без технических предписаний.
