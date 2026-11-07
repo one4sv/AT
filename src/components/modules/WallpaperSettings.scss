@@ -1,4 +1,6 @@
 @use "../../scss/mixins.scss" as var;
+@use "../../pages/Settings/scss/pers.scss";
+@use "../../pages/Settings/scss/seekbar.scss";
 
 .wallpaperSettingsModal {
     @include var.centerModal;
@@ -50,6 +52,55 @@
 
     > .backgroundFullscreenControl {
         padding: .5dvh 0;
+    }
+}
+
+.wallpaperSettingsModal {
+    .backgroundFullscreenControl {
+        display: flex;
+        flex-direction: column;
+        gap: .7dvh;
+
+        > .disabled {
+            color: var(--borderWh);
+        }
+    }
+
+    .backgroundFullscreenMovement {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1vw;
+        width: 100%;
+        padding: .5dvh 0;
+        border: none;
+        background: transparent;
+        color: var(--tc);
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+
+        &.disabled {
+            color: var(--borderHabit);
+            cursor: default;
+        }
+    }
+
+    .contourPatternPicker > .settingSpan {
+        font-size: 16px;
+        margin-bottom: 1vh;
+        padding-inline-start: .5vw;
+        color: var(--tc);
+    }
+
+    @media (max-width: 800px) {
+        .backgroundFullscreenMovement {
+            gap: 2vw;
+        }
+
+        .contourPatternPicker > .settingSpan {
+            padding-inline-start: 1vw;
+        }
     }
 }
 

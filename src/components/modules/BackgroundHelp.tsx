@@ -1,12 +1,13 @@
 import { CircleHelp, Film, LayoutGrid, Palette, WandSparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
+import { WallpaperLogoIcon } from "../ts/utils/WallpaperCapabilityIcons";
 import ruSettings from "../../i18n/locales/ru/settings.json";
 import enSettings from "../../i18n/locales/en/settings.json";
 import "./BackgroundHelp.scss";
 
 type HelpKey = "help" | "helpTitle" | "helpIntro" | "helpMotion" | "helpTheme" |
-    "helpAppearance" | "helpPattern" | "helpColorTitle" | "helpColorPattern" | "helpPreview" | "helpSelect" | "helpClose";
+    "helpAppearance" | "helpPattern" | "helpLogo" | "helpClose";
 
 function useBackgroundHelpText() {
     const { t, i18n } = useTranslation("settings");
@@ -42,7 +43,7 @@ export default function BackgroundHelp() {
         { icon: <Palette size={20}/>, title: t("backgroundLibrary.themeAware"), detail: helpText("helpTheme") },
         { icon: <WandSparkles size={20}/>, title: t("backgroundLibrary.appearanceAware"), detail: helpText("helpAppearance") },
         { icon: <LayoutGrid size={20}/>, title: t("backgroundLibrary.patternAvailable"), detail: helpText("helpPattern") },
-        { icon: <LayoutGrid size={20}/>, title: helpText("helpColorTitle"), detail: helpText("helpColorPattern") }
+        { icon: <WallpaperLogoIcon/>, title: t("backgroundLibrary.logo"), detail: helpText("helpLogo") }
     ];
 
     return (
@@ -60,8 +61,6 @@ export default function BackgroundHelp() {
                     </div>
                 ))}
             </div>
-            <p>{helpText("helpPreview")}</p>
-            <p>{helpText("helpSelect")}</p>
             <button type="button" className="backgroundHelpClose"
                 onClick={() => setBlackout({ seted: false })}>
                 {helpText("helpClose")}
