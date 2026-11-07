@@ -32,3 +32,11 @@ npm run test --prefix tests/e2e
 ## Реестр текущих регрессий интерфейса
 
 [SLIDERS.md](SLIDERS.md) содержит 16 механизмов и исходники. Тесты в `tests/e2e/appearance.spec.ts` проверяют непрерывность кадра в Wallpaper Studio и поведение wheel, а `tests/e2e/smoke.spec.ts` содержит контроль центрирования календаря. Большая часть авторизованных тестов зависит от фикстуры `AT_E2E_STORAGE_STATE`; **пропуск — не успех**. Для мобильных жестов необходим отдельный WebKit/реальный iPhone.
+
+## CI: сборка и публичные smoke-тесты (07.11.2026)
+
+Файл `.github/workflows/client-ci.yml` запускается при push в `main`, pull request и вручную. Он выполняет `npm run check:release`, `npm run build`, затем публичные Playwright smoke-тесты в Chromium. Тест переключения RU/EN проверяет перевод заголовка roadmap и сохранение английских названий версий.
+
+CI не получает пользовательские cookies или тестовую базу. Сценарии Acc, активности, статистики и календаря с авторизацией в `tests/e2e/smoke.spec.ts` остаются **пропущенными**, пока не настроен изолированный `AT_E2E_STORAGE_STATE` и `AT_E2E_HABIT_ID`. В том числе тест заголовков статистики на RU/EN требует fixture с данными. Пропуск не равен подтверждению успешного E2E.
+
+Для локального авторизованного прогона сначала запустить Vite, затем `AT_E2E_STORAGE_STATE=... AT_E2E_HABIT_ID=... npm run test --prefix tests/e2e -- --project=chromium-desktop smoke.spec.ts`. Дополнительно вручную проверить iPhone Safari: Chromium не заменяет WebKit и реальные жесты.

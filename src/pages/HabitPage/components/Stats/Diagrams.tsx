@@ -80,7 +80,7 @@ export default function Diagrams({
     };
 
     const goBack = () => {
-        if (slide.slide) setSlide({ label: "Выполнено", value: "comp", slide: false });
+        if (slide.slide) setSlide({ label: t("statsUi.cards.comp"), value: "comp", slide: false });
     };
 
     return (
@@ -88,7 +88,7 @@ export default function Diagrams({
             <div className={`statsTitle ${slide.slide ? "slided" : ""}`} onClick={goBack}>
                 {slide.slide ? <>
                     <CaretLeftIcon/>
-                    {slide.label}
+                    {t(`statsUi.cards.${slide.value}`)}
                 </> : t("statsUi.title")}
             </div>
 

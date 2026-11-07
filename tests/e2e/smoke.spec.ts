@@ -12,6 +12,24 @@ test("roadmap uses invariant English release names and its historical beginning 
     await expect(page.locator(".roadmapPastContent")).toContainText("0.1 The Foundation");
 });
 
+test("language switch keeps roadmap translations and release names consistent", async ({ page }) => {
+    await page.goto("/settings/language");
+    await page.locator('.languageChoice').filter({ hasText: "English" }).click();
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+
+    await page.goto("/info/roadmap");
+    await expect(page.locator(".roadmapPage h2")).toHaveText("Development roadmap");
+    await expect(page.locator(".roadmapBranchCurrent")).toContainText("0.6.2 The New Palette");
+
+    await page.goto("/settings/language");
+    await page.locator('.languageChoice').filter({ hasText: "Русский" }).click();
+    await expect(page.locator("html")).toHaveAttribute("lang", "ru");
+
+    await page.goto("/info/roadmap");
+    await expect(page.locator(".roadmapPage h2")).toHaveText("Дорожная карта");
+    await expect(page.locator(".roadmapBranchCurrent")).toContainText("0.6.2 The New Palette");
+});
+
 test.describe("authenticated UI regression", () => {
     test.skip(!process.env.AT_E2E_STORAGE_STATE, "Requires isolated test account storage state");
 
@@ -57,6 +75,30 @@ test.describe("authenticated UI regression", () => {
         }));
 
         expect(centered).toBe(true);
+    });
+
+    test("statistics details and return keep the selected language", async ({ page }) => {
+        test.skip(!process.env.AT_E2E_HABIT_ID, "Set AT_E2E_HABIT_ID to a dedicated test habit");
+        await page.goto("/settings/language");
+        await page.locator('.languageChoice').filter({ hasText: "English" }).click();
+        await expect(page.locator("html")).toHaveAttribute("lang", "en");
+
+        await page.goto(`/habit/${process.env.AT_E2E_HABIT_ID}`);
+        const statistics = page.locator(".statsDivStats");
+        await expect(statistics.locator(".overallDetailButt")).toBeVisible();
+        await statistics.locator(".overallDetailButt").click();
+        await expect(statistics.locator(".statsTitle")).toHaveText("Completions");
+
+        await page.goto("/settings/language");
+        await page.locator('.languageChoice').filter({ hasText: "Русский" }).click();
+        await expect(page.locator("html")).toHaveAttribute("lang", "ru");
+
+        await page.goto(`/habit/${process.env.AT_E2E_HABIT_ID}`);
+        await expect(statistics.locator(".overallDetailButt")).toBeVisible();
+        await statistics.locator(".overallDetailButt").click();
+        await expect(statistics.locator(".statsTitle")).toHaveText("Выполнения");
+        await statistics.locator(".statsTitle").click();
+        await expect(statistics.locator(".statsTitle")).toHaveText("Статистика");
     });
 
     test("habit calendar keeps seven weekday headings, statistics and responsive modal positioning", async ({ page }) => {
