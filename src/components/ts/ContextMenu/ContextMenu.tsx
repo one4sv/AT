@@ -4,6 +4,7 @@ import { useContextMenu } from "../../hooks/ContextMenuHook";
 import HabitMenu from "./menus/HabitMenu";
 import ChatMenu from "./menus/ChatMenu";
 import PostMenu from "./menus/PostMenu";
+import PersonMenu from "./menus/PersonMenu";
 import CommentMenu from "./menus/CommentMenu";
 import AccMenu from "./menus/AccMenu";
 import MemberMenu from "./menus/MemberMenu";
@@ -104,6 +105,8 @@ export default function ContextMenu() {
                 return <ChatMenu />;
             case "post":
                 return <PostMenu />;
+            case "person":
+                return <PersonMenu />;
             case "comment":
                 return <CommentMenu />;
             case "acc":
