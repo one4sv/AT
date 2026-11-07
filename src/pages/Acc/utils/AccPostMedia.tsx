@@ -1,7 +1,10 @@
 import { X } from "@phosphor-icons/react";
+import { useEffect, useState } from "react";
 import GetIconByType from "../../Chat/utils/getIconByType";
 import useImagePreview from "../../../components/hooks/utils/useImagePreview";
 import type { Media } from "../../../components/context/ChatContext";
+
+const emptyNewFiles: File[] = [];
 
 interface AccPostMediaProps {
     red: boolean;
@@ -20,12 +23,19 @@ export default function AccPostMedia({
     media,
     gallery,
     keptMedia = [],
-    newFiles = [],
+    newFiles = emptyNewFiles,
     setKeptMedia = () => {},
     setNewFiles = () => {},
     inputFileRef
 }: AccPostMediaProps) {
     const openImage = useImagePreview(gallery || (red ? keptMedia : media) || []);
+    const [newFilePreviews, setNewFilePreviews] = useState<{ file: File; url: string }[]>([]);
+    useEffect(() => {
+        if (!red) return;
+        const previews = newFiles.map(file => ({ file, url: URL.createObjectURL(file) }));
+        setNewFilePreviews(previews);
+        return () => previews.forEach(preview => URL.revokeObjectURL(preview.url));
+    }, [newFiles, red]);
     return (
         <div className="accPostmedia">
             {!red ? (
@@ -91,8 +101,7 @@ export default function AccPostMedia({
                             );
                         })}
 
-                        {newFiles.map((file, i) => {
-                            const previewUrl = URL.createObjectURL(file);
+                        {newFilePreviews.map(({ file, url: previewUrl }, i) => {
                             const isImage = file.type.startsWith("image/");
                             const isVideo = file.type.startsWith("video/");
                             return (

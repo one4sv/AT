@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import "../../scss/modules/PickHandler.scss"
 import { useBlackout } from "../hooks/BlackoutHook"
 import { useUpUser } from "../hooks/UpdateUserHook"
@@ -14,6 +14,16 @@ export const PickHandler = () => {
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1)
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+    useEffect(() => {
+        if (!blackout.pick) {
+            setPreviewUrl(null)
+            return
+        }
+        const url = URL.createObjectURL(blackout.pick)
+        setPreviewUrl(url)
+        return () => URL.revokeObjectURL(url)
+    }, [blackout.pick])
 
     const onCropComplete = (_: Area, croppedAreaPixels: Area) => {
         setCroppedAreaPixels(croppedAreaPixels)
@@ -30,10 +40,10 @@ export const PickHandler = () => {
     return (
         <div className="pickHandlerDiv">
             <div className="pickHandlerImg">
-                {blackout.pick && (
+                {blackout.pick && previewUrl && (
                     <div className="cropContainer">
                         <Cropper
-                            image={URL.createObjectURL(blackout.pick)}
+                            image={previewUrl}
                             crop={crop}
                             zoom={zoom}
                             aspect={1}

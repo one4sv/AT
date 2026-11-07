@@ -1,7 +1,7 @@
 import TA from "../../ts/TA";
 import { useTranslation } from "react-i18next";
 import { Camera } from "@phosphor-icons/react";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface CreateChatInfoProps {
     pick: File | null,
@@ -15,6 +15,16 @@ interface CreateChatInfoProps {
 export default function CreateChatInfo({pick, setPick, name, setName, desc, setDesc}: CreateChatInfoProps) {
     const { t } = useTranslation("common");
     const inputFileRef =  useRef<HTMLInputElement>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    useEffect(() => {
+        if (!pick) {
+            setPreviewUrl(null);
+            return;
+        }
+        const url = URL.createObjectURL(pick);
+        setPreviewUrl(url);
+        return () => URL.revokeObjectURL(url);
+    }, [pick]);
     
     return (
         <div className="createChatInfo">
@@ -24,8 +34,8 @@ export default function CreateChatInfo({pick, setPick, name, setName, desc, setD
                     if (file) setPick(file);
                 }}/>
                 <div className="creteChatPickPre" onClick={() => inputFileRef.current?.click()}>
-                    {pick ? (
-                        <img src={URL.createObjectURL(pick)} className="createChatPick" alt="Chat Avatar Preview"/>
+                    {pick && previewUrl ? (
+                        <img src={previewUrl} className="createChatPick" alt="Chat Avatar Preview"/>
                     ) : <Camera />}
                 </div>
                 <div className="createChatWrapper">
