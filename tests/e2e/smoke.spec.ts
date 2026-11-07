@@ -63,29 +63,29 @@ test("wallpaper studio places SideMenu header above the panel", async ({ page })
     expect(layers.side).toBeGreaterThan(layers.page);
 });
 
-test("common page header stays below SideMenu in compact layout", async ({ page }) => {
+test("mobile SideMenu background covers the page header", async ({ page }) => {
     await page.setViewportSize({ width: 760, height: 900 });
+    await page.addInitScript(() => {
+        localStorage.setItem("settings_decor", JSON.stringify("glass"));
+        localStorage.setItem("settings_appearance", JSON.stringify({ settings_decor: "glass" }));
+    });
     // /settings/language is a standalone route without ResponsiveLayout.
     await page.goto("/info/roadmap");
     await expect(page.locator(".mobile-layout > .headerDiv")).toBeAttached();
+    await expect(page.locator(".sideMenuBackground")).toBeAttached();
     await expect(page.locator(".sideMenu")).toBeAttached();
 
     const layers = await page.evaluate(() => {
-        const background = document.querySelector(".sideMenuBackground");
         const nav = document.querySelector(".SMnavDiv");
         return {
             header: Number(getComputedStyle(document.querySelector(".mobile-layout > .headerDiv")!).zIndex),
-            background: background ? Number(getComputedStyle(background).zIndex) : null,
+            background: Number(getComputedStyle(document.querySelector(".sideMenuBackground")!).zIndex),
             side: Number(getComputedStyle(document.querySelector(".sideMenu")!).zIndex),
             nav: nav ? Number(getComputedStyle(nav).zIndex) : null
         };
     });
-    // Mobile SM's own background must hide the page header as well.
-    if (layers.background !== null) {
-        expect(layers.background).toBeGreaterThan(layers.header);
-        expect(layers.side).toBeGreaterThan(layers.background);
-    }
-    expect(layers.header).toBeLessThan(layers.side);
+    expect(layers.background).toBeGreaterThan(layers.header);
+    expect(layers.side).toBeGreaterThan(layers.background);
     // SMnav is not mounted for unauthenticated visitors.
     if (layers.nav !== null) expect(layers.nav).toBeGreaterThan(layers.side);
 });
