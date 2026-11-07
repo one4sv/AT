@@ -42,6 +42,8 @@ body {
 }
 
 .mobile-layout .page-content {
+  // Page headers must never cover the logical SideMenu group.
+  z-index: 0;
   width: 100%;
   flex: 1;
   min-height: 0;
@@ -53,6 +55,8 @@ body {
 }
 
 .app-layout .page-content {
+    // Isolate page headers beneath SideMenu even if Header has a local z-index.
+    z-index: 0;
     width: 80.5vw;
     position: relative;
     left: 19.5vw;

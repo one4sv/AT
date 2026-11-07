@@ -144,7 +144,11 @@ export default function SideMenu() {
         () => {
             const handleClickOutside = (event: MouseEvent | TouchEvent) => {
                 if (isMobile || layout !== "hidden" || !showSideMenu || menu.visible) return;
-                if (sideMenuRef.current && !sideMenuRef.current.contains(event.target as Node)) {
+                // SMnav and SMheader belong to the SideMenu as a logical component,
+                // even though the layout renders them beside .sideMenu in the DOM.
+                const target = event.target;
+                if (target instanceof Element && target.closest(".sideMenu, .SMnavDiv, .smHeader")) return;
+                if (sideMenuRef.current && !sideMenuRef.current.contains(target as Node)) {
                     closeMenu();
                 }
             };

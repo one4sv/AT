@@ -54,6 +54,21 @@
     }
 }
 
+.smHeader.studioOpen .smHeaderPart {
+    padding-left: calc(4dvh + 1.5vw);
+
+    @media (max-width: 800px) {
+        padding-left: calc(5dvh + 3vw);
+    }
+}
+
+.smHeader.studioOpen .smHeaderTitle {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .smHeaderSliderWrapper {
     width: 100%;
     height: 100%;

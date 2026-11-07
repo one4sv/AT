@@ -229,7 +229,7 @@ export default function SMheader() {
 
     return (
         <div
-            className={`smHeader ${openFilters ? "filtersOpen" : ""}`}
+            className={`smHeader ${openFilters ? "filtersOpen" : ""} ${studio && showSideMenu && translateX > -1 ? "studioOpen" : ""}`}
             style={{
                 transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none",
             }}
