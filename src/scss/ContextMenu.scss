@@ -140,3 +140,16 @@
     flex-shrink: 0;
     transform: scale(.78);
 }
+
+/* Native long-tap selection must not appear underneath custom menus. */
+[data-context-menu], .ContextMenuWrapper, .ContextMenuFocusPreview {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+html:has(.ContextMenuWrapper) .page-content,
+html:has(.ContextMenuWrapper) .sideMenu {
+    -webkit-user-select: none;
+    user-select: none;
+}
