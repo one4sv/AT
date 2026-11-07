@@ -23,6 +23,13 @@
     -webkit-backdrop-filter: blur(var(--blur));
     height: fit-content;
     border: 1px solid var(--block_border);
+    flex-shrink: 0;
+
+    &.empty {
+        height: auto;
+        min-height: 16dvh;
+        align-items: center;
+    }
 }
 .accHabitsEmpty, .accHabitsList > .accNoPrivateAccess {
     display: flex;
