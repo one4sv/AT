@@ -1,5 +1,5 @@
 import { useUser } from "../../hooks/UserHook";
-import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, SignOutIcon, UserIcon, CheckIcon, CalendarCheckIcon, ChatTeardropIcon } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, SignOutIcon, UserIcon, CheckIcon, CalendarCheckIcon, ChatTeardropIcon, PencilSimpleIcon } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useSideMenu } from "../../hooks/SideMenuHook";
@@ -77,6 +77,9 @@ export default function AccountList() {
                     <span className="settingName"><BookmarkSimpleIcon weight="fill"/>{t("accountNavigation.saved")}</span><CaretRightIcon className="fastButtCaret"/>
                 </Link>
                 <div className="SMcreateDiv">
+                    <div className="SMcreateButt" onClick={() => { closeMenu(); navigate("/post/new"); }}>
+                        <PencilSimpleIcon size={18} weight="fill"/> {t("sideMenu.newPost")}
+                    </div>
                     <div className="SMcreateButt" onClick={() => setBlackout({ seted: true, module: "CreateChat" })}>
                         <ChatTeardropIcon size={18} weight="fill"/> {t("sideMenu.newChat")}
                     </div>                    
