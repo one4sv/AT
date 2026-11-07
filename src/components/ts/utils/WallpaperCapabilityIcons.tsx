@@ -1,10 +1,3 @@
-export function WallpaperLogoIcon() {
-    return <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
-        strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M2 19 9.1 4l7 15M4.8 13.4h8.5M12.5 4H22M18 4v15"/>
-    </svg>;
-}
-
 export function WallpaperFillIcon({ gradient }: { gradient: boolean }) {
     return <svg viewBox="0 0 24 24" width="17" height="17" fill="none"
         stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

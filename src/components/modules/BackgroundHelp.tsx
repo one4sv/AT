@@ -1,13 +1,14 @@
-import { CircleHelp, Film, LayoutGrid, Palette, WandSparkles } from "lucide-react";
+import { CircleHelp, Film, LayoutGrid, Palette, Sun, WandSparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
-import { WallpaperLogoIcon } from "../ts/utils/WallpaperCapabilityIcons";
+import { WallpaperFillIcon } from "../ts/utils/WallpaperCapabilityIcons";
+import { useSettings } from "../hooks/SettingsHook";
 import ruSettings from "../../i18n/locales/ru/settings.json";
 import enSettings from "../../i18n/locales/en/settings.json";
 import "./BackgroundHelp.scss";
 
 type HelpKey = "help" | "helpTitle" | "helpIntro" | "helpMotion" | "helpTheme" |
-    "helpAppearance" | "helpPattern" | "helpLogo" | "helpClose";
+    "helpAppearance" | "helpPattern" | "helpFill" | "helpGlow" | "helpClose";
 
 function useBackgroundHelpText() {
     const { t, i18n } = useTranslation("settings");
@@ -37,13 +38,15 @@ export default function BackgroundHelp() {
     const { t } = useTranslation("settings");
     const helpText = useBackgroundHelpText();
     const { setBlackout } = useBlackout();
+    const { wallpaperStyle } = useSettings();
 
     const items = [
+        { icon: <WallpaperFillIcon gradient={wallpaperStyle.fillMode === "gradient"}/>, title: t("backgroundLibrary.backgroundFill"), detail: helpText("helpFill") },
+        { icon: <LayoutGrid size={20}/>, title: t("backgroundLibrary.patternAvailable"), detail: helpText("helpPattern") },
+        { icon: <Sun size={20}/>, title: t("backgroundLibrary.logoGlow"), detail: helpText("helpGlow") },
         { icon: <Film size={20}/>, title: t("backgroundLibrary.motionAvailable"), detail: helpText("helpMotion") },
         { icon: <Palette size={20}/>, title: t("backgroundLibrary.themeAware"), detail: helpText("helpTheme") },
-        { icon: <WandSparkles size={20}/>, title: t("backgroundLibrary.appearanceAware"), detail: helpText("helpAppearance") },
-        { icon: <LayoutGrid size={20}/>, title: t("backgroundLibrary.patternAvailable"), detail: helpText("helpPattern") },
-        { icon: <WallpaperLogoIcon/>, title: t("backgroundLibrary.logo"), detail: helpText("helpLogo") }
+        { icon: <WandSparkles size={20}/>, title: t("backgroundLibrary.appearanceAware"), detail: helpText("helpAppearance") }
     ];
 
     return (
