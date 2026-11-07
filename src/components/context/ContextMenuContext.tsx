@@ -16,6 +16,8 @@ type MenuOptions = {
     url?:string,
     postHeader?: boolean,
     onCopy?: () => void,
+    onCopyLink?: () => void,
+    onOpen?: () => void,
     onShare?: () => void,
     onForward?: () => void,
     onReply?: () => void,
@@ -73,6 +75,7 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
     const menuRef = useRef<HTMLDivElement>(null);
 
     const openMenu = (x:number, y:number, point:string, options:MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType, memberInfo?:MemberType ) => {
+        window.getSelection()?.removeAllRanges();
         const side = document.elementFromPoint(x, y)?.closest<HTMLElement>(".sideMenu");
         const bounds = side?.getBoundingClientRect();
         const target = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-context-menu]");
