@@ -466,7 +466,7 @@ export default function WallpaperStudio() {
                 <div className="wallpaperStudioScroll" ref={scrollRef}>
                     <section className="wallpaperStudioGroup">
                         <div className="wallpaperStudioGroupHeading">
-                            {t("backgroundLibrary.custom")} ({bgGallery.length}/${MAX_CUSTOM_BACKGROUNDS})
+                            {t("backgroundLibrary.custom")} ({bgGallery.length}/{MAX_CUSTOM_BACKGROUNDS})
                         </div>
                         <div className="wallpaperStudioGrid">
                             {items.map((item, index) => ({ item, index })).filter(({ item }) => item.group === "custom").map(({ item, index }) => tile(item, index))}
