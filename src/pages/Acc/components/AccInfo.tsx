@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { useContacts } from "../../../components/hooks/ContactsHook";
 import { CircleIcon, ChatTeardropTextIcon, FloppyDiskBackIcon, PencilSimpleIcon, ShareFatIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
+import { ToggleBlocked } from "../../../components/ts/ContextMenu/buttons/ToggleBlocked";
 export default function AccInfo({
     acc,
     canView,
@@ -248,6 +249,7 @@ export default function AccInfo({
                             >
                                 <ShareFatIcon weight="fill" /> {t("share")}
                             </div>
+                            {!isMyAcc && acc?.id && <ToggleBlocked id={acc.id} nick={acc.nick} name={acc.username || acc.nick} className="settingInnerButt blockUserAction"/>}
                         </div>
                     </div>
                 </div>
