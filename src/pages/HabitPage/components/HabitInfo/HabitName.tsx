@@ -51,13 +51,13 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:Habit
                 }}
                 onClick={() => setShowHabitMenu(!showHabitMenu)}>
                 {habit.tag && (
-                    <div className="habitNameTag chatUserPick">
+                    <div className="habitNameTag">
                         {TagIcon(habit)}
                     </div>
                 )}
-                <div className="chatUserName">
+                <div className="habitNameText">
                     <div className="habitName">{habit.name}</div>
-                    <span className="chatOnlineStauts">
+                    <span className="habitNameStatus">
                         <Streak habit={habit} calendar={calendar}/>
                     </span>
                 </div>

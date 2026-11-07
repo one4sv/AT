@@ -17,9 +17,43 @@
 }
 
 .habitNameTag {
-    color: var(--accent);
-    height: 6dvh;
-    aspect-ratio: 1/1;
+    width: 5dvh;
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent_text);
+
+    > svg {
+        height: 3.5dvh;
+        width: 3.5dvh;
+        flex-shrink: 0;
+    }
+}
+
+.habitNameText {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: .15vh;
+    margin-left: .5vw;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.habitName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.habitNameStatus {
+    color: var(--borderWh);
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .saveHabit {
@@ -43,5 +77,10 @@
     .saveHabit {
         width: 10%;
         text-overflow: ellipsis;
+    }
+
+    .habitNameText {
+        margin-left: 1vw;
+        gap: .1vh;
     }
 }

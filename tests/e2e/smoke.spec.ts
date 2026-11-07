@@ -212,6 +212,36 @@ test("habit editor form and tag styles load on direct navigation without opening
     await expect(fixture.locator(".dayChanger")).toHaveCSS("display", "flex");
 });
 
+test("activity header styles and stacking are independent of Chat lazy loading", async ({ page }) => {
+    await page.goto("/habit");
+    await expect(page.locator(".page-content")).toBeAttached();
+    await page.evaluate(() => {
+        const fixture = document.createElement("div");
+        fixture.className = "statsDiv";
+        fixture.id = "habit-header-style-probe";
+        fixture.innerHTML = `<div class="headerDiv">
+            <div class="header habitNameMain">
+                <div class="habitNameTag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 2 L22 22"/></svg></div>
+                <div class="habitNameText">
+                    <div class="habitName">Активность</div>
+                    <span class="habitNameStatus">Серия выполнений</span>
+                </div>
+            </div>
+        </div><div class="habitMenu"></div>`;
+        document.querySelector(".page-content")!.append(fixture);
+    });
+    const fixture = page.locator("#habit-header-style-probe");
+    const header = fixture.locator(":scope > .headerDiv");
+    const menu = fixture.locator(":scope > .habitMenu");
+    const headerLayer = Number(await header.evaluate(el => getComputedStyle(el).zIndex));
+    const menuLayer = Number(await menu.evaluate(el => getComputedStyle(el).zIndex));
+    expect(menuLayer).toBeGreaterThan(headerLayer);
+    await expect(fixture.locator(".habitNameTag")).toHaveCSS("display", "flex");
+    await expect(fixture.locator(".habitNameTag > svg")).toHaveCSS("width", /[1-9][0-9.]*px/);
+    await expect(fixture.locator(".habitNameText")).toHaveCSS("flex-direction", "column");
+    await expect(fixture.locator(".habitNameStatus")).toHaveCSS("font-size", "14px");
+});
+
 test.describe("authenticated UI regression", () => {
     test.skip(!process.env.AT_E2E_STORAGE_STATE, "Requires isolated test account storage state");
 
