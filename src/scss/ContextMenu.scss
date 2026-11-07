@@ -104,6 +104,36 @@
     color: var(--notValid);
 }
 
+.ContextMenuFocusBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    background: rgba(0, 0, 0, .55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.ContextMenuFocusPreview {
+    position: fixed;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--interact);
+    box-shadow: 0 14px 45px rgba(0, 0, 0, .4);
+    pointer-events: none;
+    user-select: none;
+
+    > * {
+        width: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        pointer-events: none !important;
+    }
+}
+
 .ContextMenuButt > .toggler {
     margin-left: auto;
     pointer-events: none;
