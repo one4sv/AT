@@ -133,11 +133,11 @@ export default function NotificationsTab({ search }: { search: string }) {
                 <div className="settingInnerList">
                     <div className="settingTogglerDiv" onClick={() => void togglePreference("all_note", !note)} data-setting-id="note">
                         <span title="Не кликабельно"><HighlightText text={t("notifications.generalNotifications")} search={search} /></span>
-                        <Toggler state={note} setState={(value) => void togglePreference("all_note", value)} stopPropagation={true} />
+                        <Toggler state={note} setState={(value: boolean) => void togglePreference("all_note", value)} stopPropagation={true} />
                     </div>
                     <div className={`settingTogglerDiv ${!note && "settingInactive"}`} onClick={() => { if (note) void togglePreference("new_mess_note", !messNote); }} data-setting-id="messNote">
                         <span title="Не кликабельно"><HighlightText text={t("notifications.newMessages")} search={search} /></span>
-                        <Toggler state={messNote} setState={(value) => void togglePreference("new_mess_note", value)} disable={!note} stopPropagation={true} />
+                        <Toggler state={messNote} setState={(value: boolean) => void togglePreference("new_mess_note", value)} disable={!note} stopPropagation={true} />
                     </div>
                 </div>
                 <div className="notificationPermissionPanel" data-setting-id="browserNotifications">
