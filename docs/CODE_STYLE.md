@@ -327,3 +327,7 @@ Flex-список занимает свободную высоту через fl
 ## Карта взаимодействий — сверка 06.11.2026
 
 Все слайдеры, карусели, sheet и SeekBar описаны в [SLIDERS.md](SLIDERS.md); текущие фоновые файлы и редактор — в [WALLPAPERS.md](WALLPAPERS.md). Сохранять существующие классы, табуляцию, порядок импортов и исходные SCSS; не добавлять `font-weight`. Жесты на телефоне не зависимы от десктопной настройки `settings_layout`.
+
+## Страничные хедеры
+
+Для изменений `Header`, `ChatUser`, `HabitName`, `WallpaperHeader` перед работой обязательно сверять `[HEADERS.md](HEADERS.md)`; `SMnav` и `SMheader` описаны только в `[SIDEMENU.md](SIDEMENU.md)`. На ПК с `settings_layout=hidden` кнопка открытия SM обязательна во всех трёх обычных типах хедеров; Wallpaper Studio имеет собственную кнопку при любом режиме. Нельзя переносить ограничение `isMobile` на desktop-only настройку `hidden`.

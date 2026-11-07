@@ -170,3 +170,9 @@
 Порядок слоёв: `.page-content` — отдельный нижний stacking context (`z-index: 0`); хедер страницы `.headerDiv`, включая `.wallpaperHeader`, остаётся **под SideMenu**, каким бы высоким ни был его локальный `z-index`. `.smHeader` и `.SMnavDiv` принадлежат SideMenu и могут быть выше панели `.sideMenu` только для своих кнопок и фильтров. На `/wallpapers` `smHeader.studioOpen` оставляет место для кнопки закрытия, не перекрывая заголовок.
 
 QA: ПК при `layout=hidden` — открыть SM кнопкой, нажать все вкладки/поиск/фильтры SMnav и заголовок SMheader (панель не закрывается); клик по странице вне всех трёх частей закрывает. Проверить MainLayout и MobileLayout, mouse и touch, обычный Header и WallpaperHeader.
+
+## 07.11.2026 — уточнение слоёв после проверки всех хедеров
+
+`MobileLayout` выводит **обычный** `Header` непосредственно рядом с `.sideMenu`, а кастомные страничные хедеры находятся в `.page-content`. Это разные stacking contexts: глобальный `.headerDiv { z-index: 40 !important }` раньше поднимал обычный хедер поверх SM. Для прямого потомка применяется `.mobile-layout > .headerDiv { z-index: 6 !important }`. Фон SM находится на уровне 5, сама панель на 8, навигация и заголовок SM — на 9 (в Wallpaper Studio они поднимаются до 60/61 внутри того же общего порядка). Внутри `.page-content` страничные хедеры ограничены стеком страницы с `z-index: 0`.
+
+Уточнение: `SMnav` и `SMheader` остаются **функционально внутренними элементами SideMenu** независимо от HTML. Их слои/поведение/закрытие описывать **здесь**; отдельное `[HEADERS.md](HEADERS.md)` — только про страничные `Header`, `ChatUser`, `HabitName`, `WallpaperHeader`. Для активности на ПК с `layout=hidden` кнопка открытия SM обязательна.

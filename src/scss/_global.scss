@@ -41,6 +41,12 @@ body {
   background-color: var(--bgc);
 }
 
+// Header is a direct sibling of SideMenu in MobileLayout. Unlike custom page
+// headers inside .page-content, it needs an explicit layer below the SM group.
+.mobile-layout > .headerDiv {
+  z-index: 6 !important;
+}
+
 .mobile-layout .page-content {
   // Page headers must never cover the logical SideMenu group.
   z-index: 0;

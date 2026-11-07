@@ -8,7 +8,8 @@ import Streak from "./Streak"
 import { useCalendar } from "../../../../components/hooks/CalendarHook"
 import { TextIndentIcon } from "@phosphor-icons/react"
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook"
-import { isMobile } from "react-device-detect"
+import useCompactLayout from "../../../../components/hooks/utils/useCompactLayout"
+import { useSettings } from "../../../../components/hooks/SettingsHook"
 import { useContextMenu } from "../../../../components/hooks/ContextMenuHook"
 import useHeaderMenuGestures from "../../../../components/hooks/utils/useHeaderMenuGestures"
 
@@ -23,6 +24,8 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:Habit
     const { isUpdating } = useUpHabit()
     const { calendar } = useCalendar()
     const { openSideMenu } = useSideMenu()
+    const { layout } = useSettings()
+    const isCompact = useCompactLayout()
     const { openMenu } = useContextMenu()
     const headerGestures = useHeaderMenuGestures()
     const habitNameRef = useRef<HTMLDivElement | null>(null);
@@ -31,7 +34,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:Habit
     
     return (
         <div className={`headerDiv ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} {...headerGestures}>
-            {isMobile && (
+            {(isCompact || layout === "hidden") && (
                 <div className="headerButt" data-header-gesture="quick"
                     onContextMenu={e => {
                         e.preventDefault()

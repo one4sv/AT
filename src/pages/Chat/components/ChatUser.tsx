@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useChat } from "../../../components/hooks/ChatHook";
 import { useRef } from "react";
-import { isMobile } from "react-device-detect";
+import useCompactLayout from "../../../components/hooks/utils/useCompactLayout";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { BookmarkSimpleIcon, CalendarCheckIcon, ChatTeardropIcon, DotsThreeOutlineVerticalIcon, MagnifyingGlassIcon, PushPinIcon, TextIndentIcon } from "@phosphor-icons/react";
 import { useSideMenu } from "../../../components/hooks/SideMenuHook";
@@ -16,6 +16,7 @@ import useHeaderMenuGestures from "../../../components/hooks/utils/useHeaderMenu
 
 export default function ChatUser() {
     const { t } = useTranslation("common");
+    const isMobile = useCompactLayout();
     const { user } = useUser()
     const headerGestures = useHeaderMenuGestures();
     const { chatWith, typingMap, messages, activeHeader, setActiveHeader } = useChat();

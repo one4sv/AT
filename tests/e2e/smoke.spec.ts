@@ -63,8 +63,36 @@ test("wallpaper studio places SideMenu header above the panel", async ({ page })
     expect(layers.side).toBeGreaterThan(layers.page);
 });
 
+test("common page header stays below SideMenu in compact layout", async ({ page }) => {
+    await page.setViewportSize({ width: 760, height: 900 });
+    await page.goto("/settings/language");
+    await expect(page.locator(".mobile-layout > .headerDiv")).toBeAttached();
+    await expect(page.locator(".sideMenu")).toBeAttached();
+
+    const layers = await page.evaluate(() => ({
+        header: Number(getComputedStyle(document.querySelector(".mobile-layout > .headerDiv")!).zIndex),
+        background: Number(getComputedStyle(document.querySelector(".sideMenuBackground")!).zIndex),
+        side: Number(getComputedStyle(document.querySelector(".sideMenu")!).zIndex),
+        nav: Number(getComputedStyle(document.querySelector(".SMnavDiv")!).zIndex)
+    }));
+    expect(layers.header).toBeGreaterThan(layers.background);
+    expect(layers.header).toBeLessThan(layers.side);
+    expect(layers.nav).toBeGreaterThan(layers.side);
+});
+
 test.describe("authenticated UI regression", () => {
     test.skip(!process.env.AT_E2E_STORAGE_STATE, "Requires isolated test account storage state");
+
+    test("habit header offers the SideMenu button on desktop in button-only mode", async ({ page }) => {
+        test.skip(!process.env.AT_E2E_HABIT_ID, "Set AT_E2E_HABIT_ID to a test habit");
+        await page.setViewportSize({ width: 1440, height: 900 });
+        await page.addInitScript(() => localStorage.setItem("settings_layout", "hidden"));
+        await page.goto(`/habit/${process.env.AT_E2E_HABIT_ID}`);
+        const button = page.locator(".statsDiv > .headerDiv > .headerButt");
+        await expect(button).toBeVisible();
+        await button.click();
+        await expect(page.locator(".sideMenu")).toHaveClass(/open/);
+    });
 
     test("SideMenu navigation and header keep the menu open after clicking", async ({ page }) => {
         await page.goto("/wallpapers");
