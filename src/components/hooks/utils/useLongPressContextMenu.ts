@@ -90,10 +90,14 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
             const origin = press.target;
             const target = document.elementFromPoint(event.clientX, event.clientY);
             const item = active ? target?.closest<HTMLElement>(".ContextMenuWrapper .ContextMenuButt") : null;
-            const onOrigin = target === origin || !!(target && origin.contains(target));
+            const distance = Math.hypot(event.clientX - press.startX, event.clientY - press.startY);
+            // An unmoved release must not choose an item, even when the
+            // highlighted preview sits over a separate dimming layer.
+            const onOrigin = distance < 24 || target === origin || !!(target && origin.contains(target));
             if (active) suppressUntil = performance.now() + 1400;
             cancel(event.type === "pointercancel" || active && !item && !onOrigin);
-            if (active && item) item.click();
+            // Only an intentional move onto a menu item selects it on release.
+            if (active && item && distance >= 24) item.click();
         };
 
         const suppress = (event: MouseEvent) => {
