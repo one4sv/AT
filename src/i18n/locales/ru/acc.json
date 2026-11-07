@@ -35,6 +35,8 @@
         "commentReply": "Ответить",
         "commentReplying": "Ответ для {{name}}",
         "commentCopy": "Копировать текст",
+    "commentCopyLink": "Копировать ссылку на комментарий",
+    "openAuthor": "Открыть профиль автора",
         "commentDelete": "Удалить",
         "commentDeleteConfirm": "Удалить комментарий?",
         "commentSave": "Сохранить комментарий",
