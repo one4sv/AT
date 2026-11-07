@@ -102,6 +102,10 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
 
         const suppress = (event: MouseEvent) => {
             if (!event.isTrusted || performance.now() >= suppressUntil) return;
+            // Block the release-generated ghost click, but allow a deliberate
+            // second tap on an opened menu item immediately after long-press.
+            if (event.type === "click" && event.target instanceof Element &&
+                event.target.closest(".ContextMenuWrapper")) return;
             event.preventDefault();
             event.stopImmediatePropagation();
         };
