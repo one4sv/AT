@@ -257,7 +257,7 @@ test("solid fill advertises the same capabilities before and after changing its 
     const icons = page.locator(".wallpaperHeaderCapabilities > span");
     await expect(icons).toHaveCount(3);
     const before = await icons.evaluateAll(elements =>
-        elements.map(item => ({ title: item.title, svg: item.querySelector("svg")?.outerHTML }))
+        elements.map(item => ({ title: item.getAttribute("title"), svg: item.querySelector("svg")?.outerHTML }))
     );
     expect(before.every(item => item.title && item.svg)).toBe(true);
 
@@ -267,7 +267,7 @@ test("solid fill advertises the same capabilities before and after changing its 
     await page.reload();
     await expect(icons).toHaveCount(3);
     const after = await icons.evaluateAll(elements =>
-        elements.map(item => ({ title: item.title, svg: item.querySelector("svg")?.outerHTML }))
+        elements.map(item => ({ title: item.getAttribute("title"), svg: item.querySelector("svg")?.outerHTML }))
     );
     expect(after).toEqual(before);
 });

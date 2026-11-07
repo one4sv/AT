@@ -43,7 +43,7 @@ export default function WallpaperHeader({ id, name, onSettings }: {
                     <span title={t("backgroundLibrary.backgroundFill")}><WallpaperFillIcon/></span>
                     <span title={t("backgroundLibrary.patternAvailable")}><LayoutGrid size={16}/></span>
                     <span title={t("backgroundLibrary.logoGlow")}><Sun size={16}/></span>
-                </>}}
+                </>}
                 {supportsBackgroundMotion(id) && <span title={t("backgroundLibrary.motionAvailable")}><Film size={16}/></span>}
                 {themeAware && <span title={t("backgroundLibrary.themeAware")}><Palette size={16}/></span>}
                 {id === "art" && <span title={t("backgroundLibrary.appearanceAware")}><WandSparkles size={16}/></span>}
