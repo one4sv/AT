@@ -539,6 +539,7 @@
     "openChat": "Open chat",
     "removeMember": "Remove from group",
     "block": "Block",
+    "banFromGroup": "Ban from group",
     "unblock": "Unblock",
     "blocked": "User blocked",
     "unblocked": "User unblocked",
