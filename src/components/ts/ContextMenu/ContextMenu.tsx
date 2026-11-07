@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import "../../../scss/ContextMenu.scss";
 import { useContextMenu } from "../../hooks/ContextMenuHook";
 import HabitMenu from "./menus/HabitMenu";
@@ -17,11 +17,16 @@ import SettingsSectionMenu from "./menus/SettingsSectionMenu";
 export default function ContextMenu() {
     const {
         menu,
-        menuRef
+        menuRef,
+        closeMenu
     } = useContextMenu();
     const [pos, setPos] = useState<{
         top: number;
         left: number;
+        previewTop?: number;
+        previewLeft?: number;
+        previewWidth?: number;
+        previewHeight?: number;
     }>(
         {
             top: 0,
@@ -29,6 +34,7 @@ export default function ContextMenu() {
         }
     );
     const [isAdjusted, setIsAdjusted] = useState(false);
+    const previewRef = useRef<HTMLDivElement>(null);
 
     useLayoutEffect(
         () => {
@@ -45,14 +51,24 @@ export default function ContextMenu() {
             const viewportHeight = viewport?.height ?? window.innerHeight;
             const offsetLeft = viewport?.offsetLeft ?? 0;
             const offsetTop = viewport?.offsetTop ?? 0;
+            const focused = !!menu.focusSource?.isConnected && !!menu.focusRect;
+            const previewWidth = focused ? Math.min(menu.focusRect!.width, viewportWidth - 32) : 0;
+            const previewHeight = focused ? Math.min(menu.focusRect!.height, viewportHeight * .28) : 0;
+            const previewTop = Math.max(offsetTop + 12, offsetTop + (viewportHeight - previewHeight - menuHeight - 16) / 2);
+            const previewLeft = offsetLeft + (viewportWidth - previewWidth) / 2;
             const minLeft = menu.originSide ? Math.max(offsetLeft + 10, menu.originSide.left + 10) : offsetLeft + 10;
             const maxRight = menu.originSide ? Math.min(offsetLeft + viewportWidth - 10, menu.originSide.right - 10) : offsetLeft + viewportWidth - 10;
-            const left = Math.max(minLeft, Math.min(menu.x, Math.max(minLeft, maxRight - menuWidth)));
-            const top = Math.max(offsetTop + 10, Math.min(menu.y, offsetTop + viewportHeight - menuHeight - 10));
-            setPos({
-                top,
-                left
-            });
+            const left = focused ? offsetLeft + (viewportWidth - menuWidth) / 2 :
+                Math.max(minLeft, Math.min(menu.x, Math.max(minLeft, maxRight - menuWidth)));
+            const top = focused ? Math.min(previewTop + previewHeight + 16, offsetTop + viewportHeight - menuHeight - 12) :
+                Math.max(offsetTop + 10, Math.min(menu.y, offsetTop + viewportHeight - menuHeight - 10));
+            setPos({ top, left, previewTop, previewLeft, previewWidth, previewHeight });
+            if (focused && previewRef.current && menu.focusSource) {
+                const clone = menu.focusSource.cloneNode(true) as HTMLElement;
+                clone.removeAttribute("id");
+                clone.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
+                previewRef.current.replaceChildren(clone);
+            }
             setIsAdjusted(true);
             if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
             const originX = Math.max(0, Math.min(menuWidth, menu.x - left));
@@ -114,6 +130,16 @@ export default function ContextMenu() {
     };
 
     return (
+        <>
+        {menu.focusRect && menu.focusSource?.isConnected && <>
+            <div className="ContextMenuFocusBackdrop" onPointerDown={event => {
+                if (event.pointerType !== "touch" && event.pointerType !== "pen") closeMenu();
+            }}/>
+            <div className="ContextMenuFocusPreview" ref={previewRef} aria-hidden="true"
+                style={{ top: pos.previewTop ?? 0, left: pos.previewLeft ?? 0,
+                    width: pos.previewWidth ?? 0, height: pos.previewHeight ?? 0,
+                    visibility: isAdjusted ? "visible" : "hidden" }}/>
+        </>}
         <div
             className="ContextMenuWrapper"
             ref={menuRef}
@@ -126,5 +152,6 @@ export default function ContextMenu() {
         >
             {renderMenu()}
         </div>
+        </>
     );
 }
