@@ -3,6 +3,7 @@ import type { Habit } from "../../../components/context/HabitsContext";
 import type { PrivateSettings } from "../../../components/context/SettingsContext";
 import HabitDiv from "../../../components/ts/Habit";
 import { useTranslation } from "react-i18next";
+import SectionArt from "../../../components/ts/SectionArt";
 
 interface acchabitsProps {
     habits?:Habit[],
@@ -21,11 +22,17 @@ export default function AccHabits({habits, canView, isMyAcc}:acchabitsProps) {
             </div>
             <div className={`accHabitsList ${isMobile ? "mobile" : ""} ${isEmpty ? "empty" : ""}`}>
                 {isPrivate ? (
-                    <span className="accNoPrivateAccess">{t("activitiesHidden")}</span>
+                    <div className="accEmptyState">
+                        <SectionArt theme="privacy"/>
+                        <span>{t("activitiesHidden")}</span>
+                    </div>
                 ) : habits?.length ? (
                     habits.map((habit: Habit) => <HabitDiv key={habit.id} habit={habit} isMyAcc={isMyAcc} />)
                 ) : (
-                    <div className="accHabitsEmpty">{t(isMyAcc ? "activitiesEmptyOwn" : "activitiesEmpty")}</div>
+                    <div className="accEmptyState">
+                        <SectionArt theme="habits"/>
+                        <span>{t(isMyAcc ? "activitiesEmptyOwn" : "activitiesEmpty")}</span>
+                    </div>
                 )}
             </div>
         </div>

@@ -26,19 +26,7 @@
     flex-shrink: 0;
 
     &.empty {
-        height: auto;
-        min-height: 16dvh;
+        min-height: 28dvh;
         align-items: center;
     }
-}
-.accHabitsEmpty, .accHabitsList > .accNoPrivateAccess {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 16dvh;
-    padding: 2dvh 2vw;
-    box-sizing: border-box;
-    color: var(--borderWh);
-    text-align: center;
 }

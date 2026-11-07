@@ -2,6 +2,8 @@
     "activitiesHidden": "Пользователь скрыл активности",
   "activitiesEmpty": "Пока нет активностей",
   "activitiesEmptyOwn": "У вас пока нет активностей",
+  "postsEmpty": "Пока нет постов",
+  "postsEmptyOwn": "У вас пока нет постов",
   "tabs": {
         "files": "Файлы",
         "favorites": "Избранное",
