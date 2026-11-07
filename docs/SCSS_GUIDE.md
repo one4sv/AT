@@ -16,6 +16,7 @@
 | Модальная оболочка | `src/scss/blackout.scss` |
 | Стили общих компонентов | `src/scss/radioGroup.scss`, `selector.scss`, `toggler.scss`, `Composer.scss`, `ContextMenu.scss`, `Loading.scss` и другие |
 | Стили модалок | `src/scss/modules/` |
+| Общие контролы создания и редактирования активности | `src/scss/modules/habitFormControls.scss` (подключается `addHabit.scss` и `redHabit.scss`) |
 | Стили бокового меню | `src/scss/SM/` |
 | Страницы | `src/pages/<НазваниеСтраницы>/scss/` |
 

@@ -1,4 +1,5 @@
 @use "../../../scss/mixins" as var;
+@use "../../../scss/modules/habitFormControls.scss";
 .redHabit {
     right: 0;
     display: flex;

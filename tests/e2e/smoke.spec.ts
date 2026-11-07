@@ -176,6 +176,42 @@ test("styles shared by lazy modal buttons exist without visiting their original 
     await expect(fixture.locator(".wtbgButt")).toHaveCSS("display", "inline-flex");
 });
 
+test("habit editor form and tag styles load on direct navigation without opening AddHabit", async ({ page }) => {
+    await page.goto("/habit");
+    await expect(page.locator(".page-content")).toBeAttached();
+
+    await page.evaluate(() => {
+        const fixture = document.createElement("div");
+        fixture.id = "habit-editor-style-probe";
+        fixture.innerHTML = \`<div class="redHabit">
+            <div class="addHabitWrapper">
+                <label for="habit-form-probe-name">Название</label>
+                <input class="addHabitInput" id="habit-form-probe-name" value="Тест" />
+                <span>4/40</span>
+            </div>
+            <div class="addHabitTimeWrapper"><div class="addHabitWrapper time">
+                <input class="addHabitInput" value="12:00" /></div></div>
+            <div class="addHabitWrapper">
+                <div class="tegSelector"><div class="tag active">Тег</div>
+                    <div class="addTeg">Изменить</div></div>
+                <div class="tagList">Список тегов</div>
+            </div>
+            <div class="dayChanger"><button>пн</button></div>
+        </div>\`;
+        document.body.append(fixture);
+    });
+
+    const fixture = page.locator("#habit-editor-style-probe");
+    await expect(fixture.locator(".addHabitWrapper").first()).toHaveCSS("display", "flex");
+    await expect(fixture.locator(".addHabitInput").first()).toHaveCSS("border-radius", "24px");
+    await expect(fixture.locator(".addHabitTimeWrapper")).toHaveCSS("display", "flex");
+    await expect(fixture.locator(".tegSelector")).toHaveCSS("display", "flex");
+    await expect(fixture.locator(".tag.active")).toHaveCSS("display", "flex");
+    await expect(fixture.locator(".addTeg")).toHaveCSS("border-style", "solid");
+    await expect(fixture.locator(".tagList")).toHaveCSS("opacity", "0");
+    await expect(fixture.locator(".dayChanger")).toHaveCSS("display", "flex");
+});
+
 test.describe("authenticated UI regression", () => {
     test.skip(!process.env.AT_E2E_STORAGE_STATE, "Requires isolated test account storage state");
 
