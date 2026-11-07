@@ -12,13 +12,14 @@ interface acchabitsProps {
 export default function AccHabits({habits, canView, isMyAcc}:acchabitsProps) {
     const { t } = useTranslation("acc");
     const isPrivate = !!canView && !canView("habits");
+    const isEmpty = isPrivate || !habits?.length;
     return (
         <div className="accHabits">
             <div className="accHabitsInfo">
                 <div className="accHabitChart"></div>
                 <div className="accHabitOverall"></div>
             </div>
-            <div className={`accHabitsList ${isMobile ? "mobile" : ""}`}>
+            <div className={`accHabitsList ${isMobile ? "mobile" : ""} ${isEmpty ? "empty" : ""}`}>
                 {isPrivate ? (
                     <span className="accNoPrivateAccess">{t("activitiesHidden")}</span>
                 ) : habits?.length ? (
