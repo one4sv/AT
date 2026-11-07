@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
@@ -11,6 +11,11 @@ import { useNote } from "../../../../components/hooks/NoteHook";
 import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
+import { requestNotificationPermission } from "../../../../components/ts/utils/NoteRequest";
+import "./notificationPermission.scss";
+
+const browserPermission = (): NotificationPermission | "unsupported" =>
+    typeof window === "undefined" || !("Notification" in window) ? "unsupported" : Notification.permission;
 
 export default function NotificationsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
@@ -19,6 +24,20 @@ export default function NotificationsTab({ search }: { search: string }) {
     const { habits } = useHabits();
     const { showDevNote } = useNote()
     const [showNoteList, setShowNoteList] = useState<number>(0);
+    const [permission, setPermission] = useState<NotificationPermission | "unsupported">(browserPermission);
+    useEffect(() => {
+        const update = () => setPermission(browserPermission());
+        window.addEventListener("focus", update);
+        document.addEventListener("visibilitychange", update);
+        return () => {
+            window.removeEventListener("focus", update);
+            document.removeEventListener("visibilitychange", update);
+        };
+    }, []);
+    const enableBrowserNotifications = async () => {
+        await requestNotificationPermission();
+        setPermission(browserPermission());
+    };
 
     const habitNoteArray = [
         {
@@ -50,6 +69,18 @@ export default function NotificationsTab({ search }: { search: string }) {
     return (
         <div className="settingTab">
             {!search.trim() && <SectionArt theme="notifications"/>}
+            <div className="settingInnerDiv">
+                <div className="settingHeader">
+                    {t("notifications.browserTitle")}
+                </div>
+                <div className="notificationPermissionPanel" data-setting-id="browserNotifications">
+                    <div className="notificationPermissionStatus">{t(`notifications.browser${permission === "granted" ? "Granted" : permission === "denied" ? "Denied" : permission === "unsupported" ? "Unsupported" : "Disabled"}`)}</div>
+                    {permission === "default" && <button type="button" onClick={() => void enableBrowserNotifications()}>{t("notifications.enableBrowser")}</button>}
+                    {permission === "denied" && <p>{t("notifications.permissionHelp")}</p>}
+                    <p>{t("notifications.noAdvertising")}</p>
+                    <p>{t("notifications.browserOnly")}</p>
+                </div>
+            </div>
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     {t("notifications.general")}

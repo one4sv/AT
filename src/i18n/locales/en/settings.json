@@ -121,7 +121,16 @@
     "fromTo": "from {{start}} to {{end}}",
     "startsAt": "starts at {{time}}",
     "until": "until {{time}}",
-    "notificationsCount": "{{count}} notifications"
+    "notificationsCount": "{{count}} notifications",
+    "browserTitle": "Browser notifications",
+    "browserGranted": "Browser notifications are enabled",
+    "browserDisabled": "Browser notifications are off. Allow them to receive messages and selected events.",
+    "browserDenied": "Your browser has blocked notifications.",
+    "browserUnsupported": "System notifications aren't supported by this browser.",
+    "enableBrowser": "Allow notifications",
+    "permissionHelp": "Allow notifications for AT in browser settings, then return here.",
+    "noAdvertising": "We don't send ads or unnecessary notifications. Only your selected AchieveTogether events and messages.",
+    "browserOnly": "Notifications currently work while the website is open. Alerts when the site is closed require a separate push subscription."
   },
   "personalization": {
     "appearance": "Appearance",
