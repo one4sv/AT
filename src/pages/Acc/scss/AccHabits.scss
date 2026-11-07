@@ -24,3 +24,14 @@
     height: fit-content;
     border: 1px solid var(--block_border);
 }
+.accHabitsEmpty, .accHabitsList > .accNoPrivateAccess {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 16dvh;
+    padding: 2dvh 2vw;
+    box-sizing: border-box;
+    color: var(--borderWh);
+    text-align: center;
+}
