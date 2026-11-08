@@ -39,10 +39,38 @@ test("account deletion requires an explicit code and phone change is hidden", as
     await expect(page.locator('[data-setting-id="phone"]')).toHaveCount(0);
     const removal = page.locator('[data-setting-id="deleteAccount"]');
     await removal.click();
-    await expect(page.locator("#deleteAccountPassword")).toBeVisible();
-    await expect(page.locator(".settingInnerList").filter({ has: removal })
-        .getByRole("button", { name: /код|code/i })).toBeDisabled();
-    await expect(page.locator("#deleteAccountCode")).toHaveCount(0);
+    const modal = page.getByRole("dialog");
+    await expect(modal).toBeVisible();
+    await expect(modal.locator("#accountCurrentPassword")).toBeVisible();
+    await expect(modal.getByRole("button", { name: /код|code/i })).toBeDisabled();
+    const checkbox = modal.locator("#accountDeleteMessages");
+    await expect(checkbox).not.toBeChecked();
+    await modal.locator('label[for="accountDeleteMessages"]').click();
+    await expect(checkbox).toBeChecked();
+    await expect(modal.locator('label[for="accountDeleteMessages"] svg')).toBeVisible();
+    await expect(modal.locator("#deleteAccountCode")).toHaveCount(0);
+});
+
+test("changing email opens a modal with the code button on the right", async ({ page }) => {
+    await page.goto("/settings/acc");
+    await expect(page.locator("#accountNewEmail")).toHaveCount(0);
+    await page.locator('[data-setting-id="email"] button').click();
+
+    const modal = page.getByRole("dialog");
+    await expect(modal).toBeVisible();
+    await expect(modal.locator("#accountNewEmail")).toBeVisible();
+    await expect(modal.locator("#accountCurrentPassword")).toBeVisible();
+    await expect(page.locator(".settingCollapsibleInner")).toHaveCount(0);
+    const buttons = modal.locator(".accountSecurityActions > button");
+    const cancelBox = await buttons.first().boundingBox();
+    const sendBox = await buttons.last().boundingBox();
+    expect(cancelBox).not.toBeNull();
+    expect(sendBox).not.toBeNull();
+    expect(sendBox!.x).toBeGreaterThan(cancelBox!.x);
+    await expect(buttons.last()).toBeDisabled();
+
+    await modal.locator(".accountSecurityClose").click();
+    await expect(modal).toHaveCount(0);
 });
 
 test("pending deletion uses the separate recovery page and a live countdown", async ({ page }) => {

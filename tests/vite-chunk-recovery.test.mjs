@@ -130,12 +130,41 @@ test("missing lazy stylesheet triggers one reload without retrying repeatedly", 
     assert.equal(reloads, 1);
 });
 
-test("the account deletion selection has a Checkbox, never a Toggler row", () => {
-    const source = readFileSync(
+test("account deletion uses RegForm native checkbox, not a Toggler", () => {
+    const tab = readFileSync(
         new URL("../src/pages/Settings/components/SettingsTabs/AccSettingsTab.tsx", import.meta.url),
         "utf8"
     );
-    assert.match(source, /className="settingCheckboxDiv"/);
-    assert.match(source, /<Checkbox state=\{deleteMessages\}/);
-    assert.doesNotMatch(source, /<label className="settingTogglerDiv">/);
+    const modal = readFileSync(
+        new URL("../src/components/modules/AccountSecurityAction.tsx", import.meta.url),
+        "utf8"
+    );
+    const styles = readFileSync(new URL("../src/scss/consentCheckbox.scss", import.meta.url), "utf8");
+    assert.match(tab, /module: "AccountSecurityAction", point: "delete"/);
+    assert.doesNotMatch(tab, /settingCollapsibleInner|settingTogglerDiv|openDelete/);
+    assert.match(modal, /className="checkString accountSecurityCheckbox"/);
+    assert.match(modal, /className="landingNativeCheckbox"/);
+    assert.match(modal, /<CheckSquareIcon weight="fill"/);
+    assert.match(modal, /<SquareIcon aria-hidden="true"/);
+    assert.doesNotMatch(modal, /settingTogglerDiv/);
+    assert.match(styles, /\.checkString\s*\{/);
+    assert.match(styles, /\.landingNativeCheckbox\s*\{/);
+});
+
+test("email and deletion forms open through Blackout, not inline accordions", () => {
+    const tab = readFileSync(
+        new URL("../src/pages/Settings/components/SettingsTabs/AccSettingsTab.tsx", import.meta.url), "utf8"
+    );
+    const mapping = readFileSync(new URL("../src/components/modules/ModuleMap.ts", import.meta.url), "utf8");
+    const modal = readFileSync(new URL("../src/components/modules/AccountSecurityAction.tsx", import.meta.url), "utf8");
+    const scss = readFileSync(new URL("../src/components/modules/AccountSecurityAction.scss", import.meta.url), "utf8");
+    assert.match(tab, /module: "AccountSecurityAction", point: "email"/);
+    assert.match(tab, /module: "AccountSecurityAction", point: "delete"/);
+    assert.match(mapping, /AccountSecurityAction: lazy\(\(\) => import\("\.\/AccountSecurityAction"\)\)/);
+    assert.match(modal, /import "\.\/AccountSecurityAction\.scss"/);
+    assert.match(modal, /auth\/account\/email\/request/);
+    assert.match(modal, /auth\/account\/email\/confirm/);
+    assert.match(modal, /auth\/account\/deletion\/request/);
+    assert.match(modal, /auth\/account\/deletion\/confirm/);
+    assert.match(scss, /\.accountSecurityPrimary, \.accountSecurityDanger\s*\{\s*margin-left:\s*auto/);
 });
