@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import "../../scss/SectionArt.scss";
 
-export type ArtTheme = "general" | "account" | "personalization" | "habits" | "chats" | "notifications" | "security" | "privacy" | "about" | "contacts" | "faq" | "policy" | "terms" | "growth" | "future" | "community" | "roadmap";
+export type ArtTheme = "general" | "account" | "personalization" | "habits" | "chats" | "notifications" | "security" | "privacy" | "about" | "contacts" | "faq" | "policy" | "terms" | "growth" | "future" | "community" | "roadmap" | "feedback";
 
 const themes: Record<string, ArtTheme> = {
     gen: "general", pers: "personalization", activities: "habits", notes: "notifications",
@@ -81,6 +81,17 @@ function Motif({ theme }: { theme: ArtTheme }) {
             <path d="M0-32c-20-15-42-14-61-7v81c24-7 41-8 61 4 20-12 37-11 61-4v-81c-19-7-41-8-61 7Z" className="artPaper"/>
             <path d="M0-32v78M-45-16l28 3m-28 13 28 3m-28 13 28 3M17-13l28-3M17 3l28-3M17 19l28-3" className="artLine"/>
             <path d="M28-42v30l9-7 9 5v-31" className="artSolid artShimmer"/>
+        </>;
+        case "feedback": return <>
+            <g className="artBob">
+                <rect x="-56" y="-44" width="105" height="88" rx="18" className="artPaper"/>
+                <path d="M-35-22H25M-35-5H18M-35 12H6" className="artLine"/>
+                <path d="m28 44 8-30 23-24 12 12-23 24Z" className="artSolid"/>
+                <path d="m36 14 12 12M59-10l12 12" className="artInverse"/>
+            </g>
+            <g className="artPulse">
+                <path d="M-24 47h32m-16-8v16" className="artLine"/>
+            </g>
         </>;
         case "roadmap": return <>
             <rect x="-60" y="-46" width="120" height="92" rx="20" className="artPaper"/>

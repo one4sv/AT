@@ -24,6 +24,10 @@
         "roadmap": {
             "name": "Roadmap",
             "desc": "Release history and development plans"
+        },
+        "feedback": {
+            "name": "Feedback",
+            "desc": "Report an issue, suggest an improvement or submit a complaint"
         }
     },
     "about": {
@@ -72,7 +76,8 @@
         "email": "Email",
         "supportText2": "We are open to feedback and suggestions for the development of the project.",
         "aboutProject": "About the Project",
-        "aboutProjectText": "Achieve Together is currently in early development. We continue to develop the service by adding new features for communication, publications, and jointly achieving goals."
+        "aboutProjectText": "Achieve Together is currently in early development. We continue to develop the service by adding new features for communication, publications, and jointly achieving goals.",
+        "feedbackOpen": "Contact support"
     },
     "faq": {
         "title": "FAQ",

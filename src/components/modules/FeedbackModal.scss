@@ -1,0 +1,195 @@
+@use "../../scss/mixins.scss" as var;
+
+.feedbackModal {
+    @include var.centerModal;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5dvh;
+    width: 40vw;
+    max-width: 94vw;
+    max-height: 85dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 2dvh 1.5vw;
+    background: var(--mc);
+    color: var(--tc);
+    border-radius: 24px;
+    box-sizing: border-box;
+
+    .sectionArt {
+        flex-shrink: 0;
+    }
+
+    > form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5dvh;
+        min-width: 0;
+    }
+
+    @media (max-width: 800px) {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        max-width: 100%;
+        max-height: 88dvh;
+        padding: 2dvh 4vw calc(2dvh + env(safe-area-inset-bottom));
+    }
+}
+
+.feedbackModalHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1vw;
+
+    p {
+        margin: .75dvh 0 0;
+        color: var(--borderWh);
+        line-height: 1.4;
+    }
+}
+
+.feedbackModalName {
+    font-size: 24px;
+}
+
+.feedbackModalClose {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 24px;
+    background: var(--interact);
+    color: var(--tc);
+    cursor: pointer;
+    padding: 1dvh;
+}
+
+.feedbackField {
+    display: flex;
+    flex-direction: column;
+    gap: .8dvh;
+    min-width: 0;
+
+    > input, > textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid var(--block_border);
+        border-radius: 16px;
+        background: var(--bgc);
+        color: var(--tc);
+        padding: 1.3dvh 1vw;
+        font: inherit;
+        outline: none;
+
+        &:focus {
+            border-color: var(--accent);
+        }
+    }
+
+    > .radioGroup {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5dvh .5vw;
+    }
+
+    @media (max-width: 800px) {
+        > input, > textarea {
+            padding: 1.5dvh 3vw;
+        }
+        > .radioGroup {
+            gap: .5dvh 1vw;
+        }
+    }
+}
+
+.feedbackTarget {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1vw;
+    border-radius: 16px;
+    background: var(--interact);
+    padding: 1.5dvh 1vw;
+
+    @media (max-width: 800px) {
+        padding: 1.5dvh 3vw;
+    }
+}
+
+.feedbackCounter {
+    align-self: flex-end;
+    font-size: 13px;
+    color: var(--borderWh);
+}
+
+.feedbackPrivacy {
+    margin: 0;
+    color: var(--borderWh);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.feedbackError {
+    color: var(--notValid);
+    margin: 0;
+}
+
+.feedbackActions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: .6vw;
+
+    > button, .feedbackSuccess > button {
+        border-radius: 24px;
+        border: none;
+        font: inherit;
+        font-size: 16px;
+        padding: 1.2dvh 1.5vw;
+        background: var(--interact);
+        color: var(--tc);
+        cursor: pointer;
+    }
+
+    > button[type="submit"] {
+        display: flex;
+        align-items: center;
+        gap: .5vw;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
+        border: none;
+    }
+
+    > button:disabled {
+        opacity: .5;
+        cursor: default;
+    }
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+        > button {
+            padding: 1.4dvh 4vw;
+        }
+    }
+}
+
+.feedbackSuccess {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5dvh;
+
+    > p { margin: 0; color: var(--borderWh); }
+    > button {
+        align-self: flex-end;
+        border: none;
+        border-radius: 24px;
+        padding: 1.2dvh 2vw;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
+        cursor: pointer;
+    }
+}

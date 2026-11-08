@@ -715,5 +715,55 @@
     "next": "Next photo",
     "toMessage": "Go to message",
     "download": "Download"
+  },
+  "feedback": {
+    "title": "Feedback",
+    "reportTitle": "Report content",
+    "hint": "Tell us about a problem or suggest an improvement — we read your feedback.",
+    "reportHint": "Select a reason and describe the issue. Your report goes to AT moderation.",
+    "kindLabel": "Request type",
+    "reasonLabel": "Reason",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "Briefly describe your request",
+    "detailsLabel": "Description",
+    "detailsPlaceholder": "What happened, or what would you improve?",
+    "reportPlaceholder": "Which rule is being violated? Add relevant details.",
+    "targetLabel": "Reporting",
+    "emailLabel": "Reply email (optional)",
+    "emailPlaceholder": "example@email.com",
+    "privacy": "Your request is sent to support. Private message content and attachments are not forwarded automatically.",
+    "signIn": "Sign in to report content.",
+    "send": "Send",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "close": "Close",
+    "done": "Done",
+    "sendFailed": "Could not send your request. Please try again later.",
+    "success": "Thank you! Your request was sent.",
+    "ticket": "Request ID: {{id}}",
+    "reportSubject": "Report about {{target}}",
+    "types": {
+      "bug": "Bug",
+      "idea": "Suggestion",
+      "complaint": "Complaint",
+      "other": "Other"
+    },
+    "targets": {
+      "account": "account",
+      "post": "post",
+      "message": "message",
+      "comment": "comment",
+      "activity": "activity"
+    },
+    "reasons": {
+      "spam": "Spam",
+      "harassment": "Harassment or bullying",
+      "hate": "Hateful content",
+      "violence": "Violence or threats",
+      "sexual": "Inappropriate content",
+      "privacy": "Privacy violation",
+      "fraud": "Scam or fraud",
+      "other": "Other reason"
+    }
   }
 }
