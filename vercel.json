@@ -5,11 +5,20 @@
       "destination": "https://achievetogether-server.onrender.com/:path*"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|api/).*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
+    {
+      "source": "/((?!api/|assets/).*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, max-age=0, must-revalidate"
+        }
+      ]
+    },
     {
       "source": "/assets/(.*)",
       "headers": [
@@ -39,7 +48,12 @@
     },
     {
       "source": "/manifest.webmanifest",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache, must-revalidate" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
     },
     {
       "source": "/index.html",
