@@ -32,6 +32,7 @@ const WallpaperStudio = lazy(() => import("./pages/WallpaperStudio/WallpaperStud
 const PasswordAccess = lazy(() => import("./pages/Settings/PasswordAccess"));
 const AuthorizedDevices = lazy(() => import("./pages/Settings/AuthorizedDevices"));
 const AccountDeletion = lazy(() => import("./pages/Settings/AccountDeletion"));
+const TwoFactorConfirm = lazy(() => import("./pages/Settings/TwoFactorConfirm"));
 
 function App() {
     useVisualViewport();
@@ -52,6 +53,7 @@ function App() {
                     <Route path="/connection" element={<ConnectionStatus standalone />} />
                     <Route path="/sign" element={<Landing />} />
                     <Route path="/account-deletion" element={<AccountDeletion />} />
+                    <Route path="/settings/2fa" element={<TwoFactorConfirm />} />
                     <Route path="/settings/language" element={<Language />} />
                     <Route path="/reset-password" element={<PasswordAccess />} />
                     <Route path="/settings/password" element={<PasswordAccess />} />
