@@ -292,6 +292,7 @@ test("activity header styles and stacking are independent of Chat lazy loading",
     const fixture = page.locator("#habit-header-style-probe");
     const header = fixture.locator(":scope > .headerDiv");
     const menu = fixture.locator(":scope > .habitMenu");
+    await expect(menu).toHaveCSS("z-index", "7");
     const headerLayer = Number(await header.evaluate(el => getComputedStyle(el).zIndex));
     const menuLayer = Number(await menu.evaluate(el => getComputedStyle(el).zIndex));
     expect(menuLayer).toBeGreaterThan(headerLayer);
