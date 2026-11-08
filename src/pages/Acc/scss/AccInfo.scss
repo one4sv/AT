@@ -135,39 +135,38 @@
 
 .accOnlineStauts {
     position: absolute;
-    right: 0;
+    left: calc(100% - 0.8dvh);
     bottom: 0;
-    transform: translate(25%, 25%);
+    transform: translateY(20%);
     z-index: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: max-content;
-    max-width: min(30vw, 220px);
+    white-space: nowrap;
     box-sizing: border-box;
-    gap: 0.4vw;
+    gap: 0.3vw;
     margin: 0;
-    padding: 0.5vh 0.75vw;
+    padding: 0.3dvh 0.6vw;
     border: 1px solid var(--block_border);
     border-radius: 24px;
     background-color: var(--interact);
     color: var(--borderWh);
-    font-size: 14px;
-    line-height: 1.2;
-    text-align: center;
+    font-size: 11px;
+    line-height: 1.1;
     pointer-events: none;
-    overflow-wrap: anywhere;
     > svg {
         flex-shrink: 0;
+        width: 1.1dvh;
+        height: 1.1dvh;
     }
     &.online > svg {
         color: var(--accent_text);
     }
     @media (max-width: 800px) {
-        max-width: 70vw;
-        gap: 2vw;
-        padding: 0.7vh 2vw;
-        transform: translate(15%, 25%);
+        left: calc(100% - 1.2dvh);
+        gap: 1vw;
+        padding: 0.4dvh 1.5vw;
     }
 }
 
