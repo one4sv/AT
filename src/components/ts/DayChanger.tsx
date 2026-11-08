@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import "../../scss/modules/habitFormControls.scss";
 export default function DayChanger({
     chosenDays,
     toggleDay,
