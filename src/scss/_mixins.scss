@@ -4,7 +4,7 @@
     background-color: $bg;
     border: 1px solid $bor;
     color: $c;
-    font-size: 16px;
+    font-size: calc(16px * var(--app-font-scale, 1));
     outline: none;
     height: $h;
     border-radius: $br;
@@ -45,7 +45,7 @@
   background-color: $bg;
   color: $c;
   border-radius: 24px;
-  font-size: 16px;
+  font-size: calc(16px * var(--app-font-scale, 1));
   border: 1px solid $bord;
   cursor: pointer;
   outline: none;
@@ -81,7 +81,7 @@
     background: linear-gradient($grad);
     color: $c;
     border-radius: 8px;
-    font-size: 20px;
+    font-size: calc(20px * var(--app-font-scale, 1));
     border: none;
     cursor: pointer;
     outline: none;
