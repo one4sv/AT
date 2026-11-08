@@ -1,3 +1,4 @@
+import "../scss/Extra.scss";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { QrCodeIcon, CheckCircleIcon } from "@phosphor-icons/react";

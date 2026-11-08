@@ -1,3 +1,4 @@
+import "../../scss/blackout.scss";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, useMotionValue, animate } from "framer-motion";

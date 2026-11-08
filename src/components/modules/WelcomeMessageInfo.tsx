@@ -1,3 +1,4 @@
+import "../../pages/Chat/scss/welcome.scss";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
 

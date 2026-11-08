@@ -1,3 +1,5 @@
+import "../../scss/modules/CreateChat.scss";
+import "../../pages/HabitPage/scss/HabitChatMenu.scss";
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { CheckCircleIcon, CircleIcon, UserCircleIcon, XIcon } from "@phosphor-icons/react";

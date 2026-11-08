@@ -1,4 +1,5 @@
 import TA from "../../../components/ts/TA";
+import "../scss/AccInfo.scss";
 import { Camera, UserRound } from "lucide-react";
 import { useUpUser } from "../../../components/hooks/UpdateUserHook";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";

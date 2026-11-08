@@ -1,3 +1,4 @@
+import "../../scss/SM/habitsList.scss";
 import type { Habit } from "../context/HabitsContext";
 import type { habitTimer } from "../context/TheHabitContext";
 import { CheckCircle, PushPinIcon } from "@phosphor-icons/react";

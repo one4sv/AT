@@ -1,3 +1,4 @@
+import "../../scss/Extra.scss";
 import { useEffect, useState } from "react";
 import { GlobeHemisphereWestIcon, WifiSlashIcon, CloudSlashIcon } from "@phosphor-icons/react";
 import { api, getConnectionIssue, type ConnectionIssue } from "./api";

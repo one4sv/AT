@@ -6,6 +6,33 @@ test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("at-cookie-consent-v1", "necessary"));
 });
 
+test("account settings style is available on the first direct navigation", async ({ page }) => {
+    await page.route("**/api/user", route => route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({
+            success: true, id: "css-user", nick: "stylefixture", username: "Тест профиля",
+            bio: "Проверка оформления", avatar_url: null, date_of_birth: "2005-01-01",
+            last_online: "2026-11-06T14:00:00Z"
+        })
+    }));
+    await page.goto("/settings/acc");
+    const info = page.locator(".settingInnerAccDiv .accInfo");
+    await expect(info).toBeVisible();
+    await expect(info).toHaveCSS("display", "flex");
+    await expect(info).toHaveCSS("border-radius", "24px");
+    await expect(info.locator(".accInfoMain")).toHaveCSS("display", "flex");
+    await expect(info.locator(".accPic")).toHaveCSS("border-radius", "50%");
+    await expect(info.locator(".accInfoNames")).toHaveCSS("display", "flex");
+    await expect(info.locator(".accOnlineStauts")).toHaveCSS("display", "flex");
+});
+
+test("QR approval page loads status styles without opening another page", async ({ page }) => {
+    await page.goto("/auth/qr");
+    await expect(page.locator(".statusCard")).toBeVisible();
+    await expect(page.locator(".statusPage")).toHaveCSS("display", "grid");
+    await expect(page.locator(".statusCard")).toHaveCSS("border-radius", "24px");
+});
+
 test("feedback opens from Info and Contacts with a report reason choice", async ({ page }) => {
     await page.goto("/info");
     const entry = page.locator(".settingsButtsWrapper .settingButt").filter({ hasText: "Обратная связь" });

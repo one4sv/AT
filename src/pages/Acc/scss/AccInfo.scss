@@ -1,0 +1,226 @@
+.accInfo {
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
+    --acc-info-margin-top: 0px;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 0;
+    background-color: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    box-sizing: border-box;
+    padding: 0;
+    overflow: hidden;
+    opacity: 1;
+    @media (max-width: 800px) {
+        --acc-info-margin-top: 1vh;
+        margin: 1vh 2vw 0;
+    }
+}
+
+.accInfoDragging {
+    transition: none;
+}
+
+.accInfoInner {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.5vh 0.5vw;
+    @media (max-width: 800px) {
+        padding: 1vh 2vw;
+    }
+}
+
+.accInfoInner > * {
+    flex-shrink: 0;
+}
+
+.accInput.dis, .extraInfoInput.dis, .accExtraInfoWrapper.dis {
+    pointer-events: none;
+    user-select: none;
+    cursor: default;
+}
+
+.accInfoMain {
+    display: flex;
+    @media (max-width: 800px) {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+.accPic {
+    left: 0.5vw;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    height: 10vh;
+    background-color: var(--mc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    > svg {
+        height: 80%;
+        width: 80%;
+    }
+    @media (max-width: 800px) {
+        height: 20vh;
+        width: 20vh;
+        margin-top: 2vh;
+    }
+}
+
+.avatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit:cover;
+    border-radius: 50%;
+}
+
+.accPicksfileInput {
+    display: none;
+}
+
+.accInfoNames {
+    flex: 1;
+    margin-left: 0.5vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    >div {
+        color: var(--borderHabit);
+        > * {
+            background-color: var(--tr);
+            outline: none;
+            border: none;
+            max-width: fit-content;
+        }
+    }
+    @media (max-width: 800px) {
+        flex: auto;
+        width: 100%;
+        margin-left: 0;
+        > div {
+            width: 100%;
+            > * {
+                text-align: center;
+                color: var(--borderWh);
+                height: 100%;
+                width: 100%;
+                max-width: 100%;
+            }
+            &.accMainInfoStr {
+                > * {
+                    color: var(--tc);
+                    font-size: 24px;
+                }
+            }
+        }
+    }
+}
+
+.accNickStr {
+    display: flex;
+    @media (max-width: 800px) {
+        justify-content: center;
+    }
+}
+
+.accOnlineStauts {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5vw;
+    margin: 0 0.5vw;
+    padding: 0.75vh 0.75vw;
+    border-radius: 24px;
+    background-color: var(--interact);
+    color: var(--borderWh);
+    font-size: 16px;
+    > svg {
+        flex-shrink: 0;
+    }
+    &.online > svg {
+        color: var(--accent_text);
+    }
+    @media (max-width: 800px) {
+        gap: 2vw;
+        margin: 1vh 0 0;
+        padding: 1vh 3vw;
+    }
+}
+
+.nameInput {
+    font-size: 30px;
+    color: var(--tc) !important;
+}
+
+.nickInput {
+    color: var(--borderHabit);
+    font-size: 18px;
+}
+
+.accInfoWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    padding-bottom: 0.25vh;
+}
+
+.accExtraInfoWrapper {
+    display: flex;
+    flex-direction: column;
+    color: var(--borderWh);
+    width: 100%;
+    padding: 0.5vh 0.5vw;
+    min-height: 0;
+    >label {
+        width: 100%;
+        padding-left: 0.35vw;
+    }
+    &:focus-within {
+        color: var(--accent_text);
+    }
+    &.disabled:focus-within {
+        color: var(--borderHabit);
+    }
+}
+
+.extraInfoInput {
+    height: 25px;
+    scrollbar-width: none;
+    resize: none;
+    background-color: var(--tr);
+    border: none;
+    color: var(--tc);
+    font-size: 18px;
+    outline: none;
+    overflow: hidden;
+    width: 100%;
+    &.disabled {
+        color: var(--borderWh);
+    }
+}
+
+.accExtraInfo {
+    display: flex;
+    gap: 0.5vw;
+    min-height: 0;
+    >div {
+        flex: 1;
+    }
+    @media (max-width:800px) {
+        flex-direction: column;
+    }
+}
+
+.accInfo, .accExtraInfoWrapper, .accExtraInfo {
+    flex-shrink: 0;
+}

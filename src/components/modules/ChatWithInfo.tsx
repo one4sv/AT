@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { ChatTeardropIcon, CheckCircle, Circle, MagnifyingGlassIcon, PushPinIcon, UserIcon } from "@phosphor-icons/react"
 import "../../scss/modules/ChatWithInfo.scss"
-import "../../pages/Acc/scss/Acc.scss"
+import "../../pages/Acc/scss/AccInfo.scss"
 import { useBlackout } from "../hooks/BlackoutHook"
 import { useChat } from "../hooks/ChatHook"
 import { isMobile } from "react-device-detect"
