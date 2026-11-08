@@ -357,6 +357,17 @@ export const roadmapCurrent: RoadmapRelease = {
 
 export const roadmapFuture: RoadmapRelease[] = [
     {
+        version: "0.6.3",
+        title: "Songbird",
+        features: [
+            { ru: "Ускорена загрузка сайта, улучшены кэширование и производительность.", en: "Faster site loading with improved caching and performance." },
+            { ru: "Добавлены Web Push-уведомления и гибкие напоминания об активностях.", en: "Web Push notifications and flexible activity reminders." },
+            { ru: "Обновлены элементы оформления, настройки и взаимодействия на ПК и мобильных устройствах.", en: "Refined styling, settings, and interactions on desktop and mobile." },
+            { ru: "Усилена защита аккаунтов, сообщений и личных данных.", en: "Stronger protection for accounts, messages, and personal data." },
+            { ru: "Добавлена форма для сообщений об ошибках, предложений и жалоб.", en: "Feedback form for bug reports, suggestions, and complaints." }
+        ]
+    },
+    {
         version: "0.7",
         title: "The Castle",
         features: [

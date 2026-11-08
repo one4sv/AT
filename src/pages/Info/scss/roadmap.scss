@@ -33,10 +33,10 @@
     }
 
     .roadmapBranchFuture {
-        border-left-color: var(--borderWh);
+        border-left-color: var(--tc);
 
         &::before {
-            background-color: var(--borderWh);
+            background-color: var(--tc);
         }
     }
 
@@ -92,7 +92,7 @@
     }
 
     .roadmapCount {
-        color: var(--borderWh);
+        color: var(--tc);
         font-size: 14px;
     }
 
@@ -134,7 +134,7 @@
     .roadmapDate {
         display: block;
         margin-top: .25dvh;
-        color: var(--borderWh);
+        color: var(--tc);
         font-size: 13px;
     }
 
@@ -148,7 +148,7 @@
         border-radius: 24px;
         padding: 1.5dvh 1.25vw;
         background: linear-gradient(135deg, var(--accent_hov), var(--grad_hov));
-        color: var(--inner_text);
+        color: var(--tc);
     }
 
     .roadmapReleaseMajor {
@@ -166,7 +166,7 @@
     }
 
     .roadmapStatus {
-        color: var(--accent_text);
+        color: var(--tc);
     }
 
     :is(.roadmapRelease, .roadmapCurrentContent) ul {
@@ -180,7 +180,7 @@
     }
 
     .roadmapNote {
-        color: var(--borderWh);
+        color: var(--tc);
     }
 
     @media (max-width: 800px) {
@@ -247,7 +247,7 @@
         flex-shrink: 0;
         border: 1px solid var(--accent);
         border-radius: 50%;
-        color: var(--accent_text);
+        color: var(--tc);
     }
 
     @media (max-width: 800px) {
@@ -265,15 +265,15 @@
         box-sizing: border-box;
         border-radius: 24px;
         background: linear-gradient(135deg, var(--accent_hov), var(--grad_hov));
-        color: var(--inner_text);
+        color: var(--tc);
 
         h3 {
             margin: 0 0 .75dvh;
-            color: var(--inner_text);
+            color: var(--tc);
         }
 
         time {
-            color: var(--inner_text);
+            color: var(--tc);
         }
 
         @media (max-width: 800px) {
@@ -284,5 +284,12 @@
 }
 
 .roadmapPage :is(.roadmapCurrentContent, .roadmapReleaseMajor, .roadmapBeginning) :is(h3, h4, ul, li, time, p, a, span) {
-    color: var(--inner_text);
+    color: var(--tc);
+}
+
+
+.roadmapPage.accent,
+.roadmapPage .accent,
+.infoText.roadmapPage a {
+    color: var(--tc);
 }
