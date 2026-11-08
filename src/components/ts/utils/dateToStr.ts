@@ -2,6 +2,17 @@ import i18n from "../../../i18n/i18n";
 /**
  * Возвращает сегодняшнюю дату в формате YYYY-MM-DD
  */
+const isAmerican = () => document.documentElement.dataset.dateFormat === "american";
+const isTwelveHours = () => document.documentElement.dataset.timeFormat === "twelve";
+const displayParts = (y: string, m: string, d: string) => isAmerican() ? `${m}.${d}.${y}` : `${d}.${m}.${y}`;
+export const formatClock = (value: string) => {
+    const match = /^(\d{1,2}):(\d{2})/.exec(value || "");
+    if (!match || !isTwelveHours()) return value;
+    const hour = Number(match[1]);
+    if (hour > 23) return value;
+    return `${hour % 12 || 12}:${match[2]} ${hour < 12 ? "AM" : "PM"}`;
+};
+
 export const todayStrFunc = () => {
     const d = new Date()
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
@@ -12,7 +23,7 @@ export const todayStrFunc = () => {
  */
 export const dateToStrFormat = (date: Date) => {
     const d = new Date(date)
-    return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear()}`
+    return displayParts(String(d.getFullYear()), String(d.getMonth() + 1).padStart(2, "0"), String(d.getDate()).padStart(2, "0"))
 }
 
 /**
@@ -28,9 +39,9 @@ export const dateToCalendarFormat = (date: Date) => {
 export const timeToStr = (date: Date | string) => {
     const d = new Date(date)
 
-    return `${String(d.getHours()).padStart(2, "0")}:${String(
+    return formatClock(`${String(d.getHours()).padStart(2, "0")}:${String(
         d.getMinutes()
-    ).padStart(2, "0")}`
+    ).padStart(2, "0")}`)
 }
 
 /**
@@ -39,7 +50,7 @@ export const timeToStr = (date: Date | string) => {
  */
 export const formatDateFromString = (date: string) => {
     const [y, m, d] = date.split("-")
-    return `${d}.${m}.${y}`
+    return displayParts(y, m, d)
 }
 /**
  * Преобразует YYYY-MM-DD → DD.MM.YYYY
@@ -47,7 +58,7 @@ export const formatDateFromString = (date: string) => {
  */
 export const formatShortDateFromString = (date: string) => {
     const [, m, d] = date.split("-")
-    return `${d}.${m}`
+    return isAmerican() ? `${m}.${d}` : `${d}.${m}`
 }
 
 /**
@@ -56,7 +67,7 @@ export const formatShortDateFromString = (date: string) => {
  */
 export const weekDay = (day: string) => {
     return new Date(day)
-        .toLocaleDateString("ru-RU", { weekday: "short" })
+        .toLocaleDateString(i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU", { weekday: "short" })
         .slice(0, 2)
 }
 /**
@@ -95,7 +106,7 @@ export const formatDateLabel = (dateStr: string) => {
     else if (diffDays === 1) prefix = i18n.t("sideMenu.tomorrow", { ns: "common" });
     else if (diffDays === -1) prefix = i18n.t("chatUi.yesterdayShort", { ns: "common" });
 
-    const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
+    const locale = isAmerican() ? "en-US" : i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
     const dateLabel = date.toLocaleDateString(locale, { day: "2-digit", month: "2-digit", year: "numeric" });
     const weekday = date.toLocaleDateString(locale, { weekday: "short" }).replace(".", "");
 
@@ -110,8 +121,8 @@ export const formatDateLabel = (dateStr: string) => {
  */
 export const formatTime = (start_time: string, end_time: string ) => {
     if (start_time && end_time)
-        return `${start_time} - ${end_time}:`
-    if (start_time) return `с ${start_time}:`
-    if (end_time) return `до ${end_time}:`
+        return `${formatClock(start_time)} - ${formatClock(end_time)}:`
+    if (start_time) return `${i18n.resolvedLanguage?.startsWith("en") ? "from" : "с"} ${formatClock(start_time)}:`
+    if (end_time) return `${i18n.resolvedLanguage?.startsWith("en") ? "until" : "до"} ${formatClock(end_time)}:`
     return ""
 }
