@@ -57,6 +57,12 @@ export interface SettingsContextType {
     setBg: React.Dispatch<React.SetStateAction<string>>;
     decor: string;
     setDecor: React.Dispatch<React.SetStateAction<string>>;    
+    fontSize: number;
+    setFontSize: React.Dispatch<React.SetStateAction<number>>;
+    dateFormat: "standart" | "american";
+    setDateFormat: React.Dispatch<React.SetStateAction<"standart" | "american">>;
+    timeFormat: "twentyFour" | "twelve";
+    setTimeFormat: React.Dispatch<React.SetStateAction<"twentyFour" | "twelve">>;
     lang:string,
     setLang: React.Dispatch<React.SetStateAction<string>>;    
     emote: string;
@@ -159,7 +165,10 @@ const LOCAL_KEYS = {
     note:"settings_note",
     messnote:"settings_messnote",
     habitsnote:"settings_habitsnote",
-    lang:"settings_lang"
+    lang:"settings_lang",
+    fontSize:"settings_font_size",
+    dateFormat:"settings_date_format",
+    timeFormat:"settings_time_format"
 };
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
@@ -211,6 +220,17 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const hydratedBgEffectsFor = useRef<string | null>(null);
     const [ decor, setDecor ] = useLocalStorage(LOCAL_KEYS.decor, "glass");
     const [ lang, setLang ] = useLocalStorage(LOCAL_KEYS.lang, "ru");
+    const [ fontSize, setFontSize ] = useLocalStorage<number>(LOCAL_KEYS.fontSize, 16);
+    const [ dateFormat, setDateFormat ] = useLocalStorage<"standart" | "american">(LOCAL_KEYS.dateFormat, "standart");
+    const [ timeFormat, setTimeFormat ] = useLocalStorage<"twentyFour" | "twelve">(LOCAL_KEYS.timeFormat, "twentyFour");
+
+    useEffect(() => {
+        const safeSize = Number.isFinite(fontSize) ? Math.max(12, Math.min(22, fontSize)) : 16;
+        document.documentElement.style.fontSize = `${safeSize}px`;
+        document.documentElement.style.setProperty("--app-font-size", `${safeSize}px`);
+        document.documentElement.dataset.dateFormat = dateFormat;
+        document.documentElement.dataset.timeFormat = timeFormat;
+    }, [fontSize, dateFormat, timeFormat]);
     const [ emote, setEmote ] = useLocalStorage(LOCAL_KEYS.emote, "Heart")
     const [ messdb, setMessdb ] = useLocalStorage(LOCAL_KEYS.messdb, "reaction")
     const [ autoLoadImages, setAutoLoadImages ] = useLocalStorage(LOCAL_KEYS.autoLoadImages, true);
@@ -323,7 +343,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             layout, setLayout,
             bg, setBg,
             decor, setDecor,
-            bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, wallpaperStyle, setWallpaperStyle, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang,
+            bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, wallpaperStyle, setWallpaperStyle, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang, fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat,
             privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
             twoAuth, setTwoAuth,
             autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
