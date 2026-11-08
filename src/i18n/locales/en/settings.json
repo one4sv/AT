@@ -164,7 +164,12 @@
     "iosHelpDone": "Got it",
     "pushToggleTitle": "Push notifications",
     "pushToggleHint": "Get new messages even when the app is closed. Enable on each device separately.",
-    "pushNotSupported": "This device or browser does not support background Push. Notifications inside the open AT app still work."
+    "pushNotSupported": "This device or browser does not support background Push. Notifications inside the open AT app still work.",
+    "remindersLoadError": "Could not load reminder settings",
+    "remindersSaveError": "Could not save reminder settings",
+    "reminderAt": "Remind at",
+    "remindersPushHint": "Enable browser push notifications on this device to receive reminders.",
+    "invalidReminderTime": "Enter a valid reminder time"
   },
   "personalization": {
     "appearance": "Appearance",
