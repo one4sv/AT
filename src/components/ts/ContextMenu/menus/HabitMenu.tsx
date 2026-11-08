@@ -1,3 +1,4 @@
+import ReportButton from "../buttons/ReportButton";
 import { useTranslation } from "react-i18next";
 import { CheckCircle, Circle, PushPin, PushPinSlash } from "@phosphor-icons/react";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
@@ -44,6 +45,7 @@ export default function HabitMenu() {
                 </div>
             )}
 
+            <ReportButton targetType="activity" targetId={String(habit.id)} isMy={!!options?.isMy}/>
             <DeleteButton />
         </>
     );

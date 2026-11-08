@@ -1,3 +1,4 @@
+import ReportButton from "../buttons/ReportButton";
 import { useTranslation } from "react-i18next";
 import { SignOut, User, Users } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
@@ -42,6 +43,7 @@ export default function ChatMenu() {
 
             <TogglePinned bool={chatInfo!.pinned} id={options.id} />
             <PersonButtons />
+            {!chatInfo?.is_group && options.nick && <ReportButton targetType="account" targetId={options.nick}/>} 
 
             {options?.isMy && !chatInfo?.is_group && <DeleteButton />}
 

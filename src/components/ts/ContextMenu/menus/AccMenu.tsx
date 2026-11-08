@@ -1,3 +1,4 @@
+import ReportButton from "../buttons/ReportButton";
 import { useTranslation } from "react-i18next";
 import { ChatTeardropIcon, CheckCircle, Circle, MagnifyingGlassIcon, PushPinIcon, SignOut } from "@phosphor-icons/react";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
@@ -56,6 +57,7 @@ export default function AccMenu() {
 
             <LinkButton />
             <PersonButtons />
+            {!chatInfo?.is_group && options.nick && <ReportButton targetType="account" targetId={options.nick}/>} 
 
             {chatInfo?.is_group && (
                 <div

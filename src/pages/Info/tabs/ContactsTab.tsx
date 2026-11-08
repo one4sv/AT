@@ -8,10 +8,13 @@ import { useSettings } from "../../../components/hooks/SettingsHook";
 import one4svlogo from "../../../assets/pics/one4svlogo.png";
 
 import SectionArt from "../../../components/ts/SectionArt";
+import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import { ChatCircleTextIcon } from "@phosphor-icons/react";
 
 export default function ContactsTab() {
     const { t } = useTranslation("info");
     const { isDark } = useSettings();
+    const { setBlackout } = useBlackout();
 
     return (
         <div className="infoText">
@@ -53,6 +56,10 @@ export default function ContactsTab() {
             </p>
 
             <p>{t("contacts.supportText2")}</p>
+            <button type="button" className="contactFeedbackButton"
+                onClick={() => setBlackout({ seted: true, module: "FeedbackModal" })}>
+                <ChatCircleTextIcon size={22}/> {t("contacts.feedbackOpen")}
+            </button>
 
             <h3 className="accent">{t("contacts.aboutProject")}</h3>
 

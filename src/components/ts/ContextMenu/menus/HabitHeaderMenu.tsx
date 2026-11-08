@@ -1,3 +1,4 @@
+import ReportButton from "../buttons/ReportButton";
 import { useTranslation } from "react-i18next";
 import { GearSix, NotebookIcon, Target, UserCircleIcon, UsersIcon } from "@phosphor-icons/react";
 import { UserRoundPlus } from "lucide-react";
@@ -59,6 +60,7 @@ export default function HabitHeaderMenu() {
                 <Target weight="fill"/>
                 {t("habitUi.addGoal")}
             </div>}
+            <ReportButton targetType="activity" targetId={String(habit.id)} isMy={isMy}/>
             {isMember && <div className="ContextMenuButt" onClick={() => openSlide("journal")}>
                 <NotebookIcon weight="fill"/>
                 {t("habitUi.journal")}

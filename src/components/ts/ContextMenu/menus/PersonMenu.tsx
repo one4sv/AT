@@ -1,3 +1,4 @@
+import ReportButton from "../buttons/ReportButton";
 import { ChatTeardropIcon, LinkSimpleIcon, ShareNetworkIcon, UserIcon } from "@phosphor-icons/react"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
@@ -56,5 +57,6 @@ export default function PersonMenu() {
             <ShareNetworkIcon/> {t("chatMenu.shareProfile")}
         </div>
         {user.id && options.id !== user.id && <ToggleBlocked id={options.id} nick={nick} name={options.name}/>}
+        <ReportButton targetType="account" isMy={String(options.id) === String(user.id)}/>
     </>
 }

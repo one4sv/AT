@@ -1,3 +1,4 @@
+import ReportButton from "../buttons/ReportButton";
 import { useTranslation } from "react-i18next";
 import { ChatTeardrop, Prohibit, User, UserMinus } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
@@ -37,6 +38,7 @@ export default function MemberMenu() {
             </div>
 
             <LinkButton />
+            <ReportButton targetType="account" isMy={!!memberInfo.isMe}/>
             {!memberInfo.isMe && options.nick && <ToggleBlocked id={options.id} nick={options.nick} name={options.name}/>}
 
             {!memberInfo.isMe && memberInfo.myPerms?.kick_users === true && (

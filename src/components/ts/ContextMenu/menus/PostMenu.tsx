@@ -1,3 +1,4 @@
+import ReportButton from "../buttons/ReportButton";
 import { PencilSimple, LinkSimple, ShareNetwork, ArrowBendUpRight, ArrowSquareOut } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
@@ -22,6 +23,7 @@ export default function PostMenu() {
             <div className="ContextMenuButt" onClick={options.onShare}>
                     <ShareNetwork />{t("post.share")}
             </div>
+            <ReportButton targetType="post" isMy={!!options.isMy}/>
             {options.isMy && <>
                     <div className="ContextMenuButt" onClick={options.func}>
                         <PencilSimple />{t("post.edit")}

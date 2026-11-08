@@ -294,3 +294,31 @@
 .infoText li {
     margin-block: .4em;
 }
+
+.contactFeedbackButton {
+    display: flex;
+    align-items: center;
+    gap: .65vw;
+    padding: 1.3dvh 1.5vw;
+    border: 1px solid var(--block_border);
+    background: var(--mc);
+    color: var(--tc);
+    border-radius: 24px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 16px;
+    margin: 1dvh .5vw;
+
+    @media (hover: hover) {
+        &:hover {
+            border: none;
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            color: var(--inner_text);
+        }
+    }
+    @media (max-width: 800px) {
+        gap: 2vw;
+        padding: 1.5dvh 4vw;
+        margin: 1dvh 1.5vw;
+    }
+}

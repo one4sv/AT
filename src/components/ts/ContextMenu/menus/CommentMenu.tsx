@@ -1,3 +1,4 @@
+import ReportButton from "../buttons/ReportButton";
 import { ArrowBendUpLeftIcon, CopyIcon, LinkSimpleIcon, UserIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
@@ -22,6 +23,7 @@ export default function CommentMenu() {
         {options.onCopy && <div className="ContextMenuButt" onClick={options.onCopy}>
             <CopyIcon /> {t("post.commentCopy")}
         </div>}
+        <ReportButton targetType="comment" isMy={!!options.isMy}/>
         {options.isMy && <>
             <div className="ContextMenuButt" onClick={options.onEdit}>
                 <PencilSimpleIcon /> {t("post.edit")}

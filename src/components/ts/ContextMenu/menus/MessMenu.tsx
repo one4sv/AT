@@ -1,3 +1,4 @@
+import ReportButton from "../buttons/ReportButton";
 import { useTranslation } from "react-i18next";
 import {
     CheckCircle,
@@ -151,6 +152,7 @@ export default function MessMenu() {
                     : t("chatMenu.forward")}
             </div>
 
+            <ReportButton targetType="message" isMy={!!curChat.isMy}/>
             <div
                 className="ContextMenuButt delete"
                 onClick={() => {

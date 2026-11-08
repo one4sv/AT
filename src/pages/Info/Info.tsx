@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { usePageTitle } from "../../components/hooks/PageContextHook"
 import "./scss/info.scss"
 import type { Setting } from "../Settings/Settings"
-import { AddressBookIcon, ArrowLeftIcon, DetectiveIcon, HandshakeIcon, InfoIcon, QuestionIcon, GitBranchIcon } from "@phosphor-icons/react"
+import { AddressBookIcon, ArrowLeftIcon, DetectiveIcon, HandshakeIcon, InfoIcon, QuestionIcon, GitBranchIcon, ChatCircleTextIcon } from "@phosphor-icons/react"
 import { useNavigate, useParams } from "react-router-dom"
 import AboutTab from "./tabs/AboutTab"
 import TermsTab from "./tabs/TermsTab"
@@ -229,6 +229,11 @@ export default function Info() {
                                     {s.tab === "roadmap" ? <RoadmapArt/> : <SectionArt section={s.tab} mini/>}
                                 </div>
                             ))}
+                            <div className="settingButt" onClick={() => setBlackout({ seted: true, module: "FeedbackModal" })}>
+                                <span className="settingName"><ChatCircleTextIcon size={24} weight="fill"/>{t("info.feedback.name")}</span>
+                                <div className="settingDesc">{t("info.feedback.desc")}</div>
+                                <SectionArt theme="feedback" mini/>
+                            </div>
                         </div>
                         {isMobile ? (
                             <div className="settingBackWrapper">
