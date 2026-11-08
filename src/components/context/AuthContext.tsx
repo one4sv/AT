@@ -159,7 +159,15 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
                 showNotification('success', "Аккаунт подтверждён");;
             }
             return res.data
-        } catch {
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 423 &&
+                error.response?.data?.code === "DELETION_PENDING") {
+                sessionStorage.setItem("at-pending-deletion", JSON.stringify({
+                    email: error.response.data.email,
+                    deadline: error.response.data.deadline
+                }));
+                window.location.assign("/account-deletion");
+            }
             return { success: false };
         }
     }
