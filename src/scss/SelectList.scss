@@ -1,0 +1,120 @@
+@use "./mixins" as var;
+
+// The SelectList owner provides its styles independently of routes and modals.
+// Page-specific variants may override these low-specificity fallback rules.
+:where(.selectListDiv) {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    cursor: pointer;
+
+    > input {
+        width: 100%;
+        box-sizing: border-box;
+        min-width: 0;
+        background-color: var(--interact);
+        color: var(--tc);
+        border: 1px solid var(--block_border);
+        border-radius: 24px;
+        padding: .8dvh 2.5vw .8dvh .75vw;
+        cursor: pointer;
+    }
+
+    > svg {
+        position: absolute;
+        right: .75vw;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: var(--borderWh);
+    }
+
+    > .selectList {
+        position: absolute;
+        z-index: 12;
+        left: 0;
+        top: 100%;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        border-radius: 24px;
+        background: var(--bgc);
+        overflow-y: auto;
+        max-height: 40dvh;
+        opacity: 0;
+        pointer-events: none;
+
+        &.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        > .selectListButt {
+            padding: 1dvh 1vw;
+            color: var(--borderWh);
+            cursor: pointer;
+            white-space: nowrap;
+
+            @media (hover: hover) {
+                &:hover {
+                    color: var(--tc);
+                    background: var(--menuButtHover);
+                }
+            }
+            @media (hover: none) {
+                &:active {
+                    color: var(--tc);
+                    background: var(--menuButtHover);
+                }
+            }
+        }
+    }
+
+    @media (max-width: 800px) {
+        > input {
+            padding-inline-start: 3vw;
+            padding-inline-end: 10vw;
+        }
+        > svg {
+            right: 3vw;
+        }
+        > .selectList > .selectListButt {
+            padding-inline: 3vw;
+        }
+    }
+}
+
+.redHabitSL {
+    @include var.selectList(100%, fit-content, 9%, 0vw, 0.7vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 5%);
+    margin-bottom: 1vh;
+    >input {
+        @include var.input(var(--interact), var(--tc), var(--tr), fit-content, 16px, var(--tr));
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid var(--block_border);
+        border-radius: 24px;
+        font-size: 20px;
+        padding: .65vh 2.5vw .65vh .75vw;
+        cursor: pointer;
+        padding-inline-start: 0.75vw;
+        &:focus-visible {
+            outline: 1px solid var(--accent);
+        }
+        @media (max-width: 800px) {
+            padding-left: 3vw;
+            padding-right: 10vw;
+        }
+    }
+    > div > div {
+        padding-left: 1vw;
+        @media (max-width: 800px) {
+            padding-left: 3vw;
+        }
+    }
+    &:focus-within {
+        >svg {
+            color: var(--accent_text);
+        }
+    }
+}

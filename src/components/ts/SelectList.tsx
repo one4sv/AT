@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
+import "../../scss/SelectList.scss";
 
 export type Option = {
   label: string;
