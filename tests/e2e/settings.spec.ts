@@ -18,6 +18,8 @@ test.beforeEach(async ({ page }) => {
 test("device-local font, date and time preferences survive a reload", async ({ page }) => {
     await page.goto("/settings/gen");
     await expect(page.locator('[data-setting-id="fontSize"]')).toBeVisible();
+    // Wait for the synthetic user to finish loading before setting account-scoped values.
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("settingsfixture_settings_font_size"))).not.toBeNull();
     await page.evaluate(() => {
         localStorage.setItem("settingsfixture_settings_font_size", "20");
         localStorage.setItem("settingsfixture_settings_date_format", JSON.stringify("american"));
