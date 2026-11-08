@@ -79,7 +79,7 @@
     > .composerSend {
         background: linear-gradient(135deg, var(--accent), var(--grad));
         border: none;
-        color: var(--accent_text);
+        color: var(--inner_text);
         &:disabled { opacity: 1; }
     }
 }
@@ -200,7 +200,7 @@
         height: 5vh;
         border-radius: 50%;
         background: linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--accent_text);
+        color: var(--inner_text);
         &:disabled { opacity: 1; cursor: default; }
     }
     .composerInput.composerChatStyle > .inputEmojiButton { right: .5vh; }

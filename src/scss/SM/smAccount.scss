@@ -74,10 +74,11 @@
     &.active {
         border: none;
         background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
         > .settingName {
-            color: var(--accent_text);
+            color: var(--inner_text);
             > svg {
-                color: var(--accent_text);
+                color: var(--inner_text);
             }
         }
     }
@@ -161,14 +162,15 @@
     &.active {
         border: none;
         background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
         .SMmainButtName {
-            color: var(--accent_text);
+            color: var(--inner_text);
         }
         .SMmainButtDesc {
-            color: var(--accent_text);
+            color: var(--inner_text);
         }
         .SMmainButtSvg {
-            color: var(--accent_text);
+            color: var(--inner_text);
         }
     }
 }

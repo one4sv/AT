@@ -167,34 +167,35 @@
 .contactsUser.active {
     border: none;
     background:linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--inner_text);
     >.contactsUserPic > svg {
-        color: var(--accent_text);
-        fill: var(--accent_text);
+        color: var(--inner_text);
+        fill: var(--inner_text);
     }
     >.contactsUserInfo {
         >.contactsUserStr {
-                color: var(--accent_text);
+                color: var(--inner_text);
             > .nameSpan > svg {
-                color: var(--accent_text);
+                color: var(--inner_text);
             }
             >.secSpan {
-                color: var(--accent_text);
+                color: var(--inner_text);
             }
             >.isReadCL {
-                color: var(--accent_text);
+                color: var(--inner_text);
             }
         }
         > .nowTyping {
-            color: var(--accent_text);
+            color: var(--inner_text);
         }
         >.lastMess {
-            color: var(--accent_text);
+            color: var(--inner_text);
             >div {
                 > .lmsender {
-                    color: var(--accent_text);
+                    color: var(--inner_text);
                 }
                 > .lmc {
-                    color: var(--accent_text);
+                    color: var(--inner_text);
                 }
             }
         }

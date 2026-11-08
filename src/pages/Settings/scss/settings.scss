@@ -114,23 +114,24 @@
     &.settingButtAcc {
         position: sticky;
         background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
         border: none;
         @media (hover: hover) {
             &:hover {
                 div,                 span {
-                    color: var(--accent_text);
+                    color: var(--inner_text);
                 }
             }
         }
         @media (hover: none) {
             &:active {
                 div,                 span {
-                    color: var(--accent_text);
+                    color: var(--inner_text);
                 }
             }
         }
         div,         span {
-            color: var(--accent_text);
+            color: var(--inner_text);
         }
     }
     @media (max-width: 800px) {
