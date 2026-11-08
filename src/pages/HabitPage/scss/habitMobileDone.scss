@@ -38,7 +38,7 @@
     }
     &.doable {
         background:linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--accent_text);
+        color: var(--inner_text);
 
         > .bottomOpen {
             border: none;
