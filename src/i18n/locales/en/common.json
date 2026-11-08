@@ -180,7 +180,8 @@
     "name": "Name",
     "description": "Description",
     "today": "Today",
-    "yesterdayShort": "Yesterday"
+    "yesterdayShort": "Yesterday",
+    "pendingDeletion": "This account is pending deletion. Messages are disabled."
   },
   "statsUi": {
     "title": "Statistics",
