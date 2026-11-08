@@ -232,6 +232,10 @@
     >span > a {
         text-decoration: underline;
     }
+
+    .message.my & a {
+        color: var(--inner_text);
+    }
     @media (max-width:800px) {
         max-width: 100%;
     }
@@ -513,4 +517,8 @@
 
 .message.ur {
     transform-origin: left bottom;
+}
+
+.message.my .redirectText a {
+    color: var(--inner_text);
 }
