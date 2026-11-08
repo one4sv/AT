@@ -48,7 +48,7 @@ jobs:
             sleep 2
           done
           curl --fail --silent http://127.0.0.1:5173/info/roadmap > /dev/null || { cat /tmp/at-vite.log; exit 1; }
-          npm run test --prefix tests/e2e -- --project=chromium-desktop smoke.spec.ts
+          npm run test --prefix tests/e2e -- --project=chromium-desktop smoke.spec.ts settings.spec.ts
       - name: Upload Playwright failures
         if: failure()
         uses: actions/upload-artifact@v4
