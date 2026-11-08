@@ -24,10 +24,13 @@ test("avatar title spacing and online status font use the shared design", () => 
     const chat = read("src/scss/modules/ChatWithInfo.scss");
     const group = read("src/pages/Group/scss/Group.scss");
 
-    assert.match(common, /\.accInfoNames\s*\{\s*flex:\s*1;\s*margin-left:\s*1\.5vw/);
+    assert.match(common, /\.accInfoNames\s*\{\s*flex:\s*1;\s*margin-left:\s*5px/);
+    assert.match(common, /\.accInfoInner\s*\{[\s\S]*?padding:\s*0\.5vh 5px;[\s\S]*?padding:\s*1vh 8px;/);
+    assert.match(common, /\.accPic\s*\{[\s\S]*?left:\s*0;/);
     assert.match(common, /\.accOnlineStauts\s*\{[\s\S]*?font-size:\s*13px/);
-    assert.match(chat, /\.chatWithInfoMain\s*\{[\s\S]*?padding:\s*1vh;\s*gap:\s*1vw;/);
-    assert.match(group, /\.groupPage\s*\{[\s\S]*?\.accInfoNames\s*\{\s*min-width:\s*0;\s*margin-left:\s*2vw;/);
+    assert.match(chat, /\.chatWithInfoMain\s*\{[\s\S]*?padding:\s*1vh;\s*gap:\s*5px;/);
+    assert.match(group, /\.groupPage\s*\{[\s\S]*?\.accInfoNames\s*\{\s*min-width:\s*0;\s*margin-left:\s*5px;/);
+    assert.match(chat, />\.accInfoNames\s*\{\s*margin-left:\s*0;/);
     assert.match(group, /@media\s*\(max-width:\s*800px\)\s*\{\s*margin-left:\s*0;\s*\}/);
 });
 

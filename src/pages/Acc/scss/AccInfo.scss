@@ -30,9 +30,9 @@
     flex-shrink: 0;
     box-sizing: border-box;
     width: 100%;
-    padding: 0.5vh 0.5vw;
+    padding: 0.5vh 5px;
     @media (max-width: 800px) {
-        padding: 1vh 2vw;
+        padding: 1vh 8px;
     }
 }
 
@@ -51,13 +51,14 @@
     @media (max-width: 800px) {
         flex-direction: column;
         align-items: center;
+        gap: 5px;
     }
 }
 
 .accPic {
     position: relative;
     flex-shrink: 0;
-    left: 0.5vw;
+    left: 0;
     aspect-ratio: 1/1;
     border-radius: 50%;
     height: 10vh;
@@ -90,7 +91,7 @@
 
 .accInfoNames {
     flex: 1;
-    margin-left: 1.5vw;
+    margin-left: 5px;
     display: flex;
     flex-direction: column;
     justify-content: center;

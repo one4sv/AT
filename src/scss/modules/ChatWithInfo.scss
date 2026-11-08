@@ -29,12 +29,15 @@
     background-color: var(--interact);
     border-radius: 24px;
     padding: 1vh;
-    gap: 1vw;
+    gap: 5px;
+    >.accInfoNames {
+        margin-left: 0;
+    }
     >.accPic {
         margin-top: 0;
     }
     @media (max-width: 800px) {
-        gap: 2vw;
+        gap: 5px;
     }
 }
 
