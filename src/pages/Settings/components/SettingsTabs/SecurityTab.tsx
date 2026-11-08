@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import HighlightText from "../../../../components/ts/HighlightText";
+import { ShieldCheckIcon } from "@phosphor-icons/react";
 
 import SectionArt from "../../../../components/ts/SectionArt";
 
@@ -53,16 +54,21 @@ export default function SecurityTab({ search }: { search: string }) {
     return (
         <div className="settingTab">
             {!search.trim() && <SectionArt theme="security"/>}
-            <div className="settingInnerDiv" data-setting-id="twoAuth">
-                <div className="settingHeader">
-                    <HighlightText text={t("security.twoFactor")} search={search}/>
-                </div>
-                <span className="settingHint">
+            <div className="settingInnerDiv twoFactorSettingsCard" data-setting-id="twoAuth">
+                <div className="twoFactorHeading">
+                    <span className="twoFactorIcon"><ShieldCheckIcon size={24}/></span>
+                    <div className="twoFactorHeadingText">
+                        <div className="settingHeader">
+                            <HighlightText text={t("security.twoFactor")} search={search}/>
+                        </div>
+                        <span className="settingHint">
                     {pending
                         ? t("security.sentHint", { email: user.mail })
                         : t("security.confirmHint", { email: user.mail })}
-                </span>
-                {!pending && <div className="settingInnerList">
+                        </span>
+                    </div>
+                </div>
+                {!pending && <div className="settingInnerList twoFactorForm">
                     <div className="settingsInputDiv">
                         <label htmlFor="twoFactorPassword" className="settingsLabel">{t("security.currentPassword")}</label>
                         <div className="settingInputInnerList">

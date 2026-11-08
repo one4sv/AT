@@ -465,3 +465,12 @@
     font: inherit;
     text-align: left;
 }
+
+// Extra breathing room between the account avatar and its name.
+.settingButtAcc .settingAvatar {
+    margin-right: 1vw;
+
+    @media (max-width: 800px) {
+        margin-right: 3vw;
+    }
+}

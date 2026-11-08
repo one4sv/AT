@@ -785,3 +785,104 @@
     .habitReminderEventButton { gap: 2vw; }
     .habitReminderEditorCount { padding-inline: 2vw; }
 }
+
+
+// Keep the reminder editor inside the settings pane on narrow screens.
+.habitRemindersDiv,
+.habitRemindersCatalog,
+.habitRemindersWorkspace,
+.habitRemindersEditor,
+.habitReminderEditorSections,
+.habitReminderEventSection,
+.habitReminderEvents {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.habitReminderEvent {
+    box-sizing: border-box;
+}
+
+@media (max-width: 800px) {
+    .habitRemindersWorkspace {
+        width: 100%;
+        min-width: 0;
+        flex-direction: column;
+    }
+
+    .habitRemindersList {
+        display: flex;
+        flex: none;
+        flex-direction: column;
+        width: 100%;
+        min-width: 0;
+        gap: .75dvh;
+    }
+
+    .habitReminderListItem {
+        width: 100%;
+        min-height: 0;
+        height: auto;
+        padding: .8dvh 3vw;
+        gap: 2vw;
+        box-sizing: border-box;
+    }
+
+    .habitReminderListIcon {
+        width: 3.5dvh;
+        height: 3.5dvh;
+        border-radius: 10px;
+    }
+
+    .habitReminderListInfo {
+        gap: .15dvh;
+
+        > small { font-size: 13px; }
+    }
+
+    .habitRemindersEditor {
+        width: 100%;
+        padding: 1.5dvh 3vw;
+    }
+
+    .habitReminderEventSection,
+    .habitReminderEvents,
+    .habitReminderEvent {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .habitReminderEvent {
+        flex-wrap: nowrap;
+        gap: 2vw;
+        padding: 1dvh 2vw;
+    }
+
+    .habitReminderEventButton {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .habitReminderEvent .habitNoteCustomInput {
+        flex: 0 0 auto;
+        width: 29%;
+        min-width: 0;
+        gap: 1vw;
+
+        > input {
+            width: 100%;
+            min-width: 0;
+            padding: .5dvh 1vw;
+        }
+    }
+
+    .habitReminderFilters {
+        min-width: 0;
+
+        > button {
+            min-width: 0;
+            white-space: normal;
+        }
+    }
+}

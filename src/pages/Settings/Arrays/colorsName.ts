@@ -115,7 +115,7 @@ export const colorsName = (accent: string, grad: string): string => {
             grad: "ocean"
         },        
         {
-            label: "Выпавшая роса",
+            label: "Весеннее небо",
             accent: "sky",
             grad: "meadow"
         },        
