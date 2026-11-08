@@ -177,21 +177,21 @@ export default function GroupInfo({
                 <div className="accInfoMain">
                     <div className="groupAvatarStatusAnchor">
                         <button
-                        type="button"
-                        className="accPic groupAvatar"
-                        disabled={saving || (editing ? !myPerms?.change_avatar : !avatar)}
-                        aria-label={editing ? t("groupUi.editAvatar") : t("groupUi.openAvatar")}
-                        onClick={() => {
-                            if (editing) inputRef.current?.click(); else if (avatar) setBlackout(
-                                {
-                                    seted: true,
-                                    module: "ImgPrev",
-                                    img: avatar
-                                }
-                            );
-                        }}
-                    >
-                        {avatar ? <img src={avatar} alt="" className="avatarImg" /> : editing ? <Camera /> : <Users />}
+                            type="button"
+                            className="accPic groupAvatar"
+                            disabled={saving || (editing ? !myPerms?.change_avatar : !avatar)}
+                            aria-label={editing ? t("groupUi.editAvatar") : t("groupUi.openAvatar")}
+                            onClick={() => {
+                                if (editing) inputRef.current?.click(); else if (avatar) setBlackout(
+                                    {
+                                        seted: true,
+                                        module: "ImgPrev",
+                                        img: avatar
+                                    }
+                                );
+                            }}
+                        >
+                            {avatar ? <img src={avatar} alt="" className="avatarImg" /> : editing ? <Camera /> : <Users />}
                         </button>
                         <div className={`accOnlineStauts ${onlineCount ? "online" : "offline"}`}>
                             <CircleIcon size={16} weight="fill" aria-hidden="true" />
