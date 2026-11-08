@@ -54,7 +54,7 @@
 }
 
 .doneButt {
-    @include var.longButt(17vw, 3.7vh, 1vh, .5vw, none, var(--accent_text), var(--tr), var(--accent));
+    @include var.longButt(17vw, 3.7vh, 1vh, .5vw, none, var(--inner_text), var(--tr), var(--accent));
     background:linear-gradient(135deg, var(--accent), var(--grad));
     color: var(--inner_text);
     border: none;
