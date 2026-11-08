@@ -191,7 +191,13 @@
     "remindersSaveError": "Could not save reminder settings",
     "reminderAt": "Remind at",
     "remindersPushHint": "Enable browser push notifications on this device to receive reminders.",
-    "invalidReminderTime": "Enter a valid reminder time"
+    "invalidReminderTime": "Enter a valid reminder time",
+    "reminderEditorIntro": "Choose an activity and set when you want reminders. You can select multiple events.",
+    "reminderPickActivity": "Select an activity to set reminder times",
+    "reminderNeedsStart": "This reminder requires a start time on the activity.",
+    "reminderNeedsEnd": "This reminder requires an end time on the activity.",
+    "reminderAutoSaved": "Changes save after you select or update a time.",
+    "reminderSaving": "Saving…"
   },
   "personalization": {
     "appearance": "Appearance",

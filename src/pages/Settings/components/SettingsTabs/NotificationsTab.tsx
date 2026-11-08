@@ -5,7 +5,7 @@ import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import Toggler from "../../../../components/ts/Toggler";
 import "../../../../scss/habitsNoteTable.scss";
 import { TagIcon } from "../../../HabitPage/utils/TagIcon";
-import { BellIcon, CaretDownIcon, CheckIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
+import { BellIcon, CheckIcon, MagnifyingGlassIcon, SlidersHorizontalIcon, ClockIcon } from "@phosphor-icons/react";
 import { formatClock } from "../../../../components/ts/utils/dateToStr";
 import { useTranslation } from "react-i18next";
 import { useNote } from "../../../../components/hooks/NoteHook";
@@ -225,6 +225,12 @@ export default function NotificationsTab({ search }: { search: string }) {
         (!configuredOnly || reminderRules.some(rule => rule.habit_id === h.id))
     );
     const configuredHabits = activeHabits.filter(h => reminderRules.some(rule => rule.habit_id === h.id)).length;
+    const selectedHabit = visibleHabits.find(h => h.id === showNoteList) || visibleHabits[0] || null;
+    const selectedRules = selectedHabit ? reminderRules.filter(rule => rule.habit_id === selectedHabit.id) : [];
+    const selectedTime = selectedHabit ? [
+        selectedHabit.start_time && t("notifications.startsAt", { time: formatClock(selectedHabit.start_time) }),
+        selectedHabit.end_time && t("notifications.until", { time: formatClock(selectedHabit.end_time) })
+    ].filter(Boolean).join(" · ") : "";
 
     return (
         <div className="settingTab">
@@ -325,9 +331,13 @@ export default function NotificationsTab({ search }: { search: string }) {
                 </div>
                 <div className="habitRemindersCatalog">
                     <div className="habitRemindersCatalogHeading">
-                        <span>{t("notifications.activityReminders")}</span>
+                        <div className="habitRemindersCatalogTitle">
+                            <SlidersHorizontalIcon size={20}/>
+                            <span>{t("notifications.activityReminders")}</span>
+                        </div>
                         <small>{t("notifications.configuredHabits", { count: configuredHabits })}</small>
                     </div>
+                    <p className="habitRemindersDescription">{t("notifications.reminderEditorIntro")}</p>
                     <div className="habitRemindersToolbar">
                         <label className="habitRemindersSearch">
                             <MagnifyingGlassIcon size={18} aria-hidden="true"/>
@@ -347,86 +357,101 @@ export default function NotificationsTab({ search }: { search: string }) {
                             </button>
                         </div>
                     </div>
-                    <div className="habitsNoteTable">
-                        {visibleHabits.map(h => {
-                            let timePart = "";
-                            if (h.start_time && h.end_time) {
-                                timePart = t("notifications.fromTo", { start: formatClock(h.start_time), end: formatClock(h.end_time) });
-                            } else if (h.start_time) {
-                                timePart = t("notifications.startsAt", { time: formatClock(h.start_time) });
-                            } else if (h.end_time) {
-                                timePart = t("notifications.until", { time: formatClock(h.end_time) });
-                            }
-                            const opened = showNoteList === h.id;
-                            const habitRules = reminderRules.filter(rule => rule.habit_id === h.id);
-                            return (
-                                <div className={"habitNoteWrapper " + (opened ? "opened" : "")} key={h.id}>
-                                    <button type="button" className="habitNoteRow"
-                                        aria-expanded={opened} aria-controls={`habit-reminders-${h.id}`}
-                                        onClick={() => setShowNoteList(prev => prev === h.id ? 0 : h.id)}>
-                                        <span className="habitNoteMain">
-                                            <span className="habitNoteMainIcon">{TagIcon(h, h.tag)}</span>
-                                            <span className="habitNoteMeta">
-                                                <span className="habitNoteName">{h.name}</span>
-                                                <small className="habitNoteTime">{timePart || t("notifications.noActivityTime")}</small>
-                                            </span>
+                    <div className="habitRemindersWorkspace">
+                        <div className="habitRemindersList" aria-label={t("notifications.activityReminders")}>
+                            {visibleHabits.map(h => {
+                                const active = selectedHabit?.id === h.id;
+                                const count = reminderRules.filter(rule => rule.habit_id === h.id).length;
+                                return (
+                                    <button type="button" className={"habitReminderListItem " + (active ? "active" : "")}
+                                        key={h.id} aria-pressed={active} onClick={() => setShowNoteList(h.id)}>
+                                        <span className="habitReminderListIcon">{TagIcon(h, h.tag)}</span>
+                                        <span className="habitReminderListInfo">
+                                            <span>{h.name}</span>
+                                            <small>{count ? t("notifications.notificationsCount", { count }) : t("notifications.remindersNoRules")}</small>
                                         </span>
-                                        <span className={"habitNoteCounter " + (habitRules.length ? "active" : "")}>
-                                            {habitRules.length ? t("notifications.notificationsCount", { count: habitRules.length }) : t("notifications.remindersNoRules")}
-                                        </span>
-                                        <CaretDownIcon className={"habitNoteCaret " + (opened ? "opened" : "")} size={18} aria-hidden="true"/>
+                                        {count > 0 && <span className="habitReminderActiveDot"/>}
                                     </button>
-                                    {opened && <div className="habitNoteArray" id={`habit-reminders-${h.id}`}>
-                                        <p className="habitNoteHelp">{t("notifications.remindersRuleHint")}</p>
-                                        {!reminderPrefs.enabled && <p className="habitNoteHelp inactive">{t("notifications.remindersInactiveHint")}</p>}
-                                        {habitNoteArray.map(a => (
-                                            <div className="habitNoteSection" key={a.title}>
-                                                <div className="habitNoteTitle">{a.title}</div>
-                                                <div className="habitNoteArrayNote">
-                                                    {a.options.map(n => {
-                                                        const rule = habitRules.find(item => item.code === n.value);
-                                                        const selected = Boolean(rule);
-                                                        const value = reminderDrafts[`${h.id}:${n.value}`] ?? (n.value === "inp" ? "18:00" : "5");
-                                                        return (
-                                                            <div className={"habitNoteRule " + (selected ? "selected" : "")} key={n.value}>
-                                                                <button type="button" className={"habitNoteArrayButton " + (selected ? "selected" : "")}
-                                                                    aria-pressed={selected}
-                                                                    disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled}
-                                                                    onClick={() => void saveHabitRule(h.id, n.value)}>
-                                                                    {selected && <CheckIcon size={16} aria-hidden="true"/>}
-                                                                    {n.label}
-                                                                </button>
-                                                                {n.input && <label className="habitNoteCustomInput">
-                                                                    <input type={n.value === "inp" ? "time" : "number"}
-                                                                        aria-label={n.value === "inp" ? t("notifications.atTime") : t("notifications.minutesBefore")}
-                                                                        min={n.value === "inp" ? undefined : 1}
-                                                                        max={n.value === "inp" ? undefined : 1440}
-                                                                        value={value}
-                                                                        disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled}
-                                                                        onChange={event => setReminderDrafts(previous => ({
-                                                                            ...previous, [`${h.id}:${n.value}`]: event.target.value
-                                                                        }))}
-                                                                        onBlur={() => {
-                                                                            if (!rule) return;
-                                                                            const saved = n.value === "inp" ? (rule.fixed_time || "").slice(0, 5) : String(rule.minutes_before);
-                                                                            if (saved !== value) void saveHabitRule(h.id, n.value, true);
-                                                                        }}
-                                                                        onKeyDown={event => { if (event.key === "Enter") event.currentTarget.blur(); }}/>
-                                                                    {n.value !== "inp" && <span>{t("notifications.minutesUnit")}</span>}
-                                                                </label>}
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>}
+                                );
+                            })}
+                            {!visibleHabits.length && <div className="habitRemindersEmpty">
+                                {activeHabits.length ? t("notifications.remindersNoMatch") : t("notifications.remindersNoActivities")}
+                            </div>}
+                        </div>
+                        <div className="habitRemindersEditor">
+                            {selectedHabit ? <>
+                                <div className="habitReminderEditorHeader">
+                                    <div className="habitReminderEditorTitle">
+                                        <span className="habitReminderListIcon">{TagIcon(selectedHabit, selectedHabit.tag)}</span>
+                                        <div>
+                                            <span>{selectedHabit.name}</span>
+                                            <small>{selectedTime || t("notifications.noActivityTime")}</small>
+                                        </div>
+                                    </div>
+                                    <span className="habitReminderEditorCount">
+                                        {t("notifications.notificationsCount", { count: selectedRules.length })}
+                                    </span>
                                 </div>
-                            );
-                        })}
-                        {visibleHabits.length === 0 && <div className="habitRemindersEmpty">
-                            {activeHabits.length ? t("notifications.remindersNoMatch") : t("notifications.remindersNoActivities")}
-                        </div>}
+                                <p className="habitNoteHelp">{t("notifications.remindersRuleHint")}</p>
+                                {!reminderPrefs.enabled && <p className="habitNoteHelp inactive">{t("notifications.remindersInactiveHint")}</p>}
+                                <div className="habitReminderEditorSections">
+                                    {habitNoteArray.map((section, index) => (
+                                        <div className="habitReminderEventSection" key={section.title}>
+                                            <div className="habitReminderEventHeader">
+                                                <ClockIcon size={17}/>
+                                                <span>{section.title}</span>
+                                            </div>
+                                            <div className="habitReminderEvents">
+                                                {section.options.map(option => {
+                                                    const rule = selectedRules.find(item => item.code === option.value);
+                                                    const selected = !!rule;
+                                                    const key = `${selectedHabit.id}:${option.value}`;
+                                                    const draft = reminderDrafts[key] ?? (option.value === "inp" ? "18:00" : "5");
+                                                    return (
+                                                        <div className={"habitReminderEvent " + (selected ? "selected" : "")} key={option.value}>
+                                                            <button type="button" className="habitReminderEventButton" aria-pressed={selected}
+                                                                disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled}
+                                                                onClick={() => void saveHabitRule(selectedHabit.id, option.value)}>
+                                                                <span className="habitReminderEventCheck">
+                                                                    {selected && <CheckIcon size={14} aria-hidden="true"/>}
+                                                                </span>
+                                                                <span>{option.label}</span>
+                                                            </button>
+                                                            {option.input && <label className="habitNoteCustomInput">
+                                                                <input type={option.value === "inp" ? "time" : "number"}
+                                                                    aria-label={option.value === "inp" ? t("notifications.atTime") : t("notifications.minutesBefore")}
+                                                                    min={option.value === "inp" ? undefined : 1}
+                                                                    max={option.value === "inp" ? undefined : 1440}
+                                                                    value={draft}
+                                                                    disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled}
+                                                                    onChange={event => setReminderDrafts(previous => ({
+                                                                        ...previous, [key]: event.target.value
+                                                                    }))}
+                                                                    onBlur={() => {
+                                                                        if (!rule) return;
+                                                                        const saved = option.value === "inp" ? (rule.fixed_time || "").slice(0, 5) : String(rule.minutes_before);
+                                                                        if (saved !== draft) void saveHabitRule(selectedHabit.id, option.value, true);
+                                                                    }}
+                                                                    onKeyDown={event => { if (event.key === "Enter") event.currentTarget.blur(); }}/>
+                                                                {option.value !== "inp" && <span>{t("notifications.minutesUnit")}</span>}
+                                                            </label>}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                            {index === 0 && !selectedHabit.start_time && <small className="habitReminderEventHint">{t("notifications.reminderNeedsStart")}</small>}
+                                            {index === 2 && !selectedHabit.end_time && <small className="habitReminderEventHint">{t("notifications.reminderNeedsEnd")}</small>}
+                                        </div>
+                                    ))}
+                                </div>
+                                <p className="habitReminderSaveHint">
+                                    {busyHabit === selectedHabit.id ? t("notifications.reminderSaving") : t("notifications.reminderAutoSaved")}
+                                </p>
+                            </> : <div className="habitReminderEditorEmpty">
+                                <BellIcon size={30}/>
+                                <span>{t("notifications.reminderPickActivity")}</span>
+                            </div>}
+                        </div>
                     </div>
                 </div>
             </div>

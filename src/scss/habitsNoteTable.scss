@@ -517,3 +517,271 @@
         transition: none;
     }
 }
+
+/* Two-pane reminder editor; activity navigation and rule editor have separate roles. */
+.habitRemindersCatalogTitle {
+    display: flex;
+    align-items: center;
+    gap: .6vw;
+
+    > svg { color: var(--accent_text); }
+}
+
+.habitRemindersWorkspace {
+    display: flex;
+    align-items: stretch;
+    gap: .75vw;
+    width: 100%;
+    min-height: 0;
+}
+
+.habitRemindersList {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 31%;
+    min-width: 0;
+    gap: .5dvh;
+}
+
+.habitReminderListItem {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 6.5dvh;
+    gap: .65vw;
+    padding: 1dvh .75vw;
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
+    border-radius: 16px;
+    background: var(--interact);
+    color: var(--tc);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &.active {
+        border-color: var(--accent);
+        background: var(--menuButtHover);
+    }
+
+    @media (hover: hover) {
+        &:hover:not(.active) { background: var(--menuButtHover); }
+    }
+}
+
+.habitReminderListIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4dvh;
+    height: 4dvh;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--mc);
+    color: var(--accent_text);
+
+    > svg { width: 65%; height: 65%; }
+}
+
+.habitReminderListInfo {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    gap: .35dvh;
+
+    > span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    > small { color: var(--borderWh); }
+}
+
+.habitReminderActiveDot {
+    flex-shrink: 0;
+    width: .65dvh;
+    height: .65dvh;
+    background: var(--accent);
+    border-radius: 50%;
+}
+
+.habitRemindersEditor {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 18dvh;
+    gap: 1.25dvh;
+    padding: 1.5dvh 1.25vw;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    box-sizing: border-box;
+    background: var(--mc);
+}
+
+.habitReminderEditorHeader {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1vw;
+    justify-content: space-between;
+    padding-bottom: 1.25dvh;
+    border-bottom: 1px solid var(--block_border);
+}
+
+.habitReminderEditorTitle {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    flex: 1;
+    gap: .75vw;
+
+    > div:last-child {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        gap: .35dvh;
+
+        > span { overflow-wrap: anywhere; }
+        > small { color: var(--borderWh); }
+    }
+}
+
+.habitReminderEditorCount {
+    padding: .65dvh .8vw;
+    border-radius: 24px;
+    background: var(--interact);
+    color: var(--borderWh);
+    font-size: 13px;
+}
+
+.habitReminderEditorSections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4dvh;
+}
+
+.habitReminderEventSection {
+    display: flex;
+    flex-direction: column;
+    gap: .75dvh;
+}
+
+.habitReminderEventHeader {
+    display: flex;
+    align-items: center;
+    gap: .5vw;
+    padding: 0 .25vw;
+    color: var(--tc);
+
+    > svg { color: var(--accent_text); }
+}
+
+.habitReminderEvents {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .5vw;
+}
+
+.habitReminderEvent {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5vw;
+    padding: .75dvh .65vw;
+    border: 1px solid var(--block_border);
+    border-radius: 14px;
+    background: var(--interact);
+    min-width: 0;
+
+    &.selected {
+        border-color: var(--accent);
+        background: var(--menuButtHover);
+    }
+}
+
+.habitReminderEventButton {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: .5vw;
+    min-width: 0;
+    min-height: 3.5dvh;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--tc);
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+
+    &:disabled { opacity: .5; cursor: default; }
+}
+
+.habitReminderEventCheck {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25dvh;
+    height: 2.25dvh;
+    flex-shrink: 0;
+    border: 1px solid var(--borderWh);
+    border-radius: 50%;
+
+    .selected & {
+        color: var(--inner_text);
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        border-color: transparent;
+    }
+}
+
+.habitReminderEventHint {
+    color: var(--borderWh);
+    font-size: 13px;
+}
+
+.habitReminderSaveHint {
+    margin: 0;
+    padding: .75dvh .5vw 0;
+    border-top: 1px solid var(--block_border);
+    color: var(--borderWh);
+    font-size: 13px;
+}
+
+.habitReminderEditorEmpty {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1dvh;
+    color: var(--borderWh);
+    text-align: center;
+}
+
+@media (max-width: 1000px) {
+    .habitRemindersWorkspace {
+        flex-direction: column;
+        gap: 1dvh;
+    }
+
+    .habitRemindersList {
+        flex: auto;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 800px) {
+    .habitRemindersList { grid-template-columns: 1fr; gap: .75dvh; }
+    .habitRemindersEditor { padding: 2dvh 3vw; }
+    .habitReminderListItem { padding: 1dvh 3vw; gap: 2vw; }
+    .habitReminderEditorTitle { gap: 2vw; }
+    .habitReminderEventHeader { gap: 2vw; }
+    .habitReminderEvents { gap: 1dvh; grid-template-columns: 1fr; }
+    .habitReminderEvent { gap: 2vw; padding: 1.25dvh 3vw; }
+    .habitReminderEventButton { gap: 2vw; }
+    .habitReminderEditorCount { padding-inline: 2vw; }
+}
