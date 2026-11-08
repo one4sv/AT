@@ -27,7 +27,7 @@ test("solid accent notification and action buttons use inner_text", () => {
     const createChat = read("src/scss/modules/CreateChat.scss");
     assert.match(contacts, /\.contactsUnreadCount\s*\{[\s\S]*?background-color:\s*var\(--darker_accent\);\s*color:\s*var\(--inner_text\)/);
     assert.match(message, /&\.myRB\s*\{[\s\S]*?background-color:\s*var\(--darker_accent\);\s*color:\s*var\(--inner_text\)/);
-    const chips = createChat.slice(createChat.indexOf(".createChatChosenCon {"), createChat.indexOf(".createChatConRemove {"));
+    const chips = createChat.slice(createChat.indexOf(".createChatChosenCon {"), createChat.indexOf("\n.createChatConRemove {"));
     assert.match(chips, /&:hover\s*\{\s*background-color:\s*var\(--darker_accent\);\s*color:\s*var\(--inner_text\)/);
     assert.match(chips, /&:active\s*\{\s*background-color:\s*var\(--darker_accent\);\s*color:\s*var\(--inner_text\)/);
 });
