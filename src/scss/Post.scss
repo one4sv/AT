@@ -35,7 +35,7 @@
     height: 3dvh;
     padding: 0 0.4vw;
     position: relative;
-    color: var(--accent_text);
+    color: var(--inner_text);
     @media (max-width:800px) {
         padding: 0 1.5vw;
     }
@@ -222,13 +222,13 @@
         background:linear-gradient(135deg, var(--accent), var(--grad));
         border-radius: 6px;
         gap: 0.2vh;
-        color: var(--accent_text);
+        color: var(--inner_text);
         .postFileName {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             width: 90%;
-            color: var(--accent_text);
+            color: var(--inner_text);
         }
     }
     @media (hover: hover) {

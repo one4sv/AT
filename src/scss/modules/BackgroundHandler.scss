@@ -123,7 +123,7 @@
 
 .backgroundHandlerConfirm {
     background: linear-gradient(135deg, var(--accent), var(--grad));
-    color: var(--accent_text);
+    color: var(--inner_text);
 
     @media (hover: hover) {
         &:not(:disabled):hover {
