@@ -50,3 +50,17 @@ test("contact search preserves selection, loading and save", () => {
     assert.ok(activity.includes("saving || !selected.length"));
     assert.ok(activity.includes("await loadHabit(String(habit.id))"));
 });
+
+
+test("TagSelector and DayChanger own shared habit-control styling", () => {
+    const tag = read("src/components/ts/TagSelector.tsx");
+    const day = read("src/components/ts/DayChanger.tsx");
+    const global = read("src/scss/App.scss");
+    const styles = read("src/scss/modules/habitFormControls.scss");
+
+    assert.ok(tag.includes('import "../../scss/modules/habitFormControls.scss"'));
+    assert.ok(day.includes('import "../../scss/modules/habitFormControls.scss"'));
+    assert.ok(global.includes('@use "./modules/habitFormControls";'));
+    assert.ok(styles.includes(".tagList {"));
+    assert.ok(styles.includes(".dayChanger {"));
+});

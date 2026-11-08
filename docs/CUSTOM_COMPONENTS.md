@@ -10,7 +10,7 @@
 
 | Нужен элемент | Использовать | Исходник / стили |
 | --- | --- | --- |
-| Выпадающий список вариантов | **`SelectList`** | `src/components/ts/SelectList.tsx`, `src/scss/_mixins.scss` → `@mixin selectList` |
+| Выпадающий список вариантов | **`SelectList`** | `src/components/ts/SelectList.tsx`, `src/scss/SelectList.scss`, `src/scss/_mixins.scss` → `@mixin selectList` |
 | Выбор ровно одного режима из нескольких строк | **`RadioGroup`** | `src/components/ts/RadioGroup.tsx`, `src/scss/radioGroup.scss` |
 | Переключение вкладок с движущимся индикатором | **`Selector`** | `src/components/ts/Selector.tsx`, `src/scss/selector.scss` |
 | Переключатель on/off | **`Toggler`** | `src/components/ts/Toggler.tsx`, `src/scss/toggler.scss` |

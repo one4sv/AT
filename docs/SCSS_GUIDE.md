@@ -501,3 +501,11 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
 
 - В `BackgroundLibrary` выбор фона подсвечивается **локально на миниатюре**, а не border вокруг всей `.backgroundLibraryTile`. Для `.backgroundLibraryChoose.selected` — `border-color: var(--accent)` при постоянном `border: 1px solid transparent` в обычном состоянии; у самой карточки нет рамки. Локальное выделение обновляется при клике, выбор пользовательского фона откатывается при ошибке API.
 - У `.customPaletteSwatch` («Свои цвета») **border: none** при всех состояниях, так как кругляшок сам имеет `background: linear-gradient(135deg, var(--accent), var(--grad))`. Не добавлять ему `var(--block_border)` даже в нейтральной кнопке вокруг.
+
+
+## Независимые стили выбора и поиска контактов (dev 0.6.2)
+
+- \`SelectList.tsx\` подключает \`src/scss/SelectList.scss\` самостоятельно. В нём находятся базовые правила \`.selectListDiv\` и \`.redHabitSL\`, поэтому модалка создания активности не зависит от предварительной загрузки страницы редактирования. \`.redHabitSL\` нельзя возвращать в \`redHabit.scss\`.
+- \`TagSelector.tsx\` и \`DayChanger.tsx\` также импортируют собственные общие правила из \`src/scss/modules/habitFormControls.scss\`. У всех этих общих компонентов есть дополнительный импорт в \`App.scss\`.
+- \`HabitParticipantPicker\` использует те же классы \`.contactPickerList\`, \`.createChatSearch\`, \`.createChatChosenCons\`, \`.createChatChosenCon\`, \`.createChatContact\`, что и поиск участников при приглашении из беседы (\`CreateChat\`). Общие правила находятся в \`src/scss/modules/contactPickerControls.scss\`.
+- Проверять на прямых маршрутах, в том числе из \`/info\` и \`/habit\`, на ПК и мобильном, без предварительного открытия Settings. CI: \`tests/select-list-modal-styles.test.mjs\`; сборка: \`npm run check:bundle\` проверяет наличие селекторов в начальном CSS.
