@@ -26,7 +26,7 @@ if (!html.includes(`/assets/${cssFiles[0]}`)) {
     throw new Error("The single CSS bundle must be included in the initial HTML");
 }
 const css = await readFile(path.join(distDir, "assets", cssFiles[0]), "utf8");
-for (const selector of [".redHabitSL", ".selectListDiv", ".dayChanger", ".tagList", ".contactPickerList", ".createChatSearch", ".habitParticipantPicker", ".groupAvatarStatusAnchor", ".accOnlineStauts"]) {
+for (const selector of [".redHabitSL", ".selectListDiv", ".dayChanger", ".tagList", ".contactPickerList", ".createChatSearch", ".habitParticipantPicker", ".groupAvatarStatusAnchor", ".accOnlineStauts", ".accountSecurityModal", ".accountSecurityCheckbox", ".checkString", ".landingNativeCheckbox"]) {
     if (!css.includes(selector)) {
         throw new Error(`Required modal style is missing from the initial CSS: ${selector}`);
     }
