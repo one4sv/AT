@@ -304,7 +304,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         if (previousPath.current === null) {
             previousPath.current = location.pathname;
-            if (!studio && location.pathname.startsWith("/info") && (isCompact || layout === "hidden")) closeMenu();
+            if (!studio && (location.pathname.startsWith("/info") || location.pathname.startsWith("/settings")) && (isCompact || layout === "hidden")) closeMenu();
             return;
         }
         if (previousPath.current !== location.pathname) {
