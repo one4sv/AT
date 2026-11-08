@@ -8,6 +8,7 @@ import { api } from "../../../../components/ts/api";
 import axios from "axios";
 
 import SectionArt from "../../../../components/ts/SectionArt";
+import Checkbox from "../../../../components/ts/utils/Checkbox";
 
 export default function AccSettingsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
@@ -151,9 +152,10 @@ export default function AccSettingsTab({ search }: { search: string }) {
                     </button>
                     {openDelete && <div className="settingCollapsibleInner">
                         <p className="settingHint">{t("acc.deleteWarning")}</p>
-                        <label className="settingTogglerDiv">
-                            <input type="checkbox" checked={deleteMessages}
+                        <label className="settingCheckboxDiv">
+                            <input className="settingCheckboxNative" type="checkbox" checked={deleteMessages}
                                 onChange={event => setDeleteMessages(event.target.checked)} disabled={deletePending}/>
+                            <Checkbox state={deleteMessages} disable={deletePending}/>
                             <span>{t("acc.deleteMessages")}</span>
                         </label>
                         {!deletePending ? <>
