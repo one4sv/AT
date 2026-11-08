@@ -13,6 +13,17 @@ export const formatClock = (value: string) => {
     return `${hour % 12 || 12}:${match[2]} ${hour < 12 ? "AM" : "PM"}`;
 };
 
+export const appDateLocale = () => isAmerican() ? "en-US" : i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
+export const formatAppDate = (date: Date | string, options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" }) =>
+    new Date(date).toLocaleDateString(appDateLocale(), options);
+export const formatAppTime = (date: Date | string, seconds = false) =>
+    new Date(date).toLocaleTimeString(appDateLocale(), {
+        hour: "2-digit",
+        minute: "2-digit",
+        ...(seconds ? { second: "2-digit" } : {}),
+        hour12: isTwelveHours()
+    });
+
 export const todayStrFunc = () => {
     const d = new Date()
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
@@ -106,7 +117,7 @@ export const formatDateLabel = (dateStr: string) => {
     else if (diffDays === 1) prefix = i18n.t("sideMenu.tomorrow", { ns: "common" });
     else if (diffDays === -1) prefix = i18n.t("chatUi.yesterdayShort", { ns: "common" });
 
-    const locale = isAmerican() ? "en-US" : i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
+    const locale = appDateLocale();
     const dateLabel = date.toLocaleDateString(locale, { day: "2-digit", month: "2-digit", year: "numeric" });
     const weekday = date.toLocaleDateString(locale, { weekday: "short" }).replace(".", "");
 
