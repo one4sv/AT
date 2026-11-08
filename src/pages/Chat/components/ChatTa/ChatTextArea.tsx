@@ -69,6 +69,7 @@ export default function ChatTextArea({
     const routeRef = useRef("");
     const [oldMess, setOldMess] = useState<string>("");
     const [enterToSend, setEnterToSend] = useState(() => localStorage.getItem("at_chat_enter_to_send") !== "false");
+    const [sendTypingStatus, setSendTypingStatus] = useState(() => localStorage.getItem("at_chat_send_typing") !== "false");
     const [files, setFiles] = useState<File[]>([]);
     const [oldFiles, setOldFiles] = useState<File[]>([]);
     const [oldMedia, setOldMedia] = useState<Media[]>([]);
@@ -77,6 +78,7 @@ export default function ChatTextArea({
     useEffect(() => {
         const syncKeyboard = (event: StorageEvent) => {
             if (event.key === "at_chat_enter_to_send") setEnterToSend(event.newValue !== "false");
+            if (event.key === "at_chat_send_typing") setSendTypingStatus(event.newValue !== "false");
         };
         window.addEventListener("storage", syncKeyboard);
         return () => window.removeEventListener("storage", syncKeyboard);
@@ -296,7 +298,7 @@ export default function ChatTextArea({
                         taRef={textAreaRef}
                         onChange={e => {
                             setMess(e.currentTarget.value);
-                            if (!editing) handleTyping(chatWith ? chatWith.id : "");
+                            if (!editing && sendTypingStatus) handleTyping(chatWith ? chatWith.id : "");
                         }}
                         onKeyDown={handleKeyDown}
                         placeholder={tc("chatUi.placeholder")}

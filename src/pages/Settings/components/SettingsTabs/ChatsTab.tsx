@@ -23,9 +23,14 @@ export default function ChatsTab({ search }: { search: string }) {
     const [ welcomeDraft, setWelcomeDraft ] = useState<ChatWelcomeSettings>(chatWelcome);
     const [ savingWelcome, setSavingWelcome ] = useState(false);
     const [ enterToSend, setEnterToSend ] = useState(() => localStorage.getItem("at_chat_enter_to_send") !== "false");
+    const [ sendTypingStatus, setSendTypingStatus ] = useState(() => localStorage.getItem("at_chat_send_typing") !== "false");
     const changeEnterToSend = (value: boolean) => {
         localStorage.setItem("at_chat_enter_to_send", String(value));
         setEnterToSend(value);
+    };
+    const changeSendTypingStatus = (value: boolean) => {
+        localStorage.setItem("at_chat_send_typing", String(value));
+        setSendTypingStatus(value);
     };
 
     useEffect(() => {
@@ -104,6 +109,18 @@ export default function ChatsTab({ search }: { search: string }) {
                 <div className="settingHint">{t("chats.enterToSendHint", {
                     shortcut: enterToSend ? t("chats.shiftEnter") : t("chats.ctrlEnter")
                 })}</div>
+            </div>
+            <div className="settingInnerDiv" data-setting-id="sendTypingStatus">
+                <div className="settingHeader">
+                    <HighlightText text={t("chats.typingTitle")} search={search}/>
+                </div>
+                <div className="settingInnerList">
+                    <div className="settingTogglerDiv" onClick={() => changeSendTypingStatus(!sendTypingStatus)}>
+                        <span>{t("chats.sendTypingStatus")}</span>
+                        <Toggler state={sendTypingStatus} onToggle={changeSendTypingStatus} stopPropagation={true}/>
+                    </div>
+                </div>
+                <div className="settingHint">{t("chats.typingHint")}</div>
             </div>
             <div className="settingInnerDiv" data-setting-id="welcomeMessage">
                 <div className="settingHeader">
