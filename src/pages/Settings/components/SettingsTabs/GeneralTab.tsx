@@ -1,11 +1,9 @@
-import { useState } from "react";
 import RadioGroup from "../../../../components/ts/RadioGroup";
 import SeekBar from "../SeekBar";
 import { Link } from "react-router-dom";
 import { TranslateIcon, CaretRightIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import Toggler from "../../../../components/ts/Toggler";
-import { useNote } from "../../../../components/hooks/NoteHook";
 import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
@@ -14,9 +12,7 @@ import { useSettings } from "../../../../components/hooks/SettingsHook";
 
 export default function GeneralTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { showDevNote } = useNote()
-    const [ fontSize, setFontSize ] = useState<number>(16);
-    const { autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache } = useSettings();
+    const { fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat, autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache } = useSettings();
 
     const timeChanger = [
         { label: t("general.twentyFour"), value: "twentyFour" },
@@ -54,23 +50,23 @@ export default function GeneralTab({ search }: { search: string }) {
                 <div className="settingHeader">
                     {t("general.text")}
                 </div>
-                <div className="settingInnerWrapper" onClick={() => showDevNote()}>
+                <div className="settingInnerWrapper">
                     <div className="settingSpan">
                         <HighlightText text={t("general.fontSize")} search={search} />
                     </div>
                     <SeekBar min={12} max={22} value={fontSize} unit="px" step={1} onChange={setFontSize} disabled={false} id="fontSize"/>
                 </div>
-                <div className="settingInnerWrapper" onClick={() => showDevNote()}>
+                <div className="settingInnerWrapper">
                     <div className="settingSpan">
                         <HighlightText text={t("general.dateFormat")} search={search} />
                     </div>
-                    <RadioGroup list={dateChanger} val={"standart"} id="dateFormat"/>
+                    <RadioGroup list={dateChanger} val={dateFormat} newVal={value => setDateFormat(value === "american" ? "american" : "standart")} id="dateFormat"/>
                 </div>
-                <div className="settingInnerWrapper" onClick={() => showDevNote()}>
+                <div className="settingInnerWrapper">
                     <div className="settingSpan">
                         <HighlightText text={t("general.timeFormat")} search={search} />
                     </div>
-                    <RadioGroup list={timeChanger} val={"twentyFour"} id="timeFormat"/>
+                    <RadioGroup list={timeChanger} val={timeFormat} newVal={value => setTimeFormat(value === "twelve" ? "twelve" : "twentyFour")} id="timeFormat"/>
                 </div>
             </div>
             <QuickActionsSettings search={search}/>
