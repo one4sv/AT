@@ -1,4 +1,5 @@
 import i18n from "../../../i18n/i18n";
+import { formatAppDate, formatAppTime } from "./dateToStr";
 export default function formatLastOnline(lastOnline: string | null | undefined) {
   if (!lastOnline) return "";
 
@@ -21,7 +22,7 @@ export default function formatLastOnline(lastOnline: string | null | undefined) 
   const yesterday = new Date();
   yesterday.setDate(now.getDate() - 1);
 
-  const timeStr = lastDate.toLocaleTimeString(i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU", { hour: "2-digit", minute: "2-digit" });
+  const timeStr = formatAppTime(lastDate);
 
   if (
     lastDate.getDate() === yesterday.getDate() &&
@@ -32,6 +33,6 @@ export default function formatLastOnline(lastOnline: string | null | undefined) 
   }
 
   const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short" };
-  const dateStr = lastDate.toLocaleDateString(i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU", options);
+  const dateStr = formatAppDate(lastDate, options);
   return i18n.t("chatUi.lastSeen", { ns: "common", date: dateStr, time: timeStr });
 }
