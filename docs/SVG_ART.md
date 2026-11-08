@@ -6,7 +6,7 @@
 
 - `SectionArt` принимает `theme?: ArtTheme`, `section?: string` и `mini?: boolean`. `section` преобразуется через объект `themes` в `SectionArt.tsx`; не каждый ключ маршрута равен имени темы.
 - Внутренний `Motif` выбирает уникальную рисованную композицию по `theme`. Оболочка `SectionArt` общая: `viewBox="0 0 360 176"`, мягкие эллипсы, дорожки, частицы, боковые элементы и градиент.
-- Текущие темы (сверять с `ArtTheme`): `general`, `account`, `personalization`, `habits`, `chats`, `notifications`, `security`, `privacy`, `about`, `contacts`, `faq`, `policy`, `terms`, `growth`, `future`, `community`, `roadmap`.
+- Текущие темы (сверять с `ArtTheme`): `general`, `account`, `personalization`, `habits`, `chats`, `notifications`, `security`, `privacy`, `about`, `contacts`, `faq`, `policy`, `terms`, `growth`, `future`, `community`, `roadmap`, `feedback`.
 - Идентификаторы градиента и clipPath создаются через `useId`, поэтому иллюстрации не конфликтуют, когда находятся на странице несколько раз.
 - `IntersectionObserver` ставит `isVisible`: анимации невидимых иллюстраций приостанавливаются. Если добавлять анимацию, соблюдать это поведение.
 - `aria-hidden="true"`, `focusable="false"`, `pointer-events: none`: рисунок декоративный, не подменяет текстовую информацию и не блокирует нажатия на карточку.

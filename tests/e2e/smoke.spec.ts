@@ -6,6 +6,26 @@ test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("at-cookie-consent-v1", "necessary"));
 });
 
+test("feedback opens from Info and Contacts with a report reason choice", async ({ page }) => {
+    await page.goto("/info");
+    const entry = page.locator(".settingsButtsWrapper .settingButt").filter({ hasText: "Обратная связь" });
+    await expect(entry).toBeVisible();
+    await entry.click();
+
+    const modal = page.locator(".feedbackModal");
+    await expect(modal).toBeVisible();
+    await expect(modal.locator('[data-setting-id="feedbackKind"]')).toBeVisible();
+    await modal.locator('[data-setting-id="feedbackKind"] .radiobutt').filter({ hasText: "Жалоба" }).click();
+    await expect(modal.locator('[data-setting-id="feedbackReason"]')).toBeVisible();
+    await modal.getByRole("button", { name: "Закрыть" }).click();
+    await expect(modal).toHaveCount(0);
+
+    await page.goto("/info/contacts");
+    await page.locator(".contactFeedbackButton").click();
+    await expect(page.locator(".feedbackModal")).toBeVisible();
+    await expect(page.locator(".feedbackModal .sectionArt")).toBeVisible();
+});
+
 test("roadmap uses invariant English release names and its historical beginning date", async ({ page }) => {
     await page.goto("/info/roadmap");
     await expect(page.locator(".roadmapPage")).toBeVisible();
