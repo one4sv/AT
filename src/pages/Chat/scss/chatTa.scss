@@ -268,14 +268,14 @@
     }
     @media (hover: hover) {
         &:hover {
-            color: var(--inner_text);
+            color: var(--accent_text);
             background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }
 
     @media (hover: none) {
         &:active {
-            color: var(--inner_text);
+            color: var(--accent_text);
             background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }
@@ -291,6 +291,7 @@
     justify-content: center;
     cursor: pointer;
     background:linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--accent_text);
     @media (hover: hover) {
         &:hover {
             background:linear-gradient(105deg, var(--accent), var(--grad));

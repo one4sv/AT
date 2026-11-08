@@ -54,7 +54,7 @@
 }
 
 .doneButt {
-    @include var.longButt(17vw, 3.7vh, 1vh, .5vw, none, var(--inner_text), var(--tr), var(--accent));
+    @include var.longButt(17vw, 3.7vh, 1vh, .5vw, none, var(--accent_text), var(--tr), var(--accent));
     background:linear-gradient(135deg, var(--accent), var(--grad));
     border: none;
     user-select: none;
@@ -68,7 +68,7 @@
     transition: all 0s ease;
     &.dbComp {
         >svg {
-            color: var(--inner_text);
+            color: var(--accent_text);
         }
     }
     @media (max-width: 800px) {
@@ -116,14 +116,14 @@
     @media (hover: hover) {
         &:hover {
             box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
-            &.dbComp {
+            &:not(.planButt).dbComp {
                 > svg {
-                    color: var(--inner_text);
+                    color: var(--accent_text);
                 }
             }
-            &.dbMark {
+            &:not(.planButt).dbMark {
                 > svg {
-                    color: var(--inner_text);
+                    color: var(--accent_text);
                 }
             }
         }
@@ -131,14 +131,14 @@
     @media (hover: none) {
         &:active {
             box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
-            &.dbComp {
+            &:not(.planButt).dbComp {
                 > svg {
-                    color: var(--inner_text);
+                    color: var(--accent_text);
                 }
             }
-            &.dbMark {
+            &:not(.planButt).dbMark {
                 > svg {
-                    color: var(--inner_text);
+                    color: var(--accent_text);
                 }
             }
         }

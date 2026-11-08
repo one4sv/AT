@@ -148,7 +148,7 @@
         border-radius: 24px;
         padding: 1.5dvh 1.25vw;
         background: linear-gradient(135deg, var(--accent_hov), var(--grad_hov));
-        color: var(--tc);
+        color: var(--accent_text);
     }
 
     .roadmapReleaseMajor {
@@ -265,15 +265,15 @@
         box-sizing: border-box;
         border-radius: 24px;
         background: linear-gradient(135deg, var(--accent_hov), var(--grad_hov));
-        color: var(--tc);
+        color: var(--accent_text);
 
         h3 {
             margin: 0 0 .75dvh;
-            color: var(--tc);
+            color: var(--accent_text);
         }
 
         time {
-            color: var(--borderWh);
+            color: var(--accent_text);
         }
 
         @media (max-width: 800px) {
@@ -281,4 +281,8 @@
             padding: 2dvh 3vw;
         }
     }
+}
+
+.roadmapPage :is(.roadmapCurrentContent, .roadmapReleaseMajor) :is(h3, h4, li, time, p, a, span) {
+    color: var(--accent_text);
 }

@@ -394,7 +394,7 @@
     border: none;
     border-radius: 12px;
     background:linear-gradient(135deg, var(--accent), var(--grad));
-    color: var(--tc);
+    color: var(--accent_text);
     font-size: 20px;
     cursor: pointer;
     @media (hover: hover) {
@@ -525,7 +525,7 @@
             &:hover {
                 background: linear-gradient(135deg, var(--accent), var(--grad));
                 > svg {
-                    color: var(--tc);
+                    color: var(--accent_text);
                 }
             }
         }
@@ -573,7 +573,7 @@
         right: .5vw;
         border-radius: 24px;
         background: linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--tc);
+        color: var(--accent_text);
     }
 
     .createChatList {
@@ -630,12 +630,14 @@
         @media (hover: hover) {
             &:hover {
                 background: linear-gradient(135deg, var(--accent), var(--grad));
+                color: var(--accent_text);
             }
         }
 
         @media (hover: none) {
             &:active {
                 background: linear-gradient(135deg, var(--accent), var(--grad));
+                color: var(--accent_text);
             }
         }
     }
@@ -650,7 +652,7 @@
         outline: none;
         border-radius: 24px;
         background: linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--tc);
+        color: var(--accent_text);
         font: inherit;
         font-size: 18px;
         cursor: pointer;

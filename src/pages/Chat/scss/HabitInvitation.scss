@@ -47,7 +47,7 @@
 
             &.accept {
                 background: linear-gradient(135deg, var(--accent_hov), var(--grad_hov));
-                color: var(--inner_text);
+                color: var(--accent_text);
                 @media (hover: hover) {
                     &:hover {
                         background: linear-gradient(135deg, var(--accent), var(--grad));
@@ -56,7 +56,7 @@
 
                 @media (hover: none) {
                     &:active {
-                        color: var(--notValid);
+                        color: var(--accent_text);
                         background: linear-gradient(135deg, var(--accent), var(--grad));
                     }
                 }

@@ -168,33 +168,33 @@
     border: none;
     background:linear-gradient(135deg, var(--accent), var(--grad));
     >.contactsUserPic > svg {
-        color: var(--inner_text);
-        fill: var(--inner_text);
+        color: var(--accent_text);
+        fill: var(--accent_text);
     }
     >.contactsUserInfo {
         >.contactsUserStr {
-                color: var(--inner_text);
+                color: var(--accent_text);
             > .nameSpan > svg {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
             >.secSpan {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
             >.isReadCL {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
         }
         > .nowTyping {
-            color: var(--inner_text);
+            color: var(--accent_text);
         }
         >.lastMess {
-            color: var(--inner_text);
+            color: var(--accent_text);
             >div {
                 > .lmsender {
-                    color: var(--inner_text);
+                    color: var(--accent_text);
                 }
                 > .lmc {
-                    color: var(--inner_text);
+                    color: var(--accent_text);
                 }
             }
         }

@@ -156,7 +156,7 @@
         align-items: center;
         gap: .5vw;
         background: linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--inner_text);
+        color: var(--accent_text);
         border: none;
     }
 
@@ -185,7 +185,7 @@
         border-radius: 24px;
         padding: 1.2dvh 2vw;
         background: linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--inner_text);
+        color: var(--accent_text);
         cursor: pointer;
     }
 }

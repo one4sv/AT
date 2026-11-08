@@ -120,7 +120,7 @@
     border: 1px solid var(--block_border);
     &.open {
         background: linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--inner_text);
+        color: var(--accent_text);
         border: none;
     }
 
@@ -128,11 +128,17 @@
         &:hover {
             color: var(--tc);
         }
+        &.open:hover {
+            color: var(--accent_text);
+        }
     }
 
     @media (hover: none) {
         &:active {
             color: var(--tc);
+        }
+        &.open:active {
+            color: var(--accent_text);
         }
     }
 

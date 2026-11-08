@@ -293,7 +293,7 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
 - Действующая модалка `BackgroundLibrary` из контекстного меню «Интерфейс» использует такой же пятиколоночный каталог, что `/wallpapers`: 16:9 на ПК и 9:16 на телефоне, без видимых названий, с `Selector` вкладок. Кнопка добавления — SVG `ImagePlus`.
 - Раздел «Интерфейс» имеет **один `settingInnerDiv` «Задний фон»**. Сначала текущий фон и кнопка «Изменить фон» (`font-size: 16px`), затем ползунок `SeekBar` с названием «Размытие заднего фона» (без `0px` в заголовке), отдельная строка движения фона и отдельный `settingSpan` «Фильтры».
 - Выбранный ч/б фильтр: чёрно-белый градиент; сепия: коричнево-сепийный градиент; негатив: инверсия именно текущего `accent → grad` на псевдоэлементе, чтобы текст остался читаемым. Для всех выбранных фильтров `border: none`.
-- У `.contactsUser.active` SVG (в том числе в `PreviewAccent`) должен иметь `color/fill: var(--inner_text)`; не задавать на самой SVG конфликтующее `color="var(--accent_text)"`.
+- У `.contactsUser.active` SVG (в том числе в `PreviewAccent`) должен иметь `color/fill: var(--accent_text)`; не задавать на самой SVG конфликтующее `color="var(--accent_text)"`.
 - `Selector` в `Blackout` обрабатывает touch и pointer сам, с `stopPropagation` и `setPointerCapture`, без ожидания и без проверки `dontHandleOther`. Это правило распространяется на все страницы.
 
 ## Стоковые фоны, вид и поведение миниатюр
@@ -422,7 +422,7 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
 
 **ЧЕТВЁРТАЯ КРИТИЧЕСКАЯ ПРОВЕРКА — ГРАНИЦА МЕНЯЕТСЯ ВМЕСТЕ С ФОНОМ**
 
-**НЕЙТРАЛЬНЫЙ `--mc` / `--interact` НА ВИДИМОМ ФОНЕ ПРИЛОЖЕНИЯ → `border: 1px solid var(--block_border)`. ГРАДИЕНТ `accent → grad` НА HOVER / ACTIVE / OPEN → `border: none` И `color: var(--inner_text)` У ТЕКСТА И ВСЕХ SVG.** Не путать это правило с запретом внутренних декоративных границ в уже залитых `--mc` панелях. Проверять не только финальный градиент, но и восстановление границы после ухода курсора. Контрольный компонент: `.backgroundFullscreenBottom > .backgroundFullscreenInfo`.
+**НЕЙТРАЛЬНЫЙ `--mc` / `--interact` НА ВИДИМОМ ФОНЕ ПРИЛОЖЕНИЯ → `border: 1px solid var(--block_border)`. ГРАДИЕНТ `accent → grad` НА HOVER / ACTIVE / OPEN → `border: none` И `color: var(--accent_text)` У ТЕКСТА И ВСЕХ SVG.** Не путать это правило с запретом внутренних декоративных границ в уже залитых `--mc` панелях. Проверять не только финальный градиент, но и восстановление границы после ухода курсора. Контрольный компонент: `.backgroundFullscreenBottom > .backgroundFullscreenInfo`.
 
 **анимации предпросмотра и галереи**
 
@@ -449,10 +449,10 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
 
 **ТРЕТЬЯ ОБЯЗАТЕЛЬНАЯ ПАМЯТКА — HOVER, ГРАДИЕНТ И ЦВЕТ SVG**
 
-**НИКОГДА НЕ ОСТАВЛЯТЬ ДЕКОРАТИВНЫЙ BORDER ИЛИ АКЦЕНТНЫЙ SVG НА ГРАДИЕНТЕ — ДАЖЕ ТОЛЬКО ПРИ `:hover`, `:active` ИЛИ `[aria-expanded="true"]`.**
+**НИКОГДА НЕ ОСТАВЛЯТЬ ДЕКОРАТИВНЫЙ BORDER ИЛИ SVG СО СТАРЫМ ЦВЕТОМ НА ГРАДИЕНТЕ — ДАЖЕ ТОЛЬКО ПРИ `:hover`, `:active` ИЛИ `[aria-expanded="true"]`.**
 
-- Проверять **все** состояния элемента: обычное, `:hover`, `:active`, выбранное, открытое (`aria-expanded`), `:focus-visible`, disabled. Если хотя бы в одном состоянии `background: linear-gradient(135deg, var(--accent), var(--grad))`, там обязательны **`border: none`** и **`color: var(--inner_text)` для текста и каждой SVG**. Это правило действует также на вложенные `span`, `path`, `svg` и вложенные компоненты с собственным `color: var(--accent_text)`.
-- Акцентный цвет `var(--accent_text)` допустим у иконки **только на нейтральном фоне**, где обеспечен контраст. При появлении градиента даже в hover и active переопределять **вложенную SVG** на `var(--inner_text)` селектором достаточной специфичности. Не полагаться только на `color` родителя: у SVG могут быть собственные правила.
+- Проверять **все** состояния элемента: обычное, `:hover`, `:active`, выбранное, открытое (`aria-expanded`), `:focus-visible`, disabled. Если хотя бы в одном состоянии `background: linear-gradient(135deg, var(--accent), var(--grad))`, там обязательны **`border: none`** и **`color: var(--accent_text)` для текста и каждой SVG**. Это правило действует также на вложенные `span`, `path`, `svg` и вложенные компоненты с собственным цветом, отличным от `var(--accent_text)`.
+- Цвет `var(--accent_text)` обязателен для текста и SVG на градиентном фоне, в том числе при hover, active и открытом состоянии. При появлении градиента даже в hover и active переопределять **вложенную SVG** на `var(--accent_text)` селектором достаточной специфичности. Не полагаться только на `color` родителя: у SVG могут быть собственные правила.
 - Если нейтральная кнопка (`background: var(--mc)` или `var(--interact)`) находится **непосредственно поверх видимого фона приложения**, у неё ОБЯЗАТЕЛЬНО `border: 1px solid var(--block_border)` в обычном состоянии. Если градиент появляется только на `:hover`, `:active` или при `[aria-expanded="true"]`, граница убирается **только в этом градиентном состоянии** через `border: none`. НЕ удалять границу из базового состояния из-за наличия градиента на hover. Для активной градиентной поверхности запрещены `border-color`, полупрозрачные линии и декоративный `outline`. Исключения прежние: явно требуемые пользователем границы и специально оформленные опасные действия.
 - **БОРДЕР ТОЛЬКО ТАМ, ГДЕ ЗА ЭЛЕМЕНТОМ ВИДЕН ФОН ПРИЛОЖЕНИЯ**, если не оговорено иное. Внутри `var(--mc)`/`var(--interact)` не добавлять его ради украшения. Перед коммитом проверять CSS не только компонента, но и общие hover-правила (например, `.modulesenderInfo:hover`), специфичность и поздние переопределения.
 
@@ -472,10 +472,10 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
         &:hover {
             border: none;
             background: linear-gradient(135deg, var(--accent), var(--grad));
-            color: var(--inner_text);
+            color: var(--accent_text);
 
 > svg, span, .nestedIcon > svg {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
         }
     }
@@ -484,10 +484,10 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
         &:active {
             border: none;
             background: linear-gradient(135deg, var(--accent), var(--grad));
-            color: var(--inner_text);
+            color: var(--accent_text);
 
 > svg, span, .nestedIcon > svg {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
         }
     }

@@ -80,10 +80,10 @@
         border: none;
         background:linear-gradient(135deg, var(--accent), var(--grad));
         .habitName, .habitPer {
-            color: var(--inner_text);
+            color: var(--accent_text);
         }
         svg {
-            color: var(--inner_text);
+            color: var(--accent_text);
         }
         .habitIconSvg {
             background: none;

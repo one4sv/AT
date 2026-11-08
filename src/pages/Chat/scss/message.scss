@@ -171,7 +171,7 @@
         border-radius: 12px 12px 0 12px;
         display: flex;
         flex-direction: column;
-        color: var(--inner_text);
+        color: var(--accent_text);
         > .messageStatusBarDiv {
             justify-content: flex-end;
             > .messageBar {
@@ -179,7 +179,7 @@
             }
         }
         .answerMess {
-            border-left: 3px solid var(--inner_text);
+            border-left: 3px solid var(--accent_text);
         }
     }
     @media (max-width:800px) {
@@ -234,7 +234,7 @@
     }
 
     .message.my & a {
-        color: var(--inner_text);
+        color: var(--accent_text);
     }
     @media (max-width:800px) {
         max-width: 100%;
@@ -377,7 +377,7 @@
     font-size: 14px;
     color:#dfdfdf;
     >span {
-        color: var(--inner_text);
+        color: var(--accent_text);
         cursor: pointer;
         @media (hover: hover) {
             &:hover {
@@ -467,7 +467,7 @@
     justify-content: center;
     height: 100%;
     background-color: var(--bgc);
-    color: var(--inner_text);
+    color: var(--accent_text);
     text-decoration: none;
     // Для a tag
     border-radius: 12px;
@@ -520,5 +520,5 @@
 }
 
 .message.my .redirectText a {
-    color: var(--inner_text);
+    color: var(--accent_text);
 }

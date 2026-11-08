@@ -216,10 +216,10 @@
         &:hover {
             background:linear-gradient(135deg, var(--accent), var(--grad));
             span {
-                color: var(--inner_text) !important;
+                color: var(--accent_text) !important;
             }
             svg {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
         }
     }
@@ -227,10 +227,10 @@
         &:active {
             background:linear-gradient(135deg, var(--accent), var(--grad));
             span {
-                color: var(--inner_text) !important;
+                color: var(--accent_text) !important;
             }
             svg {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
         }
     }

@@ -219,7 +219,7 @@
         &.active {
             background:linear-gradient(135deg, var(--accent), var(--grad));
             border: none;
-            color: var(--tc);
+            color: var(--accent_text);
         }
         &.was {
             background-color: var(--borderHabit);

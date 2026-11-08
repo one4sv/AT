@@ -209,7 +209,7 @@
 }
 
 .addHabitSave {
-    @include var.longButt(85%, 4vh, 0, 0, none, var(--tc), var(--tr), none);
+    @include var.longButt(85%, 4vh, 0, 0, none, var(--accent_text), var(--tr), none);
     font-size: calc(20px * var(--app-font-scale, 1));
     display: flex;
     align-items: center;

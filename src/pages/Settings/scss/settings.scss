@@ -118,19 +118,19 @@
         @media (hover: hover) {
             &:hover {
                 div,                 span {
-                    color: var(--inner_text);
+                    color: var(--accent_text);
                 }
             }
         }
         @media (hover: none) {
             &:active {
                 div,                 span {
-                    color: var(--inner_text);
+                    color: var(--accent_text);
                 }
             }
         }
         div,         span {
-            color: var(--inner_text);
+            color: var(--accent_text);
         }
     }
     @media (max-width: 800px) {

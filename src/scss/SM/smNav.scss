@@ -216,7 +216,7 @@
     }
 
     &.active {
-        color: var(--inner_text);
+        color: var(--accent_text);
 
         @media (hover: hover) {
             &:hover {

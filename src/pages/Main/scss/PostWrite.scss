@@ -98,14 +98,14 @@
     }
     @media (hover: hover) {
         &:hover {
-            color: var(--tc);
+            color: var(--accent_text);
             background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }
 
     @media (hover: none) {
         &:active {
-            color: var(--tc);
+            color: var(--accent_text);
             background:linear-gradient(135deg, var(--accent), var(--grad));
         }
     }
@@ -163,7 +163,7 @@
     position: absolute;
     right: 0.5vw;
     background:linear-gradient(135deg, var(--accent), var(--grad));
-    color: var(--inner_text);
+    color: var(--accent_text);
     @media (max-width:800px) {
         right: 2vw;
     }

@@ -79,7 +79,7 @@
     border-radius: 24px;
     padding: 1.3dvh 1vw;
     font: inherit;
-    color: var(--inner_text);
+    color: var(--accent_text);
     background: linear-gradient(135deg, var(--accent), var(--grad));
     cursor: pointer;
     &:disabled { opacity: .5; cursor: default; }

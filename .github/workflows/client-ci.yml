@@ -29,6 +29,8 @@ jobs:
         run: node --test tests/web-push-sw.test.mjs
       - name: Check stale asset recovery and checkbox semantics
         run: node --test tests/vite-chunk-recovery.test.mjs
+      - name: Verify gradient text colors
+        run: node --test tests/gradient-text.test.mjs
       - name: Build client
         run: npm run build
       - name: Enforce entry JavaScript budget

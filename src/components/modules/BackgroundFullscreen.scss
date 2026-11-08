@@ -511,15 +511,15 @@
     &[aria-expanded="true"] {
         background: linear-gradient(135deg, var(--accent), var(--grad));
         border: none;
-        color: var(--inner_text);
+        color: var(--accent_text);
 
         .senderInfoPic > svg,
         > svg {
-            color: var(--inner_text);
+            color: var(--accent_text);
         }
 
         .senderInfoMain > span {
-            color: var(--inner_text);
+            color: var(--accent_text);
         }
     }
 
@@ -527,15 +527,15 @@
         &:hover {
             background: linear-gradient(135deg, var(--accent), var(--grad));
             border: none;
-            color: var(--inner_text);
+            color: var(--accent_text);
 
             .senderInfoPic > svg,
             > svg {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
 
             .senderInfoMain > span {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
         }
     }
@@ -544,15 +544,15 @@
         &:active {
             background: linear-gradient(135deg, var(--accent), var(--grad));
             border: none;
-            color: var(--inner_text);
+            color: var(--accent_text);
 
             .senderInfoPic > svg,
             > svg {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
 
             .senderInfoMain > span {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
         }
     }
