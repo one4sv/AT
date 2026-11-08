@@ -228,6 +228,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         const safeSize = Number.isFinite(fontSize) ? Math.max(12, Math.min(22, fontSize)) : 16;
         document.documentElement.style.fontSize = `${safeSize}px`;
         document.documentElement.style.setProperty("--app-font-size", `${safeSize}px`);
+        document.documentElement.style.setProperty("--app-font-scale", String(safeSize / 16));
         document.documentElement.dataset.dateFormat = dateFormat;
         document.documentElement.dataset.timeFormat = timeFormat;
     }, [fontSize, dateFormat, timeFormat]);
