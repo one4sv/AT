@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { usePageTitle } from "../../components/hooks/PageContextHook"
+import "../Settings/scss/settings.scss"
 import "./scss/info.scss"
 import type { Setting } from "../Settings/Settings"
 import { AddressBookIcon, ArrowLeftIcon, DetectiveIcon, HandshakeIcon, InfoIcon, QuestionIcon, GitBranchIcon, ChatCircleTextIcon } from "@phosphor-icons/react"

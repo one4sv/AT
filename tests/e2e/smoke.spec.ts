@@ -10,6 +10,9 @@ test("feedback opens from Info and Contacts with a report reason choice", async 
     await page.goto("/info");
     const entry = page.locator(".settingsButtsWrapper .settingButt").filter({ hasText: "Обратная связь" });
     await expect(entry).toBeVisible();
+    await expect(entry).toHaveCSS("display", "flex");
+    await expect(entry).toHaveCSS("border-radius", "24px");
+    await expect(page.locator(".settingsSliderWrapper")).toHaveCSS("width", /[1-9][0-9.]*px/);
     await entry.click();
 
     const modal = page.locator(".feedbackModal");
@@ -21,9 +24,16 @@ test("feedback opens from Info and Contacts with a report reason choice", async 
     await expect(modal).toHaveCount(0);
 
     await page.goto("/info/contacts");
-    await page.locator(".contactFeedbackButton").click();
+    const contactHeadings = await page.locator(".infoText h3").allTextContents();
+    expect(contactHeadings.slice(0, 3)).toEqual(["Разработка", "Социальные сети", "Поддержка"]);
+    const supportButton = page.locator(".contactFeedbackButton");
+    const height = await supportButton.evaluate(node => node.getBoundingClientRect().height);
+    await supportButton.hover();
+    const hoverHeight = await supportButton.evaluate(node => node.getBoundingClientRect().height);
+    expect(Math.abs(hoverHeight - height)).toBeLessThan(0.5);
+    await supportButton.click();
     await expect(page.locator(".feedbackModal")).toBeVisible();
-    await expect(page.locator(".feedbackModal .sectionArt")).toBeVisible();
+    await expect(page.locator(".feedbackModal .sectionArt")).toHaveCount(0);
 });
 
 test("roadmap uses invariant English release names and its historical beginning date", async ({ page }) => {

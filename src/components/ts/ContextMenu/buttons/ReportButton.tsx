@@ -33,7 +33,7 @@ export default function ReportButton({ targetType, targetId, isMy }: {
         }});
     };
 
-    return <div className="ContextMenuButt" onClick={open}>
+    return <div className="ContextMenuButt delete" onClick={open}>
         <FlagIcon/> {t("feedback.reportTitle")}
     </div>;
 }

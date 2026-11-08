@@ -6,7 +6,6 @@ import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
 import RadioGroup from "../ts/RadioGroup";
 import TA from "../ts/TA";
-import SectionArt from "../ts/SectionArt";
 import "./FeedbackModal.scss";
 
 type FeedbackKind = "bug" | "idea" | "complaint" | "other";
@@ -74,7 +73,6 @@ export default function FeedbackModal() {
             </div>
             <button type="button" className="feedbackModalClose" onClick={close} aria-label={t("feedback.close")}><XIcon size={20}/></button>
         </div>
-        <SectionArt theme="feedback"/>
         {sentId ?
             <div className="feedbackSuccess" role="status">
                 <div>{t("feedback.success")}</div>

@@ -20,21 +20,6 @@ export default function ContactsTab() {
         <div className="infoText">
             <SectionArt theme="contacts"/>
 
-            <h3 className="accent">{t("contacts.support")}</h3>
-
-            <p>{t("contacts.supportText1")}</p>
-
-            <p>
-                {t("contacts.email")}:{" "}
-                <a href="mailto:kutenko18@gmail.com">kutenko18@gmail.com</a>
-            </p>
-
-            <p>{t("contacts.supportText2")}</p>
-            <button type="button" className="contactFeedbackButton"
-                onClick={() => setBlackout({ seted: true, module: "FeedbackModal" })}>
-                <ChatCircleTextIcon size={22}/> {t("contacts.feedbackOpen")}
-            </button>
-
             <h3 className="accent">{t("contacts.development")}</h3>
 
             <p>
@@ -61,6 +46,21 @@ export default function ContactsTab() {
                     Instagram
                 </Link>
             </div>
+
+            <h3 className="accent">{t("contacts.support")}</h3>
+
+            <p>{t("contacts.supportText1")}</p>
+
+            <p>
+                {t("contacts.email")}:{" "}
+                <a href="mailto:kutenko18@gmail.com">kutenko18@gmail.com</a>
+            </p>
+
+            <p>{t("contacts.supportText2")}</p>
+            <button type="button" className="contactFeedbackButton"
+                onClick={() => setBlackout({ seted: true, module: "FeedbackModal" })}>
+                <ChatCircleTextIcon size={22}/> {t("contacts.feedbackOpen")}
+            </button>
 
             <h3 className="accent">{t("contacts.aboutProject")}</h3>
 

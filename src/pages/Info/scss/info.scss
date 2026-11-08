@@ -313,7 +313,7 @@
 
     @media (hover: hover) {
         &:hover {
-            border: none;
+            border: 1px solid transparent;
             background: linear-gradient(135deg, var(--accent), var(--grad));
             color: var(--inner_text);
         }
