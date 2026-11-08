@@ -168,7 +168,7 @@ export default function ChatTextArea({
                 setRedirect(undefined);
                 setForwardPost(null);
                 setShowNames(true);
-                stopTyping();
+                if (sendTypingStatus) stopTyping();
                 const success = await sendMess(
                     {
                         nick,
