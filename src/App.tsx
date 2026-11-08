@@ -31,6 +31,7 @@ const Language = lazy(() => import("./pages/Settings/Language"));
 const WallpaperStudio = lazy(() => import("./pages/WallpaperStudio/WallpaperStudio"));
 const PasswordAccess = lazy(() => import("./pages/Settings/PasswordAccess"));
 const AuthorizedDevices = lazy(() => import("./pages/Settings/AuthorizedDevices"));
+const AccountDeletion = lazy(() => import("./pages/Settings/AccountDeletion"));
 
 function App() {
     useVisualViewport();
@@ -50,6 +51,7 @@ function App() {
                     <Route path="/auth/qr" element={<QrApprove />} />
                     <Route path="/connection" element={<ConnectionStatus standalone />} />
                     <Route path="/sign" element={<Landing />} />
+                    <Route path="/account-deletion" element={<AccountDeletion />} />
                     <Route path="/settings/language" element={<Language />} />
                     <Route path="/reset-password" element={<PasswordAccess />} />
                     <Route path="/settings/password" element={<PasswordAccess />} />
