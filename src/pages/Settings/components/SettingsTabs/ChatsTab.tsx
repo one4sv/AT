@@ -22,6 +22,11 @@ export default function ChatsTab({ search }: { search: string }) {
     const { showNotification } = useNote();
     const [ welcomeDraft, setWelcomeDraft ] = useState<ChatWelcomeSettings>(chatWelcome);
     const [ savingWelcome, setSavingWelcome ] = useState(false);
+    const [ enterToSend, setEnterToSend ] = useState(() => localStorage.getItem("at_chat_enter_to_send") !== "false");
+    const changeEnterToSend = (value: boolean) => {
+        localStorage.setItem("at_chat_enter_to_send", String(value));
+        setEnterToSend(value);
+    };
 
     useEffect(() => {
         setWelcomeDraft(chatWelcome);
@@ -85,6 +90,20 @@ export default function ChatsTab({ search }: { search: string }) {
                         <RadioGroup list={doubleClickArr} val={messdb} newVal={(val) => setNewMessdb(val)} id="doubleClick"/>
                     </div>
                 </div>
+            </div>
+            <div className="settingInnerDiv" data-setting-id="enterToSend">
+                <div className="settingHeader">
+                    <HighlightText text={t("chats.keyboardTitle")} search={search}/>
+                </div>
+                <div className="settingInnerList">
+                    <div className="settingTogglerDiv" onClick={() => changeEnterToSend(!enterToSend)}>
+                        <span>{t("chats.enterToSend")}</span>
+                        <Toggler state={enterToSend} onToggle={changeEnterToSend} stopPropagation={true}/>
+                    </div>
+                </div>
+                <div className="settingHint">{t("chats.enterToSendHint", {
+                    shortcut: enterToSend ? t("chats.shiftEnter") : t("chats.ctrlEnter")
+                })}</div>
             </div>
             <div className="settingInnerDiv" data-setting-id="welcomeMessage">
                 <div className="settingHeader">

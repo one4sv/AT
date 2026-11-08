@@ -68,11 +68,19 @@ export default function ChatTextArea({
     const sending = useRef(false);
     const routeRef = useRef("");
     const [oldMess, setOldMess] = useState<string>("");
+    const [enterToSend, setEnterToSend] = useState(() => localStorage.getItem("at_chat_enter_to_send") !== "false");
     const [files, setFiles] = useState<File[]>([]);
     const [oldFiles, setOldFiles] = useState<File[]>([]);
     const [oldMedia, setOldMedia] = useState<Media[]>([]);
     const location = useLocation();
     routeRef.current = location.pathname;
+    useEffect(() => {
+        const syncKeyboard = (event: StorageEvent) => {
+            if (event.key === "at_chat_enter_to_send") setEnterToSend(event.newValue !== "false");
+        };
+        window.addEventListener("storage", syncKeyboard);
+        return () => window.removeEventListener("storage", syncKeyboard);
+    }, []);
     const inputFileRef = useRef<HTMLInputElement>(null);
 
     useEffect(
@@ -92,7 +100,9 @@ export default function ChatTextArea({
         [editing]
     );
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter" && !e.shiftKey && !isMobile && !e.nativeEvent.isComposing) {
+        if (e.key !== "Enter" || isMobile || e.nativeEvent.isComposing) return;
+        const send = enterToSend ? !e.shiftKey && !e.ctrlKey && !e.metaKey : e.ctrlKey || e.metaKey;
+        if (send) {
             e.preventDefault();
             handleSend();
         }

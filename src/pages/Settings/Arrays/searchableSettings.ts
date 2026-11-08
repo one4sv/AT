@@ -190,6 +190,12 @@ export function useSearchableSettings(): SearchableSection[] {
                     category: t("chats.header"),
                 },
                 {
+                    id: "enterToSend",
+                    name: t("chats.enterToSend"),
+                    icon: ChatsTeardropIcon,
+                    category: t("chats.keyboardTitle"),
+                },
+                {
                     id: "welcomeMessage",
                     name: t("chats.welcomeTitle"),
                     icon: ChatsTeardropIcon,
