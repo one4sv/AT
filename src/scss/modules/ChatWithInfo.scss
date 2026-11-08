@@ -29,11 +29,12 @@
     background-color: var(--interact);
     border-radius: 24px;
     padding: 1vh;
+    gap: 1vw;
     >.accPic {
         margin-top: 0;
     }
     @media (max-width: 800px) {
-        gap: 5px;
+        gap: 2vw;
     }
 }
 

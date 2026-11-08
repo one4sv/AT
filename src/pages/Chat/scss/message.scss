@@ -520,6 +520,10 @@
     transform-origin: left bottom;
 }
 
+.message.my .redirectedMess,
+.message.my .redirectSign,
+.message.my .redirectSign > span,
+.message.my .redirectText,
 .message.my .redirectText a {
     color: var(--inner_text);
 }

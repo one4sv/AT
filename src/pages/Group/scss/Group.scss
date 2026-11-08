@@ -60,6 +60,11 @@
 
     .accInfoNames {
         min-width: 0;
+        margin-left: 2vw;
+
+        @media (max-width: 800px) {
+            margin-left: 0;
+        }
     }
 
     .accMainInfoStr .nameInput {

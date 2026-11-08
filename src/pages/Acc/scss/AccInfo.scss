@@ -90,7 +90,7 @@
 
 .accInfoNames {
     flex: 1;
-    margin-left: 0.5vw;
+    margin-left: 1.5vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -152,7 +152,7 @@
     border-radius: 24px;
     background-color: var(--interact);
     color: var(--borderWh);
-    font-size: 11px;
+    font-size: 13px;
     line-height: 1.1;
     pointer-events: none;
     > svg {
