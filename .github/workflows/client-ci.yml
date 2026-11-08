@@ -25,6 +25,8 @@ jobs:
         run: npm run check:release
       - name: Check lazy page and modal style ownership
         run: npm run check:lazy-styles
+      - name: Verify SelectList and contact picker styles
+        run: node --test tests/select-list-modal-styles.test.mjs
       - name: Run Web Push service worker tests
         run: node --test tests/web-push-sw.test.mjs
       - name: Check stale asset recovery and checkbox semantics
