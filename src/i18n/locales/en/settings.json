@@ -25,7 +25,21 @@
     "header": "Account",
     "save": "Save",
     "edit": "Edit",
-    "deleteAccount": "Delete account"
+    "deleteAccount": "Delete account",
+    "changeEmail": "Change email",
+    "newEmail": "New email",
+    "password": "Password",
+    "sendCode": "Send code",
+    "emailCode": "Email verification code",
+    "confirmEmail": "Confirm new email",
+    "emailSecurityHint": "Changing your email requires your current password and verification of the new address. You will need to sign in again.",
+    "emailCodeHint": "A code was sent to {{email}}. It expires in 15 minutes.",
+    "deleteWarning": "Your account will be disabled for 30 days. You can restore it using a code emailed to you. After that, deletion is permanent.",
+    "deleteMessages": "Delete my messages and chats after 30 days",
+    "requestDeletion": "Get deletion confirmation code",
+    "deleteCodeHint": "Enter the six-digit code sent to {{email}} to confirm deletion.",
+    "confirmDeletion": "Confirm account deletion",
+    "requestError": "Could not process the request. Check your connection and try again."
   },
   "chats": {
     "header": "Default behavior",
@@ -441,5 +455,27 @@
     "openSideMenu": "Open side menu",
     "showLogo": "Show AT logo",
     "accentGlow": "Light Rings"
+  },
+  "pending": {
+    "title": "Account pending deletion",
+    "description": "Restore your account before the deadline. While it is pending deletion, you cannot use the account and others cannot message it.",
+    "remaining": "Time until permanent deletion",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "hours_one": "{{count}} hour",
+    "hours_other": "{{count}} hours",
+    "minutes_one": "{{count}} minute",
+    "minutes_other": "{{count}} minutes",
+    "expired": "The recovery period has expired",
+    "email": "Email",
+    "password": "Password",
+    "code": "Email verification code",
+    "send": "Send recovery code",
+    "confirm": "Restore account",
+    "sent": "A recovery code was sent to {{email}}. It expires in 15 minutes.",
+    "error": "Could not complete the request.",
+    "returnToLogin": "Back to sign in",
+    "missing": "Sign in to check your account's deletion status.",
+    "pendingOther": "This account is pending deletion. Messaging is unavailable."
   }
 }
