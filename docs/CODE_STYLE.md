@@ -358,3 +358,6 @@ Flex-список занимает свободную высоту через fl
 ### Цвет текста на градиентных поверхностях
 
 Для кнопок, карточек и выбранных вкладок с `background: linear-gradient(135deg, var(--accent), var(--grad))` устанавливать `color: var(--inner_text)` для текста и SVG, в том числе на `hover`/`active`. Если у того же элемента в обычном состоянии `background: var(--mc)` или `var(--interact)`, оставлять существующий цвет текста без изменений. Не использовать `--accent_text` поверх акцентного градиента.
+
+
+Для сплошных фонов `background: var(--accent)`, `background-color: var(--accent)` и `background-color: var(--darker_accent)` действует то же правило: текст и иконки — `var(--inner_text)`. На нейтральной поверхности использовать обычный цвет; проверять вложенные подписи и состояния hover/active. CI проверяет `tests/accent-text-contrast.test.mjs`.

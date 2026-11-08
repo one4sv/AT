@@ -475,10 +475,10 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
         &:hover {
             border: none;
             background: linear-gradient(135deg, var(--accent), var(--grad));
-            color: var(--accent_text);
+            color: var(--inner_text);
 
 > svg, span, .nestedIcon > svg {
-                color: var(--accent_text);
+                color: var(--inner_text);
             }
         }
     }
@@ -487,10 +487,10 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
         &:active {
             border: none;
             background: linear-gradient(135deg, var(--accent), var(--grad));
-            color: var(--accent_text);
+            color: var(--inner_text);
 
 > svg, span, .nestedIcon > svg {
-                color: var(--accent_text);
+                color: var(--inner_text);
             }
         }
     }
@@ -509,3 +509,6 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
 - \`TagSelector.tsx\` и \`DayChanger.tsx\` также импортируют собственные общие правила из \`src/scss/modules/habitFormControls.scss\`. У всех этих общих компонентов есть дополнительный импорт в \`App.scss\`.
 - \`HabitParticipantPicker\` использует те же классы \`.contactPickerList\`, \`.createChatSearch\`, \`.createChatChosenCons\`, \`.createChatChosenCon\`, \`.createChatContact\`, что и поиск участников при приглашении из беседы (\`CreateChat\`). Общие правила находятся в \`src/scss/modules/contactPickerControls.scss\`.
 - Проверять на прямых маршрутах, в том числе из \`/info\` и \`/habit\`, на ПК и мобильном, без предварительного открытия Settings. CI: \`tests/select-list-modal-styles.test.mjs\`; сборка: \`npm run check:bundle\` проверяет наличие селекторов в начальном CSS.
+
+
+**Сплошной акцентный фон:** если текст, значок, счётчик или статус расположен на `background: var(--accent)`, `background-color: var(--accent)` или `var(--darker_accent)`, использовать `color: var(--inner_text)`, включая hover/active и явно окрашенные дочерние SVG и надписи. Если элемент возвращается на нейтральный `--mc`/`--interact`, вернуть его исходный цвет, а не сохранять `inner_text` на тёмном фоне. В списке участников активности `.habitMemberStatus` на нейтральной строке — `--borderWh`, а на `.habitMember.active` — `--inner_text` поверх градиента. Выбранная беседа в `.contactPickerList .createChatContact.selected` сохраняет акцентный фон и `inner_text` при hover и active.
