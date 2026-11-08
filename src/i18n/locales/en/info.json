@@ -268,9 +268,9 @@
         "title": "Development roadmap",
         "intro": "AchieveTogether's journey from its earliest pages to shared activities. The current release is highlighted; past and future milestones can be expanded.",
         "past": "Past releases",
-        "current": "Current update · dev 0.6.2",
+        "current": "Current update · dev {{version}}",
         "future": "Upcoming releases",
-        "note": "Future features are plans, not confirmed release dates. Version dev 0.6.2 is still being tested.",
+        "note": "Future features are plans, not confirmed release dates. Version dev {{version}} is still being tested.",
         "beginning": "Начало"
     }
 }

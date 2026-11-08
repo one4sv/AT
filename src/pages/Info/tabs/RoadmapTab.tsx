@@ -68,7 +68,7 @@ export default function RoadmapTab() {
 
                 <section className="roadmapBranch roadmapBranchCurrent">
                     <div className="roadmapCurrentContent">
-                        <span className="roadmapStatus">{t("roadmap.current")}</span>
+                        <span className="roadmapStatus">{t("roadmap.current", { version: roadmapCurrent.version })}</span>
                         <h3><span className="roadmapVersion">{roadmapCurrent.version}{roadmapCurrent.title ? ` ${roadmapCurrent.title}` : ""}</span></h3>
                         {roadmapCurrent.date && <time className="roadmapDate" dateTime={roadmapCurrent.date}>
                             {new Date(`${roadmapCurrent.date}T12:00:00`).toLocaleDateString(language === "en" ? "en-GB" : "ru-RU", {
@@ -111,7 +111,7 @@ export default function RoadmapTab() {
                 </section>
             </div>
 
-            <p className="roadmapNote">{t("roadmap.note")}</p>
+            <p className="roadmapNote">{t("roadmap.note", { version: roadmapCurrent.version })}</p>
         </div>
     );
 }
