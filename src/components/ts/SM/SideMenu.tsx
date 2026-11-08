@@ -193,7 +193,8 @@ export default function SideMenu() {
                 if (!menu.visible) setTranslateX(showSideMenu ? 0 : -100);
             }}
             style={{
-                transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none"
+                transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none",
+                pointerEvents: (isMobile || layout === "hidden" || studio) && !showSideMenu ? "none" : undefined
             }}
         >
             <div className="ListWrapper">

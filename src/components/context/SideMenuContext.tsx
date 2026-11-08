@@ -255,10 +255,9 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         setIsDragging(false);
         setDontHandle(false);
         setDontHandleOther(false);
+        setShowSideMenu(false);
 
-        animateTo(-100, () => {
-            setShowSideMenu(false);
-        });
+        animateTo(-100);
     }, [animateTo]);
 
     const openSideMenu = useCallback(() => {
