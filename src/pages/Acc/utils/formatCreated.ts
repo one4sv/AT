@@ -1,3 +1,4 @@
+import { formatAppDate, formatAppTime } from "../../../components/ts/utils/dateToStr";
 export default function formatCreated(created: string | null | undefined) {
   if (!created) return "";
 
@@ -20,7 +21,7 @@ export default function formatCreated(created: string | null | undefined) {
   const yesterday = new Date();
   yesterday.setDate(now.getDate() - 1);
 
-  const timeStr = lastDate.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+  const timeStr = formatAppTime(lastDate);
 
   if (
     lastDate.getDate() === yesterday.getDate() &&
@@ -31,6 +32,6 @@ export default function formatCreated(created: string | null | undefined) {
   }
 
   const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short" };
-  const dateStr = lastDate.toLocaleDateString("ru-RU", options);
+  const dateStr = formatAppDate(lastDate, options);
   return `${dateStr} в ${timeStr}`;
 }
