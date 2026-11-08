@@ -29,7 +29,7 @@
 }
 
 .settingSpan {
-    font-size: 16px;
+    font-size: calc(16px * var(--app-font-scale, 1));
     margin-bottom: 1vh;
     padding-inline-start: 0.5vw;
     color: var(--tc);
@@ -145,7 +145,7 @@
     color: var(--borderWh);
     text-decoration: none;
     font: inherit;
-    font-size: 14px;
+    font-size: calc(14px * var(--app-font-scale, 1));
     cursor: pointer;
     &:hover {
         color: var(--tc);
@@ -155,7 +155,7 @@
 
 .moduleName {
     width: 100%;
-    font-size: 20px;
+    font-size: calc(20px * var(--app-font-scale, 1));
     padding-left: .25vw;
     display: flex;
     align-items: center;
@@ -165,7 +165,7 @@
 
 .addHabitGoal {
     @include var.longButt(85%, 4vh, 0, 0, var(--tr), var(--borderHabit), var(--tr), var(--menuButtHover));
-    font-size: 20px;
+    font-size: calc(20px * var(--app-font-scale, 1));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -187,7 +187,7 @@
 
 .addHabitSave {
     @include var.longButt(85%, 4vh, 0, 0, none, var(--tc), var(--tr), none);
-    font-size: 20px;
+    font-size: calc(20px * var(--app-font-scale, 1));
     display: flex;
     align-items: center;
     justify-content: center;
