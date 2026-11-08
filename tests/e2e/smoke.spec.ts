@@ -24,6 +24,7 @@ test("feedback opens from Info and Contacts with a report reason choice", async 
     await expect(modal).toHaveCount(0);
 
     await page.goto("/info/contacts");
+    await expect(page.locator(".infoText h3").first()).toBeVisible();
     const contactHeadings = await page.locator(".infoText h3").allTextContents();
     expect(contactHeadings.slice(0, 3)).toEqual(["Разработка", "Социальные сети", "Поддержка"]);
     const supportButton = page.locator(".contactFeedbackButton");
