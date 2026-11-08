@@ -73,18 +73,26 @@ test("danger and security button styles load when settings pages are opened dire
     const danger = page.locator('[data-setting-id="deleteAccount"]');
     await expect(danger).toBeVisible();
     await expect(danger).toHaveCSS("display", "flex");
-    const dangerColors = await danger.evaluate(element => ({
-        actual: getComputedStyle(element).color,
-        expected: getComputedStyle(document.documentElement).getPropertyValue("--notValid").trim()
-    }));
+    const dangerColors = await danger.evaluate(element => {
+        const reference = document.createElement("span");
+        reference.style.color = "var(--notValid)";
+        document.body.appendChild(reference);
+        const colors = { actual: getComputedStyle(element).color, expected: getComputedStyle(reference).color };
+        reference.remove();
+        return colors;
+    });
     expect(dangerColors.actual).toBe(dangerColors.expected);
 
     await page.goto("/settings/security");
     const safety = page.locator(".safetyButt").first();
     await expect(safety).toBeVisible();
-    const safetyColors = await safety.evaluate(element => ({
-        actual: getComputedStyle(element).color,
-        expected: getComputedStyle(document.documentElement).getPropertyValue("--inner_text").trim()
-    }));
+    const safetyColors = await safety.evaluate(element => {
+        const reference = document.createElement("span");
+        reference.style.color = "var(--inner_text)";
+        document.body.appendChild(reference);
+        const colors = { actual: getComputedStyle(element).color, expected: getComputedStyle(reference).color };
+        reference.remove();
+        return colors;
+    });
     expect(safetyColors.actual).toBe(safetyColors.expected);
 });
