@@ -104,7 +104,15 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
         } catch (error) {
             console.error(" Ошибка авторизации:", error);
             if (axios.isAxiosError(error)) {
-                showNotification("error", error.response?.data?.message || "Неверные данные для входа");
+                if (error.response?.status === 423 && error.response.data?.code === "DELETION_PENDING") {
+                    sessionStorage.setItem("at-pending-deletion", JSON.stringify({
+                        email: error.response.data.email,
+                        deadline: error.response.data.deadline
+                    }));
+                    window.location.assign("/account-deletion");
+                    return;
+                }
+                showNotification("error", error.response?.data?.message || error.response?.data?.error || "Неверные данные для входа");
                 setResponse({success:false, field:"all", error:error.response?.data?.message || "Неверные данные для входа", form:"auth"})
             }
         } finally {
