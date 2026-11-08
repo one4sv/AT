@@ -283,6 +283,6 @@
     }
 }
 
-.roadmapPage :is(.roadmapCurrentContent, .roadmapReleaseMajor) :is(h3, h4, li, time, p, a, span) {
-    color: var(--accent_text);
+.roadmapPage :is(.roadmapCurrentContent, .roadmapReleaseMajor, .roadmapBeginning) :is(h3, h4, ul, li, time, p, a, span) {
+    color: var(--inner_text);
 }
