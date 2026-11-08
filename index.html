@@ -41,6 +41,68 @@
         navigator.virtualKeyboard.overlaysContent = true;
       }
     </script>
+    <script>
+      // Vite lazy chunks from older deployments can disappear after publication.
+      // Retry once with freshly revalidated HTML, never on every failed import.
+      (function () {
+        const retryKey = "at-missing-chunk-reload";
+        const retryWindow = 2 * 60 * 1000;
+
+        function showReloadNotice() {
+          if (document.getElementById("at-chunk-reload-notice")) return;
+          function render() {
+            if (document.getElementById("at-chunk-reload-notice")) return;
+            const panel = document.createElement("div");
+            panel.id = "at-chunk-reload-notice";
+            panel.setAttribute("role", "alert");
+            panel.style.cssText = "position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5dvh;padding:4vw;text-align:center;background:var(--bgc,#131313);color:var(--tc,#fff);font-family:Arial,Helvetica,sans-serif";
+            const hint = document.createElement("p");
+            hint.textContent = document.documentElement.lang === "en"
+              ? "The application was updated. Refresh the page to load the latest version."
+              : "Приложение обновилось. Перезагрузите страницу, чтобы загрузить новую версию.";
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = document.documentElement.lang === "en" ? "Refresh" : "Обновить";
+            button.style.cssText = "border:0;border-radius:24px;padding:1dvh 3vw;background:var(--accent,#14b314);color:var(--inner_text,#fff);cursor:pointer";
+            button.addEventListener("click", function () {
+              try { sessionStorage.removeItem(retryKey); } catch (_) {}
+              location.reload();
+            });
+            panel.append(hint, button);
+            document.body.appendChild(panel);
+          }
+          if (document.body) render();
+          else document.addEventListener("DOMContentLoaded", render, { once: true });
+        }
+
+        function recover() {
+          if (!navigator.onLine) return;
+          let lastAttempt = 0;
+          try {
+            lastAttempt = Number(sessionStorage.getItem(retryKey) || 0);
+          } catch (_) {}
+          if (Date.now() - lastAttempt < retryWindow) {
+            showReloadNotice();
+            return;
+          }
+          try { sessionStorage.setItem(retryKey, String(Date.now())); } catch (_) {}
+          location.reload();
+        }
+
+        window.addEventListener("vite:preloadError", function (event) {
+          event.preventDefault();
+          recover();
+        });
+
+        window.addEventListener("error", function (event) {
+          const element = event.target;
+          if (element && element.tagName === "SCRIPT" &&
+              element.type === "module" && element.src.startsWith(location.origin + "/assets/")) {
+            recover();
+          }
+        }, true);
+      })();
+    </script>
   </head>
 
   <body>
