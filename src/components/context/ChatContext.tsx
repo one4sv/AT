@@ -18,6 +18,7 @@ export interface chatWithType {
     pinned: boolean;
     am_i_blocked: boolean;
     is_group: boolean;
+    deletion_pending?: boolean;
     members: {
         id: string;
         nick: string;
@@ -160,7 +161,8 @@ export const ChatProvider = ({
                         is_group: false,
                         members: [],
                         chat_id: res.data.chat_id,
-                        welcome_message: res.data.welcome_message ?? null
+                        welcome_message: res.data.welcome_message ?? null,
+                        deletion_pending: Boolean(u.deletion_pending)
                     }
                 );
                 setMessages(res.data.messages || []);
