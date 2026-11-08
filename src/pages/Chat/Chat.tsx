@@ -20,6 +20,7 @@ import Skeleton from "../../components/ts/Skeleton";
 import { LoaderSmall } from "../../components/ts/LoaderSmall";
 import WelcomeMessage from "./components/WelcomeMessage";
 import { useChatMessageScroll } from "../../components/hooks/utils/useChatMessageScroll";
+import { formatAppDate } from "../../components/ts/utils/dateToStr";
 export default function Chat() {
     const { t, i18n } = useTranslation("common");
     const {
@@ -109,7 +110,7 @@ export default function Chat() {
         () => {
             if (!search.trim()) return [];
             return messages.filter(
-                m => (m.content.toLowerCase().includes(search.toLowerCase()) || new Date(m.created_at).toLocaleDateString(i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU").includes(search)) && !m.is_system
+                m => (m.content.toLowerCase().includes(search.toLowerCase()) || formatAppDate(m.created_at).includes(search)) && !m.is_system
             ).reverse();
         },
         [messages, search, i18n.resolvedLanguage]
