@@ -85,7 +85,7 @@ export default function NotificationsTab({ search }: { search: string }) {
             if (mounted) showNotification("error", t("notifications.remindersLoadError"));
         });
         return () => { mounted = false; };
-    }, [setNewHabitsNote, showNotification, t]);
+    }, []);
 
     const saveReminderPreferences = async (next: ReminderPreferences) => {
         if (reminderBusy || !remindersLoaded) return;
