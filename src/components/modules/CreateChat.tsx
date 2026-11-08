@@ -138,7 +138,7 @@ export default function CreateChat() {
                 />
             )}
 
-            <div className="createChatList">
+            <div className="createChatList contactPickerList">
                 <div className="createChatChosenCons">
                     {chosenCons.length > 0 &&
                         chosenCons.map((con) => (

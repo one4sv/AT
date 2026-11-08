@@ -115,28 +115,51 @@ export default function HabitParticipantPicker() {
                 newVal={value => { setMode(value); setSelected([]); }}
             /> : <div className="settingSpan">{t("habitDialog.invite")}</div>}
             {isOwner && <button type="button" className="addGoalButtDiv habitPickerCreate" disabled={saving} onClick={() => setBlackout({ seted: true, module: "HabitCreateChat" })}>{t("habitDialog.createNewGroup")}</button>}
-            {selected.length > 0 && <div className="createChatChosenCons">
-                {selected.map(contact => <button
-                    key={contact.id}
-                    type="button"
-                    className="createChatChosenCon"
-                    disabled={saving}
-                    aria-label={t("habitDialog.removeSelected", { name: contact.name || contact.nick })}
-                    onClick={() => setSelected(current => current.filter(item => item.id !== contact.id))}
-                >
-                    <div className="creteChatConPick">
-                        {contact.avatar_url ? <img src={contact.avatar_url} alt="" /> : <UserCircleIcon />}
-                    </div>
-                    <span>{contact.name || contact.nick}</span>
-                    <XIcon className="createChatConRemove" />
-                </button>)}
-            </div>}
-            <div className="createChatSearch"><input value={search} onChange={event => setSearch(event.target.value)} placeholder={t("habitDialog.contactsSearch")} aria-label={t("habitDialog.contactsSearch")} /><SearchIcon /></div>
-            <div className="habitPickerContacts">
-                {loading ? <div className="habitMembersSkeleton" role="status" aria-label={t("habitDialog.contactsLoading")}><div /><div /></div> : listError ? <p role="alert">{listError}</p> : list.length === 0 ? <div className="habitSettingValue">{t("habitDialog.contactsNotFound")}</div> : list.map(contact => <button key={contact.id} type="button" className="contactsUser" disabled={saving} onClick={() => setSelected([contact])}>
-                    <div className="contactsUserPic">{contact.avatar_url ? <img className="contactsUserAvatar" src={contact.avatar_url} alt="" /> : <UserCircleIcon />}</div>
-                    <div className="contactsUserInfo"><div className="contactsUserStr"><span className="nameSpan">{contact.name || contact.nick}</span>{selected.some(item => item.id === contact.id) ? <CheckCircleIcon weight="fill" /> : <CircleIcon />}</div></div>
-                </button>)}
+            <div className="createChatList contactPickerList">
+                {selected.length > 0 && <div className="createChatChosenCons">
+                    {selected.map(contact => <button
+                        key={contact.id}
+                        type="button"
+                        className="createChatChosenCon"
+                        disabled={saving}
+                        aria-label={t("habitDialog.removeSelected", { name: contact.name || contact.nick })}
+                        onClick={() => setSelected(current => current.filter(item => item.id !== contact.id))}
+                    >
+                        <div className="creteChatConPick">
+                            {contact.avatar_url ? <img src={contact.avatar_url} alt="" /> : <UserCircleIcon />}
+                        </div>
+                        <span>{contact.name || contact.nick}</span>
+                        <XIcon className="createChatConRemove" />
+                    </button>)}
+                </div>}
+                <div className="createChatSearch">
+                    <input
+                        type="text"
+                        value={search}
+                        onChange={event => setSearch(event.target.value)}
+                        placeholder={t("habitDialog.contactsSearch")}
+                        aria-label={t("habitDialog.contactsSearch")}
+                        disabled={saving}
+                    />
+                    <SearchIcon />
+                </div>
+                <div className="habitPickerContacts">
+                    {loading ? <div className="habitMembersSkeleton" role="status" aria-label={t("habitDialog.contactsLoading")}><div /><div /></div> : listError ? <p role="alert">{listError}</p> : list.length === 0 ? <div className="habitSettingValue">{t("habitDialog.contactsNotFound")}</div> : list.map(contact => <button
+                        key={contact.id}
+                        type="button"
+                        className={`createChatContact ${selected.some(item => item.id === contact.id) ? "selected" : ""}`}
+                        disabled={saving}
+                        onClick={() => setSelected([contact])}
+                    >
+                        <div className="creteChatConPick">
+                            {contact.avatar_url ? <img src={contact.avatar_url} alt="" /> : <UserCircleIcon />}
+                        </div>
+                        <span className="createChatConName">{contact.name || contact.nick}</span>
+                        <div className="createChatConCheck">
+                            {selected.some(item => item.id === contact.id) ? <CheckCircleIcon weight="fill" /> : <CircleIcon />}
+                        </div>
+                    </button>)}
+                </div>
             </div>
         </div>
         <div className="habitConfirmActions">

@@ -1,0 +1,165 @@
+// Shared contact picker presentation for inviting to a conversation or activity.
+// The same controls must render with the same dimensions in both dialogs.
+.contactPickerList {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: .75dvh;
+    gap: .75dvh;
+    background: var(--interact);
+    border-radius: 24px;
+    overflow: hidden;
+
+    .createChatSearch {
+        flex-shrink: 0;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+
+        > input {
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+            height: 4.5dvh;
+            min-height: 0;
+            padding-inline-start: 1vw;
+            padding-inline-end: 3vw;
+            border-radius: 24px;
+        }
+
+        > svg {
+            top: 50%;
+            right: .75vw;
+            width: 2.5dvh;
+            height: 2.5dvh;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+    }
+
+    .createChatChosenCons {
+        flex-shrink: 0;
+        gap: .5dvh .35vw;
+    }
+
+    .createChatChosenCon {
+        box-sizing: border-box;
+        height: 3.5dvh;
+        min-height: 0;
+        padding: .3dvh .6vw;
+        gap: .4vw;
+        border: 0;
+        outline: none;
+        border-radius: 24px;
+        color: var(--tc);
+        font: inherit;
+        text-align: left;
+
+        > span {
+            max-width: 12vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        > .createChatConRemove {
+            flex-shrink: 0;
+            visibility: visible;
+        }
+
+        @media (hover: hover) {
+            &:hover {
+                background: linear-gradient(135deg, var(--accent), var(--grad));
+                color: var(--inner_text);
+
+                > .createChatConRemove {
+                    color: var(--inner_text);
+                }
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+                background: linear-gradient(135deg, var(--accent), var(--grad));
+                color: var(--inner_text);
+
+                > .createChatConRemove {
+                    color: var(--inner_text);
+                }
+            }
+        }
+    }
+
+    .createChatContact {
+        box-sizing: border-box;
+        flex-shrink: 0;
+        min-height: 4.5dvh;
+        height: auto;
+        padding: .35dvh .6vw;
+        gap: .5vw;
+        border: 0;
+        border-radius: 24px;
+        background: transparent;
+        font: inherit;
+        text-align: left;
+
+        &.selected {
+            background: var(--menuButtHover);
+            color: var(--tc);
+        }
+
+        &:disabled {
+            opacity: .5;
+            cursor: default;
+        }
+
+        > .creteChatConPick {
+            height: 3.5dvh;
+            flex-shrink: 0;
+        }
+
+        > .createChatConName {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        > .createChatConCheck {
+            position: static;
+            margin-left: auto;
+            flex-shrink: 0;
+            color: var(--accent_text);
+        }
+    }
+
+    @media (max-width: 800px) {
+        .createChatSearch {
+            > input {
+                padding-inline-start: 3vw;
+                padding-inline-end: 12vw;
+            }
+            > svg {
+                right: 3vw;
+            }
+        }
+
+        .createChatChosenCon {
+            padding-inline: 2vw;
+            gap: 1vw;
+
+            > span {
+                max-width: 45vw;
+            }
+        }
+
+        .createChatContact {
+            gap: 2vw;
+            padding-inline: 2vw;
+        }
+    }
+}
