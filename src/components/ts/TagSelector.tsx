@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import "../../scss/modules/habitFormControls.scss"
 import { Plus, Pencil } from "lucide-react"
   import { tags, groups } from "./tags"
 
