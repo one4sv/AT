@@ -13,6 +13,7 @@ import { useNavigate } from "react-router";
 import AnswerMess from "../utils/AnswerMess";
 import MessageFiles from "../utils/MessageFiles";
 import { useSettings } from "../../../components/hooks/SettingsHook";
+import { formatAppTime } from "../../../components/ts/utils/dateToStr";
 import { reactionsArr } from "../../../components/ts/utils/emojies";
 import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
 import HighlightText from "../../../components/ts/HighlightText";
@@ -96,10 +97,7 @@ export default function Message({
     const navigate = useNavigate();
     const messageGetTime = (date: Date | string) => {
         const d = new Date(date);
-        return d.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        return formatAppTime(d);
     };
     const isMy = m.sender_id === user.id ? true : false;
     const isChose = activeHeader === "choosing";
