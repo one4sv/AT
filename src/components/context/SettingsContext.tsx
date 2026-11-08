@@ -8,6 +8,7 @@ import { api } from "../ts/api";
 import { applyCustomPalette } from "../ts/utils/customPalette";
 import { defaultBackgroundEffects, hasCachedBackgroundEffects, normalizeBackgroundEffects } from "../ts/utils/backgroundEffects";
 import { MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
+import { privateAssetUrl } from "../ts/utils/privateAssetUrl";
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
@@ -247,7 +248,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         (theme === "system" && systemDark);
 
     const [ orderHabits, setOrderHabits ] = useState<string[  ] | null>(null);
-    const [ bgUrl, setBgUrl ] = useLocalStorage(LOCAL_KEYS.bgUrl, (() => {
+    const [ storedBgUrl, setStoredBgUrl ] = useLocalStorage(LOCAL_KEYS.bgUrl, (() => {
         try {
             // Migrate the previous device-only key without reading a selected URL from the API.
             const value = JSON.parse(localStorage.getItem("settings_bg_url") ?? '""');
@@ -256,6 +257,12 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             return "";
         }
     })());
+    const bgUrl = privateAssetUrl(storedBgUrl);
+    const setBgUrl = useCallback<React.Dispatch<React.SetStateAction<string>>>(next => {
+        setStoredBgUrl(previous => privateAssetUrl(
+            typeof next === "function" ? next(privateAssetUrl(previous)) : next
+        ));
+    }, [setStoredBgUrl]);
     const [ bgGallery, setBgGallery ] = useState<SavedBackground[]>([]);
     const [ groupInvites, setGroupInvites ] = useState<GroupInviteRules>({ contacts: "message", others: "none" });
     const [ chatWelcome, setChatWelcome ] = useState<ChatWelcomeSettings>({ enabled: false, text: "" });
