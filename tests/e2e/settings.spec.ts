@@ -66,3 +66,25 @@ test("PWA installation help is not shown on desktop browsers", async ({ page }, 
     await expect(page.locator(".notificationPermissionPanel")).toBeVisible();
     await expect(page.locator(".notificationPermissionSecondary")).toHaveCount(0);
 });
+
+
+test("danger and security button styles load when settings pages are opened directly", async ({ page }) => {
+    await page.goto("/settings/acc");
+    const danger = page.locator('[data-setting-id="deleteAccount"]');
+    await expect(danger).toBeVisible();
+    await expect(danger).toHaveCSS("display", "flex");
+    const dangerColors = await danger.evaluate(element => ({
+        actual: getComputedStyle(element).color,
+        expected: getComputedStyle(document.documentElement).getPropertyValue("--notValid").trim()
+    }));
+    expect(dangerColors.actual).toBe(dangerColors.expected);
+
+    await page.goto("/settings/security");
+    const safety = page.locator(".safetyButt").first();
+    await expect(safety).toBeVisible();
+    const safetyColors = await safety.evaluate(element => ({
+        actual: getComputedStyle(element).color,
+        expected: getComputedStyle(document.documentElement).getPropertyValue("--inner_text").trim()
+    }));
+    expect(safetyColors.actual).toBe(safetyColors.expected);
+});
