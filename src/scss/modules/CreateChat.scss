@@ -301,8 +301,10 @@
     @media (hover: hover) {
         &:hover {
         background-color: var(--darker_accent);
+        color: var(--inner_text);
         >.createChatConRemove {
         visibility: visible;
+        color: var(--inner_text);
         }
     
         }
@@ -311,8 +313,10 @@
     @media (hover: none) {
         &:active {
         background-color: var(--darker_accent);
+        color: var(--inner_text);
         >.createChatConRemove {
         visibility: visible;
+        color: var(--inner_text);
         }
     
         
