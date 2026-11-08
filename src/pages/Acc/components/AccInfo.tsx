@@ -142,6 +142,10 @@ export default function AccInfo({
                                 );
                             }}
                         /> : red ? <Camera size={256} /> : <UserRound size={128} />}
+                        <div className={`accOnlineStauts ${onlineMap[acc?.id || ""] ? "online" : "offline"}`}>
+                            <CircleIcon size={16} weight="fill" aria-hidden="true" />
+                            {onlineMap[acc?.id || ""] ? t("online") : formatLastOnline(acc?.last_online)}
+                        </div>
                     </div>
                     <div className="accInfoNames">
                         <div className="accMainInfoStr">
@@ -160,12 +164,6 @@ export default function AccInfo({
                                 readOnly={!red}
                                 onChange={e => setNewNick(e.currentTarget.value)}
                             />
-                        </div>
-                    </div>
-                    <div className="accInfoWrapper">
-                        <div className={`accOnlineStauts ${onlineMap[acc?.id || ""] ? "online" : "offline"}`}>
-                            <CircleIcon size={16} weight="fill" aria-hidden="true" />
-                            {onlineMap[acc?.id || ""] ? t("online") : formatLastOnline(acc?.last_online)}
                         </div>
                     </div>
                 </div>
