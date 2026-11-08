@@ -120,7 +120,7 @@
         cursor: pointer;
 
         &.active {
-            color: var(--accent_text);
+            color: var(--inner_text);
             background: linear-gradient(135deg, var(--accent), var(--grad));
         }
 

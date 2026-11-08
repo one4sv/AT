@@ -41,7 +41,7 @@
     cursor: pointer;
     height: 5dvh;
     aspect-ratio: 1/1;
-    color: var(--accent_text);
+    color: var(--inner_text);
     > span {
         outline: none;
         white-space: nowrap;
@@ -69,6 +69,6 @@
     }
     &.editing {
         cursor: text;
-        background-color: var(--borderHabit);
+        background-color: var(--inner_text);
     }
 }

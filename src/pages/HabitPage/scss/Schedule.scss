@@ -77,7 +77,7 @@
     }
     &.save {
         padding: 0.5vh 0.5vw;
-        color: var(--accent_text);
+        color: var(--inner_text);
         background:linear-gradient(135deg, var(--accent), var(--grad));
         @media (hover: hover) {
             &:hover {

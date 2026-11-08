@@ -123,7 +123,7 @@
     justify-content: center;
     text-align: center;
     cursor: pointer;
-    color: var(--accent_text);
+    color: var(--inner_text);
     background: linear-gradient(135deg, var(--accent), var(--grad));
     font: inherit;
 }
@@ -502,7 +502,7 @@
         &.accept {
             border: 0;
             background: linear-gradient(135deg, var(--accent), var(--grad));
-            color: var(--accent_text);
+            color: var(--inner_text);
         }
 
         &.danger {

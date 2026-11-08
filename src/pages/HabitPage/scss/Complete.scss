@@ -56,6 +56,7 @@
 .doneButt {
     @include var.longButt(17vw, 3.7vh, 1vh, .5vw, none, var(--accent_text), var(--tr), var(--accent));
     background:linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--inner_text);
     border: none;
     user-select: none;
     font-size: 20px;
@@ -68,7 +69,7 @@
     transition: all 0s ease;
     &.dbComp {
         >svg {
-            color: var(--accent_text);
+            color: var(--inner_text);
         }
     }
     @media (max-width: 800px) {
@@ -118,12 +119,12 @@
             box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
             &:not(.planButt).dbComp {
                 > svg {
-                    color: var(--accent_text);
+                    color: var(--inner_text);
                 }
             }
             &:not(.planButt).dbMark {
                 > svg {
-                    color: var(--accent_text);
+                    color: var(--inner_text);
                 }
             }
         }
@@ -133,12 +134,12 @@
             box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
             &:not(.planButt).dbComp {
                 > svg {
-                    color: var(--accent_text);
+                    color: var(--inner_text);
                 }
             }
             &:not(.planButt).dbMark {
                 > svg {
-                    color: var(--accent_text);
+                    color: var(--inner_text);
                 }
             }
         }
