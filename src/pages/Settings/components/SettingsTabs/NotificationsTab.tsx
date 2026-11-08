@@ -396,21 +396,22 @@ export default function NotificationsTab({ search }: { search: string }) {
                                 {!reminderPrefs.enabled && <p className="habitNoteHelp inactive">{t("notifications.remindersInactiveHint")}</p>}
                                 <div className="habitReminderEditorSections">
                                     {habitNoteArray.map((section, index) => (
-                                        <div className="habitReminderEventSection" key={section.title}>
+                                        <div className={"habitReminderEventSection " + (((index === 0 && !selectedHabit.start_time) || (index === 2 && !selectedHabit.end_time)) ? "unavailable" : "")} key={section.title}>
                                             <div className="habitReminderEventHeader">
                                                 <ClockIcon size={17}/>
                                                 <span>{section.title}</span>
                                             </div>
-                                            <div className="habitReminderEvents">
+                                            <div className={"habitReminderEvents " + (index === 1 ? "atTime" : "")}>
                                                 {section.options.map(option => {
                                                     const rule = selectedRules.find(item => item.code === option.value);
+                                                    const unavailable = (index === 0 && !selectedHabit.start_time) || (index === 2 && !selectedHabit.end_time);
                                                     const selected = !!rule;
                                                     const key = `${selectedHabit.id}:${option.value}`;
                                                     const draft = reminderDrafts[key] ?? (option.value === "inp" ? "18:00" : "5");
                                                     return (
-                                                        <div className={"habitReminderEvent " + (selected ? "selected" : "")} key={option.value}>
+                                                        <div className={"habitReminderEvent " + (selected ? "selected " : "") + (unavailable ? "unavailable" : "")} key={option.value}>
                                                             <button type="button" className="habitReminderEventButton" aria-pressed={selected}
-                                                                disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled}
+                                                                disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled || unavailable}
                                                                 onClick={() => void saveHabitRule(selectedHabit.id, option.value)}>
                                                                 <span className="habitReminderEventCheck">
                                                                     {selected && <CheckIcon size={14} aria-hidden="true"/>}
@@ -423,7 +424,7 @@ export default function NotificationsTab({ search }: { search: string }) {
                                                                     min={option.value === "inp" ? undefined : 1}
                                                                     max={option.value === "inp" ? undefined : 1440}
                                                                     value={draft}
-                                                                    disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled}
+                                                                    disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled || unavailable}
                                                                     onChange={event => setReminderDrafts(previous => ({
                                                                         ...previous, [key]: event.target.value
                                                                     }))}

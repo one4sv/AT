@@ -886,3 +886,58 @@
         }
     }
 }
+
+.habitReminderEvents.atTime {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.habitReminderEventSection.unavailable .habitReminderEventHeader {
+    color: var(--borderHabit);
+
+    > svg { color: var(--borderHabit); }
+}
+
+.habitReminderEvent.unavailable {
+    border-color: var(--block_border);
+    background: var(--interact);
+    opacity: .45;
+    cursor: not-allowed;
+
+    > .habitReminderEventButton {
+        color: var(--borderHabit);
+        cursor: not-allowed;
+    }
+
+    .habitReminderEventCheck {
+        border-color: var(--borderHabit);
+    }
+
+    .habitNoteCustomInput {
+        color: var(--borderHabit);
+        pointer-events: none;
+    }
+}
+
+.habitReminderEvent.unavailable.selected {
+    border-color: var(--block_border);
+    background: var(--interact);
+}
+
+.habitReminderEventHint {
+    display: block;
+    padding: .5dvh .5vw;
+}
+
+@media (max-width: 800px) {
+    .habitReminderEvents.atTime { grid-template-columns: minmax(0, 1fr); }
+
+    .habitReminderEvents.atTime .habitReminderEvent {
+        width: 100%;
+    }
+
+    .habitReminderEvents.atTime .habitNoteCustomInput {
+        width: auto;
+        min-width: 30vw;
+        max-width: 42vw;
+    }
+}
