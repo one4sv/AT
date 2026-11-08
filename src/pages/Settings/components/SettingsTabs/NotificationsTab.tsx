@@ -6,6 +6,7 @@ import Toggler from "../../../../components/ts/Toggler";
 import "../../../../scss/habitsNoteTable.scss";
 import { TagIcon } from "../../../HabitPage/utils/TagIcon";
 import { CaretDownIcon } from "@phosphor-icons/react";
+import { formatClock } from "../../../../components/ts/utils/dateToStr";
 import { useTranslation } from "react-i18next";
 import { useNote } from "../../../../components/hooks/NoteHook";
 import HighlightText from "../../../../components/ts/HighlightText";
@@ -211,11 +212,11 @@ export default function NotificationsTab({ search }: { search: string }) {
                 </div>
                 <div className="settingInnerList">
                     <div className="settingTogglerDiv" onClick={() => void togglePreference("all_note", !note)} data-setting-id="note">
-                        <span title="Не кликабельно"><HighlightText text={t("notifications.generalNotifications")} search={search} /></span>
+                        <span><HighlightText text={t("notifications.generalNotifications")} search={search} /></span>
                         <Toggler state={note} setState={(value: boolean) => void togglePreference("all_note", value)} stopPropagation={true} />
                     </div>
                     <div className={`settingTogglerDiv ${!note && "settingInactive"}`} onClick={() => { if (note) void togglePreference("new_mess_note", !messNote); }} data-setting-id="messNote">
-                        <span title="Не кликабельно"><HighlightText text={t("notifications.newMessages")} search={search} /></span>
+                        <span><HighlightText text={t("notifications.newMessages")} search={search} /></span>
                         <Toggler state={messNote} setState={(value: boolean) => void togglePreference("new_mess_note", value)} disable={!note} stopPropagation={true} />
                     </div>
                 </div>
@@ -283,11 +284,11 @@ export default function NotificationsTab({ search }: { search: string }) {
                             {habits?.filter(h => h.ongoing).sort((a, b) => a.id - b.id).map((h) => {
                                 let timePart = "";
                                 if (h.start_time && h.end_time) {
-                                    timePart = t("notifications.fromTo", { start: h.start_time, end: h.end_time });
+                                    timePart = t("notifications.fromTo", { start: formatClock(h.start_time), end: formatClock(h.end_time) });
                                 } else if (h.start_time) {
-                                    timePart = t("notifications.startsAt", { time: h.start_time });
+                                    timePart = t("notifications.startsAt", { time: formatClock(h.start_time) });
                                 } else if (h.end_time) {
-                                    timePart = t("notifications.until", { time: h.end_time });
+                                    timePart = t("notifications.until", { time: formatClock(h.end_time) });
                                 }
                                 const opened = showNoteList === h.id;
                                 return (
