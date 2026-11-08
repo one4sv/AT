@@ -50,6 +50,10 @@
     }
     &.close {
         width: 5vh;
+
+        > .bottomOpen > svg {
+            color: var(--inner_text);
+        }
     }
     &.open {
         width: calc(100% - 5.5vh);
