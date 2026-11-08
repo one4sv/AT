@@ -266,11 +266,15 @@
         }
 
         .habitMemberStatus {
-            color: var(--inner_text);
+            color: var(--borderWh);
             opacity: .8;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        &.active .habitMemberStatus {
+            color: var(--inner_text);
         }
     }
 
@@ -450,10 +454,14 @@
     }
 
     .habitMemberStatus {
-        color: var(--inner_text);
+        color: var(--borderWh);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+
+    &.active .habitMemberStatus {
+        color: var(--inner_text);
     }
 
     .addGoalCaret {

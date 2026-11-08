@@ -107,8 +107,37 @@
         text-align: left;
 
         &.selected {
-            background: var(--menuButtHover);
-            color: var(--tc);
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            color: var(--inner_text);
+
+            > .creteChatConPick > svg,
+            > .createChatConCheck {
+                color: var(--inner_text);
+            }
+
+            @media (hover: hover) {
+                &:hover {
+                    background: linear-gradient(135deg, var(--accent), var(--grad));
+                    color: var(--inner_text);
+
+                    > .creteChatConPick > svg,
+                    > .createChatConCheck {
+                        color: var(--inner_text);
+                    }
+                }
+            }
+
+            @media (hover: none) {
+                &:active {
+                    background: linear-gradient(135deg, var(--accent), var(--grad));
+                    color: var(--inner_text);
+
+                    > .creteChatConPick > svg,
+                    > .createChatConCheck {
+                        color: var(--inner_text);
+                    }
+                }
+            }
         }
 
         &:disabled {
