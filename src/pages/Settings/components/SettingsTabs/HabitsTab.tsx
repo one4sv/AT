@@ -5,6 +5,7 @@ import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import Toggler from "../../../../components/ts/Toggler";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useTranslation } from "react-i18next";
 import HighlightText from "../../../../components/ts/HighlightText";
 

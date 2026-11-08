@@ -1,5 +1,6 @@
 import TA from "../../../components/ts/TA";
 import "../scss/AccInfo.scss";
+import "react-datepicker/dist/react-datepicker.css";
 import { Camera, UserRound } from "lucide-react";
 import { useUpUser } from "../../../components/hooks/UpdateUserHook";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";

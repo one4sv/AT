@@ -23,6 +23,8 @@ jobs:
         run: npm install --no-audit --no-fund --legacy-peer-deps
       - name: Check release and RU/EN key parity
         run: npm run check:release
+      - name: Check lazy page and modal style ownership
+        run: npm run check:lazy-styles
       - name: Run Web Push service worker tests
         run: node --test tests/web-push-sw.test.mjs
       - name: Build client
