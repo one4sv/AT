@@ -39,7 +39,9 @@
     "requestDeletion": "Get deletion confirmation code",
     "deleteCodeHint": "Enter the six-digit code sent to {{email}} to confirm deletion.",
     "confirmDeletion": "Confirm account deletion",
-    "requestError": "Could not process the request. Check your connection and try again."
+    "requestError": "Could not process the request. Check your connection and try again.",
+    "cancel": "Cancel",
+    "close": "Close"
   },
   "chats": {
     "header": "Default behavior",
