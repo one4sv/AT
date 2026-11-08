@@ -55,6 +55,8 @@
 }
 
 .accPic {
+    position: relative;
+    flex-shrink: 0;
     left: 0.5vw;
     aspect-ratio: 1/1;
     border-radius: 50%;
@@ -132,16 +134,29 @@
 }
 
 .accOnlineStauts {
-    display: flex;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translate(25%, 25%);
+    z-index: 1;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5vw;
-    margin: 0 0.5vw;
-    padding: 0.75vh 0.75vw;
+    width: max-content;
+    max-width: min(30vw, 220px);
+    box-sizing: border-box;
+    gap: 0.4vw;
+    margin: 0;
+    padding: 0.5vh 0.75vw;
+    border: 1px solid var(--block_border);
     border-radius: 24px;
     background-color: var(--interact);
     color: var(--borderWh);
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 1.2;
+    text-align: center;
+    pointer-events: none;
+    overflow-wrap: anywhere;
     > svg {
         flex-shrink: 0;
     }
@@ -149,9 +164,10 @@
         color: var(--accent_text);
     }
     @media (max-width: 800px) {
+        max-width: 70vw;
         gap: 2vw;
-        margin: 1vh 0 0;
-        padding: 1vh 3vw;
+        padding: 0.7vh 2vw;
+        transform: translate(15%, 25%);
     }
 }
 
