@@ -171,7 +171,7 @@
         border-radius: 12px 12px 0 12px;
         display: flex;
         flex-direction: column;
-        color: var(--accent_text);
+        color: var(--inner_text);
         > .messageStatusBarDiv {
             justify-content: flex-end;
             > .messageBar {
@@ -179,7 +179,7 @@
             }
         }
         .answerMess {
-            border-left: 3px solid var(--accent_text);
+            border-left: 3px solid var(--inner_text);
         }
     }
     @media (max-width:800px) {
@@ -234,7 +234,7 @@
     }
 
     .message.my & a {
-        color: var(--accent_text);
+        color: var(--inner_text);
     }
     @media (max-width:800px) {
         max-width: 100%;
@@ -520,5 +520,14 @@
 }
 
 .message.my .redirectText a {
-    color: var(--accent_text);
+    color: var(--inner_text);
+}
+
+.messageWrapper.highlight > .message.my {
+    div {
+        color: var(--inner_text);
+    }
+    > .messageDate {
+        color: var(--inner_text);
+    }
 }
