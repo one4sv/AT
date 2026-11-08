@@ -186,7 +186,8 @@
     "name": "Название",
     "description": "Описание",
     "today": "Сегодня",
-    "yesterdayShort": "Вчера"
+    "yesterdayShort": "Вчера",
+    "pendingDeletion": "Аккаунт ожидает удаления. Написать сообщение нельзя."
   },
   "statsUi": {
     "title": "Статистика",
