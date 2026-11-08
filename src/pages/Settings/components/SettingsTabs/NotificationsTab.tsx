@@ -12,7 +12,6 @@ import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
 import { getPushState, enableWebPush, disableWebPush, isIOS, isStandalonePWA, type PushState } from "../../../../components/ts/utils/webPush";
-import { requestNotificationPermission } from "../../../../components/ts/utils/NoteRequest";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { api } from "../../../../components/ts/api";
 import "./notificationPermission.scss";
@@ -72,12 +71,6 @@ export default function NotificationsTab({ search }: { search: string }) {
         if (busy) return;
         setBusy(true);
         try {
-            if (!push.configured && permission === "default") {
-                const granted = await requestNotificationPermission();
-                if (!granted) throw new Error("Permission denied");
-                showNotification("success", t("notifications.browserGranted"));
-                return;
-            }
             await enableWebPush(push.publicKey);
             setPush(await getPushState());
             showNotification("success", t("notifications.pushSuccess"));
@@ -148,32 +141,37 @@ export default function NotificationsTab({ search }: { search: string }) {
                     </div>
                 </div>
                 <div className="notificationPermissionPanel" data-setting-id="browserNotifications">
-                <div className={"notificationPermissionStatus " + (permission === "denied" ? "blocked" : "")}>
-                    {t("notifications.browserTitle")}: {t("notifications.browser" + (permission === "granted" ? "Granted" : permission === "denied" ? "Denied" : permission === "unsupported" ? "Unsupported" : "Disabled"))}
-                </div>
-                {permission === "denied" && <p>{t("notifications.permissionHelp")}</p>}
-                {iosNeedsInstall && <p>{t("notifications.pushRequiresPwa")}</p>}
-                {pushError && <p>{t("notifications.pushError")}</p>}
-                {!push.configured && !pushError && <p>{t("notifications.pushUnavailable")}</p>}
-                {push.configured && permission === "granted" && push.supported &&
-                    <p>{t(push.subscribed ? "notifications.pushActive" : "notifications.pushInactive")}</p>}
-                {permission === "default" && !iosNeedsInstall && !push.configured && "Notification" in window &&
-                    <button type="button" disabled={busy} onClick={() => void enableBrowserNotifications()}>
-                        {t("notifications.enableBrowser")}
+                    <div className="settingTogglerDiv notificationPushToggle"
+                        onClick={() => {
+                            if (!busy && !pushError && push.supported && push.configured && permission !== "denied") {
+                                void (push.subscribed ? disableBrowserNotifications() : enableBrowserNotifications());
+                            }
+                        }}>
+                        <div className="notificationPushText">
+                            <span>{t("notifications.pushToggleTitle")}</span>
+                            <p>{t("notifications.pushToggleHint")}</p>
+                        </div>
+                        <Toggler state={push.subscribed}
+                            disable={busy || pushError || !push.supported || !push.configured || permission === "denied"}
+                            onToggle={(value: boolean) => void (value ? enableBrowserNotifications() : disableBrowserNotifications())}
+                            stopPropagation={true}/>
+                    </div>
+                    <div className={"notificationPermissionStatus " + (permission === "denied" ? "blocked" : "")}>
+                        {t("notifications.browserTitle")}: {t("notifications.browser" + (permission === "granted" ? "Granted" : permission === "denied" ? "Denied" : permission === "unsupported" ? "Unsupported" : "Disabled"))}
+                    </div>
+                    {permission === "denied" && <p>{t("notifications.permissionHelp")}</p>}
+                    {iosNeedsInstall && <p>{t("notifications.pushRequiresPwa")}</p>}
+                    {pushError && <p>{t("notifications.pushError")}</p>}
+                    {!push.configured && !pushError && <p>{t("notifications.pushUnavailable")}</p>}
+                    {!push.supported && !iosNeedsInstall && !pushError &&
+                        <p>{t("notifications.pushNotSupported")}</p>}
+                    {push.configured && push.supported && permission === "granted" &&
+                        <p>{t(push.subscribed ? "notifications.pushActive" : "notifications.pushInactive")}</p>}
+                    {iosNeedsInstall && <button type="button" className="notificationPermissionSecondary"
+                        onClick={() => setBlackout({ seted: true, module: "PushInstallHelp" })}>
+                        {t("notifications.iosAdd")}
                     </button>}
-                {push.supported && push.configured && permission !== "denied" && (
-                    push.subscribed ?
-                        <button type="button" className="notificationPermissionSecondary" disabled={busy}
-                            onClick={() => void disableBrowserNotifications()}>{t("notifications.pushDisable")}</button> :
-                        <button type="button" disabled={busy} onClick={() => void enableBrowserNotifications()}>
-                            {t(busy ? "notifications.pushLoading" : "notifications.enableBrowser")}
-                        </button>
-                )}
-                <button type="button" className="notificationPermissionSecondary"
-                    onClick={() => setBlackout({ seted: true, module: "PushInstallHelp" })}>
-                    {t("notifications.iosAdd")}
-                </button>
-                <p>{t("notifications.noAdvertising")}</p>
+                    <p className="notificationNoAdvertising">{t("notifications.noAdvertising")}</p>
                 </div>
             </div>
             <div className="settingInnerDiv" onClick={() => showDevNote()}>

@@ -147,7 +147,10 @@
     "iosStep1": "Open AchieveTogether in Safari and tap Share.",
     "iosStep2": "Choose Add to Home Screen → Add, then launch AT from the new icon.",
     "iosStep3": "Open AT Settings → Notifications and tap Allow notifications.",
-    "iosHelpDone": "Got it"
+    "iosHelpDone": "Got it",
+    "pushToggleTitle": "Push notifications",
+    "pushToggleHint": "Get new messages even when the app is closed. Enable on each device separately.",
+    "pushNotSupported": "This device or browser does not support background Push. Notifications inside the open AT app still work."
   },
   "personalization": {
     "appearance": "Appearance",
