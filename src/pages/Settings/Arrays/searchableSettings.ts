@@ -155,14 +155,8 @@ export function useSearchableSettings(): SearchableSection[] {
                     category: t("settings.account") || "Аккаунт",
                 },
                 {
-                    id: "phone",
-                    name: "Изменить номер телефона",
-                    icon: PhoneIcon,
-                    category: t("settings.account") || "Аккаунт",
-                },
-                {
                     id: "email",
-                    name: "Изменить email",
+                    name: t("acc.changeEmail"),
                     icon: EnvelopeIcon,
                     category: t("settings.account") || "Аккаунт",
                 },
