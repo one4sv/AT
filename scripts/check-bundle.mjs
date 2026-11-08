@@ -25,6 +25,12 @@ if (cssFiles.length !== 1) {
 if (!html.includes(`/assets/${cssFiles[0]}`)) {
     throw new Error("The single CSS bundle must be included in the initial HTML");
 }
+const css = await readFile(path.join(distDir, "assets", cssFiles[0]), "utf8");
+for (const selector of [".redHabitSL", ".selectListDiv", ".contactPickerList", ".createChatSearch", ".habitParticipantPicker"]) {
+    if (!css.includes(selector)) {
+        throw new Error(`Required modal style is missing from the initial CSS: ${selector}`);
+    }
+}
 const limit = 1_500_000;
 console.log(`Entry: ${entry} — ${(bytes / 1024).toFixed(1)} KiB; JavaScript chunks: ${jsChunks}`);
 if (bytes > limit) {
