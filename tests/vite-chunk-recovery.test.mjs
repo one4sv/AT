@@ -5,6 +5,11 @@ import test from "node:test";
 
 const config = JSON.parse(readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const vite = readFileSync(new URL("../vite.config.ts", import.meta.url), "utf8");
+
+test("all modal and lazy-page CSS is loaded from the initial stylesheet", () => {
+    assert.match(vite, /cssCodeSplit:\s*false/);
+});
 
 test("SPA fallback excludes missing JS assets, without breaking client routes", () => {
     const source = config.rewrites.find(item => item.destination === "/index.html")?.source;
@@ -74,6 +79,55 @@ test("missing chunk recovery retries once, avoiding an endless reload loop", () 
         }
     });
     assert.equal(location.count, 1);
+});
+
+test("missing lazy stylesheet triggers one reload without retrying repeatedly", () => {
+    const match = html.match(/<script>\s*(\/\/ Vite lazy chunks[\s\S]*?)<\/script>/);
+    assert.ok(match);
+    const listeners = new Map();
+    const storage = new Map();
+    let reloads = 0;
+    const context = {
+        navigator: { onLine: true },
+        location: {
+            origin: "https://at.test",
+            reload() { reloads++; }
+        },
+        Date,
+        sessionStorage: {
+            getItem(key) { return storage.get(key) ?? null; },
+            setItem(key, value) { storage.set(key, value); },
+            removeItem(key) { storage.delete(key); }
+        },
+        window: {
+            addEventListener(type, callback) { listeners.set(type, callback); }
+        },
+        document: {
+            body: null,
+            getElementById() { return null; },
+            addEventListener() {}
+        }
+    };
+    runInNewContext("(function() { " + match[1] + " })()", context);
+    const linkError = {
+        target: {
+            tagName: "LINK",
+            rel: "stylesheet",
+            href: "https://at.test/assets/ChatWithInfo-B0mOxz5V.css"
+        }
+    };
+    listeners.get("error")(linkError);
+    assert.equal(reloads, 1);
+    listeners.get("error")(linkError);
+    assert.equal(reloads, 1);
+    listeners.get("error")({
+        target: {
+            tagName: "LINK",
+            rel: "stylesheet",
+            href: "https://external.test/styles.css"
+        }
+    });
+    assert.equal(reloads, 1);
 });
 
 test("the account deletion selection has a Checkbox, never a Toggler row", () => {

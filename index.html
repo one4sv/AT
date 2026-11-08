@@ -96,8 +96,15 @@
 
         window.addEventListener("error", function (event) {
           const element = event.target;
-          if (element && element.tagName === "SCRIPT" &&
-              element.type === "module" && element.src.startsWith(location.origin + "/assets/")) {
+          if (!element) return;
+          const moduleScript = element.tagName === "SCRIPT" && element.type === "module";
+          const cssLink = element.tagName === "LINK" && (
+            element.rel === "stylesheet" ||
+            element.rel === "modulepreload" ||
+            (element.rel === "preload" && (element.as === "style" || element.as === "script"))
+          );
+          const assetUrl = moduleScript ? element.src : cssLink ? element.href : "";
+          if (assetUrl && assetUrl.startsWith(location.origin + "/assets/")) {
             recover();
           }
         }, true);
