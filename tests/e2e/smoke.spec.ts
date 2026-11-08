@@ -10,7 +10,7 @@ test("feedback opens from Info and Contacts with a report reason choice", async 
     await page.goto("/info");
     const entry = page.locator(".settingsButtsWrapper .settingButt").filter({ hasText: "Обратная связь" });
     await expect(entry).toBeVisible();
-    await expect(entry).toHaveCSS("display", "flex");
+    await expect(entry).toHaveCSS("display", "grid");
     await expect(entry).toHaveCSS("border-radius", "24px");
     await expect(page.locator(".settingsSliderWrapper")).toHaveCSS("width", /[1-9][0-9.]*px/);
     await entry.click();
