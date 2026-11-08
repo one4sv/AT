@@ -5,6 +5,7 @@ html, body {
   min-height: 100dvh;
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+  font-size: var(--app-font-size, 16px);
   scrollbar-width: thin;
   scrollbar-color: var(--menuButtHover) transparent;
   overflow: hidden;
