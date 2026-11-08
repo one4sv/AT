@@ -136,6 +136,22 @@
         > svg {
             color: var(--notValid);
         }
+        @media (hover: hover) {
+            &:hover {
+                color: var(--notValid);
+                background-color: var(--notValidBg);
+            }
+        }
+        @media (hover: none) {
+            &:active {
+                color: var(--notValid);
+                background-color: var(--notValidBg);
+            }
+        }
+        &:disabled {
+            opacity: .5;
+            cursor: default;
+        }
     }
 }
 
