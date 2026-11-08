@@ -99,6 +99,8 @@ export default function ChatUser() {
                 (curOnline > 0 ? t("chatUi.onlineCount", { count: curOnline }) : "")
         }
 
+        if (chatWith.deletion_pending) return t("chatUi.pendingDeletion")
+
         if (typingText) return typingText
 
         return onlineMap[chatWith.id || ""]
