@@ -5,7 +5,7 @@ import { useUpSettings } from "../../../../components/hooks/UpdateSettingsHook";
 import Toggler from "../../../../components/ts/Toggler";
 import "../../../../scss/habitsNoteTable.scss";
 import { TagIcon } from "../../../HabitPage/utils/TagIcon";
-import { CaretDownIcon } from "@phosphor-icons/react";
+import { BellIcon, CaretDownIcon, CheckIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { formatClock } from "../../../../components/ts/utils/dateToStr";
 import { useTranslation } from "react-i18next";
 import { useNote } from "../../../../components/hooks/NoteHook";
@@ -28,6 +28,9 @@ export default function NotificationsTab({ search }: { search: string }) {
     const { showNotification } = useNote()
     const { setBlackout } = useBlackout();
     const [showNoteList, setShowNoteList] = useState<number>(0);
+    const [reminderSearch, setReminderSearch] = useState("");
+    const [configuredOnly, setConfiguredOnly] = useState(false);
+    const [commonTimeDraft, setCommonTimeDraft] = useState("18:00");
     const [permission, setPermission] = useState<NotificationPermission | "unsupported">(browserPermission);
     const [push, setPush] = useState<PushState>({ supported: false, configured: false, subscribed: false, publicKey: null });
     const [busy, setBusy] = useState(false);
@@ -75,6 +78,7 @@ export default function NotificationsTab({ search }: { search: string }) {
             const next: ReminderPreferences = response.data.preferences;
             const items: ReminderRule[] = response.data.rules || [];
             setReminderPrefs(next);
+            setCommonTimeDraft(next.commonTime.slice(0, 5));
             setReminderRules(items);
             setNewHabitsNote(next.enabled);
             setReminderDrafts(Object.fromEntries(items.map(rule => [
@@ -95,6 +99,7 @@ export default function NotificationsTab({ search }: { search: string }) {
             const response = await api.post("settings/reminders/preferences", next);
             if (!response.data?.success) throw new Error("reminders");
             setReminderPrefs(response.data.preferences);
+            setCommonTimeDraft(response.data.preferences.commonTime.slice(0, 5));
             setNewHabitsNote(response.data.preferences.enabled);
         } catch {
             showNotification("error", t("notifications.remindersSaveError"));
@@ -107,12 +112,12 @@ export default function NotificationsTab({ search }: { search: string }) {
         if (busyHabit !== null || !remindersLoaded) return;
         const previous = reminderRules.filter(rule => rule.habit_id === habitId);
         const old = previous.find(rule => rule.code === code);
-        const draft = reminderDrafts[`${habitId}:${code}`] || (code === "inp" ? "18:00" : "5");
+        const draft = reminderDrafts[`${habitId}:${code}`] ?? (code === "inp" ? "18:00" : "5");
         const isCustom = code === "inpstart" || code === "inpend";
         const minutes = isCustom ? Number(draft) : code.startsWith("10") ? 10 : code.startsWith("60") ? 60 : 0;
         const fixed = code === "inp" ? draft : null;
-        if ((isCustom && (!Number.isSafeInteger(minutes) || minutes < 1 || minutes > 1440)) ||
-            (code === "inp" && !/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(draft))) {
+        if ((!old || updating) && ((isCustom && (!Number.isSafeInteger(minutes) || minutes < 1 || minutes > 1440)) ||
+            (code === "inp" && !/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(draft)))) {
             showNotification("error", t("notifications.invalidReminderTime"));
             return;
         }
@@ -133,6 +138,17 @@ export default function NotificationsTab({ search }: { search: string }) {
         } finally {
             setBusyHabit(null);
         }
+    };
+
+    const commitCommonTime = () => {
+        if (!remindersLoaded || reminderBusy || !reminderPrefs.enabled || !reminderPrefs.commonEnabled) return;
+        if (commonTimeDraft === reminderPrefs.commonTime.slice(0, 5)) return;
+        if (!/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(commonTimeDraft)) {
+            showNotification("error", t("notifications.invalidReminderTime"));
+            setCommonTimeDraft(reminderPrefs.commonTime.slice(0, 5));
+            return;
+        }
+        void saveReminderPreferences({ ...reminderPrefs, commonTime: commonTimeDraft });
     };
 
     const togglePreference = async (key: "all_note" | "new_mess_note", value: boolean) => {
@@ -203,6 +219,13 @@ export default function NotificationsTab({ search }: { search: string }) {
         },
     ];
 
+    const activeHabits = (habits || []).filter(h => h.ongoing).sort((a, b) => a.id - b.id);
+    const visibleHabits = activeHabits.filter(h =>
+        h.name.toLocaleLowerCase().includes(reminderSearch.trim().toLocaleLowerCase()) &&
+        (!configuredOnly || reminderRules.some(rule => rule.habit_id === h.id))
+    );
+    const configuredHabits = activeHabits.filter(h => reminderRules.some(rule => rule.habit_id === h.id)).length;
+
     return (
         <div className="settingTab">
             {!search.trim() && <SectionArt theme="notifications"/>}
@@ -254,91 +277,156 @@ export default function NotificationsTab({ search }: { search: string }) {
                     <p className="notificationNoAdvertising">{t("notifications.noAdvertising")}</p>
                 </div>
             </div>
-            <div className="settingInnerDiv">
-                <div className="settingHeader">
-                    {t("notifications.reminders")}
+            <div className="settingInnerDiv habitRemindersDiv">
+                <div className="settingHeader">{t("notifications.reminders")}</div>
+                <p className="habitRemindersDescription">{t("notifications.remindersDescription")}</p>
+                <div className="habitReminderOverview">
+                    <div className="habitReminderOverviewIcon"><BellIcon size={24}/></div>
+                    <div className="habitReminderOverviewText">
+                        <span>{t(reminderPrefs.enabled ? "notifications.remindersEnabled" : "notifications.remindersDisabled")}</span>
+                        <small>{t("notifications.reminderTimezone", { timezone: reminderPrefs.timezone })}</small>
+                    </div>
+                    <span className={"habitReminderOverviewCount " + (configuredHabits ? "active" : "")}>
+                        {configuredHabits} / {activeHabits.length}
+                    </span>
                 </div>
-                <div className="settingInnerList">
-                    <div className="settingTogglerDiv" onClick={() => { if (remindersLoaded) void saveReminderPreferences({ ...reminderPrefs, enabled: !reminderPrefs.enabled }); }} data-setting-id="habitsNote">
-                        <span><HighlightText text={t("notifications.remindAboutActivities")} search={search} /></span>
-                        <Toggler state={reminderPrefs.enabled} onToggle={(value: boolean) => void saveReminderPreferences({ ...reminderPrefs, enabled: value })}
+                <div className="habitReminderControls">
+                    <div className="habitReminderControl settingTogglerDiv" data-setting-id="habitsNote"
+                        onClick={() => { if (remindersLoaded && !reminderBusy) void saveReminderPreferences({ ...reminderPrefs, enabled: !reminderPrefs.enabled }); }}>
+                        <div className="habitReminderControlText">
+                            <span><HighlightText text={t("notifications.remindAboutActivities")} search={search}/></span>
+                            <small>{t("notifications.reminderGeneralHint")}</small>
+                        </div>
+                        <Toggler state={reminderPrefs.enabled}
+                            onToggle={(value: boolean) => void saveReminderPreferences({ ...reminderPrefs, enabled: value })}
                             disable={!remindersLoaded || reminderBusy} stopPropagation={true}/>
                     </div>
-                    <div className={`settingTogglerDiv ${!reminderPrefs.enabled && "settingInactive"}`} data-setting-id="commonReminderTime">
-                        <span><HighlightText text={t("notifications.commonReminderTime")} search={search} /></span>
+                    <div className={"habitReminderControl settingTogglerDiv " + (!reminderPrefs.enabled ? "settingInactive" : "")}
+                        data-setting-id="commonReminderTime"
+                        onClick={() => { if (remindersLoaded && !reminderBusy && reminderPrefs.enabled) void saveReminderPreferences({ ...reminderPrefs, commonEnabled: !reminderPrefs.commonEnabled }); }}>
+                        <div className="habitReminderControlText">
+                            <span><HighlightText text={t("notifications.commonReminderTime")} search={search}/></span>
+                            <small>{t("notifications.commonReminderHint")}</small>
+                        </div>
                         <Toggler state={reminderPrefs.commonEnabled}
                             onToggle={(value: boolean) => void saveReminderPreferences({ ...reminderPrefs, commonEnabled: value })}
                             disable={!remindersLoaded || reminderBusy || !reminderPrefs.enabled} stopPropagation={true}/>
                     </div>
-                    {reminderPrefs.enabled && reminderPrefs.commonEnabled && <div className="settingTogglerDiv">
+                    {reminderPrefs.enabled && reminderPrefs.commonEnabled && <div className="habitReminderCommonTime">
                         <label htmlFor="commonHabitReminderTime">{t("notifications.reminderAt")}</label>
-                        <input id="commonHabitReminderTime" type="time" className="extraInfoInput"
-                            disabled={reminderBusy} value={reminderPrefs.commonTime}
-                            onChange={event => void saveReminderPreferences({ ...reminderPrefs, commonTime: event.target.value })}/>
+                        <input id="commonHabitReminderTime" type="time"
+                            disabled={!remindersLoaded || reminderBusy}
+                            value={commonTimeDraft}
+                            onChange={event => setCommonTimeDraft(event.target.value)}
+                            onBlur={commitCommonTime}
+                            onKeyDown={event => { if (event.key === "Enter") event.currentTarget.blur(); }}/>
                     </div>}
-                    {!push.subscribed && <span className="settingHint">{t("notifications.remindersPushHint")}</span>}
+                    {!push.subscribed && <p className="habitReminderPushHint">{t("notifications.remindersPushHint")}</p>}
                 </div>
-                <div className={`settingsInnerDiv ${!reminderPrefs.enabled && "settingInactive"}`}>
-                    <div className="settingInnerList">
-                        <div className="habitsNoteTable">
-                            {habits?.filter(h => h.ongoing).sort((a, b) => a.id - b.id).map((h) => {
-                                let timePart = "";
-                                if (h.start_time && h.end_time) {
-                                    timePart = t("notifications.fromTo", { start: formatClock(h.start_time), end: formatClock(h.end_time) });
-                                } else if (h.start_time) {
-                                    timePart = t("notifications.startsAt", { time: formatClock(h.start_time) });
-                                } else if (h.end_time) {
-                                    timePart = t("notifications.until", { time: formatClock(h.end_time) });
-                                }
-                                const opened = showNoteList === h.id;
-                                return (
-                                    <div className="habitNoteWrapper" key={h.id}>
-                                        <div className="habitNoteRow" onClick={() => setShowNoteList(prev => (prev === h.id ? 0 : h.id))}>
-                                            <div className="habitNoteMain">
-                                                <div className="habitNoteMainIcon">
-                                                    {TagIcon(h, h.tag)}
-                                                </div>
-                                                <div className="habitNoteName">
-                                                    {h.name}
-                                                </div>
-                                                <div className={`habitNoteTime ${!reminderPrefs.enabled && "settingInactive"}`}>
-                                                    {timePart}
-                                                </div>
-                                            </div>
-                                            <div className="habitNoteCounter">
-                                                {t("notifications.notificationsCount", { count: reminderRules.filter(rule => rule.habit_id === h.id).length })}
-                                            </div>
-                                            <div className="habitNoteIsShown">
-                                                <CaretDownIcon style={{ transform: opened ? "rotate(180deg)" : "" }} />
-                                            </div>
-                                        </div>
-                                        <div className={`habitNoteArray ${opened ? "opened" : ""}`}>
-                                            {habitNoteArray.map((a) => (
-                                                <div key={a.title}>
-                                                    <div className="habitNoteTitle">{a.title}</div>
-                                                    <div className="habitNoteArrayNote">
-                                                        {a.options.map((n) => (
-                                                            <div className="habitNoteRule" key={n.value}>
-                                                                <button type="button" className={`habitNoteArrayButton ${reminderRules.some(rule => rule.habit_id === h.id && rule.code === n.value) ? "selected" : ""}`}
-                                                                    disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled}
-                                                                    onClick={() => void saveHabitRule(h.id, n.value)}>{n.label}</button>
-                                                                {n.input && <input className="extraInfoInput" type={n.value === "inp" ? "time" : "number"}
-                                                                    min={n.value === "inp" ? undefined : 1} max={n.value === "inp" ? undefined : 1440}
-                                                                    value={reminderDrafts[`${h.id}:${n.value}`] || (n.value === "inp" ? "18:00" : "5")}
-                                                                    disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled}
-                                                                    onChange={event => setReminderDrafts(previous => ({ ...previous, [`${h.id}:${n.value}`]: event.target.value }))}
-                                                                    onBlur={() => { if (reminderRules.some(rule => rule.habit_id === h.id && rule.code === n.value)) void saveHabitRule(h.id, n.value, true); }}/>
-                                                                }
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                <div className="habitRemindersCatalog">
+                    <div className="habitRemindersCatalogHeading">
+                        <span>{t("notifications.activityReminders")}</span>
+                        <small>{t("notifications.configuredHabits", { count: configuredHabits })}</small>
+                    </div>
+                    <div className="habitRemindersToolbar">
+                        <label className="habitRemindersSearch">
+                            <MagnifyingGlassIcon size={18} aria-hidden="true"/>
+                            <input type="search" value={reminderSearch}
+                                onChange={event => setReminderSearch(event.target.value)}
+                                placeholder={t("notifications.remindersSearch")}
+                                aria-label={t("notifications.remindersSearch")}/>
+                        </label>
+                        <div className="habitReminderFilters" role="group" aria-label={t("notifications.activityReminders")}>
+                            <button type="button" className={!configuredOnly ? "active" : ""}
+                                aria-pressed={!configuredOnly} onClick={() => setConfiguredOnly(false)}>
+                                {t("notifications.allActivities")}
+                            </button>
+                            <button type="button" className={configuredOnly ? "active" : ""}
+                                aria-pressed={configuredOnly} onClick={() => setConfiguredOnly(true)}>
+                                {t("notifications.configuredActivities")}
+                            </button>
                         </div>
+                    </div>
+                    <div className="habitsNoteTable">
+                        {visibleHabits.map(h => {
+                            let timePart = "";
+                            if (h.start_time && h.end_time) {
+                                timePart = t("notifications.fromTo", { start: formatClock(h.start_time), end: formatClock(h.end_time) });
+                            } else if (h.start_time) {
+                                timePart = t("notifications.startsAt", { time: formatClock(h.start_time) });
+                            } else if (h.end_time) {
+                                timePart = t("notifications.until", { time: formatClock(h.end_time) });
+                            }
+                            const opened = showNoteList === h.id;
+                            const habitRules = reminderRules.filter(rule => rule.habit_id === h.id);
+                            return (
+                                <div className={"habitNoteWrapper " + (opened ? "opened" : "")} key={h.id}>
+                                    <button type="button" className="habitNoteRow"
+                                        aria-expanded={opened} aria-controls={`habit-reminders-${h.id}`}
+                                        onClick={() => setShowNoteList(prev => prev === h.id ? 0 : h.id)}>
+                                        <span className="habitNoteMain">
+                                            <span className="habitNoteMainIcon">{TagIcon(h, h.tag)}</span>
+                                            <span className="habitNoteMeta">
+                                                <span className="habitNoteName">{h.name}</span>
+                                                <small className="habitNoteTime">{timePart || t("notifications.noActivityTime")}</small>
+                                            </span>
+                                        </span>
+                                        <span className={"habitNoteCounter " + (habitRules.length ? "active" : "")}>
+                                            {habitRules.length ? t("notifications.notificationsCount", { count: habitRules.length }) : t("notifications.remindersNoRules")}
+                                        </span>
+                                        <CaretDownIcon className={"habitNoteCaret " + (opened ? "opened" : "")} size={18} aria-hidden="true"/>
+                                    </button>
+                                    {opened && <div className="habitNoteArray" id={`habit-reminders-${h.id}`}>
+                                        <p className="habitNoteHelp">{t("notifications.remindersRuleHint")}</p>
+                                        {!reminderPrefs.enabled && <p className="habitNoteHelp inactive">{t("notifications.remindersInactiveHint")}</p>}
+                                        {habitNoteArray.map(a => (
+                                            <div className="habitNoteSection" key={a.title}>
+                                                <div className="habitNoteTitle">{a.title}</div>
+                                                <div className="habitNoteArrayNote">
+                                                    {a.options.map(n => {
+                                                        const rule = habitRules.find(item => item.code === n.value);
+                                                        const selected = Boolean(rule);
+                                                        const value = reminderDrafts[`${h.id}:${n.value}`] ?? (n.value === "inp" ? "18:00" : "5");
+                                                        return (
+                                                            <div className={"habitNoteRule " + (selected ? "selected" : "")} key={n.value}>
+                                                                <button type="button" className={"habitNoteArrayButton " + (selected ? "selected" : "")}
+                                                                    aria-pressed={selected}
+                                                                    disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled}
+                                                                    onClick={() => void saveHabitRule(h.id, n.value)}>
+                                                                    {selected && <CheckIcon size={16} aria-hidden="true"/>}
+                                                                    {n.label}
+                                                                </button>
+                                                                {n.input && <label className="habitNoteCustomInput">
+                                                                    <input type={n.value === "inp" ? "time" : "number"}
+                                                                        aria-label={n.value === "inp" ? t("notifications.atTime") : t("notifications.minutesBefore")}
+                                                                        min={n.value === "inp" ? undefined : 1}
+                                                                        max={n.value === "inp" ? undefined : 1440}
+                                                                        value={value}
+                                                                        disabled={!remindersLoaded || busyHabit !== null || !reminderPrefs.enabled}
+                                                                        onChange={event => setReminderDrafts(previous => ({
+                                                                            ...previous, [`${h.id}:${n.value}`]: event.target.value
+                                                                        }))}
+                                                                        onBlur={() => {
+                                                                            if (!rule) return;
+                                                                            const saved = n.value === "inp" ? (rule.fixed_time || "").slice(0, 5) : String(rule.minutes_before);
+                                                                            if (saved !== value) void saveHabitRule(h.id, n.value, true);
+                                                                        }}
+                                                                        onKeyDown={event => { if (event.key === "Enter") event.currentTarget.blur(); }}/>
+                                                                    {n.value !== "inp" && <span>{t("notifications.minutesUnit")}</span>}
+                                                                </label>}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>}
+                                </div>
+                            );
+                        })}
+                        {visibleHabits.length === 0 && <div className="habitRemindersEmpty">
+                            {activeHabits.length ? t("notifications.remindersNoMatch") : t("notifications.remindersNoActivities")}
+                        </div>}
                     </div>
                 </div>
             </div>

@@ -1,150 +1,519 @@
-@use "./mixins.scss" as var;
-
 .habitsNoteTable {
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: 2px;
-    overflow-y: auto;
-    max-height: 50dvh;
-    scrollbar-width: thin;
-    scrollbar-gutter: stable both-edges;
+    gap: 0.75dvh;
 }
-.habitNoteRow {
+
+.habitRemindersDiv {
+    gap: 1.5dvh;
+}
+
+.habitRemindersDescription {
+    margin: 0;
+    color: var(--borderWh);
+    line-height: 1.5;
+}
+
+.habitReminderOverview {
     display: flex;
-    width: 100%;
-    padding: 0.5vh 0.5vw;
-    border-radius: 8px;
+    align-items: center;
+    gap: 1vw;
+    padding: 1.5dvh 1vw;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--interact);
+}
+
+.habitReminderOverviewIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 5dvh;
+    height: 5dvh;
+    border-radius: 16px;
+    background: var(--accent_op);
+    color: var(--accent_text);
+}
+
+.habitReminderOverviewText {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.4dvh;
+
+    > small {
+        color: var(--borderWh);
+        overflow-wrap: anywhere;
+    }
+}
+
+.habitReminderOverviewCount {
+    flex-shrink: 0;
+    padding: 0.75dvh 0.75vw;
+    border-radius: 24px;
+    background: var(--mc);
+    color: var(--borderWh);
+    font-size: 14px;
+
+    &.active {
+        background: var(--accent_op);
+        color: var(--accent_text);
+    }
+}
+
+.habitReminderControls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5dvh;
+}
+
+.habitReminderControl {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2vw;
+    min-height: 6dvh;
+    padding: 1.25dvh 1vw;
+    box-sizing: border-box;
+    border-radius: 16px;
+    background: var(--interact);
     cursor: pointer;
-    position: relative;
+
     @media (hover: hover) {
-        &:hover {
-        background-color: var(--menuButtHover);
-    
+        &:hover:not(.settingInactive) {
+            background: var(--menuButtHover);
         }
     }
 
-    @media (hover: none) {
-        &:active {
-        background-color: var(--menuButtHover);
-    
-        
+    > .toggler {
+        flex-shrink: 0;
+    }
+}
+
+.habitReminderControlText {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5dvh;
+    min-width: 0;
+
+    > small {
+        color: var(--borderWh);
+        line-height: 1.4;
+    }
+}
+
+.habitReminderCommonTime {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+    padding: 1.25dvh 1vw;
+    border-radius: 16px;
+    background: var(--interact);
+}
+
+.habitReminderCommonTime > input,
+.habitNoteCustomInput > input {
+    min-width: 0;
+    min-height: 4dvh;
+    padding: 0.5dvh 0.75vw;
+    box-sizing: border-box;
+    border: 1px solid var(--block_border);
+    border-radius: 12px;
+    background: var(--mc);
+    color: var(--tc);
+    color-scheme: dark;
+    font: inherit;
+    outline: none;
+
+    &:focus {
+        border-color: var(--accent);
+    }
+
+    &:disabled {
+        opacity: .5;
+    }
+}
+
+.habitReminderPushHint {
+    margin: 0;
+    padding: 1dvh 1vw;
+    border-radius: 16px;
+    color: var(--borderWh);
+    background: var(--interact);
+    line-height: 1.4;
+}
+
+.habitRemindersCatalog {
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+    min-width: 0;
+}
+
+.habitRemindersCatalogHeading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+
+    > small {
+        color: var(--borderWh);
+    }
+}
+
+.habitRemindersToolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75vw;
+}
+
+.habitRemindersSearch {
+    display: flex;
+    align-items: center;
+    flex: 1 1 12vw;
+    gap: 0.5vw;
+    min-width: 0;
+    padding: 1dvh 1vw;
+    border: 1px solid var(--block_border);
+    border-radius: 16px;
+    background: var(--interact);
+    color: var(--borderWh);
+
+    &:focus-within {
+        border-color: var(--accent);
+    }
+
+    > input {
+        width: 100%;
+        min-width: 0;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: var(--tc);
+        font: inherit;
+    }
+}
+
+.habitReminderFilters {
+    display: flex;
+    align-items: stretch;
+    gap: 0.25vw;
+    padding: 0.35dvh 0.35vw;
+    border-radius: 16px;
+    background: var(--interact);
+
+    > button {
+        border: none;
+        padding: 0.75dvh 1vw;
+        border-radius: 12px;
+        color: var(--tc);
+        background: transparent;
+        font: inherit;
+        cursor: pointer;
+
+        &.active {
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            color: var(--inner_text);
+        }
+
+        @media (hover: hover) {
+            &:hover:not(.active) {
+                background: var(--menuButtHover);
+            }
         }
     }
 }
-.habitNoteMain {
-    position: relative;
-    display: flex;
-    width: 60%;
-    align-items: center;
-    gap: 10px;
-}
-.habitNoteName {
-    flex: 1;
+
+.habitNoteWrapper {
     min-width: 0;
-    max-width: 50%;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--interact);
+    overflow: hidden;
+
+    &.opened {
+        border-color: var(--accent);
+    }
+}
+
+.habitNoteRow {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 7dvh;
+    gap: 1vw;
+    padding: 1.2dvh 1vw;
+    box-sizing: border-box;
+    border: none;
+    background: transparent;
+    color: var(--tc);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--menuButtHover);
+        }
+    }
+}
+
+.habitNoteMain {
+    display: flex;
+    align-items: center;
+    gap: 0.75vw;
+    min-width: 0;
+    flex: 1;
+}
+
+.habitNoteMainIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 4dvh;
+    height: 4dvh;
+    border-radius: 12px;
+    background: var(--mc);
+    color: var(--accent_text);
+
+    > svg {
+        width: 65%;
+        height: 65%;
+    }
+}
+
+.habitNoteMeta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 0.35dvh;
+}
+
+.habitNoteName {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
 .habitNoteTime {
-    flex: 1;
     color: var(--borderWh);
-    white-space: nowrap;
 }
-.habitNoteMainIcon {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    >svg {
-        height: 100%;
-        width: 100%;
-    }
-}
+
 .habitNoteCounter {
-    display: flex;
-    align-items: center;
+    flex-shrink: 0;
+    padding: 0.65dvh 0.75vw;
+    border-radius: 24px;
+    background: var(--mc);
     color: var(--borderWh);
-}
-.habitNoteIsShown {
-    display: flex;
-    margin-top: 3px;
-    align-items: center;
-    position: absolute;
-    right: 0.5vw;
-    >svg {
-        transition: transform .2s ease;
+    font-size: 13px;
+
+    &.active {
+        color: var(--accent_text);
+        background: var(--accent_op);
     }
 }
-.habitNoteArray {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition:
-        max-height .2s ease,
-        opacity .2s ease;
+
+.habitNoteCaret {
+    flex-shrink: 0;
+    transition: transform .2s ease;
 
     &.opened {
-        max-height: 75dvh;
-        opacity: 1;
+        transform: rotate(180deg);
     }
 }
-.habitNoteTitle {
-    color: var(--borderWh);
-    padding-inline-start: 10px;
-    margin-top: 0.5dvh;
-}
-.habitNoteArrayNote {
-    margin-top: 0.5dvh;
-    display: flex;
-    justify-content: space-evenly;
-}
-.habitNoteRule {
-    width: 22%;
+
+.habitNoteArray {
     display: flex;
     flex-direction: column;
-    gap: .5dvh;
+    gap: 1.5dvh;
+    padding: 0 1vw 1.5dvh;
+}
 
-    .extraInfoInput {
-        box-sizing: border-box;
-        width: 100%;
-        min-width: 0;
-        text-align: center;
+.habitNoteHelp {
+    margin: 0;
+    color: var(--borderWh);
+    font-size: 14px;
+    line-height: 1.45;
+
+    &.inactive {
+        color: var(--notValid);
     }
 }
+
+.habitNoteSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75dvh;
+}
+
+.habitNoteTitle {
+    color: var(--borderWh);
+    font-size: 14px;
+}
+
+.habitNoteArrayNote {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75vw;
+}
+
+.habitNoteRule {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 0.5vw;
+    min-width: 0;
+    border-radius: 16px;
+}
+
 .habitNoteArrayButton {
-    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+    min-height: 4.5dvh;
+    gap: 0.5vw;
+    padding: 0.85dvh 1vw;
+    border: 1px solid var(--block_border);
+    border-radius: 16px;
+    background: var(--mc);
     color: var(--tc);
-    background: var(--interact);
+    font: inherit;
+    cursor: pointer;
 
     &.selected {
-        border-color: var(--accent);
+        border-color: transparent;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
+
+        > svg {
+            color: var(--inner_text);
+        }
     }
 
     &:disabled {
         opacity: .5;
         cursor: default;
     }
-    text-align: center;
-    padding: 0.75vh 0;
-    border-radius: 8px;
-    cursor: pointer;
-    border: 1px solid var(--tr);
+
     @media (hover: hover) {
-        &:hover {
-        border: 1px solid var(--tc);
-        background-color: var(--menuButtHover);
-    
+        &:not(:disabled):hover:not(.selected) {
+            background: var(--menuButtHover);
+        }
+    }
+}
+
+.habitNoteCustomInput {
+    display: flex;
+    align-items: center;
+    flex: 0 1 8vw;
+    min-width: 0;
+    gap: 0.35vw;
+    color: var(--borderWh);
+
+    > input {
+        width: 100%;
+        min-width: 0;
+        text-align: center;
+    }
+
+    > span {
+        font-size: 13px;
+    }
+}
+
+.habitRemindersEmpty {
+    padding: 3dvh 1vw;
+    border-radius: 24px;
+    color: var(--borderWh);
+    background: var(--interact);
+    text-align: center;
+}
+
+@media (max-width: 800px) {
+    .habitReminderOverview,
+    .habitReminderControl,
+    .habitReminderCommonTime,
+    .habitReminderPushHint,
+    .habitNoteRow {
+        padding-inline: 3vw;
+    }
+
+    .habitRemindersToolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1dvh;
+    }
+
+    .habitRemindersSearch {
+        flex: auto;
+        gap: 2vw;
+        padding: 1.2dvh 3vw;
+    }
+
+    .habitReminderFilters {
+        gap: 1vw;
+        padding: 0.5dvh 1vw;
+
+        > button {
+            flex: 1;
+            padding: 1dvh 2vw;
         }
     }
 
-    @media (hover: none) {
-        &:active {
-        border: 1px solid var(--tc);
-        background-color: var(--menuButtHover);
-    
-        
+    .habitNoteRow {
+        gap: 2vw;
+    }
+
+    .habitNoteMain {
+        gap: 2vw;
+    }
+
+    .habitNoteTime {
+        font-size: 13px;
+    }
+
+    .habitNoteCounter {
+        padding-inline: 2vw;
+    }
+
+    .habitNoteArray {
+        padding: 0 3vw 2dvh;
+    }
+
+    .habitNoteArrayNote {
+        grid-template-columns: 1fr;
+        gap: 1dvh;
+    }
+
+    .habitNoteRule {
+        gap: 2vw;
+    }
+
+    .habitNoteCustomInput {
+        flex-basis: 25vw;
+        gap: 1vw;
+
+        > input {
+            padding-inline: 2vw;
         }
     }
 
+    .habitReminderCommonTime > input {
+        padding-inline: 3vw;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .habitNoteCaret {
+        transition: none;
+    }
 }
