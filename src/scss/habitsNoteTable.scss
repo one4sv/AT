@@ -85,7 +85,7 @@
         opacity .2s ease;
 
     &.opened {
-        max-height: 300px;
+        max-height: 75dvh;
         opacity: 1;
     }
 }
@@ -99,8 +99,32 @@
     display: flex;
     justify-content: space-evenly;
 }
-.habitNoteArrayButton {
+.habitNoteRule {
     width: 22%;
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+
+    .extraInfoInput {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        text-align: center;
+    }
+}
+.habitNoteArrayButton {
+    width: 100%;
+    color: var(--tc);
+    background: var(--interact);
+
+    &.selected {
+        border-color: var(--accent);
+    }
+
+    &:disabled {
+        opacity: .5;
+        cursor: default;
+    }
     text-align: center;
     padding: 0.75vh 0;
     border-radius: 8px;
