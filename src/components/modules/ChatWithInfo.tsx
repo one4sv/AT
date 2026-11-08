@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { ChatTeardropIcon, CheckCircle, Circle, MagnifyingGlassIcon, PushPinIcon, UserIcon } from "@phosphor-icons/react"
+import { ChatTeardropIcon, CheckCircle, Circle, CircleIcon, MagnifyingGlassIcon, PushPinIcon, UserIcon } from "@phosphor-icons/react"
 import "../../scss/modules/ChatWithInfo.scss"
 import "../../pages/Acc/scss/AccInfo.scss"
 import { useBlackout } from "../hooks/BlackoutHook"
@@ -8,12 +8,15 @@ import { isMobile } from "react-device-detect"
 import { useMessages } from "../hooks/MessagesHook"
 import { useNavigate } from "react-router"
 import ChatMedia from "./components/ChatMedia"
+import { useContacts } from "../hooks/ContactsHook"
+import formatLastOnline from "../ts/utils/formatOnline"
 
 export default function ChatWithInfo() {
     const { t } = useTranslation("common");
     const { chatWith, activeHeader:header, setActiveHeader:setHeader, messages } = useChat()
     const { setBlackout } = useBlackout()
     const { setChosenMess } = useMessages();
+    const { onlineMap } = useContacts();
 
     const navigate = useNavigate()
 
@@ -34,6 +37,10 @@ export default function ChatWithInfo() {
                     ) : (
                         <UserIcon size={128} />
                     )}
+                    {!chatWith.is_group && <div className={`accOnlineStauts ${onlineMap[chatWith.id] ? "online" : "offline"}`}>
+                        <CircleIcon size={16} weight="fill" aria-hidden="true"/>
+                        {onlineMap[chatWith.id] ? t("online") : formatLastOnline(chatWith.last_online)}
+                    </div>}
                 </div>
                 <div className="accInfoNames">
                     <div className="accMainInfoStr">
