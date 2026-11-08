@@ -28,6 +28,7 @@ test("feedback opens from Info and Contacts with a report reason choice", async 
     const contactHeadings = await page.locator(".infoText h3").allTextContents();
     expect(contactHeadings.slice(0, 3)).toEqual(["Разработка", "Социальные сети", "Поддержка"]);
     const supportButton = page.locator(".contactFeedbackButton");
+    await expect(supportButton).toHaveCSS("border-top-width", "0px");
     const height = await supportButton.evaluate(node => node.getBoundingClientRect().height);
     await supportButton.hover();
     const hoverHeight = await supportButton.evaluate(node => node.getBoundingClientRect().height);

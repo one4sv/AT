@@ -16,6 +16,7 @@ export default function ReportButton({ targetType, targetId, isMy }: {
     const { setBlackout } = useBlackout();
     const { user } = useUser();
     const id = String(targetId ?? menu.options.id ?? "");
+    const nick = targetType === "account" ? menu.options.nick : undefined;
 
     if (!user.id || !id || isMy || (targetType === "account" && String(user.id) === id)) return null;
 
@@ -29,6 +30,7 @@ export default function ReportButton({ targetType, targetId, isMy }: {
         setBlackout({ seted: true, module: "FeedbackModal", feedback: {
             targetType,
             targetId: id,
+            targetName: nick ? "@" + nick : undefined,
             targetUrl: url
         }});
     };

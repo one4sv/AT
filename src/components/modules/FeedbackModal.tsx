@@ -86,7 +86,7 @@ export default function FeedbackModal() {
                 </div>}
                 {strictReport && <div className="feedbackTarget">
                     <span>{t("feedback.targetLabel")}</span>
-                    <span>{t("feedback.targets." + target?.targetType)} · {target?.targetId}</span>
+                    <span>{t("feedback.targets." + target?.targetType)} · {target?.targetName || target?.targetId}</span>
                 </div>}
                 {reportKind && <div className="feedbackField">
                     <span>{t("feedback.reasonLabel")}</span>
