@@ -1,0 +1,87 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { runInNewContext } from "node:vm";
+import test from "node:test";
+
+const config = JSON.parse(readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));
+const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+
+test("SPA fallback excludes missing JS assets, without breaking client routes", () => {
+    const source = config.rewrites.find(item => item.destination === "/index.html")?.source;
+    assert.ok(source, "SPA rewrite required");
+    const matches = new RegExp("^" + source + "$");
+    assert.equal(matches.test("/assets/HabitPage-ByXygUFM.js"), false);
+    assert.equal(matches.test("/assets/EmojiBar-DUtVdROy.js"), false);
+    assert.equal(matches.test("/api/user"), false);
+    assert.equal(matches.test("/habit/19"), true);
+    assert.equal(matches.test("/settings/acc"), true);
+    assert.equal(matches.test("/wallpapers/japan"), true);
+});
+
+test("SPA HTML is revalidated, while fingerprinted JS remains immutable", () => {
+    const globalHeader = config.headers.find(item => item.source.startsWith("/((?!api/|assets/"));
+    assert.ok(globalHeader?.headers.some(item =>
+        item.key === "Cache-Control" && item.value.includes("must-revalidate")
+    ));
+    const assetHeader = config.headers.find(item => item.source === "/assets/(.*)");
+    assert.ok(assetHeader?.headers.some(item =>
+        item.key === "Cache-Control" && item.value.includes("immutable")
+    ));
+});
+
+test("missing chunk recovery retries once, avoiding an endless reload loop", () => {
+    const match = html.match(/<script>\s*(\/\/ Vite lazy chunks[\s\S]*?)<\/script>/);
+    assert.ok(match, "early recovery script must be included in HTML");
+
+    const listeners = new Map();
+    const storage = new Map();
+    const location = { origin: "https://at.test", count: 0, reload() { this.count += 1; } };
+    let warning = 0;
+    const context = {
+        navigator: { onLine: true },
+        location,
+        Date,
+        sessionStorage: {
+            getItem(key) { return storage.get(key) ?? null; },
+            setItem(key, value) { storage.set(key, value); },
+            removeItem(key) { storage.delete(key); }
+        },
+        window: { addEventListener(name, listener) { listeners.set(name, listener); } },
+        document: {
+            body: null,
+            getElementById() { return null; },
+            addEventListener(name) { if (name === "DOMContentLoaded") warning++; }
+        }
+    };
+    runInNewContext("(function() { " + match[1] + " })()", context);
+
+    let prevented = false;
+    listeners.get("vite:preloadError")({
+        preventDefault() { prevented = true; }
+    });
+    assert.equal(prevented, true);
+    assert.equal(location.count, 1);
+
+    listeners.get("vite:preloadError")({ preventDefault() {} });
+    assert.equal(location.count, 1);
+    assert.equal(warning, 1);
+
+    listeners.get("error")({
+        target: {
+            tagName: "SCRIPT",
+            type: "module",
+            src: "https://at.test/assets/HabitPage-old.js"
+        }
+    });
+    assert.equal(location.count, 1);
+});
+
+test("the account deletion selection has a Checkbox, never a Toggler row", () => {
+    const source = readFileSync(
+        new URL("../src/pages/Settings/components/SettingsTabs/AccSettingsTab.tsx", import.meta.url),
+        "utf8"
+    );
+    assert.match(source, /className="settingCheckboxDiv"/);
+    assert.match(source, /<Checkbox state=\{deleteMessages\}/);
+    assert.doesNotMatch(source, /<label className="settingTogglerDiv">/);
+});
