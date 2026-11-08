@@ -1,7 +1,7 @@
 {
   "name": "achievetogether",
   "private": true,
-  "version": "0.6.2-dev.0",
+  "version": "0.6.3-dev.0",
   "type": "module",
   "scripts": {
     "dev": "node scripts/build-desktop-wallpapers.mjs && vite",

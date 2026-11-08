@@ -334,39 +334,36 @@ export const roadmapHistory: RoadmapRelease[] = [
             { ru: "Настройки cookies и улучшения безопасности входа", en: "Cookie preferences and sign-in security improvements" },
             { ru: "Исправления интерфейса и навигации", en: "Interface and navigation fixes" }
         ]
+    },
+    {
+        version: "0.6.2",
+        date: "2026-11-04",
+        title: "The New Palette",
+        features: [
+            { ru: "Новая статистика активностей и исправление расписания", en: "Refreshed activity statistics and schedule layout fixes" },
+            { ru: "Собственные цвета акцента и градиента", en: "Custom accent and gradient colors" },
+            { ru: "Десять новых стандартных фонов и анимации", en: "Ten new built-in backgrounds and animations" },
+            { ru: "Настройка скорости анимации фонов", en: "Configurable background animation speed" },
+            { ru: "Новый выбор и редактор фоновых изображений", en: "New wallpaper picker and editor" },
+            { ru: "Улучшения мобильного интерфейса", en: "Mobile interface improvements" }
+        ]
     }
 ];
 
 export const roadmapCurrent: RoadmapRelease = {
-    version: "0.6.2",
-    date: "2026-11-04",
-    title: "The New Palette",
+    version: "0.6.3",
+    date: "2026-11-08",
+    title: "Songbird",
     features: [
-        { ru: "Новая статистика активностей и исправление расписания", en: "Refreshed activity statistics and schedule layout fixes" },
-        { ru: "Собственные цвета акцента и градиента", en: "Custom accent and gradient colors" },
-        { ru: "Десять новых стандартных фонов и анимации", en: "Ten new built-in backgrounds and animations" },
-        { ru: "Настройка скорости анимации фонов", en: "Configurable background animation speed" },
-        { ru: "Новый выбор и редактор фоновых изображений", en: "New wallpaper picker and editor" },
-        { ru: "Улучшения мобильного интерфейса", en: "Mobile interface improvements" }
-    ],
-    notice: {
-        ru: "Продолжается тестирование на мобильных устройствах",
-        en: "Mobile device testing is ongoing"
-    }
+        { ru: "Ускорена загрузка сайта, улучшены кэширование и производительность.", en: "Faster site loading with improved caching and performance." },
+        { ru: "Добавлены Web Push-уведомления и гибкие напоминания об активностях.", en: "Web Push notifications and flexible activity reminders." },
+        { ru: "Обновлены элементы оформления, настройки и взаимодействия на ПК и мобильных устройствах.", en: "Refined styling, settings, and interactions on desktop and mobile." },
+        { ru: "Усилена защита аккаунтов, сообщений и личных данных.", en: "Stronger protection for accounts, messages, and personal data." },
+        { ru: "Добавлена форма для сообщений об ошибках, предложений и жалоб.", en: "Feedback form for bug reports, suggestions, and complaints." }
+    ]
 };
 
 export const roadmapFuture: RoadmapRelease[] = [
-    {
-        version: "0.6.3",
-        title: "Songbird",
-        features: [
-            { ru: "Ускорена загрузка сайта, улучшены кэширование и производительность.", en: "Faster site loading with improved caching and performance." },
-            { ru: "Добавлены Web Push-уведомления и гибкие напоминания об активностях.", en: "Web Push notifications and flexible activity reminders." },
-            { ru: "Обновлены элементы оформления, настройки и взаимодействия на ПК и мобильных устройствах.", en: "Refined styling, settings, and interactions on desktop and mobile." },
-            { ru: "Усилена защита аккаунтов, сообщений и личных данных.", en: "Stronger protection for accounts, messages, and personal data." },
-            { ru: "Добавлена форма для сообщений об ошибках, предложений и жалоб.", en: "Feedback form for bug reports, suggestions, and complaints." }
-        ]
-    },
     {
         version: "0.7",
         title: "The Castle",
