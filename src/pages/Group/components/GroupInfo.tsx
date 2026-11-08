@@ -1,4 +1,5 @@
 import TA from "../../../components/ts/TA";
+import "../../Acc/scss/AccInfo.scss";
 import { useTranslation } from "react-i18next";
 import { CircleIcon, Camera, ChatTeardropText, FloppyDiskBack, PencilSimple, Users, X } from "@phosphor-icons/react";
 import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
@@ -174,7 +175,8 @@ export default function GroupInfo({
         >
             <div className="accInfoInner" ref={innerRef}>
                 <div className="accInfoMain">
-                    <button
+                    <div className="groupAvatarStatusAnchor">
+                        <button
                         type="button"
                         className="accPic groupAvatar"
                         disabled={saving || (editing ? !myPerms?.change_avatar : !avatar)}
@@ -190,7 +192,12 @@ export default function GroupInfo({
                         }}
                     >
                         {avatar ? <img src={avatar} alt="" className="avatarImg" /> : editing ? <Camera /> : <Users />}
-                    </button>
+                        </button>
+                        <div className={`accOnlineStauts ${onlineCount ? "online" : "offline"}`}>
+                            <CircleIcon size={16} weight="fill" aria-hidden="true" />
+                            {onlineCount ? t("groupUi.online", { count: onlineCount }) : t("groupUi.group")}
+                        </div>
+                    </div>
                     <input
                         ref={inputRef}
                         type="file"
@@ -221,12 +228,6 @@ export default function GroupInfo({
                             />
                         </div>
                         <div className="accNickStr groupMemberCount">{t("groupUi.members", { count: members.length })}
-                        </div>
-                    </div>
-                    <div className="accInfoWrapper">
-                        <div className={`accOnlineStauts ${onlineCount ? "online" : "offline"}`}>
-                            <CircleIcon size={16} weight="fill" aria-hidden="true" />
-                            {onlineCount ? t("groupUi.online", { count: onlineCount }) : t("groupUi.group")}
                         </div>
                     </div>
                 </div>

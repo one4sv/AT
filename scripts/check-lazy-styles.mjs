@@ -14,6 +14,7 @@ const entries = [
 const inlineOnly = new Set([resolve(root, "src/pages/Admin.tsx")]);
 const shared = [
     "src/pages/Acc/components/AccInfo.tsx",
+    "src/pages/Group/components/GroupInfo.tsx",
     "src/components/ts/Habit.tsx",
     "src/components/ts/ConnectionStatus.tsx",
     "src/components/ts/CalendarInput.tsx"

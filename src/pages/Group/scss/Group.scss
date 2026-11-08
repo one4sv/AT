@@ -28,6 +28,35 @@
         color: var(--tc);
         flex-shrink: 0;
     }
+    .groupAvatarStatusAnchor {
+        position: relative;
+        flex-shrink: 0;
+        width: 10vh;
+        height: 10vh;
+
+        .groupAvatar {
+            width: 100%;
+            height: 100%;
+            left: 0;
+            margin: 0;
+        }
+
+        .accOnlineStauts {
+            left: calc(100% - 0.8dvh);
+            bottom: 0;
+        }
+
+        @media (max-width: 800px) {
+            width: 20vh;
+            height: 20vh;
+            margin-top: 2vh;
+
+            .accOnlineStauts {
+                left: calc(100% - 1.2dvh);
+            }
+        }
+    }
+
 
     .accInfoNames {
         min-width: 0;

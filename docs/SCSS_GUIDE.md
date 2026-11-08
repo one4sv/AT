@@ -512,3 +512,8 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
 
 
 **Сплошной акцентный фон:** если текст, значок, счётчик или статус расположен на `background: var(--accent)`, `background-color: var(--accent)` или `var(--darker_accent)`, использовать `color: var(--inner_text)`, включая hover/active и явно окрашенные дочерние SVG и надписи. Если элемент возвращается на нейтральный `--mc`/`--interact`, вернуть его исходный цвет, а не сохранять `inner_text` на тёмном фоне. В списке участников активности `.habitMemberStatus` на нейтральной строке — `--borderWh`, а на `.habitMember.active` — `--inner_text` поверх градиента. Выбранная беседа в `.contactPickerList .createChatContact.selected` сохраняет акцентный фон и `inner_text` при hover и active.
+
+
+## GroupInfo и профильные стили (dev 0.6.2)
+
+`src/pages/Group/components/GroupInfo.tsx` использует `accInfo`, `accPic` и `accInfoNames` и **сам импортирует** `src/pages/Acc/scss/AccInfo.scss`, даже при наличии переходного `@use` в `Group.scss`. Плашка `accOnlineStauts` должна находиться внутри `groupAvatarStatusAnchor` вместе с аватаркой, а не в отдельном правом `accInfoWrapper`: `position: absolute` в стилях рассчитывается относительно аватарки. Проверять прямое открытие группы на ПК и iPhone без посещения профиля. Для профилактики используются `tests/group-info-styles.test.mjs`, `check:lazy-styles` и `check:bundle`.
