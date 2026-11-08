@@ -14,13 +14,14 @@ import { useSideMenu } from "../hooks/SideMenuHook";
 import { useTranslation } from "react-i18next";
 import { useContacts } from "../hooks/ContactsHook";
 import localizeSystemMessage from "../../pages/Chat/utils/localizeSystemMessage";
+import { formatAppDate, formatAppTime } from "./utils/dateToStr";
 
 export interface ContactType {
     contact: Contact;
 }
 
 export default function Contact({ contact }: ContactType) {
-    const { t, i18n } = useTranslation("common");
+    const { t } = useTranslation("common");
     const { typingMap, setActiveHeader } = useChat();
     const { onlineMap } = useContacts();
     const { setBlackout } = useBlackout();
@@ -66,10 +67,10 @@ export default function Contact({ contact }: ContactType) {
         const oneDay = 24 * 60 * 60 * 1000;
 
         if (diff < oneDay) {
-            return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+            return formatAppTime(d);
         }
 
-        return d.toLocaleDateString(i18n.language === "ru" ? "ru-RU" : undefined, {
+        return formatAppDate(d, {
             day: "numeric",
             month: "short",
         });
