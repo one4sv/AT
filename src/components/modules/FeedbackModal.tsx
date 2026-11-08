@@ -39,7 +39,19 @@ export default function FeedbackModal() {
 
     const submit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (sending || !details.trim() || (strictReport && !user.id)) return;
+        if (sending) return;
+        if (strictReport && !user.id) {
+            setError(t("feedback.signIn"));
+            return;
+        }
+        if (!strictReport && title.trim().length < 4) {
+            setError(t("feedback.subjectTooShort"));
+            return;
+        }
+        if (details.trim().length < 12) {
+            setError(t("feedback.detailsTooShort"));
+            return;
+        }
         setError("");
         setSending(true);
         try {
@@ -96,11 +108,11 @@ export default function FeedbackModal() {
                 </div>}
                 {!strictReport && <label className="feedbackField">
                     <span>{t("feedback.subjectLabel")}</span>
-                    <input value={title} onChange={event => setTitle(event.target.value)} maxLength={140} minLength={4} required placeholder={t("feedback.subjectPlaceholder")}/>
+                    <input value={title} onChange={event => setTitle(event.target.value)} maxLength={140} placeholder={t("feedback.subjectPlaceholder")}/>
                 </label>}
                 <label className="feedbackField">
                     <span>{t("feedback.detailsLabel")}</span>
-                    <TA value={details} minHeight={9} maxHeight={27} maxLength={3000} minLength={12} required
+                    <TA value={details} minHeight={9} maxHeight={27} maxLength={3000}
                         onChange={event => setDetails(event.target.value)}
                         placeholder={t(strictReport ? "feedback.reportPlaceholder" : "feedback.detailsPlaceholder")}/>
                     <span className="feedbackCounter">{details.length}/3000</span>
@@ -114,7 +126,7 @@ export default function FeedbackModal() {
                 <p className="feedbackPrivacy">{t("feedback.privacy")}</p>
                 <div className="feedbackActions">
                     <button type="button" onClick={close}>{t("feedback.cancel")}</button>
-                    <button type="submit" disabled={sending || details.trim().length < 12 || (!strictReport && title.trim().length < 4) || (strictReport && !user.id)}>
+                    <button type="submit" disabled={sending}>
                         <PaperPlaneTiltIcon size={20}/> {t(sending ? "feedback.sending" : "feedback.send")}
                     </button>
                 </div>

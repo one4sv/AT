@@ -766,6 +766,8 @@
       "fraud": "Scam or fraud",
       "other": "Other reason"
     },
-    "queued": "Your request was received. Delivery to support is queued and will retry automatically."
+    "queued": "Your request was received. Delivery to support is queued and will retry automatically.",
+    "subjectTooShort": "Enter a subject of at least 4 characters.",
+    "detailsTooShort": "Describe your request in at least 12 characters."
   }
 }
