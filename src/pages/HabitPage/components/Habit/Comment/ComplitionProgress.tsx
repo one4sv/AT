@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react"
 import { api } from "../../../../../components/ts/api"
 import { placeholders } from "../../../utils/placeholders"
 import { useWebSocket } from "../../../../../components/hooks/WebSocketHook"
-import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr"
+import { todayStrFunc, formatAppTime } from "../../../../../components/ts/utils/dateToStr"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 
 interface Event {
@@ -23,13 +23,10 @@ const timeToSeconds = (time: string): number => {
     return h * 3600 + m * 60 + s
 }
 
-const formatTime = (iso: string, locale: string): string => {
-    return new Date(iso).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit" })
-}
+const formatTime = (iso: string): string => formatAppTime(iso, true)
 
 export default function CompletionProgress() {
-    const { t, i18n } = useTranslation("common");
-    const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
+    const { t } = useTranslation("common");
     const { habit, loadTimer, setHabitTimer, parseTimer, showTimer, habitTimer } = useTheHabit()
     const { chosenDay } = useCalendar()
     const { ws } = useWebSocket()
@@ -219,13 +216,13 @@ export default function CompletionProgress() {
                 if (event.type === "start") {
                     return (
                         <div key={key} className="eventStr startStr">
-                            <span className="eventTime">{event.time}</span>: {t("habitPageUi.progress.startedAt", { time: formatTime(event.start!, locale) })}
+                            <span className="eventTime">{event.time}</span>: {t("habitPageUi.progress.startedAt", { time: formatTime(event.start!) })}
                         </div>
                     )
                 }
 
                 if (event.type === "pause") {
-                    const startTime = formatTime(event.start!, locale);
+                    const startTime = formatTime(event.start!);
                     const isOpen = !event.end;
 
                     let durationMs: number;
@@ -246,8 +243,8 @@ export default function CompletionProgress() {
                             <span className="eventTime">{event.time}</span>: {t("habitPageUi.progress.pauseFromTo", {
                                 start: startTime,
                                 end: isOpen
-                                    ? (currentTimer.status === "ended" || isHistorical ? formatTime(currentTimer.end_at.toISOString(), locale) : t("habitPageUi.progress.now"))
-                                    : formatTime(event.end!, locale)
+                                    ? (currentTimer.status === "ended" || isHistorical ? formatTime(currentTimer.end_at.toISOString()) : t("habitPageUi.progress.now"))
+                                    : formatTime(event.end!)
                             })} {event.end && t("habitPageUi.progress.duration", { duration })}
                         </div>
                     );
@@ -335,7 +332,7 @@ export default function CompletionProgress() {
                 if (event.type === "end") {
                     return (
                         <div key={key} className="eventStr endStr">
-                            <span className="eventTime">{event.time}</span>: {t("habitPageUi.progress.endedAt", { time: formatTime(event.end!, locale) })}
+                            <span className="eventTime">{event.time}</span>: {t("habitPageUi.progress.endedAt", { time: formatTime(event.end!) })}
                         </div>
                     )
                 }
