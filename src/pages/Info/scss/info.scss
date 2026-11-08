@@ -1,5 +1,6 @@
 @use "../../../scss/mixins" as var;
 .infoText {
+    flex-shrink: 0;
     border: 1px solid var(--block_border);
     box-sizing: border-box;
     border-radius: 24px;
