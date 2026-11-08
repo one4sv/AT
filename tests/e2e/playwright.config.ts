@@ -12,6 +12,7 @@ export default defineConfig({
     },
     projects: [
         { name: "chromium-desktop", use: { ...devices["Desktop Chrome"] } },
+        { name: "firefox-desktop", use: { ...devices["Desktop Firefox"] } },
         { name: "webkit-mobile", use: { ...devices["iPhone 13"] } }
     ]
 });
