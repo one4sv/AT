@@ -23,6 +23,7 @@ export default function FeedbackModal() {
     const [email, setEmail] = useState("");
     const [sending, setSending] = useState(false);
     const [sentId, setSentId] = useState("");
+    const [queued, setQueued] = useState(false);
     const [error, setError] = useState("");
     const reportKind = strictReport || kind === "complaint";
 
@@ -57,6 +58,7 @@ export default function FeedbackModal() {
                 website: ""
             });
             if (!response.data?.success || !response.data?.id) throw new Error("Feedback not accepted");
+            setQueued(response.data.queued === true);
             setSentId(response.data.id);
         } catch {
             setError(t("feedback.sendFailed"));
@@ -75,7 +77,7 @@ export default function FeedbackModal() {
         </div>
         {sentId ?
             <div className="feedbackSuccess" role="status">
-                <div>{t("feedback.success")}</div>
+                <div>{t(queued ? "feedback.queued" : "feedback.success")}</div>
                 <p>{t("feedback.ticket", { id: sentId })}</p>
                 <button type="button" onClick={close}>{t("feedback.done")}</button>
             </div> :

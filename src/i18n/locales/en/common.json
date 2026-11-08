@@ -740,7 +740,7 @@
     "close": "Close",
     "done": "Done",
     "sendFailed": "Could not send your request. Please try again later.",
-    "success": "Thank you! Your request was sent.",
+    "success": "Thank you! Your request was handed to the email provider.",
     "ticket": "Request ID: {{id}}",
     "reportSubject": "Report about {{target}}",
     "types": {
@@ -765,6 +765,7 @@
       "privacy": "Privacy violation",
       "fraud": "Scam or fraud",
       "other": "Other reason"
-    }
+    },
+    "queued": "Your request was received. Delivery to support is queued and will retry automatically."
   }
 }
