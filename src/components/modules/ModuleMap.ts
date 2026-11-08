@@ -3,6 +3,7 @@ import { lazy, type ComponentType } from "react";
 // Load each dialog only when it is requested.
 const ModuleMap: Record<string, ComponentType> = {
     ConfirmAction: lazy(() => import("./ConfirmAction")),
+    AccountSecurityAction: lazy(() => import("./AccountSecurityAction")),
     HabitParticipantPicker: lazy(() => import("./HabitParticipantPicker")),
     HabitCreateChat: lazy(() => import("./HabitCreateChat")),
     AddHabit: lazy(() => import("./AddHabit")),

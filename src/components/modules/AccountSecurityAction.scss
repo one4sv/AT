@@ -1,0 +1,216 @@
+@use "../../scss/mixins" as var;
+@use "../../scss/consentCheckbox";
+
+.accountSecurityModal {
+    @include var.centerModal;
+    width: 34vw;
+    max-width: 92vw;
+    max-height: 85dvh;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5dvh;
+    padding: 2dvh 1.5vw;
+    border-radius: 24px;
+    background: var(--mc);
+    color: var(--tc);
+
+    @media (max-width: 800px) {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        align-self: stretch;
+        width: 100%;
+        max-width: 100%;
+        max-height: 90dvh;
+        padding: 2.5dvh 4vw calc(2dvh + env(safe-area-inset-bottom));
+        border-radius: 24px 24px 0 0;
+    }
+}
+
+.accountSecurityHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+    font-size: 20px;
+}
+
+.accountSecurityClose {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4dvh;
+    height: 4dvh;
+    border: 0;
+    border-radius: 24px;
+    background: var(--interact);
+    color: var(--tc);
+    cursor: pointer;
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--menuButtHover);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background: var(--menuButtHover);
+        }
+    }
+}
+
+.accountSecurityForm {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    gap: 2dvh;
+}
+
+.accountSecurityBody {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5dvh;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.accountSecurityHint {
+    margin: 0;
+    color: var(--borderWh);
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.accountSecurityField {
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+
+    > label {
+        color: var(--borderWh);
+    }
+
+    > input {
+        width: 100%;
+        min-height: 4.5dvh;
+        padding: 1dvh .9vw;
+        box-sizing: border-box;
+        border: 1px solid var(--block_border);
+        border-radius: 12px;
+        background: var(--interact);
+        color: var(--tc);
+        font: inherit;
+        outline: none;
+
+        &:focus {
+            border-color: var(--accent);
+        }
+    }
+}
+
+.accountSecurityCheckbox {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+    font-size: 16px;
+
+    > label {
+        cursor: pointer;
+    }
+
+    &:has(input:disabled) {
+        opacity: .5;
+        cursor: default;
+
+        > label {
+            cursor: default;
+        }
+    }
+}
+
+.accountSecurityError {
+    margin: 0;
+    color: var(--notValid);
+    overflow-wrap: anywhere;
+}
+
+.accountSecurityActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 1vw;
+    flex-shrink: 0;
+
+    > button {
+        min-height: 5dvh;
+        padding: 1dvh 1.5vw;
+        border: 0;
+        border-radius: 24px;
+        background: var(--interact);
+        color: var(--tc);
+        font: inherit;
+        cursor: pointer;
+
+        &:disabled {
+            opacity: .5;
+            cursor: default;
+        }
+    }
+
+    .accountSecurityPrimary, .accountSecurityDanger {
+        margin-left: auto;
+    }
+
+    .accountSecurityPrimary {
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
+    }
+
+    .accountSecurityDanger {
+        background: var(--notValidBg);
+        color: var(--notValid);
+    }
+
+    @media (hover: hover) {
+        .accountSecurityCancel:not(:disabled):hover {
+            background: var(--menuButtHover);
+        }
+
+        .accountSecurityDanger:not(:disabled):hover {
+            background: var(--notValid);
+            color: var(--inner_text);
+        }
+    }
+
+    @media (hover: none) {
+        .accountSecurityCancel:not(:disabled):active {
+            background: var(--menuButtHover);
+        }
+
+        .accountSecurityDanger:not(:disabled):active {
+            background: var(--notValid);
+            color: var(--inner_text);
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 3vw;
+
+        > button {
+            min-height: 6dvh;
+            padding: 1dvh 3vw;
+        }
+    }
+}
+
+.accountSecurityModal .accountSecurityField > input {
+    @media (max-width: 800px) {
+        padding-inline: 3vw;
+    }
+}
