@@ -57,19 +57,17 @@ export default function SecurityTab({ search }: { search: string }) {
             <div className="settingInnerDiv twoFactorSettingsCard" data-setting-id="twoAuth">
                 <div className="twoFactorHeading">
                     <span className="twoFactorIcon"><ShieldCheckIcon size={24}/></span>
-                    <div className="twoFactorHeadingText">
-                        <div className="settingHeader">
-                            <HighlightText text={t("security.twoFactor")} search={search}/>
-                        </div>
-                        <span className="settingHint">
+                    <div className="settingHeader">
+                        <HighlightText text={t("security.twoFactor")} search={search}/>
+                    </div>
+                </div>
+                <span className="settingHint twoFactorDescription">
                     {pending
                         ? t("security.sentHint", { email: user.mail })
                         : t("security.confirmHint", { email: user.mail })}
-                        </span>
-                    </div>
-                </div>
-                {!pending && <div className="settingInnerList twoFactorForm">
-                    <div className="settingsInputDiv">
+                </span>
+                {!pending && <>
+                    <div className="settingsInputDiv twoFactorPassword">
                         <label htmlFor="twoFactorPassword" className="settingsLabel">{t("security.currentPassword")}</label>
                         <div className="settingInputInnerList">
                             <input id="twoFactorPassword" className="extraInfoInput" type="password"
@@ -77,17 +75,21 @@ export default function SecurityTab({ search }: { search: string }) {
                                 onChange={event => setPassword(event.target.value)}/>
                         </div>
                     </div>
-                    <button type="button" className="safetyButt" disabled={busy || !password || twoAuth === null}
-                        onClick={() => void askAuth("toggle")}>
-                        {twoAuth ? t("security.disable") : t("security.enable")}
-                    </button>
+                    <div className="twoFactorActions">
+                        <button type="button" className="safetyButt" disabled={busy || !password || twoAuth === null}
+                            onClick={() => void askAuth("toggle")}>
+                            {twoAuth ? t("security.disable") : t("security.enable")}
+                        </button>
+                    </div>
                     {twoAuth && <>
                         <span className="settingHint">{t("security.backupCount", { count: unusedCodes ?? 0 })}</span>
-                        <button type="button" className="safetyButt" disabled={busy || !password}
-                            onClick={() => void askAuth("backup")}>{t("security.regenerateBackup")}</button>
+                        <div className="twoFactorActions">
+                            <button type="button" className="safetyButt" disabled={busy || !password}
+                                onClick={() => void askAuth("backup")}>{t("security.regenerateBackup")}</button>
+                        </div>
                         <span className="settingHint">{t("security.regenerateWarning")}</span>
                     </>}
-                </div>}
+                </>}
                 {pending && <span className="settingHint">{t("security.emailLinkHint")}</span>}
                 {error && <span className="settingHint" role="alert">{error}</span>}
             </div>

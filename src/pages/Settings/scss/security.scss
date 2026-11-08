@@ -39,16 +39,21 @@
 .twoFactorSettingsCard {
     display: flex;
     flex-direction: column;
-    gap: 1.75dvh;
+    gap: 1.5dvh;
     padding: 2dvh 1.5vw;
     box-sizing: border-box;
     min-width: 0;
 
     .twoFactorHeading {
         display: flex;
-        align-items: flex-start;
-        gap: 1vw;
+        align-items: center;
+        gap: .75vw;
         min-width: 0;
+
+        > .settingHeader {
+            padding: 0;
+            min-width: 0;
+        }
     }
 
     .twoFactorIcon {
@@ -56,82 +61,73 @@
         flex-shrink: 0;
         align-items: center;
         justify-content: center;
-        width: 5dvh;
-        height: 5dvh;
-        border-radius: 16px;
+        width: 4dvh;
+        height: 4dvh;
+        border-radius: 12px;
         background: var(--interact);
         color: var(--accent_text);
     }
 
-    .twoFactorHeadingText {
+    .twoFactorDescription {
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    .twoFactorPassword {
+        width: 100%;
+        min-width: 0;
+
+        > .settingsLabel {
+            box-sizing: border-box;
+            padding: 0 0 0.75dvh .75vw;
+        }
+
+        > .settingInputInnerList {
+            padding: .75dvh .75vw;
+            border: 1px solid var(--block_border);
+            box-sizing: border-box;
+            border-radius: 16px;
+
+            &:focus-within {
+                border-color: var(--accent);
+            }
+
+            > .extraInfoInput {
+                width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+            }
+        }
+    }
+
+    .twoFactorActions {
         display: flex;
-        flex: 1;
-        flex-direction: column;
-        gap: .75dvh;
-        min-width: 0;
-
-        > .settingHeader {
-            padding: 0;
-        }
-
-        > .settingHint {
-            line-height: 1.45;
-            overflow-wrap: anywhere;
-        }
-    }
-
-    .twoFactorForm {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1.25dvh;
+        justify-content: flex-end;
         width: 100%;
         min-width: 0;
-    }
 
-    .twoFactorForm .settingsInputDiv {
-        width: 100%;
-        min-width: 0;
-    }
+        > .safetyButt {
+            min-height: 4.5dvh;
+            padding: 1dvh 1.5vw;
+            border: 0;
+            box-sizing: border-box;
+            border-radius: 24px;
+            background: linear-gradient(135deg, var(--accent), var(--grad));
+            color: var(--inner_text);
 
-    .twoFactorForm .settingInputInnerList {
-        padding: .75dvh .75vw;
-        border: 1px solid var(--block_border);
-        box-sizing: border-box;
-        border-radius: 16px;
-
-        &:focus-within {
-            border-color: var(--accent);
-        }
-    }
-
-    .twoFactorForm .extraInfoInput {
-        width: 100%;
-        min-width: 0;
-        box-sizing: border-box;
-    }
-
-    .twoFactorForm .safetyButt {
-        min-height: 4.5dvh;
-        padding: 1dvh 1.5vw;
-        border: 0;
-        box-sizing: border-box;
-        border-radius: 24px;
-        background: linear-gradient(135deg, var(--accent), var(--grad));
-        color: var(--inner_text);
-
-        &:disabled {
-            opacity: .5;
-            cursor: default;
+            &:disabled {
+                opacity: .5;
+                cursor: default;
+            }
         }
     }
 
     @media (max-width: 800px) {
         padding: 2dvh 4vw;
-        gap: 1.5dvh;
 
-        .twoFactorHeading { gap: 3vw; }
-        .twoFactorForm .settingInputInnerList { padding: 1dvh 2vw; }
-        .twoFactorForm .safetyButt { padding: 1dvh 4vw; }
+        .twoFactorHeading { gap: 2vw; }
+        .twoFactorPassword > .settingsLabel { padding-left: 2vw; }
+        .twoFactorPassword > .settingInputInnerList { padding: 1dvh 2vw; }
+        .twoFactorActions > .safetyButt { padding: 1dvh 4vw; }
     }
 }
