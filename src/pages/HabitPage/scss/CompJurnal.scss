@@ -35,6 +35,9 @@
     background-color: var(--mc);
     margin-bottom: 2px;
     cursor: pointer;
+    &.memberEvent {
+        cursor: default;
+    }
     @media (hover: hover) {
         &:hover {
             background-color: var(--menuButtHover);
@@ -58,9 +61,28 @@
 
 .CJdate {
     display: flex;
-    color: #11c011;
+    color: var(--tc);
     align-items: center;
     gap: 0.2vw;
+}
+
+.CJmember {
+    min-width: 0;
+    gap: .5vw;
+}
+
+.CJavatar {
+    width: 2.5dvh;
+    height: 2.5dvh;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.CJmember > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .CJcreated {

@@ -60,18 +60,20 @@ const SideMenuContext = createContext<SideMenuContextType | undefined>(undefined
 
 export function SideMenuProvider({ children }: { children: ReactNode }) {
     const { t, i18n } = useTranslation("common");
-    const { list } = useContacts()
+    const { list, search: settingsSearch, setSearch: setSettingsSearch } = useContacts()
     const { habits, newOrderHabits } = useHabits()
     const { showArchived, layout } = useSettings();
     const isCompact = useCompactLayout();
+    const location = useLocation();
+    const initiallyClosed = (isCompact || layout === "hidden") &&
+        (location.pathname.startsWith("/settings") || location.pathname.startsWith("/info") || location.pathname.startsWith("/wallpapers"));
 
-    const [showSideMenu, setShowSideMenu] = useState(() => isCompact || layout !== "hidden");
+    const [showSideMenu, setShowSideMenu] = useState(() => initiallyClosed ? false : isCompact || layout !== "hidden");
     const [red, setRed] = useState(false);
     const [showHabitMenu, setShowHabitMenu] = useState(false);
     const [showSlide, setShowSlide] = useState<slides>(null);
     const [activeTab, setActiveTab] = useState<tab>("chats");
-    const [settingsSearch, setSettingsSearch] = useState("");
-    const [translateX, setTranslateX] = useState(() => isCompact || layout !== "hidden" ? 0 : -100);
+    const [translateX, setTranslateX] = useState(() => initiallyClosed ? -100 : isCompact || layout !== "hidden" ? 0 : -100);
     const [isDragging, setIsDragging] = useState(false);
     const [dontHandle, setDontHandle] = useState(false);
     const [dontHandleOther, setDontHandleOther] = useState(false);
@@ -190,7 +192,6 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const translateXRef = useRef(0);
     const animationFrame = useRef<number | null>(null);
     const previousPath = useRef<string | null>(null);
-    const location = useLocation();
 
     useEffect(() => {
         translateXRef.current = translateX;

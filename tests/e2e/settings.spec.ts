@@ -1,10 +1,13 @@
 import { test, expect } from "@playwright/test";
 
+// Settings tests use a synthetic account; the wallpaper service worker must not bypass route mocks after reload.
+test.use({ serviceWorkers: "block" });
+
 // These tests use a synthetic account response. They never modify production data,
 // send account-deletion emails or depend on a real user's cookies.
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, context }) => {
     await page.addInitScript(() => localStorage.setItem("at-cookie-consent-v1", "necessary"));
-    await page.route("**/api/user", route => route.fulfill({
+    await context.route("**/api/user", route => route.fulfill({
         status: 200, contentType: "application/json",
         body: JSON.stringify({
             success: true, id: "settings-fixture", nick: "settingsfixture",

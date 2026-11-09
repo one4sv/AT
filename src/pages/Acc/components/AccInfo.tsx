@@ -15,6 +15,7 @@ import type { PrivateSettings } from "../../../components/context/SettingsContex
 import DatePicker from "react-datepicker";
 import DatePickerHeader from "../../../components/ts/DatePickerHeader";
 import { useTranslation } from "react-i18next";
+import { enGB, ru } from "date-fns/locale";
 import { useContacts } from "../../../components/hooks/ContactsHook";
 import { CircleIcon, ChatTeardropTextIcon, FloppyDiskBackIcon, PencilSimpleIcon, ShareFatIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
@@ -31,7 +32,7 @@ export default function AccInfo({
     onHeightChange?: (height: number) => void;
 }) {
     const isMobile = useCompactLayout();
-    const { t } = useTranslation("acc");
+    const { t, i18n } = useTranslation("acc");
     const { setBlackout } = useBlackout();
     const {
         newName,
@@ -189,6 +190,7 @@ export default function AccInfo({
                             className="extraInfoInput"
                             id="extraInfoInputBirth"
                             selected={birthDate}
+                            locale={i18n.resolvedLanguage?.startsWith("en") ? enGB : ru}
                             onChange={date => setNewBirth(date ? date.toISOString().split("T")[0] : "")}
                             maxDate={new Date()}
                             readOnly={!red}

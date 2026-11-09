@@ -1,20 +1,6 @@
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useState } from "react";
-
-const months = [
-    "Январь",
-    "Февраль",
-    "Март",
-    "Апрель",
-    "Май",
-    "Июнь",
-    "Июль",
-    "Август",
-    "Сентябрь",
-    "Октябрь",
-    "Ноябрь",
-    "Декабрь",
-];
+import { useTranslation } from "react-i18next";
 
 export default function DatePickerHeader({
     date,
@@ -29,6 +15,12 @@ export default function DatePickerHeader({
     decreaseMonth: () => void;
     increaseMonth: () => void;
 }) {
+    const { i18n } = useTranslation();
+    const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
+    const months = Array.from({ length: 12 }, (_, month) => {
+        const label = new Intl.DateTimeFormat(locale, { month: "long" }).format(new Date(2024, month, 1));
+        return label[0].toUpperCase() + label.slice(1);
+    });
     const [monthOpen, setMonthOpen] = useState(false);
     const [yearOpen, setYearOpen] = useState(false);
 

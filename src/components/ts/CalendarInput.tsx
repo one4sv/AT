@@ -1,5 +1,7 @@
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { enGB, ru } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 interface CalendarInputProps {
   value?: Date | null;
@@ -22,6 +24,7 @@ export default function CalendarInput({
   id,
   readOnly
 }: CalendarInputProps) {
+  const { i18n } = useTranslation();
   const handleDateChange = (date: Date | null) => {
     onChange(date);
   };
@@ -52,6 +55,7 @@ export default function CalendarInput({
       id={id}
       className={className}
       selected={value}
+      locale={i18n.resolvedLanguage?.startsWith("en") ? enGB : ru}
       onChange={handleDateChange}
       disabled={readOnly ?? false}
       onChangeRaw={handleChangeRaw}
