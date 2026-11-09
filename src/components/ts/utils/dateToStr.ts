@@ -15,7 +15,9 @@ export const formatClock = (value: string) => {
 
 export const appDateLocale = () => i18n.resolvedLanguage?.startsWith("en") ? (isAmerican() ? "en-US" : "en-GB") : "ru-RU";
 export const formatAppDate = (date: Date | string, options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" }) =>
-    new Date(date).toLocaleDateString(appDateLocale(), options);
+    isAmerican() && options.day === "2-digit" && options.month === "2-digit" && options.year === "numeric"
+        ? dateToStrFormat(new Date(date))
+        : new Date(date).toLocaleDateString(appDateLocale(), options);
 export const formatAppTime = (date: Date | string, seconds = false) =>
     new Date(date).toLocaleTimeString(appDateLocale(), {
         hour: "2-digit",
@@ -118,7 +120,7 @@ export const formatDateLabel = (dateStr: string) => {
     else if (diffDays === -1) prefix = i18n.t("chatUi.yesterdayShort", { ns: "common" });
 
     const locale = appDateLocale();
-    const dateLabel = date.toLocaleDateString(locale, { day: "2-digit", month: "2-digit", year: "numeric" });
+    const dateLabel = formatAppDate(date);
     const weekday = date.toLocaleDateString(locale, { weekday: "short" }).replace(".", "");
 
     return `${prefix ? prefix + ", " : ""}${dateLabel}, ${weekday}`;
