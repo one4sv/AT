@@ -177,6 +177,7 @@
     "user": "user",
     "mediaCount": "{{count}} media files",
     "forwardedMessage": "Forwarded message",
+    "newMessages": "New messages",
     "name": "Name",
     "description": "Description",
     "today": "Today",

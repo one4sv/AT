@@ -510,3 +510,85 @@ test.describe("authenticated UI regression", () => {
         }
     });
 });
+
+
+test("chat opens at the newest messages and keeps a stable unread divider through reflow", async ({ page }) => {
+    const currentUser = "chat-scroll-fixture";
+    const messages = Array.from({ length: 44 }, (_, index) => ({
+        id: index + 1,
+        sender_id: "chat-peer-fixture",
+        sender_name: "Друг",
+        sender_nick: "scrollfixture",
+        sender_avatar_url: "",
+        content: "Сообщение " + (index + 1) + " — текст для проверки прокрутки",
+        created_at: new Date(Date.UTC(2026, 10, 10, 9, index)).toISOString(),
+        files: [],
+        read_by: index < 30 ? [currentUser] : [],
+        reactions: [],
+        answer_id: null,
+        edited: false,
+        redirected_id: null,
+        is_system: false
+    }));
+
+    await page.route("**/api/user", route => route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+            success: true,
+            id: currentUser,
+            nick: "chatfixture",
+            username: "Chat Fixture",
+            mail: "chat@example.invalid",
+            avatar_url: null,
+            last_online: "2026-11-10T09:00:00Z"
+        })
+    }));
+    await page.route("**/api/chat/scrollfixture*", route => route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+            success: true,
+            chat_id: "chat-scroll-fixture-id",
+            user: {
+                id: "chat-peer-fixture",
+                nick: "scrollfixture",
+                username: "Друг",
+                avatar_url: null,
+                last_online: "2026-11-10T09:00:00Z"
+            },
+            messages,
+            hasMore: false
+        })
+    }));
+    await page.route("**/api/chat/read", route => route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ success: true })
+    }));
+
+    await page.goto("/chat/scrollfixture");
+    const chat = page.locator(".chat");
+    await expect(chat.locator(".messageWrapper")).toHaveCount(messages.length);
+    const unread = chat.locator(".newMessagesDivider");
+    await expect(unread).toHaveText("Новые сообщения");
+    await expect(unread.locator("xpath=following-sibling::*[1]")).toContainText("Сообщение 31");
+
+    const distanceFromBottom = () => chat.evaluate(el => el.scrollHeight - el.scrollTop - el.clientHeight);
+    await expect.poll(distanceFromBottom).toBeLessThan(10);
+
+    // A media preview can grow after the first render; it must not push the chat up.
+    await chat.locator(".messageWrapper").last().evaluate(el => {
+        (el as HTMLElement).style.minHeight = "400px";
+    });
+    await expect.poll(distanceFromBottom).toBeLessThan(10);
+    await expect(unread).toHaveCount(1);
+
+    // Once the user scrolls back in history, subsequent layout shifts must not steal their position.
+    await chat.evaluate(el => { el.scrollTop = 0; });
+    await expect.poll(distanceFromBottom).toBeGreaterThan(250);
+    await chat.locator(".messageWrapper").last().evaluate(el => {
+        (el as HTMLElement).style.minHeight = "550px";
+    });
+    await expect.poll(() => chat.evaluate(el => el.scrollTop)).toBeLessThan(20);
+});

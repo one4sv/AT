@@ -183,6 +183,7 @@
     "user": "пользователя",
     "mediaCount": "Медиафайлов: {{count}}",
     "forwardedMessage": "Пересланное сообщение",
+    "newMessages": "Новые сообщения",
     "name": "Название",
     "description": "Описание",
     "today": "Сегодня",

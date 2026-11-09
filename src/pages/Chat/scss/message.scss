@@ -125,6 +125,39 @@
     }
 }
 
+.newMessagesDivider {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+    width: 100%;
+    padding: 1dvh 0;
+    color: var(--accent_text);
+    font-size: 14px;
+    text-align: center;
+    user-select: none;
+
+    &::before,
+    &::after {
+        content: "";
+        height: 1px;
+        flex: 1;
+        background-color: var(--accent_text);
+        opacity: .45;
+    }
+
+    > span {
+        flex-shrink: 0;
+        padding: .3vh .5vw;
+    }
+
+    @media (max-width: 800px) {
+        gap: 3vw;
+        > span {
+            padding: .3vh 2vw;
+        }
+    }
+}
+
 .dateDivider {
     position: sticky;
     top: 1dvh;

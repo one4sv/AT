@@ -4,7 +4,7 @@ import { useChat } from "../../components/hooks/ChatHook";
 import { useMessages } from "../../components/hooks/MessagesHook";
 import { useUser } from "../../components/hooks/UserHook";
 import "./scss/Chat.scss";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import DateDivider from "./utils/DateDivider";
 import Message from "./components/Message";
 import ChatUser from "./components/ChatUser";
@@ -25,7 +25,8 @@ export default function Chat() {
     const { t, i18n } = useTranslation("common");
     const {
         user,
-        loadingUser
+        loadingUser,
+        isAuthenticated
     } = useUser();
     const {
         refetchChatWLoading,
@@ -54,22 +55,45 @@ export default function Chat() {
     } = useParams();
     const navigate = useNavigate();
     const [showGoDown, setShowGoDown] = useState(false);
+    const [unreadDividerId, setUnreadDividerId] = useState<number | null>(null);
     const [mess, setMess] = useState<string>("");
     const chatContainerRef = useRef<HTMLDivElement | null>(null);
     const { scrollToMessage } = useChatMessageScroll();
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
     const isLoadingMoreRef = useRef(false);
-    const prevScrollHeightRef = useRef(0);
     const initialScrolledRef = useRef(false);
     const hadMessagesRef = useRef(false);
+    const pinnedBottomRef = useRef(true);
+    const unreadCapturedRef = useRef(false);
+    const prependSnapshotRef = useRef<{ height: number; top: number; firstId: number } | null>(null);
     const API_URL = import.meta.env.VITE_API_URL;
+    const chatReady = !chatLoading && !!chatWith && (id
+        ? chatWith.is_group && String(chatWith.id) === id
+        : !chatWith.is_group && chatWith.nick === nick);
+
+    useLayoutEffect(() => {
+        initialScrolledRef.current = false;
+        hadMessagesRef.current = false;
+        pinnedBottomRef.current = true;
+        unreadCapturedRef.current = false;
+        prependSnapshotRef.current = null;
+        isLoadingMoreRef.current = false;
+        setUnreadDividerId(null);
+    }, [nick, id]);
+
+    useLayoutEffect(() => {
+        if (!chatReady || !user.id || unreadCapturedRef.current) return;
+        unreadCapturedRef.current = true;
+        setUnreadDividerId(messages.find(m =>
+            m.sender_id !== user.id && !m.read_by?.includes(user.id)
+        )?.id ?? null);
+    }, [chatReady, messages, user.id]);
 
     useEffect(
         () => {
+            if (loadingUser || !isAuthenticated) return;
             setActiveHeader("text");
             setChosenMess([]);
-            initialScrolledRef.current = false;
-            hadMessagesRef.current = false;
             if (id) {
                 refetchGroupChatWLoading(id);
             } else if (nick) {
@@ -77,7 +101,7 @@ export default function Chat() {
             }
             // eslint-disable-next-line react-hooks/exhaustive-deps
         },
-        [nick, id]
+        [nick, id, loadingUser, isAuthenticated]
     );
 
     useEffect(
@@ -89,7 +113,8 @@ export default function Chat() {
 
     useEffect(
         () => {
-            const unread = messages.filter(m => !m.read_by.includes(user.id!) && m.sender_id !== user.id);
+            if (!chatReady || !user.id) return;
+            const unread = messages.filter(m => !m.read_by?.includes(user.id!) && m.sender_id !== user.id);
             if (unread.length) {
                 unread.forEach(
                     m => api.post(
@@ -104,7 +129,7 @@ export default function Chat() {
                 );
             }
         },
-        [API_URL, messages, user.id]
+        [API_URL, messages, user.id, chatReady]
     );
     const searchedMessages = useMemo(
         () => {
@@ -174,6 +199,7 @@ export default function Chat() {
     useEffect(
         () => {
             if (pendingScrollId === null) return;
+            pinnedBottomRef.current = false;
             scrollToMessage(pendingScrollId).finally(
                 () => {
                     setTimeout(() => setPendingScrollId(null), 600);
@@ -186,24 +212,26 @@ export default function Chat() {
     useEffect(
         () => {
             const el = chatContainerRef.current;
-            if (!el) return;
+            if (!el || !chatReady) return;
             const onScroll = () => {
                 const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+                pinnedBottomRef.current = distanceFromBottom < 80;
                 setShowGoDown(distanceFromBottom > 250);
-                if (el.scrollTop < 150 && hasMore && !isLoadingMoreRef.current && !loadingMore) {
+                if (!initialScrolledRef.current || pendingScrollId !== null || el.scrollHeight <= el.clientHeight + 20) return;
+                if (el.scrollTop < 150 && hasMore && messages.length > 0 && !isLoadingMoreRef.current && !loadingMore) {
                     isLoadingMoreRef.current = true;
-                    prevScrollHeightRef.current = el.scrollHeight;
+                    const snapshot = { height: el.scrollHeight, top: el.scrollTop, firstId: messages[0].id };
+                    prependSnapshotRef.current = snapshot;
                     loadOlderMessages().finally(
                         () => {
-                            requestAnimationFrame(
-                                () => {
-                                    if (chatContainerRef.current) {
-                                        const newHeight = chatContainerRef.current.scrollHeight;
-                                        chatContainerRef.current.scrollTop = newHeight - prevScrollHeightRef.current;
-                                    }
-                                    isLoadingMoreRef.current = false;
+                            requestAnimationFrame(() => {
+                                if (prependSnapshotRef.current === snapshot) {
+                                    const current = chatContainerRef.current;
+                                    if (current) current.scrollTop = snapshot.top + current.scrollHeight - snapshot.height;
+                                    prependSnapshotRef.current = null;
                                 }
-                            );
+                                isLoadingMoreRef.current = false;
+                            });
                         }
                     );
                 }
@@ -213,18 +241,44 @@ export default function Chat() {
             });
             return () => el.removeEventListener("scroll", onScroll);
         },
-        [chatLoading, hasMore, loadingMore, loadOlderMessages]
+        [chatReady, hasMore, loadingMore, loadOlderMessages, messages, pendingScrollId]
     );
 
-    useEffect(
+    useLayoutEffect(
         () => {
-            if (!chatLoading && messages.length > 0 && chatContainerRef.current && !initialScrolledRef.current) {
-                chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+            const el = chatContainerRef.current;
+            if (!chatReady || !el) return;
+            const snapshot = prependSnapshotRef.current;
+            if (snapshot) {
+                if (messages[0]?.id !== snapshot.firstId) {
+                    el.scrollTop = snapshot.top + el.scrollHeight - snapshot.height;
+                    prependSnapshotRef.current = null;
+                }
+                return;
+            }
+            if (!initialScrolledRef.current) {
+                el.scrollTop = el.scrollHeight;
                 initialScrolledRef.current = true;
+                pinnedBottomRef.current = true;
+            } else if (pinnedBottomRef.current && pendingScrollId === null) {
+                el.scrollTop = el.scrollHeight;
             }
         },
-        [chatLoading, messages.length]
+        [chatReady, messages, unreadDividerId, pendingScrollId]
     );
+
+    useEffect(() => {
+        const el = chatContainerRef.current;
+        if (!chatReady || !el || typeof ResizeObserver === "undefined") return;
+        const observer = new ResizeObserver(() => {
+            if (initialScrolledRef.current && pinnedBottomRef.current && !isLoadingMoreRef.current && pendingScrollId === null) {
+                el.scrollTop = el.scrollHeight;
+            }
+        });
+        observer.observe(el);
+        Array.from(el.children).forEach(child => observer.observe(child));
+        return () => observer.disconnect();
+    }, [chatReady, messages.length, loadingMore, pendingScrollId]);
     useEffect(() => {
         if (!chatLoading && messages.length > 0) hadMessagesRef.current = true;
     }, [chatLoading, messages.length]);
@@ -267,13 +321,17 @@ export default function Chat() {
                                     name: redir_find.redirected_name || "",
                                     text: redir_find.content || (redir_find.files?.length ? t("chatUi.mediaCount", { count: redir_find.files.length }) : t("chatUi.forwardedMessage"))
                                 } : undefined;
-                                return m.is_system ? <SystemMessage key={m.id} m={m} answer={answer} /> : <Message
-                                    key={m.clientId ?? m.id}
-                                    message={m}
-                                    answer={answer}
-                                    redir_answer={redir_answer}
-                                    cornerType={getCornerType(m.id, messages.map(msg => msg.id), chosenMess.map(cm => cm.id))}
-                                />;
+                                return <Fragment key={m.clientId ?? m.id}>
+                                    {m.id === unreadDividerId && <div className="newMessagesDivider" role="separator" aria-label={t("chatUi.newMessages")}>
+                                        <span>{t("chatUi.newMessages")}</span>
+                                    </div>}
+                                    {m.is_system ? <SystemMessage m={m} answer={answer} /> : <Message
+                                        message={m}
+                                        answer={answer}
+                                        redir_answer={redir_answer}
+                                        cornerType={getCornerType(m.id, messages.map(msg => msg.id), chosenMess.map(cm => cm.id))}
+                                    />}
+                                </Fragment>;
                             }
                         )}
                     </div>
