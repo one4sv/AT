@@ -143,6 +143,15 @@ export default function SeekBar({
     const handleTouchEnd = (e: React.TouchEvent) => {
         if (dontHandleOther) return;
         e.stopPropagation();
+        const touch = e.changedTouches[0];
+        if (!disabled && touch) updateValue(touch.clientX);
+        setDontHandle(false);
+        setDragging(false);
+    };
+
+    const handleTouchCancel = (e: React.TouchEvent) => {
+        if (dontHandleOther) return;
+        e.stopPropagation();
         setDontHandle(false);
         setDragging(false);
     };
@@ -165,7 +174,7 @@ export default function SeekBar({
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            onTouchCancel={handleTouchEnd}
+            onTouchCancel={handleTouchCancel}
         >
             <div className="seekBarLine" ref={lineRef}>
                 {hoverValue !== null && (
