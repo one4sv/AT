@@ -40,7 +40,8 @@ export default function ChatSearch ({searchedMessages, selectedIndex, setSelecte
             setSelectedIndex((prev) => Math.max(prev - 1, 0));
         } else if (e.key === "Enter") {
             e.preventDefault();
-            scrollToMessage(searchedMessages[selectedIndex].id);
+            const target = searchedMessages[Math.min(Math.max(selectedIndex, 0), searchedMessages.length - 1)];
+            if (target) scrollToMessage(target.id);
         }
     };
 
@@ -56,7 +57,7 @@ export default function ChatSearch ({searchedMessages, selectedIndex, setSelecte
                         type="text"
                         placeholder={t("chatUi.search")}
                         value={searchMess}
-                        onChange={(e) => { setSearchMess(e.target.value); setIsOpen(true)}}
+                        onChange={(e) => { setSearchMess(e.target.value); setSelectedIndex(0); setIsOpen(true)}}
                         onKeyDown={handleSearchKeyDown}
                     />
                     {searchMess.length > 0 ? (
