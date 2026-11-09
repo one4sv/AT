@@ -13,6 +13,20 @@ import type { Media, message } from "../../../../components/context/ChatContext"
 import { useSendMess } from "../../../../components/hooks/SendMessHook";
 import { useUser } from "../../../../components/hooks/UserHook";
 import EmojiButton from "../../../../components/ts/utils/EmojiButton";
+interface FailedChatDraft {
+    key: number;
+    route: string;
+    receiver: { nick?: string; id?: string };
+    text: string;
+    files: File[];
+    answerId?: string;
+    redirect?: message[];
+    showNames: boolean;
+}
+
+const failedChatDrafts = new Map<string, FailedChatDraft[]>();
+let nextFailedDraftId = 0;
+
 interface ChatTABgProps {
     textAreaRef: React.RefObject<HTMLTextAreaElement | null>;
     scrollToMessage: (id: number) => void;
@@ -75,6 +89,54 @@ export default function ChatTextArea({
     const [oldMedia, setOldMedia] = useState<Media[]>([]);
     const location = useLocation();
     routeRef.current = location.pathname;
+    const draftKey = `${user.id ?? "guest"}:${location.pathname}`;
+    const [failedDrafts, setFailedDrafts] = useState<FailedChatDraft[]>(() => failedChatDrafts.get(draftKey) ?? []);
+    const [retryingFailedId, setRetryingFailedId] = useState<number | null>(null);
+
+    useEffect(() => {
+        setFailedDrafts(failedChatDrafts.get(draftKey) ?? []);
+        setRetryingFailedId(null);
+    }, [draftKey]);
+
+    const removeFailedDraft = (key: number) => {
+        const next = (failedChatDrafts.get(draftKey) ?? []).filter(draft => draft.key !== key);
+        if (next.length) failedChatDrafts.set(draftKey, next);
+        else failedChatDrafts.delete(draftKey);
+        setFailedDrafts(next);
+    };
+
+    const retryFailedDraft = async (draft: FailedChatDraft) => {
+        if (sending.current || retryingFailedId !== null) return;
+        sending.current = true;
+        setRetryingFailedId(draft.key);
+        try {
+            const success = await sendMess(
+                draft.receiver,
+                draft.text,
+                draft.files,
+                draft.answerId,
+                draft.redirect,
+                draft.showNames,
+                confirmedMessages => {
+                    if (routeRef.current !== draft.route) return;
+                    setMessages(prev => {
+                        const serverIds = new Set(confirmedMessages.map(message => message.id));
+                        return [...prev.filter(message => !serverIds.has(message.id)), ...confirmedMessages];
+                    });
+                }
+            );
+            if (success) {
+                const next = (failedChatDrafts.get(draftKey) ?? []).filter(item => item.key !== draft.key);
+                if (next.length) failedChatDrafts.set(draftKey, next);
+                else failedChatDrafts.delete(draftKey);
+                if (routeRef.current === draft.route) setFailedDrafts(next);
+            }
+        } finally {
+            sending.current = false;
+            setRetryingFailedId(null);
+        }
+    };
+
     useEffect(() => {
         const syncKeyboard = (event: StorageEvent) => {
             if (event.key === "at_chat_enter_to_send") setEnterToSend(event.newValue !== "false");
@@ -113,7 +175,7 @@ export default function ChatTextArea({
         if (sending.current) return;
         const currentPost = forwardPost;
         const currentRoute = location.pathname;
-        const draftText = mess;
+        const currentDraftKey = draftKey;
         const trimmedMess = [mess.trim(), currentPost ? new URL("/post/" + currentPost.id, window.location.origin).href : ""].filter(Boolean).join("\n\n");
         const hasContent = trimmedMess || files.length > 0 || editing && oldMedia.length > 0 || redirect;
         if (!(nick || id) || !hasContent) return;
@@ -205,12 +267,19 @@ export default function ChatTextArea({
                 if (!success) {
                     // Если отправка не удалась — убираем временное сообщение
                     setMessages(prev => prev.filter(m => m.id !== tempId));
-                    if (routeRef.current === currentRoute) {
-                        setMess(value => value || draftText);
-                        setFiles(value => [...currentFiles, ...value]);
-                        if (currentPost) setForwardPost(currentPost);
-                        else if (currentRedirect) setRedirect(currentRedirect);
-                    }
+                    const failedDraft: FailedChatDraft = {
+                        key: ++nextFailedDraftId,
+                        route: currentRoute,
+                        receiver: { nick, id },
+                        text: trimmedMess,
+                        files: currentFiles,
+                        answerId: currentAnswer?.id,
+                        redirect: currentRedirect,
+                        showNames: currentShowNames
+                    };
+                    const next = [...(failedChatDrafts.get(currentDraftKey) ?? []), failedDraft];
+                    failedChatDrafts.set(currentDraftKey, next);
+                    if (routeRef.current === currentRoute) setFailedDrafts(next);
                 }
             }
         } catch (error) {
@@ -256,6 +325,21 @@ export default function ChatTextArea({
 
     return (
         <>
+            {failedDrafts.length > 0 && <div className="chatFailedDrafts">
+                {failedDrafts.map(draft => (
+                    <div className="chatFailedDraft" key={draft.key}>
+                        <div className="chatFailedDraftContent">
+                            <div>{tc("chatUi.failedMessage")}</div>
+                            {draft.text && <div className="chatFailedDraftText">{draft.text}</div>}
+                            {draft.files.length > 0 && <div className="chatFailedDraftFiles">{draft.files.map(file => file.name).join(", ")}</div>}
+                        </div>
+                        <div className="chatFailedDraftActions">
+                            <button type="button" disabled={retryingFailedId !== null} onClick={() => retryFailedDraft(draft)}>{tc("chatUi.retryMessage")}</button>
+                            <button type="button" disabled={retryingFailedId === draft.key} aria-label={tc("chatUi.discardFailedMessage")} onClick={() => removeFailedDraft(draft.key)}><X size={18}/></button>
+                        </div>
+                    </div>
+                ))}
+            </div>}
             <div className="chatTAStr">
                 <div className="chatTaButts">
                     <div className="chatWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
