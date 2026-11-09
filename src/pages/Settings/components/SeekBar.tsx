@@ -133,6 +133,8 @@ export default function SeekBar({
         if (dontHandleOther || disabled) return;
         e.stopPropagation();
         setDontHandle(true);
+        const touch = e.touches[0];
+        if (touch) updateValue(touch.clientX);
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
