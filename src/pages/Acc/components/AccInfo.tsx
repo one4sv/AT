@@ -148,7 +148,7 @@ export default function AccInfo({
                         {(isOnline || lastSeen) && <div className={`accOnlineStauts ${isOnline ? "online" : "offline"}`}>
                             <CircleIcon size={16} weight="fill" aria-hidden="true" />
                             {isOnline ? t("online") : lastSeen}
-                        </div>
+                        </div>}
                     </div>
                     <div className="accInfoNames">
                         <div className="accMainInfoStr">
