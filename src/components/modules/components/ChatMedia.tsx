@@ -8,7 +8,6 @@ import {
 import { useChat } from "../../hooks/ChatHook";
 import { api } from "../../ts/api";
 import { useBlackout } from "../../hooks/BlackoutHook";
-import { useParams } from "react-router";
 import useOpenLink from "../../hooks/utils/useOpenLink";
 import GetIconByType from "../../../pages/Chat/utils/getIconByType";
 
@@ -59,7 +58,6 @@ export default function ChatMedia() {
     const openLink = useOpenLink();
     const { chatWith } = useChat();
     const { setBlackout } = useBlackout();
-    const { nick, id } = useParams();
 
     const [activeFilter, setActiveFilter] = useState<MediaCategory>("photo");
     const [items, setItems] = useState<ChatMediaItem[]>([]);
@@ -187,7 +185,8 @@ export default function ChatMedia() {
         }
 
 
-        if (item.category === "photo") {
+        if (item.category === "photo" && chatWith) {
+            const chatPath = chatWith.is_group ? `g/${chatWith.id}` : chatWith.nick;
             const photos = items.filter(media => media.category === "photo");
             const imageIndex = photos.findIndex(photo => photo.id === item.id);
 
@@ -199,7 +198,7 @@ export default function ChatMedia() {
                     url: photo.url,
                     name: photo.name,
                     options: {
-                        nick: nick ? nick : `g/${id}`,
+                        nick: chatPath,
                         id: String(photo.message_id),
                         name: photo.name,
                         url: photo.url
@@ -208,7 +207,7 @@ export default function ChatMedia() {
                 })),
                 imageIndex,
                 options: {
-                    nick: nick ? nick : `g/${id}`,
+                    nick: chatPath,
                     id: String(item.message_id),
                     name: item.name,
                     url: item.url
