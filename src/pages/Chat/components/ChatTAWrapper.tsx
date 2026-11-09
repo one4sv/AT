@@ -32,13 +32,12 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, set
     const [ isSearchOpen, setIsSearchOpen ] = useState(false);
     const [ selectedIndex, setSelectedIndex ] = useState(0)
     const searchDivRef = useRef<HTMLDivElement | null>(null);
-    const searchRef = useRef<HTMLInputElement | null>(null);
     const emojiButtRef = useRef<HTMLDivElement | null>(null)
     const chatTARef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
         setIsSearchOpen(searchMess.trim().length > 0 && activeHeader === "search");
-    }, [activeHeader, searchMess, searchedMessages]);
+    }, [activeHeader, searchMess]);
 
     const renderChatTa = () => {
         switch (activeHeader) {
@@ -81,19 +80,15 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, set
     }
 
     useEffect(() => {
+        if (activeHeader !== "search") return;
         const handleClickOutside = (e: MouseEvent) => {
-            if (
-                searchDivRef.current &&
-                !searchDivRef.current.contains(e.target as Node) &&
-                searchRef.current &&
-                !searchRef.current.contains(e.target as Node)
-            ) {
+            if (chatTARef.current && !chatTARef.current.contains(e.target as Node)) {
                 setIsSearchOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+    }, [activeHeader]);
 
     return (
         <div className="chatTAWrapper" ref={chatTARef}>
