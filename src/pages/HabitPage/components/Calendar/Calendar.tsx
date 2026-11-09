@@ -141,6 +141,16 @@ export default function Calendar() {
         el.style.scrollSnapType = "none";
         el.style.scrollBehavior = "auto";
         el.scrollLeft = el.clientWidth;
+        let lastWidth = el.clientWidth;
+        const resizeObserver = new ResizeObserver(() => {
+            const width = el.clientWidth;
+            if (!width || width === lastWidth) return;
+            if (lastWidth && !isAnimatingRef.current) {
+                el.scrollLeft = el.scrollLeft / lastWidth * width;
+            }
+            lastWidth = width;
+        });
+        resizeObserver.observe(el);
 
         const frame = requestAnimationFrame(() => {
             el.style.scrollSnapType = previousSnap;
@@ -155,6 +165,7 @@ export default function Calendar() {
         return () => {
             cancelAnimationFrame(frame);
             cancelAnimationFrame(release);
+            resizeObserver.disconnect();
             el.style.scrollSnapType = previousSnap;
             el.style.scrollBehavior = previousBehavior;
         };
