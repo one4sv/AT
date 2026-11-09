@@ -137,7 +137,7 @@ export default function Settings() {
           ...prev.filter((id) => id !== item.id),
       ].slice(0, 5));
 
-      navigate(item.id === "language" ? "/settings/language" : `/settings/${sectionId}`, {
+      navigate(item.id === "bg" ? "/wallpapers" : item.id === "language" ? "/settings/language" : `/settings/${sectionId}`, {
           state: {
               from: "/settings",
               settingId: item.id,
