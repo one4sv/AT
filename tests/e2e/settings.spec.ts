@@ -20,11 +20,14 @@ test("device-local font, date and time preferences survive a reload", async ({ p
     await expect(page.locator('[data-setting-id="fontSize"]')).toBeVisible();
     // Wait for the synthetic user to finish loading before setting account-scoped values.
     await expect.poll(() => page.evaluate(() => localStorage.getItem("settingsfixture_settings_font_size"))).not.toBeNull();
-    await page.evaluate(() => {
-        localStorage.setItem("settingsfixture_settings_font_size", "20");
-        localStorage.setItem("settingsfixture_settings_date_format", JSON.stringify("american"));
-        localStorage.setItem("settingsfixture_settings_time_format", JSON.stringify("twelve"));
-    });
+    const fontLine = await page.locator('[data-setting-id="fontSize"] .seekBarLine').boundingBox();
+    expect(fontLine).not.toBeNull();
+    await page.mouse.click(fontLine!.x + fontLine!.width * 0.8, fontLine!.y + fontLine!.height / 2);
+    await page.locator('[data-setting-id="dateFormat"] .radiobutt').nth(1).click();
+    await page.locator('[data-setting-id="timeFormat"] .radiobutt').nth(1).click();
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("settingsfixture_settings_font_size"))).toBe("20");
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("settingsfixture_settings_date_format"))).toBe('"american"');
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("settingsfixture_settings_time_format"))).toBe('"twelve"');
     await page.reload();
     await expect.poll(() => page.locator("html").evaluate(el => getComputedStyle(el).fontSize)).toBe("20px");
     await expect(page.locator("html")).toHaveAttribute("data-date-format", "american");
@@ -114,6 +117,9 @@ test("danger and security button styles load when settings pages are opened dire
     await page.goto("/settings/security");
     const safety = page.locator(".safetyButt").first();
     await expect(safety).toBeVisible();
+    await expect.poll(() => page.locator("html").evaluate(element =>
+        getComputedStyle(element).getPropertyValue("--inner_text").trim()
+    )).not.toBe("");
     const safetyColors = await safety.evaluate(element => {
         const reference = document.createElement("span");
         reference.style.color = "var(--inner_text)";
