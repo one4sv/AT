@@ -19,7 +19,8 @@ export default function SearchedButts({ search, selectSetting }: Props) {
             const filteredItems = query === "??" || query === "."
                 ? section.items
                 : section.items.filter((item) =>
-                    item.name.toLowerCase().includes(query)
+                    item.name.toLowerCase().includes(query) ||
+                    (item.id === "bg" && ["обои", "фон", "фоны", "wallpaper", "wallpapers", "background"].some(word => word.includes(query)))
                 );
 
             if (filteredItems.length === 0) return null;
