@@ -1,5 +1,8 @@
 import { test, expect } from "@playwright/test";
 
+// Settings tests use a synthetic account; the wallpaper service worker must not bypass route mocks after reload.
+test.use({ serviceWorkers: "block" });
+
 // These tests use a synthetic account response. They never modify production data,
 // send account-deletion emails or depend on a real user's cookies.
 test.beforeEach(async ({ page, context }) => {
