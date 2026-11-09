@@ -2,6 +2,7 @@ import "../../../scss/Diagrams.scss"
 import { useTranslation } from "react-i18next"
 import i18n from "../../../../../i18n/i18n"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
+import { useSettings } from "../../../../../components/hooks/SettingsHook"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
 import { useHabits } from "../../../../../components/hooks/HabitsHook"
 import { Line } from "react-chartjs-2"
@@ -77,6 +78,8 @@ export default function BreakDiagram({
     mainRef: React.RefObject<HTMLDivElement | null>
 }) {
         const { t, i18n: language } = useTranslation("common")
+    const settings = useSettings()
+    const chartText = getComputedStyle(document.documentElement).getPropertyValue("--tc").trim() || (settings.isDark ? "#fff" : "#111")
     const locale = language.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU"
     const { calendar, setChosenDay, setSelectedMonth, setSelectedYear } = useCalendar()
         const { habit } = useTheHabit()
@@ -157,7 +160,7 @@ export default function BreakDiagram({
             }
         },
         plugins: {
-            legend: { display: true },
+            legend: { display: true, labels: { color: chartText } },
             tooltip: {
                 callbacks: {
                     label: ctx => t("habitPageUi.charts.breakTooltip", { days: ctx.raw }),
@@ -165,7 +168,9 @@ export default function BreakDiagram({
             },
         },
         scales: {
+            x: { ticks: { color: chartText } },
             y: {
+                ticks: { color: chartText },
                 display: !isMobile,
                 beginAtZero: true,
                 max: maxValue,
