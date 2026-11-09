@@ -58,7 +58,7 @@ export function calculateOverallStats(
     const streaks: number[] = []
     const breaks: number[] = []
 
-    days.forEach(day => {
+    days.forEach((day, dayIndex) => {
         const isDone = doneDates.has(day)
 
         if (isDone) {
@@ -78,7 +78,7 @@ export function calculateOverallStats(
                 if (tempBreak > maxBreak) {
                     maxBreak = tempBreak
                     breakStart = tempBreakStart
-                    breakEnd = day
+                    breakEnd = days[dayIndex - 1]
                 }
             }
 
