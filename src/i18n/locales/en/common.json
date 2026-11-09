@@ -181,7 +181,10 @@
     "description": "Description",
     "today": "Today",
     "yesterdayShort": "Yesterday",
-    "pendingDeletion": "This account is pending deletion. Messages are disabled."
+    "pendingDeletion": "This account is pending deletion. Messages are disabled.",
+    "failedMessage": "Unsent message",
+    "retryMessage": "Retry sending",
+    "discardFailedMessage": "Discard unsent message"
   },
   "statsUi": {
     "title": "Statistics",
