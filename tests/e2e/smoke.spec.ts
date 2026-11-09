@@ -332,6 +332,47 @@ test("solid fill advertises the same capabilities before and after changing its 
     expect(after).toEqual(before);
 });
 
+test("calendar month grids never bleed into adjacent slides on desktop and mobile", async ({ page }) => {
+    await page.goto("/info/roadmap");
+    await page.evaluate(async () => {
+        await import("/src/pages/HabitPage/scss/calendar.scss");
+        const fixture = document.createElement("div");
+        fixture.id = "calendarLayoutFixture";
+        const month = () => '<div class="calendarSlide"><div class="calendarDays">' +
+            Array.from({ length: 35 }, (_, index) => `<div class="calDay">${index + 1}</div>`).join("") +
+            '</div></div>';
+        fixture.innerHTML = '<div class="calendarDiv"><div class="calendarMain"><div class="calendarSlider">' +
+            '<div class="calendarSlidesWrapper">' + month() + month() + month() + '</div></div></div></div>';
+        document.body.appendChild(fixture);
+    });
+    for (const width of [1074, 1440, 390]) {
+        await page.setViewportSize({ width, height: 930 });
+        const measurements = await page.evaluate(() => {
+            const root = document.getElementById("calendarLayoutFixture")!;
+            const slider = root.querySelector<HTMLElement>(".calendarSlider")!;
+            slider.scrollLeft = slider.clientWidth;
+            const slides = [...root.querySelectorAll<HTMLElement>(".calendarSlide")];
+            const current = slides[1].getBoundingClientRect();
+            const grid = slides[1].querySelector<HTMLElement>(".calendarDays")!.getBoundingClientRect();
+            const days = [...slides[1].querySelectorAll<HTMLElement>(".calDay")].slice(0, 7);
+            return {
+                prevRight: slides[0].getBoundingClientRect().right,
+                currentLeft: current.left,
+                currentRight: current.right,
+                nextLeft: slides[2].getBoundingClientRect().left,
+                gridRight: grid.right,
+                gridLeft: grid.left,
+                columns: new Set(days.map(day => Math.round(day.getBoundingClientRect().left))).size
+            };
+        });
+        expect(measurements.columns).toBe(7);
+        expect(measurements.prevRight).toBeLessThanOrEqual(measurements.currentLeft + 1);
+        expect(measurements.nextLeft).toBeGreaterThanOrEqual(measurements.currentRight - 1);
+        expect(measurements.gridLeft).toBeGreaterThanOrEqual(measurements.currentLeft - 1);
+        expect(measurements.gridRight).toBeLessThanOrEqual(measurements.currentRight + 1);
+    }
+});
+
 test.describe("authenticated UI regression", () => {
     test.skip(!process.env.AT_E2E_STORAGE_STATE, "Requires isolated test account storage state");
 

@@ -235,11 +235,14 @@
     width: calc(100% / 3);
     min-width: 0;
     height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
     scroll-snap-align: center;
 }
 
 /* Сетка дней */ .calendarDays {
     width: 100%;
+    box-sizing: border-box;
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 0.25vh 0.35vw;
@@ -247,6 +250,7 @@
 }
 
 .calDay {
+    min-width: 0;
     aspect-ratio: 1;
     font-size: 15px;
     display: flex;
