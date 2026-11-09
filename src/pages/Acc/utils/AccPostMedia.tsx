@@ -6,6 +6,16 @@ import TrafficImage from "../../../components/ts/TrafficImage";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import type { Media } from "../../../components/context/ChatContext";
 
+function normalizePostFileName(name: string) {
+    if (!/[ÐÑ]/.test(name) || [...name].some(char => char.charCodeAt(0) > 255)) return name;
+    try {
+        const decoded = new TextDecoder("utf-8", { fatal: true }).decode(new Uint8Array([...name].map(char => char.charCodeAt(0))));
+        return /[\u0400-\u04FF]/.test(decoded) ? decoded : name;
+    } catch {
+        return name;
+    }
+}
+
 const emptyNewFiles: File[] = [];
 
 interface AccPostMediaProps {
@@ -45,6 +55,7 @@ export default function AccPostMedia({
                 media && media.length > 0 && (
                     <div className="postMediaGrid">
                         {media?.map((file, j) => {
+                            const fileName = normalizePostFileName(file.name);
                             const isImage = file.type.startsWith("image/");
                             const isVideo = file.type.startsWith("video/");
                             return (
@@ -52,7 +63,7 @@ export default function AccPostMedia({
                                     {isImage ? (
                                         <TrafficImage
                                             src={file.url}
-                                            alt={file.name}
+                                            alt={fileName}
                                             mimeType={file.type}
                                             className="postFilePreview"
                                             onClick={event => openImage(file, event)}
@@ -60,9 +71,9 @@ export default function AccPostMedia({
                                     ) : isVideo ? (
                                         <video src={file.url} className="postFilePreview" preload={autoLoadImages && autoPlayGif ? "metadata" : "none"} controls />
                                     ) : (
-                                        <a href={file.url} download={file.name} className="postFileOther">
-                                            {GetIconByType(file.name, file.type)}
-                                            <span className="postFileName">{file.name}</span>
+                                        <a href={file.url} download={fileName} className="postFileOther">
+                                            {GetIconByType(fileName, file.type)}
+                                            <span className="postFileName">{fileName}</span>
                                         </a>
                                     )}
                                 </div>
@@ -74,6 +85,7 @@ export default function AccPostMedia({
                 (keptMedia.length > 0 || newFiles.length > 0) && (
                     <div className="postMediaGrid">
                         {keptMedia.map((file, j) => {
+                            const fileName = normalizePostFileName(file.name);
                             const isImage = file.type.startsWith("image/");
                             const isVideo = file.type.startsWith("video/");
                             return (
@@ -87,7 +99,7 @@ export default function AccPostMedia({
                                     {isImage ? (
                                         <img
                                             src={file.url}
-                                            alt={file.name}
+                                            alt={fileName}
                                             className="postFilePreview"
                                             loading="lazy" decoding="async"
                                             onClick={event => openImage(file, event)}
@@ -96,8 +108,8 @@ export default function AccPostMedia({
                                         <video src={file.url} className="postFilePreview" preload="metadata" controls />
                                     ) : (
                                         <div className="postFileOther">
-                                            {GetIconByType(file.name, file.type)}
-                                            <span className="postFileName">{file.name}</span>
+                                            {GetIconByType(fileName, file.type)}
+                                            <span className="postFileName">{fileName}</span>
                                         </div>
                                     )}
                                 </div>
