@@ -37,7 +37,7 @@ export default function AccountList() {
 
     const selectSetting = (sectionId: string, item: SearchableSetting) => {
         setRecentIds(previous => [item.id, ...previous.filter(id => id !== item.id)].slice(0, 5));
-        navigate(item.id === "language" ? "/settings/language" : `/settings/${sectionId}`, {
+        navigate(item.id === "bg" ? "/wallpapers" : item.id === "language" ? "/settings/language" : `/settings/${sectionId}`, {
             state: { settingId: item.id, settingName: item.name, from: "/settings" }
         });
         closeMenu();
