@@ -82,10 +82,11 @@ export default function Chat() {
     }, [nick, id]);
 
     useLayoutEffect(() => {
-        if (!chatReady || !user.id || unreadCapturedRef.current) return;
+        const userId = user.id;
+        if (!chatReady || !userId || unreadCapturedRef.current) return;
         unreadCapturedRef.current = true;
         setUnreadDividerId(messages.find(m =>
-            m.sender_id !== user.id && !m.read_by?.includes(user.id)
+            m.sender_id !== userId && !m.read_by?.includes(userId)
         )?.id ?? null);
     }, [chatReady, messages, user.id]);
 
