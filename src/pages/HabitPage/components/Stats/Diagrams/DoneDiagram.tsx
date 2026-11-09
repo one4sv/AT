@@ -110,6 +110,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
     const { t, i18n: language } = useTranslation("common")
     const settings = useSettings()
     const chartText = getComputedStyle(document.documentElement).getPropertyValue("--tc").trim() || (settings.isDark ? "#fff" : "#111")
+    const chartMuted = getComputedStyle(document.documentElement).getPropertyValue("--borderWh").trim() || (settings.isDark ? "#a1a1a1" : "#666")
     const locale = language.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU"
     const { calendar, setChosenDay, setSelectedMonth, setSelectedYear } = useCalendar()
     const { habit } = useTheHabit()
@@ -272,8 +273,8 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
             datasets.push({
                 label: t("statsUi.skipped"),
                 data: skipPerDay,
-                borderColor: "#646464",
-                backgroundColor: "#646464",
+                borderColor: chartMuted,
+                backgroundColor: chartMuted,
                 tension: 0.1,
                 pointRadius: 4,
                 pointHoverRadius: 7,
@@ -284,8 +285,8 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
             datasets.push({
                 label: t("statsUi.filters.free"),
                 data: freePerDay,
-                borderColor: "#111111",
-                backgroundColor: "#111111",
+                borderColor: chartText,
+                backgroundColor: chartText,
                 tension: 0.1,
                 pointRadius: 4,
                 pointHoverRadius: 7,
@@ -303,7 +304,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
             effectiveGroup,
             groupStats,
         }
-    }, [calendar, habit, habits, period, metric, id, group, locale, t])
+    }, [calendar, habit, habits, period, metric, id, group, locale, t, chartText, chartMuted])
 
     const maxValue = Math.max(2, ...data.datasets.flatMap(d => d.data)) + 1
 
