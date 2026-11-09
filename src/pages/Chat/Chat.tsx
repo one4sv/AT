@@ -64,6 +64,7 @@ export default function Chat() {
     const initialScrolledRef = useRef(false);
     const hadMessagesRef = useRef(false);
     const pinnedBottomRef = useRef(true);
+    const measuredScrollHeightRef = useRef(0);
     const unreadCapturedRef = useRef(false);
     const prependSnapshotRef = useRef<{ height: number; top: number; firstId: number } | null>(null);
     const API_URL = import.meta.env.VITE_API_URL;
@@ -75,6 +76,7 @@ export default function Chat() {
         initialScrolledRef.current = false;
         hadMessagesRef.current = false;
         pinnedBottomRef.current = true;
+        measuredScrollHeightRef.current = 0;
         unreadCapturedRef.current = false;
         prependSnapshotRef.current = null;
         isLoadingMoreRef.current = false;
@@ -215,9 +217,15 @@ export default function Chat() {
             const el = chatContainerRef.current;
             if (!el || !chatReady) return;
             const onScroll = () => {
-                const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-                pinnedBottomRef.current = distanceFromBottom < 80;
-                setShowGoDown(distanceFromBottom > 250);
+                const contentResized = Math.abs(el.scrollHeight - measuredScrollHeightRef.current) > 1;
+                if (contentResized && pinnedBottomRef.current && !isLoadingMoreRef.current && pendingScrollId === null) {
+                    el.scrollTop = el.scrollHeight;
+                } else {
+                    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+                    pinnedBottomRef.current = distanceFromBottom < 80;
+                }
+                measuredScrollHeightRef.current = el.scrollHeight;
+                setShowGoDown(el.scrollHeight - el.scrollTop - el.clientHeight > 250);
                 if (!initialScrolledRef.current || pendingScrollId !== null || el.scrollHeight <= el.clientHeight + 20) return;
                 if (el.scrollTop < 150 && hasMore && messages.length > 0 && !isLoadingMoreRef.current && !loadingMore) {
                     isLoadingMoreRef.current = true;
@@ -253,16 +261,19 @@ export default function Chat() {
             if (snapshot) {
                 if (messages[0]?.id !== snapshot.firstId) {
                     el.scrollTop = snapshot.top + el.scrollHeight - snapshot.height;
+                    measuredScrollHeightRef.current = el.scrollHeight;
                     prependSnapshotRef.current = null;
                 }
                 return;
             }
             if (!initialScrolledRef.current) {
                 el.scrollTop = el.scrollHeight;
+                measuredScrollHeightRef.current = el.scrollHeight;
                 initialScrolledRef.current = true;
                 pinnedBottomRef.current = true;
             } else if (pinnedBottomRef.current && pendingScrollId === null) {
                 el.scrollTop = el.scrollHeight;
+                measuredScrollHeightRef.current = el.scrollHeight;
             }
         },
         [chatReady, messages, unreadDividerId, pendingScrollId]
@@ -275,6 +286,7 @@ export default function Chat() {
             if (initialScrolledRef.current && pinnedBottomRef.current && !isLoadingMoreRef.current && pendingScrollId === null) {
                 el.scrollTop = el.scrollHeight;
             }
+            measuredScrollHeightRef.current = el.scrollHeight;
         });
         observer.observe(el);
         Array.from(el.children).forEach(child => observer.observe(child));
