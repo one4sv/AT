@@ -15,7 +15,7 @@ export const formatClock = (value: string) => {
 
 export const appDateLocale = () => i18n.resolvedLanguage?.startsWith("en") ? (isAmerican() ? "en-US" : "en-GB") : "ru-RU";
 export const formatAppDate = (date: Date | string, options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" }) =>
-    isAmerican() && options.day === "2-digit" && options.month === "2-digit" && options.year === "numeric"
+    isAmerican() && !i18n.resolvedLanguage?.startsWith("en") && options.day === "2-digit" && options.month === "2-digit" && options.year === "numeric"
         ? dateToStrFormat(new Date(date))
         : new Date(date).toLocaleDateString(appDateLocale(), options);
 export const formatAppTime = (date: Date | string, seconds = false) =>
