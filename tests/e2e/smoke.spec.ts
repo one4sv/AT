@@ -68,7 +68,7 @@ test("feedback opens from Info and Contacts with a report reason choice", async 
 test("roadmap uses invariant English release names and its historical beginning date", async ({ page }) => {
     await page.goto("/info/roadmap");
     await expect(page.locator(".roadmapPage")).toBeVisible();
-    await expect(page.locator(".roadmapBranchCurrent")).toContainText("0.6.2 The New Palette");
+    await expect(page.locator(".roadmapBranchCurrent")).toContainText("0.6.3 Songbird");
     await expect(page.locator(".roadmapPastContent .roadmapReleaseHeading").first()).toBeAttached();
     const past = page.locator(".roadmapBranchPast .roadmapToggle");
     await past.click();
@@ -84,7 +84,7 @@ test("language switch keeps roadmap translations and release names consistent", 
 
     await page.goto("/info/roadmap");
     await expect(page.locator(".roadmapPage h2")).toHaveText("Development roadmap");
-    await expect(page.locator(".roadmapBranchCurrent")).toContainText("0.6.2 The New Palette");
+    await expect(page.locator(".roadmapBranchCurrent")).toContainText("0.6.3 Songbird");
 
     await page.goto("/settings/language");
     await page.locator('.languageChoice').filter({ hasText: "Русский" }).click();
@@ -92,7 +92,7 @@ test("language switch keeps roadmap translations and release names consistent", 
 
     await page.goto("/info/roadmap");
     await expect(page.locator(".roadmapPage h2")).toHaveText("Дорожная карта");
-    await expect(page.locator(".roadmapBranchCurrent")).toContainText("0.6.2 The New Palette");
+    await expect(page.locator(".roadmapBranchCurrent")).toContainText("0.6.3 Songbird");
 });
 
 test("wallpaper studio places SideMenu header above the panel", async ({ page }) => {
