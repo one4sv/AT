@@ -46,6 +46,8 @@ export default function AccInfo({
         setNewBirth
     } = useUpUser();
     const { onlineMap } = useContacts();
+    const isOnline = acc?.can_view_presence !== false && (onlineMap[acc?.id || ""] ?? acc?.is_online ?? false);
+    const lastSeen = formatLastOnline(acc?.last_online);
     const { isMyAcc } = useAcc();
     const { user } = useUser();
     const {
@@ -143,9 +145,9 @@ export default function AccInfo({
                                 );
                             }}
                         /> : red ? <Camera size={256} /> : <UserRound size={128} />}
-                        <div className={`accOnlineStauts ${onlineMap[acc?.id || ""] ? "online" : "offline"}`}>
+                        {(isOnline || lastSeen) && <div className={`accOnlineStauts ${isOnline ? "online" : "offline"}`}>
                             <CircleIcon size={16} weight="fill" aria-hidden="true" />
-                            {onlineMap[acc?.id || ""] ? t("online") : formatLastOnline(acc?.last_online)}
+                            {isOnline ? t("online") : lastSeen}
                         </div>
                     </div>
                     <div className="accInfoNames">
