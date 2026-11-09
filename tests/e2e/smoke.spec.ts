@@ -216,6 +216,33 @@ test("guest profile hides account-only actions while shared action styles load d
     await expect(page.locator(".accInfo .blockUserAction")).toHaveCount(0);
 });
 
+test("profile outside contacts shows on-demand online and hides unavailable status", async ({ page }) => {
+    let visible = true;
+    await page.route("**/api/user", route => route.fulfill({ status: 401, contentType: "application/json", body: "{}" }));
+    await page.route("**/api/acc/bob", route => route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({
+            success: true,
+            acc: {
+                id: "public-profile", nick: "bob", username: "Бигбоб", bio: "",
+                avatar_url: null, date_of_birth: null,
+                is_online: visible, can_view_presence: visible,
+                last_online: visible ? "2026-11-09T12:00:00Z" : null
+            },
+            habits: [], media: [], privateRules: { number: "nobody", mail: "nobody", habits: "all", posts: "all" }
+        })
+    }));
+    await page.route("**/api/posts/bob", route => route.fulfill({
+        status: 200, contentType: "application/json", body: JSON.stringify({ success: true, posts: [] })
+    }));
+    await page.goto("/acc/bob");
+    await expect(page.locator(".accOnlineStauts")).toContainText("В сети");
+    visible = false;
+    await page.reload();
+    await expect(page.locator(".accInfo")).toBeVisible();
+    await expect(page.locator(".accOnlineStauts")).toHaveCount(0);
+});
+
 test("styles shared by lazy modal buttons exist without visiting their original pages", async ({ page }) => {
     await page.goto("/info/roadmap");
     await page.evaluate(() => {

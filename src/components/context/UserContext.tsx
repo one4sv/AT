@@ -12,6 +12,8 @@ export interface User {
     bio: string | null;
     avatar_url: string | null;
     last_online: string | null;
+    is_online?: boolean;
+    can_view_presence?: boolean;
     reg_date: Date | null;
     sex: string | null;
     date_of_birth: string | null;
