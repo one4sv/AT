@@ -15,14 +15,20 @@ test.beforeEach(async ({ page }) => {
     }));
 });
 
-test("device-local font, date and time preferences survive a reload", async ({ page }) => {
+test("device-local font, date and time preferences survive a reload", async ({ page }, testInfo) => {
     await page.goto("/settings/gen");
     await expect(page.locator('[data-setting-id="fontSize"]')).toBeVisible();
     // Wait for the synthetic user to finish loading before setting account-scoped values.
     await expect.poll(() => page.evaluate(() => localStorage.getItem("settingsfixture_settings_font_size"))).not.toBeNull();
     const fontLine = await page.locator('[data-setting-id="fontSize"] .seekBarLine').boundingBox();
     expect(fontLine).not.toBeNull();
-    await page.mouse.click(fontLine!.x + fontLine!.width * 0.8, fontLine!.y + fontLine!.height / 2);
+    if (testInfo.project.name === "webkit-mobile") {
+        await page.locator('[data-setting-id="fontSize"] .seekBarLine').tap({
+            position: { x: fontLine!.width * 0.8, y: fontLine!.height / 2 }
+        });
+    } else {
+        await page.mouse.click(fontLine!.x + fontLine!.width * 0.8, fontLine!.y + fontLine!.height / 2);
+    }
     await page.locator('[data-setting-id="dateFormat"] .radiobutt').nth(1).click();
     await page.locator('[data-setting-id="timeFormat"] .radiobutt').nth(1).click();
     await expect.poll(() => page.evaluate(() => localStorage.getItem("settingsfixture_settings_font_size"))).toBe("20");
