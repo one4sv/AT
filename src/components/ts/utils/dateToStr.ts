@@ -13,7 +13,7 @@ export const formatClock = (value: string) => {
     return `${hour % 12 || 12}:${match[2]} ${hour < 12 ? "AM" : "PM"}`;
 };
 
-export const appDateLocale = () => isAmerican() ? "en-US" : i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
+export const appDateLocale = () => i18n.resolvedLanguage?.startsWith("en") ? (isAmerican() ? "en-US" : "en-GB") : "ru-RU";
 export const formatAppDate = (date: Date | string, options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" }) =>
     new Date(date).toLocaleDateString(appDateLocale(), options);
 export const formatAppTime = (date: Date | string, seconds = false) =>
