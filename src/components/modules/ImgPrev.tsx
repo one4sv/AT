@@ -288,9 +288,9 @@ export default function ImgPrev() {
                         className="imgPrevToMessage imgPrevMenuButt"
                         title={t("imagePreview.toMessage")}
                         onClick={() => {
-                            navigate(`/chat/${nick}`);
                             setPendingScrollId(Number(id));
-                            setBlackout({ seted: false });
+                            setBlackoutStack([]);
+                            navigate(`/chat/${nick}`);
                         }}
                     >
                         <MessageCircleReply size={22} />

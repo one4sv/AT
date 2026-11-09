@@ -592,3 +592,107 @@ test("chat opens at the newest messages and keeps a stable unread divider throug
     });
     await expect.poll(() => chat.evaluate(el => el.scrollTop)).toBeLessThan(20);
 });
+
+
+for (const chatType of ["personal", "group"] as const) {
+    test("media jumps to an older message in a " + chatType + " chat", async ({ page }) => {
+        const ownId = "media-navigation-fixture";
+        const targetId = 10;
+        const group = chatType === "group";
+        const chatPath = group ? "/chat/g/media-test-group" : "/chat/mediafixture";
+        const recentIds = Array.from({ length: 44 }, (_, index) => 100 + index);
+        const message = (id: number) => ({
+            id,
+            sender_id: "media-peer-fixture",
+            sender_name: "Собеседник",
+            sender_nick: "mediafixture",
+            sender_avatar_url: "",
+            content: id === targetId ? "Исходное сообщение со старым вложением" : "История " + id,
+            created_at: new Date(Date.UTC(2026, 10, 10, 9, id % 60)).toISOString(),
+            files: [],
+            read_by: [ownId],
+            reactions: [],
+            answer_id: null,
+            edited: false,
+            redirected_id: null,
+            is_system: false
+        });
+
+        const imageUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+X0ZYAAAAASUVORK5CYII=";
+        const aroundRequests: string[] = [];
+
+        await page.route("**/api/user", route => route.fulfill({
+            status: 200, contentType: "application/json",
+            body: JSON.stringify({
+                success: true, id: ownId, nick: "mediaowner", username: "Media Owner",
+                avatar_url: null, last_online: new Date().toISOString()
+            })
+        }));
+        await page.route("**/api/chat/**", route => {
+            const url = new URL(route.request().url());
+            const aroundId = url.searchParams.get("aroundId");
+            if (aroundId) aroundRequests.push(aroundId);
+            const items = aroundId
+                ? Array.from({ length: 20 }, (_, index) => message(index + 1))
+                : recentIds.map(message);
+            const info = group ? {
+                chat: {
+                    id: "media-test-group", name: "Media fixture", is_group: true,
+                    members: [], avatar_url: null, note: false, pinned: false, is_blocked: false
+                }
+            } : {
+                chat_id: "media-personal-chat",
+                user: {
+                    id: "media-peer-fixture", nick: "mediafixture", username: "Собеседник",
+                    avatar_url: null, last_online: new Date().toISOString(),
+                    note: false, pinned: false, is_blocked: false, am_i_blocked: false
+                }
+            };
+            return route.fulfill({
+                status: 200, contentType: "application/json",
+                body: JSON.stringify({ success: true, ...info, messages: items, hasMore: false })
+            });
+        });
+        await page.route("**/api/media/**", route => route.fulfill({
+            status: 200, contentType: "application/json",
+            body: JSON.stringify({
+                success: true,
+                items: [{
+                    id: 80, message_id: targetId, url: imageUrl, name: "archive.png",
+                    type: "image/png", size: 67, sender_id: "media-peer-fixture",
+                    created_at: new Date().toISOString(), category: "photo",
+                    sender: { id: "media-peer-fixture", nick: "mediafixture", name: "Собеседник", url: "" }
+                }],
+                hasMore: false, nextBeforeId: null
+            })
+        }));
+        await page.route("**/api/chat/read", route => route.fulfill({
+            status: 200, contentType: "application/json",
+            body: JSON.stringify({ success: true })
+        }));
+
+        await page.goto(chatPath);
+        await expect(page.locator(".chat .messageWrapper")).toHaveCount(recentIds.length);
+        await page.locator(".chatUserInfo").click();
+        await expect(page.locator(".chatWithInfoDiv")).toBeVisible();
+        await page.locator(".chatMediaItem.chatMediaphoto").first().click();
+        await expect(page.locator(".imgPrevDiv")).toBeVisible();
+
+        await page.locator(".imgPrevMenu .imgPrevToMessage").first().click();
+
+        await expect(page.locator(".imgPrevDiv")).toHaveCount(0);
+        await expect(page.locator(".chatWithInfoDiv")).toHaveCount(0);
+        await expect(page).toHaveURL(new RegExp(chatPath.replaceAll("/", "\\/") + "$"));
+        await expect.poll(() => aroundRequests).toContain(String(targetId));
+
+        const selected = page.locator(".chat .messageWrapper.highlight");
+        await expect(selected).toContainText("Исходное сообщение со старым вложением");
+        await expect.poll(() => selected.evaluate(el => {
+            const scroll = el.closest(".chat");
+            if (!scroll) return false;
+            const bounds = el.getBoundingClientRect();
+            const viewport = scroll.getBoundingClientRect();
+            return bounds.top >= viewport.top - 5 && bounds.bottom <= viewport.bottom + 5;
+        })).toBe(true);
+    });
+}

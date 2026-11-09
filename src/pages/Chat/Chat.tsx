@@ -201,15 +201,17 @@ export default function Chat() {
 
     useEffect(
         () => {
-            if (pendingScrollId === null) return;
+            if (pendingScrollId === null || !chatReady) return;
             pinnedBottomRef.current = false;
+            let cancelled = false;
             scrollToMessage(pendingScrollId).finally(
                 () => {
-                    setTimeout(() => setPendingScrollId(null), 600);
+                    if (!cancelled) setPendingScrollId(current => current === pendingScrollId ? null : current);
                 }
             );
+            return () => { cancelled = true; };
         },
-        [pendingScrollId, scrollToMessage, setPendingScrollId]
+        [pendingScrollId, chatReady, scrollToMessage, setPendingScrollId]
     );
 
     useEffect(

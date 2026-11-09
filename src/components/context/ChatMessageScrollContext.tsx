@@ -42,24 +42,34 @@ export const ChatMessageScrollProvider = ({ children }: { children: ReactNode })
 
             if (!success) return;
 
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
+            // React can commit the loaded history after the next two frames under load.
+            // Keep the jump pending until the target is actually mounted.
+            await new Promise<void>(resolve => {
+                let attempts = 0;
+                const focusTarget = () => {
                     const el = messageRefs.current.get(targetId);
 
-                    if (el) {
-                        if (highlightTimeoutRef.current) {
-                            clearTimeout(highlightTimeoutRef.current);
-                        }
-
-                        setHighlightedId(targetId);
-                        el.scrollIntoView({ behavior: "smooth", block: "center" });
-
-                        highlightTimeoutRef.current = window.setTimeout(() => {
-                            setHighlightedId(null);
-                            highlightTimeoutRef.current = null;
-                        }, 2000);
+                    if (!el?.isConnected) {
+                        if (++attempts < 30) requestAnimationFrame(focusTarget);
+                        else resolve();
+                        return;
                     }
-                });
+
+                    if (highlightTimeoutRef.current) {
+                        clearTimeout(highlightTimeoutRef.current);
+                    }
+
+                    setHighlightedId(targetId);
+                    el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                    highlightTimeoutRef.current = window.setTimeout(() => {
+                        setHighlightedId(null);
+                        highlightTimeoutRef.current = null;
+                    }, 2000);
+                    resolve();
+                };
+
+                requestAnimationFrame(focusTarget);
             });
         },
         [loadAroundMessage]

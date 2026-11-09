@@ -3,12 +3,14 @@ import { ChatTeardrop } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import { useMessages } from "../../../hooks/MessagesHook";
+import { useBlackout } from "../../../hooks/BlackoutHook";
 import { DownloadButt } from "../buttons/DownloadButt";
 
 export default function MediaMenu() {
     const { t } = useTranslation("common");
     const { menu } = useContextMenu();
     const { setPendingScrollId } = useMessages();
+    const { setBlackoutStack } = useBlackout();
     const navigate = useNavigate();
 
     const { options } = menu;
@@ -21,6 +23,7 @@ export default function MediaMenu() {
                 className="ContextMenuButt"
                 onClick={() => {
                     setPendingScrollId(Number(options.id));
+                    setBlackoutStack([]);
                     navigate(`/chat/${options.nick}`);
                 }}
             >
