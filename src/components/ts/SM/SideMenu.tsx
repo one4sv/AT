@@ -26,6 +26,7 @@ export default function SideMenu() {
     const {
         list,
         loadingList,
+        search: contactSearch,
         mainSearchRef
     } = useContacts();
     const {
@@ -205,7 +206,7 @@ export default function SideMenu() {
                     }}
                 >
                     <div className="slide">
-                        {loadingUser || loadingList && list.length === 0 ? <Skeleton type="list" /> : <ContactsList filter={messageSelectedValue} searchRef={mainSearchRef} />}
+                        {loadingUser || (loadingList && (list.length === 0 || contactSearch.trim().length > 0)) ? <Skeleton type="list" /> : <ContactsList filter={messageSelectedValue} searchRef={mainSearchRef} />}
                     </div>
                     <div className="slide">
                         {loadingUser || loadingHabits && !habits?.length ? <Skeleton type="list" /> : <HabitsList filter={habitsSelectedValue} />}
