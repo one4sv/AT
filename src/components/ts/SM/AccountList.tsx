@@ -44,7 +44,7 @@ export default function AccountList() {
     };
 
     if (activeTab === "user" && search.trim()) {
-        return <div className="accountList SMlist accountSettingsSearch"><SearchedButts search={search} selectSetting={selectSetting}/></div>;
+        return <div className="accountList SMlist accountSettingsSearch"><SearchedButts search={search} selectSetting={selectSetting} staticResults/></div>;
     }
 
     return (

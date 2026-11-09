@@ -8,9 +8,10 @@ import SearchButt from "../SearchButt";
 interface Props {
     search: string;
     selectSetting: (sectionId: string, item: SearchableSetting) => void;
+    staticResults?: boolean;
 }
 
-export default function SearchedButts({ search, selectSetting }: Props) {
+export default function SearchedButts({ search, selectSetting, staticResults = false }: Props) {
     const searchableSettings = useSearchableSettings();
     const query = search.trim().toLowerCase();
 
@@ -37,10 +38,10 @@ export default function SearchedButts({ search, selectSetting }: Props) {
         return (
             <motion.div
                 className="settingInnerDiv searchedButtsEmpty"
-                initial={{ scale: 0.96, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.96, opacity: 0 }}
-                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                initial={staticResults ? false : { scale: 0.96, opacity: 0 }}
+                animate={staticResults ? undefined : { scale: 1, opacity: 1 }}
+                exit={staticResults ? undefined : { scale: 0.96, opacity: 0 }}
+                transition={staticResults ? { duration: 0 } : { duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             >
                 <MagnifyingGlassMinusIcon size={48} />
                 <span>Ничего не найдено</span>
@@ -49,16 +50,16 @@ export default function SearchedButts({ search, selectSetting }: Props) {
     }
 
     return (
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode={staticResults ? "sync" : "popLayout"} initial={!staticResults}>
             {filteredSections.map((section) => (
                 <motion.div
                     key={section!.id}
                     className="settingInnerDiv"
-                    initial={{ scale: 0.97, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.97, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    layout
+                    initial={staticResults ? false : { scale: 0.97, opacity: 0 }}
+                    animate={staticResults ? undefined : { scale: 1, opacity: 1 }}
+                    exit={staticResults ? undefined : { scale: 0.97, opacity: 0 }}
+                    transition={staticResults ? { duration: 0 } : { duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    layout={!staticResults}
                 >
                     <div className="searchSectionHeader">
                         {section && <section.icon size={22} weight="fill" />}
@@ -66,9 +67,9 @@ export default function SearchedButts({ search, selectSetting }: Props) {
                     </div>
 
                     <div className="searchInnerDiv">
-                        <AnimatePresence mode="popLayout">
+                        <AnimatePresence mode={staticResults ? "sync" : "popLayout"} initial={!staticResults}>
                             {section!.items.map((item, itemIndex) => (
-                                <SearchButt item={item} itemIndex={itemIndex} section={section} selectSetting={selectSetting} key={item.id} search={search}/>
+                                <SearchButt item={item} itemIndex={itemIndex} section={section} selectSetting={selectSetting} key={item.id} search={search} staticResults={staticResults}/>
                             ))}
                         </AnimatePresence>
                     </div>

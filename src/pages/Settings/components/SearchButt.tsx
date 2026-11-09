@@ -10,10 +10,11 @@ interface Props {
     section: SearchableSection,
     itemIndex:number,
     selectSetting: (sectionId: string, item: SearchableSetting) => void;
-    search:string
+    search:string,
+    staticResults?: boolean
 }
 
-export default function SearchButt({item, section, itemIndex, selectSetting, search}:Props) {
+export default function SearchButt({item, section, itemIndex, selectSetting, search, staticResults = false}:Props) {
 
     if (isMobile && item.options?.mobileOnly) return
 
@@ -21,15 +22,15 @@ export default function SearchButt({item, section, itemIndex, selectSetting, sea
         <motion.div
             className="searchButt"
             onClick={() => selectSetting(section!.id, item)}
-            initial={{ scale: 0.96, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.96, opacity: 0 }}
-            transition={{
+            initial={staticResults ? false : { scale: 0.96, opacity: 0 }}
+            animate={staticResults ? undefined : { scale: 1, opacity: 1 }}
+            exit={staticResults ? undefined : { scale: 0.96, opacity: 0 }}
+            transition={staticResults ? { duration: 0 } : {
                 duration: 0.1,
                 ease: [0.22, 1, 0.36, 1],
                 delay: itemIndex * 0.025,
             }}
-            layout
+            layout={!staticResults}
         >
             <span className={`settingName ${item.options?.isDanger ? "danger" : ""}`}>
                 {item.icon ? (
