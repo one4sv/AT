@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { ChatTeardrop } from "@phosphor-icons/react";
+import { ChatTeardrop, CopySimple } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import { useMessages } from "../../../hooks/MessagesHook";
@@ -18,6 +18,13 @@ export default function MediaMenu() {
     return (
         <>
             {options.url && options.name && DownloadButt(options.url, options.name)}
+
+            {options.onCopyLink && (
+                <div className="ContextMenuButt" onClick={options.onCopyLink}>
+                    <CopySimple />
+                    {t("chatMenu.copy")}
+                </div>
+            )}
 
             <div
                 className="ContextMenuButt"

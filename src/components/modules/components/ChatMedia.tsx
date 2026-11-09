@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -8,6 +8,7 @@ import {
 import { useChat } from "../../hooks/ChatHook";
 import { api } from "../../ts/api";
 import { useBlackout } from "../../hooks/BlackoutHook";
+import { useContextMenu } from "../../hooks/ContextMenuHook";
 import useOpenLink from "../../hooks/utils/useOpenLink";
 import GetIconByType from "../../../pages/Chat/utils/getIconByType";
 
@@ -58,6 +59,7 @@ export default function ChatMedia() {
     const openLink = useOpenLink();
     const { chatWith } = useChat();
     const { setBlackout } = useBlackout();
+    const { openMenu } = useContextMenu();
 
     const [activeFilter, setActiveFilter] = useState<MediaCategory>("photo");
     const [items, setItems] = useState<ChatMediaItem[]>([]);
@@ -217,6 +219,21 @@ export default function ChatMedia() {
         }
     };
 
+    const openMediaMenu = (event: MouseEvent<HTMLDivElement>, item: ChatMediaItem) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (!chatWith) return;
+
+        openMenu(event.clientX, event.clientY, "media", {
+            id: String(item.message_id),
+            nick: chatWith.is_group ? `g/${chatWith.id}` : chatWith.nick,
+            name: item.name,
+            url: item.category !== "link" ? item.url : undefined,
+            onCopyLink: item.category === "link" ? () => { void navigator.clipboard.writeText(item.url); } : undefined
+        });
+    };
+
     const formatSize = (size: number) => {
         if (!size) return "";
         if (size < 1024) return `${size} ${t("chatMedia.bytes")}`;
@@ -318,6 +335,8 @@ export default function ChatMedia() {
                                         y: { duration: 0.2 },
                                         delay: Math.min(index * 0.025, 0.25)
                                     }}
+                                    data-context-menu="true"
+                                    onContextMenu={event => openMediaMenu(event, item)}
                                     onClick={() => openMedia(item)}
                                 >
                                     {item.category === "photo" && (
