@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../../scss/CompJurnal.scss";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
-import { Search, X } from "lucide-react";
+import { CircleUserRound, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "../../../../components/ts/api";
 import { formatDateFromString } from "../../../../components/ts/utils/dateToStr";
@@ -14,7 +14,7 @@ interface ActivityEvent {
     type: "completion" | "joined" | "left" | "invited" | "declined" | "settings_changed" | "completion_removed";
     date?: string;
     created_at: string;
-    user: { nick: string; username: string | null } | null;
+    user: { nick: string; username: string | null; avatar_url?: string | null } | null;
 }
 
 export default function CompJurnal() {
@@ -47,8 +47,9 @@ export default function CompJurnal() {
     }, [habit?.id])
 
     const describeEvent = (event: ActivityEvent) => {
-        if (event.type === "completion_removed") return t("habitPageUi.journal.completionRemoved", { date: event.date || t("habitPageUi.journal.unspecifiedDate") });
-        if (event.type === "completion") return t("habitPageUi.journal.completed", { date: event.date });
+        const date = event.date && /^\d{4}-\d{2}-\d{2}$/.test(event.date) ? formatDateFromString(event.date) : event.date;
+        if (event.type === "completion_removed") return t("habitPageUi.journal.completionRemoved", { date: date || t("habitPageUi.journal.unspecifiedDate") });
+        if (event.type === "completion") return t("habitPageUi.journal.completed", { date });
         return t(`habitPageUi.journal.${event.type}`);
     };
 
@@ -71,9 +72,12 @@ export default function CompJurnal() {
                 <div className="settingSpan">{t("habitPageUi.journal.memberActions")}</div>
                 {memberEventsError && <div className="settingHint">{t("habitPageUi.journal.loadFailed")}</div>}
                 {!memberEventsError && memberEvents.length === 0 && <div className="settingHint">{t("habitPageUi.journal.empty")}</div>}
-                {memberEvents.filter(event => !jurnalSearch.trim() || [event.user?.username, event.user?.nick, event.date].some(value => value?.toLowerCase().includes(jurnalSearch.trim().toLowerCase()))).slice(0, 30).map(event => <div className="CJrecord" key={event.id}>
+                {memberEvents.filter(event => !jurnalSearch.trim() || [event.user?.username, event.user?.nick, event.date].some(value => value?.toLowerCase().includes(jurnalSearch.trim().toLowerCase()))).slice(0, 30).map(event => <div className="CJrecord memberEvent" key={event.id}>
                     <div className="CJdates">
-                        <div className="CJdate">{event.user?.username || event.user?.nick || t("habitPageUi.day.participant")}</div>
+                        <div className="CJdate CJmember">
+                            {event.user?.avatar_url ? <img src={event.user.avatar_url} className="CJavatar" alt="" /> : <CircleUserRound className="CJavatar" aria-hidden="true" />}
+                            <span>{event.user?.username || event.user?.nick || t("habitPageUi.day.participant")}</span>
+                        </div>
                         <div className="CJcreated">{new Date(event.created_at).toLocaleString(locale)}</div>
                     </div>
                     <div className="CJcomment">{describeEvent(event)}</div>

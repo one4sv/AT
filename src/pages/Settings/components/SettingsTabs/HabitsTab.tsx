@@ -7,12 +7,13 @@ import Toggler from "../../../../components/ts/Toggler";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useTranslation } from "react-i18next";
+import { enGB, ru } from "date-fns/locale";
 import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
 
 export default function HabitsTab({ search }: { search: string }) {
-    const { t } = useTranslation("settings");
+    const { t, i18n } = useTranslation("settings");
     const { orderHabits, showArchived, showArchivedInAcc, weekStart, settingsLoaded } = useSettings();
     const { setNewOrder, setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart } = useUpSettings();
 
@@ -135,6 +136,7 @@ export default function HabitsTab({ search }: { search: string }) {
                     <DatePicker
                         className="habitTabDP"
                         selected={weekStart ? new Date(weekStart) : null}
+                        locale={i18n.resolvedLanguage?.startsWith("en") ? enGB : ru}
                         maxDate={new Date()}
                         dateFormat="dd.MM.yyyy"
                         minDate={new Date(2000, 0, 1)}

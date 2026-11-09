@@ -60,7 +60,7 @@ const SideMenuContext = createContext<SideMenuContextType | undefined>(undefined
 
 export function SideMenuProvider({ children }: { children: ReactNode }) {
     const { t, i18n } = useTranslation("common");
-    const { list } = useContacts()
+    const { list, search: settingsSearch, setSearch: setSettingsSearch } = useContacts()
     const { habits, newOrderHabits } = useHabits()
     const { showArchived, layout } = useSettings();
     const isCompact = useCompactLayout();
@@ -70,7 +70,6 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [showHabitMenu, setShowHabitMenu] = useState(false);
     const [showSlide, setShowSlide] = useState<slides>(null);
     const [activeTab, setActiveTab] = useState<tab>("chats");
-    const [settingsSearch, setSettingsSearch] = useState("");
     const [translateX, setTranslateX] = useState(() => isCompact || layout !== "hidden" ? 0 : -100);
     const [isDragging, setIsDragging] = useState(false);
     const [dontHandle, setDontHandle] = useState(false);
