@@ -388,3 +388,74 @@
     &.open { left: 0; width: 100%; }
 }
 
+.chatFailedDrafts {
+    position: absolute;
+    bottom: calc(100% + .5dvh);
+    width: 100%;
+    max-height: 30dvh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+    scrollbar-width: thin;
+}
+
+.chatFailedDraft {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    padding: 1dvh 1vw;
+    box-sizing: border-box;
+    color: var(--tc);
+    background: var(--bgc);
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+        padding: 1dvh 3vw;
+    }
+}
+
+.chatFailedDraftContent {
+    min-width: 0;
+    flex: 1;
+}
+
+.chatFailedDraftText, .chatFailedDraftFiles {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--borderWh);
+    font-size: 14px;
+}
+
+.chatFailedDraftActions {
+    display: flex;
+    align-items: center;
+    gap: .5vw;
+
+    > button {
+        border: none;
+        border-radius: 24px;
+        background: var(--interact);
+        color: var(--accent_text);
+        padding: .75dvh 1vw;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    > button:disabled {
+        opacity: .5;
+        cursor: default;
+    }
+
+    @media (max-width: 800px) {
+        gap: 1vw;
+
+        > button {
+            padding: 1dvh 2vw;
+        }
+    }
+}
