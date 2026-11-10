@@ -670,8 +670,7 @@
         .editedMess,
         .messBarSvg,
         .messageReadSign,
-        .reactionItem,
-        .reactionTrigger {
+        .reactionItem {
             color: #fff;
         }
     }
@@ -717,8 +716,7 @@
     gap: 4px;
 }
 
-.reactionItem,
-.reactionTrigger {
+.reactionItem {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -753,8 +751,7 @@
     }
 }
 
-.message.mediaOnly .reactionItem,
-.message.mediaOnly .reactionTrigger {
+.message.mediaOnly .reactionItem {
     background: rgba(255, 255, 255, .15);
     &.active {
         background: rgba(255, 255, 255, .3);
@@ -776,45 +773,6 @@
     > .messageStatusBarDiv,
     > .messageStatusBarDiv * {
         color: #fff;
-    }
-}
-
-/* The quick reaction control on my gradient bubble follows inner_text. */
-.message.my:not(.mediaOnly) .reactionTrigger {
-    background: transparent;
-    color: var(--inner_text);
-    box-shadow: none;
-
-    &.active {
-        background: transparent;
-        color: var(--inner_text);
-    }
-
-    @media (hover: hover) {
-        &:hover {
-            background: rgba(255, 255, 255, .14);
-            color: var(--inner_text);
-        }
-    }
-
-    @media (hover: none) {
-        &:active {
-            background: rgba(255, 255, 255, .14);
-        }
-    }
-}
-
-.message.my.mediaOnly .reactionTrigger {
-    background: transparent;
-
-    &.active {
-        background: transparent;
-    }
-
-    @media (hover: hover) {
-        &:hover {
-            background: rgba(255, 255, 255, .2);
-        }
     }
 }
 
@@ -904,7 +862,3 @@
     }
 }
 
-.reactionTrigger {
-    flex-shrink: 0;
-    align-self: center;
-}

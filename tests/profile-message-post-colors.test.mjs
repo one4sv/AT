@@ -50,3 +50,12 @@ test("short messages grow with reactions and receipts stay inside the bubble", (
     assert.match(message, /users\.length >= 4 && <span className="reactionCount">\{users\.length\}<\/span>/);
     assert.doesNotMatch(message, /className="reactionMore"/);
 });
+
+test("reaction picker opens with the context menu, not an inline add button", () => {
+    const message = read("src/pages/Chat/components/Message.tsx");
+    const css = read("src/pages/Chat/scss/message.scss");
+    assert.doesNotMatch(message, /reactionTrigger|SmilePlus|reactionPickerOpen/);
+    assert.doesNotMatch(css, /\.reactionTrigger/);
+    assert.match(message, /contextReactionOpen && createPortal\(/);
+    assert.match(message, /<ReactionPicker[\s\S]*?onSelect=\{reaction => \{/);
+});

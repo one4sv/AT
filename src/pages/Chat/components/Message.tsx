@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { CheckCircle, ShareFat, PushPin, ClockCountdownIcon } from "@phosphor-icons/react";
 import { useChat } from "../../../components/hooks/ChatHook";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { message } from "../../../components/context/ChatContext";
 import { useUser } from "../../../components/hooks/UserHook";
@@ -17,7 +17,6 @@ import { useSettings } from "../../../components/hooks/SettingsHook";
 import { formatAppTime } from "../../../components/ts/utils/dateToStr";
 import ReactionIcon from "../../../components/ts/ReactionIcon";
 import ReactionPicker from "../../../components/ts/ReactionPicker";
-import { SmilePlus } from "lucide-react";
 import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
 import HighlightText from "../../../components/ts/HighlightText";
 import HabitInvitation from "./HabitInvitation";
@@ -74,9 +73,7 @@ export default function Message({
         messdb
     } = useSettings();
     const { searchMess } = useChat();
-    const [reactionPickerOpen, setReactionPickerOpen] = useState(false);
     const [reactionPickerPosition, setReactionPickerPosition] = useState({ top: 0, left: 0 });
-    const reactionTriggerRef = useRef<HTMLButtonElement>(null);
     const reactionPopoverRef = useRef<HTMLDivElement>(null);
     const appearRef = useRef<HTMLDivElement>(null);
     const animateIn = useRef(Boolean(m.animateIn));
@@ -110,7 +107,6 @@ export default function Message({
     const isMy = m.sender_id === user.id ? true : false;
     const isChose = activeHeader === "choosing";
     const contextReactionOpen = menu.visible && menu.point === "mess" && menu.options.id === String(m.id) && !isChose;
-    const pickerVisible = reactionPickerOpen || contextReactionOpen;
     const mediaOnly = !m.content?.trim() && !!m.files?.length &&
         !m.redirected_id && !answer && !m.habit_invite_habit_id;
     const uniqueReactions = [...new Map((m.reactions || []).map(reaction => [reaction.user_id, reaction])).values()];
@@ -121,31 +117,29 @@ export default function Message({
     }, {} as Record<string, string[]>));
     const ownReactions = uniqueReactions.filter(reaction => reaction.user_id === user.id).map(reaction => reaction.reaction);
     useLayoutEffect(() => {
-        if (!pickerVisible) return;
+        if (!contextReactionOpen) return;
 
         const updatePosition = () => {
             const popover = reactionPopoverRef.current;
-            const anchorElement = contextReactionOpen ? menuRef.current : reactionTriggerRef.current;
+            const anchorElement = menuRef.current;
             if (!anchorElement || !popover) return;
 
             const anchor = anchorElement.getBoundingClientRect();
             const width = popover.offsetWidth;
             const height = popover.offsetHeight;
-            const preferredLeft = contextReactionOpen
-                ? anchor.left + (anchor.width - width) / 2
-                : isMy ? anchor.right - width : anchor.left;
-            const left = Math.max(8, Math.min(preferredLeft, window.innerWidth - width - 8));
+            const left = Math.max(8, Math.min(
+                anchor.left + (anchor.width - width) / 2,
+                window.innerWidth - width - 8
+            ));
             let top = anchor.top - height - 8;
 
-            if (contextReactionOpen) {
-                const preview = document.querySelector<HTMLElement>(".ContextMenuFocusPreview");
-                const previewRect = preview?.getBoundingClientRect();
-                if (previewRect && top < previewRect.bottom + 8) {
-                    const abovePreview = previewRect.top - height - 8;
-                    const belowMenu = anchor.bottom + 8;
-                    if (abovePreview >= 8) top = abovePreview;
-                    else if (belowMenu + height <= window.innerHeight - 8) top = belowMenu;
-                }
+            const preview = document.querySelector<HTMLElement>(".ContextMenuFocusPreview");
+            const previewRect = preview?.getBoundingClientRect();
+            if (previewRect && top < previewRect.bottom + 8) {
+                const abovePreview = previewRect.top - height - 8;
+                const belowMenu = anchor.bottom + 8;
+                if (abovePreview >= 8) top = abovePreview;
+                else if (belowMenu + height <= window.innerHeight - 8) top = belowMenu;
             }
 
             if (top < 8) top = Math.min(anchor.bottom + 8, window.innerHeight - height - 8);
@@ -162,33 +156,9 @@ export default function Message({
             window.removeEventListener("resize", updatePosition);
             document.removeEventListener("scroll", updatePosition, true);
         };
-    }, [pickerVisible, contextReactionOpen, isMy, menuRef]);
-
-    useEffect(() => {
-        if (!pickerVisible) return;
-        const handleOutside = (event: PointerEvent) => {
-            const target = event.target as Node;
-            if (reactionTriggerRef.current?.contains(target) ||
-                reactionPopoverRef.current?.contains(target)) return;
-            setReactionPickerOpen(false);
-        };
-        const handleEscape = (event: KeyboardEvent) => {
-            if (event.key === "Escape") setReactionPickerOpen(false);
-        };
-        document.addEventListener("pointerdown", handleOutside, true);
-        document.addEventListener("keydown", handleEscape);
-        return () => {
-            document.removeEventListener("pointerdown", handleOutside, true);
-            document.removeEventListener("keydown", handleEscape);
-        };
-    }, [pickerVisible]);
-
-    useEffect(() => {
-        if (menu.visible) setReactionPickerOpen(false);
-    }, [menu.visible]);
+    }, [contextReactionOpen, menuRef]);
 
     const openContext = (x: number, y: number) => {
-        setReactionPickerOpen(false);
         const reaction = m.reactions.find(r => r.user_id === user.id);
         const isReacted = reaction ? reaction.reaction : "none";
         openMenu(
@@ -367,23 +337,9 @@ export default function Message({
                                 </button>
                             ))}
                         </div>}
-                        {!isChose && !m.isPending && <button
-                            ref={reactionTriggerRef}
-                            type="button"
-                            className={`reactionTrigger ${reactionPickerOpen ? "active" : ""}`}
-                            title={t("chatUi.chooseReaction")}
-                            aria-label={t("chatUi.chooseReaction")}
-                            aria-expanded={reactionPickerOpen}
-                            onClick={event => {
-                                event.stopPropagation();
-                                setReactionPickerOpen(current => !current);
-                            }}
-                        >
-                            <SmilePlus size={15} strokeWidth={1.9} />
-                        </button>}
                     </div>
                 </div>
-                {pickerVisible && !isChose && createPortal(
+                {contextReactionOpen && createPortal(
                     <div
                         ref={reactionPopoverRef}
                         className="reactionPopover"
@@ -393,8 +349,7 @@ export default function Message({
                             activeReactions={ownReactions}
                             onSelect={reaction => {
                                 void setReaction(m.id, reaction);
-                                setReactionPickerOpen(false);
-                                if (contextReactionOpen) closeMenu();
+                                closeMenu();
                             }}
                         />
                     </div>,
