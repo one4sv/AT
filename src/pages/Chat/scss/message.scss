@@ -672,6 +672,7 @@
         -webkit-backdrop-filter: blur(12px);
 
         .messageBar {
+            height: 20px;
             flex-direction: row;
         }
 
@@ -706,6 +707,7 @@
 
     .messageBar {
         width: max-content;
+        height: 24px;
         flex-shrink: 0;
         gap: 5px;
         flex-wrap: nowrap;
@@ -725,6 +727,7 @@
 .reactions {
     display: flex;
     align-items: center;
+    height: 100%;
     flex-wrap: nowrap;
     flex-shrink: 0;
     gap: 4px;
@@ -737,9 +740,9 @@
     box-sizing: border-box;
     min-width: 0;
     min-height: 0;
-    height: 20px;
+    height: 100%;
     gap: 3px;
-    padding: 0 3px;
+    padding: 1px;
     border: none;
     border-radius: 6px;
     background: transparent;
@@ -811,7 +814,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        height: 100%;
         gap: 3px;
+
+        > .reactionIllustration {
+            width: auto;
+            height: 100%;
+            aspect-ratio: 1;
+        }
     }
 
     .reactionCount {
@@ -824,8 +834,8 @@
         align-items: center;
         justify-content: center;
         width: auto;
+        height: 100%;
         gap: 0;
-        min-height: 16px;
         padding-left: 2px;
     }
 
@@ -834,11 +844,12 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        width: 15px;
-        height: 15px;
+        width: auto;
+        height: 100%;
+        aspect-ratio: 1;
         margin-left: -4px;
         overflow: hidden;
-        border: 1px solid var(--mess);
+        border: none;
         border-radius: 50%;
         background: var(--mc);
         color: var(--tc);
@@ -854,8 +865,8 @@
         }
 
         > svg {
-            width: 12px;
-            height: 12px;
+            width: 100%;
+            height: 100%;
         }
     }
 
@@ -868,15 +879,5 @@
 
 .message.my:not(.mediaOnly) .reactionItem {
     color: var(--inner_text);
-
-    .reactionUsers .reactionUser {
-        border-color: var(--grad);
-    }
-}
-
-.message.mediaOnly .reactionItem {
-    .reactionUsers .reactionUser {
-        border-color: rgba(12, 14, 18, .58);
-    }
 }
 

@@ -99,9 +99,20 @@ test("reaction items match status metadata height and don't stretch message foot
     assert.ok(reactionStyles);
     assert.match(reactionStyles, /box-sizing:\s*border-box;/);
     assert.match(reactionStyles, /min-height:\s*0;/);
-    assert.match(reactionStyles, /height:\s*20px;/);
-    assert.match(reactionStyles, /padding:\s*0 3px;/);
+    assert.match(reactionStyles, /height:\s*100%;/);
+    assert.match(reactionStyles, /padding:\s*1px;/);
     assert.match(reactionStyles, /background:\s*transparent;/);
     assert.match(message, /<ReactionIcon value=\{reaction\} size=\{17\} \/>/);
     assert.doesNotMatch(css, /\.reactionItem\s*\{\s*flex-direction:\s*row;[\s\S]{0,90}min-height:\s*26px/);
+});
+ 
+test("reaction avatars and illustrations fill the status button without borders", () => {
+    const css = read("src/pages/Chat/scss/message.scss");
+    assert.match(css, /\.messageStatusBarDiv\s*\{[\s\S]*?\.messageBar\s*\{\s*width:\s*max-content;\s*height:\s*24px;/);
+    assert.match(css, /\.reactions\s*\{\s*display:\s*flex;\s*align-items:\s*center;\s*height:\s*100%;/);
+    assert.match(css, /\.reactionItem\s*\{\s*display:\s*inline-flex;[\s\S]*?height:\s*100%;[\s\S]*?padding:\s*1px;/);
+    assert.match(css, /\.reactionItemMain\s*\{[\s\S]*?height:\s*100%;[\s\S]*?> \.reactionIllustration\s*\{\s*width:\s*auto;\s*height:\s*100%;/);
+    assert.match(css, /\.reactionUsers \.reactionUser\s*\{[\s\S]*?width:\s*auto;\s*height:\s*100%;[\s\S]*?border:\s*none;/);
+    assert.match(css, /> svg\s*\{\s*width:\s*100%;\s*height:\s*100%;/);
+    assert.match(css, /\.message\.mediaOnly\s*\{[\s\S]*?\.messageBar\s*\{\s*height:\s*20px;/);
 });
