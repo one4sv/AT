@@ -26,7 +26,7 @@ export default function ReactionPicker({
                 <button
                     key={reaction.value}
                     type="button"
-                    className={`reactionPickerItem ${activeReactions.includes(reaction.value) ? "active" : ""}`}
+                    className={`reactionPickerItem ${compact ? "ContextMenuButt" : ""} ${activeReactions.includes(reaction.value) ? "active" : ""}`}
                     title={t(`reactions.${reaction.value}`)}
                     aria-label={t(`reactions.${reaction.value}`)}
                     aria-pressed={activeReactions.includes(reaction.value)}
