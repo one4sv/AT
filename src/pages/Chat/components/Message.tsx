@@ -65,7 +65,9 @@ export default function Message({
     const { user } = useUser();
     const {
         openMenu,
-        menu
+        closeMenu,
+        menu,
+        menuRef
     } = useContextMenu();
     const {
         emote,
@@ -107,49 +109,63 @@ export default function Message({
     };
     const isMy = m.sender_id === user.id ? true : false;
     const isChose = activeHeader === "choosing";
+    const contextReactionOpen = menu.visible && menu.point === "mess" && menu.options.id === String(m.id) && !isChose;
+    const pickerVisible = reactionPickerOpen || contextReactionOpen;
     const mediaOnly = !m.content?.trim() && !!m.files?.length &&
         !m.redirected_id && !answer && !m.habit_invite_habit_id;
-    const reactionGroups = Object.entries((m.reactions || []).reduce((acc, reaction) => {
+    const uniqueReactions = [...new Map((m.reactions || []).map(reaction => [reaction.user_id, reaction])).values()];
+    const reactionGroups = Object.entries(uniqueReactions.reduce((acc, reaction) => {
         if (!acc[reaction.reaction]) acc[reaction.reaction] = [];
         acc[reaction.reaction].push(reaction.user_id);
         return acc;
     }, {} as Record<string, string[]>));
-    const ownReactions = (m.reactions || []).filter(reaction => reaction.user_id === user.id).map(reaction => reaction.reaction);
+    const ownReactions = uniqueReactions.filter(reaction => reaction.user_id === user.id).map(reaction => reaction.reaction);
     useLayoutEffect(() => {
-        if (!reactionPickerOpen) return;
+        if (!pickerVisible) return;
 
         const updatePosition = () => {
-            const button = reactionTriggerRef.current;
             const popover = reactionPopoverRef.current;
-            if (!button || !popover) return;
+            const anchorElement = contextReactionOpen ? menuRef.current : reactionTriggerRef.current;
+            if (!anchorElement || !popover) return;
 
-            const anchor = button.getBoundingClientRect();
+            const anchor = anchorElement.getBoundingClientRect();
             const width = popover.offsetWidth;
             const height = popover.offsetHeight;
-            const left = Math.max(8, Math.min(
-                isMy ? anchor.right - width : anchor.left,
-                window.innerWidth - width - 8
-            ));
-            const top = anchor.top - height - 8 >= 8
-                ? anchor.top - height - 8
-                : Math.min(anchor.bottom + 8, window.innerHeight - height - 8);
+            const preferredLeft = contextReactionOpen
+                ? anchor.left + (anchor.width - width) / 2
+                : isMy ? anchor.right - width : anchor.left;
+            const left = Math.max(8, Math.min(preferredLeft, window.innerWidth - width - 8));
+            let top = anchor.top - height - 8;
 
+            if (contextReactionOpen) {
+                const preview = document.querySelector<HTMLElement>(".ContextMenuFocusPreview");
+                const previewRect = preview?.getBoundingClientRect();
+                if (previewRect && top < previewRect.bottom + 8) {
+                    const abovePreview = previewRect.top - height - 8;
+                    const belowMenu = anchor.bottom + 8;
+                    if (abovePreview >= 8) top = abovePreview;
+                    else if (belowMenu + height <= window.innerHeight - 8) top = belowMenu;
+                }
+            }
+
+            if (top < 8) top = Math.min(anchor.bottom + 8, window.innerHeight - height - 8);
             setReactionPickerPosition({ top: Math.max(8, top), left });
         };
 
         updatePosition();
+        const frame = window.requestAnimationFrame(updatePosition);
         window.addEventListener("resize", updatePosition);
         document.addEventListener("scroll", updatePosition, true);
 
         return () => {
+            window.cancelAnimationFrame(frame);
             window.removeEventListener("resize", updatePosition);
             document.removeEventListener("scroll", updatePosition, true);
         };
-    }, [reactionPickerOpen, isMy]);
+    }, [pickerVisible, contextReactionOpen, isMy, menuRef]);
 
     useEffect(() => {
-        if (!reactionPickerOpen) return;
-
+        if (!pickerVisible) return;
         const handleOutside = (event: PointerEvent) => {
             const target = event.target as Node;
             if (reactionTriggerRef.current?.contains(target) ||
@@ -159,15 +175,13 @@ export default function Message({
         const handleEscape = (event: KeyboardEvent) => {
             if (event.key === "Escape") setReactionPickerOpen(false);
         };
-
         document.addEventListener("pointerdown", handleOutside, true);
         document.addEventListener("keydown", handleEscape);
-
         return () => {
             document.removeEventListener("pointerdown", handleOutside, true);
             document.removeEventListener("keydown", handleEscape);
         };
-    }, [reactionPickerOpen]);
+    }, [pickerVisible]);
 
     useEffect(() => {
         if (menu.visible) setReactionPickerOpen(false);
@@ -300,6 +314,13 @@ export default function Message({
                     {m.redirected_files && m.redirected_files.length > 0 && <MessageFiles files={m.redirected_files} m={m} />}
                 </div>}
                 <div className="messageStatusBarDiv">
+                    {isMy && chatWith ? m.isPending ? <div className="messageReadSign ">
+                        <ClockCountdownIcon />
+                    </div> : m.read_by.length > 0 ? <div className="messageReadSign read">
+                        <CheckCheck />
+                    </div> : <div className="messageReadSign unread">
+                        <Check />
+                    </div> : ""}
                     <div className="messageBar">
                         <span className="messTime">{messageGetTime(m.created_at)}</span>
                         {m.edited && <span className="editedMess">{t("chatUi.edited")}</span>}
@@ -362,15 +383,8 @@ export default function Message({
                             <SmilePlus size={15} strokeWidth={1.9} />
                         </button>}
                     </div>
-                    {isMy && chatWith ? m.isPending ? <div className="messageReadSign ">
-                        <ClockCountdownIcon />
-                    </div> : m.read_by.length > 0 ? <div className="messageReadSign read">
-                        <CheckCheck />
-                    </div> : <div className="messageReadSign unread">
-                        <Check />
-                    </div> : ""}
                 </div>
-                {reactionPickerOpen && !isChose && createPortal(
+                {pickerVisible && !isChose && createPortal(
                     <div
                         ref={reactionPopoverRef}
                         className="reactionPopover"
@@ -381,6 +395,7 @@ export default function Message({
                             onSelect={reaction => {
                                 void setReaction(m.id, reaction);
                                 setReactionPickerOpen(false);
+                                if (contextReactionOpen) closeMenu();
                             }}
                         />
                     </div>,

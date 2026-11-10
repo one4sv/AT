@@ -381,12 +381,12 @@ export const ChatProvider = ({
                                 if (data.removed) {
                                     return {
                                         ...m,
-                                        reactions: reactions.filter(r => !(r.user_id === data.user_id && r.reaction === data.reaction))
+                                        reactions: reactions.filter(r => r.user_id !== data.user_id)
                                     };
                                 } else {
                                     return {
                                         ...m,
-                                        reactions: [...reactions.filter(r => !(r.user_id === data.user_id && r.reaction === data.reaction)), {
+                                        reactions: [...reactions.filter(r => r.user_id !== data.user_id), {
                                             user_id: data.user_id,
                                             reaction: data.reaction
                                         }]
@@ -477,12 +477,13 @@ export const ChatProvider = ({
         const current = messages.find(message => message.id === mId);
         if (!current || current.isPending) return;
 
-        const wasReacted = current.reactions?.some(r => r.user_id === userId && r.reaction === reaction) ?? false;
+        const previousOwnReactions = (current.reactions || []).filter(r => r.user_id === userId);
+        const wasReacted = previousOwnReactions.some(r => r.reaction === reaction);
         reactionPendingRef.current.add(mId);
 
         setMessages(prev => prev.map(message => {
             if (message.id !== mId) return message;
-            const reactions = (message.reactions || []).filter(r => !(r.user_id === userId && r.reaction === reaction));
+            const reactions = (message.reactions || []).filter(r => r.user_id !== userId);
             return {
                 ...message,
                 reactions: wasReacted ? reactions : [...reactions, { user_id: userId, reaction }]
@@ -495,10 +496,10 @@ export const ChatProvider = ({
         } catch (err) {
             setMessages(prev => prev.map(message => {
                 if (message.id !== mId) return message;
-                const reactions = (message.reactions || []).filter(r => !(r.user_id === userId && r.reaction === reaction));
+                const reactions = (message.reactions || []).filter(r => r.user_id !== userId);
                 return {
                     ...message,
-                    reactions: wasReacted ? [...reactions, { user_id: userId, reaction }] : reactions
+                    reactions: [...reactions, ...previousOwnReactions]
                 };
             }));
             showNotification("error", t("chatUi.reactionFailed"));
