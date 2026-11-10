@@ -310,7 +310,7 @@ export default function Message({
                                     }}
                                 >
                                     <span className="reactionItemMain">
-                                        <ReactionIcon value={reaction} size={21} />
+                                        <ReactionIcon value={reaction} size={17} />
                                         {users.length >= 4 && <span className="reactionCount">{users.length}</span>}
                                     </span>
                                     <span className="reactionUsers" aria-hidden="true">
