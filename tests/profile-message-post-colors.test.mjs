@@ -75,3 +75,12 @@ test("quick reaction restores hover-only behavior outside message metadata", () 
     assert.match(css, /left:\s*calc\(100% \+ 5px\)/);
     assert.doesNotMatch(message, /reactionTrigger|reactionPickerOpen/);
 });
+
+test("hover quick-reaction has a hit-test bridge across the 5px gap", () => {
+    const css = read("src/pages/Chat/scss/message.scss");
+    const button = css.match(/\.reactionButt\s*\{[\s\S]*?@media \(hover: hover\) and \(pointer: fine\)/)?.[0];
+    assert.ok(button);
+    assert.match(button, /&::before\s*\{\s*content:\s*"";\s*position:\s*absolute;[\s\S]*?width:\s*6px;/);
+    assert.match(button, /&\.myRB\s*\{\s*right:\s*calc\(100% \+ 5px\);\s*&::before\s*\{\s*right:\s*-6px;/);
+    assert.match(button, /&\.urRB\s*\{\s*left:\s*calc\(100% \+ 5px\);\s*&::before\s*\{\s*left:\s*-6px;/);
+});

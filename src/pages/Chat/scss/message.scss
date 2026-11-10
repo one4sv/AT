@@ -322,14 +322,32 @@
     pointer-events: none;
     transition: opacity .16s ease;
 
+    // Bridge the gap between the bubble and its outside hover action.
+    &::before {
+        content: "";
+        position: absolute;
+        top: -5px;
+        bottom: -5px;
+        width: 6px;
+    }
+
     &.myRB {
         right: calc(100% + 5px);
+
+        &::before {
+            right: -6px;
+        }
         background-color: var(--darker_accent);
         color: var(--inner_text);
     }
 
     &.urRB {
         left: calc(100% + 5px);
+
+        &::before {
+            left: -6px;
+        }
+
         background-color: var(--mess);
         color: var(--tc);
     }
