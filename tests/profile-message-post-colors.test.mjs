@@ -84,3 +84,10 @@ test("hover quick-reaction has a hit-test bridge across the 5px gap", () => {
     assert.match(button, /&\.myRB\s*\{\s*right:\s*calc\(100% \+ 5px\);\s*&::before\s*\{\s*right:\s*-6px;/);
     assert.match(button, /&\.urRB\s*\{\s*left:\s*calc\(100% \+ 5px\);\s*&::before\s*\{\s*left:\s*-6px;/);
 });
+
+test("outgoing message metadata stays flush right within the bubble", () => {
+    const css = read("src/pages/Chat/scss/message.scss");
+    assert.match(css, /&\.my\s*\{[\s\S]*?> \.messageStatusBarDiv\s*\{\s*align-self:\s*flex-end;\s*margin-left:\s*auto;/);
+    assert.match(css, /> \.messageStatusBarDiv\s*\{[\s\S]*?flex-direction:\s*row-reverse;\s*> \.messageBar\s*\{\s*flex-direction:\s*row-reverse;/);
+    assert.match(css, /\.message\.mediaOnly\s*\{[\s\S]*?> \.messageStatusBarDiv\s*\{[\s\S]*?right:\s*7px;/);
+});
