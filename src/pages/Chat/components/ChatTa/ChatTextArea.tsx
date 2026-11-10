@@ -122,7 +122,7 @@ export default function ChatTextArea({
                 if (controller.signal.aborted) return;
 
                 const file = new File([blob], forwardMedia.name || "media", {
-                    type: blob.type || forwardMedia.type || "application/octet-stream"
+                    type: forwardMedia.type || blob.type || "application/octet-stream"
                 });
                 setFiles(prev => [...prev, file]);
                 setForwardMedia(null);
