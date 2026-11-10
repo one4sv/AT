@@ -102,7 +102,10 @@ export default function ChatTextArea({
         setRetryingFailedId(null);
     }, [draftKey]);
     useEffect(() => {
-        if (!forwardMedia || forwardMedia.targetPath !== location.pathname || chatLoading) return;
+        const targetReady = !chatLoading && !!chatWith && (id
+            ? chatWith.is_group && String(chatWith.id) === id
+            : !chatWith.is_group && chatWith.nick === nick);
+        if (!forwardMedia || forwardMedia.targetPath !== location.pathname || !targetReady) return;
 
         if (forwardMedia.isLink) {
             setMess(prev => [prev.trim(), forwardMedia.url].filter(Boolean).join("\n"));
@@ -135,7 +138,7 @@ export default function ChatTextArea({
 
         void prepare();
         return () => controller.abort();
-    }, [forwardMedia, location.pathname, chatLoading, setForwardMedia, setMess, showNotification, tc]);
+    }, [forwardMedia, location.pathname, chatLoading, chatWith, id, nick, setForwardMedia, setMess, showNotification, tc]);
 
 
     const removeFailedDraft = (key: number) => {
