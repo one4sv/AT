@@ -341,7 +341,7 @@ export default function Message({
                                 >
                                     <span className="reactionItemMain">
                                         <ReactionIcon value={reaction} size={21} />
-                                        <span className="reactionCount">{users.length}</span>
+                                        {users.length >= 4 && <span className="reactionCount">{users.length}</span>}
                                     </span>
                                     <span className="reactionUsers" aria-hidden="true">
                                         {users.slice(0, 4).map(userId => {
@@ -363,7 +363,6 @@ export default function Message({
                                                 </span>
                                             );
                                         })}
-                                        {users.length > 4 && <span className="reactionMore">+{users.length - 4}</span>}
                                     </span>
                                 </button>
                             ))}

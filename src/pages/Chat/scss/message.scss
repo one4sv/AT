@@ -180,7 +180,8 @@
 
 .message {
     max-width: 25vw;
-    width: fit-content;
+    width: max-content;
+    box-sizing: border-box;
     padding: 0.6vh 0.4vw 0.4vh 0.4vw;
     max-height: max-content;
     position: relative;
@@ -682,13 +683,28 @@
 }
 
 .messageStatusBarDiv {
+    width: max-content;
+    max-width: 100%;
     min-height: 24px;
     height: auto;
     gap: 5px;
+    box-sizing: border-box;
 
     .messageBar {
+        min-width: 0;
+        max-width: 100%;
         gap: 5px;
         flex-wrap: wrap;
+    }
+
+    .messTime,
+    .editedMess {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .messageReadSign {
+        flex-shrink: 0;
     }
 }
 
@@ -696,6 +712,8 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    min-width: 0;
+    max-width: 100%;
     gap: 4px;
 }
 
@@ -807,6 +825,7 @@
 
 .reactionItem {
     flex-direction: row;
+    flex-shrink: 0;
     min-width: 0;
     min-height: 26px;
     padding: 3px 6px;

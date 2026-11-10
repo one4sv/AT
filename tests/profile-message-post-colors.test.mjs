@@ -39,3 +39,14 @@ test("post-linked habit SVG uses inner_text over the accent gradient", () => {
     assert.match(css, /\.PostHabit\s*\{[\s\S]*?background:\s*linear-gradient\(135deg,\s*var\(--accent\),\s*var\(--grad\)\)/);
     assert.match(css, /\.aphIcon\s*\{[\s\S]*?>svg\s*\{\s*height:\s*100%;\s*color:\s*var\(--inner_text\);/);
 });
+
+test("short messages grow with reactions and receipts stay inside the bubble", () => {
+    const css = read("src/pages/Chat/scss/message.scss");
+    const message = read("src/pages/Chat/components/Message.tsx");
+    assert.match(css, /\.message\s*\{\s*max-width:\s*25vw;\s*width:\s*max-content;/);
+    assert.match(css, /\.messageStatusBarDiv\s*\{\s*width:\s*max-content;\s*max-width:\s*100%;/);
+    assert.match(css, /\.messageBar\s*\{\s*min-width:\s*0;\s*max-width:\s*100%;[\s\S]*?flex-wrap:\s*wrap;/);
+    assert.match(css, /\.messageReadSign\s*\{\s*flex-shrink:\s*0;/);
+    assert.match(message, /users\.length >= 4 && <span className="reactionCount">\{users\.length\}<\/span>/);
+    assert.doesNotMatch(message, /className="reactionMore"/);
+});
