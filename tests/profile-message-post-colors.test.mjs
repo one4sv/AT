@@ -59,3 +59,17 @@ test("reaction picker opens with the context menu, not an inline add button", ()
     assert.match(message, /contextReactionOpen && createPortal\(/);
     assert.match(message, /<ReactionPicker[\s\S]*?onSelect=\{reaction => \{/);
 });
+
+
+test("quick reaction restores hover-only behavior outside message metadata", () => {
+    const message = read("src/pages/Chat/components/Message.tsx");
+    const css = read("src/pages/Chat/scss/message.scss");
+    assert.match(message, /!isMobile && !isChose && !m\.isPending && uniqueReactions\.length === 0 && <button/);
+    assert.match(message, /className=\{`reactionButt \$\{isMy \? "myRB" : "urRB"\}\`\}/);
+    assert.match(message, /void setReaction\(m\.id, emote\);/);
+    assert.match(css, /\.reactionButt\s*\{[\s\S]*?opacity:\s*0;[\s\S]*?visibility:\s*hidden;/);
+    assert.match(css, /@media \(hover: hover\) and \(pointer: fine\)\s*\{\s*\.message:hover > &,/);
+    assert.match(css, /right:\s*calc\(100% \+ 5px\)/);
+    assert.match(css, /left:\s*calc\(100% \+ 5px\)/);
+    assert.doesNotMatch(message, /reactionTrigger|reactionPickerOpen/);
+});

@@ -339,6 +339,18 @@ export default function Message({
                         </div>}
                     </div>
                 </div>
+                {!isMobile && !isChose && !m.isPending && uniqueReactions.length === 0 && <button
+                    type="button"
+                    className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
+                    title={t(`reactions.${emote}`)}
+                    aria-label={t(`reactions.${emote}`)}
+                    onClick={event => {
+                        event.stopPropagation();
+                        void setReaction(m.id, emote);
+                    }}
+                >
+                    <ReactionIcon value={emote} size={20} />
+                </button>}
                 {contextReactionOpen && createPortal(
                     <div
                         ref={reactionPopoverRef}

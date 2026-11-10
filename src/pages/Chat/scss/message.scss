@@ -307,40 +307,47 @@
 .reactionButt {
     position: absolute;
     bottom: 2px;
+    z-index: 4;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 6px;
-    cursor: pointer;
+    width: 1.7rem;
     height: 1.7rem;
-    width: 1.5vw;
+    padding: 3px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .16s ease;
+
     &.myRB {
-        right: 95%;
+        right: calc(100% + 5px);
         background-color: var(--darker_accent);
         color: var(--inner_text);
-        @media (hover: hover) {
-            &:hover {
-                background-color: var(--accent_text);
-            }
-        }
-        @media (hover: none) {
-            &:active {
-                background-color: var(--accent_text);
-            }
-        }
     }
+
     &.urRB {
-        left: 95%;
+        left: calc(100% + 5px);
         background-color: var(--mess);
-        @media (hover: hover) {
-            &:hover {
-                background-color: var(--borderHabit);
-            }
+        color: var(--tc);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .message:hover > &,
+        &:focus-visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
-        @media (hover: none) {
-            &:active {
-                background-color: var(--borderHabit);
-            }
+
+        &.myRB:hover {
+            background-color: var(--accent_text);
+        }
+
+        &.urRB:hover {
+            background-color: var(--borderHabit);
         }
     }
 }
