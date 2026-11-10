@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useCallback, useRef, type SetStateAction } from "react";
 import { type ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { useNote } from "../hooks/NoteHook";
 import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
@@ -102,6 +103,7 @@ export const ChatProvider = ({
         isAuthenticated
     } = useUser();
     const { showNotification } = useNote();
+    const { t } = useTranslation("common");
     const {
         note,
         messNote
@@ -125,6 +127,7 @@ export const ChatProvider = ({
     const notificationAggregator = new NotificationAggregator();
     const searchInputRef = useRef<HTMLInputElement | null>(null);
     const chatAbortRef = useRef<AbortController | null>(null);
+    const reactionPendingRef = useRef<Set<number>>(new Set());
 
     useEffect(() => {
         chatWithRef.current = chatWith;
@@ -468,13 +471,40 @@ export const ChatProvider = ({
         [ws, user.id, note, messNote, showNotification, navigate]
     );
     const setReaction = async (mId: number, reaction: string) => {
+        const userId = user.id;
+        if (!userId || mId <= 0 || reactionPendingRef.current.has(mId)) return;
+
+        const current = messages.find(message => message.id === mId);
+        if (!current || current.isPending) return;
+
+        const wasReacted = current.reactions?.some(r => r.user_id === userId && r.reaction === reaction) ?? false;
+        reactionPendingRef.current.add(mId);
+
+        setMessages(prev => prev.map(message => {
+            if (message.id !== mId) return message;
+            const reactions = (message.reactions || []).filter(r => !(r.user_id === userId && r.reaction === reaction));
+            return {
+                ...message,
+                reactions: wasReacted ? reactions : [...reactions, { user_id: userId, reaction }]
+            };
+        }));
+
         try {
-            await api.post("/reactions", {
-                mId,
-                reaction
-            });
+            const response = await api.post("/reactions", { mId, reaction });
+            if (!response.data?.success) throw new Error("Reaction was not saved");
         } catch (err) {
+            setMessages(prev => prev.map(message => {
+                if (message.id !== mId) return message;
+                const reactions = (message.reactions || []).filter(r => !(r.user_id === userId && r.reaction === reaction));
+                return {
+                    ...message,
+                    reactions: wasReacted ? [...reactions, { user_id: userId, reaction }] : reactions
+                };
+            }));
+            showNotification("error", t("chatUi.reactionFailed"));
             console.error("Ошибка при отправке реакции", err);
+        } finally {
+            reactionPendingRef.current.delete(mId);
         }
     };
 

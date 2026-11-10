@@ -1,0 +1,63 @@
+.reactionPicker {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 4px;
+    padding: 6px;
+    border-radius: 16px;
+    background: var(--interact);
+    color: var(--tc);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    user-select: none;
+
+    &.compact {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        background: transparent;
+        padding: 5px;
+        gap: 2px;
+    }
+
+    .reactionPickerItem {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border: none;
+        border-radius: 12px;
+        color: var(--tc);
+        background: transparent;
+        cursor: pointer;
+        transition: background .15s ease, transform .15s ease;
+
+        &.active {
+            color: var(--accent_text);
+            background: var(--accent_hov);
+        }
+
+        @media (hover: hover) {
+            &:hover {
+                color: var(--accent_text);
+                background: var(--menuButtHover);
+                transform: translateY(-2px);
+            }
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--accent_text);
+            outline-offset: 1px;
+        }
+    }
+
+    @media (max-width: 800px) {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        &.compact {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+        .reactionPickerItem {
+            width: 35px;
+            height: 35px;
+        }
+    }
+}

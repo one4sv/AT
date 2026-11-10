@@ -166,6 +166,8 @@
     "lastSeen": "last seen {{date}} at {{time}}",
     "from": "from",
     "edited": "edited",
+    "reactionFailed": "Could not save reaction",
+    "chooseReaction": "Choose a reaction",
     "blockedBy": "This user has blocked you",
     "blockedYou": "You have blocked this user",
     "results": "{{count}} results",
@@ -187,6 +189,24 @@
     "failedMessage": "Unsent message",
     "retryMessage": "Retry sending",
     "discardFailedMessage": "Discard unsent message"
+  },
+  "reactions": {
+      "Heart": "Love",
+      "Like": "Like",
+      "Laugh": "Funny",
+      "Wow": "Wow",
+      "Fire": "Fire",
+      "Party": "Party",
+      "Clap": "Applause",
+      "Thanks": "Thank you",
+      "Hundred": "100 percent",
+      "Dislike": "Dislike",
+      "Cry": "Sad",
+      "Angry": "Angry",
+      "Thinking": "Thinking",
+      "Celebrate": "Celebrate",
+      "MindBlown": "Mind blown",
+      "LoveEyes": "Adore"
   },
   "statsUi": {
     "title": "Statistics",

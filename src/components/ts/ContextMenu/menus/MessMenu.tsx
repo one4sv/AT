@@ -4,7 +4,6 @@ import {
     CheckCircle,
     Circle,
     CopySimple,
-    Heart,
     PencilSimple,
     PushPin,
     PushPinSlash,
@@ -17,8 +16,10 @@ import { useDelete } from "../../../hooks/DeleteHook";
 import { useChat } from "../../../hooks/ChatHook";
 import { useMessages } from "../../../hooks/MessagesHook";
 import { useSendMess } from "../../../hooks/SendMessHook";
+import { useUser } from "../../../hooks/UserHook";
 import { DownloadButt } from "../buttons/DownloadButt";
 import useForwardMedia from "../../../hooks/utils/useForwardMedia";
+import ReactionPicker from "../../ReactionPicker";
 
 export default function MessMenu() {
     const { t } = useTranslation("common");
@@ -34,6 +35,7 @@ export default function MessMenu() {
         setRedirect,
     } = useMessages();
     const { pinMess } = useSendMess();
+    const { user } = useUser();
     const forwardMedia = useForwardMedia();
 
     const { options, curChat, point } = menu;
@@ -42,19 +44,12 @@ export default function MessMenu() {
 
     return (
         <>
-            {!isChose && (
-                <div
-                    className="ContextMenuButt"
-                    onClick={() => setReaction(Number(options.id), "Heart")}
-                >
-                    {curChat.isReacted !== "none" ? (
-                        <Heart weight="fill" />
-                    ) : (
-                        <Heart />
-                    )}
-                    {t("chatMenu.reaction")}
-                </div>
-            )}
+            {!isChose && <ReactionPicker
+                compact
+                activeReactions={messages.find(m => m.id === Number(options.id))?.reactions
+                    ?.filter(r => r.user_id === user?.id).map(r => r.reaction) || []}
+                onSelect={reaction => void setReaction(Number(options.id), reaction)}
+            />}
 
             {!isChose && curChat.isMy && (
                 <div

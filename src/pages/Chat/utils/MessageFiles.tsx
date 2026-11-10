@@ -62,7 +62,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
     };
 
     return (
-        <div className="messageFiles">
+        <div className={`messageFiles ${files.length === 1 ? "single" : ""}`}>
             {files.map((file, j) => {
                 const isImage = file.type.startsWith("image/");
                 const isVideo = file.type.startsWith("video/");

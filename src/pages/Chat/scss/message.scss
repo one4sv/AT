@@ -569,3 +569,198 @@
         color: var(--inner_text);
     }
 }
+
+
+/* Media without text is a standalone surface; metadata floats above it. */
+.message.mediaOnly {
+    width: min(40vw, 520px);
+    max-width: min(40vw, 520px);
+    padding: 0;
+    background: transparent;
+    border-radius: 16px;
+    box-shadow: none;
+    overflow: visible;
+
+    .senderName {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 2;
+        max-width: calc(100% - 16px);
+        padding: 4px 9px;
+        border-radius: 12px;
+        background: rgba(12, 14, 18, .55);
+        color: #fff;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    > .messageFiles {
+        display: grid;
+        width: 100%;
+        max-height: none;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 3px;
+        margin: 0;
+        overflow: hidden;
+        border-radius: 16px;
+
+        &.single {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        > .messageFile {
+            min-width: 0;
+            box-shadow: none;
+            border-radius: 0;
+            background: var(--mc);
+        }
+
+        &.single > .messageFile {
+            aspect-ratio: auto;
+        }
+
+        .messageFilePreview {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            object-fit: contain;
+        }
+
+        &.single .messageFilePreview {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 65dvh;
+            object-fit: contain;
+        }
+
+        .messageFileOther {
+            min-height: 15dvh;
+        }
+    }
+
+    > .messageStatusBarDiv {
+        position: absolute;
+        z-index: 3;
+        right: 7px;
+        bottom: 7px;
+        display: flex;
+        width: fit-content;
+        max-width: calc(100% - 14px);
+        height: auto;
+        min-height: 26px;
+        margin: 0;
+        padding: 4px 7px;
+        gap: 5px;
+        border-radius: 12px;
+        background: rgba(12, 14, 18, .58);
+        color: #fff;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+
+        .messageBar {
+            flex-direction: row;
+        }
+
+        .messTime,
+        .editedMess,
+        .messBarSvg,
+        .messageReadSign,
+        .reactionItem,
+        .reactionTrigger {
+            color: #fff;
+        }
+    }
+
+    @media (max-width: 800px) {
+        width: min(86vw, 520px);
+        max-width: min(86vw, 520px);
+    }
+}
+
+.messageStatusBarDiv {
+    min-height: 24px;
+    height: auto;
+    gap: 5px;
+
+    .messageBar {
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+}
+
+.reactions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.reactionItem,
+.reactionTrigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    min-height: 24px;
+    gap: 4px;
+    padding: 3px 6px;
+    border: none;
+    border-radius: 10px;
+    background: var(--interact);
+    color: inherit;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    transition: transform .16s ease, background .16s ease, color .16s ease;
+
+    &.active {
+        background: var(--accent_hov);
+        color: var(--accent_text);
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            transform: translateY(-1px);
+            background: var(--menuButtHover);
+        }
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--accent_text);
+        outline-offset: 1px;
+    }
+}
+
+.message.mediaOnly .reactionItem,
+.message.mediaOnly .reactionTrigger {
+    background: rgba(255, 255, 255, .15);
+    &.active {
+        background: rgba(255, 255, 255, .3);
+    }
+}
+
+.reactionPopover {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    z-index: 7;
+    border-radius: 16px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .2);
+
+    .message.my & {
+        right: 0;
+    }
+    .message.ur & {
+        left: 0;
+    }
+}
+
+.messageWrapper.highlight > .message.mediaOnly {
+    background: transparent;
+
+    > .messageStatusBarDiv,
+    > .messageStatusBarDiv * {
+        color: #fff;
+    }
+}

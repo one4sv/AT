@@ -14,7 +14,9 @@ import AnswerMess from "../utils/AnswerMess";
 import MessageFiles from "../utils/MessageFiles";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import { formatAppTime } from "../../../components/ts/utils/dateToStr";
-import { reactionsArr } from "../../../components/ts/utils/emojies";
+import ReactionIcon from "../../../components/ts/ReactionIcon";
+import ReactionPicker from "../../../components/ts/ReactionPicker";
+import { SmilePlus } from "lucide-react";
 import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
 import HighlightText from "../../../components/ts/HighlightText";
 import HabitInvitation from "./HabitInvitation";
@@ -69,7 +71,7 @@ export default function Message({
         messdb
     } = useSettings();
     const { searchMess } = useChat();
-    const [showReactionButt, setShowReactionButt] = useState<number>(0);
+    const [reactionPickerOpen, setReactionPickerOpen] = useState(false);
     const appearRef = useRef<HTMLDivElement>(null);
     const animateIn = useRef(Boolean(m.animateIn));
 
@@ -101,6 +103,14 @@ export default function Message({
     };
     const isMy = m.sender_id === user.id ? true : false;
     const isChose = activeHeader === "choosing";
+    const mediaOnly = !m.content?.trim() && !!m.files?.length &&
+        !m.redirected_id && !answer && !m.habit_invite_habit_id;
+    const reactionGroups = Object.entries((m.reactions || []).reduce((acc, reaction) => {
+        if (!acc[reaction.reaction]) acc[reaction.reaction] = [];
+        acc[reaction.reaction].push(reaction.user_id);
+        return acc;
+    }, {} as Record<string, string[]>));
+    const ownReactions = (m.reactions || []).filter(reaction => reaction.user_id === user.id).map(reaction => reaction.reaction);
     const openContext = (x: number, y: number) => {
         const reaction = m.reactions.find(r => r.user_id === user.id);
         const isReacted = reaction ? reaction.reaction : "none";
@@ -131,12 +141,11 @@ export default function Message({
                 ${cornerType ? `corner-${cornerType}` : ""}
                 ${menu.point === "mess" && menu.options.id === String(m.id) && "onContextMenu"}
                 ${m.isPending ? "pending" : ""}
+                ${mediaOnly ? "mediaOnly" : ""}
             `}
             ref={el => {
                 messageRefs?.current.set(m.id, el);
             }}
-            onMouseEnter={() => setShowReactionButt(m.id)}
-            onMouseLeave={() => setShowReactionButt(0)}
             onMouseDown={e => {
                 if (e.detail === 2) {
                     const el = e.currentTarget;
@@ -195,7 +204,7 @@ export default function Message({
             </div>}
             <div
                 ref={appearRef}
-                className={`message ${isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""}`}
+                className={`message ${isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""} ${mediaOnly ? "mediaOnly" : ""}`}
             >
                 {!isMy && (showNames === undefined || showNames === true) && chatWith?.is_group && <div
                     className="senderName"
@@ -207,7 +216,7 @@ export default function Message({
                     {m.sender_name}
                 </div>}
                 {answer && scrollToMessage && <AnswerMess answer={answer} scrollToMessage={scrollToMessage} />}
-                {m.habit_invite_habit_id && m.habit_invite_recipient_id ? <HabitInvitation messageId={m.id} recipientId={m.habit_invite_recipient_id} /> : <div className={`messageText ${isMobile ? "mobile" : ""}`}>
+                {m.habit_invite_habit_id && m.habit_invite_recipient_id ? <HabitInvitation messageId={m.id} recipientId={m.habit_invite_recipient_id} /> : !!m.content?.trim() && <div className={`messageText ${isMobile ? "mobile" : ""}`}>
                     <HighlightText text={m.content} search={searchMess} />
                 </div>}
                 {m.files && m.files.length > 0 && <MessageFiles files={m.files} m={m} />}
@@ -229,47 +238,41 @@ export default function Message({
                 </div>}
                 <div className="messageStatusBarDiv">
                     <div className="messageBar">
-                        <span className="messTime">
-                            {messageGetTime(m.created_at)}
-                        </span>
+                        {reactionGroups.length > 0 && <div className="reactions" role="group" aria-label={t("chatUi.chooseReaction")}>
+                            {reactionGroups.map(([reaction, users]) => (
+                                <button
+                                    type="button"
+                                    key={reaction}
+                                    className={`reactionItem ${ownReactions.includes(reaction) ? "active" : ""}`}
+                                    aria-label={`${t(`reactions.${reaction}`)}: ${users.length}`}
+                                    aria-pressed={ownReactions.includes(reaction)}
+                                    title={t(`reactions.${reaction}`)}
+                                    onClick={event => {
+                                        event.stopPropagation();
+                                        void setReaction(m.id, reaction);
+                                    }}
+                                >
+                                    <ReactionIcon value={reaction} size={15} />
+                                    <span>{users.length}</span>
+                                </button>
+                            ))}
+                        </div>}
+                        {!isChose && !m.isPending && <button
+                            type="button"
+                            className={`reactionTrigger ${reactionPickerOpen ? "active" : ""}`}
+                            title={t("chatUi.chooseReaction")}
+                            aria-label={t("chatUi.chooseReaction")}
+                            aria-expanded={reactionPickerOpen}
+                            onClick={event => {
+                                event.stopPropagation();
+                                setReactionPickerOpen(current => !current);
+                            }}
+                        >
+                            <SmilePlus size={15} strokeWidth={1.9} />
+                        </button>}
                         {m.is_pinned && <PushPin weight="fill" className="messBarSvg" />}
                         {m.edited && <span className="editedMess">{t("chatUi.edited")}</span>}
-                        {m.reactions && m.reactions.length > 0 && <div className="reactions" onClick={() => setReaction(m.id, "Heart")}>
-                            {Object.entries(
-                                m.reactions.reduce(
-                                    (acc, r) => {
-                                        if (!acc[r.reaction]) acc[r.reaction] = [];
-                                        acc[r.reaction].push(r.user_id);
-                                        return acc;
-                                    },
-                                    {} as Record<string, string[]>
-                                )
-                            ).map(
-                                ([reaction, users]) => <div key={reaction} className={`reactionItem ${isMy ? "myR" : "urR"}`}>
-
-                                    {reactionsArr.find(r => r.value === reaction)?.label}
-
-                                    <div className="reactionUsers">
-                                        {users.slice(0, 2).map(
-                                            userId => {
-                                                if (!chatWith) return null;
-                                                const src = userId === user.id ? user.avatar_url : chatWith.is_group ? chatWith.members.find(m => m.id === userId) ? chatWith.members.find(m => m.id === userId)?.avatar_url : "" : chatWith.avatar_url;
-                                                if (src) {
-                                                    return (
-                                                        <div key={userId} className="reactionUser">
-                                                            <img src={src} alt="" />
-                                                        </div>
-                                                    );
-                                                }
-                                            }
-                                        )}
-                                        {users.length > 2 && <span>+
-                                            {users.length - 2}
-                                        </span>}
-                                    </div>
-                                </div>
-                            )}
-                        </div>}
+                        <span className="messTime">{messageGetTime(m.created_at)}</span>
                     </div>
                     {isMy && chatWith ? m.isPending ? <div className="messageReadSign ">
                         <ClockCountdownIcon />
@@ -279,16 +282,14 @@ export default function Message({
                         <Check />
                     </div> : ""}
                 </div>
-                {highlightedId === m.id && m.reactions && m.reactions.length === 0 ? <div
-                    className={`reactionButt ${isMy ? "myRB" : "urRB"}`}
-                    style={{
-                        opacity: showReactionButt === m.id ? "1" : "0"
-                    }}
-                    onClick={() => setReaction(m.id, emote)}
-                >
-                    {reactionsArr.find(r => r.value === emote)?.label}
-                </div> : !isMobile && showReactionButt === m.id && (!m.reactions || m.reactions.length === 0) && !isChose && <div className={`reactionButt ${isMy ? "myRB" : "urRB"}`} onClick={() => setReaction(m.id, emote)}>
-                    {reactionsArr.find(r => r.value === emote)?.label}
+                {reactionPickerOpen && !isChose && <div className="reactionPopover" onClick={event => event.stopPropagation()}>
+                    <ReactionPicker
+                        activeReactions={ownReactions}
+                        onSelect={reaction => {
+                            void setReaction(m.id, reaction);
+                            setReactionPickerOpen(false);
+                        }}
+                    />
                 </div>}
             </div>
         </div>
