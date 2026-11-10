@@ -764,3 +764,42 @@
         color: #fff;
     }
 }
+
+/* The quick reaction control on my gradient bubble follows inner_text. */
+.message.my:not(.mediaOnly) .reactionTrigger {
+    background: transparent;
+    color: var(--inner_text);
+    box-shadow: none;
+
+    &.active {
+        background: transparent;
+        color: var(--inner_text);
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: rgba(255, 255, 255, .14);
+            color: var(--inner_text);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background: rgba(255, 255, 255, .14);
+        }
+    }
+}
+
+.message.my.mediaOnly .reactionTrigger {
+    background: transparent;
+
+    &.active {
+        background: transparent;
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: rgba(255, 255, 255, .2);
+        }
+    }
+}
