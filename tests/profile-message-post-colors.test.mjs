@@ -45,7 +45,7 @@ test("short messages grow with reactions and receipts stay inside the bubble", (
     const message = read("src/pages/Chat/components/Message.tsx");
     assert.match(css, /\.message\s*\{\s*max-width:\s*40vw;\s*width:\s*max-content;/);
     assert.match(css, /\.messageStatusBarDiv\s*\{\s*width:\s*max-content;\s*max-width:\s*100%;/);
-    assert.match(css, /\.messageBar\s*\{\s*width:\s*max-content;\s*flex-shrink:\s*0;[\s\S]*?flex-wrap:\s*nowrap;/);
+    assert.match(css, /\.messageBar\s*\{\s*width:\s*max-content;\s*height:\s*24px;\s*flex-shrink:\s*0;[\s\S]*?flex-wrap:\s*nowrap;/);
     assert.match(css, /\.reactions\s*\{\s*display:\s*flex;[\s\S]*?flex-wrap:\s*nowrap;/);
     assert.match(css, /\.messageStatusBarDiv\s*\{[\s\S]*?overflow-x:\s*auto;/);
     assert.match(css, /\.messageReadSign\s*\{\s*flex-shrink:\s*0;/);
