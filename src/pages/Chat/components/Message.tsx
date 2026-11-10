@@ -1,14 +1,15 @@
 import { useTranslation } from "react-i18next";
 import { CheckCircle, ShareFat, PushPin, ClockCountdownIcon } from "@phosphor-icons/react";
 import { useChat } from "../../../components/hooks/ChatHook";
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { message } from "../../../components/context/ChatContext";
 import { useUser } from "../../../components/hooks/UserHook";
 import Linkify from "linkify-react";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
-import { Check, CheckCheck } from "lucide-react";
+import { Check, CheckCheck, UserCircle } from "lucide-react";
 import { useNavigate } from "react-router";
 import AnswerMess from "../utils/AnswerMess";
 import MessageFiles from "../utils/MessageFiles";
@@ -72,6 +73,9 @@ export default function Message({
     } = useSettings();
     const { searchMess } = useChat();
     const [reactionPickerOpen, setReactionPickerOpen] = useState(false);
+    const [reactionPickerPosition, setReactionPickerPosition] = useState({ top: 0, left: 0 });
+    const reactionTriggerRef = useRef<HTMLButtonElement>(null);
+    const reactionPopoverRef = useRef<HTMLDivElement>(null);
     const appearRef = useRef<HTMLDivElement>(null);
     const animateIn = useRef(Boolean(m.animateIn));
 
@@ -111,7 +115,66 @@ export default function Message({
         return acc;
     }, {} as Record<string, string[]>));
     const ownReactions = (m.reactions || []).filter(reaction => reaction.user_id === user.id).map(reaction => reaction.reaction);
+    useLayoutEffect(() => {
+        if (!reactionPickerOpen) return;
+
+        const updatePosition = () => {
+            const button = reactionTriggerRef.current;
+            const popover = reactionPopoverRef.current;
+            if (!button || !popover) return;
+
+            const anchor = button.getBoundingClientRect();
+            const width = popover.offsetWidth;
+            const height = popover.offsetHeight;
+            const left = Math.max(8, Math.min(
+                isMy ? anchor.right - width : anchor.left,
+                window.innerWidth - width - 8
+            ));
+            const top = anchor.top - height - 8 >= 8
+                ? anchor.top - height - 8
+                : Math.min(anchor.bottom + 8, window.innerHeight - height - 8);
+
+            setReactionPickerPosition({ top: Math.max(8, top), left });
+        };
+
+        updatePosition();
+        window.addEventListener("resize", updatePosition);
+        document.addEventListener("scroll", updatePosition, true);
+
+        return () => {
+            window.removeEventListener("resize", updatePosition);
+            document.removeEventListener("scroll", updatePosition, true);
+        };
+    }, [reactionPickerOpen, isMy]);
+
+    useEffect(() => {
+        if (!reactionPickerOpen) return;
+
+        const handleOutside = (event: PointerEvent) => {
+            const target = event.target as Node;
+            if (reactionTriggerRef.current?.contains(target) ||
+                reactionPopoverRef.current?.contains(target)) return;
+            setReactionPickerOpen(false);
+        };
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape") setReactionPickerOpen(false);
+        };
+
+        document.addEventListener("pointerdown", handleOutside, true);
+        document.addEventListener("keydown", handleEscape);
+
+        return () => {
+            document.removeEventListener("pointerdown", handleOutside, true);
+            document.removeEventListener("keydown", handleEscape);
+        };
+    }, [reactionPickerOpen]);
+
+    useEffect(() => {
+        if (menu.visible) setReactionPickerOpen(false);
+    }, [menu.visible]);
+
     const openContext = (x: number, y: number) => {
+        setReactionPickerOpen(false);
         const reaction = m.reactions.find(r => r.user_id === user.id);
         const isReacted = reaction ? reaction.reaction : "none";
         openMenu(
@@ -238,6 +301,9 @@ export default function Message({
                 </div>}
                 <div className="messageStatusBarDiv">
                     <div className="messageBar">
+                        <span className="messTime">{messageGetTime(m.created_at)}</span>
+                        {m.edited && <span className="editedMess">{t("chatUi.edited")}</span>}
+                        {m.is_pinned && <PushPin weight="fill" className="messBarSvg" />}
                         {reactionGroups.length > 0 && <div className="reactions" role="group" aria-label={t("chatUi.chooseReaction")}>
                             {reactionGroups.map(([reaction, users]) => (
                                 <button
@@ -252,12 +318,37 @@ export default function Message({
                                         void setReaction(m.id, reaction);
                                     }}
                                 >
-                                    <ReactionIcon value={reaction} size={15} />
-                                    <span>{users.length}</span>
+                                    <span className="reactionItemMain">
+                                        <ReactionIcon value={reaction} size={21} />
+                                        <span className="reactionCount">{users.length}</span>
+                                    </span>
+                                    <span className="reactionUsers" aria-hidden="true">
+                                        {users.slice(0, 4).map(userId => {
+                                            const member = chatWith?.is_group
+                                                ? chatWith.members.find(member => member.id === userId)
+                                                : null;
+                                            const name = userId === user.id
+                                                ? t("chatUi.you")
+                                                : member?.nick || (m.sender_id === userId ? m.sender_name : chatWith?.name || chatWith?.nick || "");
+                                            const avatar = userId === user.id
+                                                ? user.avatar_url
+                                                : chatWith?.is_group
+                                                    ? member?.avatar_url || (m.sender_id === userId ? m.sender_avatar_url : "")
+                                                    : chatWith?.avatar_url;
+
+                                            return (
+                                                <span key={userId} className="reactionUser" title={name}>
+                                                    {avatar ? <img src={avatar} alt="" loading="lazy" /> : <UserCircle size={14} aria-hidden="true" />}
+                                                </span>
+                                            );
+                                        })}
+                                        {users.length > 4 && <span className="reactionMore">+{users.length - 4}</span>}
+                                    </span>
                                 </button>
                             ))}
                         </div>}
                         {!isChose && !m.isPending && <button
+                            ref={reactionTriggerRef}
                             type="button"
                             className={`reactionTrigger ${reactionPickerOpen ? "active" : ""}`}
                             title={t("chatUi.chooseReaction")}
@@ -270,9 +361,6 @@ export default function Message({
                         >
                             <SmilePlus size={15} strokeWidth={1.9} />
                         </button>}
-                        {m.is_pinned && <PushPin weight="fill" className="messBarSvg" />}
-                        {m.edited && <span className="editedMess">{t("chatUi.edited")}</span>}
-                        <span className="messTime">{messageGetTime(m.created_at)}</span>
                     </div>
                     {isMy && chatWith ? m.isPending ? <div className="messageReadSign ">
                         <ClockCountdownIcon />
@@ -282,15 +370,22 @@ export default function Message({
                         <Check />
                     </div> : ""}
                 </div>
-                {reactionPickerOpen && !isChose && <div className="reactionPopover" onClick={event => event.stopPropagation()}>
-                    <ReactionPicker
-                        activeReactions={ownReactions}
-                        onSelect={reaction => {
-                            void setReaction(m.id, reaction);
-                            setReactionPickerOpen(false);
-                        }}
-                    />
-                </div>}
+                {reactionPickerOpen && !isChose && createPortal(
+                    <div
+                        ref={reactionPopoverRef}
+                        className="reactionPopover"
+                        style={reactionPickerPosition}
+                    >
+                        <ReactionPicker
+                            activeReactions={ownReactions}
+                            onSelect={reaction => {
+                                void setReaction(m.id, reaction);
+                                setReactionPickerOpen(false);
+                            }}
+                        />
+                    </div>,
+                    document.body
+                )}
             </div>
         </div>
     );

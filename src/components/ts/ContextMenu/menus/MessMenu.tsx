@@ -23,7 +23,7 @@ import ReactionPicker from "../../ReactionPicker";
 
 export default function MessMenu() {
     const { t } = useTranslation("common");
-    const { menu } = useContextMenu();
+    const { menu, closeMenu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { setDeleteConfirm, setDeleteMess } = useDelete();
     const { setReaction, messages, setActiveHeader, activeHeader } = useChat();
@@ -48,7 +48,10 @@ export default function MessMenu() {
                 compact
                 activeReactions={messages.find(m => m.id === Number(options.id))?.reactions
                     ?.filter(r => r.user_id === user?.id).map(r => r.reaction) || []}
-                onSelect={reaction => void setReaction(Number(options.id), reaction)}
+                onSelect={reaction => {
+                    void setReaction(Number(options.id), reaction);
+                    closeMenu();
+                }}
             />}
 
             {!isChose && curChat.isMy && (

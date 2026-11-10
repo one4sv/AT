@@ -1,6 +1,8 @@
 .reactionPicker {
     display: grid;
-    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-template-columns: repeat(8, 35px);
+    width: max-content;
+    max-width: calc(100vw - 24px);
     gap: 4px;
     padding: 6px;
     border-radius: 16px;
@@ -11,18 +13,19 @@
     user-select: none;
 
     &.compact {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-columns: repeat(6, 35px);
         background: transparent;
+        gap: 3px;
         padding: 5px;
-        gap: 2px;
     }
 
     .reactionPickerItem {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 34px;
-        height: 34px;
+        width: 35px;
+        height: 38px;
+        min-height: 0;
         padding: 0;
         border: none;
         border-radius: 12px;
@@ -31,14 +34,20 @@
         cursor: pointer;
         transition: background .15s ease, transform .15s ease;
 
+        .reactionIllustration {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            pointer-events: none;
+            user-select: none;
+        }
+
         &.active {
-            color: var(--accent_text);
             background: var(--accent_hov);
         }
 
         @media (hover: hover) {
             &:hover {
-                color: var(--accent_text);
                 background: var(--menuButtHover);
                 transform: translateY(-2px);
             }
@@ -51,13 +60,20 @@
     }
 
     @media (max-width: 800px) {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-columns: repeat(6, 35px);
+
         &.compact {
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-        }
-        .reactionPickerItem {
-            width: 35px;
-            height: 35px;
+            grid-template-columns: repeat(5, 35px);
         }
     }
+}
+
+.reactionIllustration {
+    display: inline-block;
+    flex-shrink: 0;
+    object-fit: contain;
+    vertical-align: middle;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
 }

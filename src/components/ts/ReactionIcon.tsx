@@ -1,54 +1,51 @@
-import {
-    Heart, ThumbsUp, ThumbsDown, Laugh, Eye, Flame, PartyPopper, Hand,
-    HandHeart, BadgeCheck, Frown, Angry, Brain, Sparkles, Lightbulb, Smile,
-    type LucideIcon
-} from "lucide-react";
+import { useState } from "react";
+import { reactionsArr } from "./utils/emojies";
 
-const icons: Record<string, LucideIcon> = {
-    Heart,
-    Like: ThumbsUp,
-    Laugh,
-    Wow: Eye,
-    Fire: Flame,
-    Party: PartyPopper,
-    Clap: Hand,
-    Thanks: HandHeart,
-    Hundred: BadgeCheck,
-    Dislike: ThumbsDown,
-    Cry: Frown,
-    Angry,
-    Thinking: Brain,
-    Celebrate: Sparkles,
-    MindBlown: Lightbulb,
-    LoveEyes: Smile
+const illustrations: Record<string, string> = {
+    Heart: "2764",
+    Like: "1f44d",
+    Laugh: "1f602",
+    Wow: "1f62e",
+    Fire: "1f525",
+    Party: "1f389",
+    Clap: "1f44f",
+    Thanks: "1f64f",
+    Hundred: "1f4af",
+    Dislike: "1f44e",
+    Cry: "1f622",
+    Angry: "1f620",
+    Thinking: "1f914",
+    Celebrate: "1f973",
+    MindBlown: "1f92f",
+    LoveEyes: "1f60d"
 };
 
-const colors: Record<string, string> = {
-    Heart: "#ff6384",
-    Like: "#60a5fa",
-    Dislike: "#a78bfa",
-    Laugh: "#fbbf24",
-    Wow: "#f9a84d",
-    Fire: "#ff794f",
-    Party: "#b794f6",
-    Clap: "#eab65b",
-    Thanks: "#fb8fb6",
-    Hundred: "#ff7180",
-    Cry: "#73bcfa",
-    Angry: "#fb6868",
-    Thinking: "#a6a5f3",
-    Celebrate: "#ce91f4",
-    MindBlown: "#54d6bf",
-    LoveEyes: "#f978b4"
-};
+// Fluent Emoji 3D (Microsoft, MIT): see docs/REACTION_ASSETS.md.
+const baseUrl = "https://cdn.jsdelivr.net/gh/shuding/fluentui-emoji-unicode@main/assets/";
 
 export default function ReactionIcon({ value, size = 18 }: { value: string; size?: number }) {
-    const Icon = icons[value] || Heart;
-    return <Icon
-        size={size}
-        strokeWidth={1.9}
-        fill={value === "Heart" ? "currentColor" : "none"}
-        style={{ color: colors[value] || "var(--accent_text)" }}
-        aria-hidden="true"
-    />;
+    const file = illustrations[value] || illustrations.Heart;
+    const src = `${baseUrl}${file}_3d.png`;
+    const [ failedSrc, setFailedSrc ] = useState<string | null>(null);
+
+    if (failedSrc === src) {
+        return (
+            <span className="reactionIllustrationFallback" aria-hidden="true" style={{ fontSize: size }}>
+                {reactionsArr.find(reaction => reaction.value === value)?.label || "❤️"}
+            </span>
+        );
+    }
+
+    return (
+        <img
+            className="reactionIllustration"
+            src={src}
+            alt=""
+            width={size}
+            height={size}
+            decoding="async"
+            draggable={false}
+            onError={() => setFailedSrc(src)}
+        />
+    );
 }
