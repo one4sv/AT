@@ -7,6 +7,7 @@ import { useContextMenu } from "../hooks/ContextMenuHook";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDrop } from "../hooks/DropHook";
 import { useBlackout } from "../hooks/BlackoutHook";
+import { useMessages } from "../hooks/MessagesHook";
 import { useUser } from "../hooks/UserHook";
 import { useIdentify } from "../hooks/utils/useIdentify";
 import { useMemo } from "react";
@@ -25,6 +26,7 @@ export default function Contact({ contact }: ContactType) {
     const { typingMap, setActiveHeader } = useChat();
     const { onlineMap } = useContacts();
     const { setBlackout } = useBlackout();
+    const { forwardMedia, setForwardMedia } = useMessages();
     const { openMenu } = useContextMenu();
     const { setDroppedFiles } = useDrop();
     const { user } = useUser();
@@ -193,6 +195,12 @@ export default function Contact({ contact }: ContactType) {
             className={`contactsUser ${isActive ? "active" : ""}`}
             key={contact.id}
             onClick={() => {
+                if (forwardMedia && !forwardMedia.targetPath) {
+                    setForwardMedia({
+                        ...forwardMedia,
+                        targetPath: contact.is_group ? `/chat/g/${contact.id}` : `/chat/${contact.nick}`
+                    });
+                }
                 setBlackout({ seted: false });
                 setActiveHeader("text");
                 closeMenu();

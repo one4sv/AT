@@ -229,7 +229,8 @@ export default function ChatMedia() {
             id: String(item.message_id),
             nick: chatWith.is_group ? `g/${chatWith.id}` : chatWith.nick,
             name: item.name,
-            url: item.category !== "link" ? item.url : undefined,
+            url: item.url,
+            type: item.category === "link" ? "text/url" : item.type,
             onCopyLink: item.category === "link" ? () => { void navigator.clipboard.writeText(item.url); } : undefined
         });
     };

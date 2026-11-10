@@ -14,6 +14,7 @@ type MenuOptions = {
     isMy?:boolean,
     func?: () => void,
     url?:string,
+    type?:string,
     postHeader?: boolean,
     onCopy?: () => void,
     onCopyLink?: () => void,

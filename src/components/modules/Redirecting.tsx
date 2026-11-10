@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 export default function Redirecting() {
     const { setSearch } = useContacts()
     const { setBlackout } = useBlackout()
-    const { setRedirect, setForwardPost } = useMessages()
+    const { setRedirect, setForwardPost, setForwardMedia } = useMessages()
     const { t } = useTranslation("settings")
     const searchRef = useRef<HTMLInputElement | null>(null)
     const [ filter, setFilter ] = useState<"all" | "private" | "group">("all")
@@ -44,6 +44,7 @@ export default function Redirecting() {
                     setBlackout({seted:false})
                     setRedirect(undefined)
                     setForwardPost(null)
+                    setForwardMedia(null)
                 }}>
                     Отмена
                 </div>

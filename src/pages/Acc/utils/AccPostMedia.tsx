@@ -1,9 +1,10 @@
 import { X } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import GetIconByType from "../../Chat/utils/getIconByType";
 import useImagePreview from "../../../components/hooks/utils/useImagePreview";
 import TrafficImage from "../../../components/ts/TrafficImage";
 import { useSettings } from "../../../components/hooks/SettingsHook";
+import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import type { Media } from "../../../components/context/ChatContext";
 
 function normalizePostFileName(name: string) {
@@ -42,6 +43,7 @@ export default function AccPostMedia({
 }: AccPostMediaProps) {
     const openImage = useImagePreview(gallery || (red ? keptMedia : media) || []);
     const { autoLoadImages, autoPlayGif } = useSettings();
+    const { openMenu } = useContextMenu();
     const [newFilePreviews, setNewFilePreviews] = useState<{ file: File; url: string }[]>([]);
     useEffect(() => {
         if (!red) return;
@@ -49,6 +51,17 @@ export default function AccPostMedia({
         setNewFilePreviews(previews);
         return () => previews.forEach(preview => URL.revokeObjectURL(preview.url));
     }, [newFiles, red]);
+    const openMediaMenu = (event: MouseEvent<HTMLDivElement>, file: Media) => {
+        event.preventDefault();
+        event.stopPropagation();
+        openMenu(event.clientX, event.clientY, "media", {
+            id: "",
+            name: normalizePostFileName(file.name),
+            url: file.url,
+            type: file.type
+        });
+    };
+
     return (
         <div className="accPostmedia">
             {!red ? (
@@ -59,7 +72,10 @@ export default function AccPostMedia({
                             const isImage = file.type.startsWith("image/");
                             const isVideo = file.type.startsWith("video/");
                             return (
-                                <div key={j} className="postFileGrid">
+                                <div key={j} className="postFileGrid"
+                                    data-context-menu="true"
+                                    onContextMenu={event => openMediaMenu(event, file)}
+                                >
                                     {isImage ? (
                                         <TrafficImage
                                             src={file.url}

@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useEffect, useState } from "react";
 import { type ReactNode } from "react"
 import { useLocation } from "react-router";
 import { type Media } from "./ChatContext";
@@ -6,10 +6,13 @@ import { type message } from "./ChatContext";
 const MessagesContext = createContext<MessagesContextType | null>(null);
 
 export type ForwardPost = { id: number; text: string; author: string };
+export type ForwardMedia = { url: string; name: string; type?: string; isLink?: boolean; targetPath?: string };
 
 export interface MessagesContextType {
     forwardPost: ForwardPost | null,
     setForwardPost: (post: ForwardPost | null) => void,
+    forwardMedia: ForwardMedia | null,
+    setForwardMedia: (media: ForwardMedia | null) => void,
     chosenMess: { id: number; text: string }[],
     setChosenMess: React.Dispatch<React.SetStateAction<{ id: number; text: string }[]>>,
     showNames: boolean,
@@ -42,6 +45,7 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
     } | null>(null)
     const [ redirectState, setRedirectState ] = useState<message[] | undefined>(undefined)
     const [ forwardPost, setForwardPostState ] = useState<ForwardPost | null>(null);
+    const [ forwardMedia, setForwardMediaState ] = useState<ForwardMedia | null>(null);
     const [ showNames, setShowNames ] = useState(true)
 
     const location = useLocation()
@@ -75,8 +79,19 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
             setAnswerState(null);
             setEditingState(null);
             setRedirectState(undefined);
+            setForwardMediaState(null);
         }
     };
+
+    const setForwardMedia = useCallback((media: ForwardMedia | null) => {
+        setForwardMediaState(media);
+        if (media && !media.targetPath) {
+            setAnswerState(null);
+            setEditingState(null);
+            setRedirectState(undefined);
+            setForwardPostState(null);
+        }
+    }, []);
 
     useEffect(() => {
         setAnswerState(null)
@@ -85,6 +100,7 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
             setForwardPostState(null);
             setShowNames(true)
             setRedirectState(undefined)
+            setForwardMediaState(null)
         }
     }, [location.pathname])
 
@@ -99,6 +115,7 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
         <MessagesContext.Provider
             value={{
                 forwardPost, setForwardPost,
+                forwardMedia, setForwardMedia,
                 chosenMess, setChosenMess,
                 pendingScrollId, setPendingScrollId,
                 answer: answerState, setAnswer,

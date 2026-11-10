@@ -67,7 +67,19 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                 const isImage = file.type.startsWith("image/");
                 const isVideo = file.type.startsWith("video/");
                 return (
-                    <div key={j} className="messageFile">
+                    <div key={j} className="messageFile" data-context-menu="true"
+                        onContextMenu={event => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            openMenu(event.clientX, event.clientY, "media", {
+                                id: String(m.id),
+                                nick: chatWith ? chatWith.is_group ? `g/${chatWith.id}` : chatWith.nick : undefined,
+                                url: file.url,
+                                name: file.name,
+                                type: file.type
+                            });
+                        }}
+                    >
                         {isImage ? (
                             <TrafficImage src={file.url} alt={file.name} mimeType={file.type} className="messageFilePreview" contextMenu onClick={event => {
                                 event.stopPropagation();
@@ -80,7 +92,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                                     const reaction = m.reactions.find(r => r.user_id === user.id);
                                     return reaction ? reaction.reaction : "none";
                                 })();
-                                openMenu(e.clientX, e.clientY, "mess", { id:String(m.id), name:file.name, url:file.url }, undefined, undefined,
+                                openMenu(e.clientX, e.clientY, "mess", { id:String(m.id), name:file.name, url:file.url, type:file.type }, undefined, undefined,
                                     { isReacted, isMy:m.sender_id === user.id, text:m.content, previewText: m.content ?? (m.files && m.files?.length > 0 ? t("chatUi.mediaCount", { count: m.files?.length }) : t("chatUi.forwardedMessage")),
                                     sender:m.sender_name }
                                 )

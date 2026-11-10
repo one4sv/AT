@@ -6,13 +6,15 @@ import { useBlackout } from "../hooks/BlackoutHook";
 import { useNavigate } from "react-router";
 import { useMessages } from "../hooks/MessagesHook";
 import { ArrowDownToLine, ChevronLeft, ChevronRight, MessageCircleReply } from "lucide-react";
-import { UserIcon } from "@phosphor-icons/react";
+import { UserIcon, ShareFat } from "@phosphor-icons/react";
+import useForwardMedia from "../hooks/utils/useForwardMedia";
 
 export default function ImgPrev() {
     const { t } = useTranslation("common");
     const { blackout, setBlackout, setBlackoutStack } = useBlackout();
     const { setPendingScrollId } = useMessages();
     const navigate = useNavigate();
+    const forwardMedia = useForwardMedia();
     const { images, imageIndex = 0 } = blackout;
     const { nick, id, name } = blackout.options ?? {};
     const sender = blackout.sender;
@@ -283,6 +285,18 @@ export default function ImgPrev() {
             )}
 
             <div className="imgPrevMenu" onClick={event => event.stopPropagation()}>
+                {blackout.img && (
+                    <div
+                        className="imgPrevToMessage imgPrevMenuButt"
+                        title={t("chatMenu.forward")}
+                        onClick={() => forwardMedia({
+                            url: blackout.img!,
+                            name: name || "image"
+                        })}
+                    >
+                        <ShareFat size={22} />
+                    </div>
+                )}
                 {nick && id && (
                     <div
                         className="imgPrevToMessage imgPrevMenuButt"

@@ -12,6 +12,7 @@ import { MessBarBlock } from "../../utils/MessBarBlock";
 import type { Media, message } from "../../../../components/context/ChatContext";
 import { useSendMess } from "../../../../components/hooks/SendMessHook";
 import { useUser } from "../../../../components/hooks/UserHook";
+import { useNote } from "../../../../components/hooks/NoteHook";
 import EmojiButton from "../../../../components/ts/utils/EmojiButton";
 interface FailedChatDraft {
     key: number;
@@ -67,6 +68,8 @@ export default function ChatTextArea({
     const {
         forwardPost,
         setForwardPost,
+        forwardMedia,
+        setForwardMedia,
         answer,
         editing,
         setEditing,
@@ -77,6 +80,7 @@ export default function ChatTextArea({
         setChosenMess
     } = useMessages();
     const { user } = useUser();
+    const { showNotification } = useNote();
     const { t } = useTranslation("acc");
     const { t: tc } = useTranslation("common");
     const sending = useRef(false);
@@ -97,6 +101,42 @@ export default function ChatTextArea({
         setFailedDrafts(failedChatDrafts.get(draftKey) ?? []);
         setRetryingFailedId(null);
     }, [draftKey]);
+    useEffect(() => {
+        if (!forwardMedia || forwardMedia.targetPath !== location.pathname || chatLoading) return;
+
+        if (forwardMedia.isLink) {
+            setMess(prev => [prev.trim(), forwardMedia.url].filter(Boolean).join("\n"));
+            setForwardMedia(null);
+            return;
+        }
+
+        const controller = new AbortController();
+        const prepare = async () => {
+            try {
+                const response = await fetch(forwardMedia.url, {
+                    credentials: "include",
+                    signal: controller.signal
+                });
+                if (!response.ok) throw new Error("Media fetch failed");
+                const blob = await response.blob();
+                if (controller.signal.aborted) return;
+
+                const file = new File([blob], forwardMedia.name || "media", {
+                    type: blob.type || forwardMedia.type || "application/octet-stream"
+                });
+                setFiles(prev => [...prev, file]);
+                setForwardMedia(null);
+            } catch {
+                if (controller.signal.aborted) return;
+                showNotification("error", tc("chatUi.forwardMediaFailed"));
+                setForwardMedia(null);
+            }
+        };
+
+        void prepare();
+        return () => controller.abort();
+    }, [forwardMedia, location.pathname, chatLoading, setForwardMedia, setMess, showNotification, tc]);
+
 
     const removeFailedDraft = (key: number) => {
         const next = (failedChatDrafts.get(draftKey) ?? []).filter(draft => draft.key !== key);
@@ -172,7 +212,7 @@ export default function ChatTextArea({
         }
     };
     const handleSend = async () => {
-        if (sending.current) return;
+        if (sending.current || forwardMedia?.targetPath === location.pathname) return;
         const currentPost = forwardPost;
         const currentRoute = location.pathname;
         const currentDraftKey = draftKey;
@@ -321,7 +361,7 @@ export default function ChatTextArea({
             setFiles(prev => prev.filter((_, i) => i !== index - oldMedia.length));
         }
     };
-    const barOpen = forwardPost !== null || files.length > 0 || answer !== null || editing !== null || redirect !== undefined;
+    const barOpen = forwardPost !== null || forwardMedia?.targetPath === location.pathname || files.length > 0 || answer !== null || editing !== null || redirect !== undefined;
 
     return (
         <>
@@ -369,6 +409,15 @@ export default function ChatTextArea({
                             <div className="answer2str">{forwardPost.text || t("post.open")}</div>
                         </div>
                         <button type="button" className="closeAnswer" aria-label={t("editor.close")} onClick={() => setForwardPost(null)}>
+                            <X />
+                        </button>
+                    </div>}
+                    {forwardMedia?.targetPath === location.pathname && <div className="answerDiv postForwardDraft">
+                        <div className="answer">
+                            <div className="answer1str">{tc("chatMenu.forward")}</div>
+                            <div className="answer2str">{forwardMedia.name}</div>
+                        </div>
+                        <button type="button" className="closeAnswer" aria-label={t("editor.close")} onClick={() => setForwardMedia(null)}>
                             <X />
                         </button>
                     </div>}

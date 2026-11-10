@@ -18,6 +18,7 @@ import { useChat } from "../../../hooks/ChatHook";
 import { useMessages } from "../../../hooks/MessagesHook";
 import { useSendMess } from "../../../hooks/SendMessHook";
 import { DownloadButt } from "../buttons/DownloadButt";
+import useForwardMedia from "../../../hooks/utils/useForwardMedia";
 
 export default function MessMenu() {
     const { t } = useTranslation("common");
@@ -33,6 +34,7 @@ export default function MessMenu() {
         setRedirect,
     } = useMessages();
     const { pinMess } = useSendMess();
+    const forwardMedia = useForwardMedia();
 
     const { options, curChat, point } = menu;
     const isChose = activeHeader === "choosing"
@@ -72,6 +74,15 @@ export default function MessMenu() {
             )}
 
             {options?.url && options?.name && !isChose && DownloadButt(options.url, options.name)}
+
+            {options?.url && options?.name && !isChose && <div className="ContextMenuButt" onClick={() => forwardMedia({
+                url: options.url!,
+                name: options.name!,
+                type: options.type
+            })}>
+                <ShareFat />
+                {t("chatMenu.forwardMedia")}
+            </div>}
 
             <div
                 className="ContextMenuButt"

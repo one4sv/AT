@@ -183,6 +183,7 @@
     "today": "Today",
     "yesterdayShort": "Yesterday",
     "pendingDeletion": "This account is pending deletion. Messages are disabled.",
+    "forwardMediaFailed": "Could not prepare media for forwarding",
     "failedMessage": "Unsent message",
     "retryMessage": "Retry sending",
     "discardFailedMessage": "Discard unsent message"
@@ -557,6 +558,7 @@
     "copyFailed": "Could not copy or share the link",
     "blockedStatus": "Blocked",
     "showInChat": "Show in chat",
+    "forwardMedia": "Forward media",
     "loadFailed": "Could not load",
     "enterChatName": "Enter a chat name",
     "selectMember": "Select at least one participant",
