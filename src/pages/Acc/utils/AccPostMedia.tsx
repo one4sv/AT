@@ -82,6 +82,7 @@ export default function AccPostMedia({
                                             alt={fileName}
                                             mimeType={file.type}
                                             className="postFilePreview"
+                                            contextMenu
                                             onClick={event => openImage(file, event)}
                                         />
                                     ) : isVideo ? (
