@@ -43,9 +43,11 @@ test("post-linked habit SVG uses inner_text over the accent gradient", () => {
 test("short messages grow with reactions and receipts stay inside the bubble", () => {
     const css = read("src/pages/Chat/scss/message.scss");
     const message = read("src/pages/Chat/components/Message.tsx");
-    assert.match(css, /\.message\s*\{\s*max-width:\s*25vw;\s*width:\s*max-content;/);
+    assert.match(css, /\.message\s*\{\s*max-width:\s*40vw;\s*width:\s*max-content;/);
     assert.match(css, /\.messageStatusBarDiv\s*\{\s*width:\s*max-content;\s*max-width:\s*100%;/);
-    assert.match(css, /\.messageBar\s*\{\s*min-width:\s*0;\s*max-width:\s*100%;[\s\S]*?flex-wrap:\s*wrap;/);
+    assert.match(css, /\.messageBar\s*\{\s*width:\s*max-content;\s*flex-shrink:\s*0;[\s\S]*?flex-wrap:\s*nowrap;/);
+    assert.match(css, /\.reactions\s*\{\s*display:\s*flex;[\s\S]*?flex-wrap:\s*nowrap;/);
+    assert.match(css, /\.messageStatusBarDiv\s*\{[\s\S]*?overflow-x:\s*auto;/);
     assert.match(css, /\.messageReadSign\s*\{\s*flex-shrink:\s*0;/);
     assert.match(message, /users\.length >= 4 && <span className="reactionCount">\{users\.length\}<\/span>/);
     assert.doesNotMatch(message, /className="reactionMore"/);

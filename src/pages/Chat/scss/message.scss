@@ -179,7 +179,7 @@
 }
 
 .message {
-    max-width: 25vw;
+    max-width: 40vw;
     width: max-content;
     box-sizing: border-box;
     padding: 0.6vh 0.4vw 0.4vh 0.4vw;
@@ -219,7 +219,7 @@
         }
     }
     @media (max-width:800px) {
-        max-width: 70vw;
+        max-width: 86vw;
         padding: 0.5vh 2vw;
     }
 }
@@ -695,12 +695,18 @@
     height: auto;
     gap: 5px;
     box-sizing: border-box;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 
     .messageBar {
-        min-width: 0;
-        max-width: 100%;
+        width: max-content;
+        flex-shrink: 0;
         gap: 5px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
     }
 
     .messTime,
@@ -717,9 +723,8 @@
 .reactions {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    min-width: 0;
-    max-width: 100%;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
     gap: 4px;
 }
 
