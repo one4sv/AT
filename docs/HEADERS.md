@@ -69,3 +69,8 @@
 ## 12.11.2026 — хедер страницы плана
 
 Общий `Header` отображает справа `headerButt.planHeaderActionsButt` с `DotsThreeIcon` только когда активный `/plan/:id` установил `PageTitleContext.headerMenu` для владельца. Короткое нажатие на кнопку или название плана открывает контекстное меню `plan`; длительное удержание через `useHeaderMenuGestures` (`data-header-gesture="plan"`) использует те же команды. При уходе со страницы `setHeaderMenu(null)` удаляет действия из общего хедера, `quick/chat/habit` не меняются. Порядок z-index должен оставаться как в общих правилах (Header ниже SM и поверх route).
+
+
+## 12.11.2026 — точное совпадение кнопки действий плана с чатом
+
+Кнопка справа в общем `Header` на странице плана должна быть **та же по ширине и иконке**, что в `ChatUser`: `<div className="headerButt"> <DotsThreeOutlineVerticalIcon weight="fill"/> </div>`. Для плана добавляется только `planHeaderActionsButt` и `data-header-gesture="plan"`, семантические клавиатурные атрибуты, но нет локального размера, `padding` или `aspect-ratio`. База `.headerButt` в `src/scss/header.scss` задаёт 4dvh и aspect-ratio 1/1 (на мобильном 5dvh). **Не** использовать горизонтальный `DotsThreeIcon` и нативный `button`, который может добавить browser padding и поменять фактическую ширину. На удержание и клик остаётся меню управления планом.

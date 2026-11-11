@@ -156,3 +156,16 @@ test("plan details stay in place when inputs become active", () => {
     assert.match(css, /\.planMainSection \.planDetailsInput\[readonly\],[\s\S]*?pointer-events: none;/);
     assert.match(date, /dateFormat=\{dateFormat\}/);
 });
+
+
+test("plan header action is the same vertical three-dot control and width as the chat header", () => {
+    const sharedHeader = read("src/components/ts/Header.tsx");
+    const chatHeader = read("src/pages/Chat/components/ChatUser.tsx");
+    const styles = read("src/scss/header.scss");
+    assert.match(chatHeader, /<div className="headerButt" data-header-gesture="chat"/);
+    assert.match(chatHeader, /<DotsThreeOutlineVerticalIcon weight="fill"\/>/);
+    assert.match(sharedHeader, /className="headerButt planHeaderActionsButt"/);
+    assert.match(sharedHeader, /<DotsThreeOutlineVerticalIcon weight="fill"\/>/);
+    assert.doesNotMatch(sharedHeader, /<DotsThreeIcon/);
+    assert.match(styles, /\.headerButt\s*\{[\s\S]*?height: 4dvh;[\s\S]*?aspect-ratio: 1\/1;/);
+});

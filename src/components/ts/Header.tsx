@@ -4,7 +4,7 @@ import { usePageTitle } from "../hooks/PageContextHook";
 import useCompactLayout from "../hooks/utils/useCompactLayout";
 import { useLocation, useNavigate } from "react-router";
 import { useSettings } from "../hooks/SettingsHook";
-import { DotsThreeIcon, TextIndentIcon } from "@phosphor-icons/react";
+import { DotsThreeOutlineVerticalIcon, TextIndentIcon } from "@phosphor-icons/react";
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { getHeaderScrollTarget } from "../ts/utils/pageScroll";
 import { requestContentRefresh } from "../ts/utils/contentRefresh";
@@ -94,7 +94,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                     {titleSuffix}
                 </div>
                 {rightAction}
-                {planHeaderMenu && <button type="button" className="headerButt planHeaderActionsButt"
+                {planHeaderMenu && <div role="button" tabIndex={0} className="headerButt planHeaderActionsButt"
                     data-header-gesture="plan" aria-label={t("plans.management")}
                     onClick={event => {
                         event.stopPropagation();
@@ -103,10 +103,17 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                     }}
                     onContextMenu={event => {
                         event.preventDefault();
+                        event.stopPropagation();
                         showPlanMenu(event.clientX, event.clientY);
+                    }}
+                    onKeyDown={event => {
+                        if (event.key !== "Enter" && event.key !== " ") return;
+                        event.preventDefault();
+                        const rect = event.currentTarget.getBoundingClientRect();
+                        showPlanMenu(rect.left, rect.bottom + 6);
                     }}>
-                    <DotsThreeIcon weight="bold"/>
-                </button>}
+                    <DotsThreeOutlineVerticalIcon weight="fill"/>
+                </div>}
             </div>
         </>
     );
