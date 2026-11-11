@@ -11,6 +11,9 @@ import type { ScheduleBlockType } from "../../../../components/context/ScheduleC
 import { isOddWeek } from "../../utils/isOddWeek"
 import { useSettings } from "../../../../components/hooks/SettingsHook"
 import { isMobile } from "react-device-detect"
+import { usePlans } from "../../../../components/hooks/PlansHook"
+import { useNavigate } from "react-router-dom"
+import type { OneOffPlan } from "../../../../components/context/PlansContext"
 
 export type CountInpsType = {
     fullDate: string;
@@ -27,6 +30,8 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
     const { t, i18n } = useTranslation("common")
     const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU"
     const { habits } = useHabits()
+    const { plans } = usePlans()
+    const navigate = useNavigate()
     const { habit } = useTheHabit()
     const { weekStart } = useSettings()
     const { schedules, habitSchedule, loadHabitSchedule, saveHabitSchedule, loading, schedule_settings } = useSchedule()
@@ -77,7 +82,8 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                 value: date.getDay(),
                 label: date.toLocaleDateString(locale, { weekday: "short" }),
                 dateStr: date.toLocaleDateString(locale, { day: "numeric", month: "short" }),
-                fullDate: date.toISOString().split("T")[0]
+                fullDate: [date.getFullYear(), String(date.getMonth() + 1).padStart(2,"0"),
+                    String(date.getDate()).padStart(2,"0")].join("-")
             })
         }
         return result
@@ -90,6 +96,8 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
         return d;
     }, []);
     const secondWeek = useMemo(() => createWeek(secondWeekStart), [isWeek, secondWeekStart, locale]);
+
+    const planTime = (plan: OneOffPlan) => plan.start_time?.slice(0, 5) || plan.end_time?.slice(0, 5) || "";
 
     const sortHabits = (a: Habit, b: Habit) => {
         const getPriority = (h: Habit) => {
@@ -278,6 +286,26 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
                                     )
                                 })
                         )}
+                        {!id && plans
+                            .filter(plan => plan.plan_date === d.fullDate &&
+                                plan.membership_status !== "pending" && plan.status !== "canceled")
+                            .sort((a, b) => planTime(a).localeCompare(planTime(b)))
+                            .map(plan => <div className="scheduleBlock planScheduleBlock"
+                                key={"plan-" + plan.id + "-" + d.fullDate}
+                                role="button" tabIndex={0}
+                                onClick={() => navigate("/plan/" + plan.id)}
+                                onKeyDown={event => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                        event.preventDefault();
+                                        navigate("/plan/" + plan.id);
+                                    }
+                                }}>
+                                <div className="scheduleBlockText">
+                                    <span className="scheduleHabitTime">{plan.start_time?.slice(0,5) ||
+                                        plan.end_time?.slice(0,5) || t("plans.noTime")}</span>
+                                    <span className="scheduleHabitName">{plan.name}</span>
+                                </div>
+                            </div>)}
                     </div>
                 ))}
             </div>

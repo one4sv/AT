@@ -19,6 +19,8 @@ import Complete from "./components/Habit/Complete/Complete";
 import Schedule from "./components/Schedule/Schedule";
 import HabitOverviewLayout from "./components/Overview/HabitOverviewLayout";
 import { useSchedule } from "../../components/hooks/ScheduleHook";
+import { usePlans } from "../../components/hooks/PlansHook";
+import { todayStrFunc } from "../../components/ts/utils/dateToStr";
 import { useHabits } from "../../components/hooks/HabitsHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
 import HabitMenu from "./components/HabitInfo/HabitMenu";
@@ -49,6 +51,7 @@ export default function Habit() {
         setShowSlide
     } = useSideMenu();
     const { schedules } = useSchedule();
+    const { plans } = usePlans();
     const { user } = useUser();
     const { habitId } = useParams<{
         habitId: string;
@@ -98,8 +101,11 @@ export default function Habit() {
         }
     }, [habitId, loadingHabits, calendarLoading]);
 
-    const shouldShowSchedule = !habitId && Object.values(schedules).some(arr => arr.length > 0) || habit && habitId === String(habit.id) && habit.periodicity !== "sometimes" && habitSettings.schedule;
-    if (habitId && loadingHabit || loadingHabits || calendarLoading) {
+    const shouldShowSchedule = (!habitId && (Object.values(schedules).some(arr => arr.length > 0) ||
+        plans.some(plan => plan.membership_status !== "pending" && plan.status !== "canceled" &&
+            plan.plan_date >= todayStrFunc()))) ||
+        !!(habit && habitId === String(habit.id) && habit.periodicity !== "sometimes" && habitSettings.schedule);
+    if (habitId && (loadingHabit || loadingHabits || calendarLoading)) {
         return <Skeleton type="habit" overview={!habitId} />;
     }
     const isMy = !!habit && habit.user_id === user.id;

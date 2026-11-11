@@ -56,17 +56,16 @@ const DayCell = ({ habits, habit, day, month, year, type }: DayCellProps) => {
             <div className="calendarDots">
                 {completedArr.length > 0 && <div className="calendarDot comp"></div>}
                 {nowArr.length > 0 && <div className="calendarDot now"></div>}
-                {(plannedArr.length > 0 || willArr.length > 0) && (
+                {(plannedArr.length > 0 || willArr.length > 0 || oneOffCount > 0) && (
                     <div className="calendarDot will"></div>
                 )}
                 {skippedArr.length > 0 && <div className="calendarDot skip"></div>}
-                {oneOffCount > 0 && <div className="calendarDot plan" title={String(oneOffCount)}></div>}
             </div>
             {hovered && (
                 <HoverDay
                     completed={completedArr.length}
                     missed={skippedArr.length}
-                    planned={willArr.length + plannedArr.length}
+                    planned={willArr.length + plannedArr.length + oneOffCount}
                     ongoing={nowArr.length}
                     targetRef={cellRef}
                     comment={comment}
