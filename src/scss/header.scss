@@ -158,3 +158,17 @@
         }
     }
 }
+
+.headerTitleTag {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent_text);
+    margin-right: .5vw;
+
+    > svg {
+        width: 3.5dvh;
+        height: 3.5dvh;
+    }
+}

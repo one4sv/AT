@@ -1,7 +1,8 @@
 @use "../HabitPage/scss/habitMobileDone.scss";
+@use "../HabitPage/scss/Complete.scss";
 @use "../HabitPage/scss/DayComment.scss";
 .planPage {
-    width: min(100%, 68vw);
+    width: 42%;
     margin: 0 auto;
     height: 100dvh;
     overflow-y: auto;
@@ -136,12 +137,30 @@
     margin-bottom: 1dvh;
 }
 .planDanger {
-    color: var(--accent_text);
+    color: var(--notValid);
+    border: 1px solid var(--notValid);
+    background: var(--interact);
+
+    > svg {
+        color: var(--notValid);
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--notValidBg);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background: var(--notValidBg);
+        }
+    }
 }
 @media (max-width: 800px) {
     .planPage {
-        width: 100%;
-        padding: 9dvh 2vw 12dvh;
+        width: 95%;
+        padding: 9dvh 0 12dvh;
     }
     .planSection {
         padding: 2dvh 4vw;
@@ -184,6 +203,23 @@
     cursor: pointer;
     color: var(--tc);
     font-size: 18px;
+
+    &::marker {
+        content: "";
+    }
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+}
+.planRemindersCaret {
+    margin-left: auto;
+    flex-shrink: 0;
+    color: var(--borderWh);
+    transition: transform .2s ease;
+}
+.planRemindersSection[open] .planRemindersCaret {
+    transform: rotate(180deg);
 }
 .planRemindersSection[open] .planRemindersSummary {
     margin-bottom: 1.5dvh;
@@ -240,18 +276,16 @@
     gap: 1dvh;
 }
 .planManagementActions > .planQuietButton,
-.planManagementActions > .planPrimaryButton,
-.planCompletionSection > .planDoneButton {
+.planManagementActions > .planPrimaryButton {
     width: 100%;
     min-height: 5dvh;
     box-sizing: border-box;
 }
-.planCompletionSection > .planDoneButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .5vw;
+.planCompletionSection .doneButtDiv {
     margin-top: 1dvh;
+}
+.planCompletionSection .planDoneButton {
+    gap: .5vw;
 }
 .planDesktopComment {
     width: 100%;
@@ -305,5 +339,63 @@
     .planManagementActions > button {
         width: 100%;
         min-height: 5dvh;
+    }
+}
+
+.planTitleWithIcon {
+    display: flex;
+    align-items: center;
+    gap: .75vw;
+    min-width: 0;
+    overflow-wrap: anywhere;
+
+    > svg {
+        flex-shrink: 0;
+        color: var(--accent_text);
+    }
+}
+.planInlineName {
+    flex: 1;
+}
+.planMetadataEditing {
+    align-items: flex-start;
+
+    > svg {
+        flex-shrink: 0;
+        margin-top: 1dvh;
+    }
+
+    > .addHabitWrapper,
+    > .addHabitTimeWrapper {
+        min-width: 0;
+        flex: 1;
+    }
+}
+.planInlineTag {
+    margin: 1dvh 0;
+    position: relative;
+}
+.planInlineTag > .tagList {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    margin-top: .5dvh;
+    display: none;
+
+    &.active {
+        display: flex;
+    }
+}
+.planInlineDescription {
+    margin: 1dvh 0;
+}
+.planPage .planFormSelect {
+    flex: 1;
+    min-width: 0;
+}
+@media (max-width: 800px) {
+    .planTitleWithIcon {
+        gap: 2vw;
     }
 }

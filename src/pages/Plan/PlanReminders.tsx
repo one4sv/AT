@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BellIcon } from "@phosphor-icons/react";
+import { BellIcon, CaretDownIcon } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../components/ts/api";
@@ -72,6 +72,7 @@ export default function PlanReminders({ planId }: { planId: number }) {
     return <details className="planSection planRemindersSection">
         <summary className="planRemindersSummary">
             <BellIcon size={21}/>{t("plans.reminders")} ({rules.length})
+            <CaretDownIcon className="planRemindersCaret" size={20}/>
         </summary>
         {loading ? <p>{t("plans.loading")}</p> : <>
             {!globalEnabled && <p className="planRemindersHint">

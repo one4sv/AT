@@ -25,6 +25,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     const { layout } = useSettings();
     const {
         title,
+        titleIcon,
         hideHeader
     } = usePageTitle();
     const location = useLocation();
@@ -73,6 +74,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                     }}
                     onClick={handleHeaderClick}
                 >
+                    {titleOverride === undefined && titleIcon && <span className="headerTitleTag">{titleIcon}</span>}
                     <span className="headerCustomText">{titleOverride ?? title}</span>
                     {titleSuffix}
                 </div>

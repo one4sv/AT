@@ -67,7 +67,7 @@ export default function HabitOverviewEntries({ entries, view = "all" }: {
                 (entry.plan?.completion_mode !== "shared" || entry.plan?.is_owner) &&
                 entry.plan?.status !== "canceled")) &&
                 <button type="button"
-                    className={"habitOverviewEntryDone" + (entry.completed ? " completed" : "")}
+                    className={"habitOverviewEntryDone" + (entry.completed ? " completed" : entry.state === "now" ? " now" : "")}
                     disabled={Boolean(updating)}
                     aria-label={t(entry.completed ? "plans.undoCompletion" : "plans.markCompleted")}
                     onClick={() => void complete(entry)}>

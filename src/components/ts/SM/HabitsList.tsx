@@ -1,7 +1,7 @@
 import "../../../scss/SM/habitsList.scss";
 import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import { CalendarBlankIcon, GhostIcon } from "@phosphor-icons/react";
+import { GhostIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useHabits } from "../../hooks/HabitsHook";
 import { usePlans } from "../../hooks/PlansHook";
@@ -12,6 +12,14 @@ import { useContacts } from "../../hooks/ContactsHook";
 import { useSideMenu } from "../../hooks/SideMenuHook";
 import HabitDiv from "../Habit";
 import { makeSideMenuEntries, describeDayTime } from "../utils/dayTimeline";
+import { tags } from "../tags";
+
+function PlanTagIcon({ tag }: { tag?: string | null }) {
+    const selectedTag = tags.find(item => item.value === tag);
+    if (!selectedTag) return null;
+    const Icon = selectedTag.icon;
+    return <div className="habitIcon"><Icon className="habitIconSvg"/></div>;
+}
 
 export default function HabitsList({ filter }: { filter?: string }) {
     const { t } = useTranslation("common");
@@ -42,7 +50,7 @@ export default function HabitsList({ filter }: { filter?: string }) {
             <HabitDiv habit={entry.habit} key={entry.key} id={Number(habitId)} isMyAcc={true}/> :
             <Link to={"/plan/" + entry.plan!.id} key={entry.key}
                 className="habit smPlanItem" onClick={closeMenu}>
-                <span className="habitIcon"><CalendarBlankIcon size={22}/></span>
+                <PlanTagIcon tag={entry.plan?.tag}/>
                 <span className="habitInfo">
                     <span className="habitName">{entry.name}</span>
                     <span className="habitPer">{entry.date} · {describeDayTime(entry, t)}</span>
