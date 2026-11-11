@@ -248,6 +248,42 @@
         min-height: 12dvh;
     }
 }
+.skeletonProfile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+}
+.skeletonProfileHeader {
+    min-height: 22dvh;
+    flex-direction: row;
+    align-items: center;
+    gap: 1vw;
+    padding: 2dvh 1.5vw;
+
+    > .skeletonCircle {
+        width: 12dvh;
+        height: 12dvh;
+    }
+}
+.skeletonProfileTabs {
+    display: flex;
+    justify-content: space-around;
+    gap: 2vw;
+    padding: 1dvh 1vw;
+
+    > .skeletonLine {
+        width: 28%;
+    }
+}
+.skeletonProfileFeed {
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+}
+.skeletonProfileFeed .skeletonBlock {
+    height: 12dvh;
+}
 .skeletonPlan {
     display: flex;
     flex-direction: column;
@@ -306,6 +342,8 @@
     .skeleton-list { padding: 4vh 1vw 0; }
     .skeleton-feed, .skeleton-profile { width: 95%; padding-top: 8vh; }
     .skeletonPlanMain, .skeletonPlanSecondary { padding: 2dvh 4vw; }
+    .skeletonProfileHeader { gap: 3vw; padding: 2dvh 4vw; }
+    .skeletonProfileHeader > .skeletonCircle { width: 9dvh; height: 9dvh; }
     .skeleton-habit { padding: 8vh 2vw; }
     .skeletonHabit,
     .skeletonOverview .skeletonHabit {
