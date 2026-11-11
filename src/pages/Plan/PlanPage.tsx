@@ -23,6 +23,11 @@ export default function PlanPage() {
     const [error, setError] = useState("");
     const [confirmDelete, setConfirmDelete] = useState(false);
 
+    useEffect(() => {
+        setEditing(!planId);
+        setPlan(null);
+        setError("");
+    }, [planId]);
     const load = async () => {
         if (!planId) return;
         setLoading(true);
@@ -50,6 +55,22 @@ export default function PlanPage() {
         try {
             await fn();
             await Promise.all([load(), refreshPlans()]);
+            return true;
+        } catch {
+            setError(t("plans.saveError"));
+            return false;
+        } finally {
+            setSaving(false);
+        }
+    };
+    const remove = async () => {
+        if (!planId) return;
+        setSaving(true);
+        setError("");
+        try {
+            await api.delete("plans/" + planId);
+            await refreshPlans();
+            navigate("/habit");
         } catch {
             setError(t("plans.saveError"));
         } finally {
@@ -148,7 +169,7 @@ export default function PlanPage() {
                         {plan.is_owner && plan.status === "upcoming" && <form className="planInvite" onSubmit={event => {
                             event.preventDefault();
                             void action(() => api.post("plans/" + planId + "/invite", { nick:invitedNick }))
-                                .then(() => setInvitedNick(""));
+                                .then(success => { if (success) setInvitedNick(""); });
                         }}>
                             <input required value={invitedNick} placeholder={t("plans.nick")}
                                 onChange={event => setInvitedNick(event.target.value)}/>
@@ -177,10 +198,7 @@ export default function PlanPage() {
                             <div className="planActions">
                                 <button className="planQuietButton" onClick={() => setConfirmDelete(false)}>{t("plans.back")}</button>
                                 <button className="planPrimaryButton" disabled={saving} onClick={() =>
-                                    void action(async () => {
-                                        await api.delete("plans/" + planId);
-                                        navigate("/habit");
-                                    })}>{t("plans.delete")}</button>
+                                    void remove()}>{t("plans.delete")}</button>
                             </div>
                         </div>}
                     </div>}
