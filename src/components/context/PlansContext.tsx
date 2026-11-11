@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { api } from "../ts/api";
 import { useUser } from "../hooks/UserHook";
 
@@ -40,28 +40,37 @@ const PlansContext = createContext<PlansContextType | null>(null);
 
 export const PlansProvider = ({ children }: { children: ReactNode }) => {
     const { user, initialLoading } = useUser();
+    const accountId = useRef(user.id);
+    accountId.current = user.id;
     const [plans, setPlans] = useState<OneOffPlan[]>([]);
     const [loadingPlans, setLoadingPlans] = useState(false);
     const refreshPlans = useCallback(async () => {
+        const requester = accountId.current;
+        if (!requester) {
+            setPlans([]);
+            return;
+        }
         setLoadingPlans(true);
         try {
             const res = await api.get("plans");
             if (!res.data.success) throw new Error("Plans could not be loaded");
-            setPlans(res.data.plans || []);
+            if (accountId.current === requester) setPlans(res.data.plans || []);
         } finally {
-            setLoadingPlans(false);
+            if (accountId.current === requester) setLoadingPlans(false);
         }
     }, []);
 
     useEffect(() => {
         if (initialLoading) return;
-        if (!user.nick) {
-            setPlans([]);
+        setPlans([]);
+        if (!user.id) {
+            setLoadingPlans(false);
             return;
         }
-        setPlans([]);
-        void refreshPlans().catch(() => setPlans([]));
-    }, [user.nick, initialLoading, refreshPlans]);
+        void refreshPlans().catch(() => {
+            if (accountId.current === user.id) setPlans([]);
+        });
+    }, [user.id, initialLoading, refreshPlans]);
 
     return <PlansContext.Provider value={{ plans, loadingPlans, refreshPlans }}>{children}</PlansContext.Provider>;
 };
