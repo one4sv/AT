@@ -798,6 +798,8 @@
     "detailsTooShort": "Describe your request in at least 12 characters."
   },
     "plans": {
+        "showAll": "Show all",
+        "currentActivity": "Current activity",
         "comment": "Comment",
         "commentLoadError": "Could not load the plan comment",
         "commentSaveError": "Could not save the plan comment",

@@ -375,3 +375,68 @@
         gap: 2vw;
     }
 }
+
+/* Center: date and daily metrics. Right: four upcoming items. */
+.habitOverviewCenter { overflow: visible; }
+.habitOverviewContext { overflow: hidden; }
+.habitOverviewCenter > p { margin: 0; }
+.habitOverviewEntry { border: 0; border-radius: 24px; min-height: 5.5dvh; }
+.habitOverviewEntryMain { border-radius: 24px; }
+.habitOverviewEntryName { font-size: 18px; font-weight: 600; }
+.habitOverviewEntryDone { color: var(--borderWh); border-radius: 24px; }
+.habitOverviewEntryDone.completed { color: var(--accent_text); }
+.habitOverviewFilters { display: flex; gap: .3vw; flex-shrink: 0; }
+.habitOverviewFilters > button {
+    color: var(--tc);
+    background: var(--interact);
+    border: 0; border-radius: 24px; padding: .5dvh .5vw;
+    min-width: 0; flex: 1; font-size: 13px; cursor: pointer;
+}
+.habitOverviewFilters > button.active {
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--inner_text);
+}
+.habitOverviewNextLabel { color: var(--borderWh); flex-shrink: 0; }
+.habitOverviewNextList { min-height: 0; flex: 1; overflow: hidden; }
+.habitOverviewNextList .habitOverviewEntry { min-height: 5dvh; }
+.habitOverviewShowAll {
+    flex-shrink: 0; width: 100%; border: 0; border-radius: 24px;
+    background: var(--interact); color: var(--tc);
+    padding: .7dvh .7vw; font-size: 16px; cursor: pointer;
+}
+.habitOverviewCurrent {
+    display: flex; flex-direction: column; gap: .3dvh;
+    border-radius: 24px; background: var(--interact); padding: 1dvh 1vw;
+}
+.habitOverviewCurrent > small { color: var(--borderWh); }
+.habitOverviewCurrent b { font-weight: normal; color: var(--accent_text); }
+.overviewPanelSkeleton {
+    flex: 1; min-width: 0; display: flex; flex-direction: column;
+    gap: 1dvh; padding: 1dvh; overflow: hidden;
+}
+.habitOverviewListModal {
+    background: var(--mc); color: var(--tc); border-radius: 24px;
+    width: min(580px, 90vw); max-height: 85dvh; padding: 2dvh 1.5vw;
+    box-sizing: border-box; display: flex; flex-direction: column; gap: 1dvh;
+    backdrop-filter: blur(var(--blur));
+}
+.habitOverviewModalHeader { display: flex; align-items: center; justify-content: space-between; gap: 1vw; font-size: 20px; }
+.habitOverviewModalHeader button {
+    background: var(--interact); color: var(--tc); border: 0;
+    border-radius: 24px; width: 4dvh; height: 4dvh; font-size: 24px; cursor: pointer;
+}
+.habitOverviewModalBody { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+@media (max-width: 800px) {
+    .habitOverviewCenter { height: auto; min-height: 0; flex: 0 0 auto; overflow: visible; }
+    .habitOverviewContext { max-height: none; height: auto; overflow: visible; gap: 1dvh; }
+    .habitOverviewNextList { overflow: visible; }
+    .habitOverviewEntryName { font-size: 19px; }
+    .habitOverviewFilters { gap: 2vw; }
+    .habitOverviewFilters > button { font-size: 14px; padding: 1dvh 2vw; }
+    .habitOverviewCurrent { padding: 1dvh 3vw; }
+    .habitOverviewListModal {
+        width: 100%; max-height: 88dvh;
+        padding: 2dvh 4vw calc(3dvh + env(safe-area-inset-bottom));
+        border-radius: 24px 24px 0 0;
+    }
+}

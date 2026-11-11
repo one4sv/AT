@@ -120,8 +120,9 @@
         cursor: pointer;
 
         &.active {
-            color: var(--inner_text);
+            color: var(--inner_text) !important;
             background: linear-gradient(135deg, var(--accent), var(--grad));
+            > * { color: inherit; }
         }
 
         @media (hover: hover) {
