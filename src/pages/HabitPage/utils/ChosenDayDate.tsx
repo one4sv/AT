@@ -2,6 +2,7 @@ import { CalendarSync } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { formatDateLabel, todayStrFunc } from "../../../components/ts/utils/dateToStr";
 import { useCalendar } from "../../../components/hooks/CalendarHook";
+import "../scss/ChosenDay.scss";
 
 export default function ChosenDayDate () {
     useTranslation("common");
