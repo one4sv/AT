@@ -71,15 +71,22 @@ test("plan editor and compact modal controls keep mobile layout and text limits"
     const habitStyles = read("src/scss/modules/addHabit.scss");
     const sharedTime = read("src/scss/modules/habitFormControls.scss");
     const addHabit = read("src/components/modules/AddHabit.tsx");
-    const autoDesc = read("src/components/ts/utils/AutoDesc.tsx");
+    const chatTA = read("src/components/ts/TA.tsx");
+    const sideMenuStyles = read("src/scss/SM/sideMenu.scss");
+    const sideMenu = read("src/components/ts/SM/SideMenu.tsx");
     const select = read("src/components/ts/SelectList.tsx");
     const sm = read("src/scss/SM/smAccount.scss");
 
     assert.ok(plans.indexOf('htmlFor="planDescription"') < plans.indexOf('htmlFor="planDate"'));
     assert.match(plans, /maxLength=\{1200\}/);
     assert.match(plans, /value\.description\.length\}\/1200/);
-    assert.match(autoDesc, /maxLength\?: number/);
-    assert.match(styles, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+    assert.match(plans, /<TA id="planDescription"/);
+    assert.match(chatTA, /ResizeObserver/);
+    assert.match(styles, /grid-template-columns: minmax\(0, 1fr\)/);
+    assert.match(sharedTime, /&\.timeInputs/);
+    assert.match(plans, /<TagSelector selectedTag=/);
+    assert.match(sideMenuStyles, /padding-bottom: calc\(1dvh \+ var\(--sm-nav-clearance/);
+    assert.match(sideMenu, /--sm-nav-clearance/);
     assert.match(sharedTime, /\&\[type="time"\]/);
     assert.match(sharedTime, /\:\:-webkit-calendar-picker-indicator/);
     assert.match(addHabit, /type="time" id="inputStartTime"/);

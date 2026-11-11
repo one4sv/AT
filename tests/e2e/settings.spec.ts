@@ -141,14 +141,14 @@ test("danger and security button styles load when settings pages are opened dire
 });
 
 
-test("native time controls keep two separate columns and readable labels on mobile WebKit", async ({ page }, testInfo) => {
+test("native time controls have full-width mobile rows and two desktop columns", async ({ page }, testInfo) => {
     await page.goto("/settings/notes");
     await expect(page.locator(".settingTab")).toBeVisible();
     await page.evaluate(() => {
         const probe = document.createElement("div");
         probe.id = "native-time-layout-probe";
         probe.style.cssText = "position:fixed;inset:22% auto auto 5vw;width:90vw;max-width:450px;padding:3vw;box-sizing:border-box;background:var(--mc);z-index:3000";
-        probe.innerHTML = '<div class="addHabitTimeWrapper">' +
+        probe.innerHTML = '<div class="addHabitTimeWrapper timeInputs">' +
             '<div class="addHabitWrapper time"><label>Начало (необязательно)</label>' +
             '<input type="time" class="addHabitInput" value="13:00"></div>' +
             '<div class="addHabitWrapper time"><label>Конец (необязательно)</label>' +
@@ -160,15 +160,19 @@ test("native time controls keep two separate columns and readable labels on mobi
     const rects = await fields.evaluateAll(inputs => inputs.map(input => {
         const rect = input.getBoundingClientRect();
         const style = getComputedStyle(input);
-        return { left:rect.left, right:rect.right, width:rect.width,
+        return { left:rect.left, right:rect.right, top:rect.top, bottom:rect.bottom, width:rect.width,
             fontSize:parseFloat(style.fontSize), scrollWidth:input.scrollWidth,
             clientWidth:input.clientWidth };
     }));
     expect(rects[0].width).toBeGreaterThan(80);
     expect(rects[1].width).toBeGreaterThan(80);
-    expect(rects[0].right).toBeLessThanOrEqual(rects[1].left + 1);
     if (testInfo.project.name === "webkit-mobile") {
+        expect(rects[0].bottom).toBeLessThanOrEqual(rects[1].top + 1);
+        expect(rects[0].width).toBeGreaterThan(250);
+        expect(rects[1].width).toBeGreaterThan(250);
         expect(rects[0].fontSize).toBeGreaterThanOrEqual(20);
         expect(rects[1].fontSize).toBeGreaterThanOrEqual(20);
+    } else {
+        expect(rects[0].right).toBeLessThanOrEqual(rects[1].left + 1);
     }
 });
