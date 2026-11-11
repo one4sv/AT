@@ -111,12 +111,21 @@
     }
 }
 
-// Keep tag choices in the plan form's scroll flow (not clipped by the modal).
+// Overlay tag choices without changing the height of the plan modal.
+.addPlanDiv .planTagWrapper,
+.planEditor .planTagWrapper {
+    position: relative;
+}
 .addPlanDiv .planTagWrapper > .tagList,
 .planEditor .planTagWrapper > .tagList {
-    position: relative;
-    top: auto;
-    left: auto;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 20;
+    background: var(--bgc);
+    max-height: 28dvh;
+    overflow-y: auto;
+    scrollbar-width: thin;
     width: 100%;
     margin-top: .5dvh;
     display: none;
