@@ -733,19 +733,19 @@
 .planMainSection .doneButtDiv > .planDoneButton:active,
 .planMainSection .doneButtDiv > .planDoneButton:focus-visible {
     border: none;
-    color: var(--accent_text);
+    color: var(--inner_text);
 }
 .planMainSection .doneButtDiv > .planDoneButton svg,
 .planMainSection .doneButtDiv > .planDoneButton:hover svg,
 .planMainSection .doneButtDiv > .planDoneButton:active svg {
-    color: var(--accent_text);
+    color: var(--inner_text);
 }
 .planMobileDone .doneButtDivMobile.doable,
 .planMobileDone .doneButtDivMobile.doable > .bottomOpen,
 .planMobileDone .doneButtDivMobile.doable > .doneButtMobile {
     border: none;
-    color: var(--accent_text);
+    color: var(--inner_text);
 }
 .planMobileDone .doneButtDivMobile.doable svg {
-    color: var(--accent_text);
+    color: var(--inner_text);
 }
