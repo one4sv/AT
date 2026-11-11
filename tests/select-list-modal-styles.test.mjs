@@ -69,6 +69,8 @@ test("plan editor and compact modal controls keep mobile layout and text limits"
     const plans = read("src/pages/Plan/PlanEditor.tsx");
     const styles = read("src/scss/modules/addPlan.scss");
     const habitStyles = read("src/scss/modules/addHabit.scss");
+    const sharedTime = read("src/scss/modules/habitFormControls.scss");
+    const addHabit = read("src/components/modules/AddHabit.tsx");
     const autoDesc = read("src/components/ts/utils/AutoDesc.tsx");
     const select = read("src/components/ts/SelectList.tsx");
     const sm = read("src/scss/SM/smAccount.scss");
@@ -78,7 +80,10 @@ test("plan editor and compact modal controls keep mobile layout and text limits"
     assert.match(plans, /value\.description\.length\}\/1200/);
     assert.match(autoDesc, /maxLength\?: number/);
     assert.match(styles, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
-    assert.match(styles, /\.addHabitInput\[type="time"\]/);
+    assert.match(sharedTime, /\&\[type="time"\]/);
+    assert.match(sharedTime, /\:\:-webkit-calendar-picker-indicator/);
+    assert.match(addHabit, /type="time" id="inputStartTime"/);
+    assert.match(addHabit, /type="time" id="inputEndTime"/);
     assert.match(habitStyles, /height: 5dvh/);
     assert.match(habitStyles, /3dvh \+ env\(safe-area-inset-bottom\)/);
     assert.match(select, /translateY\(-50%\) rotate/);
