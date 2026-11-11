@@ -167,4 +167,4 @@ AddHabit + AddPlan используют нативный time picker (без р�
 
 ## 12.11.2026 — восстановлена верстка ChosenDayDate в центральном блоке
 
-Ошибка по скриншоту iPhone: строка «Завтра, 13.11.2026, пт» отображалась слишком мелко, кнопка возврата к текущей дате `CalendarSync` оказывалась на следующей строке. Исправлено в `ChosenDayDate.tsx` + `ChosenDay.scss`: разделить текст и кнопку на стабильные flex-элементы, явные `font-size:20px`/`align-items:center`/`nowrap` и фиксированное место для кнопки. Саму относительную надпись «Сегодня/Завтра» и полную дату в `formatDateLabel` не менять. Добавлен статический регрессионный тест в `tests/day-timeline.test.mjs`.
+По прямому требованию автора оформление `ChosenDay.scss` для `.chosenDayDate` и `.calendarReturn` возвращено к состоянию 09.11.2026 (`height:4dvh`, `align-items:flex-start`, прежние отступы). Текст `formatDateLabel(chosenDay)` с «Сегодня/Завтра» и датой сохраняется. Регрессионный тест `tests/day-timeline.test.mjs` обновлён под это состояние.
