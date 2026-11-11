@@ -150,13 +150,17 @@ test("native time controls fit two columns on mobile and desktop", async ({ page
         probe.style.cssText = "position:fixed;inset:22% auto auto 5vw;width:90vw;max-width:450px;padding:3vw;box-sizing:border-box;background:var(--mc);z-index:3000";
         probe.innerHTML = '<div class="addHabitTimeWrapper timeInputs">' +
             '<div class="addHabitWrapper time"><label>Начало (необязательно)</label>' +
-            '<input type="time" class="addHabitInput" value="13:00"></div>' +
+            '<div class="timeInputShell"><input type="time" class="addHabitInput" value="13:00"></div></div>' +
             '<div class="addHabitWrapper time"><label>Конец (необязательно)</label>' +
-            '<input type="time" class="addHabitInput"></div></div>';
+            '<div class="timeInputShell"><input type="time" class="addHabitInput"></div></div></div>';
         document.body.appendChild(probe);
     });
     const fields = page.locator("#native-time-layout-probe input[type=time]");
     await expect(fields).toHaveCount(2);
+    const shells = page.locator("#native-time-layout-probe .timeInputShell");
+    await expect(shells).toHaveCount(2);
+    await expect(shells.first()).toHaveCSS("border-radius", "24px");
+    await expect(shells.last()).toHaveCSS("border-radius", "24px");
     const rects = await fields.evaluateAll(inputs => inputs.map(input => {
         const rect = input.getBoundingClientRect();
         const style = getComputedStyle(input);
