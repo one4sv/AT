@@ -82,7 +82,7 @@ export default function SideMenu() {
             window.visualViewport?.removeEventListener("resize", updateClearance);
             container.style.removeProperty("--sm-nav-clearance");
         };
-    }, []);
+    }, [isAuthenticated, loadingUser]);
 
     useEffect(() => {
         if (user.id) refreshSchedules();
