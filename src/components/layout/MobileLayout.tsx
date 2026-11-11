@@ -22,7 +22,9 @@ export default function MobileLayout({ children }: LayoutProps) {
     const { blackout } = useBlackout();
     const location = useLocation();
     const {
-        toggleMenu,
+        openSideMenu,
+        closeMenu,
+        showSideMenu,
         translateX,
         setIsDragging,
         setTranslateX,
@@ -45,7 +47,7 @@ export default function MobileLayout({ children }: LayoutProps) {
         }
 
         const target = e.target as Element;
-        if (target.closest("input, textarea, [contenteditable='true'], [data-context-menu], [data-header-gesture], .selector, .seekBarWrapper, .ContextMenuWrapper, .blackout, .scheduleDiv, .statsDivWrapper")) {
+        if (target.closest("input, textarea, [contenteditable='true'], [data-context-menu], [data-header-gesture], .selector, .seekBarWrapper, .ContextMenuWrapper, .blackout, .scheduleDiv, .statsDivSlider")) {
             gesture.current = "scroll";
             return;
         }
@@ -56,7 +58,7 @@ export default function MobileLayout({ children }: LayoutProps) {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-        if ((e.target as Element).closest(".habitMenu, .scheduleDiv, .statsDivWrapper, .seekBarWrapper")) return;
+        if ((e.target as Element).closest(".habitMenu, .scheduleDiv, .statsDivSlider, .seekBarWrapper")) return;
         if (contextMenu.visible || blackout.seted || dontHandle ||
             e.touches.length !== 1 || gesture.current === "scroll") return;
 
@@ -81,27 +83,39 @@ export default function MobileLayout({ children }: LayoutProps) {
         setTranslateX(Math.max(-100, Math.min(0, startTranslate.current + percent)));
     };
 
-    const handleTouchEnd = () => {
-        if (gesture.current === "menu" && !contextMenu.visible && !blackout.seted) toggleMenu();
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        if (gesture.current === "menu" && !contextMenu.visible && !blackout.seted) {
+            const dx = (e.changedTouches[0]?.clientX ?? startX.current) - startX.current;
+            if (Math.abs(dx) >= 32) {
+                if (dx > 0) openSideMenu();
+                else closeMenu();
+            } else if (startTranslate.current > -50) openSideMenu();
+            else closeMenu();
+        }
 
         gesture.current = "none";
         setIsDragging(false);
         setDontHandle(false);
+        setDontHandleOther(false);
     };
 
+    const handleTouchCancel = () => {
+        gesture.current = "none";
+        setIsDragging(false);
+        setDontHandle(false);
+        setDontHandleOther(false);
+        setTranslateX(showSideMenu ? 0 : -100);
+    };
+
+    const handleTouchMoveRef = useRef(handleTouchMove);
+    handleTouchMoveRef.current = handleTouchMove;
     useEffect(() => {
         const element = pageRef.current;
         if (!element) return;
-
-        element.addEventListener("touchmove", handleTouchMove, { passive: false });
-        return () => element.removeEventListener("touchmove", handleTouchMove);
-    });
-
-    useEffect(() => {
-        // In wallpaper studio the desktop SideMenu is non-modal: page
-        // sliders, selectors and preview gestures must remain usable.
-        setDontHandleOther(location.pathname.startsWith("/wallpapers") ? false : translateX > -100);
-    }, [setDontHandleOther, translateX, location.pathname]);
+        const move = (event: TouchEvent) => handleTouchMoveRef.current(event);
+        element.addEventListener("touchmove", move, { passive: false });
+        return () => element.removeEventListener("touchmove", move);
+    }, []);
 
     const hideHeader =
         location.pathname.startsWith("/chat") ||
@@ -139,7 +153,7 @@ export default function MobileLayout({ children }: LayoutProps) {
                 ref={pageRef}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
-                onTouchCancel={handleTouchEnd}
+                onTouchCancel={handleTouchCancel}
             >
                 {decor === "default" && <Background />}
                 {children}

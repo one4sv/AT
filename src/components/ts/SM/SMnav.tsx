@@ -53,7 +53,8 @@ export default function SMnav() {
         setIsDragging,
         showSideMenu,
         closeMenu,
-        toggleMenu
+        openSideMenu,
+        startupTabAnimationReady
     } = useSideMenu();
     const { menu: contextMenu } = useContextMenu();
     const { setBlackout } = useBlackout();
@@ -212,12 +213,10 @@ export default function SMnav() {
         touchTab.current = null;
         if (gesture.current === "menu") {
             setIsDragging(false);
-            const target = translateX < -40 ? -100 : 0;
-            if (target === -100) {
-                closeMenu();
-            } else {
-                toggleMenu();
-            }
+            const moved = touch ? touch.clientX - swipeStartX.current : 0;
+            const target = Math.abs(moved) >= 32 ? (moved > 0 ? 0 : -100) : (showSideMenu ? 0 : -100);
+            if (target === -100) closeMenu();
+            else openSideMenu();
         }
         if (!wasLongPress.current) {
             cancelLongPress();
@@ -633,7 +632,7 @@ export default function SMnav() {
             </div>
 
             <div className={`SMnav ${isSearch ? "dis" : "active"}`} ref={tabsRef}>
-                <div className={`SMnavActive ${activeTab}`} />
+                <div className={`SMnavActive ${activeTab}`} style={startupTabAnimationReady ? undefined : { transition: "none" }} />
 
                 <div
                     className={`SMnavButt ${activeTab === "chats" ? "active" : ""}`}

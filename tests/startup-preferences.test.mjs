@@ -14,6 +14,10 @@ test("startup preferences are per-account local settings with compatibility defa
     assert.match(ctx,/useLocalStorage<StartupSideMenuTab>\(LOCAL_KEYS\.startupSideMenuTab, "chats"\)/);
     const storage = read("src/components/hooks/utils/useLocalStorage.ts");
     assert.match(storage,/GLOBAL_KEYS = \["settings_theme", "settings_lang"\]/);
+    assert.match(storage,/STARTUP_KEYS = \["settings_startup_page", "settings_mobile_start_menu", "settings_mobile_start_tab"\]/);
+    assert.match(storage,/readStartupCache\(key\)/);
+    assert.match(storage,/localStorage\.setItem\(STARTUP_CACHE_KEY/);
+    assert.match(storage,/at_startup_last_user/);
 });
 
 test("launch redirects only the initial root navigation and leaves direct links alone", () => {
@@ -25,13 +29,34 @@ test("launch redirects only the initial root navigation and leaves direct links 
     assert.match(app,/<StartupNavigation \/>/);
 });
 
-test("mobile startup menu applies after settings load and chooses the desired tab", () => {
+test("mobile startup menu opens from cached settings before server load without sliding tabs", () => {
     const menu = read("src/components/context/SideMenuContext.tsx");
-    assert.match(menu,/!settingsLoaded \|\| !showMobileMenuOnStart/);
+    assert.match(menu,/\? !showMobileMenuOnStart \|\| restrictedStartupPath/);
+    assert.doesNotMatch(menu,/\? !settingsLoaded \|\| !showMobileMenuOnStart/);
     assert.match(menu,/mobileStartupApplied\.current = true/);
+    assert.match(menu,/useLayoutEffect\(\(\) =>/);
     assert.match(menu,/setActiveTab\(startupSideMenuTab\)/);
     assert.match(menu,/setTranslateX\(shouldOpen \? 0 : -100\)/);
+    assert.match(menu,/startupTabAnimationReady/);
     assert.match(menu,/!location\.state\?\.startup/);
+    for (const file of ["src/components/ts/SM/SideMenu.tsx", "src/components/ts/SM/SMheader.tsx", "src/components/ts/SM/SMnav.tsx"]) {
+        assert.match(read(file),/startupTabAnimationReady/);
+    }
+});
+
+test("SideMenu swipe completion follows direction, is cancel-safe, and does not block its own swipes", () => {
+    const context = read("src/components/context/SideMenuContext.tsx");
+    const layout = read("src/components/layout/MobileLayout.tsx");
+    const side = read("src/components/ts/SM/SideMenu.tsx");
+    const nav = read("src/components/ts/SM/SMnav.tsx");
+    assert.match(context,/translateXRef\.current = value/);
+    assert.match(layout,/Math\.abs\(dx\) >= 32/);
+    assert.match(layout,/onTouchCancel=\{handleTouchCancel\}/);
+    assert.doesNotMatch(layout,/\.statsDivWrapper/);
+    assert.doesNotMatch(layout,/translateX > -100/);
+    assert.match(side,/Math\.abs\(moved\) >= 32/);
+    assert.match(nav,/Math\.abs\(moved\) >= 32/);
+    assert.match(nav,/openSideMenu\(\)/);
 });
 
 test("General uses existing RadioGroup and Toggler, mobile-only controls are gated", () => {

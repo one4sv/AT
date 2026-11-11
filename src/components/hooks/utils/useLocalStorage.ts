@@ -2,6 +2,25 @@ import { useCallback, useEffect, useState } from "react";
 import { useUser } from "../UserHook";
 type SetValue<T> = React.Dispatch<React.SetStateAction<T>>;
 const GLOBAL_KEYS = ["settings_theme", "settings_lang"];
+const STARTUP_KEYS = ["settings_startup_page", "settings_mobile_start_menu", "settings_mobile_start_tab"];
+const STARTUP_CACHE_KEY = "at_startup_preferences";
+const readStartupCache = (key: string): unknown => {
+    try {
+        const cached = JSON.parse(localStorage.getItem(STARTUP_CACHE_KEY) ?? "{}");
+        if (cached && typeof cached === "object" && Object.prototype.hasOwnProperty.call(cached, key)) {
+            return cached[key];
+        }
+        // One-time fallback for settings saved before the bootstrap cache existed.
+        const previousNick = localStorage.getItem("at_startup_last_user");
+        const stored = previousNick ? localStorage.getItem(`${previousNick}_${key}`) : null;
+        if (stored !== null) return JSON.parse(stored);
+        const matches = Object.keys(localStorage).filter(item => item.endsWith(`_${key}`));
+        if (matches.length === 1) return JSON.parse(localStorage.getItem(matches[0]) ?? "null");
+    } catch {
+        return undefined;
+    }
+    return undefined;
+};
 const APPEARANCE_KEYS = ["settings_accent", "settings_grad", "settings_blur", "settings_layout", "settings_bg", "settings_bg_url", "settings_decor", "settings_bg_effects", "settings_contour_pattern", "settings_contour_size", "settings_art_pattern", "settings_art_size"];
 const readAppearance = (): Record<string, unknown> => {
     try {
@@ -21,6 +40,10 @@ export default function useLocalStorage<T>(key: string, defaultValue: T): readon
     const readValue = useCallback(
         (): T => {
             try {
+                if ((initialLoading || !user?.nick) && STARTUP_KEYS.includes(key)) {
+                    const startupValue = readStartupCache(key);
+                    if (typeof startupValue === typeof defaultValue) return startupValue as T;
+                }
                 if ((initialLoading || !user?.nick) && APPEARANCE_KEYS.includes(key)) {
                     const appearance = readAppearance();
                     if (typeof appearance[key] === typeof defaultValue) return appearance[key] as T;
@@ -72,6 +95,14 @@ export default function useLocalStorage<T>(key: string, defaultValue: T): readon
             if (initialLoading || stored.key !== stateKey) return;
             try {
                 localStorage.setItem(storageKey, JSON.stringify(stored.value));
+                if (user.nick && STARTUP_KEYS.includes(key)) {
+                    const cached = JSON.parse(localStorage.getItem(STARTUP_CACHE_KEY) ?? "{}");
+                    localStorage.setItem(STARTUP_CACHE_KEY, JSON.stringify({
+                        ...(cached && typeof cached === "object" ? cached : {}),
+                        [key]: stored.value
+                    }));
+                    localStorage.setItem("at_startup_last_user", user.nick);
+                }
                 if (user.id && APPEARANCE_KEYS.includes(key)) {
                     const appearance = readAppearance();
                     localStorage.setItem(

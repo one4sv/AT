@@ -17,6 +17,7 @@ export default function SMheader() {
     const {
         activeTab,
         setActiveTab,
+        startupTabAnimationReady,
         translateX,
         showSideMenu,
         closeMenu,
@@ -244,7 +245,7 @@ export default function SMheader() {
             <div className="smHeaderSliderWrapper">
                 <div
                     className="smHeaderSlider"
-                    style={{ transform: `translateX(${translateSlider}%)` }}
+                    style={{ transform: `translateX(${translateSlider}%)`, transition: startupTabAnimationReady ? undefined : "none" }}
                 >
                     <div className="smHeaderPart">
                         <div className="smHeaderTitle" onClick={handleTitleClick}>{t("sideMenu.chats")}</div>

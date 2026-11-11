@@ -2,6 +2,7 @@ import {
     createContext,
     useState,
     useEffect,
+    useLayoutEffect,
     type ReactNode,
     type SetStateAction,
     useRef,
@@ -47,6 +48,7 @@ interface SideMenuContextType {
     habitsFilters: FilterItem[];
     translateX: number;
     setTranslateX: React.Dispatch<SetStateAction<number>>;
+    startupTabAnimationReady: boolean;
     isDragging: boolean;
     setIsDragging: React.Dispatch<SetStateAction<boolean>>;
     dontHandle: boolean;
@@ -71,7 +73,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const restrictedStartupPath = location.pathname.startsWith("/settings") ||
         location.pathname.startsWith("/info") || location.pathname.startsWith("/wallpapers");
     const initiallyClosed = isCompact
-        ? !settingsLoaded || !showMobileMenuOnStart || restrictedStartupPath
+        ? !showMobileMenuOnStart || restrictedStartupPath
         : layout === "hidden" && restrictedStartupPath;
 
     const [showSideMenu, setShowSideMenu] = useState(() => initiallyClosed ? false : isCompact || layout !== "hidden");
@@ -79,7 +81,14 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [showHabitMenu, setShowHabitMenu] = useState(false);
     const [showSlide, setShowSlide] = useState<slides>(null);
     const [activeTab, setActiveTab] = useState<tab>(() => isCompact ? startupSideMenuTab : "chats");
-    const [translateX, setTranslateX] = useState(() => initiallyClosed ? -100 : isCompact || layout !== "hidden" ? 0 : -100);
+    const [translateX, setTranslateXState] = useState(() => initiallyClosed ? -100 : isCompact || layout !== "hidden" ? 0 : -100);
+    const translateXRef = useRef(translateX);
+    const setTranslateX = useCallback<React.Dispatch<SetStateAction<number>>>(next => {
+        const value = typeof next === "function" ? next(translateXRef.current) : next;
+        translateXRef.current = value;
+        setTranslateXState(value);
+    }, []);
+    const [startupTabAnimationReady, setStartupTabAnimationReady] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [dontHandle, setDontHandle] = useState(false);
     const [dontHandleOther, setDontHandleOther] = useState(false);
@@ -203,24 +212,31 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     }, [habits, plans, newOrderHabits, showArchived, t, i18n.language, habitsSelectedValue]);
 
     // === остальной код (анимация и т.д.) без изменений ===
-    const translateXRef = useRef(0);
     const animationFrame = useRef<number | null>(null);
     const previousPath = useRef<string | null>(null);
     const mobileStartupApplied = useRef(false);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!isCompact || !settingsLoaded || mobileStartupApplied.current) return;
         mobileStartupApplied.current = true;
         setActiveTab(startupSideMenuTab);
         const shouldOpen = showMobileMenuOnStart && !restrictedStartupPath;
         setShowSideMenu(shouldOpen);
         setTranslateX(shouldOpen ? 0 : -100);
-        translateXRef.current = shouldOpen ? 0 : -100;
-    }, [isCompact, settingsLoaded, showMobileMenuOnStart, startupSideMenuTab, restrictedStartupPath]);
+    }, [isCompact, settingsLoaded, showMobileMenuOnStart, startupSideMenuTab, restrictedStartupPath, setTranslateX]);
 
+    // Allow the initial cached tab/late account hydration to settle before any slide animation.
     useEffect(() => {
-        translateXRef.current = translateX;
-    }, [translateX]);
+        if (!settingsLoaded) return;
+        let secondFrame: number | null = null;
+        const firstFrame = requestAnimationFrame(() => {
+            secondFrame = requestAnimationFrame(() => setStartupTabAnimationReady(true));
+        });
+        return () => {
+            cancelAnimationFrame(firstFrame);
+            if (secondFrame !== null) cancelAnimationFrame(secondFrame);
+        };
+    }, [settingsLoaded]);
 
     useEffect(() => {
         setRed(false);
@@ -298,14 +314,10 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const toggleMenu = useCallback(() => {
         setDontHandleOther(false);
         setIsDragging(false);
-
-        const current = translateXRef.current;
-        const target = current > -50 ? 0 : -100;
-
-        animateTo(target, () => {
-            setShowSideMenu(target === 0);
-        });
-    }, [animateTo]);
+        const target = showSideMenu ? -100 : 0;
+        setShowSideMenu(target === 0);
+        animateTo(target);
+    }, [animateTo, showSideMenu]);
 
     // Wallpaper Studio is always a manual overlay on desktop, regardless
     // of settings_layout. Initialize it once on entry and keep user choices.
@@ -355,6 +367,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
                 setActiveTab,
                 setTranslateX,
                 translateX,
+                startupTabAnimationReady,
                 setIsDragging,
                 isDragging,
                 dontHandle,

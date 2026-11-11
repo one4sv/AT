@@ -153,6 +153,41 @@ test("desktop page Header stays above routed content and its overlays", async ({
     expect(headerReceivesPointer).toBe(true);
 });
 
+test("mobile swipe opens and closes SideMenu and cancelled swipe restores it", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/info/roadmap");
+    const menu = page.locator(".mobile-layout > .sideMenu");
+    await expect(menu).toBeAttached();
+    await expect(menu).not.toHaveClass(/open/);
+
+    const swipe = async (selector: string, startX: number, endX: number, cancel = false) => {
+        await page.evaluate(({ selector, startX, endX, cancel }) => {
+            const target = document.querySelector<HTMLElement>(selector)!;
+            const touch = (x: number) => new Touch({ identifier: 1, target, clientX: x, clientY: 300 });
+            const fire = (name: string, x: number) => {
+                const point = touch(x);
+                target.dispatchEvent(new TouchEvent(name, {
+                    bubbles: true, cancelable: true,
+                    touches: name === "touchend" || name === "touchcancel" ? [] : [point],
+                    targetTouches: name === "touchend" || name === "touchcancel" ? [] : [point],
+                    changedTouches: [point]
+                }));
+            };
+            fire("touchstart", startX);
+            fire("touchmove", startX + (endX - startX) / 2);
+            fire("touchmove", endX);
+            fire(cancel ? "touchcancel" : "touchend", endX);
+        }, { selector, startX, endX, cancel });
+    };
+
+    await swipe(".mobile-layout .page-content", 20, 170, true);
+    await expect(menu).not.toHaveClass(/open/);
+    await swipe(".mobile-layout .page-content", 20, 170);
+    await expect(menu).toHaveClass(/open/);
+    await swipe(".mobile-layout > .sideMenu", 300, 140);
+    await expect(menu).not.toHaveClass(/open/);
+});
+
 test("mobile SideMenu background covers the page header", async ({ page }) => {
     await page.setViewportSize({ width: 760, height: 900 });
     await page.addInitScript(() => {

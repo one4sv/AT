@@ -40,6 +40,7 @@ export default function SideMenu() {
         closeMenu,
         openSideMenu,
         activeTab,
+        startupTabAnimationReady,
         showSideMenu,
         setIsDragging,
         translateX,
@@ -159,7 +160,8 @@ export default function SideMenu() {
         }
         setIsDragging(false);
         setDontHandle(false);
-        if (currentTranslate.current < -18) closeMenu();
+        const moved = (currentTranslate.current - startTranslate.current) * window.innerWidth / 100;
+        if (Math.abs(moved) >= 32 ? moved < 0 : startTranslate.current <= -50) closeMenu();
         else openSideMenu();
         horizontalSwipe.current = false;
         verticalScroll.current = false;
@@ -226,7 +228,8 @@ export default function SideMenu() {
                 <div
                     className="slider"
                     style={{
-                        transform: `translateX(${translateSlider}%)`
+                        transform: `translateX(${translateSlider}%)`,
+                        transition: startupTabAnimationReady ? undefined : "none"
                     }}
                 >
                     <div className="slide">
