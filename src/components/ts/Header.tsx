@@ -41,6 +41,8 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     };
     const handleHeaderClick = (event: React.MouseEvent<HTMLDivElement>) => {
         if (planHeaderMenu) {
+            // ContextMenuProvider closes on a bubbling window click.
+            event.stopPropagation();
             const rect = event.currentTarget.getBoundingClientRect();
             showPlanMenu(rect.left, rect.bottom + 6);
             return;
@@ -95,6 +97,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                 {planHeaderMenu && <button type="button" className="headerButt planHeaderActionsButt"
                     data-header-gesture="plan" aria-label={t("plans.management")}
                     onClick={event => {
+                        event.stopPropagation();
                         const rect = event.currentTarget.getBoundingClientRect();
                         showPlanMenu(rect.left, rect.bottom + 6);
                     }}
