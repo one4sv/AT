@@ -10,7 +10,7 @@
 ## Текущий первый этап (ветки feature/one-off-plans-064)
 
 - Сервер: \`database/one_off_plans_20261111.sql\`, \`routes/plans/plans.js\`: \`GET/POST /plans\`, \`GET/PATCH/DELETE /plans/:id\`, \`POST /plans/:id/complete\`, \`/cancel\`, \`/invite\`, \`/respond\`. Приглашение пока только существующему незаблокированному личному контакту; самостоятельное вступление и исключения планов пока не реализованы.
-- Клиент: \`PlansContext\` не пересекается со старым \`PlannedContext\`, обзор /habit 1:2:1 и детальная /plan/:id, создание /plan/new. Отдельная активность /habit/:habitId не меняется.
+- Клиент: \`PlansContext\` не пересекается со \`HabitPlanningContext\`, обзор /habit 1:2:1 и детальная /plan/:id, создание /plan/new. Отдельная активность /habit/:habitId не меняется.
 - Сетевые запросы \`api\` идут через /api; все UI-строки — common.plans в RU/EN.
 - Это **работа в ветках**, не завершённая функция. Не отмечать релиз и ONE4SV-79 Done. Перед включением в production проверить SQL, backend тесты, npm build, ACL по двум пользователям, iOS/desktop и хронологию календаря.
 

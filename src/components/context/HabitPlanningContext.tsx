@@ -4,21 +4,21 @@ import { useTheHabit } from "../hooks/TheHabitHook";
 import { useCalendar } from "../hooks/CalendarHook";
 import { useHabits } from "../hooks/HabitsHook";
 
-const PlannedContext = createContext<PlannedContextType | null>(null);
+const HabitPlanningContext = createContext<HabitPlanningContextType | null>(null);
 
-export interface PlannedContextType {
-    markPlan: (id: number, date: string) => void;
-    markPlanWLoading: (id: number, date: string) => void;
+export interface HabitPlanningContextType {
+    markHabitPlannedDay: (id: number, date: string) => void;
+    markHabitPlannedDayWLoading: (id: number, date: string) => void;
     waitPlanAnswer: boolean;
 }
 
-export const PlannedProvider = ( { children } : { children:ReactNode } ) => {
+export const HabitPlanningProvider = ( { children } : { children:ReactNode } ) => {
     const { habit, loadHabit } = useTheHabit()
     const { fetchCalendarHabit, fetchCalendarUser } = useCalendar()
     const { refetchHabits } = useHabits()
     const [ waitPlanAnswer, setWaitPlanAnswer ] = useState(false)
 
-    const markPlan = async (id: number, date: string) => {
+    const markHabitPlannedDay = async (id: number, date: string) => {
         setWaitPlanAnswer(true)
         try {
             const res = await api.post(`markplan`, {habit_id:id, date})
@@ -37,17 +37,17 @@ export const PlannedProvider = ( { children } : { children:ReactNode } ) => {
         }
     }
 
-    const markPlanWLoading = async (id: number, date: string) => {
+    const markHabitPlannedDayWLoading = async (id: number, date: string) => {
         setWaitPlanAnswer(true);
-        await markPlan(id, date);
+        await markHabitPlannedDay(id, date);
     };
     return (
-        <PlannedContext.Provider
-            value={{ markPlan, markPlanWLoading, waitPlanAnswer }}
+        <HabitPlanningContext.Provider
+            value={{ markHabitPlannedDay, markHabitPlannedDayWLoading, waitPlanAnswer }}
         >
             {children}
-        </PlannedContext.Provider>
+        </HabitPlanningContext.Provider>
     );
 }
 
-export default PlannedContext
+export default HabitPlanningContext
