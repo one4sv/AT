@@ -23,6 +23,7 @@ export default function HabitOverviewLayout() {
     const dayPlans = useMemo(() => plans.filter(plan =>
         plan.plan_date === chosenDay && plan.membership_status !== "pending"
     ), [plans, chosenDay]);
+    const pendingPlans = plans.filter(plan => plan.membership_status === "pending");
     const selectedPlan: OneOffPlan | undefined = dayPlans.find(plan => plan.id === selectedId);
     const open = (plan: OneOffPlan) => {
         if (isMobile) navigate("/plan/" + plan.id);
@@ -48,6 +49,14 @@ export default function HabitOverviewLayout() {
                     {t("plans.create")}
                 </button>
             </div>
+            {pendingPlans.length > 0 && <div className="habitOverviewInvitations">
+                <span>{t("plans.invitations")}</span>
+                {pendingPlans.map(plan => <button key={plan.id} type="button" className="habitOverviewPlan"
+                    onClick={() => navigate("/plan/" + plan.id)}>
+                    <span className="habitOverviewPlanName">{plan.name}</span>
+                    <span>{t("plans.accept")}</span>
+                </button>)}
+            </div>}
             <Selector selected={view} arr={[
                 { value:"all",label:t("plans.all"),func:setView },
                 { value:"activities",label:t("plans.activities"),func:setView },

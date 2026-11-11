@@ -853,6 +853,7 @@
         "noTime": "Без времени",
         "emptyDay": "На выбранную дату планов нет",
         "noDescription": "Нет описания",
+        "invitations": "Приглашения в планы",
         "dayOverview": "Обзор дня",
         "dayCount": "Планов на дату: {{count}}"
     }

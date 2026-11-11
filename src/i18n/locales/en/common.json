@@ -845,6 +845,7 @@
         "noTime": "No time set",
         "emptyDay": "No plans on the selected date",
         "noDescription": "No description",
+        "invitations": "Plan invitations",
         "dayOverview": "Day overview",
         "dayCount": "Plans on this date: {{count}}"
     }
