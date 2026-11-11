@@ -173,8 +173,8 @@
     }
 }
 
-.headerDiv .headerButt.planHeaderActionsButt {
-    border: none;
+.headerDiv .headerButt.planHeaderActionsButt:not(.planHeaderSaveButt) {
+    border: 1px solid var(--block_border);
 }
 
 .headerDiv .headerButt.planHeaderSaveButt {
