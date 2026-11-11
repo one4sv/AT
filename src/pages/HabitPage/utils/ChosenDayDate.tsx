@@ -17,7 +17,7 @@ export default function ChosenDayDate () {
     }
     return (
         <div className="chosenDayDate">
-            <span className="chosenDayDateLabel">{formatDateLabel(chosenDay)}</span>
+            {formatDateLabel(chosenDay)}
             {showReturn && (
                 <div className="calendarReturn" onClick={() => returnCal()}>
                     <CalendarSync size={18}/>
