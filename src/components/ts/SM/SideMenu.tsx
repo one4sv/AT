@@ -160,8 +160,9 @@ export default function SideMenu() {
         }
         setIsDragging(false);
         setDontHandle(false);
-        const moved = (currentTranslate.current - startTranslate.current) * window.innerWidth / 100;
-        if (Math.abs(moved) >= 32 ? moved < 0 : startTranslate.current <= -50) closeMenu();
+        // Original SM drag settling: finish according to the actual menu
+        // position, not the swipe direction or a fixed distance in pixels.
+        if (currentTranslate.current < -18) closeMenu();
         else openSideMenu();
         horizontalSwipe.current = false;
         verticalScroll.current = false;

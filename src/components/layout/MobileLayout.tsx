@@ -36,6 +36,7 @@ export default function MobileLayout({ children }: LayoutProps) {
     const startX = useRef(0);
     const startY = useRef(0);
     const startTranslate = useRef(-100);
+    const currentTranslate = useRef(-100);
     const pageRef = useRef<HTMLDivElement>(null);
     const gesture = useRef<"none" | "menu" | "scroll">("none");
 
@@ -58,6 +59,7 @@ export default function MobileLayout({ children }: LayoutProps) {
         startX.current = e.touches[0].clientX;
         startY.current = e.touches[0].clientY;
         startTranslate.current = translateX;
+        currentTranslate.current = translateX;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -83,16 +85,16 @@ export default function MobileLayout({ children }: LayoutProps) {
 
         if (e.cancelable) e.preventDefault();
         const percent = diffX / window.innerWidth * 100;
-        setTranslateX(Math.max(-100, Math.min(0, startTranslate.current + percent)));
+        const next = Math.max(-100, Math.min(0, startTranslate.current + percent));
+        currentTranslate.current = next;
+        setTranslateX(next);
     };
 
-    const handleTouchEnd = (e: React.TouchEvent) => {
+    const handleTouchEnd = () => {
         if (gesture.current === "menu" && !contextMenu.visible && !blackout.seted) {
-            const dx = (e.changedTouches[0]?.clientX ?? startX.current) - startX.current;
-            if (Math.abs(dx) >= 32) {
-                if (dx > 0) openSideMenu();
-                else closeMenu();
-            } else if (startTranslate.current > -50) openSideMenu();
+            // Restore the original position-based snap: the menu travels with
+            // the finger, then finishes on the side of the halfway point.
+            if (currentTranslate.current > -50) openSideMenu();
             else closeMenu();
         }
 

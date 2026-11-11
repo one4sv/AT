@@ -89,6 +89,7 @@ export default function SMnav() {
     const swipeStartX = useRef(0);
     const swipeStartY = useRef(0);
     const swipeStartTranslate = useRef(0);
+    const swipeCurrentTranslate = useRef(0);
     const gesture = useRef<"none" | "menu" | "scroll" | "longpress">("none");
 
     useEffect(
@@ -123,6 +124,7 @@ export default function SMnav() {
             swipeStartX.current = clientX;
             swipeStartY.current = clientY;
             swipeStartTranslate.current = translateX;
+            swipeCurrentTranslate.current = translateX;
         }
         timerRef.current = window.setTimeout(
             () => {
@@ -200,6 +202,7 @@ export default function SMnav() {
         const diffPercent = dx / window.innerWidth * 100;
         let next = swipeStartTranslate.current + diffPercent;
         next = Math.max(-100, Math.min(0, next));
+        swipeCurrentTranslate.current = next;
         setTranslateX(next);
     };
     const handleNavTouchEnd = (event: React.TouchEvent) => {
@@ -213,9 +216,9 @@ export default function SMnav() {
         touchTab.current = null;
         if (gesture.current === "menu") {
             setIsDragging(false);
-            const moved = touch ? touch.clientX - swipeStartX.current : 0;
-            const target = Math.abs(moved) >= 32 ? (moved > 0 ? 0 : -100) : (showSideMenu ? 0 : -100);
-            if (target === -100) closeMenu();
+            // SMnav used a -40% position threshold before direction-based
+            // completion replaced it. Keep the same final animation as SM.
+            if (swipeCurrentTranslate.current < -40) closeMenu();
             else openSideMenu();
         }
         if (!wasLongPress.current) {

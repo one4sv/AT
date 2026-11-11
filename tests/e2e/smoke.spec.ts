@@ -174,7 +174,13 @@ test("mobile swipe opens and closes SideMenu and cancelled swipe restores it", a
 
     await swipe(".mobile-layout .page-content", 20, 170, true);
     await expect(menu).not.toHaveClass(/open/);
+    // A short swipe crosses 32 px but does not reach the old -50% snap
+    // position: it must return closed, not open by direction alone.
     await swipe(".mobile-layout .page-content", 20, 170);
+    await expect(menu).not.toHaveClass(/open/);
+    await swipe(".mobile-layout .page-content", 20, 260);
+    await expect(menu).toHaveClass(/open/);
+    await swipe(".mobile-layout > .sideMenu", 300, 270);
     await expect(menu).toHaveClass(/open/);
     await swipe(".mobile-layout > .sideMenu", 300, 140);
     await expect(menu).not.toHaveClass(/open/);
@@ -210,9 +216,9 @@ test("mobile swipe from a post or message context surface opens SideMenu", async
                 }));
             };
             fire("touchstart", 25);
-            fire("touchmove", 80);
-            fire("touchmove", 180);
-            fire("touchend", 180);
+            fire("touchmove", 140);
+            fire("touchmove", 290);
+            fire("touchend", 290);
             surface.remove();
         }, type);
         await expect(menu).toHaveClass(/open/);
