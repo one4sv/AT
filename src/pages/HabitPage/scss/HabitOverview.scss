@@ -255,3 +255,123 @@
         max-width: 32vw;
     }
 }
+
+
+// Shared day timeline for habits and one-off plans.
+.habitOverviewTimeline {
+    display: flex;
+    flex-direction: column;
+    gap: .4dvh;
+}
+.habitOverviewEntry {
+    min-height: 5.5dvh;
+    display: flex;
+    align-items: center;
+    border-radius: 18px;
+    background: var(--interact);
+    border: 1px solid var(--block_border);
+}
+.habitOverviewEntryMain {
+    display: flex;
+    align-items: center;
+    gap: .7vw;
+    flex: 1;
+    min-width: 0;
+    padding: .75dvh .8vw;
+    color: var(--tc);
+    background: transparent;
+    text-align: left;
+    border: none;
+    cursor: pointer;
+}
+.habitOverviewEntryMain .calendarDot {
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+}
+.habitOverviewEntryInfo {
+    display: flex;
+    flex-direction: column;
+    gap: .2dvh;
+    min-width: 0;
+}
+.habitOverviewEntryName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.habitOverviewEntryInfo small,
+.habitOverviewNext small,
+.habitOverviewSummary small {
+    color: var(--borderWh);
+}
+.habitOverviewEntryDone {
+    display: grid;
+    place-items: center;
+    min-width: 3dvh;
+    height: 3dvh;
+    border: 0;
+    padding: 0;
+    margin-inline-end: .8vw;
+    background: transparent;
+    color: var(--accent_text);
+    cursor: pointer;
+}
+.habitOverviewEntryDone:disabled {
+    opacity: .5;
+}
+.habitOverviewSummary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .5vw;
+}
+.habitOverviewSummary > div {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--block_border);
+    border-radius: 16px;
+    padding: 1dvh .8vw;
+}
+.habitOverviewSummary span {
+    font-size: 24px;
+}
+.habitOverviewProgress {
+    width: 100%;
+    height: .7dvh;
+    background: var(--interact);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.habitOverviewProgress > span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    transition: width .2s ease;
+}
+.habitOverviewNext {
+    display: flex;
+    flex-direction: column;
+    gap: .3dvh;
+    border: 1px solid var(--block_border);
+    border-radius: 16px;
+    background: var(--interact);
+    padding: .8dvh .8vw;
+    color: var(--tc);
+    text-align: left;
+    cursor: pointer;
+}
+@media (max-width: 800px) {
+    .habitOverviewEntryMain {
+        gap: 2vw;
+        padding: 1dvh 3vw;
+    }
+    .habitOverviewEntryDone {
+        margin-inline-end: 2vw;
+        min-width: 5dvh;
+        height: 5dvh;
+    }
+    .habitOverviewSummary,
+    .habitOverviewNext {
+        gap: 2vw;
+    }
+}

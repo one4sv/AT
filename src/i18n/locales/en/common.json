@@ -798,6 +798,11 @@
     "detailsTooShort": "Describe your request in at least 12 characters."
   },
     "plans": {
+        "daySummary": "Day summary",
+        "completedCount": "Completed: {{done}} of {{total}}",
+        "remainingCount": "Remaining: {{count}}",
+        "nextUp": "Up next",
+        "emptyTimeline": "Nothing scheduled for this date",
         "createActions": "Create",
         "added": "Plan created",
         "invalidTime": "End time cannot be earlier than start time",

@@ -806,6 +806,11 @@
     "detailsTooShort": "Опишите обращение подробнее — не менее 12 символов."
   },
     "plans": {
+        "daySummary": "Итоги дня",
+        "completedCount": "Выполнено: {{done}} из {{total}}",
+        "remainingCount": "Осталось: {{count}}",
+        "nextUp": "Следующее",
+        "emptyTimeline": "На выбранную дату ничего нет",
         "createActions": "Создать",
         "added": "План создан",
         "invalidTime": "Время окончания не может быть раньше начала",
