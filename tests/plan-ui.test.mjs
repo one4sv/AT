@@ -107,6 +107,15 @@ test("creation is personal and participant management lives on plan page", () =>
     assert.match(page, /<PlanMembers plan=\{plan\}/);
     assert.match(members, /api\.post\("plans\/" \+ plan\.id \+ "\/invite"/);
     assert.match(members, /api\.delete\("plans\/" \+ plan\.id \+ "\/members\/" \+ id\)/);
-    assert.match(style, /height: 92dvh;/);
+    assert.match(style, /height: auto;/);
+    assert.match(style, /max-height: calc\(92dvh - env\(safe-area-inset-bottom\)\);/);
     assert.doesNotMatch(sharedStyle, /min-height: 2\.5em/);
+});
+
+test("collapsed completion controls keep their status color rather than an interact overlay", () => {
+    const plan = read("src/pages/Plan/PlanPage.scss");
+    const habit = read("src/pages/HabitPage/scss/habitMobileDone.scss");
+    assert.match(plan, /\.planMobileDone \.doneButtDivMobile > \.bottomOpen\s*\{\s*border: none;\s*background: transparent;/);
+    assert.match(habit, /> \.bottomOpen\s*\{\s*border: none;\s*background: transparent;\s*color: inherit;/);
+    assert.doesNotMatch(habit, /\.doneButtDivMobile\s*\{[\s\S]*?backdrop-filter: blur\(var\(--blur\)\)/);
 });

@@ -93,6 +93,8 @@ test("plan editor and compact modal controls keep mobile layout and text limits"
     assert.match(sharedTime, /\&\[type="time"\]/);
     assert.match(sharedTime, /\:\:-webkit-calendar-picker-indicator/);
     assert.match(addHabit, /type="time" id="inputStartTime"/);
+    assert.match(addHabit, /className="timeInputShell"/);
+    assert.match(plans, /className="timeInputShell"/);
     assert.match(addHabit, /type="time" id="inputEndTime"/);
     assert.match(habitStyles, /height: 5dvh/);
     assert.match(habitStyles, /3dvh \+ env\(safe-area-inset-bottom\)/);
@@ -106,12 +108,37 @@ test("AddPlan has no separate title or kind selection and labels do not force a 
     const controls = read("src/scss/modules/habitFormControls.scss");
     assert.doesNotMatch(form, /addPlanHeading/);
     assert.match(form, /!modal && !initial/);
-    assert.match(mobile, /height: 92dvh/);
+    assert.match(mobile, /height: auto/);
     assert.doesNotMatch(controls, /min-height: 2\.5em/);
 });
 
 test("time inputs align at the bottom of both columns without label min-height", () => {
     const css = read("src/scss/modules/habitFormControls.scss");
-    assert.match(css, /> \.addHabitInput\[type="time"\] \{\s*margin-top: auto;/);
+    assert.match(css, /> \.timeInputShell \{\s*margin-top: auto;/);
     assert.doesNotMatch(css, /min-height: 2\.5em/);
+});
+
+test("native time reset uses controlled input events and independently rounded shells", () => {
+    const plan = read("src/pages/Plan/PlanEditor.tsx");
+    const habit = read("src/components/modules/AddHabit.tsx");
+    const css = read("src/scss/modules/habitFormControls.scss");
+    const select = read("src/scss/SelectList.scss");
+    for (const form of [plan, habit]) {
+        assert.match(form, /className="timeInputShell"/);
+        assert.match(form, /onInput=\{e =>/);
+        assert.match(form, /onBlur=\{e =>/);
+        assert.match(form, /className="timeInputClear"/);
+    }
+    assert.match(css, /\.timeInputShell\s*\{[\s\S]*?border-radius: 24px;[\s\S]*?overflow: hidden;/);
+    assert.match(css, /> input\.addHabitInput\[type="time"\]\s*\{[\s\S]*?border: none;/);
+    assert.doesNotMatch(css, /font-size: 20px;\s*padding-inline-end: 6vw;/);
+    assert.match(select, /\.redHabitSL\s*\{[\s\S]*?> svg \{\s*top: 50%;/);
+});
+test("settings context-menu buttons can start a horizontal SideMenu swipe", () => {
+    const layout = read("src/components/layout/MobileLayout.tsx");
+    const press = read("src/components/hooks/utils/useLongPressContextMenu.ts");
+    const style = read("src/pages/Settings/scss/settings.scss");
+    assert.doesNotMatch(layout, /target\.closest\("[^"]*\[data-context-menu\]/);
+    assert.match(press, /Math\.abs\(dx\) >= 8/);
+    assert.match(style, /\.settingButt \{\s*touch-action: pan-y;/);
 });

@@ -203,6 +203,10 @@ test("SideMenu list reserves space for its overlapping navigation bar", async ({
 });
 
 test("personal plan participants can be invited and removed from its details page", async ({ page }) => {
+    await page.addInitScript(() => {
+        localStorage.setItem("at_startup_preferences", JSON.stringify({ settings_mobile_start_menu: false }));
+        localStorage.setItem("settingsfixture_settings_mobile_start_menu", "false");
+    });
     const contactId = "22222222-2222-4222-8222-222222222222";
     let invited = false;
     let removed = false;
@@ -260,4 +264,33 @@ test("personal plan participants can be invited and removed from its details pag
     await section.getByRole("button", { name: "Отменить приглашение" }).last().click();
     await expect.poll(() => removed).toBe(true);
     await expect(section.locator(".planMember")).toHaveCount(1);
+});
+
+test("mobile settings buttons allow swiping SideMenu open", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
+    await page.goto("/settings");
+    const button = page.locator(".settingsButtsWrapper .settingButt").first();
+    await expect(button).toBeVisible();
+    const menu = page.locator(".mobile-layout > .sideMenu");
+    await expect(menu).not.toHaveClass(/open/);
+    await button.evaluate(element => {
+        const touch = (x: number) => new Touch({
+            identifier: 1, target: element, clientX: x, clientY: 300
+        });
+        const fire = (type: string, x: number) => {
+            const point = touch(x);
+            element.dispatchEvent(new TouchEvent(type, {
+                bubbles: true, cancelable: true,
+                touches: type === "touchend" ? [] : [point],
+                targetTouches: type === "touchend" ? [] : [point],
+                changedTouches: [point]
+            }));
+        };
+        fire("touchstart", 30);
+        fire("touchmove", 90);
+        fire("touchmove", 185);
+        fire("touchend", 185);
+    });
+    await expect(menu).toHaveClass(/open/);
+    await expect(page).toHaveURL(/\/settings\/?$/);
 });
