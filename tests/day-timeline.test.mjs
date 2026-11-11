@@ -99,9 +99,9 @@ test("habit day header preserves the November 9 date layout and return control",
     const root = new URL("../src/pages/HabitPage/", import.meta.url);
     const view = readFileSync(new URL("utils/ChosenDayDate.tsx", root), "utf8");
     const styles = readFileSync(new URL("scss/ChosenDay.scss", root), "utf8");
-    assert.match(view, /<span className="chosenDayDateLabel">\\{formatDateLabel\\(chosenDay\\)\\}<\\/span>/);
+    assert.match(view, /<span className="chosenDayDateLabel">\{formatDateLabel\(chosenDay\)\}<\/span>/);
     assert.match(view, /className="calendarReturn"/);
-    assert.match(styles, /\\.chosenDayDate\\s*\\{[\\s\\S]*?height: 4dvh;/);
-    assert.match(styles, /\\.chosenDayDate\\s*\\{[\\s\\S]*?align-items: flex-start;/);
-    assert.match(styles, /\\.calendarReturn\\s*\\{[\\s\\S]*?height: 3dvh;/);
+    assert.match(styles, /\.chosenDayDate\s*\{[\s\S]*?height: 4dvh;/);
+    assert.match(styles, /\.chosenDayDate\s*\{[\s\S]*?align-items: flex-start;/);
+    assert.match(styles, /\.calendarReturn\s*\{[\s\S]*?height: 3dvh;/);
 });
