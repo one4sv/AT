@@ -364,6 +364,49 @@ test("profile info collapses from active tab and wheel at top, not a regular con
     await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeGreaterThan(originalHeight - 2);
 });
 
+test("plan actions open from its section and shared header without changing edit layout", async ({ page }) => {
+    const plan = {
+        id: 7, owner_id: "fixture-owner", name: "План для теста", description: "Описание",
+        plan_date: "2026-11-20", start_time: "13:00", end_time: "14:00",
+        place: "Москва", tag: null, kind: "personal", completion_mode: "personal",
+        status: "upcoming", is_owner: true, membership_status: "accepted",
+        completed_for_me: false, members: [{
+            id: "fixture-owner", nick: "owner", username: "Owner", avatar_url: null,
+            completed: false, status: "accepted", is_owner: true
+        }]
+    };
+    await page.route("**/api/plans/7", route => route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({ success: true, plan })
+    }));
+    await page.route("**/api/plans", route => route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({ success: true, plans: [] })
+    }));
+    await page.goto("/plan/7");
+    const section = page.locator(".planMainSection");
+    const name = page.locator("#planInlineName");
+    const menu = page.locator(".ContextMenuWrapper");
+    await expect(section).toBeVisible();
+    await expect(name).toHaveAttribute("readonly", "");
+    const before = await name.boundingBox();
+
+    await section.click({ button: "right", position: { x: 16, y: 16 } });
+    await expect(menu).toBeVisible();
+    await menu.getByText("Редактировать").click();
+    await expect(name).not.toHaveAttribute("readonly");
+    const after = await name.boundingBox();
+    expect(Math.abs((after?.y ?? 0) - (before?.y ?? 0))).toBeLessThanOrEqual(2);
+
+    await page.locator(".planHeaderActionsButt").click();
+    await expect(menu).toBeVisible();
+    await menu.getByText("Назад").click();
+    await expect(name).toHaveAttribute("readonly", "");
+    await page.locator(".headerTitle").click();
+    await expect(menu).toBeVisible();
+    await expect(menu).toContainText("Удалить");
+});
+
 test("guest profile hides account-only actions while shared action styles load directly", async ({ page }) => {
     await page.route("**/api/user", route => route.fulfill({ status: 401, contentType: "application/json", body: "{}" }));
     await page.route("**/api/acc/bob", route => route.fulfill({
