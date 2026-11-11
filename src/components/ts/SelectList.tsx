@@ -82,7 +82,17 @@ export default function SelectList({
       const viewportTop = viewport?.offsetTop ?? 0;
       const viewportBottom = viewportTop + (viewport?.height ?? window.innerHeight);
       const rect = root.getBoundingClientRect();
-      const spaceBelow = Math.max(0, viewportBottom - rect.bottom - 12);
+      // Fixed PageBottom actions (for example Settings search) reserve usable
+      // screen space even though they do not shorten visualViewport.height.
+      let usableBottom = viewportBottom;
+      root.closest(".settingsPage, .page-content")?.querySelectorAll<HTMLElement>(".pageBottom").forEach(bar => {
+        const bounds = bar.getBoundingClientRect();
+        if (bounds.width > 0 && bounds.height > 0 && bounds.top >= rect.bottom &&
+            bounds.left < rect.right && bounds.right > rect.left) {
+          usableBottom = Math.min(usableBottom, bounds.top);
+        }
+      });
+      const spaceBelow = Math.max(0, usableBottom - rect.bottom - 12);
       const spaceAbove = Math.max(0, rect.top - viewportTop - 12);
       const upwards = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
       list.style.maxHeight = Math.max(0, Math.min(desiredHeight, upwards ? spaceAbove : spaceBelow)) + "px";
