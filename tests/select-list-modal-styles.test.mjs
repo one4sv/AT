@@ -82,7 +82,10 @@ test("plan editor and compact modal controls keep mobile layout and text limits"
     assert.match(plans, /value\.description\.length\}\/1200/);
     assert.match(plans, /<TA id="planDescription"/);
     assert.match(chatTA, /ResizeObserver/);
-    assert.match(styles, /grid-template-columns: minmax\(0, 1fr\)/);
+    assert.match(styles, /\.addPlanDiv \.addHabitTimeWrapper\.timeInputs\s*\{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+    assert.match(styles, /\.addPlanDiv \.planFormSelect > svg,[\s\S]*?top: 50%;/);
+    assert.match(sharedTime, /&\.timeInputs\s*\{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+    assert.match(sharedTime, /font-size: 16px;[\s\S]*?-webkit-text-size-adjust: 100%/);
     assert.match(sharedTime, /&\.timeInputs/);
     assert.match(plans, /<TagSelector selectedTag=/);
     assert.match(sideMenuStyles, /padding-bottom: calc\(1dvh \+ var\(--sm-nav-clearance/);

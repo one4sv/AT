@@ -141,7 +141,7 @@ test("danger and security button styles load when settings pages are opened dire
 });
 
 
-test("native time controls have full-width mobile rows and two desktop columns", async ({ page }, testInfo) => {
+test("native time controls fit two columns on mobile and desktop", async ({ page }, testInfo) => {
     await page.goto("/settings/notes");
     await expect(page.locator(".settingTab")).toBeVisible();
     await page.evaluate(() => {
@@ -166,14 +166,13 @@ test("native time controls have full-width mobile rows and two desktop columns",
     }));
     expect(rects[0].width).toBeGreaterThan(80);
     expect(rects[1].width).toBeGreaterThan(80);
+    expect(rects[0].right).toBeLessThanOrEqual(rects[1].left + 1);
+    expect(Math.abs(rects[0].top - rects[1].top)).toBeLessThanOrEqual(2);
     if (testInfo.project.name === "webkit-mobile") {
-        expect(rects[0].bottom).toBeLessThanOrEqual(rects[1].top + 1);
-        expect(rects[0].width).toBeGreaterThan(250);
-        expect(rects[1].width).toBeGreaterThan(250);
-        expect(rects[0].fontSize).toBeGreaterThanOrEqual(20);
-        expect(rects[1].fontSize).toBeGreaterThanOrEqual(20);
-    } else {
-        expect(rects[0].right).toBeLessThanOrEqual(rects[1].left + 1);
+        expect(rects[0].width).toBeGreaterThan(120);
+        expect(rects[1].width).toBeGreaterThan(120);
+        expect(rects[0].fontSize).toBeGreaterThanOrEqual(16);
+        expect(rects[1].fontSize).toBeGreaterThanOrEqual(16);
     }
 });
 
