@@ -109,3 +109,9 @@ test("AddPlan has no separate title or kind selection and labels do not force a 
     assert.match(mobile, /height: 92dvh/);
     assert.doesNotMatch(controls, /min-height: 2\.5em/);
 });
+
+test("time inputs align at the bottom of both columns without label min-height", () => {
+    const css = read("src/scss/modules/habitFormControls.scss");
+    assert.match(css, /> \.addHabitInput\[type="time"\] \{\s*margin-top: auto;/);
+    assert.doesNotMatch(css, /min-height: 2\.5em/);
+});

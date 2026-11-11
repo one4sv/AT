@@ -47,6 +47,10 @@
         max-width: 100%;
         min-width: 0;
         overflow: hidden;
+
+        > .addHabitInput[type="time"] {
+            margin-top: auto;
+        }
     }
     @media (max-width: 800px) {
         column-gap: 2vw;
