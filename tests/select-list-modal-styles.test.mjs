@@ -162,6 +162,8 @@ test("SelectList flips above the field and caps its scrollable height near viewp
     const styles = read("src/scss/SelectList.scss");
     assert.match(code, /useLayoutEffect\(\(\) =>/);
     assert.match(code, /window\.visualViewport/);
+    assert.match(code, /querySelectorAll<HTMLElement>\("\.pageBottom"\)/);
+    assert.match(code, /usableBottom = Math\.min\(usableBottom, bounds\.top\)/);
     assert.match(code, /spaceBelow < desiredHeight && spaceAbove > spaceBelow/);
     assert.match(code, /list\.style\.maxHeight = Math\.max\(0, Math\.min\(desiredHeight/);
     assert.match(code, /window\.addEventListener\("scroll", handleScroll, true\)/);
