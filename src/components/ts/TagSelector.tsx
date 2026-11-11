@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { createPortal } from "react-dom"
 import "../../scss/modules/habitFormControls.scss"
 import { Plus, Pencil } from "lucide-react"
   import { tags, groups } from "./tags"
@@ -7,12 +8,39 @@ interface TagSelectorProps {
   selectedTag?: string;
   setSelectedTag: (tag: string | undefined) => void;
   showOnly?:boolean | undefined;
+  portal?: boolean;
 }
 
-export default function TagSelector({ selectedTag, setSelectedTag, showOnly }: TagSelectorProps) {
+export default function TagSelector({ selectedTag, setSelectedTag, showOnly, portal = false }: TagSelectorProps) {
   const [showTagList, setShowTagList] = useState<boolean>(false)
   const tagListRef = useRef<HTMLDivElement>(null)
   const addTagButt = useRef<HTMLDivElement>(null)
+  const [popupPosition, setPopupPosition] = useState<{top: number; left: number; width: number; maxHeight: number} | null>(null)
+
+  useEffect(() => {
+    if (!portal || !showTagList) return
+    const updatePosition = () => {
+      const rect = addTagButt.current?.getBoundingClientRect()
+      if (!rect) return
+      const spaceBelow = window.innerHeight - rect.bottom - 12
+      const spaceAbove = rect.top - 12
+      const openAbove = spaceBelow < 220 && spaceAbove > spaceBelow
+      const maxHeight = Math.max(100, Math.min(320, openAbove ? spaceAbove : spaceBelow))
+      setPopupPosition({
+        top: openAbove ? Math.max(8, rect.top - maxHeight - 6) : rect.bottom + 6,
+        left: Math.max(8, rect.left),
+        width: Math.min(Math.max(rect.width, 280), window.innerWidth - Math.max(8, rect.left) - 8),
+        maxHeight
+      })
+    }
+    updatePosition()
+    window.addEventListener("scroll", updatePosition, true)
+    window.addEventListener("resize", updatePosition)
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true)
+      window.removeEventListener("resize", updatePosition)
+    }
+  }, [portal, showTagList])
 
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
@@ -31,6 +59,28 @@ export default function TagSelector({ selectedTag, setSelectedTag, showOnly }: T
       document.removeEventListener("mousedown", handleMouseDown);
     };
   }, []);
+
+  const tagList = (
+    <div className={`tagList ${showTagList ? "active" : ""} ${portal ? "planTagPortal" : ""}`} ref={tagListRef}
+      style={portal ? { position: "fixed", top: popupPosition?.top ?? -9999, left: popupPosition?.left ?? 0,
+        width: popupPosition?.width ?? 0, maxHeight: popupPosition?.maxHeight ?? 200, zIndex: 1000 } : undefined}>
+      {groups.map(({ group, value }) => {
+        const tagsInGroup = tags.filter(tag => tag.group === group)
+        if (!tagsInGroup.length) return null
+        return <div key={group} className="tagGroup">
+          <div className="tagGroupTitle">{value}</div>
+          {tagsInGroup.map((tag, i) => {
+            const Icon = tag.icon
+            if (selectedTag !== tag.value) return <div className="tag" key={i}
+              onClick={() => { setSelectedTag(tag.value); setShowTagList(false) }}>
+              <Icon size={24}/> {tag.label}
+            </div>
+            return null
+          })}
+        </div>
+      })}
+    </div>
+  )
 
   return (
     <>
@@ -59,31 +109,7 @@ export default function TagSelector({ selectedTag, setSelectedTag, showOnly }: T
           </>
         </div>
       </div>
-      <div className={`tagList ${showTagList ? "active" : ""}`} ref={tagListRef}>
-          {groups.map(({ group, value }) => {
-            const tagsInGroup = tags.filter(tag => tag.group === group)
-
-            if (!tagsInGroup.length) return null
-
-            return (
-              <div key={group} className="tagGroup">
-                <div className="tagGroupTitle">{value}</div>
-                {tagsInGroup.map((tag, i) => {
-                  const Icon = tag.icon
-                  if (selectedTag !== tag.value) return (
-                    <div
-                      className="tag"
-                      key={i}
-                      onClick={() => setSelectedTag(tag.value)}
-                    >
-                      <Icon size={24} /> {tag.label}
-                    </div>
-                  )
-                })}
-              </div>
-            )
-          })}
-        </div>
+      {portal ? (showTagList && createPortal(tagList, document.body)) : tagList}
     </>
   )
 }
