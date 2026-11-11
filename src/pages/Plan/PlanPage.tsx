@@ -7,6 +7,7 @@ import { usePlans } from "../../components/hooks/PlansHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import type { OneOffPlan } from "../../components/context/PlansContext";
 import PlanEditor, { type PlanInput } from "./PlanEditor";
+import PlanReminders from "./PlanReminders";
 import "./PlanPage.scss";
 
 export default function PlanPage() {
@@ -146,6 +147,7 @@ export default function PlanPage() {
                             void action(() => api.post("plans/" + planId + "/respond", { status:"declined" }))}>{t("plans.decline")}</button>
                     </div>
                 </div> : <>
+                    <PlanReminders planId={plan.id}/>
                     <div className="planSection">
                         <h2>{t("plans.completion")}</h2>
                         <p>{plan.kind === "shared" && plan.completion_mode === "personal"

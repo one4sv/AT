@@ -128,6 +128,12 @@
     "sometimes": "Иногда"
   },
   "notifications": {
+        "planRemindersTitle": "Напоминания о планах",
+        "planRemindersToggle": "Получать напоминания о планах",
+        "planRemindersHint": "Выключено по умолчанию. Для получения уведомлений включите Web Push. Дополнительные напоминания настраиваются в каждом плане.",
+        "planRemindersDefault": "Обычное напоминание для всех планов",
+        "planRemindersNoTime": "Для планов без времени используется 09:00 в часовом поясе плана.",
+        "1dayBefore": "За 1 день",
     "general": "Общие",
     "generalNotifications": "Общие уведомления",
     "newMessages": "Новые сообщения",

@@ -50,3 +50,8 @@
 ## 11.11.2026 — форма плана и мобильные controls
 
 В `main` UI: описание плана сразу за именем, счётчик/лимит 1200; `AutoDesc` принимает необязательный `maxLength`. Мобильные `time` поля AddPlan исправлены через grid 2× minmax(0,1fr), единые высоты label, min-width:0. SelectList ChevronDown вращается с сохранением translateY(-50%), в форме плана добавлен padding под стрелку. Мобильные AddHabit/AddPlan: Save высотой 5dvh и нижний padding 3dvh+safe-area. SMheader: «Активности». SMaccountButt: не переопределять цвет текста на hover. См. ONE4SV-79, проверить iPhone и desktop после деплоя.
+
+
+## 11.11.2026 — plan reminder UI
+
+В настройках уведомлений добавлен `PlanRemindersSettings` и searchable id `planReminders`; в `/plan/:id` для принятых участников — `PlanReminders` как раскрываемый блок под информацией плана. Общий тумблер off по умолчанию и отдельное стандартное смещение; дополнительные смещения на каждом плане. RU/EN локализации и SCSS принадлежат компонентам. API: `GET/POST /settings/plan-reminders`, `GET/POST /plans/:id/reminders`; server `services/planReminderWorker.js`. Не отправлять Push при отключённой общей настройке.

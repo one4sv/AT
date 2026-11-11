@@ -258,6 +258,12 @@ export function useSearchableSettings(): SearchableSection[] {
                     category: t("notifications.reminders"),
                 },
                 {
+                    id: "planReminders",
+                    name: t("notifications.planRemindersTitle"),
+                    icon: BellIcon,
+                    category: t("notifications.reminders"),
+                },
+                {
                     id: "commonReminderTime",
                     name: t("notifications.commonReminderTime"),
                     icon: ClockIcon,

@@ -172,3 +172,58 @@
     background-color: var(--bgc);
     z-index: 12;
 }
+
+
+.planRemindersSummary {
+    display: flex;
+    align-items: center;
+    gap: .6vw;
+    cursor: pointer;
+    color: var(--tc);
+    font-size: 18px;
+}
+.planRemindersSection[open] .planRemindersSummary {
+    margin-bottom: 1.5dvh;
+}
+.planRemindersHint {
+    color: var(--borderWh);
+}
+.planRemindersHint a {
+    color: var(--accent_text);
+}
+.planReminderChoices, .planReminderCustom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .7vw;
+    align-items: center;
+    margin: 1dvh 0;
+}
+.planReminderChoices .selected {
+    border-color: var(--accent);
+    color: var(--accent_text);
+}
+.planReminderCustom input {
+    max-width: 8vw;
+    min-width: 6vw;
+    background: var(--interact);
+    color: var(--tc);
+    border: 1px solid var(--block_border);
+    border-radius: 16px;
+    padding: .8dvh .8vw;
+}
+.planRemindersError {
+    color: var(--notValid);
+}
+@media (max-width: 800px) {
+    .planRemindersSummary {
+        gap: 2vw;
+    }
+    .planReminderChoices, .planReminderCustom {
+        gap: 2vw;
+    }
+    .planReminderCustom input {
+        max-width: 26vw;
+        min-width: 20vw;
+        padding: 1dvh 3vw;
+    }
+}

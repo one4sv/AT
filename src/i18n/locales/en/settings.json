@@ -128,6 +128,12 @@
     "sometimes": "Sometimes"
   },
   "notifications": {
+        "planRemindersTitle": "Plan reminders",
+        "planRemindersToggle": "Receive plan reminders",
+        "planRemindersHint": "Off by default. Enable Web Push to receive notifications. Configure extra reminders on each plan.",
+        "planRemindersDefault": "Default reminder for every plan",
+        "planRemindersNoTime": "Plans without a time use 9:00 AM in the plan's time zone.",
+        "1dayBefore": "1 day before",
     "general": "General",
     "generalNotifications": "General notifications",
     "newMessages": "New messages",

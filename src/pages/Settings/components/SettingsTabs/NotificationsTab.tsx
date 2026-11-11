@@ -16,6 +16,7 @@ import { getPushState, enableWebPush, disableWebPush, isIOS, isStandalonePWA, ty
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { api } from "../../../../components/ts/api";
 import "./notificationPermission.scss";
+import PlanRemindersSettings from "./PlanRemindersSettings";
 
 const browserPermission = (): NotificationPermission | "unsupported" =>
     typeof window === "undefined" || !("Notification" in window) ? "unsupported" : Notification.permission;
@@ -456,6 +457,7 @@ export default function NotificationsTab({ search }: { search: string }) {
                     </div>
                 </div>
             </div>
+            <PlanRemindersSettings search={search}/>
         </div>
     );
 }
