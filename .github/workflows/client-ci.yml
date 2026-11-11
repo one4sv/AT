@@ -31,6 +31,8 @@ jobs:
         run: node --test tests/day-timeline.test.mjs
       - name: Verify plan form, tag icons and dangerous actions
         run: node --test tests/plan-ui.test.mjs
+      - name: Verify launch preferences and mobile SideMenu startup
+        run: node --test tests/startup-preferences.test.mjs
       - name: Verify media, SMnav skeletons and start-of-day logic
         run: node --test tests/overview-loading.test.mjs
       - name: Verify GroupInfo avatar/status positioning

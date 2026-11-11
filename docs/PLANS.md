@@ -112,3 +112,12 @@ PlansProvider загружает планы после входа или сме�
 - У `PlanReminders` справа видимая стрелка `CaretDownIcon`, поворачивающаяся при открытии. Управление: SVG у редактирования, отмены/восстановления, удаления и сохранения.
 - Кнопка «Выполнить» (EN: Complete) на странице плана использует `habitUi.complete`, а на ПК также **исходную `.doneButt` из `Complete.scss`** (ширина 17vw, размер текста 20px и состояния `dbMark/dbComp`), а не широкую planPrimaryButton. Мобильная привычная кнопка продолжает пользоваться `.doneButtMobile`.
 - Действия «Отменить план» и «Удалить» оформлены строго по `SCSS_GUIDE.md`: цвет `var(--notValid)`, рамка `1px solid var(--notValid)`, `var(--notValidBg)` при hover/active; подтверждение удаления также красное, не градиентное. «Восстановить» остаётся нейтральным. Регрессионные тесты: `tests/plan-ui.test.mjs`.
+
+
+## Корректировка PlanPage и напоминаний
+
+На desktop PlanComment и кнопка выполнения (.doneButt) находятся в первой .planSection, сразу после метаданных плана; отдельная секция выполнения не нужна. Mobile использует штатную закреплённую панель с переключением комментария и выполнения.
+
+В planPrimaryButton содержимое центрируется через display:flex, align-items:center, justify-content:center. SVG в planMetadataEditing центрируется по строке инпутов. Скролл страницы scrollbar-width:thin, нижний padding 2dvh на desktop, 3dvh на mobile и резерв 9dvh + safe-area только при закреплённой панели.
+
+PlanReminders постоянно показывает строку с общими настройками. Link на /settings/notes передаёт router state.settingId=planReminders, штатный Settings.tsx прокручивает к data-setting-id=planReminders. Выключенное общее напоминание дополнительно сопровождается предупреждением.

@@ -75,9 +75,13 @@ export default function PlanReminders({ planId }: { planId: number }) {
             <CaretDownIcon className="planRemindersCaret" size={20}/>
         </summary>
         {loading ? <p>{t("plans.loading")}</p> : <>
-            {!globalEnabled && <p className="planRemindersHint">
-                {t("plans.remindersGlobalDisabled")} <Link to="/settings/notes">{t("plans.remindersOpenSettings")}</Link>
-            </p>}
+            <p className="planRemindersHint">
+                {!globalEnabled && <>{t("plans.remindersGlobalDisabled")} </>}
+                {t("plans.remindersSettingsHint")}{" "}
+                <Link to="/settings/notes" state={{ from: "/plan/" + planId, settingId: "planReminders" }}>
+                    {t("plans.remindersOpenSettings")}
+                </Link>
+            </p>
             <p className="planRemindersHint">{t("plans.remindersExplainer")}</p>
             <div className="planReminderChoices">
                 {presets.map(minutes => <button type="button" key={minutes}

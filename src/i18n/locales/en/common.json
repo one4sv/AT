@@ -798,6 +798,7 @@
     "detailsTooShort": "Describe your request in at least 12 characters."
   },
     "plans": {
+    "remindersSettingsHint": "Global reminder settings:",
         "showAll": "Show all",
         "dayStart": "Start of day", "currentActivity": "Current activity",
         "comment": "Comment",

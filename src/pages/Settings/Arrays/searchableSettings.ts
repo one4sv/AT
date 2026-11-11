@@ -91,6 +91,23 @@ export function useSearchableSettings(): SearchableSection[] {
             icon: WrenchIcon,
             items: [
                 {
+                    id: "startupPage",
+                    name: t("general.startupPage"),
+                    icon: NewspaperIcon,
+                    category: t("general.startupTitle"),
+                },
+                ...(isMobile ? [{
+                    id: "showMobileMenuOnStart",
+                    name: t("general.showMobileMenuOnStart"),
+                    icon: TextIndentIcon,
+                    category: t("general.startupTitle"),
+                },{
+                    id: "startupSideMenuTab",
+                    name: t("general.startupSideMenuTab"),
+                    icon: ChatsTeardropIcon,
+                    category: t("general.startupTitle"),
+                }] : []),
+                {
                     id: "autoLoadImages",
                     name: t("general.autoLoadImages"),
                     icon: ImageSquareIcon,

@@ -18,6 +18,8 @@ export type QuickActionType = "feed" | "settings" | "profile" | "habits" | "habi
 export type QuickAction = { type: QuickActionType; target?: string; label?: string };
 export type SavedBackground = { url: string; path: string | null };
 export type ContourPattern = "order" | "chaos";
+export type StartupPage = "feed" | "habits";
+export type StartupSideMenuTab = "chats" | "habits";
 export type WallpaperStyle = {
     logoEnabled: boolean;
     fillMode: "solid" | "gradient";
@@ -54,6 +56,12 @@ export interface SettingsContextType {
     setBlur: React.Dispatch<React.SetStateAction<number>>;    
     layout: string;
     setLayout: React.Dispatch<React.SetStateAction<string>>;
+    startupPage: StartupPage;
+    setStartupPage: React.Dispatch<React.SetStateAction<StartupPage>>;
+    showMobileMenuOnStart: boolean;
+    setShowMobileMenuOnStart: React.Dispatch<React.SetStateAction<boolean>>;
+    startupSideMenuTab: StartupSideMenuTab;
+    setStartupSideMenuTab: React.Dispatch<React.SetStateAction<StartupSideMenuTab>>;
     bg: string;
     setBg: React.Dispatch<React.SetStateAction<string>>;
     decor: string;
@@ -149,6 +157,9 @@ const LOCAL_KEYS = {
     grad: "settings_grad",
     blur: "settings_blur",
     layout: "settings_layout",
+    startupPage: "settings_startup_page",
+    showMobileMenuOnStart: "settings_mobile_start_menu",
+    startupSideMenuTab: "settings_mobile_start_tab",
     bg: "settings_bg",
     bgUrl: "settings_bg_url",
     bgEffects: "settings_bg_effects",
@@ -180,6 +191,9 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ grad, setGrad ] = useLocalStorage(LOCAL_KEYS.grad, "meadow");
     const [ blur, setBlur ] = useLocalStorage(LOCAL_KEYS.blur, 6);
     const [ layout, setLayout ] = useLocalStorage(LOCAL_KEYS.layout, "always");
+    const [ startupPage, setStartupPage ] = useLocalStorage<StartupPage>(LOCAL_KEYS.startupPage, "feed");
+    const [ showMobileMenuOnStart, setShowMobileMenuOnStart ] = useLocalStorage<boolean>(LOCAL_KEYS.showMobileMenuOnStart, true);
+    const [ startupSideMenuTab, setStartupSideMenuTab ] = useLocalStorage<StartupSideMenuTab>(LOCAL_KEYS.startupSideMenuTab, "chats");
     const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "landing");
     const [ contourPattern, setContourPattern ] = useLocalStorage<ContourPattern>(LOCAL_KEYS.contourPattern, "order");
     const [ contourSize, setContourSize ] = useLocalStorage<number>(LOCAL_KEYS.contourSize, 1);
@@ -349,6 +363,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             grad, setGrad,
             blur, setBlur,
             layout, setLayout,
+            startupPage, setStartupPage, showMobileMenuOnStart, setShowMobileMenuOnStart,
+            startupSideMenuTab, setStartupSideMenuTab,
             bg, setBg,
             decor, setDecor,
             bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, wallpaperStyle, setWallpaperStyle, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang, fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat,

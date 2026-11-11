@@ -65,17 +65,20 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const { list, search: settingsSearch, setSearch: setSettingsSearch } = useContacts()
     const { habits, newOrderHabits } = useHabits()
     const { plans } = usePlans()
-    const { showArchived, layout } = useSettings();
+    const { showArchived, layout, settingsLoaded, showMobileMenuOnStart, startupSideMenuTab } = useSettings();
     const isCompact = useCompactLayout();
     const location = useLocation();
-    const initiallyClosed = (isCompact || layout === "hidden") &&
-        (location.pathname.startsWith("/settings") || location.pathname.startsWith("/info") || location.pathname.startsWith("/wallpapers"));
+    const restrictedStartupPath = location.pathname.startsWith("/settings") ||
+        location.pathname.startsWith("/info") || location.pathname.startsWith("/wallpapers");
+    const initiallyClosed = isCompact
+        ? !settingsLoaded || !showMobileMenuOnStart || restrictedStartupPath
+        : layout === "hidden" && restrictedStartupPath;
 
     const [showSideMenu, setShowSideMenu] = useState(() => initiallyClosed ? false : isCompact || layout !== "hidden");
     const [red, setRed] = useState(false);
     const [showHabitMenu, setShowHabitMenu] = useState(false);
     const [showSlide, setShowSlide] = useState<slides>(null);
-    const [activeTab, setActiveTab] = useState<tab>("chats");
+    const [activeTab, setActiveTab] = useState<tab>(() => isCompact ? startupSideMenuTab : "chats");
     const [translateX, setTranslateX] = useState(() => initiallyClosed ? -100 : isCompact || layout !== "hidden" ? 0 : -100);
     const [isDragging, setIsDragging] = useState(false);
     const [dontHandle, setDontHandle] = useState(false);
@@ -203,6 +206,17 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const translateXRef = useRef(0);
     const animationFrame = useRef<number | null>(null);
     const previousPath = useRef<string | null>(null);
+    const mobileStartupApplied = useRef(false);
+
+    useEffect(() => {
+        if (!isCompact || !settingsLoaded || mobileStartupApplied.current) return;
+        mobileStartupApplied.current = true;
+        setActiveTab(startupSideMenuTab);
+        const shouldOpen = showMobileMenuOnStart && !restrictedStartupPath;
+        setShowSideMenu(shouldOpen);
+        setTranslateX(shouldOpen ? 0 : -100);
+        translateXRef.current = shouldOpen ? 0 : -100;
+    }, [isCompact, settingsLoaded, showMobileMenuOnStart, startupSideMenuTab, restrictedStartupPath]);
 
     useEffect(() => {
         translateXRef.current = translateX;
@@ -320,9 +334,9 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         }
         if (previousPath.current !== location.pathname) {
             previousPath.current = location.pathname;
-            if (!studio && (isCompact || layout === "hidden")) closeMenu();
+            if (!studio && (isCompact || layout === "hidden") && !location.state?.startup) closeMenu();
         }
-    }, [location.pathname, closeMenu, isCompact, layout, studio]);
+    }, [location.pathname, location.state, closeMenu, isCompact, layout, studio]);
 
     return (
         <SideMenuContext.Provider

@@ -9,10 +9,15 @@ import HighlightText from "../../../../components/ts/HighlightText";
 import SectionArt from "../../../../components/ts/SectionArt";
 import QuickActionsSettings from "./QuickActionsSettings";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
+import useCompactLayout from "../../../../components/hooks/utils/useCompactLayout";
 
 export default function GeneralTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat, autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache } = useSettings();
+    const isMobile = useCompactLayout();
+    const { fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat,
+        autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
+        startupPage, setStartupPage, showMobileMenuOnStart, setShowMobileMenuOnStart,
+        startupSideMenuTab, setStartupSideMenuTab } = useSettings();
 
     const timeChanger = [
         { label: t("general.twentyFour"), value: "twentyFour" },
@@ -26,6 +31,42 @@ export default function GeneralTab({ search }: { search: string }) {
     return (
         <div className="settingTab">
             {!search.trim() && <SectionArt theme="general"/>}
+            <div className="settingInnerDiv" data-setting-id="startupPage">
+                <div className="settingHeader">
+                    {t("general.startupTitle")}
+                </div>
+                <div className="settingInnerWrapper">
+                    <div className="settingSpan">
+                        <HighlightText text={t("general.startupPage")} search={search}/>
+                    </div>
+                    <RadioGroup list={[
+                        { label: t("general.startupFeed"), value: "feed" },
+                        { label: t("general.startupHabits"), value: "habits" }
+                    ]} val={startupPage}
+                        newVal={value => setStartupPage(value === "habits" ? "habits" : "feed")}
+                        id="startupPage"/>
+                </div>
+                {isMobile && <>
+                    <div className="settingInnerList">
+                        <div className="settingTogglerDiv" data-setting-id="showMobileMenuOnStart"
+                            onClick={() => setShowMobileMenuOnStart(!showMobileMenuOnStart)}>
+                            <HighlightText text={t("general.showMobileMenuOnStart")} search={search}/>
+                            <Toggler state={showMobileMenuOnStart} setState={setShowMobileMenuOnStart} stopPropagation={true}/>
+                        </div>
+                    </div>
+                    {showMobileMenuOnStart && <div className="settingInnerWrapper" data-setting-id="startupSideMenuTab">
+                        <div className="settingSpan">
+                            <HighlightText text={t("general.startupSideMenuTab")} search={search}/>
+                        </div>
+                        <RadioGroup list={[
+                            { label: t("general.startupChats"), value: "chats" },
+                            { label: t("general.startupActivities"), value: "habits" }
+                        ]} val={startupSideMenuTab}
+                            newVal={value => setStartupSideMenuTab(value === "habits" ? "habits" : "chats")}
+                            id="startupSideMenuTab"/>
+                    </div>}
+                </>}
+            </div>
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     {t("general.traffic")}

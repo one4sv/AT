@@ -586,29 +586,7 @@ export default function SMnav() {
             </div>
     );
 
-    if (loadingUser) return (
-        <div
-            className={`SMnavDiv ${showSideMenu ? "open" : ""}`}
-            style={{
-                transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none"
-            }}
-            role="status"
-            aria-label={t("sideMenu.loadingNavigation")}
-        >
-            <div className="SMnav" aria-hidden="true">
-                {Array.from(
-                    {
-                        length: 4
-                    },
-                    (_, i) => <div className="SMnavButt" key={i}>
-                        <div className="skeletonCircle" />
-                    </div>
-                )}
-            </div>
-            {searchControl}
-        </div>
-    );
-    if (!user.id) return null;
+    if (!loadingUser && !user.id) return null;
 
     return (
         <div
@@ -725,8 +703,9 @@ export default function SMnav() {
                     onTouchStart={e => handleNavTouchStart("user", e)}
                     onTouchMove={handleNavTouchMove}
                 >
-                    {user?.avatar_url ? <NavAvatar key={user.avatar_url} src={user.avatar_url}
-                        alt={user.username ?? user.nick ?? t("sideMenu.photo")}/> : <CircleUserRound />}
+                    {loadingUser ? <span className="skeletonCircle smNavAvatarSkeleton" aria-hidden="true"/> :
+                        user?.avatar_url ? <NavAvatar key={user.avatar_url} src={user.avatar_url}
+                            alt={user.username ?? user.nick ?? t("sideMenu.photo")}/> : <CircleUserRound />}
                 </div>
             </div>
             {searchControl}

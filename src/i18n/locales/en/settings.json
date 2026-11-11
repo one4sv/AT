@@ -75,6 +75,14 @@
     "welcomeInfoButton": "Got it"
   },
   "general": {
+    "startupTitle": "When opening the app",
+    "startupPage": "Start page",
+    "startupFeed": "Feed",
+    "startupHabits": "Plans and activities",
+    "showMobileMenuOnStart": "Show side menu on launch",
+    "startupSideMenuTab": "Side menu section on launch",
+    "startupChats": "Chats",
+    "startupActivities": "Activities",
     "language": "App language",
     "russian": "Russian",
     "english": "English",

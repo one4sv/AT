@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
 import Skeleton from "./components/ts/Skeleton";
 import { Background } from "./components/ts/utils/background";
 import ResponsiveLayout from "./components/layout/ResponsiveLayout";
@@ -6,8 +6,10 @@ import MobileLayout from "./components/layout/MobileLayout";
 import './scss/App.scss';
 import ConnectionStatus from './components/ts/ConnectionStatus';
 import TrustedDevice from './components/ts/TrustedDevice';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { AppProvider } from './components/ts/AppProvider';
+import { useUser } from "./components/hooks/UserHook";
+import { useSettings } from "./components/hooks/SettingsHook";
 import Notification from "./components/ts/Notification";
 import Blackout from './components/ts/Blackout';
 import ThemeHandler from './components/hooks/themeHook';
@@ -35,12 +37,31 @@ const AuthorizedDevices = lazy(() => import("./pages/Settings/AuthorizedDevices"
 const AccountDeletion = lazy(() => import("./pages/Settings/AccountDeletion"));
 const TwoFactorConfirm = lazy(() => import("./pages/Settings/TwoFactorConfirm"));
 
+function StartupNavigation() {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { user, initialLoading } = useUser();
+    const { settingsLoaded, startupPage } = useSettings();
+    const checked = useRef(false);
+
+    useEffect(() => {
+        if (checked.current || initialLoading || !settingsLoaded) return;
+        checked.current = true;
+        if (user.id && location.pathname === "/" && startupPage === "habits") {
+            navigate("/habit", { replace: true, state: { startup: true } });
+        }
+    }, [initialLoading, settingsLoaded, user.id, location.pathname, startupPage, navigate]);
+
+    return null;
+}
+
 function App() {
     useVisualViewport();
 
     return (
         <Router>
             <AppProvider>
+                <StartupNavigation />
                 <ThemeHandler />
                 <ConnectionStatus />
                 <TrustedDevice />

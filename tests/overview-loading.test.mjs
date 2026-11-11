@@ -74,9 +74,11 @@ test("message media skeletons are load-aware and respect disabled automatic load
 test("SMnav has working search during loading and avatar skeleton on actual image load", () => {
     const nav = read("src/components/ts/SM/SMnav.tsx");
     assert.match(nav, /const searchControl =/);
-    assert.match(nav, /if \(loadingUser\) return/);
+    assert.doesNotMatch(nav, /if \(loadingUser\) return/);
+    assert.match(nav, /if \(!loadingUser && !user.id\) return null/);
+    assert.match(nav, /loadingUser \? <span className="skeletonCircle smNavAvatarSkeleton"/);
     assert.match(nav, /onLoad=\{\(\) => setStatus\("ready"\)\}/);
-    assert.equal((nav.match(/\{searchControl\}/g) || []).length, 2);
+    assert.equal((nav.match(/\{searchControl\}/g) || []).length, 1);
 });
 
 test("plan schedule border remains one pixel without layout shift on hover", () => {

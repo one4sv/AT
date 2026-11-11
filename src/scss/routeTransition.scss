@@ -8,3 +8,9 @@
     min-width: 0;
     flex: 1;
 }
+
+/* Keep scrolling content and poppers under the shared page header. */
+.routeTransition {
+    z-index: 0;
+    isolation: isolate;
+}

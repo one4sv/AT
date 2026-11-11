@@ -237,6 +237,19 @@ export default function PlanPage() {
                             plan.kind === "shared" && plan.completion_mode &&
                                 " · " + t("plans." + plan.completion_mode + "Completion")}
                     </div>
+                    {!isCompact && plan.membership_status === "accepted" && <div className="planInlineCompletion">
+                        <h2>{t("plans.completion")}</h2>
+                        {plan.kind === "shared" && plan.completion_mode === "personal" &&
+                            <p>{(plan.completed_count || 0) + "/" + (plan.participants_count || 1)}</p>}
+                        <PlanComment planId={plan.id} disabled={plan.status === "canceled"}/>
+                        {canComplete && <div className="doneButtDiv"><button className={"doneButt planDoneButton " +
+                            (plan.completed_for_me ? "dbComp" : "dbMark")}
+                            disabled={saving} onClick={() => void action(() => api.post("plans/" + planId + "/complete",
+                                { completed: !plan.completed_for_me }))}>
+                            {plan.completed_for_me ? <CheckCircleIcon size={20} weight="fill"/> : <CircleIcon size={20}/>}
+                            {t(plan.completed_for_me ? "plans.undoCompletion" : "habitUi.complete")}
+                        </button></div>}
+                    </div>}
                 </div>
                 {plan.membership_status === "pending" ? <div className="planSection">
                     <p>{t("plans.invited")}</p>
@@ -248,19 +261,6 @@ export default function PlanPage() {
                     </div>
                 </div> : <>
                     <PlanReminders planId={plan.id}/>
-                    <div className="planSection planCompletionSection">
-                        <h2>{t("plans.completion")}</h2>
-                        {plan.kind === "shared" && plan.completion_mode === "personal" &&
-                            <p>{(plan.completed_count || 0) + "/" + (plan.participants_count || 1)}</p>}
-                        {!isCompact && <PlanComment planId={plan.id} disabled={plan.status === "canceled"}/>}
-                        {canComplete && !isCompact && <div className="doneButtDiv"><button className={"doneButt planDoneButton " +
-                            (plan.completed_for_me ? "dbComp" : "dbMark")}
-                            disabled={saving} onClick={() => void action(() => api.post("plans/" + planId + "/complete",
-                                { completed: !plan.completed_for_me }))}>
-                            {plan.completed_for_me ? <CheckCircleIcon size={20} weight="fill"/> : <CircleIcon size={20}/>}
-                            {t(plan.completed_for_me ? "plans.undoCompletion" : "habitUi.complete")}
-                        </button></div>}
-                    </div>
                     {plan.kind === "shared" && <div className="planSection">
                         <h2>{t("plans.members")}</h2>
                         <div className="planMembers">

@@ -196,3 +196,12 @@ QA: ПК при `layout=hidden` — открыть SM кнопкой, нажат
 `MobileLayout` выводит **обычный** `Header` непосредственно рядом с `.sideMenu`, а кастомные страничные хедеры находятся в `.page-content`. Это разные stacking contexts: глобальный `.headerDiv { z-index: 40 !important }` раньше поднимал обычный хедер поверх SM. Для прямого потомка применяется `.mobile-layout > .headerDiv { z-index: 6 !important }`. Фон SM находится на уровне **7**, то есть **выше** обычного хедера страницы на уровне 6 и **ниже** панели SM на уровне 8; навигация и заголовок SM — на 9 (в Wallpaper Studio они поднимаются до 60/61 внутри того же общего порядка). Внутри `.page-content` страничные хедеры ограничены стеком страницы с `z-index: 0`.
 
 Уточнение: `SMnav` и `SMheader` остаются **функционально внутренними элементами SideMenu** независимо от HTML. Их слои/поведение/закрытие описывать **здесь**; отдельное `[HEADERS.md](HEADERS.md)` — только про страничные `Header`, `ChatUser`, `HabitName`, `WallpaperHeader`. Для активности на ПК с `layout=hidden` кнопка открытия SM обязательна.
+
+
+## Страница при открытии и мобильное начальное меню
+
+Локальные per-account ключи SettingsContext: settings_startup_page (feed/habits, по умолчанию feed), settings_mobile_start_menu (true по умолчанию), settings_mobile_start_tab (chats/habits, по умолчанию chats). StartupNavigation в App один раз после готовности auth и settings перенаправляет только начальный корневой путь / в /habit, когда выбран habits. Глубокие ссылки и последующие переходы в Ленту остаются рабочими.
+
+SideMenuProvider после settingsLoaded один раз выбирает начальное мобильное открытие и tab, без анимации открытия; перенаправление с router state.startup не вызывает штатного закрытия SideMenu. Особые маршруты /settings, /info, /wallpapers остаются закрытыми при запуске. Настройка desktop settings_layout не меняется.
+
+SMnav всегда показывает реальные четыре кнопки и поиск, даже пока loadingUser; никакого отдельного skeleton для панели. Только аватар (до окончания загрузки изображения) может иметь smNavAvatarSkeleton. Поэтому гидрация пользователя не меняет ширину и структуру нижней навигации.

@@ -71,3 +71,27 @@ test("reminder section has a right-aligned caret", () => {
     assert.match(reminders, /<CaretDownIcon className="planRemindersCaret" size=\{20\}\/>/);
     assert.match(style, /\.planRemindersCaret\s*\{\s*margin-left: auto;/);
 });
+
+
+test("desktop plan completion and comment live inside the first details section", () => {
+    const page = read("src/pages/Plan/PlanPage.tsx");
+    const css = read("src/pages/Plan/PlanPage.scss");
+    const indexDetails = page.indexOf('<div className="planSection">',page.indexOf('return <div className="planPage">'));
+    const indexCompletion = page.indexOf('<div className="planInlineCompletion">');
+    const indexReminders = page.indexOf('<PlanReminders planId={plan.id}/>');
+    assert.ok(indexDetails >= 0 && indexCompletion > indexDetails && indexCompletion < indexReminders);
+    assert.doesNotMatch(page, /planSection planCompletionSection/);
+    assert.match(css, /scrollbar-width: thin/);
+    assert.match(css, /\.planPrimaryButton\s*\{[\s\S]*?display: flex;[\s\S]*?align-items: center;[\s\S]*?justify-content: center;/);
+    assert.match(css, /\.planMetadataEditing\s*\{[\s\S]*?align-items: center;/);
+});
+test("plan reminders always have a link to their specific settings section", () => {
+    const reminders = read("src/pages/Plan/PlanReminders.tsx");
+    assert.match(reminders, /state=\{\{ from: "\/plan\/" \+ planId, settingId: "planReminders" \}\}/);
+    assert.match(reminders, /remindersSettingsHint/);
+    assert.match(reminders, /<Link to="\/settings\/notes"/);
+});
+test("scrolling content is isolated beneath the shared header", () => {
+    const route = read("src/scss/routeTransition.scss");
+    assert.match(route,/\.routeTransition\s*\{[\s\S]*?z-index: 0;[\s\S]*?isolation: isolate;/);
+});

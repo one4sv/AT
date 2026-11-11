@@ -75,6 +75,14 @@
     "welcomeInfoButton": "Понятно"
   },
   "general": {
+    "startupTitle": "При открытии приложения",
+    "startupPage": "Страница при открытии",
+    "startupFeed": "Лента",
+    "startupHabits": "Планы и активности",
+    "showMobileMenuOnStart": "Показывать боковое меню при открытии",
+    "startupSideMenuTab": "Раздел бокового меню при открытии",
+    "startupChats": "Чаты",
+    "startupActivities": "Активности",
     "language": "Язык приложения",
     "russian": "Русский",
     "english": "Английский",
