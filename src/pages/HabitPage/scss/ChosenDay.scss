@@ -26,38 +26,24 @@
 }
 
 .chosenDayDate {
-    padding: .5dvh 0.5vw .5dvh 1vw;
+    padding: 1vh 0.5vw 0 1vw;
     display: flex;
-    flex-wrap: nowrap;
-    min-height: 4dvh;
-    flex-shrink: 0;
+    height: 4dvh;
     align-items: center;
-    gap: .5vw;
     font-size: 20px;
-    line-height: 1.2;
     width: 100%;
+    display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     box-sizing: border-box;
-    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), margin 0.35s cubic-bezier(.4,0,.2,1), flex-grow 0.3s ease;
-
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1),          background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),         margin 0.35s cubic-bezier(.4,0,.2,1),         flex-grow 0.3s ease;
     @media (max-width:800px) {
-        padding: .5dvh 3vw;
-        gap: 2vw;
-        font-size: 22px;
+        padding-left: 3vw;
     }
-}
-
-.chosenDayDateLabel {
-    min-width: 0;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .calendarReturn {
     height: 3dvh;
-    flex: 0 0 3dvh;
     display: flex;
     align-items: center;
     justify-content: center;
