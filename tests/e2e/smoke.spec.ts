@@ -122,6 +122,37 @@ test("wallpaper studio places SideMenu header above the panel", async ({ page })
     expect(layers.side).toBeGreaterThan(layers.page);
 });
 
+test("desktop page Header stays above routed content and its overlays", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.addInitScript(() => localStorage.setItem("settings_layout", "always"));
+    await page.goto("/info/roadmap");
+
+    const header = page.locator(".app-layout .page-content > .headerDiv");
+    const route = page.locator(".app-layout .page-content > .routeTransition");
+    await expect(header).toBeVisible();
+    await expect(route).toBeVisible();
+
+    const layers = await page.evaluate(() => ({
+        header: Number(getComputedStyle(document.querySelector(".app-layout .page-content > .headerDiv")!).zIndex),
+        route: Number(getComputedStyle(document.querySelector(".app-layout .page-content > .routeTransition")!).zIndex)
+    }));
+    expect(layers.header).toBeGreaterThan(layers.route);
+
+    const headerReceivesPointer = await page.evaluate(() => {
+        const route = document.querySelector(".app-layout .routeTransition")!;
+        const overlay = document.createElement("div");
+        overlay.style.cssText = "position:absolute;top:0;left:0;right:0;height:10dvh;z-index:99999;pointer-events:auto";
+        route.append(overlay);
+
+        const header = document.querySelector<HTMLElement>(".app-layout .page-content > .headerDiv .header")!;
+        const rect = header.getBoundingClientRect();
+        const topmost = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        overlay.remove();
+        return Boolean(topmost?.closest(".app-layout .page-content > .headerDiv"));
+    });
+    expect(headerReceivesPointer).toBe(true);
+});
+
 test("mobile SideMenu background covers the page header", async ({ page }) => {
     await page.setViewportSize({ width: 760, height: 900 });
     await page.addInitScript(() => {
