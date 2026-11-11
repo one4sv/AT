@@ -807,7 +807,7 @@
   },
     "plans": {
         "showAll": "Показать",
-        "currentActivity": "Текущая активность",
+        "dayStart": "Начало дня", "currentActivity": "Текущая активность",
         "comment": "Комментарий",
         "commentLoadError": "Не удалось загрузить комментарий к плану",
         "commentSaveError": "Не удалось сохранить комментарий к плану",

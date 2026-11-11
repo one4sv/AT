@@ -799,7 +799,7 @@
   },
     "plans": {
         "showAll": "Show all",
-        "currentActivity": "Current activity",
+        "dayStart": "Start of day", "currentActivity": "Current activity",
         "comment": "Comment",
         "commentLoadError": "Could not load the plan comment",
         "commentSaveError": "Could not save the plan comment",
