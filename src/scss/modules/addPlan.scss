@@ -58,7 +58,7 @@
 
 .addPlanActions {
     width: 100%;
-    margin-top: auto;
+    margin-top: .5dvh;
 }
 
 .addPlanActions .addHabitSave {
@@ -67,8 +67,8 @@
 
 @media (max-width: 800px) {
     .addPlanDiv {
-        height: 92dvh;
-        max-height: calc(96dvh - env(safe-area-inset-bottom));
+        height: auto;
+        max-height: calc(92dvh - env(safe-area-inset-bottom));
         overflow-x: hidden;
         padding-bottom: calc(3dvh + env(safe-area-inset-bottom));
         scroll-padding-bottom: 3dvh;

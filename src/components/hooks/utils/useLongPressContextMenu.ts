@@ -69,7 +69,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
                 const dx = event.clientX - press.startX;
                 const dy = event.clientY - press.startY;
                 if ((Math.abs(dy) > 18 && Math.abs(dy) > Math.abs(dx)) ||
-                    (Math.abs(dx) > 28 && Math.abs(dx) > Math.abs(dy))) cancel();
+                    (Math.abs(dx) >= 8 && Math.abs(dx) > Math.abs(dy))) cancel();
                 return;
             }
 

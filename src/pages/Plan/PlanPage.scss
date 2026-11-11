@@ -505,6 +505,11 @@
         cursor: pointer;
         padding: 0;
     }
+    .planMobileDone .doneButtDivMobile > .bottomOpen {
+        border: none;
+        background: transparent;
+        color: inherit;
+    }
     .planMobileDone .habitDayCommentMobile.open:only-child {
         width: 100%;
     }

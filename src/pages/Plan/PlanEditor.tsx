@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { XIcon } from "@phosphor-icons/react";
 import CalendarInput from "../../components/ts/CalendarInput";
 import SelectList from "../../components/ts/SelectList";
 import TA from "../../components/ts/TA";
@@ -80,13 +81,31 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
         <div className="addHabitTimeWrapper timeInputs">
             <div className="addHabitWrapper time">
                 <label htmlFor="planStartTime">{t("plans.startTime")}</label>
-                <input id="planStartTime" className="addHabitInput" type="time"
-                    value={value.start_time || ""} onChange={e => change("start_time", e.target.value || null)}/>
+                <div className="timeInputShell">
+                    <input id="planStartTime" className="addHabitInput" type="time"
+                        value={value.start_time || ""}
+                        onInput={e => change("start_time", e.currentTarget.value || null)}
+                        onChange={e => change("start_time", e.target.value || null)}
+                        onBlur={e => change("start_time", e.currentTarget.value || null)}/>
+                    {value.start_time && <button type="button" className="timeInputClear"
+                        aria-label={t("plans.clearTime")} onClick={() => change("start_time", null)}>
+                        <XIcon size={18}/>
+                    </button>}
+                </div>
             </div>
             <div className="addHabitWrapper time">
                 <label htmlFor="planEndTime">{t("plans.endTime")}</label>
-                <input id="planEndTime" className="addHabitInput" type="time"
-                    value={value.end_time || ""} onChange={e => change("end_time", e.target.value || null)}/>
+                <div className="timeInputShell">
+                    <input id="planEndTime" className="addHabitInput" type="time"
+                        value={value.end_time || ""}
+                        onInput={e => change("end_time", e.currentTarget.value || null)}
+                        onChange={e => change("end_time", e.target.value || null)}
+                        onBlur={e => change("end_time", e.currentTarget.value || null)}/>
+                    {value.end_time && <button type="button" className="timeInputClear"
+                        aria-label={t("plans.clearTime")} onClick={() => change("end_time", null)}>
+                        <XIcon size={18}/>
+                    </button>}
+                </div>
             </div>
         </div>
         {!modal && !initial && <div className="inpWrapperAddHabit">

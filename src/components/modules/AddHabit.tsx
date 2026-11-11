@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { XIcon } from "@phosphor-icons/react";
 import TA from "../ts/TA";
 import { useState, useEffect } from "react"
 import "../../scss/modules/addHabit.scss"
@@ -167,13 +168,25 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             <div className="addHabitTimeWrapper timeInputs">
                 <div className="addHabitWrapper time">
                     <label htmlFor="inputStartTime">{t("habitUi.startTime")}</label>
-                    <input type="time" id="inputStartTime" className="inputStartTime addHabitInput" value={startTime}
-                        onChange={e => setStartTime(e.target.value)}/>
+                    <div className="timeInputShell">
+                        <input type="time" id="inputStartTime" className="inputStartTime addHabitInput" value={startTime}
+                            onInput={e => setStartTime(e.currentTarget.value)}
+                            onChange={e => setStartTime(e.target.value)}
+                            onBlur={e => setStartTime(e.currentTarget.value)}/>
+                        {startTime && <button type="button" className="timeInputClear" aria-label={t("habitUi.clearTime")}
+                            onClick={() => setStartTime("")}><XIcon size={18}/></button>}
+                    </div>
                 </div>
                 <div className="addHabitWrapper time">
                     <label htmlFor="inputEndTime">{t("habitUi.endTime")}</label>
-                    <input type="time" id="inputEndTime" className="inputEndTime addHabitInput" value={endTime}
-                        onChange={e => setEndTime(e.target.value)}/>
+                    <div className="timeInputShell">
+                        <input type="time" id="inputEndTime" className="inputEndTime addHabitInput" value={endTime}
+                            onInput={e => setEndTime(e.currentTarget.value)}
+                            onChange={e => setEndTime(e.target.value)}
+                            onBlur={e => setEndTime(e.currentTarget.value)}/>
+                        {endTime && <button type="button" className="timeInputClear" aria-label={t("habitUi.clearTime")}
+                            onClick={() => setEndTime("")}><XIcon size={18}/></button>}
+                    </div>
                 </div>
             </div>
             <button className="addHabitGoal">{t("habitUi.addGoal")}</button>

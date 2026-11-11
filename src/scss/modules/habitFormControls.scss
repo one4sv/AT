@@ -48,7 +48,7 @@
         min-width: 0;
         overflow: hidden;
 
-        > .addHabitInput[type="time"] {
+        > .timeInputShell {
             margin-top: auto;
         }
     }
@@ -145,6 +145,74 @@
                 margin-inline-start: 2px;
                 margin-inline-end: 0;
             }
+        }
+    }
+}
+
+.timeInputShell {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 4.5dvh;
+    background: var(--interact);
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    &:focus-within {
+        border-color: var(--accent_text);
+    }
+
+    > input.addHabitInput[type="time"] {
+        flex: 1 1 0;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        min-height: 4.5dvh;
+        margin: 0;
+        padding: .8dvh 1vw;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        font-size: 20px;
+
+        &::-webkit-date-and-time-value {
+            min-width: 0;
+            width: auto;
+        }
+
+        @media (max-width: 800px) {
+            padding: 1dvh 1.5vw;
+            padding-inline-end: 0;
+            font-size: 16px;
+        }
+    }
+
+    > .timeInputClear {
+        flex-shrink: 0;
+        width: 3.3dvh;
+        height: 3.3dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-inline-end: .5vw;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background: transparent;
+        color: var(--borderWh);
+        cursor: pointer;
+
+        &:hover, &:focus-visible {
+            color: var(--tc);
+            background: var(--menuButtHover);
+        }
+
+        @media (max-width: 800px) {
+            margin-inline-end: 1vw;
         }
     }
 }
@@ -316,9 +384,5 @@
 
     @media (max-width: 800px) {
         padding: 1dvh 2vw;
-        &[type="time"] {
-            font-size: 20px;
-            padding-inline-end: 6vw;
-        }
     }
 }

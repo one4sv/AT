@@ -47,7 +47,7 @@ export default function MobileLayout({ children }: LayoutProps) {
         }
 
         const target = e.target as Element;
-        if (target.closest("input, textarea, [contenteditable='true'], [data-context-menu], [data-header-gesture], .selector, .seekBarWrapper, .ContextMenuWrapper, .blackout, .scheduleDiv, .statsDivSlider")) {
+        if (target.closest("input, textarea, [contenteditable='true'], [data-header-gesture], .selector, .seekBarWrapper, .ContextMenuWrapper, .blackout, .scheduleDiv, .statsDivSlider")) {
             gesture.current = "scroll";
             return;
         }

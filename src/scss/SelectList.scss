@@ -88,6 +88,12 @@
 .redHabitSL {
     @include var.selectList(100%, fit-content, 9%, 0vw, 0.7vh, var(--borderWh), var(--tc), var(--bgc), 18px, 1vh, 1vw, 5%);
     margin-bottom: 1vh;
+    > svg {
+        top: 50%;
+        right: 3vw;
+        width: 22px;
+        height: 22px;
+    }
     >input {
         @include var.input(var(--interact), var(--tc), var(--tr), fit-content, 16px, var(--tr));
         width: 100%;
