@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: .5dvh;
-    padding: .8dvh 0;
+    padding: .8dvh 0 .8dvh 1vw;
 }
 .planRemindersSettings .planReminderSelect {
     width: 100%;
@@ -13,6 +13,9 @@
     font-size: 16px;
 }
 @media (max-width: 800px) {
+    .planRemindersSettings .planReminderDefault {
+        padding-left: 3vw;
+    }
     .planRemindersSettings .planReminderSelect {
         max-width: 100%;
     }
