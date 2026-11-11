@@ -44,7 +44,6 @@ test("Acc restores GroupInfo's original collapse controls without collapsing fro
         assert.match(source, /if \(getActiveSlideScrollTop\(\) > 0\) return;/);
         assert.match(source, /animateCollapse\(collapsedRef\.current === 0 \? 1 : 0\)/);
         assert.match(source, /const duration = 320/);
-        assert.match(source, /collapsedRef\.current > 0\.45 \? 1 : 0/);
     }
     assert.doesNotMatch(acc, /e\.deltaY > 0 && \(e\.target as Element\)\.closest\("\.accContentSlide"\)/);
     assert.doesNotMatch(acc, /onClick=\{handleSlideClick\}/);
@@ -60,4 +59,15 @@ test("read-only profile values select as text without creating invisible input f
     assert.match(source, /<span className="bioTA extraInfoInput accSelectableValue">/);
     assert.match(css, /\.accInfo \.accSelectableValue\s*\{[\s\S]*?pointer-events: auto;[\s\S]*?user-select: text;/);
     assert.match(css, /\.accOnlineStauts\s*\{[\s\S]*?user-select: none;/);
+});
+
+test("mobile AccInfo finishes after 32px by direction and content tap closes it", () => {
+    const acc = read("src/pages/Acc/Acc.tsx");
+    assert.match(acc, /const touchOriginY = useRef\(0\)/);
+    assert.match(acc, /Math\.abs\(movedY\) >= 32/);
+    assert.match(acc, /movedY > 0 \? 1 : 0/);
+    assert.match(acc, /onClickCapture=\{handleSlideClick\}/);
+    assert.match(acc, /animateCollapse\(1\);/);
+    assert.match(acc, /onTouchCancelCapture=\{handleTouchCancel\}/);
+    assert.doesNotMatch(acc, /pointerEvents:.*isMobile && collapsed === 0/);
 });
