@@ -26,7 +26,7 @@
     font-size: 16px;
     min-height: 9dvh;
     padding: 1dvh 1vw;
-    padding-bottom: 2dvh;
+    padding-bottom: 3dvh;
     max-height: 22dvh;
     overflow-y: auto;
 }
@@ -43,7 +43,7 @@
     border: 1px solid var(--block_border);
     box-sizing: border-box;
     border-radius: 24px;
-    padding: 1dvh 1vw;
+    padding: 1dvh 3vw 1dvh 1vw;
     font-size: 20px;
     width: 100%;
     min-height: 4.5dvh;
@@ -68,6 +68,31 @@
     .addPlanDiv {
         max-height: calc(86dvh - env(safe-area-inset-bottom));
         overflow-x: hidden;
+        padding-bottom: calc(3dvh + env(safe-area-inset-bottom));
+        scroll-padding-bottom: 3dvh;
+    }
+    .addPlanDiv .addHabitTimeWrapper {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 2vw;
+    }
+    .addPlanDiv .addHabitTimeWrapper > .addHabitWrapper.time {
+        width: 100%;
+        min-width: 0;
+    }
+    .addPlanDiv .addHabitTimeWrapper > .addHabitWrapper.time > label {
+        display: flex;
+        align-items: flex-end;
+        min-height: 2.5em;
+    }
+    .addPlanDiv .addHabitTimeWrapper .addHabitInput[type="time"] {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+        font-size: 16px;
+        padding: .8dvh 1.5vw;
     }
     .addPlanDiv .addHabitWrapper > input:first-of-type {
         padding-right: 12vw;
@@ -76,6 +101,21 @@
         padding: 1dvh 3vw 2dvh;
     }
     .addPlanDiv .planFormSelect > input {
-        padding: 1dvh 3vw;
+        padding: 1dvh 10vw 1dvh 3vw;
+    }
+    .addPlanDiv .planFormSelect > svg {
+        right: 3vw;
+    }
+}
+
+.addPlanDiv .planFormSelect > svg,
+.planEditor .planFormSelect > svg {
+    right: 1vw;
+}
+
+@media (max-width: 800px) {
+    .addPlanDiv .planFormSelect > svg,
+    .planEditor .planFormSelect > svg {
+        right: 3vw;
     }
 }

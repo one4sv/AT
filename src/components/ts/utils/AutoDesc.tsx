@@ -5,6 +5,7 @@ interface AutoDescProps {
     defaultValue?: string;           // fallback для неконтролируемого режима
     readOnly?: boolean;
     className?: string;
+    maxLength?: number;
     onChange?: (newValue: string) => void;   // ← новый опциональный колбэк
 }
 
@@ -13,6 +14,7 @@ export default function AutoDesc({
     defaultValue = "",
     readOnly = false,
     className = "",
+    maxLength,
     onChange,
 }: AutoDescProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -41,6 +43,7 @@ export default function AutoDesc({
             value={displayValue}           // контролируемое значение
             disabled={readOnly}
             className={className}
+            maxLength={maxLength}
             style={{ resize: "none" }}
             onInput={adjustHeight}         // на всякий случай (для быстрого ввода)
             onChange={handleChange}

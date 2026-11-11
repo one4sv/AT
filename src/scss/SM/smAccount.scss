@@ -103,9 +103,6 @@
     @media (hover: hover) {
         &:hover {
             background-color: var(--menuButtHover);
-            > .settingName {
-                color: var(--tc);
-            }
             > .settingDesc {
                 color: var(--borderWh);
             }
@@ -115,9 +112,6 @@
     @media (hover: none) {
         &:active {
             background-color: var(--menuButtHover);
-            > .settingName {
-                color: var(--tc);
-            }
             > .settingDesc {
                 color: var(--borderWh);
             }

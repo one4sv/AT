@@ -62,6 +62,12 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
             <span>{value.name.length}/160</span>
         </div>
         <div className="addHabitWrapper">
+            <label htmlFor="planDescription">{t("plans.description")}</label>
+            <AutoDesc className="addHabitInput planDescription" maxLength={1200} value={value.description}
+                onChange={next => change("description", next)}/>
+            <span>{value.description.length}/1200</span>
+        </div>
+        <div className="addHabitWrapper">
             <label htmlFor="planDate">{t("plans.date")}</label>
             <CalendarInput id="planDate" value={value.plan_date ? new Date(value.plan_date + "T12:00:00") : null}
                 onChange={date => change("plan_date", date ? localDate(date) : "")}
@@ -102,11 +108,7 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
             <input id="planPlace" className="addHabitInput" maxLength={500} value={value.place}
                 onChange={e => change("place", e.target.value)}/>
         </div>
-        <div className="addHabitWrapper">
-            <label htmlFor="planDescription">{t("plans.description")}</label>
-            <AutoDesc className="addHabitInput planDescription" value={value.description}
-                onChange={next => change("description", next)}/>
-        </div>
+
         <div className={modal ? "addPlanActions" : "planEditorActions"}>
             {!modal && <button className="planQuietButton" type="button" onClick={onClose}>{t("plans.back")}</button>}
             <button className={modal ? "addHabitSave" : "planPrimaryButton"} type="submit"

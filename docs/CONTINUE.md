@@ -45,3 +45,8 @@
 ## 11.11.2026 — layout /habit, создание плана в SM
 
 Исправлено flex-сжатие `.habitOverview` (40dvh desktop, три карточки 1:2:1 через flex как в детальной привычке). Добавлен scroll-to-top при входе в обзор; на mobile stack. В `AccountList` переименована ссылка в «Планы и активности», секция Create содержит «Новый план». В `SMnav` в меню активностей добавлен «Новый план» с обработкой удержания 350мс, он открывает существующую модалку `AddPlan`. Проверить /habit с Schedule, mobile и счётчики плана; не объявлять E2E проверенным без браузера.
+
+
+## 11.11.2026 — форма плана и мобильные controls
+
+В `main` UI: описание плана сразу за именем, счётчик/лимит 1200; `AutoDesc` принимает необязательный `maxLength`. Мобильные `time` поля AddPlan исправлены через grid 2× minmax(0,1fr), единые высоты label, min-width:0. SelectList ChevronDown вращается с сохранением translateY(-50%), в форме плана добавлен padding под стрелку. Мобильные AddHabit/AddPlan: Save высотой 5dvh и нижний padding 3dvh+safe-area. SMheader: «Активности». SMaccountButt: не переопределять цвет текста на hover. См. ONE4SV-79, проверить iPhone и desktop после деплоя.

@@ -64,3 +64,23 @@ test("TagSelector and DayChanger own shared habit-control styling", () => {
     assert.ok(styles.includes(".tagList {"));
     assert.ok(styles.includes(".dayChanger {"));
 });
+
+test("plan editor and compact modal controls keep mobile layout and text limits", () => {
+    const plans = read("src/pages/Plan/PlanEditor.tsx");
+    const styles = read("src/scss/modules/addPlan.scss");
+    const habitStyles = read("src/scss/modules/addHabit.scss");
+    const autoDesc = read("src/components/ts/utils/AutoDesc.tsx");
+    const select = read("src/components/ts/SelectList.tsx");
+    const sm = read("src/scss/SM/smAccount.scss");
+
+    assert.ok(plans.indexOf('htmlFor="planDescription"') < plans.indexOf('htmlFor="planDate"'));
+    assert.match(plans, /maxLength=\{1200\}/);
+    assert.match(plans, /value\.description\.length\}\/1200/);
+    assert.match(autoDesc, /maxLength\?: number/);
+    assert.match(styles, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+    assert.match(styles, /\.addHabitInput\[type="time"\]/);
+    assert.match(habitStyles, /height: 5dvh/);
+    assert.match(habitStyles, /3dvh \+ env\(safe-area-inset-bottom\)/);
+    assert.match(select, /translateY\(-50%\) rotate/);
+    assert.doesNotMatch(sm, /&:hover \{\s*background-color: var\(--menuButtHover\);\s*> \.settingName/);
+});

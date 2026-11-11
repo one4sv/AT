@@ -102,7 +102,7 @@ export default function SelectList({
         readOnly={readOnly}
       />
       {chevron && (
-        <ChevronDown style={{ transform: `rotate(${showList && !showOnly ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
+        <ChevronDown style={{ transform: `translateY(-50%) rotate(${showList && !showOnly ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
       )}
       <div className={`selectList ${showList ? "active" : ""}`} ref={listRef}>
         {showList &&
