@@ -101,6 +101,7 @@ test("habit day header preserves the November 9 date layout and return control",
     const styles = readFileSync(new URL("scss/ChosenDay.scss", root), "utf8");
     assert.match(view, /\{formatDateLabel\(chosenDay\)\}/);
     assert.match(view, /className="calendarReturn"/);
+    assert.match(view, /import "\.\.\/scss\/ChosenDay\.scss";/);
     assert.match(styles, /\.chosenDayDate\s*\{[\s\S]*?height: 4dvh;/);
     assert.match(styles, /\.chosenDayDate\s*\{[\s\S]*?align-items: flex-start;/);
     assert.match(styles, /\.calendarReturn\s*\{[\s\S]*?height: 3dvh;/);
