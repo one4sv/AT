@@ -27,6 +27,8 @@ jobs:
         run: npm run check:lazy-styles
       - name: Verify SelectList and contact picker styles
         run: node --test tests/select-list-modal-styles.test.mjs
+      - name: Verify combined activity / plan chronology
+        run: node --test tests/day-timeline.test.mjs
       - name: Verify GroupInfo avatar/status positioning
         run: node --test tests/group-info-styles.test.mjs
       - name: Verify own forwarded message and profile/post colors
