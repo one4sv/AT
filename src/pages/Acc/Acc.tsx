@@ -161,7 +161,6 @@ export default function Acc() {
         if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
         if ((e.target as Element).closest("input, textarea, [contenteditable='true'], .react-datepicker-popper")) return;
         if (getActiveSlideScrollTop() > 0) return;
-        if (e.deltaY > 0 && (e.target as Element).closest(".accContentSlide")) return;
 
         const target = e.deltaY > 0 ? 1 : 0;
         if (collapsedRef.current === target && collapseFrame.current === null) return;
@@ -395,6 +394,8 @@ export default function Acc() {
         if (currentIdx === i) {
             if (activeSlide && activeSlide.scrollTop > 0) {
                 activeSlide.scrollTo({ top: 0, behavior: "smooth" });
+            } else {
+                animateCollapse(collapsedRef.current === 0 ? 1 : 0);
             }
             return;
         }

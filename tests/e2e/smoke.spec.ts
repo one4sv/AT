@@ -320,6 +320,49 @@ test("unauthenticated SideMenu has styled sign-in and theme buttons on direct na
     expect(placement.leftGap).toBeLessThan(100);
 });
 
+
+test("profile info collapses from active tab and wheel at top, not a regular content click", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.route("**/api/user", route => route.fulfill({ status: 401, contentType: "application/json", body: "{}" }));
+    await page.route("**/api/acc/bob", route => route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({
+            success: true,
+            acc: { id: "public-profile", nick: "bob", username: "Бигбоб", bio: "Привет", avatar_url: null,
+                last_online: "2026-10-24T14:00:00Z", date_of_birth: null },
+            habits: [], media: [], privateRules: { number: "all", mail: "all", habits: "all", posts: "all" }
+        })
+    }));
+    await page.route("**/api/posts/bob", route => route.fulfill({
+        status: 200, contentType: "application/json", body: JSON.stringify({ success: true, posts: [] })
+    }));
+    await page.goto("/acc/bob");
+    const info = page.locator(".accInfo");
+    const activeTab = page.locator(".accContentButt.acbActive");
+    const slide = page.locator(".accContentSlide").first();
+    await expect(info).toBeVisible();
+    await expect(activeTab).toBeVisible();
+    const originalHeight = await info.evaluate(el => el.getBoundingClientRect().height);
+    expect(originalHeight).toBeGreaterThan(50);
+
+    await slide.click({ position: { x: 8, y: 8 } });
+    await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeGreaterThan(originalHeight - 2);
+
+    await activeTab.click();
+    await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeLessThan(2);
+    await activeTab.click();
+    await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeGreaterThan(originalHeight - 2);
+
+    await slide.evaluate(el => el.dispatchEvent(new WheelEvent("wheel", {
+        bubbles: true, cancelable: true, deltaY: 130
+    })));
+    await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeLessThan(2);
+    await slide.evaluate(el => el.dispatchEvent(new WheelEvent("wheel", {
+        bubbles: true, cancelable: true, deltaY: -130
+    })));
+    await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeGreaterThan(originalHeight - 2);
+});
+
 test("guest profile hides account-only actions while shared action styles load directly", async ({ page }) => {
     await page.route("**/api/user", route => route.fulfill({ status: 401, contentType: "application/json", body: "{}" }));
     await page.route("**/api/acc/bob", route => route.fulfill({

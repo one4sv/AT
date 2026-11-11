@@ -36,3 +36,18 @@ test("avatar and status styles are guaranteed in the initial CSS", () => {
     assert.ok(bundleCheck.includes('".accOnlineStauts"'));
     assert.ok(lazyCheck.includes('"src/pages/Group/components/GroupInfo.tsx"'));
 });
+
+test("Acc restores GroupInfo's original collapse controls without collapsing from a content click", () => {
+    const acc = read("src/pages/Acc/Acc.tsx");
+    const group = read("src/pages/Group/Group.tsx");
+    for (const source of [acc, group]) {
+        assert.match(source, /if \(getActiveSlideScrollTop\(\) > 0\) return;/);
+        assert.match(source, /animateCollapse\(collapsedRef\.current === 0 \? 1 : 0\)/);
+        assert.match(source, /const duration = 320/);
+        assert.match(source, /collapsedRef\.current > 0\.45 \? 1 : 0/);
+    }
+    assert.doesNotMatch(acc, /e\.deltaY > 0 && \(e\.target as Element\)\.closest\("\.accContentSlide"\)/);
+    assert.doesNotMatch(acc, /onClick=\{handleSlideClick\}/);
+    assert.match(acc, /getActiveSlideScrollTop\(\) === 0/);
+    assert.match(acc, /onTouchStartCapture=\{handleTouchStart\}/);
+});
