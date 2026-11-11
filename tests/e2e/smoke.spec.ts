@@ -349,14 +349,15 @@ test("profile info collapses from active tab and wheel at top, not a regular con
     await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeGreaterThan(originalHeight - 2);
 
     await activeTab.click();
-    await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeLessThan(2);
+    // A fully collapsed AccInfo keeps its 1px top and bottom borders.
+    await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeLessThanOrEqual(2);
     await activeTab.click();
     await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeGreaterThan(originalHeight - 2);
 
     await slide.evaluate(el => el.dispatchEvent(new WheelEvent("wheel", {
         bubbles: true, cancelable: true, deltaY: 130
     })));
-    await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeLessThan(2);
+    await expect.poll(() => info.evaluate(el => el.getBoundingClientRect().height)).toBeLessThanOrEqual(2);
     await slide.evaluate(el => el.dispatchEvent(new WheelEvent("wheel", {
         bubbles: true, cancelable: true, deltaY: -130
     })));
