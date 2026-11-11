@@ -51,3 +51,13 @@ test("Acc restores GroupInfo's original collapse controls without collapsing fro
     assert.match(acc, /getActiveSlideScrollTop\(\) === 0/);
     assert.match(acc, /onTouchStartCapture=\{handleTouchStart\}/);
 });
+
+test("read-only profile values select as text without creating invisible input focus", () => {
+    const source = read("src/pages/Acc/components/AccInfo.tsx");
+    const css = read("src/pages/Acc/scss/AccInfo.scss");
+    assert.match(source, /<span className="accInput nameInput accSelectableValue">/);
+    assert.match(source, /<span className="accInput nickInput accSelectableValue">/);
+    assert.match(source, /<span className="bioTA extraInfoInput accSelectableValue">/);
+    assert.match(css, /\.accInfo \.accSelectableValue\s*\{[\s\S]*?pointer-events: auto;[\s\S]*?user-select: text;/);
+    assert.match(css, /\.accOnlineStauts\s*\{[\s\S]*?user-select: none;/);
+});

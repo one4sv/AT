@@ -64,3 +64,8 @@
 В `routeTransition.scss` задан `z-index: 0` и `isolation: isolate` для `.routeTransition` (`position: relative` уже существовал). В `MainLayout` это ограничивает дочерние поля, попапы и прокручиваемый контент слоем ниже общего `Header` с `z-index: 6`, без изменения порядка глобального SideMenu и Blackout.
 
 **Запрещено задавать `.app-layout .page-content > * { z-index: 1; }`**: из-за большей специфичности это правило переопределяет `z-index: 6` у общего `.headerDiv` и `z-index: 0` у `.routeTransition`. Оба становятся на одном уровне, и маршрут, отрисованный после хедера, перекрывает его. Фон уже имеет собственный `z-index: 0`; дополнительные уровни прямым потомкам не нужны. Проверка: `tests/e2e/smoke.spec.ts` — desktop Header выше маршрута даже при вложенном всплывающем слое с большим `z-index`.
+
+
+## 12.11.2026 — хедер страницы плана
+
+Общий `Header` отображает справа `headerButt.planHeaderActionsButt` с `DotsThreeIcon` только когда активный `/plan/:id` установил `PageTitleContext.headerMenu` для владельца. Короткое нажатие на кнопку или название плана открывает контекстное меню `plan`; длительное удержание через `useHeaderMenuGestures` (`data-header-gesture="plan"`) использует те же команды. При уходе со страницы `setHeaderMenu(null)` удаляет действия из общего хедера, `quick/chat/habit` не меняются. Порядок z-index должен оставаться как в общих правилах (Header ниже SM и поверх route).

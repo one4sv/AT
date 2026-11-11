@@ -122,3 +122,37 @@ test("collapsed completion controls keep their status color rather than an inter
     const completedButtonStyles = habit.split(".doneButtDivMobile {")[1].split(".doneButtMobile {")[0];
     assert.doesNotMatch(completedButtonStyles, /backdrop-filter: blur\(var\(--blur\)\)/);
 });
+
+test("plan management is offered on the first section and both header triggers", () => {
+    const page = read("src/pages/Plan/PlanPage.tsx");
+    const header = read("src/components/ts/Header.tsx");
+    const gestures = read("src/components/hooks/utils/useHeaderMenuGestures.ts");
+    const menu = read("src/components/ts/ContextMenu/menus/PlanMenu.tsx");
+    const provider = read("src/components/context/PageTitleContext.tsx");
+    assert.match(page, /className="planSection planMainSection"/);
+    assert.match(page, /data-context-menu=\{plan\.is_owner \? "true" : undefined\}/);
+    assert.match(page, /onContextMenu=\{event => \{/);
+    assert.match(page, /setHeaderMenu\(\{ point: "plan"/);
+    assert.doesNotMatch(page, /className="planSection">\s*<h2>\{t\("plans\.management"\)\}/);
+    assert.match(header, /className="headerButt planHeaderActionsButt"/);
+    assert.match(header, /data-header-gesture="plan"/);
+    assert.match(header, /if \(planHeaderMenu\) \{/);
+    assert.match(gestures, /kind === "plan"/);
+    assert.match(provider, /headerMenu: \{ point: string; options: MenuOptions \} \| null/);
+    for (const action of ["onEdit", "onSave", "onStopEdit", "onToggleCancel", "onConfirmDelete"])
+        assert.match(menu, new RegExp("options\\." + action));
+    assert.match(page, /confirmDelete && plan\.is_owner && <div className="planDeleteConfirm">/);
+});
+test("plan details stay in place when inputs become active", () => {
+    const page = read("src/pages/Plan/PlanPage.tsx");
+    const css = read("src/pages/Plan/PlanPage.scss");
+    const date = read("src/components/ts/CalendarInput.tsx");
+    assert.match(page, /const readOnly = !editing \|\| !draft/);
+    assert.match(page, /className="planDetailsInput planTitleInput"/);
+    assert.match(page, /className="planDetailsInput planDetailsDate"/);
+    assert.match(page, /className="planDetailsInput planDescriptionText planDetailsDescription"/);
+    assert.match(page, /readOnly=\{readOnly\} tabIndex=\{readOnly \? -1 : 0\}/);
+    assert.match(page, /onChange=\{event => changeDraft\("name", event\.target\.value\)\}/);
+    assert.match(css, /\.planMainSection \.planDetailsInput\[readonly\],[\s\S]*?pointer-events: none;/);
+    assert.match(date, /dateFormat=\{dateFormat\}/);
+});
