@@ -278,22 +278,24 @@ test("mobile settings buttons allow swiping SideMenu open", async ({ page }, tes
     const menu = page.locator(".mobile-layout > .sideMenu");
     await expect(menu).not.toHaveClass(/open/);
     await button.evaluate(element => {
-        const touch = (x: number) => new Touch({
-            identifier: 1, target: element, clientX: x, clientY: 300
-        });
+        const touch = (x: number) => ({ identifier: 1, target: element, clientX: x, clientY: 300 });
         const fire = (type: string, x: number) => {
             const point = touch(x);
-            element.dispatchEvent(new TouchEvent(type, {
-                bubbles: true, cancelable: true,
-                touches: type === "touchend" ? [] : [point],
-                targetTouches: type === "touchend" ? [] : [point],
-                changedTouches: [point]
-            }));
+            // WebKit's Touch constructor is not available in test JS; a native
+            // bubbling event with touch lists exercises the same handlers.
+            const event = new Event(type, { bubbles: true, cancelable: true });
+            const touches = type === "touchend" ? [] : [point];
+            Object.defineProperties(event, {
+                touches: { value: touches },
+                targetTouches: { value: touches },
+                changedTouches: { value: [point] }
+            });
+            element.dispatchEvent(event);
         };
         fire("touchstart", 30);
-        fire("touchmove", 90);
-        fire("touchmove", 185);
-        fire("touchend", 185);
+        fire("touchmove", Math.round(window.innerWidth * .45));
+        fire("touchmove", Math.round(window.innerWidth * .85));
+        fire("touchend", Math.round(window.innerWidth * .85));
     });
     await expect(menu).toHaveClass(/open/);
     await expect(page).toHaveURL(/\/settings\/?$/);
