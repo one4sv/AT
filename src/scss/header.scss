@@ -173,9 +173,13 @@
     }
 }
 
+.headerDiv .headerButt.planHeaderActionsButt {
+    border: none;
+}
+
 .headerDiv .headerButt.planHeaderSaveButt {
     background: linear-gradient(135deg, var(--accent), var(--grad));
-    border-color: transparent;
+    border: none;
     > svg, &:hover > svg, &:active > svg, &.headerGestureActive > svg {
         color: var(--inner_text);
     }
