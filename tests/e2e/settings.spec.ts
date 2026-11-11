@@ -328,7 +328,14 @@ test("SelectList opens above near the bottom and below near the top", async ({ p
     await control.locator("input").evaluate(element => (element as HTMLInputElement).click());
     await expect(menu).not.toHaveClass(/active/);
 
-    await control.evaluate(element => { element.style.top = "90px"; });
+    await control.evaluate(element => {
+        element.style.top = "90px";
+        // Fixed descendants of transformed settings sliders can be offset
+        // from the visual viewport; normalize the actual screen coordinate.
+        const rect = element.getBoundingClientRect();
+        element.style.transform = `translateY(${90 - rect.top}px)`;
+    });
+    await expect.poll(() => control.evaluate(element => Math.round(element.getBoundingClientRect().top))).toBe(90);
     await control.locator("input").evaluate(element => (element as HTMLInputElement).click());
     await expect(menu).toHaveClass(/active/);
     await expect(control).not.toHaveClass(/openUp/);
