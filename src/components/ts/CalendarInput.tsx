@@ -12,6 +12,7 @@ interface CalendarInputProps {
   className?:string
   id?:string;
   readOnly?:boolean
+  dateFormat?:string
 }
 
 export default function CalendarInput({
@@ -22,7 +23,8 @@ export default function CalendarInput({
   placeholder,
   className,
   id,
-  readOnly
+  readOnly,
+  dateFormat = "dd.MM.yyyy"
 }: CalendarInputProps) {
   const { i18n } = useTranslation();
   const handleDateChange = (date: Date | null) => {
@@ -59,7 +61,7 @@ export default function CalendarInput({
       onChange={handleDateChange}
       disabled={readOnly ?? false}
       onChangeRaw={handleChangeRaw}
-      dateFormat="dd.MM.yyyy"
+      dateFormat={dateFormat}
       maxDate={maxDate}
       minDate={minDate}
       placeholderText={placeholder}

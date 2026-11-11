@@ -587,3 +587,108 @@
         gap: 2vw;
     }
 }
+
+ 
+/* Plan editing is intentionally an unchanged details layout: readonly fields
+   are not hit targets on iOS, so long-press reaches the plan context menu. */
+.planMainSection .planDetailsInput {
+    color: inherit;
+    font: inherit;
+    line-height: inherit;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    box-sizing: border-box;
+    border-radius: 0;
+    -webkit-text-fill-color: currentColor;
+}
+
+.planMainSection .planDetailsInput[readonly],
+.planMainSection .planDetailsDate:disabled {
+    pointer-events: none;
+    cursor: default;
+    opacity: 1;
+}
+
+.planTitleInput {
+    flex: 1;
+    width: 100%;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.planMainSection .planDetailsDate {
+    width: 100%;
+}
+.planMainSection .react-datepicker-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+.planDetailsTimes {
+    > svg {
+        flex-shrink: 0;
+    }
+    > input[type="time"] {
+        width: 6.4em;
+        max-width: calc((100% - 2em) / 2);
+        font-size: 16px;
+        flex-shrink: 1;
+    }
+    > input[readonly]::-webkit-calendar-picker-indicator {
+        display: none;
+    }
+}
+.planDetailsDescription {
+    display: block;
+    width: 100%;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    resize: none;
+}
+.planDetailsTag,
+.planMetadata:has(.planCompletionModeEditable) {
+    position: relative;
+}
+.planTagEdit {
+    background: transparent;
+    color: var(--accent_text);
+    border: none;
+    cursor: pointer;
+}
+.planTagChoices,
+.planCompletionChoices {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 14;
+    display: flex;
+    flex-direction: column;
+    max-height: 35dvh;
+    overflow: auto;
+    scrollbar-width: thin;
+    border: 1px solid var(--block_border);
+    background: var(--interact);
+    border-radius: 16px;
+    padding: .5dvh;
+    min-width: 50%;
+    > button {
+        background: transparent;
+        border: none;
+        color: var(--tc);
+        padding: 1dvh 1vw;
+        cursor: pointer;
+        display: flex;
+        gap: .5vw;
+        align-items: center;
+        text-align: left;
+        &:hover {
+            background: var(--menuButtHover);
+        }
+    }
+}
+.planCompletionModeEditable {
+    cursor: pointer;
+}

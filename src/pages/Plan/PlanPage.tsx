@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { CalendarBlankIcon, ClockIcon, MapPinIcon, CheckCircleIcon, CircleIcon, PencilSimpleIcon, XCircleIcon, ArrowCounterClockwiseIcon, TrashIcon, FloppyDiskIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon, ClockIcon, MapPinIcon, CheckCircleIcon, CircleIcon, TrashIcon } from "@phosphor-icons/react";
 import { api } from "../../components/ts/api";
 import { usePlans } from "../../components/hooks/PlansHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
+import { useContextMenu } from "../../components/hooks/ContextMenuHook";
+import type { MenuOptions } from "../../components/context/ContextMenuContext";
 import type { OneOffPlan } from "../../components/context/PlansContext";
 import PlanEditor, { type PlanInput } from "./PlanEditor";
 import CalendarInput from "../../components/ts/CalendarInput";
-import SelectList from "../../components/ts/SelectList";
-import TagSelector from "../../components/ts/TagSelector";
 import TA from "../../components/ts/TA";
 import PlanReminders from "./PlanReminders";
 import PlanComment from "./PlanComment";
@@ -25,7 +25,8 @@ export default function PlanPage() {
     const isCompact = useCompactLayout();
     const [mobileOpen, setMobileOpen] = useState<"done" | "comment">("done");
     const { refreshPlans } = usePlans();
-    const { setTitle, setTitleIcon } = usePageTitle();
+    const { setTitle, setTitleIcon, setHeaderMenu } = usePageTitle();
+    const { openMenu } = useContextMenu();
     const [plan, setPlan] = useState<OneOffPlan | null>(null);
     const [loading, setLoading] = useState(Boolean(planId));
     const [saving, setSaving] = useState(false);
@@ -33,6 +34,8 @@ export default function PlanPage() {
     const [draft, setDraft] = useState<PlanInput | null>(null);
     const [error, setError] = useState("");
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const [tagOpen, setTagOpen] = useState(false);
+    const [completionOpen, setCompletionOpen] = useState(false);
 
     useEffect(() => {
         setMobileOpen("done");
@@ -40,6 +43,9 @@ export default function PlanPage() {
         setDraft(null);
         setPlan(null);
         setError("");
+        setConfirmDelete(false);
+        setTagOpen(false);
+        setCompletionOpen(false);
     }, [planId]);
     const load = async () => {
         if (!planId) return;
@@ -82,6 +88,8 @@ export default function PlanPage() {
             kind: plan.kind,
             completion_mode: plan.completion_mode || "personal"
         });
+        setTagOpen(false);
+        setCompletionOpen(false);
         setEditing(true);
     };
     function changeDraft<K extends keyof PlanInput>(key: K, next: PlanInput[K]) {
@@ -90,6 +98,8 @@ export default function PlanPage() {
     const stopEditing = () => {
         setEditing(false);
         setDraft(null);
+        setTagOpen(false);
+        setCompletionOpen(false);
     };
     const localDate = (date: Date) => [date.getFullYear(),
         String(date.getMonth() + 1).padStart(2, "0"),
@@ -159,6 +169,50 @@ export default function PlanPage() {
     const canComplete = !!plan && plan.membership_status === "accepted" && plan.status !== "canceled" &&
         (plan.is_owner || plan.completion_mode !== "shared");
 
+    const menuHandlers = useRef({
+        edit: startEditing,
+        save: () => { if (draft) void save(draft); },
+        stop: stopEditing,
+        toggleCancel: () => { if (planId && plan) void action(() => api.post("plans/" + planId + "/cancel",
+            { cancel: plan.status !== "canceled" })); },
+        delete: () => setConfirmDelete(true)
+    });
+    menuHandlers.current = {
+        edit: startEditing,
+        save: () => { if (draft && draft.name.trim() && draft.plan_date && !saving) void save(draft); },
+        stop: stopEditing,
+        toggleCancel: () => { if (planId && plan && !saving) void action(() => api.post("plans/" + planId + "/cancel",
+            { cancel: plan.status !== "canceled" })); },
+        delete: () => setConfirmDelete(true)
+    };
+    const makePlanMenuOptions = (id: string, name: string, type: string, owner: boolean): MenuOptions => ({
+        id, name, type, isMy: owner, disabled: saving,
+        onEdit: () => menuHandlers.current.edit(),
+        onSave: () => menuHandlers.current.save(),
+        onStopEdit: () => menuHandlers.current.stop(),
+        onToggleCancel: () => menuHandlers.current.toggleCancel(),
+        onConfirmDelete: () => menuHandlers.current.delete()
+    });
+    useEffect(() => {
+        if (plan?.is_owner && planId) {
+            setHeaderMenu({ point: "plan", options: makePlanMenuOptions(planId, plan.name,
+                editing ? "editing" : plan.status, true) });
+        } else {
+            setHeaderMenu(null);
+        }
+        return () => setHeaderMenu(null);
+        // Header callbacks read menuHandlers.current so changing draft text does not rebuild the header.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [planId, plan?.id, plan?.name, plan?.is_owner, plan?.status, editing, saving, setHeaderMenu]);
+
+    const openPlanMenu = (x: number, y: number) => {
+        if (!plan?.is_owner || !planId || saving) return;
+        openMenu(x, y, "plan", makePlanMenuOptions(planId, plan.name,
+            editing ? "editing" : plan.status, true));
+    };
+    const readOnly = !editing || !draft;
+    const value = draft || plan;
+
     return <div className="planPage">
         {error && <div className="planError" role="alert">{error}</div>}
         {loading ? <div className="planSection">{t("plans.loading")}</div> :
@@ -167,76 +221,96 @@ export default function PlanPage() {
                 <PlanEditor initial={plan || undefined} saving={saving} onSave={save}
                     onClose={() => planId ? setEditing(false) : navigate("/habit")}/>
             </div> : plan ? <>
-                <div className="planSection">
+                <div className="planSection planMainSection"
+                    data-context-menu={plan.is_owner ? "true" : undefined}
+                    onContextMenu={event => {
+                        if (editing && (event.target as Element).closest("input, textarea")) return;
+                        if (plan.is_owner) {
+                            event.preventDefault();
+                            openPlanMenu(event.clientX, event.clientY);
+                        }
+                    }}>
                     <div className="planHeading">
-                        {editing && draft ? <div className="addHabitWrapper planInlineName">
-                            <label htmlFor="planInlineName">{t("plans.name")}</label>
-                            <input id="planInlineName" className="addHabitInput" maxLength={160} required
-                                value={draft.name} onChange={event => changeDraft("name", event.target.value)}/>
-                            <span>{draft.name.length}/160</span>
-                        </div> : <h1 className="planTitleWithIcon">
+                        <h1 className="planTitleWithIcon">
                             {selectedTag && <selectedTag.icon size={26}/>}
-                            {plan.name}
-                        </h1>}
+                            <input id="planInlineName" className="planDetailsInput planTitleInput"
+                                aria-label={t("plans.name")} maxLength={160} required
+                                readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
+                                value={value.name} onChange={event => changeDraft("name", event.target.value)}/>
+                        </h1>
                         {plan.status && plan.status !== "upcoming" && <span className="planStatus">{t("plans." + plan.status)}</span>}
                     </div>
                     <div className="planMetadata">
                         <CalendarBlankIcon size={20}/>
-                        {editing && draft ? <CalendarInput id="planInlineDate" className="addHabitInput planInlineDate"
-                            value={draft.plan_date ? new Date(draft.plan_date + "T12:00:00") : null}
-                            onChange={date => changeDraft("plan_date", date ? localDate(date) : "")}/> :
-                            formatDate(plan.plan_date)}
+                        <CalendarInput id="planInlineDate" className="planDetailsInput planDetailsDate"
+                            readOnly={readOnly} dateFormat="d MMMM yyyy"
+                            value={value.plan_date ? new Date(value.plan_date + "T12:00:00") : null}
+                            onChange={date => changeDraft("plan_date", date ? localDate(date) : "")}/>
                     </div>
-                    {editing && draft ? <div className="planMetadata planMetadataEditing">
+                    {(plan.start_time || plan.end_time || editing) && <div className="planMetadata planDetailsTimes">
                         <ClockIcon size={20}/>
-                        <div className="addHabitTimeWrapper timeInputs">
-                            <div className="addHabitWrapper time">
-                                <label htmlFor="planInlineStart">{t("plans.startTime")}</label>
-                                <input id="planInlineStart" className="addHabitInput" type="time"
-                                    value={draft.start_time || ""}
-                                    onChange={event => changeDraft("start_time", event.target.value || null)}/>
-                            </div>
-                            <div className="addHabitWrapper time">
-                                <label htmlFor="planInlineEnd">{t("plans.endTime")}</label>
-                                <input id="planInlineEnd" className="addHabitInput" type="time"
-                                    value={draft.end_time || ""}
-                                    onChange={event => changeDraft("end_time", event.target.value || null)}/>
-                            </div>
-                        </div>
-                    </div> : (plan.start_time || plan.end_time) && <div className="planMetadata">
-                        <ClockIcon size={20}/>{[plan.start_time?.slice(0, 5),plan.end_time?.slice(0, 5)].filter(Boolean).join(" – ")}
+                        <input id="planInlineStart" aria-label={t("plans.startTime")}
+                            className="planDetailsInput" type="time"
+                            readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
+                            value={value.start_time?.slice(0, 5) || ""}
+                            onChange={event => changeDraft("start_time", event.target.value || null)}/>
+                        <span>–</span>
+                        <input id="planInlineEnd" aria-label={t("plans.endTime")}
+                            className="planDetailsInput" type="time"
+                            readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
+                            value={value.end_time?.slice(0, 5) || ""}
+                            onChange={event => changeDraft("end_time", event.target.value || null)}/>
                     </div>}
-                    {editing && draft ? <div className="planMetadata planMetadataEditing">
+                    {(plan.place || editing) && <div className="planMetadata">
                         <MapPinIcon size={20}/>
-                        <div className="addHabitWrapper">
-                            <label htmlFor="planInlinePlace">{t("plans.place")}</label>
-                            <input id="planInlinePlace" className="addHabitInput" maxLength={500}
-                                value={draft.place} onChange={event => changeDraft("place", event.target.value)}/>
-                        </div>
-                    </div> : plan.place && <div className="planMetadata"><MapPinIcon size={20}/>{plan.place}</div>}
-                    {editing && draft ? <div className="planTagWrapper planInlineTag">
-                        <TagSelector selectedTag={draft.tag || undefined}
-                            setSelectedTag={tag => changeDraft("tag", tag || null)}/>
-                    </div> : selectedTag && <div className="planMetadata planTag">
-                        <selectedTag.icon size={20}/>{selectedTag.label}
+                        <input id="planInlinePlace" aria-label={t("plans.place")} className="planDetailsInput"
+                            maxLength={500} readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
+                            placeholder={readOnly ? "" : t("plans.place")}
+                            value={value.place} onChange={event => changeDraft("place", event.target.value)}/>
                     </div>}
-                    {editing && draft ? <div className="addHabitWrapper planInlineDescription">
-                        <label htmlFor="planInlineDescription">{t("plans.description")}</label>
-                        <TA id="planInlineDescription" className="addHabitInput planDescription" maxLength={1200}
-                            minHeight={5} maxHeight={22} value={draft.description}
-                            onChange={event => changeDraft("description", event.target.value)}/>
-                        <span>{draft.description.length}/1200</span>
-                    </div> : plan.description && <p className="planDescriptionText">{plan.description}</p>}
+                    {(plan.tag || editing) && <div className="planMetadata planTag planDetailsTag">
+                        {(() => {
+                            const tag = tags.find(item => item.value === value.tag);
+                            return tag ? <><tag.icon size={20}/>{tag.label}</> : editing ? t("plans.tag") : null;
+                        })()}
+                        {editing && <button type="button" className="planTagEdit" aria-label={t("plans.tag")}
+                            onClick={() => setTagOpen(previous => !previous)}>⋯</button>}
+                        {editing && tagOpen && <div className="planTagChoices">
+                            <button type="button" onClick={() => { changeDraft("tag", null); setTagOpen(false); }}>—</button>
+                            {tags.map(tag => <button key={tag.value} type="button" onClick={() => {
+                                changeDraft("tag", tag.value);
+                                setTagOpen(false);
+                            }}><tag.icon size={20}/>{tag.label}</button>)}
+                        </div>}
+                    </div>}
+                    {(plan.description || editing) && <TA id="planInlineDescription"
+                        className="planDetailsInput planDescriptionText planDetailsDescription"
+                        aria-label={t("plans.description")} maxLength={1200} minHeight={0} maxHeight={22}
+                        readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
+                        value={value.description}
+                        onChange={event => changeDraft("description", event.target.value)}/>}
                     <div className="planMetadata">{t("plans." + plan.kind)}
-                        {editing && draft && plan.kind === "shared" ?
-                            <SelectList id="planInlineCompletionMode" className="planFormSelect"
-                                selected={draft.completion_mode}
-                                arr={[{ value: "personal", label: t("plans.individualCompletion") },
-                                    { value: "shared", label: t("plans.sharedCompletion") }]}
-                                onChange={next => changeDraft("completion_mode", next as PlanInput["completion_mode"])}/> :
-                            plan.kind === "shared" && plan.completion_mode &&
-                                " · " + t("plans." + plan.completion_mode + "Completion")}
+                        {plan.kind === "shared" && <>
+                            {" · "}
+                            <span className={editing ? "planCompletionModeEditable" : ""} onClick={() => {
+                                if (editing) setCompletionOpen(previous => !previous);
+                            }}>{t("plans." + value.completion_mode + "Completion")}</span>
+                            {editing && completionOpen && <div className="planCompletionChoices">
+                                {(["personal", "shared"] as const).map(mode => <button key={mode} type="button"
+                                    onClick={() => { changeDraft("completion_mode", mode); setCompletionOpen(false); }}>
+                                    {t(mode === "personal" ? "plans.individualCompletion" : "plans.sharedCompletion")}
+                                </button>)}
+                            </div>}
+                        </>}
                     </div>
+                    {confirmDelete && plan.is_owner && <div className="planDeleteConfirm">
+                        <p>{t("plans.confirmDelete")}</p>
+                        <div className="planActions">
+                            <button className="planQuietButton" onClick={() => setConfirmDelete(false)}>{t("plans.back")}</button>
+                            <button className="planQuietButton planDanger" disabled={saving}
+                                onClick={() => void remove()}><TrashIcon size={20}/>{t("plans.delete")}</button>
+                        </div>
+                    </div>}
                     {!isCompact && plan.membership_status === "accepted" && <div className="planInlineCompletion">
                         <h2>{t("plans.completion")}</h2>
                         {plan.kind === "shared" && plan.completion_mode === "personal" &&
@@ -264,43 +338,6 @@ export default function PlanPage() {
                     <PlanMembers plan={plan} onChanged={async () => {
                         await Promise.all([load(), refreshPlans()]);
                     }}/>
-                    {plan.is_owner && <div className="planSection">
-                        <h2>{t("plans.management")}</h2>
-                        <div className="planActions planManagementActions">
-                            {editing && draft ? <>
-                                <button className="planPrimaryButton" disabled={saving || !draft.name.trim() || !draft.plan_date}
-                                    onClick={() => void save(draft)}>
-                                    <FloppyDiskIcon size={20}/>{saving ? t("plans.saving") : t("plans.save")}
-                                </button>
-                                <button className="planQuietButton" disabled={saving} onClick={stopEditing}>
-                                    <XCircleIcon size={20}/>{t("plans.back")}
-                                </button>
-                            </> : <>
-                                <button className="planQuietButton" disabled={saving} onClick={startEditing}>
-                                    <PencilSimpleIcon size={20}/>{t("plans.edit")}
-                                </button>
-                                <button className={"planQuietButton " + (plan.status !== "canceled" ? "planDanger" : "")}
-                                    disabled={saving} onClick={() =>
-                                    void action(() => api.post("plans/" + planId + "/cancel",
-                                        { cancel:plan.status !== "canceled" }))}>
-                                    {plan.status === "canceled" ? <ArrowCounterClockwiseIcon size={20}/> : <XCircleIcon size={20}/>}
-                                    {t(plan.status === "canceled" ? "plans.restore" : "plans.cancel")}
-                                </button>
-                                <button className="planQuietButton planDanger" disabled={saving}
-                                    onClick={() => setConfirmDelete(true)}>
-                                    <TrashIcon size={20}/>{t("plans.delete")}
-                                </button>
-                            </>}
-                        </div>
-                        {!editing && confirmDelete && <div className="planDeleteConfirm">
-                            <p>{t("plans.confirmDelete")}</p>
-                            <div className="planActions">
-                                <button className="planQuietButton" onClick={() => setConfirmDelete(false)}>{t("plans.back")}</button>
-                                <button className="planQuietButton planDanger" disabled={saving} onClick={() =>
-                                    void remove()}><TrashIcon size={20}/>{t("plans.delete")}</button>
-                            </div>
-                        </div>}
-                    </div>}
                 </>}
             </> : !error && <div className="planSection">{t("plans.notFound")}</div>}
         {isCompact && !editing && !loading && plan?.membership_status === "accepted" &&
