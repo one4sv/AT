@@ -1,5 +1,6 @@
-import { createContext, useCallback, useState, type ReactNode } from "react";
+import { createContext, useCallback, useEffect, useState, type ReactNode } from "react";
 import { api } from "../ts/api";
+import { useUser } from "../hooks/UserHook";
 
 export interface OneOffPlanMember {
     id: string;
@@ -38,6 +39,7 @@ interface PlansContextType {
 const PlansContext = createContext<PlansContextType | null>(null);
 
 export const PlansProvider = ({ children }: { children: ReactNode }) => {
+    const { user, initialLoading } = useUser();
     const [plans, setPlans] = useState<OneOffPlan[]>([]);
     const [loadingPlans, setLoadingPlans] = useState(false);
     const refreshPlans = useCallback(async () => {
@@ -50,6 +52,16 @@ export const PlansProvider = ({ children }: { children: ReactNode }) => {
             setLoadingPlans(false);
         }
     }, []);
+
+    useEffect(() => {
+        if (initialLoading) return;
+        if (!user.nick) {
+            setPlans([]);
+            return;
+        }
+        setPlans([]);
+        void refreshPlans().catch(() => setPlans([]));
+    }, [user.nick, initialLoading, refreshPlans]);
 
     return <PlansContext.Provider value={{ plans, loadingPlans, refreshPlans }}>{children}</PlansContext.Provider>;
 };

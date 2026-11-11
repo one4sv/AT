@@ -11,6 +11,8 @@ import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useContacts } from "../hooks/ContactsHook";
 import { useHabits } from "../hooks/HabitsHook";
+import { usePlans } from "../hooks/PlansHook";
+import { todayStrFunc } from "../ts/utils/dateToStr";
 import { useSettings } from "../hooks/SettingsHook";
 import { filterHabitsByOrder } from "../ts/utils/filteredHabitsByOrder";
 import useCompactLayout from "../hooks/utils/useCompactLayout";
@@ -62,6 +64,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const { t, i18n } = useTranslation("common");
     const { list, search: settingsSearch, setSearch: setSettingsSearch } = useContacts()
     const { habits, newOrderHabits } = useHabits()
+    const { plans } = usePlans()
     const { showArchived, layout } = useSettings();
     const isCompact = useCompactLayout();
     const location = useLocation();
@@ -137,7 +140,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         const filters: FilterItem[] = [];
         filters.push({ label: t("sideMenu.all"), value: "all", new: "0" });
 
-        if (newOrderHabits && habits) {
+        if (newOrderHabits) {
             const groupLabels: Record<string, string> = {
                 everyday: t("sideMenu.everyday"),
                 today: t("sideMenu.today"),
@@ -145,13 +148,21 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
                 sometimes: t("sideMenu.sometimes"),
             };
 
-            const activeHabits = habits.filter((h) => h.ongoing);
+            const activeHabits = (habits || []).filter((h) => h.ongoing);
 
             newOrderHabits.forEach((order) => {
                 if (order === "pinned") return;
 
                 const groupHabits = filterHabitsByOrder(order, activeHabits, "");
-                if (groupHabits.length > 0) {
+                const planDate = order === "today" ? todayStrFunc() : order === "tomorrow" ?
+                    (() => {
+                        const d = new Date();
+                        d.setDate(d.getDate() + 1);
+                        return [d.getFullYear(), String(d.getMonth() + 1).padStart(2,"0"), String(d.getDate()).padStart(2,"0")].join("-");
+                    })() : /^\d{4}-\d{2}-\d{2}$/.test(order) ? order : "";
+                const hasPlans = planDate && plans.some(plan =>
+                    plan.plan_date === planDate && plan.membership_status !== "pending");
+                if (groupHabits.length > 0 || hasPlans) {
                     let label = groupLabels[order];
                     if (!label) {
                         const date = new Date(order);
@@ -172,7 +183,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
                 }
             });
 
-            if (habits.some((h) => !h.ongoing)) {
+            if (habits?.some((h) => !h.ongoing)) {
                 filters.push({
                     label: t("sideMenu.archive"),
                     value: "archived",
@@ -186,7 +197,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         if (!filters.some((f) => f.value === habitsSelectedValue)) {
             setHabitsSelectedValue(filters[0]?.value ?? "all");
         }
-    }, [habits, newOrderHabits, showArchived, t, i18n.language, habitsSelectedValue]);
+    }, [habits, plans, newOrderHabits, showArchived, t, i18n.language, habitsSelectedValue]);
 
     // === остальной код (анимация и т.д.) без изменений ===
     const translateXRef = useRef(0);

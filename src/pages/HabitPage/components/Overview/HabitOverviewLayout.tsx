@@ -48,9 +48,12 @@ export default function HabitOverviewLayout() {
     const nowClock = now.toTimeString().slice(0, 5);
     const today = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, "0"),
         String(now.getDate()).padStart(2, "0")].join("-");
-    const next = entries.find(entry => !entry.completed &&
-        (chosenDay !== today || !entry.start || entry.start >= nowClock)
-    ) || entries.find(entry => !entry.completed);
+    const next = chosenDay === today ?
+        entries.find(entry => !entry.completed && entry.state === "now") ||
+        entries.find(entry => !entry.completed && entry.start && entry.start >= nowClock) ||
+        entries.find(entry => !entry.completed && entry.end && entry.end >= nowClock) ||
+        entries.find(entry => !entry.completed) :
+        entries.find(entry => !entry.completed);
 
     const open = (entry: DayEntry) => {
         if (isMobile) navigate(entry.kind === "plan" ? "/plan/" + entry.plan!.id : "/habit/" + entry.habit!.id);

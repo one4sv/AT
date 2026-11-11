@@ -75,7 +75,7 @@ export default function PlanReminders({ planId }: { planId: number }) {
         </summary>
         {loading ? <p>{t("plans.loading")}</p> : <>
             {!globalEnabled && <p className="planRemindersHint">
-                {t("plans.remindersGlobalDisabled")} <Link to="/settings/notifications">{t("plans.remindersOpenSettings")}</Link>
+                {t("plans.remindersGlobalDisabled")} <Link to="/settings/notes">{t("plans.remindersOpenSettings")}</Link>
             </p>}
             <p className="planRemindersHint">{t("plans.remindersExplainer")}</p>
             <div className="planReminderChoices">
