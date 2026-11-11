@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { CalendarBlankIcon, ClockIcon, MapPinIcon, UserPlusIcon, CheckCircleIcon, CircleIcon, ChatCenteredIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon, ClockIcon, MapPinIcon, UserPlusIcon, CheckCircleIcon, CircleIcon } from "@phosphor-icons/react";
 import { api } from "../../components/ts/api";
 import { usePlans } from "../../components/hooks/PlansHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
@@ -222,7 +222,7 @@ export default function PlanPage() {
                         {t(plan.completed_for_me ? "plans.undoCompletion" : "plans.markCompleted")}
                     </button>}
                 </div>}
-                <PlanComment planId={plan.id} mobile disabled={plan.status === "canceled"}
+                <PlanComment planId={plan.id} mobile
                     open={canComplete ? mobileOpen : "comment"} setOpen={setMobileOpen}/>
             </div>}
     </div>;
