@@ -44,19 +44,26 @@ test("mobile startup menu opens from cached settings before server load without 
     }
 });
 
-test("SideMenu swipe completion follows direction, is cancel-safe, and does not block its own swipes", () => {
+test("SideMenu restores position-based settling, is cancel-safe and retains swipe ownership", () => {
     const context = read("src/components/context/SideMenuContext.tsx");
     const layout = read("src/components/layout/MobileLayout.tsx");
     const side = read("src/components/ts/SM/SideMenu.tsx");
     const nav = read("src/components/ts/SM/SMnav.tsx");
     assert.match(context,/translateXRef\.current = value/);
-    assert.match(layout,/Math\.abs\(dx\) >= 32/);
+    assert.match(layout,/currentTranslate\.current = next/);
+    assert.match(layout,/currentTranslate\.current > -50/);
+    assert.doesNotMatch(layout,/Math\.abs\(dx\) >= 32/);
     assert.match(layout,/onTouchCancel=\{handleTouchCancel\}/);
     assert.doesNotMatch(layout,/\.statsDivWrapper/);
     assert.doesNotMatch(layout,/translateX > -100/);
-    assert.match(side,/Math\.abs\(moved\) >= 32/);
-    assert.match(nav,/Math\.abs\(moved\) >= 32/);
+    assert.match(side,/currentTranslate\.current < -18/);
+    assert.doesNotMatch(side,/Math\.abs\(moved\) >= 32/);
+    assert.match(nav,/swipeCurrentTranslate\.current = next/);
+    assert.match(nav,/swipeCurrentTranslate\.current < -40/);
+    assert.doesNotMatch(nav,/Math\.abs\(moved\) >= 32/);
     assert.match(nav,/openSideMenu\(\)/);
+    assert.match(context,/const duration = 320/);
+    assert.match(context,/const eased = 1 - Math\.pow\(1 - progress, 3\)/);
 });
 
 test("General uses existing RadioGroup and Toggler, mobile-only controls are gated", () => {
