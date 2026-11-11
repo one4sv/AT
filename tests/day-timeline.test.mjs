@@ -93,3 +93,15 @@ test("plan date in SideMenu uses the existing date-format helper rather than ISO
     assert.doesNotMatch(list, /\{entry\.date\} ·/);
     assert.match(dates, /return displayParts\(y, m, d\)/);
 });
+
+test("habit day header keeps today/tomorrow date and return control in one full-size row", () => {
+    const root = new URL("../src/pages/HabitPage/", import.meta.url);
+    const view = readFileSync(new URL("utils/ChosenDayDate.tsx", root), "utf8");
+    const styles = readFileSync(new URL("scss/ChosenDay.scss", root), "utf8");
+    assert.match(view, /<span className="chosenDayDateLabel">\{formatDateLabel\(chosenDay\)\}<\/span>/);
+    assert.match(view, /className="calendarReturn"/);
+    assert.match(styles, /\.chosenDayDate\s*\{[\s\S]*?flex-wrap: nowrap;[\s\S]*?align-items: center;/);
+    assert.match(styles, /\.chosenDayDateLabel\s*\{[\s\S]*?white-space: nowrap;/);
+    assert.match(styles, /\.calendarReturn\s*\{[\s\S]*?flex: 0 0 3dvh;/);
+    assert.match(styles, /@media \(max-width:800px\) \{[\s\S]*?font-size: 20px;/);
+});
