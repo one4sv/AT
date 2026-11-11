@@ -240,7 +240,7 @@ export default function PlanPage() {
                         </h1>
                         {plan.status && plan.status !== "upcoming" && <span className="planStatus">{t("plans." + plan.status)}</span>}
                     </div>
-                    <div className="planMetadata">
+                    <div className="planMetadata planDateMetadata">
                         <CalendarBlankIcon size={20}/>
                         <CalendarInput id="planInlineDate" className="planDetailsInput planDetailsDate"
                             readOnly={readOnly} dateFormat="d MMMM yyyy"
