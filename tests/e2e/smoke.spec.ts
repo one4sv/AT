@@ -290,7 +290,7 @@ test("habit editor form and tag styles load on direct navigation without opening
     const fixture = page.locator("#habit-editor-style-probe");
     await expect(fixture.locator(".addHabitWrapper").first()).toHaveCSS("display", "flex");
     await expect(fixture.locator(".addHabitInput").first()).toHaveCSS("border-radius", "24px");
-    await expect(fixture.locator(".addHabitTimeWrapper")).toHaveCSS("display", "flex");
+    await expect(fixture.locator(".addHabitTimeWrapper")).toHaveCSS("display", "grid");
     await expect(fixture.locator(".tegSelector")).toHaveCSS("display", "flex");
     await expect(fixture.locator(".tag.active")).toHaveCSS("display", "flex");
     await expect(fixture.locator(".addTeg")).toHaveCSS("border-style", "solid");

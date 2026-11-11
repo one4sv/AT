@@ -41,7 +41,9 @@ export default function PlanComment({ planId, disabled = false, mobile = false, 
             if (active) setLoading(false);
         });
         return () => { active = false; };
-    }, [planId, showNotification, t]);
+        // Per-plan fetch only: notification callbacks are recreated by the global notification context.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [planId]);
 
     useEffect(() => {
         setShowEmojiBar(false);

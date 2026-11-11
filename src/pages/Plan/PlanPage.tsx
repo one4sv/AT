@@ -129,7 +129,7 @@ export default function PlanPage() {
                 <div className="planSection">
                     <div className="planHeading">
                         <h1>{plan.name}</h1>
-                        <span className="planStatus">{t("plans." + (plan.status || "upcoming"))}</span>
+                        {plan.status && plan.status !== "upcoming" && <span className="planStatus">{t("plans." + plan.status)}</span>}
                     </div>
                     <div className="planMetadata"><CalendarBlankIcon size={20}/>{formatDate(plan.plan_date)}</div>
                     {(plan.start_time || plan.end_time) && <div className="planMetadata">
