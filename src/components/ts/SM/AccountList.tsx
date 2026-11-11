@@ -1,5 +1,5 @@
 import { useUser } from "../../hooks/UserHook";
-import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, SignOutIcon, UserIcon, CheckIcon, CalendarCheckIcon, ChatTeardropIcon, PencilSimpleIcon } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, CalendarPlusIcon, SignOutIcon, UserIcon, CheckIcon, CalendarCheckIcon, ChatTeardropIcon, PencilSimpleIcon } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useSideMenu } from "../../hooks/SideMenuHook";
@@ -67,7 +67,7 @@ export default function AccountList() {
                     <div className="SMmainButtDesc">{t("accountNavigation.feedDesc")}</div>
                 </Link>
                 <Link to="/habit" className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} onClick={closeMenu}>
-                    <span className="SMmainButtName"><SneakerMoveIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("accountNavigation.activities")}<CaretRightIcon className="fastButtCaret"/></span>
+                    <span className="SMmainButtName"><SneakerMoveIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("sideMenu.plansAndActivities")}<CaretRightIcon className="fastButtCaret"/></span>
                     <div className="SMmainButtDesc">{t("accountNavigation.activitiesDesc")}</div>
                 </Link>
                 <Link to="/settings" className={`SMaccountButt ${location.pathname.startsWith("/settings") ? "active" : ""}`} onClick={closeMenu}>
@@ -85,6 +85,9 @@ export default function AccountList() {
                     </div>                    
                     <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddHabit"})}>
                         <CalendarCheckIcon size={18} weight="fill"/> {t("sideMenu.newActivity")}
+                    </div>
+                    <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddPlan"})}>
+                        <CalendarPlusIcon size={18} weight="fill"/> {t("plans.create")}
                     </div>                    
                     <div className="SMcreateButt" onClick={() => showNotification("info", t("sideMenu.inDevelopment"))}>
                         <Megaphone size={18} fill="currentColor"/> {t("sideMenu.newSpot")}

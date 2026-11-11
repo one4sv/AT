@@ -1,6 +1,6 @@
 import { useUser } from "../../hooks/UserHook";
 import { CircleUserRound, Megaphone } from "lucide-react";
-import { CalendarCheckIcon, ChatTeardropIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, PlusIcon, SignOutIcon, SortAscendingIcon, UserIcon, CheckIcon, MagnifyingGlassIcon, CaretRightIcon, XIcon } from "@phosphor-icons/react";
+import { CalendarCheckIcon, CalendarPlusIcon, ChatTeardropIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, PlusIcon, SignOutIcon, SortAscendingIcon, UserIcon, CheckIcon, MagnifyingGlassIcon, CaretRightIcon, XIcon } from "@phosphor-icons/react";
 import { useSideMenu } from "../../hooks/SideMenuHook";
 import { useContextMenu } from "../../hooks/ContextMenuHook";
 import { useEffect, useRef, useState } from "react";
@@ -262,6 +262,14 @@ export default function SMnav() {
                     }
                 );
             }
+            if (action === "add-plan") {
+                setBlackout(
+                    {
+                        seted: true,
+                        module: "AddPlan"
+                    }
+                );
+            }
             if (action === "new-spot") {
                 showNotification("info", t("sideMenu.inDevelopment"));
             }
@@ -428,7 +436,7 @@ export default function SMnav() {
                     </div>
                 );
             case "habits":
-                return (
+                return (<>
                     <div
                         className="SMextraMenuButt"
                         onMouseUp={() => {
@@ -444,7 +452,22 @@ export default function SMnav() {
                     >
                         <PlusIcon size={20} /> {t("sideMenu.newActivity")}
                     </div>
-                );
+                    <div
+                        className="SMextraMenuButt"
+                        onMouseUp={() => {
+                            setBlackout(
+                                {
+                                    seted: true,
+                                    module: "AddPlan"
+                                }
+                            );
+                            setIsExtraOpen(false);
+                        }}
+                        data-action="add-plan"
+                    >
+                        <CalendarPlusIcon size={20} /> {t("plans.create")}
+                    </div>
+                </>);
             case "spots":
                 return (
                     <div

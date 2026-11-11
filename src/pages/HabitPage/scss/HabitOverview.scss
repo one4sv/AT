@@ -1,8 +1,8 @@
 .habitOverview {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    display: flex;
     gap: 0.5vw;
     height: 40dvh;
+    flex: 0 0 40dvh;
     min-height: 0;
     width: 100%;
 }
@@ -12,6 +12,11 @@
 .habitOverviewContext {
     min-width: 0;
     min-height: 0;
+    flex: 1 1 0;
+}
+
+.habitOverviewCenter {
+    flex: 2 1 0;
 }
 
 .habitOverviewCalendar .calendarDiv {
@@ -203,8 +208,16 @@
         display: flex;
         height: auto;
         min-height: 0;
+        flex: 0 0 auto;
         flex-direction: column;
         gap: 1dvh;
+    }
+
+    .habitOverviewCalendar,
+    .habitOverviewCenter,
+    .habitOverviewContext {
+        width: 100%;
+        flex: 0 0 auto;
     }
 
     .habitOverviewCenter {

@@ -92,6 +92,12 @@ export default function Habit() {
         },
         [habitId, habit, habit?.name, loadingHabit, setTitle, t]
     );
+    useEffect(() => {
+        if (!habitId && !loadingHabits && !calendarLoading) {
+            mainRef.current?.scrollTo(0, 0);
+        }
+    }, [habitId, loadingHabits, calendarLoading]);
+
     const shouldShowSchedule = !habitId && Object.values(schedules).some(arr => arr.length > 0) || habit && habitId === String(habit.id) && habit.periodicity !== "sometimes" && habitSettings.schedule;
     if (habitId && loadingHabit || loadingHabits || calendarLoading) {
         return <Skeleton type="habit" overview={!habitId} />;
