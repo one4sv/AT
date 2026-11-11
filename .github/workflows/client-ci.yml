@@ -29,6 +29,8 @@ jobs:
         run: node --test tests/select-list-modal-styles.test.mjs
       - name: Verify combined activity / plan chronology
         run: node --test tests/day-timeline.test.mjs
+      - name: Verify plan form, tag icons and dangerous actions
+        run: node --test tests/plan-ui.test.mjs
       - name: Verify media, SMnav skeletons and start-of-day logic
         run: node --test tests/overview-loading.test.mjs
       - name: Verify GroupInfo avatar/status positioning
