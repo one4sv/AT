@@ -374,9 +374,22 @@ export const roadmapFuture: RoadmapRelease[] = [
         ]
     },
     {
+        version: "0.6.5",
+        features: [
+            { ru: "Цели: личные и совместные, связь с планами и активностями", en: "Goals: personal and shared, linked to plans and activities" }
+        ]
+    },
+    {
+        version: "0.6.4",
+        features: [
+            { ru: "Разовые личные и совместные планы", en: "One-off personal and shared plans" },
+            { ru: "Обновление страницы «Планы и активности»", en: "New Plans and Activities overview" }
+        ]
+    },
+    {
         version: "0.6+",
         features: [
-            { ru: "Цели и расширенная аналитика активностей", en: "Goals and extended activity analytics" },
+            { ru: "Дополнительная аналитика активностей", en: "Extended activity analytics" },
             { ru: "Развитие комментариев и ответов", en: "Expanded comments and replies" },
             { ru: "Улучшения поиска и связанных настроек", en: "Search and linked settings improvements" },
             { ru: "Дальнейшее развитие сообщества и чатов", en: "Further community and chat features" }
