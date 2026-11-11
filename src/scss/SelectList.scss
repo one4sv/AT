@@ -124,3 +124,25 @@
         }
     }
 }
+
+ 
+// Position is chosen after measuring the available visual viewport space.
+.selectListDiv.isOpen {
+    z-index: 13;
+}
+
+.selectListDiv > .selectList {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+}
+
+.selectListDiv.openUp > .selectList {
+    top: auto;
+    bottom: calc(100% + .5dvh);
+    transform: none;
+
+    &.active {
+        transform: none;
+    }
+}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import "../../scss/SelectList.scss";
 
@@ -37,8 +37,10 @@ export default function SelectList({
   onChange?: (value: string) => void;
 }) {
   const [showList, setShowList] = useState(false);
+  const [openUp, setOpenUp] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState<string>("");
 
+  const rootRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   if (hide === undefined) hide = true
@@ -65,6 +67,48 @@ export default function SelectList({
     }
   }, [arr, prop, selected]);
 
+  useLayoutEffect(() => {
+    if (!showList || showOnly) return;
+    const root = rootRef.current;
+    const list = listRef.current;
+    if (!root || !list) return;
+
+    const updatePlacement = () => {
+      // Read the original CSS height limit before applying a viewport cap.
+      list.style.maxHeight = "";
+      const cssMaxHeight = parseFloat(getComputedStyle(list).maxHeight);
+      const desiredHeight = Math.min(list.scrollHeight, Number.isFinite(cssMaxHeight) ? cssMaxHeight : list.scrollHeight);
+      const viewport = window.visualViewport;
+      const viewportTop = viewport?.offsetTop ?? 0;
+      const viewportBottom = viewportTop + (viewport?.height ?? window.innerHeight);
+      const rect = root.getBoundingClientRect();
+      const spaceBelow = Math.max(0, viewportBottom - rect.bottom - 12);
+      const spaceAbove = Math.max(0, rect.top - viewportTop - 12);
+      const upwards = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
+      list.style.maxHeight = Math.max(0, Math.min(desiredHeight, upwards ? spaceAbove : spaceBelow)) + "px";
+      setOpenUp(previous => previous === upwards ? previous : upwards);
+    };
+
+    updatePlacement();
+    const handleScroll = (event: Event) => {
+      if (!list.contains(event.target as Node)) updatePlacement();
+    };
+    const observer = new ResizeObserver(updatePlacement);
+    observer.observe(root);
+    window.addEventListener("resize", updatePlacement);
+    window.addEventListener("scroll", handleScroll, true);
+    window.visualViewport?.addEventListener("resize", updatePlacement);
+    window.visualViewport?.addEventListener("scroll", updatePlacement);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updatePlacement);
+      window.removeEventListener("scroll", handleScroll, true);
+      window.visualViewport?.removeEventListener("resize", updatePlacement);
+      window.visualViewport?.removeEventListener("scroll", updatePlacement);
+      list.style.maxHeight = "";
+    };
+  }, [showList, showOnly, arr.length, showSelected, selected]);
+
   const handleSelect = (option: Option) => {
     if (option.value !== "0") setSelectedLabel(option.label);
     setShowList(false);
@@ -76,10 +120,10 @@ export default function SelectList({
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
       if (
-        listRef.current &&
+        rootRef.current &&
         hide &&
         showList &&
-        !listRef.current.contains(event.target as Node)
+        !rootRef.current.contains(event.target as Node)
       ) {
         setShowList(false);
       }
@@ -92,7 +136,7 @@ export default function SelectList({
   }, [hide, showList]);
 
   return (
-    <div className={`selectListDiv ${className} ${showOnly && "showOnly"}`}>
+    <div ref={rootRef} className={`selectListDiv ${className} ${showOnly && "showOnly"} ${showList && "isOpen"} ${openUp && "openUp"}`}>
       <input
         id={id}
         type="text"
