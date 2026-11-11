@@ -399,3 +399,20 @@
 
 
 .mobile-layout:has(.wallpaperStudio) > .SMnavDiv { width: 19.5vw; @media (max-width: 800px) { width: 100%; } }
+
+.SMnavAvatar {
+    position: relative;
+}
+
+.SMnavAvatar > .smNavAvatarSkeleton {
+    width: 3.5dvh;
+    height: 3.5dvh;
+    min-width: 0;
+    min-height: 0;
+}
+
+.SMnavAvatar > img.smNavAvatarPending {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}

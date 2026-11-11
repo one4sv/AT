@@ -9,14 +9,17 @@ interface TrafficImageProps {
     className: string;
     mimeType?: string;
     contextMenu?: boolean;
+    skeleton?: boolean;
     onClick?: MouseEventHandler<HTMLImageElement>;
     onContextMenu?: MouseEventHandler<HTMLImageElement>;
 }
 
-export default function TrafficImage({ src, alt, className, mimeType, contextMenu, onClick, onContextMenu }: TrafficImageProps) {
+export default function TrafficImage({ src, alt, className, mimeType, contextMenu, skeleton = false, onClick, onContextMenu }: TrafficImageProps) {
     const { t } = useTranslation("settings");
     const { autoLoadImages, autoPlayGif } = useSettings();
     const [allowed, setAllowed] = useState(false);
+    const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
+    const [failedSrc, setFailedSrc] = useState<string | null>(null);
     useEffect(() => setAllowed(false), [src]);
 
     const gif = mimeType === "image/gif" || /\.gif(?:$|[?#])/i.test(src);
@@ -34,7 +37,19 @@ export default function TrafficImage({ src, alt, className, mimeType, contextMen
         </button>
     );
 
-    return <img src={src} alt={alt} className={className} loading="lazy" decoding="async"
-        data-context-menu={contextMenu ? "true" : undefined}
-        onClick={onClick} onContextMenu={onContextMenu}/>;
+    if (skeleton && failedSrc === src) return (
+        <div className={`${className} messageMediaFailed`} role="img" aria-label={alt}>
+            <ImageSquareIcon size={24} aria-hidden="true"/>
+        </div>
+    );
+
+    return <>
+        {skeleton && loadedSrc !== src && <span className="skeletonBlock messageFileSkeleton" aria-hidden="true"/>}
+        <img src={src} alt={alt} className={`${className}${skeleton && loadedSrc !== src ? " messageMediaPending" : ""}`}
+            loading="lazy" decoding="async"
+            data-context-menu={contextMenu ? "true" : undefined}
+            onLoad={() => setLoadedSrc(src)}
+            onError={() => setFailedSrc(src)}
+            onClick={onClick} onContextMenu={onContextMenu}/>
+    </>;
 }

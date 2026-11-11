@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Media, message } from "../../../components/context/ChatContext";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
@@ -7,6 +8,18 @@ import { useUser } from "../../../components/hooks/UserHook";
 import GetIconByType from "./getIconByType";
 import TrafficImage from "../../../components/ts/TrafficImage";
 import { useSettings } from "../../../components/hooks/SettingsHook";
+import "../../../scss/Loading.scss";
+
+function MessageVideoPreview({ src, preload }: { src: string; preload: "metadata" | "none" }) {
+    const [resolved, setResolved] = useState(false);
+
+    return <>
+        {preload === "metadata" && !resolved && <span className="skeletonBlock messageFileSkeleton" aria-hidden="true"/>}
+        <video src={src} className={`messageFilePreview${preload === "metadata" && !resolved ? " messageMediaPending" : ""}`}
+            preload={preload} controls
+            onLoadedMetadata={() => setResolved(true)} onError={() => setResolved(true)}/>
+    </>;
+}
 
 export default function MessageFiles({files, m} : {files:Media[], m:message}) {
     const { t } = useTranslation("common");
@@ -81,7 +94,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                         }}
                     >
                         {isImage ? (
-                            <TrafficImage src={file.url} alt={file.name} mimeType={file.type} className="messageFilePreview" contextMenu onClick={event => {
+                            <TrafficImage src={file.url} alt={file.name} mimeType={file.type} className="messageFilePreview" skeleton contextMenu onClick={event => {
                                 event.stopPropagation();
                                 openImage(file);
                             }}
@@ -98,7 +111,8 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                                 )
                             }}/>
                         ) : isVideo ? (
-                            <video src={file.url} className="messageFilePreview" preload={autoLoadImages && autoPlayGif ? "metadata" : "none"} controls />
+                            <MessageVideoPreview key={file.url} src={file.url}
+                                preload={autoLoadImages && autoPlayGif ? "metadata" : "none"}/>
                         ) : (
                             <a href={file.url} download={file.name} className="messageFileOther">
                                 {GetIconByType(file.name, file.type)}

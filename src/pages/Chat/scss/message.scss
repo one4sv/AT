@@ -478,6 +478,7 @@
 }
 
 .messageFile {
+    position: relative;
     flex: 1 1 calc(33.33% - 0.5vw);
     aspect-ratio: 1/1;
     border-radius: 12px;
@@ -504,6 +505,28 @@
     height: 100%;
     object-fit: cover;
     border-radius: 12px;
+}
+
+.messageFileSkeleton {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.messageFilePreview.messageMediaPending {
+    opacity: 0;
+}
+
+.messageMediaFailed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--borderWh);
+    background: var(--interact);
 }
 
 .messageFileOther {

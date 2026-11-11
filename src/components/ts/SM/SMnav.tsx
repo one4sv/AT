@@ -13,6 +13,20 @@ import { useSettings } from "../../hooks/SettingsHook";
 import { useContacts } from "../../hooks/ContactsHook";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
+import "../../../scss/Loading.scss";
+
+function NavAvatar({ src, alt }: { src: string; alt: string }) {
+    const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+
+    if (status === "error") return <CircleUserRound/>;
+
+    return <>
+        {status === "loading" && <span className="skeletonCircle smNavAvatarSkeleton" aria-hidden="true"/>}
+        <img src={src} alt={alt} className={status === "loading" ? "smNavAvatarPending" : ""}
+            onLoad={() => setStatus("ready")} onError={() => setStatus("error")}/>
+    </>;
+}
+
 export default function SMnav() {
     const isMobile = useCompactLayout();
     const studio = useLocation().pathname.startsWith("/wallpapers");
@@ -545,6 +559,33 @@ export default function SMnav() {
                 );
         }
     };
+    const searchControl = (
+            <div className={`smNavSearch ${isSearch ? "active" : "dis"}`}>
+                <input
+                    ref={searchInputRef}
+                    type="text"
+                    className="smNavSearchInp"
+                    placeholder={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")}
+                    aria-label={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")}
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                />
+                <div
+                    className=""
+                    onClick={() => {
+                        if (!isSearch) {
+                            setIsSearch(true);
+                            requestAnimationFrame(() => searchInputRef.current?.focus());
+                        } else {
+                            if (search.trim() !== "") setSearch(""); else setIsSearch(false);
+                        }
+                    }}
+                >
+                    {isSearch ? search.trim() !== "" ? <XIcon /> : <CaretRightIcon /> : <MagnifyingGlassIcon />}
+                </div>
+            </div>
+    );
+
     if (loadingUser) return (
         <div
             className={`SMnavDiv ${showSideMenu ? "open" : ""}`}
@@ -564,6 +605,7 @@ export default function SMnav() {
                     </div>
                 )}
             </div>
+            {searchControl}
         </div>
     );
     if (!user.id) return null;
@@ -683,33 +725,11 @@ export default function SMnav() {
                     onTouchStart={e => handleNavTouchStart("user", e)}
                     onTouchMove={handleNavTouchMove}
                 >
-                    {user?.avatar_url ? <img src={user.avatar_url} alt={user.username ?? user.nick ?? t("sideMenu.photo")} /> : <CircleUserRound />}
+                    {user?.avatar_url ? <NavAvatar key={user.avatar_url} src={user.avatar_url}
+                        alt={user.username ?? user.nick ?? t("sideMenu.photo")}/> : <CircleUserRound />}
                 </div>
             </div>
-            <div className={`smNavSearch ${isSearch ? "active" : "dis"}`}>
-                <input
-                    ref={searchInputRef}
-                    type="text"
-                    className="smNavSearchInp"
-                    placeholder={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")}
-                    aria-label={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")}
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                />
-                <div
-                    className=""
-                    onClick={() => {
-                        if (!isSearch) {
-                            setIsSearch(true);
-                            requestAnimationFrame(() => searchInputRef.current?.focus());
-                        } else {
-                            if (search.trim() !== "") setSearch(""); else setIsSearch(false);
-                        }
-                    }}
-                >
-                    {isSearch ? search.trim() !== "" ? <XIcon /> : <CaretRightIcon /> : <MagnifyingGlassIcon />}
-                </div>
-            </div>
+            {searchControl}
         </div>
     );
 }
