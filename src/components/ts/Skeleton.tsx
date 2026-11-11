@@ -120,7 +120,7 @@ export default function Skeleton({ type = "list", count = 6, overview = false }:
                             <div className="skeletonLine skeletonShort" />
                         </div>
                     </div>
-                    {(type === "feed" || type === "profile") && <div className="skeletonBlock" />}
+                    {type === "feed" && <div className="skeletonBlock" />}
                 </div>
             ))}
         </div>
