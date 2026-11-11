@@ -127,7 +127,7 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
                 onChange={next => change("completion_mode", next as PlanInput["completion_mode"])}/>
         </div>}
         <div className="addHabitWrapper planTagWrapper">
-            <TagSelector selectedTag={value.tag || undefined}
+            <TagSelector portal={modal} selectedTag={value.tag || undefined}
                 setSelectedTag={tag => change("tag", tag || null)}/>
         </div>
         <div className="addHabitWrapper">
