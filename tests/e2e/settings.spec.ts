@@ -201,3 +201,63 @@ test("SideMenu list reserves space for its overlapping navigation bar", async ({
     expect(Math.abs(dimensions.clearance - dimensions.overlap)).toBeLessThanOrEqual(2);
     expect(dimensions.padding).toBeGreaterThan(dimensions.overlap);
 });
+
+test("personal plan participants can be invited and removed from its details page", async ({ page }) => {
+    const contactId = "22222222-2222-4222-8222-222222222222";
+    let invited = false;
+    let removed = false;
+    const currentPlan = () => ({
+        id: 7, owner_id: "settings-fixture", name: "Plan members fixture", description: "",
+        plan_date: "2026-11-20", start_time: null, end_time: null,
+        kind: invited ? "shared" : "personal", completion_mode: "personal", status: "upcoming",
+        membership_status: "accepted", is_owner: true, completed_for_me: false,
+        participants_count: 1, completed_count: 0, members: [
+            { id: "settings-fixture", nick: "settingsfixture", username: "Settings Fixture",
+                avatar_url: null, status: "accepted", is_owner: true, completed: false },
+            ...(invited && !removed ? [{ id: contactId, nick: "testmember", username: "Test Member",
+                avatar_url: null, status: "pending", is_owner: false, completed: false }] : [])
+        ]
+    });
+    await page.route("**/api/plans", route => route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({ success: true, plans: [] })
+    }));
+    await page.route("**/api/plans/7", route => route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({ success: true, plan: currentPlan() })
+    }));
+    await page.route("**/api/plans/7/invite", route => {
+        invited = true;
+        return route.fulfill({ status: 200, contentType: "application/json",
+            body: JSON.stringify({ success: true }) });
+    });
+    await page.route(`**/api/plans/7/members/${contactId}`, route => {
+        removed = true;
+        return route.fulfill({ status: 200, contentType: "application/json",
+            body: JSON.stringify({ success: true }) });
+    });
+    await page.route("**/api/contacts", route => route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({ success: true, friendsArr: [
+            { id: contactId, nick: "testmember", name: "Test Member",
+                avatar_url: null, is_group: false, pinned: false, note: true,
+                is_blocked: false, unread_count: 0, lastMessage: null }
+        ] })
+    }));
+
+    await page.goto("/plan/7");
+    const section = page.locator(".planMembersSection");
+    await expect(section).toBeVisible();
+    await expect(section.locator(".planMember")).toHaveCount(1);
+    await section.getByRole("button", { name: "Добавить участника" }).click();
+    await expect(section.locator(".planInviteContact")).toHaveCount(1);
+    await section.locator(".planInviteContact").click();
+    await section.getByRole("button", { name: "Пригласить" }).click();
+    await expect.poll(() => invited).toBe(true);
+    await expect(section.locator(".planMember")).toHaveCount(2);
+    await expect(section).toContainText("Ожидает приглашение");
+    await section.getByRole("button", { name: "Отменить приглашение" }).first().click();
+    await section.getByRole("button", { name: "Отменить приглашение" }).last().click();
+    await expect.poll(() => removed).toBe(true);
+    await expect(section.locator(".planMember")).toHaveCount(1);
+});
