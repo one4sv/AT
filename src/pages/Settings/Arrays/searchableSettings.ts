@@ -6,7 +6,7 @@ import { useSettings } from "../../../components/hooks/SettingsHook";
 import { MirrorRectangularIcon } from "lucide-react";
 import useCompactLayout from "../../../components/hooks/utils/useCompactLayout";
 import { reactionsArr } from "../../../components/ts/utils/emojies";
-import { ChatCircleIcon, ListNumbersIcon } from "@phosphor-icons/react/dist/ssr";
+import { ChatCircleIcon } from "@phosphor-icons/react/dist/ssr";
 
 export interface SearchableSection {
     id: string;
@@ -231,12 +231,6 @@ export function useSearchableSettings(): SearchableSection[] {
                     name: t("habits.weekStartFrom"),
                     icon: CalendarBlankIcon,
                     category: t("habits.schedule"),
-                },
-                {
-                    id: "orderHabits",
-                    name: t("habits.displayOrder"),
-                    icon: ListNumbersIcon,
-                    category: t("habits.displayOrder"),
                 },
             ],
         },

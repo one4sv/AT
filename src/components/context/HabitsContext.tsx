@@ -2,7 +2,6 @@ import { createContext, useState, useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
-import { useSettings } from "../hooks/SettingsHook";
 import type { HabitSettings } from "./TheHabitContext";
 import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
@@ -72,7 +71,6 @@ export const HabitsProvider = ({
     children: ReactNode;
 }) => {
     const { showNotification } = useNote();
-    const { orderHabits } = useSettings();
     const {
         user,
         initialLoading
@@ -136,15 +134,11 @@ export const HabitsProvider = ({
                 const dd = String(date.getDate()).padStart(2, "0");
                 weekOrder.push(`${yyyy}-${mm}-${dd}`);
             }
-            if (!orderHabits || weekOrder.length === 0) return;
-            let newOrder = orderHabits.flatMap(item => item === "weekly" ? weekOrder : [item]);
+            let newOrder = ["everyday", ...weekOrder, "sometimes"];
             if (habits?.find(h => h.pinned)) newOrder = ["pinned", ...newOrder];
-            const isSame = newOrder.length === orderHabits.length && newOrder.every((val, i) => val === orderHabits[i]);
-            if (!isSame) {
-                setNewOrderHabits(newOrder);
-            }
+            setNewOrderHabits(newOrder);
         },
-        [habits, orderHabits]
+        [habits]
     );
 
     return (
