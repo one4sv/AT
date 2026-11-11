@@ -24,9 +24,8 @@
 
 .addPlanDiv .planDescription {
     font-size: 16px;
-    min-height: 9dvh;
-    padding: 1dvh 1vw;
-    padding-bottom: 3dvh;
+    min-height: 5dvh;
+    padding: 1dvh 1vw 2.5dvh;
     max-height: 22dvh;
     overflow-y: auto;
 }
@@ -73,13 +72,13 @@
     }
     .addPlanDiv .addHabitTimeWrapper {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 2vw;
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 1dvh;
     }
     .addPlanDiv .addHabitTimeWrapper > .addHabitWrapper.time {
         width: 100%;
         min-width: 0;
-        overflow: hidden;
+        overflow: visible;
     }
     .addPlanDiv .addHabitTimeWrapper > .addHabitWrapper.time > label {
         display: flex;
@@ -110,4 +109,19 @@
     .planEditor .planFormSelect > svg {
         right: 3vw;
     }
+}
+
+// Keep tag choices in the plan form's scroll flow (not clipped by the modal).
+.addPlanDiv .planTagWrapper > .tagList,
+.planEditor .planTagWrapper > .tagList {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    margin-top: .5dvh;
+    display: none;
+}
+.addPlanDiv .planTagWrapper > .tagList.active,
+.planEditor .planTagWrapper > .tagList.active {
+    display: flex;
 }

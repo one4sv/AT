@@ -238,3 +238,19 @@
         }
     }
 }
+@media (max-width: 800px) {
+  .addPlanDiv .react-datepicker__header,
+  .planEditor .react-datepicker__header {
+    padding-top: .35rem;
+  }
+  .addPlanDiv .react-datepicker__month,
+  .planEditor .react-datepicker__month {
+    margin: .2rem;
+  }
+  .addPlanDiv .react-datepicker__day,
+  .addPlanDiv .react-datepicker__day-name,
+  .planEditor .react-datepicker__day,
+  .planEditor .react-datepicker__day-name {
+    margin: .1rem;
+  }
+}

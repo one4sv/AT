@@ -61,6 +61,30 @@ export default function SideMenu() {
     const sideMenuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        const container = sideMenuRef.current;
+        const nav = document.querySelector<HTMLElement>(".SMnavDiv");
+        if (!container || !nav) return;
+
+        const updateClearance = () => {
+            const bottom = container.getBoundingClientRect().bottom;
+            const navTop = nav.getBoundingClientRect().top;
+            container.style.setProperty("--sm-nav-clearance", Math.ceil(Math.max(0, bottom - navTop)) + "px");
+        };
+        updateClearance();
+        const observer = new ResizeObserver(updateClearance);
+        observer.observe(container);
+        observer.observe(nav);
+        window.addEventListener("resize", updateClearance);
+        window.visualViewport?.addEventListener("resize", updateClearance);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener("resize", updateClearance);
+            window.visualViewport?.removeEventListener("resize", updateClearance);
+            container.style.removeProperty("--sm-nav-clearance");
+        };
+    }, []);
+
+    useEffect(() => {
         if (user.id) refreshSchedules();
     }, [user.id, refreshSchedules]);
     useEffect(() => {

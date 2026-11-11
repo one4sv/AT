@@ -9,6 +9,7 @@ import type { OneOffPlan } from "../../components/context/PlansContext";
 import PlanEditor, { type PlanInput } from "./PlanEditor";
 import PlanReminders from "./PlanReminders";
 import PlanComment from "./PlanComment";
+import { tags } from "../../components/ts/tags";
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import "./PlanPage.scss";
 
@@ -115,6 +116,7 @@ export default function PlanPage() {
         { day:"numeric",month:"long",year:"numeric" }
     ).format(new Date(date + "T12:00:00"));
 
+    const selectedTag = tags.find(tag => tag.value === plan?.tag);
     const canComplete = !!plan && plan.membership_status === "accepted" && plan.status !== "canceled" &&
         (plan.is_owner || plan.completion_mode !== "shared");
 
@@ -136,6 +138,7 @@ export default function PlanPage() {
                         <ClockIcon size={20}/>{[plan.start_time?.slice(0, 5),plan.end_time?.slice(0, 5)].filter(Boolean).join(" – ")}
                     </div>}
                     {plan.place && <div className="planMetadata"><MapPinIcon size={20}/>{plan.place}</div>}
+                    {selectedTag && <div className="planMetadata planTag"><selectedTag.icon size={20}/>{selectedTag.label}</div>}
                     {plan.description && <p className="planDescriptionText">{plan.description}</p>}
                     <div className="planMetadata">{t("plans." + plan.kind)}
                         {plan.kind === "shared" && plan.completion_mode && " · " + t("plans." + plan.completion_mode + "Completion")}

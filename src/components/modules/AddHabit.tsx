@@ -164,7 +164,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             {selectedperiodicity === "weekly" && (
                 <DayChanger toggleDay={toggleDay} chosenDays={chosenDays}/>
             )}
-            <div className="addHabitTimeWrapper">
+            <div className="addHabitTimeWrapper timeInputs">
                 <div className="addHabitWrapper time">
                     <label htmlFor="inputStartTime">{t("habitUi.startTime")}</label>
                     <input type="time" id="inputStartTime" className="inputStartTime addHabitInput" value={startTime}

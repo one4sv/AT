@@ -19,6 +19,7 @@ export interface OneOffPlan {
     end_time?: string | null;
     timezone?: string;
     place?: string;
+    tag?: string | null;
     kind: "personal" | "shared";
     completion_mode?: "personal" | "shared";
     join_mode?: "invite" | "request" | "open";

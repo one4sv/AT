@@ -2,7 +2,8 @@ import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import CalendarInput from "../../components/ts/CalendarInput";
 import SelectList from "../../components/ts/SelectList";
-import AutoDesc from "../../components/ts/utils/AutoDesc";
+import TA from "../../components/ts/TA";
+import TagSelector from "../../components/ts/TagSelector";
 import type { OneOffPlan } from "../../components/context/PlansContext";
 import "../../scss/modules/habitFormControls.scss";
 
@@ -14,6 +15,7 @@ export interface PlanInput {
     end_time: string | null;
     timezone: string;
     place: string;
+    tag: string | null;
     kind: "personal" | "shared";
     completion_mode: "personal" | "shared";
 }
@@ -40,6 +42,7 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
         end_time: initial?.end_time?.slice(0, 5) || null,
         timezone: initial?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Moscow",
         place: initial?.place || "",
+        tag: initial?.tag || null,
         kind: initial?.kind || "personal",
         completion_mode: initial?.completion_mode || "personal"
     });
@@ -63,8 +66,9 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
         </div>
         <div className="addHabitWrapper">
             <label htmlFor="planDescription">{t("plans.description")}</label>
-            <AutoDesc className="addHabitInput planDescription" maxLength={1200} value={value.description}
-                onChange={next => change("description", next)}/>
+            <TA id="planDescription" className="addHabitInput planDescription" maxLength={1200}
+                minHeight={5} maxHeight={22} value={value.description}
+                onChange={event => change("description", event.target.value)}/>
             <span>{value.description.length}/1200</span>
         </div>
         <div className="addHabitWrapper">
@@ -73,7 +77,7 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
                 onChange={date => change("plan_date", date ? localDate(date) : "")}
                 className="addHabitInput planDateInput"/>
         </div>
-        <div className="addHabitTimeWrapper">
+        <div className="addHabitTimeWrapper timeInputs">
             <div className="addHabitWrapper time">
                 <label htmlFor="planStartTime">{t("plans.startTime")}</label>
                 <input id="planStartTime" className="addHabitInput" type="time"
@@ -103,6 +107,10 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
                     { value: "shared", label: t("plans.sharedCompletion") }]}
                 onChange={next => change("completion_mode", next as PlanInput["completion_mode"])}/>
         </div>}
+        <div className="addHabitWrapper planTagWrapper">
+            <TagSelector selectedTag={value.tag || undefined}
+                setSelectedTag={tag => change("tag", tag || null)}/>
+        </div>
         <div className="addHabitWrapper">
             <label htmlFor="planPlace">{t("plans.place")}</label>
             <input id="planPlace" className="addHabitInput" maxLength={500} value={value.place}

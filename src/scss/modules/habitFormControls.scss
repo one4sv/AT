@@ -50,6 +50,10 @@
     }
     @media (max-width: 800px) {
         column-gap: 2vw;
+        &.timeInputs {
+            grid-template-columns: minmax(0, 1fr);
+            row-gap: 1dvh;
+        }
         >.addHabitWrapper > label {
             display: flex;
             align-items: flex-end;
@@ -78,7 +82,7 @@
         width: 100%;
         min-width: 0;
         max-width: 100%;
-        overflow: hidden;
+        overflow: visible;
         padding: .8dvh 1vw;
         padding-inline-end: 2.5vw;
         min-height: 4.5dvh;

@@ -269,9 +269,8 @@
     scrollbar-width: thin;
     scrollbar-color: var(--menuButtHover) var(--tr);
     scrollbar-gutter: stable both-edges;
-    padding-bottom: calc(9dvh + env(safe-area-inset-bottom));
     box-sizing: border-box;
-    scroll-padding-bottom: calc(9dvh + env(safe-area-inset-bottom));
+    scroll-padding-bottom: var(--sm-nav-clearance, 11dvh);
     @media (max-width: 800px) {
         padding: 0 3vw;
     }
@@ -282,7 +281,9 @@
     display: flex;
     flex-direction: column;
     transition: max-height 0.35s ease;
-    padding-bottom: 1dvh;
+    // The list itself owns its scroll clearance; the nav overlays the scroll viewport.
+    padding-bottom: calc(1dvh + var(--sm-nav-clearance, 11dvh));
+    box-sizing: border-box;
     margin-top: 4dvh;
     gap: 0.2vh;
     &.nothing {
