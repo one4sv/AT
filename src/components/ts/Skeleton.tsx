@@ -1,6 +1,6 @@
 import "../../scss/Loading.scss";
 
-export type SkeletonType = "list" | "feed" | "habit" | "chat" | "profile";
+export type SkeletonType = "list" | "feed" | "habit" | "chat" | "profile" | "plan";
 
 export default function Skeleton({ type = "list", count = 6, overview = false }: { type?: SkeletonType, count?: number, overview?: boolean }) {
     const rows = Array.from({ length: count }, (_, i) => i);
@@ -43,6 +43,22 @@ export default function Skeleton({ type = "list", count = 6, overview = false }:
                                 <div className="skeletonBlock" />
                             </div>)}
                         </div>
+                    </div>
+                </div>
+            ) : type === "plan" ? (
+                <div className="skeletonPlan" aria-hidden="true">
+                    <div className="skeletonCard skeletonPlanMain">
+                        <div className="skeletonLine skeletonTitle"/>
+                        <div className="skeletonLine skeletonShort"/>
+                        <div className="skeletonLine"/>
+                        <div className="skeletonLine skeletonShort"/>
+                        <div className="skeletonBlock"/>
+                        <div className="skeletonLine skeletonShort"/>
+                    </div>
+                    <div className="skeletonCard skeletonPlanSecondary">
+                        <div className="skeletonLine skeletonTitle"/>
+                        <div className="skeletonLine"/>
+                        <div className="skeletonLine skeletonShort"/>
                     </div>
                 </div>
             ) : type === "chat" ? (
