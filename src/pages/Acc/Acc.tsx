@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useUser } from "../../components/hooks/UserHook";
 import "./scss/Acc.scss";
-import Loader from "../../components/ts/Loader";
+import Skeleton from "../../components/ts/Skeleton";
 import type { PrivateSettings } from "../../components/context/SettingsContext";
 import AccInfo from "./components/AccInfo";
 import AccHabits from "./components/AccHabits";
@@ -439,7 +439,7 @@ export default function Acc() {
         });
     };
 
-    if (loading) return <Loader />;
+    if (loading) return <Skeleton type="profile"/>;
 
     return (
         <div className="accDiv">
