@@ -24,6 +24,7 @@ import { ScheduleProvider } from '../context/ScheduleContext';
 import { SideMenuProvider } from '../context/SideMenuContext';
 import { WebSocketProvider } from '../context/WebSocketContext';
 import { PlannedProvider } from '../context/PlannedContext';
+import { PlansProvider } from '../context/PlansContext';
 import { ContactsProvider } from '../context/ContactsContext';
 import { ChatMessageScrollProvider } from '../context/ChatMessageScrollContext';
 import { PinnedMessagesProvider } from '../context/PinnedMessagesContext';
@@ -47,6 +48,7 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                                                                 <DeleteProvider>
                                                                     <BlackoutProvider>
                                                                         <CalendarProvider>
+                                                                            <PlansProvider>
                                                                             <TheHabitProvider>
                                                                                 <UpdateHabitProvider>
                                                                                     <DoneProvider>
@@ -68,6 +70,7 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                                                                                     </DoneProvider>
                                                                                 </UpdateHabitProvider>
                                                                             </TheHabitProvider>
+                                                                            </PlansProvider>
                                                                         </CalendarProvider>
                                                                     </BlackoutProvider>
                                                                 </DeleteProvider>

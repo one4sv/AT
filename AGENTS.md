@@ -19,6 +19,7 @@
 - **Рисованные SVG:** [SVG_ART.md](docs/SVG_ART.md). Уникальные сюжеты создаются внутри общей `SectionArt`, а не самостоятельной картинкой с чужими цветами и размерами. Декор не блокирует события.
 - **Авторизация, почта и устройства:** [AUTH_AND_SESSIONS.md](docs/AUTH_AND_SESSIONS.md). Проверка сессий и отзыв доступа обязательны на сервере; не оставлять старые JWT без контроля версий.
 - **Архитектура и контексты:** [ARCHITECTURE.md](docs/ARCHITECTURE.md).
+- **Разовые планы 0.6.4 и цели 0.6.5:** [PLANS.md](docs/PLANS.md).
 - **Совместные активности, роли, дата вступления:** [COLLABORATION_AND_PERMISSIONS.md](docs/COLLABORATION_AND_PERMISSIONS.md), [habit-invitations.md](docs/habit-invitations.md).
 - **Текущая версия:** dev 0.6.3 Songbird — [ROADMAP_PROPOSAL.md](docs/ROADMAP_PROPOSAL.md) и [RELEASE_QA.md](docs/RELEASE_QA.md). История изменений и даты — только в [CHANGELOG.md](docs/CHANGELOG.md).
 - **Roadmap:** [ROADMAP_PROPOSAL.md](docs/ROADMAP_PROPOSAL.md). Страница уже есть в `/info/roadmap`; живая синхронизация с Linear — отдельная работа.

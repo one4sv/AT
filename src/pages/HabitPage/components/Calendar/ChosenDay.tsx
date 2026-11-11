@@ -11,7 +11,7 @@ import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
 import { todayStrFunc } from "../../../../components/ts/utils/dateToStr";
 import ChosenDayDate from "../../utils/ChosenDayDate";
 
-export default function ChosenDay() {
+export default function ChosenDay({ showDate = true }: { showDate?: boolean }) {
     const { t } = useTranslation("common");
     const { chosenDay, calendar } = useCalendar()
     const { markDone } = useDone()
@@ -94,7 +94,7 @@ export default function ChosenDay() {
 
     return (
         <div className="chosenDayDiv" ref={ChosenDayRef}>
-            <ChosenDayDate/>
+            {showDate && <ChosenDayDate/>}
             {(completedArr.length > 0 || skippedArr.length > 0 || willArr.length > 0 || nowArr.length > 0) && (
                 <div className="cdhabits">
                     {mappingHabits(completedArr, "comp")}

@@ -2,6 +2,7 @@ import { useMemo, useRef, useState, memo } from "react";
 import type { Habit } from "../../../../components/context/HabitsContext";
 import HoverDay from "./HoverDay";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
+import { usePlans } from "../../../../components/hooks/PlansHook";
 import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
 import { useParams } from "react-router-dom";
 import { dateToCalendarFormat, todayStrFunc } from "../../../../components/ts/utils/dateToStr";
@@ -17,6 +18,7 @@ interface DayCellProps {
 
 const DayCell = ({ habits, habit, day, month, year, type }: DayCellProps) => {
     const { setChosenDay, calendar, chosenDay } = useCalendar();
+    const { plans } = usePlans();
     const [hovered, setHovered] = useState(false);
     const { habitId: id } = useParams<{ habitId: string }>();
     const cellRef = useRef<HTMLDivElement | null>(null);
@@ -24,6 +26,7 @@ const DayCell = ({ habits, habit, day, month, year, type }: DayCellProps) => {
     const date = new Date(year, month, day);
     const todayStr = todayStrFunc()
     const dateStr = dateToCalendarFormat(date);
+    const oneOffCount = !id ? plans.filter(plan => plan.plan_date === dateStr && plan.membership_status !== "pending").length : 0;
 
     const { completedArr, skippedArr, willArr, nowArr, plannedArr } = useMemo(
         () => getDayArrays(dateStr, calendar, habits, id, habit),
@@ -57,6 +60,7 @@ const DayCell = ({ habits, habit, day, month, year, type }: DayCellProps) => {
                     <div className="calendarDot will"></div>
                 )}
                 {skippedArr.length > 0 && <div className="calendarDot skip"></div>}
+                {oneOffCount > 0 && <div className="calendarDot plan" title={String(oneOffCount)}></div>}
             </div>
             {hovered && (
                 <HoverDay

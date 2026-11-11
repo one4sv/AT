@@ -1,0 +1,244 @@
+.habitOverview {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    gap: 0.5vw;
+    height: 40dvh;
+    min-height: 0;
+    width: 100%;
+}
+
+.habitOverviewCalendar,
+.habitOverviewCenter,
+.habitOverviewContext {
+    min-width: 0;
+    min-height: 0;
+}
+
+.habitOverviewCalendar .calendarDiv {
+    width: 100%;
+    height: 100%;
+}
+
+.habitOverviewCenter,
+.habitOverviewContext {
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--mc);
+    padding: 1dvh 1vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+    box-sizing: border-box;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+}
+
+.habitOverviewCenter {
+    overflow: hidden;
+}
+
+.habitOverviewContext {
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.habitOverviewHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5vw;
+    min-height: 3.5dvh;
+    flex-shrink: 0;
+    font-size: 20px;
+}
+
+.habitOverviewHeader > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.habitOverviewAddButton {
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--inner_text);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    width: 4dvh;
+    height: 4dvh;
+    min-width: 4dvh;
+    padding: 0;
+    flex-shrink: 0;
+    touch-action: manipulation;
+}
+
+.habitOverviewCenter > .selector {
+    flex-shrink: 0;
+}
+
+.habitOverviewBody {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--menuButtHover) transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+}
+
+.habitOverviewActivities .chosenDayDiv {
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+    background: transparent;
+    border: 0;
+    padding: 0;
+}
+
+.habitOverviewActivities .cdhabits {
+    padding-top: 0;
+}
+
+.habitOverviewPlanList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5dvh;
+}
+
+.habitOverviewPlan {
+    background: var(--interact);
+    color: var(--tc);
+    width: 100%;
+    text-align: start;
+    display: flex;
+    align-items: center;
+    gap: 0.5vw;
+    padding: 1.25dvh 1vw;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.habitOverviewPlan.chosen {
+    border-color: var(--accent);
+}
+
+.habitOverviewPlanName {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.habitOverviewPlanTime {
+    color: var(--borderWh);
+}
+
+.habitOverviewContext p {
+    color: var(--tc);
+    overflow-wrap: anywhere;
+}
+
+.habitOverviewEmpty {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5dvh;
+    min-height: 15dvh;
+    padding: 1dvh 0;
+    color: var(--borderWh);
+    text-align: center;
+}
+
+.habitOverviewEmpty > .sectionArt {
+    width: min(100%, 12vw);
+    max-width: 12vw;
+}
+
+.habitOverviewEmpty p,
+.habitOverviewEmptyText {
+    margin: 0;
+    font-size: 15px;
+}
+
+.calendarDot.plan {
+    background: var(--accent);
+    border-radius: 2px;
+}
+
+.habitOverview .planPrimaryButton {
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    border: 0;
+    border-radius: 24px;
+    color: var(--inner_text);
+    cursor: pointer;
+    padding: 1dvh 1vw;
+    font-size: 16px;
+}
+
+.habitOverview .planQuietButton {
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--interact);
+    color: var(--tc);
+    cursor: pointer;
+    padding: 1dvh 1vw;
+    font-size: 16px;
+}
+
+.habitOverviewInvitations {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5dvh;
+    padding: 1dvh 0;
+    border-bottom: 1px solid var(--block_border);
+}
+
+@media (max-width: 800px) {
+    .habitOverview {
+        display: flex;
+        height: auto;
+        min-height: 0;
+        flex-direction: column;
+        gap: 1dvh;
+    }
+
+    .habitOverviewCenter {
+        order: 0;
+        height: 50dvh;
+        flex: 0 0 50dvh;
+        padding: 1.5dvh 3vw;
+    }
+
+    .habitOverviewCalendar {
+        order: 1;
+    }
+
+    .habitOverviewCalendar .calendarDiv {
+        height: auto;
+    }
+
+    .habitOverviewContext {
+        order: 2;
+        max-height: 35dvh;
+        padding: 1.5dvh 3vw;
+    }
+
+    .habitOverviewHeader,
+    .habitOverviewPlan {
+        gap: 2vw;
+    }
+
+    .habitOverviewPlan {
+        padding: 1.5dvh 3vw;
+    }
+
+    .habitOverviewEmpty > .sectionArt {
+        width: 32vw;
+        max-width: 32vw;
+    }
+}

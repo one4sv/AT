@@ -1,0 +1,81 @@
+@use "./addHabit.scss";
+
+.addPlanDiv {
+    max-height: 86dvh;
+    overflow-y: auto;
+    overflow-x: visible;
+    align-items: stretch;
+    gap: 1.5dvh;
+    scrollbar-width: thin;
+}
+
+.addPlanHeading {
+    font-size: 22px;
+    padding: 0 0.5vw;
+}
+
+.addPlanDiv .addHabitWrapper > span {
+    bottom: 0;
+}
+
+.addPlanDiv .addHabitWrapper > input:first-of-type {
+    padding-right: 4vw;
+}
+
+.addPlanDiv .planDescription {
+    font-size: 16px;
+    min-height: 9dvh;
+    padding: 1dvh 1vw;
+    padding-bottom: 2dvh;
+    max-height: 22dvh;
+    overflow-y: auto;
+}
+
+.addPlanDiv .planFormSelect,
+.planEditor .planFormSelect {
+    width: 100%;
+}
+
+.addPlanDiv .planFormSelect > input,
+.planEditor .planFormSelect > input {
+    background-color: var(--interact);
+    color: var(--tc);
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
+    border-radius: 24px;
+    padding: 1dvh 1vw;
+    font-size: 20px;
+    width: 100%;
+    min-height: 4.5dvh;
+    cursor: pointer;
+}
+
+.addPlanDiv .planFormSelect .selectList,
+.planEditor .planFormSelect .selectList {
+    background-color: var(--bgc);
+    z-index: 12;
+}
+
+.addPlanActions {
+    width: 100%;
+}
+
+.addPlanActions .addHabitSave {
+    width: 100%;
+}
+
+@media (max-width: 800px) {
+    .addPlanDiv {
+        max-height: calc(86dvh - env(safe-area-inset-bottom));
+        overflow-x: hidden;
+    }
+    .addPlanDiv .addHabitWrapper > input:first-of-type {
+        padding-right: 12vw;
+    }
+    .addPlanDiv .planDescription {
+        padding: 1dvh 3vw 2dvh;
+    }
+    .addPlanDiv .planFormSelect > input {
+        padding: 1dvh 3vw;
+    }
+}

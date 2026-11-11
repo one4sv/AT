@@ -7,6 +7,7 @@ const ModuleMap: Record<string, ComponentType> = {
     HabitParticipantPicker: lazy(() => import("./HabitParticipantPicker")),
     HabitCreateChat: lazy(() => import("./HabitCreateChat")),
     AddHabit: lazy(() => import("./AddHabit")),
+    AddPlan: lazy(() => import("./AddPlan")),
     Delete: lazy(() => import("./DeleteConfirm")),
     PickHandler: lazy(() => import("./PickHandler").then(module => ({ default: module.PickHandler }))),
     BgHandler: lazy(() => import("./BgHandler").then(module => ({ default: module.BgHandler }))),

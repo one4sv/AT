@@ -22,6 +22,7 @@ const Chat = lazy(() => import("./pages/Chat/Chat"));
 const Acc = lazy(() => import("./pages/Acc/Acc"));
 const Admin = lazy(() => import("./pages/Admin"));
 const HabitPage = lazy(() => import("./pages/HabitPage/HabitPage"));
+const PlanPage = lazy(() => import("./pages/Plan/PlanPage"));
 const Group = lazy(() => import("./pages/Group/Group"));
 const Join = lazy(() => import("./pages/Join"));
 const Settings = lazy(() => import("./pages/Settings/Settings"));
@@ -67,6 +68,7 @@ function App() {
                         <Route path="post/:postId" element={<PostPage />} />
                         <Route path="habit" element={<HabitPage />} />
                         <Route path="habit/:habitId" element={<HabitPage />} />
+                        <Route path="plan/:planId" element={<PlanPage />} />
                         <Route path="chat/:nick" element={<Chat />} />
                         <Route path="chat/g/:id" element={<Chat />} />
                         <Route path="acc/:nick" element={<Acc />} />

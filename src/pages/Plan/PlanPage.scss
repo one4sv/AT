@@ -1,0 +1,174 @@
+.planPage {
+    width: min(100%, 68vw);
+    margin: 0 auto;
+    height: 100dvh;
+    overflow-y: auto;
+    padding: 7dvh 1vw 8dvh;
+    box-sizing: border-box;
+    color: var(--tc);
+}
+.planPageHeader, .planHeading, .planActions, .planEditorActions, .planTimeFields, .planMetadata, .planInvite {
+    display: flex;
+    align-items: center;
+    gap: 0.75vw;
+}
+.planPageHeader {
+    margin-bottom: 2dvh;
+}
+.planHeading {
+    justify-content: space-between;
+}
+.planHeading h1 {
+    font-size: 26px;
+    margin: 0;
+}
+.planSection {
+    padding: 2dvh 1.5vw;
+    margin-bottom: 1dvh;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+}
+.planSection h2 {
+    font-size: 20px;
+    margin: 0 0 1dvh;
+}
+.planMetadata {
+    margin: 1dvh 0;
+    color: var(--tc);
+    overflow-wrap: anywhere;
+}
+.planDescriptionText {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.planStatus {
+    color: var(--borderWh);
+}
+.planIconButton, .planQuietButton {
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--interact);
+    color: var(--tc);
+    cursor: pointer;
+    padding: 1dvh 1vw;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4vw;
+}
+.planPrimaryButton {
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--inner_text);
+    border: 0;
+    border-radius: 24px;
+    cursor: pointer;
+    padding: 1.2dvh 1.2vw;
+    font-size: 16px;
+}
+.planPrimaryButton:disabled, .planQuietButton:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+.planEditor, .planInput {
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+}
+.planEditor {
+    gap: 2dvh;
+}
+.planInput {
+    flex: 1;
+    min-width: 0;
+}
+.planInput > span {
+    color: var(--tc);
+}
+.planInput input, .planInput textarea, .planInvite input {
+    color: var(--tc);
+    background: var(--bgc);
+    border: 1px solid var(--block_border);
+    box-sizing: border-box;
+    border-radius: 16px;
+    padding: 1dvh 1vw;
+    width: 100%;
+    min-width: 0;
+    font-size: 16px;
+}
+.planDescription {
+    min-height: 12dvh;
+}
+.planSelectList {
+    width: 100%;
+    position: relative;
+}
+.planTimeFields > .planInput {
+    width: 50%;
+}
+.planEditorActions {
+    justify-content: flex-end;
+}
+.planMembers {
+    display: flex;
+    flex-direction: column;
+}
+.planMember {
+    display: flex;
+    justify-content: space-between;
+    padding: 1dvh 0;
+    border-bottom: 1px solid var(--block_border);
+}
+.planInvite {
+    margin-top: 1dvh;
+}
+.planError {
+    padding: 1.5dvh 1vw;
+    color: var(--tc);
+    border: 1px solid var(--accent);
+    border-radius: 24px;
+    margin-bottom: 1dvh;
+}
+.planDanger {
+    color: var(--accent_text);
+}
+@media (max-width: 800px) {
+    .planPage {
+        width: 100%;
+        padding: 9dvh 2vw 12dvh;
+    }
+    .planSection {
+        padding: 2dvh 4vw;
+    }
+    .planPageHeader, .planHeading, .planActions, .planEditorActions, .planMetadata, .planInvite {
+        gap: 2vw;
+    }
+    .planPrimaryButton, .planQuietButton {
+        padding: 1.2dvh 3vw;
+    }
+    .planInput input, .planInput textarea, .planInvite input {
+        padding: 1dvh 3vw;
+    }
+    .planTimeFields {
+        gap: 2vw;
+    }
+}
+
+.planEditor .planFormSelect > input {
+    background-color: var(--interact);
+    color: var(--tc);
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    box-sizing: border-box;
+    padding: 1dvh 1vw;
+    width: 100%;
+    font-size: 20px;
+}
+
+.planEditor .planFormSelect .selectList {
+    background-color: var(--bgc);
+    z-index: 12;
+}

@@ -1,10 +1,10 @@
 import { useEffect, useId, useRef, useState } from "react";
 import "../../scss/SectionArt.scss";
 
-export type ArtTheme = "general" | "account" | "personalization" | "habits" | "chats" | "notifications" | "security" | "privacy" | "about" | "contacts" | "faq" | "policy" | "terms" | "growth" | "future" | "community" | "roadmap" | "feedback";
+export type ArtTheme = "general" | "account" | "personalization" | "habits" | "plans" | "chats" | "notifications" | "security" | "privacy" | "about" | "contacts" | "faq" | "policy" | "terms" | "growth" | "future" | "community" | "roadmap" | "feedback";
 
 const themes: Record<string, ArtTheme> = {
-    gen: "general", pers: "personalization", activities: "habits", notes: "notifications",
+    gen: "general", pers: "personalization", activities: "habits", plans: "plans", notes: "notifications",
     acc: "account", account: "account", chats: "chats", security: "security", privacy: "privacy",
     about: "about", contacts: "contacts", faq: "faq", policy: "policy", terms: "terms"
 };
@@ -29,6 +29,15 @@ function Motif({ theme }: { theme: ArtTheme }) {
             <path d="M-44 13 0-25 44 13v13h-88Z" className="artTint"/>
             <g className="artBob"><circle cx="-26" cy="-20" r="10" className="artSolid"/></g>
             <g className="artSway"><path d="m13 40 38-62 11 7-38 62Z" className="artSolid"/><path d="m13 40-4 14 15-7" className="artLine"/></g>
+        </>;
+        case "plans": return <>
+            <rect x="-52" y="-44" width="104" height="94" rx="19" className="artPaper"/>
+            <path d="M-52-18H52M-25-52v16m50-16v16" className="artLine"/>
+            <path d="M-32 0h22m-22 15h30m-30 15h18" className="artLine artDraw"/>
+            <g className="artBob">
+                <circle cx="29" cy="21" r="21" className="artSolid"/>
+                <path d="M29 9v13l10 8" className="artInverse"/>
+            </g>
         </>;
         case "habits": return <>
             <rect x="-50" y="-43" width="100" height="89" rx="20" className="artPaper"/>

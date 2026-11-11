@@ -17,7 +17,7 @@ import SharedDayComments from "./components/Habit/Comment/SharedDayComments";
 import DayComment from "./components/Habit/Comment/DayComment";
 import Complete from "./components/Habit/Complete/Complete";
 import Schedule from "./components/Schedule/Schedule";
-import ChosenDay from "./components/Calendar/ChosenDay";
+import HabitOverviewLayout from "./components/Overview/HabitOverviewLayout";
 import { useSchedule } from "../../components/hooks/ScheduleHook";
 import { useHabits } from "../../components/hooks/HabitsHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
@@ -87,7 +87,7 @@ export default function Habit() {
             if (habitId && habit) {
                 setTitle(habit.name);
             } else if (!habitId) {
-                setTitle(t("sideMenu.activities"));
+                setTitle(t("sideMenu.plansAndActivities"));
             }
         },
         [habitId, habit, habit?.name, loadingHabit, setTitle, t]
@@ -115,29 +115,25 @@ export default function Habit() {
 
             {!habitId && <HabitInvitations />}
             <div className="StatsDivMain" ref={mainRef}>
-                <div className="StatsDivHabit">
+                {!habitId ? <HabitOverviewLayout /> : <div className="StatsDivHabit">
                     {isMobile ? <>
-                        {habitId && <div className="mobileHabitLayout">
+                        <div className="mobileHabitLayout">
                             <Complete isMy={!isCompletionReadOnly} />
                             {habitSettings.metric_type === "timer" && <CompletionProgress />}
                             {habitSettings.metric_type === "counter" && <CounterProgression />}
-                        </div>}
-
+                        </div>
                         <Calendar />
-                        {!habitId && <ChosenDay />}
                     </> : <>
                         <Calendar />
-                        {habitId ? <>
-                            <Complete isMy={!isCompletionReadOnly} />
-                            <div className="dayCommentDiv">
-                                <DayComment id={habitId!} isMy={canComment && !isArchived} />
-                                <SharedDayComments />
-                                {habitSettings.metric_type === "timer" && <CompletionProgress />}
-                                {habitSettings.metric_type === "counter" && <CounterProgression />}
-                            </div>
-                        </> : <ChosenDay />}
+                        <Complete isMy={!isCompletionReadOnly} />
+                        <div className="dayCommentDiv">
+                            <DayComment id={habitId} isMy={canComment && !isArchived} />
+                            <SharedDayComments />
+                            {habitSettings.metric_type === "timer" && <CompletionProgress />}
+                            {habitSettings.metric_type === "counter" && <CounterProgression />}
+                        </div>
                     </>}
-                </div>
+                </div>}
 
                 {shouldShowSchedule && <Schedule id={habitId} isMy={!!habit?.access?.can_edit_blocks || isMy} />}
 

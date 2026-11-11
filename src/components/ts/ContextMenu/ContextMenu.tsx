@@ -15,6 +15,7 @@ import HeaderQuickActionMenu from "./menus/HeaderQuickActionMenu";
 import HabitHeaderMenu from "./menus/HabitHeaderMenu";
 import SettingsBackMenu from "./menus/SettingsBackMenu";
 import SettingsSectionMenu from "./menus/SettingsSectionMenu";
+import PlanCreateMenu from "./menus/PlanCreateMenu";
 export default function ContextMenu() {
     const {
         menu,
@@ -137,6 +138,8 @@ export default function ContextMenu() {
                 return <SettingsBackMenu />;
             case "settingsSection":
                 return <SettingsSectionMenu />;
+            case "planCreate":
+                return <PlanCreateMenu />;
             default:
                 return null;
         }
