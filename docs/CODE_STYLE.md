@@ -361,3 +361,7 @@ Flex-список занимает свободную высоту через fl
 
 
 Для сплошных фонов `background: var(--accent)`, `background-color: var(--accent)` и `background-color: var(--darker_accent)` действует то же правило: текст и иконки — `var(--inner_text)`. На нейтральной поверхности использовать обычный цвет; проверять вложенные подписи и состояния hover/active. CI проверяет `tests/accent-text-contrast.test.mjs`.
+
+## Обязательная проверка градиента, рамки и SVG
+
+Во всех состояниях (`:hover`, `:active`, `[aria-expanded="true"]`, selected, `:focus-visible`, disabled) при `background: linear-gradient(135deg, var(--accent), var(--grad))` декоративный `border` должен быть `none`, а текст, вложенные span, svg, path и компоненты — цвета `var(--accent_text)`. Проверять каждое состояние, а не только обычное. Нейтральное стеклянное окно может сохранять штатную рамку Blackout. На нейтральной кнопке допускается `border: 1px solid var(--block_border)` и `background: var(--interact)` с акцентным SVG. При переходе к градиенту рамка снимается и текст с SVG получают `var(--accent_text)`.
