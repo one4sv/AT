@@ -798,6 +798,9 @@
     "detailsTooShort": "Describe your request in at least 12 characters."
   },
     "plans": {
+        "comment": "Comment",
+        "commentLoadError": "Could not load the plan comment",
+        "commentSaveError": "Could not save the plan comment",
         "reminders": "Reminders",
         "remindersGlobalDisabled": "Plan reminders are disabled in general settings.",
         "remindersOpenSettings": "Open settings",

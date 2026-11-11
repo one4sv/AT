@@ -1,3 +1,5 @@
+@use "../HabitPage/scss/habitMobileDone.scss";
+@use "../HabitPage/scss/DayComment.scss";
 .planPage {
     width: min(100%, 68vw);
     margin: 0 auto;
@@ -225,5 +227,82 @@
         max-width: 26vw;
         min-width: 20vw;
         padding: 1dvh 3vw;
+    }
+}
+
+
+/* Plan details reuse the established habit comment/done interaction. */
+.planManagementActions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1dvh;
+}
+.planManagementActions > .planQuietButton,
+.planManagementActions > .planPrimaryButton,
+.planCompletionSection > .planDoneButton {
+    width: 100%;
+    min-height: 5dvh;
+    box-sizing: border-box;
+}
+.planCompletionSection > .planDoneButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5vw;
+    margin-top: 1dvh;
+}
+.planDesktopComment {
+    width: 100%;
+    min-width: 0;
+    padding: 1dvh 0;
+    box-sizing: border-box;
+}
+.planDesktopComment .habitDayComment {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+.planDesktopComment .habitDayComment > textarea {
+    min-height: 4dvh;
+}
+.planDesktopComment .saveCommentButton:disabled,
+.planDayCommentMobile .saveCommentButtonMobile:disabled {
+    opacity: .45;
+}
+@media (max-width: 800px) {
+    .planPage:has(.planMobileDone) {
+        padding-bottom: calc(12dvh + env(safe-area-inset-bottom));
+    }
+    .planMobileDone.habitMobileDone {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        box-sizing: border-box;
+        z-index: 5;
+        padding-bottom: calc(3dvh + env(safe-area-inset-bottom));
+    }
+    .planMobileDone .doneButtDivMobile {
+        flex-shrink: 0;
+    }
+    .planMobileDone .bottomOpen {
+        border: 1px solid var(--block_border);
+        background: var(--interact);
+        cursor: pointer;
+        padding: 0;
+    }
+    .planMobileDone .habitDayCommentMobile.open:only-child {
+        width: 100%;
+    }
+    .planCompletionSection {
+        display: none;
+    }
+    .planManagementActions {
+        gap: 1dvh;
+    }
+    .planManagementActions > button {
+        width: 100%;
+        min-height: 5dvh;
     }
 }

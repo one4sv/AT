@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowLeftIcon, CalendarBlankIcon, ClockIcon, MapPinIcon, UserPlusIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon, ClockIcon, MapPinIcon, UserPlusIcon, CheckCircleIcon, CircleIcon, ChatCenteredIcon } from "@phosphor-icons/react";
 import { api } from "../../components/ts/api";
 import { usePlans } from "../../components/hooks/PlansHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import type { OneOffPlan } from "../../components/context/PlansContext";
 import PlanEditor, { type PlanInput } from "./PlanEditor";
 import PlanReminders from "./PlanReminders";
+import PlanComment from "./PlanComment";
+import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import "./PlanPage.scss";
 
 export default function PlanPage() {
     const { planId } = useParams<{ planId: string }>();
     const { t, i18n } = useTranslation("common");
     const navigate = useNavigate();
+    const isCompact = useCompactLayout();
+    const [mobileOpen, setMobileOpen] = useState<"done" | "comment">("done");
     const { refreshPlans } = usePlans();
     const { setTitle } = usePageTitle();
     const [plan, setPlan] = useState<OneOffPlan | null>(null);
@@ -25,6 +29,7 @@ export default function PlanPage() {
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     useEffect(() => {
+        setMobileOpen("done");
         setEditing(!planId);
         setPlan(null);
         setError("");
@@ -110,12 +115,10 @@ export default function PlanPage() {
         { day:"numeric",month:"long",year:"numeric" }
     ).format(new Date(date + "T12:00:00"));
 
+    const canComplete = !!plan && plan.membership_status === "accepted" && plan.status !== "canceled" &&
+        (plan.is_owner || plan.completion_mode !== "shared");
+
     return <div className="planPage">
-        <div className="planPageHeader">
-            <button type="button" className="planIconButton" onClick={() => navigate("/habit")}
-                aria-label={t("plans.back")}><ArrowLeftIcon size={22}/></button>
-            <span>{planId ? t("plans.title") : t("plans.create")}</span>
-        </div>
         {error && <div className="planError" role="alert">{error}</div>}
         {loading ? <div className="planSection">{t("plans.loading")}</div> :
             editing ? <div className="planSection">
@@ -148,17 +151,17 @@ export default function PlanPage() {
                     </div>
                 </div> : <>
                     <PlanReminders planId={plan.id}/>
-                    <div className="planSection">
+                    <div className="planSection planCompletionSection">
                         <h2>{t("plans.completion")}</h2>
-                        <p>{plan.kind === "shared" && plan.completion_mode === "personal"
-                            ? (plan.completed_count || 0) + "/" + (plan.participants_count || 1)
-                            : t(plan.completed_for_me ? "plans.completed" : "plans.upcoming")}</p>
-                        {(plan.is_owner || plan.completion_mode !== "shared") && plan.status !== "canceled" &&
-                            <button className="planPrimaryButton" disabled={saving} onClick={() =>
-                                void action(() => api.post("plans/" + planId + "/complete",
-                                    { completed: !plan.completed_for_me }))}>
-                                {t(plan.completed_for_me ? "plans.undoCompletion" : "plans.markCompleted")}
-                            </button>}
+                        {plan.kind === "shared" && plan.completion_mode === "personal" &&
+                            <p>{(plan.completed_count || 0) + "/" + (plan.participants_count || 1)}</p>}
+                        {!isCompact && <PlanComment planId={plan.id} disabled={plan.status === "canceled"}/>}
+                        {canComplete && !isCompact && <button className="planPrimaryButton planDoneButton"
+                            disabled={saving} onClick={() => void action(() => api.post("plans/" + planId + "/complete",
+                                { completed: !plan.completed_for_me }))}>
+                            {plan.completed_for_me ? <CheckCircleIcon size={20} weight="fill"/> : <CircleIcon size={20}/>}
+                            {t(plan.completed_for_me ? "plans.undoCompletion" : "plans.markCompleted")}
+                        </button>}
                     </div>
                     {plan.kind === "shared" && <div className="planSection">
                         <h2>{t("plans.members")}</h2>
@@ -182,7 +185,7 @@ export default function PlanPage() {
                     </div>}
                     {plan.is_owner && <div className="planSection">
                         <h2>{t("plans.management")}</h2>
-                        <div className="planActions">
+                        <div className="planActions planManagementActions">
                             <button className="planQuietButton" disabled={saving} onClick={() => setEditing(true)}>
                                 {t("plans.edit")}
                             </button>
@@ -206,5 +209,21 @@ export default function PlanPage() {
                     </div>}
                 </>}
             </> : !error && <div className="planSection">{t("plans.notFound")}</div>}
+        {isCompact && !editing && !loading && plan?.membership_status === "accepted" &&
+            plan.status !== "canceled" && <div className="habitMobileDone planMobileDone">
+                {canComplete && <div className={"doneButtDivMobile doable " + (mobileOpen === "done" ? "open" : "close")}>
+                    {mobileOpen === "comment" ? <button type="button" className="bottomOpen"
+                        aria-label={t("plans.completion")} onClick={() => setMobileOpen("done")}>
+                        {plan.completed_for_me ? <CheckCircleIcon weight="fill" size={22}/> : <CircleIcon size={22}/>}
+                    </button> : <button type="button" className="doneButtMobile" disabled={saving}
+                        onClick={() => void action(() => api.post("plans/" + planId + "/complete",
+                            { completed: !plan.completed_for_me }))}>
+                        {plan.completed_for_me ? <CheckCircleIcon weight="fill" size={22}/> : <CircleIcon size={22}/>}
+                        {t(plan.completed_for_me ? "plans.undoCompletion" : "plans.markCompleted")}
+                    </button>}
+                </div>}
+                <PlanComment planId={plan.id} mobile disabled={plan.status === "canceled"}
+                    open={canComplete ? mobileOpen : "comment"} setOpen={setMobileOpen}/>
+            </div>}
     </div>;
 }
