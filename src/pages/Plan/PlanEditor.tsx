@@ -58,7 +58,6 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
     };
 
     return <form className={modal ? "addHabitDiv addPlanDiv" : "planEditor"} onSubmit={submit}>
-        {modal && <div className="addPlanHeading">{t("plans.create")}</div>}
         <div className="addHabitWrapper">
             <label htmlFor="planName">{t("plans.name")}</label>
             <input id="planName" className="addHabitInput" required maxLength={160}
@@ -90,7 +89,7 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
                     value={value.end_time || ""} onChange={e => change("end_time", e.target.value || null)}/>
             </div>
         </div>
-        {!initial && <div className="inpWrapperAddHabit">
+        {!modal && !initial && <div className="inpWrapperAddHabit">
             <label htmlFor="planKind">{t("plans.kind")}</label>
             <SelectList id="planKind" className="planFormSelect" selected={value.kind}
                 arr={[{ value: "personal", label: t("plans.personal") },
@@ -101,7 +100,7 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
                         completion_mode: kind === "personal" ? "personal" : previous.completion_mode }));
                 }}/>
         </div>}
-        {value.kind === "shared" && <div className="inpWrapperAddHabit">
+        {!modal && value.kind === "shared" && <div className="inpWrapperAddHabit">
             <label htmlFor="planCompletionMode">{t("plans.completionMode")}</label>
             <SelectList id="planCompletionMode" className="planFormSelect" selected={value.completion_mode}
                 arr={[{ value: "personal", label: t("plans.individualCompletion") },

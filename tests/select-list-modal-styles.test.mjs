@@ -99,3 +99,13 @@ test("plan editor and compact modal controls keep mobile layout and text limits"
     assert.match(select, /translateY\(-50%\) rotate/);
     assert.doesNotMatch(sm, /&:hover \{\s*background-color: var\(--menuButtHover\);\s*> \.settingName/);
 });
+
+test("AddPlan has no separate title or kind selection and labels do not force a minimum height", () => {
+    const form = read("src/pages/Plan/PlanEditor.tsx");
+    const mobile = read("src/scss/modules/addPlan.scss");
+    const controls = read("src/scss/modules/habitFormControls.scss");
+    assert.doesNotMatch(form, /addPlanHeading/);
+    assert.match(form, /!modal && !initial/);
+    assert.match(mobile, /height: 92dvh/);
+    assert.doesNotMatch(controls, /min-height: 2\.5em/);
+});

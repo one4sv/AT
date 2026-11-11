@@ -8,6 +8,8 @@ export interface OneOffPlanMember {
     username: string | null;
     avatar_url: string | null;
     completed: boolean;
+    status?: "pending" | "accepted";
+    is_owner?: boolean;
 }
 export interface OneOffPlan {
     id: number;

@@ -124,15 +124,180 @@
 .planMembers {
     display: flex;
     flex-direction: column;
+    gap: 1dvh;
 }
 .planMember {
     display: flex;
+    align-items: center;
+    gap: 1vw;
+    padding: .6dvh 0;
+}
+.planMemberAvatar {
+    width: 4.5dvh;
+    height: 4.5dvh;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--interact);
+    overflow: hidden;
+
+    > img, > svg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+.planMemberText {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .3dvh;
+
+    > a {
+        color: var(--tc);
+        text-decoration: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    > span {
+        color: var(--borderWh);
+        font-size: 14px;
+    }
+}
+.planMembersHeader {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    padding: 1dvh 0;
-    border-bottom: 1px solid var(--block_border);
+    gap: 1vw;
+    margin-bottom: 1dvh;
+
+    > h2 {
+        margin: 0;
+    }
+}
+.planMembersCount {
+    color: var(--borderWh);
+    margin: 0 0 1dvh;
+}
+.planMemberRemove {
+    border: none;
+    background: transparent;
+    color: var(--notValid);
+    cursor: pointer;
+    width: 4dvh;
+    height: 4dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &:hover, &:active {
+        background: var(--notValidBg);
+    }
+}
+.planMemberConfirm {
+    margin: 0 0 1dvh calc(4.5dvh + 1vw);
+    display: flex;
+    flex-direction: column;
+    gap: .8dvh;
+    color: var(--tc);
 }
 .planInvite {
     margin-top: 1dvh;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1dvh;
+}
+.planInviteSearch {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--block_border);
+    background: var(--interact);
+    border-radius: 24px;
+    padding: 0 1vw;
+    gap: .7vw;
+
+    > svg {
+        flex-shrink: 0;
+        color: var(--borderWh);
+    }
+
+    > input {
+        flex: 1;
+        width: 100%;
+        background: transparent;
+        color: var(--tc);
+        border: none;
+        outline: none;
+        padding: 1dvh 0;
+        font-size: 16px;
+    }
+}
+.planInviteList {
+    max-height: 27dvh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    display: flex;
+    flex-direction: column;
+    gap: .4dvh;
+}
+.planInviteContact {
+    display: flex;
+    align-items: center;
+    gap: .75vw;
+    background: var(--interact);
+    color: var(--tc);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    width: 100%;
+    padding: .75dvh .7vw;
+    cursor: pointer;
+    text-align: start;
+
+    &.selected {
+        border-color: var(--accent);
+    }
+
+    > span:nth-child(2) {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+.planInviteActions {
+    display: flex;
+    gap: .75vw;
+
+    > button {
+        flex: 1;
+        min-width: 0;
+    }
+}
+.planInviteError {
+    color: var(--notValid);
+}
+@media (max-width: 800px) {
+    .planMembersHeader, .planMember, .planInvite, .planInviteActions {
+        gap: 2vw;
+    }
+    .planInviteSearch {
+        padding: 0 3vw;
+        gap: 2vw;
+    }
+    .planInviteContact {
+        padding: 1dvh 2vw;
+        gap: 2vw;
+    }
+    .planMemberConfirm {
+        margin-left: calc(4.5dvh + 2vw);
+    }
 }
 .planError {
     padding: 1.5dvh 1vw;

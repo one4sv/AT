@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { CalendarBlankIcon, ClockIcon, MapPinIcon, UserPlusIcon, CheckCircleIcon, CircleIcon, PencilSimpleIcon, XCircleIcon, ArrowCounterClockwiseIcon, TrashIcon, FloppyDiskIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon, ClockIcon, MapPinIcon, CheckCircleIcon, CircleIcon, PencilSimpleIcon, XCircleIcon, ArrowCounterClockwiseIcon, TrashIcon, FloppyDiskIcon } from "@phosphor-icons/react";
 import { api } from "../../components/ts/api";
 import { usePlans } from "../../components/hooks/PlansHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
@@ -13,6 +13,7 @@ import TagSelector from "../../components/ts/TagSelector";
 import TA from "../../components/ts/TA";
 import PlanReminders from "./PlanReminders";
 import PlanComment from "./PlanComment";
+import PlanMembers from "./PlanMembers";
 import { tags } from "../../components/ts/tags";
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import "./PlanPage.scss";
@@ -30,7 +31,6 @@ export default function PlanPage() {
     const [saving, setSaving] = useState(false);
     const [editing, setEditing] = useState(!planId);
     const [draft, setDraft] = useState<PlanInput | null>(null);
-    const [invitedNick, setInvitedNick] = useState("");
     const [error, setError] = useState("");
     const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -261,26 +261,9 @@ export default function PlanPage() {
                     </div>
                 </div> : <>
                     <PlanReminders planId={plan.id}/>
-                    {plan.kind === "shared" && <div className="planSection">
-                        <h2>{t("plans.members")}</h2>
-                        <div className="planMembers">
-                            {(plan.members || []).map(member => <div key={member.id} className="planMember">
-                                <span>{member.username || member.nick}</span>
-                                <span>{member.completed ? t("plans.completed") : t("plans.upcoming")}</span>
-                            </div>)}
-                        </div>
-                        {plan.is_owner && plan.status === "upcoming" && <form className="planInvite" onSubmit={event => {
-                            event.preventDefault();
-                            void action(() => api.post("plans/" + planId + "/invite", { nick:invitedNick }))
-                                .then(success => { if (success) setInvitedNick(""); });
-                        }}>
-                            <input required value={invitedNick} placeholder={t("plans.nick")}
-                                onChange={event => setInvitedNick(event.target.value)}/>
-                            <button className="planQuietButton" disabled={saving} type="submit">
-                                <UserPlusIcon size={18}/>{t("plans.invite")}
-                            </button>
-                        </form>}
-                    </div>}
+                    <PlanMembers plan={plan} onChanged={async () => {
+                        await Promise.all([load(), refreshPlans()]);
+                    }}/>
                     {plan.is_owner && <div className="planSection">
                         <h2>{t("plans.management")}</h2>
                         <div className="planActions planManagementActions">

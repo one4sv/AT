@@ -5,17 +5,12 @@
         transform: translate(-50%, -50%);
     }
 
-    max-height: 86dvh;
+    max-height: 94dvh;
     overflow-y: auto;
     overflow-x: visible;
     align-items: stretch;
     gap: 1.5dvh;
     scrollbar-width: thin;
-}
-
-.addPlanHeading {
-    font-size: 22px;
-    padding: 0 0.5vw;
 }
 
 .addPlanDiv .addHabitWrapper > span {
@@ -63,6 +58,7 @@
 
 .addPlanActions {
     width: 100%;
+    margin-top: auto;
 }
 
 .addPlanActions .addHabitSave {
@@ -71,7 +67,8 @@
 
 @media (max-width: 800px) {
     .addPlanDiv {
-        max-height: calc(86dvh - env(safe-area-inset-bottom));
+        height: 92dvh;
+        max-height: calc(96dvh - env(safe-area-inset-bottom));
         overflow-x: hidden;
         padding-bottom: calc(3dvh + env(safe-area-inset-bottom));
         scroll-padding-bottom: 3dvh;

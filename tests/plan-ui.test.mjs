@@ -95,3 +95,18 @@ test("scrolling content is isolated beneath the shared header", () => {
     const route = read("src/scss/routeTransition.scss");
     assert.match(route,/\.routeTransition\s*\{[\s\S]*?z-index: 0;[\s\S]*?isolation: isolate;/);
 });
+
+test("creation is personal and participant management lives on plan page", () => {
+    const editor = read("src/pages/Plan/PlanEditor.tsx");
+    const page = read("src/pages/Plan/PlanPage.tsx");
+    const members = read("src/pages/Plan/PlanMembers.tsx");
+    const style = read("src/scss/modules/addPlan.scss");
+    const sharedStyle = read("src/scss/modules/habitFormControls.scss");
+    assert.match(editor, /!modal && !initial && <div className="inpWrapperAddHabit">/);
+    assert.doesNotMatch(editor, /modal && <div className="addPlanHeading"/);
+    assert.match(page, /<PlanMembers plan=\{plan\}/);
+    assert.match(members, /api\.post\("plans\/" \+ plan\.id \+ "\/invite"/);
+    assert.match(members, /api\.delete\("plans\/" \+ plan\.id \+ "\/members\/" \+ id\)/);
+    assert.match(style, /height: 92dvh;/);
+    assert.doesNotMatch(sharedStyle, /min-height: 2\.5em/);
+});
