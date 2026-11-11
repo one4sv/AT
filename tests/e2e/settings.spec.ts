@@ -176,3 +176,29 @@ test("native time controls have full-width mobile rows and two desktop columns",
         expect(rects[0].right).toBeLessThanOrEqual(rects[1].left + 1);
     }
 });
+
+
+test("SideMenu list reserves space for its overlapping navigation bar", async ({ page }) => {
+    await page.goto("/settings/notes");
+    await expect(page.locator(".sideMenu")).toBeAttached();
+    await expect(page.locator(".SMnavDiv")).toBeAttached();
+    await expect.poll(() => page.locator(".sideMenu").evaluate(element =>
+        getComputedStyle(element).getPropertyValue("--sm-nav-clearance").trim()
+    )).not.toBe("");
+
+    const dimensions = await page.evaluate(() => {
+        const sideMenu = document.querySelector<HTMLElement>(".sideMenu")!;
+        const nav = document.querySelector<HTMLElement>(".SMnavDiv")!;
+        const list = document.createElement("div");
+        list.className = "SMlist";
+        sideMenu.querySelector(".slide")?.appendChild(list);
+        const clearance = parseFloat(getComputedStyle(sideMenu).getPropertyValue("--sm-nav-clearance"));
+        const padding = parseFloat(getComputedStyle(list).paddingBottom);
+        const overlap = sideMenu.getBoundingClientRect().bottom - nav.getBoundingClientRect().top;
+        list.remove();
+        return { clearance, padding, overlap };
+    });
+    expect(dimensions.clearance).toBeGreaterThan(0);
+    expect(Math.abs(dimensions.clearance - dimensions.overlap)).toBeLessThanOrEqual(2);
+    expect(dimensions.padding).toBeGreaterThan(dimensions.overlap);
+});
