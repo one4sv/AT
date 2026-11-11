@@ -40,8 +40,9 @@ export default function PlanEditor({ initial, saving, onSave, onClose }: {
         kind: initial?.kind || "personal",
         completion_mode: initial?.completion_mode || "personal"
     });
-    const change = <K extends keyof PlanInput>(key: K, next: PlanInput[K]) =>
+    function change<K extends keyof PlanInput>(key: K, next: PlanInput[K]) {
         setValue(previous => ({ ...previous, [key]: next }));
+    }
     const submit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         void onSave(value);
