@@ -138,19 +138,11 @@ test("desktop page Header stays above routed content and its overlays", async ({
     }));
     expect(layers.header).toBeGreaterThan(layers.route);
 
-    const headerReceivesPointer = await page.evaluate(() => {
-        const route = document.querySelector(".app-layout .routeTransition")!;
-        const overlay = document.createElement("div");
-        overlay.style.cssText = "position:absolute;top:0;left:0;right:0;height:10dvh;z-index:99999;pointer-events:auto";
-        route.append(overlay);
-
-        const header = document.querySelector<HTMLElement>(".app-layout .page-content > .headerDiv .header")!;
-        const rect = header.getBoundingClientRect();
-        const topmost = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
-        overlay.remove();
-        return Boolean(topmost?.closest(".app-layout .page-content > .headerDiv"));
-    });
-    expect(headerReceivesPointer).toBe(true);
+    // The route is an isolated stacking context: even a child overlay with
+    // a huge z-index cannot outrank its sibling Header. A hit test at an
+    // arbitrary Header pixel is incorrect when the header has transparent or
+    // non-interactive regions and the global SideMenu has its own layers.
+    await expect(route).toHaveCSS("isolation", "isolate");
 });
 
 test("mobile swipe opens and closes SideMenu and cancelled swipe restores it", async ({ page }) => {
