@@ -23,7 +23,8 @@ import { GroupProvider } from '../context/GroupContext';
 import { ScheduleProvider } from '../context/ScheduleContext';
 import { SideMenuProvider } from '../context/SideMenuContext';
 import { WebSocketProvider } from '../context/WebSocketContext';
-import { PlannedProvider } from '../context/PlannedContext';
+import { HabitPlanningProvider } from '../context/HabitPlanningContext';
+import { PlansProvider } from '../context/PlansContext';
 import { ContactsProvider } from '../context/ContactsContext';
 import { ChatMessageScrollProvider } from '../context/ChatMessageScrollContext';
 import { PinnedMessagesProvider } from '../context/PinnedMessagesContext';
@@ -47,10 +48,11 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                                                                 <DeleteProvider>
                                                                     <BlackoutProvider>
                                                                         <CalendarProvider>
+                                                                            <PlansProvider>
                                                                             <TheHabitProvider>
                                                                                 <UpdateHabitProvider>
                                                                                     <DoneProvider>
-                                                                                        <PlannedProvider>
+                                                                                        <HabitPlanningProvider>
                                                                                             <MessagesProvider>
                                                                                                 <ScheduleProvider>
                                                                                                     <ContextMenuProvider>
@@ -64,10 +66,11 @@ export const AppProvider = ({ children }:{ children:React.ReactNode }) => (
                                                                                                     </ContextMenuProvider>
                                                                                                 </ScheduleProvider>
                                                                                             </MessagesProvider>
-                                                                                        </PlannedProvider>
+                                                                                        </HabitPlanningProvider>
                                                                                     </DoneProvider>
                                                                                 </UpdateHabitProvider>
                                                                             </TheHabitProvider>
+                                                                            </PlansProvider>
                                                                         </CalendarProvider>
                                                                     </BlackoutProvider>
                                                                 </DeleteProvider>

@@ -489,7 +489,7 @@ export default function SMnav() {
                             }}
                             data-action="habits"
                         >
-                            <SneakerMoveIcon weight="fill" size={20} /> {t("sideMenu.activities")}
+                            <SneakerMoveIcon weight="fill" size={20} /> {t("sideMenu.plansAndActivities")}
                         </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname.includes("/settings") ? "selected" : ""}`}

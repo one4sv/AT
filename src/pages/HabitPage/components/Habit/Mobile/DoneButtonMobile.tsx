@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useDone } from "../../../../../components/hooks/DoneHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import { LoaderSmall } from "../../../../../components/ts/LoaderSmall";
-import { usePlanned } from "../../../../../components/hooks/PlannedHook";
+import { useHabitPlanning } from "../../../../../components/hooks/HabitPlanningHook";
 import type { Dispatch, SetStateAction } from "react";
 
 interface DoneButtonProps {
@@ -17,7 +17,7 @@ export default function DoneButton({ habitId, open, setOpen }: DoneButtonProps) 
     const { t } = useTranslation("common");
     const { todayDone, isDone, doable, planable, isPlanned, habit } = useTheHabit();
     const { markDoneWLoading, waitDoneAnswer } = useDone();
-    const { waitPlanAnswer, markPlanWLoading } = usePlanned()
+    const { waitPlanAnswer, markHabitPlannedDayWLoading } = useHabitPlanning()
     const { chosenDay } = useCalendar();
 
     const displayDone = isDone !== null ? isDone : todayDone;
@@ -44,7 +44,7 @@ export default function DoneButton({ habitId, open, setOpen }: DoneButtonProps) 
                 planable ? (
                     <button
                         className={`doneButtMobile planButt ${displayDone ? "dbComp" : "dbMark"}`}
-                        onClick={() => markPlanWLoading(habitId, chosenDay)}
+                        onClick={() => markHabitPlannedDayWLoading(habitId, chosenDay)}
                     >
                         {displayPlan ? <CalendarCheckIcon size={22}/> : <CalendarBlankIcon size={22}/>}
                         {waitPlanAnswer ? <LoaderSmall/> : displayPlan ? t("habitPageUi.done.planned") : t("habitPageUi.done.plan")}

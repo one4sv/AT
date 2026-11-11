@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
+import { usePlans } from "../../../../components/hooks/PlansHook";
 import "../../scss/calendar.scss";
 import { ChevronDown } from "lucide-react";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
@@ -27,6 +28,7 @@ export default function Calendar() {
     const { calendarRef, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear, chosenDay } = useCalendar();
     const { habit: h } = useTheHabit();
     const { habits } = useHabits();
+    const { plans } = usePlans();
     const { habitId: id } = useParams<{ habitId: string }>();
 
     const [showList, setShowList] = useState({ months: false, years: false });
@@ -37,9 +39,13 @@ export default function Calendar() {
     const isAnimatingRef = useRef(false);
 
     const yearsList = useMemo(() => {
-        if (!habits) return [];
         const set = new Set<number>();
         const now = new Date();
+        if (!id) {
+            for (let y = now.getFullYear() - 2; y <= now.getFullYear() + 3; y++) set.add(y);
+            plans.forEach(plan => set.add(Number(plan.plan_date.slice(0, 4))));
+        }
+        if (!habits) return Array.from(set).sort((a, b) => a - b);
 
         if (id && h) {
             const start = new Date(h.start_date).getFullYear();
@@ -54,7 +60,7 @@ export default function Calendar() {
         }
 
         return Array.from(set).sort((a, b) => a - b);
-    }, [habits, h, id]);
+    }, [habits, h, id, plans]);
 
     useEffect(() => {
         if (chosenDay === todayStrFunc()) {
