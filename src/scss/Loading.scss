@@ -234,6 +234,42 @@
     width: 50%;
     margin: 0 auto;
     padding-top: 6vh;
+    gap: 1dvh;
+
+    > .skeletonCard:first-child {
+        min-height: 20dvh;
+
+        .skeletonCircle {
+            width: 9dvh;
+            height: 9dvh;
+        }
+    }
+    > .skeletonCard:not(:first-child) {
+        min-height: 12dvh;
+    }
+}
+.skeletonPlan {
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+}
+.skeleton-plan {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+.skeletonPlanMain {
+    min-height: 35dvh;
+    padding: 2dvh 1.5vw;
+    gap: 2dvh;
+
+    .skeletonBlock {
+        height: 8dvh;
+    }
+}
+.skeletonPlanSecondary {
+    padding: 2dvh 1.5vw;
+    min-height: 12dvh;
 }
 
 .SMlist,
@@ -269,6 +305,7 @@
     .skeletonRow { gap: 2vw; }
     .skeleton-list { padding: 4vh 1vw 0; }
     .skeleton-feed, .skeleton-profile { width: 95%; padding-top: 8vh; }
+    .skeletonPlanMain, .skeletonPlanSecondary { padding: 2dvh 4vw; }
     .skeleton-habit { padding: 8vh 2vw; }
     .skeletonHabit,
     .skeletonOverview .skeletonHabit {
