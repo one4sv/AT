@@ -117,5 +117,6 @@ test("collapsed completion controls keep their status color rather than an inter
     const habit = read("src/pages/HabitPage/scss/habitMobileDone.scss");
     assert.match(plan, /\.planMobileDone \.doneButtDivMobile > \.bottomOpen\s*\{\s*border: none;\s*background: transparent;/);
     assert.match(habit, /> \.bottomOpen\s*\{\s*border: none;\s*background: transparent;\s*color: inherit;/);
-    assert.doesNotMatch(habit, /\.doneButtDivMobile\s*\{[\s\S]*?backdrop-filter: blur\(var\(--blur\)\)/);
+    const completedButtonStyles = habit.split(".doneButtDivMobile {")[1].split(".doneButtMobile {")[0];
+    assert.doesNotMatch(completedButtonStyles, /backdrop-filter: blur\(var\(--blur\)\)/);
 });
