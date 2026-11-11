@@ -35,6 +35,7 @@ interface PlansContextType {
     plans: OneOffPlan[];
     loadingPlans: boolean;
     refreshPlans: () => Promise<void>;
+    upsertPlan: (plan: OneOffPlan) => void;
 }
 const PlansContext = createContext<PlansContextType | null>(null);
 
@@ -42,10 +43,12 @@ export const PlansProvider = ({ children }: { children: ReactNode }) => {
     const { user, initialLoading } = useUser();
     const accountId = useRef(user.id);
     accountId.current = user.id;
+    const requestVersion = useRef(0);
     const [plans, setPlans] = useState<OneOffPlan[]>([]);
     const [loadingPlans, setLoadingPlans] = useState(false);
     const refreshPlans = useCallback(async () => {
         const requester = accountId.current;
+        const version = ++requestVersion.current;
         if (!requester) {
             setPlans([]);
             return;
@@ -54,14 +57,21 @@ export const PlansProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await api.get("plans");
             if (!res.data.success) throw new Error("Plans could not be loaded");
-            if (accountId.current === requester) setPlans(res.data.plans || []);
+            if (accountId.current === requester && requestVersion.current === version) setPlans(res.data.plans || []);
         } finally {
-            if (accountId.current === requester) setLoadingPlans(false);
+            if (accountId.current === requester && requestVersion.current === version) setLoadingPlans(false);
         }
+    }, []);
+
+    const upsertPlan = useCallback((plan: OneOffPlan) => {
+        requestVersion.current++;
+        setPlans(previous => [plan, ...previous.filter(item => item.id !== plan.id)]);
+        setLoadingPlans(false);
     }, []);
 
     useEffect(() => {
         if (initialLoading) return;
+        requestVersion.current++;
         setPlans([]);
         if (!user.id) {
             setLoadingPlans(false);
@@ -72,7 +82,7 @@ export const PlansProvider = ({ children }: { children: ReactNode }) => {
         });
     }, [user.id, initialLoading, refreshPlans]);
 
-    return <PlansContext.Provider value={{ plans, loadingPlans, refreshPlans }}>{children}</PlansContext.Provider>;
+    return <PlansContext.Provider value={{ plans, loadingPlans, refreshPlans, upsertPlan }}>{children}</PlansContext.Provider>;
 };
 
 export default PlansContext;

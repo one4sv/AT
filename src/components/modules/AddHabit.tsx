@@ -42,20 +42,6 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
 
     const timeInputPattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
-    const formatTimeInput = (val: string) => {
-        const digits = val.replace(/\D/g, "");
-        if (digits.length >= 3) {
-            let hh = digits.slice(0, 2);
-            let mm = digits.slice(2, 4);
-
-            if (parseInt(hh) > 23) hh = "23";
-            if (parseInt(mm) > 59) mm = "59";
-
-            return hh + ":" + mm;
-        }
-        return digits;
-    };
-
     const clearInputPer = () => {
         setChosenDays(initialChosenDays);
     }
@@ -87,10 +73,6 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
         }
         if (endTime && !timeInputPattern.test(endTime)) {
             showNotification("error", t("habitUi.invalidEnd"));
-            return;
-        }
-        if (!startTime && endTime) {
-            showNotification("error", t("habitUi.enterStart"));
             return;
         }
         if (
@@ -185,21 +167,13 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             <div className="addHabitTimeWrapper">
                 <div className="addHabitWrapper time">
                     <label htmlFor="inputStartTime">{t("habitUi.startTime")}</label>
-                    <input type="text" id="inputStartTime" className="inputStartTime addHabitInput" value={startTime} onChange={(e) => {
-                        const formatted = formatTimeInput(e.target.value);
-                        if (formatted.length <= 5) {
-                            setStartTime(formatted);
-                        }
-                    }}/>
+                    <input type="time" id="inputStartTime" className="inputStartTime addHabitInput" value={startTime}
+                        onChange={e => setStartTime(e.target.value)}/>
                 </div>
                 <div className="addHabitWrapper time">
                     <label htmlFor="inputEndTime">{t("habitUi.endTime")}</label>
-                    <input type="text" id="inputEndTime" className="inputEndTime addHabitInput" value={endTime} onChange={(e) => {
-                        const formatted = formatTimeInput(e.target.value);
-                        if (formatted.length <= 5) {
-                            setEndTime(formatted);
-                        }
-                    }}/>
+                    <input type="time" id="inputEndTime" className="inputEndTime addHabitInput" value={endTime}
+                        onChange={e => setEndTime(e.target.value)}/>
                 </div>
             </div>
             <button className="addHabitGoal">{t("habitUi.addGoal")}</button>

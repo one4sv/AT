@@ -18,7 +18,7 @@
     bottom: 0;
 }
 
-.addPlanDiv .addHabitWrapper > input:first-of-type {
+.addPlanDiv .addHabitWrapper:not(.time) > input:first-of-type {
     padding-right: 4vw;
 }
 
@@ -79,22 +79,14 @@
     .addPlanDiv .addHabitTimeWrapper > .addHabitWrapper.time {
         width: 100%;
         min-width: 0;
+        overflow: hidden;
     }
     .addPlanDiv .addHabitTimeWrapper > .addHabitWrapper.time > label {
         display: flex;
         align-items: flex-end;
         min-height: 2.5em;
     }
-    .addPlanDiv .addHabitTimeWrapper .addHabitInput[type="time"] {
-        display: block;
-        width: 100%;
-        min-width: 0;
-        max-width: 100%;
-        box-sizing: border-box;
-        font-size: 16px;
-        padding: .8dvh 1.5vw;
-    }
-    .addPlanDiv .addHabitWrapper > input:first-of-type {
+    .addPlanDiv .addHabitWrapper:not(.time) > input:first-of-type {
         padding-right: 12vw;
     }
     .addPlanDiv .planDescription {

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useCalendar } from "../hooks/CalendarHook";
@@ -10,8 +11,9 @@ import "../../scss/modules/addPlan.scss";
 
 export default function AddPlan() {
     const { t } = useTranslation("common");
-    const { chosenDay } = useCalendar();
-    const { refreshPlans } = usePlans();
+    const { chosenDay, setChosenDay } = useCalendar();
+    const { refreshPlans, upsertPlan } = usePlans();
+    const navigate = useNavigate();
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
     const [saving, setSaving] = useState(false);
@@ -26,8 +28,12 @@ export default function AddPlan() {
         try {
             const res = await api.post("plans", input);
             if (!res.data.success) throw new Error("Plan was not created");
-            await refreshPlans();
+            upsertPlan({ ...res.data.plan, membership_status: "accepted", is_owner: true,
+                completed_for_me: false });
+            setChosenDay(input.plan_date);
             setBlackout({ seted: false });
+            navigate("/habit");
+            void refreshPlans().catch(() => {});
             showNotification("success", t("plans.added"));
         } catch {
             showNotification("error", t("plans.saveError"));
