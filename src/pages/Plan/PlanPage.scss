@@ -564,9 +564,14 @@
     position: relative;
 }
 .planInlineTag > .tagList {
-    position: relative;
-    top: auto;
-    left: auto;
+    position: absolute;
+    z-index: 20;
+    top: 100%;
+    left: 0;
+    max-height: 28dvh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    background: var(--bgc);
     width: 100%;
     margin-top: .5dvh;
     display: none;
@@ -574,6 +579,17 @@
     &.active {
         display: flex;
     }
+}
+.planRelativeDate {
+    color: var(--borderWh);
+    white-space: nowrap;
+}
+.planInlineTag {
+    display: block;
+    width: 100%;
+}
+.planInlineTag > .tegSelector {
+    width: 100%;
 }
 .planInlineDescription {
     margin: 1dvh 0;
