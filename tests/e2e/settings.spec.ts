@@ -298,3 +298,43 @@ test("mobile settings buttons allow swiping SideMenu open", async ({ page }, tes
     await expect(menu).toHaveClass(/open/);
     await expect(page).toHaveURL(/\/settings\/?$/);
 });
+
+test("SelectList opens above near the bottom and below near the top", async ({ page }) => {
+    await page.route("**/api/settings/plan-reminders", route => route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({ success: true, preferences: { enabled: true, defaultMinutesBefore: 60 } })
+    }));
+    await page.goto("/settings/notes");
+    const control = page.locator(".planReminderSelect");
+    const menu = control.locator(".selectList");
+    await expect(control).toBeVisible();
+
+    // Keep the real React SelectList, only pin its location for deterministic viewport bounds.
+    await control.evaluate(element => {
+        element.style.position = "fixed";
+        element.style.top = "calc(100dvh - 94px)";
+        element.style.left = "15px";
+        element.style.width = "320px";
+        element.style.zIndex = "100";
+    });
+    await control.locator("input").evaluate(element => (element as HTMLInputElement).click());
+    await expect(menu).toHaveClass(/active/);
+    await expect(control).toHaveClass(/openUp/);
+    const above = await menu.boundingBox();
+    const bottomInput = await control.locator("input").boundingBox();
+    expect(above).not.toBeNull();
+    expect(bottomInput).not.toBeNull();
+    expect(above!.y + above!.height).toBeLessThan(bottomInput!.y);
+    await control.locator("input").evaluate(element => (element as HTMLInputElement).click());
+    await expect(menu).not.toHaveClass(/active/);
+
+    await control.evaluate(element => { element.style.top = "90px"; });
+    await control.locator("input").evaluate(element => (element as HTMLInputElement).click());
+    await expect(menu).toHaveClass(/active/);
+    await expect(control).not.toHaveClass(/openUp/);
+    const below = await menu.boundingBox();
+    const topInput = await control.locator("input").boundingBox();
+    expect(below).not.toBeNull();
+    expect(topInput).not.toBeNull();
+    expect(below!.y).toBeGreaterThanOrEqual(topInput!.y + topInput!.height - 1);
+});

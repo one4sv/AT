@@ -156,3 +156,16 @@ test("ordinary posts and messages do not block SideMenu touch capture", () => {
     assert.match(press, /Math\.abs\(dx\) >= 8/);
     assert.match(press, /}, 350\)/);
 });
+
+test("SelectList flips above the field and caps its scrollable height near viewport edges", () => {
+    const code = read("src/components/ts/SelectList.tsx");
+    const styles = read("src/scss/SelectList.scss");
+    assert.match(code, /useLayoutEffect\(\(\) =>/);
+    assert.match(code, /window\.visualViewport/);
+    assert.match(code, /spaceBelow < desiredHeight && spaceAbove > spaceBelow/);
+    assert.match(code, /list\.style\.maxHeight = Math\.max\(0, Math\.min\(desiredHeight/);
+    assert.match(code, /window\.addEventListener\("scroll", handleScroll, true\)/);
+    assert.match(code, /rootRef\.current\.contains\(event\.target as Node\)/);
+    assert.match(styles, /\.selectListDiv\.openUp > \.selectList\s*\{\s*top: auto;\s*bottom: calc\(100% \+ \.5dvh\)/);
+    assert.match(styles, /\.selectListDiv > \.selectList\s*\{\s*overflow-y: auto;/);
+});
