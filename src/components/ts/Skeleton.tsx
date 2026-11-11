@@ -84,6 +84,33 @@ export default function Skeleton({ type = "list", count = 6, overview = false }:
                         <div className="skeletonCard skeletonCircle" />
                     </div>
                 </div>
+            ) : type === "profile" ? (
+                <div className="skeletonProfile" aria-hidden="true">
+                    <div className="skeletonCard skeletonProfileHeader">
+                        <div className="skeletonCircle"/>
+                        <div className="skeletonText">
+                            <div className="skeletonLine skeletonTitle"/>
+                            <div className="skeletonLine skeletonShort"/>
+                            <div className="skeletonLine"/>
+                        </div>
+                    </div>
+                    <div className="skeletonProfileTabs">
+                        <div className="skeletonLine"/>
+                        <div className="skeletonLine"/>
+                    </div>
+                    <div className="skeletonProfileFeed">
+                        {rows.slice(0, 3).map(i => <div className="skeletonCard" key={i}>
+                            <div className="skeletonRow">
+                                <div className="skeletonCircle"/>
+                                <div className="skeletonText">
+                                    <div className="skeletonLine"/>
+                                    <div className="skeletonLine skeletonShort"/>
+                                </div>
+                            </div>
+                            <div className="skeletonBlock"/>
+                        </div>)}
+                    </div>
+                </div>
             ) : rows.map(i => (
                 <div className="skeletonCard" key={i} aria-hidden="true">
                     <div className="skeletonRow">
