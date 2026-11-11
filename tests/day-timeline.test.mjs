@@ -104,5 +104,5 @@ test("habit day header keeps today/tomorrow date and return control in one full-
     assert.match(styles, /\.chosenDayDate\s*\{[\s\S]*?flex-wrap: nowrap;[\s\S]*?align-items: center;/);
     assert.match(styles, /\.chosenDayDateLabel\s*\{[\s\S]*?white-space: nowrap;/);
     assert.match(styles, /\.calendarReturn\s*\{[\s\S]*?flex: 0 0 3dvh;/);
-    assert.match(styles, /@media \(max-width:800px\) \{[\s\S]*?font-size: 20px;/);
+    assert.match(styles, /@media \(max-width:800px\) \{[\s\S]*?font-size: 22px;/);
 });
