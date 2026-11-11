@@ -243,3 +243,25 @@
 .accInfo, .accExtraInfoWrapper, .accExtraInfo {
     flex-shrink: 0;
 }
+
+ 
+// Non-editing profile values are real selectable text rather than focusable
+// inputs: iOS can show its native selection menu without invisible keyboard focus.
+.accInfo .accSelectableValue {
+    display: inline-block;
+    width: auto;
+    max-width: 100%;
+    pointer-events: auto;
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+    cursor: text;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+
+    &.extraInfoInput {
+        width: 100%;
+        min-height: 25px;
+        height: auto;
+    }
+}

@@ -100,6 +100,7 @@ export default function AccInfo({
         },
         [acc?.bio, newBio, red]
     );
+    const birthDisplay = (isMyAcc ? newBirth : acc?.date_of_birth)?.split("-").reverse().join(".") || "";
     const birthDate = (isMyAcc ? newBirth : acc?.date_of_birth) ? (() => {
         const [year, month, day] = (isMyAcc ? newBirth : acc?.date_of_birth)!.split("-").map(Number);
         return new Date(year, month - 1, day);
@@ -152,21 +153,23 @@ export default function AccInfo({
                     </div>
                     <div className="accInfoNames">
                         <div className="accMainInfoStr">
-                            <input
-                                className={`accInput nameInput ${!red ? "dis" : ""}`}
+                            {red ? <input
+                                className="accInput nameInput"
                                 value={(isMyAcc ? newName : acc?.username) ?? ""}
-                                readOnly={!red}
                                 onChange={e => setNewName(e.currentTarget.value)}
-                            />
+                            /> : <span className="accInput nameInput accSelectableValue">
+                                {(isMyAcc ? newName : acc?.username) ?? ""}
+                            </span>}
                         </div>
                         <div className="accNickStr">
                             {!isMobile && "@"}
-                            <input
-                                className={`accInput nickInput ${!red ? "dis" : ""}`}
+                            {red ? <input
+                                className="accInput nickInput"
                                 value={(isMyAcc ? newNick : acc?.nick) ?? ""}
-                                readOnly={!red}
                                 onChange={e => setNewNick(e.currentTarget.value)}
-                            />
+                            /> : <span className="accInput nickInput accSelectableValue">
+                                {(isMyAcc ? newNick : acc?.nick) ?? ""}
+                            </span>}
                         </div>
                     </div>
                 </div>
@@ -175,20 +178,21 @@ export default function AccInfo({
                         <label htmlFor="extraInfoInputBio">
                             {t("about")}
                         </label>
-                        <TA
+                        {red ? <TA
                             className="bioTA extraInfoInput"
                             taRef={bioRef}
                             id="extraInfoInputBio"
                             value={(isMyAcc ? newBio : acc?.bio) ?? ""}
-                            readOnly={!red}
                             onChange={e => setNewBio(e.currentTarget.value)}
-                        />
+                        /> : <span className="bioTA extraInfoInput accSelectableValue">
+                            {(isMyAcc ? newBio : acc?.bio) ?? ""}
+                        </span>}
                     </div> : ""}
                     {acc?.date_of_birth || red ? <div className={`accExtraInfoWrapper ${!red ? "dis" : ""}`}>
                         <label htmlFor="extraInfoInputBirth">
                             {t("birthday")}
                         </label>
-                        <DatePicker
+                        {red ? <DatePicker
                             className="extraInfoInput"
                             id="extraInfoInputBirth"
                             selected={birthDate}
@@ -205,7 +209,7 @@ export default function AccInfo({
                             popperPlacement="bottom-start"
                             portalId="root"
                             renderCustomHeader={props => <DatePickerHeader {...props} />}
-                        />
+                        /> : <span className="extraInfoInput accSelectableValue">{birthDisplay}</span>}
                     </div> : ""}
                     <div className={`accExtraInfoWrapper ${!red ? "dis" : ""}`}>
                         {!canView("number") ? <span>
@@ -214,7 +218,7 @@ export default function AccInfo({
                             <label htmlFor="extraInfoInputPhone">
                                 {t("phone")}
                             </label>
-                            <input id="extraInfoInputPhone" className="extraInfoInput dis" value="—" readOnly />
+                            <span id="extraInfoInputPhone" className="extraInfoInput accSelectableValue">—</span>
                         </>}
                     </div>
                     <div className="accExtraInfoWrapper">
