@@ -10,6 +10,7 @@ import { getHeaderScrollTarget } from "../ts/utils/pageScroll";
 import { requestContentRefresh } from "../ts/utils/contentRefresh";
 import useHeaderMenuGestures from "../hooks/utils/useHeaderMenuGestures";
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 interface HeaderProps {
     titleOverride?: string;
     titleSuffix?: ReactNode;
@@ -19,6 +20,7 @@ interface HeaderProps {
 
 export default function Header({ titleOverride, titleSuffix, rightAction, hideMenuButton = false }: HeaderProps = {}) {
     const isMobile = useCompactLayout();
+    const { t } = useTranslation("common");
     const headerGestures = useHeaderMenuGestures();
     const { openSideMenu } = useSideMenu();
     const { openMenu } = useContextMenu();
@@ -91,7 +93,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                 </div>
                 {rightAction}
                 {planHeaderMenu && <button type="button" className="headerButt planHeaderActionsButt"
-                    data-header-gesture="plan" aria-label="Plan actions"
+                    data-header-gesture="plan" aria-label={t("plans.management")}
                     onClick={event => {
                         const rect = event.currentTarget.getBoundingClientRect();
                         showPlanMenu(rect.left, rect.bottom + 6);

@@ -170,7 +170,10 @@ export default function PlanPage() {
         stop: stopEditing,
         toggleCancel: () => { if (planId && plan) void action(() => api.post("plans/" + planId + "/cancel",
             { cancel: plan.status !== "canceled" })); },
-        delete: () => setConfirmDelete(true)
+        delete: () => {
+            setConfirmDelete(true);
+            document.querySelector(".planPage")?.scrollTo({ top: 0, behavior: "smooth" });
+        }
     });
     menuHandlers.current = {
         edit: startEditing,
@@ -178,7 +181,10 @@ export default function PlanPage() {
         stop: stopEditing,
         toggleCancel: () => { if (planId && plan && !saving) void action(() => api.post("plans/" + planId + "/cancel",
             { cancel: plan.status !== "canceled" })); },
-        delete: () => setConfirmDelete(true)
+        delete: () => {
+            setConfirmDelete(true);
+            document.querySelector(".planPage")?.scrollTo({ top: 0, behavior: "smooth" });
+        }
     };
     const makePlanMenuOptions = (id: string, name: string, type: string, owner: boolean): MenuOptions => ({
         id, name, type, isMy: owner, disabled: saving,

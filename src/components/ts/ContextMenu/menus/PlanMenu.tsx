@@ -10,7 +10,7 @@ export default function PlanMenu() {
 
     const run = (action?: () => void) => {
         closeMenu();
-        action?.();
+        if (!options.disabled) action?.();
     };
 
     return <>
