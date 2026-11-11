@@ -337,3 +337,8 @@ setBlackout({
 
 
 **AccountSecurityAction** — независимая Blackout-модалка смены email и удаления аккаунта с двухшаговым подтверждением по коду. SCSS: `src/components/modules/AccountSecurityAction.scss`. На вкладке аккаунта размещены только кнопки открытия. Галочка удаления переписок в модалке оформлена точно как в `RegistrationForm`, общие стили в `src/scss/consentCheckbox.scss`.
+
+
+### 11.11.2026 — автоматическое направление SelectList
+
+Штатный `SelectList` вычисляет свободное место от поля до границ `window.visualViewport` при открытии, включая экранную клавиатуру. Если список не помещается снизу и сверху больше места, корень получает класс `.openUp`, а popup — `bottom:calc(100% + .5dvh)`. В обоих направлениях список ограничивается высотой доступного пространства и прокручивается (`overflow-y:auto`). На scroll/resize/visualViewport resize компонент пересчитывает позицию; при закрытии убирает слушатели и inline `max-height`. Клик по input не считается внешним: outside-click проверяет `rootRef` целиком. Пропсы, CSS-миксины и существующие варианты сохранены. Проверять модалки с overflow и iPhone Safari.

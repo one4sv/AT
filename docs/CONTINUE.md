@@ -138,3 +138,8 @@ AddHabit + AddPlan используют нативный time picker (без р�
 ## 11.11.2026 — откат завершения SM к механике 8 ноября
 
 Историческая версия [f2ec269](https://github.com/one4sv/AT/commit/f2ec2699a1a039d3f35a8e64b5b5fb3fc25a8a5a): меню идёт за пальцем (−100..0%), после отпускания автоматически дотягивается из текущей позиции к открытому/закрытому краю за 320мс ease-out. Вместо нового выбора по направлению и 32px возвращены пороги позиции: страница — −50%, внутри меню — −18%, нижний SMnav — −40%. Добавлены `currentTranslate`/`swipeCurrentTranslate` ref для корректного решения без устаревшего React state. Сохранены mobile startup prefs из useLocalStorage, swipe из сообщений/постов/settings, запреты вложенных жестов, отдельный `touchcancel`. E2E проверяет возврат недоведённого и доводку пройденного порога, статический `tests/startup-preferences.test.mjs` проверяет отсутствие 32px-правила. Физический iOS/Android приёмочный тест ещё нужен.
+
+
+## 11.11.2026 — даты планов и SelectList
+
+Разовые планы в SM: вывод даты из API заменён общим `formatDateFromString` с учётом выбранного `settings_date_format`. Общий `SelectList` с `useLayoutEffect` измеряет свободное место сверху/снизу от поля до границ visual viewport, при недостатке места снизу раскрывается вверх через `.openUp`, ограничивает высоту, обновляет позицию после scroll/resize и очищает обработчики при закрытии. Добавлены статические и браузерные регрессии (`tests/day-timeline.test.mjs`, `tests/select-list-modal-styles.test.mjs`, `tests/e2e/settings.spec.ts`). Нужна реальная проверка iPhone Safari на `/settings/notes` у нижнего поиска и в скроллируемых модалках.
