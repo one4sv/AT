@@ -180,8 +180,12 @@ test("mobile swipe opens and closes SideMenu and cancelled swipe restores it", a
     await expect(menu).not.toHaveClass(/open/);
     await swipe(".mobile-layout .page-content", 20, 260);
     await expect(menu).toHaveClass(/open/);
+    // The open class changes before the 320-ms position animation finishes.
+    // Start the next gesture only after SideMenu really reaches translateX(0%).
+    await expect.poll(() => menu.evaluate(element => (element as HTMLElement).style.transform)).toBe("translateX(0%)");
     await swipe(".mobile-layout > .sideMenu", 300, 270);
     await expect(menu).toHaveClass(/open/);
+    await expect.poll(() => menu.evaluate(element => (element as HTMLElement).style.transform)).toBe("translateX(0%)");
     await swipe(".mobile-layout > .sideMenu", 300, 140);
     await expect(menu).not.toHaveClass(/open/);
 });
