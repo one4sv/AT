@@ -138,7 +138,21 @@ test("settings context-menu buttons can start a horizontal SideMenu swipe", () =
     const layout = read("src/components/layout/MobileLayout.tsx");
     const press = read("src/components/hooks/utils/useLongPressContextMenu.ts");
     const style = read("src/pages/Settings/scss/settings.scss");
-    assert.match(layout, /target\.closest\("\[data-context-menu\]"\) && !target\.closest\("\.settingButt"\)/);
-    assert.match(press, /press\.target\.matches\("\.settingButt"\) \? 8 : 28/);
+    assert.doesNotMatch(layout, /target\.closest\("[^"]*\[data-context-menu\]/);
+    assert.match(press, /Math\.abs\(dx\) >= 8/);
     assert.match(style, /\.settingButt \{\s*touch-action: pan-y;/);
+});
+
+test("ordinary posts and messages do not block SideMenu touch capture", () => {
+    const layout = read("src/components/layout/MobileLayout.tsx");
+    const press = read("src/components/hooks/utils/useLongPressContextMenu.ts");
+    const post = read("src/components/ts/Post.tsx");
+    const message = read("src/pages/Chat/components/Message.tsx");
+    assert.match(post, /data-context-menu="true"/);
+    assert.match(message, /data-context-menu="true"/);
+    assert.doesNotMatch(layout, /ownsContextGesture/);
+    assert.doesNotMatch(layout, /target\.closest\("[^"]*\[data-context-menu\]/);
+    assert.match(layout, /Math\.abs\(diffX\) < 8 && Math\.abs\(diffY\) < 8/);
+    assert.match(press, /Math\.abs\(dx\) >= 8/);
+    assert.match(press, /}, 350\)/);
 });

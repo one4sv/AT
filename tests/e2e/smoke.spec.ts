@@ -180,6 +180,65 @@ test("mobile swipe opens and closes SideMenu and cancelled swipe restores it", a
     await expect(menu).not.toHaveClass(/open/);
 });
 
+test("mobile swipe from a post or message context surface opens SideMenu", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/info/roadmap");
+    const menu = page.locator(".mobile-layout > .sideMenu");
+    await expect(menu).toBeAttached();
+    await expect(menu).not.toHaveClass(/open/);
+
+    for (const type of ["PostDiv", "messageDiv"]) {
+        await page.evaluate((type) => {
+            const parent = document.querySelector<HTMLElement>(".mobile-layout .page-content")!;
+            const surface = document.createElement("div");
+            surface.className = type;
+            surface.dataset.contextMenu = "true";
+            const text = document.createElement("span");
+            text.textContent = "Swipe test";
+            surface.append(text);
+            parent.append(surface);
+            const touch = (x: number) => new Touch({
+                identifier: 1, target: text, clientX: x, clientY: 250
+            });
+            const fire = (event: string, x: number) => {
+                const point = touch(x);
+                text.dispatchEvent(new TouchEvent(event, {
+                    bubbles: true, cancelable: true,
+                    touches: event === "touchend" ? [] : [point],
+                    targetTouches: event === "touchend" ? [] : [point],
+                    changedTouches: [point]
+                }));
+            };
+            fire("touchstart", 25);
+            fire("touchmove", 80);
+            fire("touchmove", 180);
+            fire("touchend", 180);
+            surface.remove();
+        }, type);
+        await expect(menu).toHaveClass(/open/);
+        await page.evaluate(() => {
+            const menu = document.querySelector<HTMLElement>(".mobile-layout > .sideMenu")!;
+            const touch = (x: number) => new Touch({
+                identifier: 2, target: menu, clientX: x, clientY: 260
+            });
+            const fire = (name: string, x: number) => {
+                const point = touch(x);
+                menu.dispatchEvent(new TouchEvent(name, {
+                    bubbles: true, cancelable: true,
+                    touches: name === "touchend" ? [] : [point],
+                    targetTouches: name === "touchend" ? [] : [point],
+                    changedTouches: [point]
+                }));
+            };
+            fire("touchstart", 315);
+            fire("touchmove", 250);
+            fire("touchmove", 115);
+            fire("touchend", 115);
+        });
+        await expect(menu).not.toHaveClass(/open/);
+    }
+});
+
 test("mobile SideMenu background covers the page header", async ({ page }) => {
     await page.setViewportSize({ width: 760, height: 900 });
     await page.addInitScript(() => {

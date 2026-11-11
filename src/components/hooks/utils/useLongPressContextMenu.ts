@@ -68,9 +68,11 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
             if (!press.triggered) {
                 const dx = event.clientX - press.startX;
                 const dy = event.clientY - press.startY;
-                const horizontalThreshold = press.target.matches(".settingButt") ? 8 : 28;
+                // Match MobileLayout's 8px axis arbitration for every ordinary
+                // context-menu surface (posts, messages, settings cards, etc.).
+                // Otherwise the menu timer can fire during a slow swipe.
                 if ((Math.abs(dy) > 18 && Math.abs(dy) > Math.abs(dx)) ||
-                    (Math.abs(dx) >= horizontalThreshold && Math.abs(dx) > Math.abs(dy))) cancel();
+                    (Math.abs(dx) >= 8 && Math.abs(dx) > Math.abs(dy))) cancel();
                 return;
             }
 

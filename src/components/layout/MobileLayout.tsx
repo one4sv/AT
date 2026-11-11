@@ -47,11 +47,10 @@ export default function MobileLayout({ children }: LayoutProps) {
         }
 
         const target = e.target as Element;
-        // Settings cards can open their context menu by holding, but a
-        // horizontal swipe should still reach SideMenu. Other context-menu
-        // surfaces preserve their own gestures.
-        const ownsContextGesture = target.closest("[data-context-menu]") && !target.closest(".settingButt");
-        if (ownsContextGesture || target.closest("input, textarea, [contenteditable='true'], [data-header-gesture], .selector, .seekBarWrapper, .ContextMenuWrapper, .blackout, .scheduleDiv, .statsDivSlider")) {
+        // data-context-menu does not own the touch until its long-press
+        // activates. Messages, posts and settings cards must still allow
+        // horizontal swipes; their context menu keeps priority once opened.
+        if (target.closest("input, textarea, select, [contenteditable='true'], [data-header-gesture], .selector, .seekBarWrapper, .ContextMenuWrapper, .blackout, .scheduleDiv, .statsDivSlider")) {
             gesture.current = "scroll";
             return;
         }
