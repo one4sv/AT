@@ -709,3 +709,43 @@
     cursor: pointer;
 }
 
+
+/* Keep the relative day label immediately after the visible calendar date. */
+.planMainSection .planDateMetadata .react-datepicker-wrapper {
+    flex: 0 1 auto;
+    width: auto;
+}
+.planMainSection .planDateMetadata .planDetailsDate {
+    width: auto;
+}
+.planDateMetadata {
+    justify-content: flex-start;
+}
+.planDateMetadata .planRelativeDate {
+    flex-shrink: 0;
+    margin-left: 0;
+    color: var(--borderWh);
+}
+
+/* The plan completion gradient must not inherit a neutral outline. */
+.planMainSection .doneButtDiv > .planDoneButton,
+.planMainSection .doneButtDiv > .planDoneButton:hover,
+.planMainSection .doneButtDiv > .planDoneButton:active,
+.planMainSection .doneButtDiv > .planDoneButton:focus-visible {
+    border: none;
+    color: var(--accent_text);
+}
+.planMainSection .doneButtDiv > .planDoneButton svg,
+.planMainSection .doneButtDiv > .planDoneButton:hover svg,
+.planMainSection .doneButtDiv > .planDoneButton:active svg {
+    color: var(--accent_text);
+}
+.planMobileDone .doneButtDivMobile.doable,
+.planMobileDone .doneButtDivMobile.doable > .bottomOpen,
+.planMobileDone .doneButtDivMobile.doable > .doneButtMobile {
+    border: none;
+    color: var(--accent_text);
+}
+.planMobileDone .doneButtDivMobile.doable svg {
+    color: var(--accent_text);
+}
