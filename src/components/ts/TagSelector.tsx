@@ -20,16 +20,19 @@ export default function TagSelector({ selectedTag, setSelectedTag, showOnly, por
   useEffect(() => {
     if (!portal || !showTagList) return
     const updatePosition = () => {
-      const rect = addTagButt.current?.getBoundingClientRect()
-      if (!rect) return
-      const spaceBelow = window.innerHeight - rect.bottom - 12
-      const spaceAbove = rect.top - 12
+      const triggerRect = addTagButt.current?.getBoundingClientRect()
+      const fieldRect = addTagButt.current?.closest(".planTagWrapper")?.getBoundingClientRect()
+      if (!triggerRect) return
+      const spaceBelow = window.innerHeight - triggerRect.bottom - 12
+      const spaceAbove = triggerRect.top - 12
       const openAbove = spaceBelow < 220 && spaceAbove > spaceBelow
       const maxHeight = Math.max(100, Math.min(320, openAbove ? spaceAbove : spaceBelow))
+      const anchorRect = fieldRect || triggerRect
+      const left = Math.max(8, anchorRect.left)
       setPopupPosition({
-        top: openAbove ? Math.max(8, rect.top - maxHeight - 6) : rect.bottom + 6,
-        left: Math.max(8, rect.left),
-        width: Math.min(Math.max(rect.width, 280), window.innerWidth - Math.max(8, rect.left) - 8),
+        top: openAbove ? Math.max(8, triggerRect.top - maxHeight - 6) : triggerRect.bottom + 6,
+        left,
+        width: Math.min(anchorRect.width, window.innerWidth - left - 8),
         maxHeight
       })
     }
