@@ -4,7 +4,7 @@ import { usePageTitle } from "../hooks/PageContextHook";
 import useCompactLayout from "../hooks/utils/useCompactLayout";
 import { useLocation, useNavigate } from "react-router";
 import { useSettings } from "../hooks/SettingsHook";
-import { TextIndentIcon } from "@phosphor-icons/react";
+import { DotsThreeIcon, TextIndentIcon } from "@phosphor-icons/react";
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { getHeaderScrollTarget } from "../ts/utils/pageScroll";
 import { requestContentRefresh } from "../ts/utils/contentRefresh";
@@ -26,13 +26,23 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     const {
         title,
         titleIcon,
-        hideHeader
+        hideHeader,
+        headerMenu
     } = usePageTitle();
     const location = useLocation();
     const navigate = useNavigate();
     const isInInfo = location.pathname.startsWith("/info/");
     const isInfo = location.pathname === "/info";
-    const handleHeaderClick = () => {
+    const planHeaderMenu = location.pathname.startsWith("/plan/") && headerMenu?.point === "plan" ? headerMenu : null;
+    const showPlanMenu = (x: number, y: number) => {
+        if (planHeaderMenu) openMenu(x, y, planHeaderMenu.point, planHeaderMenu.options);
+    };
+    const handleHeaderClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        if (planHeaderMenu) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            showPlanMenu(rect.left, rect.bottom + 6);
+            return;
+        }
         if (titleOverride !== undefined) return;
         const scroller = getHeaderScrollTarget(location.pathname);
 
@@ -67,10 +77,11 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                 </div> : ""}
                 <div
                     className={`header headerTitle ${isInInfo || isInfo ? "headerInfo" : ""} ${titleOverride !== undefined ? "headerCustomTitle" : ""}`}
-                    data-header-gesture="quick"
+                    data-header-gesture={planHeaderMenu ? "plan" : "quick"}
                     onContextMenu={e => {
                         e.preventDefault();
-                        openMenu(e.clientX, e.clientY, "headerQuickAction", { id: "headerQuickAction" });
+                        if (planHeaderMenu) showPlanMenu(e.clientX, e.clientY);
+                        else openMenu(e.clientX, e.clientY, "headerQuickAction", { id: "headerQuickAction" });
                     }}
                     onClick={handleHeaderClick}
                 >
@@ -79,6 +90,18 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                     {titleSuffix}
                 </div>
                 {rightAction}
+                {planHeaderMenu && <button type="button" className="headerButt planHeaderActionsButt"
+                    data-header-gesture="plan" aria-label="Plan actions"
+                    onClick={event => {
+                        const rect = event.currentTarget.getBoundingClientRect();
+                        showPlanMenu(rect.left, rect.bottom + 6);
+                    }}
+                    onContextMenu={event => {
+                        event.preventDefault();
+                        showPlanMenu(event.clientX, event.clientY);
+                    }}>
+                    <DotsThreeIcon weight="bold"/>
+                </button>}
             </div>
         </>
     );

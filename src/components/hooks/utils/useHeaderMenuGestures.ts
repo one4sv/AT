@@ -1,9 +1,10 @@
 import { useEffect, useRef, type TouchEvent } from "react";
 import { useChat } from "../ChatHook";
+import { usePageTitle } from "../PageContextHook";
 import { useContextMenu } from "../ContextMenuHook";
 import { useSideMenu } from "../SideMenuHook";
 
-type HeaderGesture = "quick" | "chat" | "habit";
+type HeaderGesture = "quick" | "chat" | "habit" | "plan";
 
 type PressState = {
     id: number;
@@ -17,11 +18,12 @@ type PressState = {
 
 export default function useHeaderMenuGestures() {
     const { chatWith } = useChat();
+    const { headerMenu } = usePageTitle();
     const { openMenu, closeMenu } = useContextMenu();
     const { setDontHandle, setDontHandleOther } = useSideMenu();
 
-    const handlers = useRef({ chatWith, openMenu, closeMenu, setDontHandle, setDontHandleOther });
-    handlers.current = { chatWith, openMenu, closeMenu, setDontHandle, setDontHandleOther };
+    const handlers = useRef({ chatWith, headerMenu, openMenu, closeMenu, setDontHandle, setDontHandleOther });
+    handlers.current = { chatWith, headerMenu, openMenu, closeMenu, setDontHandle, setDontHandleOther };
 
     const state = useRef<PressState | null>(null);
     const hovered = useRef<HTMLElement | null>(null);
@@ -72,7 +74,7 @@ export default function useHeaderMenuGestures() {
         setTrigger(trigger);
         if (press.held && press.kind === kind) return;
 
-        const { chatWith, openMenu } = handlers.current;
+        const { chatWith, headerMenu, openMenu } = handlers.current;
         const box = trigger.getBoundingClientRect();
         if (kind === "chat") {
             if (!chatWith) return;
@@ -88,6 +90,9 @@ export default function useHeaderMenuGestures() {
             });
         } else if (kind === "habit") {
             openMenu(box.left, box.bottom + 6, "habitHeader", { id: trigger.dataset.habitId || "" });
+        } else if (kind === "plan") {
+            if (!headerMenu) return;
+            openMenu(box.left, box.bottom + 6, headerMenu.point, headerMenu.options);
         } else {
             openMenu(box.left, box.bottom + 6, "headerQuickAction", { id: "headerQuickAction" });
         }

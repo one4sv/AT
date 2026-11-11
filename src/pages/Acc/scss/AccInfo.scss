@@ -42,7 +42,8 @@
 
 .accInput.dis, .extraInfoInput.dis, .accExtraInfoWrapper.dis {
     pointer-events: none;
-    user-select: none;
+    -webkit-user-select: text;
+    user-select: text;
     cursor: default;
 }
 
@@ -156,6 +157,8 @@
     font-size: 13px;
     line-height: 1.1;
     pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
     > svg {
         flex-shrink: 0;
         width: 1.1dvh;

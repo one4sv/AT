@@ -5,7 +5,7 @@ import type { Perms } from "./GroupContext"
 import useLongPressContextMenu from "../hooks/utils/useLongPressContextMenu"
 const ContextMenuContext = createContext<ContextMenuContextType | null>(null)
 
-type MenuOptions = {
+export type MenuOptions = {
     id: string,
     isDone?: boolean,
     name?:string,
@@ -24,6 +24,11 @@ type MenuOptions = {
     onReply?: () => void,
     onEdit?: () => void,
     onDelete?: () => void,
+    onSave?: () => void,
+    onStopEdit?: () => void,
+    onToggleCancel?: () => void,
+    onConfirmDelete?: () => void,
+    disabled?: boolean,
 }
 export interface chatInfoType {
     note:boolean,
@@ -80,7 +85,7 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
         const side = document.elementFromPoint(x, y)?.closest<HTMLElement>(".sideMenu");
         const bounds = side?.getBoundingClientRect();
         // Header menus open below the header; do not capture the message underneath.
-        const isHeaderMenu = ["acc", "headerQuickAction", "habitHeader", "settingsBack", "settingsSection"].includes(point);
+        const isHeaderMenu = ["acc", "headerQuickAction", "habitHeader", "plan", "settingsBack", "settingsSection"].includes(point);
         const target = isHeaderMenu ? null : document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-context-menu]");
         const focusSource = window.matchMedia("(pointer: coarse)").matches && target &&
             !target.closest(".headerDiv, [data-header-gesture]") ? target : undefined;

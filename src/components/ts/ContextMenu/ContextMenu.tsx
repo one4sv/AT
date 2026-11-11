@@ -16,6 +16,7 @@ import HabitHeaderMenu from "./menus/HabitHeaderMenu";
 import SettingsBackMenu from "./menus/SettingsBackMenu";
 import SettingsSectionMenu from "./menus/SettingsSectionMenu";
 import PlanCreateMenu from "./menus/PlanCreateMenu";
+import PlanMenu from "./menus/PlanMenu";
 export default function ContextMenu() {
     const {
         menu,
@@ -140,6 +141,8 @@ export default function ContextMenu() {
                 return <SettingsSectionMenu />;
             case "planCreate":
                 return <PlanCreateMenu />;
+            case "plan":
+                return <PlanMenu />;
             default:
                 return null;
         }
