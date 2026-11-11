@@ -134,3 +134,15 @@
 .planEditor .planTagWrapper > .tagList.active {
     display: flex;
 }
+
+/* Portal escapes the scrolling Blackout modal; its own list remains scrollable. */
+.tagList.planTagPortal {
+    position: fixed;
+    margin-top: 0;
+    display: flex;
+    background: var(--bgc);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    box-sizing: border-box;
+    box-shadow: 0 8px 24px #00000045;
+}
