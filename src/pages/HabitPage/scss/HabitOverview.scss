@@ -406,8 +406,86 @@
 .habitOverviewCurrent > small { color: var(--borderWh); }
 .habitOverviewCurrent b { font-weight: normal; color: var(--accent_text); }
 .overviewPanelSkeleton {
-    flex: 1; min-width: 0; display: flex; flex-direction: column;
-    gap: 1dvh; padding: 1dvh; overflow: hidden;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+    overflow: hidden;
+}
+
+.overviewCalendarSkeleton {
+    height: 100%;
+    box-sizing: border-box;
+    padding: 1dvh 1vw;
+}
+
+.overviewCalendarSkeleton .skeletonDays {
+    flex: 1;
+}
+
+.overviewSummarySkeleton .habitOverviewSummary {
+    flex-shrink: 0;
+    gap: .5vw;
+}
+
+.overviewSummarySkeleton .habitOverviewSummary > .skeletonCard {
+    gap: 1dvh;
+    justify-content: center;
+    background: var(--interact);
+    min-height: 7dvh;
+}
+
+.overviewSummarySkeleton .overviewSkeletonProgress {
+    width: 100%;
+    height: .7dvh;
+    flex-shrink: 0;
+}
+
+.overviewSummarySkeleton .overviewSkeletonCurrent {
+    background: var(--interact);
+    margin-top: auto;
+    padding: 1dvh 1vw;
+}
+
+.overviewUpcomingSkeleton .overviewSkeletonFilters {
+    display: flex;
+    gap: .5vw;
+}
+
+.overviewUpcomingSkeleton .overviewSkeletonFilters > .skeletonLine {
+    width: 33.33%;
+    height: 3.5dvh;
+}
+
+.overviewUpcomingSkeleton .overviewSkeletonEntry {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .5vw;
+    min-height: 5dvh;
+    flex-shrink: 0;
+    padding: .6dvh .8vw;
+    background: var(--interact);
+}
+
+.overviewUpcomingSkeleton .overviewSkeletonEntry > .skeletonCircle {
+    min-width: 0;
+    min-height: 0;
+    width: 2.5dvh;
+    height: 2.5dvh;
+}
+
+.overviewUpcomingSkeleton .overviewSkeletonButton {
+    margin-top: auto;
+    padding: 1dvh .8vw;
+    background: var(--interact);
+}
+
+.overviewUpcomingSkeleton .overviewSkeletonButton > .skeletonLine {
+    width: 65%;
+    margin: 0 auto;
 }
 .habitOverviewListModal {
     background: var(--mc); color: var(--tc); border-radius: 24px;
@@ -429,6 +507,21 @@
     .habitOverviewFilters { gap: 2vw; }
     .habitOverviewFilters > button { font-size: 14px; padding: 1dvh 2vw; }
     .habitOverviewCurrent { padding: 1dvh 3vw; }
+    .overviewCalendarSkeleton {
+        min-height: 52dvh;
+        padding: 1dvh 2vw;
+    }
+    .overviewSummarySkeleton .habitOverviewSummary,
+    .overviewUpcomingSkeleton .overviewSkeletonFilters {
+        gap: 2vw;
+    }
+    .overviewUpcomingSkeleton .overviewSkeletonEntry {
+        padding: 1dvh 3vw;
+        gap: 2vw;
+    }
+    .overviewSummarySkeleton .overviewSkeletonCurrent {
+        padding: 1dvh 3vw;
+    }
     .habitOverviewListModal {
         width: 100%; max-height: 88dvh;
         padding: 2dvh 4vw calc(3dvh + env(safe-area-inset-bottom));
