@@ -138,7 +138,7 @@ test("settings context-menu buttons can start a horizontal SideMenu swipe", () =
     const layout = read("src/components/layout/MobileLayout.tsx");
     const press = read("src/components/hooks/utils/useLongPressContextMenu.ts");
     const style = read("src/pages/Settings/scss/settings.scss");
-    assert.doesNotMatch(layout, /target\.closest\("[^"]*\[data-context-menu\]/);
-    assert.match(press, /Math\.abs\(dx\) >= 8/);
+    assert.match(layout, /target\.closest\("\[data-context-menu\]"\) && !target\.closest\("\.settingButt"\)/);
+    assert.match(press, /press\.target\.matches\("\.settingButt"\) \? 8 : 28/);
     assert.match(style, /\.settingButt \{\s*touch-action: pan-y;/);
 });

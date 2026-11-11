@@ -47,7 +47,11 @@ export default function MobileLayout({ children }: LayoutProps) {
         }
 
         const target = e.target as Element;
-        if (target.closest("input, textarea, [contenteditable='true'], [data-header-gesture], .selector, .seekBarWrapper, .ContextMenuWrapper, .blackout, .scheduleDiv, .statsDivSlider")) {
+        // Settings cards can open their context menu by holding, but a
+        // horizontal swipe should still reach SideMenu. Other context-menu
+        // surfaces preserve their own gestures.
+        const ownsContextGesture = target.closest("[data-context-menu]") && !target.closest(".settingButt");
+        if (ownsContextGesture || target.closest("input, textarea, [contenteditable='true'], [data-header-gesture], .selector, .seekBarWrapper, .ContextMenuWrapper, .blackout, .scheduleDiv, .statsDivSlider")) {
             gesture.current = "scroll";
             return;
         }

@@ -68,8 +68,9 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
             if (!press.triggered) {
                 const dx = event.clientX - press.startX;
                 const dy = event.clientY - press.startY;
+                const horizontalThreshold = press.target.matches(".settingButt") ? 8 : 28;
                 if ((Math.abs(dy) > 18 && Math.abs(dy) > Math.abs(dx)) ||
-                    (Math.abs(dx) >= 8 && Math.abs(dx) > Math.abs(dy))) cancel();
+                    (Math.abs(dx) >= horizontalThreshold && Math.abs(dx) > Math.abs(dy))) cancel();
                 return;
             }
 
