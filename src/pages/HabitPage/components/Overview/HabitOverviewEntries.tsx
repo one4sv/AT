@@ -5,6 +5,7 @@ import { CheckCircleIcon, CircleIcon } from "@phosphor-icons/react";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useDone } from "../../../../components/hooks/DoneHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
+import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { describeDayTime, type DayEntry } from "../../../../components/ts/utils/dayTimeline";
 import { api } from "../../../../components/ts/api";
 import SectionArt from "../../../../components/ts/SectionArt";
@@ -17,8 +18,14 @@ export default function HabitOverviewEntries({ entries, view = "all" }: {
     const { chosenDay } = useCalendar();
     const { markDone } = useDone();
     const { refreshPlans } = usePlans();
+    const { blackout, setBlackout } = useBlackout();
     const navigate = useNavigate();
     const [updating, setUpdating] = useState<string | null>(null);
+
+    const openEntry = (entry: DayEntry) => {
+        if (blackout.module === "HabitOverviewList") setBlackout({ seted: false });
+        navigate(entry.kind === "plan" ? "/plan/" + entry.plan!.id : "/habit/" + entry.habit!.id);
+    };
 
     const complete = async (entry: DayEntry) => {
         if (updating || entry.plan?.status === "canceled") return;
@@ -49,7 +56,7 @@ export default function HabitOverviewEntries({ entries, view = "all" }: {
     return <div className="habitOverviewTimeline">
         {entries.map(entry => <div className="habitOverviewEntry" key={entry.key}>
             <button className="habitOverviewEntryMain" type="button"
-                onClick={() => navigate(entry.kind === "plan" ? "/plan/" + entry.plan!.id : "/habit/" + entry.habit!.id)}>
+                onClick={() => openEntry(entry)}>
                 <span className={"calendarDot " + entry.state}/>
                 <span className="habitOverviewEntryInfo">
                     <span className="habitOverviewEntryName">{entry.name}</span>
