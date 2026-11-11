@@ -532,10 +532,10 @@
         &.active {
             background: linear-gradient(135deg, var(--accent), var(--grad));
             border: none;
-            color: var(--inner_text);
+            color: var(--accent_text);
 
             > svg {
-                color: var(--inner_text);
+                color: var(--accent_text);
             }
         }
     }
