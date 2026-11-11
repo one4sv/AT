@@ -499,16 +499,22 @@
     .planMobileDone .doneButtDivMobile {
         flex-shrink: 0;
     }
-    .planMobileDone .bottomOpen {
+    // Only the comment expander has a neutral surface.
+    // The collapsed completion button must retain its parent status color.
+    .planMobileDone .habitDayCommentMobile > .bottomOpen {
         border: 1px solid var(--block_border);
         background: var(--interact);
         cursor: pointer;
         padding: 0;
     }
-    .planMobileDone .doneButtDivMobile > .bottomOpen {
+    .planMobileDone .doneButtDivMobile.close > .bottomOpen {
         border: none;
         background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
         color: inherit;
+        padding: 0;
     }
     .planMobileDone .habitDayCommentMobile.open:only-child {
         width: 100%;

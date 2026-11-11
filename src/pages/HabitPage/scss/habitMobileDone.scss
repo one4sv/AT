@@ -56,6 +56,14 @@
     &.close {
         width: 5vh;
 
+        > .bottomOpen {
+            background: transparent;
+            box-shadow: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            color: inherit;
+        }
+
         > .bottomOpen > svg {
             color: inherit;
         }

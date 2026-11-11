@@ -115,7 +115,9 @@ test("creation is personal and participant management lives on plan page", () =>
 test("collapsed completion controls keep their status color rather than an interact overlay", () => {
     const plan = read("src/pages/Plan/PlanPage.scss");
     const habit = read("src/pages/HabitPage/scss/habitMobileDone.scss");
-    assert.match(plan, /\.planMobileDone \.doneButtDivMobile > \.bottomOpen\s*\{\s*border: none;\s*background: transparent;/);
+    assert.match(plan, /\.planMobileDone \.doneButtDivMobile\.close > \.bottomOpen\s*\{\s*border: none;\s*background: transparent;/);
+    assert.match(plan, /\.planMobileDone \.habitDayCommentMobile > \.bottomOpen\s*\{/);
+    assert.doesNotMatch(plan, /\.planMobileDone \.bottomOpen\s*\{/);
     assert.match(habit, /> \.bottomOpen\s*\{\s*border: none;\s*background: transparent;\s*color: inherit;/);
     const completedButtonStyles = habit.split(".doneButtDivMobile {")[1].split(".doneButtMobile {")[0];
     assert.doesNotMatch(completedButtonStyles, /backdrop-filter: blur\(var\(--blur\)\)/);

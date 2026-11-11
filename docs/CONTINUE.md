@@ -126,3 +126,7 @@ AddHabit + AddPlan используют нативный time picker (без р�
 ## 11.11.2026 — мобильные time-поля, SelectList, SM и свёрнутая кнопка
 
 По iPhone-скриншотам уменьшена модалка AddPlan: `height:auto; max-height:calc(92dvh - safe-area)` вместо принудительных 92dvh. Поля времени в AddPlan и AddHabit имеют общую круглую `timeInputShell`, компактный WebKit-инпут и отдельное действие `timeInputClear`; `onInput` и `onBlur` синхронизируют сброс с React. Исправлена вертикаль Chevron в `redHabitSL` (top:50%). У кнопок настроек больше не блокируется старт горизонтального свайпа из-за `data-context-menu`; перемещение от 8 px отменяет long-press. `PlanPage.scss` больше не закрывает акцентный фон свёрнутой кнопки выполнения `var(--interact)`; у обычной `doneButtDivMobile` удалён лишний backdrop blur. Добавлены проверки. Осталась реальная QA нативного picker и жестов iPhone.
+
+## 11.11.2026 — нейтральный фон поверх свёрнутой кнопки выполнения
+
+В `PlanPage.scss` селектор `.planMobileDone .bottomOpen` применял `background:var(--interact)` сразу к двум разным элементам — свёрнутому выполнению и раскрытию комментария. Правило уточнено до `.habitDayCommentMobile > .bottomOpen`: нейтральный фон остаётся только у комментария. У `.doneButtDivMobile.close > .bottomOpen` принудительно прозрачный фон, без backdrop-filter и shadow; SVG наследует `inner_text` при `doable`, а круглая кнопка получает цвет родительского статуса. Сохранена существующая анимация ширины и жесты. Добавлен статический тест CSS-областей.
