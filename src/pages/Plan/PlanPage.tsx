@@ -20,7 +20,7 @@ import "./PlanPage.scss";
 
 export default function PlanPage() {
     const { planId } = useParams<{ planId: string }>();
-    const { t, i18n } = useTranslation("common");
+    const { t } = useTranslation("common");
     const navigate = useNavigate();
     const isCompact = useCompactLayout();
     const [mobileOpen, setMobileOpen] = useState<"done" | "comment">("done");
@@ -160,11 +160,6 @@ export default function PlanPage() {
             setSaving(false);
         }
     };
-    const formatDate = (date: string) => new Intl.DateTimeFormat(
-        i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU",
-        { day:"numeric",month:"long",year:"numeric" }
-    ).format(new Date(date + "T12:00:00"));
-
     const selectedTag = tags.find(tag => tag.value === plan?.tag);
     const canComplete = !!plan && plan.membership_status === "accepted" && plan.status !== "canceled" &&
         (plan.is_owner || plan.completion_mode !== "shared");
@@ -196,7 +191,7 @@ export default function PlanPage() {
     useEffect(() => {
         if (plan?.is_owner && planId) {
             setHeaderMenu({ point: "plan", options: makePlanMenuOptions(planId, plan.name,
-                editing ? "editing" : plan.status, true) });
+                editing ? "editing" : plan.status || "upcoming", true) });
         } else {
             setHeaderMenu(null);
         }
@@ -208,10 +203,10 @@ export default function PlanPage() {
     const openPlanMenu = (x: number, y: number) => {
         if (!plan?.is_owner || !planId || saving) return;
         openMenu(x, y, "plan", makePlanMenuOptions(planId, plan.name,
-            editing ? "editing" : plan.status, true));
+            editing ? "editing" : plan.status || "upcoming", true));
     };
     const readOnly = !editing || !draft;
-    const value = draft || plan;
+    const value = (draft || plan)!;
 
     return <div className="planPage">
         {error && <div className="planError" role="alert">{error}</div>}
@@ -287,14 +282,14 @@ export default function PlanPage() {
                         className="planDetailsInput planDescriptionText planDetailsDescription"
                         aria-label={t("plans.description")} maxLength={1200} minHeight={0} maxHeight={22}
                         readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
-                        value={value.description}
+                        value={value.description || ""}
                         onChange={event => changeDraft("description", event.target.value)}/>}
                     <div className="planMetadata">{t("plans." + plan.kind)}
                         {plan.kind === "shared" && <>
                             {" · "}
                             <span className={editing ? "planCompletionModeEditable" : ""} onClick={() => {
                                 if (editing) setCompletionOpen(previous => !previous);
-                            }}>{t("plans." + value.completion_mode + "Completion")}</span>
+                            }}>{t("plans." + (value.completion_mode || "personal") + "Completion")}</span>
                             {editing && completionOpen && <div className="planCompletionChoices">
                                 {(["personal", "shared"] as const).map(mode => <button key={mode} type="button"
                                     onClick={() => { changeDraft("completion_mode", mode); setCompletionOpen(false); }}>
