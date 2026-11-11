@@ -31,6 +31,15 @@ export const todayStrFunc = () => {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
 }
 
+/** Calendar-relative labels compare local dates without UTC/DST shifts. */
+export const relativePlanDay = (day: string, t: (key: string) => string) => {
+    if (day === todayStrFunc()) return t("chatUi.today");
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (day === dateToCalendarFormat(tomorrow)) return t("sideMenu.tomorrow");
+    return "";
+};
+
 /**
  * Форматирует Date в строку DD.MM.YYYY
  */

@@ -7,7 +7,7 @@
     height: 100dvh;
     overflow-y: auto;
     scrollbar-width: thin;
-    padding: 7dvh 1vw 2dvh;
+    padding: 7dvh .25vw 2dvh;
     box-sizing: border-box;
     color: var(--tc);
 }
@@ -691,4 +691,10 @@
 }
 .planCompletionModeEditable {
     cursor: pointer;
+}
+
+.planDateRelative {
+    color: var(--borderWh);
+    white-space: nowrap;
+    flex-shrink: 0;
 }

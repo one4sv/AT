@@ -172,3 +172,11 @@
         height: 3.5dvh;
     }
 }
+
+.headerDiv .headerButt.planHeaderSaveButt {
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    border-color: transparent;
+    > svg, &:hover > svg, &:active > svg, &.headerGestureActive > svg {
+        color: var(--inner_text);
+    }
+}

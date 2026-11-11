@@ -15,6 +15,7 @@ import PlanReminders from "./PlanReminders";
 import PlanComment from "./PlanComment";
 import PlanMembers from "./PlanMembers";
 import { tags } from "../../components/ts/tags";
+import { relativePlanDay } from "../../components/ts/utils/dateToStr";
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import "./PlanPage.scss";
 
@@ -247,6 +248,8 @@ export default function PlanPage() {
                             readOnly={readOnly} dateFormat="d MMMM yyyy"
                             value={value.plan_date ? new Date(value.plan_date + "T12:00:00") : null}
                             onChange={date => changeDraft("plan_date", date ? localDate(date) : "")}/>
+                        {value.plan_date && relativePlanDay(value.plan_date, t) &&
+                            <span className="planDateRelative">({relativePlanDay(value.plan_date, t)})</span>}
                     </div>
                     {(plan.start_time || plan.end_time || editing) && <div className="planMetadata planDetailsTimes">
                         <ClockIcon size={20}/>

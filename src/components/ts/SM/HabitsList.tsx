@@ -12,7 +12,7 @@ import { useContacts } from "../../hooks/ContactsHook";
 import { useSideMenu } from "../../hooks/SideMenuHook";
 import HabitDiv from "../Habit";
 import { makeSideMenuEntries, describeDayTime } from "../utils/dayTimeline";
-import { formatDateFromString } from "../utils/dateToStr";
+import { formatDateFromString, relativePlanDay } from "../utils/dateToStr";
 import { tags } from "../tags";
 
 function PlanTagIcon({ tag }: { tag?: string | null }) {
@@ -54,7 +54,7 @@ export default function HabitsList({ filter }: { filter?: string }) {
                 <PlanTagIcon tag={entry.plan?.tag}/>
                 <span className="habitInfo">
                     <span className="habitName">{entry.name}</span>
-                    <span className="habitPer">{formatDateFromString(entry.date)} · {describeDayTime(entry, t)}</span>
+                    <span className="habitPer">{relativePlanDay(entry.date, t) || formatDateFromString(entry.date)} · {describeDayTime(entry, t)}</span>
                 </span>
             </Link>
         )}
