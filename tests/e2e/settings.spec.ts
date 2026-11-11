@@ -139,3 +139,36 @@ test("danger and security button styles load when settings pages are opened dire
     });
     expect(safetyColors.actual).toBe(safetyColors.expected);
 });
+
+
+test("native time controls keep two separate columns and readable labels on mobile WebKit", async ({ page }, testInfo) => {
+    await page.goto("/settings/notes");
+    await expect(page.locator(".settingTab")).toBeVisible();
+    await page.evaluate(() => {
+        const probe = document.createElement("div");
+        probe.id = "native-time-layout-probe";
+        probe.style.cssText = "position:fixed;inset:22% auto auto 5vw;width:90vw;max-width:450px;padding:3vw;box-sizing:border-box;background:var(--mc);z-index:3000";
+        probe.innerHTML = '<div class="addHabitTimeWrapper">' +
+            '<div class="addHabitWrapper time"><label>Начало (необязательно)</label>' +
+            '<input type="time" class="addHabitInput" value="13:00"></div>' +
+            '<div class="addHabitWrapper time"><label>Конец (необязательно)</label>' +
+            '<input type="time" class="addHabitInput"></div></div>';
+        document.body.appendChild(probe);
+    });
+    const fields = page.locator("#native-time-layout-probe input[type=time]");
+    await expect(fields).toHaveCount(2);
+    const rects = await fields.evaluateAll(inputs => inputs.map(input => {
+        const rect = input.getBoundingClientRect();
+        const style = getComputedStyle(input);
+        return { left:rect.left, right:rect.right, width:rect.width,
+            fontSize:parseFloat(style.fontSize), scrollWidth:input.scrollWidth,
+            clientWidth:input.clientWidth };
+    }));
+    expect(rects[0].width).toBeGreaterThan(80);
+    expect(rects[1].width).toBeGreaterThan(80);
+    expect(rects[0].right).toBeLessThanOrEqual(rects[1].left + 1);
+    if (testInfo.project.name === "webkit-mobile") {
+        expect(rects[0].fontSize).toBeGreaterThanOrEqual(20);
+        expect(rects[1].fontSize).toBeGreaterThanOrEqual(20);
+    }
+});
