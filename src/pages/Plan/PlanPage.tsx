@@ -11,6 +11,9 @@ import type { OneOffPlan } from "../../components/context/PlansContext";
 import PlanEditor, { type PlanInput } from "./PlanEditor";
 import CalendarInput from "../../components/ts/CalendarInput";
 import TA from "../../components/ts/TA";
+import TagSelector from "../../components/ts/TagSelector";
+import Skeleton from "../../components/ts/Skeleton";
+import { relativePlanDay } from "../../components/ts/utils/dateToStr";
 import PlanReminders from "./PlanReminders";
 import PlanComment from "./PlanComment";
 import PlanMembers from "./PlanMembers";
@@ -34,7 +37,6 @@ export default function PlanPage() {
     const [draft, setDraft] = useState<PlanInput | null>(null);
     const [error, setError] = useState("");
     const [confirmDelete, setConfirmDelete] = useState(false);
-    const [tagOpen, setTagOpen] = useState(false);
     const [completionOpen, setCompletionOpen] = useState(false);
 
     useEffect(() => {
@@ -44,7 +46,6 @@ export default function PlanPage() {
         setPlan(null);
         setError("");
         setConfirmDelete(false);
-        setTagOpen(false);
         setCompletionOpen(false);
     }, [planId]);
     const load = async () => {
@@ -88,7 +89,6 @@ export default function PlanPage() {
             kind: plan.kind,
             completion_mode: plan.completion_mode || "personal"
         });
-        setTagOpen(false);
         setCompletionOpen(false);
         setEditing(true);
     };
@@ -98,7 +98,6 @@ export default function PlanPage() {
     const stopEditing = () => {
         setEditing(false);
         setDraft(null);
-        setTagOpen(false);
         setCompletionOpen(false);
     };
     const localDate = (date: Date) => [date.getFullYear(),
@@ -216,7 +215,7 @@ export default function PlanPage() {
 
     return <div className="planPage">
         {error && <div className="planError" role="alert">{error}</div>}
-        {loading ? <div className="planSection">{t("plans.loading")}</div> :
+        {loading ? <Skeleton type="plan"/> :
             editing && !plan ? <div className="planSection">
                 <h2>{planId ? t("plans.edit") : t("plans.create")}</h2>
                 <PlanEditor initial={plan || undefined} saving={saving} onSave={save}
@@ -247,6 +246,7 @@ export default function PlanPage() {
                             readOnly={readOnly} dateFormat="d MMMM yyyy"
                             value={value.plan_date ? new Date(value.plan_date + "T12:00:00") : null}
                             onChange={date => changeDraft("plan_date", date ? localDate(date) : "")}/>
+                        {value.plan_date && relativePlanDay(value.plan_date, t) && <span className="planRelativeDate">({relativePlanDay(value.plan_date, t)})</span>}
                     </div>
                     {(plan.start_time || plan.end_time || editing) && <div className="planMetadata planDetailsTimes">
                         <ClockIcon size={20}/>
@@ -269,20 +269,14 @@ export default function PlanPage() {
                             placeholder={readOnly ? "" : t("plans.place")}
                             value={value.place} onChange={event => changeDraft("place", event.target.value)}/>
                     </div>}
-                    {(plan.tag || editing) && <div className="planMetadata planTag planDetailsTag">
+                    {editing ? <div className="planMetadata planDetailsTag planInlineTag">
+                        <TagSelector selectedTag={value.tag || undefined}
+                            setSelectedTag={tag => changeDraft("tag", tag || null)}/>
+                    </div> : plan.tag && <div className="planMetadata planTag planDetailsTag">
                         {(() => {
                             const tag = tags.find(item => item.value === value.tag);
-                            return tag ? <><tag.icon size={20}/>{tag.label}</> : editing ? t("plans.tag") : null;
+                            return tag ? <><tag.icon size={20}/>{tag.label}</> : null;
                         })()}
-                        {editing && <button type="button" className="planTagEdit" aria-label={t("plans.tag")}
-                            onClick={() => setTagOpen(previous => !previous)}>⋯</button>}
-                        {editing && tagOpen && <div className="planTagChoices">
-                            <button type="button" onClick={() => { changeDraft("tag", null); setTagOpen(false); }}>—</button>
-                            {tags.map(tag => <button key={tag.value} type="button" onClick={() => {
-                                changeDraft("tag", tag.value);
-                                setTagOpen(false);
-                            }}><tag.icon size={20}/>{tag.label}</button>)}
-                        </div>}
                     </div>}
                     {(plan.description || editing) && <TA id="planInlineDescription"
                         className="planDetailsInput planDescriptionText planDetailsDescription"
