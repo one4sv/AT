@@ -1,0 +1,101 @@
+.habitOverview {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    gap: 0.5vw;
+    min-height: 40dvh;
+    width: 100%;
+}
+.habitOverviewCalendar, .habitOverviewCenter, .habitOverviewContext {
+    min-width: 0;
+}
+.habitOverviewCalendar .calendarDiv {
+    width: 100%;
+}
+.habitOverviewCenter, .habitOverviewContext {
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--mc);
+    padding: 1dvh 1vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+    box-sizing: border-box;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+}
+.habitOverviewHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5vw;
+    font-size: 20px;
+}
+.habitOverviewActivities .chosenDayDiv {
+    width: 100%;
+    max-height: none;
+    background: transparent;
+    border: 0;
+}
+.habitOverviewPlanList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5dvh;
+}
+.habitOverviewPlan {
+    background: var(--interact);
+    color: var(--tc);
+    width: 100%;
+    text-align: start;
+    display: flex;
+    align-items: center;
+    gap: 0.5vw;
+    padding: 1.25dvh 1vw;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.habitOverviewPlan.chosen {
+    border-color: var(--accent);
+}
+.habitOverviewPlanName {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.habitOverviewPlanTime {
+    color: var(--borderWh);
+}
+.habitOverviewContext p, .habitOverviewEmpty {
+    color: var(--tc);
+    overflow-wrap: anywhere;
+}
+.calendarDot.plan {
+    background: var(--accent);
+    border-radius: 2px;
+}
+@media (max-width: 800px) {
+    .habitOverview {
+        display: flex;
+        flex-direction: column;
+        gap: 1dvh;
+    }
+    .habitOverviewCenter {
+        order: 0;
+    }
+    .habitOverviewCalendar {
+        order: 1;
+    }
+    .habitOverviewContext {
+        order: 2;
+    }
+    .habitOverviewCenter, .habitOverviewContext {
+        padding: 1.5dvh 3vw;
+    }
+    .habitOverviewHeader, .habitOverviewPlan {
+        gap: 2vw;
+    }
+    .habitOverviewPlan {
+        padding: 1.5dvh 3vw;
+    }
+}
