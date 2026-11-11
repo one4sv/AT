@@ -60,3 +60,27 @@ test("time is displayed below a name and supports end-only times", () => {
     assert.match(describeDayTime(entry("end",null,"08:00"),t), /08:00/);
     assert.match(describeDayTime(entry("start","01:00",null),t), /01:00/);
 });
+
+test("overview keeps date and metrics in the center, title and four next items on the right", () => {
+    const overview = readFileSync(new URL("../src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx", import.meta.url), "utf8");
+    const indexCenter = overview.indexOf('className="habitOverviewCenter"');
+    const indexContext = overview.indexOf('className="habitOverviewContext"');
+    const indexDate = overview.indexOf("formatDateLabel(chosenDay)",indexCenter);
+    const indexMetrics = overview.indexOf('className="habitOverviewSummary"',indexCenter);
+    const indexDaySummary = overview.indexOf('t("plans.daySummary")',indexContext);
+    const indexFour = overview.indexOf('nextFour',indexContext);
+    assert.ok(indexCenter >= 0 && indexContext > indexCenter);
+    assert.ok(indexDate > indexCenter && indexDate < indexContext);
+    assert.ok(indexMetrics > indexCenter && indexMetrics < indexContext);
+    assert.ok(indexDaySummary > indexContext && indexFour > indexContext);
+    assert.match(overview,/pending\.slice\(0, 4\)/);
+    assert.match(overview,/HabitOverviewList/);
+});
+test("calendar shares ordinary planned marker with plans and schedule includes plan blocks", () => {
+    const day = readFileSync(new URL("../src/pages/HabitPage/components/Calendar/DayCell.tsx", import.meta.url), "utf8");
+    const schedule = readFileSync(new URL("../src/pages/HabitPage/components/Schedule/Schedule.tsx", import.meta.url), "utf8");
+    assert.match(day,/willArr\.length > 0 \|\| oneOffCount > 0/);
+    assert.doesNotMatch(day,/className="calendarDot plan"/);
+    assert.match(schedule,/planScheduleBlock/);
+    assert.match(schedule,/plan\.plan_date === d\.fullDate/);
+});

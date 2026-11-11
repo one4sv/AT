@@ -440,3 +440,13 @@
         border-radius: 24px 24px 0 0;
     }
 }
+
+/* Blackout owns the sheet on mobile; desktop dialogs stay centered. */
+@media (min-width: 801px) {
+    .habitOverviewListModal {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
