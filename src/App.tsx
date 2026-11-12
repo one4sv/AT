@@ -11,6 +11,7 @@ import { AppProvider } from './components/ts/AppProvider';
 import { useUser } from "./components/hooks/UserHook";
 import { useSettings } from "./components/hooks/SettingsHook";
 import Notification from "./components/ts/Notification";
+import AutoWebPush from "./components/ts/AutoWebPush";
 import Blackout from './components/ts/Blackout';
 import ThemeHandler from './components/hooks/themeHook';
 import ContextMenu from './components/ts/ContextMenu/ContextMenu';
@@ -63,6 +64,7 @@ function App() {
             <AppProvider>
                 <StartupNavigation />
                 <ThemeHandler />
+                <AutoWebPush />
                 <ConnectionStatus />
                 <TrustedDevice />
                 <CookieConsent />

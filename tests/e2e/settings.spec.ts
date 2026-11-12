@@ -103,7 +103,9 @@ test("pending deletion uses the separate recovery page and a live countdown", as
 test("PWA installation help is not shown on desktop browsers", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "chromium-desktop", "Desktop-only platform check");
     await page.goto("/settings/notes");
-    await expect(page.locator(".notificationPermissionPanel")).toBeVisible();
+    await expect(page.locator(".notificationPermissionPanel")).toHaveCount(0);
+    await expect(page.locator(".notificationPushToggle")).toHaveCount(0);
+    await expect(page.locator(".notificationNoAdvertising")).toBeVisible();
     await expect(page.locator(".notificationPermissionSecondary")).toHaveCount(0);
 });
 

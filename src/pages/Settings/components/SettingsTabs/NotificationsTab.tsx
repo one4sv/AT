@@ -12,7 +12,7 @@ import { useNote } from "../../../../components/hooks/NoteHook";
 import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
-import { getPushState, enableWebPush, disableWebPush, isIOS, isStandalonePWA, type PushState } from "../../../../components/ts/utils/webPush";
+import { getPushState, enableWebPush, isIOS, isStandalonePWA, type PushState } from "../../../../components/ts/utils/webPush";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { api } from "../../../../components/ts/api";
 import "../../scss/notificationPermission.scss";
@@ -36,6 +36,7 @@ export default function NotificationsTab({ search }: { search: string }) {
     const [push, setPush] = useState<PushState>({ supported: false, configured: false, subscribed: false, publicKey: null });
     const [busy, setBusy] = useState(false);
     const [pushError, setPushError] = useState(false);
+    const [pushChecked, setPushChecked] = useState(false);
     const iosNeedsInstall = isIOS() && !isStandalonePWA();
     type ReminderRule = { habit_id: number; code: string; minutes_before: number; fixed_time: string | null };
     type ReminderPreferences = { enabled: boolean; commonEnabled: boolean; commonTime: string; timezone: string };
@@ -57,9 +58,13 @@ export default function NotificationsTab({ search }: { search: string }) {
                 if (mounted) {
                     setPush(value);
                     setPushError(false);
+                    setPushChecked(true);
                 }
             }).catch(() => {
-                if (mounted) setPushError(true);
+                if (mounted) {
+                    setPushError(true);
+                    setPushChecked(true);
+                }
             });
         };
         update();
@@ -179,20 +184,6 @@ export default function NotificationsTab({ search }: { search: string }) {
         }
     };
 
-    const disableBrowserNotifications = async () => {
-        if (busy) return;
-        setBusy(true);
-        try {
-            await disableWebPush();
-            setPush(await getPushState());
-            showNotification("success", t("notifications.pushDisabled"));
-        } catch {
-            showNotification("error", t("notifications.pushError"));
-        } finally {
-            setBusy(false);
-        }
-    };
-
     const habitNoteArray = [
         {
             title: t("notifications.beforeStart"),
@@ -250,39 +241,32 @@ export default function NotificationsTab({ search }: { search: string }) {
                         <Toggler state={messNote} setState={(value: boolean) => void togglePreference("new_mess_note", value)} disable={!note} stopPropagation={true} />
                     </div>
                 </div>
-                <div className="notificationPermissionPanel" data-setting-id="browserNotifications">
-                    <div className="settingTogglerDiv notificationPushToggle"
-                        onClick={() => {
-                            if (!busy && !pushError && push.supported && push.configured && permission !== "denied") {
-                                void (push.subscribed ? disableBrowserNotifications() : enableBrowserNotifications());
-                            }
-                        }}>
-                        <div className="notificationPushText">
-                            <span>{t("notifications.pushToggleTitle")}</span>
-                            <p>{t("notifications.pushToggleHint")}</p>
-                        </div>
-                        <Toggler state={push.subscribed}
-                            disable={busy || pushError || !push.supported || !push.configured || permission === "denied"}
-                            onToggle={(value: boolean) => void (value ? enableBrowserNotifications() : disableBrowserNotifications())}
-                            stopPropagation={true}/>
-                    </div>
-                    <div className={"notificationPermissionStatus " + (permission === "denied" ? "blocked" : "")}>
-                        {t("notifications.browserTitle")}: {t("notifications.browser" + (permission === "granted" ? "Granted" : permission === "denied" ? "Denied" : permission === "unsupported" ? "Unsupported" : "Disabled"))}
-                    </div>
-                    {permission === "denied" && <p>{t("notifications.permissionHelp")}</p>}
-                    {iosNeedsInstall && <p>{t("notifications.pushRequiresPwa")}</p>}
-                    {pushError && <p>{t("notifications.pushError")}</p>}
-                    {!push.configured && !pushError && <p>{t("notifications.pushUnavailable")}</p>}
-                    {!push.supported && !iosNeedsInstall && !pushError &&
-                        <p>{t("notifications.pushNotSupported")}</p>}
-                    {push.configured && push.supported && permission === "granted" &&
-                        <p>{t(push.subscribed ? "notifications.pushActive" : "notifications.pushInactive")}</p>}
-                    {iosNeedsInstall && <button type="button" className="notificationPermissionSecondary"
-                        onClick={() => setBlackout({ seted: true, module: "PushInstallHelp" })}>
-                        {t("notifications.iosAdd")}
-                    </button>}
-                    <p className="notificationNoAdvertising">{t("notifications.noAdvertising")}</p>
-                </div>
+                {(permission !== "granted" || pushError || pushChecked && (!push.supported || !push.configured)) &&
+                    <div className="notificationPermissionWarnings" data-setting-id="browserNotifications">
+                        {permission !== "granted" && <div className={"notificationPermissionStatus " +
+                            (permission === "denied" ? "blocked" : "")} role="alert">
+                            {t("notifications.browser" + (permission === "denied" ? "Denied" :
+                                permission === "unsupported" ? "Unsupported" : "Disabled"))}
+                        </div>}
+                        {permission === "denied" && <p>{t("notifications.permissionHelp")}</p>}
+                        {permission === "default" && push.supported && push.configured &&
+                            <button type="button" className="notificationPermissionAction" disabled={busy}
+                                onClick={() => void enableBrowserNotifications()}>
+                                {t(busy ? "notifications.pushLoading" : "notifications.enableBrowser")}
+                            </button>}
+                        {iosNeedsInstall && <>
+                            <p>{t("notifications.pushRequiresPwa")}</p>
+                            <button type="button" className="notificationPermissionSecondary"
+                                onClick={() => setBlackout({ seted: true, module: "PushInstallHelp" })}>
+                                {t("notifications.iosAdd")}
+                            </button>
+                        </>}
+                        {pushError && <p>{t("notifications.pushError")}</p>}
+                        {pushChecked && !push.configured && !pushError && <p>{t("notifications.pushUnavailable")}</p>}
+                        {pushChecked && !push.supported && !iosNeedsInstall && permission !== "unsupported" &&
+                            <p>{t("notifications.pushNotSupported")}</p>}
+                    </div>}
+                <p className="notificationNoAdvertising">{t("notifications.noAdvertising")}</p>
             </div>
             <div className="settingInnerDiv habitRemindersDiv">
                 <div className="settingHeader">{t("notifications.reminders")}</div>

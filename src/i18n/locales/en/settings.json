@@ -141,7 +141,7 @@
   "notifications": {
         "planRemindersTitle": "Plan reminders",
         "planRemindersToggle": "Receive plan reminders",
-        "planRemindersHint": "Off by default. Enable Web Push to receive notifications. Configure extra reminders on each plan.",
+        "planRemindersHint": "Off by default. Allow browser notifications to receive reminders. Configure extra reminders on each plan.",
         "planRemindersDefault": "Default reminder for every plan",
         "planRemindersNoTime": "Plans without a time use 9:00 AM in the plan's time zone.",
         "1dayBefore": "1 day before",
@@ -215,7 +215,7 @@
     "remindersLoadError": "Could not load reminder settings",
     "remindersSaveError": "Could not save reminder settings",
     "reminderAt": "Remind at",
-    "remindersPushHint": "Enable browser push notifications on this device to receive reminders.",
+    "remindersPushHint": "Allow browser notifications on this device to receive reminders.",
     "invalidReminderTime": "Enter a valid reminder time",
     "reminderEditorIntro": "Select an activity and set its reminder times. You can enable multiple events.",
     "reminderPickActivity": "Select an activity to set reminder times",
