@@ -4,6 +4,7 @@ import { useNote } from "../hooks/NoteHook";
 import { type habitCounter, type habitTimer } from "./TheHabitContext";
 import { todayStrFunc } from "../ts/utils/dateToStr";
 import { useSettings } from "../hooks/SettingsHook";
+import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
 
 const CalendarContext = createContext<CalendarContextType | null>(null);
@@ -45,6 +46,7 @@ export interface CalendarContextType {
 export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote()
     const { timeZone } = useSettings()
+    const { user, initialLoading } = useUser()
     const [ calendar, setCalendar ] = useState<Calendar[]>([])
     const [ allCalendar, setAllCalendar ] = useState<Calendar[]>([])
     const [ timers, setTimers ] = useState<habitTimer[] | null>(null)
@@ -60,6 +62,25 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
         setChosenDay(value => value === previousToday.current ? current : value);
         previousToday.current = current;
     }, [timeZone]);
+
+    // SideMenu needs every habit's completion history even if the current
+    // /habit/:id page loads only that habit into the active calendar.
+    useEffect(() => {
+        if (initialLoading) return;
+        if (!user.id) {
+            setAllCalendar([]);
+            return;
+        }
+        const controller = new AbortController();
+        void api.get("calendar", { signal: controller.signal }).then(response => {
+            if (!controller.signal.aborted && response.data?.success) {
+                setAllCalendar(response.data.calendar || []);
+            }
+        }).catch(error => {
+            if (!controller.signal.aborted) console.error("Не удалось загрузить общий календарь", error);
+        });
+        return () => controller.abort();
+    }, [user.id, initialLoading]);
 
     const calendarRef = useRef<HTMLDivElement | null>(null)
 
