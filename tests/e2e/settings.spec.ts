@@ -258,9 +258,11 @@ test("personal plan participants can be invited and removed from its details pag
     await expect(section).toBeVisible();
     await expect(section.locator(".planMember")).toHaveCount(1);
     await section.getByRole("button", { name: "Добавить участника" }).click();
-    await expect(section.locator(".planInviteContact")).toHaveCount(1);
-    await section.locator(".planInviteContact").click();
-    await section.getByRole("button", { name: "Пригласить" }).click();
+    const picker = page.locator(".habitParticipantPicker");
+    await expect(picker).toBeVisible();
+    await expect(picker.locator(".createChatContact")).toHaveCount(1);
+    await picker.locator(".createChatContact").click();
+    await picker.locator(".habitConfirmActions .accept").click();
     await expect.poll(() => invited).toBe(true);
     await expect(section.locator(".planMember")).toHaveCount(2);
     await expect(section).toContainText("Ожидает приглашение");
