@@ -1,7 +1,8 @@
+import { todayStrFunc } from "./dateToStr";
 import type { Habit } from "../../context/HabitsContext";
 
 export const filterHabitsByOrder = (order: string, habits: Habit[], search: string) => {
-    const todayNum = new Date().getDay()
+    const todayNum = new Date(todayStrFunc() + "T12:00:00").getDay()
     const tomorrowNum = todayNum !== 6 ? todayNum + 1 : 0
     if (!habits) return [];
 
@@ -20,7 +21,7 @@ export const filterHabitsByOrder = (order: string, habits: Habit[], search: stri
         });
     }
     else {
-        const date = new Date(order);
+        const date = new Date(order + "T12:00:00");
         if (isNaN(date.getTime())) return [];
         const dayNum = date.getDay();
         filtered = habits.filter(h => h.chosen_days?.includes(dayNum) && !h.pinned && h.periodicity !== "everyday");
