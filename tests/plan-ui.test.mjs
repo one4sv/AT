@@ -171,3 +171,9 @@ test("plan header action is the same vertical three-dot control and width as the
     assert.doesNotMatch(sharedHeader, /<DotsThreeIcon/);
     assert.match(styles, /\.headerButt\s*\{[\s\S]*?height: 4dvh;[\s\S]*?aspect-ratio: 1\/1;/);
 });
+
+test("only plan participants have the requested mc hover over an interact list", () => {
+    const styles = read("src/pages/Plan/PlanPage.scss");
+    assert.match(styles, /\.planMembers\s*\{[\s\S]*?background: var\(--interact\);/);
+    assert.match(styles, /\.planMember\s*\{[\s\S]*?&:hover\s*\{\s*background: var\(--mc\);/);
+});
