@@ -12,7 +12,7 @@ export default function LinkButton() {
     const { t } = useTranslation("common");
     const CopyLink = (import.meta.env.VITE_LINK || window.location.origin).replace(/\/+$/, "");
     const { plans } = usePlans();
-    const { privateShow } = useSettings();
+    const { privateShow, profileShareToken } = useSettings();
 
     const handleCopy = async () => {
         const link =
@@ -35,6 +35,11 @@ export default function LinkButton() {
         if (!link) return;
         try {
             const url = new URL(`${CopyLink}/${link}`);
+            if (point === "habit") {
+                const inherited = new URLSearchParams(window.location.search).get("share");
+                const token = inherited || (options.isMy && privateShow.habits === "link" ? profileShareToken : null);
+                if (token) url.searchParams.set("share",token);
+            }
             if (point === "plan" || point === "planItem") {
                 const plan = plans.find(item => String(item.id) === String(options.id));
                 const linkOnly = !!options.shareToken || plan?.visibility === "link" || (plan?.visibility === "inherit" && privateShow.plans === "link") || !!new URLSearchParams(window.location.search).get("share");

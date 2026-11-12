@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { CalendarBlankIcon, ClockIcon, MapPinIcon, CheckCircleIcon, CircleIcon, TrashIcon } from "@phosphor-icons/react";
 import { api } from "../../components/ts/api";
@@ -27,6 +27,7 @@ export default function PlanPage() {
     const { planId } = useParams<{ planId: string }>();
     const { t } = useTranslation("common");
     const navigate = useNavigate();
+    const { search } = useLocation();
     const isCompact = useCompactLayout();
     const [mobileOpen, setMobileOpen] = useState<"done" | "comment">("done");
     const { plans, refreshPlans } = usePlans();
@@ -68,7 +69,7 @@ export default function PlanPage() {
     useEffect(() => {
         void load(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [planId]);
+    }, [planId, search]);
     useEffect(() => {
         const onMembersUpdated = () => { void load(); };
         window.addEventListener("plan-members-updated", onMembersUpdated);

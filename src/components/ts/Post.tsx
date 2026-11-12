@@ -85,6 +85,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
         new URLSearchParams(window.location.search).get("share");
     if (token) postLink.searchParams.set("share",token);
     const postUrl = postLink.href;
+    const postPath = postLink.pathname + postLink.search;
     const copyLink = async () => {
         try {
             await navigator.clipboard.writeText(postUrl);
@@ -108,7 +109,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
             id: String(post.id),
             name: post.text.slice(0, 40),
             isMy,
-            onOpen: expanded ? undefined : () => navigate('/post/' + post.id),
+            onOpen: expanded ? undefined : () => navigate(postPath),
             func: () => navigate('/post/' + post.id + '/edit'),
             onCopy: () => { void copyLink(); },
             onShare: () => { void share(); },
@@ -134,7 +135,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                 if ((event.target as Element).closest(
                     "a, button, input, textarea, video, audio, .postUser, .PostHabit, .PostBottom, .postMediaArea, .AccPostComments"
                 )) return;
-                navigate(`/post/${post.id}`);
+                navigate(postPath);
             }}
             data-context-menu="true"
             onContextMenu={e => {
@@ -149,7 +150,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                     openPostMenu(event.clientX, event.clientY);
                 }}>
                     <button type="button" className="postUser" data-context-menu="true" data-context-menu-allow-button="true"
-                        onClick={() => navigate('/acc/' + post.user.nick)}
+                        onClick={() => navigate('/acc/' + post.user.nick + (token ? '?share=' + encodeURIComponent(token) : ''))}
                         onContextMenu={event => {
                             event.preventDefault();
                             event.stopPropagation();
@@ -179,11 +180,11 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                 {!expanded && <button
                     className={`postReadMore ${truncated ? "" : "postOpenLink"}`}
                     type="button"
-                    onClick={() => navigate(`/post/${post.id}`)}
+                    onClick={() => navigate(postPath)}
                 >
                     {t(truncated ? "post.readMore" : "post.open")}
                 </button>}
-                {post.habit && <div className="PostHabit" onClick={() => navigate(`/habit/${post.habit?.id}`)}>
+                {post.habit && <div className="PostHabit" onClick={() => navigate(`/habit/${post.habit?.id}${token ? "?share=" + encodeURIComponent(token) : ""}`)}>
                     <div className="aphIcon">
                         {habitIcon(post.habit)}
                     </div>
@@ -213,7 +214,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                         </div>
                         <div className="PostComment" onClick={() => {
                             if (expanded) document.getElementById("comments")?.scrollIntoView({ block: "start" });
-                            else navigate(`/post/${post.id}#comments`);
+                            else navigate(postPath + "#comments");
                         }}>
                             <ChatCircle />
                             <span>
