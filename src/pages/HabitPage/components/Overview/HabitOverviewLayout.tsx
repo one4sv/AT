@@ -10,6 +10,8 @@ import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { clockInAppZone, formatDateLabel, todayStrFunc } from "../../../../components/ts/utils/dateToStr";
 import { makeDayEntries, describeDayTime, type DayEntry } from "../../../../components/ts/utils/dayTimeline";
 import { tags } from "../../../../components/ts/tags";
+import ActivityIndicators, { type HabitDayProgress } from "../../../../components/ts/ActivityIndicators";
+import useHabitDayProgress from "../../../../components/hooks/utils/useHabitDayProgress";
 import { getOverviewFocus, getOverviewNext } from "./dayFocus";
 import Calendar from "../Calendar/Calendar";
 import HabitOverviewEntries from "./HabitOverviewEntries";
@@ -63,7 +65,11 @@ function UpcomingSkeleton() {
     </div>;
 }
 
-function OverviewFocusCard({ entry, label, more = 0 }: { entry: DayEntry; label: string; more?: number }) {
+function OverviewFocusCard({ entry, label, more = 0, calendar, progress }: {
+    entry: DayEntry; label: string; more?: number;
+    calendar: ReturnType<typeof useCalendar>["calendar"];
+    progress?: HabitDayProgress;
+}) {
     const { t } = useTranslation("common");
     const navigate = useNavigate();
     const tag = tags.find(item => item.value === (entry.kind === "plan" ? entry.plan?.tag : entry.habit?.tag));
@@ -76,7 +82,10 @@ function OverviewFocusCard({ entry, label, more = 0 }: { entry: DayEntry; label:
             <div className="habitOverviewCurrentRow">
                 {Icon && <Icon className="habitOverviewFocusIcon"/>}
                 <div className="habitOverviewCurrentDetails">
-                    <span>{entry.name}{more > 0 && <b> +{more}</b>}</span>
+                    <span className="habitOverviewCurrentTitle">
+                        <span className="activityName">{entry.name}{more > 0 && <b> +{more}</b>}</span>
+                        <ActivityIndicators habit={entry.habit} plan={entry.plan} calendar={calendar} progress={progress}/>
+                    </span>
                     <small>{describeDayTime(entry, t)}</small>
                 </div>
             </div>
@@ -91,6 +100,7 @@ export default function HabitOverviewLayout() {
     const { plans, loadingPlans } = usePlans();
     const { openMenu } = useContextMenu();
     const { setBlackout } = useBlackout();
+    const dayProgress = useHabitDayProgress(chosenDay);
     const [view, setView] = useState<"all" | "activities" | "plans">("all");
     const entries = useMemo(() => makeDayEntries(chosenDay, habits, plans, calendar),
         [chosenDay, habits, plans, calendar]);
@@ -137,10 +147,12 @@ export default function HabitOverviewLayout() {
                 </div>
                 <p>{t("plans.completedCount", { done: completedCount, total: entries.length })}</p>
                 <p>{t("plans.remainingCount", { count: entries.length - completedCount })}</p>
-                {focus && <OverviewFocusCard entry={focus.entry} more={focus.more}
+                {focus && <OverviewFocusCard entry={focus.entry} more={focus.more} calendar={calendar}
+                    progress={focus.entry.habit ? dayProgress[String(focus.entry.habit.id)] : undefined}
                     label={t(focus.kind === "dayStart" ? "plans.dayStart" :
                         focus.entry.kind === "plan" ? "plans.currentPlan" : "plans.currentActivity")}/>}
-                {nextEntry && <OverviewFocusCard entry={nextEntry}
+                {nextEntry && <OverviewFocusCard entry={nextEntry} calendar={calendar}
+                    progress={nextEntry.habit ? dayProgress[String(nextEntry.habit.id)] : undefined}
                     label={t(nextEntry.kind === "plan" ? "plans.nextPlan" : "plans.nextActivity")}/>}
             </>}
         </div>
