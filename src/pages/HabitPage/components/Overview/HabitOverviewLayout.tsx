@@ -1,4 +1,5 @@
 import { useMemo, useState, type MouseEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PlusIcon } from "@phosphor-icons/react";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
@@ -64,12 +65,14 @@ function UpcomingSkeleton() {
 
 function OverviewFocusCard({ entry, label, more = 0 }: { entry: DayEntry; label: string; more?: number }) {
     const { t } = useTranslation("common");
+    const navigate = useNavigate();
     const tag = tags.find(item => item.value === (entry.kind === "plan" ? entry.plan?.tag : entry.habit?.tag));
     const Icon = tag?.icon;
 
     return <div className="habitOverviewFocusGroup">
         <small className="habitOverviewFocusLabel">{label}</small>
-        <div className="habitOverviewCurrent">
+        <button type="button" className="habitOverviewCurrent"
+            onClick={() => navigate(entry.kind === "plan" ? `/plan/${entry.plan!.id}` : `/habit/${entry.habit!.id}`)}>
             <div className="habitOverviewCurrentRow">
                 {Icon && <Icon className="habitOverviewFocusIcon"/>}
                 <div className="habitOverviewCurrentDetails">
@@ -77,7 +80,7 @@ function OverviewFocusCard({ entry, label, more = 0 }: { entry: DayEntry; label:
                     <small>{describeDayTime(entry, t)}</small>
                 </div>
             </div>
-        </div>
+        </button>
     </div>;
 }
 
