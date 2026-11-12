@@ -88,7 +88,7 @@ test("calendar shares ordinary planned marker with plans and schedule includes p
 test("plan date in SideMenu uses the existing date-format helper rather than ISO", () => {
     const list = readFileSync(new URL("../src/components/ts/SM/HabitsList.tsx", import.meta.url), "utf8");
     const dates = readFileSync(new URL("../src/components/ts/utils/dateToStr.ts", import.meta.url), "utf8");
-    assert.match(list, /import \{ formatDateFromString, relativePlanDay \} from "\.\.\/utils\/dateToStr"/);
+    assert.match(list, /import \{ formatDateFromString, relativePlanDay, shiftCalendarDay, todayStrFunc \} from "\.\.\/utils\/dateToStr"/);
     assert.match(list, /relativePlanDay\(entry\.date, t\) \|\| formatDateFromString\(entry\.date\)/);
     assert.match(list, /formatDateFromString\(entry\.date\)/);
     assert.doesNotMatch(list, /\{entry\.date\} ·/);
