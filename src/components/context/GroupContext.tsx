@@ -14,6 +14,7 @@ export interface GroupContextType {
     refetchGroupWLoading:(id:string) => Promise<void>,
     group:Group,
     habits:Habit[],
+    plans:GroupPlan[],
     members:Member[],
     media:Media[],
     groupLoading:boolean,
@@ -21,6 +22,13 @@ export interface GroupContextType {
     setNewAva:React.Dispatch<React.SetStateAction<File | undefined>>,
     myPerms:Perms | null
 } 
+export interface GroupPlan {
+    id: number;
+    name: string;
+    plan_date: string;
+    tag?: string | null;
+    status: string;
+}
 export interface Member {
     id: string,
     name: string | null,
@@ -65,6 +73,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
     const [ media, setMedia ] = useState<Media[]>([]);
     const [ members, setMembers ] = useState<Member[]>([]);  
     const [ habits, setHabits ] = useState<Habit[]>([]);
+    const [ plans, setPlans ] = useState<GroupPlan[]>([]);
     const [ groupLoading, setGroupLoading ] = useState<boolean>(false);
     const [ myPerms, setMyPerms ] = useState<Perms | null>(null)
     const [ newAva, setNewAva ] = useState<File | undefined>(undefined);
@@ -75,6 +84,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
             if (res.data.success) {
                 setGroup(res.data.group);
                 setHabits(res.data.habits);
+                setPlans(res.data.plans || []);
                 const sortedMembers = res.data.members.slice().sort((a: Member, b: Member) => {
                     const onlineA = onlineMap[a.id] || false;
                     const onlineB = onlineMap[b.id] || false;
@@ -125,7 +135,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
     }, [group.id, refetchGroup]);
 
     return (
-        <GroupContext.Provider value={{ refetchGroup, group, habits, members, media, groupLoading, refetchGroupWLoading, newAva, setNewAva, myPerms }}>
+        <GroupContext.Provider value={{ refetchGroup, group, habits, plans, members, media, groupLoading, refetchGroupWLoading, newAva, setNewAva, myPerms }}>
         {children}
         </GroupContext.Provider>
     );
