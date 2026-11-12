@@ -20,7 +20,7 @@ export interface DoneContextType {
 
 export const DoneProvider = ({ children }: { children: ReactNode }) => {
     const { loadHabit, setIsDone, habit, habitTimer, setDayComment, setShowCounter, setShowTimer, setDoable, setPlanable, setIsPlanned } = useTheHabit();
-    const { fetchCalendarHabit, fetchCalendarUser, chosenDay, calendar, timers, counters } = useCalendar();
+    const { fetchCalendarHabit, fetchCalendarUser, fetchAllCalendar, chosenDay, calendar, timers, counters } = useCalendar();
     const { refetchHabits, habits } = useHabits();
 
     const [waitDoneAnswer, setWaitDoneAnswer] = useState(false);
@@ -28,6 +28,7 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
 
     // DoneProvider is mounted above <Routes>, where useParams has no route match.
     const id = useMatch("/habit/:habitId")?.params.habitId;
+    const useAllDayTimeline = !id;
 
   // ==================== МАРКИРОВКА ВЫПОЛНЕНИЯ ====================
     const markDone = async (id: number, date: string) => {
@@ -36,11 +37,16 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
             if (res.data.success) {
                 window.dispatchEvent(new Event("habit-day-comment-updated"));
                 window.dispatchEvent(new Event("habit-progress-updated"));
-                if (habit && habit.id === Number(id)) {
-                    loadHabit(id.toString());
-                    fetchCalendarHabit(id.toString());
+                if (habit?.id === Number(id)) {
+                    void loadHabit(id.toString());
+                    void fetchCalendarHabit(id.toString());
                 }
-                if (!habit || habit.id === Number(id)) fetchCalendarUser();
+                // The all-activities modal can toggle *any* habit, including
+                // one that is not the currently open /habit/:id.
+                // Always refresh its calendar without replacing a single-habit
+                // page's own history with a different activity's history.
+                if (useAllDayTimeline) void fetchCalendarUser();
+                else void fetchAllCalendar();
             }
             if (habitTimer && habitTimer.status !== "ended") {
                 await api.post(`timer/stop`, {
