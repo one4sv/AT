@@ -1,4 +1,7 @@
+import { useMemo } from "react";
 import RadioGroup from "../../../../components/ts/RadioGroup";
+import SelectList from "../../../../components/ts/SelectList";
+import { browserTimeZone } from "../../../../components/ts/utils/dateToStr";
 import SeekBar from "../SeekBar";
 import { Link } from "react-router-dom";
 import { TranslateIcon, CaretRightIcon } from "@phosphor-icons/react";
@@ -14,10 +17,29 @@ import useCompactLayout from "../../../../components/hooks/utils/useCompactLayou
 export default function GeneralTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const isMobile = useCompactLayout();
-    const { fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat,
+    const { fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat, timeZone, setTimeZone,
         autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
         startupPage, setStartupPage, showMobileMenuOnStart, setShowMobileMenuOnStart,
         startupSideMenuTab, setStartupSideMenuTab } = useSettings();
+
+    const timeZones = useMemo(() => {
+        const device = browserTimeZone();
+        const zones = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") :
+            ["UTC", "Europe/Luxembourg", "Europe/London", "Europe/Berlin", "Europe/Moscow", "Asia/Yekaterinburg",
+                "Asia/Novosibirsk", "Asia/Vladivostok", "Asia/Tokyo", "Asia/Dubai", "America/New_York", "America/Los_Angeles"];
+        const items = [...new Set(["UTC", device, timeZone, ...zones].filter(zone => zone !== "auto"))].sort();
+        const now = new Date();
+        const labels = items.map(zone => {
+            try {
+                const offset = new Intl.DateTimeFormat("en-US", { timeZone: zone, timeZoneName: "shortOffset" })
+                    .formatToParts(now).find(part => part.type === "timeZoneName")?.value || "GMT";
+                return { value: zone, label: `${zone} (${offset.replace("GMT", "UTC")})` };
+            } catch {
+                return { value: zone, label: zone };
+            }
+        });
+        return [{ value: "auto", label: t("general.timeZoneAuto", { zone: device }) }, ...labels];
+    }, [t, timeZone]);
 
     const timeChanger = [
         { label: t("general.twentyFour"), value: "twentyFour" },
@@ -103,6 +125,14 @@ export default function GeneralTab({ search }: { search: string }) {
                     </div>
                     <RadioGroup list={dateChanger} val={dateFormat} newVal={value => setDateFormat(value === "american" ? "american" : "standart")} id="dateFormat"/>
                 </div>
+                <div className="settingInnerWrapper" data-setting-id="timeZone">
+                    <div className="settingSpan">
+                        <HighlightText text={t("general.timeZone")} search={search}/>
+                    </div>
+                    <SelectList className="generalTimeZoneSelect" id="timeZone"
+                        selected={timeZone} arr={timeZones} onChange={setTimeZone}/>
+                </div>
+                <div className="settingHint">{t("general.timeZoneHint")}</div>
                 <div className="settingInnerWrapper">
                     <div className="settingSpan">
                         <HighlightText text={t("general.timeFormat")} search={search} />
