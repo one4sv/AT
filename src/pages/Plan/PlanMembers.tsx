@@ -75,7 +75,10 @@ export default function PlanMembers({ plan, onChanged }: {
                         {plan.is_owner && !owner && plan.status === "upcoming" && <button type="button"
                             className="planMemberRemove" disabled={working}
                             aria-label={t(pending ? "plans.revokeInvitation" : "plans.removeParticipant")}
-                            onClick={() => setRemoving(current => current === member.id ? null : member.id)}>
+                            onClick={event => {
+                                event.stopPropagation();
+                                setRemoving(current => current === member.id ? null : member.id);
+                            }}>
                             <XIcon size={20}/>
                         </button>}
                     </div>

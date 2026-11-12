@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { CalendarBlankIcon, ClockIcon, MapPinIcon, CheckCircleIcon, CircleIcon, TrashIcon } from "@phosphor-icons/react";
 import { api } from "../../components/ts/api";
@@ -27,6 +27,7 @@ export default function PlanPage() {
     const { planId } = useParams<{ planId: string }>();
     const { t } = useTranslation("common");
     const navigate = useNavigate();
+    const { search } = useLocation();
     const isCompact = useCompactLayout();
     const [mobileOpen, setMobileOpen] = useState<"done" | "comment">("done");
     const { plans, refreshPlans } = usePlans();
@@ -51,9 +52,9 @@ export default function PlanPage() {
         setConfirmDelete(false);
         setCompletionOpen(false);
     }, [planId]);
-    const load = async () => {
+    const load = async (showSkeleton = false) => {
         if (!planId) return;
-        setLoading(true);
+        if (showSkeleton) setLoading(true);
         try {
             const res = await api.get("plans/" + planId, { params: { share: new URLSearchParams(window.location.search).get("share") || undefined } });
             if (!res.data.success) throw new Error();
@@ -62,13 +63,13 @@ export default function PlanPage() {
         } catch {
             setError(t("plans.loadError"));
         } finally {
-            setLoading(false);
+            if (showSkeleton) setLoading(false);
         }
     };
     useEffect(() => {
-        void load();
+        void load(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [planId]);
+    }, [planId, search]);
     useEffect(() => {
         const onMembersUpdated = () => { void load(); };
         window.addEventListener("plan-members-updated", onMembersUpdated);

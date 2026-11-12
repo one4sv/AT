@@ -196,6 +196,7 @@ export default function HabitDiv({
     };
     if (isMyAcc === undefined) isMyAcc = true;
     const periodicityText = ruPeriodicity(habit);
+    const inheritedShare = !isMyAcc ? new URLSearchParams(window.location.search).get("share") : null;
 
     return (
         <Link
@@ -216,7 +217,7 @@ export default function HabitDiv({
                 }
                 closeMenu();
             }}
-            to={`/habit/${habit.id}`}
+            to={`/habit/${habit.id}${inheritedShare ? "?share=" + encodeURIComponent(inheritedShare) : ""}`}
             data-context-menu={onSelect ? undefined : "true"}
             onContextMenu={e => {
                 e.preventDefault();
