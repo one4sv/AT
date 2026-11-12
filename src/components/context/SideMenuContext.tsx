@@ -15,6 +15,7 @@ import { useHabits } from "../hooks/HabitsHook";
 import { usePlans } from "../hooks/PlansHook";
 import { shiftCalendarDay, todayStrFunc } from "../ts/utils/dateToStr";
 import { useSettings } from "../hooks/SettingsHook";
+import { useUser } from "../hooks/UserHook";
 import { filterHabitsByOrder } from "../ts/utils/filteredHabitsByOrder";
 import useCompactLayout from "../hooks/utils/useCompactLayout";
 
@@ -68,13 +69,14 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const { habits, newOrderHabits } = useHabits()
     const { plans } = usePlans()
     const { showArchived, layout, settingsLoaded, showMobileMenuOnStart, startupSideMenuTab } = useSettings();
+    const { user, initialLoading } = useUser();
     const isCompact = useCompactLayout();
     const location = useLocation();
     const restrictedStartupPath = location.pathname.startsWith("/settings") ||
         location.pathname.startsWith("/info") || location.pathname.startsWith("/wallpapers");
-    const initiallyClosed = isCompact
+    const initiallyClosed = initialLoading || !user.id || (isCompact
         ? !showMobileMenuOnStart || restrictedStartupPath
-        : layout === "hidden" && restrictedStartupPath;
+        : layout === "hidden" && restrictedStartupPath);
 
     const [showSideMenu, setShowSideMenu] = useState(() => initiallyClosed ? false : isCompact || layout !== "hidden");
     const [red, setRed] = useState(false);
@@ -217,13 +219,13 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const mobileStartupApplied = useRef(false);
 
     useLayoutEffect(() => {
-        if (!isCompact || !settingsLoaded || mobileStartupApplied.current) return;
+        if (!isCompact || !settingsLoaded || !user.id || mobileStartupApplied.current) return;
         mobileStartupApplied.current = true;
         setActiveTab(startupSideMenuTab);
         const shouldOpen = showMobileMenuOnStart && !restrictedStartupPath;
         setShowSideMenu(shouldOpen);
         setTranslateX(shouldOpen ? 0 : -100);
-    }, [isCompact, settingsLoaded, showMobileMenuOnStart, startupSideMenuTab, restrictedStartupPath, setTranslateX]);
+    }, [isCompact, settingsLoaded, user.id, showMobileMenuOnStart, startupSideMenuTab, restrictedStartupPath, setTranslateX]);
 
     // Allow the initial cached tab/late account hydration to settle before any slide animation.
     useEffect(() => {
@@ -280,6 +282,22 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         animationFrame.current = requestAnimationFrame(animate);
     }, []);
 
+    // An anonymous session never opens SM automatically. On logout stop any
+    // in-flight animation and immediately reset the previous account's menu.
+    useLayoutEffect(() => {
+        if (initialLoading || user.id) return;
+        if (animationFrame.current !== null) {
+            cancelAnimationFrame(animationFrame.current);
+            animationFrame.current = null;
+        }
+        mobileStartupApplied.current = false;
+        setIsDragging(false);
+        setDontHandle(false);
+        setDontHandleOther(false);
+        setShowSideMenu(false);
+        setTranslateX(-100);
+    }, [initialLoading, user.id, setTranslateX]);
+
     useEffect(() => {
         if (isDragging && animationFrame.current !== null) {
             cancelAnimationFrame(animationFrame.current);
@@ -325,6 +343,10 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const studio = location.pathname.startsWith("/wallpapers");
 
     useEffect(() => {
+        if (!user.id) {
+            previousMode.current = null;
+            return;
+        }
         const mode = studio ? `wallpapers:${isCompact ? "compact" : layout}` : `${isCompact ? "compact" : "desktop"}:${layout}`;
         if (previousMode.current === mode) return;
         previousMode.current = mode;
@@ -336,7 +358,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         if (isCompact) return;
         if (layout === "hidden") closeMenu();
         else openSideMenu();
-    }, [isCompact, layout, studio, closeMenu, openSideMenu]);
+    }, [isCompact, layout, studio, user.id, closeMenu, openSideMenu]);
 
     useEffect(() => {
         if (previousPath.current === null) {

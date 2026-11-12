@@ -74,6 +74,11 @@ body {
     // rendered after Header and would otherwise cover it.
 }
 
+.app-layout.smGuest .page-content {
+    left: 0;
+    width: 100%;
+}
+
 .background {
     position: absolute;
     inset: 0;

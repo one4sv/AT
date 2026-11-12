@@ -160,7 +160,7 @@ export default function MainLayout({ children }: LayoutProps) {
   }, [activeHeader, answer, blackout.seted, chosenDay, editing, location.pathname, mainSearchRef, navigate, redirect, search.length, searchInputRef, searchMess.length, setActiveHeader, setAnswer, setBlackout, setChosenDay, setChosenMess, setEditing, setRedirect, setSearch, setSearchMess, setShowSlide, showHabitMenu, user.id, user.nick]);
 
   return (
-    <div className="app-layout">
+    <div className={`app-layout ${!user.id ? "smGuest" : ""}`}>
       <SMheader/>
       <SideMenu />
       <SMnav/>

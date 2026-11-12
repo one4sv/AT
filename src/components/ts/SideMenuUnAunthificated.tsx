@@ -25,10 +25,7 @@ export default function SideMenuUnAunthificated({
     const { t } = useTranslation("common");
     const { showSideMenu } = useSideMenu();
     const { setNewTheme } = useUpSettings();
-    const {
-        isDark,
-        layout
-    } = useSettings();
+    const { isDark } = useSettings();
 
     return (
         <div
@@ -39,7 +36,8 @@ export default function SideMenuUnAunthificated({
             onTouchEnd={isMobile ? onTouchE : undefined}
             onTouchCancel={onTouchCancel}
             style={{
-                transform: isMobile || layout === "hidden" || window.innerWidth <= 800 ? `translateX(${translateX}%)` : "none"
+                transform: `translateX(${translateX}%)`,
+                pointerEvents: !showSideMenu ? "none" : undefined
             }}
         >
             <div className="sideMenuUnAthorised">
