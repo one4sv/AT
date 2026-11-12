@@ -9,13 +9,16 @@ import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { describeDayTime, type DayEntry } from "../../../../components/ts/utils/dayTimeline";
 import { api } from "../../../../components/ts/api";
 import SectionArt from "../../../../components/ts/SectionArt";
+import ActivityIndicators from "../../../../components/ts/ActivityIndicators";
+import useHabitDayProgress from "../../../../components/hooks/utils/useHabitDayProgress";
 
 export default function HabitOverviewEntries({ entries, view = "all" }: {
     entries: DayEntry[];
     view?: "all" | "activities" | "plans";
 }) {
     const { t } = useTranslation("common");
-    const { chosenDay } = useCalendar();
+    const { chosenDay, calendar } = useCalendar();
+    const progress = useHabitDayProgress(chosenDay);
     const { markDone } = useDone();
     const { refreshPlans } = usePlans();
     const { blackout, setBlackout } = useBlackout();
@@ -59,7 +62,11 @@ export default function HabitOverviewEntries({ entries, view = "all" }: {
                 onClick={() => openEntry(entry)}>
                 <span className={"calendarDot " + entry.state}/>
                 <span className="habitOverviewEntryInfo">
-                    <span className="habitOverviewEntryName">{entry.name}</span>
+                    <span className="habitOverviewEntryName">
+                        <span className="activityName">{entry.name}</span>
+                        <ActivityIndicators habit={entry.habit} plan={entry.plan} calendar={calendar}
+                            progress={entry.habit ? progress[String(entry.habit.id)] : undefined}/>
+                    </span>
                     <small>{describeDayTime(entry, t)}</small>
                 </span>
             </button>
