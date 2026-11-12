@@ -58,7 +58,9 @@ test("settings and date consumers use the central timezone", () => {
     assert.match(context, /settings_time_zone/);
     assert.match(context, /dataset\.timeZone/);
     assert.match(general, /SelectList className="generalTimeZoneSelect"/);
-    assert.match(general, /Intl\.supportedValuesOf/);
+    assert.match(general, /const representative = new Map<number, string>\(\)/);
+    assert.match(general, /for \(let hour = -12; hour <= 14; hour\+\+\)/);
+    assert.match(general, /representative\.set\(minutes, timeZone\)/);
     assert.match(overview, /clockInAppZone\(\)/);
     assert.match(chat, /dateInAppZone/);
     assert.match(schedule, /clockInAppZone/);
