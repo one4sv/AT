@@ -79,7 +79,7 @@ function getAnchorDate(groupType: string, day: string): string {
 }
 
 function formatGroupLabel(groupType: string, day: string, locale: string): string {
-    const date = new Date(getAnchorDate(groupType, day))
+    const date = new Date(getAnchorDate(groupType, day) + "T12:00:00")
 
     const month = String(date.getMonth() + 1).padStart(2, "0")
     const year = date.getFullYear()
@@ -93,7 +93,7 @@ function formatGroupLabel(groupType: string, day: string, locale: string): strin
         return i18n.t("habitPageUi.charts.weekLabel", { ns: "common", week, month })
     }
 
-    return `${formatShortDateFromString(day)} ${new Intl.DateTimeFormat(locale, { weekday: "short" }).format(new Date(day)).replace(".", "")}`
+    return `${formatShortDateFromString(day)} ${new Intl.DateTimeFormat(locale, { weekday: "short" }).format(new Date(day + "T12:00:00")).replace(".", "")}`
 }
 
 function buildCalendarIndex(calendar: Calendar[]) {
@@ -154,9 +154,9 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
             for (const day of groupItem.days) {
                 let dayHasPlannedHabit = false
                 if (id && habit) {
-                    const habitStart = new Date(habit.start_date)
-                    const habitEnd = habit.end_date ? new Date(habit.end_date) : null
-                    const d = new Date(day)
+                    const habitStart = new Date(habit.start_date + "T12:00:00")
+                    const habitEnd = habit.end_date ? new Date(habit.end_date + "T12:00:00") : null
+                    const d = new Date(day + "T12:00:00")
                     if (d < habitStart || (habitEnd && d > habitEnd)) {
                         free++
                         continue
@@ -191,11 +191,11 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
                     if (!habits) continue
 
                     for (const currentHabit of habits) {
-                        const habitStart = new Date(currentHabit.start_date)
+                        const habitStart = new Date(currentHabit.start_date + "T12:00:00")
                         const habitEnd = currentHabit.end_date
-                            ? new Date(currentHabit.end_date)
+                            ? new Date(currentHabit.end_date + "T12:00:00")
                             : end
-                        const d = new Date(day)
+                        const d = new Date(day + "T12:00:00")
 
                         if (d < habitStart || d > habitEnd) continue
 
@@ -324,7 +324,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
 
             setChosenDay(selectedDate)
 
-            const d = new Date(selectedDate)
+            const d = new Date(selectedDate + "T12:00:00")
 
             setSelectedMonth(d.getMonth())
             setSelectedYear(d.getFullYear())
