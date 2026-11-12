@@ -72,9 +72,9 @@ export default function HabitOverviewEntries({ entries, view = "all" }: {
                 <span className="habitOverviewEntryInfo">
                     <span className="habitOverviewEntryName">
                         <span className="activityName">{entry.name}</span>
-                        <ActivityIndicators part="streak" habit={entry.habit} calendar={calendar}/>
+                        <ActivityIndicators part="streak" habit={entry.habit} plan={entry.plan} calendar={calendar}/>
                         {entry.habit?.pinned && <PushPinIcon className="pinnedHabitSign" weight="fill" size={14}/>}
-                        <ActivityIndicators part="aside" habit={entry.habit} plan={entry.plan}
+                        <ActivityIndicators part="aside" habit={entry.habit}
                             progress={entry.habit ? progress[String(entry.habit.id)] : undefined}/>
                     </span>
                     <small>{describeEntrySubtitle(entry, t)}</small>
