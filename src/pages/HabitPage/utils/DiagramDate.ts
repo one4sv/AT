@@ -19,7 +19,7 @@ export function getDateRange(filter: string, startDate?: string) {
             start.setDate(end.getDate() - 364)
             break
         case "all":
-            if (startDate) start = new Date(startDate)
+            if (startDate) start = new Date(startDate + "T12:00:00")
             break
     }
     return { start, end }
