@@ -168,3 +168,10 @@ AddHabit + AddPlan используют нативный time picker (без р�
 ## 12.11.2026 — восстановлена верстка ChosenDayDate в центральном блоке
 
 По прямому требованию автора оформление `ChosenDay.scss` для `.chosenDayDate` и `.calendarReturn` возвращено к состоянию 09.11.2026 (`height:4dvh`, `align-items:flex-start`, прежние отступы). Текст `formatDateLabel(chosenDay)` с «Сегодня/Завтра» и датой сохраняется. Регрессионный тест `tests/day-timeline.test.mjs` обновлён под это состояние.
+
+## 12.11.2026 — часовые пояса, общий SelectList и hover участников плана
+
+- `GeneralTab.tsx`: вместо сотен названий зон предлагается по одному представителю на каждый целочасовой UTC offset от −12 до +14 (с учётом актуального DST), сохраняется `auto` и ранее выбранный IANA пояс; проверять корректность после смены зимнего/летнего времени, особенно ранее сохранённых нецелочасовых зон.
+- `SelectList.tsx`/`SelectList.scss`: выпадающая часть перенесена в `createPortal(document.body)`, чтобы `overflow`/анимации/соседние настройки не перекрывали popup. Класс варианта сохраняется на портальном корне. Ширина и направление пересчитываются от исходного input, popup выше соседних блоков с полупрозрачным `var(--bgc)` и `backdrop-filter: blur(9px)` (WebKit тоже). Следить за `PageBottom`, мобильной клавиатурой, раскрытием вверх и кликом внутри Blackout; живую Safari/iPhone-проверку пока не заявлять.
+- `PlanPage.scss`: hover строк `.planMember` использует `var(--mc)` поверх `var(--interact)` у `.planMembers`. **Это участники плана, не беседы**; `GroupMembers.scss` в рамках задачи не менялся.
+- Обновлены `tests/timezone.test.mjs`, `tests/select-list-modal-styles.test.mjs`, `tests/e2e/settings.spec.ts` и `tests/plan-ui.test.mjs`. CI `npm run build` прошёл; полная браузерная проверка актуального SHA и реального iPhone требуется отдельно.
