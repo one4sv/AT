@@ -128,7 +128,7 @@ test("future day without times still displays the next pending plan", () => {
 test("overview focus labels are outside cards and both kinds use the same tag icon registry", () => {
     const overview = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
     const css = read("src/pages/HabitPage/scss/HabitOverview.scss");
-    const sideMenu = read("src/components/ts/SM/HabitsList.tsx");
+    const sideMenu = read("src/components/ts/Plan.tsx");
     assert.match(overview, /className="habitOverviewFocusLabel"/);
     assert.match(overview, /const tag = tags\.find/);
     assert.match(overview, /getOverviewNext\(/);
@@ -192,7 +192,7 @@ test("SideMenu streaks use full calendar even on a single activity route", () =>
 
 test("streak follows the activity name and pin, while member count stays on the right", () => {
     const habit = read("src/components/ts/Habit.tsx");
-    const sm = read("src/components/ts/SM/HabitsList.tsx");
+    const sm = read("src/components/ts/Plan.tsx");
     const focus = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
     const upcoming = read("src/pages/HabitPage/components/Overview/HabitOverviewEntries.tsx");
     const badges = read("src/components/ts/ActivityIndicators.tsx");
@@ -224,7 +224,7 @@ test("streak follows the activity name and pin, while member count stays on the 
         '<PushPinIcon className="pinnedHabitSign"',
         '<ActivityIndicators part="aside"'
     ]);
-    assert.match(sm, /<ActivityIndicators part="streak" plan=\{entry\.plan\}/);
+    assert.match(sm, /<ActivityIndicators part="streak" plan=\{plan\}/);
     assert.match(sm, /CheckCircleIcon className="habitHLStatus"/);
     assert.match(badges, /part === "streak" \? "activityIndicatorsInline" : "activityIndicatorsTrailing"/);
     assert.match(css, /&\.activityIndicatorsInline\s*\{\s*margin-left: 0;/);
@@ -262,7 +262,7 @@ test("plan and activity invitation share the same modal and contact selection co
 
 test("plan PathIcon is next to the name, completion ratio stays on first row, and tag/title gap is zero", () => {
     const indicators = read("src/components/ts/ActivityIndicators.tsx");
-    const sm = read("src/components/ts/SM/HabitsList.tsx");
+    const sm = read("src/components/ts/Plan.tsx");
     const focus = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
     const upcoming = read("src/pages/HabitPage/components/Overview/HabitOverviewEntries.tsx");
     const smStyle = read("src/scss/SM/habitsList.scss");
@@ -270,7 +270,7 @@ test("plan PathIcon is next to the name, completion ratio stays on first row, an
     const badgesStyle = read("src/scss/ActivityIndicators.scss");
     assert.match(indicators, /showStreak && plan && <PathIcon/);
     assert.doesNotMatch(indicators, /showAside && plan && <PathIcon/);
-    assert.match(sm, /<ActivityIndicators part="streak" plan=\{entry\.plan\}/);
+    assert.match(sm, /<ActivityIndicators part="streak" plan=\{plan\}/);
     assert.match(focus, /<ActivityIndicators part="streak" habit=\{entry\.habit\} plan=\{entry\.plan\}/);
     assert.match(upcoming, /<ActivityIndicators part="streak" habit=\{entry\.habit\} plan=\{entry\.plan\}/);
     assert.match(focus, /<ActivityIndicators part="aside" habit=\{entry\.habit\} progress=\{progress\}/);
