@@ -5,12 +5,13 @@ import { useUser } from "../../../components/hooks/UserHook"
 import { useIdentify } from "../../../components/hooks/utils/useIdentify"
 import { useChat } from "../../../components/hooks/ChatHook"
 import HighlightText from "../../../components/ts/HighlightText"
+import { formatAppDate } from "../../../components/ts/utils/dateToStr";
 
 interface ChatUserListType {
     m:message
 }
 export default function UserInChatUserList({m}:ChatUserListType) {
-    const { t, i18n } = useTranslation("common");
+    const { t } = useTranslation("common");
     const { user } = useUser()
     const { chatWith } = useChat()
     const { searchMess } = useChat()
@@ -35,7 +36,7 @@ export default function UserInChatUserList({m}:ChatUserListType) {
             <div className="chatSearchItemInfo">
                 <div className="chatSearcSender">
                     <span className="chatSearchName">{isMy ? t("chatUi.you") : (m.sender_name || m.sender_nick)}</span>
-                    <span className="chatSearchDate">{new Date(m.created_at).toLocaleDateString(i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU")}</span>
+                    <span className="chatSearchDate">{formatAppDate(m.created_at)}</span>
                 </div>
                 <div className="chatSearchText">
                     <span>
