@@ -38,21 +38,24 @@ export function getHabitStreakBadge(habit: Habit, calendar: Calendar[], today = 
     return view?.showCount && view.count > 0 ? { count: view.count, level: view.cl } : null;
 }
 
-export default function ActivityIndicators({ habit, plan, calendar, progress }: {
+export default function ActivityIndicators({ habit, plan, calendar, progress, part = "all" }: {
     habit?: Habit;
     plan?: OneOffPlan;
     calendar?: Calendar[];
     progress?: HabitDayProgress;
+    part?: "streak" | "aside" | "all";
 }) {
-    const streak = habit && calendar ? getHabitStreakBadge(habit, calendar) : null;
-    const shared = habit && progress && (progress.total > 1 || Boolean(habit.chat_id));
-    if (!streak && !plan && !shared) return null;
-    return <span className="activityIndicators">
-        {plan && <PathIcon className="activityPlanPath" size={18} aria-hidden="true"/>}
+    const showStreak = part !== "aside";
+    const showAside = part !== "streak";
+    const streak = showStreak && habit && calendar ? getHabitStreakBadge(habit, calendar) : null;
+    const shared = showAside && habit && progress && (progress.total > 1 || Boolean(habit.chat_id));
+    if (!streak && !(showAside && plan) && !shared) return null;
+    return <span className={`activityIndicators ${part === "streak" ? "activityIndicatorsInline" : "activityIndicatorsTrailing"}`}>
         {streak && <span className={`activityStreak ${streak.level}`} title={String(streak.count)}>
             <FireIcon weight="fill" size={17} aria-hidden="true"/>
             <span>{streak.count}</span>
         </span>}
         {shared && <span className="activityMembersCount">{progress.completed}/{progress.total}</span>}
+        {showAside && plan && <PathIcon className="activityPlanPath" size={18} aria-hidden="true"/>}
     </span>;
 }
