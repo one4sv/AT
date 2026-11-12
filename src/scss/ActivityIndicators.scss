@@ -1,0 +1,74 @@
+.activityIndicators {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: .5vw;
+    margin-left: auto;
+    font-size: 14px;
+    white-space: nowrap;
+
+    > .activityPlanPath {
+        color: var(--accent_text);
+        flex-shrink: 0;
+    }
+}
+.activityStreak {
+    display: inline-flex;
+    align-items: center;
+    gap: .15vw;
+    flex-shrink: 0;
+    color: #ffc400;
+
+    &.warn { color: var(--tc); }
+    &.week { color: #ff8800; }
+    &.half { color: red; }
+    &.month { color: #2ed118; }
+    &.comp { color: #4DA3FF; }
+    &.max { color: #892dd4; }
+
+    > svg {
+        color: inherit;
+        flex-shrink: 0;
+    }
+    > span { color: inherit; }
+}
+.activityMembersCount {
+    color: var(--borderWh);
+    flex-shrink: 0;
+}
+.habit.active .activityIndicators,
+.habit.active .activityIndicators .activityStreak,
+.habit.active .activityIndicators .activityStreak svg,
+.habit.active .activityIndicators .activityStreak span,
+.habit.active .activityIndicators .activityMembersCount,
+.habit.active .activityIndicators .activityPlanPath {
+    color: var(--inner_text);
+}
+.habitOverviewEntryName,
+.habitOverviewCurrentTitle {
+    display: flex;
+    align-items: center;
+    gap: .5vw;
+    min-width: 0;
+}
+.habitOverviewEntryName > .activityIndicators,
+.habitOverviewCurrentTitle > .activityIndicators {
+    margin-left: auto;
+}
+.habitOverviewCurrentTitle > .activityName,
+.habitOverviewEntryName > .activityName {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+@media (max-width: 800px) {
+    .activityIndicators,
+    .habitOverviewEntryName,
+    .habitOverviewCurrentTitle {
+        gap: 1.5vw;
+    }
+    .activityStreak {
+        gap: .7vw;
+    }
+}
