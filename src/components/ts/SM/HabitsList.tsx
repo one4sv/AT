@@ -1,7 +1,7 @@
 import "../../../scss/SM/habitsList.scss";
 import { useMemo } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { GhostIcon } from "@phosphor-icons/react";
+import { CheckCircleIcon, GhostIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useHabits } from "../../hooks/HabitsHook";
 import { usePlans } from "../../hooks/PlansHook";
@@ -63,8 +63,14 @@ export default function HabitsList({ filter }: { filter?: string }) {
                 onClick={closeMenu}>
                 <PlanTagIcon tag={entry.plan?.tag}/>
                 <span className="habitInfo">
-                    <span className="habitName">{entry.name}<ActivityIndicators plan={entry.plan}/></span>
-                    <span className="habitPer">{relativePlanDay(entry.date, t) || formatDateFromString(entry.date)} · {describeDayTime(entry, t)}</span>
+                    <span className="habitName">
+                        <span className="habitNameText">{entry.name}</span>
+                        <ActivityIndicators part="aside" plan={entry.plan}/>
+                    </span>
+                    <span className="habitPer">
+                        {relativePlanDay(entry.date, t) || formatDateFromString(entry.date)} · {describeDayTime(entry, t)}
+                        {entry.completed && <CheckCircleIcon className="habitHLStatus" weight="fill"/>}
+                    </span>
                 </span>
             </Link>
         )}
