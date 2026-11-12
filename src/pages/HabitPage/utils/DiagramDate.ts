@@ -1,5 +1,7 @@
+import { dateToCalendarFormat, todayStrFunc } from "../../../components/ts/utils/dateToStr";
+
 export function getDateRange(filter: string, startDate?: string) {
-    const today = new Date()
+    const today = new Date(todayStrFunc() + "T12:00:00")
     const end = new Date(today)
     end.setDate(end.getDate() - 1)
     let start = new Date(end)
@@ -27,7 +29,7 @@ export function generateDays(start: Date, end: Date) {
     const days: string[] = []
     const d = new Date(start)
     while (d <= end) {
-        days.push(d.toISOString().slice(0,10))
+        days.push(dateToCalendarFormat(d))
         d.setDate(d.getDate() + 1)
     }
     return days
@@ -42,7 +44,7 @@ export function groupDays(days: string[], type: string) {
 
     days.forEach(day => {
 
-        const d = new Date(day)
+        const d = new Date(day + "T12:00:00")
         let key = ""
 
         if (type === "week") {
@@ -62,15 +64,15 @@ export function groupDays(days: string[], type: string) {
     return Object.entries(map).map(([label, days]) => ({ label, days }))
 }
 export function getMonday(date: string) {
-    const d = new Date(date)
+    const d = new Date(date + "T12:00:00")
     const day = d.getDay()
     const diff = day === 0 ? -6 : 1 - day
     d.setDate(d.getDate() + diff)
-    return d.toISOString().slice(0,10)
+    return dateToCalendarFormat(d)
 }
 
 export function getMonthStart(date: string){
     const d = new Date(date)
     d.setDate(1)
-    return d.toISOString().slice(0,10)
+    return dateToCalendarFormat(d)
 }
