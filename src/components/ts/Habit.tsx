@@ -33,7 +33,7 @@ export default function HabitDiv({
     progress?: HabitDayProgress;
 }) {
     const { openMenu } = useContextMenu();
-    const { calendar } = useCalendar();
+    const { allCalendar } = useCalendar();
     const { closeMenu } = useSideMenu();
     const {
         findHabit,
@@ -241,7 +241,7 @@ export default function HabitDiv({
                 <div className="habitName">
                     {habit.name}
                     {habit.pinned && isMyAcc && <PushPinIcon className="pinnedHabitSign" weight="fill" size={14} />}
-                    {showIndicators && <ActivityIndicators habit={habit} calendar={calendar} progress={progress}/>}
+                    {showIndicators && <ActivityIndicators habit={habit} calendar={allCalendar} progress={progress}/>}
                 </div>
                 <div className="habitPer">
                     {habit.ongoing ? timerStatus || periodicityText : `${formatDateFromString(habit.start_date)} - ${formatDateFromString(habit.end_date)}`}
