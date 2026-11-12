@@ -301,7 +301,7 @@ export default function PlanPage() {
                         <div className="settingSpan">{t("plans.visibility")}</div>
                         <RadioGroup id="planDetailVisibility" list={["inherit","nobody","contacts","all","link"].map(mode => ({
                             value:mode,label:t("plans.visibility_" + mode)
-                        }))} val={value.visibility} newVal={next => changeDraft("visibility",next as PlanInput["visibility"])}/>
+                        }))} val={value.visibility || "inherit"} newVal={next => changeDraft("visibility",next as PlanInput["visibility"])}/>
                     </div>}
                     <div className="planMetadata">{t("plans." + plan.kind)}
                         {plan.kind === "shared" && <>
