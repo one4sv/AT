@@ -30,7 +30,8 @@ export default function HabitParticipantPicker() {
     const { user } = useUser();
     const { showNotification } = useNote();
     const { data } = useHabitMembers(habit?.id);
-    const isOwner = planMode ? Boolean(plan?.is_owner) : habit?.user_id === user.id;
+    // The plan picker is opened only by the owner action. Server validates ownership again.
+    const isOwner = planMode ? true : habit?.user_id === user.id;
     const [ mode, setMode ] = useState(blackout.point === "shared" && isOwner ? "group" : "activity");
     const hasPartner = !!data?.members.some(member => member.user_id !== data.owner_id && (member.status === "accepted" || member.status === "pending"));
     const canDirectInvite = planMode ? isOwner : !hasPartner && !habit?.chat_id && !!data?.access.can_invite;
@@ -89,7 +90,7 @@ export default function HabitParticipantPicker() {
             if (planMode && planId) {
                 const response = await api.post(`plans/${planId}/invite`, { nick: selected[0].nick });
                 if (!response.data?.success) throw new Error("Plan invitation failed");
-                await refreshPlans();
+                await refreshPlans().catch(error => console.error("Failed to refresh plans after invitation", error));
                 window.dispatchEvent(new Event("plan-members-updated"));
                 setBlackout({ seted: false });
                 showNotification("success", t("plans.inviteSent"));
