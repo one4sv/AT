@@ -376,8 +376,9 @@ test("anonymous viewer opens a shared plan without member actions", async ({ pag
 });
 
 test("Privacy headings and exceptions follow the selected language", async ({ page }) => {
-    await page.addInitScript(() => localStorage.setItem("settings_lang", JSON.stringify("en")));
     await page.goto("/settings/privacy");
+    await page.evaluate(() => localStorage.setItem("settings_lang", JSON.stringify("en")));
+    await page.reload();
     await expect(page.locator('[data-setting-id="privacyActivitiesVisibility"] .settingHeader')).toHaveText("Activity visibility");
     await expect(page.locator('[data-setting-id="privacyPostsVisibility"] .settingHeader')).toHaveText("Post visibility");
     await expect(page.locator('[data-setting-id="privacyPlansVisibility"] .settingHeader')).toHaveText("Plan visibility");
