@@ -6,7 +6,7 @@ import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useDone } from "../../../../components/hooks/DoneHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
-import { describeDayTime, type DayEntry } from "../../../../components/ts/utils/dayTimeline";
+import { describeEntrySubtitle, type DayEntry } from "../../../../components/ts/utils/dayTimeline";
 import { api } from "../../../../components/ts/api";
 import SectionArt from "../../../../components/ts/SectionArt";
 import ActivityIndicators from "../../../../components/ts/ActivityIndicators";
@@ -77,7 +77,7 @@ export default function HabitOverviewEntries({ entries, view = "all" }: {
                         <ActivityIndicators part="aside" habit={entry.habit} plan={entry.plan}
                             progress={entry.habit ? progress[String(entry.habit.id)] : undefined}/>
                     </span>
-                    <small>{describeDayTime(entry, t)}</small>
+                    <small>{describeEntrySubtitle(entry, t)}</small>
                 </span>
             </button>
             {(entry.kind === "habit" || (entry.plan?.membership_status === "accepted" &&
