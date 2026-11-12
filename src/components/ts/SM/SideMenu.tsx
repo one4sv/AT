@@ -9,6 +9,7 @@ import { useHabits } from "../../hooks/HabitsHook.ts";
 import Skeleton from "../Skeleton";
 import useCompactLayout from "../../hooks/utils/useCompactLayout";
 import { useSchedule } from "../../hooks/ScheduleHook.ts";
+import SideMenuUnAunthificated from "../SideMenuUnAunthificated.tsx";
 import { useSideMenu } from "../../hooks/SideMenuHook.ts";
 import { useContextMenu } from "../../hooks/ContextMenuHook.ts";
 import { useContacts } from "../../hooks/ContactsHook.ts";
@@ -189,7 +190,23 @@ export default function SideMenu() {
         },
         [layout, showSideMenu, closeMenu, menu.visible, isMobile, studio]
     );
-    if (!user.id) return null;
+    if (!isAuthenticated && !loadingUser) {
+        return <SideMenuUnAunthificated
+            ref={sideMenuRef}
+            onTouchS={handleTouchStart}
+            onTouchM={handleTouchMove}
+            onTouchE={handleTouchEnd}
+            translateX={translateX}
+            onTouchCancel={() => {
+                contextGesture.current = false;
+                horizontalSwipe.current = false;
+                verticalScroll.current = false;
+                setIsDragging(false);
+                setDontHandle(false);
+                if (!menu.visible) setTranslateX(showSideMenu ? 0 : -100);
+            }}
+        />;
+    }
 
     return (
         <div

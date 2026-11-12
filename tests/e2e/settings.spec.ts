@@ -390,7 +390,7 @@ test("Privacy headings and exceptions follow the selected language", async ({ pa
     await expect(page.locator('[data-setting-id="privacyPlansVisibility"] .settingHeader')).toHaveText("Видимость планов");
 });
 
-test("guest SideMenu never mounts despite enabled startup preference", async ({ page }) => {
+test("guest SideMenu stays mounted but hidden until opened manually", async ({ page }) => {
     await page.addInitScript(() => {
         localStorage.setItem("at_startup_preferences", JSON.stringify({ settings_mobile_start_menu: true }));
         localStorage.setItem("settings_mobile_start_menu", "true");
@@ -399,13 +399,20 @@ test("guest SideMenu never mounts despite enabled startup preference", async ({ 
         status: 401, contentType: "application/json", body: JSON.stringify({ success: false })
     }));
     await page.goto("/info");
-    await expect(page.locator(".sideMenu")).toHaveCount(0);
-    await expect(page.locator(".sideMenuUnAthorised")).toHaveCount(0);
-    await expect(page.locator(".SMnavDiv")).toHaveCount(0);
-    await expect(page.locator(".headerDiv .headerButt")).toHaveCount(0);
+    const menu = page.locator(".sideMenu");
+    await expect(page.locator(".sideMenuUnAthorised")).toBeAttached();
+    await expect(menu).not.toHaveClass(/\\bopen\\b/);
+    await expect.poll(() => menu.evaluate(element => Math.round(element.getBoundingClientRect().right))).toBeLessThanOrEqual(1);
     await page.reload();
-    await expect(page.locator(".sideMenu")).toHaveCount(0);
-    await expect(page.locator(".sideMenuUnAthorised")).toHaveCount(0);
-    await expect(page.locator(".SMnavDiv")).toHaveCount(0);
-    await expect(page.locator(".headerDiv .headerButt")).toHaveCount(0);
+    await expect(page.locator(".sideMenuUnAthorised")).toBeAttached();
+    await expect(menu).not.toHaveClass(/\\bopen\\b/);
+    await expect.poll(() => menu.evaluate(element => Math.round(element.getBoundingClientRect().right))).toBeLessThanOrEqual(1);
+    await expect(menu).toHaveCSS("visibility", "hidden");
+    const menuButton = page.locator(".headerDiv .headerButt").first();
+    if (await menuButton.isVisible()) {
+        await menuButton.click();
+        await expect(menu).toHaveClass(/\\bopen\\b/);
+        await expect(menu).toHaveCSS("visibility", "visible");
+        await expect.poll(() => menu.evaluate(element => Math.round(element.getBoundingClientRect().right))).toBeGreaterThan(1);
+    }
 });

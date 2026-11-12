@@ -161,11 +161,9 @@ export default function MainLayout({ children }: LayoutProps) {
 
   return (
     <div className={`app-layout ${!user.id ? "smGuest" : ""}`}>
-      {user.id && <>
-        <SMheader/>
-        <SideMenu />
-        <SMnav/>
-      </>}
+      <SMheader/>
+      <SideMenu />
+      <SMnav/>
       {decor === "glass" && <Background />}
       <div className="page-content" onDragOver={needDrag ? handleDragOver : undefined} onDrop={needDrag ? handleDrop : undefined}
         onDragEnter={needDrag ? handleDragEnter : undefined} onDragLeave={needDrag ? handleDragLeave : undefined

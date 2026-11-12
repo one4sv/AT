@@ -23,7 +23,7 @@ export default function SideMenuUnAunthificated({
 }: SMUA) {
     const isMobile = useCompactLayout();
     const { t } = useTranslation("common");
-    const { showSideMenu } = useSideMenu();
+    const { showSideMenu, isDragging } = useSideMenu();
     const { setNewTheme } = useUpSettings();
     const { isDark } = useSettings();
 
@@ -37,6 +37,7 @@ export default function SideMenuUnAunthificated({
             onTouchCancel={onTouchCancel}
             style={{
                 transform: `translateX(${translateX}%)`,
+                visibility: showSideMenu || isDragging || translateX > -100 ? "visible" : "hidden",
                 pointerEvents: !showSideMenu ? "none" : undefined
             }}
         >

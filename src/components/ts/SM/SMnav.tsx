@@ -588,7 +588,7 @@ export default function SMnav() {
             </div>
     );
 
-    if (!user.id) return null;
+    if (!loadingUser && !user.id) return null;
 
     return (
         <div

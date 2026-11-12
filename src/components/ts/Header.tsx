@@ -4,7 +4,6 @@ import { usePageTitle } from "../hooks/PageContextHook";
 import useCompactLayout from "../hooks/utils/useCompactLayout";
 import { useLocation, useNavigate } from "react-router";
 import { useSettings } from "../hooks/SettingsHook";
-import { useUser } from "../hooks/UserHook";
 import { CheckIcon, DotsThreeOutlineVerticalIcon, TextIndentIcon } from "@phosphor-icons/react";
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { getHeaderScrollTarget } from "../ts/utils/pageScroll";
@@ -26,7 +25,6 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     const { openSideMenu } = useSideMenu();
     const { openMenu } = useContextMenu();
     const { layout } = useSettings();
-    const { user } = useUser();
     const {
         title,
         titleIcon,
@@ -69,7 +67,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     return (
         <>
             <div className={`headerDiv ${hideHeader ? "hide" : ""}`} {...headerGestures}>
-                {!hideMenuButton && !!user.id && (isMobile || layout === "hidden") ? <div
+                {!hideMenuButton && (isMobile || layout === "hidden") ? <div
                     className="headerButt"
                     data-header-gesture="quick"
                     onContextMenu={e => {

@@ -1,7 +1,6 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { Background } from "../ts/utils/background";
 import { useSettings } from "../hooks/SettingsHook";
-import { useUser } from "../hooks/UserHook";
 import Header from "../ts/Header";
 import SideMenu from "../ts/SM/SideMenu";
 import { useLocation } from "react-router-dom";
@@ -18,7 +17,6 @@ interface LayoutProps {
 
 export default function MobileLayout({ children }: LayoutProps) {
     const isMobile = useCompactLayout();
-    const { user } = useUser();
     const { decor } = useSettings();
     const { menu: contextMenu } = useContextMenu();
     const { blackout } = useBlackout();
@@ -44,7 +42,7 @@ export default function MobileLayout({ children }: LayoutProps) {
 
     const handleTouchStart = (e: React.TouchEvent) => {
         gesture.current = "none";
-        if (!user.id || location.pathname.startsWith("/wallpapers") || e.touches.length !== 1 || dontHandle || contextMenu.visible || blackout.seted) {
+        if (location.pathname.startsWith("/wallpapers") || e.touches.length !== 1 || dontHandle || contextMenu.visible || blackout.seted) {
             gesture.current = "scroll";
             return;
         }
@@ -138,7 +136,7 @@ export default function MobileLayout({ children }: LayoutProps) {
         <div className="mobile-layout">
             {!hideHeader && <Header />}
 
-            {isMobile && user.id && decor === "glass" ? (
+            {isMobile && decor === "glass" ? (
                 <div
                     className="sideMenuBackground"
                     style={{ width: backgroundWidth }}
@@ -147,7 +145,7 @@ export default function MobileLayout({ children }: LayoutProps) {
                 </div>
             ) : null}
 
-            {user.id && <>
+            {<>
                 <SMheader/>
                 <SideMenu />
                 <SMnav />

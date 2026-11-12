@@ -321,23 +321,21 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     }, [animateTo]);
 
     const openSideMenu = useCallback(() => {
-        if (!user.id) return;
         setShowSideMenu(true);
         setIsDragging(false);
         setDontHandle(false);
         setDontHandleOther(false);
 
         animateTo(0);
-    }, [animateTo, user.id]);
+    }, [animateTo]);
 
     const toggleMenu = useCallback(() => {
-        if (!user.id) return;
         setDontHandleOther(false);
         setIsDragging(false);
         const target = showSideMenu ? -100 : 0;
         setShowSideMenu(target === 0);
         animateTo(target);
-    }, [animateTo, showSideMenu, user.id]);
+    }, [animateTo, showSideMenu]);
 
     // Wallpaper Studio is always a manual overlay on desktop, regardless
     // of settings_layout. Initialize it once on entry and keep user choices.
