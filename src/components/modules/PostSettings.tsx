@@ -9,7 +9,7 @@ import PostHabit from "./PostHabit";
 import HabitDiv from "../ts/Habit";
 import "../../pages/Settings/scss/settings.scss";
 import "../../pages/Post/scss/postEditor.scss";
-import "../../scss/modules/PostSettings.scss";
+import "./scss/PostSettings.scss";
 
 export default function PostSettings() {
     const { t } = useTranslation("acc");

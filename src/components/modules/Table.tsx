@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useBlackout } from "../hooks/BlackoutHook"
-import "../../scss/modules/Table.scss"
+import "./scss/Table.scss"
 
 export default function Table() {
     const { blackout, setBlackout } = useBlackout()

@@ -1,5 +1,5 @@
-@use "../mixins.scss" as var;
-@use "./habitFormControls.scss";
+@use "../../../scss/mixins" as var;
+@use "../../../scss/habitFormControls";
 
 .addHabitDiv {
     @include var.centerTopModal;

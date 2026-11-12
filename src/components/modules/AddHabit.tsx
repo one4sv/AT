@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { XIcon } from "@phosphor-icons/react";
 import TA from "../ts/TA";
 import { useState, useEffect } from "react"
-import "../../scss/modules/addHabit.scss"
+import "./scss/addHabit.scss"
 import { forwardRef, useRef } from "react"
 import SelectList from "../ts/SelectList"
 import "react-datepicker/dist/react-datepicker.css";

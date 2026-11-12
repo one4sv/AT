@@ -3,7 +3,7 @@ import { useDelete } from "../hooks/DeleteHook";
 import { useHabits } from "../hooks/HabitsHook";
 import { useNavigate} from "react-router";
 import { useNote } from "../hooks/NoteHook";
-import "../../scss/modules/deleteConfirm.scss";
+import "./scss/deleteConfirm.scss";
 import { useAcc } from "../hooks/AccHook";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";

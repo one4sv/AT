@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Image as ImageIcon, RectangleHorizontal, RectangleVertical, Square, Maximize, RotateCcw } from "lucide-react";
-import "../../scss/modules/BackgroundHandler.scss";
+import "./scss/BackgroundHandler.scss";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
 import { useNote } from "../hooks/NoteHook";

@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { ChatTeardropIcon, CopyIcon, UserIcon, UsersIcon } from "@phosphor-icons/react";
-import "../../scss/modules/ShareAccDiv.scss"
+import "./scss/ShareAccDiv.scss"
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
 import { QRCodeSVG } from "qrcode.react";

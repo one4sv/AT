@@ -4,7 +4,7 @@ import { useBlackout } from "../hooks/BlackoutHook";
 import { useSettings } from "../hooks/SettingsHook";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
 import { applyCustomPalette, getCustomHex, validHex, type PalettePart } from "../ts/utils/customPalette";
-import "./CustomThemeColor.scss";
+import "./scss/CustomThemeColor.scss";
 
 const getInitialHex = (part: PalettePart, selected: string) => {
     if (selected === "custom") return getCustomHex(part);

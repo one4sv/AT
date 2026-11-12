@@ -5,7 +5,7 @@ import axios from "axios";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
-import "./AccountSecurityAction.scss";
+import "./scss/AccountSecurityAction.scss";
 
 export default function AccountSecurityAction() {
     const { t } = useTranslation("settings");

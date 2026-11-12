@@ -8,8 +8,8 @@ import SelectList from "../../components/ts/SelectList";
 import TA from "../../components/ts/TA";
 import TagSelector from "../../components/ts/TagSelector";
 import type { OneOffPlan } from "../../components/context/PlansContext";
-import "../../scss/modules/habitFormControls.scss";
-import "../../scss/modules/addPlan.scss";
+import "../../scss/habitFormControls.scss";
+import "./scss/addPlan.scss";
 
 export interface PlanInput {
     name: string;

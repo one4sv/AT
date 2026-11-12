@@ -6,7 +6,7 @@ import { useUser } from "../hooks/UserHook";
 import { api } from "../ts/api";
 import RadioGroup from "../ts/RadioGroup";
 import TA from "../ts/TA";
-import "./FeedbackModal.scss";
+import "./scss/FeedbackModal.scss";
 
 type FeedbackKind = "bug" | "idea" | "complaint" | "other";
 

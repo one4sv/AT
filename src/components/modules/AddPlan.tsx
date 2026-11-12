@@ -7,7 +7,7 @@ import { useNote } from "../hooks/NoteHook";
 import { usePlans } from "../hooks/PlansHook";
 import { api } from "../ts/api";
 import PlanEditor, { type PlanInput } from "../../pages/Plan/PlanEditor";
-import "../../scss/modules/addPlan.scss";
+import "./scss/addPlan.scss";
 
 export default function AddPlan() {
     const { t } = useTranslation("common");

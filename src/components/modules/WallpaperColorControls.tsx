@@ -8,7 +8,7 @@ import SeekBar from "../../pages/Settings/components/SeekBar";
 import { Palette, Sun, Layers2 } from "lucide-react";
 import Toggler from "../ts/Toggler";
 import type { WallpaperStyle } from "../context/SettingsContext";
-import "./WallpaperColorControls.scss";
+import "../../scss/WallpaperColorControls.scss";
 
 const swatches = ["#151515", "#303030", "#f5f2ff", "#916cf2", "#007bff", "#ff6b00", "#20b98d", "#ff3b3b"];
 

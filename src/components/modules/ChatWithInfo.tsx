@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { ChatTeardropIcon, CheckCircle, Circle, CircleIcon, MagnifyingGlassIcon, PushPinIcon, UserIcon } from "@phosphor-icons/react"
-import "../../scss/modules/ChatWithInfo.scss"
+import "./scss/ChatWithInfo.scss"
 import "../../pages/Acc/scss/AccInfo.scss"
 import { useBlackout } from "../hooks/BlackoutHook"
 import { useChat } from "../hooks/ChatHook"

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ArrowSquareOut, Link as LinkIcon, ShieldWarning } from "@phosphor-icons/react";
-import "../../scss/modules/LinkConfirm.scss";
+import "./scss/LinkConfirm.scss";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { api } from "../ts/api";
 

@@ -17,7 +17,7 @@ import SeekBar from "../../pages/Settings/components/SeekBar";
 import Selector from "../ts/Selector";
 import Toggler from "../ts/Toggler";
 import PageBottom from "../ts/PageBottom";
-import "./BackgroundFullscreen.scss";
+import "./scss/BackgroundFullscreen.scss";
 
 type PreviewItem = { id: string; url?: string; label: string };
 

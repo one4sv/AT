@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import SeekBar from "../SeekBar.tsx";
-import BackgroundEffectsSettings from "./BackgroundEffectsSettings";
+import BackgroundEffectsSettings from "../BackgroundEffectsSettings.tsx";
 import useCompactLayout from "../../../../components/hooks/utils/useCompactLayout";
 import Selector from "../../../../components/ts/Selector.tsx";
 import { MirrorRectangular, PaintBucket, PanelLeft, PanelLeftClose } from "lucide-react";

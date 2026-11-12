@@ -1,5 +1,5 @@
 import ContactsList from "../ts/SM/ContactsList"
-import "../../scss/modules/Redirecting.scss";
+import "./scss/Redirecting.scss";
 import { Search } from "lucide-react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useMessages } from "../hooks/MessagesHook";

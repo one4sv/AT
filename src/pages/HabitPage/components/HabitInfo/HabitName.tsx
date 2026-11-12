@@ -6,12 +6,13 @@ import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook"
 import { TagIcon } from "../../utils/TagIcon"
 import Streak from "./Streak"
 import { useCalendar } from "../../../../components/hooks/CalendarHook"
-import { TextIndentIcon } from "@phosphor-icons/react"
+import { DotsThreeOutlineVerticalIcon, TextIndentIcon } from "@phosphor-icons/react"
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook"
 import useCompactLayout from "../../../../components/hooks/utils/useCompactLayout"
 import { useSettings } from "../../../../components/hooks/SettingsHook"
 import { useContextMenu } from "../../../../components/hooks/ContextMenuHook"
 import useHeaderMenuGestures from "../../../../components/hooks/utils/useHeaderMenuGestures"
+import { isMobile } from "react-device-detect"
 
 interface HabitNameProps {
     habit:Habit | undefined,
@@ -26,11 +27,26 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:Habit
     const { openSideMenu } = useSideMenu()
     const { layout } = useSettings()
     const isCompact = useCompactLayout()
-    const { openMenu } = useContextMenu()
+    const { openMenu, menu, closeMenu } = useContextMenu()
     const headerGestures = useHeaderMenuGestures()
     const habitNameRef = useRef<HTMLDivElement | null>(null);
 
     if (!habit) return null
+        const handleMenuClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!habitNameRef.current || !habit) return;
+
+        if (menu.visible) {
+            closeMenu()
+            return
+        }
+
+        const rect = habitNameRef.current.getBoundingClientRect();
+        const x = isMobile ? (rect.left + rect.width * 0.52) : (rect.left + rect.width * 0.845);
+        const y = isMobile ? (window.innerHeight * 0.075) : (window.innerHeight * 0.055);
+
+        openMenu(x, y, "habitHeader", { id: String(habit.id) })
+    };
     
     return (
         <div className={`headerDiv ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} {...headerGestures}>
@@ -69,6 +85,12 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:Habit
                         {t("habitPageUi.saving")}
                     </span>
                 </div>
+            </div>
+            <div className="headerButt" data-header-gesture="chat" onContextMenu={e => {
+                e.preventDefault();
+                handleMenuClick(e);
+            }} onClick={handleMenuClick}>
+                <DotsThreeOutlineVerticalIcon weight="fill"/>
             </div>
         </div>
     )

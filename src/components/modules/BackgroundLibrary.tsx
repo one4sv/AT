@@ -11,7 +11,7 @@ import { api } from "../ts/api";
 import { ChevronDown, CircleCheck, ImagePlus } from "lucide-react";
 import { backgroundGroups, MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
 import { BackgroundHelpButton } from "./BackgroundHelp";
-import "./BackgroundLibrary.scss";
+import "./scss/BackgroundLibrary.scss";
 import "../../scss/Loading.scss";
 
 function CustomBackgroundThumb({ url }: { url: string }) {

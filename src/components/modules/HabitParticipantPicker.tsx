@@ -1,4 +1,4 @@
-import "../../scss/modules/CreateChat.scss";
+import "./scss/CreateChat.scss";
 import "../../pages/HabitPage/scss/HabitChatMenu.scss";
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";

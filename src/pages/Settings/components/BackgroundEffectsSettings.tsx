@@ -1,15 +1,15 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useSettings } from "../../../../components/hooks/SettingsHook";
-import { useNote } from "../../../../components/hooks/NoteHook";
-import { api } from "../../../../components/ts/api";
-import Toggler from "../../../../components/ts/Toggler";
-import SeekBar from "../SeekBar";
-import HighlightText from "../../../../components/ts/HighlightText";
-import type { BackgroundEffects } from "../../../../components/context/SettingsContext";
-import { supportsBackgroundMotion } from "../../../../components/ts/utils/BackgroundScene";
-import { ContourPatternPicker } from "./ContourPatternPicker";
-import WallpaperColorControls from "../../../../components/modules/WallpaperColorControls";
+import { useSettings } from "../../../components/hooks/SettingsHook";
+import { useNote } from "../../../components/hooks/NoteHook";
+import { api } from "../../../components/ts/api";
+import Toggler from "../../../components/ts/Toggler";
+import SeekBar from "./SeekBar";
+import HighlightText from "../../../components/ts/HighlightText";
+import type { BackgroundEffects } from "../../../components/context/SettingsContext";
+import { supportsBackgroundMotion } from "../../../components/ts/utils/BackgroundScene";
+import { ContourPatternPicker } from "./SettingsTabs/ContourPatternPicker";
+import WallpaperColorControls from "../../../components/modules/WallpaperColorControls";
 
 export default function BackgroundEffectsSettings({ search }: { search: string }) {
     const { t } = useTranslation("settings");
@@ -65,17 +65,19 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
                     disabled={!motionAvailable}
                     onChange={speed => update({ ...bgEffects, speed })}/>
             </div>
-            <div className="settingSpan" data-setting-id="backgroundFilters">
-                <HighlightText text={t("backgroundLibrary.filters")} search={search}/>
-            </div>
-            <div className="backgroundEffectsFilters">
-                {filters.map(filter => (
-                    <button type="button" key={filter} data-filter={filter}
-                        className={bgEffects.filter === filter ? "active" : ""}
-                        onClick={() => update({ ...bgEffects, filter })}>
-                        {t(`backgroundLibrary.${filter}`)}
-                    </button>
-                ))}
+            <div className="settingInnerWrapper">
+                <div className="settingSpan" data-setting-id="backgroundFilters">
+                    <HighlightText text={t("backgroundLibrary.filters")} search={search}/>
+                </div>
+                <div className="backgroundEffectsFilters">
+                    {filters.map(filter => (
+                        <button type="button" key={filter} data-filter={filter}
+                            className={bgEffects.filter === filter ? "active" : ""}
+                            onClick={() => update({ ...bgEffects, filter })}>
+                            {t(`backgroundLibrary.${filter}`)}
+                        </button>
+                    ))}
+                </div>
             </div>
         </>
     );

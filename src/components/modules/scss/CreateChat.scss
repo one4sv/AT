@@ -1,5 +1,5 @@
 @use '../mixins' as var;
-@use './contactPickerControls';
+@use '../../../scss/contactPickerControls';
 
 .createChatDiv {
     @include var.centerModal;

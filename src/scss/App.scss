@@ -7,8 +7,8 @@
 @use "./Loading";
 @use "./sharedControls";
 @use "./SelectList";
-@use "./modules/contactPickerControls";
-@use "./modules/habitFormControls";
+@use "./contactPickerControls";
+@use "./habitFormControls";
 
 :root {
   --accent: #00ad09;

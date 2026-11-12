@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import "../../scss/modules/PickHandler.scss"
+import "./scss/PickHandler.scss"
 import { useBlackout } from "../hooks/BlackoutHook"
 import { useUpUser } from "../hooks/UpdateUserHook"
 import Cropper from "react-easy-crop"

@@ -5,7 +5,7 @@ import { useHabits } from "../hooks/HabitsHook";
 import { useUser } from "../hooks/UserHook";
 import HabitDiv from "../ts/Habit";
 import "../../scss/SM/habitsList.scss";
-import "../../scss/modules/PostSettings.scss";
+import "./scss/PostSettings.scss";
 
 interface PostHabitProps {
     selected: string;

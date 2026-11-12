@@ -7,7 +7,7 @@ import { useTheHabit } from "../hooks/TheHabitHook";
 import { usePlans } from "../hooks/PlansHook";
 import { useNote } from "../hooks/NoteHook";
 import { api } from "../ts/api";
-import "../../scss/modules/CreateChat.scss";
+import "./scss/CreateChat.scss";
 import "../../pages/HabitPage/scss/HabitChatMenu.scss";
 
 export default function HabitCreateChat() {

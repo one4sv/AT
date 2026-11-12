@@ -4,7 +4,7 @@ import { useBlackout } from "../hooks/BlackoutHook";
 import { WallpaperFillIcon } from "../ts/utils/WallpaperCapabilityIcons";
 import ruSettings from "../../i18n/locales/ru/settings.json";
 import enSettings from "../../i18n/locales/en/settings.json";
-import "./BackgroundHelp.scss";
+import "./scss/BackgroundHelp.scss";
 
 type HelpKey = "help" | "helpTitle" | "helpIntro" | "helpMotion" | "helpTheme" |
     "helpAppearance" | "helpPattern" | "helpFill" | "helpGlow" | "helpClose";

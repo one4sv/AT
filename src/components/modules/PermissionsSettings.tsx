@@ -1,4 +1,4 @@
-import "../../scss/modules/PermissionsDiv.scss";
+import "./scss/PermissionsDiv.scss";
 import { useCallback, useEffect, useState } from "react";
 import type { Member, Perms } from "../context/GroupContext";
 import { useGroup } from "../hooks/GroupHook";

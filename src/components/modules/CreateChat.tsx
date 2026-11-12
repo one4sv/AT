@@ -1,5 +1,5 @@
 import { Camera, CheckCircle, Circle, MagnifyingGlassIcon, X } from '@phosphor-icons/react';
-import '../../scss/modules/CreateChat.scss';
+import './scss/CreateChat.scss';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../ts/api';
 import { useNote } from '../hooks/NoteHook';
