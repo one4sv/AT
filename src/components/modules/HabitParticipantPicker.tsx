@@ -9,6 +9,7 @@ import { useContacts } from "../hooks/ContactsHook";
 import type { Contact } from "../context/ContactsContext";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useTheHabit } from "../hooks/TheHabitHook";
+import { usePlans } from "../hooks/PlansHook";
 import { useNote } from "../hooks/NoteHook";
 import { api } from "../ts/api";
 import { useUser } from "../hooks/UserHook";
@@ -19,16 +20,20 @@ export default function HabitParticipantPicker() {
     const { t } = useTranslation("common");
     const { blackout, setBlackout } = useBlackout();
     const { habit, loadHabit } = useTheHabit();
+    const { plans, refreshPlans } = usePlans();
+    const planId = blackout.point === "plan" ? Number(blackout.options?.id) : null;
+    const plan = planId ? plans.find(item => item.id === planId) : null;
+    const planMode = planId !== null && Number.isSafeInteger(planId) && planId > 0;
     const { findContacts } = useContacts();
     const findContactsRef = useRef(findContacts);
     findContactsRef.current = findContacts;
     const { user } = useUser();
     const { showNotification } = useNote();
     const { data } = useHabitMembers(habit?.id);
-    const isOwner = habit?.user_id === user.id;
+    const isOwner = planMode ? Boolean(plan?.is_owner) : habit?.user_id === user.id;
     const [ mode, setMode ] = useState(blackout.point === "shared" && isOwner ? "group" : "activity");
     const hasPartner = !!data?.members.some(member => member.user_id !== data.owner_id && (member.status === "accepted" || member.status === "pending"));
-    const canDirectInvite = !hasPartner && !habit?.chat_id && !!data?.access.can_invite;
+    const canDirectInvite = planMode ? isOwner : !hasPartner && !habit?.chat_id && !!data?.access.can_invite;
     const [ search, setSearch ] = useState("");
     const [ list, setList ] = useState<Contact[]>([]);
     const [ selected, setSelected ] = useState<Contact[]>([]);
@@ -39,15 +44,15 @@ export default function HabitParticipantPicker() {
     const notifyRef = useRef(showNotification);
     notifyRef.current = showNotification;
     useEffect(() => {
-        if (!data || !isOwner) return;
+        if (planMode || !data || !isOwner) return;
         setMode(canDirectInvite && blackout.point !== "shared" ? "activity" : "group");
-    }, [data?.owner_id, canDirectInvite, isOwner, blackout.point]);
+    }, [data?.owner_id, canDirectInvite, isOwner, blackout.point, planMode]);
     useEffect(() => {
         const controller = new AbortController();
         setLoading(true);
         setListError("");
         const timer = setTimeout(() => {
-            findContactsRef.current(search, controller, mode === "group" ? "group" : "personal").then(contacts => {
+            findContactsRef.current(search, controller, mode === "group" && !planMode ? "group" : "personal").then(contacts => {
                 if (controller.signal.aborted) return;
                 if (!contacts) {
                     setListError(t("habitDialog.contactsFailed"));
@@ -58,7 +63,8 @@ export default function HabitParticipantPicker() {
                     contact.id !== user.id &&
                     contact.name !== "Избранное" &&
                     !("is_favorite" in contact && contact.is_favorite) &&
-                    !data?.members.some(member => member.user_id === contact.id && member.status === "accepted")
+                    !(planMode ? plan?.members?.some(member => member.id === contact.id) :
+                        data?.members.some(member => member.user_id === contact.id && member.status === "accepted"))
                 ));
             }).catch(() => {
                 if (!controller.signal.aborted) {
@@ -73,12 +79,23 @@ export default function HabitParticipantPicker() {
             clearTimeout(timer);
             controller.abort();
         };
-    }, [search, mode, data?.members, user.id]);
+    }, [search, mode, data?.members, planMode, plan?.members, user.id]);
     const save = async () => {
-        if (!habit || submitting.current || !selected.length || (mode === "activity" && !canDirectInvite) || (mode === "group" && !isOwner)) return;
+        if ((!planMode && !habit) || !isOwner && planMode || submitting.current || !selected.length ||
+            (!planMode && mode === "activity" && !canDirectInvite) || (!planMode && mode === "group" && !isOwner)) return;
         submitting.current = true;
         setSaving(true);
         try {
+            if (planMode && planId) {
+                const response = await api.post(`plans/${planId}/invite`, { nick: selected[0].nick });
+                if (!response.data?.success) throw new Error("Plan invitation failed");
+                await refreshPlans();
+                window.dispatchEvent(new Event("plan-members-updated"));
+                setBlackout({ seted: false });
+                showNotification("success", t("plans.inviteSent"));
+                return;
+            }
+            if (!habit) return;
             if (mode === "activity") {
                 await api.post(`habits/${habit.id}/members`, { user_id: selected[0].id });
             } else {
@@ -95,7 +112,7 @@ export default function HabitParticipantPicker() {
             if (mode === "activity") showNotification("success", t("habitDialog.inviteSent"));
             else showNotification("success", t("habitDialog.linked"));
         } catch (error) {
-            showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || t("habitDialog.membersFailed") : t("habitDialog.membersCheck"));
+            showNotification("error", axios.isAxiosError(error) ? error.response?.data?.error || t(planMode ? "plans.inviteError" : "habitDialog.membersFailed") : t(planMode ? "plans.inviteError" : "habitDialog.membersCheck"));
         } finally {
             submitting.current = false;
             setSaving(false);
@@ -104,7 +121,7 @@ export default function HabitParticipantPicker() {
     return <div className="habitCollaborationModal habitParticipantPicker" role="dialog" aria-modal="true" aria-label={t("habitDialog.addMembers")}>
         <div className="habitCollaborationHeader">{t("habitDialog.addMembers")}</div>
         <div className="habitCollaborationBody">
-            {isOwner ? <RadioGroup
+            {!planMode && isOwner ? <RadioGroup
                 list={[
                     ...(canDirectInvite ? [{ label: t("habitDialog.invite"), value: "activity" }] : []),
                     { label: t("habitDialog.addToGroup"), value: "group" }
@@ -113,8 +130,8 @@ export default function HabitParticipantPicker() {
                 val={mode}
                 disabled={saving}
                 newVal={value => { setMode(value); setSelected([]); }}
-            /> : <div className="settingSpan">{t("habitDialog.invite")}</div>}
-            {isOwner && <button type="button" className="addGoalButtDiv habitPickerCreate" disabled={saving} onClick={() => setBlackout({ seted: true, module: "HabitCreateChat" })}>{t("habitDialog.createNewGroup")}</button>}
+            /> : <div className="settingSpan">{t(planMode ? "plans.addParticipant" : "habitDialog.invite")}</div>}
+            {!planMode && isOwner && <button type="button" className="addGoalButtDiv habitPickerCreate" disabled={saving} onClick={() => setBlackout({ seted: true, module: "HabitCreateChat" })}>{t("habitDialog.createNewGroup")}</button>}
             <div className="createChatList contactPickerList">
                 {selected.length > 0 && <div className="createChatChosenCons">
                     {selected.map(contact => <button
@@ -163,7 +180,7 @@ export default function HabitParticipantPicker() {
             </div>
         </div>
         <div className="habitConfirmActions">
-            <button type="button" className="accept" disabled={saving || !selected.length || (mode === "activity" && !canDirectInvite) || (mode === "group" && !isOwner)} onClick={() => void save()}>{saving ? t("habitDialog.saving") : t("habitDialog.save")}</button>
+            <button type="button" className="accept" disabled={saving || !selected.length || !isOwner || (!planMode && mode === "activity" && !canDirectInvite) || (!planMode && mode === "group" && !isOwner)} onClick={() => void save()}>{saving ? t("habitDialog.saving") : t("habitDialog.save")}</button>
         </div>
     </div>;
 }
