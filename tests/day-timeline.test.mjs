@@ -87,11 +87,12 @@ test("calendar shares ordinary planned marker with plans and schedule includes p
 
 test("plan date in SideMenu uses the existing date-format helper rather than ISO", () => {
     const list = readFileSync(new URL("../src/components/ts/SM/HabitsList.tsx", import.meta.url), "utf8");
+    const card = readFileSync(new URL("../src/components/ts/Plan.tsx", import.meta.url), "utf8");
     const dates = readFileSync(new URL("../src/components/ts/utils/dateToStr.ts", import.meta.url), "utf8");
-    assert.match(list, /import \{ formatDateFromString, relativePlanDay, shiftCalendarDay, todayStrFunc \} from "\.\.\/utils\/dateToStr"/);
-    assert.match(list, /relativePlanDay\(entry\.date, t\) \|\| formatDateFromString\(entry\.date\)/);
-    assert.match(list, /formatDateFromString\(entry\.date\)/);
-    assert.doesNotMatch(list, /\{entry\.date\} ·/);
+    assert.match(list, /<PlanDiv plan=\{entry\.plan!\} entry=\{entry\}/);
+    assert.match(card, /import \{ formatDateFromString, relativePlanDay \} from "\.\/utils\/dateToStr"/);
+    assert.match(card, /relativePlanDay\(entry\.date, t\) \|\| formatDateFromString\(entry\.date\)/);
+    assert.doesNotMatch(card, /\{entry\.date\} ·/);
     assert.match(dates, /return displayParts\(y, m, d\)/);
 });
 
@@ -105,4 +106,15 @@ test("habit day header preserves the November 9 date layout and return control",
     assert.match(styles, /\.chosenDayDate\s*\{[\s\S]*?height: 4dvh;/);
     assert.match(styles, /\.chosenDayDate\s*\{[\s\S]*?align-items: flex-start;/);
     assert.match(styles, /\.calendarReturn\s*\{[\s\S]*?height: 3dvh;/);
+});
+
+
+test("pinned plans and activities appear first in SideMenu without changing daily chronology", () => {
+    const normal = { id:7,name:"Normal",desc:"",periodicity:"everyday",ongoing:true,
+        start_time:"07:00",end_time:"",start_date:"2026-01-01" };
+    const pinnedPlan = { id:8,name:"Pinned plan",plan_date:"2026-11-12",
+        start_time:"09:00",end_time:null,membership_status:"accepted",pinned:true };
+    const pinnedHabit = { ...normal,id:9,name:"Pinned habit",pinned:true,start_time:"10:00" };
+    const entries = makeSideMenuEntries("all",[normal,pinnedHabit],[pinnedPlan],[],false,"");
+    assert.deepEqual(entries.map(item => item.name),["Pinned habit","Pinned plan","Normal"]);
 });

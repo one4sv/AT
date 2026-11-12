@@ -8,7 +8,7 @@ export default function AutoWebPush() {
     const { user, initialLoading } = useUser();
 
     useEffect(() => {
-        if (initialLoading || !user.id || !supportsWebPush() || Notification.permission !== "granted") return;
+        if (initialLoading || !user.id || !supportsWebPush()) return;
         let mounted = true;
         let syncing = false;
         const sync = async () => {
