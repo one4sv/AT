@@ -403,8 +403,38 @@
     display: flex; flex-direction: column; gap: .3dvh;
     border-radius: 24px; background: var(--interact); padding: 1dvh 1vw;
 }
-.habitOverviewCurrent > small { color: var(--borderWh); }
-.habitOverviewCurrent b { font-weight: normal; color: var(--accent_text); }
+.habitOverviewFocusGroup {
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+}
+.habitOverviewFocusLabel {
+    color: var(--borderWh);
+    padding-left: .8vw;
+}
+.habitOverviewCurrentRow {
+    display: flex;
+    align-items: center;
+    gap: .7vw;
+    min-width: 0;
+}
+.habitOverviewFocusIcon {
+    flex-shrink: 0;
+    width: 3dvh;
+    height: 3dvh;
+    color: var(--accent_text);
+}
+.habitOverviewCurrentDetails {
+    display: flex;
+    flex-direction: column;
+    gap: .3dvh;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.habitOverviewCurrentDetails > small {
+    color: var(--borderWh);
+}
+.habitOverviewCurrent b { color: var(--accent_text); }
 .overviewPanelSkeleton {
     flex: 1;
     min-width: 0;
@@ -507,6 +537,8 @@
     .habitOverviewFilters { gap: 2vw; }
     .habitOverviewFilters > button { font-size: 14px; padding: 1dvh 2vw; }
     .habitOverviewCurrent { padding: 1dvh 3vw; }
+    .habitOverviewFocusLabel { padding-left: 2vw; }
+    .habitOverviewCurrentRow { gap: 2vw; }
     .overviewCalendarSkeleton {
         min-height: 52dvh;
         padding: 1dvh 2vw;
