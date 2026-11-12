@@ -200,6 +200,10 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
             }
         }
 
+        if (plans.some(plan => plan.membership_status !== "pending" &&
+            plan.status !== "canceled")) {
+            filters.splice(1, 0, { label: t("plans.title"), value: "plans", new: "0" });
+        }
         setHabitsFilters(filters);
 
         if (!filters.some((f) => f.value === habitsSelectedValue)) {
