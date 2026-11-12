@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { UserCircleIcon, UserPlusIcon, XIcon } from "@phosphor-icons/react";
 import axios from "axios";
@@ -15,6 +15,9 @@ export default function PlanMembers({ plan, onChanged }: {
     const { t } = useTranslation("common");
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
+    
+    const navigate = useNavigate()
+
     const [working, setWorking] = useState(false);
     const [removing, setRemoving] = useState<string | null>(null);
     const [error, setError] = useState("");
@@ -60,7 +63,7 @@ export default function PlanMembers({ plan, onChanged }: {
                 const pending = member.status === "pending";
                 const name = member.username || member.nick;
                 return <div key={member.id}>
-                    <div className="planMember">
+                    <div className="planMember" onClick={() => navigate(`/acc/${member.nick}`)}>
                         <span className="planMemberAvatar">
                             {member.avatar_url ? <img src={member.avatar_url} alt="" loading="lazy"/> : <UserCircleIcon size={28}/>}
                         </span>

@@ -136,7 +136,8 @@
     padding: .6dvh .7vw;
     border-radius: 24px;
     transition: background-color .18s ease;
-
+    cursor: pointer;
+    
     @media (hover: hover) {
         &:hover {
             background: var(--mc);
