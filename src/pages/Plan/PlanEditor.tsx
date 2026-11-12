@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { XIcon } from "@phosphor-icons/react";
+import { useSettings } from "../../components/hooks/SettingsHook";
+import { resolveTimeZone, todayStrFunc } from "../../components/ts/utils/dateToStr";
 import CalendarInput from "../../components/ts/CalendarInput";
 import SelectList from "../../components/ts/SelectList";
 import TA from "../../components/ts/TA";
@@ -36,13 +38,14 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
     onClose: () => void;
 }) {
     const { t } = useTranslation("common");
+    const { timeZone } = useSettings();
     const [value, setValue] = useState<PlanInput>({
         name: initial?.name || "",
         description: initial?.description || "",
-        plan_date: initial?.plan_date || initialDate || localDate(new Date()),
+        plan_date: initial?.plan_date || initialDate || todayStrFunc(),
         start_time: initial?.start_time?.slice(0, 5) || null,
         end_time: initial?.end_time?.slice(0, 5) || null,
-        timezone: initial?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Moscow",
+        timezone: initial?.timezone || resolveTimeZone(timeZone),
         place: initial?.place || "",
         tag: initial?.tag || null,
         kind: initial?.kind || "personal",
