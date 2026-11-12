@@ -15,7 +15,7 @@ export default function AccSettingsTab({ search }: { search: string }) {
         <div className="settingTab">
             {!search.trim() && <SectionArt theme="account"/>}
             <div className="settingInnerDiv settingInnerAccDiv" data-setting-id="editAcc">
-                <AccInfo acc={user} canView={() => true} collapsed={0}/>
+                <AccInfo acc={user} collapsed={0}/>
             </div>
             <div className="settingAccordion" data-setting-id="email">
                 <button type="button" className="settingHeader settingHeaderCollapsible accountSettingAction"
