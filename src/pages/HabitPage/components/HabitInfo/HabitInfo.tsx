@@ -9,7 +9,7 @@ import DayChanger from "../../../../components/ts/DayChanger";
 import { initialChosenDays } from "../../../../components/ts/initialChosenDays";
 import { WarningCircle } from "@phosphor-icons/react";
 import { TagIcon } from "../../utils/TagIcon";
-import { dateToStrFormat } from "../../../../components/ts/utils/dateToStr";
+import { dateToCalendarFormat, formatDateFromString } from "../../../../components/ts/utils/dateToStr";
 
 
 interface RedHabitProps {
@@ -40,8 +40,8 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
 
     useEffect(() => {
         if (!habit) return;
-        setStartDate(new Date(habit.start_date));
-        setEndDate(habit.end_date ? new Date(habit.end_date) : null);
+        setStartDate(new Date(habit.start_date + "T12:00:00"));
+        setEndDate(habit.end_date ? new Date(habit.end_date + "T12:00:00") : null);
         setPeriodicity(habit.periodicity ?? "");
         setOngoing(Boolean(habit.ongoing));
 
@@ -258,12 +258,12 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             <div className="addHabitWrapper">
                 <div className="addHabitWrapper date">
                     <div className="AddHabitDateSpan">{t("habitUi.startDate")}</div>
-                    <div className="AddHabitDateSpan">{dateToStrFormat(startDate)}</div>
+                    <div className="AddHabitDateSpan">{formatDateFromString(dateToCalendarFormat(startDate))}</div>
                 </div>
                 {endDate && (
                     <div className="addHabitWrapper date">
                         <div className="AddHabitDateSpan">{t("habitUi.endDate")}</div>
-                        <div className="AddHabitDateSpan">{dateToStrFormat(endDate)}</div>
+                        <div className="AddHabitDateSpan">{formatDateFromString(dateToCalendarFormat(endDate))}</div>
                     </div>
                 )}
             </div>
