@@ -1,44 +1,25 @@
-import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useSettings } from "../hooks/SettingsHook";
-import { useNote } from "../hooks/NoteHook";
-import { api } from "../ts/api";
 import { supportsBackgroundMotion } from "../ts/utils/BackgroundScene";
 import type { BackgroundEffects } from "../context/SettingsContext";
-import { ContourPatternPicker } from "../../pages/Settings/components/SettingsTabs/ContourPatternPicker";
+import { ContourPatternPicker } from "../../pages/Settings/components/ContourPatternPicker";
 import SeekBar from "../../pages/Settings/components/SeekBar";
 import Toggler from "../ts/Toggler";
 import WallpaperColorControls from "./WallpaperColorControls";
-import "./WallpaperSettings.scss";
+import "./scss/WallpaperSettings.scss";
 
 export default function WallpaperSettings() {
     const { t } = useTranslation("settings");
     const { blackout, setBlackout } = useBlackout();
     const { bg, bgEffects, setBgEffects, contourPattern, setContourPattern, contourSize, setContourSize,
-        artPattern, setArtPattern, artSize, setArtSize, refetchSettings } = useSettings();
-    const { showNotification } = useNote();
-    const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+        artPattern, setArtPattern, artSize, setArtSize } = useSettings();
     const currentId = blackout.options?.id ?? bg;
     const motionAvailable = supportsBackgroundMotion(currentId);
     const filters: BackgroundEffects["filter"][] = ["none", "grayscale", "sepia", "invert", "contrast", "saturate"];
 
-    useEffect(() => () => {
-        if (saveTimer.current) clearTimeout(saveTimer.current);
-    }, []);
-
     const updateEffects = (next: BackgroundEffects) => {
         setBgEffects(next);
-        if (saveTimer.current) clearTimeout(saveTimer.current);
-        saveTimer.current = setTimeout(async () => {
-            try {
-                const result = await api.post("updatesettings", { bg_effects: next });
-                if (!result.data?.success) throw new Error();
-            } catch {
-                showNotification("error", t("backgroundLibrary.error"));
-                void refetchSettings();
-            }
-        }, 450);
     };
 
     return (

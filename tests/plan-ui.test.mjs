@@ -25,7 +25,7 @@ test("now completion icon uses exactly the calendar now color", () => {
 
 test("plan and post feed use identical relative width on desktop and mobile", () => {
     const feed = read("src/pages/Main/scss/Main.scss");
-    const plan = read("src/pages/Plan/PlanPage.scss");
+    const plan = read("src/pages/Plan/scss/PlanPage.scss");
     assert.match(feed, /\.MainDiv\s*\{\s*width: 60%;/);
     assert.match(feed, /\.postFeed\s*\{[\s\S]*?width: 70%;/);
     assert.match(plan, /\.planPage\s*\{\s*width: 42%;/);
@@ -56,7 +56,7 @@ test("tag icons appear in title, shared header and SideMenu", () => {
 });
 
 test("dangerous actions follow SCSS_GUIDE, including hover and touch", () => {
-    const style = read("src/pages/Plan/PlanPage.scss");
+    const style = read("src/pages/Plan/scss/PlanPage.scss");
     const page = read("src/pages/Plan/PlanPage.tsx");
     assert.match(style, /\.planDanger\s*\{[\s\S]*?color: var\(--notValid\);[\s\S]*?border: 1px solid var\(--notValid\);/);
     assert.match(style, /@media \(hover: hover\)\s*\{\s*&:hover\s*\{\s*background: var\(--notValidBg\);/);
@@ -67,7 +67,7 @@ test("dangerous actions follow SCSS_GUIDE, including hover and touch", () => {
 
 test("reminder section has a right-aligned caret", () => {
     const reminders = read("src/pages/Plan/PlanReminders.tsx");
-    const style = read("src/pages/Plan/PlanPage.scss");
+    const style = read("src/pages/Plan/scss/PlanPage.scss");
     assert.match(reminders, /<CaretDownIcon className="planRemindersCaret" size=\{20\}\/>/);
     assert.match(style, /\.planRemindersCaret\s*\{\s*margin-left: auto;/);
 });
@@ -75,7 +75,7 @@ test("reminder section has a right-aligned caret", () => {
 
 test("desktop plan completion and comment live inside the first details section", () => {
     const page = read("src/pages/Plan/PlanPage.tsx");
-    const css = read("src/pages/Plan/PlanPage.scss");
+    const css = read("src/pages/Plan/scss/PlanPage.scss");
     const indexDetails = page.indexOf('<div className="planSection">',page.indexOf('return <div className="planPage">'));
     const indexCompletion = page.indexOf('<div className="planInlineCompletion">');
     const indexReminders = page.indexOf('<PlanReminders planId={plan.id}/>');
@@ -115,7 +115,7 @@ test("creation is personal and participant management lives on plan page", () =>
 });
 
 test("collapsed completion controls keep their status color rather than an interact overlay", () => {
-    const plan = read("src/pages/Plan/PlanPage.scss");
+    const plan = read("src/pages/Plan/scss/PlanPage.scss");
     const habit = read("src/pages/HabitPage/scss/habitMobileDone.scss");
     assert.match(plan, /\.planMobileDone \.doneButtDivMobile\.close > \.bottomOpen\s*\{\s*border: none;\s*background: transparent;/);
     assert.match(plan, /\.planMobileDone \.habitDayCommentMobile > \.bottomOpen\s*\{/);
@@ -147,7 +147,7 @@ test("plan management is offered on the first section and both header triggers",
 });
 test("plan details stay in place when inputs become active", () => {
     const page = read("src/pages/Plan/PlanPage.tsx");
-    const css = read("src/pages/Plan/PlanPage.scss");
+    const css = read("src/pages/Plan/scss/PlanPage.scss");
     const date = read("src/components/ts/CalendarInput.tsx");
     assert.match(page, /const readOnly = !editing \|\| !draft/);
     assert.match(page, /className="planDetailsInput planTitleInput"/);
@@ -173,7 +173,7 @@ test("plan header action is the same vertical three-dot control and width as the
 });
 
 test("plan members have no shared list background and each row takes the full hover width", () => {
-    const styles = read("src/pages/Plan/PlanPage.scss");
+    const styles = read("src/pages/Plan/scss/PlanPage.scss");
     const group = styles.match(/\.planMembers\s*\{([^}]*)\}/)?.[1] || "";
     assert.doesNotMatch(group, /background|padding/);
     assert.match(styles, /\.planMember\s*\{[\s\S]*?width: 100%;[\s\S]*?box-sizing: border-box;[\s\S]*?background: transparent;/);

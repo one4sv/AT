@@ -10,7 +10,7 @@ import { useNote } from "../hooks/NoteHook";
 import { api } from "../ts/api";
 import { QuickActionVisual } from "../ts/utils/quickActions";
 import type { QuickAction, QuickActionType } from "../context/SettingsContext";
-import "../../pages/Settings/components/SettingsTabs/QuickActionsSettings.scss";
+import "../../pages/Settings/scss/QuickActionsSettings.scss";
 
 export default function QuickActionPicker() {
     const { t } = useTranslation("settings");

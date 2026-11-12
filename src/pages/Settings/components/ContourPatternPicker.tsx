@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
-import type { ContourPattern } from "../../../../components/context/SettingsContext";
-import Selector from "../../../../components/ts/Selector";
-import SeekBar from "../SeekBar";
-import "./ContourPatternPicker.scss";
+import type { ContourPattern } from "../../../components/context/SettingsContext";
+import Selector from "../../../components/ts/Selector";
+import SeekBar from "./SeekBar";
+import "../scss/ContourPatternPicker.scss";
 
 function OrderIcon({ size = 20 }: { size?: number }) {
     return <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">

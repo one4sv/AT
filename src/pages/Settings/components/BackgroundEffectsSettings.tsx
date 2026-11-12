@@ -1,38 +1,18 @@
-import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../components/hooks/SettingsHook";
-import { useNote } from "../../../components/hooks/NoteHook";
-import { api } from "../../../components/ts/api";
 import Toggler from "../../../components/ts/Toggler";
 import SeekBar from "./SeekBar";
 import HighlightText from "../../../components/ts/HighlightText";
 import type { BackgroundEffects } from "../../../components/context/SettingsContext";
 import { supportsBackgroundMotion } from "../../../components/ts/utils/BackgroundScene";
-import { ContourPatternPicker } from "./SettingsTabs/ContourPatternPicker";
+import { ContourPatternPicker } from "./ContourPatternPicker";
 import WallpaperColorControls from "../../../components/modules/WallpaperColorControls";
 
 export default function BackgroundEffectsSettings({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { bg, bgEffects, setBgEffects, refetchSettings, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize } = useSettings();
-    const { showNotification } = useNote();
-    const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    useEffect(() => () => {
-        if (timer.current) clearTimeout(timer.current);
-    }, []);
-
+    const { bg, bgEffects, setBgEffects, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize } = useSettings();
     const update = (next: BackgroundEffects) => {
         setBgEffects(next);
-        if (timer.current) clearTimeout(timer.current);
-        timer.current = setTimeout(async () => {
-            try {
-                const res = await api.post("updatesettings", { bg_effects: next });
-                if (!res.data?.success) throw new Error();
-            } catch {
-                showNotification("error", t("backgroundLibrary.error"));
-                void refetchSettings();
-            }
-        }, 450);
     };
 
     const motionAvailable = supportsBackgroundMotion(bg);

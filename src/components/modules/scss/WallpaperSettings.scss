@@ -1,6 +1,6 @@
-@use "../../scss/mixins.scss" as var;
-@use "../../pages/Settings/scss/pers.scss";
-@use "../../pages/Settings/scss/seekbar.scss";
+@use "../../../scss/mixins.scss" as var;
+@use "../../../pages/Settings/scss/pers.scss";
+@use "../../../pages/Settings/scss/seekbar.scss";
 
 .wallpaperSettingsModal {
     @include var.centerModal;

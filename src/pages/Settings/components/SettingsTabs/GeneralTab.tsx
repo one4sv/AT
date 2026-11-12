@@ -10,7 +10,7 @@ import Toggler from "../../../../components/ts/Toggler";
 import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
-import QuickActionsSettings from "./QuickActionsSettings";
+import QuickActionsSettings from "../QuickActionsSettings";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import useCompactLayout from "../../../../components/hooks/utils/useCompactLayout";
 

@@ -12,7 +12,7 @@ import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
 import { openCookiePreferences } from "../../../../components/ts/utils/cookieConsent";
-import PrivacyExceptions from "./PrivacyExceptions";
+import PrivacyExceptions from "../PrivacyExceptions";
 
 export default function PrivacyTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");

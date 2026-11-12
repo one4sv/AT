@@ -24,7 +24,9 @@
 | `src/components/hooks/` | Удобные `useX`-обёртки над контекстами и независимые хуки |
 | `src/components/layout/` | Адаптивная компоновка `ResponsiveLayout` |
 | `src/scss/` | Глобальные токены, темы, миксины и общие стили |
-| `src/pages/*/scss/` | Стили конкретных экранов |
+| `src/pages/*/scss/` | Стили конкретных экранов; SCSS не хранить рядом с TSX |
+| `src/components/modules/scss/`, `src/components/ts/scss/` | Стили модалок и общих компонентов в отдельных каталогах |
+| `src/pages/Settings/components/SettingsTabs/` | Только компоненты вкладок настроек; вспомогательные компоненты — на уровень выше, в `Settings/components/`, стили — в `Settings/scss/` |
 | `src/i18n/` | Настройка i18next и RU/EN JSON |
 | `src/pages/Info/` | Info, FAQ, about, roadmap, отдельные данные релизов и рисованные SVG |
 
@@ -34,7 +36,7 @@
 
 ## Передача данных и состояния
 
-1. В `SettingsContext` живут тема, акцент, декор, язык; `UpdateSettingsContext` отвечает за их изменение; `theme-init.ts` подставляет CSS-атрибуты до React.
+1. В `SettingsContext` живут тема, акцент, декор, язык и выбор/эффекты фона через `useLocalStorage` (без облачного сохранения параметров фона); `UpdateSettingsContext` отвечает за их изменение; `theme-init.ts` подставляет CSS-атрибуты до React.
 2. В `HabitsContext` список доступных активностей, `TheHabitContext` — конкретная активность/состояние таймера и счётчика, `CalendarContext` — календарь, `DoneContext` — отправка отметок; `GroupContext` — данные беседы и права.
 3. `SideMenuContext` арбитрирует мобильные жесты; меню/свайп/слайдер/сворачивание не должны конкурировать. Режим `settings_layout` относится только к ПК. Все слайдеры и их источники — [SLIDERS.md](SLIDERS.md); выбор фоновых изображений — [WALLPAPERS.md](WALLPAPERS.md).
 4. `BlackoutContext` и `ModuleMap` управляют модалками. Внутренний `PermissionsSettings` не создаёт второй оверлей.

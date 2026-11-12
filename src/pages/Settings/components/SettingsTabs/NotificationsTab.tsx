@@ -15,8 +15,8 @@ import SectionArt from "../../../../components/ts/SectionArt";
 import { getPushState, enableWebPush, disableWebPush, isIOS, isStandalonePWA, type PushState } from "../../../../components/ts/utils/webPush";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { api } from "../../../../components/ts/api";
-import "./notificationPermission.scss";
-import PlanRemindersSettings from "./PlanRemindersSettings";
+import "../../scss/notificationPermission.scss";
+import PlanRemindersSettings from "../PlanRemindersSettings";
 
 const browserPermission = (): NotificationPermission | "unsupported" =>
     typeof window === "undefined" || !("Notification" in window) ? "unsupported" : Notification.permission;

@@ -15,12 +15,16 @@
 | Общие анимации | `src/scss/_animations.scss` |
 | Модальная оболочка | `src/scss/blackout.scss` |
 | Стили общих компонентов | `src/scss/radioGroup.scss`, `selector.scss`, `toggler.scss`, `Composer.scss`, `ContextMenu.scss`, `Loading.scss` и другие |
-| Стили модалок | `src/scss/modules/` |
-| Общие контролы создания и редактирования активности | `src/scss/modules/habitFormControls.scss` (подключается `addHabit.scss` и `redHabit.scss`) |
+| Стили модалок | `src/components/modules/scss/` |
+| Общие контролы создания и редактирования активности | `src/scss/habitFormControls.scss` (подключается `addHabit.scss` и `redHabit.scss`) |
 | Стили бокового меню | `src/scss/SM/` |
 | Страницы | `src/pages/<НазваниеСтраницы>/scss/` |
+| Модалки и общие компоненты | `src/components/modules/scss/`, `src/components/ts/scss/` |
+| Настройки | `src/pages/Settings/scss/`, включая стили компонентов вкладок |
 
 При небольшой правке сохранять существующий файл и его структуру. Не заводить новые «вторые» стили поверх старых, не переносить селекторы без причины. Перед правкой найти все упоминания класса и проверить, откуда именно импортируется SCSS.
+
+**Строгое правило:** все `.scss` живут только внутри отдельной папки `scss/`, никогда в каталоге рядом с компонентами. Для Settings `SettingsTabs/` содержит только табы, вспомогательные TSX находятся в `Settings/components/`, все их стили — в `Settings/scss/`. После любого перемещения проверять относительные импорты, `@use` и тестовые пути.
 
 `App.scss` подключает `variables`, `mixins`, `reset`, `animations`, `datepicker`, `global` и генерирует CSS-переменные тем с помощью миксинов. Компонентные SCSS обычно импортируются самими компонентами.
 
@@ -122,7 +126,7 @@
 
 **Историческое правило для встроенного popup:** ранее у `SelectList` фон списка задавался `background-color: var(--bgc)`. Сейчас общий popup находится в `selectListPortalRoot` и использует 90%-ную заливку `var(--bgc)` с `blur(9px)` (см. актуализацию ниже). При этом входное поле выбора и фон модалки могут сохранить собственные `--mc` / `--interact`.
 
-Конкретный пример: `src/scss/modules/PermissionsDiv.scss` — `.rolesModalSelect`. Там у `@include var.selectList(...)` параметр `$bg` теперь `var(--bgc)`, а `> input` по-прежнему использует `var(--mc)`.
+Конкретный пример: `src/components/modules/scss/PermissionsDiv.scss` — `.rolesModalSelect`. Там у `@include var.selectList(...)` параметр `$bg` теперь `var(--bgc)`, а `> input` по-прежнему использует `var(--mc)`.
 
 ```scss
 .rolesModalSelect {
@@ -176,7 +180,7 @@
 - На ПК окно компактное и центрированное; на мобильном `width: 100%` без боковых зазоров, с `safe-area`, внутренним скроллом списка и скруглением верхних углов `24px`. Не добавлять дополнительную кнопку закрытия или вторую полоску `mobileBar` без требования.
 - Для внутренних полей применять `var(--interact)` или существующий компонент. **Не наслаивать несколько одинаковых фонов** на родительскую панель и её дочерние блоки.
 - У нейтрального стеклянного окна допустима штатная граница от `Blackout`; если у самой поверхности `background: linear-gradient(135deg, var(--accent), var(--grad))`, декоративный `border` должен быть `none`.
-- Образец для новой модалки — `src/scss/modules/CreateChat.scss`; при изменении `QuickActionPicker` проверять `.quickActionModal` в `src/pages/Settings/components/SettingsTabs/QuickActionsSettings.scss`.
+- Образец для новой модалки — `src/components/modules/scss/CreateChat.scss`; при изменении `QuickActionPicker` проверять `.quickActionModal` в `src/pages/Settings/scss/QuickActionsSettings.scss`.
 
 
 `Blackout` уже имеет оболочку `.blackout` / `.blackoutModule` и мобильную `.mobileBar` из `src/scss/blackout.scss`. Миксин `centerModal` задаёт `transform: translate(-50%, -50%)` для самого окна: **не применять этот миксин к движущемуся содержимому**, иначе `transform` перетрётся.
@@ -188,7 +192,7 @@
 - `min-height: 0` для вложенных flex-контейнеров;
 - прокрутка в самой панели, нижние действия вне прокручиваемой части.
 
-Пример готовой реализации: `src/scss/modules/PermissionsDiv.scss`: `.rolesModalViewport`, `.rolesModalTrack`, `.rolesModalPanel`. Прежде чем менять, открыть текущие селекторы и проверить их совместно.
+Пример готовой реализации: `src/components/modules/scss/PermissionsDiv.scss`: `.rolesModalViewport`, `.rolesModalTrack`, `.rolesModalPanel`. Прежде чем менять, открыть текущие селекторы и проверить их совместно.
 
 Не добавлять модалкам крестик/«Отмена» автоматически. `Blackout` уже умеет закрывать по фону и жестом; для «Права и роли» действующее требование — без дополнительных кнопок закрытия. Мобильная полоска принадлежит **оболочке**, не дублировать её.
 
@@ -352,7 +356,7 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
 - **Статистика**: `OverallStats` — адаптивный dashboard: кольцо выполнения, ключевые числа, карточки стриков/перерывов, детальный график и счетчик/таймер только для подходящего типа активности. Внутри `mc` карточки используют `interact` без декоративного border, кроме внешнего слоя с фоном сайта. Не использовать `font-weight` в новых SCSS.
 - **Собственные цвета**: одна кнопка «Свои цвета» под обоими пикерами открывает общую модалку `CustomThemeColor` с двумя `input[type=color]`, двумя HEX-полями, предпросмотром градиента и единым сохранением. Значения хранятся в `localStorage` (`customAccentHex` / `customGradHex`) и включаются значениями темы `accent="custom"` / `grad="custom"`. `applyCustomPalette` применяет `--accent`, `--accent_text`, `--accent_op`, `--accent_hov`, `--inner_text`, `--grad`, `--grad_op` и др. Не затирать их при переключении темы; при выборе пресета удалять inline-переопределения.
 - **10 дополнительных stock сцен**: `retroDrive` (закат и анимированная дорожная разметка без машины), `neonCity`, `paintSplash`, `liquid`, `prism`, `laser`, `waves`, `orbit`, `glitch`, `petals`. Все используют `--accent`, `--grad`, `--bgc` и псевдослучайные паттерны с фиксированным seed, совпадающие между карточкой и полноценным фоном. Стоковые сцены **не занимают** пять пользовательских слотов.
-- **Скорость движения**: `BackgroundEffects.speed` в диапазоне 0–3, шаг 0.25, серверный `settings.bg_effects.speed`. `SeekBar` доступен на всех анимируемых фонах даже при выключенном движении, на статических **disabled**; 0× останавливает анимацию. Подпись настройки всегда без значения, единица `×` у самого SeekBar. `prefers-reduced-motion` отключает анимацию.
+- **Скорость движения**: `BackgroundEffects.speed` в диапазоне 0–3, шаг 0.25, локальный `settings_bg_effects.speed`. `SeekBar` доступен на всех анимируемых фонах даже при выключенном движении, на статических **disabled**; 0× останавливает анимацию. Подпись настройки всегда без значения, единица `×` у самого SeekBar. `prefers-reduced-motion` отключает анимацию.
 - **Пользовательские фоны**: в `BackgroundLibrary` никакие названия и повторяющиеся «Изменить фон» под своими миниатюрами не показывать; выбор по превью, удаление отдельно с `notValid`. У стандартных фонов подписи на плитках больше не выводятся; названия доступны в подсказках.
 - **Roadmap**: текущая dev 0.6.2, 0.5 — только «Афродита», у каждой 0.5.x есть «Улучшение интерфейса», переименованы основные вехи. 0.6.1 переносится в историю, не теряя данные.
 
@@ -506,8 +510,8 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
 ## Независимые стили выбора и поиска контактов (dev 0.6.2)
 
 - \`SelectList.tsx\` подключает \`src/scss/SelectList.scss\` самостоятельно. В нём находятся базовые правила \`.selectListDiv\` и \`.redHabitSL\`, поэтому модалка создания активности не зависит от предварительной загрузки страницы редактирования. \`.redHabitSL\` нельзя возвращать в \`redHabit.scss\`.
-- \`TagSelector.tsx\` и \`DayChanger.tsx\` также импортируют собственные общие правила из \`src/scss/modules/habitFormControls.scss\`. У всех этих общих компонентов есть дополнительный импорт в \`App.scss\`.
-- \`HabitParticipantPicker\` использует те же классы \`.contactPickerList\`, \`.createChatSearch\`, \`.createChatChosenCons\`, \`.createChatChosenCon\`, \`.createChatContact\`, что и поиск участников при приглашении из беседы (\`CreateChat\`). Общие правила находятся в \`src/scss/modules/contactPickerControls.scss\`.
+- \`TagSelector.tsx\` и \`DayChanger.tsx\` также импортируют собственные общие правила из \`src/components/modules/scss/habitFormControls.scss\`. У всех этих общих компонентов есть дополнительный импорт в \`App.scss\`.
+- \`HabitParticipantPicker\` использует те же классы \`.contactPickerList\`, \`.createChatSearch\`, \`.createChatChosenCons\`, \`.createChatChosenCon\`, \`.createChatContact\`, что и поиск участников при приглашении из беседы (\`CreateChat\`). Общие правила находятся в \`src/components/modules/scss/contactPickerControls.scss\`.
 - Проверять на прямых маршрутах, в том числе из \`/info\` и \`/habit\`, на ПК и мобильном, без предварительного открытия Settings. CI: \`tests/select-list-modal-styles.test.mjs\`; сборка: \`npm run check:bundle\` проверяет наличие селекторов в начальном CSS.
 
 

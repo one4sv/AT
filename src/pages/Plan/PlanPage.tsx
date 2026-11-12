@@ -19,7 +19,7 @@ import PlanComment from "./PlanComment";
 import PlanMembers from "./PlanMembers";
 import { tags } from "../../components/ts/tags";
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
-import "./PlanPage.scss";
+import "./scss/PlanPage.scss";
 
 export default function PlanPage() {
     const { planId } = useParams<{ planId: string }>();

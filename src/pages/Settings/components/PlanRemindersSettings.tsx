@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNote } from "../../../../components/hooks/NoteHook";
-import { api } from "../../../../components/ts/api";
-import SelectList from "../../../../components/ts/SelectList";
-import Toggler from "../../../../components/ts/Toggler";
-import HighlightText from "../../../../components/ts/HighlightText";
-import "./PlanRemindersSettings.scss";
+import { useNote } from "../../../components/hooks/NoteHook";
+import { api } from "../../../components/ts/api";
+import SelectList from "../../../components/ts/SelectList";
+import Toggler from "../../../components/ts/Toggler";
+import HighlightText from "../../../components/ts/HighlightText";
+import "../scss/PlanRemindersSettings.scss";
 
 type Preferences = { enabled: boolean; defaultMinutesBefore: number };
 const choices = [0,10,60,1440];

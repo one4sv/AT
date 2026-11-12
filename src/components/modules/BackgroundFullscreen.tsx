@@ -12,7 +12,7 @@ import { Background } from "../ts/utils/background";
 import { backgroundGroups } from "../ts/utils/backgroundCatalog";
 import { BackgroundHelpButton } from "./BackgroundHelp";
 import { supportsBackgroundMotion } from "../ts/utils/BackgroundScene";
-import { ContourPatternPicker } from "../../pages/Settings/components/SettingsTabs/ContourPatternPicker";
+import { ContourPatternPicker } from "../../pages/Settings/components/ContourPatternPicker";
 import SeekBar from "../../pages/Settings/components/SeekBar";
 import Selector from "../ts/Selector";
 import Toggler from "../ts/Toggler";

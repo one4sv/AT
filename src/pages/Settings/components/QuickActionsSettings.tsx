@@ -1,14 +1,14 @@
 import { useRef, useState, type PointerEvent } from "react";
 import { ListIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
-import HighlightText from "../../../../components/ts/HighlightText";
-import { useSettings } from "../../../../components/hooks/SettingsHook";
-import { useNote } from "../../../../components/hooks/NoteHook";
-import { useBlackout } from "../../../../components/hooks/BlackoutHook";
-import { api } from "../../../../components/ts/api";
-import { QuickActionVisual } from "../../../../components/ts/utils/quickActions";
-import type { QuickAction } from "../../../../components/context/SettingsContext";
-import "./QuickActionsSettings.scss";
+import HighlightText from "../../../components/ts/HighlightText";
+import { useSettings } from "../../../components/hooks/SettingsHook";
+import { useNote } from "../../../components/hooks/NoteHook";
+import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import { api } from "../../../components/ts/api";
+import { QuickActionVisual } from "../../../components/ts/utils/quickActions";
+import type { QuickAction } from "../../../components/context/SettingsContext";
+import "../scss/QuickActionsSettings.scss";
 
 export default function QuickActionsSettings({ search }: { search: string }) {
     const { t } = useTranslation("settings");

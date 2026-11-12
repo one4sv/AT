@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, CircleUserRound, Search, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { api } from "../../../../components/ts/api";
-import { useContacts } from "../../../../components/hooks/ContactsHook";
-import type { Contact } from "../../../../components/context/ContactsContext";
-import type { GroupInviteRules, PrivateSettings } from "../../../../components/context/SettingsContext";
-import "./PrivacyExceptions.scss";
+import { api } from "../../../components/ts/api";
+import { useContacts } from "../../../components/hooks/ContactsHook";
+import type { Contact } from "../../../components/context/ContactsContext";
+import type { GroupInviteRules, PrivateSettings } from "../../../components/context/SettingsContext";
+import "../scss/PrivacyExceptions.scss";
 
 type ExceptionType = NonNullable<PrivateSettings["activity_invite_exceptions"]>;
 type ExceptionMode = "activity" | "group";

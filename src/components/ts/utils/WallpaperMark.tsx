@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import type { WallpaperStyle } from "../../context/SettingsContext";
-import "./WallpaperMark.scss";
+import "../scss/WallpaperMark.scss";
 
 export default function WallpaperMark({ style }: { style: WallpaperStyle }) {
     return <div className="wallpaperMark" style={{ "--mark-glow": style.logoGlow / 100, "--mark-main": style.logoColor, "--mark-grad": style.logoMode === "gradient" ? style.logoGrad : style.logoColor } as CSSProperties}>

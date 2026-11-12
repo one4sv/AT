@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { api } from "../../components/ts/api";
 import { Background } from "../../components/ts/utils/background";
-import "./AccountDeletion.scss";
+import "./scss/AccountDeletion.scss";
 
 type PendingDeletion = { email: string; deadline: string };
 

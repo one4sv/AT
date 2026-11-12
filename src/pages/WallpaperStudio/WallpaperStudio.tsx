@@ -15,7 +15,7 @@ import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { api } from "../../components/ts/api";
 import { Background } from "../../components/ts/utils/background";
 import { backgroundGroups, MAX_CUSTOM_BACKGROUNDS } from "../../components/ts/utils/backgroundCatalog";
-import "./WallpaperStudio.scss";
+import "./scss/WallpaperStudio.scss";
 
 type WallpaperItem = { id: string; url?: string; label: string; group: string };
 type HandleDrag = { pointerId: number; x: number; y: number; moved: boolean; direction: "none" | "horizontal" | "vertical" };

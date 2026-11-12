@@ -6,7 +6,7 @@ import useLocalStorage from "../hooks/utils/useLocalStorage";
 import i18n from "../../i18n/i18n";
 import { api } from "../ts/api";
 import { applyCustomPalette } from "../ts/utils/customPalette";
-import { defaultBackgroundEffects, hasCachedBackgroundEffects, normalizeBackgroundEffects } from "../ts/utils/backgroundEffects";
+import { defaultBackgroundEffects, normalizeBackgroundEffects } from "../ts/utils/backgroundEffects";
 import { MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
 import { privateAssetUrl } from "../ts/utils/privateAssetUrl";
 import { resolveTimeZone } from "../ts/utils/dateToStr";
@@ -141,7 +141,6 @@ interface SettingsResponse {
     show_archived_in_acc: boolean;
     week_start: string;
     bg_gallery?: SavedBackground[];
-    bg_effects?: BackgroundEffects;
 }
 
 export interface PrivateSettings {
@@ -235,8 +234,6 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             typeof next === "function" ? next(normalizeBackgroundEffects(previous)) : next
         ));
     }, [setStoredBgEffects]);
-    const hasLocalBgEffects = useMemo(() => hasCachedBackgroundEffects(user.nick, initialLoading), [user.nick, initialLoading]);
-    const hydratedBgEffectsFor = useRef<string | null>(null);
     const [ decor, setDecor ] = useLocalStorage(LOCAL_KEYS.decor, "glass");
     const [ lang, setLang ] = useLocalStorage(LOCAL_KEYS.lang, "ru");
     const [ fontSize, setFontSize ] = useLocalStorage<number>(LOCAL_KEYS.fontSize, 16);
@@ -295,7 +292,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ tab, setTab ] = useState<string>('menu');
     const [ loadedSettingsFor, setLoadedSettingsFor ] = useState<string | null>(null);
     const settingsLoaded = !initialLoading && (!user.nick || loadedSettingsFor === user.nick);
-    const bgEffectsReady = hasLocalBgEffects || settingsLoaded;
+    const bgEffectsReady = true;
     const reminderTimezoneSynced = useRef<string | null>(null);
     useEffect(() => {
         if (initialLoading || !settingsLoaded || !user.id) return;
@@ -351,16 +348,12 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setShowArchivedInAcc(res.data.show_archived_in_acc ?? false);
                 setWeekStart(res.data.week_start ?? null);
                 setBgGallery(Array.isArray(res.data.bg_gallery) ? res.data.bg_gallery.slice(0, MAX_CUSTOM_BACKGROUNDS) : []);
-                if (hydratedBgEffectsFor.current !== user.nick) {
-                    if (!hasLocalBgEffects) setBgEffects(normalizeBackgroundEffects(res.data.bg_effects));
-                    hydratedBgEffectsFor.current = user.nick;
-                }
             }
         } catch (err) {
             if (axios.isAxiosError(err) && err.response?.status === 401) return;
             console.error("Ошибка загрузки настроек:", err);
         }
-    }, [setMessNote, setNote, setBgEffects, hasLocalBgEffects, user.nick]);
+    }, [setMessNote, setNote]);
 
     useEffect(() => {
         if (initialLoading) return;

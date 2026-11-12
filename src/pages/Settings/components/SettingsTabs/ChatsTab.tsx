@@ -11,7 +11,7 @@ import TA from "../../../../components/ts/TA";
 import { useNote } from "../../../../components/hooks/NoteHook";
 import { api } from "../../../../components/ts/api";
 import type { ChatWelcomeSettings } from "../../../../components/context/SettingsContext";
-import "./ChatWelcomeSettings.scss";
+import "../../scss/ChatWelcomeSettings.scss";
 
 import SectionArt from "../../../../components/ts/SectionArt";
 
