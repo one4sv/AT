@@ -124,9 +124,8 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
             startDate = habit.start_date
         } else if (habits?.length) {
             startDate = habits
-                .map(h => new Date(h.start_date))
-                .sort((a, b) => a.getTime() - b.getTime())[0]
-                .toISOString()
+                .map(h => h.start_date)
+                .sort()[0]
         }
 
         const { start, end } = getDateRange(period, startDate)
