@@ -74,7 +74,7 @@ export default function AboutTab() {
 
             <p>
                 {t("about.version")}:{" "}
-                <Link to="/info/roadmap" className="accent">dev 0.6.3</Link>
+                <Link to="/info/roadmap" className="accent">dev 0.6.4</Link>
             </p>
         </div>
     );

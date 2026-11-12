@@ -347,19 +347,29 @@ export const roadmapHistory: RoadmapRelease[] = [
             { ru: "Новый выбор и редактор фоновых изображений", en: "New wallpaper picker and editor" },
             { ru: "Улучшения мобильного интерфейса", en: "Mobile interface improvements" }
         ]
+    },
+    {
+        version: "0.6.3",
+        date: "2026-11-08",
+        title: "Songbird",
+        features: [
+            { ru: "Ускорена загрузка сайта, улучшены кэширование и производительность.", en: "Faster site loading with improved caching and performance." },
+            { ru: "Добавлены Web Push-уведомления и гибкие напоминания об активностях.", en: "Web Push notifications and flexible activity reminders." },
+            { ru: "Обновлены элементы оформления, настройки и взаимодействия на ПК и мобильных устройствах.", en: "Refined styling, settings, and interactions on desktop and mobile." },
+            { ru: "Усилена защита аккаунтов, сообщений и личных данных.", en: "Stronger protection for accounts, messages, and personal data." },
+            { ru: "Добавлена форма для сообщений об ошибках, предложений и жалоб.", en: "Feedback form for bug reports, suggestions, and complaints." }
+        ]
     }
 ];
 
 export const roadmapCurrent: RoadmapRelease = {
-    version: "0.6.3",
-    date: "2026-11-08",
-    title: "Songbird",
+    version: "0.6.4",
+    date: "2026-11-12",
+    title: "Waypoint",
     features: [
-        { ru: "Ускорена загрузка сайта, улучшены кэширование и производительность.", en: "Faster site loading with improved caching and performance." },
-        { ru: "Добавлены Web Push-уведомления и гибкие напоминания об активностях.", en: "Web Push notifications and flexible activity reminders." },
-        { ru: "Обновлены элементы оформления, настройки и взаимодействия на ПК и мобильных устройствах.", en: "Refined styling, settings, and interactions on desktop and mobile." },
-        { ru: "Усилена защита аккаунтов, сообщений и личных данных.", en: "Stronger protection for accounts, messages, and personal data." },
-        { ru: "Добавлена форма для сообщений об ошибках, предложений и жалоб.", en: "Feedback form for bug reports, suggestions, and complaints." }
+        { ru: "Добавлены разовые планы: личные и совместные, с датой, временем, тегом, описанием, приглашениями участников и отдельной страницей.", en: "One-off plans: personal and shared, with a date, time, tag, description, participant invitations, and a dedicated page." },
+        { ru: "Новые настройки: часовой пояс, напоминания о планах и выбор того, что открывается при запуске приложения.", en: "New settings: time zone, plan reminders, and a choice of what opens when you launch the app." },
+        { ru: "Переработана страница «Планы и активности»: календарь, итоги дня, ближайшие дела и единая лента активностей и планов.", en: "Redesigned Plans and Activities page: calendar, day summary, upcoming items, and a single timeline of activities and plans." }
     ]
 };
 
@@ -377,13 +387,6 @@ export const roadmapFuture: RoadmapRelease[] = [
         version: "0.6.5",
         features: [
             { ru: "Цели: личные и совместные, связь с планами и активностями", en: "Goals: personal and shared, linked to plans and activities" }
-        ]
-    },
-    {
-        version: "0.6.4",
-        features: [
-            { ru: "Разовые личные и совместные планы", en: "One-off personal and shared plans" },
-            { ru: "Обновление страницы «Планы и активности»", en: "New Plans and Activities overview" }
         ]
     },
     {
