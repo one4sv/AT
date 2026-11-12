@@ -105,7 +105,9 @@ test("creation is personal and participant management lives on plan page", () =>
     assert.match(editor, /!modal && !initial && <div className="inpWrapperAddHabit">/);
     assert.doesNotMatch(editor, /modal && <div className="addPlanHeading"/);
     assert.match(page, /<PlanMembers plan=\{plan\}/);
-    assert.match(members, /api\.post\("plans\/" \+ plan\.id \+ "\/invite"/);
+    assert.match(members, /setBlackout\(\{ seted: true, module: "HabitParticipantPicker"/);
+    const picker = read("src/components/modules/HabitParticipantPicker.tsx");
+    assert.match(picker, /api\.post\(`plans\/\$\{planId\}\/invite`/);
     assert.match(members, /api\.delete\("plans\/" \+ plan\.id \+ "\/members\/" \+ id\)/);
     assert.match(style, /height: auto;/);
     assert.match(style, /max-height: calc\(92dvh - env\(safe-area-inset-bottom\)\);/);
