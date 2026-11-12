@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom"
 import type { CountInpsType } from "./Schedule"
 import { useSettings } from "../../../../components/hooks/SettingsHook"
 import { isOddWeek } from "../../utils/isOddWeek"
-import { dateToCalendarFormat, timeToMinutes } from "../../../../components/ts/utils/dateToStr"
+import { clockInAppZone, dateToCalendarFormat, timeToMinutes, todayStrFunc } from "../../../../components/ts/utils/dateToStr"
 
 export type ExtraScheduleBlock = {
     id: number;
@@ -47,7 +47,6 @@ export default function ScheduleBlock({
     const { t } = useTranslation("common");
     const { weekStart } = useSettings()
     const { calendar } = useCalendar()
-    const today = new Date()
     const navigate = useNavigate()
     const { setBlackout } = useBlackout()
     const visibleExtraBlocks = extraBlocks.filter(
@@ -55,25 +54,16 @@ export default function ScheduleBlock({
     )
     
 
-    const getTimeClass = (h: Habit, day: number, date:Date) => {
-        const now = new Date()
+    const getTimeClass = (h: Habit, date:Date) => {
+        const clock = clockInAppZone()
 
         if (calendar.find(c => c.isDone && c.date === dateToCalendarFormat(date) && Number(c.habitId) === h.id)) return "done"
 
         if (!h.start_time) return ""
 
-        const [sh, sm] = h.start_time.split(":").map(Number)
-        const start = new Date()
-        start.setHours(sh, sm, 0, 0)
-
-        if (h.end_time) {
-            const [eh, em] = h.end_time.split(":").map(Number)
-            const end = new Date()
-            end.setHours(eh, em, 0, 0)
-
-            if (day === today.getDay()) {
-                if (now > start) return "ongoing"
-            }
+        if (h.end_time && dateToCalendarFormat(date) === todayStrFunc() &&
+            clock >= h.start_time.slice(0, 5) && clock <= h.end_time.slice(0, 5)) {
+            return "ongoing";
         }
 
         return ""
@@ -84,7 +74,7 @@ export default function ScheduleBlock({
         const [ sh, sm ] = habit.start_time.split(':')
         const et = Number(eh) * 60 + Number(em)
         const st = Number(sh) * 60 + Number(sm)
-        const now = today.getHours() * 60 + today.getMinutes()
+        const now = timeToMinutes(clockInAppZone())
         const dur = et - st
         const pass = now - st
         const percent = Math.min(Math.max(pass / dur * 100, 0), 100)
@@ -96,14 +86,14 @@ export default function ScheduleBlock({
             <div className="scheduleBlockText">
                 <span className="scheduleHabitTime">{formatHabitTime(habit)}</span>
                 <span className="scheduleHabitName">{habit.name}</span>
-                {!edit && getTimeClass(habit, d.value, d.date) === "done" && <CheckCircleIcon className="isScheduleBlockDone" weight="fill"/>}
+                {!edit && getTimeClass(habit, d.date) === "done" && <CheckCircleIcon className="isScheduleBlockDone" weight="fill"/>}
             </div>
         )
     }
 
     return (
         <div className="scheduleBlock" onClick={() => isGeneral && !edit && navigate(`/habit/${habit.id}`)}>
-            {getTimeClass(habit, d.value, d.date) === "ongoing" && !edit &&
+            {getTimeClass(habit, d.date) === "ongoing" && !edit &&
                 <div className="scheduleBar">
                     <div className="scheduleBarGoing" style={{width:countProcents(habit)}}></div>
                 </div>
