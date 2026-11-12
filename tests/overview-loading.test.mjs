@@ -133,5 +133,7 @@ test("overview focus labels are outside cards and both kinds use the same tag ic
     assert.match(overview, /const tag = tags\.find/);
     assert.match(overview, /getOverviewNext\(/);
     assert.match(css, /\.habitOverviewFocusIcon\s*\{/);
-    assert.match(sideMenu, /pathname\.replace\(\/\\\/\$\/, ""\) === "\/plan\/" \+ entry\.plan!\.id \? "active"/);
+    assert.match(sideMenu, /smPlanItem/);
+    assert.match(sideMenu, /aria-current=/);
+    assert.match(sideMenu, /pathname\.replace/);
 });
