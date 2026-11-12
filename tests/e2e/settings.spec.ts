@@ -351,3 +351,26 @@ test("SelectList opens above near the bottom and below near the top", async ({ p
     expect(topInput).not.toBeNull();
     expect(below!.y).toBeGreaterThanOrEqual(topInput!.y + topInput!.height - 1);
 });
+
+test("anonymous viewer opens a shared plan without member actions", async ({ page }) => {
+    await page.route("**/api/user", route => route.fulfill({
+        status:401, contentType:"application/json",
+        body:JSON.stringify({ success:false })
+    }));
+    await page.route("**/api/plans/17?share=*", route => route.fulfill({
+        status:200, contentType:"application/json",
+        body:JSON.stringify({ success:true, plan:{
+            id:17,name:"Shared plan fixture",description:"Read-only overview",
+            plan_date:"2026-11-20",start_time:null,end_time:null,
+            kind:"personal",completion_mode:"personal",status:"upcoming",
+            visibility:"link",membership_status:"viewer",is_owner:false
+        } })
+    }));
+    await page.goto("/plan/17?share=33333333-3333-4333-8333-333333333333");
+    await expect(page.locator("#planInlineName")).toHaveValue("Shared plan fixture");
+    await expect(page.locator("#planInlineName")).toHaveAttribute("readonly","");
+    await expect(page.locator(".planMembersSection")).toHaveCount(0);
+    await expect(page.locator(".planInlineCompletion")).toHaveCount(0);
+    await expect(page.locator(".planHeaderActionsButt")).toHaveCount(0);
+    await expect(page.locator(".planDoneButton")).toHaveCount(0);
+});
