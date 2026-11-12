@@ -12,6 +12,7 @@ import PlanEditor, { type PlanInput } from "./PlanEditor";
 import CalendarInput from "../../components/ts/CalendarInput";
 import TA from "../../components/ts/TA";
 import TagSelector from "../../components/ts/TagSelector";
+import RadioGroup from "../../components/ts/RadioGroup";
 import Skeleton from "../../components/ts/Skeleton";
 import { relativePlanDay } from "../../components/ts/utils/dateToStr";
 import PlanReminders from "./PlanReminders";
@@ -97,7 +98,8 @@ export default function PlanPage() {
             place: plan.place || "",
             tag: plan.tag || null,
             kind: plan.kind,
-            completion_mode: plan.completion_mode || "personal"
+            completion_mode: plan.completion_mode || "personal",
+            visibility: plan.visibility || "inherit"
         });
         setCompletionOpen(false);
         setEditing(true);
@@ -295,6 +297,12 @@ export default function PlanPage() {
                         readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
                         value={value.description || ""}
                         onChange={event => changeDraft("description", event.target.value)}/>}
+                    {editing && plan.is_owner && <div className="planMetadata planVisibility">
+                        <div className="settingSpan">{t("plans.visibility")}</div>
+                        <RadioGroup id="planDetailVisibility" list={["inherit","nobody","contacts","all","link"].map(mode => ({
+                            value:mode,label:t("plans.visibility_" + mode)
+                        }))} val={value.visibility} newVal={next => changeDraft("visibility",next as PlanInput["visibility"])}/>
+                    </div>}
                     <div className="planMetadata">{t("plans." + plan.kind)}
                         {plan.kind === "shared" && <>
                             {" · "}

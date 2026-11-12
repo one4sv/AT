@@ -7,6 +7,7 @@ import CalendarInput from "../../components/ts/CalendarInput";
 import SelectList from "../../components/ts/SelectList";
 import TA from "../../components/ts/TA";
 import TagSelector from "../../components/ts/TagSelector";
+import RadioGroup from "../../components/ts/RadioGroup";
 import type { OneOffPlan } from "../../components/context/PlansContext";
 import "../../scss/habitFormControls.scss";
 import "../../components/modules/scss/addPlan.scss";
@@ -22,6 +23,7 @@ export interface PlanInput {
     tag: string | null;
     kind: "personal" | "shared";
     completion_mode: "personal" | "shared";
+    visibility: "inherit" | "nobody" | "contacts" | "all" | "link";
 }
 const localDate = (date: Date) => {
     const year = date.getFullYear();
@@ -49,7 +51,8 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
         place: initial?.place || "",
         tag: initial?.tag || null,
         kind: initial?.kind || "personal",
-        completion_mode: initial?.completion_mode || "personal"
+        completion_mode: initial?.completion_mode || "personal",
+        visibility: initial?.visibility || "inherit"
     });
 
     function change<K extends keyof PlanInput>(key: K, next: PlanInput[K]) {
@@ -129,6 +132,12 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
                     { value: "shared", label: t("plans.sharedCompletion") }]}
                 onChange={next => change("completion_mode", next as PlanInput["completion_mode"])}/>
         </div>}
+        <div className="addHabitWrapper">
+            <label>{t("plans.visibility")}</label>
+            <RadioGroup id="planVisibility" list={["inherit","nobody","contacts","all","link"].map(mode => ({
+                value:mode,label:t("plans.visibility_" + mode)
+            }))} val={value.visibility} newVal={next => change("visibility",next as PlanInput["visibility"])}/>
+        </div>
         <div className="addHabitWrapper planTagWrapper">
             <TagSelector portal={modal} selectedTag={value.tag || undefined}
                 setSelectedTag={tag => change("tag", tag || null)}/>

@@ -807,6 +807,13 @@
     "detailsTooShort": "Опишите обращение подробнее — не менее 12 символов."
   },
     "plans": {
+    "visibility": "Видимость плана",
+    "visibility_inherit": "По настройкам приватности",
+    "visibility_nobody": "Никто",
+    "visibility_contacts": "Контакты",
+    "visibility_all": "Все",
+    "visibility_link": "Только по прямой ссылке",
+
     "share": "Поделиться",
     "clearTime": "Сбросить время",
     "remindersSettingsHint": "Общие настройки напоминаний:",

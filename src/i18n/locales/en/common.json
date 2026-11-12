@@ -799,6 +799,13 @@
     "detailsTooShort": "Describe your request in at least 12 characters."
   },
     "plans": {
+    "visibility": "Plan visibility",
+    "visibility_inherit": "Use privacy settings",
+    "visibility_nobody": "Nobody",
+    "visibility_contacts": "Contacts",
+    "visibility_all": "Everyone",
+    "visibility_link": "Only via direct link",
+
     "share": "Share",
     "clearTime": "Clear time",
     "remindersSettingsHint": "Global reminder settings:",
