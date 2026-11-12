@@ -6,7 +6,7 @@ import Toggler from "../../../../components/ts/Toggler";
 import "../../../../scss/habitsNoteTable.scss";
 import { TagIcon } from "../../../HabitPage/utils/TagIcon";
 import { BellIcon, CheckIcon, MagnifyingGlassIcon, SlidersHorizontalIcon, ClockIcon } from "@phosphor-icons/react";
-import { formatClock } from "../../../../components/ts/utils/dateToStr";
+import { formatClock, resolveTimeZone } from "../../../../components/ts/utils/dateToStr";
 import { useTranslation } from "react-i18next";
 import { useNote } from "../../../../components/hooks/NoteHook";
 import HighlightText from "../../../../components/ts/HighlightText";
@@ -23,7 +23,7 @@ const browserPermission = (): NotificationPermission | "unsupported" =>
 
 export default function NotificationsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { note, messNote } = useSettings();
+    const { note, messNote, timeZone } = useSettings();
     const { setNewNote, setNewMessNote, setNewHabitsNote } = useUpSettings();
     const { habits } = useHabits();
     const { showNotification } = useNote()
@@ -41,7 +41,7 @@ export default function NotificationsTab({ search }: { search: string }) {
     type ReminderPreferences = { enabled: boolean; commonEnabled: boolean; commonTime: string; timezone: string };
     const [reminderPrefs, setReminderPrefs] = useState<ReminderPreferences>({
         enabled: false, commonEnabled: true, commonTime: "18:00",
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+        timezone: resolveTimeZone(timeZone)
     });
     const [reminderRules, setReminderRules] = useState<ReminderRule[]>([]);
     const [remindersLoaded, setRemindersLoaded] = useState(false);
@@ -97,7 +97,7 @@ export default function NotificationsTab({ search }: { search: string }) {
         if (reminderBusy || !remindersLoaded) return;
         setReminderBusy(true);
         try {
-            const response = await api.post("settings/reminders/preferences", next);
+            const response = await api.post("settings/reminders/preferences", { ...next, timezone: resolveTimeZone(timeZone) });
             if (!response.data?.success) throw new Error("reminders");
             setReminderPrefs(response.data.preferences);
             setCommonTimeDraft(response.data.preferences.commonTime.slice(0, 5));
@@ -291,7 +291,7 @@ export default function NotificationsTab({ search }: { search: string }) {
                     <div className="habitReminderOverviewIcon"><BellIcon size={24}/></div>
                     <div className="habitReminderOverviewText">
                         <span>{t(reminderPrefs.enabled ? "notifications.remindersEnabled" : "notifications.remindersDisabled")}</span>
-                        <small>{t("notifications.reminderTimezone", { timezone: reminderPrefs.timezone })}</small>
+                        <small>{t("notifications.reminderTimezone", { timezone: resolveTimeZone(timeZone) })}</small>
                     </div>
                     <span className={"habitReminderOverviewCount " + (configuredHabits ? "active" : "")}>
                         {configuredHabits} / {activeHabits.length}
