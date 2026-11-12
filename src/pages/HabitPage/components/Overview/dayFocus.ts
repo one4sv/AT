@@ -23,3 +23,20 @@ export function getOverviewFocus(entries: DayEntry[], selectedDay: string, today
     }
     return null;
 }
+
+/** The next actionable entry after the focus, regardless of whether it is a plan or habit. */
+export function getOverviewNext(entries: DayEntry[], selectedDay: string, today: string,
+    clock: string, focus: OverviewFocus | null): DayEntry | null {
+    if (selectedDay < today) return null;
+    const available = entries.filter(entry => !entry.completed && entry.plan?.status !== "canceled" &&
+        entry.key !== focus?.entry.key);
+
+    if (selectedDay > today) return available[0] || null;
+
+    // For today, only a future start can be the next scheduled event.
+    const upcoming = available.find(entry => entry.start && entry.start > clock);
+    if (upcoming) return upcoming;
+
+    // Tasks without a start time still belong to the selected day when no timed focus exists.
+    return !focus ? available.find(entry => !entry.start) || null : null;
+}
