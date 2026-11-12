@@ -374,3 +374,36 @@ test("anonymous viewer opens a shared plan without member actions", async ({ pag
     await expect(page.locator(".planHeaderActionsButt")).toHaveCount(0);
     await expect(page.locator(".planDoneButton")).toHaveCount(0);
 });
+
+test("Privacy headings and exceptions follow the selected language", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("settings_lang", JSON.stringify("en")));
+    await page.goto("/settings/privacy");
+    await expect(page.locator('[data-setting-id="privacyActivitiesVisibility"] .settingHeader')).toHaveText("Activity visibility");
+    await expect(page.locator('[data-setting-id="privacyPostsVisibility"] .settingHeader')).toHaveText("Post visibility");
+    await expect(page.locator('[data-setting-id="privacyPlansVisibility"] .settingHeader')).toHaveText("Plan visibility");
+    await expect(page.locator('[data-setting-id="profile"]')).toContainText("Only via direct link");
+    await page.evaluate(() => localStorage.setItem("settings_lang", JSON.stringify("ru")));
+    await page.reload();
+    await expect(page.locator('[data-setting-id="privacyActivitiesVisibility"] .settingHeader')).toHaveText("Видимость активностей");
+    await expect(page.locator('[data-setting-id="privacyPostsVisibility"] .settingHeader')).toHaveText("Видимость постов");
+    await expect(page.locator('[data-setting-id="privacyPlansVisibility"] .settingHeader')).toHaveText("Видимость планов");
+});
+
+test("guest SideMenu remains closed despite enabled startup preference", async ({ page }) => {
+    await page.addInitScript(() => {
+        localStorage.setItem("at_startup_preferences", JSON.stringify({ settings_mobile_start_menu: true }));
+        localStorage.setItem("settings_mobile_start_menu", "true");
+    });
+    await page.route("**/api/user", route => route.fulfill({
+        status: 401, contentType: "application/json", body: JSON.stringify({ success: false })
+    }));
+    await page.goto("/info");
+    const menu = page.locator(".sideMenu");
+    await expect(page.locator(".sideMenuUnAthorised")).toBeAttached();
+    await expect(menu).not.toHaveClass(/\\bopen\\b/);
+    await expect.poll(() => menu.evaluate(element => Math.round(element.getBoundingClientRect().right))).toBeLessThanOrEqual(1);
+    await page.reload();
+    await expect(page.locator(".sideMenuUnAthorised")).toBeAttached();
+    await expect(menu).not.toHaveClass(/\\bopen\\b/);
+    await expect.poll(() => menu.evaluate(element => Math.round(element.getBoundingClientRect().right))).toBeLessThanOrEqual(1);
+});
