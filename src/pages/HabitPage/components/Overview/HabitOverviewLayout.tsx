@@ -8,7 +8,7 @@ import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useContextMenu } from "../../../../components/hooks/ContextMenuHook";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { clockInAppZone, formatDateLabel, todayStrFunc } from "../../../../components/ts/utils/dateToStr";
-import { makeDayEntries, describeDayTime, type DayEntry } from "../../../../components/ts/utils/dayTimeline";
+import { makeDayEntries, describeEntrySubtitle, type DayEntry } from "../../../../components/ts/utils/dayTimeline";
 import { tags } from "../../../../components/ts/tags";
 import ActivityIndicators, { type HabitDayProgress } from "../../../../components/ts/ActivityIndicators";
 import useHabitDayProgress from "../../../../components/hooks/utils/useHabitDayProgress";
@@ -89,7 +89,7 @@ function OverviewFocusCard({ entry, label, more = 0, calendar, progress }: {
                         <ActivityIndicators part="aside" habit={entry.habit} plan={entry.plan} progress={progress}/>
                     </span>
                     <span className="habitOverviewCurrentMeta">
-                        <small>{describeDayTime(entry, t)}</small>
+                        <small>{describeEntrySubtitle(entry, t)}</small>
                         {entry.completed && <CheckCircleIcon className="habitOverviewMetaDone" weight="fill" size={18}/>}
                     </span>
                 </div>
