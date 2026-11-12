@@ -40,7 +40,7 @@ export default function Calendar() {
 
     const yearsList = useMemo(() => {
         const set = new Set<number>();
-        const now = new Date();
+        const now = new Date(todayStrFunc() + "T12:00:00");
         if (!id) {
             for (let y = now.getFullYear() - 2; y <= now.getFullYear() + 3; y++) set.add(y);
             plans.forEach(plan => set.add(Number(plan.plan_date.slice(0, 4))));
@@ -48,13 +48,13 @@ export default function Calendar() {
         if (!habits) return Array.from(set).sort((a, b) => a - b);
 
         if (id && h) {
-            const start = new Date(h.start_date).getFullYear();
+            const start = Number(h.start_date.slice(0, 4));
             for (let y = start; y <= now.getFullYear(); y++) set.add(y);
         } else {
             habits.forEach(habit => {
-                const sd = new Date(habit.start_date).getFullYear();
+                const sd = Number(habit.start_date.slice(0, 4));
                 set.add(sd);
-                if (habit.end_date) set.add(new Date(habit.end_date).getFullYear());
+                if (habit.end_date) set.add(Number(habit.end_date.slice(0, 4)));
                 for (let y = sd; y <= now.getFullYear(); y++) set.add(y);
             });
         }
@@ -64,7 +64,7 @@ export default function Calendar() {
 
     useEffect(() => {
         if (chosenDay === todayStrFunc()) {
-            const date = new Date(chosenDay);
+            const date = new Date(chosenDay + "T12:00:00");
             setSelectedMonth(date.getMonth());
             setSelectedYear(date.getFullYear());
         }
@@ -113,7 +113,7 @@ export default function Calendar() {
     }, [showList.months, showList.years]);
 
     useEffect(() => {
-        const today = new Date();
+        const today = new Date(todayStrFunc() + "T12:00:00");
         setSelectedMonth(today.getMonth());
         setSelectedYear(today.getFullYear());
     }, [setSelectedMonth, setSelectedYear]);
