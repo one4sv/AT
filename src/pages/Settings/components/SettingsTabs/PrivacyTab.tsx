@@ -11,7 +11,6 @@ import { useTranslation } from "react-i18next";
 import HighlightText from "../../../../components/ts/HighlightText";
 
 import SectionArt from "../../../../components/ts/SectionArt";
-import { openCookiePreferences } from "../../../../components/ts/utils/cookieConsent";
 import PrivacyExceptions from "../PrivacyExceptions";
 
 export default function PrivacyTab({ search }: { search: string }) {
@@ -85,9 +84,10 @@ export default function PrivacyTab({ search }: { search: string }) {
                     rule={visiblePrivate.profile || "all"} activityRule={visiblePrivate.activity_invites || "all"}
                     groupRules={visibleInvites} onChange={rules => applyExceptions("profile_exceptions",rules)}/>
             </div>
+
             <div className="settingInnerDiv" data-setting-id="privacyContentVisibility">
                 <div className="settingHeader">
-                    {t("privacy.contentVisibility")}
+                    Видимость активностей
                 </div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan"><HighlightText text={t("privacy.whoSeesActivities")} search={search} /></div>
@@ -96,6 +96,12 @@ export default function PrivacyTab({ search }: { search: string }) {
                 <PrivacyExceptions mode="habits" exceptions={visiblePrivate.habits_exceptions || {}}
                     rule={visiblePrivate.habits} activityRule={visiblePrivate.activity_invites || "all"}
                     groupRules={visibleInvites} onChange={rules => applyExceptions("habits_exceptions",rules)}/>
+            </div>
+
+            <div className="settingInnerDiv" data-setting-id="privacyContentVisibility">
+                <div className="settingHeader">
+                    Видимость постов
+                </div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan"><HighlightText text={t("privacy.whoSeesPosts")} search={search} /></div>
                     <RadioGroup list={privateArrFull} val={visiblePrivate.posts} newVal={(value) => applyNewPrivate("posts", value || "nobody")} id="posts"/>
@@ -103,6 +109,12 @@ export default function PrivacyTab({ search }: { search: string }) {
                 <PrivacyExceptions mode="posts" exceptions={visiblePrivate.posts_exceptions || {}}
                     rule={visiblePrivate.posts} activityRule={visiblePrivate.activity_invites || "all"}
                     groupRules={visibleInvites} onChange={rules => applyExceptions("posts_exceptions",rules)}/>
+            </div>
+
+            <div className="settingInnerDiv" data-setting-id="privacyContentVisibility">
+                <div className="settingHeader">
+                    Видимость планов
+                </div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan"><HighlightText text={t("privacy.whoSeesPlans")} search={search}/></div>
                     <RadioGroup list={privateArrFull} val={visiblePrivate.plans || "nobody"}
@@ -112,6 +124,7 @@ export default function PrivacyTab({ search }: { search: string }) {
                     rule={visiblePrivate.plans || "nobody"} activityRule={visiblePrivate.activity_invites || "all"}
                     groupRules={visibleInvites} onChange={rules => applyExceptions("plans_exceptions",rules)}/>
             </div>
+
             <div className="settingInnerDiv" data-setting-id="privacyActivityInvites">
                 <div className="settingHeader">{t("privacy.exceptions.activityTitle")}</div>
                 <div className="privateSLWrapper">
@@ -122,9 +135,6 @@ export default function PrivacyTab({ search }: { search: string }) {
                         { label: t("privacy.nobody"), value: "nobody" }
                     ]} val={visiblePrivate.activity_invites || "all"} newVal={value => applyNewPrivate("activity_invites", value || "all")} id="activityInvites"/>
                 </div>
-            </div>
-            <div className="settingInnerDiv" data-setting-id="activityInviteExceptions">
-                <div className="settingHeader">{t("privacy.exceptions.activityExceptions")}</div>
                 <PrivacyExceptions
                     mode="activity"
                     exceptions={visiblePrivate.activity_invite_exceptions || {}}
@@ -133,6 +143,7 @@ export default function PrivacyTab({ search }: { search: string }) {
                     onChange={exceptions => applyExceptions("activity_invite_exceptions", exceptions)}
                 />
             </div>
+
             <div className="settingInnerDiv" data-setting-id="planInvites">
                 <div className="settingHeader">{t("privacy.planInvitesTitle")}</div>
                 <div className="privateSLWrapper">
@@ -150,7 +161,6 @@ export default function PrivacyTab({ search }: { search: string }) {
             </div>
             <div className="settingInnerDiv" data-setting-id="groupInvites">
                 <div className="settingHeader"><HighlightText text={t("privacy.invites.title")} search={search}/></div>
-                <div className="settingHint">{t("privacy.invites.hint")}</div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan">{t("privacy.invites.contacts")}</div>
                     <RadioGroup list={inviteOptions} val={visibleInvites.contacts} disabled={savingInvites || !settingsLoaded} id="groupInviteContacts" newVal={value => void saveInvites({ ...visibleInvites, contacts: value as GroupInviteRules["contacts"] })}/>
@@ -159,10 +169,7 @@ export default function PrivacyTab({ search }: { search: string }) {
                     <div className="settingSpan">{t("privacy.invites.others")}</div>
                     <RadioGroup list={inviteOptions} val={visibleInvites.others} disabled={savingInvites || !settingsLoaded} id="groupInviteOthers" newVal={value => void saveInvites({ ...visibleInvites, others: value as GroupInviteRules["others"] })}/>
                 </div>
-
-            </div>
-            <div className="settingInnerDiv" data-setting-id="groupInviteExceptions">
-                <div className="settingHeader">{t("privacy.exceptions.groupExceptions")}</div>
+                                <div className="settingHeader">{t("privacy.exceptions.groupExceptions")}</div>
                 <PrivacyExceptions
                     mode="group"
                     exceptions={visiblePrivate.group_invite_exceptions || {}}
@@ -171,16 +178,6 @@ export default function PrivacyTab({ search }: { search: string }) {
                     onChange={exceptions => applyExceptions("group_invite_exceptions", exceptions)}
                 />
             </div>
-            <div className="settingInnerDiv" data-setting-id="cookieConsent">
-                <div className="settingHeader">
-                    <HighlightText text={t("privacy.cookies")} search={search} />
-                    <button type="button" className="securityAction" onClick={openCookiePreferences}>
-                        {t("privacy.manageCookies")}
-                    </button>
-                </div>
-                <span className="settingHint">{t("privacy.cookiesHint")}</span>
-            </div>
-
         </div>
     );
 }

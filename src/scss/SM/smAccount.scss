@@ -36,6 +36,14 @@
         height: 100%;
     }
 }
+.settingUserName {
+    font-size: 20px;
+}
+
+.settingUserNick {
+    font-size: 18px;
+    color: var(--accent_text);
+}
 .SMaccountButtsWrapper {
     display: flex;
     flex-direction: column;
@@ -58,8 +66,10 @@
         color: var(--tc);
         display: flex;
         align-items: center;
+        width: 100%;
         > svg {
             color: var(--accent);
+            margin-right: 6px;
         }
     }
     > span {

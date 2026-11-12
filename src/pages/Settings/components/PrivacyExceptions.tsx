@@ -183,12 +183,10 @@ export default function PrivacyExceptions({ mode, exceptions, activityRule, grou
 
     return (
         <div className="privacyExceptions" data-setting-id={mode + "Exceptions"}>
-            <div className="settingHint">{t(["activity", "group", "plan-invite"].includes(mode) ? "privacy.exceptions.hint" : "privacy.exceptions.visibilityHint")}</div>
-
             {selectedIds.length > 0 && (
                 <div className="privacyExceptionSection">
                     <div className="privacyExceptionLabel">
-                        {t("privacy.exceptions.selected", { count: selectedIds.length })}
+                        Выбранные исключения: {selectedIds.length}
                     </div>
                     <div className="privacyExceptionList">
                         {selectedUsers.map(person => renderUser(person, true))}
@@ -201,7 +199,7 @@ export default function PrivacyExceptions({ mode, exceptions, activityRule, grou
 
             <div className="privacyExceptionSection">
                 <label className="privacyExceptionLabel" htmlFor={`privacyExceptionSearch-${mode}`}>
-                    {t("privacy.exceptions.find")}
+                    Добавить исключения
                 </label>
                 <div className="privacyExceptionSearch">
                     <Search size={20} aria-hidden="true"/>
@@ -235,6 +233,7 @@ export default function PrivacyExceptions({ mode, exceptions, activityRule, grou
                     )}
                 </div>
             </div>
+            <div className="settingHint">{t(["activity", "group", "plan-invite"].includes(mode) ? "privacy.exceptions.hint" : "privacy.exceptions.visibilityHint")}</div>
         </div>
     );
 }

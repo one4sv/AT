@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import HighlightText from "../../../../components/ts/HighlightText";
 import { ShieldCheckIcon } from "@phosphor-icons/react";
-
+import { openCookiePreferences } from "../../../../components/ts/utils/cookieConsent";
 import SectionArt from "../../../../components/ts/SectionArt";
 
 export default function SecurityTab({ search }: { search: string }) {
@@ -106,6 +106,15 @@ export default function SecurityTab({ search }: { search: string }) {
                     <Link className="securityAction" to="/settings/devices">{t("security.open")}</Link>
                 </div>
                 <span className="settingHint">{t("security.devicesHint")}</span>
+            </div>
+            <div className="settingInnerDiv" data-setting-id="cookieConsent">
+                <div className="settingHeader">
+                    <HighlightText text={t("privacy.cookies")} search={search} />
+                    <button type="button" className="securityAction" onClick={openCookiePreferences}>
+                        {t("privacy.manageCookies")}
+                    </button>
+                </div>
+                <span className="settingHint">{t("privacy.cookiesHint")}</span>
             </div>
         </div>
     );
