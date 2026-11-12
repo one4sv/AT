@@ -129,9 +129,24 @@
 .habitName {
     display: flex;
     width: 100%;
+    min-width: 0;
     align-items: center;
     gap: 3px;
     color: var(--tc);
+}
+
+.habitNameText {
+    min-width: 0;
+    flex: 0 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.habitName > .activityIndicatorsInline,
+.habitName > .pinnedHabitSign,
+.habitName > .activityIndicatorsTrailing {
+    flex-shrink: 0;
 }
 
 .habitPer {
