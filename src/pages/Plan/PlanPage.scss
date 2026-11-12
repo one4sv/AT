@@ -124,13 +124,30 @@
 .planMembers {
     display: flex;
     flex-direction: column;
-    gap: 1dvh;
+    gap: .4dvh;
+    padding: .5dvh .5vw;
+    border-radius: 24px;
+    background: var(--interact);
 }
 .planMember {
     display: flex;
     align-items: center;
     gap: 1vw;
-    padding: .6dvh 0;
+    padding: .6dvh .7vw;
+    border-radius: 24px;
+    transition: background-color .18s ease;
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--mc);
+        }
+    }
+
+    @media (hover: none) {
+        &:active {
+            background: var(--mc);
+        }
+    }
 }
 .planMemberAvatar {
     width: 4.5dvh;
