@@ -1,5 +1,3 @@
-export const isSameDay = (a: Date, b: Date) => {
-    return a.getFullYear() === b.getFullYear()
-        && a.getMonth() === b.getMonth()
-        && a.getDate() === b.getDate();
-}
+import { dateInAppZone } from "../../../../components/ts/utils/dateToStr";
+
+export const isSameDay = (a: Date, b: Date) => dateInAppZone(a) === dateInAppZone(b);
