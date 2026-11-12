@@ -2,7 +2,7 @@ import type { Habit } from "../../context/HabitsContext";
 import type { Calendar } from "../../context/CalendarContext";
 import type { OneOffPlan } from "../../context/PlansContext";
 import { getDayArrays } from "./getDayArrs";
-import { shiftCalendarDay, todayStrFunc } from "./dateToStr";
+import { formatDateFromString, shiftCalendarDay, todayStrFunc } from "./dateToStr";
 
 export type DayEntry = {
     key: string;
@@ -35,6 +35,12 @@ export const describeDayTime = (entry: DayEntry, t: (key: string, options?: Reco
     if (entry.end) return t("habitPageUi.day.until", { time: entry.end });
     if (entry.habit?.periodicity === "sometimes") return t("sideMenu.sometimes");
     return t("plans.noTime");
+};
+export const describeEntrySubtitle = (entry: DayEntry, t: (key: string, options?: Record<string,string>) => string) => {
+    const label = entry.habit ? t("habitUi.period." + entry.habit.periodicity) : formatDateFromString(entry.date);
+    const clock = describeDayTime(entry, t);
+    return clock === t("plans.noTime") || (entry.habit?.periodicity === "sometimes" && clock === t("sideMenu.sometimes"))
+        ? label : `${label} · ${clock}`;
 };
 export function makeDayEntries(day: string, habits: Habit[] | null, plans: OneOffPlan[], calendar: Calendar[], includeUnscheduled = false): DayEntry[] {
     const statuses = getDayArrays(day, calendar, habits, undefined, undefined, true);
