@@ -85,9 +85,9 @@ export default function PrivacyTab({ search }: { search: string }) {
                     groupRules={visibleInvites} onChange={rules => applyExceptions("profile_exceptions",rules)}/>
             </div>
 
-            <div className="settingInnerDiv" data-setting-id="privacyContentVisibility">
+            <div className="settingInnerDiv" data-setting-id="privacyActivitiesVisibility">
                 <div className="settingHeader">
-                    Видимость активностей
+                    {t("privacy.activitiesVisibility")}
                 </div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan"><HighlightText text={t("privacy.whoSeesActivities")} search={search} /></div>
@@ -98,9 +98,9 @@ export default function PrivacyTab({ search }: { search: string }) {
                     groupRules={visibleInvites} onChange={rules => applyExceptions("habits_exceptions",rules)}/>
             </div>
 
-            <div className="settingInnerDiv" data-setting-id="privacyContentVisibility">
+            <div className="settingInnerDiv" data-setting-id="privacyPostsVisibility">
                 <div className="settingHeader">
-                    Видимость постов
+                    {t("privacy.postsVisibility")}
                 </div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan"><HighlightText text={t("privacy.whoSeesPosts")} search={search} /></div>
@@ -111,9 +111,9 @@ export default function PrivacyTab({ search }: { search: string }) {
                     groupRules={visibleInvites} onChange={rules => applyExceptions("posts_exceptions",rules)}/>
             </div>
 
-            <div className="settingInnerDiv" data-setting-id="privacyContentVisibility">
+            <div className="settingInnerDiv" data-setting-id="privacyPlansVisibility">
                 <div className="settingHeader">
-                    Видимость планов
+                    {t("privacy.plansVisibility")}
                 </div>
                 <div className="privateSLWrapper">
                     <div className="settingSpan"><HighlightText text={t("privacy.whoSeesPlans")} search={search}/></div>

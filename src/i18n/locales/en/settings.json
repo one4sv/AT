@@ -254,6 +254,9 @@
     "sideMenuMobileHint": "On phones, open the side menu with the header button or a swipe. It fills the screen, so pinning is only available on desktop. Your desktop preference is saved locally in that browser."
   },
   "privacy": {
+    "activitiesVisibility": "Activity visibility",
+    "postsVisibility": "Post visibility",
+    "plansVisibility": "Plan visibility",
         "whoSeesAccountInfo": "Who can see your account information",
         "whoSeesPlans": "Who can see your plans",
         "link": "Only via direct link",

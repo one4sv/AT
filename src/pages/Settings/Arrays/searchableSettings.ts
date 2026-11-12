@@ -1,4 +1,4 @@
-import { ImageIcon, MoonStarsIcon, PaintBucketIcon, PaintRollerIcon, PaletteIcon, SunIcon, TextIndentIcon, TrashIcon, PhoneIcon, EnvelopeIcon, UserIcon, PencilSimpleIcon, ChatsTeardropIcon, HandTapIcon, CursorClickIcon, TextAaIcon, CalendarBlankIcon, ClockIcon, TranslateIcon, GifIcon, HardDrivesIcon, ImageSquareIcon, CheckCircleIcon, ArchiveIcon, BellIcon, BellRingingIcon, LockIcon, NewspaperIcon, ShieldCheckIcon, KeyIcon, DevicesIcon, WrenchIcon, SneakerMoveIcon } from "@phosphor-icons/react";
+import { ImageIcon, MoonStarsIcon, PaintBucketIcon, PaintRollerIcon, PaletteIcon, SunIcon, TextIndentIcon, TrashIcon, EnvelopeIcon, UserIcon, PencilSimpleIcon, ChatsTeardropIcon, HandTapIcon, CursorClickIcon, TextAaIcon, CalendarBlankIcon, ClockIcon, TranslateIcon, GifIcon, HardDrivesIcon, ImageSquareIcon, CheckCircleIcon, ArchiveIcon, BellIcon, BellRingingIcon, LockIcon, NewspaperIcon, ShieldCheckIcon, KeyIcon, DevicesIcon, WrenchIcon, SneakerMoveIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import type { SearchableSetting } from "../Settings";
 import type { ElementType } from "react";
@@ -300,28 +300,46 @@ export function useSearchableSettings(): SearchableSection[] {
             icon: LockIcon,
             items: [
                 {
-                    id: "number",
-                    name: t("privacy.whoSeesPhone"),
-                    icon: PhoneIcon,
-                    category: t("privacy.accountInfo"),
-                },
-                {
-                    id: "mail",
-                    name: t("privacy.whoSeesEmail"),
-                    icon: EnvelopeIcon,
+                    id: "profile",
+                    name: t("privacy.whoSeesAccountInfo"),
+                    icon: UserIcon,
                     category: t("privacy.accountInfo"),
                 },
                 {
                     id: "habits",
                     name: t("privacy.whoSeesActivities"),
                     icon: CheckCircleIcon,
-                    category: t("privacy.contentVisibility"),
+                    category: t("privacy.activitiesVisibility"),
                 },
                 {
                     id: "posts",
                     name: t("privacy.whoSeesPosts"),
                     icon: NewspaperIcon,
-                    category: t("privacy.contentVisibility"),
+                    category: t("privacy.postsVisibility"),
+                },
+                {
+                    id: "plans",
+                    name: t("privacy.whoSeesPlans"),
+                    icon: CalendarBlankIcon,
+                    category: t("privacy.plansVisibility"),
+                },
+                {
+                    id: "activityInvites",
+                    name: t("privacy.exceptions.activityWho"),
+                    icon: SneakerMoveIcon,
+                    category: t("privacy.exceptions.activityTitle"),
+                },
+                {
+                    id: "planInvites",
+                    name: t("privacy.planInvitesWho"),
+                    icon: CalendarBlankIcon,
+                    category: t("privacy.planInvitesTitle"),
+                },
+                {
+                    id: "groupInviteContacts",
+                    name: t("privacy.invites.contacts"),
+                    icon: ChatsTeardropIcon,
+                    category: t("privacy.invites.title"),
                 },
             ],
         },

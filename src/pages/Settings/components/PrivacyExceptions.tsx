@@ -186,7 +186,7 @@ export default function PrivacyExceptions({ mode, exceptions, activityRule, grou
             {selectedIds.length > 0 && (
                 <div className="privacyExceptionSection">
                     <div className="privacyExceptionLabel">
-                        Выбранные исключения: {selectedIds.length}
+                        {t("privacy.exceptions.selected", { count: selectedIds.length })}
                     </div>
                     <div className="privacyExceptionList">
                         {selectedUsers.map(person => renderUser(person, true))}
@@ -199,7 +199,7 @@ export default function PrivacyExceptions({ mode, exceptions, activityRule, grou
 
             <div className="privacyExceptionSection">
                 <label className="privacyExceptionLabel" htmlFor={`privacyExceptionSearch-${mode}`}>
-                    Добавить исключения
+                    {t("privacy.exceptions.find")}
                 </label>
                 <div className="privacyExceptionSearch">
                     <Search size={20} aria-hidden="true"/>
