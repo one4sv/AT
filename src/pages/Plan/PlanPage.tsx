@@ -67,6 +67,12 @@ export default function PlanPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [planId]);
     useEffect(() => {
+        const onMembersUpdated = () => { void load(); };
+        window.addEventListener("plan-members-updated", onMembersUpdated);
+        return () => window.removeEventListener("plan-members-updated", onMembersUpdated);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [planId]);
+    useEffect(() => {
         setTitle(plan?.name || (planId ? t("plans.title") : t("plans.create")));
     }, [planId, plan?.name, setTitle, t]);
     useEffect(() => {
