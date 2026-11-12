@@ -6,7 +6,7 @@ import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useContextMenu } from "../../../../components/hooks/ContextMenuHook";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
-import { formatDateLabel, todayStrFunc } from "../../../../components/ts/utils/dateToStr";
+import { clockInAppZone, formatDateLabel, todayStrFunc } from "../../../../components/ts/utils/dateToStr";
 import { makeDayEntries, describeDayTime, type DayEntry } from "../../../../components/ts/utils/dayTimeline";
 import { tags } from "../../../../components/ts/tags";
 import { getOverviewFocus, getOverviewNext } from "./dayFocus";
@@ -97,7 +97,7 @@ export default function HabitOverviewLayout() {
     const activityCount = entries.filter(entry => entry.kind === "habit").length;
     const planCount = entries.length - activityCount;
     const completedCount = entries.filter(entry => entry.completed).length;
-    const currentTime = new Date().toTimeString().slice(0, 5);
+    const currentTime = clockInAppZone();
     const focus = getOverviewFocus(entries, chosenDay, todayStrFunc(), currentTime);
     const nextEntry = getOverviewNext(entries, chosenDay, todayStrFunc(), currentTime, focus);
 
