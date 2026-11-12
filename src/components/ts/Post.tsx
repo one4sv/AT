@@ -10,6 +10,7 @@ import { useMessages } from "../hooks/MessagesHook";
 import { useNote } from "../hooks/NoteHook";
 import { useAcc } from "../hooks/AccHook";
 import { useUser } from "../hooks/UserHook";
+import { useSettings } from "../hooks/SettingsHook";
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { habitIcon } from "./habitIcon";
 import { api } from "./api";
@@ -36,6 +37,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
     const { setBlackout } = useBlackout();
     const { setPosts } = useAcc();
     const { user } = useUser();
+    const { privateShow,profileShareToken } = useSettings();
     const { openMenu } = useContextMenu();
     const navigate = useNavigate();
     const divRef = useRef<HTMLDivElement>(null);
@@ -76,7 +78,13 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
         }
     };
 
-    const postUrl = new URL('/post/' + post.id, window.location.origin).href;
+    const postLink = new URL('/post/' + post.id, window.location.origin);
+    const inherited = !post.visibility || post.visibility === "inherit";
+    const needsToken = post.visibility === "link" || (inherited && privateShow.posts === "link");
+    const token = isMy && needsToken ? profileShareToken :
+        new URLSearchParams(window.location.search).get("share");
+    if (token) postLink.searchParams.set("share",token);
+    const postUrl = postLink.href;
     const copyLink = async () => {
         try {
             await navigator.clipboard.writeText(postUrl);

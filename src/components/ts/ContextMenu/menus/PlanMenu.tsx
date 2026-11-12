@@ -3,18 +3,26 @@ import { useTranslation } from "react-i18next";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import { usePlans } from "../../../hooks/PlansHook";
 import { useNote } from "../../../hooks/NoteHook";
+import { useSettings } from "../../../hooks/SettingsHook";
 import { api } from "../../api";
 import LinkButton from "../buttons/LinkButton";
 
 export default function PlanMenu() {
     const { t } = useTranslation("common");
     const { menu, closeMenu } = useContextMenu();
-    const { setPin, refreshPlans } = usePlans();
+    const { setPin, refreshPlans, plans } = usePlans();
+    const { privateShow } = useSettings();
     const { showNotification } = useNote();
     const { options } = menu;
     const isItem = menu.point === "planItem";
     const canManage = !isItem && !!options.isMy;
-    const url = new URL("/plan/" + encodeURIComponent(options.id), window.location.origin).href;
+    const target = plans.find(item => String(item.id) === String(options.id));
+    const link = new URL("/plan/" + encodeURIComponent(options.id),window.location.origin);
+    const linkOnly = target?.visibility === "link" || (target?.visibility === "inherit" && privateShow.plans === "link");
+    const token = options.shareToken || (linkOnly ? target?.share_token : undefined) ||
+        new URLSearchParams(window.location.search).get("share");
+    if (linkOnly && token) link.searchParams.set("share",token);
+    const url = link.href;
 
     const run = (action?: () => void) => {
         closeMenu();

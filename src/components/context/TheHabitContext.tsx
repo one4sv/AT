@@ -227,7 +227,8 @@ export const TheHabitProvider = ({
             if (!id) return null;
             try {
                 const res = await api.get(`habits/${id}`, {
-                    signal
+                    signal,
+                    params: { share: new URLSearchParams(window.location.search).get("share") || undefined }
                 });
                 const data = res.data;
                 if (data.success) {

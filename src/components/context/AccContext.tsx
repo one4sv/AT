@@ -8,6 +8,7 @@ import type { PrivateSettings } from "./SettingsContext";
 import type { Media } from "./ChatContext";
 import type { User } from "./UserContext";
 import type { Habit } from "./HabitsContext";
+import type { OneOffPlan } from "./PlansContext";
 import axios from "axios";
 
 const AccContext = createContext<AccContextType | null>(null);
@@ -17,7 +18,7 @@ export type PostType = {
     user:User,
     media?:PostMedia[];
     content?: JSONContent | null;
-    visibility?: "inherit" | "all" | "contacts" | "nobody";
+    visibility?: "inherit" | "all" | "contacts" | "nobody" | "link";
     habit?:Habit,
     text:string,
     likes:(string | null)[],
@@ -29,6 +30,7 @@ export interface AccContextType {
     refetchPosts:(nick:string, silent?: boolean) => Promise<void>
     acc:User | undefined,
     habits:Habit[] | undefined,
+    plans:OneOffPlan[],
     loading:boolean,
     posts:PostType[] | undefined,
     setPosts:Dispatch<SetStateAction<PostType[]>>
@@ -43,13 +45,16 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
 
     const [ acc, setAcc ] = useState<User>();
     const [ habits, setHabits ] = useState<Habit[]>();
+    const [ plans, setPlans ] = useState<OneOffPlan[]>([]);
     const [ posts, setPosts ] = useState<PostType[]>([]);
     const [ media, setMedia ] = useState<Media[]>([]);
     const [ privateRules, setPrivateRules ] = useState<PrivateSettings>({
         number: "",
         mail: "",
+        profile: "",
         habits: "",
         posts: "",
+        plans: "",
     });
     const [ accLoading, setAccLoading ] = useState<boolean>(true);
     const [ postsLoading, setPostsLoading ] = useState<boolean>(true);
@@ -61,10 +66,11 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
         if (!nick) return;
         if (!silent) setAccLoading(true);
         try {
-            const res = await api.get(`acc/${nick}`);
+            const res = await api.get(`acc/${nick}`, { params: { share: new URLSearchParams(window.location.search).get("share") || undefined } });
             if (res.data.success) {
                 setAcc(res.data.acc);
                 setHabits(res.data.habits);
+                setPlans(Array.isArray(res.data.plans) ? res.data.plans : []);
                 setPrivateRules(res.data.privateRules);
                 setMedia(res.data.media);
             }
@@ -82,7 +88,7 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
         if (!nick) return;
         if (!silent) setPostsLoading(true);
         try {
-            const res = await api.get(`posts/${nick}`);
+            const res = await api.get(`posts/${nick}`, { params: { share: new URLSearchParams(window.location.search).get("share") || undefined } });
             if (res.data.success) {
                 setPosts(res.data.posts);
             }
@@ -108,6 +114,7 @@ export const AccProvider = ({ children }: { children: ReactNode }) => {
                 refetchAcc,
                 acc,
                 habits,
+                plans,
                 loading,
                 posts,
                 media,

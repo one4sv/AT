@@ -33,6 +33,7 @@ export type MenuOptions = {
     completed?: boolean,
     canPin?: boolean,
     canComplete?: boolean,
+    shareToken?: string,
 }
 export interface chatInfoType {
     note:boolean,

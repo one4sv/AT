@@ -25,7 +25,9 @@ export interface OneOffPlan {
     kind: "personal" | "shared";
     completion_mode?: "personal" | "shared";
     join_mode?: "invite" | "request" | "open";
-    visibility?: "nobody" | "contacts" | "all";
+    visibility?: "inherit" | "nobody" | "contacts" | "all" | "link";
+    share_token?: string;
+    share?: string;
     status?: "upcoming" | "completed" | "canceled";
     membership_status?: "pending" | "accepted";
     is_owner?: boolean;

@@ -28,6 +28,7 @@ export default function PostPage() {
     const [ liking, setLiking ] = useState(false);
     const likingRef = useRef(false);
     const currentPost = post && String(post.id) === postId ? post : null;
+    const share = new URLSearchParams(window.location.search).get("share");
 
     useEffect(() => {
         setTitle(t("post.title"));
@@ -36,13 +37,13 @@ export default function PostPage() {
         const controller = new AbortController();
         setPost(null);
         setError("");
-        api.get(`post/${postId}`, { signal: controller.signal })
+        api.get(`post/${postId}`, { signal: controller.signal, params: { share } })
             .then(res => { if (!controller.signal.aborted) setPost(res.data.post); })
             .catch(err => {
                 if (!controller.signal.aborted) setError(err.response?.status === 404 ? "post.unavailable" : "post.loadFailed");
             });
         return () => controller.abort();
-    }, [postId, retry]);
+    }, [postId, retry, share]);
 
     useEffect(() => {
         if (!postId) return;
@@ -50,7 +51,7 @@ export default function PostPage() {
             const { scope, pathname } = (event as ContentRefreshEvent).detail;
             if (scope !== "page" || pathname !== `/post/${postId}`) return;
 
-            void api.get(`post/${postId}`).then(res => {
+            void api.get(`post/${postId}`, { params: { share } }).then(res => {
                 if (res.data.success && res.data.post) {
                     setPost(res.data.post);
                     setError("");
@@ -59,7 +60,7 @@ export default function PostPage() {
         };
         window.addEventListener(CONTENT_REFRESH_EVENT, refresh);
         return () => window.removeEventListener(CONTENT_REFRESH_EVENT, refresh);
-    }, [postId]);
+    }, [postId, share]);
 
     const likePost = async () => {
         if (!user.id) {

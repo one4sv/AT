@@ -211,16 +211,6 @@ export default function AccInfo({
                             renderCustomHeader={props => <DatePickerHeader {...props} />}
                         /> : <span className="extraInfoInput accSelectableValue">{birthDisplay}</span>}
                     </div> : ""}
-                    <div className={`accExtraInfoWrapper ${!red ? "dis" : ""}`}>
-                        {!canView("number") ? <span>
-                            {t("hidden")}
-                        </span> : <>
-                            <label htmlFor="extraInfoInputPhone">
-                                {t("phone")}
-                            </label>
-                            <span id="extraInfoInputPhone" className="extraInfoInput accSelectableValue">—</span>
-                        </>}
-                    </div>
                     <div className="accExtraInfoWrapper">
                         <div className="settingInnerList">
                             {(isMyAcc || user.id) && <div

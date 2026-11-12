@@ -32,7 +32,7 @@ export default function PlanDiv({ plan, entry, onSelect }: {
     const canComplete = accepted && plan.status !== "canceled" &&
         (plan.is_owner || plan.completion_mode !== "shared");
 
-    return <Link to={"/plan/" + plan.id}
+    return <Link to={"/plan/" + plan.id + (plan.share ? "?share=" + encodeURIComponent(plan.share) : "")}
         className={`habit smPlanItem ${selected ? "active" : ""}`}
         role={onSelect ? "button" : undefined}
         aria-pressed={onSelect ? selected : undefined}

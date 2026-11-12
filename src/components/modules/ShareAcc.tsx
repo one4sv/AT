@@ -6,14 +6,24 @@ import "./scss/ShareAccDiv.scss"
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
 import { QRCodeSVG } from "qrcode.react";
+import { useSettings } from "../hooks/SettingsHook";
+import { useUser } from "../hooks/UserHook";
 
 export default function ShareAcc() {
     const { t } = useTranslation("common");
     const { blackout } = useBlackout()
     const { showNotification } = useNote()
+    const { privateShow, profileShareToken } = useSettings();
+    const { user } = useUser();
     const nick = blackout.options?.nick
     const isGroup = Boolean(blackout.options?.link)
-    const link = blackout.options?.link || window.location.origin + `/acc/${nick}`
+    const accountUrl = new URL("/acc/" + encodeURIComponent(nick || ""),window.location.origin);
+    const existingShare = new URLSearchParams(window.location.search).get("share");
+    if (!blackout.options?.link && nick === user.nick && profileShareToken &&
+        [privateShow.profile,privateShow.habits,privateShow.posts,privateShow.plans].includes("link"))
+        accountUrl.searchParams.set("share",profileShareToken);
+    else if (!blackout.options?.link && existingShare) accountUrl.searchParams.set("share",existingShare);
+    const link = blackout.options?.link || accountUrl.href;
     const photo = blackout.options?.url
 
     const qr = useMemo(() => (

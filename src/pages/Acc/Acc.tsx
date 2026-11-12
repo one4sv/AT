@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useLocation } from "react-router";
 import { useUser } from "../../components/hooks/UserHook";
 import "./scss/Acc.scss";
 import Skeleton from "../../components/ts/Skeleton";
@@ -22,6 +22,7 @@ export default function Acc() {
         loading,
         posts,
         habits,
+        plans,
         acc,
         privateRules,
         refetchPosts,
@@ -33,6 +34,7 @@ export default function Acc() {
     const { setTitle } = usePageTitle();
     const { setDontHandle, setIsDragging, dontHandleOther } = useSideMenu();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [ collapsed, setCollapsed ] = useState(0);
     const [ selector, setSelector ] = useState<"habits" | "posts">("posts");
@@ -127,7 +129,7 @@ export default function Acc() {
         setSelector("posts");
 
         Promise.all([refetchAcc(nick), refetchPosts(nick)]);
-    }, [nick, user.nick, user.id]);
+    }, [nick, user.nick, user.id, location.search]);
 
     useEffect(() => {
         const onRefresh = (event: Event) => {
@@ -500,6 +502,7 @@ export default function Acc() {
                             <AccHabits
                                 isMyAcc={isMyAcc}
                                 habits={habits}
+                                plans={plans}
                                 canView={canView}
                             />
                         </div>

@@ -52,7 +52,7 @@ export default function PlanPage() {
         if (!planId) return;
         setLoading(true);
         try {
-            const res = await api.get("plans/" + planId);
+            const res = await api.get("plans/" + planId, { params: { share: new URLSearchParams(window.location.search).get("share") || undefined } });
             if (!res.data.success) throw new Error();
             setPlan(res.data.plan);
             setError("");
@@ -339,12 +339,12 @@ export default function PlanPage() {
                         <button className="planQuietButton" disabled={saving} onClick={() =>
                             void action(() => api.post("plans/" + planId + "/respond", { status:"declined" }))}>{t("plans.decline")}</button>
                     </div>
-                </div> : <>
+                </div> : plan.membership_status === "accepted" ? <>
                     <PlanReminders planId={plan.id}/>
                     <PlanMembers plan={plan} onChanged={async () => {
                         await Promise.all([load(), refreshPlans()]);
                     }}/>
-                </>}
+                </> : null}
             </> : !error && <div className="planSection">{t("plans.notFound")}</div>}
         {isCompact && !editing && !loading && plan?.membership_status === "accepted" &&
             plan.status !== "canceled" && <div className="habitMobileDone planMobileDone">
