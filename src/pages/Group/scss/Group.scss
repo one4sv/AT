@@ -108,3 +108,46 @@
         background: transparent;
     }
 }
+
+.groupLinkedPlans {
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+    width: 100%;
+}
+.groupLinkedPlan {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    gap: .5vw;
+    padding: 1dvh 1vw;
+    background: var(--interact);
+    border: none;
+    border-radius: 24px;
+    color: var(--tc);
+    text-decoration: none;
+
+    > svg { flex-shrink: 0; color: var(--accent_text); }
+    @media (hover: hover) {
+        &:hover { background: var(--mc); }
+    }
+    @media (hover: none) {
+        &:active { background: var(--mc); }
+    }
+}
+.groupLinkedPlanName {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.groupLinkedPlanDate {
+    flex-shrink: 0;
+    color: var(--borderWh);
+}
+@media (max-width: 800px) {
+    .groupLinkedPlan { gap: 2vw; padding: 1dvh 3vw; }
+}
