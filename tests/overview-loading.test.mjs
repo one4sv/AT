@@ -280,3 +280,16 @@ test("plan PathIcon is next to the name, completion ratio stays on first row, an
     assert.match(overviewStyle, /\.habitOverviewEntryMain\s*\{[\s\S]*?gap: 0;/);
     assert.match(badgesStyle, /\.activityMembersCount\s*\{[\s\S]*?align-items: center;/);
 });
+
+test("toggling any habit in the all-activities modal refreshes the SVG on that day", () => {
+    const done = read("src/components/context/DoneContext.tsx");
+    const calendar = read("src/components/context/CalendarContext.tsx");
+    const timeline = read("src/components/modules/HabitOverviewList.tsx");
+    const entries = read("src/pages/HabitPage/components/Overview/HabitOverviewEntries.tsx");
+    assert.match(done, /if \(useAllDayTimeline\) void fetchCalendarUser\(\)/);
+    assert.match(done, /else void fetchAllCalendar\(\)/);
+    assert.match(calendar, /fetchAllCalendar: \(\) => void/);
+    assert.match(timeline, /makeDayEntries\(chosenDay, habits, plans, calendar\)/);
+    assert.match(entries, /entry\.completed \? <CheckCircleIcon/);
+    assert.match(entries, /void markDone\(entry\.habit!\.id, chosenDay\)/);
+});
