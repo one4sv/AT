@@ -161,7 +161,7 @@ test("email and deletion forms open through Blackout, not inline accordions", ()
     assert.match(tab, /module: "AccountSecurityAction", point: "email"/);
     assert.match(tab, /module: "AccountSecurityAction", point: "delete"/);
     assert.match(mapping, /AccountSecurityAction: lazy\(\(\) => import\("\.\/AccountSecurityAction"\)\)/);
-    assert.match(modal, /import "\.\/AccountSecurityAction\.scss"/);
+    assert.match(modal, /import "\.\/scss\/AccountSecurityAction\.scss"/);
     assert.match(modal, /auth\/account\/email\/request/);
     assert.match(modal, /auth\/account\/email\/confirm/);
     assert.match(modal, /auth\/account\/deletion\/request/);
