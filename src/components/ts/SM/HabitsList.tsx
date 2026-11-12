@@ -9,7 +9,6 @@ import { useCalendar } from "../../hooks/CalendarHook";
 import { useSettings } from "../../hooks/SettingsHook";
 import { useBlackout } from "../../hooks/BlackoutHook";
 import { useContacts } from "../../hooks/ContactsHook";
-import { useSideMenu } from "../../hooks/SideMenuHook";
 import HabitDiv from "../Habit";
 import PlanDiv from "../Plan";
 import useHabitDayProgress from "../../hooks/utils/useHabitDayProgress";
@@ -25,7 +24,6 @@ export default function HabitsList({ filter }: { filter?: string }) {
     const { showArchived } = useSettings();
     const { habitId } = useParams();
     const { setBlackout } = useBlackout();
-    const { closeMenu } = useSideMenu();
     const progressDay = filter === "plans" || filter === "archived" ? "" :
         filter === "tomorrow" ? shiftCalendarDay(todayStrFunc(), 1) :
         filter && /^\d{4}-\d{2}-\d{2}$/.test(filter) ? filter : todayStrFunc();
