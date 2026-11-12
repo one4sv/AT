@@ -29,7 +29,7 @@ export default function HabitsList({ filter }: { filter?: string }) {
     const { search } = useContacts();
     const { habits, refetchHabitsWLoading } = useHabits();
     const { plans } = usePlans();
-    const { calendar } = useCalendar();
+    const { allCalendar } = useCalendar();
     const { showArchived } = useSettings();
     const { habitId } = useParams();
     const { pathname } = useLocation();
@@ -40,8 +40,8 @@ export default function HabitsList({ filter }: { filter?: string }) {
         filter && /^\d{4}-\d{2}-\d{2}$/.test(filter) ? filter : todayStrFunc();
     const progress = useHabitDayProgress(progressDay);
     const entries = useMemo(
-        () => makeSideMenuEntries(filter, habits, plans, calendar, showArchived, search),
-        [filter, habits, plans, calendar, showArchived, search]
+        () => makeSideMenuEntries(filter, habits, plans, allCalendar, showArchived, search),
+        [filter, habits, plans, allCalendar, showArchived, search]
     );
 
     if (!entries.length) return <div className="habitsList SMlist nothing">
