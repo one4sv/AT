@@ -298,8 +298,13 @@ test("mobile page shell retains background and SideMenu on internal navigation",
 });
 
 
-test("unauthenticated SideMenu has styled sign-in and theme buttons on direct navigation", async ({ page }) => {
+test("unauthenticated SideMenu has styled sign-in and theme buttons when opened manually", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/info/roadmap");
+    const menu = page.locator(".sideMenu");
+    await expect(menu).toHaveCSS("visibility", "hidden");
+    await page.locator(".headerDiv .headerButt").first().click();
+    await expect(menu).toHaveCSS("visibility", "visible");
     const signIn = page.locator(".sideMenuUnAthorised .greenButt");
     await expect(signIn).toBeVisible();
     await expect(signIn).toHaveAttribute("href", "/sign");
