@@ -35,7 +35,8 @@ export default function HabitsList({ filter }: { filter?: string }) {
     const { pathname } = useLocation();
     const { setBlackout } = useBlackout();
     const { closeMenu } = useSideMenu();
-    const progressDay = filter === "tomorrow" ? shiftCalendarDay(todayStrFunc(), 1) :
+    const progressDay = filter === "plans" || filter === "archived" ? "" :
+        filter === "tomorrow" ? shiftCalendarDay(todayStrFunc(), 1) :
         filter && /^\d{4}-\d{2}-\d{2}$/.test(filter) ? filter : todayStrFunc();
     const progress = useHabitDayProgress(progressDay);
     const entries = useMemo(
