@@ -185,6 +185,7 @@ test("SideMenu streaks use full calendar even on a single activity route", () =>
     const list = read("src/components/ts/SM/HabitsList.tsx");
     assert.match(context, /allCalendar: Calendar\[\]/);
     assert.match(context, /setAllCalendar\(res\.data\.calendar\)/);
+    assert.match(context, /api\.get\("calendar", \{ signal: controller\.signal \}\)/);
     assert.match(habit, /calendar=\{allCalendar\}/);
     assert.match(list, /makeSideMenuEntries\(filter, habits, plans, allCalendar/);
 });
