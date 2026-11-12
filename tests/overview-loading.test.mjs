@@ -142,7 +142,7 @@ test("overview focus cards navigate to the selected activity or plan", () => {
     const overview = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
     assert.match(overview, /className="habitOverviewCurrent"/);
     assert.match(overview, /navigate\(entry\.kind === "plan" \?/);
-    assert.match(overview, /<ActivityIndicators part="aside" habit=\{entry\.habit\} plan=\{entry\.plan\}/);
+    assert.match(overview, /<ActivityIndicators part="streak" habit=\{entry\.habit\} plan=\{entry\.plan\}/);
 });
 
 test("habit and plan indicators preserve resting colors and active inner_text", () => {
@@ -224,7 +224,7 @@ test("streak follows the activity name and pin, while member count stays on the 
         '<PushPinIcon className="pinnedHabitSign"',
         '<ActivityIndicators part="aside"'
     ]);
-    assert.match(sm, /<ActivityIndicators part="aside" plan=\{entry\.plan\}/);
+    assert.match(sm, /<ActivityIndicators part="streak" plan=\{entry\.plan\}/);
     assert.match(sm, /CheckCircleIcon className="habitHLStatus"/);
     assert.match(badges, /part === "streak" \? "activityIndicatorsInline" : "activityIndicatorsTrailing"/);
     assert.match(css, /&\.activityIndicatorsInline\s*\{\s*margin-left: 0;/);
@@ -254,4 +254,25 @@ test("plan and activity invitation share the same modal and contact selection co
     assert.match(picker, /className="createChatChosenCons"/);
     assert.match(picker, /setSelected\(\[contact\]\)/);
     assert.match(picker, /api\.post\(\`plans\/\$\{planId\}\/invite\`/);
+});
+
+test("plan PathIcon is next to the name, completion ratio stays on first row, and tag/title gap is zero", () => {
+    const indicators = read("src/components/ts/ActivityIndicators.tsx");
+    const sm = read("src/components/ts/SM/HabitsList.tsx");
+    const focus = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
+    const upcoming = read("src/pages/HabitPage/components/Overview/HabitOverviewEntries.tsx");
+    const smStyle = read("src/scss/SM/habitsList.scss");
+    const overviewStyle = read("src/pages/HabitPage/scss/HabitOverview.scss");
+    const badgesStyle = read("src/scss/ActivityIndicators.scss");
+    assert.match(indicators, /showStreak && plan && <PathIcon/);
+    assert.doesNotMatch(indicators, /showAside && plan && <PathIcon/);
+    assert.match(sm, /<ActivityIndicators part="streak" plan=\{entry\.plan\}/);
+    assert.match(focus, /<ActivityIndicators part="streak" habit=\{entry\.habit\} plan=\{entry\.plan\}/);
+    assert.match(upcoming, /<ActivityIndicators part="streak" habit=\{entry\.habit\} plan=\{entry\.plan\}/);
+    assert.match(focus, /<ActivityIndicators part="aside" habit=\{entry\.habit\} progress=\{progress\}/);
+    assert.match(upcoming, /<ActivityIndicators part="aside" habit=\{entry\.habit\}/);
+    assert.match(smStyle, /\.habitInfo\s*\{[\s\S]*?margin-left: 0;[\s\S]*?grid-template-rows: minmax\(0, 1fr\) minmax\(0, 1fr\);/);
+    assert.match(overviewStyle, /\.habitOverviewCurrentRow\s*\{[\s\S]*?gap: 0;/);
+    assert.match(overviewStyle, /\.habitOverviewEntryMain\s*\{[\s\S]*?gap: 0;/);
+    assert.match(badgesStyle, /\.activityMembersCount\s*\{[\s\S]*?align-items: center;/);
 });
