@@ -1,4 +1,4 @@
-@use "../../scss/mixins.scss" as var;
+@use "../../../scss/mixins.scss" as var;
 
 .feedbackModal {
     @include var.centerModal;

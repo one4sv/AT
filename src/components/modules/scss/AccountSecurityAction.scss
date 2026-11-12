@@ -1,5 +1,5 @@
 @use "../../../scss/mixins" as var;
-@use "../../scss/consentCheckbox";
+@use "../../../scss/consentCheckbox";
 
 .accountSecurityModal {
     @include var.centerModal;

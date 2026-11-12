@@ -1,4 +1,4 @@
-@use "../../scss/mixins.scss" as var;
+@use "../../../scss/mixins.scss" as var;
 
 .pushInstallHelpModal {
     @include var.centerModal;

@@ -1,4 +1,4 @@
-@use "../mixins" as var;
+@use "../../../scss/mixins" as var;
 
 .postSettingsDiv.settingInnerDiv {
     @include var.centerModal;
