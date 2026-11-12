@@ -4,6 +4,7 @@ import axios from "axios";
 import CreateChatInfo from "./components/CreateChatInfo";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useTheHabit } from "../hooks/TheHabitHook";
+import { usePlans } from "../hooks/PlansHook";
 import { useNote } from "../hooks/NoteHook";
 import { api } from "../ts/api";
 import "../../scss/modules/CreateChat.scss";
@@ -12,7 +13,10 @@ import "../../pages/HabitPage/scss/HabitChatMenu.scss";
 export default function HabitCreateChat() {
     const { t } = useTranslation("common");
     const { habit, loadHabit } = useTheHabit();
-    const { setBlackout } = useBlackout();
+    const { refreshPlans } = usePlans();
+    const { blackout, setBlackout } = useBlackout();
+    const planId = blackout.point === "plan" ? Number(blackout.options?.id) : null;
+    const planMode = planId !== null && Number.isSafeInteger(planId) && planId > 0;
     const { showNotification } = useNote();
     const [name, setName] = useState("");
     const [desc, setDesc] = useState("");
@@ -21,21 +25,26 @@ export default function HabitCreateChat() {
     const submitting = useRef(false);
 
     const save = async () => {
-        if (!habit || !name.trim() || name.trim().length < 3 || submitting.current) return;
+        if ((!planMode && !habit) || !name.trim() || name.trim().length < 3 || submitting.current) return;
         submitting.current = true;
         setSaving(true);
         try {
             const form = new FormData();
-            form.append("habit_id", String(habit.id));
+            if (planMode) form.append("plan_id", String(planId));
+            else if (habit) form.append("habit_id", String(habit.id));
             form.append("members", "[]");
             form.append("name", name.trim());
             form.append("desc", desc.trim());
             if (pick) form.append("pick", pick);
             const result = await api.post("createchat", form);
             if (!result.data.success || !result.data.chat_id) throw new Error(t("habitDialog.createFailed"));
-            await loadHabit(String(habit.id));
-            window.dispatchEvent(new Event("habit-members-updated"));
-            setBlackout({ seted: false });
+            if (planMode) {
+                await refreshPlans();
+                window.dispatchEvent(new Event("plan-members-updated"));
+            } else if (habit) {
+                await loadHabit(String(habit.id));
+                window.dispatchEvent(new Event("habit-members-updated"));
+            }
             setBlackout({ seted: false });
             showNotification("success", result.data.invited
                 ? t("habitDialog.createdWithInvite")
