@@ -453,7 +453,7 @@ export default function Acc() {
                 onTouchEndCapture={handleTouchEnd}
                 onTouchCancelCapture={handleTouchCancel}
             >
-                <AccInfo acc={acc} canView={canView} collapsed={collapsed}/>
+                <AccInfo acc={acc} collapsed={collapsed}/>
                 <div className="accContentSelector">
                     <div className="accContentIndicator" ref={line} />
                     <div className="accContentSelect">

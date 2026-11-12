@@ -352,7 +352,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setGroupInvites(res.data.group_invites ?? { contacts: "message", others: "none" });
                 setChatWelcome(res.data.chat_welcome ?? { enabled: false, text: "" });
                 setQuickActions(Array.isArray(res.data.quick_actions) ? res.data.quick_actions.slice(0, 3) : []);
-                setPrivate({ number:"contacts", mail:"contacts", profile:"all",habits:"all",posts:"all",plans:"nobody", ...res.data.private });
+                setPrivate(res.data.private ?? { number:"contacts",mail:"contacts",profile:"all",habits:"all",posts:"all",plans:"nobody" });
                 setProfileShareToken(res.data.profile_share_token || null);
                 setTwoAuth(res.data.twoAuth ?? false);
                 setNote(res.data.all_note ?? true);

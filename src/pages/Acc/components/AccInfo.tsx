@@ -11,7 +11,6 @@ import { useAcc } from "../../../components/hooks/AccHook";
 import { useUser } from "../../../components/hooks/UserHook";
 import { useSideMenu } from "../../../components/hooks/SideMenuHook";
 import type { User } from "../../../components/context/UserContext";
-import type { PrivateSettings } from "../../../components/context/SettingsContext";
 import DatePicker from "react-datepicker";
 import DatePickerHeader from "../../../components/ts/DatePickerHeader";
 import { useTranslation } from "react-i18next";
@@ -22,12 +21,10 @@ import { useNavigate } from "react-router";
 import { ToggleBlocked } from "../../../components/ts/ContextMenu/buttons/ToggleBlocked";
 export default function AccInfo({
     acc,
-    canView,
     collapsed,
     onHeightChange
 }: {
     acc?: User;
-    canView: (field: keyof PrivateSettings) => boolean;
     collapsed: number;
     onHeightChange?: (height: number) => void;
 }) {
