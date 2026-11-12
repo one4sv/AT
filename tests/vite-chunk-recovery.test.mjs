@@ -157,7 +157,7 @@ test("email and deletion forms open through Blackout, not inline accordions", ()
     );
     const mapping = readFileSync(new URL("../src/components/modules/ModuleMap.ts", import.meta.url), "utf8");
     const modal = readFileSync(new URL("../src/components/modules/AccountSecurityAction.tsx", import.meta.url), "utf8");
-    const scss = readFileSync(new URL("../src/components/modules/AccountSecurityAction.scss", import.meta.url), "utf8");
+    const scss = readFileSync(new URL("../src/components/modules/scss/AccountSecurityAction.scss", import.meta.url), "utf8");
     assert.match(tab, /module: "AccountSecurityAction", point: "email"/);
     assert.match(tab, /module: "AccountSecurityAction", point: "delete"/);
     assert.match(mapping, /AccountSecurityAction: lazy\(\(\) => import\("\.\/AccountSecurityAction"\)\)/);

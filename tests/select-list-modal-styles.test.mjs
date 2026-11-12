@@ -38,7 +38,7 @@ test("activity participant picker matches the invitation dialog", () => {
     for (const name of [".contactPickerList", ".createChatSearch", ".createChatChosenCon", ".createChatContact"]) {
         assert.ok(shared.includes(name + " {"), name);
     }
-    assert.ok(global.includes('@use "./modules/contactPickerControls";'));
+    assert.ok(global.includes('@use "./contactPickerControls";'));
 });
 
 test("contact search preserves selection, loading and save", () => {
@@ -58,9 +58,9 @@ test("TagSelector and DayChanger own shared habit-control styling", () => {
     const global = read("src/scss/App.scss");
     const styles = read("src/scss/habitFormControls.scss");
 
-    assert.ok(tag.includes('import "../../scss/modules/habitFormControls.scss"'));
-    assert.ok(day.includes('import "../../scss/modules/habitFormControls.scss"'));
-    assert.ok(global.includes('@use "./modules/habitFormControls";'));
+    assert.ok(tag.includes('import "../../scss/habitFormControls.scss"'));
+    assert.ok(day.includes('import "../../scss/habitFormControls.scss"'));
+    assert.ok(global.includes('@use "./habitFormControls";'));
     assert.ok(styles.includes(".tagList {"));
     assert.ok(styles.includes(".dayChanger {"));
 });
