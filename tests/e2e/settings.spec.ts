@@ -310,7 +310,7 @@ test("SelectList opens above near the bottom and below near the top", async ({ p
     }));
     await page.goto("/settings/notes");
     const control = page.locator(".planReminderSelect");
-    const menu = control.locator(".selectList");
+    const menu = page.locator(".selectListPortalRoot.planReminderSelect > .selectList");
     await expect(control).toBeVisible();
 
     // Keep the real React SelectList, only pin its location for deterministic viewport bounds.
@@ -330,7 +330,7 @@ test("SelectList opens above near the bottom and below near the top", async ({ p
     expect(bottomInput).not.toBeNull();
     expect(above!.y + above!.height).toBeLessThan(bottomInput!.y);
     await control.locator("input").evaluate(element => (element as HTMLInputElement).click());
-    await expect(menu).not.toHaveClass(/active/);
+    await expect(menu).toHaveCount(0);
 
     await control.evaluate(element => {
         element.style.top = "90px";
