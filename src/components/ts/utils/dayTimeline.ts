@@ -80,7 +80,16 @@ export function makeSideMenuEntries(filter: string | undefined, habits: Habit[] 
         day = shiftCalendarDay(today, 1);
     } else if (filter && /^\d{4}-\d{2}-\d{2}$/.test(filter)) day = filter;
     let entries: DayEntry[];
-    if (filter === "archived") {
+    if (filter === "plans") {
+        entries = plans.filter(plan => plan.membership_status !== "pending" &&
+            plan.status !== "canceled").map(plan => ({
+            key: "plan-" + plan.id, kind: "plan" as const, name: plan.name,
+            start: timeOf(plan.start_time), end: timeOf(plan.end_time),
+            date: plan.plan_date, description: plan.description || "",
+            completed: Boolean(plan.completed_for_me),
+            state: (plan.completed_for_me ? "comp" : "will") as "comp" | "will", plan
+        }));
+    } else if (filter === "archived") {
         entries = (habits || []).filter(h => !h.ongoing).map(habit => ({
             key:"habit-"+habit.id, kind:"habit", name:habit.name, start:timeOf(habit.start_time),
             end:timeOf(habit.end_time), date:day, description:habit.desc || "",
