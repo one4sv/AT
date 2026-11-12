@@ -21,6 +21,7 @@ export interface Calendar {
 
 export interface CalendarContextType {
     calendar: Calendar[]
+    allCalendar: Calendar[]
     setCalendar: React.Dispatch<React.SetStateAction<Calendar[]>>
     fetchCalendarHabit: (id: string) => void;
     fetchCalendarHabitWLoading: (id: string) => void;
@@ -45,6 +46,7 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote()
     const { timeZone } = useSettings()
     const [ calendar, setCalendar ] = useState<Calendar[]>([])
+    const [ allCalendar, setAllCalendar ] = useState<Calendar[]>([])
     const [ timers, setTimers ] = useState<habitTimer[] | null>(null)
     const [ counters, setCounters ] = useState<habitCounter[] | null>(null)
     const [ calendarLoading, setCalendarLoading ] = useState(false)
@@ -94,7 +96,10 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     const fetchCalendarUser = async () => {
         try {
             const res = await api.get(`calendar`)
-            if (res.data.success) setCalendar(res.data.calendar)
+            if (res.data.success) {
+                setCalendar(res.data.calendar)
+                setAllCalendar(res.data.calendar)
+            }
         } catch {
             showNotification("error", "Ошибка получения общего календаря")
         }
@@ -108,7 +113,7 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <CalendarContext.Provider value={{
-            calendar, setCalendar, fetchCalendarHabit, fetchCalendarUser,
+            calendar, allCalendar, setCalendar, fetchCalendarHabit, fetchCalendarUser,
             calendarLoading, chosenDay, setChosenDay, calendarRef, selectedMonth, selectedYear,
             setSelectedMonth, setSelectedYear, fetchCalendarWLoading, fetchCalendarHabitWLoading,
             timers, counters
