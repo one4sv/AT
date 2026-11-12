@@ -189,3 +189,69 @@ test("SideMenu streaks use full calendar even on a single activity route", () =>
     assert.match(habit, /calendar=\{allCalendar\}/);
     assert.match(list, /makeSideMenuEntries\(filter, habits, plans, allCalendar/);
 });
+
+test("streak follows the activity name and pin, while member count stays on the right", () => {
+    const habit = read("src/components/ts/Habit.tsx");
+    const sm = read("src/components/ts/SM/HabitsList.tsx");
+    const focus = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
+    const upcoming = read("src/pages/HabitPage/components/Overview/HabitOverviewEntries.tsx");
+    const badges = read("src/components/ts/ActivityIndicators.tsx");
+    const css = read("src/scss/ActivityIndicators.scss");
+
+    const checkOrder = (source, labels) => {
+        let previous = -1;
+        for (const label of labels) {
+            const offset = source.indexOf(label, previous + 1);
+            assert.ok(offset > previous, `Expected ${label} to follow the previous element`);
+            previous = offset;
+        }
+    };
+    checkOrder(habit, [
+        'className="habitNameText">{habit.name}',
+        '<ActivityIndicators part="streak"',
+        '<PushPinIcon className="pinnedHabitSign"',
+        '<ActivityIndicators part="aside"'
+    ]);
+    checkOrder(focus, [
+        'className="activityName">{entry.name}',
+        '<ActivityIndicators part="streak"',
+        '<PushPinIcon className="pinnedHabitSign"',
+        '<ActivityIndicators part="aside"'
+    ]);
+    checkOrder(upcoming, [
+        'className="activityName">{entry.name}',
+        '<ActivityIndicators part="streak"',
+        '<PushPinIcon className="pinnedHabitSign"',
+        '<ActivityIndicators part="aside"'
+    ]);
+    assert.match(sm, /<ActivityIndicators part="aside" plan=\{entry\.plan\}/);
+    assert.match(sm, /CheckCircleIcon className="habitHLStatus"/);
+    assert.match(badges, /part === "streak" \? "activityIndicatorsInline" : "activityIndicatorsTrailing"/);
+    assert.match(css, /&\.activityIndicatorsInline\s*\{\s*margin-left: 0;/);
+    assert.match(css, /&\.activityIndicatorsTrailing\s*\{\s*margin-left: auto;/);
+    assert.match(css, /\.habit\.active \.activityIndicators/);
+});
+
+test("overview second row uses habit periodicity or plan date, while completion stays on the right", () => {
+    const time = read("src/components/ts/utils/dayTimeline.ts");
+    const style = read("src/pages/HabitPage/scss/HabitOverview.scss");
+    const focus = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
+    const entries = read("src/pages/HabitPage/components/Overview/HabitOverviewEntries.tsx");
+    assert.match(time, /entry\.habit \? t\("habitUi\.period\." \+ entry\.habit\.periodicity\) : formatDateFromString\(entry\.date\)/);
+    assert.match(focus, /className="habitOverviewCurrentMeta"/);
+    assert.match(entries, /describeEntrySubtitle\(entry, t\)/);
+    assert.match(style, /\.habitOverviewEntryDone\s*\{\s*align-self: flex-end;/);
+});
+
+test("plan and activity invitation share the same modal and contact selection controls", () => {
+    const plan = read("src/pages/Plan/PlanMembers.tsx");
+    const picker = read("src/components/modules/HabitParticipantPicker.tsx");
+    assert.match(plan, /module: "HabitParticipantPicker"/);
+    assert.match(picker, /\{isOwner \? <RadioGroup/);
+    assert.match(picker, /\.\.\.\(!planMode \? \[\{ label: t\("habitDialog\.addToGroup"\)/);
+    assert.match(picker, /className="createChatList contactPickerList"/);
+    assert.match(picker, /className="createChatSearch"/);
+    assert.match(picker, /className="createChatChosenCons"/);
+    assert.match(picker, /setSelected\(\[contact\]\)/);
+    assert.match(picker, /api\.post\(\`plans\/\$\{planId\}\/invite\`/);
+});
