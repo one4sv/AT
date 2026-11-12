@@ -115,16 +115,13 @@
 
 .habitInfo {
     flex: 1;
-    margin-left: 0;
+    margin-left: 5px;
     display: grid;
     grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
     align-content: stretch;
     position: relative;
     min-width: 0;
     min-height: 0;
-    @media (max-width: 800px) {
-        margin-left: 0;
-    }
 }
 
 .habitName {
