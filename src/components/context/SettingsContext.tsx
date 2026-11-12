@@ -9,6 +9,7 @@ import { applyCustomPalette } from "../ts/utils/customPalette";
 import { defaultBackgroundEffects, hasCachedBackgroundEffects, normalizeBackgroundEffects } from "../ts/utils/backgroundEffects";
 import { MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
 import { privateAssetUrl } from "../ts/utils/privateAssetUrl";
+import { resolveTimeZone } from "../ts/utils/dateToStr";
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
@@ -72,6 +73,8 @@ export interface SettingsContextType {
     setDateFormat: React.Dispatch<React.SetStateAction<"standart" | "american">>;
     timeFormat: "twentyFour" | "twelve";
     setTimeFormat: React.Dispatch<React.SetStateAction<"twentyFour" | "twelve">>;
+    timeZone: string;
+    setTimeZone: React.Dispatch<React.SetStateAction<string>>;
     lang:string,
     setLang: React.Dispatch<React.SetStateAction<string>>;    
     emote: string;
@@ -180,7 +183,8 @@ const LOCAL_KEYS = {
     lang:"settings_lang",
     fontSize:"settings_font_size",
     dateFormat:"settings_date_format",
-    timeFormat:"settings_time_format"
+    timeFormat:"settings_time_format",
+    timeZone:"settings_time_zone"
 };
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
@@ -238,6 +242,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ fontSize, setFontSize ] = useLocalStorage<number>(LOCAL_KEYS.fontSize, 16);
     const [ dateFormat, setDateFormat ] = useLocalStorage<"standart" | "american">(LOCAL_KEYS.dateFormat, "standart");
     const [ timeFormat, setTimeFormat ] = useLocalStorage<"twentyFour" | "twelve">(LOCAL_KEYS.timeFormat, "twentyFour");
+    const [ timeZone, setTimeZone ] = useLocalStorage<string>(LOCAL_KEYS.timeZone, "auto");
 
     useEffect(() => {
         const safeSize = Number.isFinite(fontSize) ? Math.max(12, Math.min(22, fontSize)) : 16;
@@ -246,7 +251,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         document.documentElement.style.setProperty("--app-font-scale", String(safeSize / 16));
         document.documentElement.dataset.dateFormat = dateFormat;
         document.documentElement.dataset.timeFormat = timeFormat;
-    }, [fontSize, dateFormat, timeFormat]);
+        document.documentElement.dataset.timeZone = resolveTimeZone(timeZone);
+    }, [fontSize, dateFormat, timeFormat, timeZone]);
     const [ emote, setEmote ] = useLocalStorage(LOCAL_KEYS.emote, "Heart")
     const [ messdb, setMessdb ] = useLocalStorage(LOCAL_KEYS.messdb, "reaction")
     const [ autoLoadImages, setAutoLoadImages ] = useLocalStorage(LOCAL_KEYS.autoLoadImages, true);
@@ -367,7 +373,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             startupSideMenuTab, setStartupSideMenuTab,
             bg, setBg,
             decor, setDecor,
-            bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, wallpaperStyle, setWallpaperStyle, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang, fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat,
+            bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, wallpaperStyle, setWallpaperStyle, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang, fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat, timeZone, setTimeZone,
             privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
             twoAuth, setTwoAuth,
             autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
