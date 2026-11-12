@@ -49,13 +49,13 @@ export default function ActivityIndicators({ habit, plan, calendar, progress, pa
     const showAside = part !== "streak";
     const streak = showStreak && habit && calendar ? getHabitStreakBadge(habit, calendar) : null;
     const shared = showAside && habit && progress && (progress.total > 1 || Boolean(habit.chat_id));
-    if (!streak && !(showAside && plan) && !shared) return null;
+    if (!streak && !(showStreak && plan) && !shared) return null;
     return <span className={`activityIndicators ${part === "streak" ? "activityIndicatorsInline" : "activityIndicatorsTrailing"}`}>
         {streak && <span className={`activityStreak ${streak.level}`} title={String(streak.count)}>
             <FireIcon weight="fill" size={17} aria-hidden="true"/>
             <span>{streak.count}</span>
         </span>}
+        {showStreak && plan && <PathIcon className="activityPlanPath" size={18} aria-hidden="true"/>}
         {shared && <span className="activityMembersCount">{progress.completed}/{progress.total}</span>}
-        {showAside && plan && <PathIcon className="activityPlanPath" size={18} aria-hidden="true"/>}
     </span>;
 }
