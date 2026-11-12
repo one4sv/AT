@@ -14,7 +14,7 @@ import { calculateTimerElapsed } from "./utils/TimerFuncs";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useWebSocket } from "../hooks/WebSocketHook";
 import { Link } from "react-router-dom";
-import { formatDateFromString } from "./utils/dateToStr";
+import { formatDateFromString, todayStrFunc } from "./utils/dateToStr";
 export default function HabitDiv({
     habit,
     id,
@@ -123,7 +123,7 @@ export default function HabitDiv({
         } = habit;
         const habitIdKey = String(habit.id);
         const habitBlocks = schedules[habitIdKey] || [];
-        const todayNum = new Date().getDay();
+        const todayNum = new Date(todayStrFunc() + "T12:00:00").getDay();
         let targetDayNum = todayNum;
         let dayLabel = "Сегодня";
         let nearestDiff = 7;
@@ -133,10 +133,10 @@ export default function HabitDiv({
                 if (diff < nearestDiff) nearestDiff = diff;
             }
             targetDayNum = (todayNum + nearestDiff) % 7;
-            const targetDate = new Date();
+            const targetDate = new Date(todayStrFunc() + "T12:00:00");
             targetDate.setDate(targetDate.getDate() + nearestDiff);
             const targetIsOdd = isOddWeek(weekStart, targetDate);
-            const isInDateRange = habit.end_date ? new Date(habit.end_date) > new Date() : true;
+            const isInDateRange = habit.end_date ? habit.end_date >= todayStrFunc() : true;
             if (nearestDiff === 0 && isInDateRange) dayLabel = "Сегодня"; else if (nearestDiff === 1 && isInDateRange) dayLabel = "Завтра"; else if (isInDateRange) {
                 dayLabel = targetDate.toLocaleDateString(
                     "ru-RU",
