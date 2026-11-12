@@ -33,6 +33,7 @@ export default function DeleteConfirm() {
 
     const [ delThing, setDelThing] = useState("");
     const [ delForAll, setDelForAll ] = useState(false)
+    const [ deleting, setDeleting ] = useState(false)
     
     useEffect(() => {
         if (deleteConfirm.goal === "post") setDelThing(t("deleteDialog.post"));
@@ -47,11 +48,13 @@ export default function DeleteConfirm() {
     }, [deleteConfirm.goal, deleteConfirm.name, deleteMess, t]);
 
     const deleteThis = async () => {
+        if (deleting) return;
+        setDeleting(true);
         const { goal, id } = deleteConfirm;
         try {
             const res = await api.post(
                 `delete`,
-                { goal: goal === "mess" && delForAll ? "messForAll" : goal, delete_id: deleteMess && deleteMess.length > 0 ? deleteMess : id, group_id: group?.id || id || null}
+                { goal: goal === "mess" && delForAll ? "messForAll" : goal, delete_id: goal === "mess" && deleteMess?.length ? deleteMess : id, group_id: group?.id || id || null}
             );
 
             if (res.data.success && user.nick) {
@@ -78,10 +81,12 @@ export default function DeleteConfirm() {
                 showNotification("error", res.data.message || t("deleteDialog.deleteFailed"));
             }
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                showNotification("error", error.response?.data?.error || t("deleteDialog.groupFailed"));
-            }
-            showNotification("error", t("deleteDialog.deleteFailed"));
+            const serverMessage = axios.isAxiosError(error)
+                ? error.response?.data?.error || error.response?.data?.message
+                : null;
+            showNotification("error", serverMessage || t("deleteDialog.deleteFailed"));
+        } finally {
+            setDeleting(false);
         }
     };
 
@@ -109,7 +114,7 @@ export default function DeleteConfirm() {
                 >
                     {t("deleteDialog.cancel")}
                 </button>
-                <button className="deleteConfirm" onClick={deleteThis}>
+                <button className="deleteConfirm" onClick={deleteThis} disabled={deleting}>
                     {deleteConfirm.goal === "member" || deleteConfirm.goal === "leave" ? t("deleteDialog.confirm") : t("deleteDialog.remove")}
                 </button>
             </div>
