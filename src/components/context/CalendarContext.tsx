@@ -27,6 +27,7 @@ export interface CalendarContextType {
     fetchCalendarHabit: (id: string) => void;
     fetchCalendarHabitWLoading: (id: string) => void;
     fetchCalendarUser: () => void;
+    fetchAllCalendar: () => void;
     fetchCalendarWLoading: () => void;
     calendarLoading: boolean
     /**
@@ -114,6 +115,15 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
         setCalendarLoading(false)
     }
 
+    const fetchAllCalendar = async () => {
+        try {
+            const res = await api.get("calendar")
+            if (res.data.success) setAllCalendar(res.data.calendar)
+        } catch {
+            showNotification("error", "Ошибка получения общего календаря")
+        }
+    }
+
     const fetchCalendarUser = async () => {
         try {
             const res = await api.get(`calendar`)
@@ -134,7 +144,7 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <CalendarContext.Provider value={{
-            calendar, allCalendar, setCalendar, fetchCalendarHabit, fetchCalendarUser,
+            calendar, allCalendar, setCalendar, fetchCalendarHabit, fetchCalendarUser, fetchAllCalendar,
             calendarLoading, chosenDay, setChosenDay, calendarRef, selectedMonth, selectedYear,
             setSelectedMonth, setSelectedYear, fetchCalendarWLoading, fetchCalendarHabitWLoading,
             timers, counters
