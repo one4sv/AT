@@ -275,7 +275,8 @@ test("plan PathIcon is next to the name, completion ratio stays on first row, an
     assert.match(upcoming, /<ActivityIndicators part="streak" habit=\{entry\.habit\} plan=\{entry\.plan\}/);
     assert.match(focus, /<ActivityIndicators part="aside" habit=\{entry\.habit\} progress=\{progress\}/);
     assert.match(upcoming, /<ActivityIndicators part="aside" habit=\{entry\.habit\}/);
-    assert.match(smStyle, /\.habitInfo\s*\{[\s\S]*?margin-left: 0;[\s\S]*?grid-template-rows: minmax\(0, 1fr\) minmax\(0, 1fr\);/);
+    assert.match(smStyle, /\.habitInfo\s*\{[\s\S]*?margin-left: 5px;[\s\S]*?grid-template-rows: minmax\(0, 1fr\) minmax\(0, 1fr\);/);
+    assert.match(overviewStyle, /\.habitOverviewEntryTagIcon \+ \.habitOverviewEntryInfo,\s*\.habitOverviewFocusIcon \+ \.habitOverviewCurrentDetails\s*\{\s*margin-left: 5px;/);
     assert.match(overviewStyle, /\.habitOverviewCurrentRow\s*\{[\s\S]*?gap: 0;/);
     assert.match(overviewStyle, /\.habitOverviewEntryMain\s*\{[\s\S]*?gap: 0;/);
     assert.match(badgesStyle, /\.activityMembersCount\s*\{[\s\S]*?align-items: center;/);
