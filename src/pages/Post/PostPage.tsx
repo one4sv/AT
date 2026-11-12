@@ -1,6 +1,6 @@
 import { HeartIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../components/ts/api";
 import Post from "../../components/ts/Post";
@@ -105,9 +105,10 @@ export default function PostPage() {
             {currentPost ? <PostComments
                 key={currentPost.id}
                 id={currentPost.id}
+                share={share}
                 onSent={onCommentSent}
                 onBack={goBack}
-                action={user.id !== currentPost.user.id && (
+                action={!!user.id && user.id !== currentPost.user.id && (
                     <button
                         type="button"
                         className="pageBottomAction"
@@ -160,7 +161,9 @@ export default function PostPage() {
                         </div>
                     </div>}
                 </div>
-                <PageBottom onBack={goBack} />
+                <PageBottom onBack={user.id ? goBack : undefined}>
+                    {!user.id && <Link className="pageBottomAction" to="/sign">{t("post.signIn")}</Link>}
+                </PageBottom>
             </>}
         </div>
     );

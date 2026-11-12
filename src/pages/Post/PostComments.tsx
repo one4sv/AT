@@ -26,6 +26,7 @@ interface Comment {
 
 interface PostCommentsProps {
     id: number;
+    share?: string | null;
     onSent: (delta?: number) => void;
     children: ReactNode;
     onBack: () => void;
@@ -33,7 +34,7 @@ interface PostCommentsProps {
     action?: ReactNode;
 }
 
-export default function PostComments({ id, onSent, children, onBack, onEdit, action }: PostCommentsProps) {
+export default function PostComments({ id, share, onSent, children, onBack, onEdit, action }: PostCommentsProps) {
     const { user } = useUser();
     const { openMenu, closeMenu } = useContextMenu();
     const { t } = useTranslation("acc");
@@ -65,7 +66,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
         const controller = new AbortController();
         setLoading(true);
         setError("");
-        api.get(`comments/${id}`, { signal: controller.signal })
+        api.get(`comments/${id}`, { signal: controller.signal, params: { share } })
             .then(res => {
                 if (!controller.signal.aborted) setComments(res.data.comments ?? []);
             })
@@ -76,7 +77,7 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                 if (!controller.signal.aborted) setLoading(false);
             });
         return () => controller.abort();
-    }, [id, retry]);
+    }, [id, retry, share]);
 
     useEffect(() => {
         if (!loading && !scrolled.current && (window.location.hash === "#comments" || /^#comment-\d+$/.test(window.location.hash))) {
@@ -93,8 +94,10 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
             name: comment.user?.username || comment.user?.nick,
             isMy: !!user.id && user.id === comment.user?.id,
             onCopyLink: () => {
-                const url = new URL(`/post/${id}#comment-${comment.id}`, window.location.origin).href;
-                void navigator.clipboard.writeText(url);
+                const url = new URL(`/post/${id}`, window.location.origin);
+                if (share) url.searchParams.set("share", share);
+                url.hash = `comment-${comment.id}`;
+                void navigator.clipboard.writeText(url.href);
                 closeMenu();
             },
             onReply: user.id ? () => { setReplyTo(comment); closeMenu(); } : undefined,
@@ -289,8 +292,8 @@ export default function PostComments({ id, onSent, children, onBack, onEdit, act
                         <PencilSimpleIcon weight="fill" /> {t("post.edit")}
                     </button>)}
                 />
-                    : <PageBottom onBack={onBack}>
-                        {action}<Link className="pageBottomAction" to="/sign">
+                    : <PageBottom>
+                        <Link className="pageBottomAction" to="/sign">
                             {t("post.signIn")}
                         </Link>
                     </PageBottom>}

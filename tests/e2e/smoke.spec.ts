@@ -728,3 +728,43 @@ test.describe("authenticated UI regression", () => {
         }
     });
 });
+
+test("guest can read shared post comments and sees only sign-in in the footer", async ({ page }) => {
+    const share = "33333333-3333-4333-8333-333333333333";
+    let commentsShare: string | null = null;
+    await page.addInitScript(() => localStorage.setItem("settings_lang", JSON.stringify("ru")));
+    await page.route("**/api/user", route => route.fulfill({
+        status: 401, contentType: "application/json",
+        body: JSON.stringify({ success: false, cookie: true })
+    }));
+    await page.route("**/api/post/17?**", route => route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({ success: true, post: {
+            id: 17, text: "Public post fixture", content: null, visibility: "link",
+            user: { id: "post-owner", nick: "owner", username: "Post owner", avatar_url: null },
+            media: [], likes: [], habit: null, comments_count: 1,
+            created_at: "2026-11-01T12:00:00Z"
+        } })
+    }));
+    await page.route("**/api/comments/17?**", route => {
+        commentsShare = new URL(route.request().url()).searchParams.get("share");
+        return route.fulfill({
+            status: 200, contentType: "application/json",
+            body: JSON.stringify({ success: true, comments: [{
+                id: 42, post_id: 17, text: "Comment available to guests",
+                files: [], likes: [], parent_id: null,
+                created_at: "2026-11-01T13:00:00Z",
+                user: { id: "comment-owner", nick: "commenter", username: "Commenter" }
+            }] })
+        });
+    });
+    await page.goto(`/post/17?share=${share}`);
+    await expect(page.locator(".postComments .commentText")).toContainText("Comment available to guests");
+    expect(commentsShare).toBe(share);
+    const bottom = page.locator(".postCommentBottom .pageBottom");
+    await expect(bottom.locator(".pageBottomAction")).toHaveCount(1);
+    await expect(bottom.locator(".pageBottomAction")).toHaveText("Войти");
+    await expect(bottom.locator(".pageBottomAction")).toHaveAttribute("href", "/sign");
+    await expect(bottom.locator(".pageBottomBack")).toHaveCount(0);
+    await expect(bottom.getByRole("button", { name: /Нравится/i })).toHaveCount(0);
+});
