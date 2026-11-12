@@ -1,5 +1,7 @@
 import "../../scss/SM/habitsList.scss";
 import type { Habit } from "../context/HabitsContext";
+import { useCalendar } from "../hooks/CalendarHook";
+import ActivityIndicators, { type HabitDayProgress } from "./ActivityIndicators";
 import type { habitTimer } from "../context/TheHabitContext";
 import { CheckCircle, PushPinIcon } from "@phosphor-icons/react";
 import { habitIcon } from "./habitIcon";
@@ -19,14 +21,19 @@ export default function HabitDiv({
     habit,
     id,
     isMyAcc,
-    onSelect
+    onSelect,
+    showIndicators = false,
+    progress
 }: {
     habit: Habit;
     id?: number;
     isMyAcc?: boolean;
     onSelect?: (habit: Habit) => void;
+    showIndicators?: boolean;
+    progress?: HabitDayProgress;
 }) {
     const { openMenu } = useContextMenu();
+    const { calendar } = useCalendar();
     const { closeMenu } = useSideMenu();
     const {
         findHabit,
@@ -234,6 +241,7 @@ export default function HabitDiv({
                 <div className="habitName">
                     {habit.name}
                     {habit.pinned && isMyAcc && <PushPinIcon className="pinnedHabitSign" weight="fill" size={14} />}
+                    {showIndicators && <ActivityIndicators habit={habit} calendar={calendar} progress={progress}/>}
                 </div>
                 <div className="habitPer">
                     {habit.ongoing ? timerStatus || periodicityText : `${formatDateFromString(habit.start_date)} - ${formatDateFromString(habit.end_date)}`}
