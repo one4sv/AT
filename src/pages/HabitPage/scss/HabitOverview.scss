@@ -435,6 +435,31 @@
     color: var(--borderWh);
 }
 .habitOverviewCurrent b { color: var(--accent_text); }
+/* Focus cards are full-width navigation buttons, retaining their glass surface. */
+.habitOverviewCurrent {
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    text-align: left;
+    color: var(--tc);
+    font: inherit;
+    cursor: pointer;
+}
+.habitOverviewCurrent:focus-visible,
+.habitOverviewEntryMain:focus-visible {
+    outline: 2px solid var(--accent_text);
+    outline-offset: -2px;
+}
+.habitOverviewCurrentDetails {
+    flex: 1;
+}
+.habitOverviewEntryInfo {
+    flex: 1;
+}
+.habitOverviewEntryName {
+    width: 100%;
+}
+
 .overviewPanelSkeleton {
     flex: 1;
     min-width: 0;
