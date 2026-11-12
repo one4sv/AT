@@ -248,12 +248,16 @@ test("plan and activity invitation share the same modal and contact selection co
     const picker = read("src/components/modules/HabitParticipantPicker.tsx");
     assert.match(plan, /module: "HabitParticipantPicker"/);
     assert.match(picker, /\{isOwner \? <RadioGroup/);
-    assert.match(picker, /\.\.\.\(!planMode \? \[\{ label: t\("habitDialog\.addToGroup"\)/);
+    assert.match(picker, /\{ label: t\("habitDialog\.addToGroup"\), value: "group" \}/);
     assert.match(picker, /className="createChatList contactPickerList"/);
     assert.match(picker, /className="createChatSearch"/);
     assert.match(picker, /className="createChatChosenCons"/);
     assert.match(picker, /setSelected\(\[contact\]\)/);
     assert.match(picker, /api\.post\(\`plans\/\$\{planId\}\/invite\`/);
+    assert.match(picker, /api\.patch\(\`plans\/\$\{planId\}\/chat\`/);
+    assert.match(picker, /module: "HabitCreateChat"/);
+    const create = read("src/components/modules/HabitCreateChat.tsx");
+    assert.match(create, /form\.append\("plan_id", String\(planId\)\)/);
 });
 
 test("plan PathIcon is next to the name, completion ratio stays on first row, and tag/title gap is zero", () => {
