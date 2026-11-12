@@ -398,13 +398,17 @@ test("plan actions open from its section and shared header without changing edit
     const after = await name.boundingBox();
     expect(Math.abs((after?.y ?? 0) - (before?.y ?? 0))).toBeLessThanOrEqual(2);
 
-    await page.locator(".planHeaderActionsButt").click();
+    // While editing, the header action is Save; right-click opens its context menu.
+    await page.locator(".planHeaderActionsButt").click({ button: "right" });
     await expect(menu).toBeVisible();
     await menu.getByText("Назад").click();
     await expect(name).toHaveAttribute("readonly", "");
     await page.locator(".headerTitle").click();
     await expect(menu).toBeVisible();
     await expect(menu).toContainText("Удалить");
+    await expect(menu).toContainText("Скопировать ссылку");
+    await expect(menu).toContainText("Поделиться");
+    await expect(menu).toContainText("Закрепить");
 });
 
 test("guest profile hides account-only actions while shared action styles load directly", async ({ page }) => {
