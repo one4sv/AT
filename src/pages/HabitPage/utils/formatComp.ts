@@ -1,4 +1,4 @@
-import { formatAppDate, formatAppTime } from "../../../components/ts/utils/dateToStr";
+import { dateInAppZone, formatAppDate, formatAppTime, shiftCalendarDay, todayStrFunc } from "../../../components/ts/utils/dateToStr";
 export default function formatComp(created: Date | string | null | undefined) {
   if (!created) return "";
 
@@ -19,16 +19,11 @@ export default function formatComp(created: Date | string | null | undefined) {
   if (diffHour < 5) return `Выполнено ${diffHour} часа назад`;
   if (diffHour < 24) return `Выполнено ${diffHour} часов назад`;
 
-  const yesterday = new Date();
-  yesterday.setDate(now.getDate() - 1);
+  const yesterday = shiftCalendarDay(todayStrFunc(), -1);
 
   const timeStr = formatAppTime(date);
 
-  if (
-    date.getDate() === yesterday.getDate() &&
-    date.getMonth() === yesterday.getMonth() &&
-    date.getFullYear() === yesterday.getFullYear()
-  ) {
+  if (dateInAppZone(date) === yesterday) {
     return `Выполнено вчера в ${timeStr}`;
   }
 
