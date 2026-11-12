@@ -1,7 +1,7 @@
 import { Share2, Smartphone, Bell } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
-import "./PushInstallHelp.scss";
+import "./scss/PushInstallHelp.scss";
 
 export default function PushInstallHelp() {
     const { t } = useTranslation("settings");
