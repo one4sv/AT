@@ -2,7 +2,7 @@ import type { Habit } from "../../context/HabitsContext";
 import type { Calendar } from "../../context/CalendarContext";
 import type { OneOffPlan } from "../../context/PlansContext";
 import { getDayArrays } from "./getDayArrs";
-import { todayStrFunc } from "./dateToStr";
+import { shiftCalendarDay, todayStrFunc } from "./dateToStr";
 
 export type DayEntry = {
     key: string;
@@ -77,9 +77,7 @@ export function makeSideMenuEntries(filter: string | undefined, habits: Habit[] 
     const today = todayStrFunc();
     let day = today;
     if (filter === "tomorrow") {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        day = [tomorrow.getFullYear(), String(tomorrow.getMonth()+1).padStart(2,"0"), String(tomorrow.getDate()).padStart(2,"0")].join("-");
+        day = shiftCalendarDay(today, 1);
     } else if (filter && /^\d{4}-\d{2}-\d{2}$/.test(filter)) day = filter;
     let entries: DayEntry[];
     if (filter === "archived") {
