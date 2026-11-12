@@ -14,6 +14,7 @@ import { isMobile } from "react-device-detect"
 import { usePlans } from "../../../../components/hooks/PlansHook"
 import { useNavigate } from "react-router-dom"
 import type { OneOffPlan } from "../../../../components/context/PlansContext"
+import { todayStrFunc } from "../../../../components/ts/utils/dateToStr"
 
 export type CountInpsType = {
     fullDate: string;
@@ -33,7 +34,7 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
     const { plans } = usePlans()
     const navigate = useNavigate()
     const { habit } = useTheHabit()
-    const { weekStart } = useSettings()
+    const { weekStart, timeZone } = useSettings()
     const { schedules, habitSchedule, loadHabitSchedule, saveHabitSchedule, loading, schedule_settings } = useSchedule()
     
     const [ edit, setEdit ] = useState(false)
@@ -89,12 +90,12 @@ export default function Schedule({ id, isMy }: { id?: string; isMy: boolean }) {
         return result
     }
 
-    const week = useMemo(() => createWeek(new Date()), [isWeek, locale]);
+    const week = useMemo(() => createWeek(new Date(todayStrFunc() + "T12:00:00")), [isWeek, locale, timeZone]);
     const secondWeekStart = useMemo(() => {
-        const d = new Date();
+        const d = new Date(todayStrFunc() + "T12:00:00");
         d.setDate(d.getDate() + 7);
         return d;
-    }, []);
+    }, [timeZone]);
     const secondWeek = useMemo(() => createWeek(secondWeekStart), [isWeek, secondWeekStart, locale]);
 
     const planTime = (plan: OneOffPlan) => plan.start_time?.slice(0, 5) || plan.end_time?.slice(0, 5) || "";
