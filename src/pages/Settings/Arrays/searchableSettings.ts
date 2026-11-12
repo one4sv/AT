@@ -138,6 +138,12 @@ export function useSearchableSettings(): SearchableSection[] {
                     category: t("general.text"),
                 },
                 {
+                    id: "timeZone",
+                    name: t("general.timeZone"),
+                    icon: ClockIcon,
+                    category: t("general.text"),
+                },
+                {
                     id: "timeFormat",
                     name: t("general.timeFormat"),
                     icon: ClockIcon,
