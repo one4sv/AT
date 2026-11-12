@@ -43,7 +43,7 @@ export default function GeneralTab({ search }: { search: string }) {
                     timeZone: zone, timeZoneName: "shortOffset"
                 }).formatToParts(now).find(part => part.type === "timeZoneName")?.value || "GMT";
                 if (value === "GMT" || value === "UTC") return 0;
-                const match = /^GMT([+-])(\\d{1,2})(?::(\\d{2}))?$/.exec(value);
+                const match = /^GMT([+-])(\d{1,2})(?::(\d{2}))?$/.exec(value);
                 if (!match) return null;
                 const sign = match[1] === "-" ? -1 : 1;
                 return sign * (Number(match[2]) * 60 + Number(match[3] || 0));
