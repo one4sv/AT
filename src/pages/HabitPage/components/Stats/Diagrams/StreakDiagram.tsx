@@ -56,7 +56,7 @@ function getAnchorDate(groupType: string, day: string): string {
 }
 
 function formatGroupLabel(groupType: string, day: string, locale: string): string {
-    const date = new Date(getAnchorDate(groupType, day))
+    const date = new Date(getAnchorDate(groupType, day) + "T12:00:00")
     const month = String(date.getMonth() + 1).padStart(2, "0")
     const year = date.getFullYear()
 
@@ -65,7 +65,7 @@ function formatGroupLabel(groupType: string, day: string, locale: string): strin
         const week = Math.ceil(date.getDate() / 7)
         return i18n.t("habitPageUi.charts.weekLabel", { ns: "common", week, month })
     }
-    return `${formatShortDateFromString(day)} ${new Intl.DateTimeFormat(locale, { weekday: "short" }).format(new Date(day)).replace(".", "")}`
+    return `${formatShortDateFromString(day)} ${new Intl.DateTimeFormat(locale, { weekday: "short" }).format(new Date(day + "T12:00:00")).replace(".", "")}`
 }
 
 export default function StreakDiagram({
@@ -155,7 +155,7 @@ export default function StreakDiagram({
             const selectedDate = getAnchorDate(effectiveGroup, day)
 
             setChosenDay(selectedDate)
-            const d = new Date(selectedDate)
+            const d = new Date(selectedDate + "T12:00:00")
             setSelectedMonth(d.getMonth())
             setSelectedYear(d.getFullYear())
             if (mainRef.current) {
