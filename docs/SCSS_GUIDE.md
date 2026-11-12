@@ -517,3 +517,7 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
 ## GroupInfo и профильные стили (dev 0.6.2)
 
 `src/pages/Group/components/GroupInfo.tsx` использует `accInfo`, `accPic` и `accInfoNames` и **сам импортирует** `src/pages/Acc/scss/AccInfo.scss`, даже при наличии переходного `@use` в `Group.scss`. Плашка `accOnlineStauts` должна находиться внутри `groupAvatarStatusAnchor` вместе с аватаркой, а не в отдельном правом `accInfoWrapper`: `position: absolute` в стилях рассчитывается относительно аватарки. Проверять прямое открытие группы на ПК и iPhone без посещения профиля. Для профилактики используются `tests/group-info-styles.test.mjs`, `check:lazy-styles` и `check:bundle`.
+
+### Актуализация SelectList (12.11.2026)
+
+Для общего выпадающего `SelectList` теперь используется отдельный `selectListPortalRoot` над обычными контейнерами (см. `CUSTOM_COMPONENTS.md`). В отличие от прежнего полностью непрозрачного `var(--bgc)` popup, **именно этот portal** использует `background: color-mix(in srgb, var(--bgc) 90%, transparent)` и фиксированный `backdrop-filter: blur(9px)` с префиксом WebKit. Это обеспечивает читаемую стеклянную поверхность, не даёт списку оказаться под следующим блоком настроек и не снимает прежнего требования к непрозрачности для прочих контекстных/всплывающих списков. Не лечить обрезание `overflow` простым повышением `z-index` внутри прежнего родителя.
