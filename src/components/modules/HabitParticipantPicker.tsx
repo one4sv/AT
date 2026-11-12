@@ -137,16 +137,16 @@ export default function HabitParticipantPicker() {
     return <div className="habitCollaborationModal habitParticipantPicker" role="dialog" aria-modal="true" aria-label={t("habitDialog.addMembers")}>
         <div className="habitCollaborationHeader">{t("habitDialog.addMembers")}</div>
         <div className="habitCollaborationBody">
-            {!planMode && isOwner ? <RadioGroup
+            {isOwner ? <RadioGroup
                 list={[
                     ...(canDirectInvite ? [{ label: t("habitDialog.invite"), value: "activity" }] : []),
-                    { label: t("habitDialog.addToGroup"), value: "group" }
+                    ...(!planMode ? [{ label: t("habitDialog.addToGroup"), value: "group" }] : [])
                 ]}
                 id="participantMode"
                 val={mode}
                 disabled={saving}
                 newVal={value => { setMode(value); setSelected([]); }}
-            /> : <div className="settingSpan">{t(planMode ? "plans.addParticipant" : "habitDialog.invite")}</div>}
+            /> : <div className="settingSpan">{t("habitDialog.invite")}</div>}
             {!planMode && isOwner && <button type="button" className="addGoalButtDiv habitPickerCreate" disabled={saving} onClick={() => setBlackout({ seted: true, module: "HabitCreateChat" })}>{t("habitDialog.createNewGroup")}</button>}
             <div className="createChatList contactPickerList">
                 {selected.length > 0 && <div className="createChatChosenCons">
