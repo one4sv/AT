@@ -23,7 +23,7 @@ test("SelectList owns styles independent from the habit page", () => {
 test("activity participant picker matches the invitation dialog", () => {
     const invite = read("src/components/modules/CreateChat.tsx");
     const activity = read("src/components/modules/HabitParticipantPicker.tsx");
-    const shared = read("src/scss/modules/contactPickerControls.scss");
+    const shared = read("src/scss/contactPickerControls.scss");
     const global = read("src/scss/App.scss");
 
     for (const code of [invite, activity]) {
@@ -56,7 +56,7 @@ test("TagSelector and DayChanger own shared habit-control styling", () => {
     const tag = read("src/components/ts/TagSelector.tsx");
     const day = read("src/components/ts/DayChanger.tsx");
     const global = read("src/scss/App.scss");
-    const styles = read("src/scss/modules/habitFormControls.scss");
+    const styles = read("src/scss/habitFormControls.scss");
 
     assert.ok(tag.includes('import "../../scss/modules/habitFormControls.scss"'));
     assert.ok(day.includes('import "../../scss/modules/habitFormControls.scss"'));
@@ -67,9 +67,9 @@ test("TagSelector and DayChanger own shared habit-control styling", () => {
 
 test("plan editor and compact modal controls keep mobile layout and text limits", () => {
     const plans = read("src/pages/Plan/PlanEditor.tsx");
-    const styles = read("src/scss/modules/addPlan.scss");
-    const habitStyles = read("src/scss/modules/addHabit.scss");
-    const sharedTime = read("src/scss/modules/habitFormControls.scss");
+    const styles = read("src/components/modules/scss/addPlan.scss");
+    const habitStyles = read("src/components/modules/scss/addHabit.scss");
+    const sharedTime = read("src/scss/habitFormControls.scss");
     const addHabit = read("src/components/modules/AddHabit.tsx");
     const chatTA = read("src/components/ts/TA.tsx");
     const sideMenuStyles = read("src/scss/SM/sideMenu.scss");
@@ -104,8 +104,8 @@ test("plan editor and compact modal controls keep mobile layout and text limits"
 
 test("AddPlan has no separate title or kind selection and labels do not force a minimum height", () => {
     const form = read("src/pages/Plan/PlanEditor.tsx");
-    const mobile = read("src/scss/modules/addPlan.scss");
-    const controls = read("src/scss/modules/habitFormControls.scss");
+    const mobile = read("src/components/modules/scss/addPlan.scss");
+    const controls = read("src/scss/habitFormControls.scss");
     assert.doesNotMatch(form, /addPlanHeading/);
     assert.match(form, /!modal && !initial/);
     assert.match(mobile, /height: auto/);
@@ -113,7 +113,7 @@ test("AddPlan has no separate title or kind selection and labels do not force a 
 });
 
 test("time inputs align at the bottom of both columns without label min-height", () => {
-    const css = read("src/scss/modules/habitFormControls.scss");
+    const css = read("src/scss/habitFormControls.scss");
     assert.match(css, /> \.timeInputShell \{\s*margin-top: auto;/);
     assert.doesNotMatch(css, /min-height: 2\.5em/);
 });
@@ -121,7 +121,7 @@ test("time inputs align at the bottom of both columns without label min-height",
 test("native time reset uses controlled input events and independently rounded shells", () => {
     const plan = read("src/pages/Plan/PlanEditor.tsx");
     const habit = read("src/components/modules/AddHabit.tsx");
-    const css = read("src/scss/modules/habitFormControls.scss");
+    const css = read("src/scss/habitFormControls.scss");
     const select = read("src/scss/SelectList.scss");
     for (const form of [plan, habit]) {
         assert.match(form, /className="timeInputShell"/);

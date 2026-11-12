@@ -21,7 +21,7 @@ test("forwarded own messages use inner_text without changing other messages", ()
 
 test("avatar title spacing and online status font use the shared design", () => {
     const common = read("src/pages/Acc/scss/AccInfo.scss");
-    const chat = read("src/scss/modules/ChatWithInfo.scss");
+    const chat = read("src/components/modules/scss/ChatWithInfo.scss");
     const group = read("src/pages/Group/scss/Group.scss");
 
     assert.match(common, /\.accInfoNames\s*\{\s*flex:\s*1;\s*margin-left:\s*5px/);

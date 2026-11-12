@@ -30,7 +30,7 @@
 | Модальное окно | **`Blackout`** + зарегистрированный модуль | `src/components/ts/Blackout.tsx`, `src/components/modules/ModuleMap.ts` |
 | Просмотр фотографии/галереи | **`ImgPrev`** + `useImagePreview` | `src/components/modules/ImgPrev.tsx`, `src/components/hooks/utils/useImagePreview.ts` |
 | Подтверждение внешней ссылки | **`LinkConfirm`** + `useOpenLink` | `src/components/modules/LinkConfirm.tsx`, `src/components/hooks/utils/useOpenLink.ts` |
-| QR аккаунта или приглашения в беседу | **`ShareAcc`** | `src/components/modules/ShareAcc.tsx`, `src/scss/modules/ShareAccDiv.scss` |
+| QR аккаунта или приглашения в беседу | **`ShareAcc`** | `src/components/modules/ShareAcc.tsx`, `src/components/modules/scss/ShareAccDiv.scss` |
 | Индикатор загрузки | **`Loader`**, **`LoaderSmall`**, **`MinLoader`** | `src/components/ts/Loader.tsx`, `LoaderSmall.tsx`, `MinLoader.tsx`, `src/scss/Loading.scss` |
 | Скелетон загрузки | **`Skeleton`** | `src/components/ts/Skeleton.tsx`, `src/scss/Loading.scss` |
 | Уведомление | **`Notification`** через `useNote` | `src/components/ts/Notification.tsx`, `src/components/context/NoteContext.tsx` |
@@ -67,7 +67,7 @@
 
 **Особенности реализации:** `readOnly` управляет только редактируемостью текстового `input` и по умолчанию включён — это **не** запрет выбирать вариант. `showOnly` скрывает варианты и используется в существующем коде для режима только чтения. `hide` управляет закрытием при клике снаружи, `showSelected` — наличием текущего варианта в списке. Компонент сам хранит `showList` и `selectedLabel`; проверяйте, как он ведёт себя при изменении `selected` и при пустом значении. Для `Без роли` можно включать пункт с `value: ""`. Не добавлять рядом нативный `<select>`.
 
-Оформление: найти стиль готового варианта `.redHabitSL` в `src/pages/HabitPage/scss/redHabit.scss`, `.rolesModalSelect` в `src/scss/modules/PermissionsDiv.scss` или другой подходящий вариант. Важно проверить `position`, `z-index`, `overflow` и границы прокручиваемой модалки: список не должен обрезаться или перекрывать соседние панели. Все обычные скругления — 24px; не задавать новый шрифт/`font-weight`.
+Оформление: найти стиль готового варианта `.redHabitSL` в `src/pages/HabitPage/scss/redHabit.scss`, `.rolesModalSelect` в `src/components/modules/scss/PermissionsDiv.scss` или другой подходящий вариант. Важно проверить `position`, `z-index`, `overflow` и границы прокручиваемой модалки: список не должен обрезаться или перекрывать соседние панели. Все обычные скругления — 24px; не задавать новый шрифт/`font-weight`.
 
 ### `RadioGroup`
 
@@ -114,7 +114,7 @@
 
 ## 3. Контакты, активности и меню
 
-- **`Contact`** (`src/components/ts/Contact.tsx`) — готовая **карточка чата** для бокового меню: принимает `contact`, отображает аватар, имя, последнее сообщение, статус прочтения/набора и действия. Это не универсальный пользовательский picker. Для поиска/выбора контактов в модалках также проверять `src/components/modules/HabitParticipantPicker.tsx`, `src/scss/modules/CreateChat.scss` и существующие `.createChatContact` / `.contactsUser.active`.
+- **`Contact`** (`src/components/ts/Contact.tsx`) — готовая **карточка чата** для бокового меню: принимает `contact`, отображает аватар, имя, последнее сообщение, статус прочтения/набора и действия. Это не универсальный пользовательский picker. Для поиска/выбора контактов в модалках также проверять `src/components/modules/HabitParticipantPicker.tsx`, `src/components/modules/scss/CreateChat.scss` и существующие `.createChatContact` / `.contactsUser.active`.
 - **`Habit`** (`src/components/ts/Habit.tsx`) — карточка активности. Перед созданием похожей карточки проверить его пропсы и отображение `isMyAcc`, `id`, `onSelect` в реальных местах использования.
 - **`SideMenu`** (`src/components/ts/SM/SideMenu.tsx`) и связанные `ContactsList`, `HabitsList`, `AccountList`, `SpotsList` — уже существующая система боковой навигации и горизонтальных жестов. Не создавать отдельную копию сайдбара.
 - **`ContextMenu`** (`src/components/ts/ContextMenu/ContextMenu.tsx`) — единый рендерер контекстных меню. Открывается через `useContextMenu.openMenu(x, y, point, options, ...)`. Типы меню определены в `src/components/ts/ContextMenu/menus/` (активность, чат, пост, сообщение, участник, медиа и другие). `closeMenu` закрывает его. `ContextMenuContext` устанавливает общий обработчик долгого нажатия для элементов с `data-context-menu`. Текущее удержание — 350 мс, отмена при движении больше 10 px. Сверять одинаковые действия для обычного клика, ПКМ и мобильного long-press.
@@ -147,7 +147,7 @@ setBlackout({
 - `ShareAcc` — общий QR аккаунта и приглашения в беседу. Для беседы передать в `options` готовую `link` и `url` аватара; не создавать второй QR;
 - `ImgPrev` — полноэкранный просмотр изображений, галерея, навигация; предпочтительно вызывать через `useImagePreview(files)`;
 - `LinkConfirm` — предпросмотр и подтверждение внешних ссылок; предпочтительно вызывать через `useOpenLink`, который внутренние маршруты открывает напрямую;
-- `PermissionsSettings` — **специальная** модалка «Права и роли»; файл `src/components/modules/PermissionsSettings.tsx`, стили `src/scss/modules/PermissionsDiv.scss`. Два экрана, сохранение настроек, **`SelectList` для выбора ролей**;
+- `PermissionsSettings` — **специальная** модалка «Права и роли»; файл `src/components/modules/PermissionsSettings.tsx`, стили `src/components/modules/scss/PermissionsDiv.scss`. Два экрана, сохранение настроек, **`SelectList` для выбора ролей**;
 - `HabitParticipantPicker`, `HabitCollaborationSettings`, `HabitCreateChat`, `HabitDayActivityHistory`, `HabitTaskEditor` — готовые модалки совместной активности;
 - `CreateChat`, `ChatWithInfo`, `Redirecting`, `RedirectMesses`, `PostSettings`, `AddHabit`, `Table` и остальные перечислены в `ModuleMap.ts`.
 

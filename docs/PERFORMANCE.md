@@ -49,7 +49,7 @@ Vercel: `/assets/*` — immutable, `/wallpapers/*` — ограниченный 
 
 ## Стили форм активности
 
-Поля `.addHabitWrapper` / `.addHabitInput`, выбор тега (`.tegSelector`, `.tag`, `.addTeg`, `.tagList`), время (`.addHabitTimeWrapper`), даты (`.AddHabitDateSpan`) и дни недели (`.dayChanger`) используются одновременно в модалке создания активности и в `HabitInfo` на `/habit/:habitId`. Правила вынесены из лениво загружаемого `addHabit.scss` в `src/scss/modules/habitFormControls.scss`, который импортируют **оба** маршрута через `addHabit.scss` и `redHabit.scss`. Страница редактирования не должна требовать предварительного открытия «Добавить активность» для правильного оформления. Браузерный тест с прямым переходом на `/habit` проверяет фон полей, теги, список и кнопки недели.
+Поля `.addHabitWrapper` / `.addHabitInput`, выбор тега (`.tegSelector`, `.tag`, `.addTeg`, `.tagList`), время (`.addHabitTimeWrapper`), даты (`.AddHabitDateSpan`) и дни недели (`.dayChanger`) используются одновременно в модалке создания активности и в `HabitInfo` на `/habit/:habitId`. Правила вынесены из лениво загружаемого `addHabit.scss` в `src/scss/habitFormControls.scss`, который импортируют **оба** маршрута через `addHabit.scss` и `redHabit.scss`. Страница редактирования не должна требовать предварительного открытия «Добавить активность» для правильного оформления. Браузерный тест с прямым переходом на `/habit` проверяет фон полей, теги, список и кнопки недели.
 
 ## Хедеры и порядок слоёв
 

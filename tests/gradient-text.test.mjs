@@ -25,7 +25,7 @@ test("gradient hover, active and open navigation states use inner_text", () => {
 
 test("messages, active filters, account settings, selected tabs and send actions use inner_text", () => {
     const message = read("src/pages/Chat/scss/message.scss");
-    const media = read("src/scss/modules/ChatWithInfo.scss");
+    const media = read("src/components/modules/scss/ChatWithInfo.scss");
     const settings = read("src/pages/Settings/scss/settings.scss");
     const actions = read("src/pages/HabitPage/scss/Complete.scss");
     const side = read("src/scss/SM/smNav.scss");

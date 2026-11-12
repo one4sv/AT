@@ -5,8 +5,8 @@ import test from "node:test";
 const read = path => readFileSync(new URL("../" + path, import.meta.url), "utf8");
 
 test("only AddPlan changes desktop centering; AddHabit keeps its own mixin", () => {
-    const planStyle = read("src/scss/modules/addPlan.scss");
-    const habitStyle = read("src/scss/modules/addHabit.scss");
+    const planStyle = read("src/components/modules/scss/addPlan.scss");
+    const habitStyle = read("src/components/modules/scss/addHabit.scss");
     assert.match(planStyle, /@media \(min-width: 801px\) \{\s*transform: translate\(-50%, -50%\);/);
     assert.match(habitStyle, /@include var\.centerTopModal;/);
     assert.doesNotMatch(habitStyle, /transform: translate\(-50%, -50%\)/);
@@ -100,8 +100,8 @@ test("creation is personal and participant management lives on plan page", () =>
     const editor = read("src/pages/Plan/PlanEditor.tsx");
     const page = read("src/pages/Plan/PlanPage.tsx");
     const members = read("src/pages/Plan/PlanMembers.tsx");
-    const style = read("src/scss/modules/addPlan.scss");
-    const sharedStyle = read("src/scss/modules/habitFormControls.scss");
+    const style = read("src/components/modules/scss/addPlan.scss");
+    const sharedStyle = read("src/scss/habitFormControls.scss");
     assert.match(editor, /!modal && !initial && <div className="inpWrapperAddHabit">/);
     assert.doesNotMatch(editor, /modal && <div className="addPlanHeading"/);
     assert.match(page, /<PlanMembers plan=\{plan\}/);
