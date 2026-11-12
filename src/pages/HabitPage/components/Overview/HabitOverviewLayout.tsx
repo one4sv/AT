@@ -84,9 +84,9 @@ function OverviewFocusCard({ entry, label, more = 0, calendar, progress }: {
                 <div className="habitOverviewCurrentDetails">
                     <span className="habitOverviewCurrentTitle">
                         <span className="activityName">{entry.name}{more > 0 && <b> +{more}</b>}</span>
-                        <ActivityIndicators part="streak" habit={entry.habit} calendar={calendar}/>
+                        <ActivityIndicators part="streak" habit={entry.habit} plan={entry.plan} calendar={calendar}/>
                         {entry.habit?.pinned && <PushPinIcon className="pinnedHabitSign" weight="fill" size={14}/>}
-                        <ActivityIndicators part="aside" habit={entry.habit} plan={entry.plan} progress={progress}/>
+                        <ActivityIndicators part="aside" habit={entry.habit} progress={progress}/>
                     </span>
                     <span className="habitOverviewCurrentMeta">
                         <small>{describeEntrySubtitle(entry, t)}</small>
