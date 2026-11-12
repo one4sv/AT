@@ -309,7 +309,7 @@ test("SelectList opens above near the bottom and below near the top", async ({ p
         body: JSON.stringify({ success: true, preferences: { enabled: true, defaultMinutesBefore: 60 } })
     }));
     await page.goto("/settings/notes");
-    const control = page.locator(".planReminderSelect");
+    const control = page.locator(".planReminderSelect:not(.selectListPortalRoot)");
     const menu = page.locator(".selectListPortalRoot.planReminderSelect > .selectList");
     await expect(control).toBeVisible();
 
