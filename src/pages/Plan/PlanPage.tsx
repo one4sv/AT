@@ -27,7 +27,7 @@ export default function PlanPage() {
     const navigate = useNavigate();
     const isCompact = useCompactLayout();
     const [mobileOpen, setMobileOpen] = useState<"done" | "comment">("done");
-    const { refreshPlans } = usePlans();
+    const { plans, refreshPlans } = usePlans();
     const { setTitle, setTitleIcon, setHeaderMenu } = usePageTitle();
     const { openMenu } = useContextMenu();
     const [plan, setPlan] = useState<OneOffPlan | null>(null);
@@ -69,7 +69,11 @@ export default function PlanPage() {
     useEffect(() => {
         const onMembersUpdated = () => { void load(); };
         window.addEventListener("plan-members-updated", onMembersUpdated);
-        return () => window.removeEventListener("plan-members-updated", onMembersUpdated);
+        window.addEventListener("plan-updated", onMembersUpdated);
+        return () => {
+            window.removeEventListener("plan-members-updated", onMembersUpdated);
+            window.removeEventListener("plan-updated", onMembersUpdated);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [planId]);
     useEffect(() => {
@@ -166,6 +170,7 @@ export default function PlanPage() {
         }
     };
     const selectedTag = tags.find(tag => tag.value === plan?.tag);
+    const planPinned = plans.find(item => item.id === plan?.id)?.pinned ?? plan?.pinned ?? false;
     const canComplete = !!plan && plan.membership_status === "accepted" && plan.status !== "canceled" &&
         (plan.is_owner || plan.completion_mode !== "shared");
 
@@ -192,7 +197,7 @@ export default function PlanPage() {
         }
     };
     const makePlanMenuOptions = (id: string, name: string, type: string, owner: boolean): MenuOptions => ({
-        id, name, type, isMy: owner, disabled: saving,
+        id, name, type, isMy: owner, canPin: true, pinned: planPinned, disabled: saving,
         onEdit: () => menuHandlers.current.edit(),
         onSave: () => menuHandlers.current.save(),
         onStopEdit: () => menuHandlers.current.stop(),
@@ -200,21 +205,21 @@ export default function PlanPage() {
         onConfirmDelete: () => menuHandlers.current.delete()
     });
     useEffect(() => {
-        if (plan?.is_owner && planId) {
+        if (plan?.membership_status === "accepted" && planId) {
             setHeaderMenu({ point: "plan", options: makePlanMenuOptions(planId, plan.name,
-                editing ? "editing" : plan.status || "upcoming", true) });
+                editing ? "editing" : plan.status || "upcoming", !!plan.is_owner) });
         } else {
             setHeaderMenu(null);
         }
         return () => setHeaderMenu(null);
         // Header callbacks read menuHandlers.current so changing draft text does not rebuild the header.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [planId, plan?.id, plan?.name, plan?.is_owner, plan?.status, editing, saving, setHeaderMenu]);
+    }, [planId, plan?.id, plan?.name, plan?.is_owner, plan?.membership_status, plan?.status, planPinned, editing, saving, setHeaderMenu]);
 
     const openPlanMenu = (x: number, y: number) => {
-        if (!plan?.is_owner || !planId || saving) return;
+        if (plan?.membership_status !== "accepted" || !planId || saving) return;
         openMenu(x, y, "plan", makePlanMenuOptions(planId, plan.name,
-            editing ? "editing" : plan.status || "upcoming", true));
+            editing ? "editing" : plan.status || "upcoming", !!plan.is_owner));
     };
     const readOnly = !editing || !draft;
     const value = (draft || plan)!;
@@ -228,10 +233,10 @@ export default function PlanPage() {
                     onClose={() => planId ? setEditing(false) : navigate("/habit")}/>
             </div> : plan ? <>
                 <div className="planSection planMainSection"
-                    data-context-menu={plan.is_owner ? "true" : undefined}
+                    data-context-menu={plan.membership_status === "accepted" ? "true" : undefined}
                     onContextMenu={event => {
                         if (editing && (event.target as Element).closest("input, textarea")) return;
-                        if (plan.is_owner) {
+                        if (plan.membership_status === "accepted") {
                             event.preventDefault();
                             openPlanMenu(event.clientX, event.clientY);
                         }

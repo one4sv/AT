@@ -14,6 +14,8 @@ export default function LinkButton() {
         const link =
             point === "habit"
                 ? `habit/${options.id}`
+                : point === "plan" || point === "planItem"
+                ? `plan/${options.id}`
                 : point === "chat"
                 ? chatInfo?.is_group
                     ? `chat/g/${options.id}`

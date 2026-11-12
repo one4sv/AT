@@ -142,6 +142,7 @@ export default function ContextMenu() {
             case "planCreate":
                 return <PlanCreateMenu />;
             case "plan":
+            case "planItem":
                 return <PlanMenu />;
             default:
                 return null;

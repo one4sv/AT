@@ -30,6 +30,7 @@ export interface OneOffPlan {
     membership_status?: "pending" | "accepted";
     is_owner?: boolean;
     completed_for_me?: boolean;
+    pinned?: boolean;
     completed_count?: number;
     participants_count?: number;
     members?: OneOffPlanMember[];
@@ -39,6 +40,7 @@ interface PlansContextType {
     loadingPlans: boolean;
     refreshPlans: () => Promise<void>;
     upsertPlan: (plan: OneOffPlan) => void;
+    setPin: (id: number, pinned: boolean) => Promise<void>;
 }
 const PlansContext = createContext<PlansContextType | null>(null);
 
@@ -72,6 +74,17 @@ export const PlansProvider = ({ children }: { children: ReactNode }) => {
         setLoadingPlans(false);
     }, []);
 
+    const setPin = useCallback(async (id: number, pinned: boolean) => {
+        const requester = accountId.current;
+        if (!requester) throw new Error("Not authenticated");
+        const response = await api.patch("plans/" + id + "/pin", { pinned });
+        if (!response.data?.success) throw new Error("Could not pin plan");
+        if (accountId.current !== requester) return;
+        requestVersion.current++;
+        setPlans(previous => previous.map(plan => plan.id === id ? { ...plan, pinned: response.data.pinned } : plan));
+        setLoadingPlans(false);
+    }, []);
+
     useEffect(() => {
         if (initialLoading) return;
         requestVersion.current++;
@@ -85,7 +98,7 @@ export const PlansProvider = ({ children }: { children: ReactNode }) => {
         });
     }, [user.id, initialLoading, refreshPlans]);
 
-    return <PlansContext.Provider value={{ plans, loadingPlans, refreshPlans, upsertPlan }}>{children}</PlansContext.Provider>;
+    return <PlansContext.Provider value={{ plans, loadingPlans, refreshPlans, upsertPlan, setPin }}>{children}</PlansContext.Provider>;
 };
 
 export default PlansContext;

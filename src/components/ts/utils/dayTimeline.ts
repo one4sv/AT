@@ -115,5 +115,9 @@ export function makeSideMenuEntries(filter: string | undefined, habits: Habit[] 
         }
     }
     if (search.trim()) entries = entries.filter(e => e.name.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()));
-    return entries.sort(compareDayEntries);
+    return entries.sort((a,b) => {
+        const aPinned = !!(a.habit?.pinned || a.plan?.pinned);
+        const bPinned = !!(b.habit?.pinned || b.plan?.pinned);
+        return Number(bPinned) - Number(aPinned) || compareDayEntries(a,b);
+    });
 }

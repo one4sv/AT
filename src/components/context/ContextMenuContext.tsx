@@ -29,6 +29,10 @@ export type MenuOptions = {
     onToggleCancel?: () => void,
     onConfirmDelete?: () => void,
     disabled?: boolean,
+    pinned?: boolean,
+    completed?: boolean,
+    canPin?: boolean,
+    canComplete?: boolean,
 }
 export interface chatInfoType {
     note:boolean,
@@ -85,7 +89,7 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
         const side = document.elementFromPoint(x, y)?.closest<HTMLElement>(".sideMenu");
         const bounds = side?.getBoundingClientRect();
         // Header menus open below the header; do not capture the message underneath.
-        const isHeaderMenu = ["acc", "headerQuickAction", "habitHeader", "plan", "settingsBack", "settingsSection"].includes(point);
+        const isHeaderMenu = ["acc", "headerQuickAction", "habitHeader", "settingsBack", "settingsSection"].includes(point);
         const target = isHeaderMenu ? null : document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-context-menu]");
         const focusSource = window.matchMedia("(pointer: coarse)").matches && target &&
             !target.closest(".headerDiv, [data-header-gesture]") ? target : undefined;

@@ -1,7 +1,7 @@
 import "../../../scss/SM/habitsList.scss";
 import { useMemo } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
-import { CheckCircleIcon, GhostIcon } from "@phosphor-icons/react";
+import { useParams } from "react-router-dom";
+import { GhostIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useHabits } from "../../hooks/HabitsHook";
 import { usePlans } from "../../hooks/PlansHook";
@@ -11,18 +11,10 @@ import { useBlackout } from "../../hooks/BlackoutHook";
 import { useContacts } from "../../hooks/ContactsHook";
 import { useSideMenu } from "../../hooks/SideMenuHook";
 import HabitDiv from "../Habit";
-import ActivityIndicators from "../ActivityIndicators";
+import PlanDiv from "../Plan";
 import useHabitDayProgress from "../../hooks/utils/useHabitDayProgress";
-import { makeSideMenuEntries, describeDayTime } from "../utils/dayTimeline";
-import { formatDateFromString, relativePlanDay, shiftCalendarDay, todayStrFunc } from "../utils/dateToStr";
-import { tags } from "../tags";
-
-function PlanTagIcon({ tag }: { tag?: string | null }) {
-    const selectedTag = tags.find(item => item.value === tag);
-    if (!selectedTag) return null;
-    const Icon = selectedTag.icon;
-    return <div className="habitIcon"><Icon className="habitIconSvg"/></div>;
-}
+import { makeSideMenuEntries } from "../utils/dayTimeline";
+import { shiftCalendarDay, todayStrFunc } from "../utils/dateToStr";
 
 export default function HabitsList({ filter }: { filter?: string }) {
     const { t } = useTranslation("common");
@@ -32,7 +24,6 @@ export default function HabitsList({ filter }: { filter?: string }) {
     const { allCalendar } = useCalendar();
     const { showArchived } = useSettings();
     const { habitId } = useParams();
-    const { pathname } = useLocation();
     const { setBlackout } = useBlackout();
     const { closeMenu } = useSideMenu();
     const progressDay = filter === "plans" || filter === "archived" ? "" :
@@ -57,22 +48,7 @@ export default function HabitsList({ filter }: { filter?: string }) {
         {entries.map(entry => entry.habit ?
             <HabitDiv habit={entry.habit} key={entry.key} id={Number(habitId)} isMyAcc={true}
                 showIndicators progress={progress[String(entry.habit.id)]}/> :
-            <Link to={"/plan/" + entry.plan!.id} key={entry.key}
-                className={`habit smPlanItem ${pathname.replace(/\/$/, "") === "/plan/" + entry.plan!.id ? "active" : ""}`}
-                aria-current={pathname.replace(/\/$/, "") === "/plan/" + entry.plan!.id ? "page" : undefined}
-                onClick={closeMenu}>
-                <PlanTagIcon tag={entry.plan?.tag}/>
-                <span className="habitInfo">
-                    <span className="habitName">
-                        <span className="habitNameText">{entry.name}</span>
-                        <ActivityIndicators part="streak" plan={entry.plan}/>
-                    </span>
-                    <span className="habitPer">
-                        {relativePlanDay(entry.date, t) || formatDateFromString(entry.date)} · {describeDayTime(entry, t)}
-                        {entry.completed && <CheckCircleIcon className="habitHLStatus" weight="fill"/>}
-                    </span>
-                </span>
-            </Link>
+            <PlanDiv plan={entry.plan!} entry={entry} key={entry.key}/>
         )}
     </div>;
 }

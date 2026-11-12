@@ -51,7 +51,9 @@ test("tag icons appear in title, shared header and SideMenu", () => {
     const header = read("src/components/ts/Header.tsx");
     assert.match(page, /<selectedTag\.icon size=\{26\}/);
     assert.match(page, /setTitleIcon\(Icon \? <Icon size=\{24\}\/> : null\)/);
-    assert.match(menu, /<PlanTagIcon tag=\{entry\.plan\?\.tag\}\/>/);
+    const planCard = read("src/components/ts/Plan.tsx");
+    assert.match(menu, /<PlanDiv plan=\{entry\.plan!\}/);
+    assert.match(planCard, /<PlanTagIcon tag=\{plan\.tag\}\/>/);
     assert.match(header, /titleIcon && <span className="headerTitleTag">/);
 });
 
@@ -132,7 +134,7 @@ test("plan management is offered on the first section and both header triggers",
     const menu = read("src/components/ts/ContextMenu/menus/PlanMenu.tsx");
     const provider = read("src/components/context/PageTitleContext.tsx");
     assert.match(page, /className="planSection planMainSection"/);
-    assert.match(page, /data-context-menu=\{plan\.is_owner \? "true" : undefined\}/);
+    assert.match(page, /data-context-menu=\{plan\.membership_status === "accepted" \? "true" : undefined\}/);
     assert.match(page, /onContextMenu=\{event => \{/);
     assert.match(page, /setHeaderMenu\(\{ point: "plan"/);
     assert.doesNotMatch(page, /className="planSection">\s*<h2>\{t\("plans\.management"\)\}/);
@@ -178,4 +180,22 @@ test("plan members have no shared list background and each row takes the full ho
     assert.doesNotMatch(group, /background|padding/);
     assert.match(styles, /\.planMember\s*\{[\s\S]*?width: 100%;[\s\S]*?box-sizing: border-box;[\s\S]*?background: transparent;/);
     assert.match(styles, /\.planMember\s*\{[\s\S]*?&:hover\s*\{\s*background: var\(--mc\);/);
+});
+
+
+test("plan card uses the same context-menu surface and supports persistent pin", () => {
+    const plan = read("src/components/ts/Plan.tsx");
+    const list = read("src/components/ts/SM/HabitsList.tsx");
+    const menu = read("src/components/ts/ContextMenu/menus/PlanMenu.tsx");
+    const ctx = read("src/components/context/PlansContext.tsx");
+    const timeline = read("src/components/ts/utils/dayTimeline.ts");
+    assert.match(plan, /data-context-menu=\{onSelect \? undefined : "true"\}/);
+    assert.match(plan, /"planItem"/);
+    assert.match(plan, /pinnedHabitSign/);
+    assert.match(list, /<PlanDiv/);
+    assert.match(menu, /await setPin/);
+    assert.match(menu, /<LinkButton\/>/);
+    assert.match(menu, /navigator\.share/);
+    assert.match(ctx, /api\.patch\("plans\/" \+ id \+ "\/pin"/);
+    assert.match(timeline, /a\.plan\?\.pinned/);
 });
