@@ -35,6 +35,7 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
             const res = await api.post(`markdone`, { habit_id: id, date });
             if (res.data.success) {
                 window.dispatchEvent(new Event("habit-day-comment-updated"));
+                window.dispatchEvent(new Event("habit-progress-updated"));
                 if (habit && habit.id === Number(id)) {
                     loadHabit(id.toString());
                     fetchCalendarHabit(id.toString());
