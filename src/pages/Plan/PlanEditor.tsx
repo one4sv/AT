@@ -9,7 +9,7 @@ import TA from "../../components/ts/TA";
 import TagSelector from "../../components/ts/TagSelector";
 import type { OneOffPlan } from "../../components/context/PlansContext";
 import "../../scss/habitFormControls.scss";
-import "./scss/addPlan.scss";
+import "../../components/modules/scss/addPlan.scss";
 
 export interface PlanInput {
     name: string;
