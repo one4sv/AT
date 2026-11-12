@@ -239,9 +239,10 @@ export default function HabitDiv({
             </div>}
             <div className="habitInfo">
                 <div className="habitName">
-                    {habit.name}
+                    <span className="habitNameText">{habit.name}</span>
+                    {showIndicators && <ActivityIndicators part="streak" habit={habit} calendar={allCalendar}/>}
                     {habit.pinned && isMyAcc && <PushPinIcon className="pinnedHabitSign" weight="fill" size={14} />}
-                    {showIndicators && <ActivityIndicators habit={habit} calendar={allCalendar} progress={progress}/>}
+                    {showIndicators && <ActivityIndicators part="aside" habit={habit} progress={progress}/>}
                 </div>
                 <div className="habitPer">
                     {habit.ongoing ? timerStatus || periodicityText : `${formatDateFromString(habit.start_date)} - ${formatDateFromString(habit.end_date)}`}
