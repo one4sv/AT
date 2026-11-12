@@ -38,6 +38,21 @@ export default function HabitParticipantPicker() {
     const [ search, setSearch ] = useState("");
     const [ list, setList ] = useState<Contact[]>([]);
     const [ selected, setSelected ] = useState<Contact[]>([]);
+    const [ planExistingIds, setPlanExistingIds ] = useState<string[]>([]);
+    useEffect(() => {
+        if (!planMode || !planId) return;
+        let mounted = true;
+        void api.get(`plans/${planId}`).then(response => {
+            if (!mounted || !response.data?.success) return;
+            const details = response.data.plan;
+            setPlanExistingIds([
+                details.owner_id,
+                ...(details.members || []).map((member: { id: string }) => member.id)
+            ].filter(Boolean));
+        }).catch(error => console.error("Failed to load current plan participants", error));
+        return () => { mounted = false; };
+    }, [planMode, planId]);
+
     const [ loading, setLoading ] = useState(true);
     const [ listError, setListError ] = useState("");
     const [ saving, setSaving ] = useState(false);
@@ -64,7 +79,7 @@ export default function HabitParticipantPicker() {
                     contact.id !== user.id &&
                     contact.name !== "Избранное" &&
                     !("is_favorite" in contact && contact.is_favorite) &&
-                    !(planMode ? plan?.members?.some(member => member.id === contact.id) :
+                    !(planMode ? planExistingIds.includes(contact.id) || plan?.members?.some(member => member.id === contact.id) :
                         data?.members.some(member => member.user_id === contact.id && member.status === "accepted"))
                 ));
             }).catch(() => {
@@ -80,7 +95,7 @@ export default function HabitParticipantPicker() {
             clearTimeout(timer);
             controller.abort();
         };
-    }, [search, mode, data?.members, planMode, plan?.members, user.id]);
+    }, [search, mode, data?.members, planMode, plan?.members, planExistingIds, user.id]);
     const save = async () => {
         if ((!planMode && !habit) || !isOwner && planMode || submitting.current || !selected.length ||
             (!planMode && mode === "activity" && !canDirectInvite) || (!planMode && mode === "group" && !isOwner)) return;
