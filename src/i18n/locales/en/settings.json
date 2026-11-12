@@ -254,6 +254,11 @@
     "sideMenuMobileHint": "On phones, open the side menu with the header button or a swipe. It fills the screen, so pinning is only available on desktop. Your desktop preference is saved locally in that browser."
   },
   "privacy": {
+        "whoSeesAccountInfo": "Who can see your account information",
+        "whoSeesPlans": "Who can see your plans",
+        "link": "Only via direct link",
+        "planInvitesTitle": "Plan invitations",
+        "planInvitesWho": "Who can invite me to plans",
     "accountInfo": "Account information",
     "whoSeesPhone": "Who can see your phone number",
     "whoSeesEmail": "Who can see your email",
@@ -264,6 +269,9 @@
     "contacts": "Contacts",
     "all": "Everyone",
     "exceptions": {
+            "visibilityHint": "Exceptions override the general visibility rule for specific users. Blocked users cannot access content.",
+            "visible": "Can view",
+            "hidden": "Cannot view",
       "activityTitle": "Activity invitations",
       "activityWho": "Who can invite me to activities",
       "activityExceptions": "Activity exceptions",

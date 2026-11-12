@@ -113,6 +113,7 @@ export interface SettingsContextType {
     setContourPattern: React.Dispatch<React.SetStateAction<ContourPattern>>;
     setBgEffects: React.Dispatch<React.SetStateAction<BackgroundEffects>>;
     privateShow: PrivateSettings;
+    profileShareToken: string | null;
     setPrivate: React.Dispatch<React.SetStateAction<PrivateSettings>>;
     tab: string;
     setTab: React.Dispatch<React.SetStateAction<string>>;
@@ -134,6 +135,7 @@ interface SettingsResponse {
     success: boolean;
     order: string[  ];
     private: PrivateSettings;
+    profile_share_token?: string;
     twoAuth: boolean;
     all_note: boolean;
     new_mess_note: boolean;
@@ -143,14 +145,23 @@ interface SettingsResponse {
     bg_gallery?: SavedBackground[];
 }
 
+export type PrivacyExceptionRules = Record<string, "allow" | "deny" | "invert">;
 export interface PrivateSettings {
     number: string;
     mail: string;
+    profile: string;
     habits: string;
     posts: string;
+    plans: string;
     activity_invites?: string;
-    activity_invite_exceptions?: Record<string, "allow" | "deny" | "invert">;
-    group_invite_exceptions?: Record<string, "allow" | "deny" | "invert">;
+    plan_invites?: string;
+    profile_exceptions?: PrivacyExceptionRules;
+    habits_exceptions?: PrivacyExceptionRules;
+    posts_exceptions?: PrivacyExceptionRules;
+    plans_exceptions?: PrivacyExceptionRules;
+    plan_invite_exceptions?: PrivacyExceptionRules;
+    activity_invite_exceptions?: PrivacyExceptionRules;
+    group_invite_exceptions?: PrivacyExceptionRules;
 }
 
 const LOCAL_KEYS = {
@@ -285,7 +296,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ chatWelcome, setChatWelcome ] = useState<ChatWelcomeSettings>({ enabled: false, text: "" });
     const [ quickActions, setQuickActions ] = useState<QuickAction[]>([]);
     const [ twoAuth, setTwoAuth ] = useState<boolean | null>(null);
-    const [ privateShow, setPrivate ] = useState<PrivateSettings>({ number: "", mail: "", habits: "", posts: "" });
+    const [ privateShow, setPrivate ] = useState<PrivateSettings>({ number: "", mail: "", profile: "all", habits: "", posts: "", plans: "nobody" });
+    const [ profileShareToken, setProfileShareToken ] = useState<string | null>(null);
     const [ showArchived, setShowArchived ] = useState<boolean>(false);
     const [ showArchivedInAcc, setShowArchivedInAcc ] = useState<boolean>(false);
     const [ weekStart, setWeekStart ] = useState<string | null>(null);
@@ -340,7 +352,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setGroupInvites(res.data.group_invites ?? { contacts: "message", others: "none" });
                 setChatWelcome(res.data.chat_welcome ?? { enabled: false, text: "" });
                 setQuickActions(Array.isArray(res.data.quick_actions) ? res.data.quick_actions.slice(0, 3) : []);
-                setPrivate(res.data.private ?? { number: "contacts", mail: "contacts", habits: "all", posts: "all" });
+                setPrivate({ number:"contacts", mail:"contacts", profile:"all",habits:"all",posts:"all",plans:"nobody", ...res.data.private });
+                setProfileShareToken(res.data.profile_share_token || null);
                 setTwoAuth(res.data.twoAuth ?? false);
                 setNote(res.data.all_note ?? true);
                 setMessNote(res.data.new_mess_note ?? true);
@@ -392,7 +405,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             bg, setBg,
             decor, setDecor,
             bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, wallpaperStyle, setWallpaperStyle, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang, fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat, timeZone, setTimeZone,
-            privateShow, setPrivate, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
+            privateShow, setPrivate, profileShareToken, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
             twoAuth, setTwoAuth,
             autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
             note, setNote,

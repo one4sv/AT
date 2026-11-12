@@ -68,7 +68,7 @@ export default function PostSettings() {
             <div className="settingInnerWrapper">
                 <div className="settingSpan">{t("editor.visibility")}</div>
                 <RadioGroup
-                    list={["inherit", "all", "contacts", "nobody"].map(value => ({
+                    list={["inherit", "all", "contacts", "nobody", "link"].map(value => ({
                         label: t(`editor.${value}`),
                         value
                     }))}

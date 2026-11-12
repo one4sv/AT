@@ -8,7 +8,7 @@ import type { GroupInviteRules, PrivateSettings } from "../../../components/cont
 import "../scss/PrivacyExceptions.scss";
 
 type ExceptionType = NonNullable<PrivateSettings["activity_invite_exceptions"]>;
-type ExceptionMode = "activity" | "group";
+type ExceptionMode = "activity" | "group" | "profile" | "habits" | "posts" | "plans" | "plan-invite";
 
 interface ExceptionUser {
     id: string;
@@ -23,11 +23,12 @@ interface Props {
     mode: ExceptionMode;
     exceptions: ExceptionType;
     activityRule: string;
+    rule?: string;
     groupRules: GroupInviteRules;
     onChange: (next: ExceptionType) => void;
 }
 
-export default function PrivacyExceptions({ mode, exceptions, activityRule, groupRules, onChange }: Props) {
+export default function PrivacyExceptions({ mode, exceptions, activityRule, groupRules, rule, onChange }: Props) {
     const { t } = useTranslation("settings");
     const { findContacts } = useContacts();
     const findContactsRef = useRef(findContacts);
@@ -100,8 +101,12 @@ export default function PrivacyExceptions({ mode, exceptions, activityRule, grou
         if (mode === "activity") {
             return activityRule === "all" || (activityRule === "contacts" && person.is_contact);
         }
-        const rule = person.is_contact ? groupRules.contacts : groupRules.others;
-        return rule !== "none";
+        if (mode === "group") {
+            const groupRule = person.is_contact ? groupRules.contacts : groupRules.others;
+            return groupRule !== "none";
+        }
+        const visibility = rule || "nobody";
+        return visibility === "all" || (visibility === "contacts" && person.is_contact);
     };
 
     const getEffectiveStatus = (person: ExceptionUser, exception?: ExceptionType[string]) => {
@@ -128,6 +133,7 @@ export default function PrivacyExceptions({ mode, exceptions, activityRule, grou
         const exception = exceptions[person.id];
         const effectiveAllowed = getEffectiveStatus(person, exception);
         const newAllowed = !isAllowedByRule(person);
+        const isInvitation = mode === "activity" || mode === "group" || mode === "plan-invite";
         const unavailable = person.is_blocked || (!selected && selectedIds.length >= 100);
 
         return (
@@ -144,7 +150,8 @@ export default function PrivacyExceptions({ mode, exceptions, activityRule, grou
                         {person.is_blocked
                             ? t("privacy.exceptions.blocked")
                             : selected
-                                ? t(effectiveAllowed ? "privacy.exceptions.allowed" : "privacy.exceptions.denied")
+                                ? t(isInvitation ? (effectiveAllowed ? "privacy.exceptions.allowed" : "privacy.exceptions.denied") :
+                                    (effectiveAllowed ? "privacy.exceptions.visible" : "privacy.exceptions.hidden"))
                                 : `@${person.nick}`
                         }
                     </span>
@@ -175,8 +182,8 @@ export default function PrivacyExceptions({ mode, exceptions, activityRule, grou
     const availableUsers = visibleContacts.map(contact => users[contact.id]).filter((person): person is ExceptionUser => Boolean(person));
 
     return (
-        <div className="privacyExceptions" data-setting-id={mode === "activity" ? "activityInviteExceptions" : "groupInviteExceptions"}>
-            <div className="settingHint">{t("privacy.exceptions.hint")}</div>
+        <div className="privacyExceptions" data-setting-id={mode + "Exceptions"}>
+            <div className="settingHint">{t(["activity", "group", "plan-invite"].includes(mode) ? "privacy.exceptions.hint" : "privacy.exceptions.visibilityHint")}</div>
 
             {selectedIds.length > 0 && (
                 <div className="privacyExceptionSection">

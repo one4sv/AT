@@ -45,7 +45,7 @@ export default function PrivacyTab({ search }: { search: string }) {
     };
     const { setNewPrivateShow } = useUpSettings();
 
-    const applyExceptions = (setting: "activity_invite_exceptions" | "group_invite_exceptions", exceptions: NonNullable<PrivateSettings["activity_invite_exceptions"]>) => {
+    const applyExceptions = (setting: keyof PrivateSettings, exceptions: NonNullable<PrivateSettings["activity_invite_exceptions"]>) => {
         const updated: PrivateSettings = { ...visiblePrivate, [setting]: exceptions };
         setVisiblePrivate(updated);
         setNewPrivateShow(updated);
@@ -59,6 +59,7 @@ export default function PrivacyTab({ search }: { search: string }) {
     const privateArrFull: Option[] = [
         ...privateArr,
         { label: t("privacy.all"), value: "all" },
+        { label: t("privacy.link"), value: "link" }
     ];
 
     const applyNewPrivate = (setting: keyof PrivateSettings, value: string) => {
@@ -76,13 +77,13 @@ export default function PrivacyTab({ search }: { search: string }) {
                     {t("privacy.accountInfo")}
                 </div>
                 <div className="privateSLWrapper">
-                    <div className="settingSpan"><HighlightText text={t("privacy.whoSeesPhone")} search={search} /></div>
-                    <RadioGroup list={privateArr} val={visiblePrivate.number} newVal={(value) => applyNewPrivate("number", value || "nobody")} id="number"/>
+                    <div className="settingSpan"><HighlightText text={t("privacy.whoSeesAccountInfo")} search={search}/></div>
+                    <RadioGroup list={privateArrFull} val={visiblePrivate.profile || "all"}
+                        newVal={value => applyNewPrivate("profile",value || "nobody")} id="profile"/>
                 </div>
-                <div className="privateSLWrapper">
-                    <div className="settingSpan"><HighlightText text={t("privacy.whoSeesEmail")} search={search} /></div>
-                    <RadioGroup list={privateArr} val={visiblePrivate.mail} newVal={(value) => applyNewPrivate("mail", value || "nobody")} id="mail"/>
-                </div>
+                <PrivacyExceptions mode="profile" exceptions={visiblePrivate.profile_exceptions || {}}
+                    rule={visiblePrivate.profile || "all"} activityRule={visiblePrivate.activity_invites || "all"}
+                    groupRules={visibleInvites} onChange={rules => applyExceptions("profile_exceptions",rules)}/>
             </div>
             <div className="settingInnerDiv" data-setting-id="privacyContentVisibility">
                 <div className="settingHeader">
@@ -92,10 +93,24 @@ export default function PrivacyTab({ search }: { search: string }) {
                     <div className="settingSpan"><HighlightText text={t("privacy.whoSeesActivities")} search={search} /></div>
                     <RadioGroup list={privateArrFull} val={visiblePrivate.habits} newVal={(value) => applyNewPrivate("habits", value || "nobody")} id="habits"/>
                 </div>
+                <PrivacyExceptions mode="habits" exceptions={visiblePrivate.habits_exceptions || {}}
+                    rule={visiblePrivate.habits} activityRule={visiblePrivate.activity_invites || "all"}
+                    groupRules={visibleInvites} onChange={rules => applyExceptions("habits_exceptions",rules)}/>
                 <div className="privateSLWrapper">
                     <div className="settingSpan"><HighlightText text={t("privacy.whoSeesPosts")} search={search} /></div>
                     <RadioGroup list={privateArrFull} val={visiblePrivate.posts} newVal={(value) => applyNewPrivate("posts", value || "nobody")} id="posts"/>
                 </div>
+                <PrivacyExceptions mode="posts" exceptions={visiblePrivate.posts_exceptions || {}}
+                    rule={visiblePrivate.posts} activityRule={visiblePrivate.activity_invites || "all"}
+                    groupRules={visibleInvites} onChange={rules => applyExceptions("posts_exceptions",rules)}/>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan"><HighlightText text={t("privacy.whoSeesPlans")} search={search}/></div>
+                    <RadioGroup list={privateArrFull} val={visiblePrivate.plans || "nobody"}
+                        newVal={value => applyNewPrivate("plans",value || "nobody")} id="plans"/>
+                </div>
+                <PrivacyExceptions mode="plans" exceptions={visiblePrivate.plans_exceptions || {}}
+                    rule={visiblePrivate.plans || "nobody"} activityRule={visiblePrivate.activity_invites || "all"}
+                    groupRules={visibleInvites} onChange={rules => applyExceptions("plans_exceptions",rules)}/>
             </div>
             <div className="settingInnerDiv" data-setting-id="privacyActivityInvites">
                 <div className="settingHeader">{t("privacy.exceptions.activityTitle")}</div>
@@ -117,6 +132,21 @@ export default function PrivacyTab({ search }: { search: string }) {
                     groupRules={visibleInvites}
                     onChange={exceptions => applyExceptions("activity_invite_exceptions", exceptions)}
                 />
+            </div>
+            <div className="settingInnerDiv" data-setting-id="planInvites">
+                <div className="settingHeader">{t("privacy.planInvitesTitle")}</div>
+                <div className="privateSLWrapper">
+                    <div className="settingSpan">{t("privacy.planInvitesWho")}</div>
+                    <RadioGroup list={[
+                        { label:t("privacy.all"),value:"all" },
+                        { label:t("privacy.contacts"),value:"contacts" },
+                        { label:t("privacy.nobody"),value:"nobody" }
+                    ]} val={visiblePrivate.plan_invites || "contacts"}
+                        newVal={value => applyNewPrivate("plan_invites",value || "contacts")} id="planInvites"/>
+                </div>
+                <PrivacyExceptions mode="plan-invite" exceptions={visiblePrivate.plan_invite_exceptions || {}}
+                    rule={visiblePrivate.plan_invites || "contacts"} activityRule={visiblePrivate.activity_invites || "all"}
+                    groupRules={visibleInvites} onChange={rules => applyExceptions("plan_invite_exceptions",rules)}/>
             </div>
             <div className="settingInnerDiv" data-setting-id="groupInvites">
                 <div className="settingHeader"><HighlightText text={t("privacy.invites.title")} search={search}/></div>
