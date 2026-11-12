@@ -470,3 +470,41 @@
 .settingButtAcc .settingAvatar {
     margin-right: 5px;
 }
+
+/* IANA time zone selection uses the shared SelectList and its viewport flip. */
+.settingInnerWrapper[data-setting-id="timeZone"] {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: .5dvh;
+}
+.generalTimeZoneSelect {
+    width: 100%;
+    min-width: 0;
+    position: relative;
+}
+.generalTimeZoneSelect > input {
+    min-height: 4.5dvh;
+    width: 100%;
+    padding: .75dvh 3vw .75dvh 1vw;
+    background: var(--interact);
+    color: var(--tc);
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    font-size: 16px;
+    text-overflow: ellipsis;
+}
+.generalTimeZoneSelect > .selectList {
+    background: var(--bgc);
+    max-height: 28dvh;
+    z-index: 30;
+}
+.generalTimeZoneSelect .selectListButt {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+@media (max-width: 800px) {
+    .generalTimeZoneSelect > input {
+        padding: 1dvh 10vw 1dvh 3vw;
+    }
+}
