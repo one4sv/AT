@@ -1,5 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
+import { createPortal } from "react-dom";
 import "../../scss/SelectList.scss";
 
 export type Option = {
@@ -38,10 +39,12 @@ export default function SelectList({
 }) {
   const [showList, setShowList] = useState(false);
   const [openUp, setOpenUp] = useState(false);
+  const [placement, setPlacement] = useState({ top: 0, left: 0, width: 0, height: 0 });
   const [selectedLabel, setSelectedLabel] = useState<string>("");
 
   const rootRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const portalRef = useRef<HTMLDivElement>(null);
 
   if (hide === undefined) hide = true
   if (chevron === undefined) chevron = true
@@ -82,6 +85,9 @@ export default function SelectList({
       const viewportTop = viewport?.offsetTop ?? 0;
       const viewportBottom = viewportTop + (viewport?.height ?? window.innerHeight);
       const rect = root.getBoundingClientRect();
+      setPlacement(previous => previous.top === rect.top && previous.left === rect.left &&
+        previous.width === rect.width && previous.height === rect.height ? previous :
+        { top: rect.top, left: rect.left, width: rect.width, height: rect.height });
       // Fixed PageBottom actions (for example Settings search) reserve usable
       // screen space even though they do not shorten visualViewport.height.
       let usableBottom = viewportBottom;
@@ -133,7 +139,8 @@ export default function SelectList({
         rootRef.current &&
         hide &&
         showList &&
-        !rootRef.current.contains(event.target as Node)
+        !rootRef.current.contains(event.target as Node) &&
+        !portalRef.current?.contains(event.target as Node)
       ) {
         setShowList(false);
       }
@@ -151,19 +158,22 @@ export default function SelectList({
         id={id}
         type="text"
         placeholder={placeholder}
-        onClick={() => setShowList(!showList)}
+        onClick={() => !showOnly && setShowList(!showList)}
         value={selectedLabel}
         readOnly={readOnly}
       />
       {chevron && (
         <ChevronDown style={{ transform: `translateY(-50%) rotate(${showList && !showOnly ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
       )}
-      <div className={`selectList ${showList ? "active" : ""}`} ref={listRef}>
-        {showList &&
-          arr &&
-          !showOnly &&
-          arr.filter(option => showSelected || option.value !== selected).map((option:Option, idx) => {
-            return (
+      {showList && !showOnly && createPortal(
+        <div
+          ref={portalRef}
+          className={`selectListDiv selectListPortalRoot ${className} isOpen ${openUp ? "openUp" : ""}`}
+          style={{ top: placement.top, left: placement.left, width: placement.width, height: placement.height }}
+          onMouseDown={event => event.stopPropagation()}
+        >
+          <div className="selectList active" ref={listRef}>
+            {arr.filter(option => showSelected || option.value !== selected).map((option: Option, idx) => (
               <div
                 className="selectListButt"
                 key={idx}
@@ -171,10 +181,11 @@ export default function SelectList({
               >
                 {option.label}
               </div>
-            )
-          }
-          )}
-      </div>
+            ))}
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
