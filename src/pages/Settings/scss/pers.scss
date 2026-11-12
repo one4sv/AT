@@ -355,10 +355,12 @@
     > button {
         &.active[data-filter="grayscale"] {
             background: linear-gradient(135deg, #e5e5e5, #292929);
+            color: var(--tc);
         }
 
         &.active[data-filter="sepia"] {
             background: linear-gradient(135deg, #d6ad73, #684223);
+            color: var(--tc);
         }
 
         &.active[data-filter="invert"] {
@@ -366,7 +368,8 @@
             position: relative;
             isolation: isolate;
             overflow: hidden;
-
+            color: var(--tc);
+            
             &::before {
                 content: "";
                 position: absolute;

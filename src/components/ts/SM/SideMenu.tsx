@@ -15,6 +15,7 @@ import { useContextMenu } from "../../hooks/ContextMenuHook.ts";
 import { useContacts } from "../../hooks/ContactsHook.ts";
 import AccountList from "./AccountList.tsx";
 import SpotsList from "./SpotsList.tsx";
+
 export default function SideMenu() {
     const isMobile = useCompactLayout();
     const studio = useLocation().pathname.startsWith("/wallpapers");
@@ -88,6 +89,7 @@ export default function SideMenu() {
     useEffect(() => {
         if (user.id) refreshSchedules();
     }, [user.id, refreshSchedules]);
+
     useEffect(() => {
         if (!menu.visible) return;
         contextGesture.current = true;
@@ -96,6 +98,7 @@ export default function SideMenu() {
         setIsDragging(false);
         setTranslateX(showSideMenu ? 0 : -100);
     }, [menu.visible, showSideMenu, setIsDragging, setTranslateX]);
+    
     const handleTouchStart = (e: React.TouchEvent) => {
         if (studio && !isMobile) {
             contextGesture.current = true;
