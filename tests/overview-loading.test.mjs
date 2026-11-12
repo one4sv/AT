@@ -137,3 +137,44 @@ test("overview focus labels are outside cards and both kinds use the same tag ic
     assert.match(sideMenu, /aria-current=/);
     assert.match(sideMenu, /pathname\.replace/);
 });
+
+test("overview focus cards navigate to the selected activity or plan", () => {
+    const overview = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
+    assert.match(overview, /className="habitOverviewCurrent"/);
+    assert.match(overview, /navigate\(entry\.kind === "plan" \?/);
+    assert.match(overview, /<ActivityIndicators habit=\{entry\.habit\} plan=\{entry\.plan\}/);
+});
+
+test("habit and plan indicators preserve resting colors and active inner_text", () => {
+    const indicators = read("src/components/ts/ActivityIndicators.tsx");
+    const style = read("src/scss/ActivityIndicators.scss");
+    const sm = read("src/components/ts/SM/HabitsList.tsx");
+    const day = read("src/pages/HabitPage/components/Overview/HabitOverviewEntries.tsx");
+    assert.match(indicators, /getHabitStreakBadge/);
+    assert.match(indicators, /PathIcon/);
+    assert.match(indicators, /progress\.completed\}\s*\/\s*\{progress\.total/);
+    assert.match(style, /\.activityStreak/);
+    assert.match(style, /\.habit\.active \.activityIndicators/);
+    assert.match(style, /color: var\(--inner_text\)/);
+    assert.match(style, /color: var\(--borderWh\)/);
+    assert.match(sm, /showIndicators progress=/);
+    assert.match(day, /ActivityIndicators/);
+});
+
+test("plan filter and reused activity participant picker have consistent routing", () => {
+    const data = read("src/components/ts/utils/dayTimeline.ts");
+    const filters = read("src/components/context/SideMenuContext.tsx");
+    const plan = read("src/pages/Plan/PlanMembers.tsx");
+    const picker = read("src/components/modules/HabitParticipantPicker.tsx");
+    assert.match(data, /filter === "plans"/);
+    assert.match(filters, /value: "plans"/);
+    assert.match(plan, /module: "HabitParticipantPicker"/);
+    assert.match(picker, /plans\/\$\{planId\}\/invite/);
+});
+
+test("deletion of activities does not reuse selected chat message IDs", () => {
+    const deleteModal = read("src/components/modules/DeleteConfirm.tsx");
+    assert.match(deleteModal, /goal === "mess" && deleteMess\?\.length \? deleteMess : id/);
+    assert.match(deleteModal, /if \(deleting\) return/);
+    assert.match(deleteModal, /setDeleting\(false\)/);
+});
