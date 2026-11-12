@@ -24,20 +24,59 @@ export default function GeneralTab({ search }: { search: string }) {
 
     const timeZones = useMemo(() => {
         const device = browserTimeZone();
-        const zones = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") :
-            ["UTC", "Europe/Luxembourg", "Europe/London", "Europe/Berlin", "Europe/Moscow", "Asia/Yekaterinburg",
-                "Asia/Novosibirsk", "Asia/Vladivostok", "Asia/Tokyo", "Asia/Dubai", "America/New_York", "America/Los_Angeles"];
-        const items = [...new Set(["UTC", device, timeZone, ...zones].filter(zone => zone !== "auto"))].sort();
         const now = new Date();
-        const labels = items.map(zone => {
+        // One familiar IANA zone per current whole-hour UTC offset.
+        const zones = [
+            "Pacific/Honolulu", "Pacific/Pago_Pago", "America/Adak", "America/Anchorage",
+            "America/Los_Angeles", "America/Denver", "America/Chicago",
+            "America/New_York", "America/Halifax", "America/Sao_Paulo",
+            "America/Noronha", "Atlantic/Azores", "Europe/London",
+            "Europe/Paris", "Europe/Kaliningrad", "Europe/Moscow",
+            "Asia/Dubai", "Asia/Karachi", "Asia/Dhaka", "Asia/Bangkok",
+            "Asia/Singapore", "Asia/Tokyo", "Australia/Brisbane",
+            "Pacific/Noumea", "Pacific/Auckland", "Pacific/Tongatapu",
+            "Pacific/Kiritimati"
+        ];
+        const offsetMinutes = (zone: string): number | null => {
             try {
-                const offset = new Intl.DateTimeFormat("en-US", { timeZone: zone, timeZoneName: "shortOffset" })
-                    .formatToParts(now).find(part => part.type === "timeZoneName")?.value || "GMT";
-                return { value: zone, label: `${zone} (${offset.replace("GMT", "UTC")})` };
+                const value = new Intl.DateTimeFormat("en-US", {
+                    timeZone: zone, timeZoneName: "shortOffset"
+                }).formatToParts(now).find(part => part.type === "timeZoneName")?.value || "GMT";
+                if (value === "GMT" || value === "UTC") return 0;
+                const match = /^GMT([+-])(\\d{1,2})(?::(\\d{2}))?$/.exec(value);
+                if (!match) return null;
+                const sign = match[1] === "-" ? -1 : 1;
+                return sign * (Number(match[2]) * 60 + Number(match[3] || 0));
             } catch {
-                return { value: zone, label: zone };
+                return null;
             }
-        });
+        };
+        const representative = new Map<number, string>();
+        for (const zone of zones) {
+            const minutes = offsetMinutes(zone);
+            if (minutes !== null && minutes % 60 === 0 && !representative.has(minutes)) {
+                representative.set(minutes, zone);
+            }
+        }
+        // Include even sparsely populated offsets, without repeating cities for an hour.
+        for (let hour = -12; hour <= 14; hour++) {
+            if (!representative.has(hour * 60)) {
+                representative.set(hour * 60, hour === 0 ? "UTC" :
+                    `Etc/GMT${hour > 0 ? "-" : "+"}${Math.abs(hour)}`);
+            }
+        }
+        // Preserve an existing non-standard choice without silently resetting settings.
+        if (timeZone && timeZone !== "auto") {
+            const minutes = offsetMinutes(timeZone);
+            if (minutes !== null) representative.set(minutes, timeZone);
+        }
+        const labels = Array.from(representative.entries()).sort(([a], [b]) => a - b)
+            .map(([minutes, zone]) => {
+                const sign = minutes < 0 ? "-" : "+";
+                const absolute = Math.abs(minutes);
+                const offset = `UTC${sign}${String(Math.floor(absolute / 60)).padStart(2, "0")}:${String(absolute % 60).padStart(2, "0")}`;
+                return { value: zone, label: `${offset} · ${zone}` };
+            });
         return [{ value: "auto", label: t("general.timeZoneAuto", { zone: device }) }, ...labels];
     }, [t, timeZone]);
 
