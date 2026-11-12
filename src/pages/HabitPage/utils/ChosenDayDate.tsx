@@ -7,12 +7,13 @@ import "../scss/ChosenDay.scss";
 export default function ChosenDayDate () {
     useTranslation("common");
     const { chosenDay, setChosenDay, selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } = useCalendar()
-    const date = new Date(chosenDay)
+    const date = new Date(chosenDay + "T12:00:00")
     const showReturn = chosenDay !== todayStrFunc() || selectedMonth !== date.getMonth() || selectedYear !== date.getFullYear()
 
     const returnCal = () => {
-        const today = new Date()
-        setChosenDay(todayStrFunc())
+        const selectedToday = todayStrFunc()
+        const today = new Date(selectedToday + "T12:00:00")
+        setChosenDay(selectedToday)
         setSelectedMonth(today.getMonth())
         setSelectedYear(today.getFullYear())
     }
