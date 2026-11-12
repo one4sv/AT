@@ -3,9 +3,16 @@
     flex: 0 0 auto;
     align-items: center;
     gap: .5vw;
-    margin-left: auto;
     font-size: 14px;
     white-space: nowrap;
+
+    &.activityIndicatorsInline {
+        margin-left: 0;
+    }
+
+    &.activityIndicatorsTrailing {
+        margin-left: auto;
+    }
 
     > .activityPlanPath {
         color: var(--accent_text);
@@ -51,16 +58,17 @@
     gap: .5vw;
     min-width: 0;
 }
-.habitOverviewEntryName > .activityIndicators,
-.habitOverviewCurrentTitle > .activityIndicators {
-    margin-left: auto;
-}
 .habitOverviewCurrentTitle > .activityName,
 .habitOverviewEntryName > .activityName {
     min-width: 0;
+    flex: 0 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+.habitOverviewCurrentTitle > .pinnedHabitSign,
+.habitOverviewEntryName > .pinnedHabitSign {
+    flex-shrink: 0;
 }
 @media (max-width: 800px) {
     .activityIndicators,
