@@ -7,7 +7,7 @@ import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { CircleUserRound, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "../../../../components/ts/api";
-import { formatDateFromString } from "../../../../components/ts/utils/dateToStr";
+import { formatAppDate, formatAppTime, formatDateFromString } from "../../../../components/ts/utils/dateToStr";
 
 interface ActivityEvent {
     id: string;
@@ -18,8 +18,7 @@ interface ActivityEvent {
 }
 
 export default function CompJurnal() {
-    const { t, i18n } = useTranslation("common");
-    const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-GB" : "ru-RU";
+    const { t } = useTranslation("common");
     const { calendar } = useCalendar()
     const { setDayComment, setIsDone, habit } = useTheHabit()
     const { setChosenDay, setSelectedYear, setSelectedMonth } = useCalendar();
@@ -78,7 +77,7 @@ export default function CompJurnal() {
                             {event.user?.avatar_url ? <img src={event.user.avatar_url} className="CJavatar" alt="" /> : <CircleUserRound className="CJavatar" aria-hidden="true" />}
                             <span>{event.user?.username || event.user?.nick || t("habitPageUi.day.participant")}</span>
                         </div>
-                        <div className="CJcreated">{new Date(event.created_at).toLocaleString(locale)}</div>
+                        <div className="CJcreated">{`${formatAppDate(event.created_at)} ${formatAppTime(event.created_at)}`}</div>
                     </div>
                     <div className="CJcomment">{describeEvent(event)}</div>
                 </div>)}
@@ -93,11 +92,7 @@ export default function CompJurnal() {
                         const { date, comment, habitName, habitId, created_at } = day;
                         const created =
                             created_at &&
-                            new Date(created_at).toLocaleDateString(locale, {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                            });
+                            formatAppDate(created_at);
 
                         return (
                             <div
@@ -105,8 +100,8 @@ export default function CompJurnal() {
                                 key={`${date}-${habitId}`}
                                 onClick={() => {
                                     if (!habit) navigate(`/habit/${habitId}`);
-                                    setSelectedYear(new Date(date).getFullYear());
-                                    setSelectedMonth(new Date(date).getMonth());
+                                    setSelectedYear(new Date(date + "T12:00:00").getFullYear());
+                                    setSelectedMonth(new Date(date + "T12:00:00").getMonth());
                                     setTimeout(() => setChosenDay(date), 1);
                                     setDayComment(comment || "")
                                     setIsDone(true)
