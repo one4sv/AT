@@ -77,6 +77,12 @@ export default function SelectList({
     if (!root || !list) return;
 
     const updatePlacement = () => {
+      const rect = root.getBoundingClientRect();
+      // Measure item wrapping at the real field width, even on the first frame.
+      if (portalRef.current) {
+        portalRef.current.style.width = rect.width + "px";
+        portalRef.current.style.height = rect.height + "px";
+      }
       // Read the original CSS height limit before applying a viewport cap.
       list.style.maxHeight = "";
       const cssMaxHeight = parseFloat(getComputedStyle(list).maxHeight);
@@ -84,7 +90,6 @@ export default function SelectList({
       const viewport = window.visualViewport;
       const viewportTop = viewport?.offsetTop ?? 0;
       const viewportBottom = viewportTop + (viewport?.height ?? window.innerHeight);
-      const rect = root.getBoundingClientRect();
       setPlacement(previous => previous.top === rect.top && previous.left === rect.left &&
         previous.width === rect.width && previous.height === rect.height ? previous :
         { top: rect.top, left: rect.left, width: rect.width, height: rect.height });
