@@ -727,6 +727,27 @@
     color: var(--borderWh);
 }
 
+/* Compact read-only plan metadata without shrinking editable native controls. */
+.planMainSection .planDateMetadata .react-datepicker-wrapper,
+.planMainSection .planDateMetadata .react-datepicker__input-container {
+    flex: 0 0 auto;
+    width: fit-content;
+    min-width: 0;
+}
+.planMainSection .planDateMetadata .planDetailsDate {
+    width: 16ch;
+    max-width: 100%;
+}
+.planMainSection .planDetailsTimes > input[type="time"][readonly] {
+    width: 4.6em;
+    flex: 0 0 auto;
+}
+@media (max-width: 800px) {
+    .planMainSection .planDateMetadata .planDetailsDate {
+        width: 16ch;
+    }
+}
+
 /* The plan completion gradient must not inherit a neutral outline. */
 .planMainSection .doneButtDiv > .planDoneButton,
 .planMainSection .doneButtDiv > .planDoneButton:hover,
