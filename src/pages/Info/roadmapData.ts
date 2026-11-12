@@ -389,7 +389,11 @@ export const roadmapFuture: RoadmapRelease[] = [
     {
         version: "0.6+",
         features: [
-            { ru: "Дополнительная аналитика активностей", en: "Extended activity analytics" },
+            { ru: "Совместные активности 2.0 и расширенный прогресс участников", en: "Shared activities 2.0 and expanded member progress" },
+            { ru: "Расширенная статистика и аналитика активностей", en: "Extended activity statistics and analytics" },
+            { ru: "Журнал 2.0 и медиа активностей", en: "Journal 2.0 and activity media" },
+            { ru: "Карточки активностей и действия внутри чатов", en: "Activity cards and actions in chats" },
+            { ru: "Улучшенный календарь, достижения и отчёты", en: "Advanced calendar, achievements and reports" },
             { ru: "Развитие комментариев и ответов", en: "Expanded comments and replies" },
             { ru: "Улучшения поиска и связанных настроек", en: "Search and linked settings improvements" },
             { ru: "Дальнейшее развитие сообщества и чатов", en: "Further community and chat features" }
