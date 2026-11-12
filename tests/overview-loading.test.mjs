@@ -142,7 +142,7 @@ test("overview focus cards navigate to the selected activity or plan", () => {
     const overview = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
     assert.match(overview, /className="habitOverviewCurrent"/);
     assert.match(overview, /navigate\(entry\.kind === "plan" \?/);
-    assert.match(overview, /<ActivityIndicators habit=\{entry\.habit\} plan=\{entry\.plan\}/);
+    assert.match(overview, /<ActivityIndicators part="aside" habit=\{entry\.habit\} plan=\{entry\.plan\}/);
 });
 
 test("habit and plan indicators preserve resting colors and active inner_text", () => {
