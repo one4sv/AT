@@ -7,8 +7,9 @@ import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useContextMenu } from "../../../../components/hooks/ContextMenuHook";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { formatDateLabel, todayStrFunc } from "../../../../components/ts/utils/dateToStr";
-import { makeDayEntries, describeDayTime } from "../../../../components/ts/utils/dayTimeline";
-import { getOverviewFocus } from "./dayFocus";
+import { makeDayEntries, describeDayTime, type DayEntry } from "../../../../components/ts/utils/dayTimeline";
+import { tags } from "../../../../components/ts/tags";
+import { getOverviewFocus, getOverviewNext } from "./dayFocus";
 import Calendar from "../Calendar/Calendar";
 import HabitOverviewEntries from "./HabitOverviewEntries";
 import "../../scss/HabitOverview.scss";
@@ -61,6 +62,25 @@ function UpcomingSkeleton() {
     </div>;
 }
 
+function OverviewFocusCard({ entry, label, more = 0 }: { entry: DayEntry; label: string; more?: number }) {
+    const { t } = useTranslation("common");
+    const tag = tags.find(item => item.value === (entry.kind === "plan" ? entry.plan?.tag : entry.habit?.tag));
+    const Icon = tag?.icon;
+
+    return <div className="habitOverviewFocusGroup">
+        <small className="habitOverviewFocusLabel">{label}</small>
+        <div className="habitOverviewCurrent">
+            <div className="habitOverviewCurrentRow">
+                {Icon && <Icon className="habitOverviewFocusIcon"/>}
+                <div className="habitOverviewCurrentDetails">
+                    <span>{entry.name}{more > 0 && <b> +{more}</b>}</span>
+                    <small>{describeDayTime(entry, t)}</small>
+                </div>
+            </div>
+        </div>
+    </div>;
+}
+
 export default function HabitOverviewLayout() {
     const { t } = useTranslation("common");
     const { chosenDay, calendar, calendarLoading } = useCalendar();
@@ -79,6 +99,7 @@ export default function HabitOverviewLayout() {
     const completedCount = entries.filter(entry => entry.completed).length;
     const currentTime = new Date().toTimeString().slice(0, 5);
     const focus = getOverviewFocus(entries, chosenDay, todayStrFunc(), currentTime);
+    const nextEntry = getOverviewNext(entries, chosenDay, todayStrFunc(), currentTime, focus);
 
     const showCreateMenu = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -113,11 +134,11 @@ export default function HabitOverviewLayout() {
                 </div>
                 <p>{t("plans.completedCount", { done: completedCount, total: entries.length })}</p>
                 <p>{t("plans.remainingCount", { count: entries.length - completedCount })}</p>
-                {focus && <div className="habitOverviewCurrent">
-                    <small>{t(focus.kind === "current" ? "plans.currentActivity" : "plans.dayStart")}</small>
-                    <span>{focus.entry.name}{focus.more > 0 && <b> +{focus.more}</b>}</span>
-                    <small>{describeDayTime(focus.entry, t)}</small>
-                </div>}
+                {focus && <OverviewFocusCard entry={focus.entry} more={focus.more}
+                    label={t(focus.kind === "dayStart" ? "plans.dayStart" :
+                        focus.entry.kind === "plan" ? "plans.currentPlan" : "plans.currentActivity")}/>}
+                {nextEntry && <OverviewFocusCard entry={nextEntry}
+                    label={t(nextEntry.kind === "plan" ? "plans.nextPlan" : "plans.nextActivity")}/>}
             </>}
         </div>
         <div className="habitOverviewContext">
