@@ -196,6 +196,7 @@ test("plan card uses the same context-menu surface and supports persistent pin",
     assert.match(menu, /await setPin/);
     assert.match(menu, /<LinkButton\/>/);
     assert.match(menu, /navigator\.share/);
+    assert.match(menu, /t\("plans\.share"\)/);
     assert.match(ctx, /api\.patch\("plans\/" \+ id \+ "\/pin"/);
     assert.match(timeline, /a\.plan\?\.pinned/);
 });

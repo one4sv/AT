@@ -85,7 +85,7 @@ export default function PlanMenu() {
         </>)}
         <LinkButton/>
         <div className="ContextMenuButt" onClick={() => void share()}>
-            <ShareNetworkIcon/>{t("post.share")}
+            <ShareNetworkIcon/>{t("plans.share")}
         </div>
         {options.canPin && <div className="ContextMenuButt" onClick={() => void pin()}>
             {options.pinned ? <PushPinSlash/> : <PushPinIcon/>}

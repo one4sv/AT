@@ -799,6 +799,7 @@
     "detailsTooShort": "Describe your request in at least 12 characters."
   },
     "plans": {
+    "share": "Share",
     "clearTime": "Clear time",
     "remindersSettingsHint": "Global reminder settings:",
         "showAll": "Show all",
