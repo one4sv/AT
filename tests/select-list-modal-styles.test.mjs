@@ -170,4 +170,11 @@ test("SelectList flips above the field and caps its scrollable height near viewp
     assert.match(code, /rootRef\.current\.contains\(event\.target as Node\)/);
     assert.match(styles, /\.selectListDiv\.openUp > \.selectList\s*\{\s*top: auto;\s*bottom: calc\(100% \+ \.5dvh\)/);
     assert.match(styles, /\.selectListDiv > \.selectList\s*\{\s*overflow-y: auto;/);
+    assert.match(code, /createPortal\(/);
+    assert.match(code, /!portalRef\.current\?\.contains\(event\.target as Node\)/);
+    assert.match(code, /style=\{\{ top: placement\.top, left: placement\.left/);
+    assert.match(styles, /\.selectListPortalRoot\.selectListDiv\s*\{/);
+    assert.match(styles, /backdrop-filter: blur\(9px\)/);
+    assert.match(styles, /-webkit-backdrop-filter: blur\(9px\)/);
+    assert.match(styles, /z-index: 1200/);
 });
