@@ -355,17 +355,14 @@
     > button {
         &.active[data-filter="grayscale"] {
             background: linear-gradient(135deg, #e5e5e5, #292929);
-            color: var(--accent_text);
         }
 
         &.active[data-filter="sepia"] {
             background: linear-gradient(135deg, #d6ad73, #684223);
-            color: var(--accent_text);
         }
 
         &.active[data-filter="invert"] {
             background: transparent;
-            color: var(--accent_text);
             position: relative;
             isolation: isolate;
             overflow: hidden;
