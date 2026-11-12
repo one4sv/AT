@@ -20,6 +20,7 @@ import PlanComment from "./PlanComment";
 import PlanMembers from "./PlanMembers";
 import { tags } from "../../components/ts/tags";
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
+import { useSettings } from "../../components/hooks/SettingsHook";
 import "./scss/PlanPage.scss";
 
 export default function PlanPage() {
@@ -29,6 +30,7 @@ export default function PlanPage() {
     const isCompact = useCompactLayout();
     const [mobileOpen, setMobileOpen] = useState<"done" | "comment">("done");
     const { plans, refreshPlans } = usePlans();
+    const { privateShow } = useSettings();
     const { setTitle, setTitleIcon, setHeaderMenu } = usePageTitle();
     const { openMenu } = useContextMenu();
     const [plan, setPlan] = useState<OneOffPlan | null>(null);
@@ -173,6 +175,7 @@ export default function PlanPage() {
     };
     const selectedTag = tags.find(tag => tag.value === plan?.tag);
     const planPinned = plans.find(item => item.id === plan?.id)?.pinned ?? plan?.pinned ?? false;
+    const linkOnly = plan?.visibility === "link" || (plan?.visibility === "inherit" && privateShow.plans === "link");
     const canComplete = !!plan && plan.membership_status === "accepted" && plan.status !== "canceled" &&
         (plan.is_owner || plan.completion_mode !== "shared");
 
@@ -200,6 +203,7 @@ export default function PlanPage() {
     };
     const makePlanMenuOptions = (id: string, name: string, type: string, owner: boolean): MenuOptions => ({
         id, name, type, isMy: owner, canPin: true, pinned: planPinned, disabled: saving,
+        shareToken: plan?.is_owner && linkOnly ? plan.share_token : undefined,
         onEdit: () => menuHandlers.current.edit(),
         onSave: () => menuHandlers.current.save(),
         onStopEdit: () => menuHandlers.current.stop(),
@@ -216,7 +220,7 @@ export default function PlanPage() {
         return () => setHeaderMenu(null);
         // Header callbacks read menuHandlers.current so changing draft text does not rebuild the header.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [planId, plan?.id, plan?.name, plan?.is_owner, plan?.membership_status, plan?.status, planPinned, editing, saving, setHeaderMenu]);
+    }, [planId, plan?.id, plan?.name, plan?.is_owner, plan?.membership_status, plan?.status, plan?.share_token, plan?.visibility, privateShow.plans, planPinned, editing, saving, setHeaderMenu]);
 
     const openPlanMenu = (x: number, y: number) => {
         if (plan?.membership_status !== "accepted" || !planId || saving) return;

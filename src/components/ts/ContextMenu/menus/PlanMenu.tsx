@@ -18,7 +18,7 @@ export default function PlanMenu() {
     const canManage = !isItem && !!options.isMy;
     const target = plans.find(item => String(item.id) === String(options.id));
     const link = new URL("/plan/" + encodeURIComponent(options.id),window.location.origin);
-    const linkOnly = target?.visibility === "link" || (target?.visibility === "inherit" && privateShow.plans === "link");
+    const linkOnly = !!options.shareToken || target?.visibility === "link" || (target?.visibility === "inherit" && privateShow.plans === "link") || !!new URLSearchParams(window.location.search).get("share");
     const token = options.shareToken || (linkOnly ? target?.share_token : undefined) ||
         new URLSearchParams(window.location.search).get("share");
     if (linkOnly && token) link.searchParams.set("share",token);

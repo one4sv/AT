@@ -58,7 +58,8 @@ export default function PlanDiv({ plan, entry, onSelect }: {
             openMenu(event.clientX, event.clientY, "planItem", {
                 id: String(plan.id), name: plan.name, type: "item",
                 isMy: !!plan.is_owner, canPin: accepted, canComplete,
-                pinned: !!plan.pinned, completed: !!plan.completed_for_me
+                pinned: !!plan.pinned, completed: !!plan.completed_for_me,
+                shareToken: plan.is_owner && plan.visibility === "link" ? plan.share_token : undefined
             });
         }}>
         <PlanTagIcon tag={plan.tag}/>

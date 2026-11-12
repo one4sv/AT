@@ -37,7 +37,7 @@ export default function LinkButton() {
             const url = new URL(`${CopyLink}/${link}`);
             if (point === "plan" || point === "planItem") {
                 const plan = plans.find(item => String(item.id) === String(options.id));
-                const linkOnly = plan?.visibility === "link" || (plan?.visibility === "inherit" && privateShow.plans === "link");
+                const linkOnly = !!options.shareToken || plan?.visibility === "link" || (plan?.visibility === "inherit" && privateShow.plans === "link") || !!new URLSearchParams(window.location.search).get("share");
                 const token = options.shareToken || (linkOnly ? plan?.share_token : null) ||
                     new URLSearchParams(window.location.search).get("share");
                 if (linkOnly && token) url.searchParams.set("share",token);
