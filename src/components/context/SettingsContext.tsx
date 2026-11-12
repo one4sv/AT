@@ -296,6 +296,31 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ loadedSettingsFor, setLoadedSettingsFor ] = useState<string | null>(null);
     const settingsLoaded = !initialLoading && (!user.nick || loadedSettingsFor === user.nick);
     const bgEffectsReady = hasLocalBgEffects || settingsLoaded;
+    const reminderTimezoneSynced = useRef<string | null>(null);
+    useEffect(() => {
+        if (initialLoading || !settingsLoaded || !user.id) return;
+        const zone = resolveTimeZone(timeZone);
+        const key = `${user.id}:${zone}`;
+        if (reminderTimezoneSynced.current === key) return;
+        reminderTimezoneSynced.current = key;
+        let mounted = true;
+        // Reminders are scheduled on the server. Keep their IANA timezone in
+        // sync with this device's choice without changing other reminder rules.
+        void api.get("settings/reminders").then(async result => {
+            if (!mounted || !result.data?.success || !result.data.preferences) return;
+            const preferences = result.data.preferences;
+            if (preferences.timezone === zone) return;
+            await api.post("settings/reminders/preferences", { ...preferences, timezone: zone });
+        }).catch(error => {
+            if (mounted) {
+                reminderTimezoneSynced.current = null;
+                console.error("Не удалось синхронизировать часовой пояс напоминаний", error);
+            }
+        });
+        return () => { mounted = false; };
+    }, [initialLoading, settingsLoaded, user.id, timeZone]);
+
+
 
     useEffect(() => {
         void import("../ts/utils/wallpaperCache").then(({ configureWallpaperCache }) => {
