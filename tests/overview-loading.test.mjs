@@ -11,7 +11,7 @@ const compiled = ts.transpileModule(source, {
 }).outputText;
 const mod = { exports: {} };
 new Function("module", "exports", compiled)(mod, mod.exports);
-const { getOverviewFocus } = mod.exports;
+const { getOverviewFocus, getOverviewNext } = mod.exports;
 
 const item = (name, start, end = null, overrides = {}) => ({
     key: name, kind: "habit", name, start, end, completed: false,
@@ -87,4 +87,51 @@ test("plan schedule border remains one pixel without layout shift on hover", () 
     assert.match(styles, /border: 1px solid transparent;/);
     assert.match(styles, /border-color: var\(--tc\);/);
     assert.match(styles, /padding: 1dvh 3vw;/);
+});
+
+test("next activity is the upcoming plan after an ongoing habit", () => {
+    const ongoing = item("current habit", "08:00", "11:00");
+    const plan = item("next plan", "13:00", null, { kind: "plan" });
+    const later = item("later habit", "18:00");
+    const entries = [ongoing, plan, later];
+    const focus = getOverviewFocus(entries, "2026-11-11", "2026-11-11", "09:00");
+    assert.equal(getOverviewNext(entries, "2026-11-11", "2026-11-11", "09:00", focus)?.name, "next plan");
+});
+
+test("upcoming focus skips itself and shows the next available activity", () => {
+    const first = item("morning plan", "09:00", null, { kind: "plan" });
+    const second = item("afternoon habit", "15:00");
+    const entries = [first, second];
+    const focus = getOverviewFocus(entries, "2026-11-11", "2026-11-11", "08:00");
+    assert.equal(getOverviewNext(entries, "2026-11-11", "2026-11-11", "08:00", focus)?.name, "afternoon habit");
+});
+
+test("next skips canceled and completed plans, and past dates have no future focus", () => {
+    const current = item("active habit", "08:00", "12:00");
+    const canceled = item("canceled plan", "09:00", null, { kind: "plan", plan: { status: "canceled" } });
+    const completed = item("completed plan", "10:00", null, { kind: "plan", completed: true });
+    const next = item("next habit", "16:00");
+    const entries = [current, canceled, completed, next];
+    const focus = getOverviewFocus(entries, "2026-11-11", "2026-11-11", "08:30");
+    assert.equal(getOverviewNext(entries, "2026-11-11", "2026-11-11", "08:30", focus)?.name, "next habit");
+    assert.equal(getOverviewNext(entries, "2026-11-10", "2026-11-11", "08:30", focus), null);
+});
+
+test("future day without times still displays the next pending plan", () => {
+    const first = item("first plan", null, null, { kind: "plan" });
+    const second = item("second plan", null, null, { kind: "plan" });
+    const entries = [first, second];
+    const focus = getOverviewFocus(entries, "2026-11-12", "2026-11-11", "18:00");
+    assert.equal(getOverviewNext(entries, "2026-11-12", "2026-11-11", "18:00", focus)?.name, "second plan");
+});
+
+test("overview focus labels are outside cards and both kinds use the same tag icon registry", () => {
+    const overview = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
+    const css = read("src/pages/HabitPage/scss/HabitOverview.scss");
+    const sideMenu = read("src/components/ts/SM/HabitsList.tsx");
+    assert.match(overview, /className="habitOverviewFocusLabel"/);
+    assert.match(overview, /const tag = tags\.find/);
+    assert.match(overview, /getOverviewNext\(/);
+    assert.match(css, /\.habitOverviewFocusIcon\s*\{/);
+    assert.match(sideMenu, /pathname\.replace\(\/\\\/\$\/, ""\) === "\/plan\/" \+ entry\.plan!\.id \? "active"/);
 });
