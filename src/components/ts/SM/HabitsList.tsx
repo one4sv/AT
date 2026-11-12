@@ -1,6 +1,6 @@
 import "../../../scss/SM/habitsList.scss";
 import { useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { GhostIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useHabits } from "../../hooks/HabitsHook";
@@ -30,6 +30,7 @@ export default function HabitsList({ filter }: { filter?: string }) {
     const { calendar } = useCalendar();
     const { showArchived } = useSettings();
     const { habitId } = useParams();
+    const { pathname } = useLocation();
     const { setBlackout } = useBlackout();
     const { closeMenu } = useSideMenu();
     const entries = useMemo(
@@ -50,7 +51,9 @@ export default function HabitsList({ filter }: { filter?: string }) {
         {entries.map(entry => entry.habit ?
             <HabitDiv habit={entry.habit} key={entry.key} id={Number(habitId)} isMyAcc={true}/> :
             <Link to={"/plan/" + entry.plan!.id} key={entry.key}
-                className="habit smPlanItem" onClick={closeMenu}>
+                className={`habit smPlanItem ${pathname.replace(/\/$/, "") === "/plan/" + entry.plan!.id ? "active" : ""}`}
+                aria-current={pathname.replace(/\/$/, "") === "/plan/" + entry.plan!.id ? "page" : undefined}
+                onClick={closeMenu}>
                 <PlanTagIcon tag={entry.plan?.tag}/>
                 <span className="habitInfo">
                     <span className="habitName">{entry.name}</span>
