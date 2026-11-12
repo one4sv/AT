@@ -269,7 +269,7 @@
 .habitOverviewEntryMain {
     display: flex;
     align-items: center;
-    gap: .7vw;
+    gap: 0;
     flex: 1;
     min-width: 0;
     padding: .75dvh .8vw;
@@ -282,6 +282,7 @@
 .habitOverviewEntryMain .calendarDot {
     width: 6px;
     height: 6px;
+    margin-inline-end: .7vw;
     flex-shrink: 0;
 }
 .habitOverviewEntryInfo {
@@ -357,7 +358,7 @@
 }
 @media (max-width: 800px) {
     .habitOverviewEntryMain {
-        gap: 2vw;
+        gap: 0;
         padding: 1dvh 3vw;
     }
     .habitOverviewEntryDone {
@@ -415,7 +416,7 @@
 .habitOverviewCurrentRow {
     display: flex;
     align-items: center;
-    gap: .7vw;
+    gap: 0;
     min-width: 0;
 }
 .habitOverviewFocusIcon {
@@ -563,7 +564,7 @@
     .habitOverviewFilters > button { font-size: 14px; padding: 1dvh 2vw; }
     .habitOverviewCurrent { padding: 1dvh 3vw; }
     .habitOverviewFocusLabel { padding-left: 2vw; }
-    .habitOverviewCurrentRow { gap: 2vw; }
+    .habitOverviewCurrentRow { gap: 0; }
     .overviewCalendarSkeleton {
         min-height: 52dvh;
         padding: 1dvh 2vw;
@@ -635,6 +636,11 @@
 .habitOverviewEntryTagIcon {
     flex-shrink: 0;
     color: var(--accent_text);
+}
+@media (max-width: 800px) {
+    .habitOverviewEntryMain .calendarDot {
+        margin-inline-end: 2vw;
+    }
 }
 .habitOverviewEntryDone {
     align-self: flex-end;
