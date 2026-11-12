@@ -51,9 +51,9 @@ export default function PlanPage() {
         setConfirmDelete(false);
         setCompletionOpen(false);
     }, [planId]);
-    const load = async () => {
+    const load = async (showSkeleton = false) => {
         if (!planId) return;
-        setLoading(true);
+        if (showSkeleton) setLoading(true);
         try {
             const res = await api.get("plans/" + planId, { params: { share: new URLSearchParams(window.location.search).get("share") || undefined } });
             if (!res.data.success) throw new Error();
@@ -62,11 +62,11 @@ export default function PlanPage() {
         } catch {
             setError(t("plans.loadError"));
         } finally {
-            setLoading(false);
+            if (showSkeleton) setLoading(false);
         }
     };
     useEffect(() => {
-        void load();
+        void load(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [planId]);
     useEffect(() => {
