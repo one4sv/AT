@@ -1,8 +1,9 @@
-import { createContext, useRef, useState, type RefObject} from "react";
+import { createContext, useEffect, useRef, useState, type RefObject} from "react";
 import { type ReactNode } from "react"
 import { useNote } from "../hooks/NoteHook";
 import { type habitCounter, type habitTimer } from "./TheHabitContext";
 import { todayStrFunc } from "../ts/utils/dateToStr";
+import { useSettings } from "../hooks/SettingsHook";
 import { api } from "../ts/api";
 
 const CalendarContext = createContext<CalendarContextType | null>(null);
@@ -42,6 +43,7 @@ export interface CalendarContextType {
 
 export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     const { showNotification } = useNote()
+    const { timeZone } = useSettings()
     const [ calendar, setCalendar ] = useState<Calendar[]>([])
     const [ timers, setTimers ] = useState<habitTimer[] | null>(null)
     const [ counters, setCounters ] = useState<habitCounter[] | null>(null)
@@ -49,6 +51,13 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     const [ chosenDay, setChosenDay ] = useState<string>(todayStrFunc())
     const [ selectedMonth, setSelectedMonth ] = useState<number>(0)
     const [ selectedYear, setSelectedYear ] = useState<number>(0)
+
+    const previousToday = useRef(todayStrFunc())
+    useEffect(() => {
+        const current = todayStrFunc();
+        setChosenDay(value => value === previousToday.current ? current : value);
+        previousToday.current = current;
+    }, [timeZone]);
 
     const calendarRef = useRef<HTMLDivElement | null>(null)
 
