@@ -178,3 +178,13 @@ test("deletion of activities does not reuse selected chat message IDs", () => {
     assert.match(deleteModal, /if \(deleting\) return/);
     assert.match(deleteModal, /setDeleting\(false\)/);
 });
+
+test("SideMenu streaks use full calendar even on a single activity route", () => {
+    const context = read("src/components/context/CalendarContext.tsx");
+    const habit = read("src/components/ts/Habit.tsx");
+    const list = read("src/components/ts/SM/HabitsList.tsx");
+    assert.match(context, /allCalendar: Calendar\[\]/);
+    assert.match(context, /setAllCalendar\(res\.data\.calendar\)/);
+    assert.match(habit, /calendar=\{allCalendar\}/);
+    assert.match(list, /makeSideMenuEntries\(filter, habits, plans, allCalendar/);
+});
