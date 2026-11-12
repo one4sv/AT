@@ -6,7 +6,7 @@ import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { useEffect, useState } from "react";
 import { getStreakView } from "../../utils/getStreakView";
 import "../../scss/Streak.scss";
-import { dateToCalendarFormat } from "../../../../components/ts/utils/dateToStr";
+import { dateToCalendarFormat, todayStrFunc } from "../../../../components/ts/utils/dateToStr";
 
 export interface StreakType {
     habit: Habit;
@@ -22,12 +22,12 @@ export default function Streak({ habit, calendar }: StreakType) {
         if (habits?.find(h => h.id === habit.id)) setIsMy(true)
     }, [habit.id, habits])
 
-    const today = new Date();
+    const today = new Date(todayStrFunc() + "T12:00:00");
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
     const datesSet = new Set(calendar.map(d => d.isDone === true ? d.date : null));
-    const startDate = habit.start_date ? new Date(habit.start_date) : new Date(0);
+    const startDate = habit.start_date ? new Date(habit.start_date + "T12:00:00") : new Date(0);
 
     const checkStreak = (fromDate: Date) => {
         let count = 0;
