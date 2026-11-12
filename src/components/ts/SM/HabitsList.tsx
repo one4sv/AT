@@ -65,7 +65,7 @@ export default function HabitsList({ filter }: { filter?: string }) {
                 <span className="habitInfo">
                     <span className="habitName">
                         <span className="habitNameText">{entry.name}</span>
-                        <ActivityIndicators part="aside" plan={entry.plan}/>
+                        <ActivityIndicators part="streak" plan={entry.plan}/>
                     </span>
                     <span className="habitPer">
                         {relativePlanDay(entry.date, t) || formatDateFromString(entry.date)} · {describeDayTime(entry, t)}
