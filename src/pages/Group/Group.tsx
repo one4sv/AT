@@ -1,7 +1,7 @@
-import { CalendarBlankIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon, PathIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { useGroup } from "../../components/hooks/GroupHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
@@ -11,6 +11,7 @@ import { api } from "../../components/ts/api";
 import { useHabits } from "../../components/hooks/HabitsHook";
 import { useNote } from "../../components/hooks/NoteHook";
 import AccHabits from "../Acc/components/AccHabits";
+import { formatDateFromString } from "../../components/ts/utils/dateToStr";
 import GroupInfo from "./components/GroupInfo";
 import GroupMembers from "./components/GroupMembers";
 import "./scss/Group.scss";
@@ -20,6 +21,7 @@ export default function Group() {
         group,
         members,
         habits,
+        plans,
         refetchGroupWLoading,
         groupLoading,
         myPerms
@@ -421,8 +423,8 @@ export default function Group() {
                             }}
                             style={{ pointerEvents: isMobile && collapsed === 0 ? "none" : "all" }}
                         >
-                            {habits.length ? <>
-                                <AccHabits habits={habits} />
+                            {habits.length || plans.length ? <>
+                                {habits.length > 0 && <AccHabits habits={habits} />}
                                 {habits.filter(h => h.chat_participation_mode === "optional" && !myHabits?.some(my => my.id === h.id)).map(h => <div className="settingInnerList" key={h.id}>
                                     <span>{h.name} — {t("groupUi.optional")}</span>
                                     <button type="button" className="settingInnerButt" disabled={joiningActivity !== null} onClick={async event => {
@@ -440,6 +442,14 @@ export default function Group() {
                                         }
                                     }}>{joiningActivity === h.id ? t("groupUi.joining") : t("groupUi.join")}</button>
                                 </div>)}
+                                {plans.length > 0 && <div className="groupLinkedPlans">
+                                    {plans.map(plan => <Link to={`/plan/${plan.id}`} className="groupLinkedPlan" key={plan.id}
+                                        onClick={event => event.stopPropagation()}>
+                                        <PathIcon size={20}/>
+                                        <span className="groupLinkedPlanName">{plan.name}</span>
+                                        <span className="groupLinkedPlanDate">{formatDateFromString(plan.plan_date)}</span>
+                                    </Link>)}
+                                </div>}
                             </> : <div className="accNoPrivateAccess">
                                 <CalendarBlankIcon size={28} aria-hidden="true" />
                                 <span>{t("groupUi.noActivities")}</span>
