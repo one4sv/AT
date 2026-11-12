@@ -599,3 +599,44 @@
 .habitOverviewEntryDone.now {
     color: #4DA3FF;
 }
+
+/* Match SideMenu: title + streak + pin on the first line, progress or Path at its end. */
+.habitOverviewCurrentTitle,
+.habitOverviewEntryName {
+    gap: 3px;
+    min-width: 0;
+    width: 100%;
+}
+.habitOverviewCurrentTitle > .activityIndicatorsInline,
+.habitOverviewEntryName > .activityIndicatorsInline {
+    margin-left: 0;
+}
+.habitOverviewCurrentTitle > .activityIndicatorsTrailing,
+.habitOverviewEntryName > .activityIndicatorsTrailing {
+    margin-left: auto;
+}
+.habitOverviewCurrentMeta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5vw;
+    min-width: 0;
+}
+.habitOverviewCurrentMeta > small {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.habitOverviewMetaDone {
+    flex-shrink: 0;
+    color: var(--accent_text);
+}
+.habitOverviewEntryTagIcon {
+    flex-shrink: 0;
+    color: var(--accent_text);
+}
+.habitOverviewEntryDone {
+    align-self: flex-end;
+    margin-bottom: .5dvh;
+}
