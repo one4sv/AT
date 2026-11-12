@@ -1,5 +1,5 @@
 import i18n from "../../../i18n/i18n";
-import { formatAppDate, formatAppTime } from "./dateToStr";
+import { dateInAppZone, formatAppDate, formatAppTime, shiftCalendarDay, todayStrFunc } from "./dateToStr";
 export default function formatLastOnline(lastOnline: string | null | undefined) {
   if (!lastOnline) return "";
 
@@ -19,16 +19,11 @@ export default function formatLastOnline(lastOnline: string | null | undefined) 
   if (diffHour < 5) return i18n.t("chatUi.hours", { ns: "common", count: diffHour });
   if (diffHour < 24) return i18n.t("chatUi.hours", { ns: "common", count: diffHour });
 
-  const yesterday = new Date();
-  yesterday.setDate(now.getDate() - 1);
+  const yesterday = shiftCalendarDay(todayStrFunc(), -1);
 
   const timeStr = formatAppTime(lastDate);
 
-  if (
-    lastDate.getDate() === yesterday.getDate() &&
-    lastDate.getMonth() === yesterday.getMonth() &&
-    lastDate.getFullYear() === yesterday.getFullYear()
-  ) {
+  if (dateInAppZone(lastDate) === yesterday) {
     return i18n.t("chatUi.yesterday", { ns: "common", time: timeStr });
   }
 
