@@ -99,10 +99,10 @@
         min-height: 6dvh;
 
         @media (hover: hover) {
-            &:hover { background: var(--menuButtHover); }
+            &:hover { background: var(--mc); }
         }
         @media (hover: none) {
-            &:active { background: var(--menuButtHover); }
+            &:active { background: var(--mc); }
         }
     }
 
