@@ -1,7 +1,7 @@
 import { useMemo, useState, type MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { PlusIcon } from "@phosphor-icons/react";
+import { CheckCircleIcon, PlusIcon, PushPinIcon } from "@phosphor-icons/react";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
@@ -84,9 +84,14 @@ function OverviewFocusCard({ entry, label, more = 0, calendar, progress }: {
                 <div className="habitOverviewCurrentDetails">
                     <span className="habitOverviewCurrentTitle">
                         <span className="activityName">{entry.name}{more > 0 && <b> +{more}</b>}</span>
-                        <ActivityIndicators habit={entry.habit} plan={entry.plan} calendar={calendar} progress={progress}/>
+                        <ActivityIndicators part="streak" habit={entry.habit} calendar={calendar}/>
+                        {entry.habit?.pinned && <PushPinIcon className="pinnedHabitSign" weight="fill" size={14}/>}
+                        <ActivityIndicators part="aside" habit={entry.habit} plan={entry.plan} progress={progress}/>
                     </span>
-                    <small>{describeDayTime(entry, t)}</small>
+                    <span className="habitOverviewCurrentMeta">
+                        <small>{describeDayTime(entry, t)}</small>
+                        {entry.completed && <CheckCircleIcon className="habitOverviewMetaDone" weight="fill" size={18}/>}
+                    </span>
                 </div>
             </div>
         </button>
