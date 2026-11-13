@@ -12,7 +12,7 @@ type Props = {
     showedPass: { auth: boolean; reg: boolean; conf: boolean };
     swipeForm: (targetForm: "auth" | "reg") => void;
 };
-type Check = { valid: boolean; error?: string; checkedValue?: string };
+type Check = { valid: boolean; error?: string; checkedValue?: string; unavailable?: boolean };
 type RegisterField = "nick" | "email" | "pass" | "confirm" | "terms" | "pol" | "accepts";
 
 export default function RegistrationForm({ active = true, showPass, showedPass, swipeForm }: Props) {
@@ -82,7 +82,7 @@ export default function RegistrationForm({ active = true, showPass, showedPass, 
                 setNickCheck({ valid: result.success, checkedValue: nick, error: result.success ? undefined : t("reg.nickTaken") });
             } catch {
                 if (!controller.signal.aborted && id === nickRequestId.current)
-                    setNickCheck({ valid: false, error: "Не удалось проверить никнейм" });
+                    setNickCheck({ valid: false, checkedValue: nick, unavailable: true, error: t("reg.checkUnavailable") });
             } finally {
                 if (id === nickRequestId.current && !controller.signal.aborted) setLoadingNick(false);
             }
@@ -107,7 +107,7 @@ export default function RegistrationForm({ active = true, showPass, showedPass, 
                 setMailCheck({ valid: result.success, checkedValue: value, error: result.success ? undefined : t("reg.emailTaken") });
             } catch {
                 if (!controller.signal.aborted && id === mailRequestId.current)
-                    setMailCheck({ valid: false, error: "Не удалось проверить почту" });
+                    setMailCheck({ valid: false, checkedValue: value, unavailable: true, error: t("reg.checkUnavailable") });
             } finally {
                 if (id === mailRequestId.current && !controller.signal.aborted) setLoadingMail(false);
             }
@@ -118,8 +118,10 @@ export default function RegistrationForm({ active = true, showPass, showedPass, 
     const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (pending) return;
-        if (!checkedNick) return fail("nick", !nick ? t("reg.nickEmpty") : nickCheck.error || t("reg.nickInvalid"));
-        if (!checkedMail) return fail("email", !mail ? t("reg.emailEmpty") : mailCheck.error || t("reg.emailInvalid"));
+        if (!nickLocalValid || (nickCheck.checkedValue === nick && !nickCheck.valid && !nickCheck.unavailable))
+            return fail("nick", !nick ? t("reg.nickEmpty") : nickCheck.error || t("reg.nickInvalid"));
+        if (!mailLocalValid || (mailCheck.checkedValue === mail.trim() && !mailCheck.valid && !mailCheck.unavailable))
+            return fail("email", !mail ? t("reg.emailEmpty") : mailCheck.error || t("reg.emailInvalid"));
         if (!passwordValid) return fail("pass", !pass ? t("reg.passwordEmpty") : !passwordLength ? "length" : !passwordLatin ? "regex" : "symbols");
         if (!confirmValid) return fail("confirm", !confPass ? t("reg.confirmRequired") : t("reg.passwordMismatch"));
         if (!acceptTerms && !acceptPol) return fail("accepts", "unaccepted");
@@ -148,7 +150,7 @@ export default function RegistrationForm({ active = true, showPass, showedPass, 
                     className={`landingInput ${wrong("nick") ? "invalid" : ""}`} placeholder={t("reg.nickname")} value={nick}
                     onChange={e => { clearError(); setNick(e.target.value); }} aria-invalid={wrong("nick")}/>
                 {nick && (!nickLocalValid ? status(false, false, !/^[A-Za-z0-9_]+$/.test(nick) ? t("reg.invalidSymbols") : t("reg.nickLength"))
-                    : status(loadingNick, checkedNick, loadingNick ? t("reg.checkingNick") : checkedNick ? t("reg.nickAvailable") : nickCheck.error || t("reg.checkingNick")))}
+                    : status(loadingNick || nickCheck.checkedValue !== nick, checkedNick, loadingNick ? t("reg.checkingNick") : checkedNick ? t("reg.nickAvailable") : nickCheck.error || t("reg.checkingNick")))}
                 {wrong("nick") && <span className="inpExtraSpan invalid" role="alert">{error}</span>}
             </div>
             <div className="landingField">
@@ -157,7 +159,7 @@ export default function RegistrationForm({ active = true, showPass, showedPass, 
                     className={`landingInput ${wrong("email") ? "invalid" : ""}`} placeholder={t("reg.email")} value={mail}
                     onChange={e => { clearError(); setMail(e.target.value); }} aria-invalid={wrong("email")}/>
                 {mail && (!mailLocalValid ? status(false, false, t("reg.invalidEmail"))
-                    : status(loadingMail, checkedMail, loadingMail ? t("reg.checkingEmail") : checkedMail ? t("reg.emailAvailable") : mailCheck.error || t("reg.checkingEmail")))}
+                    : status(loadingMail || mailCheck.checkedValue !== mail.trim(), checkedMail, loadingMail ? t("reg.checkingEmail") : checkedMail ? t("reg.emailAvailable") : mailCheck.error || t("reg.checkingEmail")))}
                 {wrong("email") && <span className="inpExtraSpan invalid" role="alert">{error}</span>}
             </div>
             <div className="landingField">

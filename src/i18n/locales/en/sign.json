@@ -22,6 +22,7 @@
         "nickTaken": "This nickname is already taken",
         "invalidEmail": "Invalid email address",
         "emailTaken": "This email belongs to another account",
+        "checkUnavailable": "Availability check failed. Please try again later",
         "passwordLengthRule": "8 to 30 characters",
         "passwordLatinRule": "Latin letters and numbers only",
         "passwordSymbolsRule": "At least 1 letter and 1 number",

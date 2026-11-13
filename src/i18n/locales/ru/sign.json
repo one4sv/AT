@@ -22,6 +22,7 @@
         "nickTaken": "Этот никнейм уже занят",
         "invalidEmail": "Некорректный email-адрес",
         "emailTaken": "Этот email уже привязан к другому аккаунту",
+        "checkUnavailable": "Не удалось проверить доступность. Попробуйте позже",
         "passwordLengthRule": "От 8 до 30 символов",
         "passwordLatinRule": "Только латинские буквы и цифры",
         "passwordSymbolsRule": "Минимум 1 буква и 1 цифра",

@@ -42,6 +42,7 @@ export interface AuthContextType {
     auth: (data: { pass: string, login:string, isRemember:boolean }) => Promise<void>;
     checkRegister: (data: { nick?: string, mail?: string, signal?:AbortSignal  }) => Promise<{
         success: boolean;
+        field?: "nick" | "mail";
     }>;
     checkCode: (data:{code:string, email:string, signal?:AbortSignal}) => Promise<{success:boolean}>
     loadingAuth: boolean;
@@ -129,16 +130,17 @@ export const AuthProvider = ({ children }: { children : ReactNode }) => {
         mail?: string;
         signal?: AbortSignal
     }) => {
-        try {
-            const res = await api.post(
-                `register/check`,
-                { nick, mail, signal }
-            );
-
-            return res.data;
-        } catch {
-            return { success: false };
+        const res = await api.post(
+            `register/check`,
+            { nick, mail },
+            { signal }
+        );
+        if (res.data?.success === true) return { success: true };
+        if (res.data?.success === false &&
+            ((nick && res.data.field === "nick") || (mail && res.data.field === "mail"))) {
+            return { success: false, field: res.data.field };
         }
+        throw new Error("Не удалось проверить доступность данных регистрации");
     };
     const checkCode = async ({
         code,
