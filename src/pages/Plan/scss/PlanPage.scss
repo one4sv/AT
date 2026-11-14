@@ -28,20 +28,34 @@
     gap: .75vw;
     flex-shrink: 0;
 }
-.planHeadingEditButton {
-    width: 38px;
-    height: 38px;
+.planHeading .planHeadingEditButton {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
     padding: 0;
+    box-sizing: border-box;
+
+    > svg {
+        display: block;
+        width: 24px;
+        height: 24px;
+        flex: 0 0 24px;
+        color: var(--accent_text);
+    }
 }
-.planHeadingSaveButton,
-.planHeadingSaveButton:hover,
-.planHeadingSaveButton:active,
-.planHeadingSaveButton:focus-visible {
+.planHeading .planHeadingSaveButton,
+.planHeading .planHeadingSaveButton:hover,
+.planHeading .planHeadingSaveButton:active,
+.planHeading .planHeadingSaveButton:focus-visible,
+.planHeading .planHeadingSaveButton:disabled {
     background: linear-gradient(135deg, var(--accent), var(--grad));
     color: var(--inner_text);
     border: none;
+
+    > svg {
+        color: var(--inner_text);
+    }
 }
-.planHeadingSaveButton svg { color: var(--inner_text); }
 @media (max-width: 800px) {
     .planHeadingActions { gap: 2vw; }
 }
@@ -502,6 +516,11 @@
 }
 .planInlineCompletion .doneButtDiv {
     margin-top: 1dvh;
+}
+.planCompletionMode {
+    display: block;
+    margin: 0 0 .75dvh;
+    color: var(--borderWh);
 }
 .planInlineCompletion .radioGroup { margin: 0 0 1dvh; }
 .planInlineCompletion .radioGroup.disabled > .radiobutt.active { color: var(--accent_text); }

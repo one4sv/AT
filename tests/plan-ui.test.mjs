@@ -232,11 +232,22 @@ test("plan invitations refresh when a user returns to a tab", () => {
     assert.match(context, /document\.visibilityState !== "visible"/);
 });
 
-test("completion uses RadioGroup in both view and edit modes", () => {
+test("completion mode uses plain text when viewing and a RadioGroup only when editing", () => {
     const page = read("src/pages/Plan/PlanPage.tsx");
     const css = read("src/pages/Plan/scss/PlanPage.scss");
-    assert.match(page, /plan\.kind === "shared" && <RadioGroup id="planCompletionMode"/);
-    assert.match(page, /disabled=\{!editing \|\| !plan\.is_owner/);
-    assert.doesNotMatch(page, /planCompletionModeEditable|className="planCompletionMode"/);
-    assert.match(css, /\.radioGroup\.disabled > \.radiobutt\.active/);
+    assert.match(page, /plan\.kind === "shared" && \(editing && plan\.is_owner \?/);
+    assert.match(page, /<RadioGroup id="planCompletionMode"/);
+    assert.match(page, /<span className="planCompletionMode">/);
+    assert.match(page, /disabled=\{saving \|\| !!plan\.completed_count/);
+    assert.doesNotMatch(page, /planCompletionModeEditable|planCompletionChoices/);
+    assert.match(css, /\.planCompletionMode\s*\{/);
+});
+test("plan heading edit and save icons cannot shrink due to inherited button padding", () => {
+    const page = read("src/pages/Plan/PlanPage.tsx");
+    const css = read("src/pages/Plan/scss/PlanPage.scss");
+    assert.match(page, /<CheckIcon size=\{24\} weight="bold"\/>/);
+    assert.match(page, /<PencilSimpleIcon size=\{24\} weight="bold"\/>/);
+    assert.match(css, /\.planHeading \.planHeadingEditButton\s*\{[\s\S]*?flex: 0 0 42px;\s*padding: 0;/);
+    assert.match(css, /> svg\s*\{[\s\S]*?width: 24px;\s*height: 24px;\s*flex: 0 0 24px;/);
+    assert.match(css, /\.planHeading \.planHeadingSaveButton:disabled[\s\S]*?border: none;/);
 });
