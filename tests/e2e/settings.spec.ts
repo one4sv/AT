@@ -269,7 +269,8 @@ test("personal plan participants can be invited and removed from its details pag
     await expect(section.locator(".planMember")).toHaveCount(2);
     await expect(section).toContainText("Ожидает приглашение");
     await section.getByRole("button", { name: "Отменить приглашение" }).first().click();
-    await section.getByRole("button", { name: "Отменить приглашение" }).last().click();
+    await page.getByRole("dialog", { name: "Отменить приглашение для Test Member?" })
+        .getByRole("button", { name: "Отменить приглашение" }).click();
     await expect.poll(() => removed).toBe(true);
     await expect(section.locator(".planMember")).toHaveCount(1);
 });
