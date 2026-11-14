@@ -212,16 +212,20 @@ test("completion mode and editing action keep menu independent", () => {
     assert.match(header, /<DotsThreeOutlineVerticalIcon weight="fill"\/>/);
 });
 
-test("pending plan invitations are visible in SideMenu and the activity overview", () => {
+test("plan and habit invitations are answered only in chat messages", () => {
     const list = read("src/components/ts/SM/HabitsList.tsx");
-    const ctx = read("src/components/context/SideMenuContext.tsx");
-    const overview = read("src/pages/HabitPage/components/HabitInfo/HabitInvitations.tsx");
-    assert.match(list, /pendingPlans\.map\(plan => <Link/);
-    assert.match(list, /to=\{"\/plan\/" \+ plan\.id\}/);
-    assert.match(ctx, /const pendingCount = plans\.filter/);
-    assert.match(overview, /api\.post\(\x60plans\/\$\{id\}\/respond\x60, \{ status \}\)/);
-    assert.match(overview, /await refreshPlans\(\)/);
-    assert.match(overview, /plans\.invitationTitle/);
+    const overview = read("src/pages/HabitPage/HabitPage.tsx");
+    const plan = read("src/pages/Plan/PlanPage.tsx");
+    const message = read("src/pages/Chat/components/Message.tsx");
+    const invitation = read("src/pages/Chat/components/HabitInvitation.tsx");
+    assert.doesNotMatch(list, /pendingPlans\.map/);
+    assert.doesNotMatch(overview, /<HabitInvitations|import HabitInvitations/);
+    assert.doesNotMatch(plan, /api\.post\("plans\/" \+ planId \+ "\/respond"/);
+    assert.match(plan, /plans\.replyInChat/);
+    assert.match(message, /m\.plan_invite_plan_id/);
+    assert.match(invitation, /messages\/\$\{messageId\}\/\$\{kind\}-invitation/);
+    assert.match(invitation, /message_id: messageId/);
+    assert.match(invitation, /refreshPlans\(\)/);
 });
 
 test("plan invitations refresh when a user returns to a tab", () => {

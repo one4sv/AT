@@ -84,7 +84,7 @@ export default function HabitInvitation({ messageId, recipientId, kind = "habit"
         try {
             const res = kind === "plan" ? await api.post(`plans/${invitation.plan!.id}/respond`,
                 { status, message_id: messageId }) :
-                await api.patch(`habits/${invitation.habit.id}/members/me`, { status, message_id: messageId });
+                await api.patch(`habits/${invitation.habit!.id}/members/me`, { status, message_id: messageId });
             if (!res.data.success) throw new Error();
             setInvitation(current => current ? { ...current, status: res.data.status, can_respond: false } : current);
             setError("");
