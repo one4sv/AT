@@ -6,7 +6,7 @@ import "../../../scss/BetaNotice.scss";
 export default function BetaTab() {
     const { t } = useTranslation("info");
     return <div className="infoText betaInfo">
-        <div className="betaInfoArt"><BetaArt/></div>
+        <div className="sectionArt isVisible"><BetaArt/></div>
         <h1>{t("beta.title")}</h1>
         <p>{t("beta.intro")}</p>
         <h3>{t("beta.expectTitle")}</h3>
@@ -22,7 +22,7 @@ export default function BetaTab() {
             <li>{t("beta.capture")}</li>
         </ul>
         <p>{t("beta.secrets")}</p>
-        <Link to="/info/contacts">{t("beta.contact")}</Link>
+        <p><Link to="/info/contacts">{t("beta.contact")}</Link></p>
         <h3>{t("beta.nextTitle")}</h3>
         <p>{t("beta.next")}</p>
     </div>;
