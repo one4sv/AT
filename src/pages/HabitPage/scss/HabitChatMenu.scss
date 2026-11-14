@@ -289,21 +289,23 @@
         border: none;
         border-radius: 24px;
         background: var(--mc);
-        color: var(--tc);
+        color: var(--notValid);
         cursor: pointer;
         align-self: center;
         border: 1px solid var(--block_border);
         @media (hover: hover) {
             &:hover {
-                color: var(--tc);
-                background: var(--interact);
+                color: var(--notValid);
+                background: var(--notValidBg);
+                border-color: var(--notValid);
             }
         }
 
         @media (hover: none) {
             &:active {
-                color: var(--tc);
-                background: var(--interact);
+                color: var(--notValid);
+                background: var(--notValidBg);
+                border-color: var(--notValid);
             }
         }
 

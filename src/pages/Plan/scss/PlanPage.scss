@@ -248,8 +248,9 @@
 }
 .planMemberRemove {
     border: none;
-    background: transparent;
+    background: var(--mc);
     color: var(--notValid);
+    border: 1px solid var(--block_border);
     cursor: pointer;
     width: 4dvh;
     height: 4dvh;
@@ -261,6 +262,7 @@
 
     &:hover, &:active {
         background: var(--notValidBg);
+        border: 1px solid var(--notValid);
     }
 }
 .planMemberConfirm {

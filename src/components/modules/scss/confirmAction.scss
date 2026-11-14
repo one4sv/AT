@@ -86,7 +86,7 @@
 
             &.danger:not(:disabled):hover {
                 background: var(--notValid);
-                color: var(--inner_text);
+                color: var(--tc);
             }
         }
     }
