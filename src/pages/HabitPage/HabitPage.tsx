@@ -10,7 +10,6 @@ import "./scss/redHabit.scss";
 import { isMobile } from "react-device-detect";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import HabitName from "./components/HabitInfo/HabitName";
-import HabitInvitations from "./components/HabitInfo/HabitInvitations";
 import Calendar from "./components/Calendar/Calendar";
 import Diagrams from "./components/Stats/Diagrams";
 import SharedDayComments from "./components/Habit/Comment/SharedDayComments";
@@ -125,7 +124,6 @@ export default function Habit() {
                 isReadOnly={isReadOnly}
             />}
 
-            {!habitId && <HabitInvitations />}
             <div className="StatsDivMain" ref={mainRef}>
                 {!habitId ? <HabitOverviewLayout /> : <div className="StatsDivHabit">
                     {isMobile ? <>

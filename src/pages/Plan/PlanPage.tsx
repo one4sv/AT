@@ -355,13 +355,7 @@ export default function PlanPage() {
                     </div>}
                 </div>
                 {plan.membership_status === "pending" ? <div className="planSection">
-                    <p>{t("plans.invited")}</p>
-                    <div className="planActions">
-                        <button className="planPrimaryButton" disabled={saving} onClick={() =>
-                            void action(() => api.post("plans/" + planId + "/respond", { status:"accepted" }))}>{t("plans.accept")}</button>
-                        <button className="planQuietButton" disabled={saving} onClick={() =>
-                            void action(() => api.post("plans/" + planId + "/respond", { status:"declined" }))}>{t("plans.decline")}</button>
-                    </div>
+                    <p>{t("plans.replyInChat")}</p>
                 </div> : plan.membership_status === "accepted" ? <>
                     <PlanReminders planId={plan.id}/>
                     <PlanMembers plan={plan} onChanged={async () => {
