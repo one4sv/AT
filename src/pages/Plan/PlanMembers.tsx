@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { UserCircleIcon, UserPlusIcon, XIcon } from "@phosphor-icons/react";
-import axios from "axios";
 import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { useNote } from "../../components/hooks/NoteHook";
 import { api } from "../../components/ts/api";
@@ -18,36 +16,27 @@ export default function PlanMembers({ plan, onChanged }: {
     
     const navigate = useNavigate()
 
-    const [working, setWorking] = useState(false);
-    const [removing, setRemoving] = useState<string | null>(null);
-    const [error, setError] = useState("");
-
-    const errorText = (err: unknown, fallback: string) =>
-        axios.isAxiosError(err) && typeof err.response?.data?.error === "string"
-            ? err.response.data.error : fallback;
-
-    const remove = async (id: string, pending: boolean) => {
-        if (working) return;
-        setWorking(true);
-        setError("");
-        try {
-            const result = await api.delete("plans/" + plan.id + "/members/" + id);
-            if (!result.data.success) throw new Error();
-            await onChanged();
-            setRemoving(null);
-            showNotification("success", t(pending ? "plans.inviteRevoked" : "plans.memberRemoved"));
-        } catch (err) {
-            setError(errorText(err, t("plans.memberRemoveError")));
-        } finally {
-            setWorking(false);
+    const remove = (id: string, name: string, pending: boolean) => setBlackout({
+        seted: true,
+        module: "ConfirmAction",
+        confirmAction: {
+            title: t(pending ? "plans.revokeInvitationConfirm" : "plans.removeParticipantConfirm", { name }),
+            description: t(pending ? "plans.cannotAccept" : "plans.loseAccess", { name }),
+            label: t(pending ? "plans.revokeInvitation" : "plans.removeParticipant"),
+            run: async () => {
+                const result = await api.delete("plans/" + plan.id + "/members/" + id);
+                if (!result.data.success) throw new Error();
+                await onChanged();
+                showNotification("success", t(pending ? "plans.inviteRevoked" : "plans.memberRemoved"));
+            }
         }
-    };
+    });
 
     return <section className="planSection planMembersSection">
         <div className="planMembersHeader">
             <h2>{t("plans.members")}</h2>
             {plan.is_owner && plan.status === "upcoming" && <button type="button"
-                className="planQuietButton" disabled={working}
+                className="planQuietButton"
                 onClick={() => setBlackout({ seted: true, module: "HabitParticipantPicker",
                     point: "plan", options: { id: String(plan.id), name: plan.name } })}>
                 <UserPlusIcon size={20}/>
@@ -73,29 +62,18 @@ export default function PlanMembers({ plan, onChanged }: {
                                 member.completed ? "plans.completed" : "plans.memberAccepted")}</span>
                         </div>
                         {plan.is_owner && !owner && plan.status === "upcoming" && <button type="button"
-                            className="planMemberRemove" disabled={working}
+                            className="planMemberRemove"
                             aria-label={t(pending ? "plans.revokeInvitation" : "plans.removeParticipant")}
                             onClick={event => {
                                 event.stopPropagation();
-                                setRemoving(current => current === member.id ? null : member.id);
+                                remove(member.id, name, pending);
                             }}>
                             <XIcon size={20}/>
                         </button>}
                     </div>
-                    {removing === member.id && <div className="planMemberConfirm">
-                        <span>{t(pending ? "plans.revokeInvitationConfirm" : "plans.removeParticipantConfirm", { name })}</span>
-                        <div className="planInviteActions">
-                            <button type="button" className="planQuietButton" disabled={working}
-                                onClick={() => setRemoving(null)}>{t("plans.back")}</button>
-                            <button type="button" className="planQuietButton planDanger" disabled={working}
-                                onClick={() => void remove(member.id, pending)}>
-                                {t(pending ? "plans.revokeInvitation" : "plans.removeParticipant")}
-                            </button>
-                        </div>
-                    </div>}
+
                 </div>;
             })}
         </div>
-        {error && <p role="alert" className="planInviteError">{error}</p>}
     </section>;
 }

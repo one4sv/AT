@@ -263,13 +263,6 @@
         background: var(--notValidBg);
     }
 }
-.planMemberConfirm {
-    margin: 0 0 1dvh calc(4.5dvh + 1vw);
-    display: flex;
-    flex-direction: column;
-    gap: .8dvh;
-    color: var(--tc);
-}
 .planInvite {
     margin-top: 1dvh;
     flex-direction: column;
@@ -357,9 +350,6 @@
     .planInviteContact {
         padding: 1dvh 2vw;
         gap: 2vw;
-    }
-    .planMemberConfirm {
-        margin-left: calc(4.5dvh + 2vw);
     }
 }
 .planError {
