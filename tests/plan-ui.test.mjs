@@ -266,3 +266,13 @@ test("plan invitation cancellation uses shared ConfirmAction instead of inline c
     assert.doesNotMatch(members, /planMemberConfirm|setRemoving|removing ===/);
     assert.doesNotMatch(styles, /\.planMemberConfirm/);
 });
+
+test("plan participant picker imports the button styles on direct plan entry", () => {
+    const picker = read("src/components/modules/HabitParticipantPicker.tsx");
+    const goals = read("src/pages/HabitPage/scss/Goals.scss");
+    const modal = read("src/pages/HabitPage/scss/HabitChatMenu.scss");
+    assert.match(picker, /import "\.\.\/\.\.\/pages\/HabitPage\/scss\/Goals\.scss";/);
+    assert.match(picker, /className="addGoalButtDiv habitPickerCreate"/);
+    assert.match(goals, /\.addGoalButtDiv\s*\{/);
+    assert.match(modal, /\.habitPickerCreate\s*\{/);
+});
