@@ -138,7 +138,7 @@ test("plan management is offered on the first section and both header triggers",
     assert.match(page, /onContextMenu=\{event => \{/);
     assert.match(page, /setHeaderMenu\(\{ point: "plan"/);
     assert.doesNotMatch(page, /className="planSection">\s*<h2>\{t\("plans\.management"\)\}/);
-    assert.match(header, /className=\{`headerButt planHeaderActionsButt \$\{planEditing \? "planHeaderSaveButt" : ""\}`\}/);
+    assert.match(header, /className="headerButt planHeaderActionsButt"/);
     assert.match(header, /data-header-gesture="plan"/);
     assert.match(header, /if \(planHeaderMenu\) \{/);
     assert.match(gestures, /kind === "plan"/);
@@ -168,7 +168,7 @@ test("plan header action is the same vertical three-dot control and width as the
     const styles = read("src/scss/header.scss");
     assert.match(chatHeader, /<div className="headerButt" data-header-gesture="chat"/);
     assert.match(chatHeader, /<DotsThreeOutlineVerticalIcon weight="fill"\/>/);
-    assert.match(sharedHeader, /className=\{`headerButt planHeaderActionsButt \$\{planEditing \? "planHeaderSaveButt" : ""\}`\}/);
+    assert.match(sharedHeader, /className="headerButt planHeaderActionsButt"/);
     assert.match(sharedHeader, /<DotsThreeOutlineVerticalIcon weight="fill"\/>/);
     assert.doesNotMatch(sharedHeader, /<DotsThreeIcon/);
     assert.match(styles, /\.headerButt\s*\{[\s\S]*?height: 4dvh;[\s\S]*?aspect-ratio: 1\/1;/);
@@ -199,4 +199,55 @@ test("plan card uses the same context-menu surface and supports persistent pin",
     assert.match(menu, /t\("plans\.share"\)/);
     assert.match(ctx, /api\.patch\("plans\/" \+ id \+ "\/pin"/);
     assert.match(timeline, /a\.plan\?\.pinned/);
+});
+
+test("completion mode and editing action keep menu independent", () => {
+    const page = read("src/pages/Plan/PlanPage.tsx");
+    const header = read("src/components/ts/Header.tsx");
+    assert.match(page, /id="planCompletionMode"/);
+    assert.match(page, /plans\.completedParticipants/);
+    assert.match(page, /planHeadingEditButton/);
+    assert.doesNotMatch(page, /planCompletionChoices|planCompletionModeEditable/);
+    assert.doesNotMatch(header, /planEditing|planHeaderSaveButt/);
+    assert.match(header, /<DotsThreeOutlineVerticalIcon weight="fill"\/>/);
+});
+
+test("pending plan invitations are visible in SideMenu and the activity overview", () => {
+    const list = read("src/components/ts/SM/HabitsList.tsx");
+    const ctx = read("src/components/context/SideMenuContext.tsx");
+    const overview = read("src/pages/HabitPage/components/HabitInfo/HabitInvitations.tsx");
+    assert.match(list, /pendingPlans\.map\(plan => <Link/);
+    assert.match(list, /to=\{"\/plan\/" \+ plan\.id\}/);
+    assert.match(ctx, /const pendingCount = plans\.filter/);
+    assert.match(overview, /api\.post\(\x60plans\/\$\{id\}\/respond\x60, \{ status \}\)/);
+    assert.match(overview, /await refreshPlans\(\)/);
+    assert.match(overview, /plans\.invitationTitle/);
+});
+
+test("plan invitations refresh when a user returns to a tab", () => {
+    const context = read("src/components/context/PlansContext.tsx");
+    assert.match(context, /window\.addEventListener\("focus", refreshOnResume\)/);
+    assert.match(context, /document\.addEventListener\("visibilitychange", refreshOnResume\)/);
+    assert.match(context, /window\.removeEventListener\("focus", refreshOnResume\)/);
+    assert.match(context, /document\.visibilityState !== "visible"/);
+});
+
+test("completion mode uses plain text when viewing and a RadioGroup only when editing", () => {
+    const page = read("src/pages/Plan/PlanPage.tsx");
+    const css = read("src/pages/Plan/scss/PlanPage.scss");
+    assert.match(page, /plan\.kind === "shared" && \(editing && plan\.is_owner \?/);
+    assert.match(page, /<RadioGroup id="planCompletionMode"/);
+    assert.match(page, /<span className="planCompletionMode">/);
+    assert.match(page, /disabled=\{saving \|\| !!plan\.completed_count/);
+    assert.doesNotMatch(page, /planCompletionModeEditable|planCompletionChoices/);
+    assert.match(css, /\.planCompletionMode\s*\{/);
+});
+test("plan heading edit and save icons cannot shrink due to inherited button padding", () => {
+    const page = read("src/pages/Plan/PlanPage.tsx");
+    const css = read("src/pages/Plan/scss/PlanPage.scss");
+    assert.match(page, /<CheckIcon size=\{24\} weight="bold"\/>/);
+    assert.match(page, /<PencilSimpleIcon size=\{24\} weight="bold"\/>/);
+    assert.match(css, /\.planHeading \.planHeadingEditButton\s*\{[\s\S]*?flex: 0 0 42px;\s*padding: 0;/);
+    assert.match(css, /> svg\s*\{[\s\S]*?width: 24px;\s*height: 24px;\s*flex: 0 0 24px;/);
+    assert.match(css, /\.planHeading \.planHeadingSaveButton:disabled[\s\S]*?border: none;/);
 });
