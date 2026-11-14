@@ -77,7 +77,8 @@ export default function SelectList({
     if (!root || !list) return;
 
     const updatePlacement = () => {
-      const rect = root.getBoundingClientRect();
+      // Anchor the portal to the visible field, even inside transformed Settings sliders.
+      const rect = (root.querySelector("input") || root).getBoundingClientRect();
       // Measure item wrapping at the real field width, even on the first frame.
       if (portalRef.current) {
         portalRef.current.style.width = rect.width + "px";
