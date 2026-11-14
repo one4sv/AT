@@ -231,3 +231,12 @@ test("plan invitations refresh when a user returns to a tab", () => {
     assert.match(context, /window\.removeEventListener\("focus", refreshOnResume\)/);
     assert.match(context, /document\.visibilityState !== "visible"/);
 });
+
+test("completion uses RadioGroup in both view and edit modes", () => {
+    const page = read("src/pages/Plan/PlanPage.tsx");
+    const css = read("src/pages/Plan/scss/PlanPage.scss");
+    assert.match(page, /plan\.kind === "shared" && <RadioGroup id="planCompletionMode"/);
+    assert.match(page, /disabled=\{!editing \|\| !plan\.is_owner/);
+    assert.doesNotMatch(page, /planCompletionModeEditable|className="planCompletionMode"/);
+    assert.match(css, /\.radioGroup\.disabled > \.radiobutt\.active/);
+});

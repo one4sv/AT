@@ -324,13 +324,12 @@ export default function PlanPage() {
                     </div>}
                     {plan.membership_status === "accepted" && (!isCompact || plan.kind === "shared") && <div className="planInlineCompletion">
                         <h2>{t("plans.completion")}</h2>
-                        {plan.kind === "shared" && (editing && plan.is_owner ?
-                            <RadioGroup id="planCompletionMode" list={[
-                                { value: "personal", label: t("plans.individualCompletion") },
-                                { value: "shared", label: t("plans.sharedCompletion") }
-                            ]} val={value.completion_mode || "personal"} disabled={saving || !!plan.completed_count || plan.status === "completed"}
-                                newVal={next => changeDraft("completion_mode", next as PlanInput["completion_mode"])}/> :
-                            <span className="planCompletionMode">{t("plans." + (value.completion_mode || "personal") + "Completion")}</span>)}
+                        {plan.kind === "shared" && <RadioGroup id="planCompletionMode" list={[
+                            { value: "personal", label: t("plans.individualCompletion") },
+                            { value: "shared", label: t("plans.sharedCompletion") }
+                        ]} val={value.completion_mode || "personal"}
+                            disabled={!editing || !plan.is_owner || saving || !!plan.completed_count || plan.status === "completed"}
+                            newVal={next => changeDraft("completion_mode", next as PlanInput["completion_mode"])}/>}
                         {plan.kind === "shared" && plan.completion_mode === "personal" &&
                             <p className="planCompletionProgress">{t("plans.completedParticipants", {
                                 done: plan.completed_count || 0, total: plan.participants_count || 1
