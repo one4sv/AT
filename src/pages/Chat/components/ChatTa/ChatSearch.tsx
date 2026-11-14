@@ -69,10 +69,8 @@ export default function ChatSearch ({searchedMessages, selectedIndex, setSelecte
                         <MagnifyingGlassIcon/>
                     )}
                 </div>
-                <div className="chatTaButts">
-                    <div className="chatWriteTAButt" onClick={() => setIsOpen(!isOpen)}>
-                        <List className="chatSend"/>
-                    </div>
+                <div className="chatWriteTAButt" onClick={() => setIsOpen(!isOpen)}>
+                    <List className="chatSend"/>
                 </div>
             </div>
         </>
