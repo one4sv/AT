@@ -100,6 +100,22 @@ export const PlansProvider = ({ children }: { children: ReactNode }) => {
         });
     }, [user.id, initialLoading, refreshPlans]);
 
+    useEffect(() => {
+        if (initialLoading || !user.id) return;
+        let lastRefresh = 0;
+        const refreshOnResume = () => {
+            if (document.visibilityState !== "visible" || Date.now() - lastRefresh < 1500) return;
+            lastRefresh = Date.now();
+            void refreshPlans().catch(() => {});
+        };
+        window.addEventListener("focus", refreshOnResume);
+        document.addEventListener("visibilitychange", refreshOnResume);
+        return () => {
+            window.removeEventListener("focus", refreshOnResume);
+            document.removeEventListener("visibilitychange", refreshOnResume);
+        };
+    }, [initialLoading, user.id, refreshPlans]);
+
     return <PlansContext.Provider value={{ plans, loadingPlans, refreshPlans, upsertPlan, setPin }}>{children}</PlansContext.Provider>;
 };
 

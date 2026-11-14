@@ -223,3 +223,11 @@ test("pending plan invitations are visible in SideMenu and the activity overview
     assert.match(overview, /await refreshPlans\(\)/);
     assert.match(overview, /plans\.invitationTitle/);
 });
+
+test("plan invitations refresh when a user returns to a tab", () => {
+    const context = read("src/components/context/PlansContext.tsx");
+    assert.match(context, /window\.addEventListener\("focus", refreshOnResume\)/);
+    assert.match(context, /document\.addEventListener\("visibilitychange", refreshOnResume\)/);
+    assert.match(context, /window\.removeEventListener\("focus", refreshOnResume\)/);
+    assert.match(context, /document\.visibilityState !== "visible"/);
+});
