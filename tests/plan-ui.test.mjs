@@ -251,3 +251,18 @@ test("plan heading edit and save icons cannot shrink due to inherited button pad
     assert.match(css, /> svg\s*\{[\s\S]*?width: 24px;\s*height: 24px;\s*flex: 0 0 24px;/);
     assert.match(css, /\.planHeading \.planHeadingSaveButton:disabled[\s\S]*?border: none;/);
 });
+
+test("plan invitation cancellation uses shared ConfirmAction instead of inline confirmation", () => {
+    const members = read("src/pages/Plan/PlanMembers.tsx");
+    const habit = read("src/pages/HabitPage/components/HabitInfo/HabitMembers.tsx");
+    const styles = read("src/pages/Plan/scss/PlanPage.scss");
+    assert.match(habit, /module: "ConfirmAction"/);
+    assert.match(members, /module: "ConfirmAction"/);
+    assert.match(members, /title: t\(pending \? "plans\.revokeInvitationConfirm" : "plans\.removeParticipantConfirm", \{ name \}\)/);
+    assert.match(members, /description: t\(pending \? "plans\.cannotAccept" : "plans\.loseAccess", \{ name \}\)/);
+    assert.match(members, /await api\.delete\("plans\/" \+ plan\.id \+ "\/members\/" \+ id\)/);
+    assert.match(members, /await onChanged\(\)/);
+    assert.match(members, /event\.stopPropagation\(\)/);
+    assert.doesNotMatch(members, /planMemberConfirm|setRemoving|removing ===/);
+    assert.doesNotMatch(styles, /\.planMemberConfirm/);
+});

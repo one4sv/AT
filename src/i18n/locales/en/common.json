@@ -884,6 +884,8 @@
     "revokeInvitation": "Withdraw invitation",
     "removeParticipantConfirm": "Remove {{name}} from this plan?",
     "revokeInvitationConfirm": "Withdraw invitation for {{name}}?",
+    "cannotAccept": "{{name}} will no longer be able to accept this invitation.",
+    "loseAccess": "{{name}} will lose access to the shared plan.",
     "searchContacts": "Search contacts",
     "noAvailableContacts": "No eligible contacts found",
     "loadingContacts": "Loading contacts...",

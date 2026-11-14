@@ -892,6 +892,8 @@
     "revokeInvitation": "Отменить приглашение",
     "removeParticipantConfirm": "Убрать {{name}} из плана?",
     "revokeInvitationConfirm": "Отменить приглашение для {{name}}?",
+    "cannotAccept": "{{name}} больше не сможет принять приглашение.",
+    "loseAccess": "{{name}} потеряет доступ к совместному плану.",
     "searchContacts": "Поиск по контактам",
     "noAvailableContacts": "Подходящих контактов не найдено",
     "loadingContacts": "Загрузка контактов...",
