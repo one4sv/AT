@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { CalendarBlankIcon, ClockIcon, MapPinIcon, CheckCircleIcon, CircleIcon, TrashIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon, ClockIcon, MapPinIcon, CheckCircleIcon, CircleIcon, TrashIcon, PencilSimpleIcon, CheckIcon } from "@phosphor-icons/react";
 import { api } from "../../components/ts/api";
 import { usePlans } from "../../components/hooks/PlansHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
@@ -41,7 +41,6 @@ export default function PlanPage() {
     const [draft, setDraft] = useState<PlanInput | null>(null);
     const [error, setError] = useState("");
     const [confirmDelete, setConfirmDelete] = useState(false);
-    const [completionOpen, setCompletionOpen] = useState(false);
 
     useEffect(() => {
         setMobileOpen("done");
@@ -50,7 +49,6 @@ export default function PlanPage() {
         setPlan(null);
         setError("");
         setConfirmDelete(false);
-        setCompletionOpen(false);
     }, [planId]);
     const load = async (showSkeleton = false) => {
         if (!planId) return;
@@ -104,7 +102,6 @@ export default function PlanPage() {
             completion_mode: plan.completion_mode || "personal",
             visibility: plan.visibility || "inherit"
         });
-        setCompletionOpen(false);
         setEditing(true);
     };
     function changeDraft<K extends keyof PlanInput>(key: K, next: PlanInput[K]) {
@@ -113,7 +110,6 @@ export default function PlanPage() {
     const stopEditing = () => {
         setEditing(false);
         setDraft(null);
-        setCompletionOpen(false);
     };
     const localDate = (date: Date) => [date.getFullYear(),
         String(date.getMonth() + 1).padStart(2, "0"),
@@ -256,7 +252,16 @@ export default function PlanPage() {
                                 readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
                                 value={value.name} onChange={event => changeDraft("name", event.target.value)}/>
                         </h1>
-                        {plan.status && plan.status !== "upcoming" && <span className="planStatus">{t("plans." + plan.status)}</span>}
+                        <div className="planHeadingActions">
+                            {plan.status && plan.status !== "upcoming" && <span className="planStatus">{t("plans." + plan.status)}</span>}
+                            {plan.is_owner && plan.status !== "canceled" && <button type="button"
+                                className={`planIconButton planHeadingEditButton ${editing ? "planHeadingSaveButton" : ""}`}
+                                aria-label={t(editing ? "plans.save" : "plans.edit")}
+                                disabled={saving || (editing && (!draft?.name.trim() || !draft.plan_date))}
+                                onClick={() => editing ? menuHandlers.current.save() : startEditing()}>
+                                {editing ? <CheckIcon size={20} weight="bold"/> : <PencilSimpleIcon size={20}/>}
+                            </button>}
+                        </div>
                     </div>
                     <div className="planMetadata planDateMetadata">
                         <CalendarBlankIcon size={20}/>
@@ -308,20 +313,7 @@ export default function PlanPage() {
                             value:mode,label:t("plans.visibility_" + mode)
                         }))} val={value.visibility || "inherit"} newVal={next => changeDraft("visibility",next as PlanInput["visibility"])}/>
                     </div>}
-                    <div className="planMetadata">{t("plans." + plan.kind)}
-                        {plan.kind === "shared" && <>
-                            {" · "}
-                            <span className={editing ? "planCompletionModeEditable" : ""} onClick={() => {
-                                if (editing) setCompletionOpen(previous => !previous);
-                            }}>{t("plans." + (value.completion_mode || "personal") + "Completion")}</span>
-                            {editing && completionOpen && <div className="planCompletionChoices">
-                                {(["personal", "shared"] as const).map(mode => <button key={mode} type="button"
-                                    onClick={() => { changeDraft("completion_mode", mode); setCompletionOpen(false); }}>
-                                    {t(mode === "personal" ? "plans.individualCompletion" : "plans.sharedCompletion")}
-                                </button>)}
-                            </div>}
-                        </>}
-                    </div>
+                    <div className="planMetadata">{t("plans." + plan.kind)}</div>
                     {confirmDelete && plan.is_owner && <div className="planDeleteConfirm">
                         <p>{t("plans.confirmDelete")}</p>
                         <div className="planActions">
@@ -330,18 +322,29 @@ export default function PlanPage() {
                                 onClick={() => void remove()}><TrashIcon size={20}/>{t("plans.delete")}</button>
                         </div>
                     </div>}
-                    {!isCompact && plan.membership_status === "accepted" && <div className="planInlineCompletion">
+                    {plan.membership_status === "accepted" && (!isCompact || plan.kind === "shared") && <div className="planInlineCompletion">
                         <h2>{t("plans.completion")}</h2>
+                        {plan.kind === "shared" && (editing && plan.is_owner ?
+                            <RadioGroup id="planCompletionMode" list={[
+                                { value: "personal", label: t("plans.individualCompletion") },
+                                { value: "shared", label: t("plans.sharedCompletion") }
+                            ]} val={value.completion_mode || "personal"} disabled={saving || !!plan.completed_count || plan.status === "completed"}
+                                newVal={next => changeDraft("completion_mode", next as PlanInput["completion_mode"])}/> :
+                            <span className="planCompletionMode">{t("plans." + (value.completion_mode || "personal") + "Completion")}</span>)}
                         {plan.kind === "shared" && plan.completion_mode === "personal" &&
-                            <p>{(plan.completed_count || 0) + "/" + (plan.participants_count || 1)}</p>}
-                        <PlanComment planId={plan.id} disabled={plan.status === "canceled"}/>
-                        {canComplete && <div className="doneButtDiv"><button className={"doneButt planDoneButton " +
+                            <p className="planCompletionProgress">{t("plans.completedParticipants", {
+                                done: plan.completed_count || 0, total: plan.participants_count || 1
+                            })}</p>}
+                        {!isCompact && <>
+                            <PlanComment planId={plan.id} disabled={plan.status === "canceled"}/>
+                            {canComplete && <div className="doneButtDiv"><button className={"doneButt planDoneButton " +
                             (plan.completed_for_me ? "dbComp" : "dbMark")}
                             disabled={saving} onClick={() => void action(() => api.post("plans/" + planId + "/complete",
                                 { completed: !plan.completed_for_me }))}>
                             {plan.completed_for_me ? <CheckCircleIcon size={20} weight="fill"/> : <CircleIcon size={20}/>}
                             {t(plan.completed_for_me ? "plans.undoCompletion" : "habitUi.complete")}
                         </button></div>}
+                        </>}
                     </div>}
                 </div>
                 {plan.membership_status === "pending" ? <div className="planSection">

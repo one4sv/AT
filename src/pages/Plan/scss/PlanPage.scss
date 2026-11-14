@@ -22,6 +22,29 @@
 .planHeading {
     justify-content: space-between;
 }
+.planHeadingActions {
+    display: flex;
+    align-items: center;
+    gap: .75vw;
+    flex-shrink: 0;
+}
+.planHeadingEditButton {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+}
+.planHeadingSaveButton,
+.planHeadingSaveButton:hover,
+.planHeadingSaveButton:active,
+.planHeadingSaveButton:focus-visible {
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--inner_text);
+    border: none;
+}
+.planHeadingSaveButton svg { color: var(--inner_text); }
+@media (max-width: 800px) {
+    .planHeadingActions { gap: 2vw; }
+}
 .planHeading h1 {
     font-size: 26px;
     margin: 0;
@@ -480,6 +503,14 @@
 .planInlineCompletion .doneButtDiv {
     margin-top: 1dvh;
 }
+.planCompletionMode {
+    display: block;
+    color: var(--borderWh);
+    margin: 0 0 .75dvh;
+}
+.planInlineCompletion .radioGroup { margin: 0 0 1dvh; }
+.planCompletionProgress { margin: .5dvh 0 1dvh; color: var(--borderWh); }
+
 .planInlineCompletion .planDoneButton {
     gap: .5vw;
 }
@@ -682,8 +713,7 @@
     overflow-wrap: anywhere;
     resize: none;
 }
-.planDetailsTag,
-.planMetadata:has(.planCompletionModeEditable) {
+.planDetailsTag {
     position: relative;
 }
 .planTagEdit {
@@ -692,8 +722,7 @@
     border: none;
     cursor: pointer;
 }
-.planTagChoices,
-.planCompletionChoices {
+.planTagChoices {
     position: absolute;
     top: 100%;
     left: 0;
@@ -722,9 +751,6 @@
             background: var(--menuButtHover);
         }
     }
-}
-.planCompletionModeEditable {
-    cursor: pointer;
 }
 
 

@@ -833,6 +833,7 @@
         "reminderInvalid": "Enter 1 to 10080 minutes",
         "daySummary": "Day summary",
         "completedCount": "Completed: {{done}} of {{total}}",
+        "completedParticipants": "Completed {{done}}/{{total}}",
         "remainingCount": "Remaining: {{count}}",
         "nextUp": "Up next",
         "emptyTimeline": "Nothing scheduled for this date",

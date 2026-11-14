@@ -4,7 +4,7 @@ import { usePageTitle } from "../hooks/PageContextHook";
 import useCompactLayout from "../hooks/utils/useCompactLayout";
 import { useLocation, useNavigate } from "react-router";
 import { useSettings } from "../hooks/SettingsHook";
-import { CheckIcon, DotsThreeOutlineVerticalIcon, TextIndentIcon } from "@phosphor-icons/react";
+import { DotsThreeOutlineVerticalIcon, TextIndentIcon } from "@phosphor-icons/react";
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { getHeaderScrollTarget } from "../ts/utils/pageScroll";
 import { requestContentRefresh } from "../ts/utils/contentRefresh";
@@ -36,7 +36,6 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     const isInInfo = location.pathname.startsWith("/info/");
     const isInfo = location.pathname === "/info";
     const planHeaderMenu = location.pathname.startsWith("/plan/") && headerMenu?.point === "plan" ? headerMenu : null;
-    const planEditing = planHeaderMenu?.options.type === "editing";
     const showPlanMenu = (x: number, y: number) => {
         if (planHeaderMenu) openMenu(x, y, planHeaderMenu.point, planHeaderMenu.options);
     };
@@ -95,14 +94,10 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                     {titleSuffix}
                 </div>
                 {rightAction}
-                {planHeaderMenu && <div role="button" tabIndex={0} className={`headerButt planHeaderActionsButt ${planEditing ? "planHeaderSaveButt" : ""}`}
-                    data-header-gesture="plan" aria-label={t(planEditing ? "plans.save" : "plans.management")}
+                {planHeaderMenu && <div role="button" tabIndex={0} className="headerButt planHeaderActionsButt"
+                    data-header-gesture="plan" aria-label={t("plans.management")}
                     onClick={event => {
                         event.stopPropagation();
-                        if (planEditing) {
-                            if (!planHeaderMenu?.options.disabled) planHeaderMenu?.options.onSave?.();
-                            return;
-                        }
                         const rect = event.currentTarget.getBoundingClientRect();
                         showPlanMenu(rect.left, rect.bottom + 6);
                     }}
@@ -114,14 +109,10 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                     onKeyDown={event => {
                         if (event.key !== "Enter" && event.key !== " ") return;
                         event.preventDefault();
-                        if (planEditing) {
-                            if (!planHeaderMenu?.options.disabled) planHeaderMenu?.options.onSave?.();
-                            return;
-                        }
                         const rect = event.currentTarget.getBoundingClientRect();
                         showPlanMenu(rect.left, rect.bottom + 6);
                     }}>
-                    {planEditing ? <CheckIcon weight="bold"/> : <DotsThreeOutlineVerticalIcon weight="fill"/>}
+                    <DotsThreeOutlineVerticalIcon weight="fill"/>
                 </div>}
             </div>
         </>
