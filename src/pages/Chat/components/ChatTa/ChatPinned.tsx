@@ -15,13 +15,13 @@ export default function ChatPinned() {
         setShowList,
         mouseDown,
         mouseUp,
-        scrollToPin,
+        advancePin,
     } = usePinnedMessages()
 
     return (
         <>
             <div className="pmsMain">
-                <div className="pmsShowNow" onClick={() => scrollToPin(currentpm, showNow)}>
+                <div className="pmsShowNow" onClick={advancePin}>
                     <span className="pmsSender">
                         {currentpm?.sender_id === user.id ? t("chatUi.you") : currentpm?.sender_name || currentpm?.sender_nick}: 
                     </span>

@@ -18,6 +18,7 @@ interface PinnedMessagesContextType {
     mouseDown: () => void
     mouseUp: () => void
     scrollToPin: (pm: message | undefined, index: number) => void
+    advancePin: () => void
 }
 
 const PinnedMessagesContext = createContext<PinnedMessagesContextType | null>(null)
@@ -137,6 +138,12 @@ export function PinnedMessagesProvider({ children }: {children: ReactNode}) {
         scrollToMessage(pm.id)
     }
 
+    const advancePin = () => {
+        if (!pms.length) return
+        const nextIndex = (showNow + 1) % pms.length
+        scrollToPin(pms[nextIndex], nextIndex)
+    }
+
     return (
         <PinnedMessagesContext.Provider
             value={{
@@ -152,6 +159,7 @@ export function PinnedMessagesProvider({ children }: {children: ReactNode}) {
                 mouseDown,
                 mouseUp,
                 scrollToPin,
+                advancePin,
             }}
         >
             {children}
