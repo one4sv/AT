@@ -296,13 +296,19 @@ export default function PlanPage() {
                             return tag ? <><tag.icon size={20}/>{tag.label}</> : null;
                         })()}
                     </div>}
-                    {(plan.description || editing) && <TA id="planInlineDescription"
-                        className="planDetailsInput planDescriptionText planDetailsDescription"
-                        aria-label={t("plans.description")} maxLength={1200} minHeight={0} maxHeight={22}
-                        readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
-                        value={value.description || ""}
-                        onChange={event => changeDraft("description", event.target.value)}/>}
-                    {editing && plan.is_owner && <div className="planMetadata planVisibility">
+                    <div className="planMetadata planMetadataVertical">
+                        {(plan.description || editing) && 
+                            <TA id="planInlineDescription"
+                                placeholder="Описание"
+                                className="planDetailsInput planDescriptionText planDetailsDescription"
+                                aria-label={t("plans.description")} maxLength={1200} minHeight={0} maxHeight={22}
+                                readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
+                                value={value.description || ""}
+                                onChange={event => changeDraft("description", event.target.value)}
+                            />
+                        }
+                    </div>
+                    {editing && plan.is_owner && <div className="planMetadata planVisibility planMetadataVertical">
                         <div className="settingSpan">{t("plans.visibility")}</div>
                         <RadioGroup id="planDetailVisibility" list={["inherit","nobody","contacts","all","link"].map(mode => ({
                             value:mode,label:t("plans.visibility_" + mode)
@@ -374,6 +380,7 @@ export default function PlanPage() {
                 </div>}
                 <PlanComment planId={plan.id} mobile
                     open={canComplete ? mobileOpen : "comment"} setOpen={setMobileOpen}/>
-            </div>}
+            </div>
+        }
     </div>;
 }

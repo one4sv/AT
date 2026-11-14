@@ -43,6 +43,14 @@
     margin: 1dvh 0;
     color: var(--tc);
     overflow-wrap: anywhere;
+    &.planMetadataVertical {
+        flex-direction: column;
+        align-items: start;
+        >.settingSpan {
+            margin-bottom: 0;
+            padding-left: 0;
+        }
+    }
 }
 .planDescriptionText {
     white-space: pre-wrap;
@@ -638,6 +646,9 @@
     box-sizing: border-box;
     border-radius: 0;
     -webkit-text-fill-color: currentColor;
+    &::placeholder {
+        color: var(--borderHabit);
+    }
 }
 
 .planMainSection .planDetailsInput[readonly],
