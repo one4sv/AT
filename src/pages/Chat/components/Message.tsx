@@ -263,7 +263,10 @@ export default function Message({
                     {m.sender_name}
                 </div>}
                 {answer && scrollToMessage && <AnswerMess answer={answer} scrollToMessage={scrollToMessage} />}
-                {m.habit_invite_habit_id && m.habit_invite_recipient_id ? <HabitInvitation messageId={m.id} recipientId={m.habit_invite_recipient_id} /> : !!m.content?.trim() && <div className={`messageText ${isMobile ? "mobile" : ""}`}>
+                {m.plan_invite_plan_id && m.plan_invite_recipient_id ?
+                    <HabitInvitation messageId={m.id} recipientId={m.plan_invite_recipient_id} kind="plan"/> :
+                    m.habit_invite_habit_id && m.habit_invite_recipient_id ?
+                    <HabitInvitation messageId={m.id} recipientId={m.habit_invite_recipient_id}/> : !!m.content?.trim() && <div className={`messageText ${isMobile ? "mobile" : ""}`}>
                     <HighlightText text={m.content} search={searchMess} />
                 </div>}
                 {m.files && m.files.length > 0 && <MessageFiles files={m.files} m={m} />}

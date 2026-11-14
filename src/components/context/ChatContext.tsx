@@ -63,6 +63,8 @@ export interface message {
     target_id: string | null;
     habit_invite_habit_id?: number | null;
     habit_invite_recipient_id?: string | null;
+    plan_invite_plan_id?: number | null;
+    plan_invite_recipient_id?: string | null;
     isPending?: boolean;
     clientId?: number;
     animateIn?: boolean;
@@ -451,8 +453,11 @@ export const ChatProvider = ({
                 if (data.type === "MESSAGE_DELETED") {
                     setMessages(prev => prev.filter(m => String(m.id) !== String(data.messageId)));
                 }
-                if (data.type === "HABIT_INVITATION_UPDATED") {
-                    window.dispatchEvent(new CustomEvent("habit-invitation-updated", { detail: data.message.id }));
+                if (data.type === "HABIT_INVITATION_UPDATED" || data.type === "PLAN_INVITATION_UPDATED") {
+                    window.dispatchEvent(new CustomEvent(
+                        data.type === "PLAN_INVITATION_UPDATED" ? "plan-invitation-updated" : "habit-invitation-updated",
+                        { detail: data.message.id }
+                    ));
                 }
                 if (data.type === "MESSAGE_EDITED") {
                     setMessages(
