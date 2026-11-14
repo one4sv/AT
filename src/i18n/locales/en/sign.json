@@ -39,6 +39,13 @@
         "createAccount": "Create account",
         "signIn": "Sign in"
     },
+    "verification": {
+        "resend": "Resend code",
+        "resendAfter": "Resend available in",
+        "resending": "Sending code…",
+        "resendSuccess": "A new code has been sent",
+        "resendError": "Could not resend the code. Please try again later"
+    },
     "controls": {
         "showPassword": "Show password",
         "hidePassword": "Hide password"

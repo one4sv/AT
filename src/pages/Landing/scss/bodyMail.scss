@@ -11,6 +11,33 @@
     min-height: 100%;
     padding: 28px 20px;
 }
+.landingResendWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    text-align: center;
+    >.landingEmailHint { margin: 0; }
+    >.inpExtraSpan { justify-content: center; }
+}
+.landingResendButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    max-width: 100%;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 12px;
+    background: var(--interact);
+    color: var(--accent_text);
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    &:hover:not(:disabled) { background: var(--accent_hov); }
+    &:disabled { opacity: .65; cursor: default; }
+}
 .emailCodeWrapper {
     display: flex;
     flex-direction: column;

@@ -39,6 +39,13 @@
         "createAccount": "Создать аккаунт",
         "signIn": "Войти"
     },
+    "verification": {
+        "resend": "Отправить код повторно",
+        "resendAfter": "Повторная отправка через",
+        "resending": "Отправляем код…",
+        "resendSuccess": "Новый код отправлен на почту",
+        "resendError": "Не удалось отправить код. Попробуйте позже"
+    },
     "controls": {
         "showPassword": "Показать пароль",
         "hidePassword": "Скрыть пароль"
