@@ -834,6 +834,7 @@
         "daySummary": "Day summary",
         "completedCount": "Completed: {{done}} of {{total}}",
         "completedParticipants": "Completed {{done}}/{{total}}",
+        "invitationTitle": "Plan invitations",
         "remainingCount": "Remaining: {{count}}",
         "nextUp": "Up next",
         "emptyTimeline": "Nothing scheduled for this date",

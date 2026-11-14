@@ -211,3 +211,15 @@ test("completion mode and editing action keep menu independent", () => {
     assert.doesNotMatch(header, /planEditing|planHeaderSaveButt/);
     assert.match(header, /<DotsThreeOutlineVerticalIcon weight="fill"\/>/);
 });
+
+test("pending plan invitations are visible in SideMenu and the activity overview", () => {
+    const list = read("src/components/ts/SM/HabitsList.tsx");
+    const ctx = read("src/components/context/SideMenuContext.tsx");
+    const overview = read("src/pages/HabitPage/components/HabitInfo/HabitInvitations.tsx");
+    assert.match(list, /pendingPlans\.map\(plan => <Link/);
+    assert.match(list, /to=\{"\/plan\/" \+ plan\.id\}/);
+    assert.match(ctx, /const pendingCount = plans\.filter/);
+    assert.match(overview, /api\.post\(\x60plans\/\$\{id\}\/respond\x60, \{ status \}\)/);
+    assert.match(overview, /await refreshPlans\(\)/);
+    assert.match(overview, /plans\.invitationTitle/);
+});

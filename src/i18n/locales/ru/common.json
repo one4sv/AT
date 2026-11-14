@@ -842,6 +842,7 @@
         "daySummary": "Итоги дня",
         "completedCount": "Выполнено: {{done}} из {{total}}",
         "completedParticipants": "Выполнили {{done}}/{{total}}",
+        "invitationTitle": "Приглашения в планы",
         "remainingCount": "Осталось: {{count}}",
         "nextUp": "Следующее",
         "emptyTimeline": "На выбранную дату ничего нет",

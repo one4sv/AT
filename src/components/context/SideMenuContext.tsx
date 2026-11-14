@@ -202,9 +202,10 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
             }
         }
 
-        if (plans.some(plan => plan.membership_status !== "pending" &&
-            plan.status !== "canceled")) {
-            filters.splice(1, 0, { label: t("plans.title"), value: "plans", new: "0" });
+        const pendingCount = plans.filter(plan => plan.membership_status === "pending").length;
+        if (pendingCount || plans.some(plan => plan.status !== "canceled")) {
+            filters.splice(1, 0, { label: t("plans.title"), value: "plans",
+                new: pendingCount ? String(pendingCount) : "0" });
         }
         setHabitsFilters(filters);
 
