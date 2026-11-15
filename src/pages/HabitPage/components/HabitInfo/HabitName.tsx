@@ -10,6 +10,7 @@ import { DotsThreeOutlineVerticalIcon, TextIndentIcon } from "@phosphor-icons/re
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook"
 import useCompactLayout from "../../../../components/hooks/utils/useCompactLayout"
 import { useSettings } from "../../../../components/hooks/SettingsHook"
+import { useUser } from "../../../../components/hooks/UserHook"
 import { useContextMenu } from "../../../../components/hooks/ContextMenuHook"
 import useHeaderMenuGestures from "../../../../components/hooks/utils/useHeaderMenuGestures"
 import { isMobile } from "react-device-detect"
@@ -26,6 +27,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:Habit
     const { calendar } = useCalendar()
     const { openSideMenu } = useSideMenu()
     const { layout } = useSettings()
+    const { user } = useUser()
     const isCompact = useCompactLayout()
     const { openMenu, menu, closeMenu } = useContextMenu()
     const headerGestures = useHeaderMenuGestures()
@@ -50,7 +52,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:Habit
     
     return (
         <div className={`headerDiv ${showHabitMenu ? "br" : ""}`} ref={habitNameRef} {...headerGestures}>
-            {(isCompact || layout === "hidden") && (
+            {(isCompact || layout === "hidden" || !user.id) && (
                 <div className="headerButt" data-header-gesture="quick"
                     onContextMenu={e => {
                         e.preventDefault()

@@ -395,6 +395,7 @@ test("guest SideMenu stays mounted but hidden until opened manually", async ({ p
     await page.addInitScript(() => {
         localStorage.setItem("at_startup_preferences", JSON.stringify({ settings_mobile_start_menu: true }));
         localStorage.setItem("settings_mobile_start_menu", "true");
+        localStorage.setItem("settings_layout", JSON.stringify("always"));
     });
     await page.route("**/api/user", route => route.fulfill({
         status: 401, contentType: "application/json", body: JSON.stringify({ success: false })
@@ -410,10 +411,13 @@ test("guest SideMenu stays mounted but hidden until opened manually", async ({ p
     await expect.poll(() => menu.evaluate(element => Math.round(element.getBoundingClientRect().right))).toBeLessThanOrEqual(1);
     await expect(menu).toHaveCSS("visibility", "hidden");
     const menuButton = page.locator(".headerDiv .headerButt").first();
-    if (await menuButton.isVisible()) {
-        await menuButton.click();
-        await expect(menu).toHaveClass(/\bopen\b/);
-        await expect(menu).toHaveCSS("visibility", "visible");
-        await expect.poll(() => menu.evaluate(element => Math.round(element.getBoundingClientRect().right))).toBeGreaterThan(1);
-    }
+    await expect(menuButton).toBeVisible();
+    await menuButton.click();
+    await expect(menu).toHaveClass(/\bopen\b/);
+    await expect(menu).toHaveCSS("visibility", "visible");
+    await expect.poll(() => menu.evaluate(element => Math.round(element.getBoundingClientRect().right))).toBeGreaterThan(1);
+    await expect(page.locator(".sideMenuUnAthorised .greenButt")).toBeVisible();
+    await page.goto("/info/roadmap");
+    await expect(page.locator(".sideMenuUnAthorised")).toBeAttached();
+    await expect(page.locator(".headerDiv .headerButt").first()).toBeVisible();
 });

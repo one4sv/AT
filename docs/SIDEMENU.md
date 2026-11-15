@@ -228,6 +228,11 @@ SMnav всегда показывает реальные четыре кнопк
 
 **Важно про стили:** у `.habitInfo` (`src/scss/SM/habitsList.scss`) единый `margin-left: 5px` для обеих строк, включая mobile. Не ставить отступ отдельно только на `.habitNameText` и не обнулять `.habitInfo`. `.habitNameText` в `src/pages/HabitPage/scss/HabitName.scss` — другой контекст: строка `margin-left: .5vw` там удалена прямым указанием автора (коммит [`55c91b0`](https://github.com/one4sv/AT/commit/55c91b0abd4a0637ec9c12fa8577dc8c8fb6f250)); не восстанавливать её и не переносить стили заголовка на SM. Перед изменением одноимённых классов проверять область DOM.
 
+
+## 15.11.2026 — гостевое SideMenu доступно на страницах при desktop «Всегда»
+
+Гостевое `SideMenuUnAunthificated` уже оставалось в DOM и было правильно **закрыто при открытии страницы** (`showSideMenu=false`, `translateX=-100`, `visibility:hidden`). Но на ПК при `settings_layout="always"` общий `Header`, заголовок `HabitName` и `ChatUser` не показывали кнопку `openSideMenu`, из-за чего гость не мог раскрыть панель. Условие видимости кнопки теперь `isMobile || layout === "hidden" || !user.id`; авторизованный интерфейс и старые жесты не меняются. На гостевых маршрутах `/info` и `/info/roadmap` проверяются DOM, закрытое стартовое состояние и ручное открытие. Не возвращать автоматическое раскрытие гостевого SM и не убирать компонент из DOM.
+
 ## 12.11.2026 — SideMenu у гостя
 
 - Изначальное состояние SM до завершения авторизации и для `user.id === null` — `showSideMenu=false`, `translateX=-100`; флаг `showMobileMenuOnStart` и обычный desktop layout не могут автоматически открыть SM гостю.

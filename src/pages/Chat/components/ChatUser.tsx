@@ -110,7 +110,7 @@ export default function ChatUser() {
 
     return (
         <div className="headerDiv" ref={chatUserRef} {...headerGestures}>
-            {isMobile || layout === "hidden" ? (
+            {isMobile || layout === "hidden" || !user.id ? (
                 <div className="headerButt"
                     data-header-gesture="quick"
                     onContextMenu={e => {
