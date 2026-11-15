@@ -417,6 +417,9 @@ test("guest SideMenu stays mounted but hidden until opened manually", async ({ p
     await expect(menu).toHaveCSS("visibility", "visible");
     await expect.poll(() => menu.evaluate(element => Math.round(element.getBoundingClientRect().right))).toBeGreaterThan(1);
     await expect(page.locator(".sideMenuUnAthorised .greenButt")).toBeVisible();
+    await page.locator(".headerDiv .headerTitle").click();
+    await expect(menu).not.toHaveClass(/\bopen\b/);
+    await expect(menu).toHaveCSS("visibility", "hidden");
     await page.goto("/info/roadmap");
     await expect(page.locator(".sideMenuUnAthorised")).toBeAttached();
     await expect(page.locator(".headerDiv .headerButt").first()).toBeVisible();

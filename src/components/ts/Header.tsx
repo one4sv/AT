@@ -26,7 +26,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     const { openSideMenu } = useSideMenu();
     const { openMenu } = useContextMenu();
     const { layout } = useSettings();
-    const { user } = useUser();
+    const { user, initialLoading } = useUser();
     const {
         title,
         titleIcon,
@@ -68,7 +68,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     return (
         <>
             <div className={`headerDiv ${hideHeader ? "hide" : ""}`} {...headerGestures}>
-                {!hideMenuButton && (isMobile || layout === "hidden" || !user.id) ? <div
+                {!hideMenuButton && (isMobile || layout === "hidden" || (!initialLoading && !user.id)) ? <div
                     className="headerButt"
                     data-header-gesture="quick"
                     onContextMenu={e => {

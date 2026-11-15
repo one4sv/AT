@@ -174,7 +174,7 @@ export default function SideMenu() {
     useEffect(
         () => {
             const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-                if (isMobile || layout !== "hidden" || !showSideMenu || menu.visible) return;
+                if (isMobile || (layout !== "hidden" && !!user.id) || !showSideMenu || menu.visible) return;
                 // SMnav and SMheader belong to the SideMenu as a logical component,
                 // even though the layout renders them beside .sideMenu in the DOM.
                 const target = event.target;
@@ -188,7 +188,7 @@ export default function SideMenu() {
                 document.removeEventListener("mousedown", handleClickOutside);
             };
         },
-        [layout, showSideMenu, closeMenu, menu.visible, isMobile, studio]
+        [layout, showSideMenu, closeMenu, menu.visible, isMobile, studio, user.id]
     );
     if (!isAuthenticated && !loadingUser) {
         return <SideMenuUnAunthificated
