@@ -256,6 +256,13 @@ export default function ChatTextArea({
         setRetryingFailedId(null);
     }, [draftKey]);
     useEffect(() => {
+        createdQuick.current = null;
+        setQuickDraft(null);
+        setPreviewCommand(null);
+        setCommandListDismissed(false);
+        setActiveSuggestion(0);
+    }, [location.pathname, user.id]);
+    useEffect(() => {
         const targetReady = !chatLoading && !!chatWith && (id
             ? chatWith.is_group && String(chatWith.id) === id
             : !chatWith.is_group && chatWith.nick === nick);
