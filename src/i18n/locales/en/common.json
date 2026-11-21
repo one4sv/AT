@@ -190,7 +190,7 @@
     "failedMessage": "Unsent message",
     "retryMessage": "Retry sending",
     "discardFailedMessage": "Discard unsent message",
-    "savedPlaceholder": "Message, note, or type / for commands",
+    "savedPlaceholder": "Text, note or /",
     "quickCommands": {
       "action": "Commands",
       "createActivity": "Create activity",
@@ -198,7 +198,17 @@
       "actTemplate": "/act name: ; description: ; periodicity: everyday; start: ; end: ",
       "planTemplate": "/plan name: ; description: ; date: ; start: ; end: ",
       "aria": "Choose a command",
-      "select": "Insert template"
+      "select": "Insert template",
+      "activityCreated": "Activity created",
+      "saving": "Creating...",
+      "enterHint": "Enter — next field; last — create · Backspace — previous",
+      "nameRequired": "Enter a name",
+      "dateRequired": "Select a date",
+      "invalidDays": "Enter weekday numbers from 0 to 6 separated by commas",
+      "days": "Weekdays",
+      "daysPlaceholder": "1,3,5 (Mon, Wed, Fri)",
+      "messageFailed": "Created, but the card was not sent. Try again to send only the card.",
+      "createFailed": "Could not create item. Check the fields."
     },
     "savedCreatePlan": "Create a plan from text",
     "savedCreateActivity": "Create an activity from text"

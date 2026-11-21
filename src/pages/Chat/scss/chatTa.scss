@@ -532,3 +532,115 @@
         padding-inline-end: 5vh;
     }
 }
+
+.chatWriteBar.inputWithEmoji > .chatQuickComposer {
+    width: 100%;
+    max-height: min(44dvh, 440px);
+    padding: .75dvh 1vw;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+}
+.chatQuickComposer {
+    display: flex;
+    flex-direction: column;
+    gap: .55dvh;
+    color: var(--tc);
+    font-size: 16px;
+
+    .chatQuickCommandName {
+        align-self: flex-start;
+        background: var(--accent_highlight);
+        border-radius: 7px;
+        padding: .15dvh .35vw;
+        color: var(--tc);
+    }
+    label, .chatQuickChoice {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: .7vw;
+        > span {
+            flex: none;
+            padding: .2vh .35vw;
+            background: var(--accent_highlight);
+            border-radius: 6px;
+            white-space: nowrap;
+            color: var(--tc);
+        }
+        > input, > textarea, .chatQuickPeriod {
+            flex: 1;
+            min-width: 0;
+            width: 100%;
+            max-height: 12dvh;
+            min-height: 3.3dvh;
+            border: 0;
+            border-radius: 8px;
+            padding: .45dvh .6vw;
+            background: transparent;
+            color: var(--tc);
+            font: inherit;
+            box-sizing: border-box;
+            outline: none;
+            &:focus-visible {
+                background: var(--mc);
+                box-shadow: inset 0 -1px var(--accent_text);
+            }
+        }
+        textarea {
+            resize: none;
+            scrollbar-width: thin;
+        }
+        input[type="date"], input[type="time"] {
+            color-scheme: inherit;
+        }
+        .chatQuickPeriod {
+            padding: 0;
+            > input {
+                width: 100%;
+                padding: .45dvh .6vw;
+                box-sizing: border-box;
+                font: inherit;
+                color: var(--tc);
+                border-radius: 8px;
+                background: transparent;
+            }
+        }
+    }
+    .chatQuickTimeRow {
+        display: flex;
+        gap: 1vw;
+        > label {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: .25dvh;
+            > input {
+                min-height: 4.2dvh;
+            }
+        }
+    }
+    .chatQuickHelp {
+        color: var(--borderWh);
+        font-size: 13px;
+    }
+    @media (max-width: 800px) {
+        padding: 0;
+        gap: .85dvh;
+        label, .chatQuickChoice {
+            gap: 2vw;
+            > span { padding: .2vh 1vw; }
+            > input, > textarea, .chatQuickPeriod {
+                padding: .4vh 1vw;
+            }
+        }
+        .chatQuickTimeRow { gap: 2vw; }
+    }
+}
+.chatWriteTAButt.quickSending {
+    opacity: .55;
+    pointer-events: none;
+}

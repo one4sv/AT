@@ -4,7 +4,9 @@
     gap: .4dvh;
     padding: .65dvh .5vw;
     border-radius: 24px;
-    background: var(--bgc);
+    background: var(--mc);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     border: 1px solid var(--block_border);
     max-height: min(42dvh, 320px);
     overflow-y: auto;

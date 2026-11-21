@@ -40,7 +40,7 @@ export default function QuickCommandComposer({ draft, onChange, onSubmit, onCanc
             event.preventDefault();
             if (index === fields.length - 1) onSubmit();
             else fields[index + 1].focus({ preventScroll: true });
-        } else if (event.key === "Backspace" && !target.value && !target.readOnly) {
+        } else if (event.key === "Backspace" && !target.value) {
             event.preventDefault();
             if (index === 0) onCancel();
             else fields[index - 1].focus({ preventScroll: true });
