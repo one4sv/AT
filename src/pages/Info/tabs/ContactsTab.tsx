@@ -33,6 +33,9 @@ export default function ContactsTab() {
             <h3 className="accent">{t("contacts.social")}</h3>
 
             <div className="contactsWrapper">
+                <a className="contact" href="https://one4sv.studio/" target="_blank" rel="noopener noreferrer">
+                    one4sv.studio
+                </a>
                 <Link className="contact" to="https://github.com/one4sv">
                     <img src={isDark ? GithubWhite : GithubLogo} />
                     GitHub
