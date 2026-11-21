@@ -58,9 +58,10 @@
         color: #52e914;
     }
     .studioLogoFour {
-        font-size: 1.13em;
         margin-left: .012em;
         letter-spacing: inherit;
+        transform: scale(1.13);
+        transform-origin: center bottom;
     }
     &.studioLogoDark .studioLogoAccent {
         color: #6dfb20;
