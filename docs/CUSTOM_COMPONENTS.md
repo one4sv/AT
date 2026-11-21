@@ -6,6 +6,8 @@
 
 Смежные правила: [RELEASE_QA.md](RELEASE_QA.md), [CODE_STYLE.md](CODE_STYLE.md), [SCSS_GUIDE.md](SCSS_GUIDE.md), [CONTINUE.md](CONTINUE.md), [AGENTS.md](../AGENTS.md). Главные каталоги — `src/components/ts/`, `src/components/ts/utils/`, `src/components/modules/`, `src/components/hooks/`. Контейнеры конкретных страниц находятся в `src/pages/`.
 
+**Универсальный список подсказок:** `src/components/ts/EntitySuggestionList.tsx` и `src/scss/entitySuggestionList.scss`. Он принимает список элементов с `id`/`label`/`icon`/`description`, индикатор выбранного, обработчики выбора и предпросмотра. Подходит для будущих `@`, сущностей и поиска: не создавать отдельные JSX-списки для пользователей, активностей и планов. Сейчас используется в командах `/act` и `/plan` внутри «Избранного».
+
 ## Быстрый выбор компонента
 
 | Нужен элемент | Использовать | Исходник / стили |

@@ -1,0 +1,75 @@
+.entitySuggestionList {
+    display: flex;
+    flex-direction: column;
+    gap: .4dvh;
+    padding: .65dvh .5vw;
+    border-radius: 24px;
+    background: var(--bgc);
+    border: 1px solid var(--block_border);
+    max-height: min(42dvh, 320px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    box-shadow: 0 8px 28px #00000025;
+
+    @media (max-width: 800px) {
+        padding: .75dvh 2vw;
+        max-height: 35dvh;
+    }
+}
+
+.entitySuggestionItem {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1dvh 1vw;
+    border: none;
+    border-radius: 18px;
+    color: var(--tc);
+    background: transparent;
+    text-align: left;
+    gap: 1vw;
+    cursor: pointer;
+    font-size: 16px;
+
+    &:hover, &.active {
+        background: var(--interact);
+    }
+    @media (max-width: 800px) {
+        gap: 3vw;
+        padding: 1.1dvh 2vw;
+    }
+}
+.entitySuggestionIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent_text);
+    flex: none;
+    > svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+.entitySuggestionContent {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+    gap: .25dvh;
+}
+.entitySuggestionTitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.entitySuggestionDescription {
+    font-size: 13px;
+    color: var(--borderWh);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.entitySuggestionSuffix {
+    flex: none;
+    color: var(--borderWh);
+}

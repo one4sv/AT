@@ -14,7 +14,8 @@ export default function AddPlan() {
     const { chosenDay, setChosenDay } = useCalendar();
     const { refreshPlans, upsertPlan } = usePlans();
     const navigate = useNavigate();
-    const { setBlackout } = useBlackout();
+    const { blackout, setBlackout } = useBlackout();
+    const draft = blackout.commandDraft?.kind === "plan" ? blackout.commandDraft : undefined;
     const { showNotification } = useNote();
     const [saving, setSaving] = useState(false);
 
@@ -41,6 +42,12 @@ export default function AddPlan() {
             setSaving(false);
         }
     };
-    return <PlanEditor modal initialDate={chosenDay} saving={saving} onSave={create}
+    return <PlanEditor modal initialDate={draft?.date || chosenDay} initialDraft={draft ? {
+        name: draft.name,
+        description: draft.description,
+        start_time: draft.startTime,
+        end_time: draft.endTime,
+        tag: draft.tag
+    } : undefined} saving={saving} onSave={create}
         onClose={() => setBlackout({ seted: false })}/>;
 }

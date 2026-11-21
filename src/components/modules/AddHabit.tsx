@@ -19,15 +19,16 @@ import { api } from "../ts/api";
 const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     const { t } = useTranslation("common");
     const { refetchHabits } = useHabits()
-    const { setBlackout } = useBlackout()
+    const { blackout, setBlackout } = useBlackout()
+    const draft = blackout.commandDraft?.kind === "habit" ? blackout.commandDraft : undefined
     const { showNotification } = useNote()
 
-    const [ name, setName ] = useState<string>("")
-    const [ desc, setDescription ] = useState<string>("")
-    const [ selectedperiodicity, setSelectedperiodicity ] = useState<string | number | undefined>()
-    const [ startTime, setStartTime ] = useState<string>("")
-    const [ endTime, setEndTime ] = useState<string>("") 
-    const [ selectedTag, setSelectedTag ] = useState<string | undefined>()
+    const [ name, setName ] = useState<string>(draft?.name?.slice(0, 40) || "")
+    const [ desc, setDescription ] = useState<string>(draft?.description?.slice(0, 120) || "")
+    const [ selectedperiodicity, setSelectedperiodicity ] = useState<string | number | undefined>(draft?.periodicity)
+    const [ startTime, setStartTime ] = useState<string>(draft?.startTime || "")
+    const [ endTime, setEndTime ] = useState<string>(draft?.endTime || "") 
+    const [ selectedTag, setSelectedTag ] = useState<string | undefined>(draft?.tag)
     const [ cycle_days_active, setCycleDaysActive ] = useState("");
     const [ cycle_days_rest, setCycleDaysRest ] = useState("");
     const [ chosenDays, setChosenDays ] = useState(initialChosenDays)
@@ -113,12 +114,12 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
         <div className={`addHabitDiv ${isMobile ? "mobile" : ""}`} ref={ref}>
             <div className="addHabitWrapper">
                 <label htmlFor="inputName">{t("habitUi.name")}</label>
-                <input type="text" id="inputName" className="inputName addHabitInput" maxLength={40} onChange={(e)=>setName(e.currentTarget.value)}/>
+                <input type="text" id="inputName" className="inputName addHabitInput" maxLength={40} value={name} onChange={(e)=>setName(e.currentTarget.value)}/>
                 <span>{name.length}/40</span>
             </div>
             <div className="addHabitWrapper">
                 <label htmlFor="inputDesc">{t("habitUi.description")}</label>
-                <TA id="inputDesc" className="inputDesc addHabitInput" maxLength={120} taRef={textAreaRef}onChange={(e) => setDescription(e.currentTarget.value)}></TA>
+                <TA id="inputDesc" className="inputDesc addHabitInput" maxLength={120} taRef={textAreaRef} value={desc} onChange={(e) => setDescription(e.currentTarget.value)}></TA>
                 <span>{desc.length}/120</span>
             </div>            
             <div className="addHabitWrapper">
@@ -126,7 +127,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             </div>
             <div className="inpWrapperAddHabit">
                 <label htmlFor="addHabitSL">{t("habitUi.periodicity")}</label>
-                <SelectList id="addHabitSL" placeholder="" className="redHabitSL" chevron={true} arr={periodicityArr} hide={true} prop={setSelectedperiodicity} readOnly={true} extraFunction={clearInputPer} selected={undefined}/>
+                <SelectList id="addHabitSL" placeholder="" className="redHabitSL" chevron={true} arr={periodicityArr} hide={true} prop={setSelectedperiodicity} readOnly={true} extraFunction={clearInputPer} selected={selectedperiodicity}/>
                 <div className="settingHint">
                     {selectedperiodicity && t(`habitUi.periodHint.${selectedperiodicity}`)}
                 </div>

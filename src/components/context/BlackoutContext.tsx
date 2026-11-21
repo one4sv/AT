@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import { type ReactNode } from "react";
+import type { QuickCreateDraft } from "../ts/utils/quickCreateCommand";
 
 const BlackoutContext = createContext<BlackoutContextType | null>(null);
 
@@ -8,6 +9,7 @@ export interface Blackout {
     confirmAction?: { title: string; description: string; label?: string; run: () => Promise<void> };
     feedback?: { targetType: "account" | "post" | "message" | "comment" | "activity"; targetId: string; targetName?: string; targetUrl?: string };
     module?: string;
+    commandDraft?: QuickCreateDraft;
     pick?: File;
     bg?: File;
     img?: string;

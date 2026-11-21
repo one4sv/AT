@@ -31,9 +31,10 @@ const localDate = (date: Date) => {
     const day = String(date.getDate()).padStart(2, "0");
     return [year, month, day].join("-");
 };
-export default function PlanEditor({ initial, initialDate, modal = false, saving, onSave, onClose }: {
+export default function PlanEditor({ initial, initialDate, initialDraft, modal = false, saving, onSave, onClose }: {
     initial?: OneOffPlan;
     initialDate?: string;
+    initialDraft?: Partial<PlanInput>;
     modal?: boolean;
     saving: boolean;
     onSave: (input: PlanInput) => Promise<void>;
@@ -42,14 +43,14 @@ export default function PlanEditor({ initial, initialDate, modal = false, saving
     const { t } = useTranslation("common");
     const { timeZone } = useSettings();
     const [value, setValue] = useState<PlanInput>({
-        name: initial?.name || "",
-        description: initial?.description || "",
+        name: initialDraft?.name ?? initial?.name ?? "",
+        description: initialDraft?.description ?? initial?.description ?? "",
         plan_date: initial?.plan_date || initialDate || todayStrFunc(),
-        start_time: initial?.start_time?.slice(0, 5) || null,
-        end_time: initial?.end_time?.slice(0, 5) || null,
+        start_time: initialDraft?.start_time ?? initial?.start_time?.slice(0, 5) ?? null,
+        end_time: initialDraft?.end_time ?? initial?.end_time?.slice(0, 5) ?? null,
         timezone: initial?.timezone || resolveTimeZone(timeZone),
         place: initial?.place || "",
-        tag: initial?.tag || null,
+        tag: initialDraft?.tag ?? initial?.tag ?? null,
         kind: initial?.kind || "personal",
         completion_mode: initial?.completion_mode || "personal",
         visibility: initial?.visibility || "inherit"
