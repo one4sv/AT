@@ -54,7 +54,6 @@ export default function Chat() {
     const { setTitle } = usePageTitle();
     const { setBlackout } = useBlackout();
     const [savedSmartEnabled] = useLocalStorage("chat_saved_suggestions", true);
-    const [usedSmartMessageId, setUsedSmartMessageId] = useState<number | null>(null);
     const {
         nick,
         id
@@ -192,7 +191,7 @@ export default function Chat() {
     const lastMessage = messages[messages.length - 1];
     const smartSuggestion = savedChat && savedSmartEnabled && lastMessage &&
         !lastMessage.is_system && !lastMessage.isPending && !lastMessage.edited &&
-        lastMessage.sender_id === user.id && lastMessage.id !== usedSmartMessageId &&
+        lastMessage.sender_id === user.id &&
         !lastMessage.files?.length && !lastMessage.redirected_id
         ? parseSavedMessageSuggestion(lastMessage.content, todayStrFunc(), clockInAppZone())
         : null;
@@ -363,7 +362,6 @@ export default function Chat() {
                                             if (!smartSuggestion || !lastMessage || m.id !== lastMessage.id) return;
                                             const fresh = parseSavedMessageSuggestion(m.content, todayStrFunc(), clockInAppZone());
                                             if (!fresh) return;
-                                            setUsedSmartMessageId(m.id);
                                             setBlackout({
                                                 seted: true,
                                                 module: fresh.draft.kind === "habit" ? "AddHabit" : "AddPlan",
