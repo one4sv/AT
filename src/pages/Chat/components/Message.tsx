@@ -21,6 +21,7 @@ import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMes
 import HighlightText from "../../../components/ts/HighlightText";
 import HabitInvitation from "./HabitInvitation";
 import type { SavedMessageSuggestion } from "../../../components/ts/utils/savedMessageSuggestion";
+import CreatedEntityCard, { parseCreatedEntityMessage } from "./CreatedEntityCard";
 type MessageComponentType = {
     message: message;
     messageRefs?: React.MutableRefObject<Map<number, HTMLDivElement | null>>;
@@ -110,6 +111,8 @@ export default function Message({
         return formatAppTime(d);
     };
     const isMy = m.sender_id === user.id ? true : false;
+    const createdReference = isMy && !chatWith?.is_group && chatWith?.nick === user.nick
+        ? parseCreatedEntityMessage(m.content || "") : null;
     const isChose = activeHeader === "choosing";
     const contextReactionOpen = menu.visible && menu.point === "mess" && menu.options.id === String(m.id) && !isChose;
     const mediaOnly = !m.content?.trim() && !!m.files?.length &&
@@ -272,7 +275,7 @@ export default function Message({
                     <HabitInvitation messageId={m.id} recipientId={m.plan_invite_recipient_id} kind="plan"/> :
                     m.habit_invite_habit_id && m.habit_invite_recipient_id ?
                     <HabitInvitation messageId={m.id} recipientId={m.habit_invite_recipient_id}/> : !!m.content?.trim() && <div className={`messageText ${isMobile ? "mobile" : ""}`}>
-                    {smartSuggestion && onSmartCreate && !isChose && activeHeader === "text" && !searchMess.trim()
+                    {createdReference ? <CreatedEntityCard item={createdReference}/> : smartSuggestion && onSmartCreate && !isChose && activeHeader === "text" && !searchMess.trim()
                         ? <>
                             {m.content.slice(0, smartSuggestion.start)}
                             <button
