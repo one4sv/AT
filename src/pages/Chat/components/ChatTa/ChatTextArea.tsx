@@ -102,6 +102,7 @@ export default function ChatTextArea({
     const [quickSending, setQuickSending] = useState(false);
     const quickSubmitting = useRef(false);
     const commandPopupRef = useRef<HTMLDivElement | null>(null);
+    const commandRowRef = useRef<HTMLDivElement | null>(null);
     const commandSendRef = useRef<HTMLDivElement | null>(null);
     const createdQuick = useRef<{ kind: "habit" | "plan"; id: number } | null>(null);
     const savedChat = !id && !!nick && !!user.nick &&
@@ -606,7 +607,7 @@ export default function ChatTextArea({
                     </div>
                 ))}
             </div>}
-            <div className="chatTAStr">
+            <div className="chatTAStr" ref={commandRowRef}>
                 <div className="chatTaButts">
                     <div className="chatWriteSvgButt" onClick={() => inputFileRef.current?.click()}>
                         <Paperclip className="chatSvg" />
@@ -678,7 +679,7 @@ export default function ChatTextArea({
                     >{quickDraft ? <X size={18}/> : "/"}</button>}
                     {canShowCommands && <EntitySuggestionList
                         className="chatCommandSuggestions"
-                        anchorRef={emojiButtRef}
+                        anchorRef={commandRowRef}
                         popupRef={commandPopupRef}
                         items={matchingCommands}
                         activeIndex={Math.min(activeSuggestion, matchingCommands.length - 1)}

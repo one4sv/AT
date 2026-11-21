@@ -1,3 +1,7 @@
+## 22.11.2026 — full-width slash suggestions
+
+В `ChatTextArea.tsx` реф `commandRowRef` теперь привязан к `.chatTAStr`, а `EntitySuggestionList` использует этот ref для портального выравнивания и ширины. Только `.chatCommandSuggestions.entitySuggestionPortal` имеет `max-width:none`: список растягивается на всю строку (скрепка + TA + отправка), не на всю ширину экрана и без перекройки `ChatTAWrapper`. При мобильной экранной клавиатуре clamp по viewport и 8px padding остаются. Открытие/закрытие по повторному нажатию, outside click, фокус TA и blur 6px не менялись. Проверить iOS Safari, ПК и изменение ширины при клавиатуре.
+
 ## 22.11.2026 — modal TagSelector и повторное использование smart suggestions
 
 `Blackout` исключает `.planTagPortal` из outside-mousedown (это портал компонента TagSelector в AddPlan, а не внешний клик). В `Chat.tsx` удалён `usedSmartMessageId`: подсказка на последнем сообщении остаётся кликабельной после закрытия модалки; только изменение lastMessage убирает прежнее предложение. Сохраняются проверки даты/времени, авторства, редактирования и доступности, никаких автоматических созданий. Фокус slash-кнопки и `quickCommandOnSpace` уже есть в ChatTextArea и тестах. Проверить на iOS реальную кнопку, пробел, выбор тега и повторную модалку; unit/build не равно E2E.
