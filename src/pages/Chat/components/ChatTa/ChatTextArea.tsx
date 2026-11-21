@@ -15,7 +15,7 @@ import { useUser } from "../../../../components/hooks/UserHook";
 import { useNote } from "../../../../components/hooks/NoteHook";
 import EmojiButton from "../../../../components/ts/utils/EmojiButton";
 import EntitySuggestionList, { type EntitySuggestionItem } from "../../../../components/ts/EntitySuggestionList";
-import { isQuickCreateCommand, parseQuickCreateCommand } from "../../../../components/ts/utils/quickCreateCommand";
+import { isQuickCreateCommand, parseQuickCreateCommand, quickCommandOnSpace } from "../../../../components/ts/utils/quickCreateCommand";
 import QuickCommandComposer, { type QuickCommandDraft } from "./QuickCommandComposer";
 import { api } from "../../../../components/ts/api";
 import { todayStrFunc, resolveTimeZone } from "../../../../components/ts/utils/dateToStr";
@@ -654,6 +654,8 @@ export default function ChatTextArea({
                         aria-expanded={Boolean(canShowCommands || quickDraft)}
                         onPointerDown={event => event.preventDefault()}
                         onClick={() => {
+                            // iOS keeps the keyboard open when focus is restored in the direct tap handler.
+                            if (!quickDraft) textAreaRef.current?.focus({ preventScroll: true });
                             if (quickDraft) {
                                 cancelQuickCommand();
                                 return;
@@ -696,11 +698,19 @@ export default function ChatTextArea({
                             value={displayedMess}
                             taRef={textAreaRef}
                             onChange={e => {
+                                const nextText = e.currentTarget.value;
+                                if (savedChat && !editing) {
+                                    const command = quickCommandOnSpace(nextText);
+                                    if (command) {
+                                        commitCommand(command);
+                                        return;
+                                    }
+                                }
                                 setPreviewCommand(null);
                                 setCommandListDismissed(false);
                                 setActiveSuggestion(0);
-                                if (savedChat && e.currentTarget.value.trimStart().startsWith("/")) setShowEmojiBar(false);
-                                setMess(e.currentTarget.value);
+                                if (savedChat && nextText.trimStart().startsWith("/")) setShowEmojiBar(false);
+                                setMess(nextText);
                                 if (!editing && sendTypingStatus) handleTyping(chatWith ? chatWith.id : "");
                             }}
                             onKeyDown={handleKeyDown}

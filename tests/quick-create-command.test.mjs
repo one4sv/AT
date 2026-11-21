@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { isQuickCreateCommand, parseQuickCreateCommand } from "../src/components/ts/utils/quickCreateCommand.ts";
+import { isQuickCreateCommand, parseQuickCreateCommand, quickCommandOnSpace } from "../src/components/ts/utils/quickCreateCommand.ts";
 
 test("recognizes only supported commands", () => {
     assert.equal(isQuickCreateCommand("/act"), true);
@@ -37,4 +37,15 @@ test("Plan date and time are normalized, impossible dates rejected", () => {
     assert.equal(invalid?.date, undefined);
     const english = parseQuickCreateCommand("/plan name: Appointment; date: 2099-12-31; time: 10:00 - 11:30");
     assert.equal(english?.endTime, "11:30");
+});
+
+
+test("space after slash command activates inline composer", () => {
+    assert.equal(quickCommandOnSpace("/act "), "act");
+    assert.equal(quickCommandOnSpace("/plan "), "plan");
+    assert.equal(quickCommandOnSpace(" /ACT "), "act");
+    assert.equal(quickCommandOnSpace("/act"), null);
+    assert.equal(quickCommandOnSpace("/action "), null);
+    assert.equal(quickCommandOnSpace("/act text"), null);
+    assert.equal(quickCommandOnSpace("/plan\n"), null);
 });

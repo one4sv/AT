@@ -46,6 +46,11 @@ function normalizeDate(raw: string): string | undefined {
     return year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
 }
 
+export function quickCommandOnSpace(text: string): "act" | "plan" | null {
+    const match = /^\s*\/(act|plan) $/i.exec(text);
+    return match ? match[1].toLowerCase() as "act" | "plan" : null;
+}
+
 export function isQuickCreateCommand(text: string): boolean {
     return /^\s*\/(act|plan)(?=\s|$)/i.test(text);
 }
