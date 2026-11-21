@@ -16,7 +16,12 @@ import { useNote } from "../../../../components/hooks/NoteHook";
 import EmojiButton from "../../../../components/ts/utils/EmojiButton";
 import EntitySuggestionList, { type EntitySuggestionItem } from "../../../../components/ts/EntitySuggestionList";
 import { isQuickCreateCommand, parseQuickCreateCommand } from "../../../../components/ts/utils/quickCreateCommand";
-import { useBlackout } from "../../../../components/hooks/BlackoutHook";
+import QuickCommandComposer, { type QuickCommandDraft } from "./QuickCommandComposer";
+import { api } from "../../../../components/ts/api";
+import { todayStrFunc, resolveTimeZone } from "../../../../components/ts/utils/dateToStr";
+import { useHabits } from "../../../../components/hooks/HabitsHook";
+import { usePlans } from "../../../../components/hooks/PlansHook";
+import { useSettings } from "../../../../components/hooks/SettingsHook";
 interface FailedChatDraft {
     key: number;
     route: string;
@@ -83,7 +88,9 @@ export default function ChatTextArea({
         setChosenMess
     } = useMessages();
     const { user } = useUser();
-    const { setBlackout } = useBlackout();
+    const { refetchHabits } = useHabits();
+    const { upsertPlan, refreshPlans } = usePlans();
+    const { timeZone } = useSettings();
     const { showNotification } = useNote();
     const { t } = useTranslation("acc");
     const { t: tc } = useTranslation("common");
@@ -91,6 +98,9 @@ export default function ChatTextArea({
     const [activeSuggestion, setActiveSuggestion] = useState(0);
     const [previewCommand, setPreviewCommand] = useState<string | null>(null);
     const [commandListDismissed, setCommandListDismissed] = useState(false);
+    const [quickDraft, setQuickDraft] = useState<QuickCommandDraft | null>(null);
+    const [quickSending, setQuickSending] = useState(false);
+    const createdQuick = useRef<{ kind: "habit" | "plan"; id: number } | null>(null);
     const commandOverlayRef = useRef<HTMLDivElement | null>(null);
     const savedChat = !id && !!nick && !!user.nick &&
         nick.toLowerCase() === user.nick.toLowerCase() && !chatWith?.is_group;
@@ -101,39 +111,137 @@ export default function ChatTextArea({
     const commandQuery = mess.trim();
     const matchingCommands = /^\/[a-z]*$/i.test(commandQuery)
         ? quickCommandItems.filter(item => item.label.startsWith(commandQuery.toLowerCase())) : [];
-    const canShowCommands = savedChat && !editing && !commandListDismissed && matchingCommands.length > 0;
+    const canShowCommands = savedChat && !quickDraft && !editing && !commandListDismissed && matchingCommands.length > 0;
     const displayedMess = previewCommand || mess;
     const commandHighlight = savedChat && isQuickCreateCommand(displayedMess);
     const highlightedTokens = displayedMess.split(/(\/(?:act|plan)\b|(?:название|описание|периодичность|дата|время|начало|конец|тег|name|description|periodicity|date|time|start|end|tag)\s*:)/giu);
     const highlightToken = /^(?:\/(?:act|plan)\b|(?:название|описание|периодичность|дата|время|начало|конец|тег|name|description|periodicity|date|time|start|end|tag)\s*:)$/iu;
 
     const commitCommand = (id: string) => {
-        const next = tc(id === "act" ? "chatUi.quickCommands.actTemplate" : "chatUi.quickCommands.planTemplate");
-        setMess(next);
+        const kind = id === "act" ? "habit" : "plan";
+        const parsed = parseQuickCreateCommand(mess);
+        const draft: QuickCommandDraft = parsed?.kind === kind ? {
+            ...parsed,
+            periodicity: parsed.periodicity || "everyday",
+            date: parsed.date || todayStrFunc()
+        } : {
+            kind,
+            periodicity: "everyday",
+            date: todayStrFunc()
+        };
+        createdQuick.current = null;
+        setQuickDraft(draft);
+        setMess("");
         setPreviewCommand(null);
         setCommandListDismissed(true);
         setShowEmojiBar(false);
-        requestAnimationFrame(() => {
-            const textarea = textAreaRef.current;
-            if (!textarea) return;
-            textarea.focus({ preventScroll: true });
-            const position = next.indexOf(":") + 2;
-            textarea.setSelectionRange(position, position);
-        });
     };
-    const openQuickForm = () => {
-        if (!savedChat || editing || files.length || oldMedia.length || forwardPost || redirect) return false;
-        const draft = parseQuickCreateCommand(mess);
-        if (!draft) return false;
-        setPreviewCommand(null);
-        setCommandListDismissed(true);
+    const cancelQuickCommand = () => {
+        if (quickSending || createdQuick.current) return;
+        setQuickDraft(null);
         setMess("");
-        setBlackout({
-            seted: true,
-            module: draft.kind === "habit" ? "AddHabit" : "AddPlan",
-            commandDraft: draft
-        });
-        return true;
+        setPreviewCommand(null);
+        setCommandListDismissed(false);
+        requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
+    };
+    const submitQuickCommand = async () => {
+        if (!quickDraft || quickSending || sending.current || !savedChat || !nick ||
+            files.length || oldMedia.length || editing || redirect || forwardPost || forwardMedia) return;
+        const name = quickDraft.name?.trim() || "";
+        if (!name || (quickDraft.kind === "habit" && name.length > 40)) {
+            showNotification("error", tc("chatUi.quickCommands.nameRequired"));
+            return;
+        }
+        if (quickDraft.startTime && quickDraft.endTime && quickDraft.endTime < quickDraft.startTime) {
+            showNotification("error", tc("plans.invalidTime"));
+            return;
+        }
+        if (quickDraft.kind === "plan" && (!quickDraft.date || !/^\\d{4}-\\d{2}-\\d{2}$/.test(quickDraft.date))) {
+            showNotification("error", tc("chatUi.quickCommands.dateRequired"));
+            return;
+        }
+        if (quickDraft.kind === "habit" && quickDraft.periodicity === "weekly" &&
+            !/^[0-6](?:\\s*[,; ]\\s*[0-6])*$/.test(quickDraft.weeklyDays || "")) {
+            showNotification("error", tc("chatUi.quickCommands.invalidDays"));
+            return;
+        }
+        if (quickDraft.kind === "habit" && quickDraft.periodicity === "cycle" &&
+            (![quickDraft.cycleActive, quickDraft.cycleRest].every(value =>
+                Number.isInteger(Number(value)) && Number(value) >= 1 && Number(value) <= 365))) {
+            showNotification("error", tc("habitUi.enterCycle"));
+            return;
+        }
+        setQuickSending(true);
+        try {
+            let entity = createdQuick.current;
+            if (!entity) {
+                if (quickDraft.kind === "plan") {
+                    const response = await api.post("plans", {
+                        name,
+                        description: quickDraft.description || "",
+                        plan_date: quickDraft.date,
+                        start_time: quickDraft.startTime || null,
+                        end_time: quickDraft.endTime || null,
+                        timezone: resolveTimeZone(timeZone),
+                        place: "",
+                        tag: quickDraft.tag || null,
+                        kind: "personal",
+                        completion_mode: "personal",
+                        visibility: "inherit"
+                    });
+                    if (!response.data?.success || !response.data.plan?.id) throw new Error("Plan creation failed");
+                    entity = { kind: "plan", id: Number(response.data.plan.id) };
+                    createdQuick.current = entity;
+                    upsertPlan({ ...response.data.plan, membership_status: "accepted",
+                        is_owner: true, completed_for_me: false });
+                    void refreshPlans().catch(() => {});
+                } else {
+                    const chosenDays = quickDraft.periodicity === "weekly"
+                        ? [...new Set((quickDraft.weeklyDays || "").split(/[,; ]+/).map(Number))]
+                        : null;
+                    const response = await api.post("addhabit", {
+                        name, desc: quickDraft.description || "",
+                        startDate: new Date(), endDate: null, now: true,
+                        periodicity: quickDraft.periodicity || "everyday",
+                        chosenDays,
+                        start_time: quickDraft.startTime || null,
+                        end_time: quickDraft.endTime || null,
+                        tag: quickDraft.tag || null,
+                        cycle_days_active: quickDraft.periodicity === "cycle" ? Number(quickDraft.cycleActive) : null,
+                        cycle_days_rest: quickDraft.periodicity === "cycle" ? Number(quickDraft.cycleRest) : null
+                    });
+                    if (!response.data?.success || !response.data.habit_id) {
+                        throw new Error("Activity created without an ID");
+                    }
+                    entity = { kind: "habit", id: Number(response.data.habit_id) };
+                    createdQuick.current = entity;
+                    void refetchHabits().catch(() => {});
+                }
+            }
+            const content = (entity.kind === "plan" ? tc("plans.added") : tc("chatUi.quickCommands.activityCreated")) +
+                "\\n" + new URL("/" + (entity.kind === "plan" ? "plan" : "habit") + "/" + entity.id, window.location.origin).href;
+            const currentRoute = location.pathname;
+            const sent = await sendMess({ nick }, content, [], undefined, undefined, undefined, confirmed => {
+                if (routeRef.current !== currentRoute) return;
+                setMessages(previous => {
+                    const existingIds = new Set(previous.map(message => message.id));
+                    return [...previous, ...confirmed.filter(message => !existingIds.has(message.id))];
+                });
+            });
+            if (!sent) {
+                showNotification("error", tc("chatUi.quickCommands.messageFailed"));
+                return;
+            }
+            createdQuick.current = null;
+            setQuickDraft(null);
+            setMess("");
+            setCommandListDismissed(false);
+            showNotification("success", entity.kind === "plan" ? tc("plans.added") : tc("chatUi.quickCommands.activityCreated"));
+        } catch {
+            showNotification("error", tc("chatUi.quickCommands.createFailed"));
+        } finally {
+            setQuickSending(false);
+        }
     };
     const routeRef = useRef("");
     const [oldMess, setOldMess] = useState<string>("");
@@ -279,7 +387,7 @@ export default function ChatTextArea({
         if (savedChat && isQuickCreateCommand(mess) && e.key === "Enter" &&
             !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.nativeEvent.isComposing) {
             e.preventDefault();
-            openQuickForm();
+            commitCommand(/^\\s*\\/act\\b/i.test(mess) ? "act" : "plan");
             return;
         }
         if (e.key !== "Enter" || isMobile || e.nativeEvent.isComposing) return;
@@ -290,12 +398,16 @@ export default function ChatTextArea({
         }
     };
     const handleSend = async () => {
+        if (quickDraft) {
+            void submitQuickCommand();
+            return;
+        }
         if (canShowCommands) {
             commitCommand(matchingCommands[Math.min(activeSuggestion, matchingCommands.length - 1)].id);
             return;
         }
         if (savedChat && isQuickCreateCommand(mess)) {
-            openQuickForm();
+            commitCommand(/^\\s*\\/act\\b/i.test(mess) ? "act" : "plan");
             return;
         }
         if (sending.current || forwardMedia?.targetPath === location.pathname) return;
