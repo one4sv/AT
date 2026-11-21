@@ -101,6 +101,8 @@ export default function ChatTextArea({
     const [quickDraft, setQuickDraft] = useState<QuickCommandDraft | null>(null);
     const [quickSending, setQuickSending] = useState(false);
     const quickSubmitting = useRef(false);
+    const commandPopupRef = useRef<HTMLDivElement | null>(null);
+    const commandSendRef = useRef<HTMLDivElement | null>(null);
     const createdQuick = useRef<{ kind: "habit" | "plan"; id: number } | null>(null);
     const savedChat = !id && !!nick && !!user.nick &&
         nick.toLowerCase() === user.nick.toLowerCase() && !chatWith?.is_group;
@@ -133,7 +135,8 @@ export default function ChatTextArea({
         setShowEmojiBar(false);
     };
     const cancelQuickCommand = () => {
-        if (quickSending || createdQuick.current) return;
+        if (quickSending) return;
+        createdQuick.current = null;
         setQuickDraft(null);
         setMess("");
         setPreviewCommand(null);
@@ -241,6 +244,24 @@ export default function ChatTextArea({
             setQuickSending(false);
         }
     };
+    useEffect(() => {
+        if (!canShowCommands && !quickDraft) return;
+        const dismiss = (event: PointerEvent) => {
+            const target = event.target as Node;
+            if (emojiButtRef.current?.contains(target) || commandPopupRef.current?.contains(target) ||
+                commandSendRef.current?.contains(target)) return;
+            if (target instanceof Element && target.closest(".selectListPortalRoot, .react-datepicker-popper")) return;
+            if (quickDraft) {
+                cancelQuickCommand();
+            } else {
+                setCommandListDismissed(true);
+                setPreviewCommand(null);
+                if (mess.trim() === "/") setMess("");
+            }
+        };
+        document.addEventListener("pointerdown", dismiss, true);
+        return () => document.removeEventListener("pointerdown", dismiss, true);
+    }, [canShowCommands, quickDraft, quickSending, mess, emojiButtRef, setMess]);
     const routeRef = useRef("");
     const [oldMess, setOldMess] = useState<string>("");
     const [enterToSend, setEnterToSend] = useState(() => localStorage.getItem("at_chat_enter_to_send") !== "false");
@@ -589,7 +610,7 @@ export default function ChatTextArea({
                         <Paperclip className="chatSvg" />
                     </div>
                 </div>
-                <div className={`chatWriteBar inputWithEmoji ${barOpen ? "open" : ""}`} ref={emojiButtRef}>
+                <div className={`chatWriteBar inputWithEmoji ${barOpen ? "open" : ""} ${quickDraft ? "commandMode" : ""}`} ref={emojiButtRef}>
                     {answer !== null && <MessBarBlock object={answer} scrollToMessage={scrollToMessage} />}
                     {editing !== null && <MessBarBlock object={editing} scrollToMessage={scrollToMessage} />}
                     {redirect !== undefined && <MessBarBlock
@@ -626,12 +647,23 @@ export default function ChatTextArea({
                     </div>}
                     <MediaDraft files={files} media={oldMedia} onRemove={handleRemoveFile} />
                     {!quickDraft && <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} />}
-                    {savedChat && !quickDraft && (!mess.trim() || mess.trimStart().startsWith("/")) && !editing && <button
+                    {savedChat && (quickDraft || !mess.trim() || mess.trimStart().startsWith("/")) && !editing && <button
                         type="button"
-                        className="chatSlashButton"
-                        aria-label={tc("chatUi.quickCommands.aria")}
+                        className={`chatSlashButton ${quickDraft ? "quickActive" : ""}`}
+                        aria-label={quickDraft ? tc("chatUi.quickCommands.close") : tc("chatUi.quickCommands.aria")}
+                        aria-expanded={Boolean(canShowCommands || quickDraft)}
                         onPointerDown={event => event.preventDefault()}
                         onClick={() => {
+                            if (quickDraft) {
+                                cancelQuickCommand();
+                                return;
+                            }
+                            if (canShowCommands) {
+                                setCommandListDismissed(true);
+                                setPreviewCommand(null);
+                                if (mess.trim() === "/") setMess("");
+                                return;
+                            }
                             setShowEmojiBar(false);
                             setPreviewCommand(null);
                             setCommandListDismissed(false);
@@ -639,9 +671,11 @@ export default function ChatTextArea({
                             setMess("/");
                             requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
                         }}
-                    > / </button>}
+                    >{quickDraft ? <X size={18}/> : "/"}</button>}
                     {canShowCommands && <EntitySuggestionList
                         className="chatCommandSuggestions"
+                        anchorRef={emojiButtRef}
+                        popupRef={commandPopupRef}
                         items={matchingCommands}
                         activeIndex={Math.min(activeSuggestion, matchingCommands.length - 1)}
                         onSelect={item => commitCommand(item.id)}
@@ -675,7 +709,7 @@ export default function ChatTextArea({
                         />
                     </div>}
                 </div>
-                <div className={quickSending ? "chatWriteTAButt quickSending" : "chatWriteTAButt"} onClick={handleSend}>
+                <div ref={commandSendRef} className={quickSending ? "chatWriteTAButt quickSending" : "chatWriteTAButt"} onClick={handleSend}>
                     <PaperPlaneRightIcon className="chatSend" weight="fill" />
                 </div>
             </div>

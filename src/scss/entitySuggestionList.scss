@@ -75,3 +75,11 @@
     flex: none;
     color: var(--borderWh);
 }
+
+.entitySuggestionPortal {
+    position: fixed;
+    z-index: 1200;
+    max-width: 32rem;
+    transform: translateY(calc(-100% - 8px));
+    isolation: isolate;
+}

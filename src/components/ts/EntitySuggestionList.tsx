@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { useLayoutEffect, useState, type ReactNode, type RefObject } from "react";
+import { createPortal } from "react-dom";
 import "../../scss/entitySuggestionList.scss";
 
 export interface EntitySuggestionItem {
@@ -15,7 +16,9 @@ export default function EntitySuggestionList({
     onSelect,
     onPreview,
     onPreviewEnd,
-    className = ""
+    className = "",
+    anchorRef,
+    popupRef
 }: {
     items: EntitySuggestionItem[];
     activeIndex: number;
@@ -23,10 +26,46 @@ export default function EntitySuggestionList({
     onPreview?: (item: EntitySuggestionItem) => void;
     onPreviewEnd?: () => void;
     className?: string;
+    anchorRef?: RefObject<HTMLElement | null>;
+    popupRef?: RefObject<HTMLDivElement | null>;
 }) {
+    const [placement, setPlacement] = useState<{top: number; left: number; width: number} | null>(null);
+
+    useLayoutEffect(() => {
+        const anchor = anchorRef?.current;
+        if (!anchor) return;
+        const update = () => {
+            const rect = anchor.getBoundingClientRect();
+            const width = Math.min(rect.width, Math.max(0, window.innerWidth - 16));
+            const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
+            setPlacement(previous => previous?.top === rect.top && previous.left === left &&
+                previous.width === width ? previous : { top: rect.top, left, width });
+        };
+        const observer = new ResizeObserver(update);
+        observer.observe(anchor);
+        update();
+        window.addEventListener("resize", update);
+        window.addEventListener("scroll", update, true);
+        window.visualViewport?.addEventListener("resize", update);
+        window.visualViewport?.addEventListener("scroll", update);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener("resize", update);
+            window.removeEventListener("scroll", update, true);
+            window.visualViewport?.removeEventListener("resize", update);
+            window.visualViewport?.removeEventListener("scroll", update);
+        };
+    }, [anchorRef]);
+
     if (!items.length) return null;
-    return (
-        <div className={`entitySuggestionList ${className}`} role="listbox">
+    const list = (
+        <div ref={popupRef} className={`entitySuggestionList ${className} ${anchorRef ? "entitySuggestionPortal" : ""}`}
+            role="listbox" style={anchorRef ? {
+                top: placement?.top || 0,
+                left: placement?.left || 0,
+                width: placement?.width || 0,
+                visibility: placement ? "visible" : "hidden"
+            } : undefined}>
             {items.map((item, index) => (
                 <button
                     key={item.id}
@@ -51,4 +90,5 @@ export default function EntitySuggestionList({
             ))}
         </div>
     );
+    return anchorRef ? createPortal(list, document.body) : list;
 }

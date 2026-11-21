@@ -493,17 +493,18 @@
     }
 }
 .chatCommandSuggestions {
-    position: absolute;
-    left: 0;
-    bottom: calc(100% + .6dvh);
-    z-index: 8;
-    width: min(100%, 32rem);
     box-sizing: border-box;
+}
+.chatWriteBar.inputWithEmoji.commandMode {
+    background: var(--mc);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 }
 .chatWriteBar.inputWithEmoji > .chatQuickComposer {
     width: 100%;
+    min-width: 0;
     max-height: min(44dvh, 440px);
-    padding: .75dvh 1vw;
+    padding: 1dvh 1vw;
     box-sizing: border-box;
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -512,46 +513,59 @@
 .chatQuickComposer {
     display: flex;
     flex-direction: column;
-    gap: .55dvh;
+    min-width: 0;
+    gap: .7dvh;
     color: var(--tc);
     font-size: 16px;
 
     .chatQuickCommandName {
         align-self: flex-start;
-        background: var(--accent_highlight);
+        padding: .2dvh .45vw;
         border-radius: 7px;
-        padding: .15dvh .35vw;
+        background: var(--accent_highlight);
         color: var(--tc);
     }
     label, .chatQuickChoice {
-        min-width: 0;
         display: flex;
-        align-items: center;
-        gap: .7vw;
+        flex-direction: column;
+        align-items: stretch;
+        min-width: 0;
+        width: 100%;
+        box-sizing: border-box;
+        gap: .25dvh;
+
         > span {
-            flex: none;
-            padding: .2vh .35vw;
-            background: var(--accent_highlight);
+            display: inline-block;
+            align-self: flex-start;
+            width: fit-content;
+            max-width: 100%;
+            padding: .2dvh .45vw;
             border-radius: 6px;
-            white-space: nowrap;
+            background: var(--accent_highlight);
             color: var(--tc);
+            white-space: normal;
+            overflow-wrap: anywhere;
         }
-        > input, > textarea, .chatQuickPeriod {
-            flex: 1;
+        > input, > textarea, > .chatQuickPeriod {
+            display: block;
+            flex: none;
             min-width: 0;
+            max-width: 100%;
             width: 100%;
+            box-sizing: border-box;
+            min-height: 3.5dvh;
             max-height: 12dvh;
-            min-height: 3.3dvh;
+            margin: 0;
             border: 0;
             border-radius: 8px;
-            padding: .45dvh .6vw;
+            padding: .6dvh .6vw;
+            outline: none;
             background: transparent;
             color: var(--tc);
             font: inherit;
-            box-sizing: border-box;
-            outline: none;
+
             &:focus-visible {
-                background: var(--mc);
+                background: var(--interact);
                 box-shadow: inset 0 -1px var(--accent_text);
             }
         }
@@ -560,52 +574,69 @@
             scrollbar-width: thin;
         }
         input[type="date"], input[type="time"] {
+            min-inline-size: 0;
+            max-inline-size: 100%;
             color-scheme: inherit;
         }
-        .chatQuickPeriod {
+        > .chatQuickPeriod {
+            min-height: 4dvh;
             padding: 0;
             > input {
+                display: block;
                 width: 100%;
-                padding: .45dvh .6vw;
+                min-width: 0;
+                max-width: 100%;
                 box-sizing: border-box;
+                padding: .6dvh 2vw .6dvh .6vw;
+                border: none;
+                border-radius: 8px;
                 font: inherit;
                 color: var(--tc);
-                border-radius: 8px;
                 background: transparent;
             }
         }
     }
     .chatQuickTimeRow {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
         gap: 1vw;
+        min-width: 0;
+
         > label {
-            flex: 1;
             min-width: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: .25dvh;
+            width: 100%;
             > input {
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
                 min-height: 4.2dvh;
             }
         }
     }
     .chatQuickHelp {
+        min-width: 0;
+        padding-right: 3.5vh;
         color: var(--borderWh);
         font-size: 13px;
+        overflow-wrap: anywhere;
     }
+
     @media (max-width: 800px) {
-        padding: 0;
         gap: .85dvh;
+        padding: 0;
         label, .chatQuickChoice {
-            gap: 2vw;
-            > span { padding: .2vh 1vw; }
-            > input, > textarea, .chatQuickPeriod {
-                padding: .4vh 1vw;
-            }
+            gap: .3dvh;
+            > span { padding: .15dvh 1vw; }
+            > input, > textarea, > .chatQuickPeriod { padding: .5dvh 1vw; }
+            > .chatQuickPeriod { padding: 0; }
         }
         .chatQuickTimeRow { gap: 2vw; }
     }
+}
+.chatSlashButton.quickActive {
+    bottom: auto;
+    top: .5dvh;
 }
 .chatWriteTAButt.quickSending {
     opacity: .55;

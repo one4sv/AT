@@ -99,12 +99,12 @@ export default function QuickCommandComposer({ draft, onChange, onSubmit, onCanc
         </label>}
         <div className="chatQuickTimeRow">
             <label data-quick-field>
-                <span>{t("plans.startTime")}</span>
+                <span>{t("chatUi.quickCommands.startShort")}</span>
                 <input type="time" disabled={disabled} value={draft.startTime || ""}
                     onChange={event => update("startTime", event.target.value)}/>
             </label>
             <label data-quick-field>
-                <span>{t("plans.endTime")}</span>
+                <span>{t("chatUi.quickCommands.endShort")}</span>
                 <input type="time" disabled={disabled} value={draft.endTime || ""}
                     onChange={event => update("endTime", event.target.value)}/>
             </label>
