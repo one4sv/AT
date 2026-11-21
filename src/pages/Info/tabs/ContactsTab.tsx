@@ -5,7 +5,6 @@ import GithubLogo from "../../../assets/icons/git.png";
 import GithubWhite from "../../../assets/icons/gitwhite.png";
 import Inst from "../../../assets/icons/inst.svg";
 import { useSettings } from "../../../components/hooks/SettingsHook";
-import one4svlogo from "../../../assets/pics/one4svlogo.png";
 
 import SectionArt from "../../../components/ts/SectionArt";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
@@ -26,14 +25,15 @@ export default function ContactsTab() {
                 {t("contacts.developedBy")}{" "}
                 <span className="accent">{t("contacts.studio")}</span>.
             </p>
-            <div className="one4svlogo">
-                <img src={one4svlogo} />
-            </div>
+            <a className="one4svlogo" href="https://one4sv.studio/" target="_blank" rel="noopener noreferrer" aria-label="one4sv.studio">
+                <span>one</span><span className="studioLogoAccent"><span className="studioLogoFour">4</span>sv.</span><span>studio</span>
+            </a>
 
             <h3 className="accent">{t("contacts.social")}</h3>
 
             <div className="contactsWrapper">
                 <a className="contact" href="https://one4sv.studio/" target="_blank" rel="noopener noreferrer">
+                    <img src="https://one4sv-studio.vercel.app/assets/favicon.svg" alt="" className="studioFavicon" />
                     one4sv.studio
                 </a>
                 <Link className="contact" to="https://github.com/one4sv">
