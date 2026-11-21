@@ -1,3 +1,7 @@
+## 22.11.2026 — не закрывать slash-список по нажатию на TA
+
+Исправлена проверка outside-pointerdown в `ChatTextArea`: portal-список команд остаётся открытым при нажатии на `.chatCommandEditor` (включая сам textarea). Раньше обработчик считал TA внешней областью и закрывал список. Повторный клик по кнопке `/`, Escape, клик вне редактора и списка по-прежнему закрывают подсказки. Проверить ПК/iOS, сохранение фокуса и работу `/act ` по пробелу. Никаких изменений в компонентах других чатов и `EntitySuggestionList` нет.
+
 ## 22.11.2026 — full-width slash suggestions
 
 В `ChatTextArea.tsx` реф `commandRowRef` теперь привязан к `.chatTAStr`, а `EntitySuggestionList` использует этот ref для портального выравнивания и ширины. Только `.chatCommandSuggestions.entitySuggestionPortal` имеет `max-width:none`: список растягивается на всю строку (скрепка + TA + отправка), не на всю ширину экрана и без перекройки `ChatTAWrapper`. При мобильной экранной клавиатуре clamp по viewport и 8px padding остаются. Открытие/закрытие по повторному нажатию, outside click, фокус TA и blur 6px не менялись. Проверить iOS Safari, ПК и изменение ширины при клавиатуре.

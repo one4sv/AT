@@ -255,8 +255,9 @@ export default function ChatTextArea({
                     (target instanceof Element && target.closest(".selectListPortalRoot, .react-datepicker-popper"))) return;
                 cancelQuickCommand();
             } else {
-                // The input itself is outside the popup; tapping it must dismiss suggestions too.
-                if (target instanceof Element && target.closest(".chatSlashButton")) return;
+                // The editor is part of the active command input: keep suggestions
+                // visible when the user taps inside TA to focus or move the caret.
+                if (target instanceof Element && target.closest(".chatCommandEditor, .chatSlashButton")) return;
                 setCommandListDismissed(true);
                 setPreviewCommand(null);
                 if (mess.trim() === "/") setMess("");
