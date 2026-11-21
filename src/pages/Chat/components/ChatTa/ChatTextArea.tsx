@@ -101,7 +101,6 @@ export default function ChatTextArea({
     const [quickDraft, setQuickDraft] = useState<QuickCommandDraft | null>(null);
     const [quickSending, setQuickSending] = useState(false);
     const createdQuick = useRef<{ kind: "habit" | "plan"; id: number } | null>(null);
-    const commandOverlayRef = useRef<HTMLDivElement | null>(null);
     const savedChat = !id && !!nick && !!user.nick &&
         nick.toLowerCase() === user.nick.toLowerCase() && !chatWith?.is_group;
     const quickCommandItems: EntitySuggestionItem[] = [
@@ -113,10 +112,6 @@ export default function ChatTextArea({
         ? quickCommandItems.filter(item => item.label.startsWith(commandQuery.toLowerCase())) : [];
     const canShowCommands = savedChat && !quickDraft && !editing && !commandListDismissed && matchingCommands.length > 0;
     const displayedMess = previewCommand || mess;
-    const commandHighlight = savedChat && isQuickCreateCommand(displayedMess);
-    const highlightedTokens = displayedMess.split(/(\/(?:act|plan)\b|(?:название|описание|периодичность|дата|время|начало|конец|тег|name|description|periodicity|date|time|start|end|tag)\s*:)/giu);
-    const highlightToken = /^(?:\/(?:act|plan)\b|(?:название|описание|периодичность|дата|время|начало|конец|тег|name|description|periodicity|date|time|start|end|tag)\s*:)$/iu;
-
     const commitCommand = (id: string) => {
         const kind = id === "act" ? "habit" : "plan";
         const parsed = parseQuickCreateCommand(mess);
@@ -156,12 +151,12 @@ export default function ChatTextArea({
             showNotification("error", tc("plans.invalidTime"));
             return;
         }
-        if (quickDraft.kind === "plan" && (!quickDraft.date || !/^\\d{4}-\\d{2}-\\d{2}$/.test(quickDraft.date))) {
+        if (quickDraft.kind === "plan" && (!quickDraft.date || !/^\d{4}-\d{2}-\d{2}$/.test(quickDraft.date))) {
             showNotification("error", tc("chatUi.quickCommands.dateRequired"));
             return;
         }
         if (quickDraft.kind === "habit" && quickDraft.periodicity === "weekly" &&
-            !/^[0-6](?:\\s*[,; ]\\s*[0-6])*$/.test(quickDraft.weeklyDays || "")) {
+            !/^[0-6](?:\s*[,; ]\s*[0-6])*$/.test(quickDraft.weeklyDays || "")) {
             showNotification("error", tc("chatUi.quickCommands.invalidDays"));
             return;
         }
@@ -219,7 +214,7 @@ export default function ChatTextArea({
                 }
             }
             const content = (entity.kind === "plan" ? tc("plans.added") : tc("chatUi.quickCommands.activityCreated")) +
-                "\\n" + new URL("/" + (entity.kind === "plan" ? "plan" : "habit") + "/" + entity.id, window.location.origin).href;
+                "\n" + new URL("/" + (entity.kind === "plan" ? "plan" : "habit") + "/" + entity.id, window.location.origin).href;
             const currentRoute = location.pathname;
             const sent = await sendMess({ nick }, content, [], undefined, undefined, undefined, confirmed => {
                 if (routeRef.current !== currentRoute) return;
@@ -387,7 +382,7 @@ export default function ChatTextArea({
         if (savedChat && isQuickCreateCommand(mess) && e.key === "Enter" &&
             !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.nativeEvent.isComposing) {
             e.preventDefault();
-            commitCommand(/^\\s*\\/act\\b/i.test(mess) ? "act" : "plan");
+            commitCommand(mess.trimStart().toLowerCase().startsWith("/act") ? "act" : "plan");
             return;
         }
         if (e.key !== "Enter" || isMobile || e.nativeEvent.isComposing) return;
@@ -407,7 +402,7 @@ export default function ChatTextArea({
             return;
         }
         if (savedChat && isQuickCreateCommand(mess)) {
-            commitCommand(/^\\s*\\/act\\b/i.test(mess) ? "act" : "plan");
+            commitCommand(mess.trimStart().toLowerCase().startsWith("/act") ? "act" : "plan");
             return;
         }
         if (sending.current || forwardMedia?.targetPath === location.pathname) return;
@@ -620,8 +615,8 @@ export default function ChatTextArea({
                         </button>
                     </div>}
                     <MediaDraft files={files} media={oldMedia} onRemove={handleRemoveFile} />
-                    <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} />
-                    {savedChat && (!mess.trim() || mess.trimStart().startsWith("/")) && !editing && <button
+                    {!quickDraft && <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} />}
+                    {savedChat && !quickDraft && (!mess.trim() || mess.trimStart().startsWith("/")) && !editing && <button
                         type="button"
                         className="chatSlashButton"
                         aria-label={tc("chatUi.quickCommands.aria")}
@@ -643,35 +638,34 @@ export default function ChatTextArea({
                         onPreview={item => setPreviewCommand(tc(item.id === "act" ? "chatUi.quickCommands.actTemplate" : "chatUi.quickCommands.planTemplate"))}
                         onPreviewEnd={() => setPreviewCommand(null)}
                     />}
-                    <div className={`chatCommandEditor ${commandHighlight ? "withHighlight" : ""}`}>
-                        {commandHighlight && <div className="chatCommandOverlay" ref={commandOverlayRef} aria-hidden="true">
-                            {highlightedTokens.map((part, index) => highlightToken.test(part)
-                                ? <mark key={index}>{part}</mark> : <span key={index}>{part}</span>)}
-                        </div>}
-                    <TA
-                        name="chatTA"
-                        id="chatTA"
-                        className="chatTA chatTAwFiles"
-                        value={displayedMess}
-                        taRef={textAreaRef}
-                        onChange={e => {
-                            setPreviewCommand(null);
-                            setCommandListDismissed(false);
-                            setActiveSuggestion(0);
-                            if (savedChat && e.currentTarget.value.trimStart().startsWith("/")) setShowEmojiBar(false);
-                            setMess(e.currentTarget.value);
-                            if (!editing && sendTypingStatus) handleTyping(chatWith ? chatWith.id : "");
-                        }}
-                        onKeyDown={handleKeyDown}
-                        onScroll={event => {
-                            if (commandOverlayRef.current) commandOverlayRef.current.scrollTop = event.currentTarget.scrollTop;
-                        }}
-                        placeholder={savedChat ? tc("chatUi.savedPlaceholder") : tc("chatUi.placeholder")}
-                        onPaste={handlePaste}
-                    />
-                    </div>
+                    {quickDraft ? <QuickCommandComposer
+                        draft={quickDraft}
+                        onChange={setQuickDraft}
+                        onCancel={cancelQuickCommand}
+                        onSubmit={() => void submitQuickCommand()}
+                        disabled={quickSending || !!createdQuick.current}
+                    /> : <div className="chatCommandEditor">
+                        <TA
+                            name="chatTA"
+                            id="chatTA"
+                            className="chatTA chatTAwFiles"
+                            value={displayedMess}
+                            taRef={textAreaRef}
+                            onChange={e => {
+                                setPreviewCommand(null);
+                                setCommandListDismissed(false);
+                                setActiveSuggestion(0);
+                                if (savedChat && e.currentTarget.value.trimStart().startsWith("/")) setShowEmojiBar(false);
+                                setMess(e.currentTarget.value);
+                                if (!editing && sendTypingStatus) handleTyping(chatWith ? chatWith.id : "");
+                            }}
+                            onKeyDown={handleKeyDown}
+                            placeholder={savedChat ? tc("chatUi.savedPlaceholder") : tc("chatUi.placeholder")}
+                            onPaste={handlePaste}
+                        />
+                    </div>}
                 </div>
-                <div className="chatWriteTAButt" onClick={handleSend}>
+                <div className={quickSending ? "chatWriteTAButt quickSending" : "chatWriteTAButt"} onClick={handleSend}>
                     <PaperPlaneRightIcon className="chatSend" weight="fill" />
                 </div>
             </div>
