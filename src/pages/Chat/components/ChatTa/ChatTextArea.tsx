@@ -100,6 +100,7 @@ export default function ChatTextArea({
     const [commandListDismissed, setCommandListDismissed] = useState(false);
     const [quickDraft, setQuickDraft] = useState<QuickCommandDraft | null>(null);
     const [quickSending, setQuickSending] = useState(false);
+    const quickSubmitting = useRef(false);
     const createdQuick = useRef<{ kind: "habit" | "plan"; id: number } | null>(null);
     const savedChat = !id && !!nick && !!user.nick &&
         nick.toLowerCase() === user.nick.toLowerCase() && !chatWith?.is_group;
@@ -140,7 +141,7 @@ export default function ChatTextArea({
         requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
     };
     const submitQuickCommand = async () => {
-        if (!quickDraft || quickSending || sending.current || !savedChat || !nick ||
+        if (!quickDraft || quickSubmitting.current || sending.current || !savedChat || !nick ||
             files.length || oldMedia.length || editing || redirect || forwardPost || forwardMedia) return;
         const name = quickDraft.name?.trim() || "";
         if (!name || (quickDraft.kind === "habit" && name.length > 40)) {
@@ -166,6 +167,7 @@ export default function ChatTextArea({
             showNotification("error", tc("habitUi.enterCycle"));
             return;
         }
+        quickSubmitting.current = true;
         setQuickSending(true);
         try {
             let entity = createdQuick.current;
@@ -235,6 +237,7 @@ export default function ChatTextArea({
         } catch {
             showNotification("error", tc("chatUi.quickCommands.createFailed"));
         } finally {
+            quickSubmitting.current = false;
             setQuickSending(false);
         }
     };

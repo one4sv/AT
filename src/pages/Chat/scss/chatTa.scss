@@ -500,39 +500,6 @@
     width: min(100%, 32rem);
     box-sizing: border-box;
 }
-.chatCommandEditor.withHighlight {
-    > textarea {
-        color: transparent;
-        -webkit-text-fill-color: transparent;
-        caret-color: var(--tc);
-    }
-}
-.chatCommandOverlay {
-    position: absolute;
-    z-index: 2;
-    inset: 0;
-    pointer-events: none;
-    padding: 1.35vh 1vw;
-    padding-inline-end: 5vh;
-    box-sizing: border-box;
-    color: var(--tc);
-    font-size: 16px;
-    line-height: 1.35;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    overflow: hidden;
-    border-radius: 24px;
-    > mark {
-        background: var(--accent_highlight);
-        color: inherit;
-        border-radius: 4px;
-    }
-    @media (max-width: 800px) {
-        padding: 1vh 3vw;
-        padding-inline-end: 5vh;
-    }
-}
-
 .chatWriteBar.inputWithEmoji > .chatQuickComposer {
     width: 100%;
     max-height: min(44dvh, 440px);
