@@ -1,3 +1,7 @@
+## 22.11.2026 — Исправление slash-панели и мобильных полей
+
+EntitySuggestionList вынесен в portal в document.body из chatWriteBar с собственным backdrop-filter; список размывает именно чат позади себя. Обработчик pointerdown вне панели, повторная кнопка /, Escape закрывают меню; вне встроенного редактора также работает cancel. Редактор с отдельными label/input по вертикали, дата full width, начало/конец grid из двух равных колонок. Синхронный textarea.focus в кнопке / нужен iPhone для сохранения клавиатуры. Функция quickCommandOnSpace переводит /act и /plan с завершающим пробелом в inline-поля без Enter. Нужна проверка реального iOS Safari/PWA, наличие READY и UI-интеракции, не считать сборку E2E.
+
 ## 22.11.2026 — Команды без модалок в «Избранном»
 
 Вместо `Blackout` для **ручных slash-команд** теперь `QuickCommandComposer` в текущем `ChatTextArea`: поля названия/описания/периодичности/даты/времени, автопереход Enter/Backspace, полный API create, затем `sendMess` статуса с URL в self-chat. Отдельный `CreatedEntityCard` в `Message` показывает содержимое без приглашения, получает актуальные данные из защищённого API. Автопарсер обычного текста (этап 2) **по-прежнему** открывает модалку — это отдельное поведение. Список `EntitySuggestionList` получил `var(--mc)` и `blur(6px)`; placeholder сокращён. Добавлен `habit_id` в ответ backend `POST /addhabit`.
