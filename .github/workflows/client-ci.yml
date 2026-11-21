@@ -49,6 +49,8 @@ jobs:
         run: node --test tests/gradient-text.test.mjs
       - name: Verify solid accent and activity role text contrast
         run: node --test tests/accent-text-contrast.test.mjs
+      - name: Verify quick-create commands in Saved messages
+        run: node --experimental-strip-types --test tests/quick-create-command.test.mjs
       - name: Build client
         run: npm run build
       - name: Enforce entry JavaScript budget

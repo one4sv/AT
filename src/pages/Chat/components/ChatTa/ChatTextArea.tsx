@@ -91,6 +91,7 @@ export default function ChatTextArea({
     const [activeSuggestion, setActiveSuggestion] = useState(0);
     const [previewCommand, setPreviewCommand] = useState<string | null>(null);
     const [commandListDismissed, setCommandListDismissed] = useState(false);
+    const commandOverlayRef = useRef<HTMLDivElement | null>(null);
     const savedChat = !id && !!nick && !!user.nick &&
         nick.toLowerCase() === user.nick.toLowerCase() && !chatWith?.is_group;
     const quickCommandItems: EntitySuggestionItem[] = [
@@ -531,7 +532,7 @@ export default function ChatTextArea({
                         onPreviewEnd={() => setPreviewCommand(null)}
                     />}
                     <div className={`chatCommandEditor ${commandHighlight ? "withHighlight" : ""}`}>
-                        {commandHighlight && <div className="chatCommandOverlay" aria-hidden="true">
+                        {commandHighlight && <div className="chatCommandOverlay" ref={commandOverlayRef} aria-hidden="true">
                             {highlightedTokens.map((part, index) => highlightToken.test(part)
                                 ? <mark key={index}>{part}</mark> : <span key={index}>{part}</span>)}
                         </div>}
@@ -545,10 +546,14 @@ export default function ChatTextArea({
                             setPreviewCommand(null);
                             setCommandListDismissed(false);
                             setActiveSuggestion(0);
+                            if (savedChat && e.currentTarget.value.trimStart().startsWith("/")) setShowEmojiBar(false);
                             setMess(e.currentTarget.value);
                             if (!editing && sendTypingStatus) handleTyping(chatWith ? chatWith.id : "");
                         }}
                         onKeyDown={handleKeyDown}
+                        onScroll={event => {
+                            if (commandOverlayRef.current) commandOverlayRef.current.scrollTop = event.currentTarget.scrollTop;
+                        }}
                         placeholder={savedChat ? tc("chatUi.savedPlaceholder") : tc("chatUi.placeholder")}
                         onPaste={handlePaste}
                     />
