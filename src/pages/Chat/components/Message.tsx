@@ -20,6 +20,7 @@ import ReactionPicker from "../../../components/ts/ReactionPicker";
 import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
 import HighlightText from "../../../components/ts/HighlightText";
 import HabitInvitation from "./HabitInvitation";
+import type { SavedMessageSuggestion } from "../../../components/ts/utils/savedMessageSuggestion";
 type MessageComponentType = {
     message: message;
     messageRefs?: React.MutableRefObject<Map<number, HTMLDivElement | null>>;
@@ -36,13 +37,17 @@ type MessageComponentType = {
     scrollToMessage?: (id: number) => void;
     showNames?: (boolean);
     cornerType?: string | null;
+    smartSuggestion?: SavedMessageSuggestion;
+    onSmartCreate?: () => void;
 };
 export default function Message({
     message: m,
     answer,
     showNames,
     redir_answer,
-    cornerType
+    cornerType,
+    smartSuggestion,
+    onSmartCreate
 }: MessageComponentType) {
     const {
         scrollToMessage,
@@ -267,7 +272,23 @@ export default function Message({
                     <HabitInvitation messageId={m.id} recipientId={m.plan_invite_recipient_id} kind="plan"/> :
                     m.habit_invite_habit_id && m.habit_invite_recipient_id ?
                     <HabitInvitation messageId={m.id} recipientId={m.habit_invite_recipient_id}/> : !!m.content?.trim() && <div className={`messageText ${isMobile ? "mobile" : ""}`}>
-                    <HighlightText text={m.content} search={searchMess} />
+                    {smartSuggestion && onSmartCreate && !isChose && activeHeader === "text" && !searchMess.trim()
+                        ? <>
+                            {m.content.slice(0, smartSuggestion.start)}
+                            <button
+                                type="button"
+                                className="savedSmartSuggestion"
+                                title={t(smartSuggestion.draft.kind === "habit" ? "chatUi.savedCreateActivity" : "chatUi.savedCreatePlan")}
+                                aria-label={t(smartSuggestion.draft.kind === "habit" ? "chatUi.savedCreateActivity" : "chatUi.savedCreatePlan")}
+                                onClick={event => {
+                                    event.stopPropagation();
+                                    onSmartCreate();
+                                }}
+                                onDoubleClick={event => event.stopPropagation()}
+                            >{m.content.slice(smartSuggestion.start, smartSuggestion.end)}</button>
+                            {m.content.slice(smartSuggestion.end)}
+                        </>
+                        : <HighlightText text={m.content} search={searchMess} />}
                 </div>}
                 {m.files && m.files.length > 0 && <MessageFiles files={m.files} m={m} />}
                 {m.redirected_id && <div className="redirectedMess">

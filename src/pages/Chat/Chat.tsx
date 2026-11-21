@@ -20,7 +20,10 @@ import Skeleton from "../../components/ts/Skeleton";
 import { LoaderSmall } from "../../components/ts/LoaderSmall";
 import WelcomeMessage from "./components/WelcomeMessage";
 import { useChatMessageScroll } from "../../components/hooks/utils/useChatMessageScroll";
-import { formatAppDate } from "../../components/ts/utils/dateToStr";
+import { formatAppDate, todayStrFunc, clockInAppZone } from "../../components/ts/utils/dateToStr";
+import { parseSavedMessageSuggestion } from "../../components/ts/utils/savedMessageSuggestion";
+import { useBlackout } from "../../components/hooks/BlackoutHook";
+import useLocalStorage from "../../components/hooks/utils/useLocalStorage";
 export default function Chat() {
     const { t, i18n } = useTranslation("common");
     const {
@@ -49,6 +52,9 @@ export default function Chat() {
         setPendingScrollId
     } = useMessages();
     const { setTitle } = usePageTitle();
+    const { setBlackout } = useBlackout();
+    const [savedSmartEnabled] = useLocalStorage("chat_saved_suggestions", true);
+    const [usedSmartMessageId, setUsedSmartMessageId] = useState<number | null>(null);
     const {
         nick,
         id
@@ -181,6 +187,16 @@ export default function Chat() {
         },
         [setMess, searchInputRef]
     );
+    const savedChat = chatReady && !id && !!nick && !!user.nick &&
+        nick.toLowerCase() === user.nick.toLowerCase() && !chatWith?.is_group;
+    const lastMessage = messages[messages.length - 1];
+    const smartSuggestion = savedChat && savedSmartEnabled && lastMessage &&
+        !lastMessage.is_system && !lastMessage.isPending && !lastMessage.edited &&
+        lastMessage.sender_id === user.id && lastMessage.id !== usedSmartMessageId &&
+        !lastMessage.files?.length && !lastMessage.redirected_id
+        ? parseSavedMessageSuggestion(lastMessage.content, todayStrFunc(), clockInAppZone())
+        : null;
+
     const grouped = useMemo(
         () => {
             const groups: message[][] = [];
@@ -342,6 +358,18 @@ export default function Chat() {
                                     </div>}
                                     {m.is_system ? <SystemMessage m={m} answer={answer} /> : <Message
                                         message={m}
+                                        smartSuggestion={smartSuggestion && m.id === lastMessage?.id ? smartSuggestion : undefined}
+                                        onSmartCreate={() => {
+                                            if (!smartSuggestion || !lastMessage || m.id !== lastMessage.id) return;
+                                            const fresh = parseSavedMessageSuggestion(m.content, todayStrFunc(), clockInAppZone());
+                                            if (!fresh) return;
+                                            setUsedSmartMessageId(m.id);
+                                            setBlackout({
+                                                seted: true,
+                                                module: fresh.draft.kind === "habit" ? "AddHabit" : "AddPlan",
+                                                commandDraft: fresh.draft
+                                            });
+                                        }}
                                         answer={answer}
                                         redir_answer={redir_answer}
                                         cornerType={getCornerType(m.id, messages.map(msg => msg.id), chosenMess.map(cm => cm.id))}

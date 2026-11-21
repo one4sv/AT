@@ -14,6 +14,7 @@ import type { ChatWelcomeSettings } from "../../../../components/context/Setting
 import "../../scss/ChatWelcomeSettings.scss";
 
 import SectionArt from "../../../../components/ts/SectionArt";
+import useLocalStorage from "../../../../components/hooks/utils/useLocalStorage";
 
 export default function ChatsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
@@ -22,6 +23,7 @@ export default function ChatsTab({ search }: { search: string }) {
     const { showNotification } = useNote();
     const [ welcomeDraft, setWelcomeDraft ] = useState<ChatWelcomeSettings>(chatWelcome);
     const [ savingWelcome, setSavingWelcome ] = useState(false);
+    const [ savedSuggestions, setSavedSuggestions ] = useLocalStorage("chat_saved_suggestions", true);
     const [ enterToSend, setEnterToSend ] = useState(() => localStorage.getItem("at_chat_enter_to_send") !== "false");
     const [ sendTypingStatus, setSendTypingStatus ] = useState(() => localStorage.getItem("at_chat_send_typing") !== "false");
     const changeEnterToSend = (value: boolean) => {
@@ -121,6 +123,18 @@ export default function ChatsTab({ search }: { search: string }) {
                     </div>
                 </div>
                 <div className="settingHint">{t("chats.typingHint")}</div>
+            </div>
+            <div className="settingInnerDiv" data-setting-id="savedSmartSuggestions">
+                <div className="settingHeader">
+                    <HighlightText text={t("chats.savedTitle")} search={search}/>
+                </div>
+                <div className="settingInnerList">
+                    <div className="settingTogglerDiv" onClick={() => setSavedSuggestions(value => !value)}>
+                        <span>{t("chats.savedSmartSuggestions")}</span>
+                        <Toggler state={savedSuggestions} onToggle={setSavedSuggestions} stopPropagation={true}/>
+                    </div>
+                </div>
+                <div className="settingHint">{t("chats.savedSmartHint")}</div>
             </div>
             <div className="settingInnerDiv" data-setting-id="welcomeMessage">
                 <div className="settingHeader">

@@ -225,6 +225,12 @@ export function useSearchableSettings(): SearchableSection[] {
                     category: t("chats.keyboardTitle"),
                 },
                 {
+                    id: "savedSmartSuggestions",
+                    name: t("chats.savedSmartSuggestions"),
+                    icon: CalendarBlankIcon,
+                    category: t("chats.savedTitle"),
+                },
+                {
                     id: "welcomeMessage",
                     name: t("chats.welcomeTitle"),
                     icon: ChatsTeardropIcon,

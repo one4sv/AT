@@ -199,7 +199,9 @@
       "planTemplate": "/plan name: ; description: ; date: ; start: ; end: ",
       "aria": "Choose a command",
       "select": "Insert template"
-    }
+    },
+    "savedCreatePlan": "Create a plan from text",
+    "savedCreateActivity": "Create an activity from text"
   },
   "reactions": {
     "Heart": "Love",
