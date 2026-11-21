@@ -23,7 +23,7 @@ const browserPermission = (): NotificationPermission | "unsupported" =>
 
 export default function NotificationsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { note, messNote, timeZone } = useSettings();
+    const { note, messNote, timeZone, lang } = useSettings();
     const { setNewNote, setNewMessNote, setNewHabitsNote } = useUpSettings();
     const { habits } = useHabits();
     const { showNotification } = useNote()
@@ -173,7 +173,7 @@ export default function NotificationsTab({ search }: { search: string }) {
         if (busy) return;
         setBusy(true);
         try {
-            await enableWebPush(push.publicKey);
+            await enableWebPush(push.publicKey, lang);
             setPush(await getPushState());
             showNotification("success", t("notifications.pushSuccess"));
         } catch {

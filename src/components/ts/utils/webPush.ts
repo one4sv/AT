@@ -38,7 +38,7 @@ export async function getPushState(): Promise<PushState> {
     return state;
 }
 
-export async function enableWebPush(publicKey: string | null) {
+export async function enableWebPush(publicKey: string | null, selectedLanguage = "ru") {
     if (!supportsWebPush()) throw new Error("unsupported");
     if (!publicKey) throw new Error("unconfigured");
     // Permission must be requested directly from the user's click/tap.
@@ -49,6 +49,7 @@ export async function enableWebPush(publicKey: string | null) {
     await navigator.serviceWorker.ready;
     const applicationServerKey = decodePublicKey(publicKey);
     let subscription = await registration.pushManager.getSubscription();
+    let created = false;
 
     if (subscription) {
         const currentKey = subscription.options.applicationServerKey;
@@ -61,13 +62,17 @@ export async function enableWebPush(publicKey: string | null) {
 
     if (!subscription) {
         subscription = await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey });
+        created = true;
     }
 
     try {
-        await api.post("push/subscribe", { subscription: subscription.toJSON() });
+        await api.post("push/subscribe", {
+            subscription: subscription.toJSON(),
+            language: selectedLanguage === "en" ? "en" : "ru"
+        });
     } catch (error) {
-        // If the backend is unavailable, do not leave a locally subscribed but unknown endpoint.
-        await subscription.unsubscribe();
+        // Preserve an existing, valid subscription when merely updating its language.
+        if (created) await subscription.unsubscribe();
         throw error;
     }
 }

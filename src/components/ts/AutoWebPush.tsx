@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { useSettings } from "../hooks/SettingsHook";
 import { useUser } from "../hooks/UserHook";
 import { enableWebPush, getPushState, supportsWebPush } from "./utils/webPush";
 
@@ -6,6 +7,8 @@ import { enableWebPush, getPushState, supportsWebPush } from "./utils/webPush";
 // Browsers do not allow requesting that permission without a user gesture.
 export default function AutoWebPush() {
     const { user, initialLoading } = useUser();
+    const { lang } = useSettings();
+    const syncedLanguage = useRef<string | null>(null);
 
     useEffect(() => {
         if (initialLoading || !user.id || !supportsWebPush()) return;
@@ -16,8 +19,12 @@ export default function AutoWebPush() {
             syncing = true;
             try {
                 const state = await getPushState();
-                if (mounted && state.supported && state.configured && !state.subscribed)
-                    await enableWebPush(state.publicKey);
+                const key = String(user.id) + ":" + lang;
+                if (mounted && state.supported && state.configured &&
+                    (!state.subscribed || syncedLanguage.current !== key)) {
+                    await enableWebPush(state.publicKey, lang);
+                    if (mounted) syncedLanguage.current = key;
+                }
             } catch (error) {
                 console.error("Push subscription sync failed:", error);
             } finally {
@@ -34,7 +41,7 @@ export default function AutoWebPush() {
             window.removeEventListener("focus", onFocus);
             document.removeEventListener("visibilitychange", onVisibility);
         };
-    }, [user.id, initialLoading]);
+    }, [user.id, initialLoading, lang]);
 
     return null;
 }
