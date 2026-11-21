@@ -16,7 +16,7 @@ EntitySuggestionList вынесен в portal в document.body из chatWriteBar
 
 ## 21.11.2026 — Второй этап команд (ONE4SV-93)
 
-`savedMessageSuggestion.ts` разбирает обычные заметки и расписание, сравнивает дату/время AT через `todayStrFunc` и `clockInAppZone`. `Chat.tsx` разрешает подсказку только на последнем подтверждённом собственном сообщении «Избранного», `Message.tsx` подсвечивает распознанный фрагмент и по нажатию открывает штатную модалку с `commandDraft`; подсказка для уже использованного message ID скрывается. Настройка `chat_saved_suggestions` в ChatsTab, scoped by account/device.
+`savedMessageSuggestion.ts` разбирает обычные заметки и расписание, сравнивает дату/время AT через `todayStrFunc` и `clockInAppZone`. `Chat.tsx` разрешает подсказку только на последнем подтверждённом собственном сообщении «Избранного», `Message.tsx` подсвечивает распознанный фрагмент и по нажатию открывает штатную модалку с `commandDraft`; подсказка доступна для повторного открытия, пока сообщение остаётся последним. Настройка `chat_saved_suggestions` в ChatsTab, scoped by account/device.
 
 Тесты в `tests/saved-message-suggestions.test.mjs`, CI клиента. Требуется авторизованное E2E: переключатель после перезахода, новый message ID, переключение часового пояса, touch/long press, фактическая модалка. Развитие @mention, карточек, поиска и push из ONE4SV-93 пока не реализовано.
 
