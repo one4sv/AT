@@ -248,12 +248,14 @@ export default function ChatTextArea({
         if (!canShowCommands && !quickDraft) return;
         const dismiss = (event: PointerEvent) => {
             const target = event.target as Node;
-            if (emojiButtRef.current?.contains(target) || commandPopupRef.current?.contains(target) ||
-                commandSendRef.current?.contains(target)) return;
-            if (target instanceof Element && target.closest(".selectListPortalRoot, .react-datepicker-popper")) return;
+            if (commandPopupRef.current?.contains(target) || commandSendRef.current?.contains(target)) return;
             if (quickDraft) {
+                if (emojiButtRef.current?.contains(target) ||
+                    (target instanceof Element && target.closest(".selectListPortalRoot, .react-datepicker-popper"))) return;
                 cancelQuickCommand();
             } else {
+                // The input itself is outside the popup; tapping it must dismiss suggestions too.
+                if (target instanceof Element && target.closest(".chatSlashButton")) return;
                 setCommandListDismissed(true);
                 setPreviewCommand(null);
                 if (mess.trim() === "/") setMess("");
