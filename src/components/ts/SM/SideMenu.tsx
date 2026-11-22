@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { formatSMSearchQuery, parseSMSearchQuery } from "../utils/globalSearchQuery";
 import { useLocation } from "react-router-dom";
 import "../../../scss/SM/sideMenu.scss";
 import HabitsList from "./HabitsList.tsx";
@@ -15,6 +16,7 @@ import { useContextMenu } from "../../hooks/ContextMenuHook.ts";
 import { useContacts } from "../../hooks/ContactsHook.ts";
 import AccountList from "./AccountList.tsx";
 import SpotsList from "./SpotsList.tsx";
+import SMGlobalSearch from "./SMGlobalSearch";
 
 export default function SideMenu() {
     const isMobile = useCompactLayout();
@@ -41,6 +43,10 @@ export default function SideMenu() {
         closeMenu,
         openSideMenu,
         activeTab,
+        searchMode,
+        setSearchMode,
+        searchQuery,
+        setSearchQuery,
         startupTabAnimationReady,
         showSideMenu,
         setIsDragging,
@@ -52,6 +58,9 @@ export default function SideMenu() {
         setDontHandleOther,
         dontHandleOther
     } = useSideMenu();
+    const searchResults = searchMode ? <SMGlobalSearch key={activeTab} tab={activeTab} query={searchQuery}
+        onFilterChange={filter => setSearchQuery(formatSMSearchQuery(filter, parseSMSearchQuery(searchQuery).query))}
+        onChoose={() => { setSearchMode(false); setSearchQuery(""); closeMenu(); }}/> : null;
     const translateSlider = activeTab === "chats" ? 0 : activeTab === "habits" ? -25 : activeTab === "spots" ? -50 : activeTab === "user" ? -75 : 0;
     const startX = useRef(0);
     const startY = useRef(0);
@@ -237,16 +246,16 @@ export default function SideMenu() {
                     }}
                 >
                     <div className="slide">
-                        {loadingUser || (loadingList && (list.length === 0 || contactSearch.trim().length > 0)) ? <Skeleton type="list" /> : <ContactsList filter={messageSelectedValue} searchRef={mainSearchRef} />}
+                        {searchMode ? (activeTab === "chats" ? searchResults : null) : loadingUser || (loadingList && (list.length === 0 || contactSearch.trim().length > 0)) ? <Skeleton type="list" /> : <ContactsList filter={messageSelectedValue} searchRef={mainSearchRef} />}
                     </div>
                     <div className="slide">
-                        {loadingUser || loadingHabits && !habits?.length ? <Skeleton type="list" /> : <HabitsList filter={habitsSelectedValue} />}
+                        {searchMode ? (activeTab === "habits" ? searchResults : null) : loadingUser || loadingHabits && !habits?.length ? <Skeleton type="list" /> : <HabitsList filter={habitsSelectedValue} />}
                     </div>
                     <div className="slide">
-                        {loadingUser ? <Skeleton type="list" /> : <SpotsList />}
+                        {searchMode ? (activeTab === "spots" ? searchResults : null) : loadingUser ? <Skeleton type="list" /> : <SpotsList />}
                     </div>
                     <div className="slide">
-                        {loadingUser ? <Skeleton type="list" /> : <AccountList />}
+                        {searchMode ? (activeTab === "user" ? searchResults : null) : loadingUser ? <Skeleton type="list" /> : <AccountList />}
                     </div>
                 </div>
             </div>

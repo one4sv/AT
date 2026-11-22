@@ -294,6 +294,9 @@
 
     &.upper {
         bottom: 160%;
+        left: 3%;
+        width: 94%;
+        transition: none;
     }
     &.chats {
         left: 3%;
@@ -310,6 +313,10 @@
     }
 
     &.user {
+        left: 3%;
+        width: 94%;
+    }
+    &.upper.chats, &.upper.habits, &.upper.spots, &.upper.user {
         left: 3%;
         width: 94%;
     }

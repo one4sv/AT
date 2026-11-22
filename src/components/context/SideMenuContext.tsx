@@ -29,6 +29,10 @@ export type FilterItem = {
 };
 
 interface SideMenuContextType {
+    searchMode: boolean;
+    setSearchMode: React.Dispatch<SetStateAction<boolean>>;
+    searchQuery: string;
+    setSearchQuery: React.Dispatch<SetStateAction<string>>;
     settingsSearch: string;
     setSettingsSearch: React.Dispatch<SetStateAction<string>>;
     showSideMenu: boolean;
@@ -94,6 +98,8 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [isDragging, setIsDragging] = useState(false);
     const [dontHandle, setDontHandle] = useState(false);
     const [dontHandleOther, setDontHandleOther] = useState(false);
+    const [searchMode, setSearchMode] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
     const [messageSelectedValue, setMessageSelectedValue] = useState("chats");
     const [habitsSelectedValue, setHabitsSelectedValue] = useState("all");
 
@@ -374,6 +380,10 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     return (
         <SideMenuContext.Provider
             value={{
+                searchMode,
+                setSearchMode,
+                searchQuery,
+                setSearchQuery,
                 settingsSearch,
                 setSettingsSearch,
                 showSideMenu,

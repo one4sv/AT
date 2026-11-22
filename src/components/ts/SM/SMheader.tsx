@@ -8,6 +8,8 @@ import { useEffect, useRef, useState } from "react"
 import { useBlackout } from "../../hooks/BlackoutHook"
 import { requestContentRefresh } from "../utils/contentRefresh";
 import { useTranslation } from "react-i18next";
+import type { tab } from "../../context/SideMenuContext";
+import { formatSMSearchQuery, parseSMSearchQuery, searchTabFilters, searchTabForFilter, type SearchFilter } from "../utils/globalSearchQuery";
 
 export default function SMheader() {
     const isMobile = useCompactLayout();
@@ -17,6 +19,9 @@ export default function SMheader() {
     const {
         activeTab,
         setActiveTab,
+        searchMode,
+        searchQuery,
+        setSearchQuery,
         startupTabAnimationReady,
         translateX,
         showSideMenu,
@@ -31,7 +36,7 @@ export default function SMheader() {
     const { layout } = useSettings()
     const { setBlackout } = useBlackout()
 
-    const [openFilters, setOpenFilters] = useState<"chats" | "habits" | null>(null)
+    const [openFilters, setOpenFilters] = useState<tab | null>(null)
 
     const timerRef = useRef<number | null>(null)
     const longPressTriggered = useRef(false)
@@ -47,6 +52,8 @@ export default function SMheader() {
         activeTab === "user" ? -75 :
         0
 
+    const selectedSearch = parseSMSearchQuery(searchQuery);
+    const searchFilterLabel = t("sideMenu.searchFilter." + (selectedSearch.filter || "none"));
     const messageSelected = chatsFilters.find(f => f.value === messageSelectedValue)
         ?? { label: t("sideMenu.chats"), value: "chats", new: "" }
 
@@ -78,7 +85,7 @@ export default function SMheader() {
         touchHoverRef.current = element
     }
 
-    const startLongPress = (type: "chats" | "habits") => {
+    const startLongPress = (type: tab) => {
         isPointerDown.current = true
         longPressTriggered.current = false
         wasLongPress.current = false
@@ -164,10 +171,13 @@ export default function SMheader() {
             if (filterItem && openFilters) {
                 const value = filterItem.dataset.value
                 if (value) {
-                    if (openFilters === "chats") {
+                    if (searchMode) {
+                        setSearchQuery(formatSMSearchQuery((value || null) as SearchFilter | null, selectedSearch.query))
+                        if (value) setActiveTab(searchTabForFilter(value as SearchFilter))
+                    } else if (openFilters === "chats") {
                         setMessageSelectedValue(value)
                         setActiveTab("chats")
-                    } else {
+                    } else if (openFilters === "habits") {
                         setHabitsSelectedValue(value)
                         setActiveTab("habits")
                     }
@@ -198,14 +208,17 @@ export default function SMheader() {
         }
     }, [openFilters])
 
-    const selectFilter = (e: React.MouseEvent | React.TouchEvent, value: string, type: "chats" | "habits") => {
+    const selectFilter = (e: React.MouseEvent | React.TouchEvent, value: string, type: tab) => {
         e.stopPropagation()
         e.preventDefault()
 
-        if (type === "chats") {
+        if (searchMode) {
+            setSearchQuery(formatSMSearchQuery((value || null) as SearchFilter | null, selectedSearch.query))
+            if (value) setActiveTab(searchTabForFilter(value as SearchFilter))
+        } else if (type === "chats") {
             setMessageSelectedValue(value)
             setActiveTab("chats")
-        } else {
+        } else if (type === "habits") {
             setHabitsSelectedValue(value)
             setActiveTab("habits")
         }
@@ -218,19 +231,25 @@ export default function SMheader() {
 
         if (slide && slide.scrollTop > 2) {
             slide.scrollTo({ top: 0, behavior: "smooth" });
-        } else {
+        } else if (!searchMode) {
             requestContentRefresh(activeTab);
         }
     };
 
-    const currentFilters = openFilters === "chats" ? chatsFilters : openFilters === "habits" ? habitsFilters : []
-    const currentSelected = openFilters === "chats" ? messageSelectedValue : habitsSelectedValue
+    const currentFilters = searchMode ?
+        [{ label: t("sideMenu.searchFilter.none"), value: "", new: "" },
+            ...searchTabFilters[openFilters || activeTab].map(filter => ({
+                label: t("sideMenu.searchFilter." + filter), value: filter, new: ""
+            }))] :
+        openFilters === "chats" ? chatsFilters : openFilters === "habits" ? habitsFilters : []
+    const currentSelected = searchMode ? selectedSearch.filter || "" :
+        openFilters === "chats" ? messageSelectedValue : habitsSelectedValue
 
     if (!user.id) return null
 
     return (
         <div
-            className={`smHeader ${openFilters ? "filtersOpen" : ""} ${studio && showSideMenu && translateX > -1 ? "studioOpen" : ""}`}
+            className={`smHeader ${openFilters ? "filtersOpen" : ""} ${searchMode ? "searchMode" : ""} ${studio && showSideMenu && translateX > -1 ? "studioOpen" : ""}`}
             style={{
                 transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none",
             }}
@@ -248,7 +267,7 @@ export default function SMheader() {
                     style={{ transform: `translateX(${translateSlider}%)`, transition: startupTabAnimationReady ? undefined : "none" }}
                 >
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>{t("sideMenu.chats")}</div>
+                        <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.chats")}</div>
                         <div
                             className={`smHeaderSelected ${openFilters === "chats" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("chats")}
@@ -257,15 +276,15 @@ export default function SMheader() {
                             onContextMenu={(e) => e.preventDefault()}
                         >
                             <SortAscendingIcon />
-                            {messageSelected.label}
-                            {messageSelected.new && (
+                            {searchMode ? searchFilterLabel : messageSelected.label}
+                            {!searchMode && messageSelected.new && (
                                 <span className="smUnreadBadge headerBadge">{messageSelected.new}</span>
                             )}
                         </div>
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>{t("sideMenu.activities")}</div>
+                        <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.activities")}</div>
                         <div
                             className={`smHeaderSelected ${openFilters === "habits" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("habits")}
@@ -274,23 +293,38 @@ export default function SMheader() {
                             onContextMenu={(e) => e.preventDefault()}
                         >
                             <SortAscendingIcon />
-                            {habitsSelected.label}
+                            {searchMode ? searchFilterLabel : habitsSelected.label}
                         </div>
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>{t("sideMenu.spots")}</div>
+                        <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.spots")}</div>
+                        {searchMode && <div className={"smHeaderSelected " + (openFilters === "spots" ? "open" : "")}
+                            onMouseDown={() => startLongPress("spots")}
+                            onTouchStart={() => startLongPress("spots")}
+                            onMouseUp={() => handleClick("spots")}
+                            onContextMenu={e => e.preventDefault()}>
+                            <SortAscendingIcon/>{searchFilterLabel}
+                        </div>}
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>{user.nick ?? t("sideMenu.loading")}</div>
-                        <div
+                        <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : user.nick ?? t("sideMenu.loading")}</div>
+                        {searchMode ? <div
+                            className={`smHeaderSelected ${openFilters === "user" ? "open" : ""}`}
+                            onMouseDown={() => startLongPress("user")}
+                            onTouchStart={() => startLongPress("user")}
+                            onMouseUp={() => handleClick("user")}
+                            onContextMenu={e => e.preventDefault()}
+                        >
+                            <SortAscendingIcon/>{searchFilterLabel}
+                        </div> : <div
                             className={`smHeaderSelected`}
                             onClick={() => setBlackout({seted:true, module:"ShareAcc", options:{name:user.username ?? "", nick:user.nick ?? "", url:user.avatar_url ?? ""}})}
                         >
                             <ShareFatIcon />
                             <QrCodeIcon/>
-                        </div>
+                        </div>}
                     </div>
                 </div>
             </div>

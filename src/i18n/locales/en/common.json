@@ -14,10 +14,11 @@
     "language": "Interface language"
   },
   "sideMenu": {
+    "searchTitle": "Search",
+    "searchHint": "Enter a query or / to choose a filter",
     "searchFilter": {
-          "every": "Everywhere",
+      "none": "No filters",
           "ms": "Messages",
-          "com": "Comments",
           "post": "Posts",
           "setting": "Settings",
           "user": "Users",

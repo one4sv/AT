@@ -1,6 +1,6 @@
 import { useUser } from "../../hooks/UserHook";
 import { CircleUserRound, Megaphone } from "lucide-react";
-import { CalendarCheckIcon, CalendarPlusIcon, ChatTeardropIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, PlusIcon, SignOutIcon, SortAscendingIcon, UserIcon, CheckIcon, MagnifyingGlassIcon, CaretRightIcon, XIcon } from "@phosphor-icons/react";
+import { CalendarCheckIcon, CalendarPlusIcon, ChatTeardropIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, PlusIcon, SignOutIcon, UserIcon, CheckIcon, MagnifyingGlassIcon, CaretRightIcon, XIcon } from "@phosphor-icons/react";
 import { useSideMenu } from "../../hooks/SideMenuHook";
 import { useContextMenu } from "../../hooks/ContextMenuHook";
 import { useEffect, useRef, useState } from "react";
@@ -14,8 +14,7 @@ import { useContacts } from "../../hooks/ContactsHook";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import "../../../scss/Loading.scss";
-import SMGlobalSearch from "./SMGlobalSearch";
-import { parseSMSearchQuery, searchFilters } from "../utils/globalSearchQuery";
+import { formatSMSearchQuery, parseSMSearchQuery, searchTabFilters, searchTabForFilter, type SearchFilter } from "../utils/globalSearchQuery";
 
 function NavAvatar({ src, alt }: { src: string; alt: string }) {
     const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
@@ -40,6 +39,10 @@ export default function SMnav() {
     const {
         setActiveTab,
         activeTab,
+        searchMode,
+        setSearchMode,
+        searchQuery,
+        setSearchQuery,
         settingsSearch,
         setSettingsSearch,
         messageSelectedValue,
@@ -67,9 +70,9 @@ export default function SMnav() {
         setSearch: setContactSearch,
         list: contacts
     } = useContacts();
-    const search = activeTab === "user" ? settingsSearch : contactSearch;
-    const parsedSearch = parseSMSearchQuery(search);
-    const setSearch = activeTab === "user" ? setSettingsSearch : setContactSearch;
+    const search = searchMode ? searchQuery : activeTab === "user" ? settingsSearch : contactSearch;
+    const parsedSearch = parseSMSearchQuery(searchQuery);
+    const setSearch = searchMode ? setSearchQuery : activeTab === "user" ? setSettingsSearch : setContactSearch;
     const navigate = useNavigate();
     const { t } = useTranslation("common");
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -78,7 +81,6 @@ export default function SMnav() {
     const [extraMenu, setExtraMenu] = useState<tab>();
     const [isExtraOpen, setIsExtraOpen] = useState(false);
     const [confirmLogout, setConfirmLogout] = useState(false);
-    const [isSearch, setIsSearch] = useState(false);
     const timerRef = useRef<number | null>(null);
     const longPressTriggered = useRef(false);
     const wasLongPress = useRef(false);
@@ -231,6 +233,18 @@ export default function SMnav() {
         gesture.current = "none";
         isPointerDown.current = false;
     };
+    const selectSearchFilter = (filter: SearchFilter | null) => {
+        setSearchQuery(formatSMSearchQuery(filter, parsedSearch.query));
+        if (filter) setActiveTab(searchTabForFilter(filter));
+        setIsExtraOpen(false);
+        requestAnimationFrame(() => searchInputRef.current?.focus());
+    };
+    const switchSearchTab = (next: tab) => {
+        if (searchMode && parsedSearch.filter && searchTabForFilter(parsedSearch.filter) !== next) {
+            setSearchQuery(parsedSearch.query);
+        }
+        setActiveTab(next);
+    };
     const handlePointerUp = (e: MouseEvent | TouchEvent) => {
         if (contextMenu.visible) {
             cancelTouch();
@@ -267,13 +281,7 @@ export default function SMnav() {
         if (extraTarget) {
             const action = extraTarget.dataset.action;
             if (action === "search-filter") {
-                const filter = extraTarget.dataset.value;
-                if (filter && searchFilters.includes(filter as typeof searchFilters[number])) {
-                    setSearch(filter === "every" ? parsedSearch.query :
-                        "/" + filter + (parsedSearch.query ? " " + parsedSearch.query : ""));
-                    requestAnimationFrame(() => searchInputRef.current?.focus());
-                }
-                setIsExtraOpen(false);
+                selectSearchFilter((extraTarget.dataset.value || null) as SearchFilter | null);
                 cancelLongPress();
                 return;
             }
@@ -355,7 +363,7 @@ export default function SMnav() {
         if (navTarget) {
             const tab = navTarget.dataset.tab as tab | undefined;
             if (tab) {
-                setActiveTab(tab);
+                switchSearchTab(tab);
                 setExtraMenu(tab);
             }
             setTouchHover(null);
@@ -406,7 +414,7 @@ export default function SMnav() {
         if (contextMenu.visible || wasLongPress.current) return;
         if (tab !== activeTab) {
             setExtraMenu(tab);
-            setActiveTab(tab);
+            switchSearchTab(tab);
         } else {
             setExtraMenu(tab);
             setIsExtraOpen(prev => !prev);
@@ -449,18 +457,13 @@ export default function SMnav() {
         [extraMenu, isExtraOpen]
     );
     const extraButts = () => {
-        if (isSearch) return searchFilters.map(filter => <div
-            className={`SMextraMenuButt ${parsedSearch.filter === filter ? "selected" : ""}`}
-            key={filter}
+        if (searchMode) return [null, ...searchTabFilters[extraMenu || activeTab]].map(filter => <div
+            className={"SMextraMenuButt " + (parsedSearch.filter === filter ? "selected" : "")}
+            key={filter || "none"}
             data-action="search-filter"
-            data-value={filter}
-            onMouseUp={() => {
-                setSearch(filter === "every" ? parsedSearch.query :
-                    "/" + filter + (parsedSearch.query ? " " + parsedSearch.query : ""));
-                setIsExtraOpen(false);
-                requestAnimationFrame(() => searchInputRef.current?.focus());
-            }}>
-            {t("sideMenu.searchFilter." + filter)}
+            data-value={filter || ""}
+            onMouseUp={() => selectSearchFilter(filter)}>
+            {t("sideMenu.searchFilter." + (filter || "none"))}
         </div>);
         switch (extraMenu) {
             case "chats":
@@ -592,7 +595,7 @@ export default function SMnav() {
         }
     };
     const searchControl = (
-            <div className={`smNavSearch ${isSearch ? "active" : "dis"}`}>
+            <div className={`smNavSearch ${searchMode ? "active" : "dis"}`}>
                 <input
                     ref={searchInputRef}
                     type="text"
@@ -600,20 +603,26 @@ export default function SMnav() {
                     placeholder={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")}
                     aria-label={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")}
                     value={search}
-                    onChange={e => setSearch(e.target.value)}
+                    onChange={e => {
+                        setSearch(e.target.value);
+                        if (searchMode) {
+                            const selected = parseSMSearchQuery(e.target.value).filter;
+                            if (selected) setActiveTab(searchTabForFilter(selected));
+                        }
+                    }}
                 />
                 <div
                     className=""
                     onClick={() => {
-                        if (!isSearch) {
-                            setIsSearch(true);
+                        if (!searchMode) {
+                            setSearchMode(true);
                             requestAnimationFrame(() => searchInputRef.current?.focus());
                         } else {
-                            if (search.trim() !== "") setSearch(""); else setIsSearch(false);
+                            if (search.trim() !== "") setSearch(""); else setSearchMode(false);
                         }
                     }}
                 >
-                    {isSearch ? search.trim() !== "" ? <XIcon /> : <CaretRightIcon /> : <MagnifyingGlassIcon />}
+                    {searchMode ? search.trim() !== "" ? <XIcon /> : <CaretRightIcon /> : <MagnifyingGlassIcon />}
                 </div>
             </div>
     );
@@ -630,41 +639,13 @@ export default function SMnav() {
             onTouchCancel={cancelTouch}
         >
             <div
-                className={`SMnavExtraDiv ${isExtraOpen ? "open" : ""} ${extraMenu || ""} ${isSearch ? "upper" : ""}`}
+                className={`SMnavExtraDiv ${isExtraOpen ? "open" : ""} ${extraMenu || ""} ${searchMode ? "upper" : ""}`}
                 ref={filtersRef}
             >
                 {extraButts()}
-                {(extraMenu === "chats" || extraMenu === "habits") && <span className="SMextraSeparator" />}
-                {(extraMenu === "chats" || extraMenu === "habits") && (extraMenu === "chats" ? chatsFilters : habitsFilters).map(
-                    filter => <div
-                        className={`filterItem smFilterOption ${(extraMenu === "chats" ? messageSelectedValue : habitsSelectedValue) === filter.value ? "selected" : ""}`}
-                        key={filter.value}
-                        data-value={filter.value}
-                        data-type={extraMenu}
-                        onMouseUp={() => {
-                            if (extraMenu === "chats") {
-                                setMessageSelectedValue(filter.value);
-                                setActiveTab("chats");
-                            }
-                            if (extraMenu === "habits") {
-                                setHabitsSelectedValue(filter.value);
-                                setActiveTab("habits");
-                            }
-                            setIsExtraOpen(false);
-                        }}
-                    >
-                        <SortAscendingIcon />
-
-                        {filter.label}
-
-                        {extraMenu === "chats" && filter.new && <span className={`smUnreadBadge new ${filter.value === "chats" && allUnreadMuted ? "muted" : ""}`}>
-                            {filter.new}
-                        </span>}
-                    </div>
-                )}
             </div>
 
-            <div className={`SMnav ${isSearch ? "dis" : "active"}`} ref={tabsRef}>
+            <div className={`SMnav ${searchMode ? "dis" : "active"}`} ref={tabsRef}>
                 <div className={`SMnavActive ${activeTab}`} style={startupTabAnimationReady ? undefined : { transition: "none" }} />
 
                 <div
@@ -741,12 +722,6 @@ export default function SMnav() {
                 </div>
             </div>
             {searchControl}
-            {isSearch && !!search.trim() && <SMGlobalSearch query={search} onChoose={kind => {
-                if (kind !== "setting") setSearch("");
-                setIsSearch(false);
-                setIsExtraOpen(false);
-                closeMenu();
-            }} />}
         </div>
     );
 }
