@@ -11,7 +11,7 @@ import { MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
 import { privateAssetUrl } from "../ts/utils/privateAssetUrl";
 import { resolveTimeZone } from "../ts/utils/dateToStr";
 import { applyCustomPalette as refreshPalette } from "../ts/utils/customPalette";
-import { EMPTY_COMPOSITIONS, COMPOSITIONS_KEY, chooseComposition, compositionCycleKey, compositionOpenedFor, normalizeCompositionAppearance, normalizeCompositionStore, writeCompositionBootstrap, type CompositionAppearance, type CompositionStore } from "../ts/utils/compositions";
+import { EMPTY_COMPOSITIONS, COMPOSITIONS_KEY, chooseComposition, normalizeCompositionAppearance, normalizeCompositionStore, writeCompositionBootstrap, type CompositionAppearance, type CompositionStore } from "../ts/utils/compositions";
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 

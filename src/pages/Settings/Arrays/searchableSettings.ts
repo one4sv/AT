@@ -1,4 +1,4 @@
-import { ImageIcon, MoonStarsIcon, PaintBucketIcon, PaintRollerIcon, PaletteIcon, SunIcon, TextIndentIcon, TrashIcon, EnvelopeIcon, UserIcon, PencilSimpleIcon, ChatsTeardropIcon, HandTapIcon, CursorClickIcon, TextAaIcon, CalendarBlankIcon, ClockIcon, TranslateIcon, GifIcon, HardDrivesIcon, ImageSquareIcon, CheckCircleIcon, ArchiveIcon, BellIcon, BellRingingIcon, LockIcon, NewspaperIcon, ShieldCheckIcon, KeyIcon, DevicesIcon, WrenchIcon, SneakerMoveIcon } from "@phosphor-icons/react";
+import { ImageIcon, StackIcon, MoonStarsIcon, PaintBucketIcon, PaintRollerIcon, PaletteIcon, SunIcon, TextIndentIcon, TrashIcon, EnvelopeIcon, UserIcon, PencilSimpleIcon, ChatsTeardropIcon, HandTapIcon, CursorClickIcon, TextAaIcon, CalendarBlankIcon, ClockIcon, TranslateIcon, GifIcon, HardDrivesIcon, ImageSquareIcon, CheckCircleIcon, ArchiveIcon, BellIcon, BellRingingIcon, LockIcon, NewspaperIcon, ShieldCheckIcon, KeyIcon, DevicesIcon, WrenchIcon, SneakerMoveIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import type { SearchableSetting } from "../Settings";
 import type { ElementType } from "react";
@@ -75,6 +75,12 @@ export function useSearchableSettings(): SearchableSection[] {
                     id: "bg",
                     name: t("personalization.background"),
                     icon: ImageIcon,
+                    category: t("settings.personalization"),
+                },
+                {
+                    id: "compositions",
+                    name: t("personalization.compositions.title"),
+                    icon: StackIcon,
                     category: t("settings.personalization"),
                 },
                 ...(!isMobile ? [{

@@ -21,6 +21,7 @@ import { BackgroundScene, type StockScene, isStockScene } from "../../../../comp
 import BackIconsScene from "../../../../components/ts/utils/BackIconsScene";
 import WallpaperMark from "../../../../components/ts/utils/WallpaperMark";
 import { getBackgroundFilter } from "../../../../components/ts/utils/backgroundFilter";
+import CompositionsSettings from "../CompositionsSettings";
 
 export default function PersSettingTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
@@ -129,7 +130,7 @@ export default function PersSettingTab({ search }: { search: string }) {
                     <Selector arr={layoutArr} selected={layout}/>
                 </div>
             </div>}
-            
+            <CompositionsSettings search={search}/>
         </div>
     );
 }

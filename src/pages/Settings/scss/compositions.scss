@@ -1,0 +1,234 @@
+.compositionsSettings {
+    container-type: inline-size;
+    .compositionContent {
+        display: flex;
+        flex-direction: column;
+        gap: 1dvh;
+        padding: .8dvh .5vw 1.2dvh;
+        @media (max-width: 800px) { padding: 1dvh 1vw 1.5dvh; }
+    }
+    .compositionCount, .compositionDescription, .compositionHint, .compositionLocalHint {
+        color: var(--borderWh);
+    }
+    .compositionCount { font-size: 14px; font-variant-numeric: tabular-nums; }
+    .compositionDescription, .compositionHint, .compositionLocalHint {
+        margin: 0; font-size: 14px;
+    }
+    .compositionGrid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%;
+    }
+    @container (min-width: 560px) {
+        .compositionGrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    @container (min-width: 850px) {
+        .compositionGrid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    }
+    .compositionCard {
+        position: relative;
+        min-width: 0;
+        overflow: visible;
+        border: none;
+        border-radius: 24px;
+        background: var(--interact);
+        color: var(--tc);
+        &.active { outline: 2px solid var(--accent); outline-offset: -2px; }
+    }
+    .compositionCardApply {
+        display: flex;
+        flex-direction: column;
+        text-align: start;
+        width: 100%;
+        gap: .5dvh;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        padding: 5px 5px 9px;
+        font: inherit;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .compositionCardName {
+        display: block;
+        width: calc(100% - 28px);
+        min-height: 1.25em;
+        padding-left: 4px;
+        box-sizing: border-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .compositionCardActive {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding-left: 4px;
+        font-size: 12px;
+        color: var(--accent_text);
+    }
+    .compositionMenuAnchor { position: absolute; right: 5px; bottom: 9px; z-index: 2; }
+    .compositionMenuToggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        padding: 0;
+        background: var(--mc);
+        color: var(--tc);
+        border: 0;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+    .compositionActions {
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 5px);
+        display: flex;
+        flex-direction: column;
+        width: max-content;
+        min-width: 180px;
+        max-width: 80vw;
+        padding: 5px;
+        border-radius: 16px;
+        background: var(--interact);
+        border: 1px solid var(--block_border);
+        box-shadow: 0 4px 22px #0005;
+        z-index: 3;
+        > button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border: 0;
+            border-radius: 12px;
+            text-align: start;
+            font: inherit;
+            font-size: 14px;
+            background: transparent;
+            color: var(--tc);
+            cursor: pointer;
+            &:hover { background: var(--menuButtHover); }
+            &:disabled { opacity: .45; cursor: default; }
+            &.danger { color: var(--notValid); }
+        }
+    }
+    .compositionPreview {
+        position: relative;
+        height: clamp(70px, 8.4dvh, 115px);
+        width: 100%;
+        overflow: hidden;
+        border-radius: 19px;
+        background: var(--bgc);
+        isolation: isolate;
+    }
+    .compositionPreviewCanvas {
+        position: absolute;
+        inset: -2px;
+        overflow: hidden;
+        > .atScene, > .atContourScene, > .wallpaperMark {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            inset: 0;
+        }
+        > .wallpaperMark { display: flex; justify-content: center; align-items: center; }
+        > .wallpaperMark svg { width: 55%; height: 75%; }
+    }
+    .compositionPreviewPhoto {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .compositionPreviewNav, .compositionPreviewPanel {
+        position: absolute;
+        background: #202127bb;
+        border-radius: 6px;
+        padding: 4px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        &.light { background: #f0f0f0bb; }
+    }
+    .compositionPreviewNav {
+        left: 6px; top: 8px; bottom: 8px; width: 26%;
+        > span { border-radius: 4px; background: #8e8f9877; height: 7px; }
+    }
+    .compositionPreviewPanel {
+        left: 40%; top: 12px; bottom: 12px; right: 7px;
+        > div { height: 10px; border-radius: 4px; }
+        > span { height: 6px; border-radius: 4px; background: #8e8f9877; }
+    }
+    .compositionCreate {
+        min-height: 123px;
+        padding: 12px;
+        border: 1px dashed var(--borderWh);
+        background: transparent;
+        color: var(--borderWh);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 9px;
+        text-align: center;
+        font: inherit;
+        font-size: 14px;
+        cursor: pointer;
+        &:hover { background: var(--menuButtHover); color: var(--tc); }
+    }
+    .compositionRotation {
+        display: flex;
+        flex-direction: column;
+        gap: .7dvh;
+        margin-top: 1dvh;
+    }
+    .compositionRotationHeading { font-size: 16px; }
+    .compositionModePicker { width: 100%; }
+    .compositionWeekdays {
+        display: grid;
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: .5dvh;
+    }
+    @container (min-width: 560px) {
+        .compositionWeekdays { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .compositionWeekday {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 0;
+        gap: 10px;
+        > span { flex: 0 0 100px; }
+        .compositionDayPicker { width: 100%; min-width: 0; }
+    }
+    .compositionModePicker, .compositionDayPicker {
+        > input { width: 100%; background: var(--interact); color: var(--tc);
+            border: none; border-radius: 14px; padding: 10px; box-sizing: border-box; cursor: pointer; }
+    }
+    .compositionInlineAction {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        background: var(--interact);
+        border-radius: 18px;
+        padding: 10px;
+        font-size: 14px;
+        > input { flex: 1 1 120px; min-width: 0; padding: 8px; border-radius: 12px;
+            border: 1px solid var(--block_border); background: var(--mc); color: var(--tc); }
+        > button { border: none; border-radius: 12px; background: var(--mc);
+            color: var(--tc); padding: 8px 12px; cursor: pointer;
+            &:disabled { opacity: .5; cursor: default; } }
+        > button.danger { color: var(--notValid); }
+    }
+    @media (hover: hover) {
+        .compositionCardApply:hover { background: var(--menuButtHover); border-radius: 24px; }
+    }
+    @media (max-width: 800px) {
+        .compositionWeekday > span { flex-basis: 83px; }
+        .compositionActions { right: -3px; }
+    }
+}
