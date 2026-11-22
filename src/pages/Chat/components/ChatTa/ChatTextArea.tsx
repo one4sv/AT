@@ -245,13 +245,13 @@ export default function ChatTextArea({
         return () => {window.clearTimeout(timer);controller.abort();};
     }, [mentionToken?.query, chatWith?.id, user.id]);
     const matchingMentions: EntitySuggestionItem[] = mentionToken
-        ? mentionMembers.filter(member => member.nick && member.id !== user.id &&
+        ? [...mentionMembers.filter(member => member.nick && member.id !== user.id &&
             member.nick.toLocaleLowerCase().startsWith(mentionToken.query.toLocaleLowerCase()))
             .slice(0, 15).map(member => ({
                 id: member.nick,
                 label: "@" + member.nick,
                 description: tc("chatUi.mentionUser")
-            })).concat(externalMentions) : [];
+            })), ...externalMentions] : [];
     const commitMention = (member: EntitySuggestionItem) => {
         if (!mentionToken) return;
         const outside = member.id.startsWith("card:");
