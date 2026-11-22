@@ -496,7 +496,8 @@
     box-sizing: border-box;
 }
 .chatCommandSuggestions.entitySuggestionPortal,
-.chatMentionSuggestions.entitySuggestionPortal {
+.chatMentionSuggestions.entitySuggestionPortal,
+.chatShareSuggestions.entitySuggestionPortal {
     // Span the full composer row (attachment, TA and Send), not only the TA.
     max-width: none;
 }
@@ -615,4 +616,28 @@
 .chatWriteTAButt.quickSending {
     opacity: .55;
     pointer-events: none;
+}
+
+.chatSharedEntityDraft {
+    display: flex;
+    align-items: center;
+    gap: .5vw;
+    min-width: 0;
+    padding: .5dvh .75vw;
+    border-radius: 24px;
+    background: var(--mc);
+    > .answer {
+        min-width: 0;
+        padding-left: 0;
+    }
+    > .closeAnswer {
+        border: none;
+        background: transparent;
+        color: var(--borderWh);
+        flex-shrink: 0;
+    }
+    @media (max-width: 800px) {
+        gap: 2vw;
+        padding: .5dvh 3vw;
+    }
 }
