@@ -463,12 +463,32 @@
 .chatWriteBar.inputWithEmoji > .chatCommandEditor {
     width: 100%;
     position: relative;
-    height: 5dvh;
+    min-height: 5dvh;
+    overflow: hidden;
+    border-radius: 24px;
     > textarea {
         padding-inline-end: 5vh;
         position: relative;
         z-index: 1;
         background: transparent;
+    }
+}
+.chatWriteBar.inputWithEmoji > .chatCommandEditor > .chatCommandHighlight {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+    top: max(.8dvh, calc((5dvh - 1.35em) / 2));
+    left: 1vw;
+    padding: 0;
+    color: transparent;
+    font-size: 16px;
+    line-height: 1.35;
+    font-family: inherit;
+    white-space: pre;
+    background: var(--accent_highlight);
+    border-radius: 4px;
+    @media (max-width: 800px) {
+        left: 3vw;
     }
 }
 .chatSlashButton {
@@ -519,8 +539,10 @@
 
     .chatQuickCommandName {
         align-self: flex-start;
-        padding: .1dvh 0;
+        padding: .1dvh .25vw;
         margin-right: 4vh;
+        background: var(--accent_highlight);
+        border-radius: 4px;
     }
     .chatQuickFields {
         display: flex;
