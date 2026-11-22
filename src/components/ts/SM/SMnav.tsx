@@ -14,7 +14,8 @@ import { useContacts } from "../../hooks/ContactsHook";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import "../../../scss/Loading.scss";
-import { formatSMSearchQuery, parseSMSearchQuery, searchTabFilters, searchTabForFilter, type SearchFilter } from "../utils/globalSearchQuery";
+import { parseSMSearchQuery, searchTabFilters, searchTabForFilter, type SearchFilter } from "../utils/globalSearchQuery";
+import SMSearchFilterIcon from "./SMSearchFilterIcon";
 
 function NavAvatar({ src, alt }: { src: string; alt: string }) {
     const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
@@ -43,6 +44,8 @@ export default function SMnav() {
         setSearchMode,
         searchQuery,
         setSearchQuery,
+        searchFilter,
+        setSearchFilter,
         settingsSearch,
         setSettingsSearch,
         messageSelectedValue,
@@ -71,7 +74,6 @@ export default function SMnav() {
         list: contacts
     } = useContacts();
     const search = searchMode ? searchQuery : activeTab === "user" ? settingsSearch : contactSearch;
-    const parsedSearch = parseSMSearchQuery(searchQuery);
     const setSearch = searchMode ? setSearchQuery : activeTab === "user" ? setSettingsSearch : setContactSearch;
     const navigate = useNavigate();
     const { t } = useTranslation("common");
@@ -234,14 +236,16 @@ export default function SMnav() {
         isPointerDown.current = false;
     };
     const selectSearchFilter = (filter: SearchFilter | null) => {
-        setSearchQuery(formatSMSearchQuery(filter, parsedSearch.query));
+        setSearchFilter(filter);
+        if (searchQuery.trim().startsWith("/")) setSearchQuery("");
         if (filter) setActiveTab(searchTabForFilter(filter));
         setIsExtraOpen(false);
         requestAnimationFrame(() => searchInputRef.current?.focus());
     };
     const switchSearchTab = (next: tab) => {
-        if (searchMode && parsedSearch.filter && searchTabForFilter(parsedSearch.filter) !== next) {
-            setSearchQuery(parsedSearch.query);
+        if (searchMode && next !== activeTab) {
+            setSearchFilter(null);
+            if (searchQuery.trim().startsWith("/")) setSearchQuery("");
         }
         setActiveTab(next);
     };
@@ -458,11 +462,12 @@ export default function SMnav() {
     );
     const extraButts = () => {
         if (searchMode) return [null, ...searchTabFilters[extraMenu || activeTab]].map(filter => <div
-            className={"SMextraMenuButt " + (parsedSearch.filter === filter ? "selected" : "")}
+            className={"SMextraMenuButt " + (searchFilter === filter ? "selected" : "")}
             key={filter || "none"}
             data-action="search-filter"
             data-value={filter || ""}
             onMouseUp={() => selectSearchFilter(filter)}>
+            <SMSearchFilterIcon filter={filter}/>
             {t("sideMenu.searchFilter." + (filter || "none"))}
         </div>);
         switch (extraMenu) {
@@ -604,21 +609,29 @@ export default function SMnav() {
                     aria-label={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")}
                     value={search}
                     onChange={e => {
-                        setSearch(e.target.value);
-                        if (searchMode) {
-                            const selected = parseSMSearchQuery(e.target.value).filter;
-                            if (selected) setActiveTab(searchTabForFilter(selected));
-                        }
+                        const next = e.target.value;
+                        const selected = searchMode && next.trim().startsWith("/")
+                            ? parseSMSearchQuery(next).filter : null;
+                        if (selected) {
+                            setSearchFilter(selected);
+                            setSearchQuery(parseSMSearchQuery(next).query);
+                            setActiveTab(searchTabForFilter(selected));
+                        } else setSearch(next);
                     }}
                 />
                 <div
                     className=""
                     onClick={() => {
                         if (!searchMode) {
+                            setSearchFilter(null);
+                            setSearchQuery("");
                             setSearchMode(true);
                             requestAnimationFrame(() => searchInputRef.current?.focus());
                         } else {
-                            if (search.trim() !== "") setSearch(""); else setSearchMode(false);
+                            if (search.trim() !== "" || searchFilter) {
+                                setSearchQuery("");
+                                setSearchFilter(null);
+                            } else setSearchMode(false);
                         }
                     }}
                 >

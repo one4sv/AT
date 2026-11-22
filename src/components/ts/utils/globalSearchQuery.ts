@@ -4,10 +4,10 @@ export const searchFilters = ["ms", "new", "group", "habit", "plan", "user", "po
 export type SearchFilter = typeof searchFilters[number];
 
 export const searchTabFilters: Record<tab, readonly SearchFilter[]> = {
-    chats: ["ms", "new", "group"],
+    chats: ["ms", "new", "group", "user"],
     habits: ["habit", "plan"],
     spots: [],
-    user: ["user", "post", "setting"]
+    user: ["post", "setting"]
 };
 
 export const searchTabForFilter = (filter: SearchFilter): tab =>

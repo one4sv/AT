@@ -18,6 +18,7 @@ import { useSettings } from "../hooks/SettingsHook";
 import { useUser } from "../hooks/UserHook";
 import { filterHabitsByOrder } from "../ts/utils/filteredHabitsByOrder";
 import useCompactLayout from "../hooks/utils/useCompactLayout";
+import type { SearchFilter } from "../ts/utils/globalSearchQuery";
 
 export type tab = "chats" | "habits" | "spots" | "user";
 export type slides = "settings" | "chat" | "journal" | null;
@@ -33,6 +34,8 @@ interface SideMenuContextType {
     setSearchMode: React.Dispatch<SetStateAction<boolean>>;
     searchQuery: string;
     setSearchQuery: React.Dispatch<SetStateAction<string>>;
+    searchFilter: SearchFilter | null;
+    setSearchFilter: React.Dispatch<SetStateAction<SearchFilter | null>>;
     settingsSearch: string;
     setSettingsSearch: React.Dispatch<SetStateAction<string>>;
     showSideMenu: boolean;
@@ -100,6 +103,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const [dontHandleOther, setDontHandleOther] = useState(false);
     const [searchMode, setSearchMode] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [searchFilter, setSearchFilter] = useState<SearchFilter | null>(null);
     const [messageSelectedValue, setMessageSelectedValue] = useState("chats");
     const [habitsSelectedValue, setHabitsSelectedValue] = useState("all");
 
@@ -384,6 +388,8 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
                 setSearchMode,
                 searchQuery,
                 setSearchQuery,
+                searchFilter,
+                setSearchFilter,
                 settingsSearch,
                 setSettingsSearch,
                 showSideMenu,

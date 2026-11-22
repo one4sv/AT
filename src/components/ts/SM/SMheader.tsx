@@ -9,7 +9,8 @@ import { useBlackout } from "../../hooks/BlackoutHook"
 import { requestContentRefresh } from "../utils/contentRefresh";
 import { useTranslation } from "react-i18next";
 import type { tab } from "../../context/SideMenuContext";
-import { formatSMSearchQuery, parseSMSearchQuery, searchTabFilters, searchTabForFilter, type SearchFilter } from "../utils/globalSearchQuery";
+import { searchTabFilters, searchTabForFilter, type SearchFilter } from "../utils/globalSearchQuery";
+import SMSearchFilterIcon from "./SMSearchFilterIcon";
 
 export default function SMheader() {
     const isMobile = useCompactLayout();
@@ -20,8 +21,8 @@ export default function SMheader() {
         activeTab,
         setActiveTab,
         searchMode,
-        searchQuery,
-        setSearchQuery,
+        searchFilter,
+        setSearchFilter,
         startupTabAnimationReady,
         translateX,
         showSideMenu,
@@ -52,9 +53,8 @@ export default function SMheader() {
         activeTab === "user" ? -75 :
         0
 
-    const selectedSearch = parseSMSearchQuery(searchQuery);
     useEffect(() => { setOpenFilters(null); }, [activeTab, searchMode]);
-    const searchFilterLabel = t("sideMenu.searchFilter." + (selectedSearch.filter || "none"));
+    const searchFilterLabel = t("sideMenu.searchFilter." + (searchFilter || "none"));
     const messageSelected = chatsFilters.find(f => f.value === messageSelectedValue)
         ?? { label: t("sideMenu.chats"), value: "chats", new: "" }
 
@@ -171,9 +171,9 @@ export default function SMheader() {
 
             if (filterItem && openFilters) {
                 const value = filterItem.dataset.value
-                if (value) {
+                if (value !== undefined) {
                     if (searchMode) {
-                        setSearchQuery(formatSMSearchQuery((value || null) as SearchFilter | null, selectedSearch.query))
+                        setSearchFilter((value || null) as SearchFilter | null)
                         if (value) setActiveTab(searchTabForFilter(value as SearchFilter))
                     } else if (openFilters === "chats") {
                         setMessageSelectedValue(value)
@@ -207,14 +207,14 @@ export default function SMheader() {
             document.removeEventListener("touchcancel", handlePointerUp)
             document.removeEventListener("touchmove", handleTouchMove)
         }
-    }, [openFilters])
+    }, [openFilters, searchMode, setSearchFilter])
 
     const selectFilter = (e: React.MouseEvent | React.TouchEvent, value: string, type: tab) => {
         e.stopPropagation()
         e.preventDefault()
 
         if (searchMode) {
-            setSearchQuery(formatSMSearchQuery((value || null) as SearchFilter | null, selectedSearch.query))
+            setSearchFilter((value || null) as SearchFilter | null)
             if (value) setActiveTab(searchTabForFilter(value as SearchFilter))
         } else if (type === "chats") {
             setMessageSelectedValue(value)
@@ -243,7 +243,7 @@ export default function SMheader() {
                 label: t("sideMenu.searchFilter." + filter), value: filter, new: ""
             }))] :
         openFilters === "chats" ? chatsFilters : openFilters === "habits" ? habitsFilters : []
-    const currentSelected = searchMode ? selectedSearch.filter || "" :
+    const currentSelected = searchMode ? searchFilter || "" :
         openFilters === "chats" ? messageSelectedValue : habitsSelectedValue
 
     if (!user.id) return null
@@ -276,7 +276,7 @@ export default function SMheader() {
                             onMouseUp={() => handleClick("chats")}
                             onContextMenu={(e) => e.preventDefault()}
                         >
-                            <SortAscendingIcon />
+                            {searchMode ? <SMSearchFilterIcon filter={searchFilter}/> : <SortAscendingIcon />}
                             {searchMode ? searchFilterLabel : messageSelected.label}
                             {!searchMode && messageSelected.new && (
                                 <span className="smUnreadBadge headerBadge">{messageSelected.new}</span>
@@ -293,7 +293,7 @@ export default function SMheader() {
                             onMouseUp={() => handleClick("habits")}
                             onContextMenu={(e) => e.preventDefault()}
                         >
-                            <SortAscendingIcon />
+                            {searchMode ? <SMSearchFilterIcon filter={searchFilter}/> : <SortAscendingIcon />}
                             {searchMode ? searchFilterLabel : habitsSelected.label}
                         </div>
                     </div>
@@ -305,7 +305,7 @@ export default function SMheader() {
                             onTouchStart={() => startLongPress("spots")}
                             onMouseUp={() => handleClick("spots")}
                             onContextMenu={e => e.preventDefault()}>
-                            <SortAscendingIcon/>{searchFilterLabel}
+                            <SMSearchFilterIcon filter={searchFilter}/>{searchFilterLabel}
                         </div>}
                     </div>
 
@@ -348,7 +348,7 @@ export default function SMheader() {
                         onTouchStart={(e) => e.stopPropagation()}
                         onMouseUp={(e) => openFilters && selectFilter(e, filter.value, openFilters)}
                     >
-                        <SortAscendingIcon size={16} />
+                        {searchMode ? <SMSearchFilterIcon filter={(filter.value || null) as SearchFilter | null} size={16}/> : <SortAscendingIcon size={16} />}
                         {filter.label}
                         {openFilters === "chats" && filter.new && (
                             <span className="smUnreadBadge new">{filter.new}</span>
