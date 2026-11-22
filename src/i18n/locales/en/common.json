@@ -222,6 +222,7 @@
       "group": "Chat"
     },
     "sharedEntityUnavailable": "Object unavailable",
+    "openSharedPost": "Open post",
     "quickCommands": {
       "action": "Commands",
       "createActivity": "Create activity",
