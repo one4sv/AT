@@ -359,17 +359,28 @@ export const roadmapHistory: RoadmapRelease[] = [
             { ru: "Усилена защита аккаунтов, сообщений и личных данных.", en: "Stronger protection for accounts, messages, and personal data." },
             { ru: "Добавлена форма для сообщений об ошибках, предложений и жалоб.", en: "Feedback form for bug reports, suggestions, and complaints." }
         ]
+    },
+    {
+        version: "0.6.4",
+        date: "2026-11-12",
+        title: "Waypoint",
+        features: [
+            { ru: "Добавлены разовые планы: личные и совместные, с датой, временем, тегом, описанием, приглашениями участников и отдельной страницей.", en: "One-off plans: personal and shared, with a date, time, tag, description, participant invitations, and a dedicated page." },
+            { ru: "Новые настройки: часовой пояс, напоминания о планах и выбор того, что открывается при запуске приложения.", en: "New settings: time zone, plan reminders, and a choice of what opens when you launch the app." },
+            { ru: "Переработана страница «Планы и активности»: календарь, итоги дня, ближайшие дела и единая лента активностей и планов.", en: "Redesigned Plans and Activities page: calendar, day summary, upcoming items, and a single timeline of activities and plans." }
+        ]
     }
 ];
 
 export const roadmapCurrent: RoadmapRelease = {
-    version: "0.6.4",
-    date: "2026-11-12",
-    title: "Waypoint",
+    version: "0.6.5",
+    date: "2026-11-23",
+    title: "Mosaic",
     features: [
-        { ru: "Добавлены разовые планы: личные и совместные, с датой, временем, тегом, описанием, приглашениями участников и отдельной страницей.", en: "One-off plans: personal and shared, with a date, time, tag, description, participant invitations, and a dedicated page." },
-        { ru: "Новые настройки: часовой пояс, напоминания о планах и выбор того, что открывается при запуске приложения.", en: "New settings: time zone, plan reminders, and a choice of what opens when you launch the app." },
-        { ru: "Переработана страница «Планы и активности»: календарь, итоги дня, ближайшие дела и единая лента активностей и планов.", en: "Redesigned Plans and Activities page: calendar, day summary, upcoming items, and a single timeline of activities and plans." }
+        { ru: "Композиции — сохранение до 10 вариантов оформления и переключение вручную или автоматически.", en: "Compositions — save up to 10 interface styles and switch manually or automatically." },
+        { ru: "Универсальный поиск — пользователи, сообщения, активности, планы, публикации и настройки прямо в SideMenu.", en: "Universal search — find users, messages, activities, plans, posts, and settings directly from SideMenu." },
+        { ru: "Новые возможности чатов — команды, упоминания и интерактивные карточки пользователей, планов, активностей и публикаций.", en: "New chat features — commands, mentions, and interactive cards for users, plans, activities, and posts." },
+        { ru: "Умное «Избранное» — быстрое создание планов и активностей, распознавание дат и предложений из сообщений.", en: "Smarter Saved Messages — quickly create plans and activities, recognizing dates and suggestions from messages." }
     ]
 };
 
@@ -384,14 +395,9 @@ export const roadmapFuture: RoadmapRelease[] = [
         ]
     },
     {
-        version: "0.6.5",
-        features: [
-            { ru: "Цели: личные и совместные, связь с планами и активностями", en: "Goals: personal and shared, linked to plans and activities" }
-        ]
-    },
-    {
         version: "0.6+",
         features: [
+            { ru: "Цели: личные и совместные, связь с планами и активностями (планируется отдельно)", en: "Goals: personal and shared, linked to plans and activities (planned separately)" },
             { ru: "Совместные активности 2.0 и расширенный прогресс участников", en: "Shared activities 2.0 and expanded member progress" },
             { ru: "Расширенная статистика и аналитика активностей", en: "Extended activity statistics and analytics" },
             { ru: "Журнал 2.0 и медиа активностей", en: "Journal 2.0 and activity media" },
