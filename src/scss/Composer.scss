@@ -26,7 +26,7 @@
         min-height: 5vh;
         max-height: 50vh;
         box-sizing: border-box;
-        padding: calc((5vh - 1.35em) / 2) 1vw;
+        padding: max(.8dvh, calc((5dvh - 1.35em) / 2)) 1vw;
         line-height: 1.35;
         font-family: var(--font);
         font-size: inherit;

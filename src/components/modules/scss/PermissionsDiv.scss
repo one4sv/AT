@@ -334,6 +334,8 @@
 .rolesModalFields textarea {
     resize: none;
     field-sizing: content;
+    line-height: 1.35;
+    padding-block: max(.75dvh, calc((4.5dvh - 1.35em) / 2));
 }
 
 .rolesModalDetail {

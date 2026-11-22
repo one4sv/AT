@@ -227,6 +227,11 @@
         color: var(--borderWh);
     }
 }
+textarea.extraInfoInput.bioTA {
+    min-height: 5dvh;
+    line-height: 1.35;
+    padding: max(.8dvh, calc((5dvh - 1.35em) / 2)) 0;
+}
 
 .accExtraInfo {
     display: flex;
