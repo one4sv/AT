@@ -137,7 +137,7 @@ export default function ChatTextArea({
         {id:"post",label:"/post",description:tc("chatUi.sharePost")},
         {id:"user",label:"/user",description:tc("chatUi.shareUser")},
         {id:"group",label:"/group",description:tc("chatUi.shareGroup")},
-        {id:"invite",label:"/invite",description:tc("chatUi.shareInvite")}
+        {id:"invite",label:"/invite",description:tc(chatWith?.is_group ? "chatUi.inviteLinkToChat" : "chatUi.shareInvite")}
     ];
     const plainShare = !savedChat && !editing && !shareDismissed && /^\/[a-z]*$/i.test(mess)
         ? shareCommands.filter(item => item.label.startsWith(mess.toLowerCase())) : [];
@@ -158,6 +158,7 @@ export default function ChatTextArea({
         const entityId = item.id.slice(separator + 1);
         if (shareMatch[1] === "invite" && chatWith?.is_group) {
             if (kind !== "habit" && kind !== "plan") return;
+            if (!id || String(chatWith.id) !== id || chatLoading) return;
             const chatId = Number(chatWith.id);
             if (!Number.isSafeInteger(chatId) || chatId <= 0) return;
             const groupName = chatWith.name || tc("chatUi.shareType.group");
@@ -240,7 +241,12 @@ export default function ChatTextArea({
             const q = shareMatch[2]?.trim() || "";
             const kinds = shareMatch[1] === "invite" ? ["habit","plan"] : [shareMatch[1]];
             void Promise.all(kinds.map(kind => api.get("search/global",{
-                params:{q:"/"+kind+(q ? " "+q : ""),page:0},signal:controller.signal
+                params: {
+                    q: "/" + kind + (q ? " " + q : ""),
+                    page: 0,
+                    ...(shareMatch[1] === "invite" && chatWith?.is_group ? { link_to_chat: "1" } : {})
+                },
+                signal: controller.signal
             }))).then(results => {
                 if (controller.signal.aborted) return;
                 setShareItems(results.flatMap(response => response.data?.items || [])
@@ -253,7 +259,7 @@ export default function ChatTextArea({
             }).catch(() => { if (!controller.signal.aborted) setShareItems([]); });
         },250);
         return () => {window.clearTimeout(timer);controller.abort();};
-    }, [mess, shareMatch?.[1], shareMatch?.[2]]);
+    }, [mess, shareMatch?.[1], shareMatch?.[2], chatWith?.id, chatWith?.is_group]);
     const mentionToken = !savedChat && !quickDraft && !editing && !mentionDismissed
         ? findMentionToken(mess, mentionCaret) : null;
     const mentionMembers = chatWith?.is_group ? chatWith.members || [] : chatWith
