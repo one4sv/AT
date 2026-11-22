@@ -12,10 +12,10 @@ const css = sass.compileString(
 ).css;
 
 function token(theme, group, name, tokenName) {
-    const selector = new RegExp('\\[data-theme="?'+theme+'"?\\]\\[data-'+group+'="?'+name+'"?\\]\s*\\{([^}]+)\\}');
+    const selector = new RegExp('\\[data-theme="?'+theme+'"?\\]\\[data-'+group+'="?'+name+'"?\\]\\s*\\{([^}]+)\\}');
     const block = selector.exec(css)?.[1];
     assert.ok(block, "Missing CSS selector for " + theme + " " + name);
-    const value = new RegExp('--'+tokenName+':\s*([^;]+);').exec(block)?.[1]?.trim();
+    const value = new RegExp('--'+tokenName+':\\s*([^;]+);').exec(block)?.[1]?.trim();
     assert.ok(value, "Missing "+tokenName+" for "+theme+" "+name);
     return value;
 }
