@@ -35,7 +35,7 @@
     width: auto;
     display: flex;
     align-items: center;
-        padding-left: 0.5vw;
+    padding-left: .15vw;
     >svg {
         height: 95%;
         width: 95%;
@@ -51,7 +51,7 @@
         }
     }
     @media (max-width: 800px) {
-        padding-left: 0.5vw;
+        padding-left: .25vw;
     }
 }
 .chatUserName {
