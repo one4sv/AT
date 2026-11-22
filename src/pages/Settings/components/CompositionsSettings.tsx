@@ -4,7 +4,7 @@ import { CheckCircleIcon, CopyIcon, DotsThreeIcon, PencilSimpleIcon, PlusIcon, T
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import { getCustomHex } from "../../../components/ts/utils/customPalette";
 import { getBackgroundFilter } from "../../../components/ts/utils/backgroundFilter";
-import { BackgroundScene, isStockScene } from "../../../components/ts/utils/BackgroundScene";
+import { BackgroundScene, isStockScene, getStockScenePreviewSources } from "../../../components/ts/utils/BackgroundScene";
 import BackIconsScene from "../../../components/ts/utils/BackIconsScene";
 import WallpaperMark from "../../../components/ts/utils/WallpaperMark";
 import { MAX_COMPOSITIONS, compositionCycleKey, type Composition, type CompositionAppearance, type CompositionRotation } from "../../../components/ts/utils/compositions";
@@ -45,11 +45,16 @@ function CompositionPreview({ composition }: { composition: Composition }) {
         background
     } as CSSProperties;
     const effects = appearance.bgEffects;
+    const sources = getStockScenePreviewSources(appearance.bg);
     return <div className="compositionPreview" style={previewVars} aria-hidden="true">
         <div className="compositionPreviewCanvas" style={{ filter: getBackgroundFilter(effects, .16) }}>
             {appearance.bg === "custom" && !!appearance.bgUrl &&
                 <img className="compositionPreviewPhoto" src={appearance.bgUrl} loading="lazy" alt=""/>}
-            {isStockScene(appearance.bg) && <BackgroundScene variant={appearance.bg}
+            {sources && <picture className="compositionStockPreview">
+                <source media="(max-width: 800px)" srcSet={sources.mobile}/>
+                <img src={sources.desktop} alt="" loading="lazy" decoding="async"/>
+            </picture>}
+            {isStockScene(appearance.bg) && !sources && <BackgroundScene variant={appearance.bg}
                 artPattern={appearance.artPattern} artSize={appearance.artSize}/>}
             {appearance.bg === "default" && <BackIconsScene
                 pattern={appearance.contourPattern} size={appearance.contourSize}/>}

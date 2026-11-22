@@ -60,6 +60,8 @@ const photoSources: Partial<Record<StockScene, { desktop: string; mobile: string
     abstractGlass: { desktop: "/wallpapers/abstractGlass-desktop.svg", mobile: "/wallpapers/abstractGlass-mobile.svg" }
 };
 
+export const getStockScenePreviewSources = (id: string) => photoSources[id as StockScene] ?? null;
+
 export const isThemeAwareVectorScene = (id: string) =>
     photoSources[id as StockScene]?.desktop.endsWith(".svg") ?? false;
 
