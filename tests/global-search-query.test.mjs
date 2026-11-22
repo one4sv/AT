@@ -1,3 +1,4 @@
+import { smHeaderPopupPosition } from "../src/components/ts/utils/smHeaderPopupPosition.ts";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { formatSMSearchQuery, parseSMSearchQuery, searchFilters, searchTabFilters, searchTabForFilter, searchSourceFilters, searchResultRank } from "../src/components/ts/utils/globalSearchQuery.ts";
@@ -45,4 +46,11 @@ test("unfiltered search groups contacts and owned entities before other entities
         if (tab === "habits") assert.deepEqual(sorted.map(x=>x.mine), [true,true,false,false]);
         if (tab === "user") assert.deepEqual(sorted.map(x=>x.mine), [undefined,true,false]);
     }
+});
+
+test("header filter menu centers on its trigger and clamps within the SideMenu", () => {
+    assert.deepEqual(smHeaderPopupPosition(300, 100, 140, 100), {left:100,width:140});
+    assert.deepEqual(smHeaderPopupPosition(300, 5, 45, 180), {left:8,width:180});
+    assert.deepEqual(smHeaderPopupPosition(300, 270, 40, 160), {left:132,width:160});
+    assert.deepEqual(smHeaderPopupPosition(300, 0, 300, 160), {left:8,width:284});
 });

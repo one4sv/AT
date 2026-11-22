@@ -9,6 +9,7 @@ import { useBlackout } from "../../hooks/BlackoutHook"
 import { requestContentRefresh } from "../utils/contentRefresh";
 import { useTranslation } from "react-i18next";
 import type { tab } from "../../context/SideMenuContext";
+import { smHeaderPopupPosition } from "../utils/smHeaderPopupPosition";
 import { searchTabFilters, searchTabForFilter, type SearchFilter } from "../utils/globalSearchQuery";
 import SMSearchFilterIcon from "./SMSearchFilterIcon";
 
@@ -261,15 +262,12 @@ export default function SMheader() {
         const reposition = () => {
             const panel = header.getBoundingClientRect();
             const trigger = anchor.getBoundingClientRect();
-            const edge = 8;
             popup.style.right = "auto";
             popup.style.width = "max-content";
-            const width = Math.min(Math.max(0, panel.width - edge * 2),
-                Math.max(trigger.width, popup.offsetWidth));
-            const centered = trigger.left - panel.left + trigger.width / 2 - width / 2;
-            const left = Math.max(edge, Math.min(panel.width - edge - width, centered));
-            popup.style.width = Math.ceil(width) + "px";
-            popup.style.left = Math.round(left) + "px";
+            const { left, width } = smHeaderPopupPosition(panel.width,
+                trigger.left - panel.left, trigger.width, popup.offsetWidth);
+            popup.style.width = width + "px";
+            popup.style.left = left + "px";
         };
 
         reposition();
