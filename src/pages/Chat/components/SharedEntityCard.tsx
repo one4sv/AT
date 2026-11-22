@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { UserCircleIcon, CalendarBlankIcon, CheckCircleIcon, ArticleIcon, ChatsCircleIcon } from "@phosphor-icons/react";
+import { UserCircleIcon, CalendarBlankIcon, ArticleIcon, ChatsCircleIcon, FlagIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../components/ts/api";
-import "../scss/HabitInvitation.scss";
+import { tags } from "../../../components/ts/tags";
+import { formatClock, formatDateFromString } from "../../../components/ts/utils/dateToStr";
 import "../scss/SharedEntityCard.scss";
 
 export type SharedEntityKind = "user" | "habit" | "plan" | "post" | "group";
@@ -14,9 +15,16 @@ interface SharedEntityPreview {
     subtitle?: string;
     url: string;
     avatar_url?: string | null;
+    periodicity?: string | null;
+    tag?: string | null;
+    plan_date?: string | null;
+    start_time?: string | null;
+    end_time?: string | null;
+    author?: string | null;
+    excerpt?: string | null;
 }
 const icons = {
-    user: UserCircleIcon, habit: CheckCircleIcon, plan: CalendarBlankIcon,
+    user: UserCircleIcon, habit: FlagIcon, plan: CalendarBlankIcon,
     post: ArticleIcon, group: ChatsCircleIcon
 };
 export default function SharedEntityCard({kind,id}: {kind: SharedEntityKind; id: string}) {
@@ -32,19 +40,44 @@ export default function SharedEntityCard({kind,id}: {kind: SharedEntityKind; id:
         }).catch(() => {});
         return () => controller.abort();
     }, [kind,id]);
-    if (!item) return <div className="habitInvitation sharedEntityCard">
-        <span className="sharedEntityUnavailable">{t("chatUi.sharedEntityUnavailable")}</span>
+    if (!item) return <div className="sharedEntityCard sharedEntityUnavailable">
+        {t("chatUi.sharedEntityUnavailable")}
     </div>;
-    const Icon = icons[kind];
-    return <div className="habitInvitation sharedEntityCard"
+    const Icon = (kind === "habit" || kind === "plan"
+        ? tags.find(tag => tag.value === item.tag)?.icon : null) || icons[kind];
+    const details = kind === "habit" ? [
+        item.periodicity && ["everyday", "weekly", "cycle", "sometimes"].includes(item.periodicity)
+            ? t("habitUi.period." + item.periodicity) : "",
+        item.start_time ? formatClock(item.start_time) : "",
+        item.end_time ? formatClock(item.end_time) : ""
+    ].filter(Boolean).join(" · ") : kind === "plan" ? [
+        item.plan_date && /^\d{4}-\d{2}-\d{2}$/.test(item.plan_date)
+            ? formatDateFromString(item.plan_date) : "",
+        item.start_time ? formatClock(item.start_time) : "",
+        item.end_time ? formatClock(item.end_time) : ""
+    ].filter(Boolean).join(" · ") : item.subtitle || "";
+    return <div className={`sharedEntityCard sharedEntity${kind}`}
         onDoubleClick={event => event.stopPropagation()}>
-        <Link className="habit habitInvitationHabit" to={item.url}>
-            <div className="habitIcon">{item.avatar_url ? <img className="sharedEntityAvatar"
-                src={item.avatar_url} alt=""/> : <Icon className="habitIconSvg"/>}</div>
-            <div className="habitInfo">
-                <div className="habitName">{item.name}</div>
-                {item.subtitle && <div className="habitPer">{item.subtitle}</div>}
+        {kind === "post" ? <>
+            <div className="sharedEntityPostAuthor">
+                <span className="sharedEntityIcon">
+                    {item.avatar_url ? <img src={item.avatar_url} alt=""/> : <UserCircleIcon/>}
+                </span>
+                <span className="sharedEntityPostAuthorName">{item.author || item.name}</span>
             </div>
-        </Link>
+            {item.excerpt && <div className="sharedEntityPostExcerpt">{item.excerpt}</div>}
+            <Link className="sharedEntityPostOpen" to={item.url}>
+                {t("chatUi.openSharedPost")}
+            </Link>
+        </> : <Link className="sharedEntityLink" to={item.url}>
+            <span className="sharedEntityIcon">
+                {item.avatar_url && (kind === "user" || kind === "group")
+                    ? <img src={item.avatar_url} alt=""/> : <Icon/>}
+            </span>
+            <span className="sharedEntityInfo">
+                <span className="sharedEntityName">{item.name}</span>
+                {details && <span className="sharedEntityDetails">{details}</span>}
+            </span>
+        </Link>}
     </div>;
 }
