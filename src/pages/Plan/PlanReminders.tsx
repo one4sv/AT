@@ -3,13 +3,20 @@ import { BellIcon, CaretDownIcon } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../components/ts/api";
+import { planReminderClock } from "./utils/planReminderClock";
 
 const presets = [10,60,1440];
 
-export default function PlanReminders({ planId }: { planId: number }) {
+export default function PlanReminders({ planId, planDate, startTime, timezone }: {
+    planId: number;
+    planDate: string;
+    startTime?: string | null;
+    timezone?: string;
+}) {
     const { t } = useTranslation("common");
     const [rules, setRules] = useState<number[]>([]);
     const [globalEnabled, setGlobalEnabled] = useState(false);
+    const [defaultMinutesBefore, setDefaultMinutesBefore] = useState(60);
     const [custom, setCustom] = useState("30");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -26,6 +33,7 @@ export default function PlanReminders({ planId }: { planId: number }) {
             if (!perPlan.data?.success || !global.data?.success) throw new Error();
             setRules(perPlan.data.rules || []);
             setGlobalEnabled(Boolean(global.data.preferences?.enabled));
+            setDefaultMinutesBefore(global.data.preferences?.defaultMinutesBefore ?? 60);
             setError("");
         }).catch(() => {
             if (active) setError(t("plans.remindersLoadError"));
@@ -34,6 +42,8 @@ export default function PlanReminders({ planId }: { planId: number }) {
         });
         return () => { active = false; };
     }, [planId, t]);
+
+    const defaultTime = planReminderClock(planDate, startTime, timezone, defaultMinutesBefore);
 
     const save = async (next: number[]) => {
         if (saving || loading) return;
@@ -78,6 +88,10 @@ export default function PlanReminders({ planId }: { planId: number }) {
             <p className="planRemindersHint">
                 {!globalEnabled && <>{t("plans.remindersGlobalDisabled")} </>}
                 {t("plans.remindersSettingsHint")}{" "}
+                {defaultTime && <span className="planRemindersDefaultTime"
+                    title={t("plans.remindersDefaultTimeHint", { minutes: defaultMinutesBefore })}>
+                    {defaultTime}{" "}
+                </span>}
                 <Link to="/settings/notes" state={{ from: "/plan/" + planId, settingId: "planReminders" }}>
                     {t("plans.remindersOpenSettings")}
                 </Link>

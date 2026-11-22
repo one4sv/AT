@@ -303,6 +303,15 @@
     }
 }
 
+@media (min-width: 801px) {
+    .dayCommentDiv > .habitDayComment {
+        padding-top: .4dvh;
+    }
+    .dayCommentDiv > .habitDayComment > textarea {
+        padding-top: .4dvh;
+    }
+}
+
 .habitDayComment.inputWithEmoji > .inputEmojiButton {
     bottom: 5vh;
 }

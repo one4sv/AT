@@ -455,6 +455,10 @@
 .planRemindersHint a {
     color: var(--accent_text);
 }
+.planRemindersDefaultTime {
+    color: var(--tc);
+    font-variant-numeric: tabular-nums;
+}
 .planReminderChoices, .planReminderCustom {
     display: flex;
     flex-wrap: wrap;
@@ -467,13 +471,20 @@
     color: var(--accent_text);
 }
 .planReminderCustom input {
-    max-width: 8vw;
-    min-width: 6vw;
     background: var(--interact);
     color: var(--tc);
     border: 1px solid var(--block_border);
     border-radius: 16px;
-    padding: .8dvh .8vw;
+}
+.planReminderCustom input, .planReminderCustom .planPrimaryButton {
+    width: clamp(86px, 6vw, 110px);
+    min-width: 0;
+    max-width: 100%;
+    height: 3.6dvh;
+    min-height: 32px;
+    box-sizing: border-box;
+    padding: 0 .65vw;
+    font-size: 16px;
 }
 .planRemindersError {
     color: var(--notValid);
@@ -485,10 +496,11 @@
     .planReminderChoices, .planReminderCustom {
         gap: 2vw;
     }
-    .planReminderCustom input {
-        max-width: 26vw;
-        min-width: 20vw;
-        padding: 1dvh 3vw;
+    .planReminderCustom input, .planReminderCustom .planPrimaryButton {
+        width: 26vw;
+        height: 4.5dvh;
+        min-height: 38px;
+        padding: 0 2vw;
     }
 }
 
@@ -542,6 +554,17 @@
 }
 .planDesktopComment .habitDayComment > textarea {
     min-height: 4dvh;
+}
+@media (min-width: 801px) {
+    .planDesktopComment {
+        padding-top: .4dvh;
+    }
+    .planDesktopComment .habitDayComment {
+        padding-top: .4dvh;
+    }
+    .planDesktopComment .habitDayComment > textarea {
+        padding-top: .4dvh;
+    }
 }
 .planDesktopComment .saveCommentButton:disabled,
 .planDayCommentMobile .saveCommentButtonMobile:disabled {

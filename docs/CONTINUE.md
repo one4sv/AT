@@ -1,3 +1,7 @@
+## 22.11.2026 — desktop comments, PlanMenu and reminder HH:MM
+
+`DayComment.scss` и `PlanPage.scss`: уменьшены только верхние padding у поля комментария в десктопе; сохранены нижние и мобильные. `PlanMenu`: Danger Cancel/Delete последними, Restore нейтральный рядом с Edit. `PlanReminders`: принимает `planDate/startTime/timezone` из `PlanPage`, загружает `defaultMinutesBefore` из `GET settings/plan-reminders` и показывает расчётное `HH:MM` до ссылки на `/settings/notes`. Это **время текущего плана**, не общее `commonTime` напоминаний активностей. Если `start_time` отсутствует, сервер считает начало равным 09:00; 60 мин до него = 08:00. Функция `planReminderClock.ts` учитывает timezone/DST. RU/EN объяснение более прямое. Кнопка Add компактна и совпадает с input минут. Код проверять в `tests/plan-ui.test.mjs` и `tests/plan-reminder-clock.test.mjs`. Серверную очередь, подписки и жесты не менять.
+
 ## 22.11.2026 — smHeader::before не перекрывает первый результат
 
 По скриншоту DevTools высота `::before` превышала высоту самого хедера из-за `inset: 0 0 -1.8dvh`. Исправлено на `inset: 0`; теперь высота псевдоэлемента равна `4dvh` хедера и не залезает на первые строки, расположенные от `5dvh`. Blur 2px, фон 25%, flex/scroll, жесты без изменений.

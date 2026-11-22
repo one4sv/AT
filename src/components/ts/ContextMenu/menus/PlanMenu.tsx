@@ -82,14 +82,10 @@ export default function PlanMenu() {
             <div className="ContextMenuButt" onClick={() => run(options.onEdit)}>
                 <PencilSimpleIcon/>{t("plans.edit")}
             </div>
-            <div className={`ContextMenuButt ${options.type !== "canceled" ? "delete" : ""}`}
+            {options.type === "canceled" && <div className="ContextMenuButt"
                 onClick={() => run(options.onToggleCancel)}>
-                {options.type === "canceled" ? <ArrowCounterClockwiseIcon/> : <XCircleIcon/>}
-                {t(options.type === "canceled" ? "plans.restore" : "plans.cancel")}
-            </div>
-            <div className="ContextMenuButt delete" onClick={() => run(options.onConfirmDelete)}>
-                <TrashIcon/>{t("plans.delete")}
-            </div>
+                <ArrowCounterClockwiseIcon/>{t("plans.restore")}
+            </div>}
         </>)}
         <LinkButton/>
         <div className="ContextMenuButt" onClick={() => void share()}>
@@ -99,5 +95,14 @@ export default function PlanMenu() {
             {options.pinned ? <PushPinSlash/> : <PushPinIcon/>}
             {t(options.pinned ? "habitUi.unpin" : "habitUi.pin")}
         </div>}
+        {canManage && options.type !== "editing" && <>
+            {options.type !== "canceled" && <div className="ContextMenuButt delete"
+                onClick={() => run(options.onToggleCancel)}>
+                <XCircleIcon/>{t("plans.cancel")}
+            </div>}
+            <div className="ContextMenuButt delete" onClick={() => run(options.onConfirmDelete)}>
+                <TrashIcon/>{t("plans.delete")}
+            </div>
+        </>}
     </>;
 }

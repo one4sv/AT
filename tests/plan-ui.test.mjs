@@ -80,7 +80,7 @@ test("desktop plan completion and comment live inside the first details section"
     const css = read("src/pages/Plan/scss/PlanPage.scss");
     const indexDetails = page.indexOf('<div className="planSection">',page.indexOf('return <div className="planPage">'));
     const indexCompletion = page.indexOf('<div className="planInlineCompletion">');
-    const indexReminders = page.indexOf('<PlanReminders planId={plan.id}/>');
+    const indexReminders = page.indexOf('<PlanReminders planId={plan.id}');
     assert.ok(indexDetails >= 0 && indexCompletion > indexDetails && indexCompletion < indexReminders);
     assert.doesNotMatch(page, /planSection planCompletionSection/);
     assert.match(css, /scrollbar-width: thin/);
@@ -279,4 +279,32 @@ test("plan participant picker imports the button styles on direct plan entry", (
     assert.match(picker, /className="addGoalButtDiv habitPickerCreate"/);
     assert.match(goals, /\.addGoalButtDiv\s*\{/);
     assert.match(modal, /\.habitPickerCreate\s*\{/);
+});
+
+test("desktop habit and plan comments use smaller top padding", () => {
+    const habit = read("src/pages/HabitPage/scss/DayComment.scss");
+    const plan = read("src/pages/Plan/scss/PlanPage.scss");
+    assert.ok(habit.includes(".dayCommentDiv > .habitDayComment > textarea {\n        padding-top: .4dvh;"));
+    assert.ok(plan.includes(".planDesktopComment .habitDayComment > textarea {\n        padding-top: .4dvh;"));
+    assert.ok(plan.includes(".planDesktopComment {\n        padding-top: .4dvh;"));
+    assert.ok(habit.includes("@media (min-width: 801px)"));
+});
+
+test("plan context menu puts danger actions after share and pin", () => {
+    const source = read("src/components/ts/ContextMenu/menus/PlanMenu.tsx");
+    const share = source.lastIndexOf('t("plans.share")');
+    const pin = source.lastIndexOf('t(options.pinned ? "habitUi.unpin" : "habitUi.pin")');
+    const cancel = source.lastIndexOf('t("plans.cancel")');
+    const remove = source.lastIndexOf('t("plans.delete")');
+    assert.ok(share >= 0 && pin > share && cancel > pin && remove > cancel);
+});
+
+test("reminders display the plan-specific default time and matching compact controls", () => {
+    const reminders = read("src/pages/Plan/PlanReminders.tsx");
+    const page = read("src/pages/Plan/PlanPage.tsx");
+    const css = read("src/pages/Plan/scss/PlanPage.scss");
+    assert.ok(page.includes("planDate={plan.plan_date}"));
+    assert.ok(reminders.includes("planReminderClock(planDate, startTime, timezone, defaultMinutesBefore)"));
+    assert.ok(reminders.includes('className="planRemindersDefaultTime"'));
+    assert.ok(css.includes(".planReminderCustom input, .planReminderCustom .planPrimaryButton {"));
 });

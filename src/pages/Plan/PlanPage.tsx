@@ -368,7 +368,8 @@ export default function PlanPage() {
                 {plan.membership_status === "pending" ? <div className="planSection">
                     <p>{t("plans.replyInChat")}</p>
                 </div> : plan.membership_status === "accepted" ? <>
-                    <PlanReminders planId={plan.id}/>
+                    <PlanReminders planId={plan.id} planDate={plan.plan_date}
+                        startTime={plan.start_time} timezone={plan.timezone}/>
                     <PlanMembers plan={plan} onChanged={async () => {
                         await Promise.all([load(), refreshPlans()]);
                     }}/>
