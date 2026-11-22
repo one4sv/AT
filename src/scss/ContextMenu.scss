@@ -81,6 +81,17 @@
 .ContextMenuWrapper { max-height: calc(var(--vv-height, 100dvh) - 20px); max-width: calc(100vw - 20px); overflow-y: auto; overscroll-behavior: contain; -webkit-backdrop-filter: blur(12px); }
 .ContextMenuButt { min-height: 40px; box-sizing: border-box; }
 
+.ContextMenuButt[aria-disabled="true"] {
+    opacity: .45;
+    cursor: default;
+    @media (hover: hover) {
+        &:hover {
+            background-color: transparent;
+            color: var(--borderWh);
+        }
+    }
+}
+
 .ContextMenuButt.touchHover {
     color: var(--tc);
     background: var(--accent_hov);
