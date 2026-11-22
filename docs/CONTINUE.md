@@ -1,3 +1,7 @@
+## 22.11.2026 — smHeader::before не перекрывает первый результат
+
+По скриншоту DevTools высота `::before` превышала высоту самого хедера из-за `inset: 0 0 -1.8dvh`. Исправлено на `inset: 0`; теперь высота псевдоэлемента равна `4dvh` хедера и не залезает на первые строки, расположенные от `5dvh`. Blur 2px, фон 25%, flex/scroll, жесты без изменений.
+
 ## 22.11.2026 — равный визуальный отступ под smHeader
 
 Обычный `.SMlist` получил `margin-top: 5dvh` (было `4dvh`). Поисковый `.SMlist.smSearchResults` использует `margin-top: 4.5dvh` (было `5.5dvh`) плюс прежний `.5dvh` `padding-top`. Визуальное начало одинаковое: `5dvh` в обоих режимах, при высоте заголовка `4dvh`. Низ, стекло, `searchFilter`, scroll/safe-area и все жесты без изменений. Static regression: `tests/global-search-query.test.mjs`.
