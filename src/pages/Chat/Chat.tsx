@@ -23,6 +23,7 @@ import { useChatMessageScroll } from "../../components/hooks/utils/useChatMessag
 import { formatAppDate, todayStrFunc, clockInAppZone } from "../../components/ts/utils/dateToStr";
 import { parseSavedMessageSuggestion } from "../../components/ts/utils/savedMessageSuggestion";
 import { useBlackout } from "../../components/hooks/BlackoutHook";
+import { useGroup } from "../../components/hooks/GroupHook";
 import useLocalStorage from "../../components/hooks/utils/useLocalStorage";
 export default function Chat() {
     const { t, i18n } = useTranslation("common");
@@ -53,6 +54,7 @@ export default function Chat() {
     } = useMessages();
     const { setTitle } = usePageTitle();
     const { setBlackout } = useBlackout();
+    const { refetchGroup } = useGroup();
     const [savedSmartEnabled] = useLocalStorage("chat_saved_suggestions", true);
     const {
         nick,
@@ -82,6 +84,18 @@ export default function Chat() {
         setPendingScrollId(messageId);
         navigate(location.pathname, { replace: true });
     }, [location.pathname, location.search, navigate, setPendingScrollId]);
+    useEffect(() => {
+        if (!id || !new URLSearchParams(location.search).has("invite") ||
+            !chatWith?.is_group || String(chatWith.id) !== id || chatLoading) return;
+        let cancelled = false;
+        void refetchGroup(id).then(() => {
+            if (cancelled) return;
+            setBlackout({ seted: true, module: "CreateChat", point: "InviteUser", isRoot: true });
+            navigate(location.pathname, { replace: true });
+        }).catch(() => {});
+        return () => { cancelled = true; };
+    }, [id, chatWith?.id, chatWith?.is_group, chatLoading,
+        location.pathname, location.search, refetchGroup, navigate, setBlackout]);
     const chatReady = !chatLoading && !!chatWith && (id
         ? chatWith.is_group && String(chatWith.id) === id
         : !chatWith.is_group && chatWith.nick === nick);

@@ -153,7 +153,10 @@ export default function ChatTextArea({
         const separator = item.id.indexOf(":");
         const kind = item.id.slice(0, separator) as LinkedEntity["type"];
         const entityId = item.id.slice(separator + 1);
-        if (shareMatch[1] === "invite") {
+        if (shareMatch[1] === "group" && kind === "group") {
+            navigate("/chat/g/" + entityId + "?invite=1");
+            setMess("");
+        } else if (shareMatch[1] === "invite") {
             if (kind === "habit" || kind === "plan") navigate("/" + kind + "/" + entityId + "?invite=1");
             setMess("");
         } else {
