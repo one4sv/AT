@@ -154,6 +154,10 @@ export default function Contact({ contact }: ContactType) {
             return localizedLast;
         }
 
+        if (msg.entity_type && ["user", "habit", "plan", "post", "group"].includes(msg.entity_type)) {
+            return t("chatUi.shareType." + msg.entity_type);
+        }
+
         if (msg.content) {
             return msg.content;
         }
