@@ -228,6 +228,7 @@
       "group": "Беседа"
     },
     "sharedEntityUnavailable": "Объект недоступен",
+    "openSharedPost": "Открыть публикацию",
     "quickCommands": {
       "action": "Команды",
       "createActivity": "Создать активность",
