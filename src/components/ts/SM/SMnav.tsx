@@ -64,7 +64,8 @@ export default function SMnav() {
     const { showNotification } = useNote();
     const {
         search: contactSearch,
-        setSearch: setContactSearch
+        setSearch: setContactSearch,
+        list: contacts
     } = useContacts();
     const search = activeTab === "user" ? settingsSearch : contactSearch;
     const parsedSearch = parseSMSearchQuery(search);
@@ -428,6 +429,8 @@ export default function SMnav() {
         new: "0"
     };
     const unreadMessages = chatsFilters.find(filter => filter.value === "chats")?.new || "";
+    const unreadContacts = contacts.filter(contact => contact.unread_count > 0);
+    const allUnreadMuted = unreadContacts.length > 0 && unreadContacts.every(contact => contact.note === false);
 
     useEffect(
         () => {
@@ -654,7 +657,7 @@ export default function SMnav() {
 
                         {filter.label}
 
-                        {extraMenu === "chats" && filter.new && <span className="smUnreadBadge new">
+                        {extraMenu === "chats" && filter.new && <span className={`smUnreadBadge new ${filter.value === "chats" && allUnreadMuted ? "muted" : ""}`}>
                             {filter.new}
                         </span>}
                     </div>
@@ -680,7 +683,7 @@ export default function SMnav() {
                     onTouchMove={handleNavTouchMove}
                 >
                     <ChatTeardropIcon weight="fill" />
-                    {unreadMessages && <span className="smUnreadBadge smNavUnread">{unreadMessages}</span>}
+                    {unreadMessages && <span className={`smUnreadBadge smNavUnread ${allUnreadMuted ? "muted" : ""}`}>{unreadMessages}</span>}
                 </div>
 
                 <div

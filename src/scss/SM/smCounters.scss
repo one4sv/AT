@@ -22,6 +22,10 @@
     }
 }
 
+.smUnreadBadge.muted {
+    background: var(--borderWh);
+    color: var(--bgc);
+}
 .smHeaderSelected {
     gap: .45vw;
     min-width: 0;
