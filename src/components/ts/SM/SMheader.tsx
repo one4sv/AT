@@ -53,6 +53,7 @@ export default function SMheader() {
         0
 
     const selectedSearch = parseSMSearchQuery(searchQuery);
+    useEffect(() => { setOpenFilters(null); }, [activeTab, searchMode]);
     const searchFilterLabel = t("sideMenu.searchFilter." + (selectedSearch.filter || "none"));
     const messageSelected = chatsFilters.find(f => f.value === messageSelectedValue)
         ?? { label: t("sideMenu.chats"), value: "chats", new: "" }
@@ -107,7 +108,7 @@ export default function SMheader() {
         longPressTriggered.current = false
     }
 
-    const handleClick = (type: "chats" | "habits") => {
+    const handleClick = (type: tab) => {
         if (wasLongPress.current) return
         setOpenFilters(prev => (prev === type ? null : type))
     }

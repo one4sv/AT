@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { api } from "../api";
@@ -39,6 +39,7 @@ export default function SMGlobalSearch({ query, tab: section, onFilterChange, on
                 kind: "setting", id: item.id, label: item.name, description: item.category,
                 url: "/settings"
             }))).slice(0, 20) : [];
+    const moreRequest = useRef<AbortController | null>(null);
     const [items, setItems] = useState<SearchResult[]>([]);
     const [loading, setLoading] = useState(false);
     const [pages, setPages] = useState<Record<string, number>>({});
@@ -46,6 +47,7 @@ export default function SMGlobalSearch({ query, tab: section, onFilterChange, on
     const valid = !!parsed.query && parsed.query.length <= 100;
 
     useEffect(() => {
+        moreRequest.current?.abort();
         setItems([]);
         setPages({});
         setMoreFilters([]);
@@ -83,16 +85,22 @@ export default function SMGlobalSearch({ query, tab: section, onFilterChange, on
         return () => {
             window.clearTimeout(timer);
             controller.abort();
+            moreRequest.current?.abort();
         };
     }, [query, section]);
 
     const loadMore = () => {
         if (loading || !moreFilters.length) return;
         setLoading(true);
+        moreRequest.current?.abort();
+        const controller = new AbortController();
+        moreRequest.current = controller;
         const filters = [...moreFilters];
         void Promise.all(filters.map(filter => api.get("search/global", {
-            params: { q: formatSMSearchQuery(filter, parsed.query), page: (pages[filter] || 0) + 1 }
+            params: { q: formatSMSearchQuery(filter, parsed.query), page: (pages[filter] || 0) + 1 },
+            signal: controller.signal
         }).catch(() => null))).then(responses => {
+            if (controller.signal.aborted) return;
             setItems(previous => {
                 const seen = new Set(previous.map(item => item.kind + ":" + item.id));
                 const result = [...previous];
@@ -115,7 +123,9 @@ export default function SMGlobalSearch({ query, tab: section, onFilterChange, on
                 return next;
             });
             setMoreFilters(filters.filter((_, index) => !!responses[index]?.data?.hasMore));
-        }).finally(() => setLoading(false));
+        }).finally(() => {
+            if (!controller.signal.aborted) setLoading(false);
+        });
     };
     const open = (item: SearchResult) => {
         if (item.kind === "setting") {
