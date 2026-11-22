@@ -67,6 +67,8 @@ jobs:
         run: node --test tests/shared-entity-post-forward.test.mjs
       - name: Verify group /invite links plans and activities without replacing a chat
         run: node --test tests/chat-invite-link.test.mjs
+      - name: Verify interface compositions and rotation
+        run: node --experimental-strip-types --test tests/compositions.test.mjs
       - name: Build client
         run: npm run build
       - name: Enforce entry JavaScript budget

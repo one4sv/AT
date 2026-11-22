@@ -1,5 +1,5 @@
 import type { BackgroundEffects, ContourPattern, WallpaperStyle, StartupSideMenuTab } from "../../context/SettingsContext";
-import { normalizeBackgroundEffects } from "./backgroundEffects";
+import { normalizeBackgroundEffects } from "./backgroundEffects.ts";
 
 export const MAX_COMPOSITIONS = 10;
 export const COMPOSITIONS_KEY = "at_compositions_v1";

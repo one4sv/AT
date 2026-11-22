@@ -137,6 +137,17 @@
         > .wallpaperMark { display: flex; justify-content: center; align-items: center; }
         > .wallpaperMark svg { width: 55%; height: 75%; }
     }
+    .compositionStockPreview {
+        display: block;
+        width: 100%;
+        height: 100%;
+        > img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
     .compositionPreviewPhoto {
         width: 100%;
         height: 100%;

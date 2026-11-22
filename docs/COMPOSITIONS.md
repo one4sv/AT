@@ -35,3 +35,7 @@ Unit: `tests/compositions.test.mjs` — полная модель, лимит 10
 ### Миниатюры и трафик
 
 `getStockScenePreviewSources` берёт тот же источник фотографических/векторных сцен, что действующие обои, но карточка использует `<picture><img loading="lazy" decoding="async"/>` вместо тяжёлого `BackgroundScene` с `loading=eager`. Для процедурных сцен без ассета остаётся `BackgroundScene`. Пользовательское изображение также загружается лениво. Все превью статические и не запускают собственную анимацию; это важно для 10 плиток на мобильном. Настройка автоматического воспроизведения/кэша обоев не меняется.
+
+### Unit в обязательном CI
+
+Добавлена отдельная проверка `node --experimental-strip-types --test tests/compositions.test.mjs` перед Build client в `.github/workflows/client-ci.yml`. Утилита `compositions.ts` импортирует `backgroundEffects.ts` с явным расширением для Node 22 strip-types; `tsconfig.app.json` разрешает TypeScript расширения. Stock preview `<picture>` и `<img>` получают `width/height:100%` и `object-fit:cover`, иначе оригинальные 1920×1080 растягивали бы миниатюры.
