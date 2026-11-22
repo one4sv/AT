@@ -168,6 +168,7 @@ export default function ChatTextArea({
                     title: tc("chatUi.sendInvite"),
                     description: tc("chatUi.inviteRecipient", { name: item.label, nick: target.nick }),
                     label: tc("chatUi.sendInvite"),
+                    variant: "approve",
                     run: async () => {
                         if (selected.kind === "group") {
                             const formData = new FormData();

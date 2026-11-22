@@ -19,7 +19,7 @@ export default function ConfirmAction() {
         </div>
         <div className="confirmActionButtons">
             <button type="button" disabled={saving} onClick={() => setBlackout({ seted: false })}>{t("dialog.cancel")}</button>
-            <button type="button" className="danger" disabled={saving} onClick={async () => {
+            <button type="button" className={action.variant === "approve" ? "approve" : "danger"} disabled={saving} onClick={async () => {
                 if (submitting.current) return;
                 submitting.current = true;
                 setSaving(true);
