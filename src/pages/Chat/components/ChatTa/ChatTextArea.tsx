@@ -23,6 +23,8 @@ import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { findMentionToken } from "../../../../components/ts/utils/chatMentions";
+import type { LinkedEntity } from "../../../../components/context/SendMessContext";
+import { useNavigate } from "react-router";
 interface FailedChatDraft {
     key: number;
     route: string;
@@ -32,6 +34,7 @@ interface FailedChatDraft {
     answerId?: string;
     redirect?: message[];
     showNames: boolean;
+    linkedEntity?: LinkedEntity;
 }
 
 const failedChatDrafts = new Map<string, FailedChatDraft[]>();
@@ -100,6 +103,12 @@ export default function ChatTextArea({
     const [mentionCaret, setMentionCaret] = useState(0);
     const [activeMention, setActiveMention] = useState(0);
     const [mentionDismissed, setMentionDismissed] = useState(false);
+    const [linkedEntity, setLinkedEntity] = useState<(LinkedEntity & {label:string}) | null>(null);
+    const [shareItems, setShareItems] = useState<EntitySuggestionItem[]>([]);
+    const [activeShare, setActiveShare] = useState(0);
+    const [sharePreview, setSharePreview] = useState<string | null>(null);
+    const [shareDismissed, setShareDismissed] = useState(false);
+    const navigate = useNavigate();
     const [previewCommand, setPreviewCommand] = useState<string | null>(null);
     const [commandListDismissed, setCommandListDismissed] = useState(false);
     const [quickDraft, setQuickDraft] = useState<QuickCommandDraft | null>(null);
@@ -119,6 +128,66 @@ export default function ChatTextArea({
     const matchingCommands = /^\/[a-z]*$/i.test(commandQuery)
         ? quickCommandItems.filter(item => item.label.startsWith(commandQuery.toLowerCase())) : [];
     const canShowCommands = savedChat && !quickDraft && !editing && !commandListDismissed && matchingCommands.length > 0;
+    const shareCommands: EntitySuggestionItem[] = [
+        {id:"habit",label:"/habit",description:tc("chatUi.shareActivity")},
+        {id:"plan",label:"/plan",description:tc("chatUi.sharePlan")},
+        {id:"post",label:"/post",description:tc("chatUi.sharePost")},
+        {id:"user",label:"/user",description:tc("chatUi.shareUser")},
+        {id:"group",label:"/group",description:tc("chatUi.shareGroup")},
+        {id:"invite",label:"/invite",description:tc("chatUi.shareInvite")}
+    ];
+    const plainShare = !savedChat && !editing && !shareDismissed && /^\/[a-z]*$/i.test(mess)
+        ? shareCommands.filter(item => item.label.startsWith(mess.toLowerCase())) : [];
+    const shareMatch = !savedChat && !editing && !shareDismissed
+        ? /^\/(habit|plan|post|user|group|invite)\s+(.{0,100})$/iu.exec(mess) : null;
+    const shareSuggestions = shareMatch ? shareItems : plainShare;
+    const chooseShare = (item: EntitySuggestionItem) => {
+        if (!shareMatch) {
+            setMess("/" + item.id + " ");
+            setShareItems([]);
+            setSharePreview(null);
+            setActiveShare(0);
+            requestAnimationFrame(() => textAreaRef.current?.focus({preventScroll:true}));
+            return;
+        }
+        const separator = item.id.indexOf(":");
+        const kind = item.id.slice(0, separator) as LinkedEntity["type"];
+        const entityId = item.id.slice(separator + 1);
+        if (shareMatch[1] === "invite") {
+            if (kind === "habit" || kind === "plan") navigate("/" + kind + "/" + entityId);
+            setMess("");
+        } else {
+            setLinkedEntity({type:kind,id:entityId,label:item.label});
+            setMess("");
+        }
+        setShareItems([]);
+        setActiveShare(0);
+        setSharePreview(null);
+        setShareDismissed(true);
+        requestAnimationFrame(() => textAreaRef.current?.focus({preventScroll:true}));
+    };
+    useEffect(() => {
+        setShareItems([]);
+        if (!shareMatch?.[2]?.trim()) return;
+        const controller = new AbortController();
+        const timer = window.setTimeout(() => {
+            const q = shareMatch[2].trim();
+            const kinds = shareMatch[1] === "invite" ? ["habit","plan"] : [shareMatch[1]];
+            void Promise.all(kinds.map(kind => api.get("search/global",{
+                params:{q:"/"+kind+" "+q,page:0},signal:controller.signal
+            }))).then(results => {
+                if (controller.signal.aborted) return;
+                setShareItems(results.flatMap(response => response.data?.items || [])
+                    .filter((entry:{kind:string;id:string;label:string}) => entry.id && entry.label)
+                    .map((entry:{kind:string;id:string;label:string}) => ({
+                        id: entry.kind + ":" + entry.id, label: entry.label,
+                        description: tc("sideMenu.searchFilter." + entry.kind)
+                    })));
+                setActiveShare(0);
+            }).catch(() => { if (!controller.signal.aborted) setShareItems([]); });
+        },250);
+        return () => {window.clearTimeout(timer);controller.abort();};
+    }, [mess, shareMatch?.[1], shareMatch?.[2]]);
     const mentionToken = !savedChat && !quickDraft && !editing && !mentionDismissed
         ? findMentionToken(mess, mentionCaret) : null;
     const mentionMembers = chatWith?.is_group ? chatWith.members || [] : chatWith
@@ -145,7 +214,7 @@ export default function ChatTextArea({
             textAreaRef.current?.setSelectionRange(caret, caret);
         });
     };
-    const displayedMess = previewCommand || mess;
+    const displayedMess = previewCommand || sharePreview || mess;
     const commitCommand = (id: string) => {
         const kind = id === "act" ? "habit" : "plan";
         const parsed = parseQuickCreateCommand(mess);
@@ -334,6 +403,9 @@ export default function ChatTextArea({
         setMentionCaret(0);
         setMentionDismissed(false);
         setActiveMention(0);
+        setLinkedEntity(null);
+        setShareItems([]);
+        setShareDismissed(false);
     }, [location.pathname, user.id]);
     useEffect(() => {
         const targetReady = !chatLoading && !!chatWith && (id
@@ -741,6 +813,16 @@ export default function ChatTextArea({
                             requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
                         }}
                     >{quickDraft ? <X size={18}/> : "/"}</button>}
+                    {!!shareSuggestions.length && <EntitySuggestionList
+                        className="chatShareSuggestions"
+                        anchorRef={commandRowRef}
+                        popupRef={commandPopupRef}
+                        items={shareSuggestions}
+                        activeIndex={Math.min(activeShare,shareSuggestions.length-1)}
+                        onSelect={chooseShare}
+                        onPreview={item => { if (!shareMatch) setSharePreview(item.label + " "); }}
+                        onPreviewEnd={() => setSharePreview(null)}
+                    />}
                     {!!matchingMentions.length && <EntitySuggestionList
                         className="chatMentionSuggestions"
                         anchorRef={commandRowRef}
