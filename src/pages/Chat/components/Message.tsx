@@ -198,7 +198,7 @@ export default function Message({
                 ${menu.point === "mess" && menu.options.id === String(m.id) && "onContextMenu"}
                 ${m.isPending ? "pending" : ""}
                 ${mediaOnly ? "mediaOnly" : ""} ${mediaOnly && m.files?.length === 1 ? "singleMedia" : ""}
-            }
+            `}
             ref={el => {
                 messageRefs?.current.set(m.id, el);
             }}
