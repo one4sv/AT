@@ -35,7 +35,8 @@ function InlineQuickField({ label, value, onChange, inputRef, maxLength, inputMo
         if (!field || !label || !area || !mirror) return;
         const resize = () => {
             // Keep the empty field almost invisible; the label remains a large tap target.
-            const available = Math.max(16, field.clientWidth - label.offsetWidth - 16);
+            const container = field.parentElement;
+            const available = Math.max(16, (container?.clientWidth || field.clientWidth) - label.offsetWidth - 16);
             const measured = mirror.getBoundingClientRect().width;
             area.style.width = Math.max(1, Math.min(available, Math.ceil(measured) + (value ? 3 : 0))) + "px";
             area.style.height = "auto";
