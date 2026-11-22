@@ -227,6 +227,11 @@
     "sendInvite": "Send invitation",
     "inviteRecipient": "Invite @{{nick}} to “{{name}}”?",
     "inviteSent": "Invitation sent",
+    "inviteLinkToChat": "Add an activity or plan to this chat",
+    "addToChat": "Add to chat",
+    "addHabitToChatDescription": "Add activity “{{name}}” to “{{chat}}”?",
+    "addPlanToChatDescription": "Add plan “{{name}}” to “{{chat}}”? Members will receive personal invitations.",
+    "addedToChat": "Added to chat",
     "quickCommands": {
       "action": "Commands",
       "createActivity": "Create activity",
