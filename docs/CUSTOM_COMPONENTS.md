@@ -366,3 +366,7 @@ setBlackout({
 ### 22.11.2026 — TagSelector и slash picker
 
 Реестр `tags.ts`: добавлен тег `health` («Здоровье») с `FirstAidIcon` в группу здоровья, единый для планов/активностей; бэкенд планов валидирует этот ключ. `EntitySuggestionList` переиспользуется в «Избранном» для создания и отправки сущностей, не добавлять отдельный dropdown. Совпадающий текст `/plan` разделяется разными действиями (создать и отправить карточку), `/invite`/`/group` в избранном не показываются.
+
+## 23.11.2026 — CompositionMenu
+
+`CompositionsSettings` использует `useContextMenu.openMenu(..., "composition", options)`, обычный `data-context-menu` с `data-context-menu-allow-button` для 350-мс long-press на карточке и `ContextMenuButt` из `src/components/ts/ContextMenu/menus/CompositionMenu.tsx`. Вне общего рендера `ContextMenu.tsx` больше нет локальной панели действий. `MenuOptions.onDuplicate/canDuplicate` соответствуют дополнительному пункту «Дублировать», остальные действия — обычные `onEdit/onSave/onDelete`. Не создавать вторую панель, не нарушать арбитраж жестов и ограничение 10 пресетов.

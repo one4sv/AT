@@ -136,3 +136,26 @@ test("UI is in Interface bottom with responsive 2/4/5 cards and localized search
         }
     }
 });
+
+test("composition actions use the global ContextMenu rather than a local popup", () => {
+    const page = read("src/pages/Settings/components/CompositionsSettings.tsx");
+    const menu = read("src/components/ts/ContextMenu/menus/CompositionMenu.tsx");
+    const renderer = read("src/components/ts/ContextMenu/ContextMenu.tsx");
+    const context = read("src/components/context/ContextMenuContext.tsx");
+    const style = read("src/pages/Settings/scss/compositions.scss");
+
+    assert.match(page, /useContextMenu\(\)/);
+    assert.match(page, /openMenu\(x, y, "composition", \{/);
+    assert.match(page, /data-context-menu="true" data-context-menu-allow-button="true"/);
+    assert.match(page, /onContextMenu=\{event => onCompositionContextMenu\(event, item\)\}/);
+    assert.match(page, /aria-haspopup="menu"/);
+    assert.match(renderer, /case "composition":\s*return <CompositionMenu \/>/);
+    assert.match(context, /onDuplicate\?: \(\) => void/);
+    assert.match(menu, /onEdit/);
+    assert.match(menu, /onSave/);
+    assert.match(menu, /onDuplicate/);
+    assert.match(menu, /onDelete/);
+    assert.ok(menu.lastIndexOf('label("remove")') > menu.lastIndexOf('label("duplicate")'));
+    assert.doesNotMatch(page, /compositionActions|menuId|menuRef/);
+    assert.doesNotMatch(style, /\.compositionActions|\.compositionMenuAnchor/);
+});

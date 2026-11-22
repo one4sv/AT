@@ -24,6 +24,8 @@ export type MenuOptions = {
     onReply?: () => void,
     onEdit?: () => void,
     onDelete?: () => void,
+    onDuplicate?: () => void,
+    canDuplicate?: boolean,
     onSave?: () => void,
     onStopEdit?: () => void,
     onToggleCancel?: () => void,

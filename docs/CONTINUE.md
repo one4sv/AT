@@ -1,3 +1,7 @@
+## 23.11.2026 — меню Композиций теперь штатный ContextMenu
+
+Убрана собственная `.compositionActions` панель, `menuId`, `menuRef` и локальные обработчики pointerdown/keydown из `CompositionsSettings`. Вместо них `useContextMenu.openMenu` с `point="composition"` и соответствующий `CompositionMenu.tsx` (общий `ContextMenu.tsx`). В `MenuOptions` добавлены только `onDuplicate` и `canDuplicate`; переименование/перезапись/удаление используют существующие `onEdit/onSave/onDelete`. ПКМ и 350-мс long press на карточке, короткое нажатие на «…» → одно и то же меню с `ContextMenuButt`; опасный Delete последний, лимит 10 сохраняется. Инлайн-подтверждение Delete и переименование после выбора пункта оставлены без изменений. Короткое нажатие на плитку по-прежнему применяет композицию. Тест `tests/compositions.test.mjs`, описание `COMPOSITIONS.md`; ручной QA iOS/desktop ещё открыт.
+
 ## 23.11.2026 — локализация Композиций
 
 Исправлен неверный путь `t("compositions." + key)` → `t("personalization.compositions." + key)` в `CompositionsSettings`. Ключи RU/EN **уже существовали**, причина — несовпадение namespace-пути. Добавлен регрессионный тест. Проверить GitHub CI (unit + TS/Vite), Vercel READY и после выката визуально `Композиции`, `Сохранить текущую`, `Вручную`, выбор дней недели на RU/EN. Умышленно не менялись параметры/хранение/расписание композиций.

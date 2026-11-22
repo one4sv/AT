@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useState, type CSSProperties, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { CheckCircleIcon, CopyIcon, DotsThreeIcon, PencilSimpleIcon, PlusIcon, TrashIcon, XIcon, StackIcon } from "@phosphor-icons/react";
+import { CheckCircleIcon, DotsThreeIcon, PlusIcon, XIcon } from "@phosphor-icons/react";
 import { useSettings } from "../../../components/hooks/SettingsHook";
+import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { getCustomHex } from "../../../components/ts/utils/customPalette";
 import { getBackgroundFilter } from "../../../components/ts/utils/backgroundFilter";
 import { BackgroundScene, isStockScene, getStockScenePreviewSources } from "../../../components/ts/utils/BackgroundScene";
@@ -82,11 +83,10 @@ export default function CompositionsSettings({ search }: { search: string }) {
         bg, bgUrl, bgEffects, wallpaperStyle,
         contourPattern, contourSize, artPattern, artSize
     } = useSettings();
-    const [menuId, setMenuId] = useState<string | null>(null);
+    const { openMenu } = useContextMenu();
     const [renameId, setRenameId] = useState<string | null>(null);
     const [name, setName] = useState("");
     const [deleteId, setDeleteId] = useState<string | null>(null);
-    const menuRef = useRef<HTMLDivElement>(null);
     const current: CompositionAppearance = {
         theme, accent, grad, decor, blur, layout,
         showMobileMenuOnStart, startupSideMenuTab,
@@ -104,7 +104,6 @@ export default function CompositionsSettings({ search }: { search: string }) {
             ...previous, activeId: composition.id,
             lastCycleKey: compositionCycleKey(previous.mode, new Date())
         }));
-        setMenuId(null);
     };
     const create = () => {
         if (compositions.items.length >= MAX_COMPOSITIONS) return;
@@ -128,7 +127,6 @@ export default function CompositionsSettings({ search }: { search: string }) {
         const id = crypto.randomUUID();
         update(previous => ({ ...previous, items: [...previous.items,
             { ...item, id, name: labels("copyName", { name: item.name }) }] }));
-        setMenuId(null);
     };
     const overwrite = (item: Composition) => {
         update(previous => ({
@@ -137,7 +135,6 @@ export default function CompositionsSettings({ search }: { search: string }) {
                 { ...entry, appearance: current } : entry),
             activeId: item.id, lastCycleKey: compositionCycleKey(previous.mode, new Date())
         }));
-        setMenuId(null);
     };
     const rename = () => {
         const next = name.trim().slice(0, 40);
@@ -155,24 +152,27 @@ export default function CompositionsSettings({ search }: { search: string }) {
             weekdays: previous.weekdays.map(id => id === deleteId ? null : id)
         }));
         setDeleteId(null);
-        setMenuId(null);
     };
 
-    useEffect(() => {
-        if (!menuId) return;
-        const close = (event: PointerEvent) => {
-            if (!menuRef.current?.contains(event.target as Node)) setMenuId(null);
-        };
-        const escape = (event: KeyboardEvent) => {
-            if (event.key === "Escape") setMenuId(null);
-        };
-        document.addEventListener("pointerdown", close);
-        document.addEventListener("keydown", escape);
-        return () => {
-            document.removeEventListener("pointerdown", close);
-            document.removeEventListener("keydown", escape);
-        };
-    }, [menuId]);
+    const openCompositionMenu = (item: Composition, x: number, y: number) => {
+        openMenu(x, y, "composition", {
+            id: item.id,
+            name: item.name,
+            onEdit: () => {
+                setRenameId(item.id);
+                setName(item.name);
+            },
+            onSave: () => overwrite(item),
+            onDuplicate: () => duplicate(item),
+            canDuplicate: compositions.items.length < MAX_COMPOSITIONS,
+            onDelete: () => setDeleteId(item.id)
+        });
+    };
+    const onCompositionContextMenu = (event: MouseEvent<HTMLDivElement>, item: Composition) => {
+        event.preventDefault();
+        event.stopPropagation();
+        openCompositionMenu(item, event.clientX, event.clientY);
+    };
 
     const modes: { label: string; value: string }[] = [
         { value: "manual", label: labels("manual") },
@@ -196,7 +196,9 @@ export default function CompositionsSettings({ search }: { search: string }) {
                 {compositions.items.map(item => {
                     const active = compositions.activeId === item.id;
                     const changed = active && JSON.stringify(current) !== JSON.stringify(item.appearance);
-                    return <div key={item.id} className={"compositionCard" + (active ? " active" : "")}>
+                    return <div key={item.id} className={"compositionCard" + (active ? " active" : "")}
+                        data-context-menu="true" data-context-menu-allow-button="true"
+                        onContextMenu={event => onCompositionContextMenu(event, item)}>
                         <button type="button" className="compositionCardApply"
                             onClick={() => apply(item)} title={labels("apply", { name: item.name })}
                             aria-label={labels("apply", { name: item.name })}>
@@ -207,32 +209,16 @@ export default function CompositionsSettings({ search }: { search: string }) {
                                 {changed ? labels("changed") : labels("active")}
                             </span>}
                         </button>
-                        <div className="compositionMenuAnchor" ref={menuId === item.id ? menuRef : undefined}>
-                            <button type="button" className="compositionMenuToggle"
-                                aria-label={labels("actions", { name: item.name })}
-                                aria-expanded={menuId === item.id}
-                                onClick={() => setMenuId(previous => previous === item.id ? null : item.id)}>
-                                <DotsThreeIcon size={20}/>
-                            </button>
-                            {menuId === item.id && <div className="compositionActions">
-                                <button type="button" onClick={() => {
-                                    setRenameId(item.id);
-                                    setName(item.name);
-                                    setMenuId(null);
-                                }}><PencilSimpleIcon size={18}/>{labels("rename")}</button>
-                                <button type="button" onClick={() => overwrite(item)}>
-                                    <StackIcon size={18}/>{labels("overwrite")}
-                                </button>
-                                <button type="button" disabled={compositions.items.length >= MAX_COMPOSITIONS}
-                                    onClick={() => duplicate(item)}>
-                                    <CopyIcon size={18}/>{labels("duplicate")}
-                                </button>
-                                <button type="button" className="danger" onClick={() => {
-                                    setDeleteId(item.id);
-                                    setMenuId(null);
-                                }}><TrashIcon size={18}/>{labels("remove")}</button>
-                            </div>}
-                        </div>
+                        <button type="button" className="compositionMenuToggle"
+                            aria-label={labels("actions", { name: item.name })}
+                            aria-haspopup="menu"
+                            onClick={event => {
+                                event.stopPropagation();
+                                const rect = event.currentTarget.getBoundingClientRect();
+                                openCompositionMenu(item, rect.left, rect.bottom);
+                            }}>
+                            <DotsThreeIcon size={20}/>
+                        </button>
                     </div>;
                 })}
                 {compositions.items.length < MAX_COMPOSITIONS && <button type="button"

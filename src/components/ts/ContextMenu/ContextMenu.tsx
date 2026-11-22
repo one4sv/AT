@@ -17,6 +17,7 @@ import SettingsBackMenu from "./menus/SettingsBackMenu";
 import SettingsSectionMenu from "./menus/SettingsSectionMenu";
 import PlanCreateMenu from "./menus/PlanCreateMenu";
 import PlanMenu from "./menus/PlanMenu";
+import CompositionMenu from "./menus/CompositionMenu";
 export default function ContextMenu() {
     const {
         menu,
@@ -144,6 +145,8 @@ export default function ContextMenu() {
             case "plan":
             case "planItem":
                 return <PlanMenu />;
+            case "composition":
+                return <CompositionMenu />;
             default:
                 return null;
         }
