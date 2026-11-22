@@ -152,6 +152,7 @@ $accents: (
     inversion: (
         light: (
             accent: #fff,
+            accent_highlight: #99999966,
             accent_text: #000,
             accent_op: #ffffff69,
             accent_hov: #ffffff81,
@@ -178,6 +179,7 @@ $accents: (
         ),
         dark: (
             accent: #000,
+            accent_highlight: #66666666,
             accent_text: #fff,
             accent_op: #00000069,
             accent_hov: #00000081,
@@ -250,6 +252,7 @@ $grads: (
     mono: (
         light: (
             grad: #e9e9e9,
+            grad_highlight: #99999966,
             grad_op: #e9e9e969,
             grad_hov: #e9e9e981
         ),
@@ -267,6 +270,7 @@ $grads: (
         ),
         dark: (
             grad: #000,
+            grad_highlight: #66666666,
             grad_op: #00000069,
             grad_hov: #00000081
         )
@@ -359,7 +363,11 @@ $decors: (
                 --accent_text: #{map-get($map, accent_text)};
                 --accent_op: #{map-get($map, accent_op)};
                 --accent_hov: #{map-get($map, accent_hov)};
-                --accent_highlight: #{map-get($map, accent)}66;
+                @if map-has-key($map, accent_highlight) {
+                    --accent_highlight: #{map-get($map, accent_highlight)};
+                } @else {
+                    --accent_highlight: #{rgba(map-get($map, accent), .4)};
+                }
                 --darker_accent: #{map-get($map, darker_accent)};
                 --inner_text: #{map-get($map, inner_text)};
             }
@@ -374,7 +382,11 @@ $decors: (
                 --grad: #{map-get($map, grad)};
                 --grad_op: #{map-get($map, grad_op)};
                 --grad_hov: #{map-get($map, grad_hov)};
-                --grad_highlight: #{map-get($map, grad)}66;
+                @if map-has-key($map, grad_highlight) {
+                    --grad_highlight: #{map-get($map, grad_highlight)};
+                } @else {
+                    --grad_highlight: #{rgba(map-get($map, grad), .4)};
+                }
             }
         }
     }
