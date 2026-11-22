@@ -39,3 +39,7 @@ Unit: `tests/compositions.test.mjs` — полная модель, лимит 10
 ### Unit в обязательном CI
 
 Добавлена отдельная проверка `node --experimental-strip-types --test tests/compositions.test.mjs` перед Build client в `.github/workflows/client-ci.yml`. Утилита `compositions.ts` импортирует `backgroundEffects.ts` с явным расширением для Node 22 strip-types; `tsconfig.app.json` разрешает TypeScript расширения. Stock preview `<picture>` и `<img>` получают `width/height:100%` и `object-fit:cover`, иначе оригинальные 1920×1080 растягивали бы миниатюры.
+
+## 23.11.2026 — исправление ключей локализации
+
+При первом деплое `CompositionsSettings` вызывал `t("compositions." + key)`, но RU/EN словари сохраняют тексты по пути `personalization.compositions`. В результате отображались сырые ключи `compositions.title`, `compositions.description` и т. п. Исправлено на `t("personalization.compositions." + key)` для **всех** надписей, подписей меню, выбора автосмены, подсказок и дней недели. В `tests/compositions.test.mjs` добавлена проверка полного пути и наличия ключевых строк в обеих локалях.

@@ -95,7 +95,7 @@ export default function CompositionsSettings({ search }: { search: string }) {
         customGradHex: getCustomHex("grad")
     };
     const labels = (key: string, vars?: Record<string, unknown>) =>
-        t("compositions." + key, vars);
+        t("personalization.compositions." + key, vars);
     const update = (edit: (current: typeof compositions) => typeof compositions) =>
         setCompositions(previous => edit(previous));
     const apply = (composition: Composition) => {

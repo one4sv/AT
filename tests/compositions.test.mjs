@@ -122,11 +122,17 @@ test("UI is in Interface bottom with responsive 2/4/5 cards and localized search
     assert.match(styles,/@container \(min-width: 850px\)/);
     assert.match(search,/id: "compositions"/);
     assert.match(preview,/wallpaperStyle/);
+    assert.match(preview,/t\("personalization\.compositions\." \+ key, vars\)/);
     assert.match(preview,/compositionWeekdays/);
     assert.match(init,/initializeOpeningComposition\(\)/);
     for (const lang of ["ru","en"]) {
         const dictionary = JSON.parse(read("src/i18n/locales/"+lang+"/settings.json"));
         assert.equal(typeof dictionary.personalization.compositions.title,"string");
         assert.equal(typeof dictionary.personalization.compositions.modeHint_weekly,"string");
+        for (const key of ["title", "description", "saveCurrent", "rotation", "manual", "modeHint_manual", "localHint", "overwrite", "day_mon"]) {
+            const value = dictionary.personalization.compositions[key];
+            assert.equal(typeof value, "string", lang + ": " + key);
+            assert.ok(value.length > 0 && !value.startsWith("compositions."), lang + ": unresolved " + key);
+        }
     }
 });
