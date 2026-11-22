@@ -28,6 +28,7 @@
           "group": "Chats"
     },
     "globalSearchEmpty": "No results found",
+    "searchEmptyHint": "Try another query or search filter",
     "globalSearchMore": "Show more",
     "globalSearchLoading": "Searching…",
     "newPost": "New post",

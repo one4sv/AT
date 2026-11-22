@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
+import { MagnifyingGlassMinusIcon } from "@phosphor-icons/react";
 import { api } from "../api";
+import { tags } from "../tags";
 import { useSideMenu } from "../../hooks/SideMenuHook";
 import { useSearchableSettings } from "../../../pages/Settings/Arrays/searchableSettings";
-import { formatSMSearchQuery, parseSMSearchQuery, searchTabFilters, type SearchFilter } from "../utils/globalSearchQuery";
+import { formatSMSearchQuery, searchTabFilters, type SearchFilter } from "../utils/globalSearchQuery";
 import type { tab } from "../../context/SideMenuContext";
+import SMSearchFilterIcon from "./SMSearchFilterIcon";
+import "../../../scss/Loading.scss";
 import "../../../scss/SM/globalSearch.scss";
 
 interface SearchResult {
@@ -14,10 +18,37 @@ interface SearchResult {
     label: string;
     description: string;
     url: string;
+    avatar_url?: string | null;
+    tag?: string | null;
 }
 
-export default function SMGlobalSearch({ query, tab: section, onFilterChange, onChoose }: {
+function SMSearchResultVisual({ item }: { item: SearchResult }) {
+    const [failedImage, setFailedImage] = useState(false);
+    const TagIcon = item.kind === "habit" || item.kind === "plan"
+        ? tags.find(tag => tag.value === item.tag)?.icon : null;
+
+    return <span className={"smSearchVisual " + (item.kind === "user" ? "user" : "")} aria-hidden="true">
+        {item.kind === "user" && item.avatar_url && !failedImage
+            ? <img src={item.avatar_url} alt="" loading="lazy" onError={() => setFailedImage(true)}/>
+            : TagIcon ? <TagIcon/> : <SMSearchFilterIcon filter={item.kind as SearchFilter} size={26}/>}
+    </span>;
+}
+
+function SearchSkeleton({ count = 5 }: { count?: number }) {
+    return <div className="smSearchSkeleton" role="status" aria-busy="true">
+        {Array.from({ length: count }, (_, index) => <div className="smSearchSkeletonItem" key={index}>
+            <span className="skeletonCircle"/>
+            <span className="smSearchSkeletonLines">
+                <span className="skeletonLine"/>
+                <span className="skeletonLine skeletonShort"/>
+            </span>
+        </div>)}
+    </div>;
+}
+
+export default function SMGlobalSearch({ query, filter, tab: section, onFilterChange, onChoose }: {
     query: string;
+    filter: SearchFilter | null;
     tab: tab;
     onFilterChange: (filter: SearchFilter | null) => void;
     onChoose: (kind: string) => void;
@@ -26,41 +57,45 @@ export default function SMGlobalSearch({ query, tab: section, onFilterChange, on
     const navigate = useNavigate();
     const { setActiveTab, setSettingsSearch } = useSideMenu();
     const sections = useSearchableSettings();
-    const parsed = parseSMSearchQuery(query);
-    const activeFilters = parsed.filter ? [parsed.filter] : searchTabFilters[section];
-    const serverFilters = activeFilters.filter(filter => filter !== "setting");
-    const isFilterInput = query.trim().startsWith("/") && !parsed.query;
-    const slashMatches = isFilterInput ? searchTabFilters[section].filter(filter =>
-        filter.startsWith(query.trim().slice(1).toLowerCase())) : [];
-    const settings = activeFilters.includes("setting") && parsed.query
+    const term = query.trim();
+    const isFilterInput = term.startsWith("/");
+    const activeFilters = filter ? [filter] : searchTabFilters[section];
+    const serverFilters = activeFilters.filter(type => type !== "setting");
+    const slashMatches = isFilterInput ? searchTabFilters[section].filter(type =>
+        type.startsWith(term.slice(1).toLowerCase())) : [];
+    const settings = activeFilters.includes("setting") && !isFilterInput
         ? sections.flatMap(section => section.items.filter(item =>
-            [item.name, item.category].some(value => value?.toLowerCase().includes(parsed.query.toLowerCase())))
+            !term || [item.name, item.category].some(value => value?.toLowerCase().includes(term.toLowerCase())))
             .map(item => ({
                 kind: "setting", id: item.id, label: item.name, description: item.category,
                 url: "/settings"
             }))).slice(0, 20) : [];
+    const requestKey = section + ":" + (filter || "none") + ":" + query;
+    const valid = term.length <= 100;
     const moreRequest = useRef<AbortController | null>(null);
     const [items, setItems] = useState<SearchResult[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loadedKey, setLoadedKey] = useState<string | null>(null);
     const [pages, setPages] = useState<Record<string, number>>({});
     const [moreFilters, setMoreFilters] = useState<SearchFilter[]>([]);
-    const valid = !!parsed.query && parsed.query.length <= 100;
+    const [moreLoading, setMoreLoading] = useState(false);
+    const initialLoading = !isFilterInput && valid && !!serverFilters.length && loadedKey !== requestKey;
 
     useEffect(() => {
         moreRequest.current?.abort();
         setItems([]);
         setPages({});
         setMoreFilters([]);
-        if (!valid || !serverFilters.length) {
-            setLoading(false);
+        setMoreLoading(false);
+        setLoadedKey(null);
+        if (isFilterInput || !valid || !serverFilters.length) {
+            setLoadedKey(requestKey);
             return;
         }
         const controller = new AbortController();
-        setLoading(true);
         const timer = window.setTimeout(() => {
-            void Promise.all(serverFilters.map(filter =>
+            void Promise.all(serverFilters.map(type =>
                 api.get("search/global", {
-                    params: { q: formatSMSearchQuery(filter, parsed.query), page: 0 },
+                    params: { q: formatSMSearchQuery(type, term), page: 0 },
                     signal: controller.signal
                 }).catch(() => null)
             )).then(responses => {
@@ -78,26 +113,25 @@ export default function SMGlobalSearch({ query, tab: section, onFilterChange, on
                 });
                 setItems(results);
                 setMoreFilters(serverFilters.filter((_, index) => !!responses[index]?.data?.hasMore));
-            }).finally(() => {
-                if (!controller.signal.aborted) setLoading(false);
+                setLoadedKey(requestKey);
             });
-        }, 250);
+        }, term ? 250 : 0);
         return () => {
             window.clearTimeout(timer);
             controller.abort();
             moreRequest.current?.abort();
         };
-    }, [query, section]);
+    }, [query, filter, section]);
 
     const loadMore = () => {
-        if (loading || !moreFilters.length) return;
-        setLoading(true);
+        if (moreLoading || initialLoading || !moreFilters.length) return;
+        setMoreLoading(true);
         moreRequest.current?.abort();
         const controller = new AbortController();
         moreRequest.current = controller;
         const filters = [...moreFilters];
-        void Promise.all(filters.map(filter => api.get("search/global", {
-            params: { q: formatSMSearchQuery(filter, parsed.query), page: (pages[filter] || 0) + 1 },
+        void Promise.all(filters.map(type => api.get("search/global", {
+            params: { q: formatSMSearchQuery(type, term), page: (pages[type] || 0) + 1 },
             signal: controller.signal
         }).catch(() => null))).then(responses => {
             if (controller.signal.aborted) return;
@@ -117,19 +151,19 @@ export default function SMGlobalSearch({ query, tab: section, onFilterChange, on
             });
             setPages(previous => {
                 const next = { ...previous };
-                filters.forEach((filter, index) => {
-                    if (responses[index]?.data?.success) next[filter] = (next[filter] || 0) + 1;
+                filters.forEach((type, index) => {
+                    if (responses[index]?.data?.success) next[type] = (next[type] || 0) + 1;
                 });
                 return next;
             });
             setMoreFilters(filters.filter((_, index) => !!responses[index]?.data?.hasMore));
         }).finally(() => {
-            if (!controller.signal.aborted) setLoading(false);
+            if (!controller.signal.aborted) setMoreLoading(false);
         });
     };
     const open = (item: SearchResult) => {
         if (item.kind === "setting") {
-            setSettingsSearch(parsed.query);
+            setSettingsSearch(term);
             setActiveTab("user");
         }
         onChoose(item.kind);
@@ -137,26 +171,38 @@ export default function SMGlobalSearch({ query, tab: section, onFilterChange, on
     };
     return <div className="SMlist smSearchResults" role="region" aria-label={t("accountNavigation.search")}>
         {isFilterInput ? <>
-            <button type="button" className="smSearchResult" onClick={() => onFilterChange(null)}>
+            <button type="button" className="smSearchFilterSuggestion" onClick={() => onFilterChange(null)}>
+                <SMSearchFilterIcon filter={null}/>
                 {t("sideMenu.searchFilter.none")}
             </button>
-            {slashMatches.map(filter => <button type="button" className="smSearchResult" key={filter}
-                onClick={() => onFilterChange(filter)}>
-                {"/" + filter} — {t("sideMenu.searchFilter." + filter)}
+            {slashMatches.map(type => <button type="button" className="smSearchFilterSuggestion" key={type}
+                onClick={() => onFilterChange(type)}>
+                <SMSearchFilterIcon filter={type}/>
+                {t("sideMenu.searchFilter." + type)}
             </button>)}
         </> : <>
-            {[...settings, ...items].map(item => <button type="button"
-                key={item.kind + ":" + item.id} className="smSearchResult"
-                onClick={() => open(item)}>
-                <span className="smSearchKind">{t("sideMenu.searchFilter." + item.kind)}</span>
-                <span className="smSearchText">{item.label}</span>
-                {item.description && <span className="smSearchDescription">{item.description}</span>}
-            </button>)}
-            {loading && <div className="smSearchStatus">{t("sideMenu.globalSearchLoading")}</div>}
-            {!loading && !settings.length && !items.length && <div className="smSearchStatus">
-                {valid ? t("sideMenu.globalSearchEmpty") : t("sideMenu.searchHint")}
-            </div>}
-            {moreFilters.length > 0 && <button type="button" className="smSearchMore" disabled={loading}
+            {initialLoading ? <SearchSkeleton/> : <>
+                {[...items, ...settings].map(item => <button type="button"
+                    key={item.kind + ":" + item.id} className="smSearchResult"
+                    onClick={() => open(item)}>
+                    <SMSearchResultVisual item={item}/>
+                    <span className="smSearchResultBody">
+                        <span className="smSearchText">{item.label}</span>
+                        <span className="smSearchDescription">
+                            {t("sideMenu.searchFilter." + item.kind)}
+                            {item.description ? " · " + item.description : ""}
+                        </span>
+                    </span>
+                </button>)}
+                {!items.length && !settings.length && <div className="smSearchEmpty">
+                    <span className="smSearchEmptyIcon"><MagnifyingGlassMinusIcon size={38}/></span>
+                    <span>{t("sideMenu.globalSearchEmpty")}</span>
+                    <span className="smSearchEmptyHint">{t("sideMenu.searchEmptyHint")}</span>
+                </div>}
+            </>}
+            {moreLoading && <SearchSkeleton count={2}/>}
+            {!initialLoading && moreFilters.length > 0 && <button type="button"
+                className="smSearchMore" disabled={moreLoading}
                 onClick={loadMore}>{t("sideMenu.globalSearchMore")}</button>}
         </>}
     </div>;

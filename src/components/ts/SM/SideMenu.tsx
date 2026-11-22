@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { formatSMSearchQuery, parseSMSearchQuery } from "../utils/globalSearchQuery";
+import { searchTabForFilter } from "../utils/globalSearchQuery";
 import { useLocation } from "react-router-dom";
 import "../../../scss/SM/sideMenu.scss";
 import HabitsList from "./HabitsList.tsx";
@@ -47,6 +47,9 @@ export default function SideMenu() {
         setSearchMode,
         searchQuery,
         setSearchQuery,
+        searchFilter,
+        setSearchFilter,
+        setActiveTab,
         startupTabAnimationReady,
         showSideMenu,
         setIsDragging,
@@ -59,8 +62,13 @@ export default function SideMenu() {
         dontHandleOther
     } = useSideMenu();
     const searchResults = searchMode ? <SMGlobalSearch key={activeTab} tab={activeTab} query={searchQuery}
-        onFilterChange={filter => setSearchQuery(formatSMSearchQuery(filter, parseSMSearchQuery(searchQuery).query))}
-        onChoose={() => { setSearchMode(false); setSearchQuery(""); closeMenu(); }}/> : null;
+        filter={searchFilter}
+        onFilterChange={filter => {
+            setSearchFilter(filter);
+            if (searchQuery.trim().startsWith("/")) setSearchQuery("");
+            if (filter) setActiveTab(searchTabForFilter(filter));
+        }}
+        onChoose={() => { setSearchMode(false); setSearchQuery(""); setSearchFilter(null); closeMenu(); }}/> : null;
     const translateSlider = activeTab === "chats" ? 0 : activeTab === "habits" ? -25 : activeTab === "spots" ? -50 : activeTab === "user" ? -75 : 0;
     const startX = useRef(0);
     const startY = useRef(0);

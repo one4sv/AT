@@ -17,4 +17,6 @@ test("search filters preserve query terms and keep one owning section", () => {
     assert.equal(formatSMSearchQuery("plan","врач"),"/plan врач");
     assert.equal(new Set(Object.values(searchTabFilters).flat()).size,searchFilters.length);
     assert.deepEqual(searchTabFilters.spots,[]);
+    assert.equal(searchTabForFilter("user"), "chats");
+    assert.equal(searchTabFilters.user.includes("user"), false);
 });

@@ -28,6 +28,7 @@
           "group": "Беседы"
     },
     "globalSearchEmpty": "Ничего не найдено",
+    "searchEmptyHint": "Попробуйте другой запрос или фильтр поиска",
     "globalSearchMore": "Показать ещё",
     "globalSearchLoading": "Поиск…",
     "newPost": "Новый пост",
