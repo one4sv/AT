@@ -5,6 +5,7 @@ import {
   PersonSimpleBike, BowlingBall, BoxingGlove, PersonSimpleWalk, Code,
   BookBookmark, Briefcase, Palette, Camera, Guitar, BowlFood,
   PersonSimpleTaiChi,
+  FirstAidIcon,
   PersonArmsSpread
 } from "@phosphor-icons/react"
 import { Bed } from "lucide-react";
@@ -29,6 +30,7 @@ export const tags: Tag[] = [
   { icon: GameController , label: "Видеоигры", value: "games", group:"hobby" },
   { icon: DiceFive , label: "Настольные игры", value: "dice", group:"hobby" },
 
+  { icon: FirstAidIcon, label: "Здоровье", value: "health", group:"health" },
   { icon: Bed, label: "Режим сна", value: "sleep", group:"health" },
   { icon: PersonSimpleWalk, label: "Шаги в день", value: "walking", group:"health" },
   { icon: BowlFood, label: "Правильное питание", value: "food", group:"health" },
