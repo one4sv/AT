@@ -233,6 +233,11 @@
     "sendInvite": "Отправить приглашение",
     "inviteRecipient": "Пригласить @{{nick}} в «{{name}}»?",
     "inviteSent": "Приглашение отправлено",
+    "inviteLinkToChat": "Добавить активность или план в беседу",
+    "addToChat": "Добавить в беседу",
+    "addHabitToChatDescription": "Добавить активность «{{name}}» в беседу «{{chat}}»?",
+    "addPlanToChatDescription": "Добавить план «{{name}}» в беседу «{{chat}}»? Участникам будут отправлены личные приглашения.",
+    "addedToChat": "Добавлено в беседу",
     "quickCommands": {
       "action": "Команды",
       "createActivity": "Создать активность",
