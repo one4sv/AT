@@ -706,6 +706,7 @@ export default function ChatTextArea({
                         onCancel={cancelQuickCommand}
                         onSubmit={() => void submitQuickCommand()}
                         disabled={quickSending || !!createdQuick.current}
+                        suggestionPopupRef={commandPopupRef}
                     /> : <div className="chatCommandEditor">
                         <TA
                             name="chatTA"
