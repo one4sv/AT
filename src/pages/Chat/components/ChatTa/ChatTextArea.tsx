@@ -24,7 +24,7 @@ import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { findMentionToken } from "../../../../components/ts/utils/chatMentions";
 import type { LinkedEntity } from "../../../../components/context/SendMessContext";
-import { useNavigate } from "react-router";
+import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 interface FailedChatDraft {
     key: number;
     route: string;
@@ -108,7 +108,8 @@ export default function ChatTextArea({
     const [activeShare, setActiveShare] = useState(0);
     const [sharePreview, setSharePreview] = useState<string | null>(null);
     const [shareDismissed, setShareDismissed] = useState(false);
-    const navigate = useNavigate();
+    const [externalMentions, setExternalMentions] = useState<EntitySuggestionItem[]>([]);
+    const { setBlackout } = useBlackout();
     const [previewCommand, setPreviewCommand] = useState<string | null>(null);
     const [commandListDismissed, setCommandListDismissed] = useState(false);
     const [quickDraft, setQuickDraft] = useState<QuickCommandDraft | null>(null);
@@ -139,11 +140,11 @@ export default function ChatTextArea({
     const plainShare = !savedChat && !editing && !shareDismissed && /^\/[a-z]*$/i.test(mess)
         ? shareCommands.filter(item => item.label.startsWith(mess.toLowerCase())) : [];
     const shareMatch = !savedChat && !editing && !shareDismissed
-        ? /^\/(habit|plan|post|user|group|invite)\s+(.{0,100})$/iu.exec(mess) : null;
+        ? /^\/(habit|plan|post|user|group|invite)(?:\s+(.{0,100}))?$/iu.exec(mess) : null;
     const shareSuggestions = shareMatch ? shareItems : plainShare;
     const chooseShare = (item: EntitySuggestionItem) => {
         if (!shareMatch) {
-            setMess("/" + item.id + " ");
+            setMess("/" + item.id);
             setShareItems([]);
             setSharePreview(null);
             setActiveShare(0);
@@ -153,11 +154,38 @@ export default function ChatTextArea({
         const separator = item.id.indexOf(":");
         const kind = item.id.slice(0, separator) as LinkedEntity["type"];
         const entityId = item.id.slice(separator + 1);
-        if (shareMatch[1] === "group" && kind === "group") {
-            navigate("/chat/g/" + entityId + "?invite=1");
-            setMess("");
-        } else if (shareMatch[1] === "invite") {
-            if (kind === "habit" || kind === "plan") navigate("/" + kind + "/" + entityId + "?invite=1");
+        if (shareMatch[1] === "invite" || shareMatch[1] === "group") {
+            if (!chatWith || chatWith.is_group || !chatWith.nick || chatWith.id === user.id) {
+                showNotification("info", tc("chatUi.inviteFromPrivateChat"));
+                return;
+            }
+            const target = chatWith;
+            const selected = { kind, entityId, label: item.label };
+            setBlackout({
+                seted: true,
+                module: "ConfirmAction",
+                confirmAction: {
+                    title: tc("chatUi.sendInvite"),
+                    description: tc("chatUi.inviteRecipient", { name: item.label, nick: target.nick }),
+                    label: tc("chatUi.sendInvite"),
+                    run: async () => {
+                        if (selected.kind === "group") {
+                            const formData = new FormData();
+                            formData.append("group_id", selected.entityId);
+                            formData.append("members", JSON.stringify([target.id]));
+                            const response = await api.post("group/addusers", formData);
+                            if (!response.data?.success) throw new Error("Group invite failed");
+                        } else {
+                            const endpoint = selected.kind === "habit"
+                                ? "habits/" + selected.entityId + "/members"
+                                : "plans/" + selected.entityId + "/invite";
+                            const response = await api.post(endpoint, { nick: target.nick });
+                            if (!response.data?.success) throw new Error("Invitation failed");
+                        }
+                        showNotification("success", tc("chatUi.inviteSent"));
+                    }
+                }
+            });
             setMess("");
         } else {
             setLinkedEntity({type:kind,id:entityId,label:item.label});
@@ -171,13 +199,13 @@ export default function ChatTextArea({
     };
     useEffect(() => {
         setShareItems([]);
-        if (!shareMatch?.[2]?.trim()) return;
+        if (!shareMatch) return;
         const controller = new AbortController();
         const timer = window.setTimeout(() => {
-            const q = shareMatch[2].trim();
+            const q = shareMatch[2]?.trim() || "";
             const kinds = shareMatch[1] === "invite" ? ["habit","plan"] : [shareMatch[1]];
             void Promise.all(kinds.map(kind => api.get("search/global",{
-                params:{q:"/"+kind+" "+q,page:0},signal:controller.signal
+                params:{q:"/"+kind+(q ? " "+q : ""),page:0},signal:controller.signal
             }))).then(results => {
                 if (controller.signal.aborted) return;
                 setShareItems(results.flatMap(response => response.data?.items || [])
@@ -195,6 +223,27 @@ export default function ChatTextArea({
         ? findMentionToken(mess, mentionCaret) : null;
     const mentionMembers = chatWith?.is_group ? chatWith.members || [] : chatWith
         ? [{ id: chatWith.id, nick: chatWith.nick, avatar_url: chatWith.avatar_url || "" }] : [];
+    useEffect(() => {
+        setExternalMentions([]);
+        if (!mentionToken?.query) return;
+        const controller = new AbortController();
+        const timer = window.setTimeout(() => {
+            void api.get("search/global", {
+                params: { q: "/user " + mentionToken.query, page: 0 }, signal: controller.signal
+            }).then(response => {
+                if (controller.signal.aborted) return;
+                const memberIds = new Set(mentionMembers.map(member => member.id));
+                setExternalMentions((response.data?.items || [])
+                    .filter((entry: {id:string}) => !memberIds.has(entry.id) && entry.id !== user.id)
+                    .map((entry: {id:string;label:string;description:string}) => ({
+                        id:"card:" + entry.id,
+                        label:entry.description || entry.label,
+                        description:entry.label + " · " + tc("chatUi.shareUser")
+                    })).slice(0, 10));
+            }).catch(() => { if (!controller.signal.aborted) setExternalMentions([]); });
+        }, 250);
+        return () => {window.clearTimeout(timer);controller.abort();};
+    }, [mentionToken?.query, chatWith?.id, user.id]);
     const matchingMentions: EntitySuggestionItem[] = mentionToken
         ? mentionMembers.filter(member => member.nick && member.id !== user.id &&
             member.nick.toLocaleLowerCase().startsWith(mentionToken.query.toLocaleLowerCase()))
@@ -202,11 +251,15 @@ export default function ChatTextArea({
                 id: member.nick,
                 label: "@" + member.nick,
                 description: tc("chatUi.mentionUser")
-            })) : [];
+            })).concat(externalMentions) : [];
     const commitMention = (member: EntitySuggestionItem) => {
         if (!mentionToken) return;
-        const inserted = "@" + member.id + " ";
+        const outside = member.id.startsWith("card:");
+        const inserted = outside ? "" : "@" + member.id + " ";
         const next = mess.slice(0, mentionToken.start) + inserted + mess.slice(mentionToken.end);
+        if (outside) setLinkedEntity({
+            type: "user", id: member.id.slice(5), label: member.description || member.label
+        });
         const caret = mentionToken.start + inserted.length;
         setMess(next);
         setMentionCaret(caret);
