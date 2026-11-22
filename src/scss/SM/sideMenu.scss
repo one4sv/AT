@@ -284,7 +284,7 @@
     // The list itself owns its scroll clearance; the nav overlays the scroll viewport.
     padding-bottom: calc(1dvh + var(--sm-nav-clearance, 11dvh));
     box-sizing: border-box;
-    margin-top: 4dvh;
+    margin-top: 5dvh;
     gap: 0.2vh;
     &.nothing {
         margin-top: 2dvh;

@@ -78,3 +78,15 @@ test("header glass samples content below it instead of masking the list", () => 
     assert.match(header, /backdrop-filter:\s*blur\(2px\)/);
     assert.match(header, /background:\s*color-mix\(in srgb, var\(--mc\) 25%, transparent\)/);
 });
+
+test("normal and search lists have the same visual top offset below SMheader", () => {
+    const plain = readFileSync(new URL("../src/scss/SM/sideMenu.scss", import.meta.url), "utf8");
+    const search = readFileSync(new URL("../src/scss/SM/globalSearch.scss", import.meta.url), "utf8");
+    const normalRule = plain.match(/\.SMlist\s*\{([^}]+)\}/s)?.[1] ?? "";
+    const searchRule = search.match(/\.SMlist\.smSearchResults\s*\{([^}]+)\}/s)?.[1] ?? "";
+    const offset = (style, property) => Number(
+        style.match(new RegExp(property + ":\\s*([\\d.]+)dvh"))?.[1] ?? 0
+    );
+    assert.equal(offset(normalRule, "margin-top"),
+        offset(searchRule, "margin-top") + offset(searchRule, "padding-top"));
+});
