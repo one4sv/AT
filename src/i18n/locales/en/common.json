@@ -214,7 +214,13 @@
     "shareGroup": "Share a chat",
     "shareInvite": "Open activity or plan invitations",
     "shareSearchHint": "Type an entity name to search",
-    "shareSelected": "Shared item",
+    "shareType": {
+      "user": "User",
+      "habit": "Activity",
+      "plan": "Plan",
+      "post": "Post",
+      "group": "Chat"
+    },
     "sharedEntityUnavailable": "Object unavailable",
     "quickCommands": {
       "action": "Commands",

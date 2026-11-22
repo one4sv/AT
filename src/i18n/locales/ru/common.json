@@ -220,7 +220,13 @@
     "shareGroup": "Поделиться беседой",
     "shareInvite": "Открыть приглашения активности или плана",
     "shareSearchHint": "Введите название объекта для поиска",
-    "shareSelected": "Отправляемый объект",
+    "shareType": {
+      "user": "Пользователь",
+      "habit": "Активность",
+      "plan": "План",
+      "post": "Публикация",
+      "group": "Беседа"
+    },
     "sharedEntityUnavailable": "Объект недоступен",
     "quickCommands": {
       "action": "Команды",

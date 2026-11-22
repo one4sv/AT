@@ -630,6 +630,29 @@
         -webkit-backdrop-filter: blur(12px);
     }
 
+    > .answerMess {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 2;
+        width: calc(100% - 16px);
+        min-width: 0;
+        max-width: calc(100% - 16px);
+        box-sizing: border-box;
+        margin: 0;
+        padding: 4px 9px;
+        border-left: 3px solid #fff;
+        border-radius: 12px;
+        background: rgba(12, 14, 18, .58);
+        color: #fff;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    &:has(> .senderName) > .answerMess {
+        top: 44px;
+    }
+
     > .messageFiles {
         display: grid;
         width: 100%;
@@ -711,6 +734,37 @@
     @media (max-width: 800px) {
         width: min(86vw, 520px);
         max-width: min(86vw, 520px);
+    }
+}
+
+.message.mediaOnly.singleMedia {
+    width: fit-content;
+
+    > .messageFiles.single {
+        display: block;
+        width: fit-content;
+        max-width: 100%;
+
+        > .messageFile {
+            display: block;
+            width: fit-content;
+            max-width: 100%;
+            aspect-ratio: auto;
+
+            &:has(.messageMediaPending) {
+                min-width: min(25vw, 220px);
+                min-height: 18dvh;
+            }
+        }
+
+        .messageFilePreview {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 65dvh;
+            object-fit: contain;
+        }
     }
 }
 

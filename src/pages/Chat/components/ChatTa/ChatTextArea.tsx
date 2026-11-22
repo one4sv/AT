@@ -828,7 +828,7 @@ export default function ChatTextArea({
                     </div>}
                     {linkedEntity && <div className="chatSharedEntityDraft">
                         <div className="answer">
-                            <div className="answer1str">{tc("chatUi.shareSelected")}</div>
+                            <div className="answer1str">{tc("chatUi.shareType." + linkedEntity.type)}</div>
                             <div className="answer2str">{linkedEntity.label}</div>
                         </div>
                         <button className="closeAnswer" type="button"

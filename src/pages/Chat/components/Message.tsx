@@ -117,7 +117,7 @@ export default function Message({
     const isChose = activeHeader === "choosing";
     const contextReactionOpen = menu.visible && menu.point === "mess" && menu.options.id === String(m.id) && !isChose;
     const mediaOnly = !m.content?.trim() && !m.entity_type && !!m.files?.length &&
-        !m.redirected_id && !answer && !m.habit_invite_habit_id;
+        !m.redirected_id && !m.habit_invite_habit_id;
     const uniqueReactions = [...new Map((m.reactions || []).map(reaction => [reaction.user_id, reaction])).values()];
     const reactionGroups = Object.entries(uniqueReactions.reduce((acc, reaction) => {
         if (!acc[reaction.reaction]) acc[reaction.reaction] = [];
@@ -197,8 +197,8 @@ export default function Message({
                 ${cornerType ? `corner-${cornerType}` : ""}
                 ${menu.point === "mess" && menu.options.id === String(m.id) && "onContextMenu"}
                 ${m.isPending ? "pending" : ""}
-                ${mediaOnly ? "mediaOnly" : ""}
-            `}
+                ${mediaOnly ? "mediaOnly" : ""} ${mediaOnly && m.files?.length === 1 ? "singleMedia" : ""}
+            }
             ref={el => {
                 messageRefs?.current.set(m.id, el);
             }}
