@@ -84,7 +84,7 @@ export default function SharedEntityCard({kind,id}: {kind: SharedEntityKind; id:
         </span>
         <span className="sharedEntityPostAuthorName">{item.author || item.name}</span>
     </>;
-    return <div className={`sharedEntityCard sharedEntity${kind}`}
+    return <div className={`sharedEntityCard sharedEntity${kind} ${kind === "plan" && !Icon ? "withoutIcon" : ""}`}
         onDoubleClick={event => event.stopPropagation()}>
         {kind === "post" ? <>
             {item.author_nick ? <Link className="sharedEntityPostAuthor" to={"/acc/" + encodeURIComponent(item.author_nick)}>

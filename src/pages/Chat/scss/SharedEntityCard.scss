@@ -68,6 +68,16 @@
 
     &.sharedEntitypost {
         width: min(26vw, 390px);
+        padding-inline: 1vw;
+    }
+
+    &.sharedEntityplan.withoutIcon {
+        padding-left: .6vw;
+    }
+
+    &.sharedEntityhabit .sharedEntityLink,
+    &.sharedEntityuser .sharedEntityLink {
+        gap: .3vw;
     }
 
     .sharedEntityPostAuthor {
@@ -163,6 +173,16 @@
 
         &.sharedEntitypost {
             width: min(76vw, 390px);
+            padding-inline: 3vw;
+        }
+
+        &.sharedEntityplan.withoutIcon {
+            padding-left: 2vw;
+        }
+
+        &.sharedEntityhabit .sharedEntityLink,
+        &.sharedEntityuser .sharedEntityLink {
+            gap: 1.2vw;
         }
 
         .sharedEntityLink, .sharedEntityPostAuthor {
@@ -190,4 +210,12 @@
 .message:not(.entityOnly) .sharedEntityCard {
     margin-top: .5dvh;
     background: transparent;
+}
+
+.message:not(.entityOnly) .sharedEntityCard.sharedEntityuser {
+    margin-left: -.4vw;
+
+    @media (max-width: 800px) {
+        margin-left: -2vw;
+    }
 }

@@ -26,6 +26,7 @@ import { findMentionToken } from "../../../../components/ts/utils/chatMentions";
 import type { LinkedEntity } from "../../../../components/context/SendMessContext";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { useGroup } from "../../../../components/hooks/GroupHook";
+import { useContacts } from "../../../../components/hooks/ContactsHook";
 interface FailedChatDraft {
     key: number;
     route: string;
@@ -93,6 +94,7 @@ export default function ChatTextArea({
         setChosenMess
     } = useMessages();
     const { user } = useUser();
+    const { list: mentionContacts } = useContacts();
     const { refetchHabits } = useHabits();
     const { upsertPlan, refreshPlans } = usePlans();
     const { timeZone } = useSettings();
@@ -278,7 +280,7 @@ export default function ChatTextArea({
         ? [{ id: chatWith.id, nick: chatWith.nick, avatar_url: chatWith.avatar_url || "" }] : [];
     useEffect(() => {
         setExternalMentions([]);
-        if (!mentionToken?.query) return;
+        if (!mentionToken) return;
         const controller = new AbortController();
         const timer = window.setTimeout(() => {
             void api.get("search/global", {
@@ -297,6 +299,15 @@ export default function ChatTextArea({
         }, 250);
         return () => {window.clearTimeout(timer);controller.abort();};
     }, [mentionToken?.query, chatWith?.id, user.id]);
+    const contactMentions: EntitySuggestionItem[] = mentionToken ? mentionContacts
+        .filter(contact => !contact.is_group && contact.nick && contact.id !== user.id &&
+            !mentionMembers.some(member => member.id === contact.id) &&
+            contact.nick.toLocaleLowerCase().startsWith(mentionToken.query.toLocaleLowerCase()))
+        .slice(0, 10).map(contact => ({
+            id: "card:" + contact.id,
+            label: contact.name || contact.nick,
+            description: "@" + contact.nick + " · " + tc("chatUi.shareUser")
+        })) : [];
     const matchingMentions: EntitySuggestionItem[] = mentionToken
         ? [...mentionMembers.filter(member => member.nick && member.id !== user.id &&
             member.nick.toLocaleLowerCase().startsWith(mentionToken.query.toLocaleLowerCase()))
@@ -304,7 +315,8 @@ export default function ChatTextArea({
                 id: member.nick,
                 label: "@" + member.nick,
                 description: tc("chatUi.mentionUser")
-            })), ...externalMentions] : [];
+            })), ...contactMentions, ...externalMentions.filter(member =>
+                !contactMentions.some(contact => contact.id === member.id))] : [];
     const commitMention = (member: EntitySuggestionItem) => {
         if (!mentionToken) return;
         const outside = member.id.startsWith("card:");
