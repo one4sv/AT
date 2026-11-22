@@ -21,13 +21,15 @@ import PlanMembers from "./PlanMembers";
 import { tags } from "../../components/ts/tags";
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import { useSettings } from "../../components/hooks/SettingsHook";
+import { useBlackout } from "../../components/hooks/BlackoutHook";
 import "./scss/PlanPage.scss";
 
 export default function PlanPage() {
     const { planId } = useParams<{ planId: string }>();
     const { t } = useTranslation("common");
     const navigate = useNavigate();
-    const { search } = useLocation();
+    const { search, pathname } = useLocation();
+    const { setBlackout } = useBlackout();
     const isCompact = useCompactLayout();
     const [mobileOpen, setMobileOpen] = useState<"done" | "comment">("done");
     const { plans, refreshPlans } = usePlans();
@@ -41,6 +43,15 @@ export default function PlanPage() {
     const [draft, setDraft] = useState<PlanInput | null>(null);
     const [error, setError] = useState("");
     const [confirmDelete, setConfirmDelete] = useState(false);
+    useEffect(() => {
+        if (!plan || !plan.is_owner || plan.status !== "upcoming" ||
+            !new URLSearchParams(search).has("invite")) return;
+        setBlackout({ seted: true, module: "HabitParticipantPicker",
+            point: "plan", options: { id: String(plan.id), name: plan.name } });
+        const params = new URLSearchParams(search);
+        params.delete("invite");
+        navigate({ pathname, search: params.toString() ? "?" + params.toString() : "" }, { replace: true });
+    }, [plan?.id, plan?.is_owner, plan?.status, search, pathname, navigate, setBlackout]);
 
     useEffect(() => {
         setMobileOpen("done");

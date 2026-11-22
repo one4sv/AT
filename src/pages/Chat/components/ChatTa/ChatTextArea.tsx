@@ -154,7 +154,7 @@ export default function ChatTextArea({
         const kind = item.id.slice(0, separator) as LinkedEntity["type"];
         const entityId = item.id.slice(separator + 1);
         if (shareMatch[1] === "invite") {
-            if (kind === "habit" || kind === "plan") navigate("/" + kind + "/" + entityId);
+            if (kind === "habit" || kind === "plan") navigate("/" + kind + "/" + entityId + "?invite=1");
             setMess("");
         } else {
             setLinkedEntity({type:kind,id:entityId,label:item.label});

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router";
+import { useParams, useLocation, useNavigate } from "react-router";
+import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { useUser } from "../../components/hooks/UserHook";
 import { useTheHabit } from "../../components/hooks/TheHabitHook";
 import { useCalendar } from "../../components/hooks/CalendarHook";
@@ -33,6 +34,9 @@ export interface HabitSlideProps {
 }
 export default function Habit() {
     const { t } = useTranslation("common");
+    const { setBlackout } = useBlackout();
+    const location = useLocation();
+    const navigate = useNavigate();
     const {
         fetchCalendarHabitWLoading,
         fetchCalendarWLoading,
@@ -61,6 +65,17 @@ export default function Habit() {
         loadingHabits
     } = useHabits();
     const mainRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+        if (!habitId || !habit || String(habit.id) !== habitId ||
+            !habit.access?.can_invite || !new URLSearchParams(location.search).has("invite")) return;
+        setBlackout({ seted: true, module: "HabitParticipantPicker",
+            point: habit.chat_id ? "shared" : "personal" });
+        const params = new URLSearchParams(location.search);
+        params.delete("invite");
+        navigate({ pathname: location.pathname, search: params.toString() ? "?" + params.toString() : "" },
+            { replace: true });
+    }, [habitId, habit?.id, habit?.chat_id, habit?.access?.can_invite,
+        location.pathname, location.search, navigate, setBlackout]);
 
     useEffect(
         () => {
