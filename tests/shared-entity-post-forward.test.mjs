@@ -34,3 +34,14 @@ test("media loading skeletons cover chat attachments and post attachments", () =
     assert.match(posts, /contextMenu\s+skeleton/);
     assert.match(styles, /\.postFilePreview\.messageMediaPending/);
 });
+
+test("post actions have mobile spacing and ShareFatIcon while keeping forwarding flow", () => {
+    const post = read("src/components/ts/Post.tsx");
+    const css = read("src/scss/Post.scss");
+    assert.match(post, /Heart, DotsThreeVertical, UserCircle, ShareFatIcon/);
+    assert.match(post, /<ShareFatIcon weight="fill" \/>/);
+    assert.doesNotMatch(post, /ArrowBendUpRight/);
+    assert.match(css, /\.PostInteract\s*\{\s*display:\s*flex;\s*align-items:\s*center;\s*gap:\s*1vw;\s*@media \(max-width: 800px\)\s*\{\s*gap:\s*3vw;/);
+    assert.match(post, /onForward: forward/);
+    assert.match(post, /setForwardPost\(/);
+});

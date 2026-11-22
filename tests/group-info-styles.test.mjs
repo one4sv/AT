@@ -71,3 +71,12 @@ test("mobile AccInfo finishes after 32px by direction and content tap closes it"
     assert.match(acc, /onTouchCancelCapture=\{handleTouchCancel\}/);
     assert.doesNotMatch(acc, /pointerEvents:.*isMobile && collapsed === 0/);
 });
+
+test("profile display name is centered below the avatar on mobile", () => {
+    const component = read("src/pages/Acc/components/AccInfo.tsx");
+    const css = read("src/pages/Acc/scss/AccInfo.scss");
+    assert.match(component, /<div className="accMainInfoStr">/);
+    assert.match(css, /&\.accMainInfoStr\s*\{\s*display:\s*flex;\s*justify-content:\s*center;/);
+    assert.match(css, /@media \(max-width: 800px\)\s*\{[\s\S]*?&\.accMainInfoStr/);
+    assert.match(css, /\.accInfo \.accSelectableValue\s*\{\s*display:\s*inline-block;\s*width:\s*auto;/);
+});

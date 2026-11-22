@@ -1,3 +1,9 @@
+## 23.11.2026 — Mosaic mobile profile and post actions
+- [ ] iPhone Safari profile: name and nickname centered beneath avatar in view/edit mode; long name wraps appropriately, online badge does not overlap. Desktop remains unchanged.
+- [ ] Like, comment and ShareFat forwarding buttons have extra separation (3vw mobile, 1vw desktop) in feed, profile and post page, without overlapping the date.
+- [ ] Forward still opens Redirecting with original post data, like/comment actions remain unchanged.
+- [x] Static regressions added to group-info-styles.test.mjs and shared-entity-post-forward.test.mjs; visual authenticated E2E still needed.
+
 # Приёмка и регрессии AchieveTogether
 
 ## dev 0.6.5 Mosaic — границы текущего обновления (23.11.2026)

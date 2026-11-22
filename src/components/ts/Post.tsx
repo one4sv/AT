@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronRight } from "lucide-react";
-import { ChatCircle, Heart, DotsThreeVertical, UserCircle, ArrowBendUpRight } from "@phosphor-icons/react";
+import { ChatCircle, Heart, DotsThreeVertical, UserCircle, ShareFatIcon } from "@phosphor-icons/react";
 import { isMobile } from "react-device-detect";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useMessages } from "../hooks/MessagesHook";
@@ -229,7 +229,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                                 event.stopPropagation();
                                 forward();
                             }}>
-                            <ArrowBendUpRight />
+                            <ShareFatIcon weight="fill" />
                         </button>
                     </div>
                     <div className="PostDate">

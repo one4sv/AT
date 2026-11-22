@@ -111,6 +111,10 @@
         margin-left: 0;
         > div {
             width: 100%;
+            &.accMainInfoStr {
+                display: flex;
+                justify-content: center;
+            }
             > * {
                 text-align: center;
                 color: var(--borderWh);
