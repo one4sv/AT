@@ -537,3 +537,7 @@ CSS-эффекты `artBob`, `artPulse`, `artShimmer`, `artSway`, `artDraw` пр
 ### 22.11.2026 — вертикальное центрирование поля TA
 
 Общий `TA` вычисляет высоту по содержимому с минимальной 5vh. Для одноcтрочных полей важно, чтобы минимальная высота не оставляла весь лишний внутренний воздух снизу: в `.chatTA`, `.composerInput > textarea`, полях комментариев, `postWriteTA`, `createChatDesc`, `scheduleInpText`, `bioTA`, `.commentEdit` и ролях используются симметричные вертикальные отступы (либо `padding-block: max(минимальный отступ, calc((5dvh - 1.35em) / 2))` с соответствующим min-height). Стили отдельных форм сохраняют локальные размеры, переносы и `maxHeight`; не добавлять глобальное `!important` или другую высоту поверх расчёта `TA`. Проверять реальный viewport и мобильную клавиатуру.
+
+## 22.11.2026 — карточки Композиций
+
+`src/pages/Settings/scss/compositions.scss` — локальный SCSS внутри `.compositionsSettings`; карточки 24px и сетка по `@container` 2/4/5 (560px и 850px). Использовать `--interact`, `--mc`, `--accent`, `--grad`, `--notValid` для кнопок и состояний; **не добавлять font-weight** и не поднимать внешние z-index хедеров. Настройки не должны требовать стилей Wallpaper Studio, предварительная картинка может переиспользовать `BackgroundScene` и `WallpaperMark`, а весь остальной интерфейс должен оставаться прежним. См. [COMPOSITIONS.md](COMPOSITIONS.md).
