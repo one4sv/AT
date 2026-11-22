@@ -10,6 +10,8 @@ import { defaultBackgroundEffects, normalizeBackgroundEffects } from "../ts/util
 import { MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
 import { privateAssetUrl } from "../ts/utils/privateAssetUrl";
 import { resolveTimeZone } from "../ts/utils/dateToStr";
+import { applyCustomPalette as refreshPalette } from "../ts/utils/customPalette";
+import { EMPTY_COMPOSITIONS, COMPOSITIONS_KEY, chooseComposition, compositionCycleKey, compositionOpenedFor, normalizeCompositionAppearance, normalizeCompositionStore, writeCompositionBootstrap, type CompositionAppearance, type CompositionStore } from "../ts/utils/compositions";
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
@@ -128,6 +130,9 @@ export interface SettingsContextType {
     refetchSettings: () => Promise<void>;
     isDark:boolean,
     settingsLoaded: boolean;
+    compositions: CompositionStore;
+    setCompositions: React.Dispatch<React.SetStateAction<CompositionStore>>;
+    applyComposition: (appearance: CompositionAppearance) => void;
 }
 
 interface SettingsResponse {
@@ -168,6 +173,7 @@ export interface PrivateSettings {
 }
 
 const LOCAL_KEYS = {
+    compositions: COMPOSITIONS_KEY,
     theme: "settings_theme",
     accent: "settings_accent",
     grad: "settings_grad",
@@ -204,6 +210,13 @@ const LOCAL_KEYS = {
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const { user, initialLoading } = useUser();
 
+    const [ storedCompositions, setStoredCompositions ] = useLocalStorage<CompositionStore>(LOCAL_KEYS.compositions, EMPTY_COMPOSITIONS);
+    const compositions = useMemo(() => normalizeCompositionStore(storedCompositions), [storedCompositions]);
+    const setCompositions = useCallback<React.Dispatch<React.SetStateAction<CompositionStore>>>(next => {
+        setStoredCompositions(previous => normalizeCompositionStore(
+            typeof next === "function" ? next(normalizeCompositionStore(previous)) : next
+        ));
+    }, [setStoredCompositions]);
     const [ theme, setTheme ] = useLocalStorage(LOCAL_KEYS.theme, "system");
     const [ accent, setAccent ] = useLocalStorage(LOCAL_KEYS.accent, "poison");
     const [ grad, setGrad ] = useLocalStorage(LOCAL_KEYS.grad, "meadow");
@@ -310,6 +323,58 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ loadedSettingsFor, setLoadedSettingsFor ] = useState<string | null>(null);
     const settingsLoaded = !initialLoading && (!user.nick || loadedSettingsFor === user.nick);
     const bgEffectsReady = true;
+    const applyComposition = useCallback((appearance: CompositionAppearance) => {
+        const next = normalizeCompositionAppearance(appearance);
+        if (/^#[0-9a-fA-F]{6}$/.test(next.customAccentHex))
+            localStorage.setItem("customAccentHex", next.customAccentHex);
+        if (/^#[0-9a-fA-F]{6}$/.test(next.customGradHex))
+            localStorage.setItem("customGradHex", next.customGradHex);
+        setTheme(next.theme);
+        setAccent(next.accent);
+        setGrad(next.grad);
+        setDecor(next.decor);
+        setBlur(next.blur);
+        setLayout(next.layout);
+        setShowMobileMenuOnStart(next.showMobileMenuOnStart);
+        setStartupSideMenuTab(next.startupSideMenuTab);
+        setBg(next.bg);
+        setBgUrl(next.bgUrl);
+        setBgEffects(next.bgEffects);
+        setWallpaperStyle(next.wallpaperStyle);
+        setContourPattern(next.contourPattern);
+        setContourSize(next.contourSize);
+        setArtPattern(next.artPattern);
+        setArtSize(next.artSize);
+        refreshPalette(next.accent, next.grad);
+    }, [setTheme, setAccent, setGrad, setDecor, setBlur, setLayout,
+        setShowMobileMenuOnStart, setStartupSideMenuTab, setBg, setBgUrl, setBgEffects,
+        setWallpaperStyle, setContourPattern, setContourSize, setArtPattern, setArtSize]);
+
+    useEffect(() => {
+        if (initialLoading || !user.nick) return;
+        try { writeCompositionBootstrap(user.nick, compositions); }
+        catch (error) { console.warn("Could not cache compositions:", error); }
+    }, [initialLoading, user.nick, compositions]);
+
+    useEffect(() => {
+        if (initialLoading || !user.nick) return;
+        const tick = () => {
+            const next = chooseComposition(compositions, new Date());
+            if (!next) return;
+            applyComposition(next.composition.appearance);
+            setCompositions(next.store);
+        };
+        tick();
+        if (compositions.mode !== "daily" && compositions.mode !== "weekly") return;
+        const timer = window.setInterval(tick, 60000);
+        window.addEventListener("focus", tick);
+        document.addEventListener("visibilitychange", tick);
+        return () => {
+            window.clearInterval(timer);
+            window.removeEventListener("focus", tick);
+            document.removeEventListener("visibilitychange", tick);
+        };
+    }, [initialLoading, user.nick, compositions, setCompositions, applyComposition]);
     const reminderTimezoneSynced = useRef<string | null>(null);
     useEffect(() => {
         if (initialLoading || !settingsLoaded || !user.id) return;
@@ -422,7 +487,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             weekStart, setWeekStart,
             setEmote, emote, setMessdb, messdb,
             habitsNote, setHabitsNote, isDark,
-            settingsLoaded
+            settingsLoaded,
+            compositions, setCompositions, applyComposition
         }}>
             {children}
         </SettingsContext.Provider>

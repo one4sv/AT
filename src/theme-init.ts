@@ -1,6 +1,8 @@
 import { applyCustomPalette } from "./components/ts/utils/customPalette";
+import { initializeOpeningComposition } from "./components/ts/utils/compositions";
 (() => {
     try {
+        initializeOpeningComposition();
         const theme = JSON.parse(
             localStorage.getItem("settings_theme") ?? '"system"'
         );

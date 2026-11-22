@@ -21,7 +21,7 @@ const readStartupCache = (key: string): unknown => {
     }
     return undefined;
 };
-const APPEARANCE_KEYS = ["settings_accent", "settings_grad", "settings_blur", "settings_layout", "settings_bg", "settings_bg_url", "settings_decor", "settings_bg_effects", "settings_contour_pattern", "settings_contour_size", "settings_art_pattern", "settings_art_size"];
+const APPEARANCE_KEYS = ["settings_accent", "settings_grad", "settings_blur", "settings_layout", "settings_bg", "settings_bg_url", "settings_decor", "settings_wallpaper_style", "settings_bg_effects", "settings_contour_pattern", "settings_contour_size", "settings_art_pattern", "settings_art_size"];
 const readAppearance = (): Record<string, unknown> => {
     try {
         const value = JSON.parse(localStorage.getItem("settings_appearance") ?? "{}");
