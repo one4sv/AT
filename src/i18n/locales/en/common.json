@@ -223,6 +223,10 @@
     },
     "sharedEntityUnavailable": "Object unavailable",
     "openSharedPost": "Open post",
+    "inviteFromPrivateChat": "Open a private chat with the recipient to invite them",
+    "sendInvite": "Send invitation",
+    "inviteRecipient": "Invite @{{nick}} to “{{name}}”?",
+    "inviteSent": "Invitation sent",
     "quickCommands": {
       "action": "Commands",
       "createActivity": "Create activity",
