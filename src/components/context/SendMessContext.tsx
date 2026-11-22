@@ -4,10 +4,11 @@ import type { message } from "./ChatContext";
 import { useNote } from "../hooks/NoteHook";
 import { useContacts } from "../hooks/ContactsHook";
 
+export type LinkedEntity = { type: "user" | "habit" | "plan" | "post" | "group"; id: string };
 const SendMessContext = createContext<SendMessContextType | null>(null);
 
 export interface SendMessContextType {
-    sendMess: (receiver:{ nick?: string, id?: string }, text: string, files?: File[], answer_id?: string, redirect?:message[], showNames?:boolean, onConfirmed?: (messages: message[]) => void) => Promise<boolean | undefined>,
+    sendMess: (receiver:{ nick?: string, id?: string }, text: string, files?: File[], answer_id?: string, redirect?:message[], showNames?:boolean, onConfirmed?: (messages: message[]) => void, linkedEntity?: LinkedEntity) => Promise<boolean | undefined>,
     editMess:(messageId: number, text: string, newFiles: File[], keptUrls: string[], answer_id?: string)=>Promise<boolean | undefined>
     pinMess: (messageId:string) => Promise<boolean | undefined>
 } 
@@ -16,11 +17,15 @@ export const SendMessProvider = ({ children }: { children: ReactNode }) => {
     const { refetchContactsWTLoading } = useContacts()
     const { showNotification } = useNote()
 
-    const sendMess = async (receiver:{ nick?: string, id?: string }, text: string, files: File[] = [], answer_id?:string, redirect?:message[], showNames?:boolean, onConfirmed?: (messages: message[]) => void) => {
-        if (!text.trim() && files.length === 0 && !redirect) return;
+    const sendMess = async (receiver:{ nick?: string, id?: string }, text: string, files: File[] = [], answer_id?:string, redirect?:message[], showNames?:boolean, onConfirmed?: (messages: message[]) => void, linkedEntity?: LinkedEntity) => {
+        if (!text.trim() && files.length === 0 && !redirect && !linkedEntity) return;
         try {
             const formData = new FormData();
             formData.append("text", text);
+            if (linkedEntity) {
+                formData.append("entity_type", linkedEntity.type);
+                formData.append("entity_id", linkedEntity.id);
+            }
             if (redirect) {
                 const ids = [...new Set(redirect.map(m => m.id))]
                 formData.append("redirect", JSON.stringify(ids))

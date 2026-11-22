@@ -46,6 +46,8 @@ export interface message {
     sender_nick: string;
     sender_avatar_url: string;
     content: string;
+    entity_type?: "user" | "habit" | "plan" | "post" | "group" | null;
+    entity_id?: string | null;
     created_at: Date;
     files?: Media[];
     read_by: string[];

@@ -22,6 +22,7 @@ import HighlightText from "../../../components/ts/HighlightText";
 import HabitInvitation from "./HabitInvitation";
 import type { SavedMessageSuggestion } from "../../../components/ts/utils/savedMessageSuggestion";
 import CreatedEntityCard, { parseCreatedEntityMessage } from "./CreatedEntityCard";
+import SharedEntityCard from "./SharedEntityCard";
 type MessageComponentType = {
     message: message;
     messageRefs?: React.MutableRefObject<Map<number, HTMLDivElement | null>>;
@@ -115,7 +116,7 @@ export default function Message({
         ? parseCreatedEntityMessage(m.content || "") : null;
     const isChose = activeHeader === "choosing";
     const contextReactionOpen = menu.visible && menu.point === "mess" && menu.options.id === String(m.id) && !isChose;
-    const mediaOnly = !m.content?.trim() && !!m.files?.length &&
+    const mediaOnly = !m.content?.trim() && !m.entity_type && !!m.files?.length &&
         !m.redirected_id && !answer && !m.habit_invite_habit_id;
     const uniqueReactions = [...new Map((m.reactions || []).map(reaction => [reaction.user_id, reaction])).values()];
     const reactionGroups = Object.entries(uniqueReactions.reduce((acc, reaction) => {
@@ -274,8 +275,12 @@ export default function Message({
                 {m.plan_invite_plan_id && m.plan_invite_recipient_id ?
                     <HabitInvitation messageId={m.id} recipientId={m.plan_invite_recipient_id} kind="plan"/> :
                     m.habit_invite_habit_id && m.habit_invite_recipient_id ?
-                    <HabitInvitation messageId={m.id} recipientId={m.habit_invite_recipient_id}/> : !!m.content?.trim() && <div className={`messageText ${isMobile ? "mobile" : ""}`}>
-                    {createdReference ? <CreatedEntityCard item={createdReference}/> : smartSuggestion && onSmartCreate && !isChose && activeHeader === "text" && !searchMess.trim()
+                    <HabitInvitation messageId={m.id} recipientId={m.habit_invite_recipient_id}/> :
+                    (!!m.content?.trim() || !!m.entity_type && !!m.entity_id) && <div className={`messageText ${isMobile ? "mobile" : ""}`}>
+                    {m.entity_type && m.entity_id ? <>
+                        {!!m.content?.trim() && <HighlightText text={m.content} search={searchMess}/>}
+                        <SharedEntityCard kind={m.entity_type} id={m.entity_id}/>
+                    </> : createdReference ? <CreatedEntityCard item={createdReference}/> : smartSuggestion && onSmartCreate && !isChose && activeHeader === "text" && !searchMess.trim()
                         ? <>
                             {m.content.slice(0, smartSuggestion.start)}
                             <button

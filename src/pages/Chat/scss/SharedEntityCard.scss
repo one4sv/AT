@@ -1,0 +1,16 @@
+.sharedEntityCard {
+    margin-top: .5dvh;
+    min-width: 0;
+    .sharedEntityUnavailable {
+        display: block;
+        color: var(--borderWh);
+        padding: .75dvh .75vw;
+    }
+    .sharedEntityAvatar {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+}
