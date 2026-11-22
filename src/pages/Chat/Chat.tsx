@@ -88,11 +88,17 @@ export default function Chat() {
         if (!id || !new URLSearchParams(location.search).has("invite") ||
             !chatWith?.is_group || String(chatWith.id) !== id || chatLoading) return;
         let cancelled = false;
-        void refetchGroup(id).then(() => {
+        void api.get("group/" + id).then(async response => {
+            if (cancelled) return;
+            if (!response.data?.success || !response.data?.my_perms?.can_invite_users) {
+                navigate(location.pathname, { replace: true });
+                return;
+            }
+            await refetchGroup(id);
             if (cancelled) return;
             setBlackout({ seted: true, module: "CreateChat", point: "InviteUser", isRoot: true });
             navigate(location.pathname, { replace: true });
-        }).catch(() => {});
+        }).catch(() => { if (!cancelled) navigate(location.pathname, { replace: true }); });
         return () => { cancelled = true; };
     }, [id, chatWith?.id, chatWith?.is_group, chatLoading,
         location.pathname, location.search, refetchGroup, navigate, setBlackout]);
