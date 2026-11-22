@@ -25,6 +25,7 @@ import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { findMentionToken } from "../../../../components/ts/utils/chatMentions";
 import type { LinkedEntity } from "../../../../components/context/SendMessContext";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
+import { useGroup } from "../../../../components/hooks/GroupHook";
 interface FailedChatDraft {
     key: number;
     route: string;
@@ -110,6 +111,7 @@ export default function ChatTextArea({
     const [shareDismissed, setShareDismissed] = useState(false);
     const [externalMentions, setExternalMentions] = useState<EntitySuggestionItem[]>([]);
     const { setBlackout } = useBlackout();
+    const { refetchGroup } = useGroup();
     const [previewCommand, setPreviewCommand] = useState<string | null>(null);
     const [commandListDismissed, setCommandListDismissed] = useState(false);
     const [quickDraft, setQuickDraft] = useState<QuickCommandDraft | null>(null);
@@ -154,7 +156,39 @@ export default function ChatTextArea({
         const separator = item.id.indexOf(":");
         const kind = item.id.slice(0, separator) as LinkedEntity["type"];
         const entityId = item.id.slice(separator + 1);
-        if (shareMatch[1] === "invite" || shareMatch[1] === "group") {
+        if (shareMatch[1] === "invite" && chatWith?.is_group) {
+            if (kind !== "habit" && kind !== "plan") return;
+            const chatId = Number(chatWith.id);
+            if (!Number.isSafeInteger(chatId) || chatId <= 0) return;
+            const groupName = chatWith.name || tc("chatUi.shareType.group");
+            setBlackout({
+                seted: true,
+                module: "ConfirmAction",
+                confirmAction: {
+                    title: tc("chatUi.addToChat"),
+                    description: tc(kind === "plan" ? "chatUi.addPlanToChatDescription" :
+                        "chatUi.addHabitToChatDescription", { name: item.label, chat: groupName }),
+                    label: tc("chatUi.addToChat"),
+                    variant: "approve",
+                    run: async () => {
+                        const endpoint = kind === "habit"
+                            ? "habits/" + entityId + "/chat"
+                            : "plans/" + entityId + "/chat";
+                        const response = await api.patch(endpoint, {
+                            chat_id: chatId,
+                            only_if_unlinked: true
+                        });
+                        if (!response.data?.success) throw new Error("Could not link to chat");
+                        await Promise.allSettled([
+                            refetchGroup(String(chatId)),
+                            kind === "plan" ? refreshPlans() : refetchHabits()
+                        ]);
+                        showNotification("success", tc("chatUi.addedToChat"));
+                    }
+                }
+            });
+            setMess("");
+        } else if (shareMatch[1] === "invite" || shareMatch[1] === "group") {
             if (!chatWith || chatWith.is_group || !chatWith.nick || chatWith.id === user.id) {
                 showNotification("info", tc("chatUi.inviteFromPrivateChat"));
                 return;
