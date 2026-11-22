@@ -23,3 +23,21 @@ export function parseSMSearchQuery(text: string): { filter: SearchFilter | null;
     return match ? { filter: match[1] as SearchFilter, query: (match[2] || "").trim() } :
         { filter: null, query: text.trim().startsWith("/") ? "" : text.trim() };
 }
+
+export function searchSourceFilters(section: tab, filter: SearchFilter | null, query: string): SearchFilter[] {
+    if (filter) return section === "user" && filter === "post" && !query.trim() ? [] : [filter];
+    if (section === "chats") return query.trim() ? ["user", "ms"] : ["user"];
+    if (section === "habits") return ["habit", "plan"];
+    if (section === "user") return query.trim() ? ["post", "setting"] : ["setting"];
+    return [];
+}
+
+export function searchResultRank(section: tab, item: { kind: string; mine?: boolean }): number {
+    if (section === "chats") return item.kind === "contact" ? 0 :
+        item.kind === "group" ? 0 : item.kind === "user" ? 1 : 2;
+    if (section === "habits") return item.kind === "habit" ?
+        (item.mine ? 0 : 2) : item.kind === "plan" ? (item.mine ? 1 : 3) : 4;
+    if (section === "user") return item.kind === "setting" ? 0 :
+        item.kind === "post" ? (item.mine ? 1 : 2) : 3;
+    return 0;
+}

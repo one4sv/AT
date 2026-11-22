@@ -14,6 +14,7 @@
     "language": "Язык интерфейса"
   },
   "sideMenu": {
+    "searchContacts": "Контакты",
     "searchTitle": "Поиск",
     "searchHint": "Введите запрос или / для выбора фильтра",
     "searchFilter": {

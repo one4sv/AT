@@ -14,6 +14,7 @@
     "language": "Interface language"
   },
   "sideMenu": {
+    "searchContacts": "Contacts",
     "searchTitle": "Search",
     "searchHint": "Enter a query or / to choose a filter",
     "searchFilter": {

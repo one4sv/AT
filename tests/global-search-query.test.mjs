@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { formatSMSearchQuery, parseSMSearchQuery, searchFilters, searchTabFilters, searchTabForFilter } from "../src/components/ts/utils/globalSearchQuery.ts";
+import { formatSMSearchQuery, parseSMSearchQuery, searchFilters, searchTabFilters, searchTabForFilter, searchSourceFilters, searchResultRank } from "../src/components/ts/utils/globalSearchQuery.ts";
 
 test("search filters preserve query terms and keep one owning section", () => {
     for (const name of searchFilters) {
@@ -19,4 +19,30 @@ test("search filters preserve query terms and keep one owning section", () => {
     assert.deepEqual(searchTabFilters.spots,[]);
     assert.equal(searchTabForFilter("user"), "chats");
     assert.equal(searchTabFilters.user.includes("user"), false);
+});
+
+test("unfiltered search loads section-specific categories and only expands when typed", () => {
+    assert.deepEqual(searchSourceFilters("chats", null, ""), ["user"]);
+    assert.deepEqual(searchSourceFilters("chats", null, "врач"), ["user", "ms"]);
+    assert.deepEqual(searchSourceFilters("habits", null, ""), ["habit", "plan"]);
+    assert.deepEqual(searchSourceFilters("user", null, ""), ["setting"]);
+    assert.deepEqual(searchSourceFilters("user", null, "новости"), ["post", "setting"]);
+    assert.deepEqual(searchSourceFilters("user", "post", ""), []);
+    assert.deepEqual(searchSourceFilters("chats", "group", ""), ["group"]);
+});
+
+test("unfiltered search groups contacts and owned entities before other entities", () => {
+    for (const [tab, data, expected] of [
+        ["chats", [{kind:"ms"}, {kind:"user"}, {kind:"contact"}], ["contact","user","ms"]],
+        ["habits", [
+            {kind:"plan", mine:false}, {kind:"habit", mine:false},
+            {kind:"plan", mine:true}, {kind:"habit", mine:true}
+        ], ["habit","plan","habit","plan"]],
+        ["user", [{kind:"post", mine:false}, {kind:"post", mine:true}, {kind:"setting"}], ["setting","post","post"]]
+    ]) {
+        const sorted = data.slice().sort((a,b) => searchResultRank(tab,a)-searchResultRank(tab,b));
+        assert.deepEqual(sorted.map(x=>x.kind), expected);
+        if (tab === "habits") assert.deepEqual(sorted.map(x=>x.mine), [true,true,false,false]);
+        if (tab === "user") assert.deepEqual(sorted.map(x=>x.mine), [undefined,true,false]);
+    }
 });
