@@ -1,3 +1,7 @@
+## 22.11.2026 — маска верхней зоны SideMenu и нижний отступ поиска
+
+`src/scss/SM/sideMenu.scss`: `.ListWrapper` имеет стационарную `mask-image` и `-webkit-mask-image` — прозрачная зона `0..4.5dvh`, плавный переход к видимой области на `6.2dvh`. Фон и блюр `smHeader` (`6px`) не менялись. Причина: элементы списков просвечивали и смешивались с цветом хедера при scroll; маска на viewport, а не на скроллируемой `.SMlist`. `src/scss/SM/globalSearch.scss`: дополнительный нижний отступ `--sm-nav-clearance + 5dvh + safe-area` вместо `+2dvh`. Остальные стили/жесты не затрагивать. Ручная проверка скролла на iPhone и ПК остаётся обязательной.
+
 ## 22.11.2026 — коррекция интенсивности стекла и прокрутки поиска
 
 Точечная SCSS-правка: `smHeader.scss` у `::before` blur с 24px до 6px, saturate с 1.7 до 1.15 (включая WebKit). `globalSearch.scss`: сверх `--sm-nav-clearance` оставлено только `2dvh` вместо `9dvh`; безопасная область `env(safe-area-inset-bottom)` остаётся. Остальные стили и обработчики жестов не трогать. Browser/mobile screenshot QA отдельно.
