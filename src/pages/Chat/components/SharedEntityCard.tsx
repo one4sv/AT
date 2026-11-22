@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { UserCircleIcon, CalendarBlankIcon, ArticleIcon, ChatsCircleIcon, FlagIcon } from "@phosphor-icons/react";
+import { UserCircleIcon, ChatsCircleIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../components/ts/api";
 import { tags } from "../../../components/ts/tags";
@@ -24,8 +24,8 @@ interface SharedEntityPreview {
     excerpt?: string | null;
 }
 const icons = {
-    user: UserCircleIcon, habit: FlagIcon, plan: CalendarBlankIcon,
-    post: ArticleIcon, group: ChatsCircleIcon
+    user: UserCircleIcon,
+    group: ChatsCircleIcon
 };
 export default function SharedEntityCard({kind,id}: {kind: SharedEntityKind; id: string}) {
     const { t } = useTranslation("common");
@@ -43,8 +43,9 @@ export default function SharedEntityCard({kind,id}: {kind: SharedEntityKind; id:
     if (!item) return <div className="sharedEntityCard sharedEntityUnavailable">
         {t("chatUi.sharedEntityUnavailable")}
     </div>;
-    const Icon = (kind === "habit" || kind === "plan"
-        ? tags.find(tag => tag.value === item.tag)?.icon : null) || icons[kind];
+    // Match the tag icon rendered by HabitDiv/PlanDiv; no unrelated placeholder for untagged entities.
+    const Icon = kind === "habit" || kind === "plan"
+        ? tags.find(tag => tag.value === item.tag)?.icon : kind === "user" || kind === "group" ? icons[kind] : null;
     const details = kind === "habit" ? [
         item.periodicity && ["everyday", "weekly", "cycle", "sometimes"].includes(item.periodicity)
             ? t("habitUi.period." + item.periodicity) : "",
@@ -70,10 +71,10 @@ export default function SharedEntityCard({kind,id}: {kind: SharedEntityKind; id:
                 {t("chatUi.openSharedPost")}
             </Link>
         </> : <Link className="sharedEntityLink" to={item.url}>
-            <span className="sharedEntityIcon">
+            {(item.avatar_url && (kind === "user" || kind === "group") || Icon) && <span className="sharedEntityIcon">
                 {item.avatar_url && (kind === "user" || kind === "group")
-                    ? <img src={item.avatar_url} alt=""/> : <Icon/>}
-            </span>
+                    ? <img src={item.avatar_url} alt=""/> : Icon ? <Icon/> : null}
+            </span>}
             <span className="sharedEntityInfo">
                 <span className="sharedEntityName">{item.name}</span>
                 {details && <span className="sharedEntityDetails">{details}</span>}
