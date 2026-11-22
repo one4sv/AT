@@ -15,8 +15,8 @@
         pointer-events: none;
         // Frosted glass covers the whole title row, with a soft trailing edge.
         // Keep it above scrolling results rather than masking away the lower half.
-        backdrop-filter: blur(6px) saturate(1.15);
-        -webkit-backdrop-filter: blur(6px) saturate(1.15);
+        backdrop-filter: blur(2px) saturate(1.15);
+        -webkit-backdrop-filter: blur(2px) saturate(1.15);
         background: color-mix(in srgb, var(--mc) 80%, transparent);
         mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);
         -webkit-mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);

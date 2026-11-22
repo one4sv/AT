@@ -1,3 +1,7 @@
+## 22.11.2026 — smHeader blur 2px
+
+В `src/scss/SM/smHeader.scss` у `::before` уменьшены обе декларации `backdrop-filter`/`-webkit-backdrop-filter` до `blur(2px) saturate(1.15)` по запросу пользователя. Маска `.ListWrapper` и padding результатов `+5dvh` не менялись.
+
 ## 22.11.2026 — маска верхней зоны SideMenu и нижний отступ поиска
 
 `src/scss/SM/sideMenu.scss`: `.ListWrapper` имеет стационарную `mask-image` и `-webkit-mask-image` — прозрачная зона `0..4.5dvh`, плавный переход к видимой области на `6.2dvh`. Фон и блюр `smHeader` (`6px`) не менялись. Причина: элементы списков просвечивали и смешивались с цветом хедера при scroll; маска на viewport, а не на скроллируемой `.SMlist`. `src/scss/SM/globalSearch.scss`: дополнительный нижний отступ `--sm-nav-clearance + 5dvh + safe-area` вместо `+2dvh`. Остальные стили/жесты не затрагивать. Ручная проверка скролла на iPhone и ПК остаётся обязательной.
