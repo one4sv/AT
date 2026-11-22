@@ -57,6 +57,8 @@ jobs:
         run: node --experimental-strip-types --test tests/saved-message-suggestions.test.mjs
       - name: Verify chat mention completion
         run: node --experimental-strip-types --test tests/chat-mentions.test.mjs
+      - name: Verify universal search query filters
+        run: node --experimental-strip-types --test tests/global-search-query.test.mjs
       - name: Verify textarea vertical padding
         run: node --test tests/textarea-vertical-padding.test.mjs
       - name: Build client

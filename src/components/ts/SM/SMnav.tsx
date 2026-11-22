@@ -14,6 +14,8 @@ import { useContacts } from "../../hooks/ContactsHook";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import "../../../scss/Loading.scss";
+import SMGlobalSearch from "./SMGlobalSearch";
+import { parseSMSearchQuery, searchFilters } from "../utils/globalSearchQuery";
 
 function NavAvatar({ src, alt }: { src: string; alt: string }) {
     const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
@@ -65,6 +67,7 @@ export default function SMnav() {
         setSearch: setContactSearch
     } = useContacts();
     const search = activeTab === "user" ? settingsSearch : contactSearch;
+    const parsedSearch = parseSMSearchQuery(search);
     const setSearch = activeTab === "user" ? setSettingsSearch : setContactSearch;
     const navigate = useNavigate();
     const { t } = useTranslation("common");
@@ -262,6 +265,17 @@ export default function SMnav() {
         const navTarget = element?.closest(".SMnavButt") as HTMLElement | null;
         if (extraTarget) {
             const action = extraTarget.dataset.action;
+            if (action === "search-filter") {
+                const filter = extraTarget.dataset.value;
+                if (filter && searchFilters.includes(filter as typeof searchFilters[number])) {
+                    setSearch(filter === "every" ? parsedSearch.query :
+                        "/" + filter + (parsedSearch.query ? " " + parsedSearch.query : ""));
+                    requestAnimationFrame(() => searchInputRef.current?.focus());
+                }
+                setIsExtraOpen(false);
+                cancelLongPress();
+                return;
+            }
             if (action === "create-chat") {
                 setBlackout(
                     {
@@ -432,6 +446,19 @@ export default function SMnav() {
         [extraMenu, isExtraOpen]
     );
     const extraButts = () => {
+        if (isSearch) return searchFilters.map(filter => <div
+            className={`SMextraMenuButt ${parsedSearch.filter === filter ? "selected" : ""}`}
+            key={filter}
+            data-action="search-filter"
+            data-value={filter}
+            onMouseUp={() => {
+                setSearch(filter === "every" ? parsedSearch.query :
+                    "/" + filter + (parsedSearch.query ? " " + parsedSearch.query : ""));
+                setIsExtraOpen(false);
+                requestAnimationFrame(() => searchInputRef.current?.focus());
+            }}>
+            {t("sideMenu.searchFilter." + filter)}
+        </div>);
         switch (extraMenu) {
             case "chats":
                 return (
@@ -711,6 +738,12 @@ export default function SMnav() {
                 </div>
             </div>
             {searchControl}
+            {isSearch && !!search.trim() && <SMGlobalSearch query={search} onChoose={kind => {
+                if (kind !== "setting") setSearch("");
+                setIsSearch(false);
+                setIsExtraOpen(false);
+                closeMenu();
+            }} />}
         </div>
     );
 }

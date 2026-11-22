@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useChat } from "../../components/hooks/ChatHook";
 import { useMessages } from "../../components/hooks/MessagesHook";
@@ -59,6 +59,7 @@ export default function Chat() {
         id
     } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const [showGoDown, setShowGoDown] = useState(false);
     const [unreadDividerId, setUnreadDividerId] = useState<number | null>(null);
     const [mess, setMess] = useState<string>("");
@@ -73,6 +74,14 @@ export default function Chat() {
     const unreadCapturedRef = useRef(false);
     const prependSnapshotRef = useRef<{ height: number; top: number; firstId: number } | null>(null);
     const API_URL = import.meta.env.VITE_API_URL;
+    useEffect(() => {
+        const target = new URLSearchParams(location.search).get("message");
+        if (!target || !/^\d+$/.test(target)) return;
+        const messageId = Number(target);
+        if (!Number.isSafeInteger(messageId) || messageId <= 0) return;
+        setPendingScrollId(messageId);
+        navigate(location.pathname, { replace: true });
+    }, [location.pathname, location.search, navigate, setPendingScrollId]);
     const chatReady = !chatLoading && !!chatWith && (id
         ? chatWith.is_group && String(chatWith.id) === id
         : !chatWith.is_group && chatWith.nick === nick);

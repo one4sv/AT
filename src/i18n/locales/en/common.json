@@ -14,6 +14,21 @@
     "language": "Interface language"
   },
   "sideMenu": {
+    "searchFilter": {
+          "every": "Everywhere",
+          "ms": "Messages",
+          "com": "Comments",
+          "post": "Posts",
+          "setting": "Settings",
+          "user": "Users",
+          "habit": "Activities",
+          "plan": "Plans",
+          "new": "Unread",
+          "group": "Chats"
+    },
+    "globalSearchEmpty": "No results found",
+    "globalSearchMore": "Show more",
+    "globalSearchLoading": "Searching…",
     "newPost": "New post",
     "closeSideMenu": "Close side menu",
     "searchPlaceholder": "Search...",
