@@ -61,6 +61,8 @@ jobs:
         run: node --experimental-strip-types --test tests/global-search-query.test.mjs
       - name: Verify textarea vertical padding
         run: node --test tests/textarea-vertical-padding.test.mjs
+      - name: Verify shared entity and media skeletons, post forwarding
+        run: node --test tests/shared-entity-post-forward.test.mjs
       - name: Build client
         run: npm run build
       - name: Enforce entry JavaScript budget
