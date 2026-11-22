@@ -21,7 +21,7 @@ function token(theme, group, name, tokenName) {
 }
 
 function validHighlight(value) {
-    return /^#[0-9a-f]{8}$/i.test(value) || /^rgba?\\(\\s*[\\d.%,\\s]+\\)$/.test(value);
+    return /^#[0-9a-f]{8}$/i.test(value) || /^rgba?\(\s*[\d.%,\s]+\)$/.test(value);
 }
 
 test("every preset accent/gradient emits valid highlight for light and dark themes", () => {
