@@ -93,3 +93,40 @@ export function parseQuickCreateCommand(text: string): QuickCreateDraft | null {
     if (date) result.date = date;
     return result;
 }
+
+
+/** Editable inline command values, accepted in either RU or EN. */
+export function parseQuickFieldPeriodicity(value: string): QuickCreateDraft["periodicity"] | undefined {
+    const normalized = value.trim().toLocaleLowerCase().replace(/\s+/g, " ");
+    if (["каждый день", "ежедневно", "everyday", "every day", "daily"].includes(normalized)) return "everyday";
+    if (["несколько дней в неделю", "еженедельно", "по дням недели", "weekly"].includes(normalized)) return "weekly";
+    if (["циклическая", "цикл", "cycle", "cyclic"].includes(normalized)) return "cycle";
+    if (["иногда", "sometimes"].includes(normalized)) return "sometimes";
+    return undefined;
+}
+
+export function parseQuickFieldTime(value: string): string | undefined {
+    const raw = value.trim();
+    if (!raw) return undefined;
+    const match = /^(\d{1,2})(?:[.:]([0-5]\d))?$/.exec(raw);
+    if (!match || Number(match[1]) > 23) return undefined;
+    return String(Number(match[1])).padStart(2, "0") + ":" + (match[2] || "00");
+}
+
+export function parseQuickFieldDate(value: string): string | undefined {
+    const raw = value.trim();
+    let year: number, month: number, day: number;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+        [year, month, day] = raw.split("-").map(Number);
+    } else {
+        const match = /^(\d{1,2})[./](\d{1,2})[./](\d{4})$/.exec(raw);
+        if (!match) return undefined;
+        day = Number(match[1]);
+        month = Number(match[2]);
+        year = Number(match[3]);
+    }
+    if (year < 1900 || year > 9999 || month < 1 || month > 12 || day < 1 || day > 31) return undefined;
+    const date = new Date(Date.UTC(year, month - 1, day));
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return undefined;
+    return [year, String(month).padStart(2, "0"), String(day).padStart(2, "0")].join("-");
+}

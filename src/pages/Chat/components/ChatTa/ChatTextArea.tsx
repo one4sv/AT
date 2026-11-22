@@ -152,6 +152,18 @@ export default function ChatTextArea({
             showNotification("error", tc("chatUi.quickCommands.nameRequired"));
             return;
         }
+        if (quickDraft.kind === "habit" && !quickDraft.periodicity) {
+            showNotification("error", tc("chatUi.quickCommands.invalidPeriodicity"));
+            return;
+        }
+        if (quickDraft.startTimeText?.trim() && !quickDraft.startTime) {
+            showNotification("error", tc("habitUi.invalidStart"));
+            return;
+        }
+        if (quickDraft.endTimeText?.trim() && !quickDraft.endTime) {
+            showNotification("error", tc("habitUi.invalidEnd"));
+            return;
+        }
         if (quickDraft.startTime && quickDraft.endTime && quickDraft.endTime < quickDraft.startTime) {
             showNotification("error", tc("plans.invalidTime"));
             return;

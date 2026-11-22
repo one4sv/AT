@@ -505,142 +505,108 @@
     -webkit-backdrop-filter: blur(6px);
 }
 .chatWriteBar.inputWithEmoji > .chatQuickComposer {
-    width: 100%;
-    min-width: 0;
-    max-height: min(44dvh, 440px);
-    padding: 1dvh 1vw;
-    box-sizing: border-box;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
-}
-.chatQuickComposer {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    gap: .7dvh;
+    gap: .5dvh;
     color: var(--tc);
     font-size: 16px;
+    line-height: 1.4;
 
     .chatQuickCommandName {
         align-self: flex-start;
-        padding: .2dvh .45vw;
-        border-radius: 7px;
         background: var(--accent_highlight);
-        color: var(--tc);
+        border-radius: 6px;
+        padding: .1dvh .35vw;
+        margin-right: 4vh;
     }
-    label, .chatQuickChoice {
+    .chatQuickFields {
         display: flex;
         flex-direction: column;
-        align-items: stretch;
+        gap: .35dvh;
+        min-width: 0;
+    }
+    .chatQuickField {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: .3vw;
         min-width: 0;
         width: 100%;
-        box-sizing: border-box;
-        gap: .25dvh;
-
-        > span {
-            display: inline-block;
-            align-self: flex-start;
-            width: fit-content;
-            max-width: 100%;
-            padding: .2dvh .45vw;
-            border-radius: 6px;
-            background: var(--accent_highlight);
-            color: var(--tc);
-            white-space: normal;
-            overflow-wrap: anywhere;
-        }
-        > input, > textarea, > .chatQuickPeriod {
-            display: block;
-            flex: none;
-            min-width: 0;
-            max-width: 100%;
-            width: 100%;
-            box-sizing: border-box;
-            min-height: 3.5dvh;
-            max-height: 12dvh;
-            margin: 0;
-            border: 0;
-            border-radius: 8px;
-            padding: .6dvh .6vw;
-            outline: none;
-            background: transparent;
-            color: var(--tc);
-            font: inherit;
-
-            &:focus-visible {
-                background: var(--interact);
-                box-shadow: inset 0 -1px var(--accent_text);
-            }
-        }
-        textarea {
-            resize: none;
-            scrollbar-width: thin;
-        }
-        input[type="date"], input[type="time"] {
-            min-inline-size: 0;
-            max-inline-size: 100%;
-            color-scheme: inherit;
-        }
-        > .chatQuickPeriod {
-            min-height: 4dvh;
-            padding: 0;
-            > input {
-                display: block;
-                width: 100%;
-                min-width: 0;
-                max-width: 100%;
-                box-sizing: border-box;
-                padding: .6dvh 2vw .6dvh .6vw;
-                border: none;
-                border-radius: 8px;
-                font: inherit;
-                color: var(--tc);
-                background: transparent;
-            }
-        }
+        cursor: text;
     }
-    .chatQuickTimeRow {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        align-items: start;
-        gap: 1vw;
-        min-width: 0;
-
-        > label {
-            min-width: 0;
-            width: 100%;
-            > input {
-                width: 100%;
-                max-width: 100%;
-                min-width: 0;
-                min-height: 4.2dvh;
-            }
+    .chatQuickFieldLabel {
+        flex: none;
+        background: var(--accent_highlight);
+        color: inherit;
+        border-radius: 5px;
+        padding: .1dvh .25vw;
+        white-space: normal;
+    }
+    .chatQuickFieldValue {
+        position: relative;
+        display: inline-flex;
+        align-items: flex-start;
+        flex: 0 1 auto;
+        min-width: 1px;
+        max-width: 100%;
+        padding: .1dvh 0;
+    }
+    .chatQuickMeasure {
+        position: absolute;
+        width: max-content;
+        visibility: hidden;
+        pointer-events: none;
+        white-space: pre;
+        font: inherit;
+        line-height: inherit;
+    }
+    .chatQuickFieldValue textarea {
+        display: block;
+        box-sizing: content-box;
+        width: 1px;
+        min-width: 1px;
+        max-width: 100%;
+        min-height: 1.4em;
+        max-height: none;
+        padding: 0;
+        margin: 0;
+        border: none;
+        border-radius: 0;
+        outline: none;
+        background: transparent;
+        box-shadow: none;
+        color: var(--tc);
+        caret-color: var(--tc);
+        font: inherit;
+        line-height: inherit;
+        resize: none;
+        overflow: hidden;
+        overflow-wrap: anywhere;
+        &:focus-visible {
+            box-shadow: inset 0 -1px var(--accent_text);
         }
     }
     .chatQuickHelp {
-        min-width: 0;
-        padding-right: 3.5vh;
         color: var(--borderWh);
         font-size: 13px;
         overflow-wrap: anywhere;
+        padding-right: 4vh;
     }
-
     @media (max-width: 800px) {
-        gap: .85dvh;
-        padding: 0;
-        label, .chatQuickChoice {
-            gap: .3dvh;
-            > span { padding: .15dvh 1vw; }
-            > input, > textarea, > .chatQuickPeriod { padding: .5dvh 1vw; }
-            > .chatQuickPeriod { padding: 0; }
-        }
-        .chatQuickTimeRow { gap: 2vw; }
+        gap: .75dvh;
+        .chatQuickFields { gap: .5dvh; }
+        .chatQuickField { gap: 1vw; }
+        .chatQuickFieldLabel { padding: .1dvh .5vw; }
     }
 }
 .chatSlashButton.quickActive {
+    right: .5vw;
     bottom: auto;
     top: .5dvh;
+    @media (max-width: 800px) {
+        right: 1vw;
+    }
 }
 .chatWriteTAButt.quickSending {
     opacity: .55;

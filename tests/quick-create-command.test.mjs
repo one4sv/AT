@@ -49,3 +49,21 @@ test("space after slash command activates inline composer", () => {
     assert.equal(quickCommandOnSpace("/act text"), null);
     assert.equal(quickCommandOnSpace("/plan\n"), null);
 });
+
+
+test("inline command fields normalize time, date and RU/EN frequency", async () => {
+    const { parseQuickFieldTime, parseQuickFieldDate, parseQuickFieldPeriodicity } =
+        await import("../src/components/ts/utils/quickCreateCommand.ts");
+    assert.equal(parseQuickFieldTime("9"), "09:00");
+    assert.equal(parseQuickFieldTime("12.30"), "12:30");
+    assert.equal(parseQuickFieldTime("24:00"), undefined);
+    assert.equal(parseQuickFieldDate("22.11.2026"), "2026-11-22");
+    assert.equal(parseQuickFieldDate("2026-11-22"), "2026-11-22");
+    assert.equal(parseQuickFieldDate("31.02.2026"), undefined);
+    assert.equal(parseQuickFieldPeriodicity("каждый день"), "everyday");
+    assert.equal(parseQuickFieldPeriodicity("Every day"), "everyday");
+    assert.equal(parseQuickFieldPeriodicity("несколько дней в неделю"), "weekly");
+    assert.equal(parseQuickFieldPeriodicity("Cyclic"), "cycle");
+    assert.equal(parseQuickFieldPeriodicity("иногда"), "sometimes");
+    assert.equal(parseQuickFieldPeriodicity("random"), undefined);
+});

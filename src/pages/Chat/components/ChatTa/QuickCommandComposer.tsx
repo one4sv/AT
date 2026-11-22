@@ -1,13 +1,72 @@
-import { useEffect, useRef, type KeyboardEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, type KeyboardEvent, type Ref } from "react";
 import { useTranslation } from "react-i18next";
-import SelectList from "../../../../components/ts/SelectList";
-import TA from "../../../../components/ts/TA";
+import { parseQuickFieldDate, parseQuickFieldPeriodicity, parseQuickFieldTime } from "../../../../components/ts/utils/quickCreateCommand";
 import type { QuickCreateDraft } from "../../../../components/ts/utils/quickCreateCommand";
 
 export interface QuickCommandDraft extends QuickCreateDraft {
     weeklyDays?: string;
     cycleActive?: string;
     cycleRest?: string;
+    periodicityText?: string;
+    dateText?: string;
+    startTimeText?: string;
+    endTimeText?: string;
+}
+
+function InlineQuickField({ label, value, onChange, inputRef, maxLength, inputMode, disabled }: {
+    label: string;
+    value: string;
+    onChange: (value: string) => void;
+    inputRef?: Ref<HTMLTextAreaElement>;
+    maxLength?: number;
+    inputMode?: "text" | "numeric";
+    disabled?: boolean;
+}) {
+    const fieldRef = useRef<HTMLLabelElement>(null);
+    const titleRef = useRef<HTMLSpanElement>(null);
+    const areaRef = useRef<HTMLTextAreaElement>(null);
+    const measureRef = useRef<HTMLSpanElement>(null);
+
+    useLayoutEffect(() => {
+        const field = fieldRef.current;
+        const label = titleRef.current;
+        const area = areaRef.current;
+        const mirror = measureRef.current;
+        if (!field || !label || !area || !mirror) return;
+        const resize = () => {
+            // Keep the empty field almost invisible; the label remains a large tap target.
+            const available = Math.max(16, field.clientWidth - label.offsetWidth - 16);
+            const measured = mirror.getBoundingClientRect().width;
+            area.style.width = Math.max(1, Math.min(available, Math.ceil(measured) + (value ? 3 : 0))) + "px";
+            area.style.height = "auto";
+            area.style.height = Math.max(area.scrollHeight, parseFloat(getComputedStyle(area).lineHeight) || 22) + "px";
+        };
+        resize();
+        const observer = new ResizeObserver(resize);
+        observer.observe(field);
+        return () => observer.disconnect();
+    }, [value, label]);
+
+    return <label ref={fieldRef} className="chatQuickField" data-quick-field>
+        <span ref={titleRef} className="chatQuickFieldLabel">{label}:</span>
+        <span className="chatQuickFieldValue">
+            <span ref={measureRef} className="chatQuickMeasure" aria-hidden="true">{value || ""}</span>
+            <textarea
+                ref={node => {
+                    areaRef.current = node;
+                    if (typeof inputRef === "function") inputRef(node);
+                    else if (inputRef) inputRef.current = node;
+                }}
+                rows={1}
+                inputMode={inputMode}
+                aria-label={label}
+                value={value}
+                disabled={disabled}
+                maxLength={maxLength}
+                onChange={event => onChange(event.target.value)}
+            />
+        </span>
+    </label>;
 }
 
 export default function QuickCommandComposer({ draft, onChange, onSubmit, onCancel, disabled }: {
@@ -17,22 +76,22 @@ export default function QuickCommandComposer({ draft, onChange, onSubmit, onCanc
     onCancel: () => void;
     disabled?: boolean;
 }) {
-    const { t } = useTranslation("common");
+    const { t, i18n } = useTranslation("common");
     const containerRef = useRef<HTMLDivElement>(null);
-    const nameRef = useRef<HTMLInputElement>(null);
+    const nameRef = useRef<HTMLTextAreaElement>(null);
     const update = (key: keyof QuickCommandDraft, value: string) => onChange({ ...draft, [key]: value });
 
     useEffect(() => {
         nameRef.current?.focus({ preventScroll: true });
     }, [draft.kind]);
 
-    const focusable = () => Array.from(containerRef.current?.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-        "[data-quick-field] input, [data-quick-field] textarea"
+    const focusable = () => Array.from(containerRef.current?.querySelectorAll<HTMLTextAreaElement>(
+        "[data-quick-field] textarea"
     ) || []);
 
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         if (event.nativeEvent.isComposing || event.altKey || event.ctrlKey || event.metaKey) return;
-        const target = event.target as HTMLInputElement | HTMLTextAreaElement;
+        const target = event.target as HTMLTextAreaElement;
         const fields = focusable();
         const index = fields.indexOf(target);
         if (index < 0) return;
@@ -43,71 +102,98 @@ export default function QuickCommandComposer({ draft, onChange, onSubmit, onCanc
         } else if (event.key === "Backspace" && !target.value) {
             event.preventDefault();
             if (index === 0) onCancel();
-            else fields[index - 1].focus({ preventScroll: true });
+            else {
+                const previous = fields[index - 1];
+                previous.focus({ preventScroll: true });
+                previous.setSelectionRange(previous.value.length, previous.value.length);
+            }
         } else if (event.key === "Escape") {
             event.preventDefault();
             onCancel();
         }
     };
 
-    const periodOptions = ["everyday", "weekly", "cycle", "sometimes"].map(value => ({
-        value,
-        label: t("habitUi.period." + value)
-    }));
+    const dateText = draft.dateText ?? (draft.date
+        ? (i18n.language.startsWith("ru")
+            ? draft.date.slice(8, 10) + "." + draft.date.slice(5, 7) + "." + draft.date.slice(0, 4)
+            : draft.date)
+        : "");
 
     return <div ref={containerRef} className="chatQuickComposer" onKeyDown={handleKeyDown}>
         <div className="chatQuickCommandName">/{draft.kind === "habit" ? "act" : "plan"}</div>
-        <label data-quick-field>
-            <span>{t("chatUi.name")}</span>
-            <input ref={nameRef} type="text" required maxLength={draft.kind === "habit" ? 40 : 160}
-                disabled={disabled} value={draft.name || ""} onChange={event => update("name", event.target.value)}/>
-        </label>
-        <label data-quick-field>
-            <span>{t("chatUi.description")}</span>
-            <TA minHeight={3} maxHeight={12} disabled={disabled}
+        <div className="chatQuickFields">
+            <InlineQuickField
+                label={t("chatUi.name")}
+                inputRef={nameRef}
+                maxLength={draft.kind === "habit" ? 40 : 160}
+                disabled={disabled}
+                value={draft.name || ""}
+                onChange={value => update("name", value)}
+            />
+            <InlineQuickField
+                label={t("chatUi.description")}
                 maxLength={draft.kind === "habit" ? 120 : 1200}
-                value={draft.description || ""} onChange={event => update("description", event.target.value)}/>
-        </label>
-        {draft.kind === "habit" ? <>
-            <div data-quick-field className="chatQuickChoice">
-                <span>{t("habitUi.periodicity")}</span>
-                <SelectList className="chatQuickPeriod" arr={periodOptions}
-                    selected={draft.periodicity || "everyday"}
-                    onChange={value => update("periodicity", value)}/>
-            </div>
-            {draft.periodicity === "weekly" && <label data-quick-field>
-                <span>{t("chatUi.quickCommands.days")}</span>
-                <input type="text" placeholder={t("chatUi.quickCommands.daysPlaceholder")}
-                    disabled={disabled} value={draft.weeklyDays || ""} onChange={event => update("weeklyDays", event.target.value)}/>
-            </label>}
-            {draft.periodicity === "cycle" && <div className="chatQuickTimeRow">
-                <label data-quick-field>
-                    <span>{t("habitUi.activeDays")}</span>
-                    <input type="number" min={1} max={365} disabled={disabled}
-                        value={draft.cycleActive || ""} onChange={event => update("cycleActive", event.target.value)}/>
-                </label>
-                <label data-quick-field>
-                    <span>{t("habitUi.restDays")}</span>
-                    <input type="number" min={1} max={365} disabled={disabled}
-                        value={draft.cycleRest || ""} onChange={event => update("cycleRest", event.target.value)}/>
-                </label>
-            </div>}
-        </> : <label data-quick-field>
-            <span>{t("plans.date")}</span>
-            <input type="date" disabled={disabled} required value={draft.date || ""}
-                onChange={event => update("date", event.target.value)}/>
-        </label>}
-        <div className="chatQuickTimeRow">
-            <label data-quick-field>
-                <span>{t("chatUi.quickCommands.startShort")}</span>
-                <input type="time" disabled={disabled} value={draft.startTime || ""}
-                    onChange={event => update("startTime", event.target.value)}/>
-            </label>
-            <label data-quick-field>
-                <span>{t("chatUi.quickCommands.endShort")}</span>
-                <input type="time" disabled={disabled} value={draft.endTime || ""}
-                    onChange={event => update("endTime", event.target.value)}/>
-            </label>
+                disabled={disabled}
+                value={draft.description || ""}
+                onChange={value => update("description", value)}
+            />
+            {draft.kind === "habit" ? <>
+                <InlineQuickField
+                    label={t("habitUi.periodicity")}
+                    disabled={disabled}
+                    value={draft.periodicityText ?? t("habitUi.period." + (draft.periodicity || "everyday"))}
+                    onChange={value => onChange({
+                        ...draft, periodicityText: value, periodicity: parseQuickFieldPeriodicity(value)
+                    })}
+                />
+                {draft.periodicity === "weekly" && <InlineQuickField
+                    label={t("chatUi.quickCommands.days")}
+                    disabled={disabled}
+                    value={draft.weeklyDays || ""}
+                    onChange={value => update("weeklyDays", value)}
+                />}
+                {draft.periodicity === "cycle" && <>
+                    <InlineQuickField
+                        label={t("habitUi.activeDays")}
+                        inputMode="numeric"
+                        disabled={disabled}
+                        maxLength={3}
+                        value={draft.cycleActive || ""}
+                        onChange={value => update("cycleActive", value)}
+                    />
+                    <InlineQuickField
+                        label={t("habitUi.restDays")}
+                        inputMode="numeric"
+                        disabled={disabled}
+                        maxLength={3}
+                        value={draft.cycleRest || ""}
+                        onChange={value => update("cycleRest", value)}
+                    />
+                </>}
+            </> : <InlineQuickField
+                label={t("plans.date")}
+                disabled={disabled}
+                inputMode="numeric"
+                maxLength={10}
+                value={dateText}
+                onChange={value => onChange({ ...draft, dateText: value, date: parseQuickFieldDate(value) })}
+            />}
+            <InlineQuickField
+                label={t("chatUi.quickCommands.startShort")}
+                disabled={disabled}
+                inputMode="numeric"
+                maxLength={5}
+                value={draft.startTimeText ?? draft.startTime ?? ""}
+                onChange={value => onChange({ ...draft, startTimeText: value, startTime: parseQuickFieldTime(value) })}
+            />
+            <InlineQuickField
+                label={t("chatUi.quickCommands.endShort")}
+                disabled={disabled}
+                inputMode="numeric"
+                maxLength={5}
+                value={draft.endTimeText ?? draft.endTime ?? ""}
+                onChange={value => onChange({ ...draft, endTimeText: value, endTime: parseQuickFieldTime(value) })}
+            />
         </div>
         <div className="chatQuickHelp">{t("chatUi.quickCommands.enterHint")}</div>
     </div>;
