@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, type KeyboardEvent, type Ref } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type Ref, type RefObject } from "react";
 import { useTranslation } from "react-i18next";
+import EntitySuggestionList, { type EntitySuggestionItem } from "../../../../components/ts/EntitySuggestionList";
 import { parseQuickFieldDate, parseQuickFieldPeriodicity, parseQuickFieldTime } from "../../../../components/ts/utils/quickCreateCommand";
 import type { QuickCreateDraft } from "../../../../components/ts/utils/quickCreateCommand";
 
@@ -13,7 +14,7 @@ export interface QuickCommandDraft extends QuickCreateDraft {
     endTimeText?: string;
 }
 
-function InlineQuickField({ label, value, onChange, inputRef, maxLength, inputMode, disabled }: {
+function InlineQuickField({ label, value, onChange, inputRef, maxLength, inputMode, disabled, onFocus, suggestionsOpen }: {
     label: string;
     value: string;
     onChange: (value: string) => void;
@@ -21,6 +22,8 @@ function InlineQuickField({ label, value, onChange, inputRef, maxLength, inputMo
     maxLength?: number;
     inputMode?: "text" | "numeric";
     disabled?: boolean;
+    onFocus?: () => void;
+    suggestionsOpen?: boolean;
 }) {
     const fieldRef = useRef<HTMLLabelElement>(null);
     const titleRef = useRef<HTMLSpanElement>(null);
@@ -61,6 +64,9 @@ function InlineQuickField({ label, value, onChange, inputRef, maxLength, inputMo
                 rows={1}
                 inputMode={inputMode}
                 aria-label={label}
+                aria-autocomplete={suggestionsOpen !== undefined ? "list" : undefined}
+                aria-expanded={suggestionsOpen}
+                onFocus={onFocus}
                 value={value}
                 disabled={disabled}
                 maxLength={maxLength}
@@ -70,16 +76,33 @@ function InlineQuickField({ label, value, onChange, inputRef, maxLength, inputMo
     </label>;
 }
 
-export default function QuickCommandComposer({ draft, onChange, onSubmit, onCancel, disabled }: {
+export default function QuickCommandComposer({ draft, onChange, onSubmit, onCancel, disabled, suggestionPopupRef }: {
     draft: QuickCommandDraft;
     onChange: (next: QuickCommandDraft) => void;
     onSubmit: () => void;
     onCancel: () => void;
     disabled?: boolean;
+    suggestionPopupRef?: RefObject<HTMLDivElement | null>;
 }) {
     const { t, i18n } = useTranslation("common");
     const containerRef = useRef<HTMLDivElement>(null);
     const nameRef = useRef<HTMLTextAreaElement>(null);
+    const periodicityRef = useRef<HTMLTextAreaElement>(null);
+    const [periodicitySuggestionsOpen, setPeriodicitySuggestionsOpen] = useState(false);
+    const [activePeriodicitySuggestion, setActivePeriodicitySuggestion] = useState(0);
+    const periodicities: EntitySuggestionItem[] = (["everyday", "weekly", "cycle", "sometimes"] as const).map(id => ({
+        id,
+        label: t("habitUi.period." + id),
+        description: t("habitUi.periodHint." + id)
+    }));
+    const currentPeriodicityLabel = periodicities.find(option => option.id === draft.periodicity)?.label;
+    const periodicityQuery = draft.periodicityText?.trim().toLocaleLowerCase() || "";
+    const searchPeriodicity = periodicityQuery === currentPeriodicityLabel?.toLocaleLowerCase() ? "" : periodicityQuery;
+    const suggestedPeriodicities = searchPeriodicity ? periodicities.filter(option =>
+        [option.label, option.description || "", option.id].some(value =>
+            value.toLocaleLowerCase().includes(searchPeriodicity)
+        )
+    ) : periodicities;
     const update = (key: keyof QuickCommandDraft, value: string) => onChange({ ...draft, [key]: value });
 
     useEffect(() => {
@@ -90,12 +113,41 @@ export default function QuickCommandComposer({ draft, onChange, onSubmit, onCanc
         "[data-quick-field] textarea"
     ) || []);
 
+    const selectPeriodicity = (option: EntitySuggestionItem, advance = false) => {
+        setPeriodicitySuggestionsOpen(false);
+        onChange({ ...draft, periodicity: option.id as QuickCreateDraft["periodicity"], periodicityText: option.label });
+        if (advance) requestAnimationFrame(() => {
+            const fields = focusable();
+            const index = fields.indexOf(periodicityRef.current as HTMLTextAreaElement);
+            fields[index + 1]?.focus({ preventScroll: true });
+        });
+    };
+
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         if (event.nativeEvent.isComposing || event.altKey || event.ctrlKey || event.metaKey) return;
         const target = event.target as HTMLTextAreaElement;
         const fields = focusable();
         const index = fields.indexOf(target);
         if (index < 0) return;
+        if (target === periodicityRef.current && periodicitySuggestionsOpen) {
+            if (event.key === "Escape") {
+                event.preventDefault();
+                setPeriodicitySuggestionsOpen(false);
+                return;
+            }
+            if ((event.key === "ArrowDown" || event.key === "ArrowUp") && suggestedPeriodicities.length) {
+                event.preventDefault();
+                setActivePeriodicitySuggestion(previous =>
+                    (previous + (event.key === "ArrowDown" ? 1 : -1) + suggestedPeriodicities.length) % suggestedPeriodicities.length
+                );
+                return;
+            }
+            if (event.key === "Enter" && !event.shiftKey && suggestedPeriodicities.length) {
+                event.preventDefault();
+                selectPeriodicity(suggestedPeriodicities[Math.min(activePeriodicitySuggestion, suggestedPeriodicities.length - 1)], true);
+                return;
+            }
+        }
         if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
             if (index === fields.length - 1) onSubmit();
@@ -120,7 +172,12 @@ export default function QuickCommandComposer({ draft, onChange, onSubmit, onCanc
             : draft.date)
         : "");
 
-    return <div ref={containerRef} className="chatQuickComposer" onKeyDown={handleKeyDown}>
+    return <div ref={containerRef} className="chatQuickComposer" onKeyDown={handleKeyDown}
+        onFocusCapture={event => {
+            if (event.target instanceof HTMLTextAreaElement && event.target !== periodicityRef.current) {
+                setPeriodicitySuggestionsOpen(false);
+            }
+        }}>
         <div className="chatQuickCommandName">/{draft.kind === "habit" ? "act" : "plan"}</div>
         <div className="chatQuickFields">
             <InlineQuickField
@@ -141,11 +198,20 @@ export default function QuickCommandComposer({ draft, onChange, onSubmit, onCanc
             {draft.kind === "habit" ? <>
                 <InlineQuickField
                     label={t("habitUi.periodicity")}
+                    inputRef={periodicityRef}
                     disabled={disabled}
+                    suggestionsOpen={periodicitySuggestionsOpen}
+                    onFocus={() => {
+                        if (disabled) return;
+                        setPeriodicitySuggestionsOpen(true);
+                        setActivePeriodicitySuggestion(0);
+                    }}
                     value={draft.periodicityText ?? t("habitUi.period." + (draft.periodicity || "everyday"))}
-                    onChange={value => onChange({
-                        ...draft, periodicityText: value, periodicity: parseQuickFieldPeriodicity(value)
-                    })}
+                    onChange={value => {
+                        onChange({ ...draft, periodicityText: value, periodicity: parseQuickFieldPeriodicity(value) });
+                        setActivePeriodicitySuggestion(0);
+                        setPeriodicitySuggestionsOpen(true);
+                    }}
                 />
                 {draft.periodicity === "weekly" && <InlineQuickField
                     label={t("chatUi.quickCommands.days")}
@@ -196,6 +262,15 @@ export default function QuickCommandComposer({ draft, onChange, onSubmit, onCanc
                 onChange={value => onChange({ ...draft, endTimeText: value, endTime: parseQuickFieldTime(value) })}
             />
         </div>
+        {draft.kind === "habit" && periodicitySuggestionsOpen && !disabled && <EntitySuggestionList
+            className="chatQuickPeriodicitySuggestions"
+            anchorRef={containerRef}
+            popupRef={suggestionPopupRef}
+            items={suggestedPeriodicities}
+            activeIndex={Math.min(activePeriodicitySuggestion, suggestedPeriodicities.length - 1)}
+            onSelect={selectPeriodicity}
+            onPreview={item => setActivePeriodicitySuggestion(suggestedPeriodicities.findIndex(option => option.id === item.id))}
+        />}
         <div className="chatQuickHelp">{t("chatUi.quickCommands.enterHint")}</div>
     </div>;
 }
