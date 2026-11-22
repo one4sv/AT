@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { MagnifyingGlassMinusIcon } from "@phosphor-icons/react";
 import { api } from "../api";
 import { tags } from "../tags";
-import { useSideMenu } from "../../hooks/SideMenuHook";
 import { useContacts } from "../../hooks/ContactsHook";
 import { useSearchableSettings } from "../../../pages/Settings/Arrays/searchableSettings";
 import { settingsSearchNavigation } from "../../../pages/Settings/Arrays/settingsSearchNavigation";
@@ -72,7 +71,6 @@ export default function SMGlobalSearch({ query, filter, tab: section, onFilterCh
 }) {
     const { t } = useTranslation("common");
     const navigate = useNavigate();
-    const { setActiveTab } = useSideMenu();
     const { findContacts } = useContacts();
     const sections = useSearchableSettings();
     const term = query.trim();
