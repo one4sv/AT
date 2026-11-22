@@ -23,7 +23,7 @@ function MessageVideoPreview({ src, preload }: { src: string; preload: "metadata
 
 export default function MessageFiles({files, m} : {files:Media[], m:message}) {
     const { t } = useTranslation("common");
-    const { autoLoadImages, autoPlayGif } = useSettings();
+    const { autoLoadImages } = useSettings();
     const { chatWith } = useChat()
     const { setBlackout } = useBlackout()
     const { user } = useUser()
@@ -112,7 +112,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
                             }}/>
                         ) : isVideo ? (
                             <MessageVideoPreview key={file.url} src={file.url}
-                                preload={autoLoadImages && autoPlayGif ? "metadata" : "none"}/>
+                                preload={autoLoadImages ? "metadata" : "none"}/>
                         ) : (
                             <a href={file.url} download={file.name} className="messageFileOther">
                                 {GetIconByType(file.name, file.type)}
