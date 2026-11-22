@@ -260,7 +260,7 @@ export default function Message({
             </div>}
             <div
                 ref={appearRef}
-                className={`message ${isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""} ${mediaOnly ? "mediaOnly" : ""}`}
+                className={`message ${isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""} ${mediaOnly ? "mediaOnly" : ""} ${mediaOnly && m.files?.length === 1 ? "singleMedia" : ""}`}
             >
                 {!isMy && (showNames === undefined || showNames === true) && chatWith?.is_group && <div
                     className="senderName"
