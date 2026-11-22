@@ -12,10 +12,10 @@ const css = sass.compileString(
 ).css;
 
 function token(theme, group, name, tokenName) {
-    const selector = new RegExp('\\[data-theme="?'+theme+'"?\\]\\[data-'+group+'="?'+name+'"?\\]\\s*\\{([^}]+)\\}');
+    const selector = new RegExp('\\[data-theme="?'+theme+'"?\\]\\[data-'+group+'="?'+name+'"?\\]\s*\\{([^}]+)\\}');
     const block = selector.exec(css)?.[1];
     assert.ok(block, "Missing CSS selector for " + theme + " " + name);
-    const value = new RegExp('--'+tokenName+':\\s*([^;]+);').exec(block)?.[1]?.trim();
+    const value = new RegExp('--'+tokenName+':\s*([^;]+);').exec(block)?.[1]?.trim();
     assert.ok(value, "Missing "+tokenName+" for "+theme+" "+name);
     return value;
 }
@@ -35,10 +35,10 @@ test("every preset accent/gradient emits valid highlight for light and dark them
             assert.ok(validHighlight(highlight), theme + " grad " + name + ": " + highlight);
         }
     }
-    assert.equal(token("light", "accent", "inversion", "accent_highlight"), "#99999966");
-    assert.equal(token("dark", "accent", "abyss", "accent_highlight"), "#66666666");
-    assert.equal(token("light", "grad", "mono", "grad_highlight"), "#99999966");
-    assert.equal(token("dark", "grad", "void", "grad_highlight"), "#66666666");
+    assert.match(token("light", "accent", "inversion", "accent_highlight"), /^(#99999966|rgba\(153,\s*153,\s*153,\s*0\.4\))$/i);
+    assert.match(token("dark", "accent", "abyss", "accent_highlight"), /^(#66666666|rgba\(102,\s*102,\s*102,\s*0\.4\))$/i);
+    assert.match(token("light", "grad", "mono", "grad_highlight"), /^(#99999966|rgba\(153,\s*153,\s*153,\s*0\.4\))$/i);
+    assert.match(token("dark", "grad", "void", "grad_highlight"), /^(#66666666|rgba\(102,\s*102,\s*102,\s*0\.4\))$/i);
 });
 
 test("custom highlight remains tinted and visible near theme surfaces", () => {
