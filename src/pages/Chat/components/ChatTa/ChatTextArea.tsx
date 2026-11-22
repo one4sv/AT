@@ -513,6 +513,25 @@ export default function ChatTextArea({
         [editing]
     );
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (shareSuggestions.length && !e.nativeEvent.isComposing) {
+            if (e.key === "Escape") {
+                e.preventDefault();
+                setShareDismissed(true);
+                setSharePreview(null);
+                return;
+            }
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                e.preventDefault();
+                setActiveShare(index => (index + (e.key === "ArrowDown" ? 1 : -1) +
+                    shareSuggestions.length) % shareSuggestions.length);
+                return;
+            }
+            if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                chooseShare(shareSuggestions[Math.min(activeShare,shareSuggestions.length-1)]);
+                return;
+            }
+        }
         if (matchingMentions.length && !e.nativeEvent.isComposing) {
             if (e.key === "Escape") {
                 e.preventDefault();
@@ -565,6 +584,14 @@ export default function ChatTextArea({
     const handleSend = async () => {
         if (quickDraft) {
             void submitQuickCommand();
+            return;
+        }
+        if (shareSuggestions.length) {
+            chooseShare(shareSuggestions[Math.min(activeShare,shareSuggestions.length - 1)]);
+            return;
+        }
+        if (shareMatch || plainShare.length) {
+            showNotification("info",tc("chatUi.shareSearchHint"));
             return;
         }
         if (canShowCommands) {
@@ -724,7 +751,7 @@ export default function ChatTextArea({
             setFiles(prev => prev.filter((_, i) => i !== index - oldMedia.length));
         }
     };
-    const barOpen = forwardPost !== null || forwardMedia?.targetPath === location.pathname || files.length > 0 || answer !== null || editing !== null || redirect !== undefined;
+    const barOpen = linkedEntity !== null || forwardPost !== null || forwardMedia?.targetPath === location.pathname || files.length > 0 || answer !== null || editing !== null || redirect !== undefined;
 
     return (
         <>
@@ -783,6 +810,15 @@ export default function ChatTextArea({
                         <button type="button" className="closeAnswer" aria-label={t("editor.close")} onClick={() => setForwardMedia(null)}>
                             <X />
                         </button>
+                    </div>}
+                    {linkedEntity && <div className="chatSharedEntityDraft">
+                        <div className="answer">
+                            <div className="answer1str">{tc("chatUi.shareSelected")}</div>
+                            <div className="answer2str">{linkedEntity.label}</div>
+                        </div>
+                        <button className="closeAnswer" type="button"
+                            aria-label={tc("chatUi.quickCommands.close")}
+                            onClick={() => setLinkedEntity(null)}><X/></button>
                     </div>}
                     <MediaDraft files={files} media={oldMedia} onRemove={handleRemoveFile} />
                     {!quickDraft && <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} />}
@@ -870,6 +906,9 @@ export default function ChatTextArea({
                                 if (savedChat && nextText.trimStart().startsWith("/")) setShowEmojiBar(false);
                                 setMess(nextText);
                                 setMentionCaret(e.currentTarget.selectionStart);
+                                setShareDismissed(false);
+                                setSharePreview(null);
+                                setActiveShare(0);
                                 setMentionDismissed(false);
                                 setActiveMention(0);
                                 if (!editing && sendTypingStatus) handleTyping(chatWith ? chatWith.id : "");
