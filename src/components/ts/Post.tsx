@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronRight } from "lucide-react";
-import { ChatCircle, Heart, DotsThreeVertical, UserCircle } from "@phosphor-icons/react";
+import { ChatCircle, Heart, DotsThreeVertical, UserCircle, ArrowBendUpRight } from "@phosphor-icons/react";
 import { isMobile } from "react-device-detect";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useMessages } from "../hooks/MessagesHook";
@@ -104,6 +104,14 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
             }
         }
     };
+    const forward = () => {
+        if (!user.id) {
+            navigate("/sign");
+            return;
+        }
+        setForwardPost({ id: post.id, text: post.text, author: post.user.username || post.user.nick || "" });
+        setBlackout({ seted: true, module: "Redirecting" });
+    };
     const openPostMenu = (x: number, y: number) => {
         openMenu(x, y, "post", {
             id: String(post.id),
@@ -113,14 +121,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
             func: () => navigate('/post/' + post.id + '/edit'),
             onCopy: () => { void copyLink(); },
             onShare: () => { void share(); },
-            onForward: () => {
-                if (!user.id) {
-                    navigate("/sign");
-                    return;
-                }
-                setForwardPost({ id: post.id, text: post.text, author: post.user.username || post.user.nick || "" });
-                setBlackout({ seted: true, module: "Redirecting" });
-            }
+            onForward: forward
         });
     };
 
@@ -221,6 +222,15 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                                 {post.comments_count}
                             </span>
                         </div>
+                        <button type="button" className="PostForward"
+                            aria-label={t("post.forward")}
+                            title={t("post.forward")}
+                            onClick={event => {
+                                event.stopPropagation();
+                                forward();
+                            }}>
+                            <ArrowBendUpRight />
+                        </button>
                     </div>
                     <div className="PostDate">
                         <span>

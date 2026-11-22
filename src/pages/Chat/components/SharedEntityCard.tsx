@@ -6,6 +6,7 @@ import { api } from "../../../components/ts/api";
 import { tags } from "../../../components/ts/tags";
 import { formatClock, formatDateFromString } from "../../../components/ts/utils/dateToStr";
 import "../scss/SharedEntityCard.scss";
+import "../../../scss/Loading.scss";
 
 export type SharedEntityKind = "user" | "habit" | "plan" | "post" | "group";
 interface SharedEntityPreview {
@@ -21,6 +22,7 @@ interface SharedEntityPreview {
     start_time?: string | null;
     end_time?: string | null;
     author?: string | null;
+    author_nick?: string | null;
     excerpt?: string | null;
 }
 const icons = {
@@ -30,16 +32,35 @@ const icons = {
 export default function SharedEntityCard({kind,id}: {kind: SharedEntityKind; id: string}) {
     const { t } = useTranslation("common");
     const [item,setItem] = useState<SharedEntityPreview | null>(null);
+    const [loading,setLoading] = useState(true);
     useEffect(() => {
         const controller = new AbortController();
         setItem(null);
+        setLoading(true);
         void api.get("chat/entity/" + kind + "/" + encodeURIComponent(id), {
             signal: controller.signal
         }).then(response => {
             if (!controller.signal.aborted && response.data?.success) setItem(response.data.item);
-        }).catch(() => {});
+        }).catch(() => {}).finally(() => {
+            if (!controller.signal.aborted) setLoading(false);
+        });
         return () => controller.abort();
     }, [kind,id]);
+    if (!item && loading) return <div className={`sharedEntityCard sharedEntitySkeleton sharedEntity${kind}`}
+        role="status" aria-label={t("sideMenu.globalSearchLoading")} aria-busy="true">
+        <span className="sharedEntitySkeletonRow" aria-hidden="true">
+            <span className="skeletonCircle"/>
+            <span className="sharedEntitySkeletonLines">
+                <span className="skeletonLine"/>
+                <span className="skeletonLine skeletonShort"/>
+            </span>
+        </span>
+        {kind === "post" && <div className="sharedEntitySkeletonPost" aria-hidden="true">
+            <span className="skeletonLine"/>
+            <span className="skeletonLine"/>
+            <span className="skeletonLine skeletonShort"/>
+        </div>}
+    </div>;
     if (!item) return <div className="sharedEntityCard sharedEntityUnavailable">
         {t("chatUi.sharedEntityUnavailable")}
     </div>;
@@ -57,15 +78,18 @@ export default function SharedEntityCard({kind,id}: {kind: SharedEntityKind; id:
         item.start_time ? formatClock(item.start_time) : "",
         item.end_time ? formatClock(item.end_time) : ""
     ].filter(Boolean).join(" · ") : item.subtitle || "";
+    const postAuthor = <>
+        <span className="sharedEntityIcon">
+            {item.avatar_url ? <img src={item.avatar_url} alt=""/> : <UserCircleIcon/>}
+        </span>
+        <span className="sharedEntityPostAuthorName">{item.author || item.name}</span>
+    </>;
     return <div className={`sharedEntityCard sharedEntity${kind}`}
         onDoubleClick={event => event.stopPropagation()}>
         {kind === "post" ? <>
-            <div className="sharedEntityPostAuthor">
-                <span className="sharedEntityIcon">
-                    {item.avatar_url ? <img src={item.avatar_url} alt=""/> : <UserCircleIcon/>}
-                </span>
-                <span className="sharedEntityPostAuthorName">{item.author || item.name}</span>
-            </div>
+            {item.author_nick ? <Link className="sharedEntityPostAuthor" to={"/acc/" + encodeURIComponent(item.author_nick)}>
+                {postAuthor}
+            </Link> : <div className="sharedEntityPostAuthor">{postAuthor}</div>}
             {item.excerpt && <div className="sharedEntityPostExcerpt">{item.excerpt}</div>}
             <Link className="sharedEntityPostOpen" to={item.url}>
                 {t("chatUi.openSharedPost")}
