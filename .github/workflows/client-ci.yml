@@ -55,6 +55,8 @@ jobs:
         run: node --experimental-strip-types --test tests/quick-create-command.test.mjs
       - name: Verify Saved message smart suggestions
         run: node --experimental-strip-types --test tests/saved-message-suggestions.test.mjs
+      - name: Verify chat mention completion
+        run: node --experimental-strip-types --test tests/chat-mentions.test.mjs
       - name: Verify textarea vertical padding
         run: node --test tests/textarea-vertical-padding.test.mjs
       - name: Build client

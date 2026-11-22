@@ -197,6 +197,7 @@
     "retryMessage": "Отправить повторно",
     "discardFailedMessage": "Удалить неотправленное сообщение",
     "savedPlaceholder": "Текст, заметка или /",
+    "mentionUser": "Упомянуть участника беседы",
     "quickCommands": {
       "action": "Команды",
       "createActivity": "Создать активность",

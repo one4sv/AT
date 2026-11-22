@@ -22,6 +22,7 @@ import { todayStrFunc, resolveTimeZone } from "../../../../components/ts/utils/d
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
+import { findMentionToken } from "../../../../components/ts/utils/chatMentions";
 interface FailedChatDraft {
     key: number;
     route: string;
@@ -96,6 +97,9 @@ export default function ChatTextArea({
     const { t: tc } = useTranslation("common");
     const sending = useRef(false);
     const [activeSuggestion, setActiveSuggestion] = useState(0);
+    const [mentionCaret, setMentionCaret] = useState(0);
+    const [activeMention, setActiveMention] = useState(0);
+    const [mentionDismissed, setMentionDismissed] = useState(false);
     const [previewCommand, setPreviewCommand] = useState<string | null>(null);
     const [commandListDismissed, setCommandListDismissed] = useState(false);
     const [quickDraft, setQuickDraft] = useState<QuickCommandDraft | null>(null);
@@ -115,6 +119,32 @@ export default function ChatTextArea({
     const matchingCommands = /^\/[a-z]*$/i.test(commandQuery)
         ? quickCommandItems.filter(item => item.label.startsWith(commandQuery.toLowerCase())) : [];
     const canShowCommands = savedChat && !quickDraft && !editing && !commandListDismissed && matchingCommands.length > 0;
+    const mentionToken = !savedChat && !quickDraft && !editing && !mentionDismissed
+        ? findMentionToken(mess, mentionCaret) : null;
+    const mentionMembers = chatWith?.is_group ? chatWith.members || [] : chatWith
+        ? [{ id: chatWith.id, nick: chatWith.nick, avatar_url: chatWith.avatar_url || "" }] : [];
+    const matchingMentions: EntitySuggestionItem[] = mentionToken
+        ? mentionMembers.filter(member => member.nick && member.id !== user.id &&
+            member.nick.toLocaleLowerCase().startsWith(mentionToken.query.toLocaleLowerCase()))
+            .slice(0, 15).map(member => ({
+                id: member.nick,
+                label: "@" + member.nick,
+                description: tc("chatUi.mentionUser")
+            })) : [];
+    const commitMention = (member: EntitySuggestionItem) => {
+        if (!mentionToken) return;
+        const inserted = "@" + member.id + " ";
+        const next = mess.slice(0, mentionToken.start) + inserted + mess.slice(mentionToken.end);
+        const caret = mentionToken.start + inserted.length;
+        setMess(next);
+        setMentionCaret(caret);
+        setActiveMention(0);
+        setMentionDismissed(false);
+        requestAnimationFrame(() => {
+            textAreaRef.current?.focus({ preventScroll: true });
+            textAreaRef.current?.setSelectionRange(caret, caret);
+        });
+    };
     const displayedMess = previewCommand || mess;
     const commitCommand = (id: string) => {
         const kind = id === "act" ? "habit" : "plan";
@@ -301,6 +331,9 @@ export default function ChatTextArea({
         setPreviewCommand(null);
         setCommandListDismissed(false);
         setActiveSuggestion(0);
+        setMentionCaret(0);
+        setMentionDismissed(false);
+        setActiveMention(0);
     }, [location.pathname, user.id]);
     useEffect(() => {
         const targetReady = !chatLoading && !!chatWith && (id
@@ -408,6 +441,24 @@ export default function ChatTextArea({
         [editing]
     );
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (matchingMentions.length && !e.nativeEvent.isComposing) {
+            if (e.key === "Escape") {
+                e.preventDefault();
+                setMentionDismissed(true);
+                return;
+            }
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                e.preventDefault();
+                setActiveMention(index => (index + (e.key === "ArrowDown" ? 1 : -1) +
+                    matchingMentions.length) % matchingMentions.length);
+                return;
+            }
+            if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                commitMention(matchingMentions[Math.min(activeMention, matchingMentions.length - 1)]);
+                return;
+            }
+        }
         if (savedChat && canShowCommands && !e.nativeEvent.isComposing) {
             if (e.key === "Escape") {
                 e.preventDefault();
@@ -690,6 +741,14 @@ export default function ChatTextArea({
                             requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
                         }}
                     >{quickDraft ? <X size={18}/> : "/"}</button>}
+                    {!!matchingMentions.length && <EntitySuggestionList
+                        className="chatMentionSuggestions"
+                        anchorRef={commandRowRef}
+                        popupRef={commandPopupRef}
+                        items={matchingMentions}
+                        activeIndex={Math.min(activeMention, matchingMentions.length - 1)}
+                        onSelect={commitMention}
+                    />}
                     {canShowCommands && <EntitySuggestionList
                         className="chatCommandSuggestions"
                         anchorRef={commandRowRef}
@@ -728,9 +787,17 @@ export default function ChatTextArea({
                                 setActiveSuggestion(0);
                                 if (savedChat && nextText.trimStart().startsWith("/")) setShowEmojiBar(false);
                                 setMess(nextText);
+                                setMentionCaret(e.currentTarget.selectionStart);
+                                setMentionDismissed(false);
+                                setActiveMention(0);
                                 if (!editing && sendTypingStatus) handleTyping(chatWith ? chatWith.id : "");
                             }}
                             onKeyDown={handleKeyDown}
+                            onClick={e => {
+                                setMentionCaret(e.currentTarget.selectionStart);
+                                setMentionDismissed(false);
+                            }}
+                            onKeyUp={e => setMentionCaret(e.currentTarget.selectionStart)}
                             placeholder={savedChat ? tc("chatUi.savedPlaceholder") : tc("chatUi.placeholder")}
                             onPaste={handlePaste}
                         />

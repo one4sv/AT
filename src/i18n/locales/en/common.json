@@ -191,6 +191,7 @@
     "retryMessage": "Retry sending",
     "discardFailedMessage": "Discard unsent message",
     "savedPlaceholder": "Text, note or /",
+    "mentionUser": "Mention a chat member",
     "quickCommands": {
       "action": "Commands",
       "createActivity": "Create activity",

@@ -495,7 +495,8 @@
 .chatCommandSuggestions {
     box-sizing: border-box;
 }
-.chatCommandSuggestions.entitySuggestionPortal {
+.chatCommandSuggestions.entitySuggestionPortal,
+.chatMentionSuggestions.entitySuggestionPortal {
     // Span the full composer row (attachment, TA and Send), not only the TA.
     max-width: none;
 }
