@@ -229,6 +229,10 @@
     },
     "sharedEntityUnavailable": "Объект недоступен",
     "openSharedPost": "Открыть публикацию",
+    "inviteFromPrivateChat": "Для приглашения выберите личную беседу с получателем",
+    "sendInvite": "Отправить приглашение",
+    "inviteRecipient": "Пригласить @{{nick}} в «{{name}}»?",
+    "inviteSent": "Приглашение отправлено",
     "quickCommands": {
       "action": "Команды",
       "createActivity": "Создать активность",
