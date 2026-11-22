@@ -118,6 +118,8 @@ export default function Message({
     const contextReactionOpen = menu.visible && menu.point === "mess" && menu.options.id === String(m.id) && !isChose;
     const mediaOnly = !m.content?.trim() && !m.entity_type && !!m.files?.length &&
         !m.redirected_id && !m.habit_invite_habit_id;
+    const entityOnly = !m.content?.trim() && !!m.entity_type && !!m.entity_id &&
+        !m.files?.length && !m.redirected_id && !m.habit_invite_habit_id && !m.plan_invite_plan_id;
     const uniqueReactions = [...new Map((m.reactions || []).map(reaction => [reaction.user_id, reaction])).values()];
     const reactionGroups = Object.entries(uniqueReactions.reduce((acc, reaction) => {
         if (!acc[reaction.reaction]) acc[reaction.reaction] = [];
@@ -197,7 +199,7 @@ export default function Message({
                 ${cornerType ? `corner-${cornerType}` : ""}
                 ${menu.point === "mess" && menu.options.id === String(m.id) && "onContextMenu"}
                 ${m.isPending ? "pending" : ""}
-                ${mediaOnly ? "mediaOnly" : ""} ${mediaOnly && m.files?.length === 1 ? "singleMedia" : ""}
+                ${mediaOnly ? "mediaOnly" : ""} ${entityOnly ? "entityOnly" : ""} ${mediaOnly && m.files?.length === 1 ? "singleMedia" : ""}
             `}
             ref={el => {
                 messageRefs?.current.set(m.id, el);
@@ -260,7 +262,7 @@ export default function Message({
             </div>}
             <div
                 ref={appearRef}
-                className={`message ${isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""} ${mediaOnly ? "mediaOnly" : ""} ${mediaOnly && m.files?.length === 1 ? "singleMedia" : ""}`}
+                className={`message ${isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""} ${mediaOnly ? "mediaOnly" : ""} ${entityOnly ? "entityOnly" : ""} ${mediaOnly && m.files?.length === 1 ? "singleMedia" : ""}`}
             >
                 {!isMy && (showNames === undefined || showNames === true) && chatWith?.is_group && <div
                     className="senderName"
