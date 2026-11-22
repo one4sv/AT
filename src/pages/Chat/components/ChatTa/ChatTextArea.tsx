@@ -109,6 +109,8 @@ export default function ChatTextArea({
     const [activeShare, setActiveShare] = useState(0);
     const [sharePreview, setSharePreview] = useState<string | null>(null);
     const [shareDismissed, setShareDismissed] = useState(false);
+    const [savedShareKind, setSavedShareKind] = useState<"habit" | "plan" | "post" | "user" | null>(null);
+    const [commandScrollTop, setCommandScrollTop] = useState(0);
     const [externalMentions, setExternalMentions] = useState<EntitySuggestionItem[]>([]);
     const { setBlackout } = useBlackout();
     const { refetchGroup } = useGroup();
@@ -127,10 +129,16 @@ export default function ChatTextArea({
         { id: "act", label: "/act", description: tc("chatUi.quickCommands.createActivity"), icon: <CheckCircleIcon size={24}/> },
         { id: "plan", label: "/plan", description: tc("chatUi.quickCommands.createPlan"), icon: <CalendarPlusIcon size={24}/> }
     ];
+    const savedShareCommandItems: EntitySuggestionItem[] = [
+        {id:"share:habit",label:"/habit",description:tc("chatUi.shareActivity")},
+        {id:"share:plan",label:"/plan",description:tc("chatUi.sharePlan")},
+        {id:"share:post",label:"/post",description:tc("chatUi.sharePost")},
+        {id:"share:user",label:"/user",description:tc("chatUi.shareUser")}
+    ];
     const commandQuery = mess.trim();
     const matchingCommands = /^\/[a-z]*$/i.test(commandQuery)
-        ? quickCommandItems.filter(item => item.label.startsWith(commandQuery.toLowerCase())) : [];
-    const canShowCommands = savedChat && !quickDraft && !editing && !commandListDismissed && matchingCommands.length > 0;
+        ? [...quickCommandItems, ...savedShareCommandItems].filter(item =>
+            item.label.startsWith(commandQuery.toLowerCase())) : [];
     const shareCommands: EntitySuggestionItem[] = [
         {id:"habit",label:"/habit",description:tc("chatUi.shareActivity")},
         {id:"plan",label:"/plan",description:tc("chatUi.sharePlan")},
@@ -141,9 +149,12 @@ export default function ChatTextArea({
     ];
     const plainShare = !savedChat && !editing && !shareDismissed && /^\/[a-z]*$/i.test(mess)
         ? shareCommands.filter(item => item.label.startsWith(mess.toLowerCase())) : [];
-    const shareMatch = !savedChat && !editing && !shareDismissed
+    const shareMatch = !editing && !shareDismissed &&
+        (!savedChat || savedShareKind === "plan" || /^\/(?:habit|post|user)(?=\s|$)/i.test(mess))
         ? /^\/(habit|plan|post|user|group|invite)(?:\s+(.{0,100}))?$/iu.exec(mess) : null;
     const shareSuggestions = shareMatch ? shareItems : plainShare;
+    const canShowCommands = savedChat && !quickDraft && !editing && !shareMatch &&
+        !commandListDismissed && matchingCommands.length > 0;
     const chooseShare = (item: EntitySuggestionItem) => {
         if (!shareMatch) {
             setMess("/" + item.id);
@@ -231,6 +242,7 @@ export default function ChatTextArea({
         setActiveShare(0);
         setSharePreview(null);
         setShareDismissed(true);
+        setSavedShareKind(null);
         requestAnimationFrame(() => textAreaRef.current?.focus({preventScroll:true}));
     };
     useEffect(() => {
@@ -312,6 +324,9 @@ export default function ChatTextArea({
         });
     };
     const displayedMess = previewCommand || sharePreview || mess;
+    const commandHighlight = !editing && !quickDraft &&
+        (savedChat || !/^\/act(?=\s|$)/i.test(displayedMess))
+        ? displayedMess.match(/^\/(?:act|habit|plan|post|user|invite|group)(?=\s|$)/i)?.[0] : null;
     const commitCommand = (id: string) => {
         const kind = id === "act" ? "habit" : "plan";
         const parsed = parseQuickCreateCommand(mess);
@@ -330,6 +345,22 @@ export default function ChatTextArea({
         setPreviewCommand(null);
         setCommandListDismissed(true);
         setShowEmojiBar(false);
+    };
+    const selectSavedCommand = (item: EntitySuggestionItem) => {
+        if (!item.id.startsWith("share:")) {
+            commitCommand(item.id);
+            return;
+        }
+        const kind = item.id.slice(6) as "habit" | "plan" | "post" | "user";
+        setSavedShareKind(kind);
+        setShareDismissed(false);
+        setCommandListDismissed(true);
+        setPreviewCommand(null);
+        setSharePreview(null);
+        setActiveShare(0);
+        setShareItems([]);
+        setMess("/" + kind);
+        requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
     };
     const cancelQuickCommand = () => {
         if (quickSending) return;
@@ -508,6 +539,8 @@ export default function ChatTextArea({
         setLinkedEntity(null);
         setShareItems([]);
         setShareDismissed(false);
+        setSavedShareKind(null);
+        setCommandScrollTop(0);
     }, [location.pathname, user.id]);
     useEffect(() => {
         const targetReady = !chatLoading && !!chatWith && (id
@@ -667,14 +700,19 @@ export default function ChatTextArea({
             }
             if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
                 e.preventDefault();
-                commitCommand(matchingCommands[Math.min(activeSuggestion, matchingCommands.length - 1)].id);
+                selectSavedCommand(matchingCommands[Math.min(activeSuggestion, matchingCommands.length - 1)]);
                 return;
             }
         }
-        if (savedChat && isQuickCreateCommand(mess) && e.key === "Enter" &&
+        if (savedChat && !shareMatch && !savedShareKind && isQuickCreateCommand(mess) && e.key === "Enter" &&
             !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.nativeEvent.isComposing) {
             e.preventDefault();
             commitCommand(mess.trimStart().toLowerCase().startsWith("/act") ? "act" : "plan");
+            return;
+        }
+        if (shareMatch && e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+            showNotification("info", tc("chatUi.shareSearchHint"));
             return;
         }
         if (e.key !== "Enter" || isMobile || e.nativeEvent.isComposing) return;
@@ -698,10 +736,10 @@ export default function ChatTextArea({
             return;
         }
         if (canShowCommands) {
-            commitCommand(matchingCommands[Math.min(activeSuggestion, matchingCommands.length - 1)].id);
+            selectSavedCommand(matchingCommands[Math.min(activeSuggestion, matchingCommands.length - 1)]);
             return;
         }
-        if (savedChat && isQuickCreateCommand(mess)) {
+        if (savedChat && !shareMatch && !savedShareKind && isQuickCreateCommand(mess)) {
             commitCommand(mess.trimStart().toLowerCase().startsWith("/act") ? "act" : "plan");
             return;
         }
@@ -982,8 +1020,9 @@ export default function ChatTextArea({
                         popupRef={commandPopupRef}
                         items={matchingCommands}
                         activeIndex={Math.min(activeSuggestion, matchingCommands.length - 1)}
-                        onSelect={item => commitCommand(item.id)}
-                        onPreview={item => setPreviewCommand(tc(item.id === "act" ? "chatUi.quickCommands.actTemplate" : "chatUi.quickCommands.planTemplate"))}
+                        onSelect={selectSavedCommand}
+                        onPreview={item => setPreviewCommand(item.id.startsWith("share:")
+                            ? item.label : tc(item.id === "act" ? "chatUi.quickCommands.actTemplate" : "chatUi.quickCommands.planTemplate"))}
                         onPreviewEnd={() => setPreviewCommand(null)}
                     />}
                     {quickDraft ? <QuickCommandComposer
@@ -994,6 +1033,10 @@ export default function ChatTextArea({
                         disabled={quickSending || !!createdQuick.current}
                         suggestionPopupRef={commandPopupRef}
                     /> : <div className="chatCommandEditor">
+                        {commandHighlight && <span className="chatCommandHighlight"
+                            aria-hidden="true" style={{ transform: `translateY(-${commandScrollTop}px)` }}>
+                            {commandHighlight}
+                        </span>}
                         <TA
                             name="chatTA"
                             id="chatTA"
@@ -1002,13 +1045,14 @@ export default function ChatTextArea({
                             taRef={textAreaRef}
                             onChange={e => {
                                 const nextText = e.currentTarget.value;
-                                if (savedChat && !editing) {
+                                if (savedChat && !editing && !savedShareKind) {
                                     const command = quickCommandOnSpace(nextText);
                                     if (command) {
                                         commitCommand(command);
                                         return;
                                     }
                                 }
+                                if (savedShareKind && !nextText.startsWith("/" + savedShareKind)) setSavedShareKind(null);
                                 setPreviewCommand(null);
                                 setCommandListDismissed(false);
                                 setActiveSuggestion(0);
@@ -1023,6 +1067,7 @@ export default function ChatTextArea({
                                 if (!editing && sendTypingStatus) handleTyping(chatWith ? chatWith.id : "");
                             }}
                             onKeyDown={handleKeyDown}
+                            onScroll={e => setCommandScrollTop(e.currentTarget.scrollTop)}
                             onClick={e => {
                                 setMentionCaret(e.currentTarget.selectionStart);
                                 setMentionDismissed(false);
