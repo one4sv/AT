@@ -7,6 +7,7 @@ import { tags } from "../tags";
 import { useSideMenu } from "../../hooks/SideMenuHook";
 import { useContacts } from "../../hooks/ContactsHook";
 import { useSearchableSettings } from "../../../pages/Settings/Arrays/searchableSettings";
+import { settingsSearchNavigation } from "../../../pages/Settings/Arrays/settingsSearchNavigation";
 import { formatSMSearchQuery, searchResultRank, searchSourceFilters, searchTabFilters, type SearchFilter } from "../utils/globalSearchQuery";
 import type { tab } from "../../context/SideMenuContext";
 import type { Contact } from "../../context/ContactsContext";
@@ -20,6 +21,7 @@ interface SearchResult {
     label: string;
     description: string;
     url: string;
+    settingSection?: string;
     avatar_url?: string | null;
     tag?: string | null;
     mine?: boolean;
@@ -70,7 +72,7 @@ export default function SMGlobalSearch({ query, filter, tab: section, onFilterCh
 }) {
     const { t } = useTranslation("common");
     const navigate = useNavigate();
-    const { setActiveTab, setSettingsSearch } = useSideMenu();
+    const { setActiveTab } = useSideMenu();
     const { findContacts } = useContacts();
     const sections = useSearchableSettings();
     const term = query.trim();
@@ -85,7 +87,7 @@ export default function SMGlobalSearch({ query, filter, tab: section, onFilterCh
             !term || [item.name, item.category].some(value => value?.toLowerCase().includes(term.toLowerCase())))
             .map(item => ({
                 kind: "setting", id: item.id, label: item.name, description: item.category,
-                url: "/settings"
+                url: "/settings", settingSection: section.id
             }))).slice(0, 20) : [];
     const requestKey = section + ":" + (filter || "none") + ":" + query;
     const valid = term.length <= 100;
@@ -200,9 +202,14 @@ export default function SMGlobalSearch({ query, filter, tab: section, onFilterCh
         });
     };
     const open = (item: SearchResult) => {
-        if (item.kind === "setting") {
-            setSettingsSearch(term);
-            setActiveTab("user");
+        if (item.kind === "setting" && item.settingSection) {
+            const { pathname, state } = settingsSearchNavigation(item.settingSection, {
+                id: item.id,
+                name: item.label
+            });
+            onChoose(item.kind);
+            navigate(pathname, { state });
+            return;
         }
         onChoose(item.kind);
         navigate(item.url);

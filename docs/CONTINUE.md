@@ -1,3 +1,7 @@
+## 22.11.2026 — стеклянный smHeader и точечный переход к настройкам из SideMenu
+
+Устранён неверный принцип старой маски: `.ListWrapper` больше не получает `mask-image` и `-webkit-mask-image` (она физически скрывала элементы и мешала настоящему blur). `.smHeader::before` с `backdrop-filter:blur(2px) saturate(1.15)` теперь имеет 25% `--mc` и 75% прозрачности, чтобы видеть **размытый** underlying scroll, не перекрывать его. Маска мягкого края самой подложки сохранена. Настройки из `SMGlobalSearch` хранят `settingSection` и используют новый общий `settingsSearchNavigation` с `Settings.tsx`, передавая `settingId`/имя/секцию; после перехода штатный `Settings.tsx` прокручивает и подсвечивает `data-setting-id`. Специальные `bg` и `language` маршруты не меняются. Обновлены unit-тесты в `tests/global-search-query.test.mjs`; требуется QA авторизованного мобильного и десктопного UI.
+
 ## 22.11.2026 — smHeader blur 2px
 
 В `src/scss/SM/smHeader.scss` у `::before` уменьшены обе декларации `backdrop-filter`/`-webkit-backdrop-filter` до `blur(2px) saturate(1.15)` по запросу пользователя. Маска `.ListWrapper` и padding результатов `+5dvh` не менялись.

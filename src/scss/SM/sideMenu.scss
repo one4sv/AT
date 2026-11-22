@@ -254,10 +254,6 @@
     overflow: hidden;
     position: relative;
     height: 100%;
-    // Fade scrollable content before it passes behind the separate SM header.
-    // Mask the viewport, not the scrolling list, so the fade stays stationary.
-    mask-image: linear-gradient(to bottom, transparent 0, transparent 4.5dvh, black 6.2dvh);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 4.5dvh, black 6.2dvh);
 }
 
 .slider {

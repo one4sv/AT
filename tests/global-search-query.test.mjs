@@ -1,4 +1,6 @@
 import { smHeaderPopupPosition } from "../src/components/ts/utils/smHeaderPopupPosition.ts";
+import { settingsSearchNavigation } from "../src/pages/Settings/Arrays/settingsSearchNavigation.ts";
+import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { formatSMSearchQuery, parseSMSearchQuery, searchFilters, searchTabFilters, searchTabForFilter, searchSourceFilters, searchResultRank } from "../src/components/ts/utils/globalSearchQuery.ts";
@@ -53,4 +55,26 @@ test("header filter menu centers on its trigger and clamps within the SideMenu",
     assert.deepEqual(smHeaderPopupPosition(300, 5, 45, 180), {left:8,width:180});
     assert.deepEqual(smHeaderPopupPosition(300, 270, 40, 160), {left:132,width:160});
     assert.deepEqual(smHeaderPopupPosition(300, 0, 300, 160), {left:8,width:284});
+});
+
+test("settings search in SideMenu navigates to the same target and highlights the exact setting", () => {
+    assert.deepEqual(settingsSearchNavigation("gen", {id:"timeZone", name:"Часовой пояс"}), {
+        pathname:"/settings/gen",
+        state:{from:"/settings", settingId:"timeZone", settingName:"Часовой пояс"}
+    });
+    assert.deepEqual(settingsSearchNavigation("notes", {id:"planReminders", name:"Напоминания планов"}), {
+        pathname:"/settings/notes",
+        state:{from:"/settings", settingId:"planReminders", settingName:"Напоминания планов"}
+    });
+    assert.equal(settingsSearchNavigation("pers", {id:"bg",name:"Задний фон"}).pathname, "/wallpapers");
+    assert.equal(settingsSearchNavigation("gen", {id:"language",name:"Язык"}).pathname, "/settings/language");
+});
+
+test("header glass samples content below it instead of masking the list", () => {
+    const list = readFileSync(new URL("../src/scss/SM/sideMenu.scss", import.meta.url), "utf8");
+    const header = readFileSync(new URL("../src/scss/SM/smHeader.scss", import.meta.url), "utf8");
+    const wrapper = list.match(/\.ListWrapper\s*\{([^}]*)\}/s)?.[1] || "";
+    assert.doesNotMatch(wrapper, /(?:-webkit-)?mask-image/);
+    assert.match(header, /backdrop-filter:\s*blur\(2px\)/);
+    assert.match(header, /background:\s*color-mix\(in srgb, var\(--mc\) 25%, transparent\)/);
 });

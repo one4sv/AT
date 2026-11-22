@@ -24,6 +24,7 @@ import { useTranslation } from "react-i18next";
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import { useSettingsTabs } from "./Arrays/settingsTabs";
 import { useSearchableSettings } from "./Arrays/searchableSettings";
+import { settingsSearchNavigation } from "./Arrays/settingsSearchNavigation";
 import SettingsButts from "./components/SettingsButts";
 import SearchUnstarted from "./components/Search/SearchUnstarted";
 import SearchedButts from "./components/Search/SearchedButts";
@@ -137,13 +138,8 @@ export default function Settings() {
           ...prev.filter((id) => id !== item.id),
       ].slice(0, 5));
 
-      navigate(item.id === "bg" ? "/wallpapers" : item.id === "language" ? "/settings/language" : `/settings/${sectionId}`, {
-          state: {
-              from: "/settings",
-              settingId: item.id,
-              settingName: item.name,
-          },
-      });
+      const { pathname, state } = settingsSearchNavigation(sectionId, item);
+      navigate(pathname, { state });
   };
 
   useEffect(() => {
