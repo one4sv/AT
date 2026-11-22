@@ -6,6 +6,7 @@ import TrafficImage from "../../../components/ts/TrafficImage";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import type { Media } from "../../../components/context/ChatContext";
+import "../../../scss/Loading.scss";
 
 function normalizePostFileName(name: string) {
     if (!/[ÐÑ]/.test(name) || [...name].some(char => char.charCodeAt(0) > 255)) return name;
@@ -15,6 +16,18 @@ function normalizePostFileName(name: string) {
     } catch {
         return name;
     }
+}
+
+function PostVideoPreview({ src, preload }: { src: string; preload: "metadata" | "none" }) {
+    const [resolved, setResolved] = useState(false);
+    const pending = preload === "metadata" && !resolved;
+
+    return <>
+        {pending && <span className="skeletonBlock messageFileSkeleton" aria-hidden="true"/>}
+        <video src={src} className={`postFilePreview${pending ? " messageMediaPending" : ""}`}
+            preload={preload} controls onLoadedMetadata={() => setResolved(true)}
+            onError={() => setResolved(true)}/>
+    </>;
 }
 
 const emptyNewFiles: File[] = [];
@@ -42,7 +55,7 @@ export default function AccPostMedia({
     inputFileRef
 }: AccPostMediaProps) {
     const openImage = useImagePreview(gallery || (red ? keptMedia : media) || []);
-    const { autoLoadImages, autoPlayGif } = useSettings();
+    const { autoLoadImages } = useSettings();
     const { openMenu } = useContextMenu();
     const [newFilePreviews, setNewFilePreviews] = useState<{ file: File; url: string }[]>([]);
     useEffect(() => {
@@ -83,10 +96,11 @@ export default function AccPostMedia({
                                             mimeType={file.type}
                                             className="postFilePreview"
                                             contextMenu
+                                            skeleton
                                             onClick={event => openImage(file, event)}
                                         />
                                     ) : isVideo ? (
-                                        <video src={file.url} className="postFilePreview" preload={autoLoadImages && autoPlayGif ? "metadata" : "none"} controls />
+                                        <PostVideoPreview key={file.url} src={file.url} preload={autoLoadImages ? "metadata" : "none"}/>
                                     ) : (
                                         <a href={file.url} download={fileName} className="postFileOther">
                                             {GetIconByType(fileName, file.type)}
