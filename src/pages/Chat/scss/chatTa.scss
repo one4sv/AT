@@ -524,7 +524,7 @@
         display: flex;
         flex-wrap: wrap;
         align-items: flex-start;
-        gap: .5dvh .8vw;
+        gap: .8dvh 1vw;
         min-width: 0;
     }
     .chatQuickField {
@@ -532,7 +532,7 @@
         flex: 0 1 auto;
         flex-wrap: wrap;
         align-items: flex-start;
-        gap: .3vw;
+        gap: .4vw;
         min-width: 0;
         max-width: 100%;
         cursor: text;
@@ -541,8 +541,8 @@
         flex: none;
         background: var(--accent_highlight);
         color: inherit;
-        border-radius: 5px;
-        padding: .1dvh .25vw;
+        border-radius: 6px;
+        padding: .25dvh .45vw;
         white-space: normal;
     }
     .chatQuickFieldValue {
@@ -552,7 +552,9 @@
         flex: 0 1 auto;
         min-width: 1px;
         max-width: 100%;
-        padding: .1dvh 0;
+        padding: .25dvh .45vw;
+        border-radius: 6px;
+        background: var(--accent_highlight);
     }
     .chatQuickMeasure {
         position: absolute;
@@ -586,7 +588,7 @@
         overflow: hidden;
         overflow-wrap: anywhere;
         &:focus-visible {
-            box-shadow: inset 0 -1px var(--accent_text);
+            box-shadow: none;
         }
     }
     .chatQuickHelp {
@@ -596,10 +598,11 @@
         padding-right: 4vh;
     }
     @media (max-width: 800px) {
-        gap: .75dvh;
-        .chatQuickFields { gap: .6dvh 2vw; }
+        gap: .85dvh;
+        .chatQuickFields { gap: .9dvh 2vw; }
         .chatQuickField { gap: 1vw; }
-        .chatQuickFieldLabel { padding: .1dvh .5vw; }
+        .chatQuickFieldLabel { padding: .2dvh 1vw; }
+        .chatQuickFieldValue { padding: .2dvh 1vw; }
     }
 }
 .chatSlashButton.quickActive {
