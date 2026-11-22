@@ -768,6 +768,56 @@
     }
 }
 
+.message.entityOnly {
+    width: fit-content;
+    max-width: min(40vw, 390px);
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 16px;
+    overflow: visible;
+    color: var(--tc);
+
+    > .messageText {
+        display: block;
+        width: fit-content;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    > .messageStatusBarDiv {
+        display: flex;
+        width: fit-content;
+        max-width: 100%;
+        min-height: 24px;
+        align-self: flex-end;
+        margin: .3dvh 0 0 auto;
+        padding: 0 2px;
+        color: var(--tc);
+        background: transparent;
+
+        .messageBar, .messTime, .editedMess, .messBarSvg,
+        .messageReadSign, .reactionItem {
+            color: var(--tc);
+        }
+    }
+
+    > .senderName {
+        margin-bottom: .4dvh;
+    }
+
+    > .answerMess {
+        max-width: 100%;
+    }
+
+    @media (max-width: 800px) {
+        max-width: min(76vw, 390px);
+    }
+}
+
 .messageStatusBarDiv {
     width: max-content;
     max-width: 100%;
