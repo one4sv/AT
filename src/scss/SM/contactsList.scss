@@ -112,6 +112,10 @@
     color: var(--inner_text);
     aspect-ratio: 1/1;
 }
+.contactsUnreadCount.muted {
+    background-color: var(--borderWh);
+    color: var(--bgc);
+}
 .isReadCL {
     color: var(--accent_text);
 }

@@ -23,7 +23,7 @@ const browserPermission = (): NotificationPermission | "unsupported" =>
 
 export default function NotificationsTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
-    const { note, messNote, timeZone, lang } = useSettings();
+    const { note, messNote, mentionsNote, setMentionsNote, timeZone, lang } = useSettings();
     const { setNewNote, setNewMessNote, setNewHabitsNote } = useUpSettings();
     const { habits } = useHabits();
     const { showNotification } = useNote()
@@ -157,8 +157,8 @@ export default function NotificationsTab({ search }: { search: string }) {
         void saveReminderPreferences({ ...reminderPrefs, commonTime: commonTimeDraft });
     };
 
-    const togglePreference = async (key: "all_note" | "new_mess_note", value: boolean) => {
-        const update = key === "all_note" ? setNewNote : setNewMessNote;
+    const togglePreference = async (key: "all_note" | "new_mess_note" | "mentions_note", value: boolean) => {
+        const update = key === "all_note" ? setNewNote : key === "new_mess_note" ? setNewMessNote : setMentionsNote;
         update(value);
         try {
             const response = await api.post("updatesettings", { [key]: value });
@@ -239,6 +239,12 @@ export default function NotificationsTab({ search }: { search: string }) {
                     <div className={`settingTogglerDiv ${!note && "settingInactive"}`} onClick={() => { if (note) void togglePreference("new_mess_note", !messNote); }} data-setting-id="messNote">
                         <span><HighlightText text={t("notifications.newMessages")} search={search} /></span>
                         <Toggler state={messNote} setState={(value: boolean) => void togglePreference("new_mess_note", value)} disable={!note} stopPropagation={true} />
+                    </div>
+                    <div className={`settingTogglerDiv ${!note && "settingInactive"}`}
+                        onClick={() => { if (note) void togglePreference("mentions_note", !mentionsNote); }}
+                        data-setting-id="mentionsNote">
+                        <span><HighlightText text={t("notifications.mentions")} search={search} /></span>
+                        <Toggler state={mentionsNote} setState={(value: boolean) => void togglePreference("mentions_note", value)} disable={!note} stopPropagation={true} />
                     </div>
                 </div>
                 {(permission !== "granted" || pushError || pushChecked && (!push.supported || !push.configured)) &&

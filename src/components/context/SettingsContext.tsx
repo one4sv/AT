@@ -95,6 +95,8 @@ export interface SettingsContextType {
     setHabitsNote: React.Dispatch<React.SetStateAction<boolean>>;
     messNote: boolean;
     setMessNote: React.Dispatch<React.SetStateAction<boolean>>;
+    mentionsNote: boolean;
+    setMentionsNote: React.Dispatch<React.SetStateAction<boolean>>;
     bgUrl: string;
     setBgUrl: React.Dispatch<React.SetStateAction<string>>;
     bgGallery: SavedBackground[];
@@ -139,6 +141,7 @@ interface SettingsResponse {
     twoAuth: boolean;
     all_note: boolean;
     new_mess_note: boolean;
+    mentions_note: boolean;
     show_archived: boolean;
     show_archived_in_acc: boolean;
     week_start: string;
@@ -189,6 +192,7 @@ const LOCAL_KEYS = {
     useImageCache: "settings_use_image_cache",
     note:"settings_note",
     messnote:"settings_messnote",
+    mentionsnote:"settings_mentionsnote",
     habitsnote:"settings_habitsnote",
     lang:"settings_lang",
     fontSize:"settings_font_size",
@@ -268,6 +272,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ useImageCache, setUseImageCache ] = useLocalStorage(LOCAL_KEYS.useImageCache, true);
     const [ note, setNote ] = useLocalStorage(LOCAL_KEYS.note, true);
     const [ messNote, setMessNote ] = useLocalStorage(LOCAL_KEYS.messnote, true);
+    const [ mentionsNote, setMentionsNote ] = useLocalStorage(LOCAL_KEYS.mentionsnote, true);
     const [ habitsNote, setHabitsNote ] = useLocalStorage(LOCAL_KEYS.habitsnote, true);
 
     const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -357,6 +362,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                 setTwoAuth(res.data.twoAuth ?? false);
                 setNote(res.data.all_note ?? true);
                 setMessNote(res.data.new_mess_note ?? true);
+                setMentionsNote(res.data.mentions_note ?? true);
                 setShowArchived(res.data.show_archived ?? false);
                 setShowArchivedInAcc(res.data.show_archived_in_acc ?? false);
                 setWeekStart(res.data.week_start ?? null);
@@ -410,6 +416,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
             note, setNote,
             messNote, setMessNote,
+            mentionsNote, setMentionsNote,
             showArchived, setShowArchived,
             showArchivedInAcc, setShowArchivedInAcc,
             weekStart, setWeekStart,

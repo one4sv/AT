@@ -130,7 +130,7 @@ export default function Contact({ contact }: ContactType) {
 
         if (contact.lastMessage.sender_id !== user.id) {
             if (contact.unread_count > 0) {
-                return <div className="contactsUnreadCount">{contact.unread_count}</div>;
+                return <div className={`contactsUnreadCount ${contact.note === false ? "muted" : ""}`}>{contact.unread_count}</div>;
             }
             return null;
         }
