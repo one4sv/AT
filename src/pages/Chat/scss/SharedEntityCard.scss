@@ -1,6 +1,6 @@
 .sharedEntityCard {
-    width: min(26vw, 390px);
-    max-width: 100%;
+    width: fit-content;
+    max-width: min(30vw, 390px);
     min-width: 0;
     box-sizing: border-box;
     padding: .75dvh .7vw;
@@ -66,6 +66,10 @@
         font-size: 13px;
     }
 
+    &.sharedEntitypost {
+        width: min(26vw, 390px);
+    }
+
     .sharedEntityPostAuthor {
         display: flex;
         align-items: center;
@@ -95,8 +99,12 @@
     }
 
     @media (max-width: 800px) {
-        width: min(76vw, 390px);
+        max-width: min(76vw, 390px);
         padding: .8dvh 2vw;
+
+        &.sharedEntitypost {
+            width: min(76vw, 390px);
+        }
 
         .sharedEntityLink, .sharedEntityPostAuthor {
             gap: 2vw;
