@@ -5,18 +5,21 @@
     height: 4dvh;
     z-index: 9;
     overflow: visible;
+    isolation: isolate;
 
     &::before {
         content: "";
         position: absolute;
-        inset: 0;
-        z-index: -1;
+        inset: 0 0 -1.8dvh;
+        z-index: 0;
         pointer-events: none;
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        background: linear-gradient(135deg, var(--tr), #0000009a);
-        mask-image: linear-gradient(to top, transparent 50%, black 100%);
-        -webkit-mask-image: linear-gradient(to top, transparent 50%, black 100%);
+        // Frosted glass covers the whole title row, with a soft trailing edge.
+        // Keep it above scrolling results rather than masking away the lower half.
+        backdrop-filter: blur(24px) saturate(1.7);
+        -webkit-backdrop-filter: blur(24px) saturate(1.7);
+        background: color-mix(in srgb, var(--mc) 80%, transparent);
+        mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);
         transition: background 0.25s ease, backdrop-filter 0.25s ease;
     }
 
@@ -74,6 +77,7 @@
     height: 100%;
     overflow: hidden;
     position: relative;
+    z-index: 1;
     transition: opacity 0.25s ease, filter 0.25s ease;
 }
 

@@ -4,7 +4,7 @@ import { useSideMenu } from "../../hooks/SideMenuHook"
 import { useUser } from "../../hooks/UserHook"
 import { useSettings } from "../../hooks/SettingsHook"
 import { QrCodeIcon, ShareFatIcon, SortAscendingIcon, TextIndentIcon } from "@phosphor-icons/react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useBlackout } from "../../hooks/BlackoutHook"
 import { requestContentRefresh } from "../utils/contentRefresh";
 import { useTranslation } from "react-i18next";
@@ -44,6 +44,7 @@ export default function SMheader() {
     const wasLongPress = useRef(false)
     const isPointerDown = useRef(false)
     const filtersRef = useRef<HTMLDivElement>(null)
+    const headerRef = useRef<HTMLDivElement>(null)
     const touchHoverRef = useRef<HTMLElement | null>(null)
 
     const translateSlider =
@@ -246,10 +247,52 @@ export default function SMheader() {
     const currentSelected = searchMode ? searchFilter || "" :
         openFilters === "chats" ? messageSelectedValue : habitsSelectedValue
 
+    // The dropdown is a sibling of the sliding header content, so position it
+    // against the real filter trigger rather than a fixed right-hand offset.
+    useLayoutEffect(() => {
+        if (!openFilters) return;
+        const header = headerRef.current;
+        const popup = filtersRef.current;
+        const partIndex = ["chats", "habits", "spots", "user"].indexOf(openFilters);
+        const anchor = header?.querySelectorAll<HTMLElement>(".smHeaderSlider > .smHeaderPart")[partIndex]
+            ?.querySelector<HTMLElement>(".smHeaderSelected");
+        if (!header || !popup || !anchor) return;
+
+        const reposition = () => {
+            const panel = header.getBoundingClientRect();
+            const trigger = anchor.getBoundingClientRect();
+            const edge = 8;
+            popup.style.right = "auto";
+            popup.style.width = "max-content";
+            const width = Math.min(Math.max(0, panel.width - edge * 2),
+                Math.max(trigger.width, popup.offsetWidth));
+            const centered = trigger.left - panel.left + trigger.width / 2 - width / 2;
+            const left = Math.max(edge, Math.min(panel.width - edge - width, centered));
+            popup.style.width = Math.ceil(width) + "px";
+            popup.style.left = Math.round(left) + "px";
+        };
+
+        reposition();
+        const frame = requestAnimationFrame(reposition);
+        const observer = new ResizeObserver(reposition);
+        observer.observe(header);
+        observer.observe(anchor);
+        window.addEventListener("resize", reposition);
+        return () => {
+            cancelAnimationFrame(frame);
+            observer.disconnect();
+            window.removeEventListener("resize", reposition);
+            popup.style.left = "";
+            popup.style.right = "";
+            popup.style.width = "";
+        };
+    }, [openFilters, activeTab, searchMode, searchFilter, t]);
+
     if (!user.id) return null
 
     return (
         <div
+            ref={headerRef}
             className={`smHeader ${openFilters ? "filtersOpen" : ""} ${searchMode ? "searchMode" : ""} ${studio && showSideMenu && translateX > -1 ? "studioOpen" : ""}`}
             style={{
                 transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none",
