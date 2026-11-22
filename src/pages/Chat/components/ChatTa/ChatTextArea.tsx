@@ -357,7 +357,7 @@ export default function ChatTextArea({
         }
     };
     useEffect(() => {
-        if (!canShowCommands && !quickDraft) return;
+        if (!canShowCommands && !quickDraft && !shareSuggestions.length) return;
         const dismiss = (event: PointerEvent) => {
             const target = event.target as Node;
             if (commandPopupRef.current?.contains(target) || commandSendRef.current?.contains(target)) return;
@@ -365,6 +365,11 @@ export default function ChatTextArea({
                 if (emojiButtRef.current?.contains(target) ||
                     (target instanceof Element && target.closest(".selectListPortalRoot, .react-datepicker-popper"))) return;
                 cancelQuickCommand();
+            } else if (shareSuggestions.length) {
+                if (target instanceof Element && target.closest(".chatCommandEditor")) return;
+                setShareDismissed(true);
+                setSharePreview(null);
+                if (mess.trim() === "/") setMess("");
             } else {
                 // The editor is part of the active command input: keep suggestions
                 // visible when the user taps inside TA to focus or move the caret.
@@ -376,7 +381,7 @@ export default function ChatTextArea({
         };
         document.addEventListener("pointerdown", dismiss, true);
         return () => document.removeEventListener("pointerdown", dismiss, true);
-    }, [canShowCommands, quickDraft, quickSending, mess, emojiButtRef, setMess]);
+    }, [canShowCommands, quickDraft, quickSending, mess, emojiButtRef, setMess, shareSuggestions.length]);
     const routeRef = useRef("");
     const [oldMess, setOldMess] = useState<string>("");
     const [enterToSend, setEnterToSend] = useState(() => localStorage.getItem("at_chat_enter_to_send") !== "false");
@@ -472,7 +477,8 @@ export default function ChatTextArea({
                         const serverIds = new Set(confirmedMessages.map(message => message.id));
                         return [...prev.filter(message => !serverIds.has(message.id)), ...confirmedMessages];
                     });
-                }
+                },
+                draft.linkedEntity
             );
             if (success) {
                 const next = (failedChatDrafts.get(draftKey) ?? []).filter(item => item.key !== draft.key);
@@ -607,7 +613,8 @@ export default function ChatTextArea({
         const currentRoute = location.pathname;
         const currentDraftKey = draftKey;
         const trimmedMess = [mess.trim(), currentPost ? new URL("/post/" + currentPost.id, window.location.origin).href : ""].filter(Boolean).join("\n\n");
-        const hasContent = trimmedMess || files.length > 0 || editing && oldMedia.length > 0 || redirect;
+        const currentEntity = linkedEntity;
+        const hasContent = trimmedMess || files.length > 0 || editing && oldMedia.length > 0 || redirect || currentEntity;
         if (!(nick || id) || !hasContent) return;
         sending.current = true;
         // Сохраняем текущие значения перед очисткой
@@ -633,6 +640,8 @@ export default function ChatTextArea({
                     sender_nick: user.nick || "",
                     sender_avatar_url: user.avatar_url || "",
                     content: trimmedMess,
+                    entity_type: currentEntity?.type || null,
+                    entity_id: currentEntity?.id || null,
                     created_at: new Date(),
                     files: currentFiles.map(
                         f => ({
@@ -655,6 +664,7 @@ export default function ChatTextArea({
                 setMessages(prev => [...prev, tempMessage]);
                 // Очищаем поле сразу
                 setMess("");
+                setLinkedEntity(null);
                 setFiles([]);
                 setChosenMess([]);
                 setRedirect(undefined);
@@ -692,7 +702,8 @@ export default function ChatTextArea({
                             next.splice(insertIndex, 0, ...confirmed);
                             return next;
                         });
-                    }
+                    },
+                    currentEntity || undefined
                 );
                 if (!success) {
                     // Если отправка не удалась — убираем временное сообщение
@@ -705,7 +716,8 @@ export default function ChatTextArea({
                         files: currentFiles,
                         answerId: currentAnswer?.id,
                         redirect: currentRedirect,
-                        showNames: currentShowNames
+                        showNames: currentShowNames,
+                        linkedEntity: currentEntity || undefined
                     };
                     const next = [...(failedChatDrafts.get(currentDraftKey) ?? []), failedDraft];
                     failedChatDrafts.set(currentDraftKey, next);
