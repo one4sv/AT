@@ -46,6 +46,9 @@
         outline: none;
         overflow: hidden;
         field-sizing: content;
+        box-sizing: border-box;
+        line-height: 1.35;
+        padding: max(.8dvh, calc((5dvh - 1.35em) / 2)) .5vw;
         &::placeholder {
             color: var(--borderHabit);
         }
@@ -63,7 +66,7 @@
             max-height: 50dvh;
             min-height: 5dvh;
             line-height: 1.35;
-            padding: 1.35vh 1vw;
+            padding: max(.8dvh, calc((5dvh - 1.35em) / 2)) 1vw;
             box-sizing: border-box;
             scrollbar-width:thin;
             outline: none;
@@ -74,7 +77,7 @@
                 color: var(--borderWhLight);
             }
             @media (max-width: 800px) {
-                padding: 1vh 3vw;
+                padding-inline: 3vw;
             }
         }
         &:focus-within {
@@ -304,7 +307,7 @@
     bottom: 5vh;
 }
 .habitDayCommentMobile.inputWithEmoji {
-    > textarea { padding-inline-end: 5vh; padding-bottom: 1.5vh; }
+    > textarea { padding-inline-end: 5vh; }
     > .inputEmojiButton { right: 6vh; bottom: 1vh; }
 }
 

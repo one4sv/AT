@@ -11,6 +11,8 @@ const numericDate = /^(\d{1,2})[./](\d{1,2})(?:[./](\d{4}))?(?=\s|$)/u;
 const namedDate = /^(\d{1,2})\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря|january|february|march|april|may|june|july|august|september|october|november|december)(?:\s+(\d{4}))?(?=\s|$)/iu;
 const monthNames = "января февраля марта апреля мая июня июля августа сентября октября ноября декабря".split(" ");
 const englishMonths = "january february march april may june july august september october november december".split(" ");
+// Also recognize "Психотерапевт 30.11 16.00" (title before numeric date).
+const trailingNumericDate = /^(.+?)\s+(\d{1,2}[./]\d{1,2}(?:[./]\d{4})?)(?:\s+(?:(?:в|at)\s+)?(\d{1,2}[.:]\d{2}))?$/iu;
 
 function timeValue(text: string): string | null {
     const match = /^(\d{1,2})(?:[.:](\d{2}))?$/.exec(text.trim());
@@ -42,8 +44,10 @@ export function parseSavedMessageSuggestion(content: string, today: string, nowT
             ...(from ? {startTime: from} : {}), ...(to ? {endTime: to} : {}) } };
     }
 
-    const digit = numericDate.exec(text);
-    const word = digit ? null : namedDate.exec(text);
+    const trailing = trailingNumericDate.exec(text);
+    const dateText = trailing ? trailing[2] : text;
+    const digit = numericDate.exec(dateText);
+    const word = digit ? null : namedDate.exec(dateText);
     const match = digit || word;
     if (!match) return null;
     const day = +match[1];
@@ -54,8 +58,9 @@ export function parseSavedMessageSuggestion(content: string, today: string, nowT
     const date = dateValue(year, month, day);
     if (!date || date < today) return null;
 
-    let name = text.slice(match[0].length).trim();
-    let time: string | null = null;
+    let name = trailing ? trailing[1].trim() : text.slice(match[0].length).trim();
+    let time: string | null = trailing?.[3] ? timeValue(trailing[3]) : null;
+    if (trailing?.[3] && !time) return null;
     const leadingTime = /^(?:(?:в|at)\s+)?(\d{1,2}[.:]\d{2})\s+(.+)$/iu.exec(name);
     if (leadingTime) {
         time = timeValue(leadingTime[1]);

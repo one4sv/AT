@@ -10,6 +10,24 @@ test("future dated notes become a plan", () => {
     assert.equal(parse("2 марта 2027 др кента", "2026-11-21", "14:00")?.draft.date, "2027-03-02");
 });
 
+test("future plan with title before numeric date and time", () => {
+    const expected = {kind: "plan", name: "Психотерапевт", date: "2026-11-30", startTime: "16:00"};
+    assert.deepEqual(parse("Психотерапевт 30.11 16.00", "2026-11-22", "13:00")?.draft, expected);
+    assert.deepEqual(parse("Психотерапевт 30.11 в 16:00", "2026-11-22", "13:00")?.draft, expected);
+    assert.deepEqual(parse("Психотерапевт 30.11.2026 16:00", "2026-11-22", "13:00")?.draft, expected);
+    assert.deepEqual(parse("  Психотерапевт 30.11 16.00  ", "2026-11-22", "13:00"),
+        {start: 2, end: 27, draft: expected});
+    assert.deepEqual(parse("Dentist 30/11 at 16:00", "2026-11-22", "13:00")?.draft,
+        {kind: "plan", name: "Dentist", date: "2026-11-30", startTime: "16:00"});
+    assert.deepEqual(parse("Психотерапевт 30.11", "2026-11-22", "13:00")?.draft,
+        {kind: "plan", name: "Психотерапевт", date: "2026-11-30"});
+    for (const invalid of ["Психотерапевт 20.11 16.00", "Психотерапевт 31.11 16.00",
+        "Психотерапевт 30.11 25.00", "Психотерапевт 30.11 16.66",
+        "Психотерапевт 22.11 12.00"]) {
+        assert.equal(parse(invalid, "2026-11-22", "13:00"), null, invalid);
+    }
+});
+
 test("daily activity preserves its time range", () => {
     assert.deepEqual(parse("каждый день работа с 12 до 19", "2026-11-21", "20:00")?.draft,
         {kind: "habit", name: "работа", periodicity: "everyday", startTime: "12:00", endTime: "19:00"});

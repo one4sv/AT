@@ -141,7 +141,7 @@
         height: 5dvh;
         min-height: 5dvh;
         line-height: 1.35;
-        padding: 1vh 3vw;
+        padding: max(.8dvh, calc((5dvh - 1.35em) / 2)) 3vw;
         box-sizing: border-box;
         scrollbar-width:thin;
         outline: none;

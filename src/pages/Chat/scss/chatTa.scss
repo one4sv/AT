@@ -225,7 +225,7 @@
     max-height: 50dvh;
     min-height: 5dvh;
     line-height: 1.35;
-    padding: 1.35vh 1vw;
+    padding: max(.8dvh, calc((5dvh - 1.35em) / 2)) 1vw;
     box-sizing: border-box;
     scrollbar-width:thin;
     outline: none;
@@ -236,7 +236,7 @@
         color: var(--borderWhLight);
     }
     @media (max-width: 800px) {
-        padding: 1vh 3vw;
+        padding-inline: 3vw;
     }
 }
 .chatTaButts {
@@ -512,7 +512,7 @@
     color: var(--tc);
     font-size: 16px;
     line-height: 1.4;
-    padding: .5dvh .75vw .35dvh;
+    padding: .5dvh .75vw;
 
     .chatQuickCommandName {
         align-self: flex-start;
@@ -596,7 +596,7 @@
     }
     @media (max-width: 800px) {
         gap: .85dvh;
-        padding: .5dvh 2vw .35dvh;
+        padding: .5dvh 2vw;
         .chatQuickFields { gap: .9dvh 2vw; }
         .chatQuickField { gap: 1vw; }
         .chatQuickFieldLabel { padding: .3dvh 0; }

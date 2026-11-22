@@ -120,10 +120,10 @@
     resize: none;
     background-color: var(--tr);
     color: var(--tc);
-    padding-top: 0.5dvh;
+    padding: .5dvh 0;
     box-sizing: border-box;
     scrollbar-width:thin;
-    height: 7dvh;
+    min-height: 5dvh;
     &:focus {
         border-bottom: 2px solid var(--accent);
     }
