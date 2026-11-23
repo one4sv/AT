@@ -984,8 +984,6 @@
     "dayCount": "Plans on this date: {{count}}"
   },
   "goals": {
-    "title": "Goals",
-    "create": "New goal",
-    "navigationDescription": "Outcomes, milestones and linked actions"
+    "title": "Goals"
   }
 }

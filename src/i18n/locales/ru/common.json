@@ -992,8 +992,6 @@
     "dayCount": "Планов на дату: {{count}}"
   },
   "goals": {
-    "title": "Цели",
-    "create": "Новая цель",
-    "navigationDescription": "Результаты, этапы и связанные действия"
+    "title": "Цели"
   }
 }
