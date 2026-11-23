@@ -190,7 +190,6 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
                     </div>
                 </div>
             </div>
-            <button className="addHabitGoal">{t("habitUi.addGoal")}</button>
             <button className="addHabitSave" onClick={fetchAddHabit}>{t("habitUi.save")}</button>
         </div>
     )

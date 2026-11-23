@@ -14,6 +14,7 @@
 | --- | --- | --- |
 | Выпадающий список вариантов | **`SelectList`** | `src/components/ts/SelectList.tsx`, `src/scss/SelectList.scss`, `src/scss/_mixins.scss` → `@mixin selectList` |
 | Выбор ровно одного режима из нескольких строк | **`RadioGroup`** | `src/components/ts/RadioGroup.tsx`, `src/scss/radioGroup.scss` |
+| Изменение числового значения перетаскиванием | **`SeekBar`** | `src/pages/Settings/components/SeekBar.tsx`, `src/pages/Settings/scss/seekbar.scss` |
 | Переключение вкладок с движущимся индикатором | **`Selector`** | `src/components/ts/Selector.tsx`, `src/scss/selector.scss` |
 | Переключатель on/off | **`Toggler`** | `src/components/ts/Toggler.tsx`, `src/scss/toggler.scss` |
 | Квадратный чекбокс | **`Checkbox`** | `src/components/ts/utils/Checkbox.tsx`, `src/scss/Checkbox.scss` |
@@ -93,6 +94,39 @@
 ### `Selector`
 
 Файл: `src/components/ts/Selector.tsx`; стили: `src/scss/selector.scss`. Горизонтальный переключатель с анимированным индикатором. Принимает `arr: { label, icon?, value, func }[]` и `selected`. Работает с `useSideMenu` и флагами `dontHandle` / `dontHandleOther`. Не переписывать управление касаниями: удержание 350 мс, перемещение, освобождение и отмена уже реализованы.
+
+### `SeekBar` — единственный штатный числовой ползунок
+
+**Исходник:** `src/pages/Settings/components/SeekBar.tsx`; **стили:** `src/pages/Settings/scss/seekbar.scss`. Примеры реального использования — `src/pages/Settings/components/BackgroundEffectsSettings.tsx`, `ContourPatternPicker.tsx`, `src/components/modules/BgHandler.tsx`. Дополнительное описание и взаимодействие со слайдерами — [SLIDERS.md](SLIDERS.md), раздел 13.
+
+**Пропсы (сверены с `SeekBarInterface`):**
+
+- `min: number`, `max: number`, `value: number` — обязательны, контролируемое значение.
+- `onChange?: (value: number) => void` — изменение значения во время перетаскивания.
+- `step?: number` — шаг, по умолчанию `1`; квантование происходит относительно `min`, с округлением до 4 знаков.
+- `unit?: string` — единица измерения внутри самого ползунка (`px`, `×`, `%`).
+- `disabled: boolean` и `id: string` — **обязательны**. `id` попадает в `data-setting-id`.
+
+Пример, аналогичный текущим настройкам фона:
+
+```tsx
+<SeekBar
+    id="backgroundSpeed"
+    min={0}
+    max={3}
+    step={0.25}
+    value={bgEffects.speed ?? 1}
+    unit="×"
+    disabled={!motionAvailable}
+    onChange={speed => update({ ...bgEffects, speed })}
+/>
+```
+
+**Поведение:** `pointer capture` во время перетаскивания, `hover`-предпросмотр значения на ПК, `drag`-подпись актуального значения, завершение/`cancel` освобождают владение жестом. Компонент использует `useSideMenu`, `dontHandleOther` и `setDontHandle`, чтобы свайп SideMenu не происходил одновременно с изменением числа. На мобильных поддерживается touch-перетаскивание; нельзя создавать отдельную реализацию с чужим обработчиком касаний. Цвета — текущая тема, активная дорожка `accent → grad`, `disabled` визуально приглушён.
+
+**Обязательное правило:** при необходимости управляемого числового ползунка переиспользовать `SeekBar`, а **не** голый `<input type="range">` и не его самодельную копию. Подпись настройки содержит только название; число с единицей измерения уже показывается рядом с ползунком при hover/drag, его нельзя дублировать возле заголовка. Для простого индикатора выполнения использовать `progressbar` или существующую дорожку, **не** интерактивный `SeekBar`.
+
+**Цели AT:** при первоначальном создании цели **не нужен ни нативный `range`, ни `SeekBar`** — прогресс начинается с нуля. Позднее изменение вручную в уже созданной цели может использовать `SeekBar`, если оно действительно нужно в согласованном UX.
 
 ### `Toggler` и `Checkbox`
 

@@ -1,10 +1,10 @@
-## Цели 0.6+ — отдельная приёмка, не блокер 0.6.5 Mosaic
+## 24.11.2026 — цели откатили до стадии проектирования
 
-- [ ] Серверная SQL-миграция, RLS/grants, node tests, клиентский build на актуальных SHA.
-- [ ] Четыре режима прогресса, веса этапов, снижение метрики, пустая цель и значения 0/100.
-- [ ] CRUD владельца и запрет чтения/редактирования чужой цели, привязки только к своим habit/plan.
-- [ ] RU/EN, ошибки API, iPhone Safari, клавиатура/Blackout, ссылки в SideMenu.
-- [ ] Реальный E2E после публикации клиент+сервер; не считать готовым по одному Vercel success.
+- [x] Удалить первую неверную реализацию отдельной страницы `/goals` и лишнюю кнопку SideMenu, вернуть `/habit` основной областью.
+- [x] Убрать `addHabitGoal` из `AddHabit`; не трогать общие стили `.addHabitGoal`, используемые другими модалками.
+- [x] Дополнить `CUSTOM_COMPONENTS.md` обязательным `SeekBar` и зафиксировать отсутствие ползунка в создании цели.
+- [ ] Новая реализация **после проектирования**, см. `GOALS.md`: создать пункт `SMnavExtra.habits` и пункт `SMcreateDiv`, сохранить текущую `SMmainButt`, использовать кнопку цели внутри активности, выровнять удаление этапа.
+- [ ] Реальная авторизованная приёмка новой версии целей на iPhone Safari и двух аккаунтах; данная итерация удалена и **не проходит** её.
 
 ## 23.11.2026 — Mosaic mobile profile and post actions
 - [ ] iPhone Safari profile: name and nickname centered beneath avatar in view/edit mode; long name wraps appropriately, online badge does not overlap. Desktop remains unchanged.

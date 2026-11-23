@@ -1,6 +1,8 @@
-## 23.11.2026 — цели 0.6+ (ветка, не production)
+## 24.11.2026 — откат некорректной реализации целей, фиксация правильного UX
 
-В `feature/goals-personal-v1` клиентского и серверного репозиториев подготовлены личные цели: UI `/goals` и `/goal/:goalId`, `AddGoal`, четыре режима прогресса, этапы с весом, связи owned habit/plan и история. SQL-миграция `goals_personal_20261123.sql`. Это НЕ общие цели и не завершённая production-приёмка. Перед публикацией проверить GitHub Actions, применить схему до Render, проверить ACL/мобильный UX. Подробнее [GOALS.md](GOALS.md), Linear ONE4SV-16.
+По прямому запросу владельца удалены клиентский раздел `/goals`, лишняя кнопка в `AccountList`, самостоятельные `AddGoal`/`GoalsPage`/`GoalPage`, и серверный CRUD целей (после отдельной проверки/отката базы). В модалке `AddHabit` удаляется бесполезная кнопка `addHabitGoal`. **Статус функции: не реализована; только проектирование** в [GOALS.md](GOALS.md).
+
+Изучен текущий `/habit` (общий обзор планов и активностей), `SMnavExtra.habits` с двумя текущими действиями и обработчиком `data-action` для iPhone, `SMcreateDiv`, существующий `habitUi.addGoal` в `HabitExtraButts`/`HabitHeaderMenu`, модалки и штатный `SeekBar`. Новая реализация **не должна** создавать отдельную страницу списка целей, новый `SMmainButt` или нативный `range`. Точная последовательность изменения UI/серверных API и QA — [GOALS.md](GOALS.md). Следующая работа только после чтения профильных MD и проверок размеров/жестов.
 
 ## 23.11.2026 — mobile profile name and post actions
 Mobile profile name was left-aligned due to the more specific selectable span width:auto. The existing mobile accMainInfoStr now uses display:flex and justify-content:center, preserving selection, avatar/status and desktop positioning. PostInteract gap grows from 0.4vw to 1vw desktop / 3vw mobile; PostForward replaces ArrowBendUpRight with ShareFatIcon weight=fill while retaining forward(), Redirecting, and ACL. Tests: group-info-styles.test.mjs, shared-entity-post-forward.test.mjs. Manual iPhone and desktop QA remains open.
