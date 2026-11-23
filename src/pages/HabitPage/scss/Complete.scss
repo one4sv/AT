@@ -79,6 +79,7 @@
     &.disabled {
         pointer-events: none;
         background: var(--interact);
+        color: var(--tc);
     }
     &.planButt {
         background: #fff;
