@@ -70,9 +70,8 @@ export default function AccountList() {
                     <span className="SMmainButtName"><SneakerMoveIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("sideMenu.plansAndActivities")}<CaretRightIcon className="fastButtCaret"/></span>
                     <div className="SMmainButtDesc">{t("accountNavigation.activitiesDesc")}</div>
                 </Link>
-                <Link to="/goals" className={"SMmainButt " + (location.pathname.startsWith("/goal") ? "active" : "")} onClick={closeMenu}>
-                    <span className="SMmainButtName"><BookmarkSimpleIcon size={30} className="SMmainButtSvg"/>{t("goals.title")}<CaretRightIcon className="fastButtCaret"/></span>
-                    <div className="SMmainButtDesc">{t("goals.navigationDescription")}</div>
+                <Link to="/goals" className="SMaccountButt" onClick={closeMenu}>
+                    <span className="settingName"><BookmarkSimpleIcon size={21}/>{t("goals.title")}</span>
                 </Link>
                 <Link to="/settings" className={`SMaccountButt ${location.pathname.startsWith("/settings") ? "active" : ""}`} onClick={closeMenu}>
                     <span className="settingName"><GearIcon size={21} weight="fill"/>{t("accountNavigation.settings")}</span><CaretRightIcon className="fastButtCaret"/>
@@ -93,9 +92,6 @@ export default function AccountList() {
                     <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddPlan"})}>
                         <CalendarPlusIcon size={18} weight="fill"/> {t("plans.create")}
                     </div>                    
-                    <div className="SMcreateButt" onClick={() => setBlackout({ seted:true, module:"AddGoal" })}>
-                        <BookmarkSimpleIcon size={18}/> {t("goals.create")}
-                    </div>
                     <div className="SMcreateButt" onClick={() => showNotification("info", t("sideMenu.inDevelopment"))}>
                         <Megaphone size={18} fill="currentColor"/> {t("sideMenu.newSpot")}
                     </div>
