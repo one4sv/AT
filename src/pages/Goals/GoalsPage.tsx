@@ -1,3 +1,4 @@
+import "./goalTranslations";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { PlusIcon, TargetIcon } from "@phosphor-icons/react";
