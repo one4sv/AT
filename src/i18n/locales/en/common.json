@@ -982,5 +982,8 @@
     "invitations": "Plan invitations",
     "dayOverview": "Day overview",
     "dayCount": "Plans on this date: {{count}}"
+  },
+  "goals": {
+    "title": "Goals"
   }
 }

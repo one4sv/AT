@@ -70,6 +70,9 @@ export default function AccountList() {
                     <span className="SMmainButtName"><SneakerMoveIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("sideMenu.plansAndActivities")}<CaretRightIcon className="fastButtCaret"/></span>
                     <div className="SMmainButtDesc">{t("accountNavigation.activitiesDesc")}</div>
                 </Link>
+                <Link to="/goals" className="SMaccountButt" onClick={closeMenu}>
+                    <span className="settingName"><BookmarkSimpleIcon size={21}/>{t("goals.title")}</span>
+                </Link>
                 <Link to="/settings" className={`SMaccountButt ${location.pathname.startsWith("/settings") ? "active" : ""}`} onClick={closeMenu}>
                     <span className="settingName"><GearIcon size={21} weight="fill"/>{t("accountNavigation.settings")}</span><CaretRightIcon className="fastButtCaret"/>
                 </Link>

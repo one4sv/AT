@@ -1,3 +1,7 @@
+## 23.11.2026 — цели 0.6+ (ветка, не production)
+
+В `feature/goals-personal-v1` клиентского и серверного репозиториев подготовлены личные цели: UI `/goals` и `/goal/:goalId`, `AddGoal`, четыре режима прогресса, этапы с весом, связи owned habit/plan и история. SQL-миграция `goals_personal_20261123.sql`. Это НЕ общие цели и не завершённая production-приёмка. Перед публикацией проверить GitHub Actions, применить схему до Render, проверить ACL/мобильный UX. Подробнее [GOALS.md](GOALS.md), Linear ONE4SV-16.
+
 ## 23.11.2026 — mobile profile name and post actions
 Mobile profile name was left-aligned due to the more specific selectable span width:auto. The existing mobile accMainInfoStr now uses display:flex and justify-content:center, preserving selection, avatar/status and desktop positioning. PostInteract gap grows from 0.4vw to 1vw desktop / 3vw mobile; PostForward replaces ArrowBendUpRight with ShareFatIcon weight=fill while retaining forward(), Redirecting, and ACL. Tests: group-info-styles.test.mjs, shared-entity-post-forward.test.mjs. Manual iPhone and desktop QA remains open.
 
