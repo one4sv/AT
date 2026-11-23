@@ -1,3 +1,11 @@
+## Цели 0.6+ — отдельная приёмка, не блокер 0.6.5 Mosaic
+
+- [ ] Серверная SQL-миграция, RLS/grants, node tests, клиентский build на актуальных SHA.
+- [ ] Четыре режима прогресса, веса этапов, снижение метрики, пустая цель и значения 0/100.
+- [ ] CRUD владельца и запрет чтения/редактирования чужой цели, привязки только к своим habit/plan.
+- [ ] RU/EN, ошибки API, iPhone Safari, клавиатура/Blackout, ссылки в SideMenu.
+- [ ] Реальный E2E после публикации клиент+сервер; не считать готовым по одному Vercel success.
+
 ## 23.11.2026 — Mosaic mobile profile and post actions
 - [ ] iPhone Safari profile: name and nickname centered beneath avatar in view/edit mode; long name wraps appropriately, online badge does not overlap. Desktop remains unchanged.
 - [ ] Like, comment and ShareFat forwarding buttons have extra separation (3vw mobile, 1vw desktop) in feed, profile and post page, without overlapping the date.

@@ -1,0 +1,211 @@
+@use "../../../scss/mixins" as var;
+
+.goalsPage {
+    width: 42%;
+    margin: 0 auto;
+    height: 100dvh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 7dvh .25vw 3dvh;
+    scrollbar-width: thin;
+    color: var(--tc);
+
+    h1 {
+        font-size: 26px;
+        margin: 0;
+    }
+
+    h2 {
+        font-size: 20px;
+        margin: 0 0 1dvh;
+    }
+}
+.goalsHeading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+    margin-bottom: 2dvh;
+
+    .planPrimaryButton {
+        flex-shrink: 0;
+    }
+}
+.goalActions, .goalsFilters {
+    display: flex;
+    align-items: center;
+    gap: .5vw;
+    flex-wrap: wrap;
+}
+.goalsFilters {
+    margin-bottom: 1.5dvh;
+}
+.goalSection, .goalCard, .goalEmpty {
+    background: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    border-radius: 24px;
+    border: 1px solid var(--block_border);
+}
+.goalSection {
+    padding: 2dvh 1.5vw;
+    margin-bottom: 1dvh;
+}
+.goalsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+}
+.goalCard {
+    color: var(--tc);
+    text-decoration: none;
+    padding: 2dvh 1.5vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+}
+.goalCardHead, .goalCardFoot, .goalProgressHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1vw;
+}
+.goalCardHead {
+    font-size: 20px;
+
+    small {
+        color: var(--borderWh);
+        font-size: 14px;
+    }
+}
+.goalCardFoot, .goalMeta, .goalBack, .goalEvent {
+    color: var(--borderWh);
+    font-size: 15px;
+}
+.goalProgressTrack {
+    background: var(--interact);
+    height: .9dvh;
+    border-radius: 24px;
+    overflow: hidden;
+
+    > div {
+        height: 100%;
+        border-radius: 24px;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        transition: width .2s ease;
+    }
+}
+.goalEmpty {
+    padding: 3dvh 1.5vw;
+    display: flex;
+    gap: 1vw;
+    align-items: center;
+}
+.goalQuietButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4vw;
+    min-height: 4dvh;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    background: var(--interact);
+    color: var(--tc);
+    padding: .5dvh .8vw;
+    cursor: pointer;
+    font-size: 16px;
+
+    &.selected {
+        color: var(--accent_text);
+        background: var(--mc);
+    }
+    &.danger {
+        color: var(--notValid);
+        border-color: var(--notValid);
+    }
+    &:disabled {
+        opacity: .5;
+        cursor: default;
+    }
+}
+.goalDescriptionText {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.goalProgressHeader {
+    margin-top: 2dvh;
+}
+.goalProgressEdit, .goalStage, .goalStageDraft, .goalLink, .goalLinkAdd {
+    display: flex;
+    align-items: center;
+    gap: .5vw;
+    margin-top: 1dvh;
+    min-width: 0;
+}
+.goalProgressEdit > input, .goalStage input, .goalStageDraft input, .goalLinkAdd input {
+    min-width: 0;
+    background: var(--interact);
+    color: var(--tc);
+    border: 1px solid var(--block_border);
+    border-radius: 16px;
+    padding: 1dvh .8vw;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+.goalProgressEdit > input {
+    width: 25%;
+}
+.goalStage > span, .goalLink > a {
+    flex: 1;
+    min-width: 0;
+    color: var(--tc);
+    overflow-wrap: anywhere;
+}
+.goalStage > small {
+    color: var(--borderWh);
+}
+.goalStage input:first-of-type, .goalStageDraft input:first-of-type {
+    flex: 1;
+}
+.goalStage input[type="number"], .goalStageDraft input[type="number"] {
+    width: 14%;
+}
+.goalStageCompleted {
+    text-decoration: line-through;
+    opacity: .6;
+}
+.goalLinkSelect {
+    flex: 1;
+    min-width: 0;
+}
+.goalLinkSelect > input, .goalStatusSelect > input {
+    width: 100%;
+}
+.goalLinkAdd .goalQuietButton {
+    flex-shrink: 0;
+}
+.goalEvent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5vw;
+    padding: .8dvh 0;
+}
+@media (max-width: 800px) {
+    .goalsPage {
+        width: 100%;
+        padding: 7dvh 4vw calc(4dvh + env(safe-area-inset-bottom));
+    }
+    .goalSection, .goalCard {
+        padding: 2dvh 4vw;
+    }
+    .goalsHeading, .goalStage, .goalStageDraft, .goalLinkAdd {
+        gap: 2vw;
+    }
+    .goalQuietButton {
+        padding: 1dvh 3vw;
+    }
+    .goalStage input[type="number"], .goalStageDraft input[type="number"] {
+        width: 16%;
+    }
+}

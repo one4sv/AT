@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import SearchedButts from "../../../pages/Settings/components/Search/SearchedButts";
 import type { SearchableSetting } from "../../../pages/Settings/Settings";
 import useLocalStorage from "../../hooks/utils/useLocalStorage";
-import { Megaphone } from "lucide-react";
+import { Megaphone, Target } from "lucide-react";
 import { useBlackout } from "../../hooks/BlackoutHook";
 import { useNote } from "../../hooks/NoteHook";
 
@@ -70,6 +70,10 @@ export default function AccountList() {
                     <span className="SMmainButtName"><SneakerMoveIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("sideMenu.plansAndActivities")}<CaretRightIcon className="fastButtCaret"/></span>
                     <div className="SMmainButtDesc">{t("accountNavigation.activitiesDesc")}</div>
                 </Link>
+                <Link to="/goals" className={"SMmainButt " + (location.pathname.startsWith("/goal") ? "active" : "")} onClick={closeMenu}>
+                    <span className="SMmainButtName"><Target size={30} className="SMmainButtSvg"/>{t("goals.title")}<CaretRightIcon className="fastButtCaret"/></span>
+                    <div className="SMmainButtDesc">{t("goals.navigationDescription")}</div>
+                </Link>
                 <Link to="/settings" className={`SMaccountButt ${location.pathname.startsWith("/settings") ? "active" : ""}`} onClick={closeMenu}>
                     <span className="settingName"><GearIcon size={21} weight="fill"/>{t("accountNavigation.settings")}</span><CaretRightIcon className="fastButtCaret"/>
                 </Link>
@@ -89,6 +93,9 @@ export default function AccountList() {
                     <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddPlan"})}>
                         <CalendarPlusIcon size={18} weight="fill"/> {t("plans.create")}
                     </div>                    
+                    <div className="SMcreateButt" onClick={() => setBlackout({ seted:true, module:"AddGoal" })}>
+                        <Target size={18}/> {t("goals.create")}
+                    </div>
                     <div className="SMcreateButt" onClick={() => showNotification("info", t("sideMenu.inDevelopment"))}>
                         <Megaphone size={18} fill="currentColor"/> {t("sideMenu.newSpot")}
                     </div>
