@@ -1,15 +1,17 @@
 import { useUser } from "../../hooks/UserHook";
 import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, CalendarPlusIcon, SignOutIcon, UserIcon, CheckIcon, CalendarCheckIcon, ChatTeardropIcon, PencilSimpleIcon } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useSideMenu } from "../../hooks/SideMenuHook";
 import { useTranslation } from "react-i18next";
-import SearchedButts from "../../../pages/Settings/components/Search/SearchedButts";
+
 import type { SearchableSetting } from "../../../pages/Settings/Settings";
 import useLocalStorage from "../../hooks/utils/useLocalStorage";
 import { Megaphone } from "lucide-react";
 import { useBlackout } from "../../hooks/BlackoutHook";
 import { useNote } from "../../hooks/NoteHook";
+
+const SearchedButts = lazy(() => import("../../../pages/Settings/components/Search/SearchedButts"));
 
 const EMPTY_RECENT: string[] = [];
 
@@ -46,7 +48,7 @@ export default function AccountList() {
     const openCreate = (module:string) => setBlackout({seted:true,module});
 
     if (activeTab === "user" && search.trim()) {
-        return <div className="accountList SMlist accountSettingsSearch"><SearchedButts search={search} selectSetting={selectSetting} staticResults/></div>;
+        return <div className="accountList SMlist accountSettingsSearch"><Suspense fallback={<div className="skeletonLine" role="status" aria-label={t("sideMenu.loading")}/>}><SearchedButts search={search} selectSetting={selectSetting} staticResults/></Suspense></div>;
     }
 
     return (
