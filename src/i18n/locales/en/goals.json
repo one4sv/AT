@@ -73,5 +73,17 @@
     "stage_deleted": "Milestone removed",
     "link_added": "Linked action",
     "link_removed": "Unlinked action"
-  }
+  },
+  "days": "Completed days",
+  "streak": "Consecutive scheduled days",
+  "daily_timer": "Timer each scheduled day",
+  "trackingHabit": "Activity to track",
+  "trackingDays": "Number of days",
+  "trackingMinutes": "Minutes per day",
+  "linkActions": "Link activities or plans",
+  "trackingHabitRequired": "Link an activity to calculate progress automatically",
+  "timerHabitRequired": "Link an activity with a timer",
+  "invalidTracking": "Choose a suitable activity and valid days and minutes",
+  "trackingHelp": "Rest days do not break a streak. Scheduled days are counted from the tracking start.",
+  "daysUnit": "days"
 }

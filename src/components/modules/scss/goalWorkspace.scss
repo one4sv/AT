@@ -133,6 +133,20 @@
 .goalIconButton {
     width: 42px;
     flex-shrink: 0;
+    padding: 0;
+}
+.goalWorkspaceModal button.goalIconButton > svg,
+.goalWorkspaceModal button.goalStageRemove > svg {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    flex: 0 0 24px;
+    display: block;
+}
+.goalWorkspaceModal .goalWorkspaceField > .addHabitInput {
+    width: 100%;
+    box-sizing: border-box;
 }
 .goalIconButton.danger {
     color: var(--notValid);
