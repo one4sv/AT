@@ -1,15 +1,17 @@
 import { useUser } from "../../hooks/UserHook";
 import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, CalendarPlusIcon, SignOutIcon, UserIcon, CheckIcon, CalendarCheckIcon, ChatTeardropIcon, PencilSimpleIcon } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useSideMenu } from "../../hooks/SideMenuHook";
 import { useTranslation } from "react-i18next";
-import SearchedButts from "../../../pages/Settings/components/Search/SearchedButts";
+
 import type { SearchableSetting } from "../../../pages/Settings/Settings";
 import useLocalStorage from "../../hooks/utils/useLocalStorage";
 import { Megaphone } from "lucide-react";
 import { useBlackout } from "../../hooks/BlackoutHook";
 import { useNote } from "../../hooks/NoteHook";
+
+const SearchedButts = lazy(() => import("../../../pages/Settings/components/Search/SearchedButts"));
 
 const EMPTY_RECENT: string[] = [];
 
@@ -43,8 +45,10 @@ export default function AccountList() {
         closeMenu();
     };
 
+    const openCreate = (module:string) => setBlackout({seted:true,module});
+
     if (activeTab === "user" && search.trim()) {
-        return <div className="accountList SMlist accountSettingsSearch"><SearchedButts search={search} selectSetting={selectSetting} staticResults/></div>;
+        return <div className="accountList SMlist accountSettingsSearch"><Suspense fallback={<div className="skeletonLine" role="status" aria-label={t("sideMenu.loading")}/>}><SearchedButts search={search} selectSetting={selectSetting} staticResults/></Suspense></div>;
     }
 
     return (
@@ -80,15 +84,18 @@ export default function AccountList() {
                     <div className="SMcreateButt" onClick={() => { closeMenu(); navigate("/post/new"); }}>
                         <PencilSimpleIcon size={18} weight="fill"/> {t("sideMenu.newPost")}
                     </div>
-                    <div className="SMcreateButt" onClick={() => setBlackout({ seted: true, module: "CreateChat" })}>
+                    <div className="SMcreateButt" onClick={() => openCreate("CreateChat")}>
                         <ChatTeardropIcon size={18} weight="fill"/> {t("sideMenu.newChat")}
                     </div>                    
-                    <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddHabit"})}>
+                    <div className="SMcreateButt" onClick={() => openCreate("AddHabit")}>
                         <CalendarCheckIcon size={18} weight="fill"/> {t("sideMenu.newActivity")}
                     </div>
-                    <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddPlan"})}>
+                    <div className="SMcreateButt" onClick={() => openCreate("AddPlan")}>
                         <CalendarPlusIcon size={18} weight="fill"/> {t("plans.create")}
                     </div>                    
+                    <div className="SMcreateButt" onClick={() => openCreate("AddGoal")}>
+                        <BookmarkSimpleIcon size={18} weight="fill"/> {t("sideMenu.newGoal")}
+                    </div>
                     <div className="SMcreateButt" onClick={() => showNotification("info", t("sideMenu.inDevelopment"))}>
                         <Megaphone size={18} fill="currentColor"/> {t("sideMenu.newSpot")}
                     </div>

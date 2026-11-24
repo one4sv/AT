@@ -69,6 +69,8 @@ jobs:
         run: node --test tests/chat-invite-link.test.mjs
       - name: Verify interface compositions and rotation
         run: node --experimental-strip-types --test tests/compositions.test.mjs
+      - name: Verify integrated goals UI and locales
+        run: node --test tests/goals-ui.test.mjs
       - name: Build client
         run: npm run build
       - name: Enforce entry JavaScript budget

@@ -289,29 +289,10 @@ export default function SMnav() {
                 cancelLongPress();
                 return;
             }
-            if (action === "create-chat") {
-                setBlackout(
-                    {
-                        seted: true,
-                        module: "CreateChat"
-                    }
-                );
-            }
-            if (action === "add-habit") {
-                setBlackout(
-                    {
-                        seted: true,
-                        module: "AddHabit"
-                    }
-                );
-            }
-            if (action === "add-plan") {
-                setBlackout(
-                    {
-                        seted: true,
-                        module: "AddPlan"
-                    }
-                );
+            if (action === "create-chat" || action === "add-habit" ||
+                action === "add-plan" || action === "add-goal") {
+                setBlackout({seted:true,module:action === "create-chat" ? "CreateChat" :
+                    action === "add-habit" ? "AddHabit" : action === "add-plan" ? "AddPlan" : "AddGoal"});
             }
             if (action === "new-spot") {
                 showNotification("info", t("sideMenu.inDevelopment"));
@@ -461,6 +442,11 @@ export default function SMnav() {
         [extraMenu, isExtraOpen]
     );
     const extraButts = () => {
+        const goTo = (path:string) => { navigate(path);setIsExtraOpen(false); };
+        const createActivity = (module:string) => {
+            setBlackout({seted:true,module});
+            setIsExtraOpen(false);
+        };
         if (searchMode) return [null, ...searchTabFilters[extraMenu || activeTab]].map(filter => <div
             className={"SMextraMenuButt " + (searchFilter === filter ? "selected" : "")}
             key={filter || "none"}
@@ -476,15 +462,7 @@ export default function SMnav() {
                     <div
                         className="SMextraMenuButt"
                         data-action="create-chat"
-                        onMouseUp={() => {
-                            setBlackout(
-                                {
-                                    seted: true,
-                                    module: "CreateChat"
-                                }
-                            );
-                            setIsExtraOpen(false);
-                        }}
+                        onMouseUp={() => createActivity("CreateChat")}
                     >
                         <PlusIcon size={20} /> {t("sideMenu.newChat")}
                     </div>
@@ -493,33 +471,24 @@ export default function SMnav() {
                 return (<>
                     <div
                         className="SMextraMenuButt"
-                        onMouseUp={() => {
-                            setBlackout(
-                                {
-                                    seted: true,
-                                    module: "AddHabit"
-                                }
-                            );
-                            setIsExtraOpen(false);
-                        }}
+                        onMouseUp={() => createActivity("AddHabit")}
                         data-action="add-habit"
                     >
                         <PlusIcon size={20} /> {t("sideMenu.newActivity")}
                     </div>
                     <div
                         className="SMextraMenuButt"
-                        onMouseUp={() => {
-                            setBlackout(
-                                {
-                                    seted: true,
-                                    module: "AddPlan"
-                                }
-                            );
-                            setIsExtraOpen(false);
-                        }}
+                        onMouseUp={() => createActivity("AddPlan")}
                         data-action="add-plan"
                     >
                         <CalendarPlusIcon size={20} /> {t("plans.create")}
+                    </div>
+                    <div
+                        className="SMextraMenuButt"
+                        onMouseUp={() => createActivity("AddGoal")}
+                        data-action="add-goal"
+                    >
+                        <PlusIcon size={20} /> {t("sideMenu.addGoal")}
                     </div>
                 </>);
             case "spots":
@@ -540,40 +509,28 @@ export default function SMnav() {
                     <>
                         <div
                             className={`SMextraMenuButt user ${location.pathname === `/acc/${user.nick}` ? "selected" : ""}`}
-                            onMouseUp={() => {
-                                navigate(`/acc/${user.nick}`);
-                                setIsExtraOpen(false);
-                            }}
+                            onMouseUp={() => goTo(`/acc/${user.nick}`)}
                             data-action="profile"
                         >
                             <UserIcon weight="fill" size={20} /> {t("sideMenu.profile")}
                         </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname === "/" ? "selected" : ""}`}
-                            onMouseUp={() => {
-                                navigate("/");
-                                setIsExtraOpen(false);
-                            }}
+                            onMouseUp={() => goTo("/")}
                             data-action="posts"
                         >
                             <NewspaperIcon weight="fill" size={20} /> {t("sideMenu.feed")}
                         </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname === "/habit" ? "selected" : ""}`}
-                            onMouseUp={() => {
-                                navigate("/habit");
-                                setIsExtraOpen(false);
-                            }}
+                            onMouseUp={() => goTo("/habit")}
                             data-action="habits"
                         >
                             <SneakerMoveIcon weight="fill" size={20} /> {t("sideMenu.plansAndActivities")}
                         </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname.includes("/settings") ? "selected" : ""}`}
-                            onMouseUp={() => {
-                                navigate(`/settings`);
-                                setIsExtraOpen(false);
-                            }}
+                            onMouseUp={() => goTo(`/settings`)}
                             data-action="settings"
                         >
                             <GearIcon weight="fill" size={20} /> {t("sideMenu.settings")}

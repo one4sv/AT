@@ -9,4 +9,4 @@
 | Приёмка Mosaic | [ONE4SV-95](https://linear.app/atone4sv/issue/ONE4SV-95) |
 | Права доступа и регрессии | [ONE4SV-97](https://linear.app/atone4sv/issue/ONE4SV-97) и [ONE4SV-98](https://linear.app/atone4sv/issue/ONE4SV-98) |
 | Следующий патч | [ONE4SV-96](https://linear.app/atone4sv/issue/ONE4SV-96), состав определяется при разборе задач |
-| Цели | [Спецификация](GOALS.md) и [ONE4SV-16](https://linear.app/atone4sv/issue/ONE4SV-16). Функция находится в проектировании |
+| Цели | [Спецификация](GOALS.md) и [ONE4SV-16](https://linear.app/atone4sv/issue/ONE4SV-16). Функция реализуется внутри `/habit` через штатный Blackout, остаётся отдельный QA |
