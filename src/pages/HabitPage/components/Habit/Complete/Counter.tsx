@@ -1,4 +1,6 @@
 import "../../../scss/Counter.scss"
+import HabitGoalProgress from "./HabitGoalProgress"
+import { goalsChanged } from "../../../../../components/hooks/useGoalsWorkspace"
 import { useTranslation } from "react-i18next"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook"
@@ -46,7 +48,8 @@ export default function Counter({ isMy }: { isMy:boolean }) {
     const sendDelta = async (totalVal: number) => {
         if (totalVal === 0 || !habit?.id || isHistorical) return
         try {
-            await api.post(`counter/value`, { habit_id: habit.id, val: totalVal })
+            const res = await api.post(`counter/value`, { habit_id: habit.id, val: totalVal })
+            if (res.data.success) goalsChanged()
         } catch (err) {
             console.error(err)
         } finally {
@@ -87,7 +90,10 @@ export default function Counter({ isMy }: { isMy:boolean }) {
         if (isHistorical || !habit?.id) return
         try {
             const res = await api.post(`counter/restore`, { habit_id: habit.id })
-            if (res.data.success) loadHabit(String(habit.id))
+            if (res.data.success) {
+                loadHabit(String(habit.id))
+                goalsChanged()
+            }
         } catch (err) {
             console.error(err)
         }
@@ -141,6 +147,7 @@ export default function Counter({ isMy }: { isMy:boolean }) {
                 >{minCount}</span>
                 <Pen fill="currentColor" width={12} height={12} />
             </div>
+            {!isHistorical && <HabitGoalProgress habitId={habit.id} isMy={isMy}/>}
             <div className="timerButts">
                 <div className="launchButtWrapper">
                     {flyingNumbers.filter(n => n.side ==="left").map(f => (

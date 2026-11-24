@@ -1,6 +1,7 @@
 import { api } from "../../../components/ts/api";
 import { useTheHabit } from "../../../components/hooks/TheHabitHook";
 import { useHabits } from "../HabitsHook";
+import { goalsChanged } from "../useGoalsWorkspace";
 
 export const useHabitTimer = () => {
     const { habit, habitTimer, loadHabit } = useTheHabit();
@@ -40,6 +41,7 @@ export const useHabitTimer = () => {
         if (res.data.success) {
             await loadHabit(String(habit.id))
             await refetchHabits()
+            goalsChanged()
         }
     };
 
