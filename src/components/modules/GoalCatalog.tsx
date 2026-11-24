@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { PlusIcon, TargetIcon } from "@phosphor-icons/react";
+import { TargetIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useGoalsWorkspace } from "../hooks/useGoalsWorkspace";
 import "../../pages/HabitPage/components/Overview/goalLocale";
@@ -10,14 +10,12 @@ export default function GoalCatalog() {
     const {t}=useTranslation("goals");
     const {setBlackout}=useBlackout();
     const {goals,loading,error}=useGoalsWorkspace();
-    const [status,setStatus]=useState("active");
+    const [status,setStatus]=useState("all");
     const filtered = status==="all" ? goals : goals.filter(goal=>status==="active" ?
         goal.status==="active" || goal.status==="paused" : goal.status===status);
     return <div className="addHabitDiv addPlanDiv goalWorkspaceModal goalCatalog">
         <div className="goalWorkspaceHeading">
             <h2>{t("title")}</h2>
-            <button type="button" className="goalIconButton" aria-label={t("create")}
-                onClick={() => setBlackout({seted:true,module:"AddGoal"})}><PlusIcon size={20}/></button>
         </div>
         <div className="goalCatalogFilters">
             {["active","completed","archived","all"].map(key=><button type="button" key={key}

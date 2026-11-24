@@ -11,13 +11,15 @@ test("goals stay inside habit overview, without a standalone goals route or main
     assert.doesNotMatch(nav,/to="\/goals"/);
     assert.match(nav,/to="\/habit"/);
     assert.match(nav,/openCreate\("AddGoal"\)/);
-    assert.match(overview,/<GoalOverview\/>/);
+    assert.doesNotMatch(overview, /<GoalOverview|habitOverviewShowAll/);
+    assert.match(overview, /goalCount > 0/);
 });
 test("SideMenu has desktop and touch create actions",()=>{
     const nav=read("src/components/ts/SM/SMnav.tsx");
     assert.match(nav,/data-action="add-goal"/);
     assert.match(nav,/action === "add-goal"/);
     assert.match(nav,/createActivity\("AddGoal"\)/);
+    assert.match(nav, /<BookmarkSimpleIcon size=\{20\} weight="fill"\/> \{t\("sideMenu.newGoal"\)\}/);
     const modal=read("src/components/modules/ModuleMap.ts");
     for(const name of ["AddGoal","GoalCatalog","GoalDetails","GoalPicker"]) assert.match(modal,new RegExp(name+": lazy"));
 });
@@ -51,4 +53,25 @@ test("goal locale keys are symmetric in RU and EN",()=>{
     const ruCommon=JSON.parse(read("src/i18n/locales/ru/common.json"));
     const enCommon=JSON.parse(read("src/i18n/locales/en/common.json"));
     for(const key of ["newGoal","addGoal"]) assert.ok(ruCommon.sideMenu[key] && enCommon.sideMenu[key]);
+});
+
+test("nonzero summary counters open the existing list dialogs and share one create menu", () => {
+    const overview = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
+    const style = read("src/pages/HabitPage/scss/HabitOverview.scss");
+    const createMenu = read("src/components/ts/ContextMenu/menus/PlanCreateMenu.tsx");
+    const catalog = read("src/components/modules/GoalCatalog.tsx");
+    for (const [count, label] of [["activityCount", "activities"], ["planCount", "plans"]]) {
+        assert.ok(overview.includes(count + " > 0 && <button"));
+        assert.ok(overview.includes('module: "HabitOverviewList", options: { name: "' + label + '" }'));
+    }
+    assert.match(overview, /goalCount > 0 && <button/);
+    assert.match(overview, /module: "GoalCatalog"/);
+    assert.doesNotMatch(overview, /habitOverviewShowAll|plans\.showAll|<GoalOverview/);
+    assert.match(style, /grid-auto-columns: minmax\(0, 1fr\)/);
+    assert.match(style, /\.habitOverviewSummary > button/);
+    for (const module of ["AddPlan", "AddHabit", "AddGoal"]) {
+        assert.ok(createMenu.includes('open("' + module + '")'));
+    }
+    assert.match(createMenu, /sideMenu\.newGoal/);
+    assert.doesNotMatch(catalog, /module:\s*"AddGoal"/);
 });

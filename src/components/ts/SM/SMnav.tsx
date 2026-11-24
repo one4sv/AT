@@ -1,6 +1,6 @@
 import { useUser } from "../../hooks/UserHook";
 import { CircleUserRound, Megaphone } from "lucide-react";
-import { CalendarCheckIcon, CalendarPlusIcon, ChatTeardropIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, PlusIcon, SignOutIcon, UserIcon, CheckIcon, MagnifyingGlassIcon, CaretRightIcon, XIcon } from "@phosphor-icons/react";
+import { CalendarCheckIcon, CalendarPlusIcon, ChatTeardropIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, PlusIcon, SignOutIcon, UserIcon, CheckIcon, MagnifyingGlassIcon, CaretRightIcon, XIcon, BookmarkSimpleIcon } from "@phosphor-icons/react";
 import { useSideMenu } from "../../hooks/SideMenuHook";
 import { useContextMenu } from "../../hooks/ContextMenuHook";
 import { useEffect, useRef, useState } from "react";
@@ -488,7 +488,7 @@ export default function SMnav() {
                         onMouseUp={() => createActivity("AddGoal")}
                         data-action="add-goal"
                     >
-                        <PlusIcon size={20} /> {t("sideMenu.addGoal")}
+                        <BookmarkSimpleIcon size={20} weight="fill"/> {t("sideMenu.newGoal")}
                     </div>
                 </>);
             case "spots":

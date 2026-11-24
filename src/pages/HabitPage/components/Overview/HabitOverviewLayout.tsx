@@ -15,7 +15,8 @@ import useHabitDayProgress from "../../../../components/hooks/utils/useHabitDayP
 import { getOverviewFocus, getOverviewNext } from "./dayFocus";
 import Calendar from "../Calendar/Calendar";
 import HabitOverviewEntries from "./HabitOverviewEntries";
-import GoalOverview from "./GoalOverview";
+import { useGoalsWorkspace } from "../../../../components/hooks/useGoalsWorkspace";
+import "./goalLocale";
 import "../../scss/HabitOverview.scss";
 
 function CalendarSkeleton() {
@@ -62,7 +63,6 @@ function UpcomingSkeleton() {
                 <span className="skeletonLine skeletonShort"/>
             </div>
         </div>)}
-        <div className="skeletonCard overviewSkeletonButton"><span className="skeletonLine"/></div>
     </div>;
 }
 
@@ -101,6 +101,8 @@ function OverviewFocusCard({ entry, label, more = 0, calendar, progress }: {
 
 export default function HabitOverviewLayout() {
     const { t } = useTranslation("common");
+    const { t: tGoals } = useTranslation("goals");
+    const { goals, loading: loadingGoals, error: goalsError } = useGoalsWorkspace();
     const { chosenDay, calendar, calendarLoading } = useCalendar();
     const { habits, loadingHabits } = useHabits();
     const { plans, loadingPlans } = usePlans();
@@ -115,6 +117,7 @@ export default function HabitOverviewLayout() {
     const nextFour = pending.slice(0, 4);
     const activityCount = entries.filter(entry => entry.kind === "habit").length;
     const planCount = entries.length - activityCount;
+    const goalCount = goals.length;
     const completedCount = entries.filter(entry => entry.completed).length;
     const currentTime = clockInAppZone();
     const focus = getOverviewFocus(entries, chosenDay, todayStrFunc(), currentTime);
@@ -142,10 +145,22 @@ export default function HabitOverviewLayout() {
                 </button>
             </div>
             {loadingHabits || loadingPlans || calendarLoading ? <SummarySkeleton/> : <>
-                <div className="habitOverviewSummary">
-                    <div><span>{activityCount}</span><small>{t("plans.activities")}</small></div>
-                    <div><span>{planCount}</span><small>{t("plans.title")}</small></div>
-                </div>
+                {(activityCount > 0 || planCount > 0 || (!goalsError && goalCount > 0)) && <div className="habitOverviewSummary">
+                    {activityCount > 0 && <button type="button"
+                        onClick={() => setBlackout({ seted: true, module: "HabitOverviewList", options: { name: "activities" } })}>
+                        <span>{activityCount}</span><small>{t("plans.activities")}</small>
+                    </button>}
+                    {planCount > 0 && <button type="button"
+                        onClick={() => setBlackout({ seted: true, module: "HabitOverviewList", options: { name: "plans" } })}>
+                        <span>{planCount}</span><small>{t("plans.title")}</small>
+                    </button>}
+                    {!goalsError && goalCount > 0 && <button type="button"
+                        onClick={() => setBlackout({ seted: true, module: "GoalCatalog" })}>
+                        <span>{goalCount}</span><small>{tGoals("title")}</small>
+                    </button>}
+                </div>}
+                {loadingGoals && !goalCount && <div className="skeletonLine" role="status" aria-label={tGoals("loading")}/>}
+                {goalsError && <small>{tGoals("loadError")}</small>}
                 <div className="habitOverviewProgress" role="progressbar" aria-valuenow={completedCount}
                     aria-valuemin={0} aria-valuemax={entries.length || 1}
                     aria-label={t("plans.completed")}>
@@ -161,7 +176,6 @@ export default function HabitOverviewLayout() {
                     progress={nextEntry.habit ? dayProgress[String(nextEntry.habit.id)] : undefined}
                     label={t(nextEntry.kind === "plan" ? "plans.nextPlan" : "plans.nextActivity")}/>}
             </>}
-            <GoalOverview/>
         </div>
         <div className="habitOverviewContext">
             <div className="habitOverviewHeader">{t("plans.daySummary")}</div>
@@ -175,10 +189,6 @@ export default function HabitOverviewLayout() {
                 <div className="habitOverviewNextList">
                     <HabitOverviewEntries entries={nextFour} view={view}/>
                 </div>
-                <button className="habitOverviewShowAll" type="button"
-                    onClick={() => setBlackout({ seted: true, module: "HabitOverviewList", options: { name: view } })}>
-                    {t("plans.showAll")}{pending.length > 4 ? " (" + pending.length + ")" : ""}
-                </button>
             </>}
         </div>
     </div>;

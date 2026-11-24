@@ -1,4 +1,4 @@
-import { CalendarPlusIcon, SneakerMoveIcon } from "@phosphor-icons/react";
+import { CalendarPlusIcon, SneakerMoveIcon, BookmarkSimpleIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import { useBlackout } from "../../../hooks/BlackoutHook";
@@ -19,6 +19,10 @@ export default function PlanCreateMenu() {
         <div className="ContextMenuButt" onClick={() => open("AddHabit")}>
             <SneakerMoveIcon size={20}/>
             {t("sideMenu.newActivity")}
+        </div>
+        <div className="ContextMenuButt" onClick={() => open("AddGoal")}>
+            <BookmarkSimpleIcon size={20} weight="fill"/>
+            {t("sideMenu.newGoal")}
         </div>
     </>;
 }
