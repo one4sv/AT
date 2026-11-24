@@ -146,7 +146,8 @@
   "completionShared": "Complete together",
   "completionPersonal": "Complete individually",
   "completionSharedHint": "Members share one progress value. Automatic goals use permitted activity data.",
-  "completionPersonalHint": "One goal definition, with separate milestone and manual progress for each member.",
+  "completionPersonalHint": "Everyone has the same goal definition, but separate progress and milestone marks, including the owner. If the activity metric is shared, automatic progress uses that shared source.",
   "createSharedGoal": "Create shared goal",
-  "sharedGoalWait": "The activity owner creates the shared goal."
+  "sharedGoalWait": "The activity owner creates the shared goal.",
+  "manageSharedDefinition": "Manage shared goal definition"
 }

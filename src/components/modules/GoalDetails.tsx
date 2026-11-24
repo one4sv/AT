@@ -129,6 +129,8 @@ export default function GoalDetails() {
                     onClick={deleteGoal}><TrashIcon size={24}/></button></>}
             </div>
         </div>
+        {goal.can_manage_definition && goal.template_goal_id && <button type="button" className="goalWorkspaceQuiet"
+            onClick={()=>setBlackout({seted:true,module:"GoalDetails",options:{id:String(goal.template_goal_id)}})}>{t("manageSharedDefinition")}</button>}
         {error && <small>{t("loadError")}</small>}
         {!!goal.description && <p className="goalWorkspaceText">{goal.description}</p>}
         <div className="goalWorkspaceMeta">{t("dueDate")}: {goal.due_date || t("noDate")}</div>
@@ -181,7 +183,7 @@ export default function GoalDetails() {
         {(goal.progress_mode==="milestones" || goal.progress_mode==="combined") && <>
         <div className="goalWorkspaceHeading"><h3>{t("stages")}</h3></div>
         <small>{t("stagesHint")}</small>
-        {(goal.stages || []).map(stage=><div className="goalStageInputs goalStageExisting" key={stage.id}>
+        {(goal.stages || []).map(stage=><div className={"goalStageInputs goalStageExisting"+(!canEdit?" goalStageReadOnly":"")} key={stage.id}>
             <Checkbox state={Boolean(stage.completed_at)} disable={saving || !canProgress} func={checked=>
                 void mutate("goal-workspace/"+id+"/stages/"+stage.id,"patch",{completed:checked})}/>
             {editId===stage.id ? <>

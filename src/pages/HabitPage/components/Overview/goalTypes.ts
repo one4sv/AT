@@ -27,6 +27,7 @@ export interface Goal {
     template_goal_id?: number | null;
     can_edit?: boolean;
     can_progress?: boolean;
+    can_manage_definition?: boolean;
     description: string;
     due_date: string | null;
     progress_mode: GoalMode;

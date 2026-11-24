@@ -447,3 +447,5 @@
 }
 
 .goalLinkedRecords:empty { display: none; }
+
+.goalStageInputs.goalStageExisting.goalStageReadOnly { grid-template-columns: 25px minmax(0, 1fr) minmax(44px, 14%); }

@@ -123,7 +123,7 @@ test("activity goal button reflects links and reuses goal dialogs",()=>{
     assert.match(picker,/role="progressbar"/);
     assert.match(picker,/manualModes.includes\(goal.progress_mode\)/);
     assert.match(picker,/module:"GoalDetails"/);
-    assert.match(picker,/module:"AddGoal",options:\{id:String\(goal.id\)\}/);
+    assert.match(picker,/module:"AddGoal",options:\{id:String\(goal.can_manage_definition/);
     assert.match(picker,/!hasHabitGoalLink\(goal,habitId\)/);
 });
 
@@ -193,4 +193,12 @@ test("goal checkbox text, modal borders, day filters and dated records",()=>{
     assert.match(read("src/components/modules/GoalPicker.tsx"),/goalLinkedRecords/);
     assert.match(read("src/components/modules/GoalDetails.tsx"),/formatAppDate\(stage.completed_at\)/);
     assert.match(read("src/components/modules/HabitOverviewList.tsx"),/value: "goals"/);
+});
+
+test("collaboration goal controls are in the existing activity member slide",()=>{
+    assert.match(read("src/pages/HabitPage/components/HabitInfo/HabitChatMenu.tsx"),/HabitGoalCollaborationSettings/);
+    const settings=read("src/pages/HabitPage/components/HabitInfo/HabitGoalCollaborationSettings.tsx");
+    assert.match(settings,/goal_scope/);assert.match(settings,/goal_completion_mode/);
+    assert.match(read("src/components/modules/GoalDetails.tsx"),/can_manage_definition/);
+    assert.match(read("src/components/modules/GoalPicker.tsx"),/\.slice\(0,2\)/);
 });

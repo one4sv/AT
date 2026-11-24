@@ -80,20 +80,24 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
                             <span className="goalCatalogName">{goal.name}</span>
                             <span className="goalCatalogProgress">{goal.progress}%</span>
                         </button>
-                        {goal.can_edit!==false && <button type="button" className="goalIconButton" aria-label={t("edit")}
-                            onClick={()=>setBlackout({seted:true,module:"AddGoal",options:{id:String(goal.id)}})}>
+                        {(goal.can_edit!==false || goal.can_manage_definition) && <button type="button" className="goalIconButton" aria-label={t("edit")}
+                            onClick={()=>setBlackout({seted:true,module:"AddGoal",options:{id:String(goal.can_manage_definition && goal.template_goal_id ? goal.template_goal_id:goal.id)}})}>
                             <PencilSimpleIcon size={24}/>
                         </button>}
                         <span className="goalOverviewProgress" role="progressbar" aria-valuemin={0} aria-valuemax={100}
                             aria-valuenow={goal.progress}><span style={{width:goal.progress+"%"}}/></span>
                         <div className="goalLinkedRecords">
-                            {(["milestones","combined"].includes(goal.progress_mode)?goal.recent_stages || []:[]).map(stage=><div className="goalLinkedRecord" key={"stage-"+stage.id}>
-                                <span>{stage.title}{stage.completion_percent!=null?` · ${stage.completion_percent}%`:""}</span>
-                                <time dateTime={stage.completed_at || undefined}>{stage.completed_at?formatAppDate(stage.completed_at)+" · "+formatAppTime(stage.completed_at):""}</time>
-                            </div>)}
-                            {(goal.progress_mode==="milestones"?[]:(goal.recent_records || recent[String(goal.id)] || [])).map(record=><div className="goalLinkedRecord" key={record.kind+"-"+record.id}>
-                                <span>{record.kind==="timer"?[Math.floor((record.seconds || 0)/3600),Math.floor((record.seconds || 0)%3600/60),(record.seconds || 0)%60].map(n=>String(n).padStart(2,"0")).join(":"):record.kind==="counter"?t("counterRecord",{value:record.value}):record.kind==="day"?t("dayRecord"):t("progressRecord",{value:record.value})}</span>
-                                <time dateTime={record.date}>{record.kind==="day"?formatDateFromString(record.date):formatAppDate(record.date)+" · "+formatAppTime(record.date)}</time>
+                            {[
+                                ...(["milestones","combined"].includes(goal.progress_mode)?goal.recent_stages || []:[]).filter(stage=>stage.completed_at).map(stage=>({
+                                    key:"stage-"+stage.id,date:stage.completed_at!,label:stage.title+(stage.completion_percent!=null?" · "+stage.completion_percent+"%":""),civil:false
+                                })),
+                                ...(goal.progress_mode==="milestones"?[]:(goal.recent_records || recent[String(goal.id)] || [])).map(record=>({
+                                    key:record.kind+"-"+record.id,date:record.date,civil:record.kind==="day",
+                                    label:record.kind==="timer"?[Math.floor((record.seconds || 0)/3600),Math.floor((record.seconds || 0)%3600/60),(record.seconds || 0)%60].map(n=>String(n).padStart(2,"0")).join(":"):record.kind==="counter"?t("counterRecord",{value:record.value}):record.kind==="day"?t("dayRecord"):t("progressRecord",{value:record.value})
+                                }))
+                            ].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,2).map(record=><div className="goalLinkedRecord" key={record.key}>
+                                <span>{record.label}</span>
+                                <time dateTime={record.date}>{record.civil?formatDateFromString(record.date):formatAppDate(record.date)+" · "+formatAppTime(record.date)}</time>
                             </div>)}
                         </div>
                         {manualModes.includes(goal.progress_mode) && goal.can_progress!==false && goal.status==="active" &&
