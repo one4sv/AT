@@ -21,7 +21,7 @@ import { formatDateFromString, todayStrFunc, shiftCalendarDay, formatClock } fro
 import { useUser } from "../hooks/UserHook";
 import { useHabitGoalDisplay } from "../hooks/useHabitGoalDisplay";
 import { useHabitGoals } from "../hooks/useHabitGoals";
-import { goalMetricCompatible } from "../../pages/HabitPage/components/Overview/goalTypes";
+import { goalMetricCompatible, goalIsCurrent } from "../../pages/HabitPage/components/Overview/goalTypes";
 export default function HabitDiv({
     habit,
     id,
@@ -60,7 +60,7 @@ export default function HabitDiv({
     const {selected}=useHabitGoalDisplay(habit.id,allowPinnedGoal);
     const {linked}=useHabitGoals(habit.id,allowPinnedGoal && !!selected);
     const pinnedGoal=allowPinnedGoal?linked.find(goal=>String(goal.id)===selected && goalMetricCompatible(goal.progress_mode,metric) &&
-        (goal.status==="active" || goal.status==="paused" || (goal.status==="completed" && Boolean((goal as {repeat_next_at?:string | null}).repeat_next_at)))):undefined;
+        goalIsCurrent(goal)):undefined;
     const updateTimerDisplay = useCallback(
         (timer: habitTimer) => {
             const elapsed = calculateTimerElapsed(timer, false);

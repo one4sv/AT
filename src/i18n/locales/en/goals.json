@@ -112,5 +112,21 @@
   "totalMinutes": "Total target time, minutes",
   "totalMinutesUnit": "min",
   "totalTimerHint": "Completed sessions of linked timer activities are added together, excluding pauses.",
-  "invalidTotalTimer": "Enter a positive whole number of minutes."
+  "invalidTotalTimer": "Enter a positive whole number of minutes.",
+  "repeatLabel": "Reset progress",
+  "repeat": {
+    "none": "Never",
+    "daily": "Every day",
+    "weekly": "Every week",
+    "monthly": "Every month"
+  },
+  "repeatHint": "Progress resets at the start of the next calendar period; results are saved in history.",
+  "nextReset": "Next reset",
+  "pinnedGoal": "Pinned goal",
+  "periodHistory": "Period results",
+  "periodCompleted": "Completed",
+  "periodMissed": "Not completed",
+  "noPeriods": "No closed periods yet",
+  "loadMorePeriods": "Show more",
+  "periodClosed": "Period closed: {{progress}}%"
 }
