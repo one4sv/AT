@@ -98,3 +98,10 @@
     color: var(--borderWh);
     white-space: pre-wrap;
 }
+
+.CJeventAction { display: flex; align-items: center; gap: 8px; margin-top: .5dvh; }
+.CJeventAction > svg { flex-shrink: 0; color: var(--accent_text); }
+.CJeventAction.completion > svg,.CJeventAction.joined > svg { color: #11c011; }
+.CJeventAction.completion_removed > svg { color: var(--borderWh); }
+.CJeventAction.left > svg,.CJeventAction.declined > svg { color: var(--notValid); }
+.CJeventAction.invited > svg { color: #4DA3FF; }

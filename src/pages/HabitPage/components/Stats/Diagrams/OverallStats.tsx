@@ -11,17 +11,7 @@ import { calculateOverallStats } from "./CalculateOverallStats"
 import { useMemo, type CSSProperties } from "react"
 import { ArrowUpRightIcon, CalendarCheckIcon, FireIcon, ChartLineUpIcon } from "@phosphor-icons/react"
 
-export default function OverallStats({
-    setSlide
-}: {
-    setSlide: React.Dispatch<
-        React.SetStateAction<{
-            label: string
-            value: string
-            slide: boolean
-        }>
-    >
-}) {
+export default function OverallStats({openDiagram}:{openDiagram:(value:string)=>void}) {
     const { t } = useTranslation("common")
     const { calendar } = useCalendar()
     const { habitId: id } = useParams()
@@ -109,7 +99,7 @@ export default function OverallStats({
                             disabled={!canOpen}
                             onClick={() => {
                                 if (!canOpen) return
-                                setSlide({ label: t(`statsUi.cards.${c.value}`), value: c.value, slide: true })
+                                openDiagram(c.value)
                             }}>
                             <div className="overallCardHeader">
                                 <span>{t(`statsUi.cards.${c.value}`)}</span>
@@ -130,7 +120,7 @@ export default function OverallStats({
                 })}
             </div>
             <button type="button" className="overallDetailButt"
-                onClick={() => setSlide({ label: t("statsUi.cards.comp"), value: "comp", slide: true })}>
+                onClick={() => openDiagram("comp")}>
                 <ChartLineUpIcon size={20}/> {t("statsUi.details")} <ArrowUpRightIcon size={19}/>
             </button>
         </div>

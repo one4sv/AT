@@ -13,7 +13,7 @@
     .activityPeriodHead, .activityPeriodSelection { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8dvh; }
     .activityPeriodRanges { display: flex; gap: .35em; }
     .activityPeriodRanges button, .activityPeriodSelection button { padding: .45em .7em; }
-    .activityPeriodRanges [aria-pressed=true] { background: var(--grad); color: var(--inner_text); }
+    .activityPeriodRanges [aria-pressed=true] { background: linear-gradient(135deg,var(--accent),var(--grad)); color: var(--inner_text); border: none; }
     .activityPeriodMetrics {
         display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .55em;
         > div { display: grid; align-content: start; padding: .7em; border-radius: 16px; background: var(--interact); }
@@ -23,8 +23,8 @@
     .activityHeat {
         display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: .3em; text-align: center;
         button { min-height: 2em; }
-        .full { background: var(--accent); color: var(--inner_text); }
-        .partial { background: var(--accent_highlight); }
+        .full, .partial { background-color: var(--interact); background-image: linear-gradient(135deg,var(--accent),var(--grad)); background-repeat: no-repeat; border: none; }
+        .full { color: var(--inner_text); }
         .missed { box-shadow: inset 0 0 0 1px var(--borderWh); }
         [aria-pressed=true] { outline: 2px solid var(--accent_text); }
         :disabled { opacity: .35; cursor: default; }

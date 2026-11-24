@@ -43,3 +43,6 @@
     > .inputEmojiButton { right: 10vh; }
     > span { right: 12vh; }
 }
+
+.activityPhotoTools button.attachActivityPhoto { background: transparent; color: var(--borderHabit); padding: 0; }
+.activityPhotoTools button.attachActivityPhoto:hover:not(:disabled) { color: var(--tc); }

@@ -5,9 +5,10 @@ import "../../scss/CompJurnal.scss";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { CircleUserRound, Search, X } from "lucide-react";
+import { CheckCircleIcon,CircleIcon,UserPlusIcon,UserMinusIcon,EnvelopeSimpleIcon,XCircleIcon,GearIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { api } from "../../../../components/ts/api";
-import { formatAppDate, formatAppTime, formatDateFromString } from "../../../../components/ts/utils/dateToStr";
+import { formatAppDate, formatAppTime, formatDateFromString, dateInAppZone } from "../../../../components/ts/utils/dateToStr";
 
 interface ActivityEvent {
     id: string;
@@ -43,15 +44,17 @@ export default function CompJurnal() {
             if (active) setMemberEventsError(true);
         });
         return () => { active = false; };
-    }, [habit?.id])
+    }, [habit?.id, calendar])
 
     const describeEvent = (event: ActivityEvent) => {
         const date = event.date && /^\d{4}-\d{2}-\d{2}$/.test(event.date) ? formatDateFromString(event.date) : event.date;
-        if (event.type === "completion_removed") return t("habitPageUi.journal.completion_removed", { date: date || t("habitPageUi.journal.unspecifiedDate") });
-        if (event.type === "completion") return t("habitPageUi.journal.completed", { date });
+        const sameDay = !event.date || event.date === dateInAppZone(event.created_at);
+        if (event.type === "completion_removed") return sameDay?t("habitPageUi.journal.removedToday"):t("habitPageUi.journal.completion_removed", { date });
+        if (event.type === "completion") return sameDay?t("habitPageUi.journal.completedToday"):t("habitPageUi.journal.completed", { date });
         return t(`habitPageUi.journal.${event.type}`);
     };
 
+    const eventIcons = {completion:CheckCircleIcon,completion_removed:CircleIcon,joined:UserPlusIcon,left:UserMinusIcon,invited:EnvelopeSimpleIcon,declined:XCircleIcon,settings_changed:GearIcon};
     const sortedCalendar = [...calendar]
         .filter(c => jurnalSearch.trim().length > 0 ? (c.comment?.includes(jurnalSearch) || formatDateFromString(c.date).includes(jurnalSearch)) && c.isDone : c.isDone)
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -83,7 +86,7 @@ export default function CompJurnal() {
                         </div>
                         <div className="CJcreated">{`${formatAppDate(event.created_at)} ${formatAppTime(event.created_at)}`}</div>
                     </div>
-                    <div className="CJcomment">{describeEvent(event)}</div>
+                    <div className={"CJcomment CJeventAction "+event.type}>{(() => {const Icon=eventIcons[event.type] || GearIcon;return <Icon size={20} weight={event.type==="completion"?"fill":"regular"}/>;})()}<span>{describeEvent(event)}</span></div>
                 </div>)}
             </div> : null}}
                     itemContent={(_, day) => {
@@ -110,7 +113,7 @@ export default function CompJurnal() {
                                         <div className="calendarDot comp"></div>
                                         {formatDateFromString(date)}
                                     </div>
-                                    <div className="CJcreated">{t("habitPageUi.journal.recorded", { date: created })}</div>
+                                    {created_at && dateInAppZone(created_at)!==date && <div className="CJcreated">{t("habitPageUi.journal.recorded", { date: created })}</div>}
                                 </div>
 
                                 <div className="CJhabit">{habitName}</div>

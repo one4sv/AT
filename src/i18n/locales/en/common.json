@@ -48,14 +48,14 @@
     "searchHint": "Enter a query or / to choose a filter",
     "searchFilter": {
       "none": "No filters",
-          "ms": "Messages",
-          "post": "Posts",
-          "setting": "Settings",
-          "user": "Users",
-          "habit": "Activities",
-          "plan": "Plans",
-          "new": "Unread",
-          "group": "Chats"
+      "ms": "Messages",
+      "post": "Posts",
+      "setting": "Settings",
+      "user": "Users",
+      "habit": "Activities",
+      "plan": "Plans",
+      "new": "Unread",
+      "group": "Chats"
     },
     "globalSearchEmpty": "No results found",
     "searchEmptyHint": "Try another query or search filter",
@@ -372,7 +372,8 @@
       "fullSchedule": "Total",
       "maxSchedule": "Maximum",
       "middleSchedule": "Average"
-    }
+    },
+    "charts": "Statistics charts"
   },
   "habitPageUi": {
     "charts": {
@@ -444,7 +445,9 @@
       "completion_removed": "Undid completion for {{date}}",
       "unspecifiedDate": "the specified date",
       "completed": "Completed the activity for {{date}}",
-      "recorded": "marked {{date}}"
+      "recorded": "marked {{date}}",
+      "completedToday": "Completed the activity",
+      "removedToday": "Undid completion"
     },
     "streak": {
       "unavailable": "Streak unavailable",
@@ -500,7 +503,7 @@
   "habitUi": {
     "clearTime": "Clear time",
     "cyclePattern": "Cycle {{active}}/{{rest}}",
-        "period": {
+    "period": {
       "everyday": "Every day",
       "weekly": "Several days a week",
       "cycle": "Cyclic",
@@ -911,7 +914,8 @@
     "visibility_link": "Only via direct link",
     "share": "Share",
     "clearTime": "Clear time",
-    "remindersSettingsHint": "Global reminder settings:", "remindersDefaultTimeHint": "For this plan, {{minutes}} minutes before it starts",
+    "remindersSettingsHint": "Global reminder settings:",
+    "remindersDefaultTimeHint": "For this plan, {{minutes}} minutes before it starts",
     "showAll": "Show all",
     "dayStart": "Start of day",
     "currentActivity": "Current activity",

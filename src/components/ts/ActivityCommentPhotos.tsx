@@ -1,6 +1,6 @@
 import { useEffect,useRef,useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ImageIcon,XIcon } from "@phosphor-icons/react";
+import { PaperclipIcon,XIcon } from "@phosphor-icons/react";
 import { api } from "./api";
 import { commentPhotoUrl,prepareActivityImage } from "./utils/activityImage";
 import { useBlackout } from "../hooks/BlackoutHook";
@@ -86,7 +86,7 @@ export function useActivityCommentPhotos(id:string,date:string,enabled:boolean,e
             const files=Array.from(e.target.files || []);e.target.value="";void attach(files);
         }}/>
         <button type="button" className="attachActivityPhoto" aria-label={t("activityImages.attach")} title={t("activityImages.attach")}
-            disabled={!saved || busy || kept.length+added.length>=4} onClick={()=>input.current?.click()}><ImageIcon size={22}/></button>
+            disabled={!saved || busy || kept.length+added.length>=4} onClick={()=>input.current?.click()}><PaperclipIcon size={22}/></button>
         {error && <button type="button" onClick={()=>retry(n=>n+1)}>{t("activityImages.retry")}</button>}
     </div>;
     const previews=savedScope===scope && (kept.length>0 || added.length>0) && <div className="activityPhotoStrip">

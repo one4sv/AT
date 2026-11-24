@@ -40,7 +40,7 @@ export default function PeriodOverview(){
                 {Array.from({length:7},(_,i)=><small key={i}>{new Intl.DateTimeFormat(i18n.resolvedLanguage,{weekday:"short",timeZone:"UTC"}).format(new Date(Date.UTC(2024,0,i+1)))}</small>)}
                 {now.days.map((day,i)=><button key={day.date} type="button" disabled={!day.eligible} aria-pressed={day.date===focus}
                     className={!day.due?"rest":!day.done?"missed":day.due===day.done?"full":"partial"}
-                    style={!i?{gridColumnStart:offset+1}:undefined} aria-label={label(day.date)+" · "+day.done+"/"+day.due}
+                    style={{...(!i?{gridColumnStart:offset+1}:{}),backgroundSize:`${day.due?Math.min(100,day.done/day.due*100):0}% 100%`}} aria-label={label(day.date)+" · "+day.done+"/"+day.due}
                     onClick={()=>setFocus(day.date)}>{Number(day.date.slice(-2))}</button>)}
             </div>
             <small>{t("activityStats.legend")}</small>

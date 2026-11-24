@@ -1,4 +1,4 @@
-import { FireIcon, PathIcon } from "@phosphor-icons/react";
+import { FireIcon, PathIcon, UserCircleIcon, CircleIcon } from "@phosphor-icons/react";
 import type { Calendar } from "../context/CalendarContext";
 import type { Habit } from "../context/HabitsContext";
 import type { OneOffPlan } from "../context/PlansContext";
@@ -6,7 +6,17 @@ import { shiftCalendarDay, todayStrFunc } from "./utils/dateToStr";
 import { getStreakView } from "../../pages/HabitPage/utils/getStreakView";
 import "../../scss/ActivityIndicators.scss";
 
-export type HabitDayProgress = { completed: number; total: number };
+export type CompletionActor = {id:string;nick:string;username?:string | null;avatar_url?:string | null};
+export type HabitDayProgress = { completed: number; total: number; actors?: CompletionActor[]; actor_count?: number };
+export function CompletionAvatars({progress}:{progress:HabitDayProgress}) {
+    const actors=(progress.actors || []).slice(0,3);
+    const count=progress.actor_count ?? actors.length;
+    return <span className="activityMembersCount activityCompletionAvatars" title={`${progress.completed}/${progress.total}`} aria-label={`${progress.completed}/${progress.total}`}>
+        {actors.map(actor=><span key={actor.id} className="activityCompletionAvatar" title={actor.username || actor.nick}>{actor.avatar_url?<img src={actor.avatar_url} alt={actor.username || actor.nick}/>:<UserCircleIcon size={20}/>}</span>)}
+        {count>actors.length && <span className="activityCompletionMore">+{count-actors.length}</span>}
+        {!count && <CircleIcon size={18}/>}
+    </span>;
+}
 export type HabitDayProgressMap = Record<string, HabitDayProgress>;
 
 export function getHabitStreakBadge(habit: Habit, calendar: Calendar[], today = todayStrFunc()) {
@@ -56,6 +66,6 @@ export default function ActivityIndicators({ habit, plan, calendar, progress, pa
             <span>{streak.count}</span>
         </span>}
         {showStreak && plan && <PathIcon className="activityPlanPath" size={18} aria-hidden="true"/>}
-        {shared && <span className="activityMembersCount">{progress.completed}/{progress.total}</span>}
+        {shared && <CompletionAvatars progress={progress}/>}
     </span>;
 }

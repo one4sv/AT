@@ -48,14 +48,14 @@
     "searchHint": "Введите запрос или / для выбора фильтра",
     "searchFilter": {
       "none": "Без фильтров",
-          "ms": "Сообщения",
-          "post": "Публикации",
-          "setting": "Настройки",
-          "user": "Пользователи",
-          "habit": "Активности",
-          "plan": "Планы",
-          "new": "Непрочитанные",
-          "group": "Беседы"
+      "ms": "Сообщения",
+      "post": "Публикации",
+      "setting": "Настройки",
+      "user": "Пользователи",
+      "habit": "Активности",
+      "plan": "Планы",
+      "new": "Непрочитанные",
+      "group": "Беседы"
     },
     "globalSearchEmpty": "Ничего не найдено",
     "searchEmptyHint": "Попробуйте другой запрос или фильтр поиска",
@@ -378,7 +378,8 @@
       "fullSchedule": "Всего",
       "maxSchedule": "Максимальный",
       "middleSchedule": "Средний"
-    }
+    },
+    "charts": "Графики статистики"
   },
   "habitPageUi": {
     "charts": {
@@ -450,7 +451,9 @@
       "completion_removed": "Отменил выполнение за {{date}}",
       "unspecifiedDate": "указанную дату",
       "completed": "Выполнил активность за {{date}}",
-      "recorded": "отм. {{date}}"
+      "recorded": "отм. {{date}}",
+      "completedToday": "Выполнил активность",
+      "removedToday": "Отменил выполнение"
     },
     "streak": {
       "unavailable": "Стрик недоступен",
@@ -508,7 +511,7 @@
   "habitUi": {
     "clearTime": "Сбросить время",
     "cyclePattern": "Цикл {{active}}/{{rest}}",
-        "period": {
+    "period": {
       "everyday": "каждый день",
       "weekly": "несколько дней в неделю",
       "cycle": "циклическая",
@@ -919,7 +922,8 @@
     "visibility_link": "Только по прямой ссылке",
     "share": "Поделиться",
     "clearTime": "Сбросить время",
-    "remindersSettingsHint": "Общие настройки напоминаний:", "remindersDefaultTimeHint": "Для этого плана, за {{minutes}} мин. до начала",
+    "remindersSettingsHint": "Общие настройки напоминаний:",
+    "remindersDefaultTimeHint": "Для этого плана, за {{minutes}} мин. до начала",
     "showAll": "Показать",
     "dayStart": "Начало дня",
     "currentActivity": "Текущая активность",
