@@ -1,48 +1,84 @@
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { PlusIcon, TargetIcon } from "@phosphor-icons/react";
+import { PlusIcon, TargetIcon, PencilSimpleIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
-import { useGoalsWorkspace,goalsChanged } from "../hooks/useGoalsWorkspace";
+import { goalsChanged } from "../hooks/useGoalsWorkspace";
+import { useHabitGoals, hasHabitGoalLink } from "../hooks/useHabitGoals";
 import { useNote } from "../hooks/NoteHook";
 import { useHabits } from "../hooks/HabitsHook";
 import { useUser } from "../hooks/UserHook";
 import { isGoalHabitAvailable } from "../ts/utils/goalLinkAvailability";
 import { api } from "../ts/api";
+import type { Goal } from "../../pages/HabitPage/components/Overview/goalTypes";
 import "../../pages/HabitPage/components/Overview/goalLocale";
+import "../../pages/HabitPage/scss/goalWorkspace.scss";
 import "./scss/goalWorkspace.scss";
+
+const manualModes = ["manual","metric","milestones","combined"];
 
 export default function GoalPicker() {
     const {t}=useTranslation("goals");
     const {blackout,setBlackout}=useBlackout();
-    const {goals,loading,error}=useGoalsWorkspace();
-    const {showNotification}=useNote();
-    const habitId=Number(blackout.options?.habitId);
+    const habitIdRef=useRef(Number(blackout.options?.habitId));
+    if(blackout.module==="GoalPicker" && blackout.options?.habitId) habitIdRef.current=Number(blackout.options.habitId);
+    const habitId=habitIdRef.current;
     const {habits,loadingHabits}=useHabits();
     const {user}=useUser();
+    const isOwner=habits?.some(h=>String(h.id)===String(habitId) && h.user_id===user.id);
     const eligible=habits?.some(h=>String(h.id)===String(habitId) && isGoalHabitAvailable(h,user.id));
+    const {goals,linked,loading,error}=useHabitGoals(habitId,!!isOwner);
+    const [saving,setSaving]=useState(false);
+    const {showNotification}=useNote();
+    const available=goals.filter(goal=>!hasHabitGoalLink(goal,habitId) && (goal.status==="active" || goal.status==="paused"));
+    const openDetails=(goal:Goal)=>setBlackout({seted:true,module:"GoalDetails",options:{id:String(goal.id)}});
     const choose=async(goalId:number)=>{
-        if(!eligible) return;
+        if(!eligible || saving) return;
+        setSaving(true);
         try{
             const response=await api.post("goal-workspace/"+goalId+"/links",{kind:"habit",id:habitId});
             if(!response.data?.success) throw new Error("Link failed");
             goalsChanged();
-            setBlackout({seted:false});
             showNotification("success",t("updated"));
         }catch{showNotification("error",t("saveError"));}
+        finally{setSaving(false);}
     };
     return <div className="addHabitDiv addPlanDiv goalWorkspaceModal goalPicker">
-        <h2>{t("selectGoal")}</h2>
-        {!loadingHabits && !eligible && <small>{t("inactiveLink")}</small>}
-        <button type="button" className="goalWorkspaceQuiet" disabled={!eligible} onClick={()=>
-            setBlackout({seted:true,module:"AddGoal",options:{habitId:String(habitId)}})}>
-            <PlusIcon size={20}/>{t("createForHabit")}
-        </button>
+        <h2>{t(linked.length?"title":"selectGoal")}</h2>
         {loading || loadingHabits ? <span>{t("loading")}</span> : error ? <span>{t("loadError")}</span> :
-            !goals.length ? <span>{t("empty")}</span> :
-            <div className="goalCatalogList">{goals.map(goal=><button type="button" key={goal.id}
-                className="goalPickerItem" disabled={!eligible} onClick={()=>void choose(goal.id)}>
-                <TargetIcon size={20}/>
-                <span>{goal.name}</span>
-                <small>{goal.progress}%</small>
-            </button>)}</div>}
+            !isOwner ? <span>{t("inactiveLink")}</span> : <>
+                {!!linked.length && <div className="goalCatalogList">{linked.map(goal=>
+                    <div className="goalCatalogItem goalLinkedItem" key={goal.id}>
+                        <button type="button" className="goalLinkedTitle" onClick={()=>openDetails(goal)}>
+                            <TargetIcon size={20}/>
+                            <span className="goalCatalogName">{goal.name}</span>
+                            <span className="goalCatalogProgress">{goal.progress}%</span>
+                        </button>
+                        <button type="button" className="goalIconButton" aria-label={t("edit")}
+                            onClick={()=>setBlackout({seted:true,module:"AddGoal",options:{id:String(goal.id)}})}>
+                            <PencilSimpleIcon size={24}/>
+                        </button>
+                        <span className="goalOverviewProgress" role="progressbar" aria-valuemin={0} aria-valuemax={100}
+                            aria-valuenow={goal.progress}><span style={{width:goal.progress+"%"}}/></span>
+                        {manualModes.includes(goal.progress_mode) && goal.status==="active" &&
+                            <button type="button" className="goalWorkspaceQuiet goalLinkedProgress"
+                                onClick={()=>openDetails(goal)}>{t("recordProgress")}</button>}
+                        {!manualModes.includes(goal.progress_mode) && <small>{t("automaticProgress")}</small>}
+                    </div>)}</div>}
+                {eligible ? <>
+                    <button type="button" className="goalWorkspaceQuiet" disabled={saving} onClick={()=>
+                        setBlackout({seted:true,module:"AddGoal",options:{habitId:String(habitId)}})}>
+                        <PlusIcon size={20}/>{t("createForHabit")}
+                    </button>
+                    {!!available.length && <>
+                        <small>{t("linkExisting")}</small>
+                        <div className="goalCatalogList">{available.map(goal=><button type="button" key={goal.id}
+                            className="goalPickerItem" disabled={saving} onClick={()=>void choose(goal.id)}>
+                            <TargetIcon size={20}/>
+                            <span>{goal.name}</span>
+                            <small>{goal.progress}%</small>
+                        </button>)}</div>
+                    </>}
+                </> : <small>{t("inactiveLink")}</small>}
+            </>}
     </div>;
 }

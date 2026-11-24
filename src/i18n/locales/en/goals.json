@@ -89,5 +89,8 @@
   "counterHint": "A scheduled day counts when each linked scheduled activity reaches the specified counter value.",
   "invalidCounter": "Enter a positive whole counter target.",
   "stagesHint": "Milestones are steps toward your goal, such as choosing a course and finishing it. Mark each completed. Weight determines its share of progress; equal weights mean equal shares.",
-  "inactiveLink": "Archived activities cannot be linked to a goal."
+  "inactiveLink": "Archived activities cannot be linked to a goal.",
+  "recordProgress": "Record progress",
+  "automaticProgress": "Progress is calculated automatically",
+  "linkExisting": "Link an existing goal"
 }

@@ -502,6 +502,7 @@
     "archived": "Activity moved to the archive.",
     "archivedReadOnly": "It can no longer be updated.",
     "addGoal": "Add goal",
+    "goals": "Goals",
     "save": "Save",
     "fillFields": "Fill in all fields",
     "invalidStart": "Invalid start time format",

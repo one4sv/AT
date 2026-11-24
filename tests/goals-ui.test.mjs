@@ -112,3 +112,16 @@ test("goal editor filters archived links, adds multiple selections and explains 
 });
 
 test("SelectList portal is inside Blackout interaction",()=>{assert.match(read("src/components/ts/Blackout.tsx"),/closest\("\.planTagPortal, \.selectListPortalRoot"\)/);});
+
+test("activity goal button reflects links and reuses goal dialogs",()=>{
+    for(const path of ["src/pages/HabitPage/components/HabitInfo/HabitExtraButts.tsx","src/components/ts/ContextMenu/menus/HabitHeaderMenu.tsx"]){
+        assert.match(read(path),/linked.length \? "habitUi.goals" : "habitUi.addGoal"/);
+    }
+    const picker=read("src/components/modules/GoalPicker.tsx");
+    assert.match(picker,/linked.map\(goal/);
+    assert.match(picker,/role="progressbar"/);
+    assert.match(picker,/manualModes.includes\(goal.progress_mode\)/);
+    assert.match(picker,/module:"GoalDetails"/);
+    assert.match(picker,/module:"AddGoal",options:\{id:String\(goal.id\)\}/);
+    assert.match(picker,/!hasHabitGoalLink\(goal,habitId\)/);
+});
