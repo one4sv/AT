@@ -1,5 +1,6 @@
 import { createContext, useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { type ReactNode } from "react";
+import { useHabits } from "../hooks/HabitsHook";
 import type { Habit } from "./HabitsContext";
 import { useNote } from "../hooks/NoteHook";
 import { api } from "../ts/api";
@@ -172,6 +173,7 @@ export const TheHabitProvider = ({
     const { showNotification } = useNote();
     const { fetchCalendarHabit } = useCalendar();
     const navigate = useNavigate();
+    const {pendingHabit} = useHabits();
     const API_URL = import.meta.env.VITE_API_URL;
     const [loadingHabit, setLoadingHabit] = useState(false);
     const [habit, setHabit] = useState<Habit | undefined>(undefined);
@@ -389,6 +391,9 @@ export const TheHabitProvider = ({
         []
     );
 
+    const patch = habit && pendingHabit(habit.id);
+    const visibleHabit = habit && patch ? {...habit,...patch,end_date:"end_date" in patch ? patch.end_date ?? "" : habit.end_date} : habit;
+
     return (
         <TheHabitContext.Provider
             value={{
@@ -398,7 +403,7 @@ export const TheHabitProvider = ({
                 loadTimer,
                 loadCounter,
                 loadingHabit,
-                habit,
+                habit: visibleHabit,
                 isReadOnly,
                 isDone,
                 setIsDone,

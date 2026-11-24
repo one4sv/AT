@@ -1,3 +1,4 @@
+import ClearTimeButton from "../ts/ClearTimeButton";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { PlusIcon, TrashIcon, XIcon } from "@phosphor-icons/react";
@@ -67,7 +68,7 @@ export default function HabitTaskEditor() {
                 for (const task of filled) {
                     await api.post("checklist/save", {
                         habit_id: habit.id, date, name: task.name.trim(),
-                        start_time: task.start_time, end_time: task.end_time
+                        start_time: task.start_time || null, end_time: task.end_time || null
                     });
                     savedCount++;
                 }
@@ -107,7 +108,9 @@ export default function HabitTaskEditor() {
                 </div>
                 <div className="habitTaskTimes">
                     <label>{t("habitDialog.from")} <input type="time" value={task.start_time} onChange={event => editTask(index, "start_time", event.target.value)} /></label>
+                    {task.start_time && <ClearTimeButton label={t("habitDialog.from")} onClear={() => editTask(index,"start_time","")}/>}
                     <label>{t("habitDialog.to")} <input type="time" value={task.end_time} onChange={event => editTask(index, "end_time", event.target.value)} /></label>
+                    {task.end_time && <ClearTimeButton label={t("habitDialog.to")} onClear={() => editTask(index,"end_time","")}/>}
                 </div>
             </div>)}
             <button type="button" className="habitTaskAddAnother" onClick={() => setTasks(current => [...current, emptyTask()])}>

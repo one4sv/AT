@@ -1,11 +1,11 @@
-import { useState, createContext, useCallback, type ReactNode } from "react";
+import { useState, createContext, useCallback, useRef, type ReactNode } from "react";
 import { useHabits } from "../hooks/HabitsHook";
 import { useNote } from "../hooks/NoteHook";
 import { useTheHabit } from "../hooks/TheHabitHook";
 import { api } from "../ts/api";
 import type { asctype, metricsType } from "./TheHabitContext";
 import { todayStrFunc } from "../ts/utils/dateToStr";
-import axios from "axios";
+import i18n from "i18next";
 
 export type UpdateHabitContextType = {
     /** Изменить название привычки */
@@ -36,9 +36,9 @@ export type UpdateHabitContextType = {
     /** Автовыполнение по расписанию*/
     setNewAutoScheduleCompletion: (habitId:number, val: asctype) => void
     /**Изменение активных дней при цикле */
-    setNewCycleDaysActive: (habitId: number, val: number) => void;
+    setNewCycleDaysActive: (habitId: number, val: number | null) => void;
     /**Изменение дней отдыха при цикле */
-    setNewCycleDaysRest: (habitId: number, val: number) => void;
+    setNewCycleDaysRest: (habitId: number, val: number | null) => void;
     /** Список id привычек, которые сейчас сохраняются */
     isUpdating: string[];
     /**
@@ -57,10 +57,11 @@ export type UpdateHabitContextType = {
 const UpdateHabitContext = createContext<UpdateHabitContextType | null>(null);
 
 export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
-    const { refetchHabits } = useHabits();
+    const { refetchHabits, saveQuickFields } = useHabits();
     const { habit, habitSettings, loadHabit } = useTheHabit();
     const { showNotification } = useNote();
-    const API_URL = import.meta.env.VITE_API_URL;
+    const activeHabit = useRef(habit?.id);
+    activeHabit.current = habit?.id;
 
     const [localChanges, setLocalChanges] = useState<{ [key: number]: Partial<Record<string, unknown>> }>({});
     const [isUpdating, setIsUpdating] = useState<string[]>([]);
@@ -80,7 +81,6 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const updateLocalChanges = useCallback((habitId: number, field: string, value: unknown) => {
-        if (field === "name" && (!value || (typeof value === "string" && value.trim() === ""))) return;
         if (field === "start_date" && !value) return;
 
         let originalValue: unknown;
@@ -116,54 +116,14 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     const setNewDescription = useCallback((habitId: number, val: string) => updateLocalChanges(habitId, "desc", val), [updateLocalChanges]);
 
     const setNewOngoing = useCallback(async (habitId: number, val: boolean) => {
-        const endDateValue = val === false ? todayStrFunc() : null;
-
-        updateLocalChanges(habitId, "ongoing", val);
-        updateLocalChanges(habitId, "end_date", endDateValue);
-
-        setIsUpdating(prev => [...new Set([...prev, `habit_${habitId}`])]);
-
         try {
-            const habitFields = {
-                ongoing: val,
-                end_date: endDateValue,
-            };
-
-            const res = await api.post(`updatehabit`, {
-                habit_id: habitId,
-                table: "habits",
-                ...habitFields
+            await saveQuickFields(habitId,{ongoing:val,end_date:val ? null : todayStrFunc()},async () => {
+                await Promise.all([refetchHabits(),activeHabit.current === habitId && loadHabit(String(habitId))]);
             });
-
-            if (res.data.success) {
-                setLocalChanges(prev => {
-                    const updated = { ...prev };
-                    if (updated[habitId]) {
-                        const habitChanges = { ...updated[habitId] };
-                        delete habitChanges.ongoing;
-                        delete habitChanges.end_date;
-
-                        if (Object.keys(habitChanges).length === 0) {
-                            delete updated[habitId];
-                        } else {
-                            updated[habitId] = habitChanges;
-                        }
-                    }
-                    return updated;
-                });
-
-                refetchHabits();
-                loadHabit(String(habitId));
-            } else {
-                showNotification("error", "Не удалось сохранить ongoing");
-            }
-        } catch (err) {
-            console.error("❌ Ошибка при сохранении ongoing:", err);
-            showNotification("error", "Ошибка при сохранении ongoing");
-        } finally {
-            setIsUpdating(prev => prev.filter(item => item !== `habit_${habitId}`));
+        } catch {
+            showNotification("error","Не удалось сохранить статус активности");
         }
-    }, [updateLocalChanges, API_URL, refetchHabits, loadHabit, showNotification]);
+    }, [saveQuickFields,refetchHabits,loadHabit,showNotification]);
 
     const setNewPeriodicity = useCallback((habitId: number, val: string | number | null) => {
         if (typeof val === "string") updateLocalChanges(habitId, "periodicity", val);
@@ -179,30 +139,17 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     const setNewMetricType = useCallback((habitId: number, val: metricsType) => updateLocalChanges(habitId, "metric_type", val), [updateLocalChanges]);
     const setNewScheduleBool = useCallback((habitId: number, val: boolean) => updateLocalChanges(habitId, "schedule", val), [updateLocalChanges]);
     const setNewAutoScheduleCompletion = useCallback((habitId: number, val: asctype) => updateLocalChanges(habitId, "auto_schedule_completion", val), [updateLocalChanges]);
-    const setNewCycleDaysActive = useCallback((habitId:number,val:number) => updateLocalChanges(habitId, "cycle_days_active", val || 1), [updateLocalChanges])
-    const setNewCycleDaysRest = useCallback((habitId:number,val:number) => updateLocalChanges(habitId, "cycle_days_rest", val || 1), [updateLocalChanges])
+    const setNewCycleDaysActive = useCallback((habitId:number,val:number | null) => updateLocalChanges(habitId, "cycle_days_active", val), [updateLocalChanges])
+    const setNewCycleDaysRest = useCallback((habitId:number,val:number | null) => updateLocalChanges(habitId, "cycle_days_rest", val), [updateLocalChanges])
     const setPin = useCallback(async (habitId: number, val: boolean) => {
-        updateLocalChanges(habitId, "pinned", val);
-
         try {
-            const res = await api.post(`updatehabit`, {
-                habit_id: habitId,
-                table: "habits",
-                pinned: val
+            await saveQuickFields(habitId,{pinned:val},async () => {
+                await Promise.all([refetchHabits(),activeHabit.current === habitId && loadHabit(String(habitId))]);
             });
-
-            if (res.data.success) {
-                refetchHabits();
-                loadHabit(String(habitId));
-            } else {
-                showNotification("error", "Не удалось закрепить привычку");
-            }
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                showNotification("error", error.response?.data?.error || "Ошибка закрепления");
-            }
+        } catch {
+            showNotification("error","Не удалось изменить закрепление активности");
         }
-    }, [API_URL, loadHabit, refetchHabits, showNotification, updateLocalChanges]);
+    }, [saveQuickFields,refetchHabits,loadHabit,showNotification]);
 
     const SETTINGS_FIELDS = [
         "metric_type",
@@ -213,6 +160,18 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
     const saveHabit = useCallback(async (habitId: number) => {
         const changes = localChanges[habitId];
         if (!changes || Object.keys(changes).length === 0) return;
+        if (typeof changes.name === "string" && !changes.name.trim()) {
+            showNotification("error", i18n.t("habitUi.fillFields", { ns: "common" }));
+            return;
+        }
+        const cycle = (changes.periodicity ?? habit?.periodicity) === "cycle";
+        if (cycle && ["cycle_days_active", "cycle_days_rest"].some(field => {
+            const value = field in changes ? changes[field] : habit?.[field as "cycle_days_active" | "cycle_days_rest"];
+            return typeof value !== "number" || !Number.isInteger(value) || value < 1 || value > 365;
+        })) {
+            showNotification("error", i18n.t("habitUi.enterCycle", { ns: "common" }));
+            return;
+        }
 
         setIsUpdating(prev => [...new Set([...prev, `habit_${habitId}`])]);
 
@@ -249,14 +208,16 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
             }
 
             if (allSuccess) {
+                await Promise.all([refetchHabits(), loadHabit(String(habitId))]);
                 setLocalChanges(prev => {
-                    const updated = { ...prev };
-                    delete updated[habitId];
+                    const remaining = { ...prev[habitId] };
+                    for (const [field,value] of Object.entries(changes)) {
+                        if (isEqual(remaining[field],value)) delete remaining[field];
+                    }
+                    const updated = { ...prev, [habitId]: remaining };
+                    if (!Object.keys(remaining).length) delete updated[habitId];
                     return updated;
                 });
-
-                refetchHabits();
-                loadHabit(String(habitId));
             } else {
                 showNotification("error", "Не удалось сохранить все изменения");
             }
@@ -266,7 +227,7 @@ export const UpdateHabitProvider = ({ children }: { children: ReactNode }) => {
         } finally {
             setIsUpdating(prev => prev.filter(item => item !== `habit_${habitId}`));
         }
-    }, [localChanges, API_URL, refetchHabits, loadHabit, showNotification]);
+    }, [localChanges, habit, refetchHabits, loadHabit, showNotification]);
 
     return (
         <UpdateHabitContext.Provider

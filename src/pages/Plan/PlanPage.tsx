@@ -9,6 +9,7 @@ import { useContextMenu } from "../../components/hooks/ContextMenuHook";
 import type { MenuOptions } from "../../components/context/ContextMenuContext";
 import type { OneOffPlan } from "../../components/context/PlansContext";
 import PlanEditor, { type PlanInput } from "./PlanEditor";
+import ClearTimeButton from "../../components/ts/ClearTimeButton";
 import CalendarInput from "../../components/ts/CalendarInput";
 import TA from "../../components/ts/TA";
 import TagSelector from "../../components/ts/TagSelector";
@@ -32,11 +33,12 @@ export default function PlanPage() {
     const { setBlackout } = useBlackout();
     const isCompact = useCompactLayout();
     const [mobileOpen, setMobileOpen] = useState<"done" | "comment">("done");
-    const { plans, refreshPlans } = usePlans();
+    const { plans, pendingPlans, setCompleted, writePlan, refreshPlans } = usePlans();
     const { privateShow } = useSettings();
     const { setTitle, setTitleIcon, setHeaderMenu } = usePageTitle();
     const { openMenu } = useContextMenu();
-    const [plan, setPlan] = useState<OneOffPlan | null>(null);
+    const [confirmedPlan, setPlan] = useState<OneOffPlan | null>(null);
+    const plan = confirmedPlan && pendingPlans[confirmedPlan.id] ? {...confirmedPlan,...pendingPlans[confirmedPlan.id]} : confirmedPlan;
     const [loading, setLoading] = useState(Boolean(planId));
     const [saving, setSaving] = useState(false);
     const [editing, setEditing] = useState(!planId);
@@ -61,26 +63,35 @@ export default function PlanPage() {
         setError("");
         setConfirmDelete(false);
     }, [planId]);
+    const loadVersion=useRef(0);
     const load = async (showSkeleton = false) => {
         if (!planId) return;
+        const version=++loadVersion.current;
         if (showSkeleton) setLoading(true);
         try {
             const res = await api.get("plans/" + planId, { params: { share: new URLSearchParams(window.location.search).get("share") || undefined } });
             if (!res.data.success) throw new Error();
+            if(version!==loadVersion.current) return;
             setPlan(res.data.plan);
             setError("");
         } catch {
-            setError(t("plans.loadError"));
+            if(version===loadVersion.current) setError(t("plans.loadError"));
         } finally {
-            if (showSkeleton) setLoading(false);
+            if (version===loadVersion.current) setLoading(false);
         }
     };
     useEffect(() => {
         void load(true);
+        return () => { loadVersion.current++; };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [planId, search]);
     useEffect(() => {
-        const onMembersUpdated = () => { void load(); };
+        const onMembersUpdated = (event:Event) => {
+            const detail = (event as CustomEvent).detail;
+            if (detail?.id && String(detail.id) !== planId) return;
+            if (detail?.plan) { loadVersion.current++;setPlan(detail.plan);setLoading(false); }
+            else void load();
+        };
         window.addEventListener("plan-members-updated", onMembersUpdated);
         window.addEventListener("plan-updated", onMembersUpdated);
         return () => {
@@ -126,16 +137,29 @@ export default function PlanPage() {
         String(date.getMonth() + 1).padStart(2, "0"),
         String(date.getDate()).padStart(2, "0")].join("-");
 
-    const action = async (fn: () => Promise<unknown>) => {
+    const complete = async () => {
+        if (!plan || pendingPlans[plan.id]) return;
+        setError("");
+        try {
+            await setCompleted(plan,!plan.completed_for_me);
+        } catch {
+            setError(t("plans.saveError"));
+        }
+    };
+    const toggleCancel = async () => {
+        if (!plan || saving) return;
+        const status = plan.status === "canceled" ? "upcoming" : "canceled";
         setSaving(true);
         setError("");
         try {
-            await fn();
-            await Promise.all([load(), refreshPlans()]);
-            return true;
+            await writePlan(plan.id,{status},async () => {
+                const {data} = await api.post("plans/" + plan.id + "/cancel",{cancel:status === "canceled"});
+                if (!data.success) throw new Error("Plan not updated");
+                setPlan(current => current?.id === plan.id ? {...current,status} : current);
+                return {status};
+            });
         } catch {
             setError(t("plans.saveError"));
-            return false;
         } finally {
             setSaving(false);
         }
@@ -165,10 +189,13 @@ export default function PlanPage() {
             if (planId) {
                 const { kind, ...changes } = payload;
                 void kind;
-                const result = await api.patch("plans/" + planId, changes);
-                if (!result.data.success) throw new Error();
+                await writePlan(Number(planId),changes,async () => {
+                    const result = await api.patch("plans/" + planId, changes);
+                    if (!result.data.success) throw new Error();
+                    setPlan(current => current?.id === Number(planId) ? {...current,...result.data.plan} : current);
+                    return result.data.plan;
+                });
                 stopEditing();
-                await Promise.all([load(), refreshPlans()]);
             } else {
                 const result = await api.post("plans", payload);
                 if (!result.data.success) throw new Error();
@@ -191,8 +218,7 @@ export default function PlanPage() {
         edit: startEditing,
         save: () => { if (draft) void save(draft); },
         stop: stopEditing,
-        toggleCancel: () => { if (planId && plan) void action(() => api.post("plans/" + planId + "/cancel",
-            { cancel: plan.status !== "canceled" })); },
+        toggleCancel,
         delete: () => {
             setConfirmDelete(true);
             document.querySelector(".planPage")?.scrollTo({ top: 0, behavior: "smooth" });
@@ -202,8 +228,7 @@ export default function PlanPage() {
         edit: startEditing,
         save: () => { if (draft && draft.name.trim() && draft.plan_date && !saving) void save(draft); },
         stop: stopEditing,
-        toggleCancel: () => { if (planId && plan && !saving) void action(() => api.post("plans/" + planId + "/cancel",
-            { cancel: plan.status !== "canceled" })); },
+        toggleCancel,
         delete: () => {
             setConfirmDelete(true);
             document.querySelector(".planPage")?.scrollTo({ top: 0, behavior: "smooth" });
@@ -289,12 +314,16 @@ export default function PlanPage() {
                             readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
                             value={value.start_time?.slice(0, 5) || ""}
                             onChange={event => changeDraft("start_time", event.target.value || null)}/>
+                        {editing && value.start_time && <ClearTimeButton label={t("plans.startTime")}
+                            onClear={() => changeDraft("start_time", null)}/>}
                         <span>–</span>
                         <input id="planInlineEnd" aria-label={t("plans.endTime")}
                             className="planDetailsInput" type="time"
                             readOnly={readOnly} tabIndex={readOnly ? -1 : 0}
                             value={value.end_time?.slice(0, 5) || ""}
                             onChange={event => changeDraft("end_time", event.target.value || null)}/>
+                        {editing && value.end_time && <ClearTimeButton label={t("plans.endTime")}
+                            onClear={() => changeDraft("end_time", null)}/>}
                     </div>}
                     {(plan.place || editing) && <div className="planMetadata">
                         <MapPinIcon size={20}/>
@@ -357,8 +386,7 @@ export default function PlanPage() {
                             <PlanComment planId={plan.id} disabled={plan.status === "canceled"}/>
                             {canComplete && <div className="doneButtDiv"><button className={"doneButt planDoneButton " +
                             (plan.completed_for_me ? "dbComp" : "dbMark")}
-                            disabled={saving} onClick={() => void action(() => api.post("plans/" + planId + "/complete",
-                                { completed: !plan.completed_for_me }))}>
+                            disabled={saving || !!pendingPlans[plan.id]} onClick={() => void complete()}>
                             {plan.completed_for_me ? <CheckCircleIcon size={20} weight="fill"/> : <CircleIcon size={20}/>}
                             {t(plan.completed_for_me ? "plans.undoCompletion" : "habitUi.complete")}
                         </button></div>}
@@ -368,7 +396,7 @@ export default function PlanPage() {
                 {plan.membership_status === "pending" ? <div className="planSection">
                     <p>{t("plans.replyInChat")}</p>
                 </div> : plan.membership_status === "accepted" ? <>
-                    <PlanReminders planId={plan.id} planDate={plan.plan_date}
+                    <PlanReminders planId={plan.id} key={plan.id} planDate={plan.plan_date}
                         startTime={plan.start_time} timezone={plan.timezone}/>
                     <PlanMembers plan={plan} onChanged={async () => {
                         await Promise.all([load(), refreshPlans()]);
@@ -381,9 +409,8 @@ export default function PlanPage() {
                     {mobileOpen === "comment" ? <button type="button" className="bottomOpen"
                         aria-label={t("plans.completion")} onClick={() => setMobileOpen("done")}>
                         {plan.completed_for_me ? <CheckCircleIcon weight="fill" size={22}/> : <CircleIcon size={22}/>}
-                    </button> : <button type="button" className="doneButtMobile" disabled={saving}
-                        onClick={() => void action(() => api.post("plans/" + planId + "/complete",
-                            { completed: !plan.completed_for_me }))}>
+                    </button> : <button type="button" className="doneButtMobile" disabled={saving || !!pendingPlans[plan.id]}
+                        onClick={() => void complete()}>
                         {plan.completed_for_me ? <CheckCircleIcon weight="fill" size={22}/> : <CircleIcon size={22}/>}
                         {t(plan.completed_for_me ? "plans.undoCompletion" : "habitUi.complete")}
                     </button>}

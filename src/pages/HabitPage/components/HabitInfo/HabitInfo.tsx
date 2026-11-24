@@ -7,7 +7,7 @@ import type { Habit } from "../../../../components/context/HabitsContext";
 import TagSelector from "../../../../components/ts/TagSelector";
 import DayChanger from "../../../../components/ts/DayChanger";
 import { initialChosenDays } from "../../../../components/ts/initialChosenDays";
-import { WarningCircle } from "@phosphor-icons/react";
+import { WarningCircle, XIcon } from "@phosphor-icons/react";
 import { TagIcon } from "../../utils/TagIcon";
 import { dateToCalendarFormat, formatDateFromString } from "../../../../components/ts/utils/dateToStr";
 
@@ -20,20 +20,21 @@ interface RedHabitProps {
 export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
     const { t } = useTranslation("common");
     const {
-        setNewName, setNewDescription, setNewPeriodicity,
+        localChanges, setNewName, setNewDescription, setNewPeriodicity,
         setNewDays, setNewStartTime, setNewEndTime, setNewTag,
         setNewCycleDaysActive, setNewCycleDaysRest
     } = useUpHabit();
 
-    const [name, setName] = useState<string>("");
-    const [desc, setDesc] = useState<string | undefined>("");
-    const [startTime, setStartTime] = useState<string>("");
-    const [endTime, setEndTime] = useState<string>("");
+    const draft = localChanges[habit.id] || {};
+    const name = String(draft.name ?? habit.name ?? "");
+    const desc = String(draft.desc ?? habit.desc ?? "");
+    const startTime = String(("start_time" in draft ? draft.start_time : habit.start_time) ?? "").slice(0, 5);
+    const endTime = String(("end_time" in draft ? draft.end_time : habit.end_time) ?? "").slice(0, 5);
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date | null>(null);
-    const [periodicity, setPeriodicity] = useState<string>("");
-    const [cycle_days_active, setCycleDaysActive] = useState<string>("");
-    const [cycle_days_rest, setCycleDaysRest] = useState<string>("");
+    const periodicity = String(draft.periodicity ?? habit.periodicity ?? "");
+    const cycle_days_active = String(("cycle_days_active" in draft ? draft.cycle_days_active : habit.cycle_days_active) ?? "");
+    const cycle_days_rest = String(("cycle_days_rest" in draft ? draft.cycle_days_rest : habit.cycle_days_rest) ?? "");
     const [ongoing, setOngoing] = useState<boolean>(false);
     const [selectedTag, setSelectedTag] = useState<string | undefined>();
     const [chosenDays, setChosenDays] = useState<{ value: number; label: string; chosen: boolean }[]>(initialChosenDays);
@@ -42,25 +43,8 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
         if (!habit) return;
         setStartDate(new Date(habit.start_date + "T12:00:00"));
         setEndDate(habit.end_date ? new Date(habit.end_date + "T12:00:00") : null);
-        setPeriodicity(habit.periodicity ?? "");
         setOngoing(Boolean(habit.ongoing));
 
-        if (name === "" || name === habit.name) {
-            setName(habit.name ?? "");
-        }
-        if (!desc || desc === habit.desc) {
-            setDesc(habit.desc ?? "");
-        }
-        if (!startTime || startTime === habit.start_time) {
-            setStartTime(habit.start_time ?? "");
-        }
-        if (!endTime || endTime === habit.end_time) {
-            setEndTime(habit.end_time ?? "");
-        }
-        if (!periodicity || periodicity === habit.periodicity) {
-            setCycleDaysActive(String(habit.cycle_days_active ?? ""));
-            setCycleDaysRest(String(habit.cycle_days_rest ?? ""));
-        }
         if (Array.isArray(habit.chosen_days)) {
             setChosenDays(initialChosenDays.map(day => ({
                 ...day,
@@ -80,21 +64,9 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
 
     const infoReadOnly = !(habit.access?.can_edit_info ?? !readOnly) || !ongoing;
 
-    const formatTimeInput = (val: string) => {
-        const digits = val.replace(/\D/g, "");
-        if (digits.length >= 3) {
-            let hh = digits.slice(0, 2);
-            let mm = digits.slice(2, 4);
-            if (parseInt(hh) > 23) hh = "23";
-            if (parseInt(mm) > 59) mm = "59";
-            return hh + ":" + mm;
-        }
-        return digits;
-    };
-    
     const toggleDay = (value: number) => {
         if (readOnly) return;
-        setPeriodicity("weekly");
+
         setNewPeriodicity(habit.id, "weekly");
 
         setChosenDays(prev => {
@@ -138,7 +110,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                         value={name}
                         minLength={1}
                         onChange={(e) => {
-                            setName(e.target.value);
+
                             setNewName(habit.id, e.target.value);
                         }}
                     />
@@ -151,10 +123,10 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     id="redHabitDesc"
                     className="addHabitInput redHabitDesc"
                     maxLength={120}
-                    value={desc || habit.desc}
+                    value={desc}
                     readOnly={infoReadOnly}
                     onChange={(e) => {
-                        setDesc(e.currentTarget.value);
+
                         setNewDescription(habit.id, e.currentTarget.value);
                     }}
                 />
@@ -172,7 +144,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     showOnly={readOnly || !ongoing}
                     arr={periodicityArr}
                     prop={(value) => {
-                        setPeriodicity(value as string);
+
                         setNewPeriodicity(habit.id, value as string);
                     }}
                     selected={periodicity || habit.periodicity}
@@ -189,13 +161,14 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                             type="number"
                             id="inputActive"
                             className="addHabitInput"
+                            readOnly={infoReadOnly}
                             placeholder="1"
                             pattern="[1-9]\d*"
                             min={1}
                             max={365}
                             onChange={(e) => {
-                                setCycleDaysActive(e.target.value)
-                                setNewCycleDaysActive(habit.id, Number(e.target.value))
+
+                                setNewCycleDaysActive(habit.id, e.target.value === "" ? null : e.target.valueAsNumber)
                             }}
                             value={cycle_days_active}
                         />
@@ -207,13 +180,14 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                             type="number"
                             id="inputRest"
                             className="addHabitInput"
+                            readOnly={infoReadOnly}
                             placeholder="1"
                             pattern="[1-9]\d*"
                             min={1}
                             max={365}
                             onChange={(e) => {
-                                setCycleDaysRest(e.target.value)
-                                setNewCycleDaysRest(habit.id, Number(e.target.value))
+
+                                setNewCycleDaysRest(habit.id, e.target.value === "" ? null : e.target.valueAsNumber)
                             }}
                             value={cycle_days_rest}
                         />
@@ -225,34 +199,26 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             )}
             <div className="addHabitTimeWrapper">
                 <div className="addHabitWrapper time">
-                    <label>{t("habitUi.startTime")}</label>
-                    <input
-                        type="text"
-                        placeholder="hh:mm"
-                        className="addHabitInput"
-                        value={startTime}
-                        readOnly={readOnly || !ongoing}
-                        onChange={(e) => {
-                            const formattedTime = formatTimeInput(e.target.value);
-                            setStartTime(formattedTime);
-                            setNewStartTime(habit.id, formattedTime);
-                        }}
-                    />
+                    <label htmlFor="habitStartTime">{t("habitUi.startTime")}</label>
+                    <div className="timeInputShell">
+                        <input id="habitStartTime" type="time" className="addHabitInput"
+                            value={startTime} readOnly={infoReadOnly}
+                            onChange={e => setNewStartTime(habit.id, e.target.value || null)}/>
+                        {startTime && !infoReadOnly && <button type="button" className="timeInputClear"
+                            aria-label={t("habitUi.clearTime") + " · " + t("habitUi.startTime")}
+                            onClick={() => setNewStartTime(habit.id, null)}><XIcon size={18}/></button>}
+                    </div>
                 </div>
                 <div className="addHabitWrapper time">
-                    <label>{t("habitUi.endTime")}</label>
-                    <input
-                        type="text"
-                        placeholder="hh:mm"
-                        className="addHabitInput"
-                        value={endTime}
-                        readOnly={readOnly || !ongoing}
-                        onChange={(e) => {
-                            const formattedTime = formatTimeInput(e.target.value);
-                            setEndTime(formattedTime);
-                            setNewEndTime(habit.id, formattedTime);
-                        }}
-                    />
+                    <label htmlFor="habitEndTime">{t("habitUi.endTime")}</label>
+                    <div className="timeInputShell">
+                        <input id="habitEndTime" type="time" className="addHabitInput"
+                            value={endTime} readOnly={infoReadOnly}
+                            onChange={e => setNewEndTime(habit.id, e.target.value || null)}/>
+                        {endTime && !infoReadOnly && <button type="button" className="timeInputClear"
+                            aria-label={t("habitUi.clearTime") + " · " + t("habitUi.endTime")}
+                            onClick={() => setNewEndTime(habit.id, null)}><XIcon size={18}/></button>}
+                    </div>
                 </div>
             </div>
             <div className="addHabitWrapper">

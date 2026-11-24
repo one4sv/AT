@@ -149,8 +149,9 @@ export default function PermissionsSettings() {
     const defaultRoleId = roles.find(role => role.is_default)?.role_id ?? null;
     const chosenDefaultRoleId = editedValue("group", group.id, "default_role_id", defaultRoleId);
 
+    const invalidRank = changes.some(change => change.label === "rank" && change.value === "");
     const save = async () => {
-        if (saving || loading || changes.length === 0) return;
+        if (saving || loading || changes.length === 0 || invalidRank) return;
 
         const editedRoleNames = roles.map(role =>
             String(editedValue("role", role.role_id, "role_name", role.role_name) || "").trim()
@@ -339,11 +340,11 @@ export default function PermissionsSettings() {
                                                         type="number"
                                                         min={1}
                                                         max={99}
-                                                        value={Number(editedValue("role", selectedRole.role_id, "rank", selectedRole.rank))}
+                                                        value={String(editedValue("role", selectedRole.role_id, "rank", selectedRole.rank) ?? "")}
                                                         disabled={!canEditRole || saving}
                                                         onChange={event => {
-                                                            const value = Number(event.target.value);
-                                                            if (value >= 1 && value <= 99) {
+                                                            const value = event.target.value === "" ? "" : event.target.valueAsNumber;
+                                                            if (value === "" || (Number.isInteger(value) && value >= 1 && value <= 99)) {
                                                                 changeValue("role", selectedRole.role_id, "rank", value, selectedRole.rank);
                                                             }
                                                         }}
@@ -443,7 +444,7 @@ export default function PermissionsSettings() {
                         <button
                             type="button"
                             className="rolesModalSave"
-                            disabled={saving || changes.length === 0}
+                            disabled={saving || invalidRank || changes.length === 0}
                             onClick={() => void save()}
                         >
                             {saving ? "Сохраняем…" : "Сохранить"}

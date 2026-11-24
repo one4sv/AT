@@ -78,7 +78,8 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             return;
         }
         if (
-            selectedperiodicity === "cycle" && (!cycle_days_active || !cycle_days_rest)
+            selectedperiodicity === "cycle" && [cycle_days_active,cycle_days_rest].some(days =>
+                !days || !Number.isInteger(Number(days)) || Number(days) < 1 || Number(days) > 365)
         ) {
             showNotification("error", t("habitUi.enterCycle"));
             return;

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusIcon, TargetIcon, PencilSimpleIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
-import { goalsChanged } from "../hooks/useGoalsWorkspace";
+import { goalsChanged, previewGoal } from "../hooks/useGoalsWorkspace";
 import { useHabitGoals, hasHabitGoalLink } from "../hooks/useHabitGoals";
 import { useHabitGoalDisplay } from "../hooks/useHabitGoalDisplay";
 import SelectList from "../ts/SelectList";
@@ -54,13 +54,17 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
     const openDetails=(goal:Goal)=>setBlackout({seted:true,module:"GoalDetails",options:{id:String(goal.id)}});
     const choose=async(goalId:number)=>{
         if(!eligible || saving) return;
+        const item=available.find(goal=>goal.id===goalId);
+        if(!item) return;
+        const finish=previewGoal(user.id,goalId,{habit_ids:[...(item.habit_ids || []),habitId]});
         setSaving(true);
         try{
             const response=await api.post("goal-workspace/"+goalId+"/links",{kind:"habit",id:habitId});
             if(!response.data?.success) throw new Error("Link failed");
+            finish(response.data.goal);
             goalsChanged();
             showNotification("success",t("updated"));
-        }catch{showNotification("error",t("saveError"));}
+        }catch{finish();showNotification("error",t("saveError"));}
         finally{setSaving(false);}
     };
     return <div className={slideHabitId!==undefined ? "habitInnerSlide habitGoalSlide" : "addHabitDiv addPlanDiv goalWorkspaceModal goalPicker"}>

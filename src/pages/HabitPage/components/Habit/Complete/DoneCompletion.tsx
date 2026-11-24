@@ -8,6 +8,7 @@ import {
     TrashIcon,
 } from "@phosphor-icons/react"
 
+import ClearTimeButton from "../../../../../components/ts/ClearTimeButton"
 import "../../../scss/doneComp.scss"
 import { useEffect, useRef, useState } from "react"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
@@ -47,7 +48,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
 
     const [editing, setEditing] = useState<Set<number>>(new Set())
     const [loading, setLoading] = useState<Set<number>>(new Set())
-    const [completing, setCompleting] = useState<Set<number>>(new Set())
+    const [completing, setCompleting] = useState<Map<number,string | null>>(new Map())
     const saving = useRef(new Set<number>())
     const mounted = useRef(true)
     const editingRef = useRef(editing)
@@ -96,7 +97,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
 
             const res = await api.post(
                 `checklist/${path}`,
-                { ...b, name: b.name.trim() }
+                { ...b, name: b.name.trim(), start_time: b.start_time || null, end_time: b.end_time || null }
             )
             if (!mounted.current) return
 
@@ -140,7 +141,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
 
     const toggleComplete = async (block: DoneCompletion) => {
         if (!isMy || !habit || block.isNew || completing.has(block.id)) return;
-        setCompleting(previous => new Set(previous).add(block.id));
+        setCompleting(previous => new Map(previous).set(block.id, block.completed_at ? null : new Date().toISOString()));
         try {
             const response = await api.post("checklist/toggle", { id: block.id });
             if (!response.data.success) throw new Error(t("habitPageUi.tasks.toggleFailed"));
@@ -152,7 +153,7 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                 : t("habitPageUi.tasks.toggleFailed"));
         } finally {
             setCompleting(previous => {
-                const next = new Set(previous);
+                const next = new Map(previous);
                 next.delete(block.id);
                 return next;
             });
@@ -177,7 +178,8 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
         <div className="doneCompletionDiv">
             <div className="doneComps">
                 {!filteredBlocks.length && <div className="completionEmpty"><ListChecksIcon size={32}/><span>{t("activityCompletion.noTasks")}</span></div>}
-                {filteredBlocks.map(b => {
+                {filteredBlocks.map(block => {
+                    const b = completing.has(block.id) ? {...block,completed_at:completing.get(block.id)} : block;
                     const isEditing = editing.has(b.id)
                     const isLoading = loading.has(b.id)
 
@@ -205,6 +207,8 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                                 onChange={e => updateBlock(b.id, "start_time", e.target.value)}
                                             />
                                         </label>
+                                        {b.start_time && <ClearTimeButton label={t("activityCompletion.startTime")}
+                                            disabled={isLoading} onClear={() => updateBlock(b.id,"start_time","")}/>}
                                         <label className="doneCompTimeField">
                                             <span>{t("habitPageUi.schedule.to")}</span>
                                             <input
@@ -216,6 +220,8 @@ export default function DoneCompletion({ isMy }: { isMy: boolean }) {
                                                 onChange={e => updateBlock(b.id, "end_time", e.target.value)}
                                             />
                                         </label>
+                                        {b.end_time && <ClearTimeButton label={t("activityCompletion.endTime")}
+                                            disabled={isLoading} onClear={() => updateBlock(b.id,"end_time","")}/>}
                                     </div>
                                 ) : (b.start_time || b.end_time) && (
                                     <span className="scheduleButtSpan">{formatTime(b.start_time, b.end_time)}</span>

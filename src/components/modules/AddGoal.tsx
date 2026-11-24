@@ -1,9 +1,10 @@
+import { numberInputValue } from "../ts/utils/numberInputValue";
 import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { XIcon, PlusIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
-import { goalsChanged } from "../hooks/useGoalsWorkspace";
+import { goalsChanged, previewGoal } from "../hooks/useGoalsWorkspace";
 import { api } from "../ts/api";
 import CalendarInput from "../ts/CalendarInput";
 import TA from "../ts/TA";
@@ -17,7 +18,7 @@ import { goalMetricCompatible, goalHabitMetricType, type Goal, type GoalMode, ty
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "./scss/goalWorkspace.scss";
 
-type DraftStage = {title:string;completion_percent:number};
+type DraftStage = {title:string;completion_percent:number | ""};
 const dateValue = (date:Date | null) => date ? [date.getFullYear(),
     String(date.getMonth()+1).padStart(2,"0"),String(date.getDate()).padStart(2,"0")].join("-") : null;
 
@@ -37,8 +38,8 @@ export default function AddGoal() {
     const [autoComplete,setAutoComplete]=useState(false);
     const [repeat,setRepeat]=useState<GoalRepeat>("none");
     const [reminderDays,setReminderDays]=useState<number | null>(null);
-    const [targetDays,setTargetDays]=useState(30);
-    const [dailyMinutes,setDailyMinutes]=useState(120);
+    const [targetDays,setTargetDays]=useState<number | "">(30);
+    const [dailyMinutes,setDailyMinutes]=useState<number | "">(120);
     const [loadError,setLoadError]=useState(false);
     const [loading,setLoading]=useState(Boolean(goalId));
     const [saving,setSaving]=useState(false);
@@ -46,10 +47,10 @@ export default function AddGoal() {
     const [description,setDescription]=useState("");
     const [dueDate,setDueDate]=useState<Date | null>(null);
     const [mode,setMode]=useState<GoalMode>("manual");
-    const [metricStart,setMetricStart]=useState(0);
-    const [metricTarget,setMetricTarget]=useState(100);
+    const [metricStart,setMetricStart]=useState<number | "">(0);
+    const [metricTarget,setMetricTarget]=useState<number | "">(100);
     const [unit,setUnit]=useState("");
-    const [metricShare,setMetricShare]=useState(50);
+    const [metricShare,setMetricShare]=useState<number | "">(50);
     const [stages,setStages]=useState<DraftStage[]>([]);
 
     useEffect(()=>{
@@ -96,37 +97,43 @@ export default function AddGoal() {
         event.preventDefault();
         if(saving || loadError || !name.trim()) return;
         if(!modeChoices.includes(mode)) {showNotification("error",t("invalidAutomatic"));return;}
-        if(automatic && (!linkedHabits.length || (mode!=="total_timer" && (!Number.isInteger(targetDays) || targetDays<1 || targetDays>3650)) || (mode==="daily_timer" && (!Number.isInteger(dailyMinutes) || dailyMinutes<1 || dailyMinutes>1440)))){
+        if(automatic && (!linkedHabits.length || (mode!=="total_timer" && (!Number.isInteger(targetDays) || targetDays==="" || targetDays<1 || targetDays>3650)) || (mode==="daily_timer" && (!Number.isInteger(dailyMinutes) || dailyMinutes==="" || dailyMinutes<1 || dailyMinutes>1440)))){
             showNotification("error",t("invalidAutomatic"));return;
         }
-        if((mode==="metric" || mode==="combined") && metricStart===metricTarget){
+        if((mode==="metric" || mode==="combined") && (metricStart==="" || metricTarget==="" || metricStart===metricTarget)){
             showNotification("error",t("invalidMetric"));
             return;
         }
-        if(mode==="daily_counter" && (!Number.isInteger(metricTarget) || metricTarget<1 || metricTarget>1000000000)){
+        if(mode==="daily_counter" && (!Number.isInteger(metricTarget) || metricTarget==="" || metricTarget<1 || metricTarget>1000000000)){
             showNotification("error",t("invalidCounter"));return;
         }
-        if(mode==="total_timer" && (!Number.isInteger(metricTarget) || metricTarget<1 || metricTarget>1000000000)){
+        if(mode==="total_timer" && (!Number.isInteger(metricTarget) || metricTarget==="" || metricTarget<1 || metricTarget>1000000000)){
             showNotification("error",t("invalidTotalTimer"));return;
         }
-        if(usesStages && stages.some(s=>!s.title.trim() || !Number.isFinite(s.completion_percent) || s.completion_percent<0 || s.completion_percent>100)){
+        if(usesStages && stages.some(s=>!s.title.trim() || !Number.isFinite(s.completion_percent) || s.completion_percent==="" || s.completion_percent<0 || s.completion_percent>100)){
             showNotification("error",t("invalidStage"));
             return;
         }
+        const finish=goalId ? previewGoal(user.id,Number(goalId),{name:name.trim(),description,due_date:dateValue(dueDate),
+            habit_ids:linkedHabits.map(h=>h.id),progress_mode:mode,auto_complete:autoComplete,repeat_frequency:repeat}) : undefined;
         setSaving(true);
         try{
             const payload={name:name.trim(),description,due_date:dateValue(dueDate),
-                progress_mode:mode,repeat_frequency:repeat,auto_complete:autoComplete,reminder_days:dueDate?reminderDays:null,metric_start:metricStart,metric_target:metricTarget,
-                metric_unit:unit,metric_share:metricShare/100,target_days:targetDays,daily_minutes:dailyMinutes,
+                progress_mode:mode,repeat_frequency:repeat,auto_complete:autoComplete,reminder_days:dueDate?reminderDays:null,metric_start:metricStart===""?undefined:metricStart,metric_target:metricTarget===""?undefined:metricTarget,
+                metric_unit:unit,metric_share:metricShare===""?undefined:metricShare/100,
+                target_days:targetDays===""?undefined:targetDays,daily_minutes:dailyMinutes===""?undefined:dailyMinutes,
                 habit_ids:linkedHabits.map(h=>h.id),plan_ids:linkedPlans.map(p=>p.id)};
             const response=goalId ? await api.patch("goal-workspace/"+goalId,payload) :
                 await api.post("goal-workspace",{...payload,...(fixedSharedHabit?{shared_habit_id:fixedSharedHabit}:{}),
                     stages:usesStages ? stages.map(s=>({title:s.title.trim(),completion_percent:s.completion_percent})) : []});
             if(!response.data?.success) throw new Error("Goal save failed");
+            if(response.data.goal) (finish ?? previewGoal(user.id,response.data.goal.id,{}))(response.data.goal);
+            else finish?.();
             goalsChanged();
             setBlackout({seted:false});
             showNotification("success",t(goalId?"updated":"created"));
         }catch{
+            finish?.();
             showNotification("error",t("saveError"));
         }finally{setSaving(false);}
     };
@@ -179,13 +186,13 @@ export default function AddGoal() {
                 <div className="goalWorkspaceMetrics">
                     <div className="addHabitWrapper">
                         <label htmlFor="goalStart">{t("start")}</label>
-                        <input id="goalStart" className="addHabitInput" type="number"
-                            value={metricStart} onChange={e=>setMetricStart(Number(e.target.value))}/>
+                        <input id="goalStart" className="addHabitInput" type="number" required
+                            value={metricStart} onChange={e=>setMetricStart(numberInputValue(e.target))}/>
                     </div>
                     <div className="addHabitWrapper">
                         <label htmlFor="goalTarget">{t("target")}</label>
-                        <input id="goalTarget" className="addHabitInput" type="number"
-                            value={metricTarget} onChange={e=>setMetricTarget(Number(e.target.value))}/>
+                        <input id="goalTarget" className="addHabitInput" type="number" required
+                            value={metricTarget} onChange={e=>setMetricTarget(numberInputValue(e.target))}/>
                     </div>
                 </div>
                 <div className="addHabitWrapper">
@@ -196,29 +203,29 @@ export default function AddGoal() {
             </>}
             {mode==="combined" && <div className="addHabitWrapper">
                 <label htmlFor="goalShare">{t("metricShare")}</label>
-                <input id="goalShare" className="addHabitInput" type="number" min={0} max={100} step={5}
-                    value={metricShare} onChange={e=>setMetricShare(Number(e.target.value))}/>
+                <input id="goalShare" className="addHabitInput" type="number" required min={0} max={100} step={5}
+                    value={metricShare} onChange={e=>setMetricShare(numberInputValue(e.target))}/>
             </div>}
             {automatic && modeChoices.includes(mode) && <div className="goalWorkspaceField">
                 {mode!=="total_timer" && <>
                     <label htmlFor="goalTargetDays">{t("targetDays")}</label>
-                    <input id="goalTargetDays" className="addHabitInput" type="number" min={1} max={3650}
-                        value={targetDays} onChange={e=>setTargetDays(Number(e.target.value))}/>
+                    <input id="goalTargetDays" className="addHabitInput" type="number" required min={1} max={3650}
+                        value={targetDays} onChange={e=>setTargetDays(numberInputValue(e.target))}/>
                 </>}
                 {mode==="total_timer" && <>
                     <label htmlFor="goalTotalMinutes">{t("totalMinutes")}</label>
-                    <input id="goalTotalMinutes" className="addHabitInput" type="number" min={1} max={1000000000} step={1}
-                        value={metricTarget} onChange={e=>setMetricTarget(Number(e.target.value))}/>
+                    <input id="goalTotalMinutes" className="addHabitInput" type="number" required min={1} max={1000000000} step={1}
+                        value={metricTarget} onChange={e=>setMetricTarget(numberInputValue(e.target))}/>
                 </>}
                 {mode==="daily_timer" && <>
                     <label htmlFor="goalDailyMinutes">{t("dailyMinutes")}</label>
-                    <input id="goalDailyMinutes" className="addHabitInput" type="number" min={1} max={1440}
-                        value={dailyMinutes} onChange={e=>setDailyMinutes(Number(e.target.value))}/>
+                    <input id="goalDailyMinutes" className="addHabitInput" type="number" required min={1} max={1440}
+                        value={dailyMinutes} onChange={e=>setDailyMinutes(numberInputValue(e.target))}/>
                 </>}
                 {mode==="daily_counter" && <>
                     <label htmlFor="goalDailyCounter">{t("dailyCounterTarget")}</label>
-                    <input id="goalDailyCounter" className="addHabitInput" type="number" min={1} max={1000000000} step={1}
-                        value={metricTarget} onChange={e=>setMetricTarget(Number(e.target.value))}/>
+                    <input id="goalDailyCounter" className="addHabitInput" type="number" required min={1} max={1000000000} step={1}
+                        value={metricTarget} onChange={e=>setMetricTarget(numberInputValue(e.target))}/>
                 </>}
                 <small>{t(mode==="daily_counter"?"counterHint":mode==="total_timer"?"totalTimerHint":"automaticHint")}</small>
             </div>}
@@ -258,9 +265,9 @@ export default function AddGoal() {
                         placeholder={t("stageTitle")} aria-label={t("stageTitle")} value={s.title}
                         onChange={e=>setStages(old=>old.map((v,j)=>j===i?{...v,title:e.target.value}:v))}/>
                     <div className="goalStagePercent">
-                        <input className="addHabitInput" type="number" min={0} max={100} step={0.01}
+                        <input className="addHabitInput" type="number" required min={0} max={100} step={0.01}
                             aria-label={t("stagePercent")} value={s.completion_percent}
-                            onChange={e=>setStages(old=>old.map((v,j)=>j===i?{...v,completion_percent:Number(e.target.value)}:v))}/>
+                            onChange={e=>setStages(old=>old.map((v,j)=>j===i?{...v,completion_percent:numberInputValue(e.target)}:v))}/>
                         <span aria-hidden="true">%</span>
                     </div>
                     <button type="button" className="goalStageRemove" aria-label={t("removeStage")}

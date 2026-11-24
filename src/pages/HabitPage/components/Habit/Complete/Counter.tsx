@@ -113,7 +113,12 @@ export default function Counter({ isMy }: { isMy:boolean }) {
     }
     const saveMin = (el: HTMLElement) => {
         if (!isMy) return
-        const newMin = parseInt(el.textContent || "0", 10) || 0
+        const text = el.textContent?.trim()
+        const newMin = Number(text)
+        if (!text || !Number.isSafeInteger(newMin) || newMin < 0) {
+            el.textContent = String(minCount)
+            return
+        }
         if (counterSettings && newMin !== counterSettings.min_count) {
             updateCounterSetting("min_counter", newMin)
         }
@@ -139,7 +144,6 @@ export default function Counter({ isMy }: { isMy:boolean }) {
                     onKeyDown={(e) => {
                         if (e.key === "Enter") {
                             e.preventDefault()
-                            saveMin(e.currentTarget)
                             e.currentTarget.blur()
                         }
                     }}
@@ -167,7 +171,12 @@ export default function Counter({ isMy }: { isMy:boolean }) {
                             contentEditable={edit === "left" && !isHistorical && isMy}
                             suppressContentEditableWarning
                             onBlur={(e) => {
-                                const newVal = parseInt(e.currentTarget.textContent || "0", 10) || 0
+                                const text = e.currentTarget.textContent?.trim()
+                                const newVal = Number(text)
+                                if (!text || !Number.isSafeInteger(newVal)) {
+                                    e.currentTarget.textContent = String(counterSettings.red_counter_left ?? 0)
+                                    return
+                                }
                                 if (newVal !== counterSettings.red_counter_left) {
                                     updateCounterSetting("red_counter_left", newVal)
                                 }
@@ -210,7 +219,12 @@ export default function Counter({ isMy }: { isMy:boolean }) {
                             contentEditable={edit === "right" && !isHistorical && isMy}
                             suppressContentEditableWarning
                             onBlur={(e) => {
-                                const newVal = parseInt(e.currentTarget.textContent || "0", 10) || 0
+                                const text = e.currentTarget.textContent?.trim()
+                                const newVal = Number(text)
+                                if (!text || !Number.isSafeInteger(newVal)) {
+                                    e.currentTarget.textContent = String(counterSettings.red_counter_right ?? 0)
+                                    return
+                                }
                                 if (newVal !== counterSettings.red_counter_right) {
                                     updateCounterSetting("red_counter_right", newVal)
                                 }

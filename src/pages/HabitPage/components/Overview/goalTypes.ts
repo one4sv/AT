@@ -76,6 +76,22 @@ export function stagePercentages(stages:GoalStage[]) {
     return result;
 }
 
+export function previewGoalProgress(goal:Goal):number {
+    const clamp=(value:number)=>Math.min(100, Math.max(0,value));
+    const {progress_mode:mode,metric_target:target,metric_start:start,metric_current:current}=goal;
+    const metric=target===start ? 0 : clamp((current-start)/(target-start)*100);
+    const stages=goal.stages || [];
+    const completed=stages.filter(stage=>stage.completed_at);
+    const weights=stages.reduce((sum,stage)=>sum+Number(stage.weight),0);
+    const percentages=stagePercentages(stages);
+    const milestones=stages.some(stage=>stage.completion_percent!=null)
+        ? Math.max(0,...completed.map(stage=>percentages.get(stage.id) ?? 0))
+        : weights ? completed.reduce((sum,stage)=>sum+Number(stage.weight),0)/weights*100 : 0;
+    const progress=mode==="manual" ? goal.manual_progress : mode==="metric" ? metric :
+        mode==="milestones" ? milestones : mode==="combined" ? metric*goal.metric_share+milestones*(1-goal.metric_share) : goal.progress;
+    return Math.round(clamp(progress)*100)/100;
+}
+
 // /habits returns both the joined relation (array) and the normalized settings object.
 export function goalHabitMetricType(habit?: {settings?:{metric_type?:string} | null;habits_settings?:{metric_type?:string} | {metric_type?:string}[] | null}) {
     const relation=habit?.habits_settings;

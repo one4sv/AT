@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { PencilSimpleIcon, UserCircle, DotsThreeVerticalIcon, XIcon, CheckIcon, HeartIcon, ArrowBendUpLeftIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
+import { toggleLike, withLike } from "../../components/ts/utils/toggleLike";
 import { api } from "../../components/ts/api";
 import { useUser } from "../../components/hooks/UserHook";
 import { useContextMenu } from "../../components/hooks/ContextMenuHook";
@@ -46,7 +47,7 @@ export default function PostComments({ id, share, onSent, children, onBack, onEd
     const [ error, setError ] = useState("");
     const [ retry, setRetry ] = useState(0);
     const [ replyTo, setReplyTo ] = useState<Comment | null>(null);
-    const [ likingId, setLikingId ] = useState<number | null>(null);
+    const [ likingIds, setLikingIds ] = useState<Set<number>>(new Set());
     const [ editingId, setEditingId ] = useState<number | null>(null);
     const [ editText, setEditText ] = useState("");
     const [ changingId, setChangingId ] = useState<number | null>(null);
@@ -136,21 +137,23 @@ export default function PostComments({ id, share, onSent, children, onBack, onEd
     };
 
     const likeComment = async (commentId: number) => {
-        if (!user.id) return;
-        setLikingId(commentId);
+        const userId = user.id;
+        const item = comments.find(comment => comment.id === commentId);
+        if (!userId || !item || likingIds.has(commentId)) return;
+        setLikingIds(previous => new Set(previous).add(commentId));
         try {
-            const res = await api.post(`comments/${commentId}/like`);
-            if (!res.data.success) throw new Error("Like failed");
-            setComments(previous => previous.map(comment => {
-                if (comment.id !== commentId) return comment;
-                const likes = (comment.likes || []).filter(id => id !== user.id);
-                if (res.data.liked) likes.push(user.id!);
-                return { ...comment, likes };
-            }));
+            await toggleLike(`comments/${commentId}/like`,commentId,userId,(item.likes || []).includes(userId),liked => {
+                setComments(previous => previous.map(comment => comment.id === commentId
+                    ? {...comment,likes:withLike(comment.likes || [],userId,liked)} : comment));
+            });
         } catch {
             setError("post.commentLikeFailed");
         } finally {
-            setLikingId(null);
+            setLikingIds(previous => {
+                const next = new Set(previous);
+                next.delete(commentId);
+                return next;
+            });
         }
     };
 
@@ -260,7 +263,7 @@ export default function PostComments({ id, share, onSent, children, onBack, onEd
                                 </div>}
                                 <AccPostMedia red={false} media={comment.files ?? []} />
                                 <div className="commentReactions">
-                                    <button type="button" className="commentLike" disabled={!user.id || likingId === comment.id} aria-pressed={(comment.likes || []).includes(user.id || "")} onClick={() => void likeComment(comment.id)}>
+                                    <button type="button" className="commentLike" disabled={!user.id || likingIds.has(comment.id)} aria-pressed={(comment.likes || []).includes(user.id || "")} onClick={() => void likeComment(comment.id)}>
                                         <HeartIcon weight={(comment.likes || []).includes(user.id || "") ? "fill" : "regular"} color={(comment.likes || []).includes(user.id || "") ? "#d60000" : undefined} /> {(comment.likes || []).length}
                                     </button>
                                     {user.id && <button type="button" className="commentReply" onClick={() => setReplyTo(comment)}>

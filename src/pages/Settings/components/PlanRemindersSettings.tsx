@@ -31,12 +31,15 @@ export default function PlanRemindersSettings({ search }: { search: string }) {
 
     const save = async (next: Preferences) => {
         if (saving || loading) return;
+        const previous = prefs;
+        setPrefs(next);
         setSaving(true);
         try {
             const result = await api.post("settings/plan-reminders", next);
             if (!result.data?.success) throw new Error("Failed to save plan reminder settings");
             setPrefs(result.data.preferences);
         } catch {
+            setPrefs(previous);
             showNotification("error", t("notifications.remindersSaveError"));
         } finally {
             setSaving(false);

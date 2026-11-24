@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useCallback } from "react";
+import { createContext, useState, useEffect, useCallback, useRef, useMemo } from "react";
 import type { ReactNode } from "react";
 import axios from "axios";
 import { useNote } from "../hooks/NoteHook";
@@ -59,7 +59,10 @@ interface HabitResponse {
     error?: string;
     cookie?: boolean;
 }
+type QuickFields = Partial<Pick<Habit,"pinned" | "ongoing">> & {end_date?:string | null};
 export interface HabitContextType {
+    pendingHabit: (id:number) => QuickFields | undefined;
+    saveQuickFields: (id:number,fields:QuickFields,onSaved:()=>Promise<void>) => Promise<void>;
     habits: Habit[] | null;
     loadingHabits: boolean;
     refetchHabits: () => Promise<void>;
@@ -77,9 +80,38 @@ export const HabitsProvider = ({
         user,
         initialLoading
     } = useUser();
-    const [habits, setHabits] = useState<Habit[] | null>(null);
+    const [confirmedHabits, setHabits] = useState<Habit[] | null>(null);
     const [loadingHabits, setLoadingHabits] = useState(true);
     const [newOrderHabits, setNewOrderHabits] = useState<string[] | undefined>();
+    const account = useRef(user.id);
+    account.current = user.id;
+    const pendingKeys = useRef(new Set<string>());
+    const [pending,setPending] = useState<Record<string,QuickFields>>({});
+    const pendingHabit = (id:number) => pending[user.id + ":" + id];
+    const habits = useMemo(() => confirmedHabits?.map(habit => {
+        const patch = pendingHabit(habit.id);
+        return patch ? {...habit,...patch,end_date:"end_date" in patch ? patch.end_date ?? "" : habit.end_date} : habit;
+    }) ?? null, [confirmedHabits,pending,user.id]);
+    const saveQuickFields = async (id:number,fields:QuickFields,onSaved:()=>Promise<void>) => {
+        const requester = user.id;
+        const key = requester + ":" + id;
+        if (!requester || pendingKeys.current.has(key)) return;
+        pendingKeys.current.add(key);
+        setPending(previous => ({...previous,[key]:fields}));
+        try {
+            const {data} = await api.post("updatehabit",{habit_id:id,table:"habits",...fields});
+            if (!data.success) throw new Error("Activity update failed");
+            if (requester !== account.current) return;
+            await onSaved();
+        } finally {
+            pendingKeys.current.delete(key);
+            setPending(previous => {
+                const next = {...previous};
+                delete next[key];
+                return next;
+            });
+        }
+    };
     const refetchHabits = useCallback(
         async () => {
             try {
@@ -147,7 +179,7 @@ export const HabitsProvider = ({
     return (
         <HabitsContext.Provider
             value={{
-                habits,
+                habits, pendingHabit, saveQuickFields,
                 loadingHabits,
                 refetchHabits,
                 newOrderHabits,

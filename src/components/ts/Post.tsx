@@ -13,7 +13,7 @@ import { useUser } from "../hooks/UserHook";
 import { useSettings } from "../hooks/SettingsHook";
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { habitIcon } from "./habitIcon";
-import { api } from "./api";
+import { toggleLike, withLike } from "./utils/toggleLike";
 import HighlightText from "./HighlightText";
 import AccPostMedia from "../../pages/Acc/utils/AccPostMedia";
 import formatCreated from "../../pages/Acc/utils/formatCreated";
@@ -53,28 +53,16 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
         return () => observer.disconnect();
     }, [post.text, post.content, expanded]);
     const like = async (id: number) => {
+        const userId = user.id;
+        if (!userId) return;
         try {
-            const res = await api.post("/like", {
-                id
+            await toggleLike("/like",id,userId,post.likes.includes(userId),liked => {
+                const update = (item:PostType) => item.id === id ? {...item,likes:withLike(item.likes,userId,liked)} : item;
+                setLocalPost(update);
+                setPosts(previous => previous.map(update));
             });
-            if (res.data.success) {
-                setLocalPost(
-                    p => ({
-                        ...p,
-                        likes: res.data.liked ? [...p.likes.filter(uid => uid !== user.id), user.id] : p.likes.filter(uid => uid !== user.id)
-                    })
-                );
-                setPosts(
-                    prev => prev?.map(
-                        p => p.id === id ? {
-                            ...p,
-                            likes: res.data.liked ? [...p.likes, user.id] : p.likes.filter((uid: string | null) => uid !== user.id)
-                        } : p
-                    )
-                );
-            }
-        } catch (e) {
-            console.error("Ошибка при лайке:", e);
+        } catch {
+            showNotification("error",t("editor.likeFailed"));
         }
     };
 

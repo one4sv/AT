@@ -157,7 +157,7 @@ test("habit and plan indicators preserve resting colors and active inner_text", 
     assert.match(style, /\.habit\.active \.activityIndicators/);
     assert.match(style, /color: var\(--inner_text\)/);
     assert.match(style, /color: var\(--borderWh\)/);
-    assert.match(sm, /showIndicators progress=/);
+    assert.match(sm, /showIndicators\b[^>]*\bprogress=\{progress\[String\(entry\.habit\.id\)\]\}/);
     assert.match(day, /ActivityIndicators/);
 });
 

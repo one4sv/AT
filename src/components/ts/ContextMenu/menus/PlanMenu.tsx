@@ -4,13 +4,12 @@ import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import { usePlans } from "../../../hooks/PlansHook";
 import { useNote } from "../../../hooks/NoteHook";
 import { useSettings } from "../../../hooks/SettingsHook";
-import { api } from "../../api";
 import LinkButton from "../buttons/LinkButton";
 
 export default function PlanMenu() {
     const { t } = useTranslation("common");
     const { menu, closeMenu } = useContextMenu();
-    const { setPin, refreshPlans, plans } = usePlans();
+    const { setPin, setCompleted, plans } = usePlans();
     const { privateShow } = useSettings();
     const { showNotification } = useNote();
     const { options } = menu;
@@ -40,9 +39,7 @@ export default function PlanMenu() {
     const complete = async () => {
         closeMenu();
         try {
-            await api.post("plans/" + options.id + "/complete", { completed: !options.completed });
-            await refreshPlans();
-            window.dispatchEvent(new CustomEvent("plan-updated", { detail: { id: options.id } }));
+            if (target) await setCompleted(target, !options.completed);
         } catch {
             showNotification("error", t("plans.saveError"));
         }

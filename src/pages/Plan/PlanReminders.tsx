@@ -47,6 +47,8 @@ export default function PlanReminders({ planId, planDate, startTime, timezone }:
 
     const save = async (next: number[]) => {
         if (saving || loading) return;
+        const previous = rules;
+        setRules([...next].sort((a,b) => a-b));
         setSaving(true);
         setError("");
         try {
@@ -56,6 +58,7 @@ export default function PlanReminders({ planId, planDate, startTime, timezone }:
             if (!response.data?.success) throw new Error();
             setRules(response.data.rules);
         } catch {
+            setRules(previous);
             setError(t("plans.remindersSaveError"));
         } finally {
             setSaving(false);

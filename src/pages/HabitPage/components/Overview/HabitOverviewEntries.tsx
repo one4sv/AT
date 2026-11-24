@@ -7,7 +7,7 @@ import { useDone } from "../../../../components/hooks/DoneHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { describeEntrySubtitle, type DayEntry } from "../../../../components/ts/utils/dayTimeline";
-import { api } from "../../../../components/ts/api";
+import { useNote } from "../../../../components/hooks/NoteHook";
 import SectionArt from "../../../../components/ts/SectionArt";
 import ActivityIndicators from "../../../../components/ts/ActivityIndicators";
 import { tags } from "../../../../components/ts/tags";
@@ -29,7 +29,8 @@ export default function HabitOverviewEntries({ entries, view = "all", readOnly =
     const { chosenDay, calendar } = useCalendar();
     const progress = useHabitDayProgress(chosenDay);
     const { markDone } = useDone();
-    const { refreshPlans } = usePlans();
+    const { setCompleted } = usePlans();
+    const { showNotification } = useNote();
     const { blackout, setBlackout } = useBlackout();
     const navigate = useNavigate();
     const [updating, setUpdating] = useState<string | null>(null);
@@ -50,12 +51,9 @@ export default function HabitOverviewEntries({ entries, view = "all", readOnly =
             (entry.plan?.completion_mode === "shared" && !entry.plan?.is_owner)) return;
         setUpdating(entry.key);
         try {
-            const response = await api.post("plans/" + entry.plan!.id + "/complete", {
-                completed: !entry.completed
-            });
-            if (response.data?.success) await refreshPlans();
-        } catch (error) {
-            console.error("Failed to complete plan", error);
+            await setCompleted(entry.plan!, !entry.completed);
+        } catch {
+            showNotification("error", t("plans.saveError"));
         } finally {
             setUpdating(null);
         }

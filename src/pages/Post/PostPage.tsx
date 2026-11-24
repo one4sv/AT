@@ -2,6 +2,7 @@ import { HeartIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { toggleLike, withLike } from "../../components/ts/utils/toggleLike";
 import { api } from "../../components/ts/api";
 import Post from "../../components/ts/Post";
 import type { PostType } from "../../components/context/AccContext";
@@ -72,16 +73,12 @@ export default function PostPage() {
         setLiking(true);
         setError("");
         try {
-            const res = await api.post("like", { id: currentPost.id });
-            if (!res.data.success) throw new Error("Like not saved");
-            const update = (item: PostType): PostType => {
-                if (item.id !== currentPost.id) return item;
-                const likes = item.likes.filter(id => id !== user.id);
-                if (res.data.liked) likes.push(user.id);
-                return { ...item, likes };
-            };
-            setPost(previous => previous ? update(previous) : previous);
-            setPosts(previous => previous.map(update));
+            const userId = user.id;
+            await toggleLike("/like",currentPost.id,userId,currentPost.likes.includes(userId),liked => {
+                const update = (item:PostType) => item.id === currentPost.id ? {...item,likes:withLike(item.likes,userId,liked)} : item;
+                setPost(previous => previous ? update(previous) : previous);
+                setPosts(previous => previous.map(update));
+            });
         } catch {
             setError("editor.likeFailed");
         } finally {

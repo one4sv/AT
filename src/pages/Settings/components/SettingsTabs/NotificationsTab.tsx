@@ -100,6 +100,8 @@ export default function NotificationsTab({ search }: { search: string }) {
 
     const saveReminderPreferences = async (next: ReminderPreferences) => {
         if (reminderBusy || !remindersLoaded) return;
+        const previous = reminderPrefs;
+        setReminderPrefs(next);
         setReminderBusy(true);
         try {
             const response = await api.post("settings/reminders/preferences", { ...next, timezone: resolveTimeZone(timeZone) });
@@ -108,6 +110,8 @@ export default function NotificationsTab({ search }: { search: string }) {
             setCommonTimeDraft(response.data.preferences.commonTime.slice(0, 5));
             setNewHabitsNote(response.data.preferences.enabled);
         } catch {
+            setReminderPrefs(previous);
+            setCommonTimeDraft(previous.commonTime.slice(0, 5));
             showNotification("error", t("notifications.remindersSaveError"));
         } finally {
             setReminderBusy(false);
@@ -129,6 +133,7 @@ export default function NotificationsTab({ search }: { search: string }) {
         }
         const next = previous.filter(rule => rule.code !== code);
         if (!old || updating) next.push({ habit_id: habitId, code, minutes_before: minutes, fixed_time: fixed });
+        setReminderRules(items => [...items.filter(rule => rule.habit_id !== habitId), ...next]);
         setBusyHabit(habitId);
         try {
             const response = await api.post("settings/reminders/habit", {
@@ -140,6 +145,7 @@ export default function NotificationsTab({ search }: { search: string }) {
                 ...response.data.rules.map((rule: ReminderRule) => ({ ...rule, habit_id: habitId }))
             ]);
         } catch {
+            setReminderRules(items => [...items.filter(rule => rule.habit_id !== habitId), ...previous]);
             showNotification("error", t("notifications.remindersSaveError"));
         } finally {
             setBusyHabit(null);
