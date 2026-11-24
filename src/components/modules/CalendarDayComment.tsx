@@ -4,7 +4,7 @@ import {useBlackout} from "../hooks/BlackoutHook";
 import {useActivityCommentPhotos} from "../ts/ActivityCommentPhotos";
 import TA from "../ts/TA";
 import {formatDateFromString} from "../ts/utils/dateToStr";
-import "./scss/addPlan.scss";
+import "./scss/goalWorkspace.scss";
 export default function CalendarDayComment(){
     const {t}=useTranslation("common"),{blackout,setBlackout}=useBlackout();
     const id=blackout.options?.habitId || "",date=blackout.options?.id || "";

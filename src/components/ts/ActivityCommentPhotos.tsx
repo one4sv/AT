@@ -68,7 +68,9 @@ export function useActivityCommentPhotos(id:string,date:string,enabled:boolean,e
             if(!data.success)throw new Error("save");
             if(active.current!==scope)return;
             setSaved({photos:data.photos,text});setKept(data.photos);setAdded([]);
-            fetchCalendarHabit(id);
+            if(routeHabitId===id) fetchCalendarHabit(id);
+            else if(!routeHabitId) fetchCalendarUser();
+            else fetchAllCalendar();
             window.dispatchEvent(new Event("habit-day-comment-updated"));
         }catch(e){
             if(active.current!==scope)return;

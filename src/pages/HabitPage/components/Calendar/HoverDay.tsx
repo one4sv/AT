@@ -14,7 +14,7 @@ export function DaySummary({date,habitId,completed,missed,planned,ongoing,commen
     const {t}=useTranslation("common");
     const {user}=useUser();
     const {habit}=useTheHabit();
-    const member=Boolean(user.id && (!habitId || (habit?.id===Number(habitId) && (habit.user_id===user.id || habit.access?.is_member))));
+    const member=Boolean(user.id && (!habitId || (habit && habit.id===Number(habitId) && (habit.user_id===user.id || habit.access?.is_member))));
     const progress=useHabitDayProgress(member && habitId?date:"");
     const [goals,setGoals]=useState<{id:number;name:string;percent:number|null;kind:string}[]>([]);
     const [goalCount,setGoalCount]=useState<number|null>(null);
