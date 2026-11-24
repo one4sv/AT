@@ -73,5 +73,14 @@
     "stage_deleted": "Milestone removed",
     "link_added": "Linked action",
     "link_removed": "Unlinked action"
-  }
+  },
+  "days": "By days",
+  "streak": "Consecutive scheduled days",
+  "daily_timer": "Daily timer",
+  "targetDays": "Number of days",
+  "dailyMinutes": "Minutes per day",
+  "daysUnit": "days",
+  "minutesUnit": "min/day",
+  "automaticHint": "Scheduled days of all linked activities count. Timer mode uses ended sessions, excluding pauses.",
+  "invalidAutomatic": "Choose an activity and enter valid days and minutes."
 }

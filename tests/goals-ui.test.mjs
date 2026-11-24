@@ -91,3 +91,12 @@ test("nonzero summary counters open the existing list dialogs and share one crea
     const modal=read("src/components/modules/HabitOverviewList.tsx");
     assert.match(modal, /acc\?\.nick === profileNick \? makeProfilePlanEntries\(profilePlans\)/);
 });
+
+ test("goal editor uses SelectList and stages links before save",()=>{
+    const editor=read("src/components/modules/AddGoal.tsx");
+    assert.match(editor, /<SelectList id="goalMode"/);
+    assert.match(editor, /"days","streak","daily_timer"/);
+    assert.match(editor, /habit_ids:linkedHabits.map/);
+    assert.match(editor, /plan_ids:linkedPlans.map/);
+    assert.match(editor, /setLinkedHabits\(goal.habits/);
+});

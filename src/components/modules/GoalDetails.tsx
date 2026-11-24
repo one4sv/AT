@@ -112,10 +112,10 @@ export default function GoalDetails() {
             <div className="goalWorkspaceActions">
                 <button type="button" className="goalIconButton" aria-label={t("edit")}
                     onClick={()=>setBlackout({seted:true,module:"AddGoal",options:{id:String(goal.id)}})}>
-                    <PencilSimpleIcon size={20}/>
+                    <PencilSimpleIcon size={24}/>
                 </button>
                 <button type="button" className="goalIconButton danger" aria-label={t("delete")}
-                    onClick={deleteGoal}><TrashIcon size={20}/></button>
+                    onClick={deleteGoal}><TrashIcon size={24}/></button>
             </div>
         </div>
         {!!goal.description && <p className="goalWorkspaceText">{goal.description}</p>}
@@ -133,6 +133,10 @@ export default function GoalDetails() {
             aria-valuemin={0} aria-valuemax={100}>
             <span style={{width:goal.progress+"%"}}/>
         </div>
+        {["days","streak","daily_timer"].includes(goal.progress_mode) && <div className="goalWorkspaceMeta">
+            {t(goal.progress_mode)} · {goal.achieved_days ?? 0} / {goal.target_days ?? 30} {t("daysUnit")}
+            {goal.progress_mode==="daily_timer" && " · "+(goal.daily_minutes ?? 60)+" "+t("minutesUnit")}
+        </div>}
         {goal.progress_mode==="manual" && <div className="goalWorkspaceField">
             <SeekBar id="goalManualProgress" min={0} max={100} step={1}
                 value={value} unit="%" disabled={saving} onChange={setValue}/>
