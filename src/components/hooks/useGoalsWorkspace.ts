@@ -1,33 +1,82 @@
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useUser } from "../hooks/UserHook";
+import { useSettings } from "../hooks/SettingsHook";
+import { resolveTimeZone } from "../ts/utils/dateToStr";
 import { api } from "../ts/api";
 import type { Goal } from "../../pages/HabitPage/components/Overview/goalTypes";
 
 export const goalsChanged = () => window.dispatchEvent(new Event("at-goals-updated"));
 
-export function useGoalsWorkspace(enabled = true) {
-    const { user } = useUser();
-    const [result, setResult] = useState<{owner: string; goals: Goal[]; error: boolean} | null>(null);
-    const owner = enabled ? user.id : null;
-    useEffect(() => {
-        if (!owner) return;
-        const controller = new AbortController();
-        let version = 0;
-        const refresh = () => {
-            const request = ++version;
-            void api.get<{success:boolean;goals:Goal[]}>("goal-workspace", {signal: controller.signal}).then(({data}) => {
-                if (controller.signal.aborted || request !== version) return;
-                if (!data.success) throw new Error("Goals could not be loaded");
-                setResult({owner, goals:data.goals || [], error:false});
-            }).catch(() => {
-                if (controller.signal.aborted || request !== version) return;
-                setResult(previous => ({owner, goals:previous?.owner === owner ? previous.goals : [], error:true}));
+type Result = {goals:Goal[];loading:boolean;error:boolean};
+type Store = {result:Result;listeners:Set<()=>void>;refresh:()=>void;dispose:()=>void};
+const empty:Result={goals:[],loading:false,error:false};
+const initial:Result={goals:[],loading:true,error:false};
+const stores=new Map<string,Store>();
+let activeKey="";
+function storeFor(key:string,zone:string):Store {
+    const old=stores.get(key);
+    if(old) return old;
+    let controller:AbortController | null=null;
+    let pending=false;
+    let timer:ReturnType<typeof setTimeout> | undefined;
+    const store:Store={result:initial,listeners:new Set(),refresh:()=>{
+        if(timer!==undefined) clearTimeout(timer);
+        timer=setTimeout(()=>{
+            timer=undefined;
+            if(controller){pending=true;return;}
+            controller=new AbortController();
+            const signal=controller.signal;
+            void api.get<{success:boolean;goals:Goal[]}>("goal-workspace",{signal,params:{timezone:zone}}).then(({data})=>{
+                if(!signal.aborted){
+                    if(!data.success) throw new Error("Goals could not be loaded");
+                    store.result={goals:data.goals || [],loading:false,error:false};
+                }
+            }).catch(()=>{
+                if(!signal.aborted) store.result={...store.result,loading:false,error:true};
+            }).finally(()=>{
+                if(signal.aborted) return;
+                controller=null;
+                store.listeners.forEach(fn=>fn());
+                if(pending){pending=false;store.refresh();}
             });
+        },120);
+    },dispose:()=>{
+        if(timer!==undefined) clearTimeout(timer);
+        controller?.abort();
+    }};
+    stores.set(key,store);
+    return store;
+}
+export function useGoalsWorkspace(enabled=true){
+    const {user}=useUser();
+    const {timeZone}=useSettings();
+    const zone=resolveTimeZone(timeZone);
+    const key=user.id ? user.id+"|"+zone : "";
+    const store=enabled && key ? storeFor(key,zone) : null;
+    useEffect(()=>{
+        if(activeKey!==key){
+            for(const [id,entry] of stores) if(id!==key){entry.dispose();stores.delete(id);}
+            activeKey=key;
+        }
+        if(!store) return;
+        if(store.result.loading) store.refresh();
+    },[key,store]);
+    useEffect(()=>{
+        if(!store) return;
+        const refresh=()=>store.refresh();
+        const onFocus=()=>{if(document.visibilityState==="visible") refresh();};
+        window.addEventListener("at-goals-updated",refresh);
+        window.addEventListener("focus",refresh);
+        document.addEventListener("visibilitychange",onFocus);
+        return ()=>{
+            window.removeEventListener("at-goals-updated",refresh);
+            window.removeEventListener("focus",refresh);
+            document.removeEventListener("visibilitychange",onFocus);
         };
-        refresh();
-        window.addEventListener("at-goals-updated", refresh);
-        return () => { controller.abort(); window.removeEventListener("at-goals-updated", refresh); };
-    }, [owner]);
-    const current = owner && result?.owner === owner ? result : null;
-    return {goals:current?.goals || [], loading:!!owner && !current, error:current?.error || false};
+    },[store]);
+    return useSyncExternalStore(
+        listener=>{store?.listeners.add(listener);return ()=>{store?.listeners.delete(listener);};},
+        ()=>store?.result || empty,
+        ()=>empty
+    );
 }

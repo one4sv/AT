@@ -17,7 +17,7 @@ import { calculateTimerElapsed } from "./utils/TimerFuncs";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useWebSocket } from "../hooks/WebSocketHook";
 import { Link } from "react-router-dom";
-import { formatDateFromString, todayStrFunc } from "./utils/dateToStr";
+import { formatDateFromString, todayStrFunc, shiftCalendarDay, formatClock } from "./utils/dateToStr";
 export default function HabitDiv({
     habit,
     id,
@@ -194,7 +194,24 @@ export default function HabitDiv({
         const timePart = formatHabitTime(habit);
         if (per === "everyday") return `${timePart}`;
         if (per === "sometimes") return `Иногда${timePart}`;
-        if (per === "cycle") return `${t("habitUi.cyclePattern", { active: habit.cycle_days_active, rest: habit.cycle_days_rest })}${timePart}`;
+        if (per === "cycle") {
+            const today = todayStrFunc();
+            const start = habit.start_date.slice(0, 10);
+            const active = Number(habit.cycle_days_active);
+            const rest = Number(habit.cycle_days_rest);
+            const length = active + rest;
+            if (!start || active < 1 || rest < 0 || !Number.isInteger(length)) return timePart.trim();
+            const from = start > today ? start : today;
+            const elapsed = Math.round((Date.parse(from + "T00:00:00Z") - Date.parse(start + "T00:00:00Z")) / 86400000);
+            const phase = elapsed % length;
+            const next = shiftCalendarDay(from, phase < active ? 0 : length - phase);
+            if (habit.end_date && next > habit.end_date) return timePart.trim();
+            const label = next === today ? t("sideMenu.today") : next === shiftCalendarDay(today, 1) ? t("sideMenu.tomorrow") : formatDateFromString(next);
+            const st = habit.start_time && formatClock(habit.start_time.slice(0, 5));
+            const et = habit.end_time && formatClock(habit.end_time.slice(0, 5));
+            return label + (st && et ? " " + t("habitPageUi.day.fromTo", {start:st,end:et}) :
+                st ? " " + t("habitPageUi.day.at", {time:st}) : et ? " " + t("habitPageUi.day.until", {time:et}) : "");
+        }
         return timePart.trim() || "";
     };
     if (isMyAcc === undefined) isMyAcc = true;
