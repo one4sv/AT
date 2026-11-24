@@ -9,6 +9,7 @@ import { useUser } from "../../../hooks/UserHook";
 import { useBlackout } from "../../../hooks/BlackoutHook";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import useHabitMembers from "../../../../pages/HabitPage/components/HabitInfo/useHabitMembers";
+import { useHabitGoals } from "../../../hooks/useHabitGoals";
 
 export default function HabitHeaderMenu() {
     const { t } = useTranslation("common");
@@ -19,6 +20,7 @@ export default function HabitHeaderMenu() {
     const { setBlackout } = useBlackout();
     const { data } = useHabitMembers(habit?.id);
     const navigate = useNavigate();
+    const {linked}=useHabitGoals(habit?.id,!!habit && habit.user_id===user.id);
 
     if (!habit || !habit.ongoing) return null;
 
@@ -58,7 +60,7 @@ export default function HabitHeaderMenu() {
                 setBlackout({seted:true,module:"GoalPicker",options:{habitId:String(habit.id)}});
             }}>
                 <Target weight="fill"/>
-                {t("habitUi.addGoal")}
+                {t(linked.length ? "habitUi.goals" : "habitUi.addGoal")}
             </div>}
             <ReportButton targetType="activity" targetId={String(habit.id)} isMy={isMy}/>
             {isMember && <div className="ContextMenuButt" onClick={() => openSlide("journal")}>

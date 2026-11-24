@@ -35,6 +35,7 @@ export interface Goal {
     target_days?: number;
     daily_minutes?: number;
     achieved_days?: number;
+    habit_ids?: number[];
     stages?: GoalStage[];
     habits?: GoalLinkedItem[];
     plans?: GoalLinkedItem[];

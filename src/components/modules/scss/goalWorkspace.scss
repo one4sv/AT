@@ -318,3 +318,32 @@
     .goalCatalogItem, .goalPickerItem {gap: 2vw; padding: 1dvh 3vw;}
     .goalCatalogFilters {gap: 2vw;}
 }
+
+.goalLinkedItem {
+    cursor: default;
+}
+.goalLinkedTitle {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    color: var(--tc);
+    font-size: 16px;
+    text-align: left;
+    padding: 0;
+    cursor: pointer;
+
+    > svg {
+        color: var(--accent_text);
+        flex-shrink: 0;
+    }
+}
+.goalLinkedItem .goalLinkedProgress {
+    flex: 1 1 100%;
+}
+.goalLinkedItem > small {
+    color: var(--borderWh);
+}
