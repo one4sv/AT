@@ -30,3 +30,33 @@
         align-items: center;
     }
 }
+
+.accHabitsSummary {
+    display: flex;
+    gap: .5vw;
+    width: 100%;
+    margin-bottom: 1dvh;
+
+    > button.accHabitsList {
+        flex: 1 1 0;
+        min-width: 0;
+        width: auto;
+        align-items: flex-start;
+        padding: 1dvh 1vw;
+        text-align: left;
+        color: var(--tc);
+        font-family: inherit;
+        font-size: inherit;
+        cursor: pointer;
+
+        > span { font-size: 24px; }
+        > small { color: var(--borderWh); }
+    }
+}
+@media (max-width: 800px) {
+    .accHabitsSummary {
+        gap: 2vw;
+
+        > button.accHabitsList { padding: 1dvh 3vw; }
+    }
+}

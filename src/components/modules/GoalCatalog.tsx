@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TargetIcon } from "@phosphor-icons/react";
+import { useUser } from "../hooks/UserHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useGoalsWorkspace } from "../hooks/useGoalsWorkspace";
 import "../../pages/HabitPage/components/Overview/goalLocale";
@@ -8,8 +9,9 @@ import "./scss/goalWorkspace.scss";
 
 export default function GoalCatalog() {
     const {t}=useTranslation("goals");
-    const {setBlackout}=useBlackout();
-    const {goals,loading,error}=useGoalsWorkspace();
+    const {blackout,setBlackout}=useBlackout();
+    const {user}=useUser();
+    const {goals,loading,error}=useGoalsWorkspace(!blackout.options?.nick || blackout.options.nick === user.nick);
     const [status,setStatus]=useState("all");
     const filtered = status==="all" ? goals : goals.filter(goal=>status==="active" ?
         goal.status==="active" || goal.status==="paused" : goal.status===status);

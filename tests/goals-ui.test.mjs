@@ -75,3 +75,19 @@ test("nonzero summary counters open the existing list dialogs and share one crea
     assert.match(createMenu, /sideMenu\.newGoal/);
     assert.doesNotMatch(catalog, /module:\s*"AddGoal"/);
 });
+
+ test("goals do not appear on past calendar days and overview refresh is silent", () => {
+    const overview=read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
+    assert.match(overview, /goalCount = chosenDay >= todayStrFunc\(\) \? goals.length : 0/);
+    assert.match(overview, /initializing \? <SummarySkeleton\/>/);
+    assert.match(overview, /initializing \? <UpcomingSkeleton\/>/);
+    const style=read("src/pages/HabitPage/scss/HabitOverview.scss");
+    assert.match(style, /\.habitOverviewEntryDone \{\s*align-self: center;/);
+    const profile=read("src/pages/Acc/components/AccHabits.tsx");
+    assert.match(profile, /useGoalsWorkspace\(own\)/);
+    assert.match(profile, /upcomingProfilePlans\(plans \|\| \[\]\)/);
+    assert.match(profile, /module: "HabitOverviewList", options: \{ name: "plans", nick:/);
+    assert.match(profile, /module: "GoalCatalog", options: \{ nick:/);
+    const modal=read("src/components/modules/HabitOverviewList.tsx");
+    assert.match(modal, /acc\?\.nick === profileNick \? makeProfilePlanEntries\(profilePlans\)/);
+});

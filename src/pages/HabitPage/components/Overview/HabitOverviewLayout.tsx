@@ -1,7 +1,8 @@
-import { useMemo, useState, type MouseEvent } from "react";
+import { useEffect, useMemo, useState, type MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { CheckCircleIcon, PlusIcon, PushPinIcon } from "@phosphor-icons/react";
+import { useUser } from "../../../../components/hooks/UserHook";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
@@ -102,6 +103,7 @@ function OverviewFocusCard({ entry, label, more = 0, calendar, progress }: {
 export default function HabitOverviewLayout() {
     const { t } = useTranslation("common");
     const { t: tGoals } = useTranslation("goals");
+    const { user } = useUser();
     const { goals, loading: loadingGoals, error: goalsError } = useGoalsWorkspace();
     const { chosenDay, calendar, calendarLoading } = useCalendar();
     const { habits, loadingHabits } = useHabits();
@@ -110,6 +112,11 @@ export default function HabitOverviewLayout() {
     const { setBlackout } = useBlackout();
     const dayProgress = useHabitDayProgress(chosenDay);
     const [view, setView] = useState<"all" | "activities" | "plans">("all");
+    const [initializedAccount, setInitializedAccount] = useState<string | null>(null);
+    const initializing = initializedAccount !== user.id;
+    useEffect(() => {
+        if (user.id && !loadingHabits && !loadingPlans && !calendarLoading) setInitializedAccount(user.id);
+    }, [user.id, loadingHabits, loadingPlans, calendarLoading]);
     const entries = useMemo(() => makeDayEntries(chosenDay, habits, plans, calendar),
         [chosenDay, habits, plans, calendar]);
     const visible = entries.filter(entry => view === "all" || (view === "activities" ? entry.kind === "habit" : entry.kind === "plan"));
@@ -117,7 +124,7 @@ export default function HabitOverviewLayout() {
     const nextFour = pending.slice(0, 4);
     const activityCount = entries.filter(entry => entry.kind === "habit").length;
     const planCount = entries.length - activityCount;
-    const goalCount = goals.length;
+    const goalCount = chosenDay >= todayStrFunc() ? goals.length : 0;
     const completedCount = entries.filter(entry => entry.completed).length;
     const currentTime = clockInAppZone();
     const focus = getOverviewFocus(entries, chosenDay, todayStrFunc(), currentTime);
@@ -144,7 +151,7 @@ export default function HabitOverviewLayout() {
                     <PlusIcon size={21}/>
                 </button>
             </div>
-            {loadingHabits || loadingPlans || calendarLoading ? <SummarySkeleton/> : <>
+            {initializing ? <SummarySkeleton/> : <>
                 {(activityCount > 0 || planCount > 0 || (!goalsError && goalCount > 0)) && <div className="habitOverviewSummary">
                     {activityCount > 0 && <button type="button"
                         onClick={() => setBlackout({ seted: true, module: "HabitOverviewList", options: { name: "activities" } })}>
@@ -159,8 +166,8 @@ export default function HabitOverviewLayout() {
                         <span>{goalCount}</span><small>{tGoals("title")}</small>
                     </button>}
                 </div>}
-                {loadingGoals && !goalCount && <div className="skeletonLine" role="status" aria-label={tGoals("loading")}/>}
-                {goalsError && <small>{tGoals("loadError")}</small>}
+                {chosenDay >= todayStrFunc() && loadingGoals && !goalCount && <div className="skeletonLine" role="status" aria-label={tGoals("loading")}/>}
+                {chosenDay >= todayStrFunc() && goalsError && <small>{tGoals("loadError")}</small>}
                 <div className="habitOverviewProgress" role="progressbar" aria-valuenow={completedCount}
                     aria-valuemin={0} aria-valuemax={entries.length || 1}
                     aria-label={t("plans.completed")}>
@@ -180,7 +187,7 @@ export default function HabitOverviewLayout() {
         <div className="habitOverviewContext">
             <div className="habitOverviewHeader">{t("plans.daySummary")}</div>
             <div className="habitOverviewNextLabel">{t("plans.nextUp")}</div>
-            {loadingPlans || loadingHabits || calendarLoading ? <UpcomingSkeleton/> : <>
+            {initializing ? <UpcomingSkeleton/> : <>
                 <div className="habitOverviewFilters">
                     <button type="button" className={view === "all" ? "active" : ""} onClick={() => setView("all")}>{t("plans.all")}</button>
                     <button type="button" className={view === "activities" ? "active" : ""} onClick={() => setView("activities")}>{t("plans.activities")}</button>

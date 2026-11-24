@@ -5,30 +5,29 @@ import type { Goal } from "../../pages/HabitPage/components/Overview/goalTypes";
 
 export const goalsChanged = () => window.dispatchEvent(new Event("at-goals-updated"));
 
-export function useGoalsWorkspace() {
+export function useGoalsWorkspace(enabled = true) {
     const { user } = useUser();
-    const [goals,setGoals] = useState<Goal[]>([]);
-    const [loading,setLoading] = useState(true);
-    const [error,setError] = useState(false);
+    const [result, setResult] = useState<{owner: string; goals: Goal[]; error: boolean} | null>(null);
+    const owner = enabled ? user.id : null;
     useEffect(() => {
-        let active = true;
+        if (!owner) return;
+        const controller = new AbortController();
+        let version = 0;
         const refresh = () => {
-            if (!user.id) {
-                setGoals([]);
-                setLoading(false);
-                return;
-            }
-            setLoading(true);
-            void api.get<{success:boolean;goals:Goal[]}>("goal-workspace").then(({data}) => {
-                if (!active) return;
-                setGoals(data.goals || []);
-                setError(false);
-            }).catch(() => { if (active) setError(true); })
-              .finally(() => { if (active) setLoading(false); });
+            const request = ++version;
+            void api.get<{success:boolean;goals:Goal[]}>("goal-workspace", {signal: controller.signal}).then(({data}) => {
+                if (controller.signal.aborted || request !== version) return;
+                if (!data.success) throw new Error("Goals could not be loaded");
+                setResult({owner, goals:data.goals || [], error:false});
+            }).catch(() => {
+                if (controller.signal.aborted || request !== version) return;
+                setResult(previous => ({owner, goals:previous?.owner === owner ? previous.goals : [], error:true}));
+            });
         };
         refresh();
-        window.addEventListener("at-goals-updated",refresh);
-        return () => { active = false; window.removeEventListener("at-goals-updated",refresh); };
-    },[user.id]);
-    return {goals,loading,error};
+        window.addEventListener("at-goals-updated", refresh);
+        return () => { controller.abort(); window.removeEventListener("at-goals-updated", refresh); };
+    }, [owner]);
+    const current = owner && result?.owner === owner ? result : null;
+    return {goals:current?.goals || [], loading:!!owner && !current, error:current?.error || false};
 }

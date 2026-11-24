@@ -503,6 +503,7 @@ export default function Acc() {
                                 isMyAcc={isMyAcc}
                                 habits={habits}
                                 plans={plans}
+                                nick={acc?.nick}
                                 canView={canView}
                             />
                         </div>

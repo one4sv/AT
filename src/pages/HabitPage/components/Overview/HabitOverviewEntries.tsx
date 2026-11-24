@@ -20,9 +20,10 @@ function OverviewEntryTag({ entry }: { entry: DayEntry }) {
         <span className={"calendarDot " + entry.state}/>;
 }
 
-export default function HabitOverviewEntries({ entries, view = "all" }: {
+export default function HabitOverviewEntries({ entries, view = "all", readOnly = false }: {
     entries: DayEntry[];
     view?: "all" | "activities" | "plans";
+    readOnly?: boolean;
 }) {
     const { t } = useTranslation("common");
     const { chosenDay, calendar } = useCalendar();
@@ -35,7 +36,8 @@ export default function HabitOverviewEntries({ entries, view = "all" }: {
 
     const openEntry = (entry: DayEntry) => {
         if (blackout.module === "HabitOverviewList") setBlackout({ seted: false });
-        navigate(entry.kind === "plan" ? "/plan/" + entry.plan!.id : "/habit/" + entry.habit!.id);
+        navigate(entry.kind === "plan" ? "/plan/" + entry.plan!.id +
+            (entry.plan?.share ? "?share=" + encodeURIComponent(entry.plan.share) : "") : "/habit/" + entry.habit!.id);
     };
 
     const complete = async (entry: DayEntry) => {
@@ -80,7 +82,7 @@ export default function HabitOverviewEntries({ entries, view = "all" }: {
                     <small>{describeEntrySubtitle(entry, t)}</small>
                 </span>
             </button>
-            {(entry.kind === "habit" || (entry.plan?.membership_status === "accepted" &&
+            {!readOnly && (entry.kind === "habit" || (entry.plan?.membership_status === "accepted" &&
                 (entry.plan?.completion_mode !== "shared" || entry.plan?.is_owner) &&
                 entry.plan?.status !== "canceled")) &&
                 <button type="button"

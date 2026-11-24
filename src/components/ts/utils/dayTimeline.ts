@@ -2,7 +2,7 @@ import type { Habit } from "../../context/HabitsContext";
 import type { Calendar } from "../../context/CalendarContext";
 import type { OneOffPlan } from "../../context/PlansContext";
 import { getDayArrays } from "./getDayArrs";
-import { formatDateFromString, shiftCalendarDay, todayStrFunc } from "./dateToStr";
+import { clockInAppZone, formatDateFromString, shiftCalendarDay, todayStrFunc } from "./dateToStr";
 
 export type DayEntry = {
     key: string;
@@ -42,6 +42,23 @@ export const describeEntrySubtitle = (entry: DayEntry, t: (key: string, options?
     return clock === t("plans.noTime") || (entry.habit?.periodicity === "sometimes" && clock === t("sideMenu.sometimes"))
         ? label : `${label} · ${clock}`;
 };
+export function upcomingProfilePlans(plans: OneOffPlan[], today = todayStrFunc(), now = clockInAppZone()): OneOffPlan[] {
+    return plans.filter(plan => {
+        if (plan.status === "canceled" || plan.status === "completed" || plan.membership_status === "pending") return false;
+        if (plan.plan_date !== today) return plan.plan_date > today;
+        const cutoff = timeOf(plan.end_time) || timeOf(plan.start_time);
+        return !cutoff || cutoff > now;
+    });
+}
+
+export function makeProfilePlanEntries(plans: OneOffPlan[]): DayEntry[] {
+    return upcomingProfilePlans(plans).map(plan => ({
+        key: "plan-" + plan.id, kind: "plan" as const, name: plan.name,
+        start: timeOf(plan.start_time), end: timeOf(plan.end_time), date: plan.plan_date,
+        description: plan.description || "", completed: Boolean(plan.completed_for_me),
+        state: (plan.completed_for_me ? "comp" : "will") as "comp" | "will", plan
+    })).sort(compareDayEntries);
+}
 export function makeDayEntries(day: string, habits: Habit[] | null, plans: OneOffPlan[], calendar: Calendar[], includeUnscheduled = false): DayEntry[] {
     const statuses = getDayArrays(day, calendar, habits, undefined, undefined, true);
     const byId = new Map<number, DayEntry>();
