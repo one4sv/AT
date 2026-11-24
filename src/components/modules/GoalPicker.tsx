@@ -4,6 +4,8 @@ import { PlusIcon, TargetIcon, PencilSimpleIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { goalsChanged } from "../hooks/useGoalsWorkspace";
 import { useHabitGoals, hasHabitGoalLink } from "../hooks/useHabitGoals";
+import { useHabitGoalDisplay } from "../hooks/useHabitGoalDisplay";
+import SelectList from "../ts/SelectList";
 import { useNote } from "../hooks/NoteHook";
 import { useHabits } from "../hooks/HabitsHook";
 import { useUser } from "../hooks/UserHook";
@@ -16,17 +18,19 @@ import "./scss/goalWorkspace.scss";
 
 const manualModes = ["manual","metric","milestones","combined"];
 
-export default function GoalPicker() {
+export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) {
     const {t}=useTranslation("goals");
     const {blackout,setBlackout}=useBlackout();
     const habitIdRef=useRef(Number(blackout.options?.habitId));
     if(blackout.module==="GoalPicker" && blackout.options?.habitId) habitIdRef.current=Number(blackout.options.habitId);
-    const habitId=habitIdRef.current;
+    const habitId=slideHabitId ?? habitIdRef.current;
     const {habits,loadingHabits}=useHabits();
     const {user}=useUser();
     const isOwner=habits?.some(h=>String(h.id)===String(habitId) && h.user_id===user.id);
     const eligible=habits?.some(h=>String(h.id)===String(habitId) && isGoalHabitAvailable(h,user.id));
     const {goals,linked,loading,error}=useHabitGoals(habitId,!!isOwner);
+    const {selected,select}=useHabitGoalDisplay(habitId,!!isOwner);
+    const displayChoices=linked.filter(goal=>goal.status==="active" || goal.status==="paused");
     const [saving,setSaving]=useState(false);
     const {showNotification}=useNote();
     const available=goals.filter(goal=>!hasHabitGoalLink(goal,habitId) && (goal.status==="active" || goal.status==="paused"));
@@ -42,10 +46,16 @@ export default function GoalPicker() {
         }catch{showNotification("error",t("saveError"));}
         finally{setSaving(false);}
     };
-    return <div className="addHabitDiv addPlanDiv goalWorkspaceModal goalPicker">
-        <h2>{t(linked.length?"title":"selectGoal")}</h2>
+    return <div className={slideHabitId!==undefined ? "habitInnerSlide habitGoalSlide" : "addHabitDiv addPlanDiv goalWorkspaceModal goalPicker"}>
+        {slideHabitId!==undefined ? <div className="habitInnerSlideTitle">{t("title")}</div> : <h2>{t(linked.length?"title":"selectGoal")}</h2>}
         {loading || loadingHabits ? <span>{t("loading")}</span> : error ? <span>{t("loadError")}</span> :
             !isOwner ? <span>{t("inactiveLink")}</span> : <>
+                {!!displayChoices.length && <div className="goalWorkspaceField">
+                    <label>{t("displayGoal")}</label>
+                    <SelectList className="goalWorkspaceSelect" selected={displayChoices.some(g=>String(g.id)===selected)?selected:"none"}
+                        arr={[{value:"none",label:t("hideDisplayGoal")},...displayChoices.map(g=>({value:String(g.id),label:g.name}))]}
+                        onChange={value=>select(value==="none"?"":value)}/>
+                </div>}
                 {!!linked.length && <div className="goalCatalogList">{linked.map(goal=>
                     <div className="goalCatalogItem goalLinkedItem" key={goal.id}>
                         <button type="button" className="goalLinkedTitle" onClick={()=>openDetails(goal)}>

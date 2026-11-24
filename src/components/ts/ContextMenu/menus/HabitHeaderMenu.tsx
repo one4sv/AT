@@ -6,7 +6,6 @@ import { useNavigate } from "react-router";
 import { useTheHabit } from "../../../hooks/TheHabitHook";
 import { useSideMenu } from "../../../hooks/SideMenuHook";
 import { useUser } from "../../../hooks/UserHook";
-import { useBlackout } from "../../../hooks/BlackoutHook";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import useHabitMembers from "../../../../pages/HabitPage/components/HabitInfo/useHabitMembers";
 import { useHabitGoals } from "../../../hooks/useHabitGoals";
@@ -17,7 +16,6 @@ export default function HabitHeaderMenu() {
     const { user } = useUser();
     const { closeMenu } = useContextMenu();
     const { setShowHabitMenu, setShowSlide } = useSideMenu();
-    const { setBlackout } = useBlackout();
     const { data } = useHabitMembers(habit?.id);
     const navigate = useNavigate();
     const {linked}=useHabitGoals(habit?.id,!!habit && habit.user_id===user.id);
@@ -27,7 +25,7 @@ export default function HabitHeaderMenu() {
     const isMy = habit.user_id === user.id;
     const isMember = isMy || !!data?.access.is_member;
 
-    const openSlide = (slide: "chat" | "settings" | "journal") => {
+    const openSlide = (slide: "chat" | "settings" | "journal" | "goals") => {
         closeMenu();
         setShowSlide(slide);
         setShowHabitMenu(true);
@@ -55,10 +53,7 @@ export default function HabitHeaderMenu() {
                 <GearSix weight="fill"/>
                 {t("habitUi.settings")}
             </div>}
-            {isMy && <div className="ContextMenuButt" onClick={() => {
-                closeMenu();
-                setBlackout({seted:true,module:"GoalPicker",options:{habitId:String(habit.id)}});
-            }}>
+            {isMy && <div className="ContextMenuButt" onClick={() => openSlide("goals")}>
                 <Target weight="fill"/>
                 {t(linked.length ? "habitUi.goals" : "habitUi.addGoal")}
             </div>}

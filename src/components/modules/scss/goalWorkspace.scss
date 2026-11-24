@@ -347,3 +347,17 @@
 .goalLinkedItem > small {
     color: var(--borderWh);
 }
+
+.habitGoalSlide {
+    height: auto;
+    min-height: 100%;
+    gap: 1dvh;
+
+    .goalCatalogList {
+        max-height: none;
+        overflow: visible;
+    }
+    .goalWorkspaceSelect {
+        flex: 0 0 auto;
+    }
+}

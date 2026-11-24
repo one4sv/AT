@@ -92,5 +92,7 @@
   "inactiveLink": "Archived activities cannot be linked to a goal.",
   "recordProgress": "Record progress",
   "automaticProgress": "Progress is calculated automatically",
-  "linkExisting": "Link an existing goal"
+  "linkExisting": "Link an existing goal",
+  "displayGoal": "Goal shown in timer and counter",
+  "hideDisplayGoal": "Do not show"
 }

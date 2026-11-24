@@ -47,7 +47,7 @@ export default function CompJurnal() {
 
     const describeEvent = (event: ActivityEvent) => {
         const date = event.date && /^\d{4}-\d{2}-\d{2}$/.test(event.date) ? formatDateFromString(event.date) : event.date;
-        if (event.type === "completion_removed") return t("habitPageUi.journal.completionRemoved", { date: date || t("habitPageUi.journal.unspecifiedDate") });
+        if (event.type === "completion_removed") return t("habitPageUi.journal.completion_removed", { date: date || t("habitPageUi.journal.unspecifiedDate") });
         if (event.type === "completion") return t("habitPageUi.journal.completed", { date });
         return t(`habitPageUi.journal.${event.type}`);
     };
@@ -67,7 +67,11 @@ export default function CompJurnal() {
                         <Search/>
                     )}
             </div>
-            {habit && <div className="settingInnerWrapper">
+            <div className="compJurnalMain">
+                <Virtuoso
+                    data={sortedCalendar}
+                    style={{ height: "100%", scrollbarWidth: "thin" }}
+                    components={{Header:()=>habit ? <div className="settingInnerWrapper">
                 <div className="settingSpan">{t("habitPageUi.journal.memberActions")}</div>
                 {memberEventsError && <div className="settingHint">{t("habitPageUi.journal.loadFailed")}</div>}
                 {!memberEventsError && memberEvents.length === 0 && <div className="settingHint">{t("habitPageUi.journal.empty")}</div>}
@@ -81,13 +85,7 @@ export default function CompJurnal() {
                     </div>
                     <div className="CJcomment">{describeEvent(event)}</div>
                 </div>)}
-            </div>}
-            <div className="compJurnalMain">
-                <Virtuoso
-                    data={sortedCalendar}
-                    style={{ height: "100%", scrollbarWidth: "thin" }}
-                    followOutput="auto"
-                    initialTopMostItemIndex={sortedCalendar.length - 1}
+            </div> : null}}
                     itemContent={(_, day) => {
                         const { date, comment, habitName, habitId, created_at } = day;
                         const created =

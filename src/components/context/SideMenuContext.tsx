@@ -21,7 +21,7 @@ import useCompactLayout from "../hooks/utils/useCompactLayout";
 import type { SearchFilter } from "../ts/utils/globalSearchQuery";
 
 export type tab = "chats" | "habits" | "spots" | "user";
-export type slides = "settings" | "chat" | "journal" | null;
+export type slides = "settings" | "chat" | "journal" | "goals" | null;
 
 export type FilterItem = {
     label: string;
