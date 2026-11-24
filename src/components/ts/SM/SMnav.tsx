@@ -289,17 +289,10 @@ export default function SMnav() {
                 cancelLongPress();
                 return;
             }
-            if (action === "create-chat") {
-                setBlackout(
-                    {
-                        seted: true,
-                        module: "CreateChat"
-                    }
-                );
-            }
-            if (action === "add-habit" || action === "add-plan" || action === "add-goal") {
-                setBlackout({seted:true,module:action === "add-habit" ? "AddHabit" :
-                    action === "add-plan" ? "AddPlan" : "AddGoal"});
+            if (action === "create-chat" || action === "add-habit" ||
+                action === "add-plan" || action === "add-goal") {
+                setBlackout({seted:true,module:action === "create-chat" ? "CreateChat" :
+                    action === "add-habit" ? "AddHabit" : action === "add-plan" ? "AddPlan" : "AddGoal"});
             }
             if (action === "new-spot") {
                 showNotification("info", t("sideMenu.inDevelopment"));
@@ -468,15 +461,7 @@ export default function SMnav() {
                     <div
                         className="SMextraMenuButt"
                         data-action="create-chat"
-                        onMouseUp={() => {
-                            setBlackout(
-                                {
-                                    seted: true,
-                                    module: "CreateChat"
-                                }
-                            );
-                            setIsExtraOpen(false);
-                        }}
+                        onMouseUp={() => createActivity("CreateChat")}
                     >
                         <PlusIcon size={20} /> {t("sideMenu.newChat")}
                     </div>
