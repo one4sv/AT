@@ -16,8 +16,12 @@ export default function HabitGoalProgress({habitId,isMy}: {habitId:number;isMy:b
         setShowSlide("goals");
         setShowHabitMenu(true);
     }}>
-        <span className="habitSelectedGoalLabel"><span>{goal.name}</span><small>{goal.progress}%</small></span>
+        <span className="habitSelectedGoalLabel"><span>{goal.name} · {t("progress")}</span><small>{goal.progress}%</small></span>
         <span className="goalOverviewProgress" role="progressbar" aria-label={t("progress")} aria-valuemin={0}
             aria-valuemax={100} aria-valuenow={goal.progress}><span style={{width:goal.progress+"%"}}/></span>
+        {goal.today_progress!=null && <>
+            <span className="habitSelectedGoalLabel"><span>{t("todayProgress")}</span><small>{goal.today_progress}%</small></span>
+            <span className="goalOverviewProgress" role="progressbar" aria-label={t("todayProgress")} aria-valuemin={0} aria-valuemax={100} aria-valuenow={goal.today_progress}><span style={{width:goal.today_progress+"%"}}/></span>
+        </>}
     </button>;
 }

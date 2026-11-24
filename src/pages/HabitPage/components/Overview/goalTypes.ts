@@ -35,6 +35,13 @@ export interface Goal {
     target_days?: number;
     daily_minutes?: number;
     achieved_days?: number;
+    today_progress?: number | null;
+    today_current?: number | null;
+    today_target?: number | null;
+    auto_complete?: boolean;
+    auto_completed?: boolean;
+    reminder_days?: number | null;
+    completed_at?: string | null;
     habit_ids?: number[];
     stages?: GoalStage[];
     habits?: GoalLinkedItem[];

@@ -12,9 +12,9 @@ export default function GoalCatalog() {
     const {blackout,setBlackout}=useBlackout();
     const {user}=useUser();
     const {goals,loading,error}=useGoalsWorkspace(!blackout.options?.nick || blackout.options.nick === user.nick);
-    const [status,setStatus]=useState("all");
-    const filtered = status==="all" ? goals : goals.filter(goal=>status==="active" ?
-        goal.status==="active" || goal.status==="paused" : goal.status===status);
+    const [status,setStatus]=useState("active");
+    const filtered = (status==="all" ? goals : goals.filter(goal=>status==="active" ?
+        goal.status==="active" || goal.status==="paused" : goal.status===status)).slice().sort((a,b)=>status==="completed" ? String(b.completed_at || "").localeCompare(String(a.completed_at || "")) : 0);
     return <div className="addHabitDiv addPlanDiv goalWorkspaceModal goalCatalog">
         <div className="goalWorkspaceHeading">
             <h2>{t("title")}</h2>
@@ -33,6 +33,7 @@ export default function GoalCatalog() {
                 <TargetIcon size={20}/>
                 <span className="goalCatalogName">{goal.name}</span>
                 <span className="goalCatalogProgress">{goal.progress}%</span>
+                {goal.status==="completed" && goal.completed_at && <small>{t("completedOn")}: {new Date(goal.completed_at).toLocaleDateString()}</small>}
                 <span className="goalOverviewProgress"><span style={{width:goal.progress+"%"}}/></span>
             </button>)}</div>}
     </div>;

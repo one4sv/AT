@@ -72,7 +72,9 @@
     "stage_updated": "Milestone updated",
     "stage_deleted": "Milestone removed",
     "link_added": "Linked action",
-    "link_removed": "Unlinked action"
+    "link_removed": "Unlinked action",
+    "progress_changed": "Progress changed",
+    "auto_status": "Status changed automatically"
   },
   "days": "By days",
   "streak": "Consecutive scheduled days",
@@ -94,5 +96,14 @@
   "automaticProgress": "Progress is calculated automatically",
   "linkExisting": "Link an existing goal",
   "displayGoal": "Goal shown in timer and counter",
-  "hideDisplayGoal": "Do not show"
+  "hideDisplayGoal": "Do not show",
+  "autoComplete": "Complete automatically at 100%",
+  "deadlineReminder": "Deadline reminder",
+  "reminderOff": "No reminder",
+  "reminderBefore_zero": "On the due date",
+  "reminderBefore_one": "{{count}} day before",
+  "reminderBefore_other": "{{count}} days before",
+  "todayProgress": "Today",
+  "completedOn": "Completed on",
+  "historyProgress": "Progress: {{from}}% → {{to}}%"
 }
