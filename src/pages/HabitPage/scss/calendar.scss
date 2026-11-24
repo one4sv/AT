@@ -388,4 +388,11 @@
 .calendarContextCalendar .calendarDays > small { text-align: center; }
 .calendarContextSummary { margin-top: 8px; display: grid; gap: 7px; background: var(--mc); padding: 10px; border-radius: 16px; max-height: 23dvh; overflow-y: auto; }
 .calendarContextPick { padding: 8px; }
-.calendarContextPick select { width: 100%; border: 1px solid var(--block_border); border-radius: 16px; padding: 8px; background: var(--bgc); color: var(--tc); }
+.calendarContextPick .selectListDiv > input { width: 100%; border: 1px solid var(--block_border); border-radius: 16px; padding: 8px; background: var(--bgc); color: var(--tc); }
+
+.calendarContextCalendar { overflow: hidden; }
+.contextMonthNext { animation: contextMonthNext .2s ease-out; }
+.contextMonthPrev { animation: contextMonthPrev .2s ease-out; }
+@keyframes contextMonthNext { from { transform: translateX(30%); opacity: .4; } to { transform: translateX(0); opacity: 1; } }
+@keyframes contextMonthPrev { from { transform: translateX(-30%); opacity: .4; } to { transform: translateX(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .contextMonthNext, .contextMonthPrev { animation: none; } }

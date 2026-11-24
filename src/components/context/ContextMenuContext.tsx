@@ -115,7 +115,7 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
     useEffect(() => {
         const close = () => closeMenu()
         const scroll = (event: Event) => {
-            if (!menuRef.current?.contains(event.target as Node)) closeMenu()
+            if (!menuRef.current?.contains(event.target as Node) && !(event.target instanceof Element && event.target.closest(".selectListPortalRoot.calendarContextActivity"))) closeMenu()
         }
         const key = (event: KeyboardEvent) => { if (event.key === "Escape") closeMenu() }
         window.addEventListener("click", close)

@@ -48,7 +48,7 @@ export const DoneProvider = ({ children }: { children: ReactNode }) => {
                 if (useAllDayTimeline) void fetchCalendarUser();
                 else void fetchAllCalendar();
             }
-            if (habitTimer && habitTimer.status !== "ended") {
+            if (res.data.success && habit?.id === id && date === todayStrFunc() && habitTimer && habitTimer.status !== "ended") {
                 await api.post(`timer/stop`, {
                     habit_id: id,
                     time: new Date(),

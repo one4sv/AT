@@ -105,7 +105,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
             if (active) suppressUntil = performance.now() + 1400;
             cancel(event.type === "pointercancel" || active && !item && !onOrigin);
             // Only an intentional move onto a menu item selects it on release.
-            if (active && item && distance >= 24) item.click();
+            if (event.type !== "pointercancel" && active && item && distance >= 24) item.click();
         };
 
         const suppress = (event: MouseEvent) => {
@@ -113,7 +113,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
             // Block the release-generated ghost click, but allow a deliberate
             // second tap on an opened menu item immediately after long-press.
             if (event.type === "click" && event.target instanceof Element &&
-                event.target.closest(".ContextMenuWrapper .ContextMenuButt")) return;
+                event.target.closest(".ContextMenuWrapper, .selectListPortalRoot.calendarContextActivity")) return;
             event.preventDefault();
             event.stopImmediatePropagation();
         };

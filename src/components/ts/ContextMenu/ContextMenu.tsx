@@ -77,7 +77,7 @@ export default function ContextMenu() {
                 previewRef.current.replaceChildren(clone);
             }
             setIsAdjusted(true);
-            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+            if (mobileCalendar || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
             const originX = Math.max(0, Math.min(menuWidth, menu.x - left));
             const originY = Math.max(0, Math.min(menuHeight, menu.y - top));
             element.style.transformOrigin = `${originX}px ${originY}px`;
@@ -182,6 +182,7 @@ export default function ContextMenu() {
                     closeMenu();
                     return;
                 }
+                if ((event.target as HTMLElement).closest(".calendarContextCalendar, .calendarContextPick")) return;
                 const actions = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(".ContextMenuButt"));
                 const index = actions.indexOf(document.activeElement as HTMLElement);
                 if (event.key === "ArrowDown" || event.key === "ArrowUp") {

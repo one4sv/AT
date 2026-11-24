@@ -26,7 +26,7 @@ import type {
 } from "chart.js"
 
 import React, { useMemo } from "react"
-import { useParams } from "react-router-dom"
+import { useMatch } from "react-router-dom"
 import {
     generateDays,
     getDateRange,
@@ -115,7 +115,7 @@ export default function DoneDiagram({ group, period, metric, mainRef} : {group: 
     const { calendar, setChosenDay, setSelectedMonth, setSelectedYear } = useCalendar()
     const { habit } = useTheHabit()
     const { habits } = useHabits()
-    const { habitId: id } = useParams<{ habitId: string }>()
+    const id = useMatch("/habit/:habitId")?.params.habitId
 
     const { data, groupsDays, effectiveGroup, groupStats } = useMemo<ChartState>(() => {
         let startDate = ""

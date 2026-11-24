@@ -12,6 +12,7 @@ import {useBlackout} from "../../../hooks/BlackoutHook";
 import {dateToCalendarFormat,todayStrFunc,formatDateFromString} from "../../utils/dateToStr";
 import {getDayArrays} from "../../utils/getDayArrs";
 import {buildSlide} from "../../../../pages/HabitPage/utils/buildSlide";
+import SelectList from "../../SelectList";
 import {DaySummary} from "../../../../pages/HabitPage/components/Calendar/HoverDay";
 
 export default function CalendarDayMenu({mobile}:{mobile:boolean}){
@@ -23,6 +24,8 @@ export default function CalendarDayMenu({mobile}:{mobile:boolean}){
     const [date,setDate]=useState(menu.options.id);
     const [month,setMonth]=useState(()=>new Date(date+"T12:00:00"));
     const edge=useRef(0);
+    const [direction,setDirection]=useState(0);
+    const shiftMonth=(step:number)=>{setDirection(step);setMonth(old=>new Date(old.getFullYear(),old.getMonth()+step,1,12));};
     useEffect(()=>{
         if(!mobile)return;
         let interval:number|undefined;
@@ -35,7 +38,7 @@ export default function CalendarDayMenu({mobile}:{mobile:boolean}){
             if(direction===edge.current)return;
             stop();edge.current=direction;
             if(direction){
-                const shift=()=>setMonth(old=>new Date(old.getFullYear(),old.getMonth()+direction,1,12));
+                const shift=()=>shiftMonth(direction);
                 shift();interval=window.setInterval(shift,650);
             }
         };
@@ -58,9 +61,9 @@ export default function CalendarDayMenu({mobile}:{mobile:boolean}){
     const selectDay=()=>{const d=new Date(date+"T12:00:00");setSelectedMonth(d.getMonth());setSelectedYear(d.getFullYear());setChosenDay(date);};
     const slide=buildSlide(month.getMonth(),month.getFullYear());
     return <>
-        {mobile && <div className="calendarContextCalendar">
-            <div className="calendarContextHeader"><button type="button" aria-label={t("calendarDay.previousMonth")} onClick={()=>setMonth(old=>new Date(old.getFullYear(),old.getMonth()-1,1,12))}><CaretLeftIcon/></button><strong>{new Intl.DateTimeFormat(i18n.resolvedLanguage,{month:"long",year:"numeric"}).format(month)}</strong><button type="button" aria-label={t("calendarDay.nextMonth")} onClick={()=>setMonth(old=>new Date(old.getFullYear(),old.getMonth()+1,1,12))}><CaretRightIcon/></button></div>
-            <div className="calendarDays">
+        {mobile && <div className="calendarContextCalendar" onClick={e=>e.stopPropagation()}>
+            <div className="calendarContextHeader"><button type="button" aria-label={t("calendarDay.previousMonth")} onClick={()=>shiftMonth(-1)}><CaretLeftIcon/></button><strong>{new Intl.DateTimeFormat(i18n.resolvedLanguage,{month:"long",year:"numeric"}).format(month)}</strong><button type="button" aria-label={t("calendarDay.nextMonth")} onClick={()=>shiftMonth(1)}><CaretRightIcon/></button></div>
+            <div key={month.toISOString()} className={"calendarDays "+(direction>0?"contextMonthNext":direction<0?"contextMonthPrev":"")}>
                 {Array.from({length:7},(_,i)=><small key={i}>{new Intl.DateTimeFormat(i18n.resolvedLanguage,{weekday:"short",timeZone:"UTC"}).format(new Date(Date.UTC(2024,0,i+1)))}</small>)}
                 {[...slide.days.prev,...slide.days.this,...slide.days.post].map(d=>{
                     const day=dateToCalendarFormat(new Date(d.year,d.month,d.day,12));
@@ -69,8 +72,8 @@ export default function CalendarDayMenu({mobile}:{mobile:boolean}){
                 })}
             </div>
             <div className="calendarContextSummary"><strong>{formatDateFromString(date)}</strong><DaySummary date={date} habitId={id} completed={counts.completedArr.length} missed={counts.skippedArr.length} planned={counts.willArr.length+counts.plannedArr.length+(!id?plans.filter(p=>p.plan_date===date && p.membership_status!=="pending").length:0)} ongoing={counts.nowArr.length} comment={comment}/></div>
-        </>}
-        {!id && <div className="calendarContextPick" onClick={e=>e.stopPropagation()}><select aria-label={t("calendarDay.chooseActivity")} value={selectedId} onChange={e=>setSelectedId(e.target.value)}><option value="">{t("calendarDay.chooseActivity")}</option>{items.filter(h=>h.ongoing).map(h=><option key={h.id} value={String(h.id)}>{h.name}</option>)}</select></div>}
+        </div>}
+        {!id && <div className="calendarContextPick" onClick={e=>e.stopPropagation()}><SelectList className="calendarContextActivity" placeholder={t("calendarDay.chooseActivity")} selected={selectedId} onChange={setSelectedId} arr={items.filter(h=>h.ongoing).map(h=>({value:String(h.id),label:h.name}))}/></div>}
         {canComplete && <div className="ContextMenuButt" onClick={()=>{closeMenu();selectDay();markDone(chosen!.id,date);}}>{done?<CircleIcon/>:<CheckCircleIcon/>}{t(done?"calendarDay.undo":"calendarDay.mark")}</div>}
         {canComment && <div className="ContextMenuButt" onClick={()=>{closeMenu();selectDay();setBlackout({seted:true,module:"CalendarDayComment",options:{habitId:String(chosen!.id),id:date}});}}><ChatCircleIcon/>{t(comment?"calendarDay.editComment":"calendarDay.addComment")}</div>}
         {!canComplete && !canComment && <div className="ContextMenuButt" onClick={()=>{selectDay();closeMenu();}}>{t("calendarDay.openDay")}</div>}

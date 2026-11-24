@@ -23,7 +23,7 @@ import type {
     ChartOptions,
 } from "chart.js"
 import React, { useMemo } from "react"
-import { useParams } from "react-router-dom"
+import { useMatch } from "react-router-dom"
 import {
     generateDays,
     getDateRange,
@@ -84,7 +84,7 @@ export default function StreakDiagram({
     const { calendar, setChosenDay, setSelectedMonth, setSelectedYear } = useCalendar()
     const { habit } = useTheHabit()
     const { habits } = useHabits()
-    const { habitId: id } = useParams<{ habitId: string }>()
+    const id = useMatch("/habit/:habitId")?.params.habitId
 
     const { data, groupsDays, effectiveGroup } = useMemo(() => {
         let startDate = ""

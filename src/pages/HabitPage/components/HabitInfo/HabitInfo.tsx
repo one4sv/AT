@@ -129,7 +129,7 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
             }}/>
             <div className="habitWrapperIcon">
                 {(habit.avatar_key || selectedTag || habit.tag || !infoReadOnly) && (
-                    <div className={"habitIconWrapper"+(!infoReadOnly?" avatarEditable":"")} role={!infoReadOnly?"button":undefined} tabIndex={!infoReadOnly?0:undefined} aria-label={t("activityImages.avatar")} onClick={e=>openAvatar(e.clientX,e.clientY)} onKeyDown={e=>{if(e.key==="Enter" || e.key===" "){e.preventDefault();const rect=e.currentTarget.getBoundingClientRect();openAvatar(rect.left,rect.bottom);}}}>
+                    <div className={"habitIconWrapper"+(!infoReadOnly?" avatarEditable":"")} role={!infoReadOnly?"button":undefined} tabIndex={!infoReadOnly?0:undefined} aria-label={t("activityImages.avatar")} onClick={e=>{e.stopPropagation();openAvatar(e.clientX,e.clientY);}} onKeyDown={e=>{if(e.key==="Enter" || e.key===" "){e.preventDefault();e.stopPropagation();const rect=e.currentTarget.getBoundingClientRect();openAvatar(rect.left,rect.bottom);}}}>
                         {habit.avatar_key || selectedTag || habit.tag?TagIcon(habit, selectedTag):<CameraIcon/>}
                     </div>
                 )}

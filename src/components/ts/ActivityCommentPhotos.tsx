@@ -1,4 +1,5 @@
 import { useEffect,useRef,useState } from "react";
+import {useMatch} from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PaperclipIcon,XIcon } from "@phosphor-icons/react";
 import { api } from "./api";
@@ -22,7 +23,8 @@ function LocalPhoto({file}:{file:File}) {
 type Snapshot={photos:string[];text:string};
 export function useActivityCommentPhotos(id:string,date:string,enabled:boolean,editable:boolean) {
     const {t}=useTranslation("common"),{showNotification}=useNote();
-    const {fetchCalendarHabit}=useCalendar();
+    const {fetchCalendarHabit,fetchCalendarUser,fetchAllCalendar}=useCalendar();
+    const routeHabitId=useMatch("/habit/:habitId")?.params.habitId;
     const {user}=useUser();
     const path="habits/"+id+"/comment-photos/"+date;
     const scope=user.id+":"+path;
