@@ -87,6 +87,8 @@ export default function Group() {
         collapseFrame.current = requestAnimationFrame(animate);
     };
     const touchStartY = useRef(0);
+    const touchOriginY = useRef(0);
+    const collapseInitial = useRef(0);
     const touchStartX = useRef(0);
     const expanded = useRef(false);
     const isHorizontal = useRef(false);
@@ -181,6 +183,8 @@ export default function Group() {
             collapseFrame.current = null;
         }
         touchStartY.current = e.touches[0].clientY;
+        touchOriginY.current = e.touches[0].clientY;
+        collapseInitial.current = collapsedRef.current;
         touchStartX.current = e.touches[0].clientX;
         expanded.current = false;
         isHorizontal.current = false;
@@ -316,11 +320,28 @@ export default function Group() {
         sliderOwnsGesture.current = false;
 
         if (wasCollapsingGesture) {
-            animateCollapse(collapsedRef.current > 0.45 ? 1 : 0);
+            const finalY = e.changedTouches[0]?.clientY ?? touchOriginY.current;
+            const movedY = touchOriginY.current - finalY;
+            animateCollapse(Math.abs(movedY) >= 32 ?
+                (movedY > 0 ? 1 : 0) : (collapseInitial.current > 0.45 ? 1 : 0));
         }
 
         if (ownedGesture) {
             e.stopPropagation();
+            setIsDragging(false);
+            setDontHandle(false);
+        }
+    };
+
+    const handleTouchCancel = () => {
+        const owned = isCollapsingGesture.current || sliderOwnsGesture.current;
+        if (isCollapsingGesture.current) animateCollapse(collapseInitial.current > 0.45 ? 1 : 0);
+        expanded.current = false;
+        isHorizontal.current = false;
+        isCollapsingGesture.current = false;
+        sliderGesture.current = false;
+        sliderOwnsGesture.current = false;
+        if (owned) {
             setIsDragging(false);
             setDontHandle(false);
         }
@@ -373,7 +394,7 @@ export default function Group() {
                 ref={accRef}
                 onTouchStartCapture={handleTouchStart}
                 onTouchEndCapture={handleTouchEnd}
-                onTouchCancelCapture={handleTouchEnd}
+                onTouchCancelCapture={handleTouchCancel}
             >
                 <GroupInfo
                     key={id}
