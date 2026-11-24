@@ -110,6 +110,9 @@ export default function GoalDetails() {
     if(!goal) return <div className="addHabitDiv addPlanDiv goalWorkspaceModal">{t("loadError")}</div>;
 
     const percentages=stagePercentages(goal.stages || []);
+    const canEdit=goal.can_edit!==false;
+    const canProgress=goal.can_progress!==false;
+    const canChangeLinks=canEdit && !goal.shared_habit_id;
     return <div className="addHabitDiv addPlanDiv goalWorkspaceModal goalDetails">
         <div className="goalWorkspaceHeading">
             <h2>{goal.name}</h2>
@@ -118,12 +121,12 @@ export default function GoalDetails() {
                     onClick={()=>setBlackout({seted:true,module:"GoalHistory",options:{id:String(goal.id)}})}>
                     <ClockCounterClockwiseIcon size={24}/>
                 </button>
-                <button type="button" className="goalIconButton" aria-label={t("edit")}
+                {canEdit && <><button type="button" className="goalIconButton" aria-label={t("edit")}
                     onClick={()=>setBlackout({seted:true,module:"AddGoal",options:{id:String(goal.id)}})}>
                     <PencilSimpleIcon size={24}/>
                 </button>
                 <button type="button" className="goalIconButton danger" aria-label={t("delete")}
-                    onClick={deleteGoal}><TrashIcon size={24}/></button>
+                    onClick={deleteGoal}><TrashIcon size={24}/></button></>}
             </div>
         </div>
         {error && <small>{t("loadError")}</small>}
@@ -136,8 +139,8 @@ export default function GoalDetails() {
         <div className="goalWorkspaceField">
             <label>{t("statusLabel")}</label>
             <SelectList id="goalCurrentStatus" className="goalWorkspaceSelect"
-                selected={goal.status} onChange={next=>changeStatus(next as GoalStatus)}
-                arr={(["active","paused","completed","canceled","archived"] as GoalStatus[]).map(value=>({
+                selected={goal.status} showOnly={!canProgress && !canEdit} onChange={next=>changeStatus(next as GoalStatus)}
+                arr={(["active","paused","completed","canceled","archived"] as GoalStatus[]).filter(value=>canEdit || value==="active" || value==="completed" || value===goal.status).map(value=>({
                     value,label:t("status."+value)
                 }))}/>
         </div>
@@ -161,17 +164,17 @@ export default function GoalDetails() {
         </div>}
         {goal.progress_mode==="manual" && <div className="goalWorkspaceField">
             <SeekBar id="goalManualProgress" min={0} max={100} step={1}
-                value={value} unit="%" disabled={saving} onChange={setValue}/>
-            <button type="button" className="goalWorkspaceSave" disabled={saving || value===Number(goal.manual_progress)}
+                value={value} unit="%" disabled={saving || !canProgress} onChange={setValue}/>
+            <button type="button" className="goalWorkspaceSave" disabled={saving || !canProgress || value===Number(goal.manual_progress)}
                 onClick={()=>void mutate("goal-workspace/"+id,"patch",{manual_progress:value})}>{t("save")}</button>
         </div>}
         {(goal.progress_mode==="metric" || goal.progress_mode==="combined") && <div className="goalWorkspaceField">
             <label htmlFor="goalCurrentMetric">{t("current")} ({goal.metric_unit || t("value")})</label>
             <div className="goalWorkspaceMeasure">
-                <input type="number" className="addHabitInput" id="goalCurrentMetric" value={value}
+                <input type="number" className="addHabitInput" id="goalCurrentMetric" value={value} disabled={!canProgress}
                     onChange={e=>setValue(Number(e.target.value))}/>
                 <span>/ {goal.metric_target}</span>
-                <button type="button" className="goalWorkspaceSave" disabled={saving || value===Number(goal.metric_current)}
+                <button type="button" className="goalWorkspaceSave" disabled={saving || !canProgress || value===Number(goal.metric_current)}
                     onClick={()=>void mutate("goal-workspace/"+id,"patch",{metric_current:value})}>{t("save")}</button>
             </div>
         </div>}
@@ -179,7 +182,7 @@ export default function GoalDetails() {
         <div className="goalWorkspaceHeading"><h3>{t("stages")}</h3></div>
         <small>{t("stagesHint")}</small>
         {(goal.stages || []).map(stage=><div className="goalStageInputs goalStageExisting" key={stage.id}>
-            <Checkbox state={Boolean(stage.completed_at)} disable={saving} func={checked=>
+            <Checkbox state={Boolean(stage.completed_at)} disable={saving || !canProgress} func={checked=>
                 void mutate("goal-workspace/"+id+"/stages/"+stage.id,"patch",{completed:checked})}/>
             {editId===stage.id ? <>
                 <input className="addHabitInput" maxLength={160} value={editTitle} aria-label={t("stageTitle")}
@@ -198,21 +201,21 @@ export default function GoalDetails() {
                     }}><CheckIcon size={20}/></button>
             </> : <>
                 <div className="goalStageTitle">
-                    <button type="button" className={"goalCheckboxLabel"+(stage.completed_at?" goalStageChecked":"")} disabled={saving}
+                    <button type="button" className={"goalCheckboxLabel"+(stage.completed_at?" goalStageChecked":"")} disabled={saving || !canProgress}
                         onClick={()=>void mutate("goal-workspace/"+id+"/stages/"+stage.id,"patch",{completed:!stage.completed_at})}>{stage.title}</button>
                     {stage.completed_at && <small>{formatAppDate(stage.completed_at)} · {formatAppTime(stage.completed_at)}</small>}
                 </div>
                 <small>{percentages.get(stage.id)}%</small>
-                <button type="button" className="goalStageRemove" aria-label={t("edit")}
+                {canEdit && <button type="button" className="goalStageRemove" aria-label={t("edit")}
                     onClick={()=>{
                         setEditId(stage.id);setEditTitle(stage.title);setEditPercent(percentages.get(stage.id) ?? 0);
-                    }}><PencilSimpleIcon size={20}/></button>
+                    }}><PencilSimpleIcon size={20}/></button>}
             </>}
-            <button type="button" className="goalStageRemove danger" disabled={saving}
+            {canEdit && <button type="button" className="goalStageRemove danger" disabled={saving}
                 aria-label={t("removeStage")} onClick={()=>
-                void mutate("goal-workspace/"+id+"/stages/"+stage.id,"delete")}><XIcon size={20}/></button>
+                void mutate("goal-workspace/"+id+"/stages/"+stage.id,"delete")}><XIcon size={20}/></button>}
         </div>)}
-        <div className="goalStageInputs">
+        {canEdit && <div className="goalStageInputs">
             <input className="addHabitInput" value={newTitle} maxLength={160} placeholder={t("stageTitle")}
                 aria-label={t("stageTitle")} onChange={e=>setNewTitle(e.target.value)}/>
             <div className="goalStagePercent">
@@ -226,15 +229,15 @@ export default function GoalDetails() {
                     if(await mutate("goal-workspace/"+id+"/stages","post",
                         {title:newTitle.trim(),completion_percent:newPercent})){setNewTitle("");setNewPercent(100);}
                 }}><PlusIcon size={20}/></button>
-        </div>
+        </div>}
         </>}
         <div className="goalWorkspaceHeading"><h3>{t("linkedHabits")}</h3></div>
         {(goal.habits || []).map(habit=><div className="goalWorkspaceLink" key={habit.id}>
             <span>{habit.name}</span>
-            <button type="button" className="goalIconButton" aria-label={t("unlink")} disabled={saving}
-                onClick={()=>void mutate("goal-workspace/"+id+"/links/habit/"+habit.id,"delete")}><XIcon size={18}/></button>
+            {canChangeLinks && <button type="button" className="goalIconButton" aria-label={t("unlink")} disabled={saving}
+                onClick={()=>void mutate("goal-workspace/"+id+"/links/habit/"+habit.id,"delete")}><XIcon size={18}/></button>}
         </div>)}
-        {!!availableHabits.length && <div className="goalWorkspaceLinkAdd">
+        {canChangeLinks && !!availableHabits.length && <div className="goalWorkspaceLinkAdd">
             <SelectList className="goalWorkspaceSelect" selected={habitId} placeholder={t("chooseHabit")}
                 onChange={setHabitId} arr={availableHabits.map(h=>({value:String(h.id),label:h.name}))}/>
             <button type="button" className="goalIconButton" aria-label={t("link")} disabled={saving || !habitId}
@@ -244,10 +247,10 @@ export default function GoalDetails() {
         <div className="goalWorkspaceHeading"><h3>{t("linkedPlans")}</h3></div>
         {(goal.plans || []).map(plan=><div className="goalWorkspaceLink" key={plan.id}>
             <span>{plan.name}</span>
-            <button type="button" className="goalIconButton" aria-label={t("unlink")} disabled={saving}
-                onClick={()=>void mutate("goal-workspace/"+id+"/links/plan/"+plan.id,"delete")}><XIcon size={18}/></button>
+            {canChangeLinks && <button type="button" className="goalIconButton" aria-label={t("unlink")} disabled={saving}
+                onClick={()=>void mutate("goal-workspace/"+id+"/links/plan/"+plan.id,"delete")}><XIcon size={18}/></button>}
         </div>)}
-        {!!availablePlans.length && <div className="goalWorkspaceLinkAdd">
+        {canChangeLinks && !!availablePlans.length && <div className="goalWorkspaceLinkAdd">
             <SelectList className="goalWorkspaceSelect" selected={planId} placeholder={t("choosePlan")}
                 onChange={setPlanId} arr={availablePlans.map(p=>({value:String(p.id),label:p.name}))}/>
             <button type="button" className="goalIconButton" aria-label={t("link")} disabled={saving || !planId}

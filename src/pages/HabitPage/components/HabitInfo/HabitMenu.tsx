@@ -47,7 +47,7 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
                     />
                 )
             case "goals":
-                return isMy && habit ? <Suspense fallback={<div className="skeletonLine"/>}>
+                return habit && (isMy || habit.access?.is_member) ? <Suspense fallback={<div className="skeletonLine"/>}>
                     <GoalPicker key={habit.id} slideHabitId={habit.id}/>
                 </Suspense> : null;
             case "journal":

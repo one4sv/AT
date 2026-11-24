@@ -3,7 +3,7 @@ import type { Habit } from "../../context/HabitsContext";
 import type { OneOffPlan } from "../../context/PlansContext";
 
 export const isGoalHabitAvailable = (habit: Habit, userId: string | null | undefined) =>
-    habit.user_id === userId && habit.ongoing === true;
+    Boolean(userId && habit.ongoing === true && habit.goal_scope!=="shared" && (habit.user_id===userId || habit.access?.is_member || !habit.access));
 
 export function isGoalPlanAvailable(plan: OneOffPlan) {
     if (!plan.is_owner || plan.status !== "upcoming") return false;

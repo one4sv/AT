@@ -14,7 +14,7 @@ export default function HabitExtraButts({ isMy }: { isMy: boolean }) {
     const { data } = useHabitMembers(habit?.id);
     const { setShowSlide } = useSideMenu();
     const isMember = isMy || data?.access.is_member;
-    const {linked}=useHabitGoals(habit?.id,isMy);
+    const {linked}=useHabitGoals(habit?.id,!!isMember);
     return <div className="habitPlusDiv"><div className="habitPlusButts">
         {isMember ? <div className="addGoalButtDiv" onClick={() => setShowSlide("chat")}>
             {data?.member_count || habit?.chat_id ? <UsersIcon className="addGoalIcon chats" weight="fill" /> : <UserRoundPlus className="addGoalIcon chats" />}
@@ -33,7 +33,7 @@ export default function HabitExtraButts({ isMy }: { isMy: boolean }) {
             <CaretRightIcon className="addGoalCaret" />
         </Link>}
         {isMy && <div className="addGoalButtDiv" onClick={() => setShowSlide("settings")}><GearSix weight="fill" className="addGoalIcon settings" />{t("habitUi.settings")}<CaretRightIcon className="addGoalCaret" /></div>}
-        {isMy && <div className="addGoalButtDiv" onClick={() => setShowSlide("goals")}><Target weight="fill" className="addGoalIcon goal" />{t(linked.length ? "habitUi.goals" : "habitUi.addGoal")}<CaretRightIcon className="addGoalCaret" /></div>}
+        {isMember && <div className="addGoalButtDiv" onClick={() => setShowSlide("goals")}><Target weight="fill" className="addGoalIcon goal" />{t(linked.length ? "habitUi.goals" : "habitUi.addGoal")}<CaretRightIcon className="addGoalCaret" /></div>}
         {isMember && <div className="addGoalButtDiv" onClick={() => setShowSlide("journal")}><NotebookIcon weight="fill" className="addGoalIcon" />{t("habitUi.journal")}<CaretRightIcon className="addGoalCaret" /></div>}
     </div></div>;
 }

@@ -7,6 +7,7 @@ import { api } from "../../../../components/ts/api";
 import HabitMembers from "./HabitMembers";
 import useHabitMembers from "./useHabitMembers";
 import HabitPermissionSetting from "./HabitPermissionSetting";
+import HabitGoalCollaborationSettings from "./HabitGoalCollaborationSettings";
 import "../../scss/HabitChatMenu.scss";
 
 export default function HabitChatMenu(_props: HabitSlideProps) {
@@ -32,6 +33,7 @@ export default function HabitChatMenu(_props: HabitSlideProps) {
         } })}>{t("habitExtra.unlinkFromChat")}</button>}
         <HabitPermissionSetting field="complete_permission" label={t("habitExtra.canComplete")} />
         <HabitPermissionSetting field="comment_permission" label={t("habitExtra.canComment")} />
+        {data?.access.is_member && <HabitGoalCollaborationSettings isOwner={data.access.is_owner}/> }
         {data?.access.is_member && <button type="button" className="addGoalButtDiv habitCollaborationButton" onClick={() => setBlackout({ seted: true, module: "HabitCollaborationSettings" })}>
             <GearIcon weight="fill" />{t("habitDialog.settings")}
         </button>}

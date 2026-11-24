@@ -136,5 +136,17 @@
   "completedOnDay": "Completed on this day",
   "completedTodayCount": "Goals completed today: {{count}}",
   "completedDayCount": "Goals completed on this day: {{count}}",
-  "noDayGoals": "No goals for the selected day"
+  "noDayGoals": "No goals for the selected day",
+  "activityGoals": "Activity goals",
+  "scopePersonal": "Everyone has their own goals",
+  "scopeShared": "One shared goal",
+  "scopePersonalHint": "Each member creates their own goals. Other members' private goals are not visible.",
+  "scopeSharedHint": "The owner creates one goal for everyone. Existing private goals remain private.",
+  "sharedCompletion": "Shared goal completion",
+  "completionShared": "Complete together",
+  "completionPersonal": "Complete individually",
+  "completionSharedHint": "Members share one progress value. Automatic goals use permitted activity data.",
+  "completionPersonalHint": "One goal definition, with separate milestone and manual progress for each member.",
+  "createSharedGoal": "Create shared goal",
+  "sharedGoalWait": "The activity owner creates the shared goal."
 }

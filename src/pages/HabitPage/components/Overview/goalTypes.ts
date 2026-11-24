@@ -22,6 +22,11 @@ export interface GoalEvent {
 export interface Goal {
     id: number;
     name: string;
+    owner_id?: string;
+    shared_habit_id?: number | null;
+    template_goal_id?: number | null;
+    can_edit?: boolean;
+    can_progress?: boolean;
     description: string;
     due_date: string | null;
     progress_mode: GoalMode;
@@ -95,3 +100,5 @@ export interface GoalRecord {
     seconds?:number;
     value?:number;
 }
+
+export const goalMatchesHabitScope=(goal:Goal,habitId:number,scope?:string)=>scope==="shared"?String(goal.shared_habit_id)===String(habitId):!goal.shared_habit_id;

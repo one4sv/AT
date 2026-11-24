@@ -44,6 +44,8 @@ export interface Habit {
     cycle_days_rest: number;
     chat_id: number | null;
     chat_participation_mode?: "required" | "optional";
+    goal_scope?: "personal" | "shared";
+    goal_completion_mode?: "personal" | "shared";
     metric_progress_mode?: "personal" | "shared";
     completion_mode?: "personal" | "shared";
     schedule_blocks_mode?: "personal" | "shared";

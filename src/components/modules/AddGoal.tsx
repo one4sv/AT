@@ -32,6 +32,7 @@ export default function AddGoal() {
     const {user}=useUser();
     const [linkedHabits,setLinkedHabits]=useState<GoalLinkedItem[]>(()=>habitId?[{id:Number(habitId),name:""}]:[]);
     const [linkedPlans,setLinkedPlans]=useState<GoalLinkedItem[]>([]);
+    const [sharedHabitId,setSharedHabitId]=useState<number | null>(null);
 
     const [autoComplete,setAutoComplete]=useState(false);
     const [repeat,setRepeat]=useState<GoalRepeat>("none");
@@ -70,6 +71,7 @@ export default function AddGoal() {
             setMetricShare(Number(goal.metric_share)*100);
             setTargetDays(Number(goal.target_days ?? 30));
             setDailyMinutes(Number(goal.daily_minutes ?? 120));
+            setSharedHabitId(goal.shared_habit_id ?? null);
             setLinkedHabits(goal.habits || []);
             setLinkedPlans(goal.plans || []);
         }).catch(()=>{if(active) {setLoadError(true);showNotification("error",t("loadError"));}})
@@ -77,11 +79,13 @@ export default function AddGoal() {
         return ()=>{active=false;};
     },[goalId,showNotification,t]);
 
+    const initialSharedHabit=!goalId && habitId ? (habits || []).find(h=>String(h.id)===String(habitId) && h.goal_scope==="shared" && h.user_id===user.id):undefined;
+    const fixedSharedHabit=sharedHabitId || initialSharedHabit?.id || null;
     const automatic=["days","streak","daily_timer","daily_counter","total_timer"].includes(mode);
     const ownHabits=(habits || []).filter(h=>isGoalHabitAvailable(h,user.id));
     const ownPlans=plans.filter(isGoalPlanAvailable);
-    const availableHabits=ownHabits.filter(h=>goalMetricCompatible(mode,goalHabitMetricType(h)) && !linkedHabits.some(item=>String(item.id)===String(h.id)));
-    const availablePlans=ownPlans.filter(p=>!linkedPlans.some(item=>String(item.id)===String(p.id)));
+    const availableHabits=fixedSharedHabit?[]:ownHabits.filter(h=>goalMetricCompatible(mode,goalHabitMetricType(h)) && !linkedHabits.some(item=>String(item.id)===String(h.id)));
+    const availablePlans=fixedSharedHabit?[]:ownPlans.filter(p=>!linkedPlans.some(item=>String(item.id)===String(p.id)));
     const linkedTypes=linkedHabits.map(item=>goalHabitMetricType((habits || []).find(h=>String(h.id)===String(item.id))));
     const timerAvailable=linkedTypes.length>0 && linkedTypes.every(type=>type==="timer");
     const counterAvailable=linkedTypes.length>0 && linkedTypes.every(type=>type==="counter");
@@ -116,7 +120,7 @@ export default function AddGoal() {
                 metric_unit:unit,metric_share:metricShare/100,target_days:targetDays,daily_minutes:dailyMinutes,
                 habit_ids:linkedHabits.map(h=>h.id),plan_ids:linkedPlans.map(p=>p.id)};
             const response=goalId ? await api.patch("goal-workspace/"+goalId,payload) :
-                await api.post("goal-workspace",{...payload,
+                await api.post("goal-workspace",{...payload,...(fixedSharedHabit?{shared_habit_id:fixedSharedHabit}:{}),
                     stages:usesStages ? stages.map(s=>({title:s.title.trim(),completion_percent:s.completion_percent})) : []});
             if(!response.data?.success) throw new Error("Goal save failed");
             goalsChanged();
@@ -221,9 +225,9 @@ export default function AddGoal() {
             <div className="goalWorkspaceField">
                 <label>{t("linkedHabits")}</label>
                 {linkedHabits.map(h=><div key={h.id} className="goalWorkspaceLink">
-                    <span>{ownHabits.find(item=>item.id===h.id)?.name || h.name || String(h.id)}</span>
-                    <button type="button" className="goalIconButton" aria-label={t("unlink")}
-                        onClick={()=>setLinkedHabits(old=>old.filter(item=>item.id!==h.id))}><XIcon size={24}/></button>
+                    <span>{(habits || []).find(item=>item.id===h.id)?.name || h.name || String(h.id)}</span>
+                    {!fixedSharedHabit && <button type="button" className="goalIconButton" aria-label={t("unlink")}
+                        onClick={()=>setLinkedHabits(old=>old.filter(item=>item.id!==h.id))}><XIcon size={24}/></button>}
                 </div>)}
                 {!!availableHabits.length && <SelectList key={"habit-"+linkedHabits.map(h=>h.id).join(",")}
                     className="goalWorkspaceSelect" placeholder={t("chooseHabit")}
@@ -232,7 +236,7 @@ export default function AddGoal() {
                         const item=availableHabits.find(h=>String(h.id)===value);
                         if(item) setLinkedHabits(old=>old.some(h=>String(h.id)===value)?old:[...old,{id:item.id,name:item.name}]);
                     }}/>}
-                <label>{t("linkedPlans")}</label>
+                {!fixedSharedHabit && <label>{t("linkedPlans")}</label>}
                 {linkedPlans.map(p=><div key={p.id} className="goalWorkspaceLink">
                     <span>{ownPlans.find(item=>item.id===p.id)?.name || p.name}</span>
                     <button type="button" className="goalIconButton" aria-label={t("unlink")}

@@ -18,7 +18,7 @@ export default function HabitHeaderMenu() {
     const { setShowHabitMenu, setShowSlide } = useSideMenu();
     const { data } = useHabitMembers(habit?.id);
     const navigate = useNavigate();
-    const {linked}=useHabitGoals(habit?.id,!!habit && habit.user_id===user.id);
+    const {linked}=useHabitGoals(habit?.id,!!habit && (habit.user_id===user.id || !!data?.access.is_member));
 
     if (!habit || !habit.ongoing) return null;
 
@@ -53,7 +53,7 @@ export default function HabitHeaderMenu() {
                 <GearSix weight="fill"/>
                 {t("habitUi.settings")}
             </div>}
-            {isMy && <div className="ContextMenuButt" onClick={() => openSlide("goals")}>
+            {isMember && <div className="ContextMenuButt" onClick={() => openSlide("goals")}>
                 <Target weight="fill"/>
                 {t(linked.length ? "habitUi.goals" : "habitUi.addGoal")}
             </div>}

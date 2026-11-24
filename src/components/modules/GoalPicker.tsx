@@ -11,7 +11,7 @@ import { useHabits } from "../hooks/HabitsHook";
 import { useUser } from "../hooks/UserHook";
 import { isGoalHabitAvailable } from "../ts/utils/goalLinkAvailability";
 import { api } from "../ts/api";
-import { goalMetricCompatible, goalHabitMetricType, goalIsCurrent, type Goal, type GoalRecord } from "../../pages/HabitPage/components/Overview/goalTypes";
+import { goalMetricCompatible, goalHabitMetricType, goalIsCurrent, goalMatchesHabitScope, type Goal, type GoalRecord } from "../../pages/HabitPage/components/Overview/goalTypes";
 import { formatAppDate,formatAppTime,formatDateFromString } from "../ts/utils/dateToStr";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "../../pages/HabitPage/scss/goalWorkspace.scss";
@@ -27,10 +27,14 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
     const habitId=slideHabitId ?? habitIdRef.current;
     const {habits,loadingHabits}=useHabits();
     const {user}=useUser();
-    const isOwner=habits?.some(h=>String(h.id)===String(habitId) && h.user_id===user.id);
-    const eligible=habits?.some(h=>String(h.id)===String(habitId) && isGoalHabitAvailable(h,user.id));
-    const {goals,linked,loading,error}=useHabitGoals(habitId,!!isOwner);
-    const {selected,select}=useHabitGoalDisplay(habitId,!!isOwner);
+    const activity=habits?.find(h=>String(h.id)===String(habitId));
+    const isOwner=activity?.user_id===user.id;
+    const isMember=Boolean(activity && user.id);
+    const sharedScope=activity?.goal_scope==="shared";
+    const {goals,linked:allLinked,loading,error}=useHabitGoals(habitId,isMember);
+    const linked=allLinked.filter(goal=>goalMatchesHabitScope(goal,habitId,activity?.goal_scope));
+    const eligible=Boolean(activity?.ongoing && (sharedScope?isOwner && !linked.length:activity && isGoalHabitAvailable(activity,user.id)));
+    const {selected,select}=useHabitGoalDisplay(habitId,isMember);
     const metricType=goalHabitMetricType(habits?.find(h=>String(h.id)===String(habitId)));
     const displayChoices=linked.filter(goal=>goalMetricCompatible(goal.progress_mode,metricType) && goalIsCurrent(goal));
     const [saving,setSaving]=useState(false);
@@ -38,15 +42,15 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
     const recentSignature=linked.map(g=>g.id+":"+g.progress+":"+g.repeat_period_start).join("|");
     useEffect(()=>{
         setRecent({});
-        if(!isOwner || !recentSignature)return;
+        if(!isMember || !recentSignature)return;
         const controller=new AbortController();
         void api.get<{success:boolean;records:Record<string,GoalRecord[]>}>(`goal-workspace/activity/${habitId}/records`,{signal:controller.signal}).then(({data})=>{
             if(!controller.signal.aborted && data.success)setRecent(data.records);
         }).catch(()=>{});
         return ()=>controller.abort();
-    },[habitId,isOwner,recentSignature]);
+    },[habitId,isMember,recentSignature]);
     const {showNotification}=useNote();
-    const available=goals.filter(goal=>!hasHabitGoalLink(goal,habitId) && goalMetricCompatible(goal.progress_mode,metricType) && goalIsCurrent(goal));
+    const available=sharedScope?[]:goals.filter(goal=>!goal.shared_habit_id && !hasHabitGoalLink(goal,habitId) && goalMetricCompatible(goal.progress_mode,metricType) && goalIsCurrent(goal));
     const openDetails=(goal:Goal)=>setBlackout({seted:true,module:"GoalDetails",options:{id:String(goal.id)}});
     const choose=async(goalId:number)=>{
         if(!eligible || saving) return;
@@ -62,7 +66,7 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
     return <div className={slideHabitId!==undefined ? "habitInnerSlide habitGoalSlide" : "addHabitDiv addPlanDiv goalWorkspaceModal goalPicker"}>
         {slideHabitId!==undefined ? <div className="habitInnerSlideTitle">{t("title")}</div> : <h2>{t(linked.length?"title":"selectGoal")}</h2>}
         {loading || loadingHabits ? <span>{t("loading")}</span> : error ? <span>{t("loadError")}</span> :
-            !isOwner ? <span>{t("inactiveLink")}</span> : <>
+            !isMember ? <span>{t("inactiveLink")}</span> : <>
                 {!!displayChoices.length && <div className="goalWorkspaceField">
                     <label>{t("pinnedGoal")}</label>
                     <SelectList className="goalWorkspaceSelect" selected={displayChoices.some(g=>String(g.id)===selected)?selected:"none"}
@@ -76,10 +80,10 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
                             <span className="goalCatalogName">{goal.name}</span>
                             <span className="goalCatalogProgress">{goal.progress}%</span>
                         </button>
-                        <button type="button" className="goalIconButton" aria-label={t("edit")}
+                        {goal.can_edit!==false && <button type="button" className="goalIconButton" aria-label={t("edit")}
                             onClick={()=>setBlackout({seted:true,module:"AddGoal",options:{id:String(goal.id)}})}>
                             <PencilSimpleIcon size={24}/>
-                        </button>
+                        </button>}
                         <span className="goalOverviewProgress" role="progressbar" aria-valuemin={0} aria-valuemax={100}
                             aria-valuenow={goal.progress}><span style={{width:goal.progress+"%"}}/></span>
                         <div className="goalLinkedRecords">
@@ -92,7 +96,7 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
                                 <time dateTime={record.date}>{record.kind==="day"?formatDateFromString(record.date):formatAppDate(record.date)+" · "+formatAppTime(record.date)}</time>
                             </div>)}
                         </div>
-                        {manualModes.includes(goal.progress_mode) && goal.status==="active" &&
+                        {manualModes.includes(goal.progress_mode) && goal.can_progress!==false && goal.status==="active" &&
                             <button type="button" className="goalWorkspaceQuiet goalLinkedProgress"
                                 onClick={()=>openDetails(goal)}>{t("recordProgress")}</button>}
                         {goal.today_progress!=null && <div className="goalWorkspaceField">
@@ -104,7 +108,7 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
                 {eligible ? <>
                     <button type="button" className="goalWorkspaceQuiet" disabled={saving} onClick={()=>
                         setBlackout({seted:true,module:"AddGoal",options:{habitId:String(habitId)}})}>
-                        <PlusIcon size={20}/>{t("createForHabit")}
+                        <PlusIcon size={20}/>{t(sharedScope?"createSharedGoal":"createForHabit")}
                     </button>
                     {!!available.length && <>
                         <div className="goalLinkExistingLabel">{t("linkExisting")}</div>
@@ -115,7 +119,7 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
                             <small>{goal.progress}%</small>
                         </button>)}</div>
                     </>}
-                </> : <small>{t("inactiveLink")}</small>}
+                </> : !linked.length && <small>{t(sharedScope?"sharedGoalWait":"inactiveLink")}</small>}
             </>}
     </div>;
 }
