@@ -157,7 +157,7 @@ test("goal updates use a shared store, daily progress and optional completion/re
     const editor=read("src/components/modules/AddGoal.tsx");
     assert.match(editor,/linkedTypes\.every\(type=>type==="timer"\)/);
     assert.match(editor,/linkedTypes\.every\(type=>type==="counter"\)/);
-    assert.match(read("src/components/modules/GoalPicker.tsx"),/metricType==="timer" \|\| metricType==="counter"/);
+    assert.match(read("src/components/modules/GoalPicker.tsx"),/displayChoices=linked.filter/);
 });
 
  test("milestone percentages and cumulative timer mode have dedicated controls",()=>{
@@ -176,4 +176,12 @@ test("goal updates use a shared store, daily progress and optional completion/re
     assert.match(types,/habit\?\.settings\?\.metric_type/);
     assert.match(types,/Array\.isArray\(relation\)/);
     for(const path of ["src/components/modules/AddGoal.tsx","src/components/modules/GoalDetails.tsx","src/components/modules/GoalPicker.tsx","src/pages/HabitPage/components/Habit/Complete/HabitGoalProgress.tsx"]) assert.match(read(path),/goalHabitMetricType/);
+});
+
+test("repeat options and period history reuse the goal dialogs",()=>{
+    assert.match(read("src/components/modules/AddGoal.tsx"),/repeat_frequency:repeat/);
+    assert.match(read("src/components/modules/GoalHistory.tsx"),/\/periods/);
+    assert.match(read("src/components/modules/GoalPicker.tsx"),/pinnedGoal/);
+    assert.match(read("src/components/ts/Habit.tsx"),/smHabitGoalTrack/);
+    assert.match(read("src/pages/Settings/components/SettingsTabs/HabitsTab.tsx"),/showHabitGoals/);
 });

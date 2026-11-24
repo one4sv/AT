@@ -40,6 +40,9 @@ export interface Goal {
     today_progress?: number | null;
     today_current?: number | null;
     today_target?: number | null;
+    repeat_frequency?: GoalRepeat;
+    repeat_period_start?: string | null;
+    repeat_next_at?: string | null;
     auto_complete?: boolean;
     auto_completed?: boolean;
     reminder_days?: number | null;
@@ -70,3 +73,15 @@ export function goalHabitMetricType(habit?: {settings?:{metric_type?:string} | n
     const relation=habit?.habits_settings;
     return habit?.settings?.metric_type ?? (Array.isArray(relation)?relation[0]?.metric_type:relation?.metric_type);
 }
+
+export type GoalRepeat = "none" | "daily" | "weekly" | "monthly";
+export interface GoalPeriod {
+    id:number;
+    frequency:GoalRepeat;
+    period_start:string;
+    period_end:string;
+    progress:number;
+    completed:boolean;
+    closed_at:string;
+}
+export const goalIsCurrent=(goal:Goal)=>goal.status==="active" || goal.status==="paused" || (goal.status==="completed" && Boolean(goal.repeat_next_at));

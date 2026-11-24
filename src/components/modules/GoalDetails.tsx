@@ -128,6 +128,10 @@ export default function GoalDetails() {
         {error && <small>{t("loadError")}</small>}
         {!!goal.description && <p className="goalWorkspaceText">{goal.description}</p>}
         <div className="goalWorkspaceMeta">{t("dueDate")}: {goal.due_date || t("noDate")}</div>
+        {goal.repeat_frequency && goal.repeat_frequency!=="none" && <div className="goalWorkspaceMeta">
+            {t("repeatLabel")}: {t("repeat."+goal.repeat_frequency)}
+            {goal.repeat_next_at && <> · {t("nextReset")}: {new Date(goal.repeat_next_at).toLocaleString()}</>}
+        </div>}
         <div className="goalWorkspaceField">
             <label>{t("statusLabel")}</label>
             <SelectList id="goalCurrentStatus" className="goalWorkspaceSelect"

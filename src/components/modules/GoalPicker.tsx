@@ -11,7 +11,7 @@ import { useHabits } from "../hooks/HabitsHook";
 import { useUser } from "../hooks/UserHook";
 import { isGoalHabitAvailable } from "../ts/utils/goalLinkAvailability";
 import { api } from "../ts/api";
-import { goalMetricCompatible, goalHabitMetricType, type Goal } from "../../pages/HabitPage/components/Overview/goalTypes";
+import { goalMetricCompatible, goalHabitMetricType, goalIsCurrent, type Goal } from "../../pages/HabitPage/components/Overview/goalTypes";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "../../pages/HabitPage/scss/goalWorkspace.scss";
 import "./scss/goalWorkspace.scss";
@@ -31,10 +31,10 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
     const {goals,linked,loading,error}=useHabitGoals(habitId,!!isOwner);
     const {selected,select}=useHabitGoalDisplay(habitId,!!isOwner);
     const metricType=goalHabitMetricType(habits?.find(h=>String(h.id)===String(habitId)));
-    const displayChoices=metricType==="timer" || metricType==="counter" ? linked.filter(goal=>goalMetricCompatible(goal.progress_mode,metricType) && (goal.status==="active" || goal.status==="paused")) : [];
+    const displayChoices=linked.filter(goal=>goalMetricCompatible(goal.progress_mode,metricType) && goalIsCurrent(goal));
     const [saving,setSaving]=useState(false);
     const {showNotification}=useNote();
-    const available=goals.filter(goal=>!hasHabitGoalLink(goal,habitId) && goalMetricCompatible(goal.progress_mode,metricType) && (goal.status==="active" || goal.status==="paused"));
+    const available=goals.filter(goal=>!hasHabitGoalLink(goal,habitId) && goalMetricCompatible(goal.progress_mode,metricType) && goalIsCurrent(goal));
     const openDetails=(goal:Goal)=>setBlackout({seted:true,module:"GoalDetails",options:{id:String(goal.id)}});
     const choose=async(goalId:number)=>{
         if(!eligible || saving) return;
@@ -52,7 +52,7 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
         {loading || loadingHabits ? <span>{t("loading")}</span> : error ? <span>{t("loadError")}</span> :
             !isOwner ? <span>{t("inactiveLink")}</span> : <>
                 {!!displayChoices.length && <div className="goalWorkspaceField">
-                    <label>{t("displayGoal")}</label>
+                    <label>{t("pinnedGoal")}</label>
                     <SelectList className="goalWorkspaceSelect" selected={displayChoices.some(g=>String(g.id)===selected)?selected:"none"}
                         arr={[{value:"none",label:t("hideDisplayGoal")},...displayChoices.map(g=>({value:String(g.id),label:g.name}))]}
                         onChange={value=>select(value==="none"?"":value)}/>

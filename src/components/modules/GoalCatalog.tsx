@@ -4,6 +4,7 @@ import { TargetIcon } from "@phosphor-icons/react";
 import { useUser } from "../hooks/UserHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useGoalsWorkspace } from "../hooks/useGoalsWorkspace";
+import { goalIsCurrent } from "../../pages/HabitPage/components/Overview/goalTypes";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "./scss/goalWorkspace.scss";
 
@@ -14,7 +15,7 @@ export default function GoalCatalog() {
     const {goals,loading,error}=useGoalsWorkspace(!blackout.options?.nick || blackout.options.nick === user.nick);
     const [status,setStatus]=useState("active");
     const filtered = (status==="all" ? goals : goals.filter(goal=>status==="active" ?
-        goal.status==="active" || goal.status==="paused" : goal.status===status)).slice().sort((a,b)=>status==="completed" ? String(b.completed_at || "").localeCompare(String(a.completed_at || "")) : 0);
+        goalIsCurrent(goal) : goal.status===status && !goalIsCurrent(goal))).slice().sort((a,b)=>status==="completed" ? String(b.completed_at || "").localeCompare(String(a.completed_at || "")) : 0);
     return <div className="addHabitDiv addPlanDiv goalWorkspaceModal goalCatalog">
         <div className="goalWorkspaceHeading">
             <h2>{t("title")}</h2>

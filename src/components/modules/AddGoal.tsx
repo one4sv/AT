@@ -13,7 +13,7 @@ import { useHabits } from "../hooks/HabitsHook";
 import { usePlans } from "../hooks/PlansHook";
 import { useUser } from "../hooks/UserHook";
 import { isGoalHabitAvailable, isGoalPlanAvailable } from "../ts/utils/goalLinkAvailability";
-import { goalMetricCompatible, goalHabitMetricType, type Goal, type GoalMode, type GoalLinkedItem } from "../../pages/HabitPage/components/Overview/goalTypes";
+import { goalMetricCompatible, goalHabitMetricType, type Goal, type GoalMode, type GoalLinkedItem, type GoalRepeat } from "../../pages/HabitPage/components/Overview/goalTypes";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "./scss/goalWorkspace.scss";
 
@@ -34,6 +34,7 @@ export default function AddGoal() {
     const [linkedPlans,setLinkedPlans]=useState<GoalLinkedItem[]>([]);
 
     const [autoComplete,setAutoComplete]=useState(false);
+    const [repeat,setRepeat]=useState<GoalRepeat>("none");
     const [reminderDays,setReminderDays]=useState<number | null>(null);
     const [targetDays,setTargetDays]=useState(30);
     const [dailyMinutes,setDailyMinutes]=useState(120);
@@ -57,6 +58,7 @@ export default function AddGoal() {
             if(!active) return;
             const goal=data.goal;
             setAutoComplete(Boolean(goal.auto_complete));
+            setRepeat(goal.repeat_frequency ?? "none");
             setReminderDays(goal.reminder_days ?? null);
             setName(goal.name);
             setDescription(goal.description || "");
@@ -110,7 +112,7 @@ export default function AddGoal() {
         setSaving(true);
         try{
             const payload={name:name.trim(),description,due_date:dateValue(dueDate),
-                progress_mode:mode,auto_complete:autoComplete,reminder_days:dueDate?reminderDays:null,metric_start:metricStart,metric_target:metricTarget,
+                progress_mode:mode,repeat_frequency:repeat,auto_complete:autoComplete,reminder_days:dueDate?reminderDays:null,metric_start:metricStart,metric_target:metricTarget,
                 metric_unit:unit,metric_share:metricShare/100,target_days:targetDays,daily_minutes:dailyMinutes,
                 habit_ids:linkedHabits.map(h=>h.id),plan_ids:linkedPlans.map(p=>p.id)};
             const response=goalId ? await api.patch("goal-workspace/"+goalId,payload) :
@@ -150,6 +152,13 @@ export default function AddGoal() {
                     arr={[{value:"off",label:t("reminderOff")},...[0,1,3,7,14,30].map(days=>({value:String(days),label:t("reminderBefore",{count:days})}))]}
                     onChange={v=>setReminderDays(v==="off"?null:Number(v))}/>
             </div>}
+            <div className="addHabitWrapper">
+                <label>{t("repeatLabel")}</label>
+                <SelectList className="goalWorkspaceSelect" selected={repeat}
+                    arr={["none","daily","weekly","monthly"].map(value=>({value,label:t("repeat."+value)}))}
+                    onChange={value=>setRepeat(value as GoalRepeat)}/>
+                {repeat!=="none" && <small>{t("repeatHint")}</small>}
+            </div>
             <div className="goalWorkspaceLink">
                 <Checkbox state={autoComplete} setState={setAutoComplete}/>
                 <span>{t("autoComplete")}</span>
