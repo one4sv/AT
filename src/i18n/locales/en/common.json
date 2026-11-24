@@ -57,6 +57,7 @@
     "add": "Add",
     "notLoggedIn": "You are not logged in",
     "signIn": "Sign in",
+    "signInQr": "Sign in with QR code",
     "chats": "Chats",
     "spots": "Spots",
     "loading": "Loading",
@@ -469,7 +470,8 @@
   },
   "habitUi": {
     "clearTime": "Clear time",
-    "period": {
+    "cyclePattern": "Cycle {{active}}/{{rest}}",
+        "period": {
       "everyday": "Every day",
       "weekly": "Several days a week",
       "cycle": "Cyclic",

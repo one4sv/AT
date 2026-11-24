@@ -57,6 +57,7 @@
     "add": "Добавить",
     "notLoggedIn": "Вы не вошли в аккаунт",
     "signIn": "войти",
+    "signInQr": "Войти по QR-коду",
     "chats": "Чаты",
     "spots": "Споты",
     "loading": "Загрузка",
@@ -477,7 +478,8 @@
   },
   "habitUi": {
     "clearTime": "Сбросить время",
-    "period": {
+    "cyclePattern": "Цикл {{active}}/{{rest}}",
+        "period": {
       "everyday": "каждый день",
       "weekly": "несколько дней в неделю",
       "cycle": "циклическая",

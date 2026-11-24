@@ -114,6 +114,7 @@ export const HabitsProvider = ({
             }
             if (!user.nick) {
                 setHabits(null);
+                setLoadingHabits(false);
                 return;
             }
             refetchHabits();

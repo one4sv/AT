@@ -1,5 +1,6 @@
 import "../../scss/SM/habitsList.scss";
 import type { Habit } from "../context/HabitsContext";
+import { useTranslation } from "react-i18next";
 import { useCalendar } from "../hooks/CalendarHook";
 import ActivityIndicators, { type HabitDayProgress } from "./ActivityIndicators";
 import type { habitTimer } from "../context/TheHabitContext";
@@ -32,6 +33,7 @@ export default function HabitDiv({
     showIndicators?: boolean;
     progress?: HabitDayProgress;
 }) {
+    const { t } = useTranslation("common");
     const { openMenu } = useContextMenu();
     const { allCalendar } = useCalendar();
     const { closeMenu } = useSideMenu();
@@ -192,6 +194,7 @@ export default function HabitDiv({
         const timePart = formatHabitTime(habit);
         if (per === "everyday") return `${timePart}`;
         if (per === "sometimes") return `Иногда${timePart}`;
+        if (per === "cycle") return `${t("habitUi.cyclePattern", { active: habit.cycle_days_active, rest: habit.cycle_days_rest })}${timePart}`;
         return timePart.trim() || "";
     };
     if (isMyAcc === undefined) isMyAcc = true;

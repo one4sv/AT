@@ -55,7 +55,7 @@ export default function Habit() {
     } = useSideMenu();
     const { schedules } = useSchedule();
     const { plans } = usePlans();
-    const { user } = useUser();
+    const { user, initialLoading } = useUser();
     const { habitId } = useParams<{
         habitId: string;
     }>();
@@ -88,6 +88,7 @@ export default function Habit() {
 
     useEffect(
         () => {
+            if (initialLoading) return;
             if (habitId) {
                 loadHabitWLoading(habitId);
                 fetchCalendarHabitWLoading(habitId);
@@ -96,7 +97,7 @@ export default function Habit() {
             }
             // eslint-disable-next-line react-hooks/exhaustive-deps
         },
-        [habitId]
+        [habitId, initialLoading, user.id, location.search]
     );
 
     useEffect(
@@ -119,7 +120,7 @@ export default function Habit() {
         plans.some(plan => plan.membership_status !== "pending" && plan.status !== "canceled" &&
             plan.plan_date >= todayStrFunc()))) ||
         !!(habit && habitId === String(habit.id) && habit.periodicity !== "sometimes" && habitSettings.schedule);
-    if (habitId && (loadingHabit || loadingHabits || calendarLoading)) {
+    if (habitId && (initialLoading || loadingHabit || (user.id && loadingHabits) || calendarLoading)) {
         return <Skeleton type="habit" overview={!habitId} />;
     }
     const isMy = !!habit && habit.user_id === user.id;

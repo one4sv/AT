@@ -178,3 +178,12 @@ test("SelectList flips above the field and caps its scrollable height near viewp
     assert.match(styles, /-webkit-backdrop-filter: blur\(9px\)/);
     assert.match(styles, /z-index: 1200/);
 });
+
+test("cycle label, guest habit loading and QR shortcut use existing components",()=>{
+    const habit=read("src/components/ts/Habit.tsx");
+    assert.match(habit,/per === "cycle"/);
+    assert.match(habit,/habitUi.cyclePattern/);
+    assert.match(read("src/components/context/HabitsContext.tsx"),/if \(!user.nick\) \{\s*setHabits\(null\);\s*setLoadingHabits\(false\);/);
+    assert.match(read("src/components/ts/SideMenuUnAunthificated.tsx"),/\/sign\?mode=qr/);
+    assert.match(read("src/components/ts/SelectList.tsx"),/list.style.bottom = "auto"/);
+});

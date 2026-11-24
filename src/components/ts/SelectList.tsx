@@ -108,6 +108,9 @@ export default function SelectList({
       const spaceAbove = Math.max(0, rect.top - viewportTop - 12);
       const upwards = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
       list.style.maxHeight = Math.max(0, Math.min(desiredHeight, upwards ? spaceAbove : spaceBelow)) + "px";
+      // Explicit physical coordinates avoid WebKit resolving top/bottom against a transformed variant.
+      list.style.top = upwards ? -(list.getBoundingClientRect().height + 4) + "px" : rect.height + 4 + "px";
+      list.style.bottom = "auto";
       setOpenUp(previous => previous === upwards ? previous : upwards);
     };
 
@@ -128,6 +131,8 @@ export default function SelectList({
       window.visualViewport?.removeEventListener("resize", updatePlacement);
       window.visualViewport?.removeEventListener("scroll", updatePlacement);
       list.style.maxHeight = "";
+      list.style.top = "";
+      list.style.bottom = "";
     };
   }, [showList, showOnly, arr.length, showSelected, selected]);
 

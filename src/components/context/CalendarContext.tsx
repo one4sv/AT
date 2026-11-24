@@ -88,7 +88,7 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     const fetchCalendarHabit = async (id: string) => {
         if (!id) return;
         try {
-            const res = await api.get(`calendar/${id}`)
+            const res = await api.get(`calendar/${id}`, { params: { share: new URLSearchParams(window.location.search).get("share") || undefined } })
             if (res.data.success) {
                 setCalendar(res.data.calendar)
 

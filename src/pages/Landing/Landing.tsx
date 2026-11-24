@@ -50,7 +50,7 @@ export default function Landing() {
     const wasOpen = useRef(false);
     const russian = i18n.language.startsWith("ru");
     const [body, setBody] = useState<"sign" | "mail">("sign");
-    const [activeForm, setActiveForm] = useState<LandingFormId>("auth");
+    const [activeForm, setActiveForm] = useState<LandingFormId>(() => new URLSearchParams(location.search).get("mode") === "qr" ? "qr" : "auth");
     const [showedPass, setShowedPass] = useState({
         auth: false,
         reg: false,

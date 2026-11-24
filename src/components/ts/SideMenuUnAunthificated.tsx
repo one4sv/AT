@@ -1,7 +1,7 @@
 import useCompactLayout from "../hooks/utils/useCompactLayout";
 import { Link } from "react-router-dom";
 import { useSideMenu } from "../hooks/SideMenuHook";
-import { GhostIcon, MoonStarsIcon, SunDimIcon } from "@phosphor-icons/react";
+import { GhostIcon, MoonStarsIcon, SunDimIcon, QrCodeIcon } from "@phosphor-icons/react";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
 import { useSettings } from "../hooks/SettingsHook";
 import { useTranslation } from "react-i18next";
@@ -48,6 +48,9 @@ export default function SideMenuUnAunthificated({
                 </span>
                 <Link to={'/sign'} className="greenButt">
                     {t("sideMenu.signIn")}
+                </Link>
+                <Link to="/sign?mode=qr" className="smGuestQr">
+                    <QrCodeIcon size={24}/>{t("sideMenu.signInQr")}
                 </Link>
             </div>
             <div className="changeSignTheme" onClick={() => setNewTheme(isDark ? "light" : "dark")}>

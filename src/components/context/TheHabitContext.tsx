@@ -356,7 +356,8 @@ export const TheHabitProvider = ({
         async (habitId: number, signal?: AbortSignal): Promise<void> => {
             try {
                 const res = await api.get(`habits/${habitId}/stats`, {
-                    signal
+                    signal,
+                    params: { share: new URLSearchParams(window.location.search).get("share") || undefined }
                 });
                 if (signal?.aborted) return;
                 if (res.data.success) {

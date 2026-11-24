@@ -80,7 +80,7 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
                         <PlusIcon size={20}/>{t("createForHabit")}
                     </button>
                     {!!available.length && <>
-                        <small>{t("linkExisting")}</small>
+                        <div className="goalLinkExistingLabel">{t("linkExisting")}</div>
                         <div className="goalCatalogList">{available.map(goal=><button type="button" key={goal.id}
                             className="goalPickerItem" disabled={saving} onClick={()=>void choose(goal.id)}>
                             <TargetIcon size={20}/>
