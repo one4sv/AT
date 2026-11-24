@@ -89,6 +89,9 @@ export default function AccountList() {
                     <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddPlan"})}>
                         <CalendarPlusIcon size={18} weight="fill"/> {t("plans.create")}
                     </div>                    
+                    <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddGoal"})}>
+                        <BookmarkSimpleIcon size={18} weight="fill"/> {t("sideMenu.newGoal")}
+                    </div>
                     <div className="SMcreateButt" onClick={() => showNotification("info", t("sideMenu.inDevelopment"))}>
                         <Megaphone size={18} fill="currentColor"/> {t("sideMenu.newSpot")}
                     </div>

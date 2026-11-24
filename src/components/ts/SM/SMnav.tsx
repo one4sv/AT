@@ -313,6 +313,9 @@ export default function SMnav() {
                     }
                 );
             }
+            if (action === "add-goal") {
+                setBlackout({seted:true,module:"AddGoal"});
+            }
             if (action === "new-spot") {
                 showNotification("info", t("sideMenu.inDevelopment"));
             }
@@ -520,6 +523,16 @@ export default function SMnav() {
                         data-action="add-plan"
                     >
                         <CalendarPlusIcon size={20} /> {t("plans.create")}
+                    </div>
+                    <div
+                        className="SMextraMenuButt"
+                        onMouseUp={() => {
+                            setBlackout({seted:true,module:"AddGoal"});
+                            setIsExtraOpen(false);
+                        }}
+                        data-action="add-goal"
+                    >
+                        <PlusIcon size={20} /> {t("sideMenu.addGoal")}
                     </div>
                 </>);
             case "spots":

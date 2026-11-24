@@ -15,6 +15,7 @@ import useHabitDayProgress from "../../../../components/hooks/utils/useHabitDayP
 import { getOverviewFocus, getOverviewNext } from "./dayFocus";
 import Calendar from "../Calendar/Calendar";
 import HabitOverviewEntries from "./HabitOverviewEntries";
+import GoalOverview from "./GoalOverview";
 import "../../scss/HabitOverview.scss";
 
 function CalendarSkeleton() {
@@ -160,6 +161,7 @@ export default function HabitOverviewLayout() {
                     progress={nextEntry.habit ? dayProgress[String(nextEntry.habit.id)] : undefined}
                     label={t(nextEntry.kind === "plan" ? "plans.nextPlan" : "plans.nextActivity")}/>}
             </>}
+            <GoalOverview/>
         </div>
         <div className="habitOverviewContext">
             <div className="habitOverviewHeader">{t("plans.daySummary")}</div>

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 import { useTheHabit } from "../../../hooks/TheHabitHook";
 import { useSideMenu } from "../../../hooks/SideMenuHook";
 import { useUser } from "../../../hooks/UserHook";
-import { useNote } from "../../../hooks/NoteHook";
+import { useBlackout } from "../../../hooks/BlackoutHook";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import useHabitMembers from "../../../../pages/HabitPage/components/HabitInfo/useHabitMembers";
 
@@ -16,7 +16,7 @@ export default function HabitHeaderMenu() {
     const { user } = useUser();
     const { closeMenu } = useContextMenu();
     const { setShowHabitMenu, setShowSlide } = useSideMenu();
-    const { showDevNote } = useNote();
+    const { setBlackout } = useBlackout();
     const { data } = useHabitMembers(habit?.id);
     const navigate = useNavigate();
 
@@ -55,7 +55,7 @@ export default function HabitHeaderMenu() {
             </div>}
             {isMy && <div className="ContextMenuButt" onClick={() => {
                 closeMenu();
-                showDevNote();
+                setBlackout({seted:true,module:"GoalPicker",options:{habitId:String(habit.id)}});
             }}>
                 <Target weight="fill"/>
                 {t("habitUi.addGoal")}

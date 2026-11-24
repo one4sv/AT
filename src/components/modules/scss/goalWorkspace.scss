@@ -1,0 +1,305 @@
+@use "./addPlan.scss";
+
+.goalWorkspaceModal {
+    width: 34vw;
+    max-height: 91dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding-bottom: calc(2dvh + env(safe-area-inset-bottom));
+    scrollbar-width: thin;
+    gap: 1.4dvh;
+
+    h2, h3 {
+        margin: 0;
+        color: var(--tc);
+    }
+    h2 { font-size: 22px; }
+    h3 { font-size: 19px; }
+
+    .addHabitWrapper {
+        min-width: 0;
+    }
+    .addHabitWrapper > .addHabitInput {
+        min-height: 4.5dvh;
+        box-sizing: border-box;
+    }
+    .goalWorkspaceDescription {
+        font-size: 16px;
+        min-height: 5dvh;
+    }
+    .goalWorkspaceSubmit {
+        width: 100%;
+        border: none;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
+    }
+}
+.goalWorkspaceMetrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .7vw;
+}
+.goalWorkspaceStages, .goalWorkspaceField {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    width: 100%;
+    gap: .6dvh;
+}
+.goalStageInputs {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(54px, 18%) 44px;
+    gap: .5vw;
+    align-items: center;
+    width: 100%;
+    height: clamp(44px, 5dvh, 54px);
+    min-width: 0;
+    .addHabitInput, .goalStageRemove {
+        height: 100%;
+        min-height: 0;
+        box-sizing: border-box;
+        margin: 0;
+    }
+    .addHabitInput {
+        min-width: 0;
+        width: 100%;
+        padding: .7dvh .8vw;
+        background: var(--interact);
+        border: none;
+        border-radius: 16px;
+        color: var(--tc);
+        font-size: 16px;
+    }
+    .goalStageRemove {
+        width: 100%;
+        display: grid;
+        place-items: center;
+        border: none;
+        border-radius: 16px;
+        background: var(--interact);
+        color: var(--borderWh);
+        cursor: pointer;
+    }
+    .goalStageRemove.danger {
+        color: var(--notValid);
+    }
+    .goalStageRemove:disabled {
+        opacity: .5;
+        cursor: default;
+    }
+    &.goalStageExisting {
+        grid-template-columns: 25px minmax(0, 1fr) minmax(44px, 14%) 44px 44px;
+    }
+    > span {
+        color: var(--tc);
+        overflow-wrap: anywhere;
+        min-width: 0;
+    }
+    > small {
+        color: var(--borderWh);
+        text-align: right;
+    }
+    > .goalStageChecked {
+        opacity: .6;
+        text-decoration: line-through;
+    }
+}
+.goalWorkspaceQuiet, .goalWorkspaceSave, .goalIconButton {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: .5vw;
+    min-height: 42px;
+    padding: .7dvh .8vw;
+    border: none;
+    border-radius: 24px;
+    color: var(--tc);
+    background: var(--interact);
+    cursor: pointer;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+.goalWorkspaceSave {
+    border: none;
+    background: linear-gradient(135deg, var(--accent), var(--grad));
+    color: var(--inner_text);
+}
+.goalWorkspaceQuiet:disabled, .goalWorkspaceSave:disabled, .goalIconButton:disabled {
+    opacity: .5;
+    cursor: default;
+}
+.goalIconButton {
+    width: 42px;
+    flex-shrink: 0;
+}
+.goalIconButton.danger {
+    color: var(--notValid);
+}
+.goalWorkspaceHeading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: .7vw;
+}
+.goalWorkspaceHeading h2 {
+    overflow-wrap: anywhere;
+    min-width: 0;
+}
+.goalWorkspaceActions, .goalWorkspaceMeasure, .goalWorkspaceLinkAdd, .goalWorkspaceLink {
+    display: flex;
+    gap: .6vw;
+    align-items: center;
+    min-width: 0;
+}
+.goalWorkspaceText {
+    color: var(--tc);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.goalWorkspaceMeta {
+    color: var(--borderWh);
+    width: 100%;
+}
+.goalWorkspaceSelect {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+}
+.goalWorkspaceSelect > input {
+    background: var(--interact);
+    border: none;
+    border-radius: 24px;
+    color: var(--tc);
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 1dvh 2.5vw 1dvh .8vw;
+    width: 100%;
+    cursor: pointer;
+    font-size: 16px;
+}
+.goalWorkspaceSelect > svg {
+    right: .8vw;
+}
+.goalWorkspaceProgressHead {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1vw;
+}
+.goalWorkspaceMeasure {
+    width: 100%;
+}
+.goalWorkspaceMeasure input {
+    min-width: 0;
+    flex: 1;
+}
+.goalWorkspaceLink, .goalWorkspaceLinkAdd {
+    width: 100%;
+}
+.goalWorkspaceLink > span {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.goalWorkspaceEvents {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+    max-height: 16dvh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+.goalWorkspaceEvents > div {
+    display: flex;
+    justify-content: space-between;
+    color: var(--borderWh);
+    gap: .5vw;
+    font-size: 14px;
+}
+.goalCatalogFilters {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: .4vw;
+}
+.goalCatalogFilters > button {
+    background: var(--interact);
+    border: none;
+    color: var(--tc);
+    border-radius: 24px;
+    padding: .8dvh .7vw;
+    cursor: pointer;
+    font-size: 16px;
+}
+.goalCatalogFilters > button.active {
+    color: var(--accent_text);
+}
+.goalCatalogList {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: .6dvh;
+    max-height: 48dvh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+.goalCatalogItem, .goalPickerItem {
+    display: flex;
+    gap: .6vw;
+    align-items: center;
+    text-align: left;
+    width: 100%;
+    padding: 1dvh 1vw;
+    color: var(--tc);
+    background: var(--interact);
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    font-size: 16px;
+    flex-wrap: wrap;
+}
+.goalCatalogItem > svg, .goalPickerItem > svg {
+    color: var(--accent_text);
+    flex-shrink: 0;
+}
+.goalCatalogName, .goalPickerItem > span {
+    flex: 1;
+    overflow-wrap: anywhere;
+    min-width: 0;
+}
+.goalCatalogProgress {
+    color: var(--borderWh);
+}
+.goalPickerItem > small {
+    color: var(--borderWh);
+}
+.goalCatalogItem > .goalOverviewProgress {
+    flex: 0 0 100%;
+}
+.goalWorkspaceEmpty {
+    color: var(--borderWh);
+}
+@media (max-width: 800px) {
+    .goalWorkspaceModal {
+        width: 100%;
+        height: auto;
+        max-height: calc(92dvh - env(safe-area-inset-bottom));
+        padding-bottom: calc(3dvh + env(safe-area-inset-bottom));
+        gap: 1.2dvh;
+    }
+    .goalWorkspaceMetrics, .goalWorkspaceActions, .goalWorkspaceMeasure,
+    .goalWorkspaceLink, .goalWorkspaceLinkAdd {gap: 2vw;}
+    .goalStageInputs {gap: 2vw;}
+    .goalStageInputs .addHabitInput {
+        padding: .8dvh 2vw;
+    }
+    .goalWorkspaceSelect > input {
+        padding: 1dvh 9vw 1dvh 3vw;
+    }
+    .goalWorkspaceSelect > svg {right: 3vw;}
+    .goalCatalogItem, .goalPickerItem {gap: 2vw; padding: 1dvh 3vw;}
+    .goalCatalogFilters {gap: 2vw;}
+}
