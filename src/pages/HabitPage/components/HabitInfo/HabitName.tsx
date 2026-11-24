@@ -68,7 +68,7 @@ export default function HabitName({habit, showHabitMenu, setShowHabitMenu}:Habit
                     openMenu(e.clientX, e.clientY, "habitHeader", { id: String(habit.id) })
                 }}
                 onClick={() => setShowHabitMenu(!showHabitMenu)}>
-                {habit.tag && (
+                {(habit.avatar_key || habit.tag) && (
                     <div className="habitNameTag">
                         {TagIcon(habit)}
                     </div>

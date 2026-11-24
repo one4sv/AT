@@ -1,3 +1,5 @@
+import { ActivityPhoto } from "../../../../../components/ts/ActivityCommentPhotos";
+import { commentPhotoUrl } from "../../../../../components/ts/utils/activityImage";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -21,6 +23,7 @@ interface DayAction {
 
 interface DayComment extends DayAction {
     comment: string;
+    photo_ids?: string[];
 }
 
 interface DayCompletion extends DayAction {}
@@ -149,6 +152,7 @@ export default function SharedDayComments({ mobile = false, expanded = false }: 
                     {item.type !== "comment" && <CheckCircleIcon className="dayCompletionIcon" weight="fill" aria-label={t("habitUi.done")} />}
                 </div>
                 {item.type === "comment" && <div className="commentText">{item.comment}</div>}
+                {item.type === "comment" && habit && !!item.photo_ids?.length && <div className="activityPhotoStrip">{item.photo_ids.map(key=><ActivityPhoto key={key} url={commentPhotoUrl(habit.id,chosenDay,key)}/>)}</div>}
                 {item.type === "task" && <div className="commentText sharedTaskEventName">{t("habitPageUi.day.completedTask", { name: item.name })}</div>}
             </article>)}
             {expanded && !feed.length && !error && <div className="habitSettingValue">{t("habitPageUi.day.noActions")}</div>}

@@ -95,8 +95,8 @@ export default function SharedEntityCard({kind,id}: {kind: SharedEntityKind; id:
                 {t("chatUi.openSharedPost")}
             </Link>
         </> : <Link className="sharedEntityLink" to={item.url}>
-            {(item.avatar_url && (kind === "user" || kind === "group") || Icon) && <span className="sharedEntityIcon">
-                {item.avatar_url && (kind === "user" || kind === "group")
+            {(item.avatar_url && (kind === "user" || kind === "group" || kind === "habit") || Icon) && <span className="sharedEntityIcon">
+                {item.avatar_url && (kind === "user" || kind === "group" || kind === "habit")
                     ? <img src={item.avatar_url} alt=""/> : Icon ? <Icon/> : null}
             </span>}
             <span className="sharedEntityInfo">

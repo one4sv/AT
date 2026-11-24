@@ -1,0 +1,45 @@
+.activityAvatar {
+    width: 2em;
+    height: 2em;
+    max-width: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.activityAvatarPicker, .activityPhotoTools, .activityPhotoStrip {
+    display: flex;
+    align-items: center;
+    gap: .5em;
+    min-width: 0;
+}
+.activityAvatarPicker {
+    .activityAvatar { width: 3em; height: 3em; }
+    button { display: inline-flex; align-items: center; gap: .4em; padding: .5em .75em; border-radius: 24px; }
+}
+.activityAvatarPicker button, .activityPhotoTools button, .activityPhotoStrip button {
+    font-size: 16px; cursor: pointer; border: none; background: var(--interact); color: var(--tc);
+    &:disabled { opacity: .5; cursor: default; }
+    &:focus-visible { outline: 2px solid var(--accent_text); }
+}
+.activityPhotoTools button { display: inline-flex; padding: .35em; border-radius: 50%; }
+.activityPhotoStrip {
+    flex-wrap: wrap; width: 100%; padding: .3em 0;
+    > span { position: relative; display: inline-flex; }
+    img { display: block; width: clamp(44px,5vw,76px); height: clamp(44px,5vw,76px); object-fit: cover; border-radius: 12px; }
+    .activityPhoto { padding: 0; border-radius: 12px; }
+    .removeActivityPhoto { position: absolute; top: 0; right: 0; border-radius: 50%; padding: 4px; color: var(--tc); background: var(--bgc); display: flex; }
+}
+.habitDayCommentMobile.open:has(.activityPhotoStrip) { height: auto; flex-wrap: wrap; }
+.habitDayCommentMobile .hdcTAExtraMobile { display: flex; align-items: center; }
+
+
+.habitDayCommentMobile.inputWithEmoji.open {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) auto;
+    align-items: end;
+    .activityPhotoStrip { grid-column: 1 / -1; grid-row: 1; }
+    > textarea { grid-column: 1; grid-row: 2; width: 100%; padding-inline-end: 5vh; }
+    .hdcTAExtraMobile { grid-column: 2; grid-row: 2; width: auto; min-width: 5vh; overflow: visible; }
+    > .inputEmojiButton { right: 10vh; }
+    > span { right: 12vh; }
+}

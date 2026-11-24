@@ -18,6 +18,7 @@ export interface HabitAccess {
     completion_start_date?: string | null;
 }
 export interface Habit {
+    avatar_key?: string | null;
     access?: HabitAccess;
     complete_permission?: HabitPermission;
     comment_permission?: HabitPermission;

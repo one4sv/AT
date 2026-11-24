@@ -267,7 +267,7 @@ export default function HabitDiv({
                 );
             }}
         >
-            {habit.tag && <div className="habitIcon">
+            {(habit.avatar_key || habit.tag) && <div className="habitIcon">
                 {habitIcon(habit)}
             </div>}
             <div className="habitInfo">

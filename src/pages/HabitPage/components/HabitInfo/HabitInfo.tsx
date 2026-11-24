@@ -1,3 +1,8 @@
+import ActivityAvatarPicker from "../../../../components/ts/ActivityAvatarPicker";
+import { activityAvatarUrl } from "../../../../components/ts/utils/activityImage";
+import { api } from "../../../../components/ts/api";
+import { useHabits } from "../../../../components/hooks/HabitsHook";
+import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useTranslation } from "react-i18next";
 import TA from "../../../../components/ts/TA";
 import { useState, useEffect } from "react";
@@ -25,6 +30,8 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
         setNewCycleDaysActive, setNewCycleDaysRest
     } = useUpHabit();
 
+    const {refetchHabits}=useHabits();
+    const {loadHabit}=useTheHabit();
     const draft = localChanges[habit.id] || {};
     const name = String(draft.name ?? habit.name ?? "");
     const desc = String(draft.desc ?? habit.desc ?? "");
@@ -93,8 +100,15 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     </div>
                 </div>
             )}
+            {!infoReadOnly && <ActivityAvatarPicker key={habit.id} src={habit.avatar_key ? activityAvatarUrl(habit.id,habit.avatar_key) : undefined}
+                onChange={async file=>{
+                    const body=new FormData();
+                    if(file) body.append("avatar",file);else body.append("remove","true");
+                    await api.put("habits/"+habit.id+"/avatar",body);
+                    await Promise.all([refetchHabits(),loadHabit(String(habit.id))]);
+                }}/>}
             <div className="habitWrapperIcon">
-                {(selectedTag || habit.tag) && (
+                {(habit.avatar_key || selectedTag || habit.tag) && (
                     <div className="habitIconWrapper">
                         {TagIcon(habit, selectedTag)}
                     </div>

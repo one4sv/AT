@@ -1,4 +1,33 @@
 {
+  "activityImages": {
+    "avatar": "Activity photo",
+    "replace": "Replace photo",
+    "removeAvatar": "Remove activity photo",
+    "avatarError": "Could not save the activity photo. Try another image.",
+    "partial": "Activity created. You can add its photo in activity settings.",
+    "attach": "Attach photos",
+    "invalid": "Could not open this image. Choose a photo under 20 MB.",
+    "limit": "A comment can have up to four photos.",
+    "photo": "Comment photo",
+    "view": "Open photo",
+    "remove": "Remove photo",
+    "retry": "Retry",
+    "saveError": "Comment was not saved. Check the attachments and try again."
+  },
+  "activityStats": {
+    "title": "Period statistics",
+    "days": "{{n}} days",
+    "rate": "Completion rate",
+    "done": "Done / expected",
+    "active": "Days with a completion",
+    "missed": "Missed",
+    "noComparison": "Comparison needs two full periods with scheduled days or completions.",
+    "delta": "{{n}} pp vs the previous {{days}} days",
+    "legend": "Solid means all done, light means partly done, and an outline means missed. Unscheduled days do not reduce your rate.",
+    "rest": "Unscheduled",
+    "openDay": "Open day",
+    "empty": "There are no available activity days in this period."
+  },
   "headerQuickAction": "Add quick action",
   "profile": "Profile",
   "settings": "Settings",

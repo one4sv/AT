@@ -1,3 +1,4 @@
+import { activityAvatarUrl } from "../../../../components/ts/utils/activityImage";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -15,6 +16,7 @@ import useHabitDayProgress from "../../../../components/hooks/utils/useHabitDayP
 
 function OverviewEntryTag({ entry }: { entry: DayEntry }) {
     const tag = tags.find(item => item.value === (entry.kind === "plan" ? entry.plan?.tag : entry.habit?.tag));
+    if(entry.kind==="habit" && entry.habit?.avatar_key) return <img className="activityAvatar" alt="" loading="lazy" src={activityAvatarUrl(entry.habit.id,entry.habit.avatar_key)}/>;
     const Icon = tag?.icon;
     return Icon ? <Icon className="habitOverviewEntryTagIcon" size={20}/> :
         <span className={"calendarDot " + entry.state}/>;

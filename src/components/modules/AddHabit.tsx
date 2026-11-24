@@ -1,3 +1,4 @@
+import ActivityAvatarPicker from "../ts/ActivityAvatarPicker";
 import { useTranslation } from "react-i18next";
 import { XIcon } from "@phosphor-icons/react";
 import TA from "../ts/TA";
@@ -23,6 +24,16 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     const draft = blackout.commandDraft?.kind === "habit" ? blackout.commandDraft : undefined
     const { showNotification } = useNote()
 
+    const [avatar,setAvatar]=useState<File|null>(null);
+    const [avatarPreview,setAvatarPreview]=useState("");
+    const [preparingAvatar,setPreparingAvatar]=useState(false);
+    const [saving,setSaving]=useState(false);
+    const submitting=useRef(false);
+    useEffect(()=>{
+        if(!avatar){setAvatarPreview("");return;}
+        const url=URL.createObjectURL(avatar);setAvatarPreview(url);
+        return ()=>URL.revokeObjectURL(url);
+    },[avatar]);
     const [ name, setName ] = useState<string>(draft?.name?.slice(0, 40) || "")
     const [ desc, setDescription ] = useState<string>(draft?.description?.slice(0, 120) || "")
     const [ selectedperiodicity, setSelectedperiodicity ] = useState<string | number | undefined>(draft?.periodicity)
@@ -84,17 +95,24 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
             showNotification("error", t("habitUi.enterCycle"));
             return;
         }
+        if(submitting.current) return;
+        submitting.current=true;setSaving(true);
         try {
             const res = await api.post(`addhabit`, payload);
             if (res.data.success) {
+                let avatarSaved=true;
+                if(avatar){
+                    const body=new FormData();body.append("avatar",avatar);
+                    try{await api.put("habits/"+res.data.habit_id+"/avatar",body);}catch{avatarSaved=false;}
+                }
                 setBlackout({ seted: false, module: undefined });
-                showNotification("success", t("habitUi.added"))
+                showNotification(avatarSaved?"success":"error", t(avatarSaved?"habitUi.added":"activityImages.partial"))
             }
             refetchHabits()
         } catch (err) {
             console.error("Ошибка при отправке:", err);
             showNotification("error", t("habitUi.addFailed"));
-        }
+        } finally {submitting.current=false;setSaving(false);}
     };
     function toggleDay(value: number) {
         setChosenDays(prev =>
@@ -114,6 +132,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
     return (
         <div className={`addHabitDiv ${isMobile ? "mobile" : ""}`} ref={ref}>
             <div className="addHabitWrapper">
+                <ActivityAvatarPicker src={avatarPreview} onChange={setAvatar} onBusy={setPreparingAvatar} disabled={saving}/>
                 <label htmlFor="inputName">{t("habitUi.name")}</label>
                 <input type="text" id="inputName" className="inputName addHabitInput" maxLength={40} value={name} onChange={(e)=>setName(e.currentTarget.value)}/>
                 <span>{name.length}/40</span>
@@ -191,7 +210,7 @@ const AddHabit = forwardRef<HTMLDivElement>((_, ref) => {
                     </div>
                 </div>
             </div>
-            <button className="addHabitSave" onClick={fetchAddHabit}>{t("habitUi.save")}</button>
+            <button className="addHabitSave" disabled={saving || preparingAvatar} onClick={fetchAddHabit}>{t("habitUi.save")}</button>
         </div>
     )
 })

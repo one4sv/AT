@@ -1,3 +1,4 @@
+import PeriodOverview from "./PeriodOverview";
 import StatsFilters from "./StatsFilters";
 import { useTranslation } from "react-i18next";
 import "../../scss/Diagrams.scss"
@@ -99,6 +100,7 @@ export default function Diagrams({
                 onTouchCancel={handleTouchCancel}>
                 <div className={`statsDivSlider ${slide.slide ? "toDetails" : ""}`}>
                     <div className="statsDivSlide">
+                        <PeriodOverview/>
                         <OverallStats setSlide={setSlide}/>
                     </div>
                     <div className="statsDivSlide">
