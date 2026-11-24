@@ -159,8 +159,10 @@
     flex-direction: column;
     width: $w;
     margin: 0 auto;
-    background-color: $bg;
-    border-radius: 12px;
+    background-color: color-mix(in srgb, var(--bgc) 90%, transparent);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+    border-radius: 24px;
     overflow: hidden;
     opacity: 0;
     transform: translateY(0);
