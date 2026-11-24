@@ -240,7 +240,7 @@ test("overview second row uses habit periodicity or plan date, while completion 
     assert.match(time, /entry\.habit \? t\("habitUi\.period\." \+ entry\.habit\.periodicity\) : formatDateFromString\(entry\.date\)/);
     assert.match(focus, /className="habitOverviewCurrentMeta"/);
     assert.match(entries, /describeEntrySubtitle\(entry, t\)/);
-    assert.match(style, /\.habitOverviewEntryDone\s*\{\s*align-self: flex-end;/);
+    assert.match(style, /\.habitOverviewEntryDone\s*\{\s*align-self: center;/);
 });
 
 test("plan and activity invitation share the same modal and contact selection controls", () => {
