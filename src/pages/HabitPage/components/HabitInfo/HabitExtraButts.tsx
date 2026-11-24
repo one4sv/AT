@@ -4,14 +4,12 @@ import { CaretRightIcon, GearSix, NotebookIcon, Target, UsersIcon, UserCircleIco
 import { Link } from "react-router-dom";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { UserRoundPlus } from "lucide-react";
-import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { useSideMenu } from "../../../../components/hooks/SideMenuHook";
 import useHabitMembers from "./useHabitMembers";
 import { useHabitGoals } from "../../../../components/hooks/useHabitGoals";
 
 export default function HabitExtraButts({ isMy }: { isMy: boolean }) {
     const { t } = useTranslation("common");
-    const { setBlackout } = useBlackout();
     const { habit } = useTheHabit();
     const { data } = useHabitMembers(habit?.id);
     const { setShowSlide } = useSideMenu();
@@ -35,7 +33,7 @@ export default function HabitExtraButts({ isMy }: { isMy: boolean }) {
             <CaretRightIcon className="addGoalCaret" />
         </Link>}
         {isMy && <div className="addGoalButtDiv" onClick={() => setShowSlide("settings")}><GearSix weight="fill" className="addGoalIcon settings" />{t("habitUi.settings")}<CaretRightIcon className="addGoalCaret" /></div>}
-        {isMy && <div className="addGoalButtDiv" onClick={() => setBlackout({seted:true,module:"GoalPicker",options:{habitId:String(habit?.id)}})}><Target weight="fill" className="addGoalIcon goal" />{t(linked.length ? "habitUi.goals" : "habitUi.addGoal")}<CaretRightIcon className="addGoalCaret" /></div>}
+        {isMy && <div className="addGoalButtDiv" onClick={() => setShowSlide("goals")}><Target weight="fill" className="addGoalIcon goal" />{t(linked.length ? "habitUi.goals" : "habitUi.addGoal")}<CaretRightIcon className="addGoalCaret" /></div>}
         {isMember && <div className="addGoalButtDiv" onClick={() => setShowSlide("journal")}><NotebookIcon weight="fill" className="addGoalIcon" />{t("habitUi.journal")}<CaretRightIcon className="addGoalCaret" /></div>}
     </div></div>;
 }

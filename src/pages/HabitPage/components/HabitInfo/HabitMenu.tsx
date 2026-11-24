@@ -10,7 +10,9 @@ import HabitSettings from "./HabitSettings";
 import CompJurnal from "./CompJurnal";
 import HabitChatMenu from "./HabitChatMenu";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+
+const GoalPicker = lazy(() => import("../../../../components/modules/GoalPicker"));
 
 export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean, isArchived:boolean, isReadOnly: boolean}) {
     const { t } = useTranslation("common");
@@ -44,6 +46,10 @@ export default function HabitMenu ({isMy, isArchived, isReadOnly}:{isMy:boolean,
                         isMy={isMy}
                     />
                 )
+            case "goals":
+                return isMy && habit ? <Suspense fallback={<div className="skeletonLine"/>}>
+                    <GoalPicker key={habit.id} slideHabitId={habit.id}/>
+                </Suspense> : null;
             case "journal":
                 return (
                     <CompJurnal/>
