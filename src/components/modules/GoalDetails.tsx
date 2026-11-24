@@ -112,10 +112,10 @@ export default function GoalDetails() {
             <div className="goalWorkspaceActions">
                 <button type="button" className="goalIconButton" aria-label={t("edit")}
                     onClick={()=>setBlackout({seted:true,module:"AddGoal",options:{id:String(goal.id)}})}>
-                    <PencilSimpleIcon size={20}/>
+                    <PencilSimpleIcon size={24}/>
                 </button>
                 <button type="button" className="goalIconButton danger" aria-label={t("delete")}
-                    onClick={deleteGoal}><TrashIcon size={20}/></button>
+                    onClick={deleteGoal}><TrashIcon size={24}/></button>
             </div>
         </div>
         {!!goal.description && <p className="goalWorkspaceText">{goal.description}</p>}
@@ -133,6 +133,11 @@ export default function GoalDetails() {
             aria-valuemin={0} aria-valuemax={100}>
             <span style={{width:goal.progress+"%"}}/>
         </div>
+        {["days","streak","daily_timer"].includes(goal.progress_mode) && <div className="goalWorkspaceField">
+            <span>{t(goal.progress_mode)}: {goal.tracked_days || 0} / {goal.tracking_days} {t("daysUnit")}</span>
+            {goal.progress_mode==="daily_timer" && <small>{t("trackingMinutes")}: {goal.tracking_minutes}</small>}
+            <small>{(goal.habits || []).find(h=>h.id===goal.tracking_habit_id)?.name}</small>
+        </div>}
         {goal.progress_mode==="manual" && <div className="goalWorkspaceField">
             <SeekBar id="goalManualProgress" min={0} max={100} step={1}
                 value={value} unit="%" disabled={saving} onChange={setValue}/>
@@ -192,7 +197,7 @@ export default function GoalDetails() {
         <div className="goalWorkspaceHeading"><h3>{t("linkedHabits")}</h3></div>
         {(goal.habits || []).map(habit=><div className="goalWorkspaceLink" key={habit.id}>
             <span>{habit.name}</span>
-            <button type="button" className="goalIconButton" aria-label={t("unlink")} disabled={saving}
+            <button type="button" className="goalIconButton" aria-label={t("unlink")} disabled={saving || habit.id===goal.tracking_habit_id}
                 onClick={()=>void mutate("goal-workspace/"+id+"/links/habit/"+habit.id,"delete")}><XIcon size={18}/></button>
         </div>)}
         {!!availableHabits.length && <div className="goalWorkspaceLinkAdd">
