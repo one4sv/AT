@@ -186,3 +186,68 @@
     color: var(--accent_text);
     flex-shrink: 0;
 }
+
+.habit.withGoal {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 30px;
+    height: calc(5.5dvh + 32px);
+    row-gap: 2px;
+
+    > .habitIcon {
+        grid-column: 1;
+        grid-row: 1;
+        min-height: 0;
+    }
+    > .habitInfo {
+        grid-column: 2;
+        grid-row: 1;
+    }
+    @media (max-width: 800px) {
+        height: calc(6.5dvh + 32px);
+    }
+}
+.smHabitGoal {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
+    padding: 0 5px;
+    color: var(--borderWh);
+    font-size: 12px;
+}
+.smHabitGoalLabel {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    min-width: 0;
+    > span:first-child {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+.smHabitGoalTrack {
+    height: 4px;
+    width: 100%;
+    background: var(--interact);
+    border-radius: 24px;
+    overflow: hidden;
+    > span {
+        display: block;
+        height: 100%;
+        border-radius: 24px;
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+    }
+}
+.habit.active .smHabitGoal {
+    color: var(--inner_text);
+    .smHabitGoalTrack {
+        background: color-mix(in srgb, var(--inner_text) 20%, transparent);
+        > span { background: var(--inner_text); }
+    }
+}

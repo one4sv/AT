@@ -129,6 +129,9 @@
     "tapToLoadGif": "Tap to load GIF"
   },
   "habits": {
+    "goals": "Goals",
+    "showGoals": "Show goals in activities",
+    "showGoalsHint": "Show progress of the pinned goal in the side menu and activity completion block.",
     "archive": "Archive",
     "archivedInSideMenu": "Archived in side menu",
     "archivedInSideMenuHint": "Show archived activities in the side menu",

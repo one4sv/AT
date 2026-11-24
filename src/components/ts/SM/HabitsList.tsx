@@ -21,7 +21,7 @@ export default function HabitsList({ filter }: { filter?: string }) {
     const { habits, refetchHabitsWLoading } = useHabits();
     const { plans } = usePlans();
     const { allCalendar } = useCalendar();
-    const { showArchived } = useSettings();
+    const { showArchived, showHabitGoals } = useSettings();
     const { habitId } = useParams();
     const { setBlackout } = useBlackout();
     const progressDay = filter === "plans" || filter === "archived" ? "" :
@@ -45,7 +45,7 @@ export default function HabitsList({ filter }: { filter?: string }) {
     return <div className="habitsList SMlist">
         {entries.map(entry => entry.habit ?
             <HabitDiv habit={entry.habit} key={entry.key} id={Number(habitId)} isMyAcc={true}
-                showIndicators progress={progress[String(entry.habit.id)]}/> :
+                showIndicators showPinnedGoal={showHabitGoals && entry.habit.ongoing} progress={progress[String(entry.habit.id)]}/> :
             <PlanDiv plan={entry.plan!} entry={entry} key={entry.key}/>
         )}
     </div>;

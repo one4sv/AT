@@ -121,6 +121,8 @@ export interface SettingsContextType {
     setPrivate: React.Dispatch<React.SetStateAction<PrivateSettings>>;
     tab: string;
     setTab: React.Dispatch<React.SetStateAction<string>>;
+    showHabitGoals: boolean;
+    setShowHabitGoals: React.Dispatch<SetStateAction<boolean>>;
     showArchived: boolean;
     setShowArchived: React.Dispatch<SetStateAction<boolean>>;
     showArchivedInAcc: boolean;
@@ -200,6 +202,7 @@ const LOCAL_KEYS = {
     messnote:"settings_messnote",
     mentionsnote:"settings_mentionsnote",
     habitsnote:"settings_habitsnote",
+    showHabitGoals:"settings_show_habit_goals",
     lang:"settings_lang",
     fontSize:"settings_font_size",
     dateFormat:"settings_date_format",
@@ -316,6 +319,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ twoAuth, setTwoAuth ] = useState<boolean | null>(null);
     const [ privateShow, setPrivate ] = useState<PrivateSettings>({ number: "", mail: "", profile: "all", habits: "", posts: "", plans: "nobody" });
     const [ profileShareToken, setProfileShareToken ] = useState<string | null>(null);
+    const [ showHabitGoals, setShowHabitGoals ] = useLocalStorage<boolean>(LOCAL_KEYS.showHabitGoals, true);
     const [ showArchived, setShowArchived ] = useState<boolean>(false);
     const [ showArchivedInAcc, setShowArchivedInAcc ] = useState<boolean>(false);
     const [ weekStart, setWeekStart ] = useState<string | null>(null);
@@ -482,6 +486,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             note, setNote,
             messNote, setMessNote,
             mentionsNote, setMentionsNote,
+            showHabitGoals, setShowHabitGoals,
             showArchived, setShowArchived,
             showArchivedInAcc, setShowArchivedInAcc,
             weekStart, setWeekStart,

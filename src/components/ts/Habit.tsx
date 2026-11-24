@@ -18,12 +18,17 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useWebSocket } from "../hooks/WebSocketHook";
 import { Link } from "react-router-dom";
 import { formatDateFromString, todayStrFunc, shiftCalendarDay, formatClock } from "./utils/dateToStr";
+import { useUser } from "../hooks/UserHook";
+import { useHabitGoalDisplay } from "../hooks/useHabitGoalDisplay";
+import { useHabitGoals } from "../hooks/useHabitGoals";
+import { goalMetricCompatible } from "../../pages/HabitPage/components/Overview/goalTypes";
 export default function HabitDiv({
     habit,
     id,
     isMyAcc,
     onSelect,
     showIndicators = false,
+    showPinnedGoal = false,
     progress
 }: {
     habit: Habit;
@@ -31,6 +36,7 @@ export default function HabitDiv({
     isMyAcc?: boolean;
     onSelect?: (habit: Habit) => void;
     showIndicators?: boolean;
+    showPinnedGoal?: boolean;
     progress?: HabitDayProgress;
 }) {
     const { t } = useTranslation("common");
@@ -49,6 +55,12 @@ export default function HabitDiv({
     const timerVersionRef = useRef(0);
     const settings = Array.isArray(habit.habits_settings) ? habit.habits_settings[0] : habit.habits_settings;
     const metric = settings?.metric_type;
+    const { user } = useUser();
+    const allowPinnedGoal=showPinnedGoal && !onSelect && habit.user_id===user.id;
+    const {selected}=useHabitGoalDisplay(habit.id,allowPinnedGoal);
+    const {linked}=useHabitGoals(habit.id,allowPinnedGoal && !!selected);
+    const pinnedGoal=allowPinnedGoal?linked.find(goal=>String(goal.id)===selected && goalMetricCompatible(goal.progress_mode,metric) &&
+        (goal.status==="active" || goal.status==="paused" || (goal.status==="completed" && Boolean((goal as {repeat_next_at?:string | null}).repeat_next_at)))):undefined;
     const updateTimerDisplay = useCallback(
         (timer: habitTimer) => {
             const elapsed = calculateTimerElapsed(timer, false);
@@ -220,7 +232,7 @@ export default function HabitDiv({
 
     return (
         <Link
-            className={`habit ${id === habit.id ? "active" : ""}`}
+            className={`habit ${id === habit.id ? "active" : ""}${pinnedGoal ? " withGoal" : ""}`}
             role={onSelect ? "button" : undefined}
             aria-pressed={onSelect ? id === habit.id : undefined}
             onKeyDown={e => {
@@ -270,6 +282,12 @@ export default function HabitDiv({
                     {habit.done && <CheckCircle className="habitHLStatus" weight="fill" />}
                 </div>
             </div>
+            {pinnedGoal && <div className="smHabitGoal">
+                <div className="smHabitGoalLabel"><span>{pinnedGoal.name}</span><span>{pinnedGoal.progress}%</span></div>
+                <div className="smHabitGoalTrack" role="progressbar" aria-label={pinnedGoal.name} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pinnedGoal.progress}>
+                    <span style={{width:pinnedGoal.progress+"%"}}/>
+                </div>
+            </div>}
         </Link>
     );
 }

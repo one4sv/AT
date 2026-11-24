@@ -262,6 +262,12 @@ export function useSearchableSettings(): SearchableSection[] {
                     category: t("habits.archive"),
                 },
                 {
+                    id: "showHabitGoals",
+                    name: t("habits.showGoals"),
+                    icon: SneakerMoveIcon,
+                    category: t("habits.goals"),
+                },
+                {
                     id: "weekStart",
                     name: t("habits.weekStartFrom"),
                     icon: CalendarBlankIcon,
