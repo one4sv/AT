@@ -107,7 +107,7 @@ test("goal editor filters archived links, adds multiple selections and explains 
     assert.match(editor,/filter\(isGoalPlanAvailable\)/);
     assert.match(editor,/setLinkedHabits\(old=>old.some/);
     assert.match(editor,/usesStages && <div className="goalWorkspaceStages">/);
-    assert.match(editor,/step=\{0.001\}/);
+    assert.match(editor,/step=\{0.01\}/);
     assert.match(editor,/goalDailyCounter/);
 });
 
@@ -158,4 +158,15 @@ test("goal updates use a shared store, daily progress and optional completion/re
     assert.match(editor,/linkedTypes\.every\(type=>type==="timer"\)/);
     assert.match(editor,/linkedTypes\.every\(type=>type==="counter"\)/);
     assert.match(read("src/components/modules/GoalPicker.tsx"),/metricType==="timer" \|\| metricType==="counter"/);
+});
+
+ test("milestone percentages and cumulative timer mode have dedicated controls",()=>{
+    const editor=read("src/components/modules/AddGoal.tsx");
+    assert.match(editor,/completion_percent:s\.completion_percent/);
+    assert.match(editor,/goalTotalMinutes/);
+    assert.match(editor,/mode!=="total_timer"/);
+    const details=read("src/components/modules/GoalDetails.tsx");
+    assert.match(details,/completion_percent:editPercent/);
+    assert.match(details,/achieved_minutes/);
+    assert.match(read("src/components/modules/GoalPicker.tsx"),/goalMetricCompatible/);
 });

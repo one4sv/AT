@@ -1,10 +1,11 @@
-export type GoalMode = "manual" | "metric" | "milestones" | "combined" | "days" | "streak" | "daily_timer" | "daily_counter";
+export type GoalMode = "manual" | "metric" | "milestones" | "combined" | "days" | "streak" | "daily_timer" | "daily_counter" | "total_timer";
 export type GoalStatus = "active" | "paused" | "completed" | "canceled" | "archived";
 export interface GoalStage {
     id: number;
     goal_id: number;
     title: string;
     weight: number;
+    completion_percent?: number | null;
     position: number;
     completed_at: string | null;
 }
@@ -35,6 +36,7 @@ export interface Goal {
     target_days?: number;
     daily_minutes?: number;
     achieved_days?: number;
+    achieved_minutes?: number;
     today_progress?: number | null;
     today_current?: number | null;
     today_target?: number | null;
@@ -47,4 +49,18 @@ export interface Goal {
     habits?: GoalLinkedItem[];
     plans?: GoalLinkedItem[];
     events?: GoalEvent[];
+}
+
+export const goalHabitMetric = (mode:GoalMode) => mode==="daily_timer" || mode==="total_timer" ? "timer" : mode==="daily_counter" ? "counter" : null;
+export const goalMetricCompatible = (mode:GoalMode,metricType:string | undefined) => !goalHabitMetric(mode) || goalHabitMetric(mode)===metricType;
+
+export function stagePercentages(stages:GoalStage[]) {
+    const total=stages.reduce((sum,stage)=>sum+Number(stage.weight),0);
+    let cumulative=0;
+    const result=new Map<number,number>();
+    for(const stage of [...stages].sort((a,b)=>a.position-b.position || a.id-b.id)) {
+        cumulative+=Number(stage.weight);
+        result.set(stage.id,stage.completion_percent==null ? (total?Math.round(cumulative/total*10000)/100:0) : Number(stage.completion_percent));
+    }
+    return result;
 }

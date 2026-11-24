@@ -12,7 +12,7 @@ import { api } from "../ts/api";
 import Checkbox from "../ts/utils/Checkbox";
 import SelectList from "../ts/SelectList";
 import SeekBar from "../../pages/Settings/components/SeekBar";
-import type {Goal,GoalStatus} from "../../pages/HabitPage/components/Overview/goalTypes";
+import {goalMetricCompatible,stagePercentages,type Goal,type GoalStatus} from "../../pages/HabitPage/components/Overview/goalTypes";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "../../pages/Settings/scss/seekbar.scss";
 import "./scss/goalWorkspace.scss";
@@ -33,10 +33,10 @@ export default function GoalDetails() {
     const [saving,setSaving]=useState(false);
     const [value,setValue]=useState(0);
     const [newTitle,setNewTitle]=useState("");
-    const [newWeight,setNewWeight]=useState(1);
+    const [newPercent,setNewPercent]=useState(100);
     const [editId,setEditId]=useState<number | null>(null);
     const [editTitle,setEditTitle]=useState("");
-    const [editWeight,setEditWeight]=useState(1);
+    const [editPercent,setEditPercent]=useState(100);
     const [habitId,setHabitId]=useState("");
     const [planId,setPlanId]=useState("");
 
@@ -100,6 +100,7 @@ export default function GoalDetails() {
     };
 
     const availableHabits=(habits || []).filter(item=>isGoalHabitAvailable(item,user.id) &&
+        (!goal || goalMetricCompatible(goal.progress_mode,item.habits_settings?.metric_type)) &&
         !(goal?.habits || []).some(link=>String(link.id)===String(item.id)));
     const availablePlans=plans.filter(item=>isGoalPlanAvailable(item) &&
         !(goal?.plans || []).some(link=>String(link.id)===String(item.id)));
@@ -107,6 +108,7 @@ export default function GoalDetails() {
     if(loading) return <div className="addHabitDiv addPlanDiv goalWorkspaceModal">{t("loading")}</div>;
     if(!goal) return <div className="addHabitDiv addPlanDiv goalWorkspaceModal">{t("loadError")}</div>;
 
+    const percentages=stagePercentages(goal.stages || []);
     return <div className="addHabitDiv addPlanDiv goalWorkspaceModal goalDetails">
         <div className="goalWorkspaceHeading">
             <h2>{goal.name}</h2>
@@ -149,6 +151,9 @@ export default function GoalDetails() {
             {goal.progress_mode==="daily_timer" && " · "+(goal.daily_minutes ?? 60)+" "+t("minutesUnit")}
             {goal.progress_mode==="daily_counter" && " · "+goal.metric_target+" "+t("counterUnit")}
         </div>}
+        {goal.progress_mode==="total_timer" && <div className="goalWorkspaceMeta">
+            {t("total_timer")} · {goal.achieved_minutes ?? 0} / {goal.metric_target} {t("totalMinutesUnit")}
+        </div>}
         {goal.progress_mode==="manual" && <div className="goalWorkspaceField">
             <SeekBar id="goalManualProgress" min={0} max={100} step={1}
                 value={value} unit="%" disabled={saving} onChange={setValue}/>
@@ -174,21 +179,21 @@ export default function GoalDetails() {
             {editId===stage.id ? <>
                 <input className="addHabitInput" maxLength={160} value={editTitle} aria-label={t("stageTitle")}
                     onChange={e=>setEditTitle(e.target.value)}/>
-                <input className="addHabitInput" type="number" min={0.001} max={10000} step={0.001}
-                    value={editWeight} aria-label={t("weight")}
-                    onChange={e=>setEditWeight(Number(e.target.value))}/>
+                <input className="addHabitInput" type="number" min={0} max={100} step={0.01}
+                    value={editPercent} aria-label={t("stagePercent")}
+                    onChange={e=>setEditPercent(Number(e.target.value))}/>
                 <button type="button" className="goalStageRemove" disabled={saving} aria-label={t("save")}
                     onClick={async()=>{
-                        if(!editTitle.trim() || editWeight<=0) return;
+                        if(!editTitle.trim() || !Number.isFinite(editPercent) || editPercent<0 || editPercent>100) return;
                         if(await mutate("goal-workspace/"+id+"/stages/"+stage.id,"patch",
-                            {title:editTitle.trim(),weight:editWeight})) setEditId(null);
+                            {title:editTitle.trim(),completion_percent:editPercent})) setEditId(null);
                     }}><CheckIcon size={20}/></button>
             </> : <>
                 <span className={stage.completed_at?"goalStageChecked":""}>{stage.title}</span>
-                <small>{Number(stage.weight)}</small>
+                <small>{percentages.get(stage.id)}%</small>
                 <button type="button" className="goalStageRemove" aria-label={t("edit")}
                     onClick={()=>{
-                        setEditId(stage.id);setEditTitle(stage.title);setEditWeight(Number(stage.weight));
+                        setEditId(stage.id);setEditTitle(stage.title);setEditPercent(percentages.get(stage.id) ?? 0);
                     }}><PencilSimpleIcon size={20}/></button>
             </>}
             <button type="button" className="goalStageRemove danger" disabled={saving}
@@ -198,13 +203,13 @@ export default function GoalDetails() {
         <div className="goalStageInputs">
             <input className="addHabitInput" value={newTitle} maxLength={160} placeholder={t("stageTitle")}
                 aria-label={t("stageTitle")} onChange={e=>setNewTitle(e.target.value)}/>
-            <input className="addHabitInput" type="number" min={0.001} max={10000} step={0.001}
-                value={newWeight} aria-label={t("weight")}
-                onChange={e=>setNewWeight(Number(e.target.value))}/>
-            <button type="button" className="goalStageRemove" disabled={saving || !newTitle.trim()}
+            <input className="addHabitInput" type="number" min={0} max={100} step={0.01}
+                value={newPercent} aria-label={t("stagePercent")}
+                onChange={e=>setNewPercent(Number(e.target.value))}/>
+            <button type="button" className="goalStageRemove" disabled={saving || !newTitle.trim() || !Number.isFinite(newPercent) || newPercent<0 || newPercent>100}
                 aria-label={t("addStage")} onClick={async()=>{
                     if(await mutate("goal-workspace/"+id+"/stages","post",
-                        {title:newTitle.trim(),weight:newWeight})){setNewTitle("");setNewWeight(1);}
+                        {title:newTitle.trim(),completion_percent:newPercent})){setNewTitle("");setNewPercent(100);}
                 }}><PlusIcon size={20}/></button>
         </div>
         </>}

@@ -13,11 +13,11 @@ import { useHabits } from "../hooks/HabitsHook";
 import { usePlans } from "../hooks/PlansHook";
 import { useUser } from "../hooks/UserHook";
 import { isGoalHabitAvailable, isGoalPlanAvailable } from "../ts/utils/goalLinkAvailability";
-import type { Goal, GoalMode, GoalLinkedItem } from "../../pages/HabitPage/components/Overview/goalTypes";
+import { goalMetricCompatible, type Goal, type GoalMode, type GoalLinkedItem } from "../../pages/HabitPage/components/Overview/goalTypes";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "./scss/goalWorkspace.scss";
 
-type DraftStage = {title:string;weight:number};
+type DraftStage = {title:string;completion_percent:number};
 const dateValue = (date:Date | null) => date ? [date.getFullYear(),
     String(date.getMonth()+1).padStart(2,"0"),String(date.getDate()).padStart(2,"0")].join("-") : null;
 
@@ -75,22 +75,22 @@ export default function AddGoal() {
         return ()=>{active=false;};
     },[goalId,showNotification,t]);
 
-    const automatic=["days","streak","daily_timer","daily_counter"].includes(mode);
+    const automatic=["days","streak","daily_timer","daily_counter","total_timer"].includes(mode);
     const ownHabits=(habits || []).filter(h=>isGoalHabitAvailable(h,user.id));
     const ownPlans=plans.filter(isGoalPlanAvailable);
-    const availableHabits=ownHabits.filter(h=>!linkedHabits.some(item=>String(item.id)===String(h.id)));
+    const availableHabits=ownHabits.filter(h=>goalMetricCompatible(mode,h.habits_settings?.metric_type) && !linkedHabits.some(item=>String(item.id)===String(h.id)));
     const availablePlans=ownPlans.filter(p=>!linkedPlans.some(item=>String(item.id)===String(p.id)));
-    const linkedTypes=linkedHabits.map(item=>ownHabits.find(h=>String(h.id)===String(item.id))?.habits_settings?.metric_type);
+    const linkedTypes=linkedHabits.map(item=>(habits || []).find(h=>String(h.id)===String(item.id))?.habits_settings?.metric_type);
     const timerAvailable=linkedTypes.length>0 && linkedTypes.every(type=>type==="timer");
     const counterAvailable=linkedTypes.length>0 && linkedTypes.every(type=>type==="counter");
-    const modeChoices=(["manual","metric","milestones","combined","days","streak","daily_timer","daily_counter"] as GoalMode[]).filter(value=>
-        (value!=="daily_timer" || timerAvailable) && (value!=="daily_counter" || counterAvailable));
+    const modeChoices=(["manual","metric","milestones","combined","days","streak","daily_timer","daily_counter","total_timer"] as GoalMode[]).filter(value=>
+        ((value!=="daily_timer" && value!=="total_timer") || timerAvailable) && (value!=="daily_counter" || counterAvailable));
     const usesStages=mode==="milestones" || mode==="combined";
     const submit=async(event:FormEvent<HTMLFormElement>)=>{
         event.preventDefault();
         if(saving || loadError || !name.trim()) return;
         if(!modeChoices.includes(mode)) {showNotification("error",t("invalidAutomatic"));return;}
-        if(automatic && (!linkedHabits.length || !Number.isInteger(targetDays) || targetDays<1 || targetDays>3650 || (mode==="daily_timer" && (!Number.isInteger(dailyMinutes) || dailyMinutes<1 || dailyMinutes>1440)))){
+        if(automatic && (!linkedHabits.length || (mode!=="total_timer" && (!Number.isInteger(targetDays) || targetDays<1 || targetDays>3650)) || (mode==="daily_timer" && (!Number.isInteger(dailyMinutes) || dailyMinutes<1 || dailyMinutes>1440)))){
             showNotification("error",t("invalidAutomatic"));return;
         }
         if((mode==="metric" || mode==="combined") && metricStart===metricTarget){
@@ -100,7 +100,10 @@ export default function AddGoal() {
         if(mode==="daily_counter" && (!Number.isInteger(metricTarget) || metricTarget<1 || metricTarget>1000000000)){
             showNotification("error",t("invalidCounter"));return;
         }
-        if(usesStages && stages.some(s=>!s.title.trim() || !Number.isFinite(s.weight) || s.weight<0.001 || s.weight>10000)){
+        if(mode==="total_timer" && (!Number.isInteger(metricTarget) || metricTarget<1 || metricTarget>1000000000)){
+            showNotification("error",t("invalidTotalTimer"));return;
+        }
+        if(usesStages && stages.some(s=>!s.title.trim() || !Number.isFinite(s.completion_percent) || s.completion_percent<0 || s.completion_percent>100)){
             showNotification("error",t("invalidStage"));
             return;
         }
@@ -112,7 +115,7 @@ export default function AddGoal() {
                 habit_ids:linkedHabits.map(h=>h.id),plan_ids:linkedPlans.map(p=>p.id)};
             const response=goalId ? await api.patch("goal-workspace/"+goalId,payload) :
                 await api.post("goal-workspace",{...payload,
-                    stages:usesStages ? stages.map(s=>({title:s.title.trim(),weight:s.weight})) : []});
+                    stages:usesStages ? stages.map(s=>({title:s.title.trim(),completion_percent:s.completion_percent})) : []});
             if(!response.data?.success) throw new Error("Goal save failed");
             goalsChanged();
             setBlackout({seted:false});
@@ -184,9 +187,16 @@ export default function AddGoal() {
                     value={metricShare} onChange={e=>setMetricShare(Number(e.target.value))}/>
             </div>}
             {automatic && modeChoices.includes(mode) && <div className="goalWorkspaceField">
-                <label htmlFor="goalTargetDays">{t("targetDays")}</label>
-                <input id="goalTargetDays" className="addHabitInput" type="number" min={1} max={3650}
-                    value={targetDays} onChange={e=>setTargetDays(Number(e.target.value))}/>
+                {mode!=="total_timer" && <>
+                    <label htmlFor="goalTargetDays">{t("targetDays")}</label>
+                    <input id="goalTargetDays" className="addHabitInput" type="number" min={1} max={3650}
+                        value={targetDays} onChange={e=>setTargetDays(Number(e.target.value))}/>
+                </>}
+                {mode==="total_timer" && <>
+                    <label htmlFor="goalTotalMinutes">{t("totalMinutes")}</label>
+                    <input id="goalTotalMinutes" className="addHabitInput" type="number" min={1} max={1000000000} step={1}
+                        value={metricTarget} onChange={e=>setMetricTarget(Number(e.target.value))}/>
+                </>}
                 {mode==="daily_timer" && <>
                     <label htmlFor="goalDailyMinutes">{t("dailyMinutes")}</label>
                     <input id="goalDailyMinutes" className="addHabitInput" type="number" min={1} max={1440}
@@ -197,7 +207,7 @@ export default function AddGoal() {
                     <input id="goalDailyCounter" className="addHabitInput" type="number" min={1} max={1000000000} step={1}
                         value={metricTarget} onChange={e=>setMetricTarget(Number(e.target.value))}/>
                 </>}
-                <small>{t(mode==="daily_counter"?"counterHint":"automaticHint")}</small>
+                <small>{t(mode==="daily_counter"?"counterHint":mode==="total_timer"?"totalTimerHint":"automaticHint")}</small>
             </div>}
             <div className="goalWorkspaceField">
                 <label>{t("linkedHabits")}</label>
@@ -234,14 +244,14 @@ export default function AddGoal() {
                     <input className="addHabitInput" type="text" maxLength={160}
                         placeholder={t("stageTitle")} aria-label={t("stageTitle")} value={s.title}
                         onChange={e=>setStages(old=>old.map((v,j)=>j===i?{...v,title:e.target.value}:v))}/>
-                    <input className="addHabitInput" type="number" min={0.001} max={10000} step={0.001}
-                        aria-label={t("weight")} value={s.weight}
-                        onChange={e=>setStages(old=>old.map((v,j)=>j===i?{...v,weight:Number(e.target.value)}:v))}/>
+                    <input className="addHabitInput" type="number" min={0} max={100} step={0.01}
+                        aria-label={t("stagePercent")} value={s.completion_percent}
+                        onChange={e=>setStages(old=>old.map((v,j)=>j===i?{...v,completion_percent:Number(e.target.value)}:v))}/>
                     <button type="button" className="goalStageRemove" aria-label={t("removeStage")}
                         onClick={()=>setStages(old=>old.filter((_,j)=>j!==i))}><XIcon size={20}/></button>
                 </div>)}
                 <button type="button" className="goalWorkspaceQuiet" onClick={()=>
-                    setStages(old=>[...old,{title:"",weight:1}])}><PlusIcon size={18}/>{t("addStage")}</button>
+                    setStages(old=>[...old,{title:"",completion_percent:100}])}><PlusIcon size={18}/>{t("addStage")}</button>
             </div>}
             <button className="addHabitSave goalWorkspaceSubmit" type="submit"
                 disabled={saving || !name.trim() || !modeChoices.includes(mode)}>{t(saving?"saving":"save")}</button>
