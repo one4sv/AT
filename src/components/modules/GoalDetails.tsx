@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusIcon, PencilSimpleIcon, TrashIcon, XIcon, CheckIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
@@ -23,7 +23,9 @@ export default function GoalDetails() {
     const {user}=useUser();
     const {habits}=useHabits();
     const {plans}=usePlans();
-    const id=blackout.options?.id;
+    const goalIdRef=useRef(blackout.options?.id);
+    if (blackout.module==="GoalDetails" && blackout.options?.id) goalIdRef.current=blackout.options.id;
+    const id=goalIdRef.current;
     const [goal,setGoal]=useState<Goal | null>(null);
     const [loading,setLoading]=useState(true);
     const [error,setError]=useState(false);
