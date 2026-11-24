@@ -58,6 +58,11 @@ export default function GoalDetails() {
         }).catch(()=>{if(active) setError(true);}).finally(()=>{if(active)setLoading(false);});
         return ()=>{active=false;};
     },[id]);
+    useEffect(()=>{
+        const onChange=()=>{void load().catch(()=>setError(true));};
+        window.addEventListener("at-goals-updated",onChange);
+        return ()=>window.removeEventListener("at-goals-updated",onChange);
+    },[load]);
     const mutate=async(path:string,method:"post"|"patch"|"delete",body?:object)=>{
         if(saving) return false;
         setSaving(true);
