@@ -658,3 +658,6 @@
 .habitOverviewFocusIcon + .habitOverviewCurrentDetails {
     margin-left: 5px;
 }
+
+.habitOverviewFilters { flex-wrap: wrap; }
+.habitOverviewGoalDone { flex-shrink: 0; align-self: center; color: var(--accent_text); }

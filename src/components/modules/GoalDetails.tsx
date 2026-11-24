@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { formatAppDate,formatAppTime } from "../ts/utils/dateToStr";
 import { PlusIcon, PencilSimpleIcon, TrashIcon, XIcon, CheckIcon, ClockCounterClockwiseIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
@@ -196,7 +197,11 @@ export default function GoalDetails() {
                             {title:editTitle.trim(),completion_percent:editPercent})) setEditId(null);
                     }}><CheckIcon size={20}/></button>
             </> : <>
-                <span className={stage.completed_at?"goalStageChecked":""}>{stage.title}</span>
+                <div className="goalStageTitle">
+                    <button type="button" className={"goalCheckboxLabel"+(stage.completed_at?" goalStageChecked":"")} disabled={saving}
+                        onClick={()=>void mutate("goal-workspace/"+id+"/stages/"+stage.id,"patch",{completed:!stage.completed_at})}>{stage.title}</button>
+                    {stage.completed_at && <small>{formatAppDate(stage.completed_at)} · {formatAppTime(stage.completed_at)}</small>}
+                </div>
                 <small>{percentages.get(stage.id)}%</small>
                 <button type="button" className="goalStageRemove" aria-label={t("edit")}
                     onClick={()=>{

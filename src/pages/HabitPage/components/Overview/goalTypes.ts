@@ -48,6 +48,8 @@ export interface Goal {
     reminder_days?: number | null;
     completed_at?: string | null;
     habit_ids?: number[];
+    recent_stages?: GoalStage[];
+    recent_records?: GoalRecord[];
     stages?: GoalStage[];
     habits?: GoalLinkedItem[];
     plans?: GoalLinkedItem[];
@@ -85,3 +87,11 @@ export interface GoalPeriod {
     closed_at:string;
 }
 export const goalIsCurrent=(goal:Goal)=>goal.status==="active" || goal.status==="paused" || (goal.status==="completed" && Boolean(goal.repeat_next_at));
+
+export interface GoalRecord {
+    id:string;
+    kind:"timer" | "counter" | "day" | "progress";
+    date:string;
+    seconds?:number;
+    value?:number;
+}

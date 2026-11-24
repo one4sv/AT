@@ -128,5 +128,13 @@
   "periodMissed": "Not completed",
   "noPeriods": "No closed periods yet",
   "loadMorePeriods": "Show more",
-  "periodClosed": "Period closed: {{progress}}%"
+  "periodClosed": "Period closed: {{progress}}%",
+  "counterRecord": "Counter: {{value}}",
+  "dayRecord": "Day completed",
+  "progressRecord": "Progress: {{value}}%",
+  "completedToday": "Completed today",
+  "completedOnDay": "Completed on this day",
+  "completedTodayCount": "Goals completed today: {{count}}",
+  "completedDayCount": "Goals completed on this day: {{count}}",
+  "noDayGoals": "No goals for the selected day"
 }

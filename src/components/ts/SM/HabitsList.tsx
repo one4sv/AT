@@ -45,7 +45,7 @@ export default function HabitsList({ filter }: { filter?: string }) {
     return <div className="habitsList SMlist">
         {entries.map(entry => entry.habit ?
             <HabitDiv habit={entry.habit} key={entry.key} id={Number(habitId)} isMyAcc={true}
-                showIndicators showPinnedGoal={showHabitGoals && entry.habit.ongoing} progress={progress[String(entry.habit.id)]}/> :
+                showIndicators progress={progress[String(entry.habit.id)]} showPinnedGoal={showHabitGoals && entry.habit.ongoing}/> :
             <PlanDiv plan={entry.plan!} entry={entry} key={entry.key}/>
         )}
     </div>;

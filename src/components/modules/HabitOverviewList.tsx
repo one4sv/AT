@@ -8,6 +8,9 @@ import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { makeDayEntries, makeProfilePlanEntries } from "../../components/ts/utils/dayTimeline";
 import { formatDateLabel } from "../../components/ts/utils/dateToStr";
 import Selector from "../../components/ts/Selector";
+import { useGoalsWorkspace } from "../hooks/useGoalsWorkspace";
+import useGoalDayResults from "../hooks/useGoalDayResults";
+import DayGoalEntries,{goalsForDay} from "../../pages/HabitPage/components/Overview/DayGoalEntries";
 import HabitOverviewEntries from "../../pages/HabitPage/components/Overview/HabitOverviewEntries";
 import "../../pages/HabitPage/scss/HabitOverview.scss";
 
@@ -21,12 +24,16 @@ export default function HabitOverviewList() {
     const profileNick = blackout.options?.nick;
     const profileMode = !!profileNick;
     const initialView = blackout.options?.name;
-    const [view, setView] = useState<"all" | "activities" | "plans">(
-        initialView === "activities" || initialView === "plans" ? initialView : "all"
+    const {t:tGoals}=useTranslation("goals");
+    const {goals,loading:loadingGoals,error:goalsError}=useGoalsWorkspace(!profileMode);
+    const goalDay=useGoalDayResults(chosenDay,goals,!profileMode);
+    const dayGoals=goalsForDay(goals,chosenDay,goalDay.ids);
+    const [view, setView] = useState<"all" | "activities" | "plans" | "goals">(
+        initialView === "activities" || initialView === "plans" || initialView === "goals" ? initialView : "all"
     );
     const all = profileMode ? (acc?.nick === profileNick ? makeProfilePlanEntries(profilePlans) : []) :
         makeDayEntries(chosenDay, habits, plans, calendar);
-    const entries = all.filter(entry => view === "all" || (view === "activities" ? entry.kind === "habit" : entry.kind === "plan"));
+    const entries = all.filter(entry => view === "all" || (view === "activities" && entry.kind === "habit") || (view === "plans" && entry.kind === "plan"));
 
     return <div className="habitOverviewListModal">
         <div className="habitOverviewModalHeader">
@@ -36,12 +43,16 @@ export default function HabitOverviewList() {
         {!profileMode && <Selector selected={view} arr={[
             { value: "all", label: t("plans.all"), func: setView },
             { value: "activities", label: t("plans.activities"), func: setView },
-            { value: "plans", label: t("plans.title"), func: setView }
+            { value: "plans", label: t("plans.title"), func: setView },
+            { value: "goals", label: tGoals("title"), func: setView }
         ]}/> }
         <div className="habitOverviewModalBody">
             {(profileMode ? profileLoading : loadingPlans || loadingHabits || calendarLoading) ?
                 <div className="overviewPanelSkeleton" aria-busy="true"><div className="skeletonLine skeletonTitle"/><div className="skeletonLine"/><div className="skeletonLine"/></div> :
-                <HabitOverviewEntries entries={entries} view={profileMode ? "plans" : view} readOnly={profileMode}/>}
+                <>
+                    {view!=="goals" && <HabitOverviewEntries entries={entries} view={profileMode ? "plans" : view} readOnly={profileMode}/>}
+                    {!profileMode && (view==="goals" || (view==="all" && dayGoals.length>0)) && <DayGoalEntries goals={dayGoals} ids={goalDay.ids} day={chosenDay} loading={loadingGoals || goalDay.loading} error={goalsError || goalDay.error}/>}
+                </>}
         </div>
     </div>;
 }

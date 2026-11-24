@@ -161,7 +161,7 @@ export default function AddGoal() {
             </div>
             <div className="goalWorkspaceLink">
                 <Checkbox state={autoComplete} setState={setAutoComplete}/>
-                <span>{t("autoComplete")}</span>
+                <button type="button" className="goalCheckboxLabel" onClick={()=>setAutoComplete(value=>!value)}>{t("autoComplete")}</button>
             </div>
             <div className="addHabitWrapper">
                 <label>{t("progressMode")}</label>

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusIcon, TargetIcon, PencilSimpleIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
@@ -11,7 +11,8 @@ import { useHabits } from "../hooks/HabitsHook";
 import { useUser } from "../hooks/UserHook";
 import { isGoalHabitAvailable } from "../ts/utils/goalLinkAvailability";
 import { api } from "../ts/api";
-import { goalMetricCompatible, goalHabitMetricType, goalIsCurrent, type Goal } from "../../pages/HabitPage/components/Overview/goalTypes";
+import { goalMetricCompatible, goalHabitMetricType, goalIsCurrent, type Goal, type GoalRecord } from "../../pages/HabitPage/components/Overview/goalTypes";
+import { formatAppDate,formatAppTime,formatDateFromString } from "../ts/utils/dateToStr";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "../../pages/HabitPage/scss/goalWorkspace.scss";
 import "./scss/goalWorkspace.scss";
@@ -33,6 +34,17 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
     const metricType=goalHabitMetricType(habits?.find(h=>String(h.id)===String(habitId)));
     const displayChoices=linked.filter(goal=>goalMetricCompatible(goal.progress_mode,metricType) && goalIsCurrent(goal));
     const [saving,setSaving]=useState(false);
+    const [recent,setRecent]=useState<Record<string,GoalRecord[]>>({});
+    const recentSignature=linked.map(g=>g.id+":"+g.progress+":"+g.repeat_period_start).join("|");
+    useEffect(()=>{
+        setRecent({});
+        if(!isOwner || !recentSignature)return;
+        const controller=new AbortController();
+        void api.get<{success:boolean;records:Record<string,GoalRecord[]>}>(`goal-workspace/activity/${habitId}/records`,{signal:controller.signal}).then(({data})=>{
+            if(!controller.signal.aborted && data.success)setRecent(data.records);
+        }).catch(()=>{});
+        return ()=>controller.abort();
+    },[habitId,isOwner,recentSignature]);
     const {showNotification}=useNote();
     const available=goals.filter(goal=>!hasHabitGoalLink(goal,habitId) && goalMetricCompatible(goal.progress_mode,metricType) && goalIsCurrent(goal));
     const openDetails=(goal:Goal)=>setBlackout({seted:true,module:"GoalDetails",options:{id:String(goal.id)}});
@@ -70,6 +82,16 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
                         </button>
                         <span className="goalOverviewProgress" role="progressbar" aria-valuemin={0} aria-valuemax={100}
                             aria-valuenow={goal.progress}><span style={{width:goal.progress+"%"}}/></span>
+                        <div className="goalLinkedRecords">
+                            {(["milestones","combined"].includes(goal.progress_mode)?goal.recent_stages || []:[]).map(stage=><div className="goalLinkedRecord" key={"stage-"+stage.id}>
+                                <span>{stage.title}{stage.completion_percent!=null?` · ${stage.completion_percent}%`:""}</span>
+                                <time dateTime={stage.completed_at || undefined}>{stage.completed_at?formatAppDate(stage.completed_at)+" · "+formatAppTime(stage.completed_at):""}</time>
+                            </div>)}
+                            {(goal.progress_mode==="milestones"?[]:(goal.recent_records || recent[String(goal.id)] || [])).map(record=><div className="goalLinkedRecord" key={record.kind+"-"+record.id}>
+                                <span>{record.kind==="timer"?[Math.floor((record.seconds || 0)/3600),Math.floor((record.seconds || 0)%3600/60),(record.seconds || 0)%60].map(n=>String(n).padStart(2,"0")).join(":"):record.kind==="counter"?t("counterRecord",{value:record.value}):record.kind==="day"?t("dayRecord"):t("progressRecord",{value:record.value})}</span>
+                                <time dateTime={record.date}>{record.kind==="day"?formatDateFromString(record.date):formatAppDate(record.date)+" · "+formatAppTime(record.date)}</time>
+                            </div>)}
+                        </div>
                         {manualModes.includes(goal.progress_mode) && goal.status==="active" &&
                             <button type="button" className="goalWorkspaceQuiet goalLinkedProgress"
                                 onClick={()=>openDetails(goal)}>{t("recordProgress")}</button>}

@@ -17,6 +17,8 @@ import { getOverviewFocus, getOverviewNext } from "./dayFocus";
 import Calendar from "../Calendar/Calendar";
 import HabitOverviewEntries from "./HabitOverviewEntries";
 import { useGoalsWorkspace } from "../../../../components/hooks/useGoalsWorkspace";
+import useGoalDayResults from "../../../../components/hooks/useGoalDayResults";
+import DayGoalEntries,{goalsForDay} from "./DayGoalEntries";
 import "./goalLocale";
 import "../../scss/HabitOverview.scss";
 
@@ -111,7 +113,9 @@ export default function HabitOverviewLayout() {
     const { openMenu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const dayProgress = useHabitDayProgress(chosenDay);
-    const [view, setView] = useState<"all" | "activities" | "plans">("all");
+    const [view, setView] = useState<"all" | "activities" | "plans" | "goals">("all");
+    const goalDay=useGoalDayResults(chosenDay,goals,Boolean(user.id));
+    const dayGoals=goalsForDay(goals,chosenDay,goalDay.ids);
     const [initializedAccount, setInitializedAccount] = useState<string | null>(null);
     const initializing = initializedAccount !== user.id;
     useEffect(() => {
@@ -119,12 +123,12 @@ export default function HabitOverviewLayout() {
     }, [user.id, loadingHabits, loadingPlans, calendarLoading]);
     const entries = useMemo(() => makeDayEntries(chosenDay, habits, plans, calendar),
         [chosenDay, habits, plans, calendar]);
-    const visible = entries.filter(entry => view === "all" || (view === "activities" ? entry.kind === "habit" : entry.kind === "plan"));
+    const visible = entries.filter(entry => view === "all" || (view === "activities" && entry.kind === "habit") || (view === "plans" && entry.kind === "plan"));
     const pending = visible.filter(entry => !entry.completed && entry.plan?.status !== "canceled");
     const nextFour = pending.slice(0, 4);
     const activityCount = entries.filter(entry => entry.kind === "habit").length;
     const planCount = entries.length - activityCount;
-    const goalCount = chosenDay >= todayStrFunc() ? goals.length : 0;
+    const goalCount = dayGoals.length;
     const completedCount = entries.filter(entry => entry.completed).length;
     const currentTime = clockInAppZone();
     const focus = getOverviewFocus(entries, chosenDay, todayStrFunc(), currentTime);
@@ -162,7 +166,7 @@ export default function HabitOverviewLayout() {
                         <span>{planCount}</span><small>{t("plans.title")}</small>
                     </button>}
                     {!goalsError && goalCount > 0 && <button type="button"
-                        onClick={() => setBlackout({ seted: true, module: "GoalCatalog" })}>
+                        onClick={() => setBlackout({ seted: true, module: "HabitOverviewList", options: { name: "goals" } })}>
                         <span>{goalCount}</span><small>{tGoals("title")}</small>
                     </button>}
                 </div>}
@@ -175,6 +179,7 @@ export default function HabitOverviewLayout() {
                 </div>
                 <p>{t("plans.completedCount", { done: completedCount, total: entries.length })}</p>
                 <p>{t("plans.remainingCount", { count: entries.length - completedCount })}</p>
+                {!goalDay.loading && !goalDay.error && (goalCount>0 || goalDay.ids.length>0) && <p>{tGoals(chosenDay===todayStrFunc()?"completedTodayCount":"completedDayCount",{count:goalDay.ids.length})}</p>}
                 {focus && <OverviewFocusCard entry={focus.entry} more={focus.more} calendar={calendar}
                     progress={focus.entry.habit ? dayProgress[String(focus.entry.habit.id)] : undefined}
                     label={t(focus.kind === "dayStart" ? "plans.dayStart" :
@@ -186,15 +191,20 @@ export default function HabitOverviewLayout() {
         </div>
         <div className="habitOverviewContext">
             <div className="habitOverviewHeader">{t("plans.daySummary")}</div>
-            <div className="habitOverviewNextLabel">{t("plans.nextUp")}</div>
+            <div className="habitOverviewNextLabel">{view==="goals"?tGoals("title"):t("plans.nextUp")}</div>
             {initializing ? <UpcomingSkeleton/> : <>
                 <div className="habitOverviewFilters">
                     <button type="button" className={view === "all" ? "active" : ""} onClick={() => setView("all")}>{t("plans.all")}</button>
                     <button type="button" className={view === "activities" ? "active" : ""} onClick={() => setView("activities")}>{t("plans.activities")}</button>
                     <button type="button" className={view === "plans" ? "active" : ""} onClick={() => setView("plans")}>{t("plans.title")}</button>
+                    <button type="button" className={view === "goals" ? "active" : ""} onClick={() => setView("goals")}>{tGoals("title")}</button>
                 </div>
                 <div className="habitOverviewNextList">
-                    <HabitOverviewEntries entries={nextFour} view={view}/>
+                    {view!=="goals" && <HabitOverviewEntries entries={nextFour} view={view}/>}
+                    {(view==="goals" || (view==="all" && dayGoals.length>0)) && <>
+                        {view==="all" && <small>{tGoals("title")}</small>}
+                        <DayGoalEntries goals={view==="all"?dayGoals.slice(0,4):dayGoals} ids={goalDay.ids} day={chosenDay} loading={loadingGoals || goalDay.loading} error={goalsError || goalDay.error}/>
+                    </>}
                 </div>
             </>}
         </div>

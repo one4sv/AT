@@ -65,7 +65,7 @@ test("nonzero summary counters open the existing list dialogs and share one crea
         assert.ok(overview.includes('module: "HabitOverviewList", options: { name: "' + label + '" }'));
     }
     assert.match(overview, /goalCount > 0 && <button/);
-    assert.match(overview, /module: "GoalCatalog"/);
+    assert.match(overview, /module: "HabitOverviewList", options: \{ name: "goals" \}/);
     assert.doesNotMatch(overview, /habitOverviewShowAll|plans\.showAll|<GoalOverview/);
     assert.match(style, /grid-auto-columns: minmax\(0, 1fr\)/);
     assert.match(style, /\.habitOverviewSummary > button/);
@@ -76,9 +76,10 @@ test("nonzero summary counters open the existing list dialogs and share one crea
     assert.doesNotMatch(catalog, /module:\s*"AddGoal"/);
 });
 
- test("goals do not appear on past calendar days and overview refresh is silent", () => {
+ test("day goal results and overview refresh are silent", () => {
     const overview=read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
-    assert.match(overview, /goalCount = chosenDay >= todayStrFunc\(\) \? goals.length : 0/);
+    assert.match(overview, /goalCount = dayGoals.length/);
+    assert.match(overview,/completedTodayCount/);
     assert.match(overview, /initializing \? <SummarySkeleton\/>/);
     assert.match(overview, /initializing \? <UpcomingSkeleton\/>/);
     const style=read("src/pages/HabitPage/scss/HabitOverview.scss");
@@ -184,4 +185,12 @@ test("repeat options and period history reuse the goal dialogs",()=>{
     assert.match(read("src/components/modules/GoalPicker.tsx"),/pinnedGoal/);
     assert.match(read("src/components/ts/Habit.tsx"),/smHabitGoalTrack/);
     assert.match(read("src/pages/Settings/components/SettingsTabs/HabitsTab.tsx"),/showHabitGoals/);
+});
+
+test("goal checkbox text, modal borders, day filters and dated records",()=>{
+    assert.match(read("src/components/modules/AddGoal.tsx"),/goalCheckboxLabel.*setAutoComplete/);
+    assert.match(read("src/components/modules/scss/goalWorkspace.scss"),/\.goalWorkspaceModal \.goalWorkspaceSelect > input \{\s*border: 1px solid var\(--block_border\)/);
+    assert.match(read("src/components/modules/GoalPicker.tsx"),/goalLinkedRecords/);
+    assert.match(read("src/components/modules/GoalDetails.tsx"),/formatAppDate\(stage.completed_at\)/);
+    assert.match(read("src/components/modules/HabitOverviewList.tsx"),/value: "goals"/);
 });

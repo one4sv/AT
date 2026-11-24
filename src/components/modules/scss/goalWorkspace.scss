@@ -218,6 +218,20 @@
     cursor: pointer;
     font-size: 16px;
 }
+.goalWorkspaceModal .goalWorkspaceSelect > input {
+    border: 1px solid var(--block_border);
+}
+.goalCheckboxLabel {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    color: var(--tc);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    padding: 0;
+}
 .goalWorkspaceSelect > svg {
     right: .8vw;
 }
@@ -394,3 +408,42 @@
     font-size: 16px;
     color: var(--tc);
 }
+
+.goalStageTitle {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    > button {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    > small {
+        color: var(--borderWh);
+        font-size: 12px;
+    }
+    > .goalStageChecked {
+        opacity: .6;
+        text-decoration: line-through;
+    }
+}
+.goalLinkedRecords {
+    flex: 0 0 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .4dvh;
+    font-size: 13px;
+    color: var(--borderWh);
+}
+.goalLinkedRecord {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    > span { min-width: 0; overflow-wrap: anywhere; }
+    > time { flex-shrink: 0; text-align: right; }
+}
+
+.goalLinkedRecords:empty { display: none; }

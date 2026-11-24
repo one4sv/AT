@@ -128,5 +128,13 @@
   "periodMissed": "Не выполнено",
   "noPeriods": "Завершённых периодов пока нет",
   "loadMorePeriods": "Показать ещё",
-  "periodClosed": "Период завершён: {{progress}}%"
+  "periodClosed": "Период завершён: {{progress}}%",
+  "counterRecord": "Счётчик: {{value}}",
+  "dayRecord": "День выполнен",
+  "progressRecord": "Прогресс: {{value}}%",
+  "completedToday": "Выполнено сегодня",
+  "completedOnDay": "Выполнено в этот день",
+  "completedTodayCount": "Целей выполнено сегодня: {{count}}",
+  "completedDayCount": "Целей выполнено за день: {{count}}",
+  "noDayGoals": "Нет целей за выбранный день"
 }
