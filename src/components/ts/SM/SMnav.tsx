@@ -297,24 +297,9 @@ export default function SMnav() {
                     }
                 );
             }
-            if (action === "add-habit") {
-                setBlackout(
-                    {
-                        seted: true,
-                        module: "AddHabit"
-                    }
-                );
-            }
-            if (action === "add-plan") {
-                setBlackout(
-                    {
-                        seted: true,
-                        module: "AddPlan"
-                    }
-                );
-            }
-            if (action === "add-goal") {
-                setBlackout({seted:true,module:"AddGoal"});
+            if (action === "add-habit" || action === "add-plan" || action === "add-goal") {
+                setBlackout({seted:true,module:action === "add-habit" ? "AddHabit" :
+                    action === "add-plan" ? "AddPlan" : "AddGoal"});
             }
             if (action === "new-spot") {
                 showNotification("info", t("sideMenu.inDevelopment"));
@@ -464,6 +449,10 @@ export default function SMnav() {
         [extraMenu, isExtraOpen]
     );
     const extraButts = () => {
+        const createActivity = (module:string) => {
+            setBlackout({seted:true,module});
+            setIsExtraOpen(false);
+        };
         if (searchMode) return [null, ...searchTabFilters[extraMenu || activeTab]].map(filter => <div
             className={"SMextraMenuButt " + (searchFilter === filter ? "selected" : "")}
             key={filter || "none"}
@@ -496,40 +485,21 @@ export default function SMnav() {
                 return (<>
                     <div
                         className="SMextraMenuButt"
-                        onMouseUp={() => {
-                            setBlackout(
-                                {
-                                    seted: true,
-                                    module: "AddHabit"
-                                }
-                            );
-                            setIsExtraOpen(false);
-                        }}
+                        onMouseUp={() => createActivity("AddHabit")}
                         data-action="add-habit"
                     >
                         <PlusIcon size={20} /> {t("sideMenu.newActivity")}
                     </div>
                     <div
                         className="SMextraMenuButt"
-                        onMouseUp={() => {
-                            setBlackout(
-                                {
-                                    seted: true,
-                                    module: "AddPlan"
-                                }
-                            );
-                            setIsExtraOpen(false);
-                        }}
+                        onMouseUp={() => createActivity("AddPlan")}
                         data-action="add-plan"
                     >
                         <CalendarPlusIcon size={20} /> {t("plans.create")}
                     </div>
                     <div
                         className="SMextraMenuButt"
-                        onMouseUp={() => {
-                            setBlackout({seted:true,module:"AddGoal"});
-                            setIsExtraOpen(false);
-                        }}
+                        onMouseUp={() => createActivity("AddGoal")}
                         data-action="add-goal"
                     >
                         <PlusIcon size={20} /> {t("sideMenu.addGoal")}

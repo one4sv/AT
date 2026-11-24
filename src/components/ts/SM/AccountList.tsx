@@ -43,6 +43,8 @@ export default function AccountList() {
         closeMenu();
     };
 
+    const openCreate = (module:string) => setBlackout({seted:true,module});
+
     if (activeTab === "user" && search.trim()) {
         return <div className="accountList SMlist accountSettingsSearch"><SearchedButts search={search} selectSetting={selectSetting} staticResults/></div>;
     }
@@ -80,16 +82,16 @@ export default function AccountList() {
                     <div className="SMcreateButt" onClick={() => { closeMenu(); navigate("/post/new"); }}>
                         <PencilSimpleIcon size={18} weight="fill"/> {t("sideMenu.newPost")}
                     </div>
-                    <div className="SMcreateButt" onClick={() => setBlackout({ seted: true, module: "CreateChat" })}>
+                    <div className="SMcreateButt" onClick={() => openCreate("CreateChat")}>
                         <ChatTeardropIcon size={18} weight="fill"/> {t("sideMenu.newChat")}
                     </div>                    
-                    <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddHabit"})}>
+                    <div className="SMcreateButt" onClick={() => openCreate("AddHabit")}>
                         <CalendarCheckIcon size={18} weight="fill"/> {t("sideMenu.newActivity")}
                     </div>
-                    <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddPlan"})}>
+                    <div className="SMcreateButt" onClick={() => openCreate("AddPlan")}>
                         <CalendarPlusIcon size={18} weight="fill"/> {t("plans.create")}
                     </div>                    
-                    <div className="SMcreateButt" onClick={() => setBlackout({seted: true, module: "AddGoal"})}>
+                    <div className="SMcreateButt" onClick={() => openCreate("AddGoal")}>
                         <BookmarkSimpleIcon size={18} weight="fill"/> {t("sideMenu.newGoal")}
                     </div>
                     <div className="SMcreateButt" onClick={() => showNotification("info", t("sideMenu.inDevelopment"))}>

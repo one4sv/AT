@@ -10,14 +10,14 @@ test("goals stay inside habit overview, without a standalone goals route or main
     assert.doesNotMatch(app,/path="goals"|path="goal\//);
     assert.doesNotMatch(nav,/to="\/goals"/);
     assert.match(nav,/to="\/habit"/);
-    assert.match(nav,/module: "AddGoal"/);
+    assert.match(nav,/openCreate\("AddGoal"\)/);
     assert.match(overview,/<GoalOverview\/>/);
 });
 test("SideMenu has desktop and touch create actions",()=>{
     const nav=read("src/components/ts/SM/SMnav.tsx");
     assert.match(nav,/data-action="add-goal"/);
     assert.match(nav,/if \(action === "add-goal"\)/);
-    assert.match(nav,/module:"AddGoal"/);
+    assert.match(nav,/createActivity\("AddGoal"\)/);
     const modal=read("src/components/modules/ModuleMap.ts");
     for(const name of ["AddGoal","GoalCatalog","GoalDetails","GoalPicker"]) assert.match(modal,new RegExp(name+": lazy"));
 });
