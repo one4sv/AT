@@ -7,6 +7,7 @@ import { goalsChanged } from "../hooks/useGoalsWorkspace";
 import { useHabits } from "../hooks/HabitsHook";
 import { usePlans } from "../hooks/PlansHook";
 import { useUser } from "../hooks/UserHook";
+import { isGoalHabitAvailable, isGoalPlanAvailable } from "../ts/utils/goalLinkAvailability";
 import { api } from "../ts/api";
 import Checkbox from "../ts/utils/Checkbox";
 import SelectList from "../ts/SelectList";
@@ -98,9 +99,9 @@ export default function GoalDetails() {
         }});
     };
 
-    const availableHabits=(habits || []).filter(item=>item.user_id===user.id &&
+    const availableHabits=(habits || []).filter(item=>isGoalHabitAvailable(item,user.id) &&
         !(goal?.habits || []).some(link=>String(link.id)===String(item.id)));
-    const availablePlans=plans.filter(item=>item.is_owner &&
+    const availablePlans=plans.filter(item=>isGoalPlanAvailable(item) &&
         !(goal?.plans || []).some(link=>String(link.id)===String(item.id)));
 
     if(loading) return <div className="addHabitDiv addPlanDiv goalWorkspaceModal">{t("loading")}</div>;
@@ -133,9 +134,10 @@ export default function GoalDetails() {
             aria-valuemin={0} aria-valuemax={100}>
             <span style={{width:goal.progress+"%"}}/>
         </div>
-        {["days","streak","daily_timer"].includes(goal.progress_mode) && <div className="goalWorkspaceMeta">
+        {["days","streak","daily_timer","daily_counter"].includes(goal.progress_mode) && <div className="goalWorkspaceMeta">
             {t(goal.progress_mode)} · {goal.achieved_days ?? 0} / {goal.target_days ?? 30} {t("daysUnit")}
             {goal.progress_mode==="daily_timer" && " · "+(goal.daily_minutes ?? 60)+" "+t("minutesUnit")}
+            {goal.progress_mode==="daily_counter" && " · "+goal.metric_target+" "+t("counterUnit")}
         </div>}
         {goal.progress_mode==="manual" && <div className="goalWorkspaceField">
             <SeekBar id="goalManualProgress" min={0} max={100} step={1}
@@ -153,14 +155,16 @@ export default function GoalDetails() {
                     onClick={()=>void mutate("goal-workspace/"+id,"patch",{metric_current:value})}>{t("save")}</button>
             </div>
         </div>}
+        {(goal.progress_mode==="milestones" || goal.progress_mode==="combined") && <>
         <div className="goalWorkspaceHeading"><h3>{t("stages")}</h3></div>
+        <small>{t("stagesHint")}</small>
         {(goal.stages || []).map(stage=><div className="goalStageInputs goalStageExisting" key={stage.id}>
             <Checkbox state={Boolean(stage.completed_at)} disable={saving} func={checked=>
                 void mutate("goal-workspace/"+id+"/stages/"+stage.id,"patch",{completed:checked})}/>
             {editId===stage.id ? <>
                 <input className="addHabitInput" maxLength={160} value={editTitle} aria-label={t("stageTitle")}
                     onChange={e=>setEditTitle(e.target.value)}/>
-                <input className="addHabitInput" type="number" min={0.001} max={10000} step={0.5}
+                <input className="addHabitInput" type="number" min={0.001} max={10000} step={0.001}
                     value={editWeight} aria-label={t("weight")}
                     onChange={e=>setEditWeight(Number(e.target.value))}/>
                 <button type="button" className="goalStageRemove" disabled={saving} aria-label={t("save")}
@@ -184,7 +188,7 @@ export default function GoalDetails() {
         <div className="goalStageInputs">
             <input className="addHabitInput" value={newTitle} maxLength={160} placeholder={t("stageTitle")}
                 aria-label={t("stageTitle")} onChange={e=>setNewTitle(e.target.value)}/>
-            <input className="addHabitInput" type="number" min={0.001} max={10000} step={0.5}
+            <input className="addHabitInput" type="number" min={0.001} max={10000} step={0.001}
                 value={newWeight} aria-label={t("weight")}
                 onChange={e=>setNewWeight(Number(e.target.value))}/>
             <button type="button" className="goalStageRemove" disabled={saving || !newTitle.trim()}
@@ -193,6 +197,7 @@ export default function GoalDetails() {
                         {title:newTitle.trim(),weight:newWeight})){setNewTitle("");setNewWeight(1);}
                 }}><PlusIcon size={20}/></button>
         </div>
+        </>}
         <div className="goalWorkspaceHeading"><h3>{t("linkedHabits")}</h3></div>
         {(goal.habits || []).map(habit=><div className="goalWorkspaceLink" key={habit.id}>
             <span>{habit.name}</span>

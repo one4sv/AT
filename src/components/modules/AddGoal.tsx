@@ -11,6 +11,7 @@ import SelectList from "../ts/SelectList";
 import { useHabits } from "../hooks/HabitsHook";
 import { usePlans } from "../hooks/PlansHook";
 import { useUser } from "../hooks/UserHook";
+import { isGoalHabitAvailable, isGoalPlanAvailable } from "../ts/utils/goalLinkAvailability";
 import type { Goal, GoalMode, GoalLinkedItem } from "../../pages/HabitPage/components/Overview/goalTypes";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "./scss/goalWorkspace.scss";
@@ -30,8 +31,7 @@ export default function AddGoal() {
     const {user}=useUser();
     const [linkedHabits,setLinkedHabits]=useState<GoalLinkedItem[]>(()=>habitId?[{id:Number(habitId),name:""}]:[]);
     const [linkedPlans,setLinkedPlans]=useState<GoalLinkedItem[]>([]);
-    const [habitChoice,setHabitChoice]=useState("");
-    const [planChoice,setPlanChoice]=useState("");
+
     const [targetDays,setTargetDays]=useState(30);
     const [dailyMinutes,setDailyMinutes]=useState(120);
     const [loadError,setLoadError]=useState(false);
@@ -70,9 +70,12 @@ export default function AddGoal() {
         return ()=>{active=false;};
     },[goalId,showNotification,t]);
 
-    const automatic=["days","streak","daily_timer"].includes(mode);
-    const ownHabits=(habits || []).filter(h=>h.user_id===user.id);
-    const ownPlans=plans.filter(p=>p.is_owner);
+    const automatic=["days","streak","daily_timer","daily_counter"].includes(mode);
+    const ownHabits=(habits || []).filter(h=>isGoalHabitAvailable(h,user.id));
+    const ownPlans=plans.filter(isGoalPlanAvailable);
+    const availableHabits=ownHabits.filter(h=>!linkedHabits.some(item=>String(item.id)===String(h.id)));
+    const availablePlans=ownPlans.filter(p=>!linkedPlans.some(item=>String(item.id)===String(p.id)));
+    const usesStages=mode==="milestones" || mode==="combined";
     const submit=async(event:FormEvent<HTMLFormElement>)=>{
         event.preventDefault();
         if(saving || loadError || !name.trim()) return;
@@ -83,7 +86,10 @@ export default function AddGoal() {
             showNotification("error",t("invalidMetric"));
             return;
         }
-        if(stages.some(s=>!s.title.trim() || !Number.isFinite(s.weight) || s.weight<=0)){
+        if(mode==="daily_counter" && (!Number.isInteger(metricTarget) || metricTarget<1 || metricTarget>1000000000)){
+            showNotification("error",t("invalidCounter"));return;
+        }
+        if(usesStages && stages.some(s=>!s.title.trim() || !Number.isFinite(s.weight) || s.weight<0.001 || s.weight>10000)){
             showNotification("error",t("invalidStage"));
             return;
         }
@@ -95,7 +101,7 @@ export default function AddGoal() {
                 habit_ids:linkedHabits.map(h=>h.id),plan_ids:linkedPlans.map(p=>p.id)};
             const response=goalId ? await api.patch("goal-workspace/"+goalId,payload) :
                 await api.post("goal-workspace",{...payload,
-                    stages:stages.map(s=>({title:s.title.trim(),weight:s.weight}))});
+                    stages:usesStages ? stages.map(s=>({title:s.title.trim(),weight:s.weight})) : []});
             if(!response.data?.success) throw new Error("Goal save failed");
             goalsChanged();
             setBlackout({seted:false});
@@ -128,7 +134,7 @@ export default function AddGoal() {
                 <label>{t("progressMode")}</label>
                 <SelectList id="goalMode" className="goalWorkspaceSelect" selected={mode}
                     onChange={value=>setMode(value as GoalMode)}
-                    arr={(["manual","metric","milestones","combined","days","streak","daily_timer"] as GoalMode[]).map(value=>({
+                    arr={(["manual","metric","milestones","combined","days","streak","daily_timer","daily_counter"] as GoalMode[]).map(value=>({
                         value,label:t(value)
                     }))}/>
             </div>
@@ -165,7 +171,12 @@ export default function AddGoal() {
                     <input id="goalDailyMinutes" className="addHabitInput" type="number" min={1} max={1440}
                         value={dailyMinutes} onChange={e=>setDailyMinutes(Number(e.target.value))}/>
                 </>}
-                <small>{t("automaticHint")}</small>
+                {mode==="daily_counter" && <>
+                    <label htmlFor="goalDailyCounter">{t("dailyCounterTarget")}</label>
+                    <input id="goalDailyCounter" className="addHabitInput" type="number" min={1} max={1000000000} step={1}
+                        value={metricTarget} onChange={e=>setMetricTarget(Number(e.target.value))}/>
+                </>}
+                <small>{t(mode==="daily_counter"?"counterHint":"automaticHint")}</small>
             </div>}
             <div className="goalWorkspaceField">
                 <label>{t("linkedHabits")}</label>
@@ -174,42 +185,35 @@ export default function AddGoal() {
                     <button type="button" className="goalIconButton" aria-label={t("unlink")}
                         onClick={()=>setLinkedHabits(old=>old.filter(item=>item.id!==h.id))}><XIcon size={24}/></button>
                 </div>)}
-                <div className="goalWorkspaceLinkAdd">
-                    <SelectList key={"habit-"+linkedHabits.length} className="goalWorkspaceSelect"
-                        selected={habitChoice} placeholder={t("chooseHabit")} onChange={setHabitChoice}
-                        arr={ownHabits.filter(h=>!linkedHabits.some(item=>item.id===h.id)).map(h=>({value:String(h.id),label:h.name}))}/>
-                    <button type="button" className="goalIconButton" aria-label={t("link")} disabled={!habitChoice}
-                        onClick={()=>{
-                            const item=ownHabits.find(h=>String(h.id)===habitChoice);
-                            if(item && !linkedHabits.some(h=>h.id===item.id)) setLinkedHabits(old=>[...old,{id:item.id,name:item.name}]);
-                            setHabitChoice("");
-                        }}><PlusIcon size={24}/></button>
-                </div>
+                {!!availableHabits.length && <SelectList key={"habit-"+linkedHabits.map(h=>h.id).join(",")}
+                    className="goalWorkspaceSelect" placeholder={t("chooseHabit")}
+                    arr={availableHabits.map(h=>({value:String(h.id),label:h.name}))}
+                    onChange={value=>{
+                        const item=availableHabits.find(h=>String(h.id)===value);
+                        if(item) setLinkedHabits(old=>old.some(h=>String(h.id)===value)?old:[...old,{id:item.id,name:item.name}]);
+                    }}/>}
                 <label>{t("linkedPlans")}</label>
                 {linkedPlans.map(p=><div key={p.id} className="goalWorkspaceLink">
                     <span>{ownPlans.find(item=>item.id===p.id)?.name || p.name}</span>
                     <button type="button" className="goalIconButton" aria-label={t("unlink")}
                         onClick={()=>setLinkedPlans(old=>old.filter(item=>item.id!==p.id))}><XIcon size={24}/></button>
                 </div>)}
-                <div className="goalWorkspaceLinkAdd">
-                    <SelectList key={"plan-"+linkedPlans.length} className="goalWorkspaceSelect"
-                        selected={planChoice} placeholder={t("choosePlan")} onChange={setPlanChoice}
-                        arr={ownPlans.filter(p=>!linkedPlans.some(item=>item.id===p.id)).map(p=>({value:String(p.id),label:p.name}))}/>
-                    <button type="button" className="goalIconButton" aria-label={t("link")} disabled={!planChoice}
-                        onClick={()=>{
-                            const item=ownPlans.find(p=>String(p.id)===planChoice);
-                            if(item && !linkedPlans.some(p=>p.id===item.id)) setLinkedPlans(old=>[...old,{id:item.id,name:item.name}]);
-                            setPlanChoice("");
-                        }}><PlusIcon size={24}/></button>
-                </div>
+                {!!availablePlans.length && <SelectList key={"plan-"+linkedPlans.map(p=>p.id).join(",")}
+                    className="goalWorkspaceSelect" placeholder={t("choosePlan")}
+                    arr={availablePlans.map(p=>({value:String(p.id),label:p.name}))}
+                    onChange={value=>{
+                        const item=availablePlans.find(p=>String(p.id)===value);
+                        if(item) setLinkedPlans(old=>old.some(p=>String(p.id)===value)?old:[...old,{id:item.id,name:item.name}]);
+                    }}/>}
             </div>
-            {!goalId && <div className="goalWorkspaceStages">
+            {!goalId && usesStages && <div className="goalWorkspaceStages">
                 <label>{t("stages")}</label>
+                <small>{t("stagesHint")}</small>
                 {stages.map((s,i)=><div className="goalStageInputs" key={i}>
                     <input className="addHabitInput" type="text" maxLength={160}
                         placeholder={t("stageTitle")} aria-label={t("stageTitle")} value={s.title}
                         onChange={e=>setStages(old=>old.map((v,j)=>j===i?{...v,title:e.target.value}:v))}/>
-                    <input className="addHabitInput" type="number" min={0.001} max={10000} step={0.5}
+                    <input className="addHabitInput" type="number" min={0.001} max={10000} step={0.001}
                         aria-label={t("weight")} value={s.weight}
                         onChange={e=>setStages(old=>old.map((v,j)=>j===i?{...v,weight:Number(e.target.value)}:v))}/>
                     <button type="button" className="goalStageRemove" aria-label={t("removeStage")}
