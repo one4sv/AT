@@ -105,7 +105,7 @@ export default function GoalDetails() {
         !(goal?.plans || []).some(link=>String(link.id)===String(item.id)));
 
     if(loading) return <div className="addHabitDiv addPlanDiv goalWorkspaceModal">{t("loading")}</div>;
-    if(error || !goal) return <div className="addHabitDiv addPlanDiv goalWorkspaceModal">{t("loadError")}</div>;
+    if(!goal) return <div className="addHabitDiv addPlanDiv goalWorkspaceModal">{t("loadError")}</div>;
 
     return <div className="addHabitDiv addPlanDiv goalWorkspaceModal goalDetails">
         <div className="goalWorkspaceHeading">
@@ -119,6 +119,7 @@ export default function GoalDetails() {
                     onClick={deleteGoal}><TrashIcon size={24}/></button>
             </div>
         </div>
+        {error && <small>{t("loadError")}</small>}
         {!!goal.description && <p className="goalWorkspaceText">{goal.description}</p>}
         <div className="goalWorkspaceMeta">{t("dueDate")}: {goal.due_date || t("noDate")}</div>
         <div className="goalWorkspaceField">
@@ -134,6 +135,11 @@ export default function GoalDetails() {
             aria-valuemin={0} aria-valuemax={100}>
             <span style={{width:goal.progress+"%"}}/>
         </div>
+        {goal.today_progress!=null && <div className="goalWorkspaceField">
+            <div className="goalWorkspaceProgressHead"><span>{t("todayProgress")}</span><span>{goal.today_progress}%</span></div>
+            <div className="goalOverviewProgress goalDetailProgress"><span style={{width:goal.today_progress+"%"}}/></div>
+        </div>}
+        {goal.completed_at && <div className="goalWorkspaceMeta">{t("completedOn")}: {new Date(goal.completed_at).toLocaleDateString()}</div>}
         {["days","streak","daily_timer","daily_counter"].includes(goal.progress_mode) && <div className="goalWorkspaceMeta">
             {t(goal.progress_mode)} · {goal.achieved_days ?? 0} / {goal.target_days ?? 30} {t("daysUnit")}
             {goal.progress_mode==="daily_timer" && " · "+(goal.daily_minutes ?? 60)+" "+t("minutesUnit")}
@@ -227,7 +233,7 @@ export default function GoalDetails() {
         {!!goal.events?.length && <>
             <div className="goalWorkspaceHeading"><h3>{t("history")}</h3></div>
             <div className="goalWorkspaceEvents">{goal.events.map(e=><div key={e.id}>
-                <span>{t("event."+e.action,{defaultValue:e.action})}</span>
+                <span>{e.action==="progress_changed"?t("historyProgress",{from:e.details?.from ?? "—",to:e.details?.to}):t("event."+e.action,{defaultValue:e.action})}</span>
                 <time>{new Date(e.created_at).toLocaleString()}</time>
             </div>)}</div>
         </>}

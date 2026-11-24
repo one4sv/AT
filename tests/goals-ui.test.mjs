@@ -137,3 +137,14 @@ test("activity goals use a slide and selected progress is shared by timer and co
     const style=read("src/scss/SelectList.scss");
     assert.match(style,/backdrop-filter: blur\(9px\) !important/);
 });
+
+test("goal updates use a shared store, daily progress and optional completion/reminder",()=>{
+    assert.match(read("src/components/hooks/useGoalsWorkspace.ts"),/useSyncExternalStore/);
+    assert.match(read("src/components/ts/api.ts"),/at-goals-updated/);
+    assert.match(read("src/components/ts/api.ts"),/timezone:appTimeZone\(\)/);
+    const form=read("src/components/modules/AddGoal.tsx");
+    assert.match(form,/auto_complete:autoComplete/);
+    assert.match(form,/reminder_days:dueDate\?reminderDays:null/);
+    assert.match(read("src/components/modules/GoalDetails.tsx"),/historyProgress/);
+    assert.match(read("src/pages/HabitPage/components/Habit/Complete/HabitGoalProgress.tsx"),/goal.today_progress/);
+});

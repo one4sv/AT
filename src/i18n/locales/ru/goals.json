@@ -72,7 +72,9 @@
     "stage_updated": "Изменён этап",
     "stage_deleted": "Удалён этап",
     "link_added": "Добавлена связь",
-    "link_removed": "Удалена связь"
+    "link_removed": "Удалена связь",
+    "progress_changed": "Изменился прогресс",
+    "auto_status": "Автоматически изменён статус"
   },
   "days": "По дням",
   "streak": "По дням подряд",
@@ -94,5 +96,16 @@
   "automaticProgress": "Прогресс рассчитывается автоматически",
   "linkExisting": "Связать существующую цель",
   "displayGoal": "Отображаемая цель в таймере и счётчике",
-  "hideDisplayGoal": "Не показывать"
+  "hideDisplayGoal": "Не показывать",
+  "autoComplete": "Завершать цель автоматически при 100%",
+  "deadlineReminder": "Напоминание о сроке",
+  "reminderOff": "Не напоминать",
+  "reminderBefore_zero": "В день срока",
+  "reminderBefore_one": "За {{count}} день",
+  "reminderBefore_few": "За {{count}} дня",
+  "reminderBefore_many": "За {{count}} дней",
+  "reminderBefore_other": "За {{count}} дней",
+  "todayProgress": "Сегодня",
+  "completedOn": "Завершено",
+  "historyProgress": "Прогресс: {{from}}% → {{to}}%"
 }

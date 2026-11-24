@@ -8,6 +8,7 @@ import { api } from "../ts/api";
 import CalendarInput from "../ts/CalendarInput";
 import TA from "../ts/TA";
 import SelectList from "../ts/SelectList";
+import Checkbox from "../ts/utils/Checkbox";
 import { useHabits } from "../hooks/HabitsHook";
 import { usePlans } from "../hooks/PlansHook";
 import { useUser } from "../hooks/UserHook";
@@ -32,6 +33,8 @@ export default function AddGoal() {
     const [linkedHabits,setLinkedHabits]=useState<GoalLinkedItem[]>(()=>habitId?[{id:Number(habitId),name:""}]:[]);
     const [linkedPlans,setLinkedPlans]=useState<GoalLinkedItem[]>([]);
 
+    const [autoComplete,setAutoComplete]=useState(false);
+    const [reminderDays,setReminderDays]=useState<number | null>(null);
     const [targetDays,setTargetDays]=useState(30);
     const [dailyMinutes,setDailyMinutes]=useState(120);
     const [loadError,setLoadError]=useState(false);
@@ -53,6 +56,8 @@ export default function AddGoal() {
         void api.get<{success:boolean;goal:Goal}>("goal-workspace/"+goalId).then(({data})=>{
             if(!active) return;
             const goal=data.goal;
+            setAutoComplete(Boolean(goal.auto_complete));
+            setReminderDays(goal.reminder_days ?? null);
             setName(goal.name);
             setDescription(goal.description || "");
             setDueDate(goal.due_date ? new Date(goal.due_date+"T12:00:00") : null);
@@ -96,7 +101,7 @@ export default function AddGoal() {
         setSaving(true);
         try{
             const payload={name:name.trim(),description,due_date:dateValue(dueDate),
-                progress_mode:mode,metric_start:metricStart,metric_target:metricTarget,
+                progress_mode:mode,auto_complete:autoComplete,reminder_days:dueDate?reminderDays:null,metric_start:metricStart,metric_target:metricTarget,
                 metric_unit:unit,metric_share:metricShare/100,target_days:targetDays,daily_minutes:dailyMinutes,
                 habit_ids:linkedHabits.map(h=>h.id),plan_ids:linkedPlans.map(p=>p.id)};
             const response=goalId ? await api.patch("goal-workspace/"+goalId,payload) :
@@ -129,6 +134,16 @@ export default function AddGoal() {
                 <label htmlFor="goalDue">{t("dueDate")}</label>
                 <CalendarInput id="goalDue" value={dueDate} onChange={setDueDate}
                     className="addHabitInput" placeholder={t("optional")}/>
+            </div>
+            {dueDate && <div className="addHabitWrapper">
+                <label>{t("deadlineReminder")}</label>
+                <SelectList className="goalWorkspaceSelect" selected={reminderDays===null?"off":String(reminderDays)}
+                    arr={[{value:"off",label:t("reminderOff")},...[0,1,3,7,14,30].map(days=>({value:String(days),label:t("reminderBefore",{count:days})}))]}
+                    onChange={v=>setReminderDays(v==="off"?null:Number(v))}/>
+            </div>}
+            <div className="goalWorkspaceLink">
+                <Checkbox state={autoComplete} setState={setAutoComplete}/>
+                <span>{t("autoComplete")}</span>
             </div>
             <div className="addHabitWrapper">
                 <label>{t("progressMode")}</label>
