@@ -1,4 +1,4 @@
-export type GoalMode = "manual" | "metric" | "milestones" | "combined" | "days" | "streak" | "daily_timer";
+export type GoalMode = "manual" | "metric" | "milestones" | "combined" | "days" | "streak" | "daily_timer" | "daily_counter";
 export type GoalStatus = "active" | "paused" | "completed" | "canceled" | "archived";
 export interface GoalStage {
     id: number;

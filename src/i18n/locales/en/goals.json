@@ -18,7 +18,7 @@
   "current": "Current",
   "unit": "Unit",
   "metricShare": "Numeric contribution, %",
-  "stages": "Milestones (optional)",
+  "stages": "Goal milestones",
   "stageTitle": "Milestone name",
   "weight": "Weight",
   "addStage": "Add milestone",
@@ -82,5 +82,12 @@
   "daysUnit": "days",
   "minutesUnit": "min/day",
   "automaticHint": "Scheduled days of all linked activities count. Timer mode uses ended sessions, excluding pauses.",
-  "invalidAutomatic": "Choose an activity and enter valid days and minutes."
+  "invalidAutomatic": "Choose an activity and enter valid days and minutes.",
+  "daily_counter": "By counter",
+  "dailyCounterTarget": "Daily counter target",
+  "counterUnit": "units/day",
+  "counterHint": "A scheduled day counts when each linked scheduled activity reaches the specified counter value.",
+  "invalidCounter": "Enter a positive whole counter target.",
+  "stagesHint": "Milestones are steps toward your goal, such as choosing a course and finishing it. Mark each completed. Weight determines its share of progress; equal weights mean equal shares.",
+  "inactiveLink": "Archived activities cannot be linked to a goal."
 }

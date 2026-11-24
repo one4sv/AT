@@ -95,8 +95,18 @@ test("nonzero summary counters open the existing list dialogs and share one crea
  test("goal editor uses SelectList and stages links before save",()=>{
     const editor=read("src/components/modules/AddGoal.tsx");
     assert.match(editor, /<SelectList id="goalMode"/);
-    assert.match(editor, /"days","streak","daily_timer"/);
+    assert.match(editor, /"days","streak","daily_timer","daily_counter"/);
     assert.match(editor, /habit_ids:linkedHabits.map/);
     assert.match(editor, /plan_ids:linkedPlans.map/);
     assert.match(editor, /setLinkedHabits\(goal.habits/);
+});
+
+test("goal editor filters archived links, adds multiple selections and explains milestones",()=>{
+    const editor=read("src/components/modules/AddGoal.tsx");
+    assert.match(editor,/filter\(h=>isGoalHabitAvailable/);
+    assert.match(editor,/filter\(isGoalPlanAvailable\)/);
+    assert.match(editor,/setLinkedHabits\(old=>old.some/);
+    assert.match(editor,/usesStages && <div className="goalWorkspaceStages">/);
+    assert.match(editor,/step=\{0.001\}/);
+    assert.match(editor,/goalDailyCounter/);
 });
