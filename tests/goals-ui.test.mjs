@@ -36,11 +36,11 @@ test("creation does not use slider and remove stage button matches input height"
     const addHabit=read("src/components/modules/AddHabit.tsx");
     assert.doesNotMatch(addHabit,/className="addHabitGoal"/);
 });
-test("existing activity goal actions open the same goal picker",()=>{
+test("existing activity goal actions open the same goals slide",()=>{
     for(const path of ["src/pages/HabitPage/components/HabitInfo/HabitExtraButts.tsx",
         "src/components/ts/ContextMenu/menus/HabitHeaderMenu.tsx"]){
         const content=read(path);
-        assert.match(content,/module:"GoalPicker"/);
+        assert.match(content,/(setShowSlide|openSlide)\("goals"\)/);
         assert.doesNotMatch(content,/showDevNote\(\)/);
     }
 });
