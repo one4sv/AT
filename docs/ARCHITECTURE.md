@@ -5,7 +5,7 @@
 ## Стек и запуск
 
 - Клиент: React 19, TypeScript, Vite 7, React Router, SCSS/Sass, Motion, Axios; редактор на Tiptap 3; графики Chart.js; i18next.
-- `npm ci`, `npm run dev` — локальный запуск; `npm run build` запускает `tsc -b && vite build`; `npm run lint` — ESLint. Для Vite env локальные значения не коммитить.
+- `npm install --legacy-peer-deps`, `npm run dev` — локальный запуск; `npm run build` запускает подготовку desktop-обоев, TypeScript и Vite; `npm run lint` — ESLint. Для Vite env локальные значения не коммитить.
 - `src/main.tsx` предварительно импортирует `theme-init.ts` и `i18n/i18n.ts`, затем `App`.
 - `src/App.tsx` содержит Router, `AppProvider`, глобальные UI (`Blackout`, `Notification`, `ContextMenu`), маршруты.
 - `src/components/ts/AppProvider.tsx` — вложенный граф контекстов. Смотрите реальный порядок: глобальный провайдер находится **выше** `Routes`, поэтому `useParams` внутри него может не иметь текущих параметров. `DoneContext` использует `useMatch`.
@@ -32,7 +32,7 @@
 
 ## Реальные маршруты
 
-В `App.tsx`: `/` — Main; `/sign` — landing; `/post/new`, `/post/:postId/edit`, `/post/:postId`; `/habit`, `/habit/:habitId`; `/chat/:nick`, `/chat/g/:id`; `/acc/:nick`, `/acc`; `/room/:id`; `/join/:token`; `/settings/:tab?`, `/settings/language`, `/info/:tab?`; отдельный QR-маршрут авторизации. `/info/roadmap` — вкладка Info, не отдельный роут верхнего уровня.
+В `App.tsx`: `/` — Main; `/sign` — landing; `/post/new`, `/post/:postId/edit`, `/post/:postId`; `/habit`, `/habit/:habitId`, `/plan/:planId`; `/chat/:nick`, `/chat/g/:id`; `/acc/:nick`, `/acc`; `/room/:id`; `/join/:token`; `/settings/:tab?`, `/settings/language`, `/info/:tab?`; `/wallpapers/:tab?`, `/auth/qr`, `/reset-password`, `/account-deletion`, `/connection`, `/settings/2fa`, `/settings/password`, `/settings/devices`. `/info/roadmap` — вкладка Info, не отдельный роут верхнего уровня.
 
 ## Передача данных и состояния
 
@@ -58,7 +58,6 @@
 ## Работа с функциональностью
 
 Любая правка данных совместной активности затрагивает как минимум: API сервера, соответствующий контекст/хук, отображение календаря, права доступа, статистику и UI. Перед коммитом проверить обе модели `personal/shared`, состояние владельца и приглашённого, mobile desktop, прошлое/сегодня/будущее, дату вступления, смену прав, обработку ошибок и realtime.
-
 
 ## Web Push
 

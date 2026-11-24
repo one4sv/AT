@@ -1,5 +1,7 @@
 # Рисованные SVG в AT: SectionArt и единый стиль
 
+Общий компонент — `src/components/ts/SectionArt.tsx`, стили — `src/scss/SectionArt.scss`.
+
 Речь о **декоративных иллюстрациях** для Info и Settings, а не обо всех иконках приложения. Каноническая реализация — `src/components/ts/SectionArt.tsx` и `src/scss/SectionArt.scss`. Пример отдельного сюжета в общей системе: `src/pages/Info/RoadmapArt.tsx`, который рендерит `<SectionArt theme="roadmap" mini/>`.
 
 ## Устройство системы

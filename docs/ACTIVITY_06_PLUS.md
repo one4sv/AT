@@ -1,6 +1,6 @@
 # Развитие активностей и аналитики — 0.6+
 
-**Статус:** будущие обновления без фиксированных дат и номеров. Решение владельца от 12.11.2026: расширенные возможности перенесены из 0.6.4 в **0.6+**. Основная задача — [ONE4SV-87](https://linear.app/atone4sv/issue/ONE4SV-87/06-razvitie-aktivnostej-analitika-zhurnal-i-media). Полное подробное исходное ТЗ разделов 3–10 прежней [ONE4SV-79](https://linear.app/atone4sv/issue/ONE4SV-79/dev-064-plany-i-aktivnosti) сохранено там.
+**Статус:** будущие обновления без фиксированных дат и номеров. Расширенные возможности относятся к **0.6+**. Основная задача — [ONE4SV-87](https://linear.app/atone4sv/issue/ONE4SV-87/06-razvitie-aktivnostej-analitika-zhurnal-i-media). Полное подробное исходное ТЗ разделов 3–10 прежней [ONE4SV-79](https://linear.app/atone4sv/issue/ONE4SV-79/dev-064-plany-i-aktivnosti) сохранено там.
 
 ## Область 0.6+
 

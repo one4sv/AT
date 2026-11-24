@@ -1,4 +1,4 @@
-# Композиции интерфейса AchieveTogether (22.11.2026)
+# Композиции интерфейса AchieveTogether
 
 ## Назначение и расположение
 
@@ -36,16 +36,6 @@ Unit: `tests/compositions.test.mjs` — полная модель, лимит 10
 
 `getStockScenePreviewSources` берёт тот же источник фотографических/векторных сцен, что действующие обои, но карточка использует `<picture><img loading="lazy" decoding="async"/>` вместо тяжёлого `BackgroundScene` с `loading=eager`. Для процедурных сцен без ассета остаётся `BackgroundScene`. Пользовательское изображение также загружается лениво. Все превью статические и не запускают собственную анимацию; это важно для 10 плиток на мобильном. Настройка автоматического воспроизведения/кэша обоев не меняется.
 
-### Unit в обязательном CI
+## Действия карточки
 
-Добавлена отдельная проверка `node --experimental-strip-types --test tests/compositions.test.mjs` перед Build client в `.github/workflows/client-ci.yml`. Утилита `compositions.ts` импортирует `backgroundEffects.ts` с явным расширением для Node 22 strip-types; `tsconfig.app.json` разрешает TypeScript расширения. Stock preview `<picture>` и `<img>` получают `width/height:100%` и `object-fit:cover`, иначе оригинальные 1920×1080 растягивали бы миниатюры.
-
-## 23.11.2026 — исправление ключей локализации
-
-При первом деплое `CompositionsSettings` вызывал `t("compositions." + key)`, но RU/EN словари сохраняют тексты по пути `personalization.compositions`. В результате отображались сырые ключи `compositions.title`, `compositions.description` и т. п. Исправлено на `t("personalization.compositions." + key)` для **всех** надписей, подписей меню, выбора автосмены, подсказок и дней недели. В `tests/compositions.test.mjs` добавлена проверка полного пути и наличия ключевых строк в обеих локалях.
-
-## 23.11.2026 — единое контекстное меню Композиций
-
-Локальное выпадающее `.compositionActions` удалено. Карточка Композиции теперь вызывает **штатный** `useContextMenu().openMenu(x, y, "composition", options)` по правой кнопке и удержанию 350 мс, а кнопка «…» открывает тот же пункт меню коротким нажатием. Для этого добавлен `src/components/ts/ContextMenu/menus/CompositionMenu.tsx` и маршрут `case "composition"` в глобальном `ContextMenu.tsx`. Действия используют `MenuOptions.onEdit` (переименовать), `onSave` (перезаписать текущими), `onDuplicate` с `canDuplicate` (не выше 10), `onDelete` (запускает существующее подтверждение). Опасный пункт Delete — последний, штатный `ContextMenuButt.delete`. Позиционирование, z-index, клавиатура Escape/стрелки, внеочередное закрытие, mobile preview и pointermove — из общего ContextMenu, не новая реализация. `data-context-menu-allow-button` разрешает long-press на применяющей композицию карточке, а короткое нажатие по самой карточке по-прежнему применяет пресет. Не менять режимы автосмены, локализацию, визуал превью и хранение. Отдельно проверить iOS long-press с кнопкой, release по исходной карточке/пункту, SideMenu swipe и доступность для клавиатуры.
-
-Для заполненного лимита 10 `onDuplicate` остаётся видимым, но `aria-disabled=true`, обработчик не выполняет действие. Общие `ContextMenuButt[aria-disabled]` стили приглушают такую строку; меню не закрывается и не дублирует сверх лимита.
+Короткое нажатие применяет композицию. Кнопка «…», правый клик и удержание 350 мс открывают общий `ContextMenu` с типом `composition`. При заполненных десяти слотах дублирование остаётся в меню с `aria-disabled`. Удаление требует подтверждения. Надписи в RU/EN берутся из `personalization.compositions`.
