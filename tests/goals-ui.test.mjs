@@ -125,3 +125,15 @@ test("activity goal button reflects links and reuses goal dialogs",()=>{
     assert.match(picker,/module:"AddGoal",options:\{id:String\(goal.id\)\}/);
     assert.match(picker,/!hasHabitGoalLink\(goal,habitId\)/);
 });
+
+test("activity goals use a slide and selected progress is shared by timer and counter",()=>{
+    const menu=read("src/pages/HabitPage/components/HabitInfo/HabitMenu.tsx");
+    assert.match(menu,/case "goals":/);
+    assert.match(menu,/slideHabitId=\{habit.id\}/);
+    assert.match(read("src/pages/HabitPage/components/HabitInfo/HabitExtraButts.tsx"),/setShowSlide\("goals"\)/);
+    for(const name of ["Timer","Counter"]) assert.match(read("src/pages/HabitPage/components/Habit/Complete/"+name+".tsx"),/<HabitGoalProgress/);
+    assert.match(read("src/components/modules/GoalPicker.tsx"),/useHabitGoalDisplay/);
+    assert.match(read("src/pages/HabitPage/components/HabitInfo/CompJurnal.tsx"),/journal.completion_removed/);
+    const style=read("src/scss/SelectList.scss");
+    assert.match(style,/backdrop-filter: blur\(9px\) !important/);
+});
