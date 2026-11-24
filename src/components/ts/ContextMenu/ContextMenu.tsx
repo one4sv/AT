@@ -18,6 +18,8 @@ import SettingsSectionMenu from "./menus/SettingsSectionMenu";
 import PlanCreateMenu from "./menus/PlanCreateMenu";
 import PlanMenu from "./menus/PlanMenu";
 import CompositionMenu from "./menus/CompositionMenu";
+import CalendarDayMenu from "./menus/CalendarDayMenu";
+import ActivityAvatarMenu from "./menus/ActivityAvatarMenu";
 export default function ContextMenu() {
     const {
         menu,
@@ -39,6 +41,7 @@ export default function ContextMenu() {
     );
     const [isAdjusted, setIsAdjusted] = useState(false);
     const previewRef = useRef<HTMLDivElement>(null);
+    const mobileCalendar=menu.point==="calendarDay" && window.matchMedia("(pointer: coarse)").matches;
 
     useLayoutEffect(
         () => {
@@ -62,9 +65,9 @@ export default function ContextMenu() {
             const previewLeft = offsetLeft + (viewportWidth - previewWidth) / 2;
             const minLeft = menu.originSide ? Math.max(offsetLeft + 10, menu.originSide.left + 10) : offsetLeft + 10;
             const maxRight = menu.originSide ? Math.min(offsetLeft + viewportWidth - 10, menu.originSide.right - 10) : offsetLeft + viewportWidth - 10;
-            const left = focused ? offsetLeft + (viewportWidth - menuWidth) / 2 :
+            const left = mobileCalendar ? offsetLeft+(viewportWidth-menuWidth)/2 : focused ? offsetLeft + (viewportWidth - menuWidth) / 2 :
                 Math.max(minLeft, Math.min(menu.x, Math.max(minLeft, maxRight - menuWidth)));
-            const top = focused ? Math.min(previewTop + previewHeight + 16, offsetTop + viewportHeight - menuHeight - 12) :
+            const top = mobileCalendar ? offsetTop+Math.max(10,(viewportHeight-menuHeight)/2) : focused ? Math.min(previewTop + previewHeight + 16, offsetTop + viewportHeight - menuHeight - 12) :
                 Math.max(offsetTop + 10, Math.min(menu.y, offsetTop + viewportHeight - menuHeight - 10));
             setPos({ top, left, previewTop, previewLeft, previewWidth, previewHeight });
             if (focused && previewRef.current && menu.focusSource) {
@@ -93,7 +96,7 @@ export default function ContextMenu() {
             );
             return () => animation.cancel();
         },
-        [menu, menuRef]
+        [menu, menuRef,mobileCalendar]
     );
     useLayoutEffect(() => {
         if (!menu.visible || !menuRef.current) return;
@@ -145,6 +148,10 @@ export default function ContextMenu() {
             case "plan":
             case "planItem":
                 return <PlanMenu />;
+            case "calendarDay":
+                return <CalendarDayMenu key={menu.options.id} mobile={mobileCalendar}/>;
+            case "activityAvatar":
+                return <ActivityAvatarMenu/>;
             case "composition":
                 return <CompositionMenu />;
             default:
@@ -154,6 +161,7 @@ export default function ContextMenu() {
 
     return (
         <>
+        {mobileCalendar && <div className="ContextMenuFocusBackdrop" onClick={closeMenu}/>}
         {menu.focusRect && menu.focusSource?.isConnected && <>
             <div className="ContextMenuFocusBackdrop" onPointerDown={event => {
                 if (event.pointerType !== "touch" && event.pointerType !== "pen") closeMenu();
@@ -164,7 +172,7 @@ export default function ContextMenu() {
                     visibility: isAdjusted ? "visible" : "hidden" }}/>
         </>}
         <div
-            className="ContextMenuWrapper"
+            className={"ContextMenuWrapper"+(mobileCalendar?" calendarDayContextMenu":"")}
             role="menu"
             aria-label={menu.options.name || undefined}
             tabIndex={-1}

@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState, memo } from "react";
 import type { Habit } from "../../../../components/context/HabitsContext";
 import HoverDay from "./HoverDay";
+import { useContextMenu } from "../../../../components/hooks/ContextMenuHook";
 import { useCalendar } from "../../../../components/hooks/CalendarHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
 import { getDayArrays } from "../../../../components/ts/utils/getDayArrs";
@@ -19,6 +20,7 @@ interface DayCellProps {
 const DayCell = ({ habits, habit, day, month, year, type }: DayCellProps) => {
     const { setChosenDay, calendar, chosenDay } = useCalendar();
     const { plans } = usePlans();
+    const {openMenu,menu}=useContextMenu();
     const [hovered, setHovered] = useState(false);
     const { habitId: id } = useParams<{ habitId: string }>();
     const cellRef = useRef<HTMLDivElement | null>(null);
@@ -41,6 +43,12 @@ const DayCell = ({ habits, habit, day, month, year, type }: DayCellProps) => {
     return (
         <div
             ref={cellRef}
+            data-context-menu="true"
+            data-calendar-date={dateStr}
+            onContextMenu={e=>{
+                e.preventDefault();e.stopPropagation();setHovered(false);
+                openMenu(e.clientX,e.clientY,"calendarDay",{id:dateStr,habitId:id},habit);
+            }}
             className={`calDay ${type}Days ${dateStr === todayStr ? "todayCD" : ""} ${chosenDay === dateStr ? "chosenDayCal" : ""}`}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
@@ -61,8 +69,10 @@ const DayCell = ({ habits, habit, day, month, year, type }: DayCellProps) => {
                 )}
                 {skippedArr.length > 0 && <div className="calendarDot skip"></div>}
             </div>
-            {hovered && (
+            {hovered && !menu.visible && (
                 <HoverDay
+                    date={dateStr}
+                    habitId={id}
                     completed={completedArr.length}
                     missed={skippedArr.length}
                     planned={willArr.length + plannedArr.length + oneOffCount}

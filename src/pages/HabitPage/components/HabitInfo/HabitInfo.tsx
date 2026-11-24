@@ -1,18 +1,21 @@
-import ActivityAvatarPicker from "../../../../components/ts/ActivityAvatarPicker";
+import { prepareActivityImage } from "../../../../components/ts/utils/activityImage";
+import { useContextMenu } from "../../../../components/hooks/ContextMenuHook";
+import { useBlackout } from "../../../../components/hooks/BlackoutHook";
+import { useNote } from "../../../../components/hooks/NoteHook";
 import { activityAvatarUrl } from "../../../../components/ts/utils/activityImage";
 import { api } from "../../../../components/ts/api";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useTranslation } from "react-i18next";
 import TA from "../../../../components/ts/TA";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import SelectList from "../../../../components/ts/SelectList";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import type { Habit } from "../../../../components/context/HabitsContext";
 import TagSelector from "../../../../components/ts/TagSelector";
 import DayChanger from "../../../../components/ts/DayChanger";
 import { initialChosenDays } from "../../../../components/ts/initialChosenDays";
-import { WarningCircle, XIcon } from "@phosphor-icons/react";
+import { WarningCircle, XIcon, CameraIcon } from "@phosphor-icons/react";
 import { TagIcon } from "../../utils/TagIcon";
 import { dateToCalendarFormat, formatDateFromString } from "../../../../components/ts/utils/dateToStr";
 
@@ -32,6 +35,11 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
 
     const {refetchHabits}=useHabits();
     const {loadHabit}=useTheHabit();
+    const {openMenu}=useContextMenu();
+    const {setBlackout}=useBlackout();
+    const {showNotification}=useNote();
+    const avatarInput=useRef<HTMLInputElement>(null);
+    const [avatarBusy,setAvatarBusy]=useState(false);
     const draft = localChanges[habit.id] || {};
     const name = String(draft.name ?? habit.name ?? "");
     const desc = String(draft.desc ?? habit.desc ?? "");
@@ -71,6 +79,22 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
 
     const infoReadOnly = !(habit.access?.can_edit_info ?? !readOnly) || !ongoing;
 
+    const changeAvatar=async(file:File|null)=>{
+        if(infoReadOnly || avatarBusy)return;
+        setAvatarBusy(true);
+        try{
+            const body=new FormData();if(file)body.append("avatar",await prepareActivityImage(file,true));else body.append("remove","true");
+            await api.put("habits/"+habit.id+"/avatar",body);
+            await Promise.all([refetchHabits(),loadHabit(String(habit.id))]);
+        }catch{showNotification("error",t("activityImages.avatarError"));}finally{setAvatarBusy(false);}
+    };
+    const openAvatar=(x:number,y:number)=>{
+        if(avatarBusy)return;
+        if(!habit.avatar_key){if(!infoReadOnly)avatarInput.current?.click();return;}
+        const url=activityAvatarUrl(habit.id,habit.avatar_key);
+        if(infoReadOnly){setBlackout({seted:true,module:"ImgPrev",img:url});return;}
+        openMenu(x,y,"activityAvatar",{id:String(habit.id),onEdit:()=>avatarInput.current?.click(),onOpen:()=>setBlackout({seted:true,module:"ImgPrev",img:url}),onDelete:()=>setBlackout({seted:true,module:"ConfirmAction",confirmAction:{title:t("activityImages.removeAvatar"),description:t("activityImages.removeAvatar"),label:t("activityImages.removeAvatar"),variant:"danger",run:async()=>{await changeAvatar(null);}}})});
+    };
     const toggleDay = (value: number) => {
         if (readOnly) return;
 
@@ -100,17 +124,13 @@ export default function HabitInfo({ habit, readOnly }: RedHabitProps) {
                     </div>
                 </div>
             )}
-            {!infoReadOnly && <ActivityAvatarPicker key={habit.id} src={habit.avatar_key ? activityAvatarUrl(habit.id,habit.avatar_key) : undefined}
-                onChange={async file=>{
-                    const body=new FormData();
-                    if(file) body.append("avatar",file);else body.append("remove","true");
-                    await api.put("habits/"+habit.id+"/avatar",body);
-                    await Promise.all([refetchHabits(),loadHabit(String(habit.id))]);
-                }}/>}
+            <input ref={avatarInput} type="file" accept="image/*" hidden onChange={e=>{
+                const file=e.target.files?.[0];e.target.value="";if(file)void changeAvatar(file);
+            }}/>
             <div className="habitWrapperIcon">
-                {(habit.avatar_key || selectedTag || habit.tag) && (
-                    <div className="habitIconWrapper">
-                        {TagIcon(habit, selectedTag)}
+                {(habit.avatar_key || selectedTag || habit.tag || !infoReadOnly) && (
+                    <div className={"habitIconWrapper"+(!infoReadOnly?" avatarEditable":"")} role={!infoReadOnly?"button":undefined} tabIndex={!infoReadOnly?0:undefined} aria-label={t("activityImages.avatar")} onClick={e=>openAvatar(e.clientX,e.clientY)} onKeyDown={e=>{if(e.key==="Enter" || e.key===" "){e.preventDefault();const rect=e.currentTarget.getBoundingClientRect();openAvatar(rect.left,rect.bottom);}}}>
+                        {habit.avatar_key || selectedTag || habit.tag?TagIcon(habit, selectedTag):<CameraIcon/>}
                     </div>
                 )}
                 <div className="addHabitWrapper">

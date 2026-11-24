@@ -371,3 +371,21 @@
         animation-delay: 0.4s;
     }
 }
+
+.hoverDayDiv { width: max-content; max-width: min(240px,calc(100vw - 16px)); padding: 10px; border-radius: 16px; gap: 6px; z-index: 9; }
+.hoverGoalRow { min-width: 0; display: grid; gap: 4px; }
+.hoverGoalRow .hoverRow { justify-content: space-between; }
+.hoverGoalRow .hoverRow > span { min-width: 0; overflow-wrap: anywhere; }
+.hoverGoalRow small { color: var(--borderWh); }
+.hoverGoalTrack { height: 4px; border-radius: 12px; background: var(--interact); overflow: hidden; }
+.hoverGoalTrack > span { display: block; height: 100%; background: linear-gradient(135deg,var(--accent),var(--grad)); }
+.ContextMenuWrapper.calendarDayContextMenu { width: min(90vw,440px); max-width: min(90vw,440px); left: 50% !important; top: 50% !important; transform: translate(-50%,-50%); }
+.calendarContextCalendar { padding: 12px; }
+.calendarContextHeader { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 8px; }
+.calendarContextHeader button,.calendarContextCalendar .calDay { border: none; color: var(--tc); background: transparent; }
+.calendarContextCalendar .calDay.chosenDayCal { background: linear-gradient(135deg,var(--accent),var(--grad)); color: var(--inner_text); }
+.calendarContextCalendar .calDay.prevDays { color: var(--borderHabit); }
+.calendarContextCalendar .calendarDays > small { text-align: center; }
+.calendarContextSummary { margin-top: 8px; display: grid; gap: 7px; background: var(--mc); padding: 10px; border-radius: 16px; max-height: 23dvh; overflow-y: auto; }
+.calendarContextPick { padding: 8px; }
+.calendarContextPick select { width: 100%; border: 1px solid var(--block_border); border-radius: 16px; padding: 8px; background: var(--bgc); color: var(--tc); }

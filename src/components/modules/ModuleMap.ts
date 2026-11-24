@@ -27,6 +27,7 @@ const ModuleMap: Record<string, ComponentType> = {
     ChatWithInfo: lazy(() => import("./ChatWithInfo")),
     PostSettings: lazy(() => import("./PostSettings")),
     HabitCollaborationSettings: lazy(() => import("./HabitCollaborationSettings")),
+    CalendarDayComment: lazy(() => import("./CalendarDayComment")),
     HabitStatisticsCharts: lazy(() => import("./HabitStatisticsCharts")),
     HabitDayActivityHistory: lazy(() => import("./HabitDayActivityHistory")),
     HabitTaskEditor: lazy(() => import("./HabitTaskEditor")),

@@ -1020,5 +1020,27 @@
     "invitations": "Plan invitations",
     "dayOverview": "Day overview",
     "dayCount": "Plans on this date: {{count}}"
+  },
+  "calendarDay": {
+    "ongoing": "In progress",
+    "completed": "Completed",
+    "missed": "Skipped",
+    "planned": "Planned",
+    "empty": "No activities on this day",
+    "noComment": "No comment",
+    "goalsCompleted": "Goals completed",
+    "completedBy": "Completed by",
+    "goalChange": "Change for the day",
+    "goalDaily": "Daily progress",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "chooseActivity": "Choose activity",
+    "undo": "Undo completion",
+    "mark": "Mark completed",
+    "editComment": "Edit comment",
+    "addComment": "Add comment",
+    "openDay": "Open day",
+    "save": "Save",
+    "close": "Close"
   }
 }

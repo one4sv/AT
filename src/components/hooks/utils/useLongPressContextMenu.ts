@@ -77,6 +77,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
             }
 
             const target = document.elementFromPoint(event.clientX, event.clientY);
+            if(press.target.hasAttribute("data-calendar-date"))window.dispatchEvent(new CustomEvent("calendar-context-move",{detail:{x:event.clientX,y:event.clientY}}));
             const item = target?.closest<HTMLElement>(".ContextMenuWrapper .ContextMenuButt") ?? null;
             if (item !== hovered) {
                 clearHover();
@@ -98,7 +99,9 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
             const distance = Math.hypot(event.clientX - press.startX, event.clientY - press.startY);
             // An unmoved release must not choose an item, even when the
             // highlighted preview sits over a separate dimming layer.
-            const onOrigin = distance < 24 || target === origin || !!(target && origin.contains(target));
+            const calendarPreview=origin.hasAttribute("data-calendar-date") && !!target?.closest("[data-calendar-preview-day]");
+            const onOrigin = distance < 24 || target === origin || !!(target && origin.contains(target)) || calendarPreview;
+            if(origin.hasAttribute("data-calendar-date"))window.dispatchEvent(new Event("calendar-context-end"));
             if (active) suppressUntil = performance.now() + 1400;
             cancel(event.type === "pointercancel" || active && !item && !onOrigin);
             // Only an intentional move onto a menu item selects it on release.
@@ -110,7 +113,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
             // Block the release-generated ghost click, but allow a deliberate
             // second tap on an opened menu item immediately after long-press.
             if (event.type === "click" && event.target instanceof Element &&
-                event.target.closest(".ContextMenuWrapper")) return;
+                event.target.closest(".ContextMenuWrapper .ContextMenuButt")) return;
             event.preventDefault();
             event.stopImmediatePropagation();
         };
