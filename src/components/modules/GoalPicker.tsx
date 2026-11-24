@@ -72,6 +72,10 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
                         {manualModes.includes(goal.progress_mode) && goal.status==="active" &&
                             <button type="button" className="goalWorkspaceQuiet goalLinkedProgress"
                                 onClick={()=>openDetails(goal)}>{t("recordProgress")}</button>}
+                        {goal.today_progress!=null && <div className="goalWorkspaceField">
+                            <div className="goalWorkspaceProgressHead"><span>{t("todayProgress")}</span><span>{goal.today_progress}%</span></div>
+                            <span className="goalOverviewProgress"><span style={{width:goal.today_progress+"%"}}/></span>
+                        </div>}
                         {!manualModes.includes(goal.progress_mode) && <small>{t("automaticProgress")}</small>}
                     </div>)}</div>}
                 {eligible ? <>

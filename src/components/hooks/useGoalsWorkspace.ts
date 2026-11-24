@@ -68,10 +68,14 @@ export function useGoalsWorkspace(enabled=true){
         window.addEventListener("at-goals-updated",refresh);
         window.addEventListener("focus",refresh);
         document.addEventListener("visibilitychange",onFocus);
+        const tick=setInterval(()=>{
+            if(document.visibilityState==="visible" && store.result.goals.some(g=>g.status==="active" && g.progress_mode==="daily_timer")) refresh();
+        },60000);
         return ()=>{
             window.removeEventListener("at-goals-updated",refresh);
             window.removeEventListener("focus",refresh);
             document.removeEventListener("visibilitychange",onFocus);
+            clearInterval(tick);
         };
     },[store]);
     return useSyncExternalStore(

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { appTimeZone } from "./utils/dateToStr";
 export const api = axios.create({
     baseURL: "/api/",
     withCredentials: true
@@ -10,6 +11,10 @@ const reportConnection = (issue: ConnectionIssue) => {
     connectionIssue = issue;
     window.dispatchEvent(new Event("at-connection"));
 };
+api.interceptors.request.use(config=>{
+    if (/^\/?goal-workspace(?:\/|$)/.test(config.url || "")) config.params={...config.params,timezone:appTimeZone()};
+    return config;
+});
 api.interceptors.response.use(
     response => {
         // Only a dedicated health check clears an error; unrelated requests can race.

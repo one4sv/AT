@@ -105,5 +105,7 @@
   "reminderBefore_other": "{{count}} days before",
   "todayProgress": "Today",
   "completedOn": "Completed on",
-  "historyProgress": "Progress: {{from}}% → {{to}}%"
+  "historyProgress": "Progress: {{from}}% → {{to}}%",
+  "reminderBefore_few": "{{count}} days before",
+  "reminderBefore_many": "{{count}} days before"
 }

@@ -105,7 +105,7 @@ export default function GoalDetails() {
         !(goal?.plans || []).some(link=>String(link.id)===String(item.id)));
 
     if(loading) return <div className="addHabitDiv addPlanDiv goalWorkspaceModal">{t("loading")}</div>;
-    if(error || !goal) return <div className="addHabitDiv addPlanDiv goalWorkspaceModal">{t("loadError")}</div>;
+    if(!goal) return <div className="addHabitDiv addPlanDiv goalWorkspaceModal">{t("loadError")}</div>;
 
     return <div className="addHabitDiv addPlanDiv goalWorkspaceModal goalDetails">
         <div className="goalWorkspaceHeading">
@@ -119,6 +119,7 @@ export default function GoalDetails() {
                     onClick={deleteGoal}><TrashIcon size={24}/></button>
             </div>
         </div>
+        {error && <small>{t("loadError")}</small>}
         {!!goal.description && <p className="goalWorkspaceText">{goal.description}</p>}
         <div className="goalWorkspaceMeta">{t("dueDate")}: {goal.due_date || t("noDate")}</div>
         <div className="goalWorkspaceField">
