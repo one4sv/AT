@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { PlusIcon, PencilSimpleIcon, TrashIcon, XIcon, CheckIcon } from "@phosphor-icons/react";
+import { PlusIcon, PencilSimpleIcon, TrashIcon, XIcon, CheckIcon, ClockCounterClockwiseIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
 import { goalsChanged } from "../hooks/useGoalsWorkspace";
@@ -111,6 +111,10 @@ export default function GoalDetails() {
         <div className="goalWorkspaceHeading">
             <h2>{goal.name}</h2>
             <div className="goalWorkspaceActions">
+                <button type="button" className="goalIconButton" aria-label={t("history")} title={t("history")}
+                    onClick={()=>setBlackout({seted:true,module:"GoalHistory",options:{id:String(goal.id)}})}>
+                    <ClockCounterClockwiseIcon size={24}/>
+                </button>
                 <button type="button" className="goalIconButton" aria-label={t("edit")}
                     onClick={()=>setBlackout({seted:true,module:"AddGoal",options:{id:String(goal.id)}})}>
                     <PencilSimpleIcon size={24}/>
@@ -230,12 +234,5 @@ export default function GoalDetails() {
                 onClick={()=>void mutate("goal-workspace/"+id+"/links","post",
                     {kind:"plan",id:Number(planId)}).then(ok=>{if(ok)setPlanId("");})}><PlusIcon size={20}/></button>
         </div>}
-        {!!goal.events?.length && <>
-            <div className="goalWorkspaceHeading"><h3>{t("history")}</h3></div>
-            <div className="goalWorkspaceEvents">{goal.events.map(e=><div key={e.id}>
-                <span>{e.action==="progress_changed"?t("historyProgress",{from:e.details?.from ?? "—",to:e.details?.to}):t("event."+e.action,{defaultValue:e.action})}</span>
-                <time>{new Date(e.created_at).toLocaleString()}</time>
-            </div>)}</div>
-        </>}
     </div>;
 }

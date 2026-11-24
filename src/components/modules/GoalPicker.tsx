@@ -30,7 +30,8 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
     const eligible=habits?.some(h=>String(h.id)===String(habitId) && isGoalHabitAvailable(h,user.id));
     const {goals,linked,loading,error}=useHabitGoals(habitId,!!isOwner);
     const {selected,select}=useHabitGoalDisplay(habitId,!!isOwner);
-    const displayChoices=linked.filter(goal=>goal.status==="active" || goal.status==="paused");
+    const metricType=habits?.find(h=>String(h.id)===String(habitId))?.habits_settings?.metric_type;
+    const displayChoices=metricType==="timer" || metricType==="counter" ? linked.filter(goal=>goal.status==="active" || goal.status==="paused") : [];
     const [saving,setSaving]=useState(false);
     const {showNotification}=useNote();
     const available=goals.filter(goal=>!hasHabitGoalLink(goal,habitId) && (goal.status==="active" || goal.status==="paused"));

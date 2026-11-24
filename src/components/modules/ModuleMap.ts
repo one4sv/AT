@@ -10,6 +10,7 @@ const ModuleMap: Record<string, ComponentType> = {
     AddPlan: lazy(() => import("./AddPlan")),
     AddGoal: lazy(() => import("./AddGoal")),
     GoalDetails: lazy(() => import("./GoalDetails")),
+    GoalHistory: lazy(() => import("./GoalHistory")),
     GoalCatalog: lazy(() => import("./GoalCatalog")),
     GoalPicker: lazy(() => import("./GoalPicker")),
     HabitOverviewList: lazy(() => import("./HabitOverviewList")),

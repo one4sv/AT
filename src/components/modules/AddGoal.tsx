@@ -80,10 +80,16 @@ export default function AddGoal() {
     const ownPlans=plans.filter(isGoalPlanAvailable);
     const availableHabits=ownHabits.filter(h=>!linkedHabits.some(item=>String(item.id)===String(h.id)));
     const availablePlans=ownPlans.filter(p=>!linkedPlans.some(item=>String(item.id)===String(p.id)));
+    const linkedTypes=linkedHabits.map(item=>ownHabits.find(h=>String(h.id)===String(item.id))?.habits_settings?.metric_type);
+    const timerAvailable=linkedTypes.length>0 && linkedTypes.every(type=>type==="timer");
+    const counterAvailable=linkedTypes.length>0 && linkedTypes.every(type=>type==="counter");
+    const modeChoices=(["manual","metric","milestones","combined","days","streak","daily_timer","daily_counter"] as GoalMode[]).filter(value=>
+        (value!=="daily_timer" || timerAvailable) && (value!=="daily_counter" || counterAvailable));
     const usesStages=mode==="milestones" || mode==="combined";
     const submit=async(event:FormEvent<HTMLFormElement>)=>{
         event.preventDefault();
         if(saving || loadError || !name.trim()) return;
+        if(!modeChoices.includes(mode)) {showNotification("error",t("invalidAutomatic"));return;}
         if(automatic && (!linkedHabits.length || !Number.isInteger(targetDays) || targetDays<1 || targetDays>3650 || (mode==="daily_timer" && (!Number.isInteger(dailyMinutes) || dailyMinutes<1 || dailyMinutes>1440)))){
             showNotification("error",t("invalidAutomatic"));return;
         }
@@ -149,7 +155,7 @@ export default function AddGoal() {
                 <label>{t("progressMode")}</label>
                 <SelectList id="goalMode" className="goalWorkspaceSelect" selected={mode}
                     onChange={value=>setMode(value as GoalMode)}
-                    arr={(["manual","metric","milestones","combined","days","streak","daily_timer","daily_counter"] as GoalMode[]).map(value=>({
+                    arr={modeChoices.map(value=>({
                         value,label:t(value)
                     }))}/>
             </div>
@@ -177,7 +183,7 @@ export default function AddGoal() {
                 <input id="goalShare" className="addHabitInput" type="number" min={0} max={100} step={5}
                     value={metricShare} onChange={e=>setMetricShare(Number(e.target.value))}/>
             </div>}
-            {automatic && <div className="goalWorkspaceField">
+            {automatic && modeChoices.includes(mode) && <div className="goalWorkspaceField">
                 <label htmlFor="goalTargetDays">{t("targetDays")}</label>
                 <input id="goalTargetDays" className="addHabitInput" type="number" min={1} max={3650}
                     value={targetDays} onChange={e=>setTargetDays(Number(e.target.value))}/>
@@ -238,7 +244,7 @@ export default function AddGoal() {
                     setStages(old=>[...old,{title:"",weight:1}])}><PlusIcon size={18}/>{t("addStage")}</button>
             </div>}
             <button className="addHabitSave goalWorkspaceSubmit" type="submit"
-                disabled={saving || !name.trim()}>{t(saving?"saving":"save")}</button>
+                disabled={saving || !name.trim() || !modeChoices.includes(mode)}>{t(saving?"saving":"save")}</button>
         </>}
     </form>;
 }

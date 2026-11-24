@@ -145,6 +145,17 @@ test("goal updates use a shared store, daily progress and optional completion/re
     const form=read("src/components/modules/AddGoal.tsx");
     assert.match(form,/auto_complete:autoComplete/);
     assert.match(form,/reminder_days:dueDate\?reminderDays:null/);
-    assert.match(read("src/components/modules/GoalDetails.tsx"),/historyProgress/);
+    assert.match(read("src/components/modules/GoalHistory.tsx"),/historyProgress/);
     assert.match(read("src/pages/HabitPage/components/Habit/Complete/HabitGoalProgress.tsx"),/goal.today_progress/);
+});
+
+ test("goal history opens in a separate Blackout module and metric modes follow linked activity types",()=>{
+    const details=read("src/components/modules/GoalDetails.tsx");
+    assert.match(details,/module:"GoalHistory"/);
+    assert.doesNotMatch(details,/goal\.events\.map/);
+    assert.match(read("src/components/modules/ModuleMap.ts"),/GoalHistory: lazy/);
+    const editor=read("src/components/modules/AddGoal.tsx");
+    assert.match(editor,/linkedTypes\.every\(type=>type==="timer"\)/);
+    assert.match(editor,/linkedTypes\.every\(type=>type==="counter"\)/);
+    assert.match(read("src/components/modules/GoalPicker.tsx"),/metricType==="timer" \|\| metricType==="counter"/);
 });
