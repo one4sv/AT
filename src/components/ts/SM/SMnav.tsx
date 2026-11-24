@@ -442,6 +442,7 @@ export default function SMnav() {
         [extraMenu, isExtraOpen]
     );
     const extraButts = () => {
+        const goTo = (path:string) => { navigate(path);setIsExtraOpen(false); };
         const createActivity = (module:string) => {
             setBlackout({seted:true,module});
             setIsExtraOpen(false);
@@ -508,40 +509,28 @@ export default function SMnav() {
                     <>
                         <div
                             className={`SMextraMenuButt user ${location.pathname === `/acc/${user.nick}` ? "selected" : ""}`}
-                            onMouseUp={() => {
-                                navigate(`/acc/${user.nick}`);
-                                setIsExtraOpen(false);
-                            }}
+                            onMouseUp={() => goTo(`/acc/${user.nick}`)}
                             data-action="profile"
                         >
                             <UserIcon weight="fill" size={20} /> {t("sideMenu.profile")}
                         </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname === "/" ? "selected" : ""}`}
-                            onMouseUp={() => {
-                                navigate("/");
-                                setIsExtraOpen(false);
-                            }}
+                            onMouseUp={() => goTo("/")}
                             data-action="posts"
                         >
                             <NewspaperIcon weight="fill" size={20} /> {t("sideMenu.feed")}
                         </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname === "/habit" ? "selected" : ""}`}
-                            onMouseUp={() => {
-                                navigate("/habit");
-                                setIsExtraOpen(false);
-                            }}
+                            onMouseUp={() => goTo("/habit")}
                             data-action="habits"
                         >
                             <SneakerMoveIcon weight="fill" size={20} /> {t("sideMenu.plansAndActivities")}
                         </div>
                         <div
                             className={`SMextraMenuButt user ${location.pathname.includes("/settings") ? "selected" : ""}`}
-                            onMouseUp={() => {
-                                navigate(`/settings`);
-                                setIsExtraOpen(false);
-                            }}
+                            onMouseUp={() => goTo(`/settings`)}
                             data-action="settings"
                         >
                             <GearIcon weight="fill" size={20} /> {t("sideMenu.settings")}
