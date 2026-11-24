@@ -196,7 +196,7 @@ export default function Blackout() {
         const handleMouseDown = (event: MouseEvent) => {
             // TagSelector renders its list into document.body outside the modal tree.
             // A tag selection is part of AddPlan, not a click on the backdrop.
-            if (event.target instanceof Element && event.target.closest(".planTagPortal")) return;
+            if (event.target instanceof Element && event.target.closest(".planTagPortal, .selectListPortalRoot")) return;
             if (
                 blackoutRef.current &&
                 !Array.from(moduleRefs.current.values()).some((module) =>

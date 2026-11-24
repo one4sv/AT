@@ -110,3 +110,5 @@ test("goal editor filters archived links, adds multiple selections and explains 
     assert.match(editor,/step=\{0.001\}/);
     assert.match(editor,/goalDailyCounter/);
 });
+
+test("SelectList portal is inside Blackout interaction",()=>{assert.match(read("src/components/ts/Blackout.tsx"),/closest\("\.planTagPortal, \.selectListPortalRoot"\)/);});
