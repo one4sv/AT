@@ -30,7 +30,7 @@ export default function GoalHistory() {
         <h2>{t("history")}</h2>
         {loading ? <span>{t("loading")}</span> : error || !goal ? <span>{t("loadError")}</span> : <>
             <div className="goalWorkspaceMeta">{goal.name}</div>
-            <div className="goalWorkspaceEvents" style={{maxHeight:"none",overflowY:"visible"}}>
+            <div className="goalWorkspaceEvents">
                 {goal.events?.length ? goal.events.map(e=><div key={e.id}>
                     <span>{e.action==="progress_changed"?t("historyProgress",{from:e.details?.from ?? "—",to:e.details?.to}):t("event."+e.action,{defaultValue:e.action})}</span>
                     <time dateTime={e.created_at}>{new Date(e.created_at).toLocaleString()}</time>

@@ -170,3 +170,10 @@ test("goal updates use a shared store, daily progress and optional completion/re
     assert.match(details,/achieved_minutes/);
     assert.match(read("src/components/modules/GoalPicker.tsx"),/goalMetricCompatible/);
 });
+
+ test("goal metric selection reads both normalized settings and joined relation",()=>{
+    const types=read("src/pages/HabitPage/components/Overview/goalTypes.ts");
+    assert.match(types,/habit\?\.settings\?\.metric_type/);
+    assert.match(types,/Array\.isArray\(relation\)/);
+    for(const path of ["src/components/modules/AddGoal.tsx","src/components/modules/GoalDetails.tsx","src/components/modules/GoalPicker.tsx","src/pages/HabitPage/components/Habit/Complete/HabitGoalProgress.tsx"]) assert.match(read(path),/goalHabitMetricType/);
+});

@@ -64,3 +64,9 @@ export function stagePercentages(stages:GoalStage[]) {
     }
     return result;
 }
+
+// /habits returns both the joined relation (array) and the normalized settings object.
+export function goalHabitMetricType(habit?: {settings?:{metric_type?:string} | null;habits_settings?:{metric_type?:string} | {metric_type?:string}[] | null}) {
+    const relation=habit?.habits_settings;
+    return habit?.settings?.metric_type ?? (Array.isArray(relation)?relation[0]?.metric_type:relation?.metric_type);
+}

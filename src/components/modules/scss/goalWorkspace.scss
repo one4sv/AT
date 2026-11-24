@@ -106,6 +106,30 @@
         text-decoration: line-through;
     }
 }
+.goalStagePercent {
+    position: relative;
+    height: 100%;
+    min-width: 0;
+
+    > .addHabitInput {
+        padding-right: 24px;
+        appearance: textfield;
+        -moz-appearance: textfield;
+    }
+    > .addHabitInput::-webkit-inner-spin-button,
+    > .addHabitInput::-webkit-outer-spin-button {
+        appearance: none;
+        margin: 0;
+    }
+    > span {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--borderWh);
+        pointer-events: none;
+    }
+}
 .goalWorkspaceQuiet, .goalWorkspaceSave, .goalIconButton {
     display: inline-flex;
     justify-content: center;
@@ -226,6 +250,10 @@
     max-height: 16dvh;
     overflow-y: auto;
     scrollbar-width: thin;
+}
+.goalHistory .goalWorkspaceEvents {
+    max-height: none;
+    overflow-y: visible;
 }
 .goalWorkspaceEvents > div {
     display: flex;

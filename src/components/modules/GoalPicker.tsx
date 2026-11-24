@@ -11,7 +11,7 @@ import { useHabits } from "../hooks/HabitsHook";
 import { useUser } from "../hooks/UserHook";
 import { isGoalHabitAvailable } from "../ts/utils/goalLinkAvailability";
 import { api } from "../ts/api";
-import { goalMetricCompatible, type Goal } from "../../pages/HabitPage/components/Overview/goalTypes";
+import { goalMetricCompatible, goalHabitMetricType, type Goal } from "../../pages/HabitPage/components/Overview/goalTypes";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "../../pages/HabitPage/scss/goalWorkspace.scss";
 import "./scss/goalWorkspace.scss";
@@ -30,7 +30,7 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
     const eligible=habits?.some(h=>String(h.id)===String(habitId) && isGoalHabitAvailable(h,user.id));
     const {goals,linked,loading,error}=useHabitGoals(habitId,!!isOwner);
     const {selected,select}=useHabitGoalDisplay(habitId,!!isOwner);
-    const metricType=habits?.find(h=>String(h.id)===String(habitId))?.habits_settings?.metric_type;
+    const metricType=goalHabitMetricType(habits?.find(h=>String(h.id)===String(habitId)));
     const displayChoices=metricType==="timer" || metricType==="counter" ? linked.filter(goal=>goalMetricCompatible(goal.progress_mode,metricType) && (goal.status==="active" || goal.status==="paused")) : [];
     const [saving,setSaving]=useState(false);
     const {showNotification}=useNote();

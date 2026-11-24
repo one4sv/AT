@@ -13,7 +13,7 @@ import { useHabits } from "../hooks/HabitsHook";
 import { usePlans } from "../hooks/PlansHook";
 import { useUser } from "../hooks/UserHook";
 import { isGoalHabitAvailable, isGoalPlanAvailable } from "../ts/utils/goalLinkAvailability";
-import { goalMetricCompatible, type Goal, type GoalMode, type GoalLinkedItem } from "../../pages/HabitPage/components/Overview/goalTypes";
+import { goalMetricCompatible, goalHabitMetricType, type Goal, type GoalMode, type GoalLinkedItem } from "../../pages/HabitPage/components/Overview/goalTypes";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "./scss/goalWorkspace.scss";
 
@@ -78,9 +78,9 @@ export default function AddGoal() {
     const automatic=["days","streak","daily_timer","daily_counter","total_timer"].includes(mode);
     const ownHabits=(habits || []).filter(h=>isGoalHabitAvailable(h,user.id));
     const ownPlans=plans.filter(isGoalPlanAvailable);
-    const availableHabits=ownHabits.filter(h=>goalMetricCompatible(mode,h.habits_settings?.metric_type) && !linkedHabits.some(item=>String(item.id)===String(h.id)));
+    const availableHabits=ownHabits.filter(h=>goalMetricCompatible(mode,goalHabitMetricType(h)) && !linkedHabits.some(item=>String(item.id)===String(h.id)));
     const availablePlans=ownPlans.filter(p=>!linkedPlans.some(item=>String(item.id)===String(p.id)));
-    const linkedTypes=linkedHabits.map(item=>(habits || []).find(h=>String(h.id)===String(item.id))?.habits_settings?.metric_type);
+    const linkedTypes=linkedHabits.map(item=>goalHabitMetricType((habits || []).find(h=>String(h.id)===String(item.id))));
     const timerAvailable=linkedTypes.length>0 && linkedTypes.every(type=>type==="timer");
     const counterAvailable=linkedTypes.length>0 && linkedTypes.every(type=>type==="counter");
     const modeChoices=(["manual","metric","milestones","combined","days","streak","daily_timer","daily_counter","total_timer"] as GoalMode[]).filter(value=>
@@ -244,9 +244,12 @@ export default function AddGoal() {
                     <input className="addHabitInput" type="text" maxLength={160}
                         placeholder={t("stageTitle")} aria-label={t("stageTitle")} value={s.title}
                         onChange={e=>setStages(old=>old.map((v,j)=>j===i?{...v,title:e.target.value}:v))}/>
-                    <input className="addHabitInput" type="number" min={0} max={100} step={0.01}
-                        aria-label={t("stagePercent")} value={s.completion_percent}
-                        onChange={e=>setStages(old=>old.map((v,j)=>j===i?{...v,completion_percent:Number(e.target.value)}:v))}/>
+                    <div className="goalStagePercent">
+                        <input className="addHabitInput" type="number" min={0} max={100} step={0.01}
+                            aria-label={t("stagePercent")} value={s.completion_percent}
+                            onChange={e=>setStages(old=>old.map((v,j)=>j===i?{...v,completion_percent:Number(e.target.value)}:v))}/>
+                        <span aria-hidden="true">%</span>
+                    </div>
                     <button type="button" className="goalStageRemove" aria-label={t("removeStage")}
                         onClick={()=>setStages(old=>old.filter((_,j)=>j!==i))}><XIcon size={20}/></button>
                 </div>)}

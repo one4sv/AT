@@ -12,7 +12,7 @@ import { api } from "../ts/api";
 import Checkbox from "../ts/utils/Checkbox";
 import SelectList from "../ts/SelectList";
 import SeekBar from "../../pages/Settings/components/SeekBar";
-import {goalMetricCompatible,stagePercentages,type Goal,type GoalStatus} from "../../pages/HabitPage/components/Overview/goalTypes";
+import {goalMetricCompatible,goalHabitMetricType,stagePercentages,type Goal,type GoalStatus} from "../../pages/HabitPage/components/Overview/goalTypes";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "../../pages/Settings/scss/seekbar.scss";
 import "./scss/goalWorkspace.scss";
@@ -100,7 +100,7 @@ export default function GoalDetails() {
     };
 
     const availableHabits=(habits || []).filter(item=>isGoalHabitAvailable(item,user.id) &&
-        (!goal || goalMetricCompatible(goal.progress_mode,item.habits_settings?.metric_type)) &&
+        (!goal || goalMetricCompatible(goal.progress_mode,goalHabitMetricType(item))) &&
         !(goal?.habits || []).some(link=>String(link.id)===String(item.id)));
     const availablePlans=plans.filter(item=>isGoalPlanAvailable(item) &&
         !(goal?.plans || []).some(link=>String(link.id)===String(item.id)));
@@ -179,9 +179,12 @@ export default function GoalDetails() {
             {editId===stage.id ? <>
                 <input className="addHabitInput" maxLength={160} value={editTitle} aria-label={t("stageTitle")}
                     onChange={e=>setEditTitle(e.target.value)}/>
-                <input className="addHabitInput" type="number" min={0} max={100} step={0.01}
-                    value={editPercent} aria-label={t("stagePercent")}
-                    onChange={e=>setEditPercent(Number(e.target.value))}/>
+                <div className="goalStagePercent">
+                    <input className="addHabitInput" type="number" min={0} max={100} step={0.01}
+                        value={editPercent} aria-label={t("stagePercent")}
+                        onChange={e=>setEditPercent(Number(e.target.value))}/>
+                    <span aria-hidden="true">%</span>
+                </div>
                 <button type="button" className="goalStageRemove" disabled={saving} aria-label={t("save")}
                     onClick={async()=>{
                         if(!editTitle.trim() || !Number.isFinite(editPercent) || editPercent<0 || editPercent>100) return;
@@ -203,9 +206,12 @@ export default function GoalDetails() {
         <div className="goalStageInputs">
             <input className="addHabitInput" value={newTitle} maxLength={160} placeholder={t("stageTitle")}
                 aria-label={t("stageTitle")} onChange={e=>setNewTitle(e.target.value)}/>
-            <input className="addHabitInput" type="number" min={0} max={100} step={0.01}
-                value={newPercent} aria-label={t("stagePercent")}
-                onChange={e=>setNewPercent(Number(e.target.value))}/>
+            <div className="goalStagePercent">
+                <input className="addHabitInput" type="number" min={0} max={100} step={0.01}
+                    value={newPercent} aria-label={t("stagePercent")}
+                    onChange={e=>setNewPercent(Number(e.target.value))}/>
+                <span aria-hidden="true">%</span>
+            </div>
             <button type="button" className="goalStageRemove" disabled={saving || !newTitle.trim() || !Number.isFinite(newPercent) || newPercent<0 || newPercent>100}
                 aria-label={t("addStage")} onClick={async()=>{
                     if(await mutate("goal-workspace/"+id+"/stages","post",
