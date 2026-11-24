@@ -133,6 +133,20 @@
 .goalIconButton {
     width: 42px;
     flex-shrink: 0;
+    padding: 0;
+
+    > svg {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        color: inherit;
+    }
+}
+.goalWorkspaceModal .goalStageRemove > svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: inherit;
 }
 .goalIconButton.danger {
     color: var(--notValid);

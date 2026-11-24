@@ -7,8 +7,11 @@ import { goalsChanged } from "../hooks/useGoalsWorkspace";
 import { api } from "../ts/api";
 import CalendarInput from "../ts/CalendarInput";
 import TA from "../ts/TA";
-import RadioGroup from "../ts/RadioGroup";
-import type { Goal, GoalMode } from "../../pages/HabitPage/components/Overview/goalTypes";
+import SelectList from "../ts/SelectList";
+import { useHabits } from "../hooks/HabitsHook";
+import { usePlans } from "../hooks/PlansHook";
+import { useUser } from "../hooks/UserHook";
+import type { Goal, GoalMode, GoalLinkedItem } from "../../pages/HabitPage/components/Overview/goalTypes";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "./scss/goalWorkspace.scss";
 
@@ -22,6 +25,16 @@ export default function AddGoal() {
     const {showNotification}=useNote();
     const goalId=blackout.options?.id;
     const habitId=blackout.options?.habitId;
+    const {habits}=useHabits();
+    const {plans}=usePlans();
+    const {user}=useUser();
+    const [linkedHabits,setLinkedHabits]=useState<GoalLinkedItem[]>(()=>habitId?[{id:Number(habitId),name:""}]:[]);
+    const [linkedPlans,setLinkedPlans]=useState<GoalLinkedItem[]>([]);
+    const [habitChoice,setHabitChoice]=useState("");
+    const [planChoice,setPlanChoice]=useState("");
+    const [targetDays,setTargetDays]=useState(30);
+    const [dailyMinutes,setDailyMinutes]=useState(120);
+    const [loadError,setLoadError]=useState(false);
     const [loading,setLoading]=useState(Boolean(goalId));
     const [saving,setSaving]=useState(false);
     const [name,setName]=useState("");
@@ -48,14 +61,24 @@ export default function AddGoal() {
             setMetricTarget(Number(goal.metric_target));
             setUnit(goal.metric_unit || "");
             setMetricShare(Number(goal.metric_share)*100);
-        }).catch(()=>{if(active) showNotification("error",t("loadError"));})
+            setTargetDays(Number(goal.target_days ?? 30));
+            setDailyMinutes(Number(goal.daily_minutes ?? 120));
+            setLinkedHabits(goal.habits || []);
+            setLinkedPlans(goal.plans || []);
+        }).catch(()=>{if(active) {setLoadError(true);showNotification("error",t("loadError"));}})
           .finally(()=>{if(active) setLoading(false);});
         return ()=>{active=false;};
     },[goalId,showNotification,t]);
 
+    const automatic=["days","streak","daily_timer"].includes(mode);
+    const ownHabits=(habits || []).filter(h=>h.user_id===user.id);
+    const ownPlans=plans.filter(p=>p.is_owner);
     const submit=async(event:FormEvent<HTMLFormElement>)=>{
         event.preventDefault();
-        if(saving || !name.trim()) return;
+        if(saving || loadError || !name.trim()) return;
+        if(automatic && (!linkedHabits.length || !Number.isInteger(targetDays) || targetDays<1 || targetDays>3650 || (mode==="daily_timer" && (!Number.isInteger(dailyMinutes) || dailyMinutes<1 || dailyMinutes>1440)))){
+            showNotification("error",t("invalidAutomatic"));return;
+        }
         if((mode==="metric" || mode==="combined") && metricStart===metricTarget){
             showNotification("error",t("invalidMetric"));
             return;
@@ -68,11 +91,11 @@ export default function AddGoal() {
         try{
             const payload={name:name.trim(),description,due_date:dateValue(dueDate),
                 progress_mode:mode,metric_start:metricStart,metric_target:metricTarget,
-                metric_unit:unit,metric_share:metricShare/100};
+                metric_unit:unit,metric_share:metricShare/100,target_days:targetDays,daily_minutes:dailyMinutes,
+                habit_ids:linkedHabits.map(h=>h.id),plan_ids:linkedPlans.map(p=>p.id)};
             const response=goalId ? await api.patch("goal-workspace/"+goalId,payload) :
                 await api.post("goal-workspace",{...payload,
-                    stages:stages.map(s=>({title:s.title.trim(),weight:s.weight})),
-                    ...(habitId?{habit_id:Number(habitId)}:{})});
+                    stages:stages.map(s=>({title:s.title.trim(),weight:s.weight}))});
             if(!response.data?.success) throw new Error("Goal save failed");
             goalsChanged();
             setBlackout({seted:false});
@@ -84,7 +107,7 @@ export default function AddGoal() {
 
     return <form className="addHabitDiv addPlanDiv goalWorkspaceModal goalCreate" onSubmit={event=>void submit(event)}>
         <h2>{t(goalId?"edit":"create")}</h2>
-        {loading ? <span>{t("loading")}</span> : <>
+        {loading ? <span>{t("loading")}</span> : loadError ? <span>{t("loadError")}</span> : <>
             <div className="addHabitWrapper">
                 <label htmlFor="goalName">{t("name")}</label>
                 <input id="goalName" className="addHabitInput" maxLength={160} required
@@ -103,8 +126,9 @@ export default function AddGoal() {
             </div>
             <div className="addHabitWrapper">
                 <label>{t("progressMode")}</label>
-                <RadioGroup id="goalMode" val={mode} newVal={value=>setMode(value as GoalMode)}
-                    list={(["manual","metric","milestones","combined"] as GoalMode[]).map(value=>({
+                <SelectList id="goalMode" className="goalWorkspaceSelect" selected={mode}
+                    onChange={value=>setMode(value as GoalMode)}
+                    arr={(["manual","metric","milestones","combined","days","streak","daily_timer"] as GoalMode[]).map(value=>({
                         value,label:t(value)
                     }))}/>
             </div>
@@ -132,6 +156,53 @@ export default function AddGoal() {
                 <input id="goalShare" className="addHabitInput" type="number" min={0} max={100} step={5}
                     value={metricShare} onChange={e=>setMetricShare(Number(e.target.value))}/>
             </div>}
+            {automatic && <div className="goalWorkspaceField">
+                <label htmlFor="goalTargetDays">{t("targetDays")}</label>
+                <input id="goalTargetDays" className="addHabitInput" type="number" min={1} max={3650}
+                    value={targetDays} onChange={e=>setTargetDays(Number(e.target.value))}/>
+                {mode==="daily_timer" && <>
+                    <label htmlFor="goalDailyMinutes">{t("dailyMinutes")}</label>
+                    <input id="goalDailyMinutes" className="addHabitInput" type="number" min={1} max={1440}
+                        value={dailyMinutes} onChange={e=>setDailyMinutes(Number(e.target.value))}/>
+                </>}
+                <small>{t("automaticHint")}</small>
+            </div>}
+            <div className="goalWorkspaceField">
+                <label>{t("linkedHabits")}</label>
+                {linkedHabits.map(h=><div key={h.id} className="goalWorkspaceLink">
+                    <span>{ownHabits.find(item=>item.id===h.id)?.name || h.name || String(h.id)}</span>
+                    <button type="button" className="goalIconButton" aria-label={t("unlink")}
+                        onClick={()=>setLinkedHabits(old=>old.filter(item=>item.id!==h.id))}><XIcon size={24}/></button>
+                </div>)}
+                <div className="goalWorkspaceLinkAdd">
+                    <SelectList key={"habit-"+linkedHabits.length} className="goalWorkspaceSelect"
+                        selected={habitChoice} placeholder={t("chooseHabit")} onChange={setHabitChoice}
+                        arr={ownHabits.filter(h=>!linkedHabits.some(item=>item.id===h.id)).map(h=>({value:String(h.id),label:h.name}))}/>
+                    <button type="button" className="goalIconButton" aria-label={t("link")} disabled={!habitChoice}
+                        onClick={()=>{
+                            const item=ownHabits.find(h=>String(h.id)===habitChoice);
+                            if(item && !linkedHabits.some(h=>h.id===item.id)) setLinkedHabits(old=>[...old,{id:item.id,name:item.name}]);
+                            setHabitChoice("");
+                        }}><PlusIcon size={24}/></button>
+                </div>
+                <label>{t("linkedPlans")}</label>
+                {linkedPlans.map(p=><div key={p.id} className="goalWorkspaceLink">
+                    <span>{ownPlans.find(item=>item.id===p.id)?.name || p.name}</span>
+                    <button type="button" className="goalIconButton" aria-label={t("unlink")}
+                        onClick={()=>setLinkedPlans(old=>old.filter(item=>item.id!==p.id))}><XIcon size={24}/></button>
+                </div>)}
+                <div className="goalWorkspaceLinkAdd">
+                    <SelectList key={"plan-"+linkedPlans.length} className="goalWorkspaceSelect"
+                        selected={planChoice} placeholder={t("choosePlan")} onChange={setPlanChoice}
+                        arr={ownPlans.filter(p=>!linkedPlans.some(item=>item.id===p.id)).map(p=>({value:String(p.id),label:p.name}))}/>
+                    <button type="button" className="goalIconButton" aria-label={t("link")} disabled={!planChoice}
+                        onClick={()=>{
+                            const item=ownPlans.find(p=>String(p.id)===planChoice);
+                            if(item && !linkedPlans.some(p=>p.id===item.id)) setLinkedPlans(old=>[...old,{id:item.id,name:item.name}]);
+                            setPlanChoice("");
+                        }}><PlusIcon size={24}/></button>
+                </div>
+            </div>
             {!goalId && <div className="goalWorkspaceStages">
                 <label>{t("stages")}</label>
                 {stages.map((s,i)=><div className="goalStageInputs" key={i}>
