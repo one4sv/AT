@@ -25,12 +25,14 @@
     width: 60%;
     margin: 0 auto;
     height: 100%;
-    padding-top: 6dvh;
+    --chat-header-inset: 6dvh;
+    padding-top: var(--chat-top-inset, var(--chat-header-inset));
+    scroll-padding-top: var(--chat-top-inset, var(--chat-header-inset));
     padding-bottom:7dvh;
     @media (max-width: 800px) {
         padding-bottom:9vh;
         width: 99%;
-        padding-top: 6.5dvh;
+        --chat-header-inset: 6.5dvh;
         padding-right: 1vw;
         margin: 0 1vw;
         height: 100%;
@@ -38,34 +40,61 @@
 }
 .chatActionPanel {
     width: 60%;
-    margin: 6dvh auto .5dvh;
-    flex-shrink: 0;
-    position: relative;
+    position: absolute;
+    top: 6dvh;
+    left: 50%;
+    transform: translateX(-50%);
+    box-sizing: border-box;
     z-index: 5;
     touch-action: pan-y;
     min-width: 0;
     > .chatActionRow {
         display: flex;
         align-items: center;
-        gap: .5vw;
+        border-radius: 24px;
+        background: var(--interact);
+        border: 1px solid var(--block_border);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+        overflow: hidden;
+
         > .chatActionContent {
             flex: 1;
             min-width: 0;
         }
-        > .chatActionMenu {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--mc);
-            color: var(--tc);
-            border: 1px solid var(--block_border);
-            height: 5dvh;
-            aspect-ratio: 1/1;
-            border-radius: 50%;
-            cursor: pointer;
-            flex-shrink: 0;
-            > svg { width: 60%; height: 60%; }
+        .pmsMain, .chatTAStr, .choosingMessActions {
+            gap: 0;
+            background: transparent;
+            border: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            box-sizing: border-box;
         }
+        .pmsShowNow, .pmShowInfo, .chatTaButts, .chatSearch, .chatWriteTAButt {
+            background: transparent;
+            border: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            color: var(--tc);
+            @media (hover: hover) {
+                &:hover { background: var(--menuButtHover); color: var(--tc); }
+            }
+            @media (hover: none) {
+                &:active { background: var(--menuButtHover); color: var(--tc); }
+            }
+        }
+        .chatSearch {
+            min-width: 0;
+            &:hover, &:active { background: transparent; }
+        }
+        .pmShowInfo {
+            white-space: nowrap;
+        }
+        .pmShowInfo .chatWriteTAButt {
+            height: 4dvh;
+            width: 4dvh;
+        }
+        .pmsSender { flex-shrink: 0; max-width: 40%; overflow: hidden; text-overflow: ellipsis; }
     }
     .chatSearchDiv, .pmsList {
         position: static;
@@ -85,16 +114,21 @@
     .pmShowInfo { flex-shrink: 0; width: auto; padding: 0 .5vw; }
     .pmsText { display: block; min-width: 0; }
     @media (max-width: 800px) {
-        margin-top: 7.5dvh;
+        top: 7.5dvh;
         width: 95%;
-        > .chatActionRow { gap: 1vw; }
     }
 }
 .chatDiv:has(.chatActionPanel) > .chat {
-    flex: 1;
-    min-height: 0;
-    height: auto;
-    padding-top: .5dvh;
+    --chat-top-inset: max(var(--chat-header-inset), calc(var(--chat-action-bottom, 11dvh) + .5dvh));
+    z-index: 0;
+
+    .dateDivider {
+        top: var(--chat-top-inset);
+    }
+
+    @media (max-width: 800px) {
+        --chat-top-inset: max(var(--chat-header-inset), calc(var(--chat-action-bottom, 12.5dvh) + .5dvh));
+    }
 }
 .chatTAWrapper > .chatComposerLayer > .goDown {
     position: absolute;

@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import { DotsThreeOutlineVerticalIcon } from "@phosphor-icons/react";
-import { useTranslation } from "react-i18next";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useChat } from "../../../components/hooks/ChatHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
@@ -14,7 +12,6 @@ import SearchList from "./ChatTa/SearchList";
 import ChatChoosingMess from "./ChatTa/ChatChoosingMess";
 
 export default function ChatActionPanel({searchedMessages}: {searchedMessages:message[]}) {
-    const { t } = useTranslation("common");
     const { activeHeader, setActiveHeader, searchMess, library } = useChat();
     const { setChosenMess } = useMessages();
     const { pms, setShowList, pmRef } = usePinnedMessages();
@@ -30,6 +27,34 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
     const blocked = useRef(false);
     blocked.current = menu.visible || dontHandleOther;
     const modes: activeHeaderType[] = pms.length ? ["pinned","search","choosing"] : ["search","choosing"];
+    const panelVisible = modes.includes(activeHeader);
+
+    useLayoutEffect(() => {
+        const panel = pmRef.current;
+        const host = panel?.parentElement;
+        if (!panelVisible || !panel || !host) return;
+        const updateInset = () => {
+            const next = `${Math.ceil(panel.offsetTop + panel.offsetHeight)}px`;
+            if (host.style.getPropertyValue("--chat-action-bottom") === next) return;
+            const chat = host.querySelector<HTMLDivElement>(":scope > .chat");
+            const atBottom = !!chat && chat.scrollHeight - chat.scrollTop - chat.clientHeight < 80;
+            host.style.setProperty("--chat-action-bottom", next);
+            if (chat && atBottom) chat.scrollTop = chat.scrollHeight;
+        };
+        updateInset();
+        const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(updateInset);
+        observer?.observe(panel);
+        observer?.observe(host);
+        window.addEventListener("resize", updateInset);
+        return () => {
+            observer?.disconnect();
+            window.removeEventListener("resize", updateInset);
+            const chat = host.querySelector<HTMLDivElement>(":scope > .chat");
+            const atBottom = !!chat && chat.scrollHeight - chat.scrollTop - chat.clientHeight < 80;
+            host.style.removeProperty("--chat-action-bottom");
+            if (chat && atBottom) chat.scrollTop = chat.scrollHeight;
+        };
+    }, [panelVisible, pmRef]);
 
     useEffect(() => {
         if (!library) return;
@@ -102,7 +127,7 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
         };
     }, [activeHeader,pms.length,setActiveHeader,setChosenMess,setDontHandle]);
 
-    if (!modes.includes(activeHeader)) return null;
+    if (!panelVisible) return null;
     const showMenu = (x:number,y:number) => openMenu(x,y,"chatAction",{id:"chatAction"});
     return <div className="chatActionPanel" ref={pmRef}>
         <div ref={rowRef} className="chatActionRow" data-context-menu="true" data-context-menu-allow-button
@@ -113,10 +138,6 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
                 {activeHeader==="search" && <ChatSearch searchedMessages={searchedMessages} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} isOpen={isSearchOpen} setIsOpen={setIsSearchOpen}/>}
                 {activeHeader==="choosing" && <ChatChoosingMess/>}
             </div>
-            <button type="button" className="chatActionMenu" aria-label={t("chatUi.openPanel")} onClick={event=>{
-                const box=event.currentTarget.getBoundingClientRect();
-                showMenu(box.left,box.bottom+4);
-            }}><DotsThreeOutlineVerticalIcon weight="fill"/></button>
         </div>
         {activeHeader==="pinned" && <PmsList/>}
         {activeHeader==="search" && <SearchList isOpen={isSearchOpen} searchDivRef={searchDivRef} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} searchedMessages={searchedMessages}/>}

@@ -32,7 +32,7 @@ export default function ChatPinned() {
                     </span>
                 </div>
                 <div className="pmShowInfo" onClick={() => setShowList(!showList)}>
-                    {showNow + 1}/{pms.length}
+                    <span className="pmsCount">{showNow + 1}/{pms.length}</span>
                     <div className="chatWriteTAButt">
                         <List className="chatSend"/>
                     </div>
