@@ -14,11 +14,11 @@ import ActivityIndicators from "../../../../components/ts/ActivityIndicators";
 import { tags } from "../../../../components/ts/tags";
 import useHabitDayProgress from "../../../../components/hooks/utils/useHabitDayProgress";
 
-function OverviewEntryTag({ entry }: { entry: DayEntry }) {
+export function OverviewEntryTag({ entry }: { entry: DayEntry }) {
     const tag = tags.find(item => item.value === (entry.kind === "plan" ? entry.plan?.tag : entry.habit?.tag));
-    if(entry.kind==="habit" && entry.habit?.avatar_key) return <img className="activityAvatar" alt="" loading="lazy" src={activityAvatarUrl(entry.habit.id,entry.habit.avatar_key)}/>;
+    if(entry.kind==="habit" && entry.habit?.avatar_key) return <img className="activityAvatar habitOverviewEntryTagIcon" alt="" loading="lazy" src={activityAvatarUrl(entry.habit.id,entry.habit.avatar_key)}/>;
     const Icon = tag?.icon;
-    return Icon ? <Icon className="habitOverviewEntryTagIcon" size={20}/> :
+    return Icon ? <Icon className="habitOverviewEntryTagIcon" size={32}/> :
         <span className={"calendarDot " + entry.state}/>;
 }
 

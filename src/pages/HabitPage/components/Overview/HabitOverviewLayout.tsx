@@ -10,12 +10,11 @@ import { useContextMenu } from "../../../../components/hooks/ContextMenuHook";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
 import { clockInAppZone, formatDateLabel, todayStrFunc } from "../../../../components/ts/utils/dateToStr";
 import { makeDayEntries, describeEntrySubtitle, type DayEntry } from "../../../../components/ts/utils/dayTimeline";
-import { tags } from "../../../../components/ts/tags";
 import ActivityIndicators, { type HabitDayProgress } from "../../../../components/ts/ActivityIndicators";
 import useHabitDayProgress from "../../../../components/hooks/utils/useHabitDayProgress";
 import { getOverviewFocus, getOverviewNext } from "./dayFocus";
 import Calendar from "../Calendar/Calendar";
-import HabitOverviewEntries from "./HabitOverviewEntries";
+import HabitOverviewEntries, { OverviewEntryTag } from "./HabitOverviewEntries";
 import { useGoalsWorkspace } from "../../../../components/hooks/useGoalsWorkspace";
 import useGoalDayResults from "../../../../components/hooks/useGoalDayResults";
 import DayGoalEntries,{goalsForDay} from "./DayGoalEntries";
@@ -76,15 +75,13 @@ function OverviewFocusCard({ entry, label, more = 0, calendar, progress }: {
 }) {
     const { t } = useTranslation("common");
     const navigate = useNavigate();
-    const tag = tags.find(item => item.value === (entry.kind === "plan" ? entry.plan?.tag : entry.habit?.tag));
-    const Icon = tag?.icon;
 
     return <div className="habitOverviewFocusGroup">
         <small className="habitOverviewFocusLabel">{label}</small>
         <button type="button" className="habitOverviewCurrent"
             onClick={() => navigate(entry.kind === "plan" ? `/plan/${entry.plan!.id}` : `/habit/${entry.habit!.id}`)}>
             <div className="habitOverviewCurrentRow">
-                {Icon && <Icon className="habitOverviewFocusIcon"/>}
+                <OverviewEntryTag entry={entry}/>
                 <div className="habitOverviewCurrentDetails">
                     <span className="habitOverviewCurrentTitle">
                         <span className="activityName">{entry.name}{more > 0 && <b> +{more}</b>}</span>
@@ -212,10 +209,7 @@ export default function HabitOverviewLayout({ feed = false }: { feed?: boolean }
                 </div>
                 <div className="habitOverviewNextList">
                     {view!=="goals" && <HabitOverviewEntries entries={nextFour} view={view}/>}
-                    {(view==="goals" || (view==="all" && dayGoals.length>0)) && <>
-                        {view==="all" && <small>{tGoals("title")}</small>}
-                        <DayGoalEntries goals={view==="all"?dayGoals.slice(0,4):dayGoals} ids={goalDay.ids} day={chosenDay} loading={loadingGoals || goalDay.loading} error={goalsError || goalDay.error}/>
-                    </>}
+                    {view==="goals" && <DayGoalEntries goals={dayGoals} ids={goalDay.ids} day={chosenDay} loading={loadingGoals || goalDay.loading} error={goalsError || goalDay.error}/>}
                 </div>
             </>}
         </div>}

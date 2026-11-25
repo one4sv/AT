@@ -95,34 +95,40 @@ export function makeDayEntries(day: string, habits: Habit[] | null, plans: OneOf
     }));
     return [...byId.values(), ...planEntries].sort(compareDayEntries);
 }
+export function isPastSideMenuPlan(plan: OneOffPlan, today = todayStrFunc(), now = clockInAppZone()): boolean {
+    if (plan.plan_date !== today) return plan.plan_date < today;
+    const cutoff = timeOf(plan.end_time) || timeOf(plan.start_time);
+    return Boolean(cutoff && cutoff <= now);
+}
 export function makeSideMenuEntries(filter: string | undefined, habits: Habit[] | null, plans: OneOffPlan[],
-    calendar: Calendar[], showArchived: boolean, search: string): DayEntry[] {
+    calendar: Calendar[], showArchived: boolean, search: string, now = clockInAppZone()): DayEntry[] {
     const today = todayStrFunc();
     let day = today;
     if (filter === "tomorrow") {
         day = shiftCalendarDay(today, 1);
     } else if (filter && /^\d{4}-\d{2}-\d{2}$/.test(filter)) day = filter;
+    const activePlans = plans.filter(plan => plan.membership_status !== "pending" && plan.status !== "canceled" && !isPastSideMenuPlan(plan,today,now));
+    const archivedPlans = plans.filter(plan => plan.membership_status !== "pending" && isPastSideMenuPlan(plan,today,now));
+    const planEntry = (plan: OneOffPlan): DayEntry => ({
+        key:"plan-"+plan.id, kind:"plan", name:plan.name, start:timeOf(plan.start_time),
+        end:timeOf(plan.end_time), date:plan.plan_date, description:plan.description || "",
+        completed:Boolean(plan.completed_for_me), state:plan.completed_for_me?"comp":"will", plan
+    });
     let entries: DayEntry[];
     if (filter === "plans") {
-        entries = plans.filter(plan => plan.membership_status !== "pending" &&
-            plan.status !== "canceled").map(plan => ({
-            key: "plan-" + plan.id, kind: "plan" as const, name: plan.name,
-            start: timeOf(plan.start_time), end: timeOf(plan.end_time),
-            date: plan.plan_date, description: plan.description || "",
-            completed: Boolean(plan.completed_for_me),
-            state: (plan.completed_for_me ? "comp" : "will") as "comp" | "will", plan
-        }));
+        entries = activePlans.map(planEntry);
     } else if (filter === "archived") {
         entries = (habits || []).filter(h => !h.ongoing).map(habit => ({
             key:"habit-"+habit.id, kind:"habit", name:habit.name, start:timeOf(habit.start_time),
             end:timeOf(habit.end_time), date:day, description:habit.desc || "",
             completed:false, state:"skip", habit
         }));
+        entries.push(...archivedPlans.map(planEntry));
     } else {
         const source = showArchived ? habits : (habits || []).filter(h => h.ongoing);
-        entries = makeDayEntries(day, source, plans, calendar, !filter || filter === "all");
+        entries = makeDayEntries(day, source, activePlans, calendar, !filter || filter === "all");
         if (!filter || filter === "all") {
-            entries.push(...plans.filter(p => p.plan_date > today && p.membership_status !== "pending").map(plan => ({
+            entries.push(...activePlans.filter(p => p.plan_date > today && p.membership_status !== "pending").map(plan => ({
                 key:"plan-"+plan.id, kind:"plan" as const, name:plan.name, start:timeOf(plan.start_time),
                 end:timeOf(plan.end_time), date:plan.plan_date, description:plan.description || "",
                 completed:Boolean(plan.completed_for_me), state:"will" as const, plan

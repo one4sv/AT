@@ -13,7 +13,8 @@ import { useTranslation } from "react-i18next";
 import { useContacts } from "../hooks/ContactsHook";
 import { useHabits } from "../hooks/HabitsHook";
 import { usePlans } from "../hooks/PlansHook";
-import { shiftCalendarDay, todayStrFunc } from "../ts/utils/dateToStr";
+import { isPastSideMenuPlan } from "../ts/utils/dayTimeline";
+import { clockInAppZone, shiftCalendarDay, todayStrFunc } from "../ts/utils/dateToStr";
 import { useSettings } from "../hooks/SettingsHook";
 import { useUser } from "../hooks/UserHook";
 import { filterHabitsByOrder } from "../ts/utils/filteredHabitsByOrder";
@@ -75,6 +76,13 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     const { list, search: settingsSearch, setSearch: setSettingsSearch } = useContacts()
     const { habits, newOrderHabits } = useHabits()
     const { plans } = usePlans()
+    const [planClock,setPlanClock] = useState(()=>todayStrFunc()+" "+clockInAppZone());
+    useEffect(()=>{
+        const update=()=>setPlanClock(todayStrFunc()+" "+clockInAppZone());
+        const timer=window.setInterval(update,15000);
+        window.addEventListener("focus",update);
+        return ()=>{window.clearInterval(timer);window.removeEventListener("focus",update);};
+    },[]);
     const { showArchived, layout, settingsLoaded, showMobileMenuOnStart, startupSideMenuTab } = useSettings();
     const { user, initialLoading } = useUser();
     const isCompact = useCompactLayout();
@@ -180,7 +188,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
                 const groupHabits = filterHabitsByOrder(order, activeHabits, "");
                 const planDate = order === "today" ? todayStrFunc() : order === "tomorrow" ? shiftCalendarDay(todayStrFunc(), 1) : /^\d{4}-\d{2}-\d{2}$/.test(order) ? order : "";
                 const hasPlans = planDate && plans.some(plan =>
-                    plan.plan_date === planDate && plan.membership_status !== "pending");
+                    plan.plan_date === planDate && plan.membership_status !== "pending" && plan.status !== "canceled" && !isPastSideMenuPlan(plan));
                 if (groupHabits.length > 0 || hasPlans) {
                     let label = groupLabels[order];
                     if (!label) {
@@ -203,16 +211,16 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
                 }
             });
 
-            if (habits?.some((h) => !h.ongoing)) {
+        }
+        if (habits?.some((h) => !h.ongoing) || plans.some(p=>p.membership_status!=="pending" && isPastSideMenuPlan(p))) {
                 filters.push({
                     label: t("sideMenu.archive"),
                     value: "archived",
                     new: "0",
                 });
-            }
         }
 
-        if (plans.some(plan => plan.membership_status !== "pending" && plan.status !== "canceled")) {
+        if (plans.some(plan => plan.membership_status !== "pending" && plan.status !== "canceled" && !isPastSideMenuPlan(plan))) {
             filters.splice(1, 0, { label: t("plans.title"), value: "plans", new: "0" });
         }
         setHabitsFilters(filters);
@@ -220,7 +228,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         if (!filters.some((f) => f.value === habitsSelectedValue)) {
             setHabitsSelectedValue(filters[0]?.value ?? "all");
         }
-    }, [habits, plans, newOrderHabits, showArchived, t, i18n.language, habitsSelectedValue]);
+    }, [habits, plans, newOrderHabits, showArchived, t, i18n.language, habitsSelectedValue, planClock]);
 
     // === остальной код (анимация и т.д.) без изменений ===
     const animationFrame = useRef<number | null>(null);

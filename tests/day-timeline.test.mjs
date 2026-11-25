@@ -12,7 +12,7 @@ const dependencies = path => {
     if (path.includes("getDayArrs")) return { getDayArrays: () => ({
         completedArr: [], skippedArr: [], nowArr: [], willArr: []
     }) };
-    if (path.includes("dateToStr")) return { todayStrFunc: () => "2026-11-11" };
+    if (path.includes("dateToStr")) return { todayStrFunc: () => "2026-11-11", clockInAppZone: () => "12:00" };
     throw new Error("Unexpected import " + path);
 };
 new Function("require", "module", "exports", output)(dependencies, mod, mod.exports);
@@ -117,4 +117,11 @@ test("pinned plans and activities appear first in SideMenu without changing dail
     const pinnedHabit = { ...normal,id:9,name:"Pinned habit",pinned:true,start_time:"10:00" };
     const entries = makeSideMenuEntries("all",[normal,pinnedHabit],[pinnedPlan],[],false,"");
     assert.deepEqual(entries.map(item => item.name),["Pinned habit","Pinned plan","Normal"]);
+});
+
+test("expired plans move to the SM archive, not plans or all",()=>{
+    const plan=(id,date,start,end)=>({id,name:String(id),plan_date:date,start_time:start,end_time:end,membership_status:"accepted"});
+    const plans=[plan(1,"2026-11-10",null,null),plan(2,"2026-11-11","10:00","11:00"),plan(3,"2026-11-11",null,null),plan(4,"2026-11-12",null,null)];
+    for(const filter of ["all","plans"]) assert.deepEqual(makeSideMenuEntries(filter,[],plans,[],false,"").map(e=>e.plan.id).sort(),[3,4]);
+    assert.deepEqual(makeSideMenuEntries("archived",[],plans,[],false,"").map(e=>e.plan.id).sort(),[1,2]);
 });

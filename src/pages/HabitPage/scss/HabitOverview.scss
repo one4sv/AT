@@ -676,3 +676,19 @@
     }
     .habitOverviewProgress { flex-shrink: 0; }
 }
+
+.habitOverviewEntryMain > .habitOverviewEntryTagIcon,
+.habitOverviewCurrentRow > .habitOverviewEntryTagIcon {
+    display: block;
+    width: 3.8dvh;
+    height: 3.8dvh;
+    max-width: none;
+    flex-shrink: 0;
+}
+.habitOverviewEntryTagIcon + .habitOverviewCurrentDetails {
+    margin-left: 5px;
+}
+.habitOverviewNextList {
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
