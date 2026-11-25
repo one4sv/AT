@@ -21,7 +21,7 @@ const duplicates = versions.filter((value, index) => versions.indexOf(value) !==
 if (duplicates.length) errors.push(`Repeated roadmap versions: ${[...new Set(duplicates)].join(", ")}`);
 if (versions.filter(value => value === version).length !== 1) errors.push("Current version must occur exactly once");
 if (!about.includes("roadmap")) errors.push("About page must link to roadmap");
-if (!about.includes(`dev ${version}`)) errors.push("About version differs from package");
+if (!about.includes('import { roadmapCurrent } from "../roadmapData";') || !about.includes("dev {roadmapCurrent.version}")) errors.push("About must use the verified roadmap current version");
 if (!roadmapTab.includes("0.0 The Beginning")) errors.push("Roadmap beginning title must be invariant English");
 if (!roadmapTab.includes("2025-07-14")) errors.push("Roadmap beginning date must remain 14.07.2025");
 for (const title of ["The Foundation", "Act", "Dialogue", "Firework", "Aphrodite", "Affinity", "The New Palette", "The Castle"]) {
