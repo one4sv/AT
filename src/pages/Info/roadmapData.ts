@@ -386,6 +386,21 @@ export const roadmapCurrent: RoadmapRelease = {
 
 export const roadmapFuture: RoadmapRelease[] = [
     {
+        version: "0.6.6",
+        title: "Horizon",
+        features: [
+            { ru: "Личные, совместные и повторяющиеся цели.", en: "Personal, shared and recurring goals." },
+            { ru: "Развитие совместных активностей и журнала.", en: "Expanded shared activities and activity journal." },
+            { ru: "Улучшения взаимодействия с календарём и его контекстным меню.", en: "Improved calendar interactions and context menu." },
+            { ru: "Переработка статистики и графиков.", en: "Redesigned statistics and charts." },
+            { ru: "Аватарки активностей и планов.", en: "Activity and plan avatars." },
+            { ru: "Фотографии в комментариях активностей и планов.", en: "Photos in activity and plan comments." },
+            { ru: "Экспорт истории личных данных активности.", en: "Export of personal activity history." },
+            { ru: "Сегодняшняя сводка по активностям в ленте.", en: "Today's activity summary in the feed." },
+            { ru: "Улучшение интерфейса и оптимизация.", en: "Interface improvements and optimization." }
+        ]
+    },
+    {
         version: "0.7",
         title: "The Castle",
         features: [
@@ -397,12 +412,8 @@ export const roadmapFuture: RoadmapRelease[] = [
     {
         version: "0.6+",
         features: [
-            { ru: "Цели: личные и совместные, связь с планами и активностями (планируется отдельно)", en: "Goals: personal and shared, linked to plans and activities (planned separately)" },
-            { ru: "Совместные активности 2.0 и расширенный прогресс участников", en: "Shared activities 2.0 and expanded member progress" },
-            { ru: "Расширенная статистика и аналитика активностей", en: "Extended activity statistics and analytics" },
-            { ru: "Журнал 2.0 и медиа активностей", en: "Journal 2.0 and activity media" },
             { ru: "Карточки активностей и действия внутри чатов", en: "Activity cards and actions in chats" },
-            { ru: "Улучшенный календарь, достижения и отчёты", en: "Advanced calendar, achievements and reports" },
+            { ru: "Достижения и расширенные отчёты", en: "Achievements and expanded reports" },
             { ru: "Развитие комментариев и ответов", en: "Expanded comments and replies" },
             { ru: "Улучшения поиска и связанных настроек", en: "Search and linked settings improvements" },
             { ru: "Дальнейшее развитие сообщества и чатов", en: "Further community and chat features" }

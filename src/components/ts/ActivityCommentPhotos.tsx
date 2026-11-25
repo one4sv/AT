@@ -20,13 +20,15 @@ function LocalPhoto({file}:{file:File}) {
     useEffect(()=>{const src=URL.createObjectURL(file);setUrl(src);return ()=>URL.revokeObjectURL(src);},[file]);
     return url?<img src={url} alt=""/>:null;
 }
-type Snapshot={photos:string[];text:string};
-export function useActivityCommentPhotos(id:string,date:string,enabled:boolean,editable:boolean) {
+type PlanCommentEntry={user_id:string;comment:string;photo_ids?:string[];user?:{username?:string;nick?:string;avatar_url?:string|null}|null};
+type Snapshot={photos:string[];text:string;comments?:PlanCommentEntry[]};
+export function useActivityCommentPhotos(id:string,date:string,enabled:boolean,editable:boolean,plan=false) {
     const {t}=useTranslation("common"),{showNotification}=useNote();
     const {fetchCalendarHabit,fetchCalendarUser,fetchAllCalendar}=useCalendar();
     const routeHabitId=useMatch("/habit/:habitId")?.params.habitId;
     const {user}=useUser();
-    const path="habits/"+id+"/comment-photos/"+date;
+    const path=plan?"plans/"+id+"/comment-photos":"habits/"+id+"/comment-photos/"+date;
+    const readPath=plan?"plans/"+id+"/comment":path;
     const scope=user.id+":"+path;
     const active=useRef(scope);
     active.current=scope;
@@ -42,11 +44,11 @@ export function useActivityCommentPhotos(id:string,date:string,enabled:boolean,e
     useEffect(()=>{
         const controller=new AbortController();
         setSaved(null);setKept([]);setAdded([]);setError(false);setBusy(false);
-        if(enabled) void api.get<Snapshot>(path,{signal:controller.signal}).then(({data})=>{
+        if(enabled) void api.get<Snapshot>(readPath,{signal:controller.signal}).then(({data})=>{
             if(!controller.signal.aborted){setSavedScope(scope);setSaved(data);setKept(data.photos);}
         }).catch(()=>{if(!controller.signal.aborted)setError(true);});
         return ()=>controller.abort();
-    },[scope,path,enabled,attempt]);
+    },[scope,readPath,enabled,attempt]);
     const dirty=!!added.length || kept.length!==saved?.photos.length;
     const attach=async(files:File[])=>{
         if(!files.length) return;
@@ -67,16 +69,18 @@ export function useActivityCommentPhotos(id:string,date:string,enabled:boolean,e
             const {data}=await api.post(path,body);
             if(!data.success)throw new Error("save");
             if(active.current!==scope)return;
-            setSaved({photos:data.photos,text});setKept(data.photos);setAdded([]);
-            if(routeHabitId===id) fetchCalendarHabit(id);
-            else if(!routeHabitId) fetchCalendarUser();
-            else fetchAllCalendar();
-            window.dispatchEvent(new Event("habit-day-comment-updated"));
+            setSaved(old=>({...old,photos:data.photos,text}));setKept(data.photos);setAdded([]);
+            if(!plan){
+                if(routeHabitId===id) fetchCalendarHabit(id);
+                else if(!routeHabitId) fetchCalendarUser();
+                else fetchAllCalendar();
+                window.dispatchEvent(new Event("habit-day-comment-updated"));
+            }
         }catch(e){
             if(active.current!==scope)return;
             if((e as {response?:{status:number}}).response?.status===409){
                 try{
-                    const {data}=await api.get<Snapshot>(path);
+                    const {data}=await api.get<Snapshot>(readPath);
                     if(active.current!==scope)return;
                     const removed=saved.photos.filter(k=>!kept.includes(k));
                     setSaved(data);setKept(data.photos.filter(k=>!removed.includes(k)));
@@ -94,11 +98,11 @@ export function useActivityCommentPhotos(id:string,date:string,enabled:boolean,e
         {error && <button type="button" onClick={()=>retry(n=>n+1)}>{t("activityImages.retry")}</button>}
     </div>;
     const previews=savedScope===scope && (kept.length>0 || added.length>0) && <div className="activityPhotoStrip">
-        {kept.map(k=><span key={k}><ActivityPhoto url={commentPhotoUrl(id,date,k)}/>
+        {kept.map(k=><span key={k}><ActivityPhoto url={plan?"/api/plans/"+id+"/comment-photos/"+encodeURIComponent(k):commentPhotoUrl(id,date,k)}/>
             {editable && <button className="removeActivityPhoto" type="button" aria-label={t("activityImages.remove")} disabled={busy} onClick={()=>setKept(old=>old.filter(item=>item!==k))}><XIcon size={14}/></button>}</span>)}
         {added.map((file,i)=><span key={i}><LocalPhoto file={file}/>
             {editable && <button className="removeActivityPhoto" type="button" aria-label={t("activityImages.remove")} disabled={busy} onClick={()=>setAdded(old=>old.filter((_,j)=>i!==j))}><XIcon size={14}/></button>}</span>)}
     </div>;
-    return {controls,previews,save,dirty,busy,ready:!!saved && savedScope===scope,savedText:savedScope===scope?saved?.text:undefined};
+    return {controls,previews,save,dirty,busy,comments:savedScope===scope?saved?.comments || []:[],ready:!!saved && savedScope===scope,savedText:savedScope===scope?saved?.text:undefined};
 }
 

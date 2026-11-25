@@ -4,8 +4,8 @@ import { ArrowBendDownLeftIcon, ChatCenteredIcon, ClockCountdownIcon, PaperPlane
 import EmojiButton from "../../components/ts/utils/EmojiButton";
 import EmojiBar from "../../components/ts/utils/EmojiBar";
 import TA from "../../components/ts/TA";
-import { useNote } from "../../components/hooks/NoteHook";
-import { api } from "../../components/ts/api";
+import { ActivityPhoto,useActivityCommentPhotos } from "../../components/ts/ActivityCommentPhotos";
+import { useUser } from "../../components/hooks/UserHook";
 
 interface PlanCommentProps {
     planId: number;
@@ -17,52 +17,31 @@ interface PlanCommentProps {
 
 export default function PlanComment({ planId, disabled = false, mobile = false, open = "comment", setOpen }: PlanCommentProps) {
     const { t } = useTranslation("common");
-    const { showNotification } = useNote();
+    const {user}=useUser();
+    const photos=useActivityCommentPhotos(String(planId),"",true,!disabled,true);
     const [comment, setComment] = useState("");
-    const [saved, setSaved] = useState("");
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
+    const loading=!photos.ready;
+    const saving=photos.busy;
     const [showEmojiBar, setShowEmojiBar] = useState(false);
     const emojiRef = useRef<HTMLDivElement>(null);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-    useEffect(() => {
-        let active = true;
-        setLoading(true);
-        setComment("");
-        setSaved("");
-        void api.get("plans/" + planId + "/comment").then(response => {
-            if (!active || !response.data?.success) return;
-            setSaved(response.data.comment || "");
-            setComment(response.data.comment || "");
-        }).catch(() => {
-            if (active) showNotification("error", t("plans.commentLoadError"));
-        }).finally(() => {
-            if (active) setLoading(false);
-        });
-        return () => { active = false; };
-        // Per-plan fetch only: notification callbacks are recreated by the global notification context.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [planId]);
+    useEffect(()=>{setComment(photos.savedText ?? "");},[planId,photos.savedText]);
 
     useEffect(() => {
         setShowEmojiBar(false);
     }, [open]);
 
-    const cantSave = saving || loading || disabled || comment.trim() === saved.trim();
-    const save = async () => {
-        if (cantSave) return;
-        setSaving(true);
-        try {
-            const response = await api.post("plans/" + planId + "/comment", { comment });
-            if (!response.data?.success) throw new Error();
-            setSaved(response.data.comment || "");
-        } catch {
-            showNotification("error", t("plans.commentSaveError"));
-        } finally {
-            setSaving(false);
-        }
-    };
+    const cantSave = saving || loading || disabled || (!photos.dirty && comment.trim()===(photos.savedText || "").trim());
+    const save=async()=>{if(!cantSave)await photos.save(comment);};
+    const others=photos.comments.filter(item=>item.user_id!==user.id);
+    const otherComments=others.length>0 && <div className="planOtherComments">
+        {others.map(item=><div key={item.user_id} className="planOtherComment">
+            <div className="planOtherCommentAuthor">{item.user?.avatar_url && <img className="activityAvatar" src={item.user.avatar_url} alt=""/>}<span>{item.user?.username || item.user?.nick || t("plans.comment")}</span></div>
+            {item.comment && <div>{item.comment}</div>}
+            {!!item.photo_ids?.length && <div className="activityPhotoStrip">{item.photo_ids.map(key=><ActivityPhoto key={key} url={"/api/plans/"+planId+"/comment-photos/"+encodeURIComponent(key)}/>)}</div>}
+        </div>)}
+    </div>;
     const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
         if (!mobile && event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
             event.preventDefault();
@@ -77,33 +56,38 @@ export default function PlanComment({ planId, disabled = false, mobile = false, 
             <ChatCenteredIcon size={22}/>
         </button> : <>
             <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar}
-                disabled={loading || disabled}/>
+                disabled={loading || disabled || saving}/>
             <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar}
                 setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef}/>
             <TA placeholder={t("habitPageUi.day.commentPlaceholder")} taRef={textAreaRef}
-                readOnly={loading || disabled} value={comment} maxLength={200}
+                readOnly={loading || disabled || saving} value={comment} maxLength={200}
                 onChange={event => setComment(event.target.value)} onKeyDown={handleKeyDown}/>
+            {photos.previews}
             <span>{comment.length}/200</span>
             <div className="hdcTAExtraMobile">
+                {photos.controls}
                 <button className="saveCommentButtonMobile" type="button" disabled={cantSave} onClick={() => void save()}>
                     {saving ? <ClockCountdownIcon size={24}/> : <PaperPlaneRightIcon weight="fill" size={24}/>}
                 </button>
             </div>
+            {otherComments}
         </>}
     </div>;
 
     return <div className="planDesktopComment">
         <div className="habitDayComment inputWithEmoji" ref={emojiRef}>
             <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar}
-                disabled={loading || disabled}/>
+                disabled={loading || disabled || saving}/>
             <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar}
                 setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef}/>
             <TA placeholder={t("habitPageUi.day.commentPlaceholder")} taRef={textAreaRef}
-                readOnly={loading || disabled} value={comment} maxLength={200}
+                readOnly={loading || disabled || saving} value={comment} maxLength={200}
                 onChange={event => setComment(event.target.value)} onKeyDown={handleKeyDown}/>
+            {photos.previews}
             <div className="hdcTAExtra">
                 <span><ArrowBendDownLeftIcon/> shift+enter</span>
                 <div>
+                    {photos.controls}
                     <span>{comment.length}/200</span>
                     <button className="saveCommentButton" type="button" disabled={cantSave} onClick={() => void save()}>
                         {saving ? <ClockCountdownIcon size={24}/> : <PaperPlaneRightIcon weight="fill" size={24}/>}
@@ -111,5 +95,6 @@ export default function PlanComment({ planId, disabled = false, mobile = false, 
                 </div>
             </div>
         </div>
+        {otherComments}
     </div>;
 }

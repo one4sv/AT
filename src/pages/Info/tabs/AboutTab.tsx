@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next"
 import SectionArt from "../../../components/ts/SectionArt";
+import { roadmapCurrent } from "../roadmapData";
 import AboutIllustration from "../AboutIllustration";
 
 export default function AboutTab() {
@@ -41,6 +42,8 @@ export default function AboutTab() {
                 <li>{t("about.feature3")}</li>
                 <li>{t("about.feature4")}</li>
                 <li>{t("about.feature5")}</li>
+                <li>{t("about.feature6")}</li>
+                <li>{t("about.feature7")}</li>
             </ul>
 
             <SectionArt theme="community"/>
@@ -61,11 +64,7 @@ export default function AboutTab() {
                 <li>{t("about.future1")}</li>
                 <li>{t("about.future2")}</li>
                 <li>{t("about.future3")}</li>
-                <li>{t("about.future4")}</li>
-                <li>{t("about.future5")}</li>
-                <li>{t("about.future6")}</li>
-                <li>{t("about.future7")}</li>
-                <li>{t("about.future8")}</li>
+
             </ul>
 
             <h3 className="accent">{t("about.commercial")}</h3>
@@ -74,7 +73,7 @@ export default function AboutTab() {
 
             <p>
                 {t("about.version")}:{" "}
-                <Link to="/info/roadmap" className="accent">dev 0.6.5</Link>
+                <Link to="/info/roadmap" className="accent">dev {roadmapCurrent.version}</Link>
             </p>
         </div>
     );
