@@ -101,3 +101,12 @@
         }
     }
 }
+
+.habitExportButton { border: none; font: inherit; color: var(--tc); text-align: left; width: 100%; align-items: flex-start; }
+.habitExportModal.addPlanDiv { width: min(420px, 90vw); box-sizing: border-box; }
+.habitExportModal > h2 { margin: 0; }
+.habitExportModal .habitExportFormats { display: flex; gap: 8px; }
+.habitExportModal .habitExportFormats > button { flex: 1; border: 1px solid var(--block_border); background: var(--interact); color: var(--tc); font: inherit; border-radius: 24px; padding: 1dvh 12px; cursor: pointer; }
+.habitExportModal .habitExportFormats > button.active { border: none; background: linear-gradient(135deg,var(--accent),var(--grad)); color: var(--inner_text); }
+.habitExportModal .addHabitSave { width: 100%; }
+@media(max-width:800px) { .habitExportModal.addPlanDiv { width: 100%; } }

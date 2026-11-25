@@ -1043,5 +1043,16 @@
     "openDay": "Open day",
     "save": "Save",
     "close": "Close"
+  },
+  "habitExport": {
+    "title": "Export data",
+    "hint": "Download activity history and data that belong to you.",
+    "format": "File format",
+    "json": "JSON · for AI",
+    "csv": "CSV · for Excel",
+    "privacy": "Only your records and activity metadata. Shared data without reliable attribution and photo files are excluded.",
+    "download": "Download",
+    "loading": "Preparing file…",
+    "error": "Unable to export data"
   }
 }

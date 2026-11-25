@@ -32,7 +32,7 @@ export default function HabitExtraButts({ isMy }: { isMy: boolean }) {
             </div>
             <CaretRightIcon className="addGoalCaret" />
         </Link>}
-        {isMy && <div className="addGoalButtDiv" onClick={() => setShowSlide("settings")}><GearSix weight="fill" className="addGoalIcon settings" />{t("habitUi.settings")}<CaretRightIcon className="addGoalCaret" /></div>}
+        {isMember && <div className="addGoalButtDiv" onClick={() => setShowSlide("settings")}><GearSix weight="fill" className="addGoalIcon settings" />{t("habitUi.settings")}<CaretRightIcon className="addGoalCaret" /></div>}
         {isMember && <div className="addGoalButtDiv" onClick={() => setShowSlide("goals")}><Target weight="fill" className="addGoalIcon goal" />{t(linked.length ? "habitUi.goals" : "habitUi.addGoal")}<CaretRightIcon className="addGoalCaret" /></div>}
         {isMember && <div className="addGoalButtDiv" onClick={() => setShowSlide("journal")}><NotebookIcon weight="fill" className="addGoalIcon" />{t("habitUi.journal")}<CaretRightIcon className="addGoalCaret" /></div>}
     </div></div>;

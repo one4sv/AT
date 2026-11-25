@@ -5,7 +5,7 @@ import Toggler from "../../../../components/ts/Toggler";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { useUpHabit } from "../../../../components/hooks/UpdateHabitHook";
 import type { asctype, metricsType } from "../../../../components/context/TheHabitContext";
-import { BoxArrowDownIcon, Trash } from "@phosphor-icons/react";
+import { BoxArrowDownIcon, Trash, DownloadSimpleIcon } from "@phosphor-icons/react";
 import SelectList, { type Option } from "../../../../components/ts/SelectList";
 import type { HabitSlideProps } from "../../HabitPage";
 import { useDelete } from "../../../../components/hooks/DeleteHook";
@@ -151,6 +151,10 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
                     />
                 </div>
             )}
+            {(isMy || habit.access?.is_member) && <button type="button" className="redHabitBlock but habitExportButton" onClick={()=>setBlackout({seted:true,module:"HabitExport",options:{habitId:String(habit.id)}})}>
+                <span className="redHabitSpan but"><DownloadSimpleIcon/> {t("habitExport.title")}</span>
+                <SettingHint text={t("habitExport.hint")}/>
+            </button>}
             {isMy && (
                 <>
                     {/* Архивировать */}
