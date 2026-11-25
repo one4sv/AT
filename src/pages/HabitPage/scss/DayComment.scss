@@ -653,7 +653,26 @@ body > .emojiBar.calendarCommentEmoji {
             height: auto;
             min-height: 4dvh;
             > div { align-items: center; gap: 8px; }
-            .inputEmojiButton { position: static; width: 30px; height: 30px; padding: 4px; color: var(--borderWh); }
+            .inputEmojiButton {
+                position: static;
+                width: 30px;
+                height: 30px;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 4px;
+                border: none;
+                border-radius: 50%;
+                background: transparent;
+                color: var(--borderHabit);
+                cursor: pointer;
+                > svg { width: 22px; height: 22px; flex-shrink: 0; }
+                &:disabled { opacity: .5; cursor: default; }
+                &:hover:not(:disabled) { color: var(--tc); }
+                &:focus-visible { outline: 2px solid var(--accent_text); }
+            }
             .activityPhotoTools { align-items: center; }
             .saveCommentButton { flex-shrink: 0; }
         }
