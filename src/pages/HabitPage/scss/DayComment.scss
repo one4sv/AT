@@ -641,3 +641,26 @@ body > .emojiBar.calendarCommentEmoji {
         border-radius: 24px;
     }
 }
+
+.calendarCommentModal.addPlanDiv {
+    gap: .7dvh;
+    > h2 { font-size: 20px; }
+    > .calendarCommentDate { color: var(--borderWh); font-size: 14px; }
+    > .habitDayComment {
+        gap: .6dvh;
+        > textarea { padding: .5dvh .5vw; }
+        > .hdcTAExtra {
+            height: auto;
+            min-height: 4dvh;
+            > div { align-items: center; gap: 8px; }
+            .inputEmojiButton { position: static; width: 30px; height: 30px; padding: 4px; color: var(--borderWh); }
+            .activityPhotoTools { align-items: center; }
+            .saveCommentButton { flex-shrink: 0; }
+        }
+    }
+    @media(max-width:800px) {
+        padding: 2dvh 3vw calc(2dvh + env(safe-area-inset-bottom));
+        > h2 { font-size: 18px; }
+        > .habitDayComment { padding: .7dvh 2vw; > textarea { padding: .5dvh 1vw; min-height: 18dvh; } }
+    }
+}

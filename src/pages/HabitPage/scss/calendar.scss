@@ -441,6 +441,9 @@
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        background: var(--bgc);
+        background: transparent;
+        border-bottom: 1px solid var(--block_border);
     }
 }
+
+.calendarDayDesktopMenu > .calendarContextSummary { background: transparent; }

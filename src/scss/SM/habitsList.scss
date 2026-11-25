@@ -251,3 +251,13 @@
         > span { background: var(--inner_text); }
     }
 }
+
+@media (max-width:800px) {
+    .habit.withGoal {
+        height: calc(6.5dvh + 40px);
+        grid-template-rows: minmax(0,1fr) 32px;
+        padding: 2px 3vw 6px .5vw;
+        row-gap: 2px;
+        > .smHabitGoal { padding: 0 1.5vw; gap: 5px; }
+    }
+}

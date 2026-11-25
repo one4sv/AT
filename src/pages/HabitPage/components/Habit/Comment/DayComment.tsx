@@ -11,7 +11,6 @@ import { useUser } from "../../../../../components/hooks/UserHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import "../../../scss/DayComment.scss";
 import { isMobile } from "react-device-detect";
-import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 
 interface DayCommentProps {
   id: string;
@@ -29,7 +28,7 @@ export default function DayComment({ id, isMy, date, modal = false }: DayComment
   const { chosenDay: calendarDay } = useCalendar();
   const chosenDay = date ?? calendarDay;
   const habit = modal && String(currentHabit?.id)!==id ? habits?.find(h=>String(h.id)===id) : currentHabit;
-  const canEdit = modal ? Boolean(user.id && habit?.ongoing && chosenDay>=habit.start_date && chosenDay<=todayStrFunc() && (!habit.end_date || chosenDay<=habit.end_date) && (!habit.access?.completion_start_date || chosenDay>=habit.access.completion_start_date) && (habit.access?.can_comment ?? habit.user_id===user.id)) : isMy;
+  const canEdit = modal ? Boolean(user.id && habit?.ongoing && chosenDay>=habit.start_date && (!habit.end_date || chosenDay<=habit.end_date) && (!habit.access?.completion_start_date || chosenDay>=habit.access.completion_start_date) && (habit.access?.can_comment ?? habit.user_id===user.id)) : isMy;
   const fallbackComment = modal ? "" : dayComment;
     const visible=String(habit?.id)===id && !!(habit?.access?.is_member || habit?.access?.is_owner || (modal ? habit?.user_id===user.id : isMy)) &&
         (!habit?.access?.completion_start_date || chosenDay>=habit.access.completion_start_date);
@@ -82,7 +81,7 @@ export default function DayComment({ id, isMy, date, modal = false }: DayComment
 
   return (
     <div className="habitDayComment inputWithEmoji" ref={emojiRef}>
-      <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!canEdit || !habit?.ongoing || syncing} />
+      {!modal && <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!canEdit || !habit?.ongoing || syncing} />}
       <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar} setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef} cn={modal ? "calendarCommentEmoji" : undefined} />
       <TA
         placeholder={t("habitPageUi.day.commentPlaceholder")}
@@ -104,9 +103,11 @@ export default function DayComment({ id, isMy, date, modal = false }: DayComment
           </span>
         ) : ""}
         <div>
+          {modal && <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!canEdit || !habit?.ongoing || syncing} />}
           {photos.controls}
           <span>{comment.length}/200</span>
           <button
+            type="button"
             className="saveCommentButton"
             disabled={cantSave  || waitComAnswer}
             onClick={handleSave}

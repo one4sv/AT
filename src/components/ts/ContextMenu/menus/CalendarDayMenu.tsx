@@ -54,9 +54,9 @@ export default function CalendarDayMenu({mobile}:{mobile:boolean}){
     const counts=getDayArrays(date,calendar,habits,id,current);
     const comment=calendar.find(c=>c.date===date && String(c.habitId)===String(chosen?.id))?.comment || "";
     const done=calendar.some(c=>c.date===date && String(c.habitId)===String(chosen?.id) && c.isDone);
-    const inRange=Boolean(chosen?.ongoing && date>=chosen.start_date && (!chosen.end_date || date<=chosen.end_date) && date<=todayStrFunc() && (!chosen.access?.completion_start_date || date>=chosen.access.completion_start_date));
+    const inRange=Boolean(chosen?.ongoing && date>=chosen.start_date && (!chosen.end_date || date<=chosen.end_date) && (!chosen.access?.completion_start_date || date>=chosen.access.completion_start_date));
     const own=Boolean(chosen && chosen.user_id===user.id);
-    const canComplete=inRange && Boolean(chosen?.access?.can_complete ?? own);
+    const canComplete=inRange && date<=todayStrFunc() && Boolean(chosen?.access?.can_complete ?? own);
     const canComment=inRange && Boolean(chosen?.access?.can_comment ?? own);
     const selectDay=()=>{const d=new Date(date+"T12:00:00");setSelectedMonth(d.getMonth());setSelectedYear(d.getFullYear());setChosenDay(date);};
     const slide=buildSlide(month.getMonth(),month.getFullYear());
@@ -79,8 +79,8 @@ export default function CalendarDayMenu({mobile}:{mobile:boolean}){
         {!mobile && summary}
         <div className="calendarContextActions">
         {!id && <div className="calendarContextPick" onClick={e=>e.stopPropagation()}><SelectList className="calendarContextActivity" placeholder={t("calendarDay.chooseActivity")} selected={selectedId} onChange={setSelectedId} arr={items.filter(h=>h.ongoing).map(h=>({value:String(h.id),label:h.name}))}/></div>}
-        {canComplete && <div className="ContextMenuButt" onClick={()=>{closeMenu();selectDay();markDone(chosen!.id,date);}}>{done?<CircleIcon/>:<CheckCircleIcon/>}{t(done?"calendarDay.undo":"calendarDay.mark")}</div>}
-        {canComment && <div className="ContextMenuButt" onClick={()=>{closeMenu();selectDay();setBlackout({seted:true,module:"CalendarDayComment",options:{habitId:String(chosen!.id),id:date}});}}><ChatCircleIcon/>{t(comment?"calendarDay.editComment":"calendarDay.addComment")}</div>}
+        {canComplete && <div className="ContextMenuButt" onClick={()=>{closeMenu();selectDay();markDone(chosen!.id,date);}}>{done?<CheckCircleIcon/>:<CircleIcon/>}{t(done?"calendarDay.undo":"calendarDay.mark")}</div>}
+        {canComment && <div className="ContextMenuButt" onClick={()=>{closeMenu();selectDay();setBlackout({seted:true,module:"CalendarDayComment",options:{habitId:String(chosen!.id),id:date,name:comment?"edit":"add"}});}}><ChatCircleIcon/>{t(comment?"calendarDay.editComment":"calendarDay.addComment")}</div>}
         {!canComplete && !canComment && <div className="ContextMenuButt" onClick={()=>{selectDay();closeMenu();}}>{t("calendarDay.openDay")}</div>}
         </div>
     </>;

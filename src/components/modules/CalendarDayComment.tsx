@@ -8,7 +8,8 @@ export default function CalendarDayComment(){
     const {t}=useTranslation("common"),{blackout}=useBlackout();
     const id=blackout.options?.habitId || "",date=blackout.options?.id || "";
     return <div className="addHabitDiv addPlanDiv calendarCommentModal">
-        <h2>{t("calendarDay.editComment")} · {formatDateFromString(date)}</h2>
+        <h2>{t(blackout.options?.name==="add"?"calendarDay.addComment":"calendarDay.editComment")}</h2>
+        <div className="calendarCommentDate">{formatDateFromString(date)}</div>
         <DayComment key={id+":"+date} id={id} date={date} isMy={false} modal/>
     </div>;
 }
