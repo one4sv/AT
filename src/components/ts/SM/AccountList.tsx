@@ -1,5 +1,5 @@
 import { useUser } from "../../hooks/UserHook";
-import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, CalendarPlusIcon, SignOutIcon, UserIcon, CheckIcon, CalendarCheckIcon, ChatTeardropIcon, PencilSimpleIcon } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, CaretRightIcon, GearIcon, NewspaperIcon, SneakerMoveIcon, CalendarPlusIcon, SignOutIcon, UserIcon, CheckIcon, CalendarCheckIcon, ChatTeardropIcon, PencilSimpleIcon, TargetIcon, CaretDownIcon } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useSideMenu } from "../../hooks/SideMenuHook";
@@ -24,6 +24,7 @@ export default function AccountList() {
     const location = useLocation();
     const navigate = useNavigate();
     const [, setRecentIds] = useLocalStorage<string[]>("settings_recent", EMPTY_RECENT);
+    const [createExpanded,setCreateExpanded] = useState(false);
     const [logoutConfirm, setLogoutConfirm] = useState(false);
     const logoutRef = useRef<HTMLButtonElement>(null);
 
@@ -35,7 +36,7 @@ export default function AccountList() {
         return () => document.removeEventListener("pointerdown", outside);
     }, []);
 
-    useEffect(() => { setLogoutConfirm(false); }, [activeTab]);
+    useEffect(() => { setLogoutConfirm(false); setCreateExpanded(false); }, [activeTab]);
 
     const selectSetting = (sectionId: string, item: SearchableSetting) => {
         setRecentIds(previous => [item.id, ...previous.filter(id => id !== item.id)].slice(0, 5));
@@ -90,15 +91,20 @@ export default function AccountList() {
                     <div className="SMcreateButt" onClick={() => openCreate("AddHabit")}>
                         <CalendarCheckIcon size={18} weight="fill"/> {t("sideMenu.newActivity")}
                     </div>
+                    {createExpanded && <>
                     <div className="SMcreateButt" onClick={() => openCreate("AddPlan")}>
                         <CalendarPlusIcon size={18} weight="fill"/> {t("plans.create")}
                     </div>                    
                     <div className="SMcreateButt" onClick={() => openCreate("AddGoal")}>
-                        <BookmarkSimpleIcon size={18} weight="fill"/> {t("sideMenu.newGoal")}
+                        <TargetIcon size={18} weight="fill"/> {t("sideMenu.newGoal")}
                     </div>
                     <div className="SMcreateButt" onClick={() => showNotification("info", t("sideMenu.inDevelopment"))}>
                         <Megaphone size={18} fill="currentColor"/> {t("sideMenu.newSpot")}
                     </div>
+                    </>}
+                    <button type="button" className="SMcreateButt SMcreateMore" aria-expanded={createExpanded} onClick={()=>setCreateExpanded(value=>!value)}>
+                        <CaretDownIcon size={18} className={createExpanded?"expanded":""}/>{t(createExpanded?"sideMenu.createLess":"sideMenu.globalSearchMore")}
+                    </button>
                 </div>
                 <button type="button" className="SMaccountButt logout" onClick={() => logoutConfirm ? logOut() : setLogoutConfirm(true)} ref={logoutRef}>
                     <span className="settingName">{logoutConfirm ? <CheckIcon size={21}/> : <SignOutIcon weight="fill" size={21}/>} {t(logoutConfirm ? "accountNavigation.confirmLogout" : "accountNavigation.logout")}</span>

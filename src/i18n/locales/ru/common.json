@@ -100,7 +100,8 @@
     "feed": "Лента",
     "confirmLogOut": "Да, выйти",
     "loadingNavigation": "Загрузка навигации",
-    "photo": "Фото"
+    "photo": "Фото",
+    "createLess": "Свернуть"
   },
   "contactsList": {
     "usersNotFound": "Пользователи не найдены",

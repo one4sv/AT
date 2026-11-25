@@ -368,3 +368,15 @@
         flex-shrink: 0;
     }
 }
+
+.SMcreateMore {
+    border: none;
+    color: var(--borderWh);
+    font-size: 16px;
+    width: 100%;
+    > svg {
+        color: inherit;
+        transition: transform .2s ease;
+        &.expanded { transform: rotate(180deg); }
+    }
+}

@@ -19,7 +19,7 @@ test("SideMenu has desktop and touch create actions",()=>{
     assert.match(nav,/data-action="add-goal"/);
     assert.match(nav,/action === "add-goal"/);
     assert.match(nav,/createActivity\("AddGoal"\)/);
-    assert.match(nav, /<BookmarkSimpleIcon size=\{20\} weight="fill"\/> \{t\("sideMenu.newGoal"\)\}/);
+    assert.match(nav, /<TargetIcon size=\{20\} weight="fill"\/> \{t\("sideMenu.newGoal"\)\}/);
     const modal=read("src/components/modules/ModuleMap.ts");
     for(const name of ["AddGoal","GoalCatalog","GoalDetails","GoalPicker"]) assert.match(modal,new RegExp(name+": lazy"));
 });

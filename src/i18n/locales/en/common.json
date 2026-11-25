@@ -100,7 +100,8 @@
     "feed": "Feed",
     "confirmLogOut": "Yes, sign out",
     "loadingNavigation": "Loading navigation",
-    "photo": "Photo"
+    "photo": "Photo",
+    "createLess": "Show less"
   },
   "contactsList": {
     "usersNotFound": "Users not found",

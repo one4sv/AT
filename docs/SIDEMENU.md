@@ -98,7 +98,7 @@
 
 ## Создание целей
 
-В `SMnav.tsx` пункт `SMnavExtraDiv.habits` «Новая цель» открывает штатную модалку `AddGoal`. SVG `BookmarkSimpleIcon` с `weight="fill"` совпадает с пунктом «Новая цель» в `SMcreateDiv`. Проверяются оба пути: `onMouseUp` на ПК и `handleNavTouchEnd` через `data-action="add-goal"` на телефоне. Общая кнопка `SMcreateDiv` добавляет «Новая цель». В `AccountList.tsx` **не появляется** новый `SMmainButt`: переход к целям происходит через существующий обзор `/habit`, его описание `accountNavigation.activitiesDesc` не менять.
+В `SMnav.tsx` пункт `SMnavExtraDiv.habits` «Новая цель» открывает штатную модалку `AddGoal`. SVG `TargetIcon` с `weight="fill"` совпадает с пунктом «Новая цель» в `SMcreateDiv`. Проверяются оба пути: `onMouseUp` на ПК и `handleNavTouchEnd` через `data-action="add-goal"` на телефоне. В `SMcreateDiv` по умолчанию видны новый пост, беседа и активность; план, цель и спот раскрываются через «Показать ещё». `TargetIcon` цели отличается от `BookmarkSimpleIcon` Избранного. В `AccountList.tsx` **не появляется** новый `SMmainButt`: переход к целям происходит через существующий обзор `/habit`, его описание `accountNavigation.activitiesDesc` не менять.
 
 Циклическая активность в `HabitDiv` отображает во второй строке ближайший активный день от даты начала цикла (Сегодня/Завтра/полная дата) и локализованное время `в`, `с … до …` или `до`; дни отдыха пропускаются. Не смешивать со счётчиком участников в первой строке. Гостевое меню остаётся штатным `SideMenuUnAunthificated`, дополнено кнопкой входа по QR, ведущей на `/sign?mode=qr` и открывающей существующий QuickLogin QR; не запускать QR-авторизацию без явного выбора.
 
