@@ -54,7 +54,7 @@ export default function FaqTab() {
             <p>{t("faq.a11")}</p>
 
             <SectionArt theme="chats"/>
-            {Array.from({ length: 9 }, (_, index) => index + 12).map(index => (
+            {Array.from({ length: 17 }, (_, index) => index + 12).map(index => (
                 <div key={index}>
                     <h3 className="accent">{t(`faq.q${index}`)}</h3>
                     <p>
