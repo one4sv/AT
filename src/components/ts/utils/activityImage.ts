@@ -31,3 +31,8 @@ export function activityAvatarUrl(id:number|string,key:string) {
 export const commentPhotoUrl=(id:string|number,date:string,key:string)=>
     "/api/habits/"+id+"/comment-photos/"+date+"/"+encodeURIComponent(key);
 
+
+export function planAvatarUrl(id:number|string,key:string,share?:string|null) {
+    const token=share ?? new URLSearchParams(window.location.search).get("share");
+    return "/api/plans/"+id+"/avatar/"+encodeURIComponent(key)+(token?"?share="+encodeURIComponent(token):"");
+}

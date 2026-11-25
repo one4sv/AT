@@ -1020,7 +1020,8 @@
     "noDescription": "No description",
     "invitations": "Plan invitations",
     "dayOverview": "Day overview",
-    "dayCount": "Plans on this date: {{count}}"
+    "dayCount": "Plans on this date: {{count}}",
+    "avatar": "Plan avatar"
   },
   "calendarDay": {
     "ongoing": "In progress",

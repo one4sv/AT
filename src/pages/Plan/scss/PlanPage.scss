@@ -855,3 +855,27 @@
 .planMobileDone .doneButtDivMobile.doable svg {
     color: var(--inner_text);
 }
+
+.planTitleWithIcon > .planAvatarButton {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 5dvh;
+    height: 5dvh;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--interact);
+    color: var(--accent_text);
+    cursor: pointer;
+    > .activityAvatar {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+    > svg {
+        width: 70%;
+        height: 70%;
+    }
+}

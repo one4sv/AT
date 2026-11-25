@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { CalendarBlankIcon, ClockIcon, MapPinIcon, CheckCircleIcon, CircleIcon, TrashIcon, PencilSimpleIcon, CheckIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon, ClockIcon, MapPinIcon, CheckCircleIcon, CircleIcon, TrashIcon, PencilSimpleIcon, CheckIcon, CameraIcon } from "@phosphor-icons/react";
 import { api } from "../../components/ts/api";
 import { usePlans } from "../../components/hooks/PlansHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
@@ -19,6 +19,8 @@ import { relativePlanDay } from "../../components/ts/utils/dateToStr";
 import PlanReminders from "./PlanReminders";
 import PlanComment from "./PlanComment";
 import PlanMembers from "./PlanMembers";
+import { prepareActivityImage, planAvatarUrl } from "../../components/ts/utils/activityImage";
+import "../../scss/activityImages.scss";
 import { tags } from "../../components/ts/tags";
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
 import { useSettings } from "../../components/hooks/SettingsHook";
@@ -41,6 +43,8 @@ export default function PlanPage() {
     const plan = confirmedPlan && pendingPlans[confirmedPlan.id] ? {...confirmedPlan,...pendingPlans[confirmedPlan.id]} : confirmedPlan;
     const [loading, setLoading] = useState(Boolean(planId));
     const [saving, setSaving] = useState(false);
+    const [avatarBusy,setAvatarBusy] = useState(false);
+    const avatarInput=useRef<HTMLInputElement>(null);
     const [editing, setEditing] = useState(!planId);
     const [draft, setDraft] = useState<PlanInput | null>(null);
     const [error, setError] = useState("");
@@ -105,9 +109,9 @@ export default function PlanPage() {
     }, [planId, plan?.name, setTitle, t]);
     useEffect(() => {
         const Icon = tags.find(tag => tag.value === plan?.tag)?.icon;
-        setTitleIcon(Icon ? <Icon size={24}/> : null);
+        setTitleIcon(plan?.avatar_key ? <img className="activityAvatar" src={planAvatarUrl(plan.id,plan.avatar_key)} alt=""/> : Icon ? <Icon size={24}/> : null);
         return () => setTitleIcon(null);
-    }, [plan?.tag, setTitleIcon]);
+    }, [plan?.tag, plan?.avatar_key, plan?.id, search, setTitleIcon]);
 
     const startEditing = () => {
         if (!plan) return;
@@ -208,6 +212,31 @@ export default function PlanPage() {
             setSaving(false);
         }
     };
+    const canEditAvatar=Boolean(plan?.is_owner && plan.status!=="canceled");
+    const changeAvatar=async(file:File|null)=>{
+        if(!plan || !canEditAvatar || avatarBusy || pendingPlans[plan.id])return;
+        setAvatarBusy(true);setError("");
+        try{
+            const body=new FormData();
+            if(file)body.append("avatar",await prepareActivityImage(file,true));else body.append("remove","true");
+            await writePlan(plan.id,{},async()=>{
+                const {data}=await api.put("plans/"+plan.id+"/avatar",body);
+                if(!data.success)throw new Error("Avatar not saved");
+                const patch={avatar_key:data.avatar_key as string|null};
+                loadVersion.current++;
+                setPlan(current=>current?.id===plan.id?{...current,...patch}:current);
+                return patch;
+            });
+        }catch{setError(t("activityImages.avatarError"));}finally{setAvatarBusy(false);}
+    };
+    const openAvatar=(x:number,y:number)=>{
+        if(!plan || avatarBusy)return;
+        if(!plan.avatar_key){if(canEditAvatar)avatarInput.current?.click();return;}
+        const url=planAvatarUrl(plan.id,plan.avatar_key);
+        const view=()=>setBlackout({seted:true,module:"ImgPrev",img:url});
+        if(!canEditAvatar){view();return;}
+        openMenu(x,y,"activityAvatar",{id:String(plan.id),onEdit:()=>avatarInput.current?.click(),onOpen:view,onDelete:()=>setBlackout({seted:true,module:"ConfirmAction",confirmAction:{title:t("activityImages.removeAvatar"),description:t("activityImages.removeAvatar"),label:t("activityImages.removeAvatar"),variant:"danger",run:async()=>{await changeAvatar(null);}}})});
+    };
     const selectedTag = tags.find(tag => tag.value === plan?.tag);
     const planPinned = plans.find(item => item.id === plan?.id)?.pinned ?? plan?.pinned ?? false;
     const linkOnly = plan?.visibility === "link" || (plan?.visibility === "inherit" && privateShow.plans === "link");
@@ -274,7 +303,7 @@ export default function PlanPage() {
                 <div className="planSection planMainSection"
                     data-context-menu={plan.membership_status === "accepted" ? "true" : undefined}
                     onContextMenu={event => {
-                        if (editing && (event.target as Element).closest("input, textarea")) return;
+                        if ((event.target as Element).closest(".planAvatarButton") || (editing && (event.target as Element).closest("input, textarea"))) return;
                         if (plan.membership_status === "accepted") {
                             event.preventDefault();
                             openPlanMenu(event.clientX, event.clientY);
@@ -282,7 +311,10 @@ export default function PlanPage() {
                     }}>
                     <div className="planHeading">
                         <h1 className="planTitleWithIcon">
-                            {selectedTag && <selectedTag.icon size={26}/>}
+                            {canEditAvatar && <input ref={avatarInput} type="file" accept="image/*" hidden onChange={event=>{const file=event.target.files?.[0];event.target.value="";if(file)void changeAvatar(file);}}/>}
+                            {(plan.avatar_key || canEditAvatar) ? <button type="button" className="planAvatarButton" aria-label={t("plans.avatar")} disabled={avatarBusy} onClick={event=>{event.stopPropagation();const rect=event.currentTarget.getBoundingClientRect();openAvatar(event.clientX || rect.left,event.clientY || rect.bottom);}} onContextMenu={event=>{event.preventDefault();event.stopPropagation();openAvatar(event.clientX,event.clientY);}}>
+                                {plan.avatar_key?<img className="activityAvatar" src={planAvatarUrl(plan.id,plan.avatar_key)} alt=""/>:selectedTag?<selectedTag.icon size={26}/>:<CameraIcon size={26}/>}
+                            </button> : selectedTag && <selectedTag.icon size={26}/>}
                             <input id="planInlineName" className="planDetailsInput planTitleInput"
                                 aria-label={t("plans.name")} maxLength={160} required
                                 readOnly={readOnly} tabIndex={readOnly ? -1 : 0}

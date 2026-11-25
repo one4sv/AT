@@ -22,6 +22,7 @@ export interface OneOffPlan {
     timezone?: string;
     place?: string;
     tag?: string | null;
+    avatar_key?: string | null;
     kind: "personal" | "shared";
     completion_mode?: "personal" | "shared";
     join_mode?: "invite" | "request" | "open";

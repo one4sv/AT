@@ -1028,7 +1028,8 @@
     "noDescription": "Нет описания",
     "invitations": "Приглашения в планы",
     "dayOverview": "Обзор дня",
-    "dayCount": "Планов на дату: {{count}}"
+    "dayCount": "Планов на дату: {{count}}",
+    "avatar": "Аватарка плана"
   },
   "calendarDay": {
     "ongoing": "В процессе",

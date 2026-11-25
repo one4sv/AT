@@ -10,8 +10,12 @@ import { formatDateFromString, relativePlanDay } from "./utils/dateToStr";
 import { describeDayTime } from "./utils/dayTimeline";
 import ActivityIndicators from "./ActivityIndicators";
 import { tags } from "./tags";
+import { planAvatarUrl } from "./utils/activityImage";
+import "../../scss/activityImages.scss";
 
-function PlanTagIcon({ tag }: { tag?: string | null }) {
+function PlanTagIcon({ plan }: { plan: OneOffPlan }) {
+    if(plan.avatar_key)return <div className="habitIcon"><img className="activityAvatar" loading="lazy" alt="" src={planAvatarUrl(plan.id,plan.avatar_key,plan.share)}/></div>;
+    const tag=plan.tag;
     const selectedTag = tags.find(item => item.value === tag);
     if (!selectedTag) return null;
     const Icon = selectedTag.icon;
@@ -62,7 +66,7 @@ export default function PlanDiv({ plan, entry, onSelect }: {
                 shareToken: plan.is_owner && plan.visibility === "link" ? plan.share_token : undefined
             });
         }}>
-        <PlanTagIcon tag={plan.tag}/>
+        <PlanTagIcon plan={plan}/>
         <span className="habitInfo">
             <span className="habitName">
                 <span className="habitNameText">{plan.name}</span>
