@@ -628,3 +628,16 @@
         }
     }
 }
+
+body > .emojiBar.calendarCommentEmoji {
+    z-index: 1200;
+}
+
+@media (max-width: 800px) {
+    body > .emojiBar.calendarCommentEmoji.emojiKeyboard {
+        top: max(1dvh, env(safe-area-inset-top));
+        bottom: auto;
+        max-height: 32dvh;
+        border-radius: 24px;
+    }
+}
