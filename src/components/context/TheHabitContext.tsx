@@ -1,3 +1,4 @@
+import { parseAppTimestamp } from "../ts/utils/dateToStr";
 import { createContext, useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { type ReactNode } from "react";
 import { useHabits } from "../hooks/HabitsHook";
@@ -147,13 +148,13 @@ const parseCounter = (counter: habitCounter): habitCounter | null => {
     if (!counter) return null;
     return {
         id: counter.id,
-        started_at: new Date(counter.started_at),
+        started_at: parseAppTimestamp(counter.started_at),
         count: counter.count,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         progression: (counter.progression || []).map(
             (item: any) => ({
                 count: item.count,
-                time: new Date(item.time),
+                time: parseAppTimestamp(item.time),
                 text: item.text
             })
         ),

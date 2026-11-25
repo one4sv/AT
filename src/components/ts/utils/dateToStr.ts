@@ -17,6 +17,14 @@ export const appTimeZone = () => resolveTimeZone(
 const isAmerican = () => typeof document !== "undefined" && document.documentElement.dataset.dateFormat === "american";
 const isTwelveHours = () => typeof document !== "undefined" && document.documentElement.dataset.timeFormat === "twelve";
 const displayParts = (y: string, m: string, d: string) => isAmerican() ? `${m}.${d}.${y}` : `${d}.${m}.${y}`;
+export const parseAppTimestamp = (value: unknown): Date => {
+    if (value instanceof Date) return value;
+    if (typeof value !== "string" || !value.trim()) return new Date(NaN);
+    const normalized = value.trim().replace(/^(\d{4}-\d{2}-\d{2}) /, "$1T")
+        .replace(/(\.\d{3})\d+(?=Z|[+-]\d{2}(?::?\d{2})?$)/i, "$1")
+        .replace(/([+-]\d{2})$/, "$1:00");
+    return new Date(normalized);
+};
 const localFields = (date: Date, timeZone = appTimeZone()) => {
     const parts = new Intl.DateTimeFormat("en-US", {
         timeZone, year: "numeric", month: "2-digit", day: "2-digit",
@@ -26,10 +34,13 @@ const localFields = (date: Date, timeZone = appTimeZone()) => {
     return { year: get("year"), month: get("month"), day: get("day"), hour: get("hour"), minute: get("minute") };
 };
 export const dateInAppZone = (value: Date | string) => {
-    const { year, month, day } = localFields(new Date(value));
+    const date = parseAppTimestamp(value);
+    if (!Number.isFinite(date.getTime())) return "";
+    const { year, month, day } = localFields(date);
     return `${year}-${month}-${day}`;
 };
 export const clockInAppZone = (value: Date = new Date()) => {
+    if (!Number.isFinite(value.getTime())) return "";
     const { hour, minute } = localFields(value);
     return `${hour}:${minute}`;
 };
@@ -53,7 +64,7 @@ const dateOnly = (value: Date | string): value is string =>
 
 export const formatAppDate = (date: Date | string, options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" }) => {
     const calendar = dateOnly(date);
-    const parsed = calendar ? new Date(date + "T12:00:00Z") : new Date(date);
+    const parsed = calendar ? new Date(date + "T12:00:00Z") : parseAppTimestamp(date);
     if (Number.isNaN(parsed.getTime())) return "";
     if (isAmerican() && !i18n.resolvedLanguage?.startsWith("en") &&
         options.day === "2-digit" && options.month === "2-digit" && options.year === "numeric") {
@@ -85,7 +96,7 @@ export const dateToStrFormat = (date: Date) => {
 /** Existing calendar-grid dates are constructed in local civil time; preserve that contract. */
 export const dateToCalendarFormat = (date: Date) =>
     `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-export const timeToStr = (date: Date | string) => formatClock(clockInAppZone(new Date(date)));
+export const timeToStr = (date: Date | string) => formatClock(clockInAppZone(parseAppTimestamp(date))) || "—";
 export const formatDateFromString = (date: string) => {
     const [y, m, d] = date.split("-");
     return displayParts(y, m, d);

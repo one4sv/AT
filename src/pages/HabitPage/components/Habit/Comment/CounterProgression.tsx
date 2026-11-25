@@ -1,7 +1,7 @@
 import TA from "../../../../../components/ts/TA";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { timeToStr, todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
+import { timeToStr, todayStrFunc, parseAppTimestamp } from "../../../../../components/ts/utils/dateToStr";
 import { placeholders } from "../../../utils/placeholders";
 import { Send } from "lucide-react";
 import { api } from "../../../../../components/ts/api";
@@ -34,12 +34,12 @@ export default function CounterProgression() {
     }, [events])
 
     const handleSend = async (key: string, time: Date, newText: string) => {
-        if (!habit || !currentCounter) return
+        if (!habit || !currentCounter || !Number.isFinite(parseAppTimestamp(time).getTime())) return
 
         setHabitCounter(prev => {
             if (!prev) return prev
             const updatedProgression = prev.progression.map(p =>
-                new Date(p.time).toISOString() === time.toISOString()
+                parseAppTimestamp(p.time).getTime() === parseAppTimestamp(time).getTime()
                     ? { ...p, text: newText }
                     : p
             )
@@ -82,7 +82,8 @@ export default function CounterProgression() {
                 const key = `${event.time}-${event.count}-${index}`
                 const currentValue = editedTexts[key] ?? event.text ?? ""
                 const hasChanged = currentValue.trim() !== (event.text ?? "").trim()
-                const isEditing = editingIndices.includes(index)
+                const validTime = Number.isFinite(parseAppTimestamp(event.time).getTime())
+                const isEditing = validTime && editingIndices.includes(index)
                 return (
                     <div className="eventStr eventCounter" key={key}>
                         <span className="eventTime">{timeToStr(event.time)}</span> {t("habitPageUi.progress.valueChanged", { count: event.count })}
@@ -134,6 +135,7 @@ export default function CounterProgression() {
                             </div>
                         ) : event.text ? (
                             <div className="circleText savedText" onClick={() => {
+                                if (!validTime) return;
                                 setEditingIndices(prev => [...prev, index])
                                 setEditedTexts(prev => ({ ...prev, [key]: event.text ?? "" }))
                             }}>

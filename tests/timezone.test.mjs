@@ -65,3 +65,12 @@ test("settings and date consumers use the central timezone", () => {
     assert.match(chat, /dateInAppZone/);
     assert.match(schedule, /clockInAppZone/);
 });
+
+test("Postgres counter timestamps and invalid history dates never crash rendering", () => {
+    document.documentElement.dataset.timeZone = "Europe/Moscow";
+    document.documentElement.dataset.timeFormat = "twentyFour";
+    assert.equal(dates.timeToStr("2026-11-25T01:03:16.972816+00:00"), "04:03");
+    assert.equal(dates.timeToStr("2026-11-25 01:03:16.972816+00"), "04:03");
+    assert.equal(dates.timeToStr(new Date(NaN)), "—");
+    assert.equal(dates.dateInAppZone("invalid"), "");
+});
