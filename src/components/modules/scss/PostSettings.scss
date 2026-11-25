@@ -133,3 +133,15 @@
         > button { padding: 1dvh 3vw; }
     }
 }
+
+.postLinkTabs > button { flex: 1; }
+.postLinkSlider { display:flex; width:100%; height:min(45dvh,460px); overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none; overscroll-behavior-x:contain; }
+.postLinkSlide { flex:0 0 100%; min-width:0; height:100%; box-sizing:border-box; overflow-y:auto; scroll-snap-align:start; scroll-snap-stop:always; overscroll-behavior-y:contain; }
+.postLinkRow { align-items:center; }
+.postLinkRow .habitInfo { height:100%; }
+.postLinkRow.active { border:none; color:var(--inner_text); }
+.postLinkCheck { flex-shrink:0; align-self:center; color:var(--inner_text); }
+.postLinkSelected { display:flex; gap:4px; flex-wrap:wrap; }
+.postLinkSelected button { border:none; background:var(--interact); border-radius:24px; color:var(--tc); padding:5px 10px; cursor:pointer; max-width:100%; overflow:hidden; text-overflow:ellipsis; }
+.postLinkSummary { align-items:center; }
+.postLinkSummary .habitInfo { height:100%; }

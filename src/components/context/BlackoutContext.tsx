@@ -4,6 +4,8 @@ import type { QuickCreateDraft } from "../ts/utils/quickCreateCommand";
 
 const BlackoutContext = createContext<BlackoutContextType | null>(null);
 
+export type PostLinks = {habit:string;goal:string;plan:string};
+
 export interface Blackout {
     seted: boolean;
     confirmAction?: { title: string; description: string; label?: string; variant?: "danger" | "approve"; run: () => Promise<void> };
@@ -18,9 +20,9 @@ export interface Blackout {
     sender?: { id?: string; nick?: string; name?: string; url?: string };
     postSettings?: {
         visibility: string;
-        habit: string;
+        links: PostLinks;
         setVisibility: (value: string) => void;
-        setHabit: (value: string) => void;
+        setLinks: (value: PostLinks) => void;
     };
     isRoot?: boolean;
     images?: BlackoutImage[];

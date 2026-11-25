@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronRight } from "lucide-react";
-import { ChatCircle, Heart, DotsThreeVertical, UserCircle, ShareFatIcon } from "@phosphor-icons/react";
+import { ChatCircle, Heart, DotsThreeVertical, UserCircle, ShareFatIcon, TargetIcon, CalendarBlankIcon } from "@phosphor-icons/react";
 import { isMobile } from "react-device-detect";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useMessages } from "../hooks/MessagesHook";
@@ -13,6 +13,8 @@ import { useUser } from "../hooks/UserHook";
 import { useSettings } from "../hooks/SettingsHook";
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { habitIcon } from "./habitIcon";
+import { tags } from "./tags";
+import { planAvatarUrl } from "./utils/activityImage";
 import { toggleLike, withLike } from "./utils/toggleLike";
 import HighlightText from "./HighlightText";
 import AccPostMedia from "../../pages/Acc/utils/AccPostMedia";
@@ -181,6 +183,12 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                         {post.habit.name}
                     </div>
                     <ChevronRight className="aphGo" />
+                </div>}
+                {post.goal && <div className="PostHabit" role="button" tabIndex={0} onKeyDown={e=>{if(e.key==="Enter")e.currentTarget.click();}} onClick={()=>setBlackout({seted:true,module:"GoalDetails",options:{id:String(post.goal!.id)}})}>
+                    <div className="aphIcon"><TargetIcon/></div><div className="aphName">{post.goal.name}</div><ChevronRight className="aphGo"/>
+                </div>}
+                {post.plan && <div className="PostHabit" role="button" tabIndex={0} onKeyDown={e=>{if(e.key==="Enter")e.currentTarget.click();}} onClick={()=>navigate(`/plan/${post.plan!.id}${token?"?share="+encodeURIComponent(token):""}`)}>
+                    <div className="aphIcon">{post.plan.avatar_key?<img className="activityAvatar" src={planAvatarUrl(post.plan.id,post.plan.avatar_key,token)} alt=""/>:(()=>{const Icon=tags.find(item=>item.value===post.plan?.tag)?.icon || CalendarBlankIcon;return <Icon/>;})()}</div><div className="aphName">{post.plan.name}</div><ChevronRight className="aphGo"/>
                 </div>}
                 <div className="postMediaArea">
                     <AccPostMedia red={false} gallery={post.media} media={post.media?.filter(file => !mediaIds(post.content).includes(file.id || file.url))} />

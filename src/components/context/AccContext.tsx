@@ -20,6 +20,8 @@ export type PostType = {
     content?: JSONContent | null;
     visibility?: "inherit" | "all" | "contacts" | "nobody" | "link";
     habit?:Habit,
+    goal?:{id:number;name:string} | null,
+    plan?:Pick<OneOffPlan,"id"|"name"|"tag"|"avatar_key"> | null,
     text:string,
     likes:(string | null)[],
     created_at: string,

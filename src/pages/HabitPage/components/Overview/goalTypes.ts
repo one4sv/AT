@@ -54,6 +54,7 @@ export interface Goal {
     reminder_days?: number | null;
     completed_at?: string | null;
     habit_ids?: number[];
+    plan_ids?: number[];
     recent_stages?: GoalStage[];
     recent_records?: GoalRecord[];
     stages?: GoalStage[];

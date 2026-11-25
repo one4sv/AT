@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { GearIcon, XIcon, ProhibitIcon } from "@phosphor-icons/react";
+import { GearIcon, XIcon, LinkSimpleIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useSettings } from "../hooks/SettingsHook";
 import { useHabits } from "../hooks/HabitsHook";
 import RadioGroup from "../ts/RadioGroup";
 import PostHabit from "./PostHabit";
-import HabitDiv from "../ts/Habit";
+import { usePlans } from "../hooks/PlansHook";
+import { useGoalsWorkspace } from "../hooks/useGoalsWorkspace";
 import "../../pages/Settings/scss/settings.scss";
 import "../../pages/Post/scss/postEditor.scss";
 import "./scss/PostSettings.scss";
@@ -18,11 +19,13 @@ export default function PostSettings() {
     const { habits } = useHabits();
     const settings = blackout.postSettings;
     const [ visibility, setVisibility ] = useState(settings?.visibility || "inherit");
-    const [ habit, setHabit ] = useState(settings?.habit || "none");
+    const [ links, setLinks ] = useState(settings?.links || {habit:"none",goal:"none",plan:"none"});
+    const {plans}=usePlans();
+    const {goals}=useGoalsWorkspace();
 
     const [ choosingHabit, setChoosingHabit ] = useState(false);
 
-    const selectedHabit = habits?.find(item => String(item.id) === habit);
+    const selectedNames=[habits?.find(item=>String(item.id)===links.habit)?.name,goals.find(item=>String(item.id)===links.goal)?.name,plans.find(item=>String(item.id)===links.plan)?.name].filter(Boolean);
 
     if (!settings) return null;
 
@@ -31,16 +34,15 @@ export default function PostSettings() {
         settings.setVisibility(value);
     };
 
-    const changeHabit = (value: string) => {
-        setHabit(value);
-        settings.setHabit(value);
-        setChoosingHabit(false);
+    const changeLinks = (value: typeof links) => {
+        setLinks(value);
+        settings.setLinks(value);
     };
 
     if (choosingHabit) return (
         <PostHabit
-            selected={habit}
-            onSelect={changeHabit}
+            selected={links}
+            onSelect={changeLinks}
             onBack={() => setChoosingHabit(false)}
         />
     );
@@ -85,23 +87,10 @@ export default function PostSettings() {
             <div className="settingHint">{t("editor.inheritHint")}</div>
             <div className="settingInnerWrapper">
                 <div className="settingSpan">{t("editor.habit")}</div>
-                {selectedHabit ? <HabitDiv
-                    habit={selectedHabit}
-                    onSelect={() => setChoosingHabit(true)}
-                    id={selectedHabit.id}
-                /> : <button
-                    type="button"
-                    className="habit postNoHabit"
-                    onClick={() => setChoosingHabit(true)}
-                    aria-haspopup="dialog"
-                >
-                    <div className="habitIcon">
-                        <ProhibitIcon className="habitIconSvg" />
-                    </div>
-                    <div className="habitInfo">
-                        <div className="habitName">{t("post.noHabit")}</div>
-                    </div>
-                </button>}
+                <button type="button" className="habit postNoHabit postLinkSummary" onClick={()=>setChoosingHabit(true)} aria-haspopup="dialog">
+                    <div className="habitIcon"><LinkSimpleIcon className="habitIconSvg"/></div>
+                    <div className="habitInfo"><div className="habitName"><span className="habitNameText">{selectedNames.length?selectedNames.join(" · "):t("editor.noLink")}</span></div><div className="habitPer">{t("editor.linkHint")}</div></div>
+                </button>
             </div>
         </div>
     );

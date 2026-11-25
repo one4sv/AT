@@ -12,6 +12,8 @@ import { useSettings } from "../../components/hooks/SettingsHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import type { PostType } from "../../components/context/AccContext";
 import PageBottom from "../../components/ts/PageBottom";
+import type { PostLinks } from "../../components/context/BlackoutContext";
+import { resolveTimeZone } from "../../components/ts/utils/dateToStr";
 import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { PostMediaContext, PostMediaNode } from "./PostMediaNode";
 import { mediaIds, type PostMedia } from "./RichPost";
@@ -32,14 +34,14 @@ export default function PostEditor() {
     const { t } = useTranslation("acc");
     const { user, loadingUser } = useUser();
     const { refetchPosts } = useAcc();
-    const { settingsLoaded } = useSettings();
+    const { settingsLoaded, timeZone } = useSettings();
     const { blackout, setBlackout, setBlackoutStack } = useBlackout();
     const { setTitle } = usePageTitle();
 
     const navigate = useNavigate();
 
     const [ media, setMedia ] = useState<DraftMedia[]>([]);
-    const [ habit, setHabit ] = useState("none");
+    const [ links, setLinks ] = useState<PostLinks>({habit:"none",goal:"none",plan:"none"});
     const [ visibility, setVisibility ] = useState("inherit");
     const [ insert, setInsert ] = useState(false);
     const [ loading, setLoading ] = useState(!!postId);
@@ -127,7 +129,7 @@ export default function PostEditor() {
         if (!editor || !user.id) return;
         const controller = new AbortController();
         setMedia([]);
-        setHabit("none");
+        setLinks({habit:"none",goal:"none",plan:"none"});
         setVisibility("inherit");
         setError("");
         setLoading(!!postId);
@@ -153,7 +155,7 @@ export default function PostEditor() {
                 ...file,
                 inline: ids.includes(file.id || file.url)
             })));
-            setHabit(post.habit ? String(post.habit.id) : "none");
+            setLinks({habit:post.habit?String(post.habit.id):"none",goal:post.goal?String(post.goal.id):"none",plan:post.plan?String(post.plan.id):"none"});
             setVisibility(post.visibility || "inherit");
             editor.commands.setContent(document);
         }).catch(() => {
@@ -215,12 +217,12 @@ export default function PostEditor() {
             module: "PostSettings",
             postSettings: {
                 visibility,
-                habit,
+                links,
                 setVisibility: value => {
                     if (!sendingRef.current) setVisibility(value);
                 },
-                setHabit: value => {
-                    if (!sendingRef.current) setHabit(value);
+                setLinks: value => {
+                    if (!sendingRef.current) setLinks(value);
                 }
             }
         });
@@ -244,7 +246,10 @@ export default function PostEditor() {
         data.append("text", editor.getText({ blockSeparator: "\n" }).trim());
         data.append("content", JSON.stringify(document));
         data.append("visibility", visibility);
-        data.append("habit_id", habit);
+        data.append("habit_id", links.habit);
+        data.append("goal_id", links.goal);
+        data.append("plan_id", links.plan);
+        data.append("timezone",resolveTimeZone(timeZone));
         data.append("media_ids", JSON.stringify(files.map(file => file.id)));
         if (postId) {
             data.append("id", postId);
