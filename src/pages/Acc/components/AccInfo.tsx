@@ -20,6 +20,7 @@ import { CircleIcon, CheckIcon, DotsThreeOutlineVerticalIcon } from "@phosphor-i
 import { useNavigate } from "react-router";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import useContactAlias from "../../../components/hooks/utils/useContactAlias";
+import { useNote } from "../../../components/hooks/NoteHook";
 export default function AccInfo({
     acc,
     collapsed,
@@ -55,7 +56,9 @@ export default function AccInfo({
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const navigate = useNavigate();
     const { openMenu, closeMenu, menu } = useContextMenu();
-    const [alias, setAlias] = useContactAlias(acc?.id);
+    const [alias, setAlias] = useContactAlias(acc?.id ?? undefined);
+    const { showNotification } = useNote();
+    const [aliasSaving, setAliasSaving] = useState(false);
     const [renaming, setRenaming] = useState(false);
     const [aliasDraft, setAliasDraft] = useState("");
     useEffect(() => { setRenaming(false); }, [acc?.id]);
@@ -232,10 +235,18 @@ export default function AccInfo({
                     </div> : ""}
                     {(red || renaming) && <div className="accExtraInfoWrapper">
                         <div className="settingInnerList">
-                            <div className="settingInnerButt" onClick={() => {
+                            <div className="settingInnerButt" aria-disabled={aliasSaving} onClick={async () => {
+                                if (aliasSaving) return;
                                 if (renaming) {
-                                    setAlias(aliasDraft.trim() === (acc?.username || "") ? "" : aliasDraft.trim());
-                                    setRenaming(false);
+                                    setAliasSaving(true);
+                                    try {
+                                        await setAlias(aliasDraft.trim() === (acc?.username || "") ? "" : aliasDraft.trim());
+                                        setRenaming(false);
+                                    } catch {
+                                        showNotification("error", t("renameFailed"));
+                                    } finally {
+                                        setAliasSaving(false);
+                                    }
                                 } else setRed(false);
                             }}>
                                 <CheckIcon size={20} /> {t("save")}
