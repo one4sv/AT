@@ -1,6 +1,6 @@
 import "../../scss/Loading.scss";
 
-export type SkeletonType = "list" | "feed" | "habit" | "chat" | "profile" | "plan";
+export type SkeletonType = "list" | "feed" | "habit" | "chat" | "chatHistory" | "profile" | "plan";
 
 export default function Skeleton({ type = "list", count = 6, overview = false }: { type?: SkeletonType, count?: number, overview?: boolean }) {
     const rows = Array.from({ length: count }, (_, i) => i);
@@ -60,6 +60,14 @@ export default function Skeleton({ type = "list", count = 6, overview = false }:
                         <div className="skeletonLine"/>
                         <div className="skeletonLine skeletonShort"/>
                     </div>
+                </div>
+            ) : type === "chatHistory" ? (
+                <div className="skeletonMessages skeletonHistoryMessages" aria-hidden="true">
+                    {rows.map(i => <div className="skeletonCard skeletonMessage" key={i}>
+                        <div className="skeletonLine" />
+                        {i % 3 === 0 && <div className="skeletonLine skeletonShort" />}
+                        <div className="skeletonLine skeletonTime" />
+                    </div>)}
                 </div>
             ) : type === "chat" ? (
                 <div className="skeletonChat" aria-hidden="true">

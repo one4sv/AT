@@ -16,9 +16,10 @@ import DatePickerHeader from "../../../components/ts/DatePickerHeader";
 import { useTranslation } from "react-i18next";
 import { enGB, ru } from "date-fns/locale";
 import { useContacts } from "../../../components/hooks/ContactsHook";
-import { CircleIcon, ChatTeardropTextIcon, FloppyDiskBackIcon, PencilSimpleIcon, ShareFatIcon } from "@phosphor-icons/react";
+import { CircleIcon, CheckIcon, DotsThreeOutlineVerticalIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
-import { ToggleBlocked } from "../../../components/ts/ContextMenu/buttons/ToggleBlocked";
+import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
+import useContactAlias from "../../../components/hooks/utils/useContactAlias";
 export default function AccInfo({
     acc,
     collapsed,
@@ -53,6 +54,25 @@ export default function AccInfo({
     } = useSideMenu();
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const navigate = useNavigate();
+    const { openMenu, closeMenu, menu } = useContextMenu();
+    const [alias, setAlias] = useContactAlias(acc?.id);
+    const [renaming, setRenaming] = useState(false);
+    const [aliasDraft, setAliasDraft] = useState("");
+    useEffect(() => { setRenaming(false); }, [acc?.id]);
+    const displayName = isMyAcc ? newName : alias || acc?.username;
+    const openActions = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!acc?.id) return;
+        if (menu.visible && menu.point === "profileActions") { closeMenu(); return; }
+        openMenu(event.clientX, event.clientY, "profileActions", {
+            id: acc.id, name: acc.username || acc.nick || "", nick: acc.nick || undefined,
+            url: acc.avatar_url || undefined, isMy: isMyAcc,
+            onEdit: isMyAcc ? () => setRed(true) : user.id ? () => { setAliasDraft(alias || acc.username || acc.nick || ""); setRenaming(true); } : undefined,
+            onOpen: user.id && !isMyAcc ? () => navigate(`/chat/${acc.nick}`) : undefined,
+            onShare: () => setBlackout({ seted: true, module: "ShareAcc", options: { name: acc.username || "", nick: acc.nick || "", url: acc.avatar_url || "" } })
+        });
+    };
     const fileInputRef = useRef<HTMLInputElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
     const bioRef = useRef<HTMLTextAreaElement>(null);
@@ -114,7 +134,7 @@ export default function AccInfo({
             }}
         >
             <div className="accInfoInner" ref={innerRef}>
-                <div className="accInfoMain">
+                <div className="accInfoMain" onContextMenu={openActions}>
                     <div className="accPic" onClick={() => isMyAcc && red && fileInputRef.current?.click()}>
                         <input
                             type="file"
@@ -150,12 +170,13 @@ export default function AccInfo({
                     </div>
                     <div className="accInfoNames">
                         <div className="accMainInfoStr">
-                            {red ? <input
+                            {red || renaming ? <input
                                 className="accInput nameInput"
-                                value={(isMyAcc ? newName : acc?.username) ?? ""}
-                                onChange={e => setNewName(e.currentTarget.value)}
+                                value={renaming ? aliasDraft : newName ?? ""}
+                                maxLength={renaming ? 40 : undefined}
+                                onChange={e => renaming ? setAliasDraft(e.currentTarget.value) : setNewName(e.currentTarget.value)}
                             /> : <span className="accInput nameInput accSelectableValue">
-                                {(isMyAcc ? newName : acc?.username) ?? ""}
+                                {displayName ?? ""}
                             </span>}
                         </div>
                         <div className="accNickStr">
@@ -169,6 +190,7 @@ export default function AccInfo({
                             </span>}
                         </div>
                     </div>
+                    {acc?.id && !red && !renaming && <button type="button" className="accProfileActions" aria-label={t("actions")} onClick={openActions}><DotsThreeOutlineVerticalIcon weight="fill" size={22}/></button>}
                 </div>
                 <div className="accInfoWrapper">
                     {acc?.bio || red ? <div className={`accExtraInfoWrapper ${!red ? "dis" : ""}`}>
@@ -208,47 +230,18 @@ export default function AccInfo({
                             renderCustomHeader={props => <DatePickerHeader {...props} />}
                         /> : <span className="extraInfoInput accSelectableValue">{birthDisplay}</span>}
                     </div> : ""}
-                    <div className="accExtraInfoWrapper">
+                    {(red || renaming) && <div className="accExtraInfoWrapper">
                         <div className="settingInnerList">
-                            {(isMyAcc || user.id) && <div
-                                className="settingInnerButt"
-                                onClick={() => {
-                                    if (isMyAcc) {
-                                        if (red === true) setRed(false); else setRed(true);
-                                    } else {
-                                        navigate(`/chat/${acc?.nick}`);
-                                    }
-                                }}
-                            >
-                                {isMyAcc ? red ? <>
-                                    <FloppyDiskBackIcon weight="fill" size={20} />
-                                    {t("save")}
-                                </> : <>
-                                    <PencilSimpleIcon size={20} weight="fill" />
-                                    {t("edit")}
-                                </> : <>
-                                    <ChatTeardropTextIcon size={20} weight="fill" />{t("message")}
-                                </>}
-                            </div>}
-                            <div
-                                className="settingInnerButt"
-                                onClick={() => setBlackout(
-                                    {
-                                        seted: true,
-                                        module: "ShareAcc",
-                                        options: {
-                                            name: acc?.username ?? "",
-                                            nick: acc?.nick ?? "",
-                                            url: acc?.avatar_url || ""
-                                        }
-                                    }
-                                )}
-                            >
-                                <ShareFatIcon weight="fill" /> {t("share")}
+                            <div className="settingInnerButt" onClick={() => {
+                                if (renaming) {
+                                    setAlias(aliasDraft.trim() === (acc?.username || "") ? "" : aliasDraft.trim());
+                                    setRenaming(false);
+                                } else setRed(false);
+                            }}>
+                                <CheckIcon size={20} /> {t("save")}
                             </div>
-                            {user.id && !isMyAcc && acc?.id && <ToggleBlocked id={acc.id} nick={acc.nick || undefined} name={acc.username || acc.nick || ""} className="settingInnerButt blockUserAction"/>}
                         </div>
-                    </div>
+                    </div>}
                 </div>
             </div>
         </div>

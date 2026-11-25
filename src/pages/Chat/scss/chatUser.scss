@@ -20,7 +20,7 @@
     }
     @media (max-width:800px) {
         width: 100%;
-        padding: 0 1vw;
+        padding: 0;
     }
 }
 .chatUserMain {
@@ -35,10 +35,11 @@
     width: auto;
     display: flex;
     align-items: center;
-    padding-left: .15vw;
+    padding-left: .5dvh;
     >svg {
-        height: 95%;
-        width: 95%;
+        height: 80%;
+        width: auto;
+        aspect-ratio: 1/1;
     }
     >img.chatUserAvatar {
         height: 80%;
@@ -49,9 +50,6 @@
         @media (max-width: 800px) {
             height: 80%;
         }
-    }
-    @media (max-width: 800px) {
-        padding-left: .25vw;
     }
 }
 .chatUserName {

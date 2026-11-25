@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useChat } from "../../../components/hooks/ChatHook";
 import { useRef } from "react";
+import useContactAlias from "../../../components/hooks/utils/useContactAlias";
 import useCompactLayout from "../../../components/hooks/utils/useCompactLayout";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { BookmarkSimpleIcon, CalendarCheckIcon, ChatTeardropIcon, DotsThreeOutlineVerticalIcon, MagnifyingGlassIcon, PushPinIcon, TextIndentIcon } from "@phosphor-icons/react";
@@ -29,6 +30,7 @@ export default function ChatUser() {
 
     const nameRef = useRef<HTMLDivElement | null>(null);
     const chatUserRef = useRef<HTMLDivElement | null>(null);
+    const [alias] = useContactAlias(chatWith?.is_group ? undefined : chatWith?.id);
     const isFavorite = chatWith?.id === user.id
 
     const handleMenuClick = (e: React.MouseEvent) => {
@@ -68,7 +70,7 @@ export default function ChatUser() {
 
     const name = () => {
         if (isFavorite) return t("chatUi.favorites")
-        else if (chatWith) return chatWith.name || chatWith.nick
+        else if (chatWith) return alias || chatWith.name || chatWith.nick
         else return ""
     }
 

@@ -234,7 +234,7 @@
 textarea.extraInfoInput.bioTA {
     min-height: 5dvh;
     line-height: 1.35;
-    padding: max(.8dvh, calc((5dvh - 1.35em) / 2)) 0;
+    padding: .25dvh 0 .8dvh;
 }
 
 .accExtraInfo {
@@ -273,4 +273,23 @@ textarea.extraInfoInput.bioTA {
         min-height: 25px;
         height: auto;
     }
+}
+
+.accInfoInner .accInfoMain {
+    position: relative;
+}
+.accProfileActions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: none;
+    background: var(--interact);
+    color: var(--tc);
+    border-radius: 50%;
+    width: 4dvh;
+    height: 4dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }

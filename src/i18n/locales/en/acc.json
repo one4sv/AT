@@ -1,4 +1,6 @@
 {
+  "rename": "Rename",
+  "actions": "Actions",
   "activitiesHidden": "This user has hidden their activities",
   "activitiesEmpty": "No activities yet",
   "activitiesEmptyOwn": "You don't have any activities yet",

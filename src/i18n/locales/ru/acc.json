@@ -1,4 +1,6 @@
 {
+  "rename": "Переименовать",
+  "actions": "Действия",
   "activitiesHidden": "Пользователь скрыл активности",
   "activitiesEmpty": "Пока нет активностей",
   "activitiesEmptyOwn": "У вас пока нет активностей",

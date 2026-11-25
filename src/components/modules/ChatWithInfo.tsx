@@ -4,6 +4,7 @@ import "./scss/ChatWithInfo.scss"
 import "../../pages/Acc/scss/AccInfo.scss"
 import { useBlackout } from "../hooks/BlackoutHook"
 import { useChat } from "../hooks/ChatHook"
+import useContactAlias from "../hooks/utils/useContactAlias"
 import { isMobile } from "react-device-detect"
 import { useMessages } from "../hooks/MessagesHook"
 import { useNavigate } from "react-router"
@@ -14,6 +15,7 @@ import formatLastOnline from "../ts/utils/formatOnline"
 export default function ChatWithInfo() {
     const { t } = useTranslation("common");
     const { chatWith, activeHeader:header, setActiveHeader:setHeader, messages } = useChat()
+    const [alias] = useContactAlias(chatWith?.is_group ? undefined : chatWith?.id);
     const { setBlackout } = useBlackout()
     const { setChosenMess } = useMessages();
     const { onlineMap } = useContacts();
@@ -44,7 +46,7 @@ export default function ChatWithInfo() {
                 </div>
                 <div className="accInfoNames">
                     <div className="accMainInfoStr">
-                        <div className="accInput nameInput">{chatWith?.name}</div>
+                        <div className="accInput nameInput">{alias || chatWith?.name}</div>
                     </div>
                     <div className="accNickStr">
                         {!isMobile && "@"}

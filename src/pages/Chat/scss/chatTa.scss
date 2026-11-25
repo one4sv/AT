@@ -240,8 +240,10 @@
     }
 }
 .chatTaButts {
+    box-sizing: border-box;
+    flex-shrink: 0;
     height: 5dvh;
-    padding: .5vh;
+    padding: calc(.5dvh - 1px);
     border-radius: 24px;
     display: flex;
     align-items: center;
@@ -281,6 +283,8 @@
     }
 }
 .chatWriteTAButt {
+    box-sizing: border-box;
+    flex-shrink: 0;
     border: none;
     border-radius: 50%;
     height: 5dvh;
@@ -463,10 +467,12 @@
 .chatWriteBar.inputWithEmoji > .chatCommandEditor {
     width: 100%;
     position: relative;
-    min-height: 5dvh;
+    min-height: calc(5dvh - 2px);
     overflow: hidden;
     border-radius: 24px;
     > textarea {
+        display: block;
+        min-height: calc(5dvh - 2px);
         padding-inline-end: 5vh;
         position: relative;
         z-index: 1;

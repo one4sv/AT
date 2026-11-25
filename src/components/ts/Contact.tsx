@@ -9,6 +9,7 @@ import { useDrop } from "../hooks/DropHook";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useMessages } from "../hooks/MessagesHook";
 import { useUser } from "../hooks/UserHook";
+import useContactAlias from "../hooks/utils/useContactAlias";
 import { useIdentify } from "../hooks/utils/useIdentify";
 import { useMemo } from "react";
 import { useSideMenu } from "../hooks/SideMenuHook";
@@ -30,6 +31,7 @@ export default function Contact({ contact }: ContactType) {
     const { openMenu } = useContextMenu();
     const { setDroppedFiles } = useDrop();
     const { user } = useUser();
+    const [alias] = useContactAlias(contact.is_group ? undefined : contact.id);
     const { closeMenu } = useSideMenu();
     const { nick, id } = useParams<{ nick: string; id: string }>();
     const navigate = useNavigate();
@@ -103,6 +105,7 @@ export default function Contact({ contact }: ContactType) {
 
     const getName = () => {
         if (isFavorite) return t("chatUi.favorites");
+        if (alias) return alias;
         if (contact.name) return contact.name;
         return contact.nick;
     };

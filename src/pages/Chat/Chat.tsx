@@ -17,7 +17,6 @@ import { usePageTitle } from "../../components/hooks/PageContextHook";
 import getCornerType from "./utils/funcs/getCornet";
 import SystemMessage from "./utils/SystemMessage";
 import Skeleton from "../../components/ts/Skeleton";
-import { LoaderSmall } from "../../components/ts/LoaderSmall";
 import WelcomeMessage from "./components/WelcomeMessage";
 import { useChatMessageScroll } from "../../components/hooks/utils/useChatMessageScroll";
 import { formatAppDate, todayStrFunc, clockInAppZone } from "../../components/ts/utils/dateToStr";
@@ -26,7 +25,7 @@ import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { useGroup } from "../../components/hooks/GroupHook";
 import useLocalStorage from "../../components/hooks/utils/useLocalStorage";
 export default function Chat() {
-    const { t, i18n } = useTranslation("common");
+    const { t } = useTranslation("common");
     const {
         user,
         loadingUser,
@@ -168,15 +167,31 @@ export default function Chat() {
         },
         [API_URL, messages, user.id, chatReady]
     );
-    const searchedMessages = useMemo(
-        () => {
-            if (!search.trim()) return [];
-            return messages.filter(
-                m => (m.content.toLowerCase().includes(search.toLowerCase()) || formatAppDate(m.created_at).includes(search)) && !m.is_system
-            ).reverse();
-        },
-        [messages, search, i18n.resolvedLanguage]
-    );
+    const [searchedMessages, setSearchedMessages] = useState<message[]>([]);
+    const historyChatId = chatWith?.chat_id;
+    useEffect(() => {
+        setSearchedMessages([]);
+        const query = search.trim();
+        if (!chatReady || activeHeader !== "search" || !query || !historyChatId) return;
+        const controller = new AbortController();
+        const timer = window.setTimeout(async () => {
+            let before: number | undefined;
+            try {
+                do {
+                    const response = await api.get("chat/search/" + historyChatId, {
+                        params: { q: query, before }, signal: controller.signal
+                    });
+                    if (controller.signal.aborted || !response.data.success) return;
+                    const batch = response.data.messages as message[];
+                    setSearchedMessages(previous => [...previous, ...batch]);
+                    before = response.data.next || undefined;
+                } while (before && !controller.signal.aborted);
+            } catch (error) {
+                if (!controller.signal.aborted) console.error("Chat history search", error);
+            }
+        }, 300);
+        return () => { window.clearTimeout(timer); controller.abort(); };
+    }, [chatReady, activeHeader, historyChatId, search]);
 
     useEffect(
         () => {
@@ -348,15 +363,7 @@ export default function Chat() {
         <div className="chatDiv">
             <ChatUser />
             <div className={`chat AH${activeHeader}`} ref={chatContainerRef}>
-                {loadingMore && <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        padding: "12px 0"
-                    }}
-                >
-                    <LoaderSmall />
-                </div>}
+                {loadingMore && <Skeleton type="chatHistory" count={3} /> }
 
                 {!hadMessagesRef.current && messages.length === 0 && !id && chatWith &&
                     chatWith.nick === nick && chatWith.id !== user.id && chatWith.welcome_message &&

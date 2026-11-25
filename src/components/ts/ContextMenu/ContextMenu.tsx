@@ -7,6 +7,7 @@ import PostMenu from "./menus/PostMenu";
 import PersonMenu from "./menus/PersonMenu";
 import CommentMenu from "./menus/CommentMenu";
 import AccMenu from "./menus/AccMenu";
+import ProfileActionsMenu from "./menus/ProfileActionsMenu";
 import MemberMenu from "./menus/MemberMenu";
 import MessMenu from "./menus/MessMenu";
 import MediaMenu from "./menus/MediaMenu";
@@ -125,6 +126,8 @@ export default function ContextMenu() {
                 return <PersonMenu />;
             case "comment":
                 return <CommentMenu />;
+            case "profileActions":
+                return <ProfileActionsMenu />;
             case "acc":
                 return <AccMenu />;
             case "member":
