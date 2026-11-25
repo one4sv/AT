@@ -589,3 +589,42 @@
         color: var(--tc);
     }
 }
+
+.calendarCommentModal.addPlanDiv {
+    width: min(42vw, 820px);
+    box-sizing: border-box;
+
+    > h2 {
+        margin: 0;
+    }
+
+    > .habitDayComment {
+        box-sizing: border-box;
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        padding: 1dvh .8vw;
+
+        > textarea {
+            min-height: 16dvh;
+            padding-inline-end: 3vw;
+            overflow-y: auto;
+        }
+    }
+
+    @media (max-width: 800px) {
+        width: 100%;
+
+        > .habitDayComment {
+            padding: 1dvh 2vw;
+
+            > textarea {
+                padding-inline-end: 10vw;
+            }
+
+            > .hdcTAExtra {
+                justify-content: flex-end;
+            }
+        }
+    }
+}

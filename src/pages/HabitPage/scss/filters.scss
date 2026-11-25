@@ -32,7 +32,7 @@
         width: 2dvh;
         height: 2dvh;
         right: .7vw;
-        top: 1dvh;
+        top: 50%;
     }
 
     > .selectList {
@@ -84,7 +84,6 @@
 
         > svg {
             right: 2vw;
-            top: 1.5dvh;
         }
 
         > .selectList > .selectListButt {

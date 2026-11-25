@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowBendDownLeftIcon, ClockCountdownIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
 import { useTheHabit } from "../../../../../components/hooks/TheHabitHook";
+import { useHabits } from "../../../../../components/hooks/HabitsHook";
+import { useUser } from "../../../../../components/hooks/UserHook";
 import { useCalendar } from "../../../../../components/hooks/CalendarHook";
 import "../../../scss/DayComment.scss";
 import { isMobile } from "react-device-detect";
@@ -13,16 +15,24 @@ import { isMobile } from "react-device-detect";
 interface DayCommentProps {
   id: string;
   isMy: boolean;
+  date?: string;
+  modal?: boolean;
 }
 
-export default function DayComment({ id, isMy }: DayCommentProps) {
+export default function DayComment({ id, isMy, date, modal = false }: DayCommentProps) {
   const { t } = useTranslation("common");
 
-  const { dayComment, habit,  } = useTheHabit();
-  const { chosenDay } = useCalendar();
-    const visible=String(habit?.id)===id && !!(habit?.access?.is_member || habit?.access?.is_owner || isMy) &&
+  const { dayComment, habit: currentHabit } = useTheHabit();
+  const { habits } = useHabits();
+  const { user } = useUser();
+  const { chosenDay: calendarDay } = useCalendar();
+  const chosenDay = date ?? calendarDay;
+  const habit = modal && String(currentHabit?.id)!==id ? habits?.find(h=>String(h.id)===id) : currentHabit;
+  const canEdit = modal ? Boolean(habit?.access?.can_comment ?? (habit?.user_id===user.id)) : isMy;
+  const fallbackComment = modal ? "" : dayComment;
+    const visible=String(habit?.id)===id && !!(habit?.access?.is_member || habit?.access?.is_owner || (modal ? habit?.user_id===user.id : isMy)) &&
         (!habit?.access?.completion_start_date || chosenDay>=habit.access.completion_start_date);
-    const photos=useActivityCommentPhotos(id,chosenDay,visible,visible && !!habit?.ongoing && isMy);
+    const photos=useActivityCommentPhotos(id,chosenDay,visible,visible && !!habit?.ongoing && canEdit);
     const waitComAnswer=photos.busy;
 
   const [comment, setComment] = useState<string>("");
@@ -33,14 +43,14 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
 
   useEffect(() => {
     setSyncing(true);
-    setComment(photos.savedText ?? dayComment ?? "");
+    setComment(photos.savedText ?? fallbackComment ?? "");
 
     const t = setTimeout(() => {
       setSyncing(false);
     }, 50);
 
     return () => clearTimeout(t);
-  }, [id, chosenDay, photos.savedText, photos.ready ? undefined : dayComment]);
+  }, [id, chosenDay, photos.savedText, photos.ready ? undefined : fallbackComment]);
 
 
   useEffect(() => { setShowEmojiBar(false); }, [chosenDay]);
@@ -51,7 +61,7 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
 
   const cantSave =
     syncing || waitComAnswer ||
-    !isMy ||
+    !canEdit ||
     !habit?.ongoing ||
     (!photos.ready || (!photos.dirty && comment.trim() === (photos.savedText || "").trim()));
 
@@ -71,16 +81,18 @@ export default function DayComment({ id, isMy }: DayCommentProps) {
 
   return (
     <div className="habitDayComment inputWithEmoji" ref={emojiRef}>
-      <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!isMy || !habit?.ongoing || syncing} />
+      <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!canEdit || !habit?.ongoing || syncing} />
       <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar} setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef} />
       <TA
         placeholder={t("habitPageUi.day.commentPlaceholder")}
         taRef={textAreaRef}
-        readOnly={!isMy || !habit?.ongoing || !photos.ready || photos.busy}
+        readOnly={!canEdit || !habit?.ongoing || !photos.ready || photos.busy}
         onChange={handleTextareaChange}
         onKeyDown={handleKeyDown}
         value={comment}
         maxLength={200}
+        minHeight={modal ? 16 : 5}
+        maxHeight={modal ? 32 : 50}
       />
       {photos.previews}
       <div className="hdcTAExtra"
