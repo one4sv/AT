@@ -11,6 +11,9 @@ type PressState = {
     x: number;
     y: number;
     original: HTMLElement;
+    initialX: number;
+    initialY: number;
+    panelSwipe: boolean;
     held: boolean;
     kind: HeaderGesture | null;
     timer: ReturnType<typeof setTimeout> | null;
@@ -117,6 +120,9 @@ export default function useHeaderMenuGestures() {
             x: touch.clientX,
             y: touch.clientY,
             original: element,
+            initialX: touch.clientX,
+            initialY: touch.clientY,
+            panelSwipe: false,
             held: false,
             kind: null,
             timer: null
@@ -141,6 +147,18 @@ export default function useHeaderMenuGestures() {
         const touch = Array.from(e.touches).find(item => item.identifier === press.id);
         if (!touch) { reset(true); return; }
 
+        const dy = touch.clientY - press.initialY;
+        const dx = touch.clientX - press.initialX;
+        const host = press.original.closest(".chatDiv");
+        if (!press.held && host?.querySelector(".chatActionPanel") && press.original.matches(".chatUserInfo") &&
+            (press.panelSwipe || (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)))) {
+            press.panelSwipe = true;
+            if (press.timer) { clearTimeout(press.timer); press.timer = null; }
+            host.dispatchEvent(new CustomEvent("chat-panel-header-gesture", {detail:{phase:"move",dy}}));
+            e.stopPropagation();
+            if (e.cancelable) e.preventDefault();
+            return;
+        }
         press.x = touch.clientX;
         press.y = touch.clientY;
         e.stopPropagation();
@@ -171,6 +189,13 @@ export default function useHeaderMenuGestures() {
         if (!touch) return;
 
         e.stopPropagation();
+        if (press.panelSwipe) {
+            press.original.closest(".chatDiv")?.dispatchEvent(new CustomEvent("chat-panel-header-gesture", {detail:{phase:"end",dy:touch.clientY - press.initialY}}));
+            suppressUntil.current = performance.now() + 700;
+            reset();
+            if (e.cancelable) e.preventDefault();
+            return;
+        }
         if (!press.held) {
             // Let the browser dispatch the normal click for a short tap.
             reset();
@@ -188,6 +213,7 @@ export default function useHeaderMenuGestures() {
 
     const touchCancel = (e: TouchEvent<HTMLDivElement>) => {
         if (!state.current) return;
+        if (state.current.panelSwipe) state.current.original.closest(".chatDiv")?.dispatchEvent(new CustomEvent("chat-panel-header-gesture", {detail:{phase:"cancel",dy:0}}));
         e.stopPropagation();
         reset(true);
     };

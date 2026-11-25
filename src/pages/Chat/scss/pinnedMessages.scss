@@ -145,7 +145,10 @@
 }
 .pm {
     display: flex;
-    height: 5dvh;
+    min-height: 5dvh;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    align-items: center;
     border-radius: 24px;
     gap: 0.5vw;
     position: relative;

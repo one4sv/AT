@@ -5,7 +5,6 @@ import React, { useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { message } from "../../../components/context/ChatContext";
 import { useUser } from "../../../components/hooks/UserHook";
-import Linkify from "linkify-react";
 import { isMobile } from "react-device-detect";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
@@ -18,7 +17,7 @@ import { formatAppTime } from "../../../components/ts/utils/dateToStr";
 import ReactionIcon from "../../../components/ts/ReactionIcon";
 import ReactionPicker from "../../../components/ts/ReactionPicker";
 import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
-import HighlightText from "../../../components/ts/HighlightText";
+import MessageLinkContent from "./MessageLinkContent";
 import HabitInvitation from "./HabitInvitation";
 import type { SavedMessageSuggestion } from "../../../components/ts/utils/savedMessageSuggestion";
 import CreatedEntityCard, { parseCreatedEntityMessage } from "./CreatedEntityCard";
@@ -280,7 +279,7 @@ export default function Message({
                     <HabitInvitation messageId={m.id} recipientId={m.habit_invite_recipient_id}/> :
                     (!!m.content?.trim() || !!m.entity_type && !!m.entity_id) && <div className={`messageText ${isMobile ? "mobile" : ""}`}>
                     {m.entity_type && m.entity_id ? <>
-                        {!!m.content?.trim() && <HighlightText text={m.content} search={searchMess}/>}
+                        {!!m.content?.trim() && <MessageLinkContent text={m.content} search={searchMess}/>}
                         <SharedEntityCard kind={m.entity_type} id={m.entity_id}/>
                     </> : createdReference ? <CreatedEntityCard item={createdReference}/> : smartSuggestion && onSmartCreate && !isChose && activeHeader === "text" && !searchMess.trim()
                         ? <>
@@ -298,7 +297,7 @@ export default function Message({
                             >{m.content.slice(smartSuggestion.start, smartSuggestion.end)}</button>
                             {m.content.slice(smartSuggestion.end)}
                         </>
-                        : <HighlightText text={m.content} search={searchMess} />}
+                        : <MessageLinkContent text={m.content} search={searchMess} />}
                 </div>}
                 {m.files && m.files.length > 0 && <MessageFiles files={m.files} m={m} />}
                 {m.redirected_id && <div className="redirectedMess">
@@ -311,9 +310,7 @@ export default function Message({
                     </div>
                     {m.redirected_answer && redir_answer && m.redirected_name && scrollToMessage && <AnswerMess answer={redir_answer} scrollToMessage={scrollToMessage} />}
                     <div className="redirectText">
-                        <Linkify>
-                            {m.redirected_content}
-                        </Linkify>
+                        <MessageLinkContent text={m.redirected_content || ""} search={searchMess}/>
                     </div>
                     {m.redirected_files && m.redirected_files.length > 0 && <MessageFiles files={m.redirected_files} m={m} />}
                 </div>}

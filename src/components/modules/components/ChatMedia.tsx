@@ -8,6 +8,7 @@ import {
 import { useChat } from "../../hooks/ChatHook";
 import type { LibraryCategory } from "../../context/ChatContext";
 import SharedEntityCard, { type SharedEntityKind } from "../../../pages/Chat/components/SharedEntityCard";
+import { parseATEntityLink } from "../../../pages/Chat/utils/parseATEntityLink";
 import { api } from "../../ts/api";
 import { useBlackout } from "../../hooks/BlackoutHook";
 import { useContextMenu } from "../../hooks/ContextMenuHook";
@@ -306,7 +307,10 @@ function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter
         return () => observer.disconnect();
     }, [active, enabled, hasMore, loading, error, loadPage, isMobile]);
 
-    const filtered = items;
+    const filtered = items.map(item => {
+        const entity = item.category === "link" && !item.entity_type ? parseATEntityLink(item.url) : null;
+        return entity ? {...item, entity_type: entity.kind, entity_id: entity.id} : item;
+    });
 
     const openMedia = (item: ChatMediaItem) => {
         if (item.entity_type) return;
@@ -460,7 +464,7 @@ function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter
                                         </>
                                     )}
 
-                                    {item.entity_type && item.entity_id ? <SharedEntityCard kind={item.entity_type} id={item.entity_id}/> : item.category === "link" && (
+                                    {item.entity_type && item.entity_id ? <SharedEntityCard kind={item.entity_type} id={item.entity_id} fallbackUrl={item.url || undefined}/> : item.category === "link" && (
                                         <>
                                             <LinkIcon size={25} />
                                             <span>{item.name}</span>

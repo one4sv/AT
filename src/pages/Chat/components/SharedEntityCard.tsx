@@ -29,7 +29,7 @@ const icons = {
     user: UserCircleIcon,
     group: ChatsCircleIcon
 };
-export default function SharedEntityCard({kind,id}: {kind: SharedEntityKind; id: string}) {
+export default function SharedEntityCard({kind,id,fallbackUrl}: {kind: SharedEntityKind; id: string; fallbackUrl?: string}) {
     const { t } = useTranslation("common");
     const [item,setItem] = useState<SharedEntityPreview | null>(null);
     const [loading,setLoading] = useState(true);
@@ -62,7 +62,7 @@ export default function SharedEntityCard({kind,id}: {kind: SharedEntityKind; id:
         </div>}
     </div>;
     if (!item) return <div className="sharedEntityCard sharedEntityUnavailable">
-        {t("chatUi.sharedEntityUnavailable")}
+        {fallbackUrl ? <a href={fallbackUrl} onClick={event => event.stopPropagation()}>{fallbackUrl}</a> : t("chatUi.sharedEntityUnavailable")}
     </div>;
     // Match the tag icon rendered by HabitDiv/PlanDiv; no unrelated placeholder for untagged entities.
     const Icon = kind === "habit" || kind === "plan"

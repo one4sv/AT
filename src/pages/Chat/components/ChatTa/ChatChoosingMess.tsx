@@ -8,7 +8,7 @@ import { useDelete } from "../../../../components/hooks/DeleteHook"
 export default function ChatChoosingMess() {
     const { t } = useTranslation("common");
     const { chosenMess, setChosenMess, setRedirect } = useMessages()
-    const { setActiveHeader, messages } = useChat() 
+    const { messages } = useChat() 
     const { setBlackout } = useBlackout()
     const { setDeleteConfirm, setDeleteMess} = useDelete()
 
@@ -17,7 +17,6 @@ export default function ChatChoosingMess() {
             <div className="choosingMessActions">
                 <div className="choosingCount" 
                     onClick={() => {
-                        setActiveHeader("text")
                         setChosenMess([])
                     }}
                 >

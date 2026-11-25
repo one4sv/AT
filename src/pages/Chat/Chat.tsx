@@ -307,10 +307,22 @@ export default function Chat() {
                     );
                 }
             };
+            const onInset = (event: Event) => {
+                const {height, top} = (event as CustomEvent<{height:number;top:number}>).detail;
+                measuredScrollHeightRef.current = el.scrollHeight;
+                if (prependSnapshotRef.current) {
+                    prependSnapshotRef.current.height += height;
+                    prependSnapshotRef.current.top += top;
+                }
+            };
+            el.addEventListener("chat-action-inset", onInset);
             el.addEventListener("scroll", onScroll, {
                 passive: true
             });
-            return () => el.removeEventListener("scroll", onScroll);
+            return () => {
+                el.removeEventListener("scroll", onScroll);
+                el.removeEventListener("chat-action-inset", onInset);
+            };
         },
         [chatReady, hasMore, loadingMore, loadOlderMessages, messages, pendingScrollId]
     );

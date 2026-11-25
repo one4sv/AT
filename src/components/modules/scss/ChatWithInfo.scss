@@ -422,6 +422,29 @@
 
 .chatMediaEntity {
     padding: 0;
-    > .sharedEntityCard { width: 100%; }
+    width: 100%;
+    background: transparent;
+    > .sharedEntityCard {
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        box-sizing: border-box;
+        &.sharedEntitypost {
+            width: 100%;
+            padding: .8dvh 1dvh;
+            .sharedEntityPostExcerpt {
+                font-size: 14px;
+                -webkit-line-clamp: 2;
+                margin: .35dvh 0;
+            }
+            .sharedEntityIcon {
+                width: 28px;
+                height: 28px;
+                flex-basis: 28px;
+            }
+            .sharedEntityPostOpen { font-size: 14px; }
+        }
+        .sharedEntitySkeletonPost { max-height: 3dvh; overflow: hidden; }
+    }
     .sharedEntityIcon img { width: 100%; height: 100%; object-fit: cover; }
 }
