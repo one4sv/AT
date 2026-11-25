@@ -185,6 +185,22 @@
     white-space: normal;
     text-align: center;
     margin-top: .4dvh;
+    @media (min-width: 801px) {
+        align-self: flex-start;
+        text-align: left;
+    }
+}
+
+@media (min-width: 801px) {
+    .accInfoInner .accInfoMain,
+    .chatWithInfoMain {
+        align-items: center;
+
+        > .accInfoNames {
+            min-width: 0;
+            justify-content: center;
+        }
+    }
 }
 
 .nameInput {

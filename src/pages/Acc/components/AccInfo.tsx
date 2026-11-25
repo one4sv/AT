@@ -191,7 +191,6 @@ export default function AccInfo({
                                 );
                             }}
                         /> : red ? <Camera size={256} /> : <UserRound size={128} />}
-                        {!isMobile && presence}
                     </div>
                     <div className="accInfoNames">
                         <div className="accMainInfoStr">
@@ -214,7 +213,7 @@ export default function AccInfo({
                                 {(isMyAcc ? newNick : acc?.nick) ?? ""}
                             </span>}
                         </div>
-                        {isMobile && presence}
+                        {presence}
                     </div>
                     {!isMobile && acc?.id && !red && !renaming && <button type="button" className="accProfileActions" aria-label={t("actions")} onClick={openActions}><DotsThreeOutlineVerticalIcon weight="fill" size={22}/></button>}
                 </div>

@@ -45,7 +45,6 @@ export default function ChatWithInfo() {
                     ) : (
                         <UserIcon size={128} />
                     )}
-                    {!isMobile && presence}
                 </div>
                 <div className="accInfoNames">
                     <div className="accMainInfoStr">
@@ -55,7 +54,7 @@ export default function ChatWithInfo() {
                         {!isMobile && "@"}
                         <div className="accInput nickInput">{chatWith?.nick}</div>
                     </div>
-                    {isMobile && presence}
+                    {presence}
                 </div>
             </div>
             <div className="settingInnerList">
