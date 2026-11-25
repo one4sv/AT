@@ -12,6 +12,7 @@ import { usePageTitle } from "../../components/hooks/PageContextHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
 import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
+import { UserIcon } from "@phosphor-icons/react";
 import { CONTENT_REFRESH_EVENT, requestContentRefresh, type ContentRefreshEvent } from "../../components/ts/utils/contentRefresh";
 
 export default function Acc() {
@@ -31,13 +32,21 @@ export default function Acc() {
     } = useAcc();
 
     const { nick } = useParams();
-    const { setTitle } = usePageTitle();
+    const { setTitle, setTitleIcon } = usePageTitle();
     const { setDontHandle, setIsDragging, dontHandleOther } = useSideMenu();
     const navigate = useNavigate();
     const location = useLocation();
 
     const [ collapsed, setCollapsed ] = useState(0);
     const [ selector, setSelector ] = useState<"habits" | "posts">("posts");
+    const showHeaderAvatar = collapsed > .45;
+    useEffect(() => {
+        if (loading || !acc?.id || acc.nick !== nick) return;
+        setTitleIcon(<span className={`profileHeaderAvatar ${showHeaderAvatar ? "visible" : ""}`} aria-hidden="true">
+            {acc.avatar_url ? <img src={acc.avatar_url} alt=""/> : <UserIcon/>}
+        </span>);
+    }, [loading, acc?.id, acc?.nick, acc?.avatar_url, nick, showHeaderAvatar, setTitleIcon]);
+    useEffect(() => () => setTitleIcon(null), [nick, setTitleIcon]);
 
     const collapsedRef = useRef(0);
     const collapseTarget = useRef(0);
@@ -96,7 +105,6 @@ export default function Acc() {
     const isHorizontal = useRef(false);
     const canExpand = useRef(true);
     const isCollapsingGesture = useRef(false);
-    const gestureMoved = useRef(false);
     const gestureBlocked = useRef(false);
     const sliderGesture = useRef(false);
     const sliderStartLeft = useRef(0);
@@ -210,7 +218,6 @@ export default function Acc() {
         isHorizontal.current = false;
         canExpand.current = getActiveSlideScrollTop() === 0;
         isCollapsingGesture.current = false;
-        gestureMoved.current = false;
         gestureBlocked.current = dontHandleOther;
         sliderGesture.current = false;
         sliderOwnsGesture.current = false;
@@ -253,7 +260,6 @@ export default function Acc() {
             }
 
             if (pullRefresh.current?.active && getActiveSlideScrollTop() <= 2) {
-                gestureMoved.current = true;
                 e.stopPropagation();
                 if (e.cancelable) e.preventDefault();
                 return;
@@ -262,8 +268,6 @@ export default function Acc() {
 
         if (!expanded.current) {
             if (Math.abs(deltaY) < 8 && Math.abs(deltaX) < 8) return;
-
-            gestureMoved.current = true;
             isHorizontal.current = Math.abs(deltaX) > Math.abs(deltaY);
             expanded.current = true;
 
@@ -408,15 +412,6 @@ export default function Acc() {
         }
     };
 
-    const handleSlideClick = (event: React.MouseEvent<HTMLDivElement>) => {
-        // When Info is fully open on mobile, the first content tap closes it.
-        // Keep nested post/habit actions inactive until the next deliberate tap.
-        if (!isMobile || dontHandleOther || gestureMoved.current || collapsedRef.current > 0.02) return;
-        event.preventDefault();
-        event.stopPropagation();
-        animateCollapse(1);
-    };
-
     const handleSelectorClick = (i: number) => {
         if (dontHandleOther || !contentRef.current) return;
 
@@ -429,8 +424,6 @@ export default function Acc() {
         if (currentIdx === i) {
             if (activeSlide && activeSlide.scrollTop > 0) {
                 activeSlide.scrollTo({ top: 0, behavior: "smooth" });
-            } else {
-                animateCollapse(collapsedRef.current === 0 ? 1 : 0);
             }
             return;
         }
@@ -483,7 +476,6 @@ export default function Acc() {
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[0] = el; }}
-                            onClickCapture={handleSlideClick}
                         >
                             <AccPosts
                                 posts={posts}
@@ -497,7 +489,6 @@ export default function Acc() {
                         <div
                             className="accContentSlide"
                             ref={el => { slideRefs.current[1] = el; }}
-                            onClickCapture={handleSlideClick}
                         >
                             <AccHabits
                                 isMyAcc={isMyAcc}

@@ -184,3 +184,37 @@
         color: var(--inner_text);
     }
 }
+
+.headerTitleTag:has(.profileHeaderAvatar) {
+    margin-right: 0;
+    min-width: 0;
+    .profileHeaderAvatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 0;
+        height: 4dvh;
+        opacity: 0;
+        overflow: hidden;
+        transform: scale(.75);
+        transition: width .32s cubic-bezier(.075,.82,.165,1), margin-right .32s ease, opacity .22s ease, transform .32s ease;
+        > img, > svg {
+            width: 4dvh;
+            height: 4dvh;
+            flex-shrink: 0;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        &.visible {
+            width: 4dvh;
+            margin-right: .5vw;
+            opacity: 1;
+            transform: scale(1);
+        }
+        @media (max-width: 800px) {
+            height: 4.8dvh;
+            > img, > svg { width: 4.8dvh; height: 4.8dvh; }
+            &.visible { width: 4.8dvh; margin-right: 1vw; }
+        }
+    }
+}

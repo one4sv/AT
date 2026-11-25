@@ -94,7 +94,6 @@ export default function Group() {
     const isHorizontal = useRef(false);
     const canExpand = useRef(true);
     const isCollapsingGesture = useRef(false);
-    const gestureMoved = useRef(false);
     const gestureBlocked = useRef(false);
     const sliderGesture = useRef(false);
     const sliderStartLeft = useRef(0);
@@ -190,7 +189,6 @@ export default function Group() {
         isHorizontal.current = false;
         canExpand.current = getActiveSlideScrollTop() === 0;
         isCollapsingGesture.current = false;
-        gestureMoved.current = false;
         gestureBlocked.current = dontHandleOther;
         sliderGesture.current = false;
         sliderOwnsGesture.current = false;
@@ -224,8 +222,6 @@ export default function Group() {
 
         if (!expanded.current) {
             if (Math.abs(deltaY) < 8 && Math.abs(deltaX) < 8) return;
-
-            gestureMoved.current = true;
             isHorizontal.current = Math.abs(deltaX) > Math.abs(deltaY);
             expanded.current = true;
 
@@ -347,20 +343,6 @@ export default function Group() {
         }
     };
 
-    const handleSlideClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (
-            dontHandleOther ||
-            gestureBlocked.current ||
-            gestureMoved.current
-        ) return;
-
-        if (collapsedRef.current < 1) {
-            e.preventDefault();
-            e.stopPropagation();
-            animateCollapse(1);
-        }
-    };
-
     const handleSelectorClick = (i: number) => {
         if (dontHandleOther || !contentRef.current) return;
 
@@ -373,8 +355,6 @@ export default function Group() {
         if (currentIdx === i) {
             if (activeSlide && activeSlide.scrollTop > 0) {
                 activeSlide.scrollTo({ top: 0, behavior: "smooth" });
-            } else {
-                animateCollapse(collapsedRef.current === 0 ? 1 : 0);
             }
             return;
         }
@@ -435,14 +415,12 @@ export default function Group() {
                         role="tabpanel"
                         id="group-panel-members"
                         aria-labelledby="group-tab-members"
-                        onClickCapture={handleSlideClick}
                     >
                         <div
                             className="accContentSlide"
                             ref={el => {
                                 slideRefs.current[0] = el;
                             }}
-                            style={{ pointerEvents: isMobile && collapsed === 0 ? "none" : "all" }}
                         >
                             <GroupMembers members={members} myPerms={myPerms} />
                         </div>
@@ -452,14 +430,12 @@ export default function Group() {
                         role="tabpanel"
                         id="group-panel-habits"
                         aria-labelledby="group-tab-habits"
-                        onClickCapture={handleSlideClick}
                     >
                         <div
                             className="accContentSlide"
                             ref={el => {
                                 slideRefs.current[1] = el;
                             }}
-                            style={{ pointerEvents: isMobile && collapsed === 0 ? "none" : "all" }}
                         >
                             {habits.length || plans.length ? <>
                                 {habits.length > 0 && <AccHabits habits={habits} />}

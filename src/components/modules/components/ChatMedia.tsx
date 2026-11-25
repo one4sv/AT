@@ -11,6 +11,8 @@ import { useBlackout } from "../../hooks/BlackoutHook";
 import { useContextMenu } from "../../hooks/ContextMenuHook";
 import useOpenLink from "../../hooks/utils/useOpenLink";
 import GetIconByType from "../../../pages/Chat/utils/getIconByType";
+import Selector from "../../ts/Selector";
+import useCompactLayout from "../../hooks/utils/useCompactLayout";
 
 type MediaCategory = "photo" | "video" | "link" | "file";
 
@@ -56,6 +58,7 @@ const cardVariants = {
 
 export default function ChatMedia() {
     const { t } = useTranslation("common");
+    const isMobile = useCompactLayout();
     const openLink = useOpenLink();
     const { chatWith } = useChat();
     const { setBlackout } = useBlackout();
@@ -273,37 +276,19 @@ export default function ChatMedia() {
     return (
         <motion.div
             className="chatMedia"
-            layout
+            layout={!isMobile}
         >
             <div className="chatMediaFilters">
-                <motion.div
-                    className="chatMediaFilterTrack"
-                    animate={{
-                        x: `${filters.findIndex(filter => filter.id === activeFilter) * 100}%`
-                    }}
-                    transition={{
-                        duration: 0.3,
-                        ease: [0.075, 0.82, 0.165, 1]
-                    }}
-                    style={{
-                        width: `${100 / filters.length}%`
-                    }}
-                />
-
-                {filters.map(filter => (
-                    <div
-                        key={filter.id}
-                        className={`chatMediaFilter ${activeFilter === filter.id ? "active" : ""}`}
-                        onClick={() => setActiveFilter(filter.id)}
-                    >
-                        {t(`chatMedia.${filter.id}`)}
-                    </div>
-                ))}
+                <Selector selected={activeFilter} arr={filters.map(filter => ({
+                    value: filter.id,
+                    label: t(`chatMedia.${filter.label}`),
+                    func: setActiveFilter
+                }))}/>
             </div>
 
             <motion.div
                 className="chatMediaBody"
-                layout
+                layout={!isMobile}
             >
                 <AnimatePresence mode="wait" initial={false}>
                     {filtered.length > 0 ? (

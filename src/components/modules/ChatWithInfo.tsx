@@ -11,6 +11,9 @@ import { useNavigate } from "react-router"
 import ChatMedia from "./components/ChatMedia"
 import { useContacts } from "../hooks/ContactsHook"
 import formatLastOnline from "../ts/utils/formatOnline"
+import { useEffect, useRef, useState } from "react";
+import { useSideMenu } from "../hooks/SideMenuHook";
+import { useContextMenu } from "../hooks/ContextMenuHook";
 
 export default function ChatWithInfo() {
     const { t } = useTranslation("common");
@@ -22,6 +25,67 @@ export default function ChatWithInfo() {
     const { onlineMap } = useContacts();
 
     const navigate = useNavigate()
+    const [expanded, setExpanded] = useState(false);
+    const sheetRef = useRef<HTMLDivElement>(null);
+    const { dontHandleOther } = useSideMenu();
+    const { menu } = useContextMenu();
+    const blocked = useRef(false);
+    blocked.current = dontHandleOther || menu.visible;
+    useEffect(() => {
+        setExpanded(false);
+    }, [chatWith?.chat_id]);
+    useEffect(() => {
+        const sheet = sheetRef.current;
+        if (!sheet || !isMobile) return;
+        let start: { x: number; y: number; id: number; atTop: boolean; owned: boolean } | null = null;
+        const onStart = (event: TouchEvent) => {
+            start = null;
+            if (event.touches.length !== 1 || blocked.current || !(event.target instanceof Element) ||
+                event.target.closest(".selector, button, input, textarea, a, [role=button]")) return;
+            const touch = event.touches[0];
+            const body = sheet.querySelector(".chatMediaBody");
+            start = { x: touch.clientX, y: touch.clientY, id: touch.identifier, atTop: !!event.target.closest(".chatInfoSheetHandle") || !body || body.scrollTop <= 2, owned: false };
+        };
+        const onMove = (event: TouchEvent) => {
+            if (!start || event.touches.length !== 1 || blocked.current || event.defaultPrevented) { start = null; return; }
+            const touch = event.touches[0];
+            if (touch.identifier !== start.id) { start = null; return; }
+            const dx = touch.clientX - start.x;
+            const dy = touch.clientY - start.y;
+            if (!start.owned && Math.abs(dx) > 8 && Math.abs(dx) >= Math.abs(dy)) { start = null; return; }
+            if (!start.owned && Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) {
+                if ((!expanded && dy < 0) || (expanded && start.atTop && dy > 0)) start.owned = true;
+                else { start = null; return; }
+            }
+            if (start.owned && event.cancelable) event.preventDefault();
+        };
+        const onEnd = (event: TouchEvent) => {
+            const current = start;
+            start = null;
+            if (!current?.owned || blocked.current) return;
+            const touch = Array.from(event.changedTouches).find(item => item.identifier === current.id);
+            if (!touch) return;
+            const dy = touch.clientY - current.y;
+            if (Math.abs(dy) >= 32) {
+                if (dy > 0) {
+                    const body = sheet.querySelector(".chatMediaBody");
+                    if (body) body.scrollTop = 0;
+                }
+                setExpanded(dy < 0);
+            }
+        };
+        const onCancel = () => { start = null; };
+        sheet.addEventListener("touchstart", onStart, { passive: true });
+        sheet.addEventListener("touchmove", onMove, { passive: false });
+        sheet.addEventListener("touchend", onEnd);
+        sheet.addEventListener("touchcancel", onCancel);
+        return () => {
+            sheet.removeEventListener("touchstart", onStart);
+            sheet.removeEventListener("touchmove", onMove);
+            sheet.removeEventListener("touchend", onEnd);
+            sheet.removeEventListener("touchcancel", onCancel);
+        };
+    }, [isMobile, expanded, chatWith?.chat_id]);
 
     if (chatWith === null) return
 
@@ -31,7 +95,9 @@ export default function ChatWithInfo() {
     </span>;
 
     return (
-        <div className="chatWithInfoDiv">
+        <div ref={sheetRef} className={`chatWithInfoDiv${expanded && isMobile ? " infoExpanded" : ""}`}>
+            {isMobile && <div className="chatInfoSheetHandle" aria-hidden="true" />}
+            <div className="chatInfoCollapse"><div className="chatInfoCollapseInner">
             <div className="accInfoMain chatWithInfoMain" onClick={() => {                    
                 if (chatWith.is_group) navigate(`/room/${chatWith.id}`)
                 else navigate(`/acc/${chatWith.nick}`)
@@ -95,6 +161,7 @@ export default function ChatWithInfo() {
                     {t(header === "choosing" ? "chatUi.cancelSelection" : "chatUi.selectMessages")}
                 </div>
             </div>
+            </div></div>
             <ChatMedia/>
         </div>
     )

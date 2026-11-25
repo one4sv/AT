@@ -277,3 +277,13 @@
         > .smHabitGoal { padding: 0 1.5vw; gap: 5px; }
     }
 }
+
+.habitsList .habit {
+    > .habitIcon {
+        align-self: center;
+        > svg { width: 85%; height: 85%; }
+        @media (max-width: 800px) {
+            > img.activityAvatar { width: 85%; height: 85%; }
+        }
+    }
+}

@@ -18,6 +18,8 @@ export default function Blackout() {
     const blackoutBackgroundRef = useRef<HTMLDivElement>(null);
     const moduleRefs = useRef<Map<number, HTMLDivElement>>(new Map());
     const startY = useRef(0);
+    const startX = useRef(0);
+    const chatInfoAxis = useRef<"x" | "y" | null>(null);
     const currentY = useRef(0);
     const dragging = useRef(false);
     const isClosing = useRef(false);
@@ -220,6 +222,13 @@ export default function Blackout() {
         if (index !== topIndex || isClosing.current || visibleStack[index]?.module === "BackgroundFullscreen") return;
 
         const target = e.target as HTMLElement;
+        chatInfoAxis.current = null;
+        horizontalSwipe.current = false;
+        if (target.closest(".chatWithInfoDiv.infoExpanded")) {
+            dragging.current = false;
+            canDismiss.current = false;
+            return;
+        }
         // Controls never own the swipe-down-to-dismiss gesture.
         if (target.closest(".selector, button, input, textarea, select, [role='button']")) {
             dragging.current = false;
@@ -269,6 +278,7 @@ export default function Blackout() {
             document.addEventListener("touchcancel", handleEnd, { once: true });
         }
 
+        startX.current = e.touches[0].clientX;
         startY.current = e.touches[0].clientY;
         currentY.current = startY.current;
         dragging.current = true;
@@ -300,8 +310,20 @@ export default function Blackout() {
         const module = moduleRefs.current.get(index);
         if (!module) return;
 
+        if (visibleStack[index]?.module === "ChatWithInfo" && e.defaultPrevented) return;
         currentY.current = e.touches[0].clientY;
         const diff = currentY.current - startY.current;
+        if (visibleStack[index]?.module === "ChatWithInfo") {
+            const dx = Math.abs(e.touches[0].clientX - startX.current);
+            if (!chatInfoAxis.current && Math.max(dx, Math.abs(diff)) > 8) {
+                chatInfoAxis.current = dx >= Math.abs(diff) ? "x" : "y";
+            }
+            if (chatInfoAxis.current === "x") {
+                horizontalSwipe.current = true;
+                return;
+            }
+            if (!chatInfoAxis.current) return;
+        }
 
         if (diff > 0) {
             module.style.transform = `translateY(${diff}px)`;
@@ -408,6 +430,11 @@ export default function Blackout() {
                         onTouchStart={(e) => handleTouchStart(e, index)}
                         onTouchMove={(e) => handleTouchMove(e, index)}
                         onTouchEnd={() => handleTouchEnd(index)}
+                        onTouchCancel={() => {
+                            if (visibleStack[index]?.module !== "ChatWithInfo") return;
+                            currentY.current = startY.current;
+                            handleTouchEnd(index);
+                        }}
                         onClick={(e) => {
                             if (!isTop) return;
                             if (e.target === e.currentTarget) {
@@ -419,7 +446,7 @@ export default function Blackout() {
                             }
                         }}
                     >
-                        {isTop && isMobile && !item.img && item.module !== "BackgroundFullscreen" && <div className="mobileBar" />}
+                        {isTop && isMobile && !item.img && item.module !== "BackgroundFullscreen" && item.module !== "ChatWithInfo" && <div className="mobileBar" />}
                         {Component ? <Suspense fallback={<div className="blackoutModulePending" role="status" aria-busy="true"><Skeleton type="list" count={3}/></div>}><Component /></Suspense> : null}
                     </div>
                 );

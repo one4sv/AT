@@ -38,8 +38,8 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     const isInInfo = location.pathname.startsWith("/info/");
     const isInfo = location.pathname === "/info";
     const planHeaderMenu = location.pathname.startsWith("/plan/") && headerMenu?.point === "plan" ? headerMenu : null;
-    const profileHeaderMenu = isMobile && location.pathname.startsWith("/acc/") && headerMenu?.point === "profileActions" ? headerMenu : null;
-    const actionsMenu = planHeaderMenu || profileHeaderMenu;
+    const profileHeaderMenu = location.pathname.startsWith("/acc/") && headerMenu?.point === "profileActions" ? headerMenu : null;
+    const actionsMenu = planHeaderMenu || (isMobile ? profileHeaderMenu : null);
     const showActionsMenu = (x: number, y: number) => {
         if (profileHeaderMenu && menu.visible && menu.point === profileHeaderMenu.point) { closeMenu(); return; }
         if (actionsMenu) openMenu(x, y, actionsMenu.point, actionsMenu.options);
@@ -89,11 +89,12 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                 </div> : ""}
                 <div
                     className={`header headerTitle ${isInInfo || isInfo ? "headerInfo" : ""} ${titleOverride !== undefined ? "headerCustomTitle" : ""}`}
-                    data-header-gesture={planHeaderMenu ? "plan" : "quick"}
+                    data-header-gesture={planHeaderMenu ? "plan" : profileHeaderMenu ? "profile" : location.pathname.startsWith("/acc/") ? undefined : "quick"}
                     onContextMenu={e => {
                         e.preventDefault();
                         if (planHeaderMenu) showPlanMenu(e.clientX, e.clientY);
-                        else openMenu(e.clientX, e.clientY, "headerQuickAction", { id: "headerQuickAction" });
+                        else if (profileHeaderMenu) { e.stopPropagation(); openMenu(e.clientX, e.clientY, profileHeaderMenu.point, profileHeaderMenu.options); }
+                        else if (!location.pathname.startsWith("/acc/")) openMenu(e.clientX, e.clientY, "headerQuickAction", { id: "headerQuickAction" });
                     }}
                     onClick={handleHeaderClick}
                 >

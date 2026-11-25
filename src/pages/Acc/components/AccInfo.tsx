@@ -76,7 +76,7 @@ export default function AccInfo({
     const actionRef = useRef(actionOptions);
     actionRef.current = actionOptions;
     useEffect(() => {
-        if (!isMobile || !acc?.id || red || renaming) return;
+        if (!acc?.id || red || renaming) return;
         const options = actionRef.current;
         if (!options) return;
         setHeaderMenu({
