@@ -97,8 +97,9 @@
 }
 
 .habitIcon {
+    width: 4.5dvh;
+    height: 4.5dvh;
     aspect-ratio: 1/1;
-    height: 100%;
     flex-shrink: 0;
     position: relative;
     border-radius: 50%;
@@ -106,6 +107,8 @@
     align-items: center;
     justify-content: center;
     @media (max-width: 800px) {
+        width: 6.5dvh;
+        height: 6.5dvh;
         margin: 0;
     }
 }
@@ -200,7 +203,8 @@
 
 .habit.withGoal {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: 4.5dvh minmax(0, 1fr);
+    &:not(:has(> .habitIcon)) { grid-template-columns: 0 minmax(0, 1fr); }
     grid-template-rows: minmax(0, 1fr) 30px;
     height: calc(5.5dvh + 32px);
     row-gap: 2px;
@@ -215,6 +219,7 @@
         grid-row: 1;
     }
     @media (max-width: 800px) {
+        grid-template-columns: 6.5dvh minmax(0, 1fr);
         height: calc(6.5dvh + 32px);
     }
 }
