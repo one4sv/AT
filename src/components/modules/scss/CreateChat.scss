@@ -1,5 +1,6 @@
 @use '../../../scss/mixins' as var;
 @use '../../../scss/contactPickerControls';
+@use '../../../scss/habitFormControls';
 
 .createChatDiv {
     @include var.centerModal;
@@ -25,7 +26,8 @@
     flex-direction: column;
     gap: 1vh;
     height: fit-content;
-    margin-bottom: 3vh;
+    margin-bottom: 1.5vh;
+    flex-shrink: 0;
 }
 .creteChatStr {
     display: flex;
@@ -38,6 +40,7 @@
     align-items: center;
     height: 6dvh;
     aspect-ratio: 1/1;
+    flex-shrink: 0;
     border-radius: 50%;
     background-color: var(--menuButtHover);
     cursor: pointer;
@@ -72,61 +75,6 @@
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
-}
-.createChatWrapper {
-    justify-content: end;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    position: relative;
-    > label {
-        padding-inline-start: 0.5vw;
-        font-size: 16px;
-        user-select: none;
-        color: var(--borderHabit);
-    }
-    &:focus-within {
-        > label {
-            color: var(--accent_text);
-        }
-    }
-    > span {
-        font-size: 14px;
-        color: var(--borderWh);
-        position: absolute;
-        right: 0;
-        bottom: -1.7vh;
-    }
-}
-.createChatname {
-    width: 100%;
-    height: 3dvh;
-    border: none;
-    border-bottom: 2px solid var(--borderHabit);
-    font-size: 20px;
-    outline: none;
-    background-color: var(--tr);
-    color: var(--tc);
-    &:focus {
-        border-bottom: 2px solid var(--accent);
-    }
-}
-.createChatDesc {
-    width: 100%;
-    border: none;
-    border-bottom: 2px solid var(--borderHabit);
-    font-size: 16px;
-    outline: none;
-    resize: none;
-    background-color: var(--tr);
-    color: var(--tc);
-    padding: .5dvh 0;
-    box-sizing: border-box;
-    scrollbar-width:thin;
-    min-height: 5dvh;
-    &:focus {
-        border-bottom: 2px solid var(--accent);
-    }
 }
 .inviteUser {
     display: flex;

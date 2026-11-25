@@ -38,16 +38,16 @@ export default function CreateChatInfo({pick, setPick, name, setName, desc, setD
                         <img src={previewUrl} className="createChatPick" alt="Chat Avatar Preview"/>
                     ) : <Camera />}
                 </div>
-                <div className="createChatWrapper">
+                <div className="addHabitWrapper">
                     <label htmlFor="createChatname">{t("chatUi.name")}</label>
-                    <input type="text" id="createChatname" className='createChatname' value={name} onChange={(e) => setName(e.target.value)} maxLength={40} minLength={3}/>
+                    <input type="text" id="createChatname" className="inputName addHabitInput" value={name} onChange={(e) => setName(e.target.value)} maxLength={40} minLength={3}/>
                     <span>{name.length}/40</span>
                 </div>
             </div>
             <div className="creteChatStr">
-                <div className="createChatWrapper">
+                <div className="addHabitWrapper">
                     <label htmlFor="createChatDesc">{t("chatUi.description")}</label>
-                    <TA id="createChatDesc" className='createChatDesc' value={desc} onChange={(e) => setDesc(e.target.value)} maxLength={150}/>
+                    <TA id="createChatDesc" className="inputDesc addHabitInput" value={desc} onChange={(e) => setDesc(e.target.value)} maxLength={150}/>
                     <span>{desc.length}/150</span>
                 </div>
             </div>
