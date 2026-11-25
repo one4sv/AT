@@ -174,7 +174,7 @@ export default function SelectList({
         readOnly={readOnly}
       />
       {chevron && (
-        <ChevronDown style={{ transform: `translateY(-50%) rotate(${showList && !showOnly ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
+        <ChevronDown style={{ top: "50%", width: "22px", height: "22px", transform: `translateY(-50%) rotate(${showList && !showOnly ? "180deg" : "0deg"})`, transition: "transform 0.2s" }}/>
       )}
       {showList && !showOnly && createPortal(
         <div

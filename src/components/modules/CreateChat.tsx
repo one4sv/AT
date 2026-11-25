@@ -9,6 +9,7 @@ import CreateChatInfo from './components/CreateChatInfo';
 import InviteUser from './components/InviteUser';
 import { useGroup } from '../hooks/GroupHook';
 import { useContacts } from '../hooks/ContactsHook';
+import { useUser } from '../hooks/UserHook';
 import type { Contact } from '../context/ContactsContext';
 
 import { useTranslation } from "react-i18next";
@@ -17,6 +18,7 @@ export default function CreateChat() {
     const { t } = useTranslation("settings");
     const { t: tc } = useTranslation("common");
     const { search, refetchContacts, findContacts } = useContacts();
+    const { user } = useUser();
     const { setBlackout, blackout } = useBlackout();
     const { members, refetchGroup, group } = useGroup();
     const { showNotification } = useNote();
@@ -43,7 +45,7 @@ export default function CreateChat() {
 
             if (controller.signal.aborted || !sortedList) return;
 
-            let filteredList = sortedList.filter((con) => !con.is_group);
+            let filteredList = sortedList.filter((con) => !con.is_group && con.id !== user.id);
 
             if (blackout.point === "InviteUser") {
                 filteredList = filteredList.filter(
@@ -61,7 +63,7 @@ export default function CreateChat() {
                 setLoadingList(false);
             }
         }
-    }, [createChatSearch, blackout.point, members, findContacts, showNotification]);
+    }, [createChatSearch, blackout.point, members, findContacts, showNotification, user.id]);
 
     useEffect(() => {
         const timer = setTimeout(refetchCreateChat, 100);

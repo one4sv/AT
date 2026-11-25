@@ -36,7 +36,7 @@ export default function Group() {
     const { showNotification } = useNote();
     const [ joiningActivity, setJoiningActivity ] = useState<number | null>(null);
     const [ collapsed, setCollapsed ] = useState(0);
-    const [ selector, setSelector ] = useState<"habits" | "members">("habits");
+    const [ selector, setSelector ] = useState<"habits" | "members">("members");
 
     const collapsedRef = useRef(0);
     const collapseTarget = useRef(0);
@@ -104,11 +104,11 @@ export default function Group() {
     const contentRef = useRef<HTMLDivElement>(null);
     const slideRefs = useRef<(HTMLDivElement | null)[]>([null, null]);
     const tabs = [{
+        tab: "members",
+        name: `${t("groupUi.participants")} ${members.length}`
+    }, {
         tab: "habits",
         name: t("sideMenu.activities")
-    }, {
-        tab: "members",
-        name: t("groupUi.participants")
     }];
 
     useEffect(
@@ -119,7 +119,7 @@ export default function Group() {
                 });
                 return;
             }
-            setSelector("habits");
+            setSelector("members");
             setCollapsed(0);
             if (contentRef.current) contentRef.current.scrollLeft = 0;
             if (line.current) line.current.style.transform = "translateX(0%)";
@@ -175,7 +175,7 @@ export default function Group() {
         if (!elWidth) return;
         const proc = elScroll / elWidth * 100;
         line.current.style.transform = `translateX(${proc}%)`;
-        if (proc > 50) setSelector("members"); else setSelector("habits");
+        if (proc > 50) setSelector("habits"); else setSelector("members");
     };
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
         if (collapseFrame.current !== null) {
@@ -433,6 +433,23 @@ export default function Group() {
                     <div
                         className="accSlide"
                         role="tabpanel"
+                        id="group-panel-members"
+                        aria-labelledby="group-tab-members"
+                        onClickCapture={handleSlideClick}
+                    >
+                        <div
+                            className="accContentSlide"
+                            ref={el => {
+                                slideRefs.current[0] = el;
+                            }}
+                            style={{ pointerEvents: isMobile && collapsed === 0 ? "none" : "all" }}
+                        >
+                            <GroupMembers members={members} myPerms={myPerms} />
+                        </div>
+                    </div>
+                    <div
+                        className="accSlide"
+                        role="tabpanel"
                         id="group-panel-habits"
                         aria-labelledby="group-tab-habits"
                         onClickCapture={handleSlideClick}
@@ -440,7 +457,7 @@ export default function Group() {
                         <div
                             className="accContentSlide"
                             ref={el => {
-                                slideRefs.current[0] = el;
+                                slideRefs.current[1] = el;
                             }}
                             style={{ pointerEvents: isMobile && collapsed === 0 ? "none" : "all" }}
                         >
@@ -475,23 +492,6 @@ export default function Group() {
                                 <CalendarBlankIcon size={28} aria-hidden="true" />
                                 <span>{t("groupUi.noActivities")}</span>
                             </div>}
-                        </div>
-                    </div>
-                    <div
-                        className="accSlide"
-                        role="tabpanel"
-                        id="group-panel-members"
-                        aria-labelledby="group-tab-members"
-                        onClickCapture={handleSlideClick}
-                    >
-                        <div
-                            className="accContentSlide"
-                            ref={el => {
-                                slideRefs.current[1] = el;
-                            }}
-                            style={{ pointerEvents: isMobile && collapsed === 0 ? "none" : "all" }}
-                        >
-                            <GroupMembers members={members} myPerms={myPerms} />
                         </div>
                     </div>
                 </div>

@@ -805,6 +805,9 @@
   },
   "groupUi": {
     "participants": "Members",
+    "roleOwner": "Owner",
+    "roleAdmin": "Admin",
+    "roleMember": "Member",
     "sections": "Group sections",
     "optional": "Optional participation",
     "joined": "You joined the activity",

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import { DotsThree as MoreHorizontal, MagnifyingGlass as Search, UserCircleGear as Settings2, UserPlus, Users, X, User, CircleIcon } from "@phosphor-icons/react";
+import { MagnifyingGlass as Search, UserCircleGear as Settings2, UserPlus, Users, X, User, CircleIcon } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import type { Member, Perms } from "../../../components/context/GroupContext";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
@@ -8,10 +9,10 @@ import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useUser } from "../../../components/hooks/UserHook";
 import { useContacts } from "../../../components/hooks/ContactsHook";
 const roleLabels: Record<string, string> = {
-    owner: "Владелец",
-    admin: "Администратор",
-    member: "Участник",
-    user: "Участник"
+    owner: "groupUi.roleOwner",
+    admin: "groupUi.roleAdmin",
+    member: "groupUi.roleMember",
+    user: "groupUi.roleMember"
 };
 export default function GroupMembers({
     members,
@@ -20,6 +21,7 @@ export default function GroupMembers({
     members: Member[];
     myPerms: Perms | null;
 }) {
+    const { t } = useTranslation("common");
     const { openMenu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { user } = useUser();
@@ -125,20 +127,9 @@ export default function GroupMembers({
                             <span
                                 className={`groupMemberRole ${member.role_name === "owner" || member.role_name === "admin" ? "privileged" : ""}`}
                             >
-                                {roleLabels[member.role_name] || member.role_name || "Участник"}
+                                {roleLabels[member.role_name] ? t(roleLabels[member.role_name]) : member.role_name || t("groupUi.roleMember")}
                             </span>
                         </Link>
-                        <button
-                            type="button"
-                            className="groupMemberMenu"
-                            aria-label={`Действия: ${member.name || member.nick}`}
-                            onClick={event => {
-                                const rect = event.currentTarget.getBoundingClientRect();
-                                showMenu(member, rect.left, rect.bottom);
-                            }}
-                        >
-                            <MoreHorizontal size={20} />
-                        </button>
                     </li>
                 )}
             </ul> : <div className="groupMembersEmpty">

@@ -813,6 +813,9 @@
   },
   "groupUi": {
     "participants": "Участники",
+    "roleOwner": "Владелец",
+    "roleAdmin": "Админ",
+    "roleMember": "Участник",
     "sections": "Разделы группы",
     "optional": "участие по желанию",
     "joined": "Вы присоединились к активности",
