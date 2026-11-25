@@ -172,7 +172,7 @@ export default function ContextMenu() {
                     visibility: isAdjusted ? "visible" : "hidden" }}/>
         </>}
         <div
-            className={"ContextMenuWrapper"+(mobileCalendar?" calendarDayContextMenu":"")}
+            className={"ContextMenuWrapper"+(mobileCalendar?" calendarDayContextMenu":menu.point==="calendarDay"?" calendarDayDesktopMenu":"")}
             role="menu"
             aria-label={menu.options.name || undefined}
             tabIndex={-1}

@@ -60,22 +60,28 @@ export default function CalendarDayMenu({mobile}:{mobile:boolean}){
     const canComment=inRange && Boolean(chosen?.access?.can_comment ?? own);
     const selectDay=()=>{const d=new Date(date+"T12:00:00");setSelectedMonth(d.getMonth());setSelectedYear(d.getFullYear());setChosenDay(date);};
     const slide=buildSlide(month.getMonth(),month.getFullYear());
+    const summary=<div className="calendarContextSummary"><strong>{formatDateFromString(date)}</strong><DaySummary key={date+":"+id} date={date} habitId={id} completed={counts.completedArr.length} missed={counts.skippedArr.length} planned={counts.willArr.length+counts.plannedArr.length+(!id?plans.filter(p=>p.plan_date===date && p.membership_status!=="pending").length:0)} ongoing={counts.nowArr.length} comment={comment}/></div>;
+    const days=[...slide.days.prev,...slide.days.this,...slide.days.post];
     return <>
         {mobile && <div className="calendarContextCalendar" onClick={e=>e.stopPropagation()}>
             <div className="calendarContextHeader"><button type="button" aria-label={t("calendarDay.previousMonth")} onClick={()=>shiftMonth(-1)}><CaretLeftIcon/></button><strong>{new Intl.DateTimeFormat(i18n.resolvedLanguage,{month:"long",year:"numeric"}).format(month)}</strong><button type="button" aria-label={t("calendarDay.nextMonth")} onClick={()=>shiftMonth(1)}><CaretRightIcon/></button></div>
             <div key={month.toISOString()} className={"calendarDays "+(direction>0?"contextMonthNext":direction<0?"contextMonthPrev":"")}>
                 {Array.from({length:7},(_,i)=><small key={i}>{new Intl.DateTimeFormat(i18n.resolvedLanguage,{weekday:"short",timeZone:"UTC"}).format(new Date(Date.UTC(2024,0,i+1)))}</small>)}
-                {[...slide.days.prev,...slide.days.this,...slide.days.post].map(d=>{
+                {days.map(d=>{
                     const day=dateToCalendarFormat(new Date(d.year,d.month,d.day,12));
                     const c=getDayArrays(day,calendar,habits,id,current);
                     return <button type="button" key={day} data-calendar-preview-day={day} className={"calDay "+(d.month!==month.getMonth()?"prevDays ":"")+(day===date?"chosenDayCal":"")} onClick={e=>{e.stopPropagation();setDate(day);}}>{d.day}<span className="calendarDots">{c.completedArr.length>0 && <span className="calendarDot comp"/>}{c.skippedArr.length>0 && <span className="calendarDot skip"/>}{(c.willArr.length>0 || c.plannedArr.length>0) && <span className="calendarDot will"/>}{c.nowArr.length>0 && <span className="calendarDot now"/>}</span></button>;
                 })}
+                {Array.from({length:42-days.length},(_,i)=><span key={"blank-"+i} aria-hidden="true"/>)}
             </div>
-            <div className="calendarContextSummary"><strong>{formatDateFromString(date)}</strong><DaySummary date={date} habitId={id} completed={counts.completedArr.length} missed={counts.skippedArr.length} planned={counts.willArr.length+counts.plannedArr.length+(!id?plans.filter(p=>p.plan_date===date && p.membership_status!=="pending").length:0)} ongoing={counts.nowArr.length} comment={comment}/></div>
+            {summary}
         </div>}
+        {!mobile && summary}
+        <div className="calendarContextActions">
         {!id && <div className="calendarContextPick" onClick={e=>e.stopPropagation()}><SelectList className="calendarContextActivity" placeholder={t("calendarDay.chooseActivity")} selected={selectedId} onChange={setSelectedId} arr={items.filter(h=>h.ongoing).map(h=>({value:String(h.id),label:h.name}))}/></div>}
         {canComplete && <div className="ContextMenuButt" onClick={()=>{closeMenu();selectDay();markDone(chosen!.id,date);}}>{done?<CircleIcon/>:<CheckCircleIcon/>}{t(done?"calendarDay.undo":"calendarDay.mark")}</div>}
         {canComment && <div className="ContextMenuButt" onClick={()=>{closeMenu();selectDay();setBlackout({seted:true,module:"CalendarDayComment",options:{habitId:String(chosen!.id),id:date}});}}><ChatCircleIcon/>{t(comment?"calendarDay.editComment":"calendarDay.addComment")}</div>}
         {!canComplete && !canComment && <div className="ContextMenuButt" onClick={()=>{selectDay();closeMenu();}}>{t("calendarDay.openDay")}</div>}
+        </div>
     </>;
 }

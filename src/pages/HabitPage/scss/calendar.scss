@@ -372,7 +372,7 @@
     }
 }
 
-.hoverDayDiv { width: max-content; max-width: min(240px,calc(100vw - 16px)); padding: 10px; border-radius: 16px; gap: 6px; z-index: 9; }
+.hoverDayDiv { width: max-content; max-width: min(240px,calc(100vw - 16px)); padding: 5px 7px; border-radius: 12px; gap: 3px; z-index: 9; }
 .hoverGoalRow { min-width: 0; display: grid; gap: 4px; }
 .hoverGoalRow .hoverRow { justify-content: space-between; }
 .hoverGoalRow .hoverRow > span { min-width: 0; overflow-wrap: anywhere; }
@@ -396,3 +396,51 @@
 @keyframes contextMonthNext { from { transform: translateX(30%); opacity: .4; } to { transform: translateX(0); opacity: 1; } }
 @keyframes contextMonthPrev { from { transform: translateX(-30%); opacity: .4; } to { transform: translateX(0); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .contextMonthNext, .contextMonthPrev { animation: none; } }
+
+.hoverDaySkeleton {
+    display: grid;
+    min-width: 120px;
+    gap: 5px;
+    > .skeletonLine {
+        width: 100%;
+        height: 10px;
+        &:last-child { width: 70%; height: 5px; }
+    }
+}
+.calendarDayContextMenu .calendarContextCalendar {
+    flex-shrink: 0;
+    > .calendarDays {
+        grid-template-rows: 20px repeat(6, min(10vw, 5.5dvh));
+        > .calDay { width: 100%; height: 100%; aspect-ratio: auto; }
+    }
+    > .calendarContextSummary {
+        box-sizing: border-box;
+        height: 17dvh;
+        min-height: 17dvh;
+        max-height: 17dvh;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+}
+.calendarDayContextMenu .calendarContextActions {
+    min-height: 80px;
+    flex-shrink: 0;
+}
+.calendarDayContextMenu .calendarContextActions:has(.calendarContextPick) {
+    min-height: calc(80px + 6dvh);
+}
+.calendarDayDesktopMenu {
+    width: min(250px, calc(100vw - 20px));
+    > .calendarContextSummary {
+        margin: 4px;
+        padding: 5px 7px;
+        border-radius: 12px;
+        gap: 3px;
+        height: 110px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        background: var(--bgc);
+    }
+}

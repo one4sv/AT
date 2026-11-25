@@ -5,6 +5,7 @@ import { useUser } from "../../../../components/hooks/UserHook";
 import { useTheHabit } from "../../../../components/hooks/TheHabitHook";
 import { api } from "../../../../components/ts/api";
 import { CompletionAvatars } from "../../../../components/ts/ActivityIndicators";
+import "../../../../scss/Loading.scss";
 import useHabitDayProgress from "../../../../components/hooks/utils/useHabitDayProgress";
 
 export interface DaySummaryProps {
@@ -18,31 +19,35 @@ export function DaySummary({date,habitId,completed,missed,planned,ongoing,commen
     const progress=useHabitDayProgress(member && habitId?date:"");
     const [goals,setGoals]=useState<{id:number;name:string;percent:number|null;kind:string}[]>([]);
     const [goalCount,setGoalCount]=useState<number|null>(null);
+    const [loadedKey,setLoadedKey]=useState("");
+    const requestKey=member?`${user.id}:${habitId || "all"}:${date}`:"";
+    const loading=Boolean(requestKey && loadedKey!==requestKey);
     useEffect(()=>{
-        setGoals([]);setGoalCount(null);
+        setGoals([]);setGoalCount(null);setLoadedKey("");
         if(!member)return;
         const controller=new AbortController();
         const timer=window.setTimeout(()=>{
-            if(habitId)void api.get("goal-workspace/activity/"+habitId+"/day/"+date,{signal:controller.signal}).then(({data})=>{if(!controller.signal.aborted && data.success)setGoals(data.goals || []);}).catch(()=>{});
-            else void api.get("goal-workspace/day/"+date,{signal:controller.signal}).then(({data})=>{if(!controller.signal.aborted && data.success)setGoalCount(data.completed_ids?.length || 0);}).catch(()=>{});
+            if(habitId)void api.get("goal-workspace/activity/"+habitId+"/day/"+date,{signal:controller.signal}).then(({data})=>{if(!controller.signal.aborted && data.success)setGoals(data.goals || []);}).catch(()=>{}).finally(()=>{if(!controller.signal.aborted)setLoadedKey(requestKey);});
+            else void api.get("goal-workspace/day/"+date,{signal:controller.signal}).then(({data})=>{if(!controller.signal.aborted && data.success)setGoalCount(data.completed_ids?.length || 0);}).catch(()=>{}).finally(()=>{if(!controller.signal.aborted)setLoadedKey(requestKey);});
         },120);
         return ()=>{clearTimeout(timer);controller.abort();};
-    },[date,habitId,member,user.id]);
+    },[date,habitId,member,user.id,requestKey]);
     const shared=habitId?progress[habitId]:undefined;
     return <>
         {!habitId ? <>
             {[[ongoing,"now","ongoing"],[completed,"comp","completed"],[missed,"skip","missed"],[planned,"will","planned"]].map(([count,cl,key])=>Number(count)>0 && <div className="hoverRow" key={String(key)}><div className={"calendarDot "+cl}/>{t("calendarDay."+key)}: {count}</div>)}
             {!ongoing && !completed && !missed && !planned && <div className="hoverRow hrEmpty">{t("calendarDay.empty")}</div>}
-            {goalCount!=null && <div className="hoverRow">{t("calendarDay.goalsCompleted")}: {goalCount}</div>}
+            {!loading && goalCount!=null && <div className="hoverRow">{t("calendarDay.goalsCompleted")}: {goalCount}</div>}
         </>:<>
             {shared && (shared.actor_count ?? shared.actors?.length ?? 0)>0 && (shared.total>1 || habit?.chat_id) && <div className="hoverRow">{t("calendarDay.completedBy")} <CompletionAvatars progress={shared}/></div>}
             <div className={"hoverRow"+(!comment?" hrEmpty":"")}>{comment || t("calendarDay.noComment")}</div>
-            {goals.map(goal=><div key={goal.id} className="hoverGoalRow">
+            {!loading && goals.map(goal=><div key={goal.id} className="hoverGoalRow">
                 <div className="hoverRow"><span>{goal.name}</span><strong>{goal.percent==null?"—":(goal.kind==="change" && goal.percent>0?"+":"")+goal.percent+"%"}</strong></div>
                 <div className="hoverGoalTrack"><span style={{width:Math.max(0,Math.min(100,goal.percent || 0))+"%"}}/></div>
                 <small>{t(goal.kind==="change"?"calendarDay.goalChange":"calendarDay.goalDaily")}</small>
             </div>)}
         </>}
+        {loading && <div className="hoverDaySkeleton" aria-busy="true"><span className="skeletonLine"/><span className="skeletonLine"/></div>}
     </>;
 }
 export default function HoverDay(props:DaySummaryProps & {targetRef:React.RefObject<HTMLDivElement|null>}){
