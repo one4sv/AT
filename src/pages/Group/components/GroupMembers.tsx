@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { MagnifyingGlass as Search, UserCircleGear as Settings2, UserPlus, Users, X, User, CircleIcon } from "@phosphor-icons/react";
 import { ChatTeardrop, CalendarBlank, Target, PushPin, ShareFat, Trash, Image, TextAa, TextAlignCenter, UserMinus, Prohibit, UserGear } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import type { Member, Perms } from "../../../components/context/GroupContext";
 import formatLastOnline from "../../../components/ts/utils/formatOnline";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
@@ -23,6 +24,7 @@ export default function GroupMembers({
     myPerms: Perms | null;
 }) {
     const { t } = useTranslation("common");
+    const navigate = useNavigate();
     const { openMenu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { user } = useUser();
@@ -113,7 +115,7 @@ export default function GroupMembers({
                             showMenu(member, event.clientX, event.clientY);
                         }}
                     >
-                        <button type="button" className="groupMemberLink" data-context-menu-allow-button onClick={() => openPermissions(member)} aria-label={member.name || member.nick}>
+                        <button type="button" className="groupMemberLink" data-context-menu-allow-button onClick={() => myPerms?.manage_roles ? openPermissions(member) : navigate(`/chat/${member.nick}`)} aria-label={member.name || member.nick}>
                             <span className="groupMemberAvatar">
                                 {member.avatar_url ? <img src={member.avatar_url} alt="" loading="lazy" /> : <span>
                                     <User size={28} />

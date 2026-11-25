@@ -33,7 +33,7 @@ export default function PlanDiv({ plan, entry, onSelect }: {
     const { closeMenu } = useSideMenu();
     const selected = pathname.replace(/\/$/, "") === "/plan/" + plan.id;
     const accepted = plan.membership_status === "accepted";
-    const canComplete = accepted && plan.status !== "canceled" &&
+    const canComplete = plan.can_complete !== false && accepted && plan.status !== "canceled" &&
         (plan.is_owner || plan.completion_mode !== "shared");
 
     return <Link to={"/plan/" + plan.id + (plan.share ? "?share=" + encodeURIComponent(plan.share) : "")}

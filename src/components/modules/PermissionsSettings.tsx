@@ -1,4 +1,5 @@
 import "./scss/PermissionsDiv.scss";
+import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
 import type { Member, Perms } from "../context/GroupContext";
 import { useGroup } from "../hooks/GroupHook";
@@ -58,15 +59,16 @@ const PERMISSIONS: { key: keyof Perms; label: string; icon: React.ComponentType<
 ];
 
 const categories = [
-    { label: "Сообщения", keys: ["send_messages", "delete_others", "pin_messages", "redirect_messages"] },
-    { label: "Беседа", keys: ["change_avatar", "change_name", "change_desc"] },
-    { label: "Участники и роли", keys: ["manage_roles", "can_invite_users", "kick_users", "ban_users"] },
-    { label: "Активности", keys: ["habit_complete", "habit_comment", "habit_edit_blocks", "habit_edit_info", "habit_invite"] },
-    { label: "Планы", keys: ["plan_complete", "plan_comment"] },
-    { label: "Цели", keys: ["goal_progress"] }
+    { label: "messages", keys: ["send_messages", "delete_others", "pin_messages", "redirect_messages"] },
+    { label: "group", keys: ["change_avatar", "change_name", "change_desc"] },
+    { label: "members", keys: ["manage_roles", "can_invite_users", "kick_users", "ban_users"] },
+    { label: "activities", keys: ["habit_complete", "habit_comment", "habit_edit_blocks", "habit_edit_info", "habit_invite"] },
+    { label: "plans", keys: ["plan_complete", "plan_comment"] },
+    { label: "goals", keys: ["goal_progress"] }
 ];
 
 export default function PermissionsSettings() {
+    const { t } = useTranslation("common");
     const { group, refetchGroup } = useGroup();
     const { user } = useUser();
     const { blackout, setBlackout } = useBlackout();
@@ -204,7 +206,7 @@ export default function PermissionsSettings() {
     return (
         <div className="rolesModal" role="dialog" aria-modal="true" aria-label="Права и роли">
             <div className="rolesModalHeader">
-                <span>{directMemberId ? "Права участника" : "Права и роли"}</span>
+                <span>{t(directMemberId ? "groupUi.memberPermissions" : "groupUi.rolesAndPermissions")}</span>
             </div>
 
             {loading ? (
@@ -371,10 +373,10 @@ export default function PermissionsSettings() {
                                                 const allActive = items.every(item => activePermission(item.key));
                                                 return <section key={category.label} className="rolesModalPermissionCategory">
                                                     <button type="button" className="rolesModalPermission" aria-pressed={allActive} disabled={!editable || saving} onClick={() => items.forEach(item => togglePermission(item.key, !allActive))}>
-                                                        <span>{category.label}</span>
+                                                        <span>{t(`groupUi.permissionCategory.${category.label}`)}</span>
                                                         <span className={"rolesModalSwitch" + (allActive ? " active" : "")} aria-hidden="true"><span /></span>
                                                     </button>
-                                                    {items.map(({ key, label, icon: Icon }) => {
+                                                    {items.map(({ key, icon: Icon }) => {
                                                 const active = activePermission(key);
                                                 return (
                                                     <button
@@ -387,7 +389,7 @@ export default function PermissionsSettings() {
                                                     >
                                                         <span className="rolesModalPermissionText">
                                                             <Icon size={20} />
-                                                            <span>{label}</span>
+                                                            <span>{t(`groupUi.permission.${key}`)}</span>
                                                         </span>
                                                         <span className={"rolesModalSwitch" + (active ? " active" : "")} aria-hidden="true">
                                                             <span />

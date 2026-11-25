@@ -807,6 +807,15 @@
   "groupUi": {
     "participants": "Members",
     "memberPermissions": "Member permissions",
+    "rolesAndPermissions": "Roles and permissions",
+    "permissionCategory": {
+      "messages": "Messages",
+      "group": "Group",
+      "members": "Members and roles",
+      "activities": "Activities",
+      "plans": "Plans",
+      "goals": "Goals"
+    },
     "permission": {
       "send_messages": "Send messages",
       "plan_complete": "Complete plans",

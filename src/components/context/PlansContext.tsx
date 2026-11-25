@@ -32,6 +32,8 @@ export interface OneOffPlan {
     status?: "upcoming" | "completed" | "canceled";
     membership_status?: "pending" | "accepted";
     is_owner?: boolean;
+    can_complete?: boolean;
+    can_comment?: boolean;
     completed_for_me?: boolean;
     pinned?: boolean;
     completed_count?: number;

@@ -815,6 +815,15 @@
   "groupUi": {
     "participants": "Участники",
     "memberPermissions": "Права участника",
+    "rolesAndPermissions": "Права и роли",
+    "permissionCategory": {
+      "messages": "Сообщения",
+      "group": "Беседа",
+      "members": "Участники и роли",
+      "activities": "Активности",
+      "plans": "Планы",
+      "goals": "Цели"
+    },
     "permission": {
       "send_messages": "Отправлять сообщения",
       "plan_complete": "Выполнять планы",

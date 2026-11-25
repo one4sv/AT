@@ -96,9 +96,12 @@ export default function PlanPage() {
             if (detail?.plan) { loadVersion.current++;setPlan(detail.plan);setLoading(false); }
             else void load();
         };
+        const onGroupUpdated = () => void load();
+        window.addEventListener("groupUpdated", onGroupUpdated);
         window.addEventListener("plan-members-updated", onMembersUpdated);
         window.addEventListener("plan-updated", onMembersUpdated);
         return () => {
+            window.removeEventListener("groupUpdated", onGroupUpdated);
             window.removeEventListener("plan-members-updated", onMembersUpdated);
             window.removeEventListener("plan-updated", onMembersUpdated);
         };
@@ -142,7 +145,7 @@ export default function PlanPage() {
         String(date.getDate()).padStart(2, "0")].join("-");
 
     const complete = async () => {
-        if (!plan || pendingPlans[plan.id]) return;
+        if (!plan || plan.can_complete === false || pendingPlans[plan.id]) return;
         setError("");
         try {
             await setCompleted(plan,!plan.completed_for_me);
@@ -240,7 +243,7 @@ export default function PlanPage() {
     const selectedTag = tags.find(tag => tag.value === plan?.tag);
     const planPinned = plans.find(item => item.id === plan?.id)?.pinned ?? plan?.pinned ?? false;
     const linkOnly = plan?.visibility === "link" || (plan?.visibility === "inherit" && privateShow.plans === "link");
-    const canComplete = !!plan && plan.membership_status === "accepted" && plan.status !== "canceled" &&
+    const canComplete = !!plan && plan.can_complete !== false && plan.membership_status === "accepted" && plan.status !== "canceled" &&
         (plan.is_owner || plan.completion_mode !== "shared");
 
     const menuHandlers = useRef({
@@ -415,7 +418,7 @@ export default function PlanPage() {
                                 done: plan.completed_count || 0, total: plan.participants_count || 1
                             })}</p>}
                         {!isCompact && <>
-                            <PlanComment planId={plan.id} disabled={plan.status === "canceled"}/>
+                            <PlanComment planId={plan.id} disabled={plan.status === "canceled" || plan.can_comment === false}/>
                             {canComplete && <div className="doneButtDiv"><button className={"doneButt planDoneButton " +
                             (plan.completed_for_me ? "dbComp" : "dbMark")}
                             disabled={saving || !!pendingPlans[plan.id]} onClick={() => void complete()}>
@@ -447,7 +450,7 @@ export default function PlanPage() {
                         {t(plan.completed_for_me ? "plans.undoCompletion" : "habitUi.complete")}
                     </button>}
                 </div>}
-                <PlanComment planId={plan.id} mobile
+                <PlanComment planId={plan.id} disabled={plan.can_comment === false} mobile
                     open={canComplete ? mobileOpen : "comment"} setOpen={setMobileOpen}/>
             </div>
         }
