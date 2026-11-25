@@ -37,7 +37,7 @@ test("avatar title spacing and online status font use the shared design", () => 
 test("post-linked habit SVG uses inner_text over the accent gradient", () => {
     const css = read("src/scss/Post.scss");
     assert.match(css, /\.PostHabit\s*\{[\s\S]*?background:\s*linear-gradient\(135deg,\s*var\(--accent\),\s*var\(--grad\)\)/);
-    assert.match(css, /\.aphIcon\s*\{[\s\S]*?>svg\s*\{\s*height:\s*100%;\s*color:\s*var\(--inner_text\);/);
+    assert.match(css, /\.aphIcon\s*\{[\s\S]*?>svg,\s*>\.activityAvatar\s*\{\s*width:\s*2\.2dvh;\s*height:\s*2\.2dvh;\s*flex-shrink:\s*0;\s*color:\s*var\(--inner_text\);/);
 });
 
 test("short messages grow with reactions and receipts stay inside the bubble", () => {

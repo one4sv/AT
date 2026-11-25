@@ -26,7 +26,7 @@
 - **Архитектура и контексты:** [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - **Разовые планы 0.6.4 и будущие цели (0.6+):** [PLANS.md](docs/PLANS.md).
 - **Совместные активности, роли, дата вступления:** [COLLABORATION_AND_PERMISSIONS.md](docs/COLLABORATION_AND_PERMISSIONS.md), [habit-invitations.md](docs/habit-invitations.md).
-- **Текущая версия:** dev 0.6.5 Mosaic — [ROADMAP_PROPOSAL.md](docs/ROADMAP_PROPOSAL.md) и [RELEASE_QA.md](docs/RELEASE_QA.md). Состав версий — в [CHANGELOG.md](docs/CHANGELOG.md).
+- **Текущая версия:** dev 0.6.6 Horizon — [ROADMAP_PROPOSAL.md](docs/ROADMAP_PROPOSAL.md) и [RELEASE_QA.md](docs/RELEASE_QA.md). Состав версий — в [CHANGELOG.md](docs/CHANGELOG.md).
 - **Roadmap:** [ROADMAP_PROPOSAL.md](docs/ROADMAP_PROPOSAL.md). Страница уже есть в `/info/roadmap`; живая синхронизация с Linear — отдельная работа.
 - **Проверки и публикация:** [RELEASE_QA.md](docs/RELEASE_QA.md), [DEPLOYMENT.md](docs/DEPLOYMENT.md).
 

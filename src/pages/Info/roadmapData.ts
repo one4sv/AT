@@ -369,37 +369,36 @@ export const roadmapHistory: RoadmapRelease[] = [
             { ru: "Новые настройки: часовой пояс, напоминания о планах и выбор того, что открывается при запуске приложения.", en: "New settings: time zone, plan reminders, and a choice of what opens when you launch the app." },
             { ru: "Переработана страница «Планы и активности»: календарь, итоги дня, ближайшие дела и единая лента активностей и планов.", en: "Redesigned Plans and Activities page: calendar, day summary, upcoming items, and a single timeline of activities and plans." }
         ]
+    },
+    {
+        version: "0.6.5",
+        date: "2026-11-23",
+        title: "Mosaic",
+        features: [
+            { ru: "Композиции — сохранение до 10 вариантов оформления и переключение вручную или автоматически.", en: "Compositions — save up to 10 interface styles and switch manually or automatically." },
+            { ru: "Универсальный поиск — пользователи, сообщения, активности, планы, публикации и настройки прямо в SideMenu.", en: "Universal search — find users, messages, activities, plans, posts, and settings directly from SideMenu." },
+            { ru: "Новые возможности чатов — команды, упоминания и интерактивные карточки пользователей, планов, активностей и публикаций.", en: "New chat features — commands, mentions, and interactive cards for users, plans, activities, and posts." },
+            { ru: "Умное «Избранное» — быстрое создание планов и активностей, распознавание дат и предложений из сообщений.", en: "Smarter Saved Messages — quickly create plans and activities, recognizing dates and suggestions from messages." }
+        ]
     }
 ];
 
 export const roadmapCurrent: RoadmapRelease = {
-    version: "0.6.5",
-    date: "2026-11-23",
-    title: "Mosaic",
+    version: "0.6.6",
+    date: "2026-11-25",
+    title: "Horizon",
     features: [
-        { ru: "Композиции — сохранение до 10 вариантов оформления и переключение вручную или автоматически.", en: "Compositions — save up to 10 interface styles and switch manually or automatically." },
-        { ru: "Универсальный поиск — пользователи, сообщения, активности, планы, публикации и настройки прямо в SideMenu.", en: "Universal search — find users, messages, activities, plans, posts, and settings directly from SideMenu." },
-        { ru: "Новые возможности чатов — команды, упоминания и интерактивные карточки пользователей, планов, активностей и публикаций.", en: "New chat features — commands, mentions, and interactive cards for users, plans, activities, and posts." },
-        { ru: "Умное «Избранное» — быстрое создание планов и активностей, распознавание дат и предложений из сообщений.", en: "Smarter Saved Messages — quickly create plans and activities, recognizing dates and suggestions from messages." }
+        { ru: "Личные, совместные и повторяющиеся цели.", en: "Personal, shared and recurring goals." },
+        { ru: "Улучшения взаимодействия с календарём и его контекстным меню.", en: "Improved calendar interactions and context menu." },
+        { ru: "Переработка статистики и графиков.", en: "Redesigned statistics and charts." },
+        { ru: "Аватарки активностей и планов.", en: "Activity and plan avatars." },
+        { ru: "Фотографии в комментариях активностей и планов.", en: "Photos in activity and plan comments." },
+        { ru: "Экспорт истории личных данных активности.", en: "Export of personal activity history." },
+        { ru: "Сегодняшняя сводка по активностям в ленте.", en: "Today's activity summary in the feed." }
     ]
 };
 
 export const roadmapFuture: RoadmapRelease[] = [
-    {
-        version: "0.6.6",
-        title: "Horizon",
-        features: [
-            { ru: "Личные, совместные и повторяющиеся цели.", en: "Personal, shared and recurring goals." },
-            { ru: "Развитие совместных активностей и журнала.", en: "Expanded shared activities and activity journal." },
-            { ru: "Улучшения взаимодействия с календарём и его контекстным меню.", en: "Improved calendar interactions and context menu." },
-            { ru: "Переработка статистики и графиков.", en: "Redesigned statistics and charts." },
-            { ru: "Аватарки активностей и планов.", en: "Activity and plan avatars." },
-            { ru: "Фотографии в комментариях активностей и планов.", en: "Photos in activity and plan comments." },
-            { ru: "Экспорт истории личных данных активности.", en: "Export of personal activity history." },
-            { ru: "Сегодняшняя сводка по активностям в ленте.", en: "Today's activity summary in the feed." },
-            { ru: "Улучшение интерфейса и оптимизация.", en: "Interface improvements and optimization." }
-        ]
-    },
     {
         version: "0.7",
         title: "The Castle",
