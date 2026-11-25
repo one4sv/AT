@@ -35,7 +35,7 @@ export function DaySummary({date,habitId,completed,missed,planned,ongoing,commen
             {!ongoing && !completed && !missed && !planned && <div className="hoverRow hrEmpty">{t("calendarDay.empty")}</div>}
             {goalCount!=null && <div className="hoverRow">{t("calendarDay.goalsCompleted")}: {goalCount}</div>}
         </>:<>
-            {shared && (shared.total>1 || habit?.chat_id) && <div className="hoverRow">{t("calendarDay.completedBy")} <CompletionAvatars progress={shared}/></div>}
+            {shared && (shared.actor_count ?? shared.actors?.length ?? 0)>0 && (shared.total>1 || habit?.chat_id) && <div className="hoverRow">{t("calendarDay.completedBy")} <CompletionAvatars progress={shared}/></div>}
             <div className={"hoverRow"+(!comment?" hrEmpty":"")}>{comment || t("calendarDay.noComment")}</div>
             {goals.map(goal=><div key={goal.id} className="hoverGoalRow">
                 <div className="hoverRow"><span>{goal.name}</span><strong>{goal.percent==null?"—":(goal.kind==="change" && goal.percent>0?"+":"")+goal.percent+"%"}</strong></div>

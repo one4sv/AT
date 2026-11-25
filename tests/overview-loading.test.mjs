@@ -155,6 +155,9 @@ test("habit and plan indicators preserve resting colors and active inner_text", 
     assert.match(indicators, /<CompletionAvatars progress=\{progress\}/);
     assert.match(indicators, /\.slice\(0,3\)/);
     assert.match(indicators, /count-actors\.length/);
+    assert.match(indicators, /if \(!count\) return null/);
+    assert.match(indicators, /\(progress\.actor_count \?\? progress\.actors\?\.length \?\? 0\) > 0/);
+    assert.doesNotMatch(indicators, /!count && <CircleIcon/);
     assert.match(style, /\.activityStreak/);
     assert.match(style, /\.habit\.active \.activityIndicators/);
     assert.match(style, /color: var\(--inner_text\)/);

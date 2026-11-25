@@ -1,4 +1,4 @@
-import { FireIcon, PathIcon, UserCircleIcon, CircleIcon } from "@phosphor-icons/react";
+import { FireIcon, PathIcon, UserCircleIcon } from "@phosphor-icons/react";
 import type { Calendar } from "../context/CalendarContext";
 import type { Habit } from "../context/HabitsContext";
 import type { OneOffPlan } from "../context/PlansContext";
@@ -11,10 +11,10 @@ export type HabitDayProgress = { completed: number; total: number; actors?: Comp
 export function CompletionAvatars({progress}:{progress:HabitDayProgress}) {
     const actors=(progress.actors || []).slice(0,3);
     const count=progress.actor_count ?? actors.length;
+    if (!count) return null;
     return <span className="activityMembersCount activityCompletionAvatars" title={`${progress.completed}/${progress.total}`} aria-label={`${progress.completed}/${progress.total}`}>
         {actors.map(actor=><span key={actor.id} className="activityCompletionAvatar" title={actor.username || actor.nick}>{actor.avatar_url?<img src={actor.avatar_url} alt={actor.username || actor.nick}/>:<UserCircleIcon size={20}/>}</span>)}
         {count>actors.length && <span className="activityCompletionMore">+{count-actors.length}</span>}
-        {!count && <CircleIcon size={18}/>}
     </span>;
 }
 export type HabitDayProgressMap = Record<string, HabitDayProgress>;
@@ -58,7 +58,7 @@ export default function ActivityIndicators({ habit, plan, calendar, progress, pa
     const showStreak = part !== "aside";
     const showAside = part !== "streak";
     const streak = showStreak && habit && calendar ? getHabitStreakBadge(habit, calendar) : null;
-    const shared = showAside && habit && progress && (progress.total > 1 || Boolean(habit.chat_id));
+    const shared = showAside && habit && progress && (progress.actor_count ?? progress.actors?.length ?? 0) > 0 && (progress.total > 1 || Boolean(habit.chat_id));
     if (!streak && !(showStreak && plan) && !shared) return null;
     return <span className={`activityIndicators ${part === "streak" ? "activityIndicatorsInline" : "activityIndicatorsTrailing"}`}>
         {streak && <span className={`activityStreak ${streak.level}`} title={String(streak.count)}>
