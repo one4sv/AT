@@ -15,17 +15,20 @@ export default function AccMenu() {
     const { setBlackout } = useBlackout();
     const { setDeleteConfirm } = useDelete();
     const { setChosenMess } = useMessages();
-    const { library, activeHeader: header, setActiveHeader:setHeader } = useChat()
+    const { library, activeHeader: header, setActiveHeader:setHeader, chatPanelHidden, setChatPanelHidden } = useChat()
 
     const { options, chatInfo } = menu;
 
     return (
         <>
             <div className="ContextMenuButt" onClick={() => {
-                setChosenMess([]);
-                setHeader(header === "text" ? (library?.pins.length ? "pinned" : "search") : "text");
+                if (header === "text" || header === "habit") {
+                    setChosenMess([]);
+                    setHeader(library?.pins.length ? "pinned" : "search");
+                    setChatPanelHidden(false);
+                } else setChatPanelHidden(previous => !previous);
             }}>
-                <MagnifyingGlassIcon/>{t(header === "text" ? "chatUi.openPanel" : "chatUi.hidePanel")}
+                <MagnifyingGlassIcon/>{t(header === "text" || header === "habit" || chatPanelHidden ? "chatUi.openPanel" : "chatUi.hidePanel")}
             </div>
             <LinkButton />
             <PersonButtons />

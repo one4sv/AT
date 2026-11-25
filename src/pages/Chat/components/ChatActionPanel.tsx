@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useChat } from "../../../components/hooks/ChatHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
@@ -12,7 +12,7 @@ import SearchList from "./ChatTa/SearchList";
 import ChatChoosingMess from "./ChatTa/ChatChoosingMess";
 
 export default function ChatActionPanel({searchedMessages}: {searchedMessages:message[]}) {
-    const { activeHeader, setActiveHeader, searchMess, library } = useChat();
+    const { activeHeader, setActiveHeader, searchMess, library, chatPanelHidden: hidden, setChatPanelHidden: setHidden } = useChat();
     const { setChosenMess } = useMessages();
     const { pms, setShowList, pmRef } = usePinnedMessages();
     const { openMenu, menu } = useContextMenu();
@@ -28,13 +28,45 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
     blocked.current = menu.visible || dontHandleOther;
     const modes: activeHeaderType[] = pms.length ? ["pinned","search","choosing"] : ["search","choosing"];
     const panelVisible = modes.includes(activeHeader);
-    const [hidden, setHidden] = useState(false);
-    const [drag, setDrag] = useState<number | null>(null);
+    const [position, setPositionState] = useState(-100);
+    const positionRef = useRef(-100);
+    const [height, setHeight] = useState(0);
+    const animationFrame = useRef<number | null>(null);
     const hostRef = useRef<HTMLElement | null>(null);
-    const hiddenRef = useRef(false);
+    const hiddenRef = useRef(hidden);
     hiddenRef.current = hidden;
     const panelHeight = () => pmRef.current?.offsetHeight || 0;
-    const hidePanel = () => { setHidden(true); setDrag(null); };
+    const setPosition = useCallback((next: number) => {
+        positionRef.current = Math.max(-100, Math.min(0, next));
+        setPositionState(positionRef.current);
+    }, []);
+    const stopAnimation = useCallback(() => {
+        if (animationFrame.current !== null) cancelAnimationFrame(animationFrame.current);
+        animationFrame.current = null;
+    }, []);
+    // The same 320ms cubic-out settling as SideMenuContext.animateTo.
+    const animateTo = useCallback((target: number) => {
+        stopAnimation();
+        const start = positionRef.current;
+        if (Math.abs(start - target) < .5) { setPosition(target); return; }
+        const startTime = performance.now();
+        const animate = (time: number) => {
+            const progress = Math.min((time - startTime) / 320, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setPosition(start + (target - start) * eased);
+            animationFrame.current = progress < 1 ? requestAnimationFrame(animate) : null;
+        };
+        animationFrame.current = requestAnimationFrame(animate);
+    }, [setPosition, stopAnimation]);
+    const settle = useCallback((nextHidden: boolean) => {
+        if (hiddenRef.current === nextHidden) animateTo(nextHidden ? -100 : 0);
+        else setHidden(nextHidden);
+    }, [animateTo, setHidden]);
+    useLayoutEffect(() => {
+        if (!panelVisible) { stopAnimation(); setPosition(-100); return; }
+        animateTo(hidden ? -100 : 0);
+    }, [panelVisible, hidden, animateTo, stopAnimation, setPosition]);
+    useEffect(() => stopAnimation, [stopAnimation]);
 
     const applyInset = (host: HTMLElement, next: string) => {
         if (host.style.getPropertyValue("--chat-action-bottom") === next) return;
@@ -57,11 +89,13 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
 
     useLayoutEffect(() => {
         const panel = pmRef.current;
-        const host = panel?.parentElement || hostRef.current;
+        const host = panel?.closest<HTMLElement>(".chatDiv") || hostRef.current;
         if (!host) return;
         hostRef.current = host;
         const updateInset = () => {
-            const next = panelVisible && !hidden && panel ? `${Math.ceil(panel.offsetTop + panel.offsetHeight)}px` : "0px";
+            const viewport = panel?.parentElement;
+            if (panel) setHeight(panel.offsetHeight);
+            const next = panelVisible && !hidden && panel && viewport ? `${Math.ceil(viewport.offsetTop + panel.offsetHeight)}px` : "0px";
             applyInset(host, next);
         };
         updateInset();
@@ -92,19 +126,26 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
             if (!hiddenRef.current && !blocked.current && performance.now() < userUntil &&
                 Math.abs(chat.scrollTop - startTop) >= 24) {
                 userUntil = 0;
-                hidePanel();
+                settle(true);
             }
         };
+        let headerStart: number | null = null;
         const onHeader = (event: Event) => {
             const { phase, dy } = (event as CustomEvent<{phase:string;dy:number}>).detail;
             if (phase === "move") {
-                setDrag(Math.min(0, Math.max(-panelHeight(), (hiddenRef.current ? -panelHeight() : 0) + dy)));
-            } else {
-                if (phase === "end") {
-                    if (hiddenRef.current && dy >= Math.min(40, panelHeight() / 2)) setHidden(false);
-                    else if (!hiddenRef.current && dy <= -40) setHidden(true);
+                if (headerStart === null) {
+                    stopAnimation();
+                    headerStart = positionRef.current;
                 }
-                setDrag(null);
+                setPosition(headerStart + dy / Math.max(1, panelHeight()) * 100);
+            } else {
+                let next = hiddenRef.current;
+                if (phase === "end") {
+                    if (next && dy >= Math.min(40, panelHeight() / 2)) next = false;
+                    else if (!next && dy <= -40) next = true;
+                }
+                headerStart = null;
+                settle(next);
             }
         };
         chat.addEventListener("touchstart", arm, {passive:true});
@@ -119,12 +160,7 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
             chat.removeEventListener("scroll", onScroll);
             host.removeEventListener("chat-panel-header-gesture", onHeader);
         };
-    }, [panelVisible, pmRef]);
-
-    useEffect(() => {
-        setHidden(false);
-        setDrag(null);
-    }, [activeHeader]);
+    }, [panelVisible, pmRef, settle, setPosition, stopAnimation]);
 
     useEffect(() => {
         if (!library) return;
@@ -145,11 +181,11 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
     useEffect(() => {
         const row = rowRef.current;
         if (!row) return;
-        let press: {x:number;y:number;id:number;axis:"x"|"y"|null} | null = null;
+        let press: {x:number;y:number;id:number;axis:"x"|"y"|null;startPosition:number} | null = null;
         const release = () => {
             if (press?.axis) setDontHandle(false);
+            if (press?.axis === "y") settle(hiddenRef.current);
             press = null;
-            setDrag(null);
         };
         const start = (event: TouchEvent) => {
             release();
@@ -157,7 +193,7 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
             if (event.touches.length !== 1 || blocked.current || !(event.target instanceof Element) ||
                 event.target.closest("input,textarea,button")) return;
             const touch = event.touches[0];
-            press = {x:touch.clientX,y:touch.clientY,id:touch.identifier,axis:null};
+            press = {x:touch.clientX,y:touch.clientY,id:touch.identifier,axis:null,startPosition:positionRef.current};
         };
         const move = (event:TouchEvent) => {
             if (!press || blocked.current || event.touches.length !== 1 || event.defaultPrevented) { release(); return; }
@@ -169,14 +205,21 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
                 press.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
                 suppressClick.current=true;
                 setDontHandle(true);
+                if (press.axis === "y") { stopAnimation(); press.startPosition = positionRef.current; }
             }
             if (event.cancelable) event.preventDefault();
-            if (press.axis === "y") setDrag(Math.max(-panelHeight(), Math.min(0, dy)));
+            if (press.axis === "y") setPosition(press.startPosition + dy / Math.max(1, panelHeight()) * 100);
         };
         const end = (event:TouchEvent) => {
             if (press?.axis && !blocked.current) {
                 const touch=Array.from(event.changedTouches).find(touch=>touch.identifier===press?.id);
-                if (touch && press.axis === "y" && touch.clientY - press.y <= -Math.min(40, panelHeight() / 2)) setHidden(true);
+                if (press.axis === "y") {
+                    const next = !!touch && touch.clientY - press.y <= -Math.min(40, panelHeight() / 2);
+                    settle(next);
+                    setDontHandle(false);
+                    press = null;
+                    return;
+                }
                 if (touch && press.axis === "x" && Math.abs(touch.clientX-press.x)>=40) {
                     const index=modes.indexOf(activeHeader);
                     const next=modes[(index+(touch.clientX<press.x?1:-1)+modes.length)%modes.length];
@@ -197,14 +240,14 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
             row.removeEventListener("touchcancel",release);
             release();
         };
-    }, [activeHeader,pms.length,setActiveHeader,setChosenMess,setDontHandle]);
+    }, [activeHeader,pms.length,setActiveHeader,setChosenMess,setDontHandle,settle,setPosition,stopAnimation]);
 
     if (!panelVisible) return null;
     const showMenu = (x:number,y:number) => openMenu(x,y,"chatAction",{id:"chatAction"});
-    const offset = drag ?? 0;
-    const fullyHidden = hidden && drag === null;
-    return <div className={`chatActionPanel${drag !== null ? " dragging" : ""}${hidden && drag === null ? " panelHidden" : ""}`} ref={pmRef}
-        style={{ transform: fullyHidden ? "translate(-50%, -100%)" : `translate(-50%, ${offset}px)`, clipPath: fullyHidden ? "inset(100% 0 0 0)" : `inset(${-offset}px -8px -8px -8px)` }} inert={fullyHidden}>
+    const fullyHidden = position <= -99.9;
+    return <div className="chatActionViewport">
+    <div className={`chatActionPanel${fullyHidden ? " panelHidden" : ""}`} ref={pmRef}
+        style={{ top: position * height / 100 }} inert={fullyHidden}>
         <div ref={rowRef} className="chatActionRow" data-context-menu="true" data-context-menu-allow-button
             onContextMenu={event=>{event.preventDefault();event.stopPropagation();showMenu(event.clientX,event.clientY);}}
             onClickCapture={event=>{if(suppressClick.current){suppressClick.current=false;event.preventDefault();event.stopPropagation();}}}>
@@ -216,5 +259,5 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
         </div>
         {activeHeader==="pinned" && <PmsList/>}
         {activeHeader==="search" && <SearchList isOpen={isSearchOpen} searchDivRef={searchDivRef} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} searchedMessages={searchedMessages}/>}
-    </div>;
+    </div></div>;
 }

@@ -39,25 +39,35 @@
         height: 100%;
     }
 }
-.chatActionPanel {
+.chatActionViewport {
     width: 60%;
     position: absolute;
     top: 6dvh;
-    left: 50%;
-    transform: translateX(-50%);
-    transition: transform .25s cubic-bezier(.075,.82,.165,1), clip-path .25s cubic-bezier(.075,.82,.165,1);
-    &.dragging { transition: none; }
-    &.panelHidden { pointer-events: none; }
-    box-sizing: border-box;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    overflow: hidden;
+    pointer-events: none;
     z-index: 5;
+    @media (max-width: 800px) {
+        top: 7.5dvh;
+        width: 95%;
+    }
+}
+.chatActionPanel {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    pointer-events: auto;
     touch-action: pan-y;
     min-width: 0;
+    &.panelHidden { pointer-events: none; }
     > .chatActionRow {
         display: flex;
         align-items: center;
         touch-action: none;
         border-radius: 24px;
-        background: var(--interact);
+        background: var(--mc);
         border: 1px solid var(--block_border);
         backdrop-filter: blur(var(--blur));
         -webkit-backdrop-filter: blur(var(--blur));
@@ -105,7 +115,7 @@
         position: static;
         width: 100%;
         box-sizing: border-box;
-        background: var(--interact);
+        background: var(--mc);
         border: 1px solid var(--block_border);
         backdrop-filter: blur(var(--blur));
         -webkit-backdrop-filter: blur(var(--blur));
@@ -125,10 +135,6 @@
     .pmsShowNow { min-width: 0; flex: 1; width: auto; }
     .pmShowInfo { flex-shrink: 0; width: auto; padding: 0 .5vw; }
     .pmsText { display: block; min-width: 0; }
-    @media (max-width: 800px) {
-        top: 7.5dvh;
-        width: 95%;
-    }
 }
 .chat > .dateDivider, .chat .dateDivider {
     top: var(--chat-top-inset);

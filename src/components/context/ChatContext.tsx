@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useCallback, useRef, type SetStateAction } from "react";
+import { createContext, useState, useEffect, useLayoutEffect, useCallback, useRef, type SetStateAction } from "react";
 import { type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useNote } from "../hooks/NoteHook";
@@ -102,6 +102,8 @@ export interface ChatContextType {
     loadOlderMessages: () => Promise<void>;
     loadAroundMessage: (messageId: number) => Promise<boolean>;
     activeHeader: activeHeaderType;
+    chatPanelHidden: boolean;
+    setChatPanelHidden: React.Dispatch<SetStateAction<boolean>>;
     setActiveHeader: React.Dispatch<SetStateAction<activeHeaderType>>;
 }
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -158,6 +160,8 @@ export const ChatProvider = ({
     const [hasMore, setHasMore] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
     const [activeHeader, setActiveHeader] = useState<activeHeaderType>("text");
+    const [chatPanelHidden, setChatPanelHidden] = useState(false);
+    useLayoutEffect(() => { setChatPanelHidden(false); }, [chatWith?.chat_id, activeHeader]);
     const typingTimeout = useRef<number | null>(null);
     const chatWithRef = useRef<chatWithType | null>(chatWith);
     const notificationAggregator = new NotificationAggregator();
@@ -634,6 +638,8 @@ export const ChatProvider = ({
                 loadOlderMessages,
                 loadAroundMessage,
                 activeHeader,
+                chatPanelHidden,
+                setChatPanelHidden,
                 setActiveHeader
             }}
         >

@@ -21,7 +21,7 @@ export default function ChatUser() {
     const { user } = useUser()
     const { setChosenMess } = useMessages();
     const headerGestures = useHeaderMenuGestures();
-    const { chatWith, typingMap, library, activeHeader, setActiveHeader } = useChat();
+    const { chatWith, typingMap, library, activeHeader, setActiveHeader, setChatPanelHidden } = useChat();
     const { onlineMap } = useContacts()
     const { openMenu, menu, closeMenu } = useContextMenu();
     const { openSideMenu } = useSideMenu()
@@ -153,7 +153,13 @@ export default function ChatUser() {
                 </div>
                 {!isMobile ? (
                     <div className="chatUserMenu" onClick={(e) => e.stopPropagation()}>
-                        <div className="chatUserMenuButt" onClick={() => { setChosenMess([]); setActiveHeader(activeHeader === "text" ? (library?.pins.length ? "pinned" : "search") : "text"); }}>
+                        <div className="chatUserMenuButt" onClick={() => {
+                            if (activeHeader === "text" || activeHeader === "habit") {
+                                setChosenMess([]);
+                                setActiveHeader(library?.pins.length ? "pinned" : "search");
+                                setChatPanelHidden(false);
+                            } else setChatPanelHidden(previous => !previous);
+                        }}>
                             <MagnifyingGlassIcon size={22}/>
                         </div>
                     </div>
