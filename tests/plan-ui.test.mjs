@@ -50,10 +50,14 @@ test("tag icons appear in title, shared header and SideMenu", () => {
     const menu = read("src/components/ts/SM/HabitsList.tsx");
     const header = read("src/components/ts/Header.tsx");
     assert.match(page, /<selectedTag\.icon size=\{26\}/);
-    assert.match(page, /setTitleIcon\(Icon \? <Icon size=\{24\}\/> : null\)/);
+    assert.match(page, /setTitleIcon\(plan\?\.avatar_key \?/);
+    assert.match(page, /Icon \? <Icon size=\{24\}\/> : null/);
+    assert.match(page, /className="planAvatarButton"/);
+    assert.match(page, /"activityAvatar",\{id:String\(plan.id\)/);
     const planCard = read("src/components/ts/Plan.tsx");
     assert.match(menu, /<PlanDiv plan=\{entry\.plan!\}/);
-    assert.match(planCard, /<PlanTagIcon tag=\{plan\.tag\}\/>/);
+    assert.match(planCard, /<PlanTagIcon plan=\{plan\}\/>/);
+    assert.match(planCard, /planAvatarUrl/);
     assert.match(header, /titleIcon && <span className="headerTitleTag">/);
 });
 
