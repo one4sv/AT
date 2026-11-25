@@ -5,7 +5,7 @@ import "../../pages/Acc/scss/AccInfo.scss"
 import { useBlackout } from "../hooks/BlackoutHook"
 import { useChat } from "../hooks/ChatHook"
 import useContactAlias from "../hooks/utils/useContactAlias"
-import { isMobile } from "react-device-detect"
+import useCompactLayout from "../hooks/utils/useCompactLayout"
 import { useMessages } from "../hooks/MessagesHook"
 import { useNavigate } from "react-router"
 import ChatMedia from "./components/ChatMedia"
@@ -14,6 +14,7 @@ import formatLastOnline from "../ts/utils/formatOnline"
 
 export default function ChatWithInfo() {
     const { t } = useTranslation("common");
+    const isMobile = useCompactLayout();
     const { chatWith, activeHeader:header, setActiveHeader:setHeader, messages } = useChat()
     const [alias] = useContactAlias(chatWith?.is_group ? undefined : chatWith?.id);
     const { setBlackout } = useBlackout()
@@ -23,6 +24,11 @@ export default function ChatWithInfo() {
     const navigate = useNavigate()
 
     if (chatWith === null) return
+
+    const presence = !chatWith.is_group && <span className={`accOnlineStauts ${onlineMap[chatWith.id] ? "online" : "offline"}`}>
+        <CircleIcon size={16} weight="fill" aria-hidden="true"/>
+        {onlineMap[chatWith.id] ? t("online") : formatLastOnline(chatWith.last_online)}
+    </span>;
 
     return (
         <div className="chatWithInfoDiv">
@@ -39,10 +45,7 @@ export default function ChatWithInfo() {
                     ) : (
                         <UserIcon size={128} />
                     )}
-                    {!chatWith.is_group && <div className={`accOnlineStauts ${onlineMap[chatWith.id] ? "online" : "offline"}`}>
-                        <CircleIcon size={16} weight="fill" aria-hidden="true"/>
-                        {onlineMap[chatWith.id] ? t("online") : formatLastOnline(chatWith.last_online)}
-                    </div>}
+                    {!isMobile && presence}
                 </div>
                 <div className="accInfoNames">
                     <div className="accMainInfoStr">
@@ -52,6 +55,7 @@ export default function ChatWithInfo() {
                         {!isMobile && "@"}
                         <div className="accInput nickInput">{chatWith?.nick}</div>
                     </div>
+                    {isMobile && presence}
                 </div>
             </div>
             <div className="settingInnerList">

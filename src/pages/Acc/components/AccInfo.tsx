@@ -19,6 +19,8 @@ import { useContacts } from "../../../components/hooks/ContactsHook";
 import { CircleIcon, CheckIcon, DotsThreeOutlineVerticalIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
+import { usePageTitle } from "../../../components/hooks/PageContextHook";
+import type { MenuOptions } from "../../../components/context/ContextMenuContext";
 import useContactAlias from "../../../components/hooks/utils/useContactAlias";
 import { useNote } from "../../../components/hooks/NoteHook";
 export default function AccInfo({
@@ -56,6 +58,7 @@ export default function AccInfo({
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const navigate = useNavigate();
     const { openMenu, closeMenu, menu } = useContextMenu();
+    const { setHeaderMenu } = usePageTitle();
     const [alias, setAlias] = useContactAlias(acc?.id ?? undefined);
     const { showNotification } = useNote();
     const [aliasSaving, setAliasSaving] = useState(false);
@@ -63,19 +66,41 @@ export default function AccInfo({
     const [aliasDraft, setAliasDraft] = useState("");
     useEffect(() => { setRenaming(false); }, [acc?.id]);
     const displayName = isMyAcc ? newName : alias || acc?.username;
-    const openActions = (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
-        event.stopPropagation();
-        if (!acc?.id) return;
-        if (menu.visible && menu.point === "profileActions") { closeMenu(); return; }
-        openMenu(event.clientX, event.clientY, "profileActions", {
+    const actionOptions: MenuOptions | null = acc?.id ? {
             id: acc.id, name: acc.username || acc.nick || "", nick: acc.nick || undefined,
             url: acc.avatar_url || undefined, isMy: isMyAcc,
             onEdit: isMyAcc ? () => setRed(true) : user.id ? () => { setAliasDraft(alias || acc.username || acc.nick || ""); setRenaming(true); } : undefined,
             onOpen: user.id && !isMyAcc ? () => navigate(`/chat/${acc.nick}`) : undefined,
             onShare: () => setBlackout({ seted: true, module: "ShareAcc", options: { name: acc.username || "", nick: acc.nick || "", url: acc.avatar_url || "" } })
+    } : null;
+    const actionRef = useRef(actionOptions);
+    actionRef.current = actionOptions;
+    useEffect(() => {
+        if (!isMobile || !acc?.id || red || renaming) return;
+        const options = actionRef.current;
+        if (!options) return;
+        setHeaderMenu({
+            point: "profileActions",
+            options: {
+                ...options,
+                onEdit: options.onEdit ? () => actionRef.current?.onEdit?.() : undefined,
+                onOpen: options.onOpen ? () => actionRef.current?.onOpen?.() : undefined,
+                onShare: options.onShare ? () => actionRef.current?.onShare?.() : undefined
+            }
         });
+        return () => setHeaderMenu(current => current?.point === "profileActions" && current.options.id === options.id ? null : current);
+    }, [isMobile, acc?.id, acc?.username, acc?.nick, acc?.avatar_url, isMyAcc, user.id, red, renaming, setHeaderMenu]);
+    const openActions = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!actionOptions || red || renaming) return;
+        if (menu.visible && menu.point === "profileActions") { closeMenu(); return; }
+        openMenu(event.clientX, event.clientY, "profileActions", actionOptions);
     };
+    const presence = (isOnline || lastSeen) && <span className={`accOnlineStauts ${isOnline ? "online" : "offline"}`}>
+        <CircleIcon size={16} weight="fill" aria-hidden="true" />
+        {isOnline ? t("online") : lastSeen}
+    </span>;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
     const bioRef = useRef<HTMLTextAreaElement>(null);
@@ -166,10 +191,7 @@ export default function AccInfo({
                                 );
                             }}
                         /> : red ? <Camera size={256} /> : <UserRound size={128} />}
-                        {(isOnline || lastSeen) && <div className={`accOnlineStauts ${isOnline ? "online" : "offline"}`}>
-                            <CircleIcon size={16} weight="fill" aria-hidden="true" />
-                            {isOnline ? t("online") : lastSeen}
-                        </div>}
+                        {!isMobile && presence}
                     </div>
                     <div className="accInfoNames">
                         <div className="accMainInfoStr">
@@ -192,8 +214,9 @@ export default function AccInfo({
                                 {(isMyAcc ? newNick : acc?.nick) ?? ""}
                             </span>}
                         </div>
+                        {isMobile && presence}
                     </div>
-                    {acc?.id && !red && !renaming && <button type="button" className="accProfileActions" aria-label={t("actions")} onClick={openActions}><DotsThreeOutlineVerticalIcon weight="fill" size={22}/></button>}
+                    {!isMobile && acc?.id && !red && !renaming && <button type="button" className="accProfileActions" aria-label={t("actions")} onClick={openActions}><DotsThreeOutlineVerticalIcon weight="fill" size={22}/></button>}
                 </div>
                 <div className="accInfoWrapper">
                     {acc?.bio || red ? <div className={`accExtraInfoWrapper ${!red ? "dis" : ""}`}>

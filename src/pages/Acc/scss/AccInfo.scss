@@ -172,10 +172,19 @@
         color: var(--accent_text);
     }
     @media (max-width: 800px) {
-        left: calc(100% - 1.2dvh);
         gap: 1vw;
         padding: 0.4dvh 1.5vw;
     }
+}
+
+.accInfoNames > .accOnlineStauts {
+    position: static;
+    transform: none;
+    align-self: center;
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    margin-top: .4dvh;
 }
 
 .nameInput {

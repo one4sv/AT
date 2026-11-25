@@ -4,7 +4,7 @@ import { usePageTitle } from "../PageContextHook";
 import { useContextMenu } from "../ContextMenuHook";
 import { useSideMenu } from "../SideMenuHook";
 
-type HeaderGesture = "quick" | "chat" | "habit" | "plan";
+type HeaderGesture = "quick" | "chat" | "habit" | "plan" | "profile";
 
 type PressState = {
     id: number;
@@ -90,9 +90,9 @@ export default function useHeaderMenuGestures() {
             });
         } else if (kind === "habit") {
             openMenu(box.left, box.bottom + 6, "habitHeader", { id: trigger.dataset.habitId || "" });
-        } else if (kind === "plan") {
+        } else if (kind === "plan" || kind === "profile") {
             if (!headerMenu) return;
-            openMenu(box.left, box.bottom + 6, headerMenu.point, headerMenu.options);
+            openMenu(kind === "profile" ? Math.max(10, box.right - 240) : box.left, box.bottom + 6, headerMenu.point, headerMenu.options);
         } else {
             openMenu(box.left, box.bottom + 6, "headerQuickAction", { id: "headerQuickAction" });
         }

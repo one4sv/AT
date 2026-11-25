@@ -24,7 +24,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     const { t } = useTranslation("common");
     const headerGestures = useHeaderMenuGestures();
     const { openSideMenu } = useSideMenu();
-    const { openMenu } = useContextMenu();
+    const { openMenu, closeMenu, menu } = useContextMenu();
     const { layout } = useSettings();
     const { user, initialLoading } = useUser();
     const {
@@ -38,6 +38,12 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     const isInInfo = location.pathname.startsWith("/info/");
     const isInfo = location.pathname === "/info";
     const planHeaderMenu = location.pathname.startsWith("/plan/") && headerMenu?.point === "plan" ? headerMenu : null;
+    const profileHeaderMenu = isMobile && location.pathname.startsWith("/acc/") && headerMenu?.point === "profileActions" ? headerMenu : null;
+    const actionsMenu = planHeaderMenu || profileHeaderMenu;
+    const showActionsMenu = (x: number, y: number) => {
+        if (profileHeaderMenu && menu.visible && menu.point === profileHeaderMenu.point) { closeMenu(); return; }
+        if (actionsMenu) openMenu(x, y, actionsMenu.point, actionsMenu.options);
+    };
     const showPlanMenu = (x: number, y: number) => {
         if (planHeaderMenu) openMenu(x, y, planHeaderMenu.point, planHeaderMenu.options);
     };
@@ -96,23 +102,23 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                     {titleSuffix}
                 </div>
                 {rightAction}
-                {planHeaderMenu && <div role="button" tabIndex={0} className="headerButt planHeaderActionsButt"
-                    data-header-gesture="plan" aria-label={t("plans.management")}
+                {actionsMenu && <div role="button" tabIndex={0} className={`headerButt ${planHeaderMenu ? "planHeaderActionsButt" : "profileHeaderActionsButt"}`}
+                    data-header-gesture={planHeaderMenu ? "plan" : "profile"} aria-label={planHeaderMenu ? t("plans.management") : t("actions", { ns: "acc" })}
                     onClick={event => {
                         event.stopPropagation();
                         const rect = event.currentTarget.getBoundingClientRect();
-                        showPlanMenu(rect.left, rect.bottom + 6);
+                        showActionsMenu(profileHeaderMenu ? Math.max(10, rect.right - 240) : rect.left, rect.bottom + 6);
                     }}
                     onContextMenu={event => {
                         event.preventDefault();
                         event.stopPropagation();
-                        showPlanMenu(event.clientX, event.clientY);
+                        showActionsMenu(event.clientX, event.clientY);
                     }}
                     onKeyDown={event => {
                         if (event.key !== "Enter" && event.key !== " ") return;
                         event.preventDefault();
                         const rect = event.currentTarget.getBoundingClientRect();
-                        showPlanMenu(rect.left, rect.bottom + 6);
+                        showActionsMenu(profileHeaderMenu ? Math.max(10, rect.right - 240) : rect.left, rect.bottom + 6);
                     }}>
                     <DotsThreeOutlineVerticalIcon weight="fill"/>
                 </div>}
