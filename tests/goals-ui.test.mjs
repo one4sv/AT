@@ -62,7 +62,7 @@ test("nonzero summary counters open the existing list dialogs and share one crea
     const catalog = read("src/components/modules/GoalCatalog.tsx");
     for (const [count, label] of [["activityCount", "activities"], ["planCount", "plans"]]) {
         assert.ok(overview.includes(count + " > 0 && <button"));
-        assert.ok(overview.includes('module: "HabitOverviewList", options: { name: "' + label + '" }'));
+        assert.ok(overview.includes('module: "HabitOverviewList", options: { name: "' + label + '", ...(feed ? { day: chosenDay, hideGoals: true } : {}) }'));
     }
     assert.match(overview, /goalCount > 0 && <button/);
     assert.match(overview, /module: "HabitOverviewList", options: \{ name: "goals" \}/);
