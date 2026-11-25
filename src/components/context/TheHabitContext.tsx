@@ -152,11 +152,13 @@ const parseCounter = (counter: habitCounter): habitCounter | null => {
         count: counter.count,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         progression: (counter.progression || []).map(
-            (item: any) => ({
-                count: item.count,
-                time: parseAppTimestamp(item.time),
-                text: item.text
-            })
+            (item: any) => {
+                let entry = item;
+                if (typeof entry === "string") {
+                    try { entry = JSON.parse(entry); } catch { entry = {}; }
+                }
+                return { count: entry?.count, time: parseAppTimestamp(entry?.time), text: entry?.text };
+            }
         ),
         min_count: counter.min_count
     };

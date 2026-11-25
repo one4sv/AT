@@ -22,7 +22,7 @@ export const parseAppTimestamp = (value: unknown): Date => {
     if (typeof value !== "string" || !value.trim()) return new Date(NaN);
     const normalized = value.trim().replace(/^(\d{4}-\d{2}-\d{2}) /, "$1T")
         .replace(/(\.\d{3})\d+(?=Z|[+-]\d{2}(?::?\d{2})?$)/i, "$1")
-        .replace(/([+-]\d{2})$/, "$1:00");
+        .replace(/(T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)([+-]\d{2})$/, "$1$2:00");
     return new Date(normalized);
 };
 const localFields = (date: Date, timeZone = appTimeZone()) => {
@@ -90,6 +90,7 @@ export const relativePlanDay = (day: string, t: (key: string) => string) => {
     return "";
 };
 export const dateToStrFormat = (date: Date) => {
+    if (!Number.isFinite(date.getTime())) return "";
     const { year, month, day } = localFields(date);
     return displayParts(year, month, day);
 };
