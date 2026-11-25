@@ -112,7 +112,7 @@ test("goal editor filters archived links, adds multiple selections and explains 
     assert.match(editor,/goalDailyCounter/);
 });
 
-test("SelectList portal is inside Blackout interaction",()=>{assert.match(read("src/components/ts/Blackout.tsx"),/closest\("\.planTagPortal, \.selectListPortalRoot"\)/);});
+test("SelectList portal is inside Blackout interaction",()=>{assert.match(read("src/components/ts/Blackout.tsx"),/closest\("\.planTagPortal, \.selectListPortalRoot, \.calendarCommentEmoji"\)/);});
 
 test("activity goal button reflects links and reuses goal dialogs",()=>{
     for(const path of ["src/pages/HabitPage/components/HabitInfo/HabitExtraButts.tsx","src/components/ts/ContextMenu/menus/HabitHeaderMenu.tsx"]){
