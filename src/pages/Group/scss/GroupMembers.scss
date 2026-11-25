@@ -63,24 +63,6 @@
         -webkit-backdrop-filter: blur(var(--blur));
     }
 
-    .groupSearchStatus {
-        display: flex;
-        align-items: center;
-        gap: 0.5vw;
-        margin-top: 1vh;
-        padding: 1vh 1vw;
-        border-radius: 24px;
-        background-color: var(--mc);
-        backdrop-filter: blur(var(--blur));
-        -webkit-backdrop-filter: blur(var(--blur));
-        > svg {
-            flex-shrink: 0;
-            color: var(--accent_text);
-        }
-        font-size: 16px;
-        color: var(--borderWh);
-    }
-
     .groupMemberList {
         margin: 0;
         padding: .5vh .25vw;
@@ -108,6 +90,12 @@
     }
 
     .groupMemberLink {
+        border: none;
+        background: transparent;
+        padding: 0;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
         flex: 1;
         min-width: 0;
         display: flex;
@@ -171,6 +159,32 @@
         }
     }
 
+    .groupMemberRoleInfo {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-left: auto;
+        max-width: 36%;
+        flex-shrink: 0;
+    }
+
+    .groupMemberOverrides {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        color: var(--borderWh);
+
+        > span {
+            display: flex;
+        }
+        .allowed {
+            color: #48b775;
+        }
+        .denied {
+            color: var(--notValid);
+        }
+    }
+
     .groupMemberRole {
         padding: 0.5vh 0.5vw;
         border-radius: 24px;
@@ -179,7 +193,7 @@
         font-size: 16px;
         flex-shrink: 0;
         margin-left: auto;
-        max-width: 36%;
+        max-width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -213,7 +227,6 @@
             padding: 0.5vh 2vw;
         }
         .groupMemberLastOnline.online { gap: 1vw; padding: 0.25vh 2vw; }
-        .groupSearchStatus { gap: 2vw; padding: 1vh 3vw; }
         .groupMemberName small { margin-left: 1vw; }
     }
 }

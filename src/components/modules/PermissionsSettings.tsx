@@ -9,7 +9,7 @@ import { api } from "../ts/api";
 import Loader from "../ts/Loader";
 import TA from "../ts/TA";
 import SelectList from "../ts/SelectList";
-import { ArrowLeft, CaretDown, CaretRight, Image, TextAa, TextAlignCenter, User, UserGear, UserMinus, UserPlus, Prohibit, Trash, PushPin, ShareFat } from "@phosphor-icons/react";
+import { ArrowLeft, CaretDown, CaretRight, Image, TextAa, TextAlignCenter, User, UserGear, UserMinus, UserPlus, Prohibit, Trash, PushPin, ShareFat, ChatTeardrop, CalendarBlank, Target } from "@phosphor-icons/react";
 
 export interface RoleType {
     role_id: string;
@@ -23,6 +23,7 @@ export interface RoleType {
 
 export interface MemberPermType extends Member {
     permissions: Perms;
+    permission_overrides?: Partial<Perms>;
 }
 
 type Change = {
@@ -35,6 +36,10 @@ type Change = {
 type Selection = { type: "role" | "member"; id: string } | null;
 
 const PERMISSIONS: { key: keyof Perms; label: string; icon: React.ComponentType<{ size?: number }> }[] = [
+    { key: "send_messages", label: "Отправлять сообщения", icon: ChatTeardrop },
+    { key: "plan_complete", label: "Выполнять планы", icon: CalendarBlank },
+    { key: "plan_comment", label: "Комментировать планы", icon: ChatTeardrop },
+    { key: "goal_progress", label: "Записывать прогресс целей", icon: Target },
     { key: "habit_complete", label: "Отмечать выполнения активностей", icon: User },
     { key: "habit_comment", label: "Комментировать активности", icon: TextAlignCenter },
     { key: "habit_edit_blocks", label: "Изменять блоки активностей", icon: TextAa },
@@ -52,10 +57,20 @@ const PERMISSIONS: { key: keyof Perms; label: string; icon: React.ComponentType<
     { key: "redirect_messages", label: "Пересылать сообщения", icon: ShareFat }
 ];
 
+const categories = [
+    { label: "Сообщения", keys: ["send_messages", "delete_others", "pin_messages", "redirect_messages"] },
+    { label: "Беседа", keys: ["change_avatar", "change_name", "change_desc"] },
+    { label: "Участники и роли", keys: ["manage_roles", "can_invite_users", "kick_users", "ban_users"] },
+    { label: "Активности", keys: ["habit_complete", "habit_comment", "habit_edit_blocks", "habit_edit_info", "habit_invite"] },
+    { label: "Планы", keys: ["plan_complete", "plan_comment"] },
+    { label: "Цели", keys: ["goal_progress"] }
+];
+
 export default function PermissionsSettings() {
     const { group, refetchGroup } = useGroup();
     const { user } = useUser();
-    const { setBlackout } = useBlackout();
+    const { blackout, setBlackout } = useBlackout();
+    const directMemberId = blackout.point === "member" ? blackout.options?.id : undefined;
     const { showNotification } = useNote();
 
     const [ roles, setRoles ] = useState<RoleType[]>([]);
@@ -65,8 +80,8 @@ export default function PermissionsSettings() {
     const [ loading, setLoading ] = useState(true);
     const [ saving, setSaving ] = useState(false);
     const [ error, setError ] = useState(false);
-    const [ selection, setSelection ] = useState<Selection>(null);
-    const [ expanded, setExpanded ] = useState({ roles: true, members: true });
+    const [ selection, setSelection ] = useState<Selection>(directMemberId ? { type: "member", id: directMemberId } : null);
+    const [ expanded, setExpanded ] = useState({ roles: true });
     const [ changes, setChanges ] = useState<Change[]>([]);
 
     const loadPermissions = useCallback(async () => {
@@ -143,8 +158,14 @@ export default function PermissionsSettings() {
     const target = selectedRole ? "role" : "member";
     const targetId = selectedRole?.role_id || selectedMember?.id || "";
     const permissions = selectedRole?.permissions || selectedMember?.permissions;
+    const roleId = selectedMember ? editedValue("member", selectedMember.id, "role_id", selectedMember.role_id || null) : null;
+    const rolePermissions = roles.find(role => role.role_id === roleId)?.permissions;
+    const inherited = (key: keyof Perms) => rolePermissions?.[key] ?? ["send_messages", "plan_complete", "plan_comment", "goal_progress"].includes(key);
+    const original = (key: keyof Perms) => selectedMember ? selectedMember.permission_overrides?.[key] ?? null : permissions?.[key] ?? false;
+    const activePermission = (key: keyof Perms) => ownerRoleSelected || selectedMember?.id === ownerId || (editedValue(target, targetId, key, original(key)) ?? inherited(key)) === true;
+    const togglePermission = (key: keyof Perms, active: boolean) => changeValue(target, targetId, key, selectedMember && active === inherited(key) ? null : active, original(key));
     const enabledCount = PERMISSIONS.filter(({ key }) =>
-        ownerRoleSelected || !!editedValue(target, targetId, key, permissions?.[key] ?? false)
+        activePermission(key)
     ).length;
     const defaultRoleId = roles.find(role => role.is_default)?.role_id ?? null;
     const chosenDefaultRoleId = editedValue("group", group.id, "default_role_id", defaultRoleId);
@@ -183,7 +204,7 @@ export default function PermissionsSettings() {
     return (
         <div className="rolesModal" role="dialog" aria-modal="true" aria-label="Права и роли">
             <div className="rolesModalHeader">
-                <span>Права и роли</span>
+                <span>{directMemberId ? "Права участника" : "Права и роли"}</span>
             </div>
 
             {loading ? (
@@ -258,45 +279,6 @@ export default function PermissionsSettings() {
                                     )}
                                 </section>
 
-                                <section className="rolesModalSection">
-                                    <button
-                                        type="button"
-                                        className="rolesModalSectionHead"
-                                        aria-expanded={expanded.members}
-                                        onClick={() => setExpanded(prev => ({ ...prev, members: !prev.members }))}
-                                    >
-                                        <span>Участники</span>
-                                        <span className="rolesModalSectionMeta">
-                                            {members.length}
-                                            <CaretDown className={expanded.members ? "expanded" : ""} size={20} />
-                                        </span>
-                                    </button>
-
-                                    {expanded.members && (
-                                        <div className="rolesModalItems">
-                                            {members.length ? members.map(member => (
-                                                <button
-                                                    type="button"
-                                                    className="rolesModalItem"
-                                                    key={member.id}
-                                                    onClick={() => setSelection({ type: "member", id: member.id })}
-                                                >
-                                                    <span className="rolesModalAvatar">
-                                                        {member.avatar_url ? <img src={member.avatar_url} alt="" /> : <User size={24} />}
-                                                    </span>
-                                                    <span className="rolesModalItemText">
-                                                        <span>{member.name || member.nick}</span>
-                                                        <small>{member.id === user.id ? "Вы" : "@" + member.nick}</small>
-                                                    </span>
-                                                    <span className="rolesModalItemEnd">
-                                                        <small>{member.id === ownerId ? "Владелец" : member.role_name || "Участник"}</small>
-                                                        <CaretRight size={18} />
-                                                    </span>
-                                                </button>
-                                            )) : <div className="rolesModalEmpty">Участников пока нет</div>}
-                                        </div>
-                                    )}
-                                </section>
                             </div>
 
                             <div className="rolesModalPanel" inert={selection === null}>
@@ -384,8 +366,16 @@ export default function PermissionsSettings() {
                                         </div>
 
                                         <div className="rolesModalPermissions">
-                                            {PERMISSIONS.map(({ key, label, icon: Icon }) => {
-                                                const active = ownerRoleSelected || !!editedValue(target, targetId, key, permissions?.[key] ?? false);
+                                            {categories.map(category => {
+                                                const items = PERMISSIONS.filter(item => category.keys.includes(item.key));
+                                                const allActive = items.every(item => activePermission(item.key));
+                                                return <section key={category.label} className="rolesModalPermissionCategory">
+                                                    <button type="button" className="rolesModalPermission" aria-pressed={allActive} disabled={!editable || saving} onClick={() => items.forEach(item => togglePermission(item.key, !allActive))}>
+                                                        <span>{category.label}</span>
+                                                        <span className={"rolesModalSwitch" + (allActive ? " active" : "")} aria-hidden="true"><span /></span>
+                                                    </button>
+                                                    {items.map(({ key, label, icon: Icon }) => {
+                                                const active = activePermission(key);
                                                 return (
                                                     <button
                                                         type="button"
@@ -393,7 +383,7 @@ export default function PermissionsSettings() {
                                                         className="rolesModalPermission"
                                                         aria-pressed={active}
                                                         disabled={!editable || saving}
-                                                        onClick={() => changeValue(target, targetId, key, !active, permissions?.[key] ?? false)}
+                                                        onClick={() => togglePermission(key, !active)}
                                                     >
                                                         <span className="rolesModalPermissionText">
                                                             <Icon size={20} />
@@ -404,6 +394,8 @@ export default function PermissionsSettings() {
                                                         </span>
                                                     </button>
                                                 );
+                                                    })}
+                                                </section>;
                                             })}
                                         </div>
 
@@ -431,7 +423,7 @@ export default function PermissionsSettings() {
                     </div>
 
                     <div className="rolesModalFooter">
-                        {selection && (
+                        {selection && !directMemberId && (
                             <button
                                 type="button"
                                 className="rolesModalBack"

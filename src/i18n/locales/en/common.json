@@ -178,6 +178,7 @@
     "created": "created the group “{{name}}”"
   },
   "chatUi": {
+    "noSendPermission": "You do not have permission to send messages in this group",
     "typing": "Typing...",
     "typingNames": "{{names}} are typing...",
     "favorites": "Saved messages",
@@ -805,6 +806,28 @@
   },
   "groupUi": {
     "participants": "Members",
+    "memberPermissions": "Member permissions",
+    "permission": {
+      "send_messages": "Send messages",
+      "plan_complete": "Complete plans",
+      "plan_comment": "Comment on plans",
+      "goal_progress": "Record goal progress",
+      "habit_complete": "Complete activities",
+      "habit_comment": "Comment on activities",
+      "habit_edit_blocks": "Edit activity blocks",
+      "habit_edit_info": "Edit activities",
+      "habit_invite": "Invite to activities",
+      "change_avatar": "Change avatar",
+      "change_name": "Change name",
+      "change_desc": "Change description",
+      "manage_roles": "Manage roles",
+      "can_invite_users": "Invite members",
+      "kick_users": "Remove members",
+      "ban_users": "Ban members",
+      "delete_others": "Delete others' messages",
+      "pin_messages": "Pin messages",
+      "redirect_messages": "Forward messages"
+    },
     "roleOwner": "Owner",
     "roleAdmin": "Admin",
     "roleMember": "Member",

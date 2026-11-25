@@ -36,7 +36,9 @@ export interface Member {
     avatar_url: string | null,
     role_id: string,
     last_online: string | null,
-    role_name:string
+    role_name:string,
+    role_rank?: number,
+    permission_differences?: Partial<Perms>
 }
 export interface Group {
     id: string,
@@ -47,6 +49,10 @@ export interface Group {
     invite_expires_at: string | null,
 }
 export interface Perms {
+    send_messages?: boolean,
+    plan_complete?: boolean,
+    plan_comment?: boolean,
+    goal_progress?: boolean,
     habit_complete?: boolean,
     habit_comment?: boolean,
     habit_edit_blocks?: boolean,

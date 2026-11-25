@@ -19,6 +19,7 @@ export interface chatWithType {
     pinned: boolean;
     am_i_blocked: boolean;
     is_group: boolean;
+    can_send_messages?: boolean;
     deletion_pending?: boolean;
     members: {
         id: string;
@@ -401,7 +402,7 @@ export const ChatProvider = ({
                     );
                 }
                 if (data.type === "GROUP_UPDATED") {
-                    if (chatWithRef.current?.is_group && chatWithRef.current.id === data.group_id) {
+                    if (chatWithRef.current?.is_group && String(chatWithRef.current.id) === String(data.group_id)) {
                         refetchGroupChat(data.group_id);
                     }
                     if (location.pathname.startsWith("/room/")) {

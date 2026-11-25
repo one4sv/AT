@@ -178,6 +178,7 @@
     "created": "создал беседу «{{name}}»"
   },
   "chatUi": {
+    "noSendPermission": "У вас нет прав писать в данную беседу",
     "typing": "Печатает...",
     "typingNames": "{{names}} печатают...",
     "favorites": "Избранное",
@@ -813,6 +814,28 @@
   },
   "groupUi": {
     "participants": "Участники",
+    "memberPermissions": "Права участника",
+    "permission": {
+      "send_messages": "Отправлять сообщения",
+      "plan_complete": "Выполнять планы",
+      "plan_comment": "Комментировать планы",
+      "goal_progress": "Записывать прогресс целей",
+      "habit_complete": "Выполнять активности",
+      "habit_comment": "Комментировать активности",
+      "habit_edit_blocks": "Изменять блоки",
+      "habit_edit_info": "Изменять активности",
+      "habit_invite": "Приглашать в активности",
+      "change_avatar": "Изменять аватар",
+      "change_name": "Изменять название",
+      "change_desc": "Изменять описание",
+      "manage_roles": "Управлять ролями",
+      "can_invite_users": "Приглашать участников",
+      "kick_users": "Исключать участников",
+      "ban_users": "Банить участников",
+      "delete_others": "Удалять чужие сообщения",
+      "pin_messages": "Закреплять сообщения",
+      "redirect_messages": "Пересылать сообщения"
+    },
     "roleOwner": "Владелец",
     "roleAdmin": "Админ",
     "roleMember": "Участник",

@@ -1,6 +1,6 @@
 import ReportButton from "../buttons/ReportButton";
 import { useTranslation } from "react-i18next";
-import { ChatTeardrop, Prohibit, User, UserMinus } from "@phosphor-icons/react";
+import { ChatTeardrop, Prohibit, User, UserMinus, UserGear } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 import { useBlackout } from "../../../hooks/BlackoutHook";
@@ -37,6 +37,10 @@ export default function MemberMenu() {
                 {t("chatMenu.openChat")}
             </div>
 
+            {options.onEdit && <div className="ContextMenuButt" onClick={options.onEdit}>
+                <UserGear />
+                {t("groupUi.memberPermissions")}
+            </div>}
             <LinkButton />
             <ReportButton targetType="account" isMy={!!memberInfo.isMe}/>
             {!memberInfo.isMe && options.nick && <ToggleBlocked id={options.id} nick={options.nick} name={options.name}/>}

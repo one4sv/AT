@@ -42,6 +42,9 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, set
     const renderChatTa = () => {
         switch (activeHeader) {
             case "text":
+                if (chatWith?.is_group && chatWith.can_send_messages === false) {
+                    return <div className="chatIsBlocked"><Prohibit/><span>{t("chatUi.noSendPermission")}</span></div>;
+                }
                 if (chatWith?.deletion_pending) {
                     return <div className="chatIsBlocked"><Prohibit/><span>{t("chatUi.pendingDeletion")}</span></div>;
                 }
@@ -94,7 +97,7 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, set
         <div className="chatTAWrapper" ref={chatTARef}>
             {activeHeader === "search" ? <SearchList isOpen={isSearchOpen} searchDivRef={searchDivRef} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} searchedMessages={searchedMessages}/>: ""}
             {activeHeader === "pinned" ? <PmsList/> : ""}
-            {activeHeader === "text" && !chatWith?.deletion_pending && !chatWith?.is_blocked && !chatWith?.am_i_blocked ? <EmojiBar setText={setMess} setShowEmojiBar={setShowEmojiBar} taRef={textAreaRef} showEmojiBar={showEmojiBar} emojiRef={emojiButtRef}/> : ""}
+            {activeHeader === "text" && !chatWith?.deletion_pending && !chatWith?.is_blocked && !chatWith?.am_i_blocked && chatWith?.can_send_messages !== false ? <EmojiBar setText={setMess} setShowEmojiBar={setShowEmojiBar} taRef={textAreaRef} showEmojiBar={showEmojiBar} emojiRef={emojiButtRef}/> : ""}
             {showGoDown && (
                 <div className="goDown" onClick={handleGoDown}>
                     <CaretDoubleDown />
