@@ -43,7 +43,7 @@ export default function ChatWithInfo() {
             if (event.touches.length !== 1 || blocked.current || !(event.target instanceof Element) ||
                 event.target.closest(".selector, button, input, textarea, a, [role=button]")) return;
             const touch = event.touches[0];
-            const body = sheet.querySelector(".chatMediaBody");
+            const body = sheet.querySelector(".chatMediaBody.active");
             start = { x: touch.clientX, y: touch.clientY, id: touch.identifier, atTop: !!event.target.closest(".chatInfoSheetHandle") || !body || body.scrollTop <= 2, owned: false };
         };
         const onMove = (event: TouchEvent) => {
@@ -68,7 +68,7 @@ export default function ChatWithInfo() {
             const dy = touch.clientY - current.y;
             if (Math.abs(dy) >= 32) {
                 if (dy > 0) {
-                    const body = sheet.querySelector(".chatMediaBody");
+                    const body = sheet.querySelector(".chatMediaBody.active");
                     if (body) body.scrollTop = 0;
                 }
                 setExpanded(dy < 0);
@@ -162,7 +162,7 @@ export default function ChatWithInfo() {
                 </div>
             </div>
             </div></div>
-            <ChatMedia/>
+            <ChatMedia key={chatWith.chat_id}/>
         </div>
     )
 }

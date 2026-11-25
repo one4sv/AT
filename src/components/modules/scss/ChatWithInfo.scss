@@ -35,12 +35,21 @@
             flex: 1;
             overflow: hidden;
         }
-        .chatMediaBody {
+        .chatMediaViewport {
             flex: 1;
+            min-height: 0;
+        }
+        .chatMediaTrack {
+            height: 100%;
+        }
+        .chatMediaPanel {
+            position: absolute;
+            top: 0;
+            height: 100%;
             overflow: hidden;
             overscroll-behavior: contain;
         }
-        &.infoExpanded .chatMediaBody {
+        &.infoExpanded .chatMediaPanel {
             overflow-y: auto;
         }
     }
@@ -131,6 +140,30 @@
     width: 100%;
     min-height: 0;
     gap: 1vh;
+}
+
+.chatMediaViewport {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    touch-action: pan-y;
+}
+
+.chatMediaTrack {
+    position: relative;
+    width: 100%;
+    transition: transform .32s cubic-bezier(.075,.82,.165,1);
+    &.dragging { transition: none; }
+}
+
+.chatMediaPanel {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+    @media (min-width: 801px) {
+        &.active { position: relative; }
+    }
 }
 
 .chatMediaBody {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ElementType, type PointerEvent } from "react"
+import { useEffect, useLayoutEffect, useRef, useState, type ElementType, type PointerEvent } from "react"
 import "../../scss/selector.scss"
 import { useSideMenu } from "../hooks/SideMenuHook"
 
@@ -11,10 +11,12 @@ interface selectorArr<T extends string | number> {
 
 export default function Selector<T extends string | number>({
     arr,
-    selected
+    selected,
+    previewIndex
 }: {
     arr: selectorArr<T>[],
-    selected: T
+    selected: T,
+    previewIndex?: number
 }) {
     const { setDontHandle } = useSideMenu()
 
@@ -25,7 +27,7 @@ export default function Selector<T extends string | number>({
     const selectedIndex = arr.findIndex(i => i.value === selected)
     const [ indicator, setIndicator ] = useState(Math.max(0, selectedIndex))
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (pointerId.current === null) setIndicator(Math.max(0, selectedIndex))
     }, [selectedIndex])
 
@@ -132,7 +134,8 @@ export default function Selector<T extends string | number>({
                 className="selectedItem"
                 style={{
                     width: `${100 / arr.length}%`,
-                    transform: `translateX(${indicator * 100}%)`
+                    transform: `translateX(${(previewIndex ?? indicator) * 100}%)`,
+                    transition: previewIndex === undefined ? undefined : "none"
                 }}
             />
 

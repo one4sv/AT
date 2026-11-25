@@ -13,6 +13,7 @@ import useOpenLink from "../../hooks/utils/useOpenLink";
 import GetIconByType from "../../../pages/Chat/utils/getIconByType";
 import Selector from "../../ts/Selector";
 import useCompactLayout from "../../hooks/utils/useCompactLayout";
+import { useSideMenu } from "../../hooks/SideMenuHook";
 
 type MediaCategory = "photo" | "video" | "link" | "file";
 
@@ -58,13 +59,122 @@ const cardVariants = {
 
 export default function ChatMedia() {
     const { t } = useTranslation("common");
+    const { setDontHandle, dontHandleOther } = useSideMenu();
+    const { menu } = useContextMenu();
+    const [activeFilter, setActiveFilter] = useState<MediaCategory>("photo");
+    const [visited, setVisited] = useState<MediaCategory[]>(["photo", "video"]);
+    const [dragOffset, setDragOffset] = useState<number | null>(null);
+    const viewportRef = useRef<HTMLDivElement>(null);
+    const blocked = useRef(false);
+    const suppressClick = useRef(false);
+    blocked.current = dontHandleOther || menu.visible;
+    const activeIndex = filters.findIndex(filter => filter.id === activeFilter);
+    const select = useCallback((category: MediaCategory) => {
+        const index = filters.findIndex(filter => filter.id === category);
+        setActiveFilter(category);
+        setVisited(previous => [...new Set([...previous, ...filters.filter((_, i) => Math.abs(i - index) <= 1).map(filter => filter.id)])]);
+    }, []);
+
+    useEffect(() => {
+        const viewport = viewportRef.current;
+        if (!viewport) return;
+        let press: { x: number; y: number; id: number; width: number; owned: boolean } | null = null;
+        const release = () => {
+            if (press?.owned) setDontHandle(false);
+            press = null;
+            setDragOffset(null);
+        };
+        const start = (event: TouchEvent) => {
+            release();
+            suppressClick.current = false;
+            if (event.touches.length !== 1 || blocked.current || !(event.target instanceof Element) ||
+                event.target.closest("button, input, textarea, select, [contenteditable=true]")) return;
+            const touch = event.touches[0];
+            press = { x: touch.clientX, y: touch.clientY, id: touch.identifier, width: Math.max(1, viewport.clientWidth), owned: false };
+        };
+        const move = (event: TouchEvent) => {
+            if (!press || event.touches.length !== 1 || blocked.current || event.defaultPrevented) { release(); return; }
+            const touch = event.touches[0];
+            if (touch.identifier !== press.id) { release(); return; }
+            const dx = touch.clientX - press.x;
+            const dy = touch.clientY - press.y;
+            if (!press.owned) {
+                if (Math.max(Math.abs(dx), Math.abs(dy)) < 8) return;
+                if (Math.abs(dx) <= Math.abs(dy)) { release(); return; }
+                press.owned = true;
+                suppressClick.current = true;
+                setDontHandle(true);
+            }
+            if (event.cancelable) event.preventDefault();
+            const raw = dx / press.width;
+            const min = -Math.min(1, filters.length - 1 - activeIndex);
+            const max = Math.min(1, activeIndex);
+            setDragOffset(Math.max(min, Math.min(max, raw)));
+        };
+        const end = (event: TouchEvent) => {
+            if (press?.owned && !blocked.current) {
+                const touch = Array.from(event.changedTouches).find(item => item.identifier === press?.id);
+                if (touch) {
+                    const dx = touch.clientX - press.x;
+                    if (Math.abs(dx) >= Math.min(press.width * .25, 85)) {
+                        const next = Math.max(0, Math.min(filters.length - 1, activeIndex + (dx < 0 ? 1 : -1)));
+                        select(filters[next].id);
+                    }
+                }
+            }
+            release();
+        };
+        viewport.addEventListener("touchstart", start, { passive: true });
+        viewport.addEventListener("touchmove", move, { passive: false });
+        viewport.addEventListener("touchend", end);
+        viewport.addEventListener("touchcancel", release);
+        return () => {
+            viewport.removeEventListener("touchstart", start);
+            viewport.removeEventListener("touchmove", move);
+            viewport.removeEventListener("touchend", end);
+            viewport.removeEventListener("touchcancel", release);
+            if (press?.owned) setDontHandle(false);
+        };
+    }, [activeIndex, select, setDontHandle]);
+
+    return (
+        <div className="chatMedia">
+            <div className="chatMediaFilters">
+                <Selector selected={activeFilter} previewIndex={dragOffset === null ? undefined : activeIndex - dragOffset}
+                    arr={filters.map(filter => ({
+                        value: filter.id,
+                        label: t(`chatMedia.${filter.label}`),
+                        func: select
+                    }))}/>
+            </div>
+            <div className="chatMediaViewport" ref={viewportRef}
+                onPointerDownCapture={() => { suppressClick.current = false; }}
+                onClickCapture={event => {
+                    if (!suppressClick.current) return;
+                    suppressClick.current = false;
+                    event.preventDefault();
+                    event.stopPropagation();
+                }}>
+                <div className={`chatMediaTrack${dragOffset !== null ? " dragging" : ""}`}
+                    style={{ transform: `translateX(${(-activeIndex + (dragOffset ?? 0)) * 100}%)` }}>
+                    {filters.map((filter, index) => (
+                        <ChatMediaPanel key={filter.id} activeFilter={filter.id}
+                            active={filter.id === activeFilter} enabled={visited.includes(filter.id)} index={index}/>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter: MediaCategory; active: boolean; enabled: boolean; index: number }) {
+    const { t } = useTranslation("common");
     const isMobile = useCompactLayout();
     const openLink = useOpenLink();
     const { chatWith } = useChat();
     const { setBlackout } = useBlackout();
     const { openMenu } = useContextMenu();
 
-    const [activeFilter, setActiveFilter] = useState<MediaCategory>("photo");
     const [items, setItems] = useState<ChatMediaItem[]>([]);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
@@ -75,9 +185,12 @@ export default function ChatMedia() {
     const beforeIdRef = useRef<string | number | null>(null);
     const hasMoreRef = useRef(true);
     const sentinelRef = useRef<HTMLDivElement | null>(null);
+    const panelRef = useRef<HTMLDivElement | null>(null);
+    const chatType = chatWith?.is_group ? "group" : "user";
+    const chatId = chatWith?.is_group ? chatWith.id : chatWith?.nick;
 
     const loadPage = useCallback(async (reset = false) => {
-        if (!chatWith || loadingRef.current || (!hasMoreRef.current && !reset)) return;
+        if (!chatId || loadingRef.current || (!hasMoreRef.current && !reset)) return;
 
         loadingRef.current = true;
         setLoading(true);
@@ -87,12 +200,7 @@ export default function ChatMedia() {
         const cursor = reset ? null : beforeIdRef.current;
 
         try {
-            const type = chatWith.is_group ? "group" : "user";
-            const chatId = chatWith.is_group
-                ? chatWith.id
-                : encodeURIComponent(chatWith.nick);
-
-            const response = await api.get(`/media/${type}/${chatId}`, {
+            const response = await api.get(`/media/${chatType}/${encodeURIComponent(chatId)}`, {
                 params: {
                     limit: 40,
                     category: activeFilter,
@@ -138,9 +246,10 @@ export default function ChatMedia() {
                 setLoading(false);
             }
         }
-    }, [chatWith, activeFilter, t]);
+    }, [chatId, chatType, activeFilter, t]);
 
     useEffect(() => {
+        if (!enabled) return;
         requestRef.current++;
         loadingRef.current = false;
         beforeIdRef.current = null;
@@ -156,12 +265,12 @@ export default function ChatMedia() {
         return () => {
             requestRef.current++;
         };
-    }, [loadPage]);
+    }, [enabled, loadPage]);
 
     useEffect(() => {
         const sentinel = sentinelRef.current;
 
-        if (!sentinel || !hasMore || loading || error) return;
+        if (!active || !enabled || !sentinel || !hasMore || loading || error) return;
 
         const observer = new IntersectionObserver(
             entries => {
@@ -170,7 +279,7 @@ export default function ChatMedia() {
                 }
             },
             {
-                root: null,
+                root: isMobile ? panelRef.current : null,
                 rootMargin: "300px",
                 threshold: 0
             }
@@ -179,7 +288,7 @@ export default function ChatMedia() {
         observer.observe(sentinel);
 
         return () => observer.disconnect();
-    }, [hasMore, loading, error, loadPage]);
+    }, [active, enabled, hasMore, loading, error, loadPage, isMobile]);
 
     const filtered = items.filter(item => item.category === activeFilter);
 
@@ -274,22 +383,8 @@ export default function ChatMedia() {
     );
 
     return (
-        <motion.div
-            className="chatMedia"
-            layout={!isMobile}
-        >
-            <div className="chatMediaFilters">
-                <Selector selected={activeFilter} arr={filters.map(filter => ({
-                    value: filter.id,
-                    label: t(`chatMedia.${filter.label}`),
-                    func: setActiveFilter
-                }))}/>
-            </div>
-
-            <motion.div
-                className="chatMediaBody"
-                layout={!isMobile}
-            >
+        <div ref={panelRef} className={`chatMediaBody chatMediaPanel${active ? " active" : ""}`}
+            style={{ left: `${index * 100}%` }} aria-hidden={!active} inert={!active}>
                 <AnimatePresence mode="wait" initial={false}>
                     {filtered.length > 0 ? (
                         <motion.div
@@ -369,7 +464,7 @@ export default function ChatMedia() {
                                 </motion.div>
                             ))}
                         </motion.div>
-                    ) : loading ? (
+                    ) : loading || !enabled ? (
                         renderSkeletons()
                     ) : (
                         <motion.div
@@ -412,7 +507,6 @@ export default function ChatMedia() {
                     className="chatMediaSentinel"
                     aria-hidden="true"
                 />
-            </motion.div>
-        </motion.div>
+        </div>
     );
 }
