@@ -26,9 +26,9 @@ export function useHabitGoalDisplay(habitId: number | undefined, enabled: boolea
     const selected=key ? (state.key===key?state.value:read(key)) : "";
     const select=(value:string)=>{
         if(!key) return;
-        try { if(value) localStorage.setItem(key,value); else localStorage.removeItem(key); }
+        try { localStorage.setItem(key,value || "none"); }
         catch { return; }
-        setState({key,value});
+        setState({key,value:value || "none"});
         window.dispatchEvent(new Event(eventName));
     };
     return {selected,select};

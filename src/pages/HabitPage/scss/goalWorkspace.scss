@@ -56,3 +56,25 @@
         padding: .5dvh 2vw;
     }
 }
+
+.completeDiv > .habitSelectedGoal {
+    margin: .5dvh auto;
+}
+@media (max-width: 800px) {
+    .mobileHabitLayout:has(.habitSelectedGoal) {
+        height: auto;
+        min-height: 50dvh;
+    }
+    .mobileHabitLayout > .completeDiv:has(.habitSelectedGoal) {
+        height: auto;
+        min-height: 30dvh;
+    }
+    .mobileHabitLayout .completeDiv:has(.habitSelectedGoal) > .completeMain {
+        flex: 1 0 23dvh;
+        height: auto;
+    }
+    .completeDiv > .habitSelectedGoal {
+        width: 90%;
+        max-width: none;
+    }
+}

@@ -1,5 +1,4 @@
 import "../../../scss/Counter.scss"
-import HabitGoalProgress from "./HabitGoalProgress"
 import { goalsChanged } from "../../../../../components/hooks/useGoalsWorkspace"
 import { useTranslation } from "react-i18next"
 import { useCalendar } from "../../../../../components/hooks/CalendarHook"
@@ -151,7 +150,6 @@ export default function Counter({ isMy }: { isMy:boolean }) {
                 >{minCount}</span>
                 <Pen fill="currentColor" width={12} height={12} />
             </div>
-            {!isHistorical && <HabitGoalProgress habitId={habit.id} isMy={isMy}/>}
             <div className="timerButts">
                 <div className="launchButtWrapper">
                     {flyingNumbers.filter(n => n.side ==="left").map(f => (

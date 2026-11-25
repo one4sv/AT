@@ -11,7 +11,7 @@ import { useHabits } from "../hooks/HabitsHook";
 import { useUser } from "../hooks/UserHook";
 import { isGoalHabitAvailable } from "../ts/utils/goalLinkAvailability";
 import { api } from "../ts/api";
-import { goalMetricCompatible, goalHabitMetricType, goalIsCurrent, goalMatchesHabitScope, type Goal, type GoalRecord } from "../../pages/HabitPage/components/Overview/goalTypes";
+import { goalMetricCompatible, goalHabitMetricType, goalIsCurrent, goalMatchesHabitScope, resolvePinnedGoal, type Goal, type GoalRecord } from "../../pages/HabitPage/components/Overview/goalTypes";
 import { formatAppDate,formatAppTime,formatDateFromString } from "../ts/utils/dateToStr";
 import "../../pages/HabitPage/components/Overview/goalLocale";
 import "../../pages/HabitPage/scss/goalWorkspace.scss";
@@ -73,7 +73,7 @@ export default function GoalPicker({slideHabitId}: {slideHabitId?:number} = {}) 
             !isMember ? <span>{t("inactiveLink")}</span> : <>
                 {!!displayChoices.length && <div className="goalWorkspaceField">
                     <label>{t("pinnedGoal")}</label>
-                    <SelectList className="goalWorkspaceSelect" selected={displayChoices.some(g=>String(g.id)===selected)?selected:"none"}
+                    <SelectList className="goalWorkspaceSelect" selected={String(resolvePinnedGoal(displayChoices,selected)?.id ?? "none")}
                         arr={[{value:"none",label:t("hideDisplayGoal")},...displayChoices.map(g=>({value:String(g.id),label:g.name}))]}
                         onChange={value=>select(value==="none"?"":value)}/>
                 </div>}

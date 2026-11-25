@@ -4,7 +4,7 @@ import { useHabitGoalDisplay } from "../../../../../components/hooks/useHabitGoa
 import { useSideMenu } from "../../../../../components/hooks/SideMenuHook";
 import { useSettings } from "../../../../../components/hooks/SettingsHook";
 import { useHabits } from "../../../../../components/hooks/HabitsHook";
-import { goalMetricCompatible,goalHabitMetricType,goalIsCurrent,goalMatchesHabitScope } from "../../Overview/goalTypes";
+import { goalMetricCompatible,goalHabitMetricType,goalIsCurrent,goalMatchesHabitScope,resolvePinnedGoal } from "../../Overview/goalTypes";
 import "../../Overview/goalLocale";
 import "../../../scss/goalWorkspace.scss";
 
@@ -15,11 +15,11 @@ export default function HabitGoalProgress({habitId,isMy}: {habitId:number;isMy:b
     const activity=habits?.find(h=>String(h.id)===String(habitId));
     const member=isMy || Boolean(activity);
     const {selected}=useHabitGoalDisplay(habitId,member && showHabitGoals);
-    const {linked}=useHabitGoals(habitId,member && showHabitGoals && !!selected);
+    const {linked}=useHabitGoals(habitId,member && showHabitGoals);
     const {setShowSlide,setShowHabitMenu}=useSideMenu();
     const metricType=goalHabitMetricType(activity);
-    const goal=linked.find(g=>String(g.id)===selected && goalMatchesHabitScope(g,habitId,activity?.goal_scope) && goalMetricCompatible(g.progress_mode,metricType) && goalIsCurrent(g));
-    if(!member || !showHabitGoals || !goal || (metricType!=="timer" && metricType!=="counter")) return null;
+    const goal=resolvePinnedGoal(linked.filter(g=>goalMatchesHabitScope(g,habitId,activity?.goal_scope) && goalMetricCompatible(g.progress_mode,metricType) && goalIsCurrent(g)),selected);
+    if(!member || !showHabitGoals || !goal) return null;
     return <button type="button" className="habitSelectedGoal" onClick={()=>{
         setShowSlide("goals");
         setShowHabitMenu(true);

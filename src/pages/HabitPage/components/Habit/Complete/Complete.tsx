@@ -6,10 +6,14 @@ import "../../../scss/Complete.scss"
 import ScheduleCompletion from "./ScheduleCompletion";
 import ChosenDayDate from "../../../utils/ChosenDayDate";
 import DoneCompletion from "./DoneCompletion";
+import HabitGoalProgress from "./HabitGoalProgress";
+import { useCalendar } from "../../../../../components/hooks/CalendarHook";
+import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 import { isMobile } from "react-device-detect";
 
 export default function Complete({isMy} : {isMy:boolean}) {
     const { habit, habitSettings } = useTheHabit()
+    const {chosenDay}=useCalendar();
     if (!habit) return
 
     return (
@@ -21,6 +25,7 @@ export default function Complete({isMy} : {isMy:boolean}) {
                 {habitSettings.metric_type === "schedule" && <ScheduleCompletion isMy={isMy}/>}
                 {(habitSettings.metric_type === "done" || habitSettings.metric_type === "checklist") && <DoneCompletion key={habit.id} isMy={isMy}/>}
             </div>
+            {habit.ongoing && chosenDay===todayStrFunc() && <HabitGoalProgress habitId={habit.id} isMy={isMy}/>}
             {isMy && !isMobile && <DoneButton habitId={habit.id}/>}
         </div>
     )

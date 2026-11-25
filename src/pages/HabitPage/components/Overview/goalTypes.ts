@@ -119,3 +119,9 @@ export interface GoalRecord {
 }
 
 export const goalMatchesHabitScope=(goal:Goal,habitId:number,scope?:string)=>scope==="shared"?String(goal.shared_habit_id)===String(habitId):!goal.shared_habit_id;
+
+// An unset device uses the first eligible goal; an explicit "none" stays hidden.
+export function resolvePinnedGoal(goals:Goal[],selected:string) {
+    if(selected==="none")return undefined;
+    return goals.find(goal=>String(goal.id)===selected) ?? [...goals].sort((a,b)=>a.id-b.id)[0];
+}

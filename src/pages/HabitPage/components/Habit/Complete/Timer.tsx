@@ -6,7 +6,6 @@ import { calculateTimerElapsed, calculateUntilTimer } from "../../../../../compo
 import { SVGclock } from "../../../utils/SVGclock";
 import { FlagPennant, Pause, Play, Square } from "@phosphor-icons/react";
 import "../../../scss/Timer.scss";
-import HabitGoalProgress from "./HabitGoalProgress";
 import { useWebSocket } from "../../../../../components/hooks/WebSocketHook";
 import { todayStrFunc } from "../../../../../components/ts/utils/dateToStr";
 
@@ -103,7 +102,6 @@ export default function Timer({ isMy }:{ isMy:boolean }) {
                     {timerDisplay}
                 </div>
             </div>
-            {!isHistorical && <HabitGoalProgress habitId={habit.id} isMy={isMy}/>}
             {canControl && (
                 <div className="timerButts">
                     {isTimerActive && !isEnded && (

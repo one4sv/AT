@@ -127,12 +127,12 @@ test("activity goal button reflects links and reuses goal dialogs",()=>{
     assert.match(picker,/!hasHabitGoalLink\(goal,habitId\)/);
 });
 
-test("activity goals use a slide and selected progress is shared by timer and counter",()=>{
+test("activity goals use a slide and selected progress is shared by all completion types",()=>{
     const menu=read("src/pages/HabitPage/components/HabitInfo/HabitMenu.tsx");
     assert.match(menu,/case "goals":/);
     assert.match(menu,/slideHabitId=\{habit.id\}/);
     assert.match(read("src/pages/HabitPage/components/HabitInfo/HabitExtraButts.tsx"),/setShowSlide\("goals"\)/);
-    for(const name of ["Timer","Counter"]) assert.match(read("src/pages/HabitPage/components/Habit/Complete/"+name+".tsx"),/<HabitGoalProgress/);
+    assert.match(read("src/pages/HabitPage/components/Habit/Complete/Complete.tsx"),/<HabitGoalProgress/);
     assert.match(read("src/components/modules/GoalPicker.tsx"),/useHabitGoalDisplay/);
     assert.match(read("src/pages/HabitPage/components/HabitInfo/CompJurnal.tsx"),/journal.completion_removed/);
     const style=read("src/scss/SelectList.scss");
@@ -201,4 +201,10 @@ test("collaboration goal controls are in the existing activity member slide",()=
     assert.match(settings,/goal_scope/);assert.match(settings,/goal_completion_mode/);
     assert.match(read("src/components/modules/GoalDetails.tsx"),/can_manage_definition/);
     assert.match(read("src/components/modules/GoalPicker.tsx"),/\.slice\(0,2\)/);
+});
+
+test("pinned goal auto fallback and explicit hide",()=>{
+    assert.match(read("src/pages/HabitPage/components/Overview/goalTypes.ts"),/selected==="none"/);
+    assert.match(read("src/components/ts/Habit.tsx"),/useHabitGoals\(habit.id,allowPinnedGoal\)/);
+    assert.match(read("src/pages/HabitPage/components/Habit/Complete/HabitGoalProgress.tsx"),/resolvePinnedGoal/);
 });

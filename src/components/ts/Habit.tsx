@@ -21,7 +21,7 @@ import { formatDateFromString, todayStrFunc, shiftCalendarDay, formatClock } fro
 import { useUser } from "../hooks/UserHook";
 import { useHabitGoalDisplay } from "../hooks/useHabitGoalDisplay";
 import { useHabitGoals } from "../hooks/useHabitGoals";
-import { goalMetricCompatible, goalIsCurrent, goalMatchesHabitScope } from "../../pages/HabitPage/components/Overview/goalTypes";
+import { goalMetricCompatible, goalIsCurrent, goalMatchesHabitScope, goalHabitMetricType, resolvePinnedGoal } from "../../pages/HabitPage/components/Overview/goalTypes";
 export default function HabitDiv({
     habit,
     id,
@@ -58,9 +58,8 @@ export default function HabitDiv({
     const { user } = useUser();
     const allowPinnedGoal=showPinnedGoal && !onSelect && Boolean(user.id) && Boolean(isMyAcc);
     const {selected}=useHabitGoalDisplay(habit.id,allowPinnedGoal);
-    const {linked}=useHabitGoals(habit.id,allowPinnedGoal && !!selected);
-    const pinnedGoal=allowPinnedGoal?linked.find(goal=>String(goal.id)===selected && goalMatchesHabitScope(goal,habit.id,habit.goal_scope) && goalMetricCompatible(goal.progress_mode,metric) &&
-        goalIsCurrent(goal)):undefined;
+    const {linked}=useHabitGoals(habit.id,allowPinnedGoal);
+    const pinnedGoal=allowPinnedGoal?resolvePinnedGoal(linked.filter(goal=>goalMatchesHabitScope(goal,habit.id,habit.goal_scope) && goalMetricCompatible(goal.progress_mode,goalHabitMetricType(habit)) && goalIsCurrent(goal)),selected):undefined;
     const updateTimerDisplay = useCallback(
         (timer: habitTimer) => {
             const elapsed = calculateTimerElapsed(timer, false);
