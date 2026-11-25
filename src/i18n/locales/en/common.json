@@ -797,6 +797,12 @@
     "showQr": "Show group chat QR code"
   },
   "chatMedia": {
+    "savedStorage": "Personal storage",
+    "savedCount": {
+      "media": "Media",
+      "link": "Links",
+      "file": "Files"
+    },
     "media": "Media",
     "activity": "Activity",
     "activities": "Activities",

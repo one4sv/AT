@@ -9,6 +9,7 @@ import useCompactLayout from "../hooks/utils/useCompactLayout"
 import { useUser } from "../hooks/UserHook"
 import { useNavigate } from "react-router"
 import ChatMedia from "./components/ChatMedia"
+import { api } from "../ts/api";
 import { useContacts } from "../hooks/ContactsHook"
 import formatLastOnline from "../ts/utils/formatOnline"
 import { useEffect, useRef, useState } from "react";
@@ -18,8 +19,25 @@ import { useContextMenu } from "../hooks/ContextMenuHook";
 export default function ChatWithInfo() {
     const { t } = useTranslation("common");
     const isMobile = useCompactLayout();
-    const { chatWith } = useChat()
+    const { chatWith, library } = useChat()
     const { user } = useUser()
+    const isFavorite = !!chatWith && !chatWith.is_group && chatWith.id === user.id;
+    const savedChatId = isFavorite && chatWith?.chat_id ? String(chatWith.chat_id) : "";
+    const [savedSummary, setSavedSummary] = useState<{ id: string; counts: Record<"media" | "link" | "file", number> } | null>(null);
+    const [summaryFailed, setSummaryFailed] = useState(false);
+    const [summaryRetry, setSummaryRetry] = useState(0);
+    const counts = savedSummary?.id === savedChatId ? savedSummary.counts : null;
+    useEffect(() => {
+        if (!savedChatId) { setSavedSummary(null); return; }
+        const controller = new AbortController();
+        setSummaryFailed(false);
+        void api.get("chat/library/" + savedChatId, { params: { summary: 1 }, signal: controller.signal }).then(response => {
+            const data = response.data.counts;
+            if (!response.data.success || !data || ![data.media, data.link, data.file].every(value => Number.isSafeInteger(value) && value >= 0)) throw new Error("Invalid library summary");
+            if (!controller.signal.aborted) setSavedSummary({ id: savedChatId, counts: data });
+        }).catch(() => { if (!controller.signal.aborted) setSummaryFailed(true); });
+        return () => controller.abort();
+    }, [savedChatId, library, summaryRetry]);
     const [alias] = useContactAlias(chatWith?.is_group ? undefined : chatWith?.id);
     const { setBlackout } = useBlackout()
     const { onlineMap } = useContacts();
@@ -89,7 +107,6 @@ export default function ChatWithInfo() {
 
     if (chatWith === null) return
 
-    const isFavorite = !chatWith.is_group && chatWith.id === user.id;
     const presence = !chatWith.is_group && <span className={`accOnlineStauts ${onlineMap[chatWith.id] ? "online" : "offline"}`}>
         <CircleIcon size={16} weight="fill" aria-hidden="true"/>
         {onlineMap[chatWith.id] ? t("online") : formatLastOnline(chatWith.last_online)}
@@ -99,7 +116,18 @@ export default function ChatWithInfo() {
         <div ref={sheetRef} className={`chatWithInfoDiv${expanded && isMobile ? " infoExpanded" : ""}`}>
             {isMobile && <div className="chatInfoSheetHandle" aria-hidden="true" />}
             <div className="chatInfoCollapse"><div className="chatInfoCollapseInner">
-            {isFavorite ? <div className="chatSavedInfo"><BookmarkSimpleIcon weight="fill"/><span>{t("chatUi.favorites")}</span></div> : <div className="accInfoMain chatWithInfoMain" onClick={() => {                    
+            {isFavorite ? <div className="chatSavedInfo">
+                <BookmarkSimpleIcon weight="regular" aria-hidden="true"/>
+                <div className="chatSavedTitle">{t("chatUi.favorites")}</div>
+                <div className="chatSavedSubtitle">{t("chatMedia.savedStorage")}</div>
+                <div className="chatSavedStats" aria-busy={!counts && !summaryFailed}>
+                    {(["media", "link", "file"] as const).map(category => <div className="chatSavedStat" key={category}>
+                        <span className="chatSavedStatCount">{counts ? counts[category].toLocaleString() : "—"}</span>
+                        <span className="chatSavedStatLabel">{t("chatMedia.savedCount." + category)}</span>
+                    </div>)}
+                </div>
+                {summaryFailed && <button type="button" className="chatSavedRetry" onClick={() => setSummaryRetry(value => value + 1)}>{t("chatMedia.retry")}</button>}
+            </div> : <div className="accInfoMain chatWithInfoMain" onClick={() => {                    
                 if (chatWith.is_group) navigate(`/room/${chatWith.id}`)
                 else navigate(`/acc/${chatWith.nick}`)
                 setBlackout({seted:false})

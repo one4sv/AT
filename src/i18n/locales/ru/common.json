@@ -805,6 +805,12 @@
     "showQr": "Показать QR-код беседы"
   },
   "chatMedia": {
+    "savedStorage": "Личное хранилище",
+    "savedCount": {
+      "media": "Медиа",
+      "link": "Ссылок",
+      "file": "Файлов"
+    },
     "media": "Медиа",
     "activity": "Актив",
     "activities": "Активности",
