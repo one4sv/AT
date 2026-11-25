@@ -130,9 +130,12 @@ test("overview focus labels are outside cards and both kinds use the same tag ic
     const css = read("src/pages/HabitPage/scss/HabitOverview.scss");
     const sideMenu = read("src/components/ts/Plan.tsx");
     assert.match(overview, /className="habitOverviewFocusLabel"/);
-    assert.match(overview, /const tag = tags\.find/);
+    const entries = read("src/pages/HabitPage/components/Overview/HabitOverviewEntries.tsx");
+    assert.match(overview, /<OverviewEntryTag entry=\{entry\}/);
+    assert.match(entries, /const tag = tags\.find/);
+    assert.match(entries, /planAvatarUrl/);
     assert.match(overview, /getOverviewNext\(/);
-    assert.match(css, /\.habitOverviewFocusIcon\s*\{/);
+    assert.match(css, /\.habitOverviewCurrentRow > \.habitOverviewEntryTagIcon\s*\{/);
     assert.match(sideMenu, /smPlanItem/);
     assert.match(sideMenu, /aria-current=/);
     assert.match(sideMenu, /pathname\.replace/);
