@@ -36,37 +36,84 @@
         height: 100%;
     }
 }
-.goDown {
+.chatActionPanel {
+    width: 60%;
+    margin: 6dvh auto .5dvh;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 5;
+    touch-action: pan-y;
+    min-width: 0;
+    > .chatActionRow {
+        display: flex;
+        align-items: center;
+        gap: .5vw;
+        > .chatActionContent {
+            flex: 1;
+            min-width: 0;
+        }
+        > .chatActionMenu {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--mc);
+            color: var(--tc);
+            border: 1px solid var(--block_border);
+            height: 5dvh;
+            aspect-ratio: 1/1;
+            border-radius: 50%;
+            cursor: pointer;
+            flex-shrink: 0;
+            > svg { width: 60%; height: 60%; }
+        }
+    }
+    .chatSearchDiv, .pmsList {
+        position: static;
+        width: 100%;
+        box-sizing: border-box;
+        background: var(--bgc);
+        &.open {
+            margin-top: .5dvh;
+            max-height: 30dvh;
+            overflow-y: auto;
+        }
+        &.closed, &.close {
+            display: none;
+        }
+    }
+    .pmsShowNow { min-width: 0; flex: 1; width: auto; }
+    .pmShowInfo { flex-shrink: 0; width: auto; padding: 0 .5vw; }
+    .pmsText { display: block; min-width: 0; }
+    @media (max-width: 800px) {
+        margin-top: 7.5dvh;
+        width: 95%;
+        > .chatActionRow { gap: 1vw; }
+    }
+}
+.chatDiv:has(.chatActionPanel) > .chat {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    padding-top: .5dvh;
+}
+.chatTAWrapper > .chatComposerLayer > .goDown {
     position: absolute;
-    background-color: var(--interact);
-    height: 4dvh;
-    width: 4dvh !important;
-    z-index: 3;
-    bottom: 108%;
+    bottom: calc(100% + 1dvh);
+    right: 0;
+    left: auto;
+    background: var(--bgc);
+    border: 1px solid var(--block_border);
+    color: var(--tc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    height: 4.5dvh;
+    width: 4.5dvh;
     border-radius: 50%;
-    left: 48%;
+    z-index: 3;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: var(--borderHabit);
-    opacity: 0.5;
-    >svg {
-        width: 80%;
-        height: 80%;
-    }
-    @media (hover: hover) {
-        &:hover {
-            opacity: 1;
-            color: var(--tc);
-            background-color: var(--menuButtHover);
-        }
-    }
-    @media (hover: none) {
-        &:active {
-            opacity: 1;
-            color: var(--tc);
-            background-color: var(--menuButtHover);
-        }
-    }
+    > svg { width: 65%; height: 65%; }
+    &:hover { background: var(--menuButtHover); }
 }

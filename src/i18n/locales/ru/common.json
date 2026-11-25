@@ -178,6 +178,10 @@
     "created": "создал беседу «{{name}}»"
   },
   "chatUi": {
+    "openPanel": "Панель чата",
+    "hidePanel": "Скрыть панель",
+    "pinnedPanel": "Закреплённые сообщения",
+    "goDown": "Прокрутить вниз",
     "noSendPermission": "У вас нет прав писать в данную беседу",
     "typing": "Печатает...",
     "typingNames": "{{names}} печатают...",
@@ -801,6 +805,11 @@
     "showQr": "Показать QR-код беседы"
   },
   "chatMedia": {
+    "media": "Медиа",
+    "activity": "Актив",
+    "activities": "Активности",
+    "plans": "Планы",
+    "goals": "Цели",
     "photo": "Фото",
     "video": "Видео",
     "link": "Ссылки",

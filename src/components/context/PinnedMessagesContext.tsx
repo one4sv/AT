@@ -24,8 +24,8 @@ interface PinnedMessagesContextType {
 const PinnedMessagesContext = createContext<PinnedMessagesContextType | null>(null)
 
 export function PinnedMessagesProvider({ children }: {children: ReactNode}) {
-    const { messages } = useChat()
-    const pms = messages.filter(m => m.is_pinned)
+    const { messages, library, chatWith } = useChat()
+    const pms = library?.pins ?? messages.filter(m => m.is_pinned)
 
     const { scrollToMessage } = useChatMessageScroll()
     const [showNow, setShowNow] = useState(Math.max(0, pms.length - 1))
@@ -41,6 +41,7 @@ export function PinnedMessagesProvider({ children }: {children: ReactNode}) {
     const mouseYRef = useRef<number | null>(null)
     const rafRef = useRef<number | null>(null)
 
+    useEffect(() => { setShowNow(0); setShowList(false); }, [chatWith?.chat_id]);
     useEffect(() => {
         if (showNow >= pms.length) {
             setShowNow(Math.max(0, pms.length - 1))
@@ -140,8 +141,8 @@ export function PinnedMessagesProvider({ children }: {children: ReactNode}) {
 
     const advancePin = () => {
         if (!pms.length) return
-        const nextIndex = (showNow + 1) % pms.length
-        scrollToPin(pms[nextIndex], nextIndex)
+        scrollToMessage(currentpm.id)
+        setShowNow((showNow + 1) % pms.length)
     }
 
     return (

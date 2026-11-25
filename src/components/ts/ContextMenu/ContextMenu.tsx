@@ -12,6 +12,7 @@ import MemberMenu from "./menus/MemberMenu";
 import MessMenu from "./menus/MessMenu";
 import MediaMenu from "./menus/MediaMenu";
 import MessBarMenu from "./menus/MessBarMenu";
+import ChatActionMenu from "./menus/ChatActionMenu";
 import HeaderQuickActionMenu from "./menus/HeaderQuickActionMenu";
 import HabitHeaderMenu from "./menus/HabitHeaderMenu";
 import SettingsBackMenu from "./menus/SettingsBackMenu";
@@ -136,6 +137,8 @@ export default function ContextMenu() {
                 return <MessMenu />;
             case "media":
                 return <MediaMenu />;
+            case "chatAction":
+                return <ChatActionMenu/>;
             case "messBar":
                 return <MessBarMenu />;
             case "headerQuickAction":

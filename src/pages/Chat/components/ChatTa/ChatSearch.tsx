@@ -9,7 +9,7 @@ import type React from "react";
 export default function ChatSearch ({searchedMessages, selectedIndex, setSelectedIndex, isOpen, setIsOpen}:{searchedMessages:message[], selectedIndex:number, setSelectedIndex:React.Dispatch<SetStateAction<number>>, isOpen:boolean, setIsOpen:React.Dispatch<SetStateAction<boolean>>}) {
     const { t } = useTranslation("common");
     const { scrollToMessage, setHighlightedId } = useChatMessageScroll()
-    const { searchMess, setSearchMess } = useChat()
+    const { searchMess, setSearchMess, searchInputRef } = useChat()
 
     const handleArrowClick = (dir: "up" | "down") => {
         setHighlightedId(null);
@@ -54,6 +54,7 @@ export default function ChatSearch ({searchedMessages, selectedIndex, setSelecte
                 </div>
                 <div className="chatSearch">
                     <input
+                        ref={searchInputRef}
                         type="text"
                         placeholder={t("chatUi.search")}
                         value={searchMess}

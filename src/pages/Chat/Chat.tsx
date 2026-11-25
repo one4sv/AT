@@ -9,6 +9,7 @@ import DateDivider from "./utils/DateDivider";
 import Message from "./components/Message";
 import ChatUser from "./components/ChatUser";
 import { ChatTAWrapper } from "./components/ChatTAWrapper";
+import ChatActionPanel from "./components/ChatActionPanel";
 import { isSameDay } from "./utils/funcs/isSameDay";
 import { isMobile } from "react-device-detect";
 import { api } from "../../components/ts/api";
@@ -362,6 +363,7 @@ export default function Chat() {
     return (
         <div className="chatDiv">
             <ChatUser />
+            {chatReady && <ChatActionPanel key={chatWith?.chat_id} searchedMessages={searchedMessages}/>}
             <div className={`chat AH${activeHeader}`} ref={chatContainerRef}>
                 {loadingMore && <Skeleton type="chatHistory" count={3} /> }
 
@@ -427,8 +429,6 @@ export default function Chat() {
                 textAreaRef={textAreaRef}
                 mess={mess}
                 setMess={setMess}
-                activeHeader={activeHeader}
-                searchedMessages={searchedMessages}
             />
         </div>
     );

@@ -328,3 +328,31 @@
         animation: none;
     }
 }
+
+.chatSavedInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2vw;
+    padding: 1dvh;
+    border-radius: 24px;
+    background: var(--interact);
+    > svg { width: 4dvh; height: 4dvh; color: var(--accent_text); }
+    > span { font-size: 20px; }
+}
+.chatLibraryActivity {
+    details {
+        margin-bottom: 1dvh;
+        padding: 1dvh;
+        border-radius: 24px;
+        background: var(--interact);
+    }
+    summary { cursor: pointer; padding: .5dvh; }
+    button { border: none; background: var(--interact); color: var(--tc); width: 100%; border-radius: 24px; padding: 1dvh; text-align: left; font-size: 16px; }
+}
+
+.chatMediaEntity {
+    padding: 0;
+    > .sharedEntityCard { width: 100%; }
+    .sharedEntityIcon img { width: 100%; height: 100%; object-fit: cover; }
+}

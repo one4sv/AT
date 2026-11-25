@@ -7,18 +7,13 @@ export default function PmsList() {
         showList,
         listRef,
         setShowList,
-        mouseUp,
         scrollToPin,
     } = usePinnedMessages()
     
     return (
-        <div className={`pmsList ${showList ? "open" : "close"}`} ref={listRef} onMouseUp={mouseUp}>
+        <div className={`pmsList ${showList ? "open" : "close"}`} ref={listRef}>
             {pms.map((pm, i) => (
-                <div className="pm" key={pm.id} onClick={() => scrollToPin(pm, i)} onMouseUp={() => {
-                    scrollToPin(pm, i)
-                    setShowList(false)
-                    mouseUp()
-                }}
+                <div className="pm" key={pm.id} onClick={() => { scrollToPin(pm, i); setShowList(false); }}
                 >
                     <UserInChatUserList m={pm}/>
                 </div>

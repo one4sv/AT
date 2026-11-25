@@ -11,10 +11,7 @@ export default function ChatPinned() {
         currentpm,
         showNow,
         showList,
-        longPressTriggered,
         setShowList,
-        mouseDown,
-        mouseUp,
         advancePin,
     } = usePinnedMessages()
 
@@ -30,17 +27,11 @@ export default function ChatPinned() {
                         {currentpm?.content
                             ? currentpm?.content
                             : currentpm?.files && currentpm?.files.length > 0
-                                ? `${currentpm.files?.length} mediafiles`
+                                ? t("chatUi.mediaCount", { count: currentpm.files.length })
                                 : t("chatUi.forwarded")}
                     </span>
                 </div>
-                <div className="pmShowInfo" onMouseDown={mouseDown}
-                    onMouseUp={mouseUp}
-                    onClick={() => {
-                    if (longPressTriggered.current) return
-                        setShowList(!showList)
-                    }}
-                >
+                <div className="pmShowInfo" onClick={() => setShowList(!showList)}>
                     {showNow + 1}/{pms.length}
                     <div className="chatWriteTAButt">
                         <List className="chatSend"/>

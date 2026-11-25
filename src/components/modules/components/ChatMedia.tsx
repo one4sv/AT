@@ -6,6 +6,8 @@ import {
     PlayIcon
 } from "@phosphor-icons/react";
 import { useChat } from "../../hooks/ChatHook";
+import type { LibraryCategory } from "../../context/ChatContext";
+import SharedEntityCard, { type SharedEntityKind } from "../../../pages/Chat/components/SharedEntityCard";
 import { api } from "../../ts/api";
 import { useBlackout } from "../../hooks/BlackoutHook";
 import { useContextMenu } from "../../hooks/ContextMenuHook";
@@ -27,14 +29,16 @@ interface ChatMediaItem {
     created_at: string;
     sender_id: string;
     category: MediaCategory;
+    entity_type?: SharedEntityKind;
+    entity_id?: string;
     sender: { id?: string; nick?: string; name?: string; url?: string };
 }
 
-const filters: { id: MediaCategory; label: string }[] = [
-    { id: "photo", label: "photo" },
-    { id: "video", label: "video" },
+const allFilters: { id: LibraryCategory; label: string }[] = [
+    { id: "media", label: "media" },
     { id: "link", label: "link" },
-    { id: "file", label: "file" }
+    { id: "file", label: "file" },
+    { id: "activity", label: "activity" }
 ];
 
 const skeletons = Array.from({ length: 3 }, (_, index) => index);
@@ -61,19 +65,30 @@ export default function ChatMedia() {
     const { t } = useTranslation("common");
     const { setDontHandle, dontHandleOther } = useSideMenu();
     const { menu } = useContextMenu();
-    const [activeFilter, setActiveFilter] = useState<MediaCategory>("photo");
-    const [visited, setVisited] = useState<MediaCategory[]>(["photo", "video"]);
+    const { library } = useChat();
+    const filters = allFilters.filter(filter => library?.tabs[filter.id]);
+    const filterKey = filters.map(filter => filter.id).join(",");
+    const [activeFilter, setActiveFilter] = useState<LibraryCategory>("media");
+    const [visited, setVisited] = useState<LibraryCategory[]>([]);
+    const effectiveFilter = filters.some(filter => filter.id === activeFilter) ? activeFilter : filters[0]?.id;
+    useEffect(() => {
+        if (effectiveFilter) {
+            setActiveFilter(effectiveFilter);
+            const index = filters.findIndex(filter => filter.id === effectiveFilter);
+            setVisited(previous => [...new Set([...previous, ...filters.filter((_, i) => Math.abs(i-index) <= 1).map(filter => filter.id)])]);
+        }
+    }, [effectiveFilter, filterKey]);
     const [dragOffset, setDragOffset] = useState<number | null>(null);
     const viewportRef = useRef<HTMLDivElement>(null);
     const blocked = useRef(false);
     const suppressClick = useRef(false);
     blocked.current = dontHandleOther || menu.visible;
-    const activeIndex = filters.findIndex(filter => filter.id === activeFilter);
-    const select = useCallback((category: MediaCategory) => {
+    const activeIndex = Math.max(0, filters.findIndex(filter => filter.id === effectiveFilter));
+    const select = useCallback((category: LibraryCategory) => {
         const index = filters.findIndex(filter => filter.id === category);
         setActiveFilter(category);
         setVisited(previous => [...new Set([...previous, ...filters.filter((_, i) => Math.abs(i - index) <= 1).map(filter => filter.id)])]);
-    }, []);
+    }, [filterKey]);
 
     useEffect(() => {
         const viewport = viewportRef.current;
@@ -135,18 +150,19 @@ export default function ChatMedia() {
             viewport.removeEventListener("touchcancel", release);
             if (press?.owned) setDontHandle(false);
         };
-    }, [activeIndex, select, setDontHandle]);
+    }, [activeIndex, select, setDontHandle, filterKey]);
 
+    if (!filters.length) return null;
     return (
         <div className="chatMedia">
-            <div className="chatMediaFilters">
-                <Selector selected={activeFilter} previewIndex={dragOffset === null ? undefined : activeIndex - dragOffset}
+            {filters.length > 1 && <div className="chatMediaFilters">
+                <Selector selected={effectiveFilter!} previewIndex={dragOffset === null ? undefined : activeIndex - dragOffset}
                     arr={filters.map(filter => ({
                         value: filter.id,
                         label: t(`chatMedia.${filter.label}`),
                         func: select
                     }))}/>
-            </div>
+            </div>}
             <div className="chatMediaViewport" ref={viewportRef}
                 onPointerDownCapture={() => { suppressClick.current = false; }}
                 onClickCapture={event => {
@@ -158,8 +174,9 @@ export default function ChatMedia() {
                 <div className={`chatMediaTrack${dragOffset !== null ? " dragging" : ""}`}
                     style={{ transform: `translateX(${(-activeIndex + (dragOffset ?? 0)) * 100}%)` }}>
                     {filters.map((filter, index) => (
+                        filter.id === "activity" ? <ActivityPanel key={filter.id} active={filter.id === effectiveFilter} index={index}/> :
                         <ChatMediaPanel key={filter.id} activeFilter={filter.id}
-                            active={filter.id === activeFilter} enabled={visited.includes(filter.id)} index={index}/>
+                            active={filter.id === effectiveFilter} enabled={visited.includes(filter.id) || filter.id === effectiveFilter} index={index}/>
                     ))}
                 </div>
             </div>
@@ -167,7 +184,7 @@ export default function ChatMedia() {
     );
 }
 
-function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter: MediaCategory; active: boolean; enabled: boolean; index: number }) {
+function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter: Exclude<LibraryCategory, "activity">; active: boolean; enabled: boolean; index: number }) {
     const { t } = useTranslation("common");
     const isMobile = useCompactLayout();
     const openLink = useOpenLink();
@@ -186,8 +203,7 @@ function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter
     const hasMoreRef = useRef(true);
     const sentinelRef = useRef<HTMLDivElement | null>(null);
     const panelRef = useRef<HTMLDivElement | null>(null);
-    const chatType = chatWith?.is_group ? "group" : "user";
-    const chatId = chatWith?.is_group ? chatWith.id : chatWith?.nick;
+    const chatId = chatWith?.chat_id;
 
     const loadPage = useCallback(async (reset = false) => {
         if (!chatId || loadingRef.current || (!hasMoreRef.current && !reset)) return;
@@ -200,7 +216,7 @@ function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter
         const cursor = reset ? null : beforeIdRef.current;
 
         try {
-            const response = await api.get(`/media/${chatType}/${encodeURIComponent(chatId)}`, {
+            const response = await api.get(`/chat/library/${encodeURIComponent(chatId)}`, {
                 params: {
                     limit: 40,
                     category: activeFilter,
@@ -246,7 +262,7 @@ function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter
                 setLoading(false);
             }
         }
-    }, [chatId, chatType, activeFilter, t]);
+    }, [chatId, activeFilter, t]);
 
     useEffect(() => {
         if (!enabled) return;
@@ -290,9 +306,11 @@ function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter
         return () => observer.disconnect();
     }, [active, enabled, hasMore, loading, error, loadPage, isMobile]);
 
-    const filtered = items.filter(item => item.category === activeFilter);
+    const filtered = items;
 
     const openMedia = (item: ChatMediaItem) => {
+        if (item.entity_type) return;
+        if (item.category === "video") { openLink(item.url, true); return; }
         if (item.category === "link") {
             openLink(item.url, true);
             return;
@@ -389,7 +407,7 @@ function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter
                     {filtered.length > 0 ? (
                         <motion.div
                             key={activeFilter}
-                            className={`chatMediaGrid chatMediaGrid${activeFilter}`}
+                            className={`chatMediaGrid chatMediaGrid${activeFilter === "media" ? "photo" : activeFilter}`}
                             layout
                             initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -400,7 +418,7 @@ function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter
                                 <motion.div
                                     key={item.id}
                                     layout
-                                    className={`chatMediaItem chatMedia${item.category}`}
+                                    className={`chatMediaItem chatMedia${item.category}${item.entity_type ? " chatMediaEntity" : ""}`}
                                     variants={cardVariants}
                                     initial="hidden"
                                     animate="visible"
@@ -417,7 +435,7 @@ function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter
                                         delay: Math.min(index * 0.025, 0.25)
                                     }}
                                     data-context-menu="true"
-                                    onContextMenu={event => openMediaMenu(event, item)}
+                                    onContextMenu={event => { if (!item.entity_type) openMediaMenu(event, item); }}
                                     onClick={() => openMedia(item)}
                                 >
                                     {item.category === "photo" && (
@@ -442,7 +460,7 @@ function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter
                                         </>
                                     )}
 
-                                    {item.category === "link" && (
+                                    {item.entity_type && item.entity_id ? <SharedEntityCard kind={item.entity_type} id={item.entity_id}/> : item.category === "link" && (
                                         <>
                                             <LinkIcon size={25} />
                                             <span>{item.name}</span>
@@ -509,4 +527,20 @@ function ChatMediaPanel({ activeFilter, active, enabled, index }: { activeFilter
                 />
         </div>
     );
+}
+
+function ActivityPanel({active,index}: {active:boolean;index:number}) {
+    const { library } = useChat();
+    const { setBlackout } = useBlackout();
+    const { t } = useTranslation("common");
+    const groups = [{kind:"habit",label:"activities"},{kind:"plan",label:"plans"},{kind:"goal",label:"goals"}] as const;
+    return <div className={`chatMediaBody chatMediaPanel chatLibraryActivity${active ? " active" : ""}`} style={{left:`${index*100}%`}} aria-hidden={!active} inert={!active}>
+        {groups.map(group => {
+            const items = library?.activity.filter(item => item.kind === group.kind) || [];
+            return items.length > 0 && <details key={group.kind} open>
+                <summary>{t("chatMedia."+group.label)} · {items.length}</summary>
+                {items.map(item => item.kind === "goal" ? <button key={item.id} type="button" onClick={() => setBlackout({seted:true,module:"GoalDetails",options:{id:item.id}})}>{item.name}</button> : <SharedEntityCard key={item.id} kind={item.kind} id={item.id}/>)}
+            </details>;
+        })}
+    </div>;
 }

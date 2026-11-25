@@ -73,7 +73,14 @@ export interface message {
     animateIn?: boolean;
 }
 export type activeHeaderType = "text" | "search" | "pinned" | "habit" | "choosing";
+export type LibraryCategory = "media" | "link" | "file" | "activity";
+export interface ChatLibrary {
+    tabs: Record<LibraryCategory, boolean>;
+    activity: {kind: "habit" | "plan" | "goal"; id: string; name: string}[];
+    pins: message[];
+}
 export interface ChatContextType {
+    library: ChatLibrary | null;
     chatWith: chatWithType | null;
     refetchChat: (nick: string) => Promise<void>;
     refetchChatWLoading: (nick: string) => Promise<void>;
@@ -120,6 +127,30 @@ export const ChatProvider = ({
     const navigate = useNavigate();
     const [chatWith, setChatWith] = useState<chatWithType | null>(null);
     const [messages, setMessages] = useState<message[]>([]);
+    const [libraryState, setLibraryState] = useState<{ id: string; data: ChatLibrary } | null>(null);
+    const [libraryRevision, setLibraryRevision] = useState(0);
+    const libraryId = chatWith?.chat_id ? String(chatWith.chat_id) : "";
+    const library = libraryState?.id === libraryId ? libraryState.data : null;
+    const lastMessageId = messages[messages.length - 1]?.id;
+    const visibleMessageCount = messages.length;
+    const loadedPins = messages.filter(m => m.is_pinned).map(m => m.id).join(",");
+    useEffect(() => {
+        if (!libraryId || !isAuthenticated) { setLibraryState(null); return; }
+        const controller = new AbortController();
+        const timer = window.setTimeout(() => {
+            void api.get("chat/library/" + libraryId, { signal: controller.signal }).then(response => {
+                if (!controller.signal.aborted && response.data.success) setLibraryState({ id: libraryId, data: response.data });
+            }).catch(() => {});
+        }, 100);
+        return () => { window.clearTimeout(timer); controller.abort(); };
+    }, [libraryId, isAuthenticated, lastMessageId, visibleMessageCount, loadedPins, libraryRevision]);
+    useEffect(() => {
+        if (!libraryId) return;
+        const refresh = () => setLibraryRevision(value => value + 1);
+        const events = ["groupUpdated","at-goals-updated","plan-members-updated","plan-invitation-updated","habit-invitation-updated","focus"];
+        events.forEach(event => window.addEventListener(event, refresh));
+        return () => events.forEach(event => window.removeEventListener(event, refresh));
+    }, [libraryId]);
     const [chatLoading, setChatLoading] = useState<boolean>(true);
     const [isTyping, setIsTyping] = useState(false);
     const [typingMap, setTypingMap] = useState<Record<string, string[]>>({});
@@ -367,6 +398,7 @@ export const ChatProvider = ({
                         )
                     );
                 }
+                if (["MESSAGE_PIN_TOGGLED", "MESSAGE_DELETED", "MESSAGE_EDITED", "GROUP_UPDATED"].includes(data.type)) setLibraryRevision(value => value + 1);
                 if (data.type === "MESSAGE_PIN_TOGGLED") {
                     setMessages(
                         prev => prev.map(
@@ -582,6 +614,7 @@ export const ChatProvider = ({
         <ChatContext.Provider
             value={{
                 chatWith,
+                library,
                 refetchChat,
                 refetchChatWLoading,
                 chatLoading,

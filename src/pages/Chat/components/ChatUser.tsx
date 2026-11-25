@@ -5,13 +5,13 @@ import { useRef } from "react";
 import useContactAlias from "../../../components/hooks/utils/useContactAlias";
 import useCompactLayout from "../../../components/hooks/utils/useCompactLayout";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
-import { BookmarkSimpleIcon, CalendarCheckIcon, ChatTeardropIcon, DotsThreeOutlineVerticalIcon, MagnifyingGlassIcon, PushPinIcon, TextIndentIcon } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, DotsThreeOutlineVerticalIcon, MagnifyingGlassIcon, TextIndentIcon } from "@phosphor-icons/react";
 import { useSideMenu } from "../../../components/hooks/SideMenuHook";
 import { useContacts } from "../../../components/hooks/ContactsHook";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import { useUser } from "../../../components/hooks/UserHook";
+import { useMessages } from "../../../components/hooks/MessagesHook";
 import { CircleUserRound } from "lucide-react";
-import { useNote } from "../../../components/hooks/NoteHook";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import useHeaderMenuGestures from "../../../components/hooks/utils/useHeaderMenuGestures";
 
@@ -19,13 +19,13 @@ export default function ChatUser() {
     const { t } = useTranslation("common");
     const isMobile = useCompactLayout();
     const { user } = useUser()
+    const { setChosenMess } = useMessages();
     const headerGestures = useHeaderMenuGestures();
-    const { chatWith, typingMap, messages, activeHeader, setActiveHeader } = useChat();
+    const { chatWith, typingMap, library, activeHeader, setActiveHeader } = useChat();
     const { onlineMap } = useContacts()
     const { openMenu, menu, closeMenu } = useContextMenu();
     const { openSideMenu } = useSideMenu()
     const { layout } = useSettings()
-    const { showNotification } = useNote()
     const { setBlackout } = useBlackout()
 
     const nameRef = useRef<HTMLDivElement | null>(null);
@@ -153,34 +153,8 @@ export default function ChatUser() {
                 </div>
                 {!isMobile ? (
                     <div className="chatUserMenu" onClick={(e) => e.stopPropagation()}>
-                        {messages.find(m => m.is_pinned) ? (
-                            <div
-                                className="chatUserMenuButt"
-                                onClick={() => {
-                                    if (activeHeader !== "pinned") setActiveHeader("pinned")
-                                    else setActiveHeader("text")
-                                }}
-                            >
-                                {activeHeader === "pinned" ? <ChatTeardropIcon weight="fill" size={22}/> : <PushPinIcon weight="fill" size={22}/>}
-                            </div>
-                        ) : ""}
-                        <div 
-                            className="chatUserMenuButt"
-                            onClick={() => {
-                                if (activeHeader !== "search") setActiveHeader("search")
-                                else setActiveHeader("text")
-                            }}
-                        >
-                            {activeHeader === "search" ? <ChatTeardropIcon weight="fill" size={22}/> : <MagnifyingGlassIcon size={22}/>}
-                        </div>                        
-                        <div 
-                            className="chatUserMenuButt" 
-                            onClick={() => {
-                                setActiveHeader("text")
-                                showNotification("info", t("sideMenu.inDevelopment"))
-                            }}
-                        >
-                            {activeHeader === "habit" ? <ChatTeardropIcon weight="fill" size={22}/> : <CalendarCheckIcon weight="fill" size={22}/>}
+                        <div className="chatUserMenuButt" onClick={() => { setChosenMess([]); setActiveHeader(activeHeader === "text" ? (library?.pins.length ? "pinned" : "search") : "text"); }}>
+                            <MagnifyingGlassIcon size={22}/>
                         </div>
                     </div>
                 ) : ""}

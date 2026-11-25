@@ -178,6 +178,10 @@
     "created": "created the group “{{name}}”"
   },
   "chatUi": {
+    "openPanel": "Chat panel",
+    "hidePanel": "Hide panel",
+    "pinnedPanel": "Pinned messages",
+    "goDown": "Scroll to bottom",
     "noSendPermission": "You do not have permission to send messages in this group",
     "typing": "Typing...",
     "typingNames": "{{names}} are typing...",
@@ -793,6 +797,11 @@
     "showQr": "Show group chat QR code"
   },
   "chatMedia": {
+    "media": "Media",
+    "activity": "Activity",
+    "activities": "Activities",
+    "plans": "Plans",
+    "goals": "Goals",
     "photo": "Photos",
     "video": "Videos",
     "link": "Links",

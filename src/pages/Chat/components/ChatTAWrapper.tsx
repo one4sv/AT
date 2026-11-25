@@ -1,17 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "motion/react";
 import { CaretDoubleDown, Prohibit } from "@phosphor-icons/react";
-import { useEffect, useRef, useState, type SetStateAction } from "react";
+import { useRef, useState, type SetStateAction } from "react";
 import { useChat } from "../../../components/hooks/ChatHook";
 import EmojiBar from "../../../components/ts/utils/EmojiBar";
 import ChatTextArea from "./ChatTa/ChatTextArea";
-import type { activeHeaderType, message } from "../../../components/context/ChatContext";
-import ChatSearch from "./ChatTa/ChatSearch";
 import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
-import ChatPinned from "./ChatTa/ChatPinned";
-import PmsList from "./ChatTa/PmsList";
-import SearchList from "./ChatTa/SearchList";
-import ChatChoosingMess from "./ChatTa/ChatChoosingMess";
 import { ToggleBlocked } from "../../../components/ts/ContextMenu/buttons/ToggleBlocked";
 
 interface ChatTAProps {
@@ -19,29 +13,17 @@ interface ChatTAProps {
     handleGoDown:()=> void, 
     textAreaRef: React.RefObject<HTMLTextAreaElement | null>, 
     mess:string,
-    setMess:React.Dispatch<SetStateAction<string>>,
-    activeHeader: activeHeaderType,
-    searchedMessages:message[]
+    setMess:React.Dispatch<SetStateAction<string>>
 }
-export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, setMess, activeHeader, searchedMessages } : ChatTAProps) {
+export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, setMess } : ChatTAProps) {
     const { t } = useTranslation("common");
     const { scrollToMessage } = useChatMessageScroll()
-    const { chatWith, searchMess } = useChat()
+    const { chatWith } = useChat()
 
     const [ showEmojiBar, setShowEmojiBar ] = useState<boolean>(false)
-    const [ isSearchOpen, setIsSearchOpen ] = useState(false);
-    const [ selectedIndex, setSelectedIndex ] = useState(0)
-    const searchDivRef = useRef<HTMLDivElement | null>(null);
     const emojiButtRef = useRef<HTMLDivElement | null>(null)
-    const chatTARef = useRef<HTMLDivElement | null>(null)
-
-    useEffect(() => {
-        setIsSearchOpen(searchMess.trim().length > 0 && activeHeader === "search");
-    }, [activeHeader, searchMess]);
 
     const renderChatTa = () => {
-        switch (activeHeader) {
-            case "text":
                 if (chatWith?.is_group && chatWith.can_send_messages === false) {
                     return <div className="chatIsBlocked"><Prohibit/><span>{t("chatUi.noSendPermission")}</span></div>;
                 }
@@ -67,51 +49,22 @@ export function ChatTAWrapper({ showGoDown, handleGoDown, textAreaRef, mess, set
                         emojiButtRef={emojiButtRef}
                     />
                 )
-            case "search":
-                return (
-                    <ChatSearch searchedMessages={searchedMessages} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} isOpen={isSearchOpen} setIsOpen={setIsSearchOpen}/>
-                )            
-            case "pinned":
-                return (
-                    <ChatPinned/>
-                )
-            case "choosing":
-                return (
-                    <ChatChoosingMess/>
-                )
-        }
     }
 
-    useEffect(() => {
-        if (activeHeader !== "search") return;
-        const handleClickOutside = (e: MouseEvent) => {
-            if (chatTARef.current && !chatTARef.current.contains(e.target as Node)) {
-                setIsSearchOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [activeHeader]);
-
     return (
-        <div className="chatTAWrapper" ref={chatTARef}>
-            {activeHeader === "search" ? <SearchList isOpen={isSearchOpen} searchDivRef={searchDivRef} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} searchedMessages={searchedMessages}/>: ""}
-            {activeHeader === "pinned" ? <PmsList/> : ""}
-            {activeHeader === "text" && !chatWith?.deletion_pending && !chatWith?.is_blocked && !chatWith?.am_i_blocked && chatWith?.can_send_messages !== false ? <EmojiBar setText={setMess} setShowEmojiBar={setShowEmojiBar} taRef={textAreaRef} showEmojiBar={showEmojiBar} emojiRef={emojiButtRef}/> : ""}
-            {showGoDown && (
-                <div className="goDown" onClick={handleGoDown}>
-                    <CaretDoubleDown />
-                </div>
-            )}
+        <div className="chatTAWrapper">
+            {!chatWith?.deletion_pending && !chatWith?.is_blocked && !chatWith?.am_i_blocked && chatWith?.can_send_messages !== false ? <EmojiBar setText={setMess} setShowEmojiBar={setShowEmojiBar} taRef={textAreaRef} showEmojiBar={showEmojiBar} emojiRef={emojiButtRef}/> : ""}
             <AnimatePresence mode="sync" initial={false}>
                 <motion.div
-                    key={activeHeader}
+                    key="composer"
+                    className="chatComposerLayer"
                     initial={{ y: "300%" }}
                     animate={{ y: 0 }}
                     exit={{ y: "300%" }}
                     transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 >
                     {renderChatTa()}
+                    {showGoDown && <button type="button" className="goDown" onClick={handleGoDown} aria-label={t("chatUi.goDown")}><CaretDoubleDown/></button>}
                 </motion.div>
             </AnimatePresence>
         </div>
