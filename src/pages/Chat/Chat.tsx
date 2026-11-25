@@ -19,7 +19,7 @@ import SystemMessage from "./utils/SystemMessage";
 import Skeleton from "../../components/ts/Skeleton";
 import WelcomeMessage from "./components/WelcomeMessage";
 import { useChatMessageScroll } from "../../components/hooks/utils/useChatMessageScroll";
-import { formatAppDate, todayStrFunc, clockInAppZone } from "../../components/ts/utils/dateToStr";
+import { todayStrFunc, clockInAppZone } from "../../components/ts/utils/dateToStr";
 import { parseSavedMessageSuggestion } from "../../components/ts/utils/savedMessageSuggestion";
 import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { useGroup } from "../../components/hooks/GroupHook";
@@ -320,7 +320,7 @@ export default function Chat() {
             if (!chatReady || !el) return;
             const snapshot = prependSnapshotRef.current;
             if (snapshot) {
-                if (messages[0]?.id !== snapshot.firstId) {
+                if (!loadingMore && messages[0]?.id !== snapshot.firstId) {
                     el.scrollTop = snapshot.top + el.scrollHeight - snapshot.height;
                     measuredScrollHeightRef.current = el.scrollHeight;
                     prependSnapshotRef.current = null;
@@ -337,7 +337,7 @@ export default function Chat() {
                 measuredScrollHeightRef.current = el.scrollHeight;
             }
         },
-        [chatReady, messages, unreadDividerId, pendingScrollId]
+        [chatReady, messages, unreadDividerId, pendingScrollId, loadingMore]
     );
 
     useEffect(() => {

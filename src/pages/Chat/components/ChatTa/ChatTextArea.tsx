@@ -1053,6 +1053,7 @@ export default function ChatTextArea({
                             name="chatTA"
                             id="chatTA"
                             className="chatTA chatTAwFiles"
+                            minHeight={0}
                             value={displayedMess}
                             taRef={textAreaRef}
                             onChange={e => {

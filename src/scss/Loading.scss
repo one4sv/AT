@@ -382,6 +382,7 @@
 }
 
 .skeleton-chatHistory {
+    height: auto;
     flex-shrink: 0;
     width: 100%;
     .skeletonHistoryMessages {

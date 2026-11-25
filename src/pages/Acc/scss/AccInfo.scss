@@ -278,6 +278,12 @@ textarea.extraInfoInput.bioTA {
 .accInfoInner .accInfoMain {
     position: relative;
 }
+.accInfoInner .accInfoMain:has(.accProfileActions) .accInfoNames {
+    padding-inline-end: 4dvh;
+    @media (max-width: 800px) {
+        padding-inline-end: 0;
+    }
+}
 .accProfileActions {
     position: absolute;
     top: 0;

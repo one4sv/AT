@@ -473,6 +473,7 @@
     > textarea {
         display: block;
         min-height: calc(5dvh - 2px);
+        padding-block: max(.8dvh, calc((5dvh - 2px - 1.35em) / 2));
         padding-inline-end: 5vh;
         position: relative;
         z-index: 1;
@@ -483,7 +484,7 @@
     position: absolute;
     z-index: 0;
     pointer-events: none;
-    top: max(.8dvh, calc((5dvh - 1.35em) / 2));
+    top: max(.8dvh, calc((5dvh - 2px - 1.35em) / 2));
     left: 1vw;
     padding: 0;
     color: transparent;
