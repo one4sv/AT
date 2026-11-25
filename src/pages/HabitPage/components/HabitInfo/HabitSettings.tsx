@@ -63,16 +63,16 @@ export default function HabitSettings({ readOnly, isArchived, isMy }: HabitSlide
 
     const handleScheduleChange = useCallback(
         (newValue: boolean) => {
-            if (!habit) return
+            if (!habit || readOnly) return
             if (habit?.periodicity === "sometimes") return;
             setScheduleToggle(newValue);
             setNewScheduleBool(habit.id, newValue);
         },
-        [habit, setNewScheduleBool]
+        [habit, readOnly, setNewScheduleBool]
     );
 
     const handleAutoCompletionChange = (value: string) => {
-        if (!habit) return
+        if (!habit || readOnly) return
         const val = value as asctype;
         setAutoCompleteMode(value);
         setNewAutoScheduleCompletion(habit.id, val);

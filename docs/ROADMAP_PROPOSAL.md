@@ -6,7 +6,7 @@
 
 - `src/pages/Info/Info.tsx` — кнопка дорожной карты в том же стиле, что остальные кнопки Info, и маршрут `/info/roadmap`.
 - `src/pages/Info/tabs/RoadmapTab.tsx` — один контейнер `infoText` и общая **вертикальная линия слева**. Будущие обновления сверху, текущее `dev 0.6.5 Mosaic` посередине, старые снизу; история по умолчанию свернута.
-- `src/pages/Info/roadmapData.ts` — статические данные исторических версий и планов; RU/EN в `RoadmapText`. У крупных `0.x` есть названия и градиентные плашки, у патчей `0.x.x` нет ни отдельного названия, ни основной плашки.
+- `src/pages/Info/roadmapData.ts` — статические данные исторических версий и планов; RU/EN в `RoadmapText`. У крупных `0.x` есть названия и градиентные плашки, у патчей `0.x.x` могут быть собственные английские названия, как Songbird, Waypoint и Mosaic.
 - `src/pages/Info/scss/roadmap.scss` — прошедшая линия `--accent`, будущая `--borderWh`, у текущего обновления увеличенный маркер и `border: var(--accent)`, фон из `--accent_hov` → `--grad_hov`.
 - `src/pages/Info/RoadmapArt.tsx` / `SectionArt theme="roadmap"` — отдельный рисунок в общей системе иллюстраций.
 - `src/pages/Info/tabs/AboutTab.tsx` — версия **dev 0.6.5** с ссылкой на roadmap; FAQ содержит внутреннюю ссылку на страницу.
