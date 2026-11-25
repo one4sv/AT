@@ -142,7 +142,10 @@
     "displayOrder": "Порядок отображения",
     "everyday": "Ежедневные",
     "weekly": "По дате",
-    "sometimes": "Иногда"
+    "sometimes": "Иногда",
+    "feed": "Лента",
+    "showFeedDaySummary": "Сегодняшняя сводка в Ленте",
+    "showFeedDaySummaryHint": "Показывать дату, прогресс дня, текущую и следующую активность или план над публикациями."
   },
   "notifications": {
     "planRemindersTitle": "Напоминания о планах",
@@ -154,7 +157,7 @@
     "general": "Общие",
     "generalNotifications": "Общие уведомления",
     "newMessages": "Уведомления из бесед",
-  "mentions": "Уведомления об упоминаниях",
+    "mentions": "Уведомления об упоминаниях",
     "reminders": "Напоминания",
     "remindAboutActivities": "Напоминать об активностях",
     "commonReminderTime": "Общее время для напоминания",

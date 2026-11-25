@@ -10,7 +10,7 @@ import SectionArt from "../../../../components/ts/SectionArt";
 
 export default function HabitsTab({ search }: { search: string }) {
     const { t, i18n } = useTranslation("settings");
-    const { showArchived, showArchivedInAcc, weekStart, showHabitGoals, setShowHabitGoals } = useSettings();
+    const { showArchived, showArchivedInAcc, weekStart, showHabitGoals, setShowHabitGoals, showFeedDaySummary, setShowFeedDaySummary } = useSettings();
     const { setNewShowArchived, setNewShowArchivedInAcc, setNewWeekStart } = useUpSettings();
 
     return <div className="settingTab">
@@ -38,6 +38,16 @@ export default function HabitsTab({ search }: { search: string }) {
                     <Toggler state={showHabitGoals}/>
                 </div>
                 <div className="settingHint">{t("habits.showGoalsHint")}</div>
+            </div>
+        </div>
+        <div className="settingInnerDiv">
+            <div className="settingHeader">{t("habits.feed")}</div>
+            <div className="settingInnerList">
+                <div className="settingTogglerDiv" onClick={() => setShowFeedDaySummary(!showFeedDaySummary)} data-setting-id="showFeedDaySummary">
+                    <HighlightText text={t("habits.showFeedDaySummary")} search={search}/>
+                    <Toggler state={showFeedDaySummary}/>
+                </div>
+                <div className="settingHint">{t("habits.showFeedDaySummaryHint")}</div>
             </div>
         </div>
         <div className="settingInnerDiv" data-setting-id="weekStart">

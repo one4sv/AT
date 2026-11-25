@@ -121,6 +121,8 @@ export interface SettingsContextType {
     setPrivate: React.Dispatch<React.SetStateAction<PrivateSettings>>;
     tab: string;
     setTab: React.Dispatch<React.SetStateAction<string>>;
+    showFeedDaySummary: boolean;
+    setShowFeedDaySummary: React.Dispatch<SetStateAction<boolean>>;
     showHabitGoals: boolean;
     setShowHabitGoals: React.Dispatch<SetStateAction<boolean>>;
     showArchived: boolean;
@@ -202,6 +204,7 @@ const LOCAL_KEYS = {
     messnote:"settings_messnote",
     mentionsnote:"settings_mentionsnote",
     habitsnote:"settings_habitsnote",
+    showFeedDaySummary:"settings_show_feed_day_summary",
     showHabitGoals:"settings_show_habit_goals",
     lang:"settings_lang",
     fontSize:"settings_font_size",
@@ -319,6 +322,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ twoAuth, setTwoAuth ] = useState<boolean | null>(null);
     const [ privateShow, setPrivate ] = useState<PrivateSettings>({ number: "", mail: "", profile: "all", habits: "", posts: "", plans: "nobody" });
     const [ profileShareToken, setProfileShareToken ] = useState<string | null>(null);
+    const [ showFeedDaySummary, setShowFeedDaySummary ] = useLocalStorage<boolean>(LOCAL_KEYS.showFeedDaySummary, false);
     const [ showHabitGoals, setShowHabitGoals ] = useLocalStorage<boolean>(LOCAL_KEYS.showHabitGoals, true);
     const [ showArchived, setShowArchived ] = useState<boolean>(false);
     const [ showArchivedInAcc, setShowArchivedInAcc ] = useState<boolean>(false);
@@ -486,6 +490,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             note, setNote,
             messNote, setMessNote,
             mentionsNote, setMentionsNote,
+            showFeedDaySummary, setShowFeedDaySummary,
             showHabitGoals, setShowHabitGoals,
             showArchived, setShowArchived,
             showArchivedInAcc, setShowArchivedInAcc,

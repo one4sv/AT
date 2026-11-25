@@ -22,13 +22,16 @@ function OverviewEntryTag({ entry }: { entry: DayEntry }) {
         <span className={"calendarDot " + entry.state}/>;
 }
 
-export default function HabitOverviewEntries({ entries, view = "all", readOnly = false }: {
+export default function HabitOverviewEntries({ entries, view = "all", readOnly = false, day }: {
     entries: DayEntry[];
     view?: "all" | "activities" | "plans";
     readOnly?: boolean;
+    day?: string;
 }) {
     const { t } = useTranslation("common");
-    const { chosenDay, calendar } = useCalendar();
+    const { chosenDay: calendarDay, calendar: activeCalendar, allCalendar } = useCalendar();
+    const chosenDay = day || calendarDay;
+    const calendar = day ? allCalendar : activeCalendar;
     const progress = useHabitDayProgress(chosenDay);
     const { markDone } = useDone();
     const { setCompleted } = usePlans();

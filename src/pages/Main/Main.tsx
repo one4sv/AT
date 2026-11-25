@@ -13,9 +13,12 @@ import { isMobile } from "react-device-detect";
 import { usePageTitle } from "../../components/hooks/PageContextHook.ts";
 import { useNavigate } from "react-router";
 import FirstSteps from "./components/FirstSteps.tsx";
+import { useSettings } from "../../components/hooks/SettingsHook";
+import HabitOverviewLayout from "../HabitPage/components/Overview/HabitOverviewLayout";
 import { CONTENT_REFRESH_EVENT, type ContentRefreshEvent } from "../../components/ts/utils/contentRefresh";
 export default function Feed() {
     const { t } = useTranslation("acc");
+    const { showFeedDaySummary } = useSettings();
     const {
         initialLoading,
         user,
@@ -67,7 +70,8 @@ export default function Feed() {
 
     return (
         <div className={`MainDiv ${isMobile ? "mobile" : ""}`}>
-            <div className={`postFeed ${isMobile ? "mobile" : ""}`}>
+            <div className={`postFeed ${isMobile ? "mobile" : ""}${showFeedDaySummary && user.id ? " withDaySummary" : ""}`}>
+                {showFeedDaySummary && user.id && <HabitOverviewLayout feed/>}
                 {diffDays < 30 && user.nick && <FirstSteps />}
                 {posts.length === 0 ? <FeedNothing /> : <>
                     {posts.map(post => <Post isMy={post.user.id === user.id} post={post} key={post.id} />)}

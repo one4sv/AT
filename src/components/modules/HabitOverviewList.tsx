@@ -17,7 +17,12 @@ import "../../pages/HabitPage/scss/HabitOverview.scss";
 export default function HabitOverviewList() {
     const { t } = useTranslation("common");
     const { blackout, setBlackout } = useBlackout();
-    const { chosenDay, calendar, calendarLoading } = useCalendar();
+    const { chosenDay: calendarDay, calendar: activeCalendar, calendarLoading: activeCalendarLoading, allCalendar, allCalendarLoading } = useCalendar();
+    const chosenDay = blackout.options?.day || calendarDay;
+    const explicitDay = Boolean(blackout.options?.day);
+    const calendar = explicitDay ? allCalendar : activeCalendar;
+    const calendarLoading = explicitDay ? allCalendarLoading : activeCalendarLoading;
+    const hideGoals = Boolean(blackout.options?.hideGoals);
     const { habits, loadingHabits } = useHabits();
     const { plans, loadingPlans } = usePlans();
     const { acc, plans: profilePlans, loading: profileLoading } = useAcc();
@@ -25,11 +30,11 @@ export default function HabitOverviewList() {
     const profileMode = !!profileNick;
     const initialView = blackout.options?.name;
     const {t:tGoals}=useTranslation("goals");
-    const {goals,loading:loadingGoals,error:goalsError}=useGoalsWorkspace(!profileMode);
-    const goalDay=useGoalDayResults(chosenDay,goals,!profileMode);
+    const {goals,loading:loadingGoals,error:goalsError}=useGoalsWorkspace(!profileMode && !hideGoals);
+    const goalDay=useGoalDayResults(chosenDay,goals,!profileMode && !hideGoals);
     const dayGoals=goalsForDay(goals,chosenDay,goalDay.ids);
     const [view, setView] = useState<"all" | "activities" | "plans" | "goals">(
-        initialView === "activities" || initialView === "plans" || initialView === "goals" ? initialView : "all"
+        initialView === "activities" || initialView === "plans" || (initialView === "goals" && !hideGoals) ? initialView : "all"
     );
     const all = profileMode ? (acc?.nick === profileNick ? makeProfilePlanEntries(profilePlans) : []) :
         makeDayEntries(chosenDay, habits, plans, calendar);
@@ -44,14 +49,14 @@ export default function HabitOverviewList() {
             { value: "all", label: t("plans.all"), func: setView },
             { value: "activities", label: t("plans.activities"), func: setView },
             { value: "plans", label: t("plans.title"), func: setView },
-            { value: "goals", label: tGoals("title"), func: setView }
+            ...(!hideGoals ? [{ value: "goals" as const, label: tGoals("title"), func: setView }] : [])
         ]}/> }
         <div className="habitOverviewModalBody">
             {(profileMode ? profileLoading : loadingPlans || loadingHabits || calendarLoading) ?
                 <div className="overviewPanelSkeleton" aria-busy="true"><div className="skeletonLine skeletonTitle"/><div className="skeletonLine"/><div className="skeletonLine"/></div> :
                 <>
-                    {view!=="goals" && <HabitOverviewEntries entries={entries} view={profileMode ? "plans" : view} readOnly={profileMode}/>}
-                    {!profileMode && (view==="goals" || (view==="all" && dayGoals.length>0)) && <DayGoalEntries goals={dayGoals} ids={goalDay.ids} day={chosenDay} loading={loadingGoals || goalDay.loading} error={goalsError || goalDay.error}/>}
+                    {view!=="goals" && <HabitOverviewEntries entries={entries} view={profileMode ? "plans" : view} readOnly={profileMode} day={explicitDay ? chosenDay : undefined}/>}
+                    {!profileMode && !hideGoals && (view==="goals" || (view==="all" && dayGoals.length>0)) && <DayGoalEntries goals={dayGoals} ids={goalDay.ids} day={chosenDay} loading={loadingGoals || goalDay.loading} error={goalsError || goalDay.error}/>}
                 </>}
         </div>
     </div>;

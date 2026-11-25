@@ -102,19 +102,30 @@ function OverviewFocusCard({ entry, label, more = 0, calendar, progress }: {
     </div>;
 }
 
-export default function HabitOverviewLayout() {
+export default function HabitOverviewLayout({ feed = false }: { feed?: boolean } = {}) {
     const { t } = useTranslation("common");
     const { t: tGoals } = useTranslation("goals");
     const { user } = useUser();
-    const { goals, loading: loadingGoals, error: goalsError } = useGoalsWorkspace();
-    const { chosenDay, calendar, calendarLoading } = useCalendar();
+    const { goals, loading: loadingGoals, error: goalsError } = useGoalsWorkspace(!feed);
+    const { chosenDay: calendarDay, calendar: activeCalendar, allCalendar, calendarLoading: activeCalendarLoading, allCalendarLoading } = useCalendar();
+    const chosenDay = feed ? todayStrFunc() : calendarDay;
+    const calendar = feed ? allCalendar : activeCalendar;
+    const calendarLoading = feed ? allCalendarLoading : activeCalendarLoading;
+    const [, setClockTick] = useState(0);
+    useEffect(() => {
+        if (!feed) return;
+        const refresh = () => setClockTick(value => value + 1);
+        const tick = window.setInterval(refresh, 15000);
+        window.addEventListener("focus", refresh);
+        return () => { window.clearInterval(tick); window.removeEventListener("focus", refresh); };
+    }, [feed]);
     const { habits, loadingHabits } = useHabits();
     const { plans, loadingPlans } = usePlans();
     const { openMenu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const dayProgress = useHabitDayProgress(chosenDay);
     const [view, setView] = useState<"all" | "activities" | "plans" | "goals">("all");
-    const goalDay=useGoalDayResults(chosenDay,goals,Boolean(user.id));
+    const goalDay=useGoalDayResults(chosenDay,goals,Boolean(user.id) && !feed);
     const dayGoals=goalsForDay(goals,chosenDay,goalDay.ids);
     const [initializedAccount, setInitializedAccount] = useState<string | null>(null);
     const initializing = initializedAccount !== user.id;
@@ -141,10 +152,10 @@ export default function HabitOverviewLayout() {
         openMenu(bounds.left, bounds.bottom + 6, "planCreate", { id: "create", name: t("plans.activitiesAndPlans") });
     };
 
-    return <div className="habitOverview">
-        <div className="habitOverviewCalendar">
+    return <div className={"habitOverview" + (feed ? " habitOverviewFeed" : "")}>
+        {!feed && <div className="habitOverviewCalendar">
             {calendarLoading ? <CalendarSkeleton/> : <Calendar/>}
-        </div>
+        </div>}
         <div className="habitOverviewCenter">
             <div className="habitOverviewHeader">
                 <span>{formatDateLabel(chosenDay)}</span>
@@ -156,22 +167,22 @@ export default function HabitOverviewLayout() {
                 </button>
             </div>
             {initializing ? <SummarySkeleton/> : <>
-                {(activityCount > 0 || planCount > 0 || (!goalsError && goalCount > 0)) && <div className="habitOverviewSummary">
+                {(activityCount > 0 || planCount > 0 || (!feed && !goalsError && goalCount > 0)) && <div className="habitOverviewSummary">
                     {activityCount > 0 && <button type="button"
-                        onClick={() => setBlackout({ seted: true, module: "HabitOverviewList", options: { name: "activities" } })}>
+                        onClick={() => setBlackout({ seted: true, module: "HabitOverviewList", options: { name: "activities", ...(feed ? { day: chosenDay, hideGoals: true } : {}) } })}>
                         <span>{activityCount}</span><small>{t("plans.activities")}</small>
                     </button>}
                     {planCount > 0 && <button type="button"
-                        onClick={() => setBlackout({ seted: true, module: "HabitOverviewList", options: { name: "plans" } })}>
+                        onClick={() => setBlackout({ seted: true, module: "HabitOverviewList", options: { name: "plans", ...(feed ? { day: chosenDay, hideGoals: true } : {}) } })}>
                         <span>{planCount}</span><small>{t("plans.title")}</small>
                     </button>}
-                    {!goalsError && goalCount > 0 && <button type="button"
+                    {!feed && !goalsError && goalCount > 0 && <button type="button"
                         onClick={() => setBlackout({ seted: true, module: "HabitOverviewList", options: { name: "goals" } })}>
                         <span>{goalCount}</span><small>{tGoals("title")}</small>
                     </button>}
                 </div>}
-                {chosenDay >= todayStrFunc() && loadingGoals && !goalCount && <div className="skeletonLine" role="status" aria-label={tGoals("loading")}/>}
-                {chosenDay >= todayStrFunc() && goalsError && <small>{tGoals("loadError")}</small>}
+                {!feed && chosenDay >= todayStrFunc() && loadingGoals && !goalCount && <div className="skeletonLine" role="status" aria-label={tGoals("loading")}/>}
+                {!feed && chosenDay >= todayStrFunc() && goalsError && <small>{tGoals("loadError")}</small>}
                 <div className="habitOverviewProgress" role="progressbar" aria-valuenow={completedCount}
                     aria-valuemin={0} aria-valuemax={entries.length || 1}
                     aria-label={t("plans.completed")}>
@@ -179,7 +190,7 @@ export default function HabitOverviewLayout() {
                 </div>
                 <p>{t("plans.completedCount", { done: completedCount, total: entries.length })}</p>
                 <p>{t("plans.remainingCount", { count: entries.length - completedCount })}</p>
-                {!goalDay.loading && !goalDay.error && (goalCount>0 || goalDay.ids.length>0) && <p>{tGoals(chosenDay===todayStrFunc()?"completedTodayCount":"completedDayCount",{count:goalDay.ids.length})}</p>}
+                {!feed && !goalDay.loading && !goalDay.error && (goalCount>0 || goalDay.ids.length>0) && <p>{tGoals(chosenDay===todayStrFunc()?"completedTodayCount":"completedDayCount",{count:goalDay.ids.length})}</p>}
                 {focus && <OverviewFocusCard entry={focus.entry} more={focus.more} calendar={calendar}
                     progress={focus.entry.habit ? dayProgress[String(focus.entry.habit.id)] : undefined}
                     label={t(focus.kind === "dayStart" ? "plans.dayStart" :
@@ -189,7 +200,7 @@ export default function HabitOverviewLayout() {
                     label={t(nextEntry.kind === "plan" ? "plans.nextPlan" : "plans.nextActivity")}/>}
             </>}
         </div>
-        <div className="habitOverviewContext">
+        {!feed && <div className="habitOverviewContext">
             <div className="habitOverviewHeader">{t("plans.daySummary")}</div>
             <div className="habitOverviewNextLabel">{view==="goals"?tGoals("title"):t("plans.nextUp")}</div>
             {initializing ? <UpcomingSkeleton/> : <>
@@ -207,6 +218,6 @@ export default function HabitOverviewLayout() {
                     </>}
                 </div>
             </>}
-        </div>
+        </div>}
     </div>;
 }

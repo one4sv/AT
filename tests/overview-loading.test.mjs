@@ -299,3 +299,17 @@ test("toggling any habit in the all-activities modal refreshes the SVG on that d
     assert.match(entries, /entry\.completed \? <CheckCircleIcon/);
     assert.match(entries, /void markDone\(entry\.habit!\.id, chosenDay\)/);
 });
+
+test("feed summary reuses overview with today and global calendar, excluding goals", () => {
+    const overview = read("src/pages/HabitPage/components/Overview/HabitOverviewLayout.tsx");
+    const feed = read("src/pages/Main/Main.tsx");
+    const settings = read("src/components/context/SettingsContext.tsx");
+    const modal = read("src/components/modules/HabitOverviewList.tsx");
+    assert.match(feed, /showFeedDaySummary && user.id && <HabitOverviewLayout feed\/>/);
+    assert.match(overview, /feed \? todayStrFunc\(\) : calendarDay/);
+    assert.match(overview, /feed \? allCalendar : activeCalendar/);
+    assert.match(overview, /useGoalsWorkspace\(!feed\)/);
+    assert.match(overview, /hideGoals: true/);
+    assert.match(modal, /useGoalsWorkspace\(!profileMode && !hideGoals\)/);
+    assert.match(settings, /LOCAL_KEYS.showFeedDaySummary, false/);
+});

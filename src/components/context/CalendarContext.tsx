@@ -23,6 +23,7 @@ export interface Calendar {
 export interface CalendarContextType {
     calendar: Calendar[]
     allCalendar: Calendar[]
+    allCalendarLoading: boolean
     setCalendar: React.Dispatch<React.SetStateAction<Calendar[]>>
     fetchCalendarHabit: (id: string) => void;
     fetchCalendarHabitWLoading: (id: string) => void;
@@ -50,6 +51,7 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     const { user, initialLoading } = useUser()
     const [ calendar, setCalendar ] = useState<Calendar[]>([])
     const [ allCalendar, setAllCalendar ] = useState<Calendar[]>([])
+    const [ allCalendarAccount, setAllCalendarAccount ] = useState<string | null>(null)
     const [ timers, setTimers ] = useState<habitTimer[] | null>(null)
     const [ counters, setCounters ] = useState<habitCounter[] | null>(null)
     const [ calendarLoading, setCalendarLoading ] = useState(false)
@@ -70,15 +72,19 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
         if (initialLoading) return;
         if (!user.id) {
             setAllCalendar([]);
+            setAllCalendarAccount(null);
             return;
         }
         const controller = new AbortController();
+        setAllCalendar([]);
         void api.get("calendar", { signal: controller.signal }).then(response => {
             if (!controller.signal.aborted && response.data?.success) {
                 setAllCalendar(response.data.calendar || []);
             }
         }).catch(error => {
             if (!controller.signal.aborted) console.error("Не удалось загрузить общий календарь", error);
+        }).finally(() => {
+            if (!controller.signal.aborted) setAllCalendarAccount(user.id);
         });
         return () => controller.abort();
     }, [user.id, initialLoading]);
@@ -144,7 +150,7 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <CalendarContext.Provider value={{
-            calendar, allCalendar, setCalendar, fetchCalendarHabit, fetchCalendarUser, fetchAllCalendar,
+            calendar, allCalendar, allCalendarLoading: Boolean(user.id && allCalendarAccount !== user.id), setCalendar, fetchCalendarHabit, fetchCalendarUser, fetchAllCalendar,
             calendarLoading, chosenDay, setChosenDay, calendarRef, selectedMonth, selectedYear,
             setSelectedMonth, setSelectedYear, fetchCalendarWLoading, fetchCalendarHabitWLoading,
             timers, counters

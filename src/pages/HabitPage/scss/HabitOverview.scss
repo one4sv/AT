@@ -661,3 +661,18 @@
 
 .habitOverviewFilters { flex-wrap: wrap; }
 .habitOverviewGoalDone { flex-shrink: 0; align-self: center; color: var(--accent_text); }
+
+/* Feed uses only the shared center panel, without fixed overview height. */
+.habitOverview.habitOverviewFeed {
+    display: block;
+    height: auto;
+    flex: 0 0 auto;
+    > .habitOverviewCenter {
+        width: 100%;
+        height: auto;
+        flex: none;
+        overflow: visible;
+        min-height: 0;
+    }
+    .habitOverviewProgress { flex-shrink: 0; }
+}

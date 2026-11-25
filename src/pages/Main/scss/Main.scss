@@ -110,3 +110,9 @@
     width: 70%;
     @media (max-width: 800px) { width: 95%; }
 }
+
+.postFeed.withDaySummary > .feedNothing {
+    position: static;
+    margin: 3dvh auto;
+    flex-shrink: 0;
+}

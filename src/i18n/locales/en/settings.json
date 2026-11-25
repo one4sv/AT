@@ -142,7 +142,10 @@
     "displayOrder": "Display order",
     "everyday": "Everyday",
     "weekly": "By date",
-    "sometimes": "Sometimes"
+    "sometimes": "Sometimes",
+    "feed": "Feed",
+    "showFeedDaySummary": "Today's summary in the feed",
+    "showFeedDaySummaryHint": "Show the date, daily progress, current and next activity or plan above posts."
   },
   "notifications": {
     "planRemindersTitle": "Plan reminders",
@@ -154,7 +157,7 @@
     "general": "General",
     "generalNotifications": "General notifications",
     "newMessages": "Chat notifications",
-  "mentions": "Mention notifications",
+    "mentions": "Mention notifications",
     "reminders": "Reminders",
     "remindAboutActivities": "Remind about activities",
     "commonReminderTime": "Common reminder time",
