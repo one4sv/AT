@@ -33,7 +33,7 @@ export function useSearchableSettings(): SearchableSection[] {
             name: t("settings.personalization"),
             icon: PaintBucketIcon,
             items: [
-                ...(/iPhone/.test(navigator.userAgent) ? [{
+                ...(document.documentElement.dataset.atNative === "true" ? [{
                     id: "interfaceStyle",
                     name: t("personalization.interfaceStyle"),
                     icon: PaintBucketIcon,

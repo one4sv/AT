@@ -67,7 +67,7 @@ export default function PersSettingTab({ search }: { search: string }) {
     return (
         <div className="settingTab">
             {!search.trim() && <SectionArt theme="personalization"/>}
-            {/iPhone/.test(navigator.userAgent) && <div className="settingInnerDiv" data-setting-id="interfaceStyle">
+            {document.documentElement.dataset.atNative === "true" && <div className="settingInnerDiv" data-setting-id="interfaceStyle">
                 <div className="settingHeader"><HighlightText text={t("personalization.interfaceStyle")} search={search}/></div>
                 <div className="settingInnerWrapper">
                     <Selector selected={interfaceStyle} arr={[

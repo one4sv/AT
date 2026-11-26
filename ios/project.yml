@@ -1,0 +1,15 @@
+name: AchieveTogether
+options:
+  bundleIdPrefix: studio.one4sv
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  AchieveTogether:
+    type: application
+    platform: iOS
+    sources: [AT]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: "1"

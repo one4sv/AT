@@ -254,6 +254,7 @@ export default function ContextMenu() {
         </>}
         <div
             className={"ContextMenuWrapper"+(mobileCalendar?" calendarDayContextMenu":menu.point==="calendarDay"?" calendarDayDesktopMenu":"")}
+            data-at-native-menu={menu.point === "composition" ? "composition" : undefined}
             role="menu"
             aria-label={menu.options.name || undefined}
             tabIndex={-1}

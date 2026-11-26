@@ -490,7 +490,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     }, [isDark, accent, grad, decor]);
 
     useEffect(() => {
-        document.documentElement.dataset.interfaceStyle = /iPhone/.test(navigator.userAgent) && interfaceStyle === "iphone"
+        document.documentElement.dataset.interfaceStyle = document.documentElement.dataset.atNative === "true" && interfaceStyle === "iphone"
             ? "iphone" : "aphrodite";
     }, [interfaceStyle]);
 
