@@ -116,11 +116,6 @@ export function useSearchableSettings(): SearchableSection[] {
                     icon: HandTapIcon,
                     category: t("general.experimental"),
                 },{
-                    id: "sideContextEdges",
-                    name: t("general.sideContextEdges"),
-                    icon: HandTapIcon,
-                    category: t("general.experimental"),
-                },{
                     id: "sideMenuSwipe",
                     name: t("general.sideMenuSwipe"),
                     icon: HandTapIcon,

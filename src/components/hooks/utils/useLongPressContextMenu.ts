@@ -5,7 +5,6 @@ type SwipeContextMenuArgs = {
     menuRef: RefObject<HTMLDivElement | null>;
     edgeSourceRef: RefObject<HTMLElement | null>;
     highlightContextEdges: boolean;
-    sideContextEdges: boolean;
 };
 
 const edgeSize = 44;
@@ -94,15 +93,15 @@ export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
         };
 
         const tickEdgeScroll = (now: number) => {
-            const { menuRef, sideContextEdges } = latest.current;
+            const { menuRef } = latest.current;
             if (!press?.triggered || !scrollSurface?.isConnected || !menuRef.current?.isConnected) {
                 stopEdgeScroll();
                 return;
             }
             const viewport = window.visualViewport;
-            const offset = sideContextEdges ? viewport?.offsetLeft ?? 0 : viewport?.offsetTop ?? 0;
-            const size = sideContextEdges ? viewport?.width ?? window.innerWidth : viewport?.height ?? window.innerHeight;
-            const coordinate = (sideContextEdges ? press.x : press.y) - offset;
+            const offset = viewport?.offsetLeft ?? 0;
+            const size = viewport?.width ?? window.innerWidth;
+            const coordinate = press.x - offset;
             const target = document.elementFromPoint(press.x, press.y);
             const direction = target?.closest(".ContextMenuWrapper, .selectListPortalRoot") ? 0 :
                 coordinate < edgeSize ? -1 : coordinate > size - edgeSize ? 1 : 0;
@@ -126,7 +125,7 @@ export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
 
             scrollSurface.setAttribute("data-context-edge-scroll", "");
             if (latest.current.highlightContextEdges) {
-                zones = (latest.current.sideContextEdges ? ["left", "right"] : ["top", "bottom"]).map(edge => {
+                zones = ["left", "right"].map(edge => {
                     const zone = document.createElement("div");
                     zone.className = `contextScrollZone ${edge}`;
                     zone.setAttribute("aria-hidden", "true");

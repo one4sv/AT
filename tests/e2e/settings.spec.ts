@@ -323,7 +323,6 @@ test("mobile context menu moves to the next item at the highlighted side edge", 
     test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
     await page.addInitScript(() => {
         localStorage.setItem("settingsfixture_settings_context_edges_highlight", "true");
-        localStorage.setItem("settingsfixture_settings_context_edges_horizontal", "true");
     });
     await page.goto("/settings");
     const target = page.locator(".settingsButtsWrapper .settingButt").first();
@@ -340,6 +339,12 @@ test("mobile context menu moves to the next item at the highlighted side edge", 
     const menu = page.locator(".ContextMenuWrapper");
     await expect(menu).toBeVisible();
     await expect(page.locator(".contextScrollZone.right")).toBeVisible();
+    await expect(page.locator(".contextScrollZone")).toHaveCount(2);
+    await page.evaluate(() => document.dispatchEvent(new PointerEvent("pointermove", {
+        clientX: window.innerWidth / 2, clientY: window.innerHeight - 4, bubbles: true, pointerType: "touch", pointerId: 4
+    })));
+    await page.waitForTimeout(450);
+    await expect(menu.locator(".ContextMenuButt")).toHaveText("Аккаунт");
     await page.evaluate(origin => {
         document.dispatchEvent(new PointerEvent("pointermove", {
             clientX: window.innerWidth - 4, clientY: origin.clientY, bubbles: true, pointerType: "touch", pointerId: 4
@@ -356,7 +361,6 @@ test("mobile context menu moves to the next item at the highlighted side edge", 
 
 test("mobile SideMenu edge hold retargets the open menu to another chat", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
-    await page.addInitScript(() => localStorage.setItem("settingsfixture_settings_context_edges_horizontal", "true"));
     await page.route("**/api/contacts", route => route.fulfill({json: {success: true, friendsArr: [
         { id: "first", name: "First chat", nick: "first", lastMessage: null, unread_count: 0, note: true, is_blocked: false, pinned: false, is_group: false },
         { id: "second", name: "Second chat", nick: "second", lastMessage: null, unread_count: 0, note: true, is_blocked: false, pinned: false, is_group: false }

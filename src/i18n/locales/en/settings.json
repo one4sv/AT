@@ -82,8 +82,7 @@
   "general": {
     "experimental": "Experimental settings",
     "highlightContextEdges": "Highlight navigation zones",
-    "sideContextEdges": "Navigate items from the side edges",
-    "contextEdgesHint": "The left edge opens the previous item’s context menu and the right edge opens the next one. The top and bottom edges are used by default.",
+    "contextEdgesHint": "The left edge opens the previous item’s context menu and the right edge opens the next one.",
     "startupTitle": "When opening the app",
     "startupPage": "Start page",
     "startupFeed": "Feed",

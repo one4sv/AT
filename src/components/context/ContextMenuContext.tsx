@@ -115,8 +115,8 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
         setMenu({ x: -1000, visible: false, y: 0, point: "", options: {id: "", name: ""}})
     }
 
-    const { highlightContextEdges, sideContextEdges } = useSettings();
-    useLongPressContextMenu({ closeMenu, menuRef, edgeSourceRef, highlightContextEdges, sideContextEdges });
+    const { highlightContextEdges } = useSettings();
+    useLongPressContextMenu({ closeMenu, menuRef, edgeSourceRef, highlightContextEdges });
 
     useEffect(() => {
         const close = () => closeMenu()
