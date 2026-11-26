@@ -36,6 +36,7 @@ const ModuleMap: Record<string, ComponentType> = {
     WelcomeMessageInfo: lazy(() => import("./WelcomeMessageInfo")),
     QuickActionPicker: lazy(() => import("./QuickActionPicker")),
     BackgroundLibrary: lazy(() => import("./BackgroundLibrary")),
+    CompositionFullscreen: lazy(() => import("./CompositionFullscreen")),
     BackgroundFullscreen: lazy(() => import("./BackgroundFullscreen")),
     BackgroundHelp: lazy(() => import("./BackgroundHelp")),
     PushInstallHelp: lazy(() => import("./PushInstallHelp")),

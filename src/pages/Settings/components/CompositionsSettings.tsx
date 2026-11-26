@@ -1,6 +1,8 @@
 import { useState, type CSSProperties, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckCircleIcon, DotsThreeIcon, PlusIcon, XIcon } from "@phosphor-icons/react";
+import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import useCompactLayout from "../../../components/hooks/utils/useCompactLayout";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { getCustomHex } from "../../../components/ts/utils/customPalette";
@@ -29,7 +31,7 @@ const swatch = (name: string, palette: Record<string, [string, string]>,
         (palette[name] || accents.poison)[dark ? 0 : 1];
 const days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
-function CompositionPreview({ composition }: { composition: Composition }) {
+export function CompositionPreview({ composition }: { composition: Composition }) {
     const appearance = composition.appearance;
     const dark = appearance.theme === "dark" ||
         (appearance.theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -87,6 +89,10 @@ export default function CompositionsSettings({ search }: { search: string }) {
     const [renameId, setRenameId] = useState<string | null>(null);
     const [name, setName] = useState("");
     const [deleteId, setDeleteId] = useState<string | null>(null);
+    const { setBlackout } = useBlackout();
+    const mobile = useCompactLayout();
+    const { previewCompositionOnTap } = useSettings();
+    const preview = (id: string) => setBlackout({ seted: true, module: "CompositionFullscreen", options: { id } });
     const current: CompositionAppearance = {
         theme, accent, grad, decor, blur, layout,
         showMobileMenuOnStart, startupSideMenuTab,
@@ -162,6 +168,7 @@ export default function CompositionsSettings({ search }: { search: string }) {
                 setRenameId(item.id);
                 setName(item.name);
             },
+            onOpen: () => preview(item.id),
             onSave: () => overwrite(item),
             onDuplicate: () => duplicate(item),
             canDuplicate: compositions.items.length < MAX_COMPOSITIONS,
@@ -200,7 +207,7 @@ export default function CompositionsSettings({ search }: { search: string }) {
                         data-context-menu="true" data-context-menu-allow-button="true"
                         onContextMenu={event => onCompositionContextMenu(event, item)}>
                         <button type="button" className="compositionCardApply"
-                            onClick={() => apply(item)} title={labels("apply", { name: item.name })}
+                            onClick={() => mobile && previewCompositionOnTap ? preview(item.id) : apply(item)} title={labels("apply", { name: item.name })}
                             aria-label={labels("apply", { name: item.name })}>
                             <CompositionPreview composition={item}/>
                             <span className="compositionCardName">{item.name}</span>

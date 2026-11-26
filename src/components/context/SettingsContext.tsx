@@ -64,6 +64,8 @@ export interface SettingsContextType {
     showMobileMenuOnStart: boolean;
     setShowMobileMenuOnStart: React.Dispatch<React.SetStateAction<boolean>>;
     startupSideMenuTab: StartupSideMenuTab;
+    previewCompositionOnTap: boolean;
+    setPreviewCompositionOnTap: React.Dispatch<React.SetStateAction<boolean>>;
     highlightContextEdges: boolean;
     setHighlightContextEdges: React.Dispatch<React.SetStateAction<boolean>>;
     sideMenuSwipe: "close" | "sections";
@@ -239,6 +241,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ layout, setLayout ] = useLocalStorage(LOCAL_KEYS.layout, "always");
     const [ startupPage, setStartupPage ] = useLocalStorage<StartupPage>(LOCAL_KEYS.startupPage, "feed");
     const [ showMobileMenuOnStart, setShowMobileMenuOnStart ] = useLocalStorage<boolean>(LOCAL_KEYS.showMobileMenuOnStart, true);
+    const [ previewCompositionOnTap, setPreviewCompositionOnTap ] = useLocalStorage("settings_composition_preview_on_tap", true);
     const [ highlightContextEdges, setHighlightContextEdges ] = useLocalStorage(LOCAL_KEYS.highlightContextEdges, false);
     const [ sideMenuSwipe, setSideMenuSwipe ] = useLocalStorage<"close" | "sections">(LOCAL_KEYS.sideMenuSwipe, "close");
     const [ startupSideMenuTab, setStartupSideMenuTab ] = useLocalStorage<StartupSideMenuTab>(LOCAL_KEYS.startupSideMenuTab, "chats");
@@ -494,6 +497,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             startupPage, setStartupPage, showMobileMenuOnStart, setShowMobileMenuOnStart,
             startupSideMenuTab, setStartupSideMenuTab,
             sideMenuSwipe, setSideMenuSwipe,
+            previewCompositionOnTap, setPreviewCompositionOnTap,
             highlightContextEdges, setHighlightContextEdges,
             bg, setBg,
             decor, setDecor,

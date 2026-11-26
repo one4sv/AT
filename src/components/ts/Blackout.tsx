@@ -219,7 +219,7 @@ export default function Blackout() {
 
 
     const handleTouchStart = (e: React.TouchEvent, index: number) => {
-        if (index !== topIndex || isClosing.current || visibleStack[index]?.module === "BackgroundFullscreen") return;
+        if (index !== topIndex || isClosing.current || ["BackgroundFullscreen", "CompositionFullscreen"].includes(visibleStack[index]?.module ?? "")) return;
 
         const target = e.target as HTMLElement;
         chatInfoAxis.current = null;
@@ -447,7 +447,7 @@ export default function Blackout() {
                             }
                         }}
                     >
-                        {isTop && isMobile && !item.img && item.module !== "BackgroundFullscreen" && item.module !== "ChatWithInfo" && <div className="mobileBar" />}
+                        {isTop && isMobile && !item.img && !["BackgroundFullscreen", "CompositionFullscreen"].includes(item.module ?? "") && item.module !== "ChatWithInfo" && <div className="mobileBar" />}
                         {Component ? <Suspense fallback={<div className="blackoutModulePending" role="status" aria-busy="true"><Skeleton type="list" count={3}/></div>}><Component /></Suspense> : null}
                     </div>
                 );

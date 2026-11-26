@@ -1,7 +1,8 @@
-import { useRef, useState, type PointerEvent } from "react";
+import { useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import { animate, motion, useMotionValue, useReducedMotion } from "framer-motion";
 import { ArrowsOutIcon, TrashIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
+import { useContextMenu } from "../hooks/ContextMenuHook";
 import { useSettings } from "../hooks/SettingsHook";
 import { useUpSettings } from "../hooks/UpdateSettingsHook";
 import { useBlackout } from "../hooks/BlackoutHook";
@@ -165,6 +166,19 @@ export default function BackgroundLibrary() {
             wallpaperStyle.fillMode === "gradient" ? "backgroundLibrary.gradientBackground" : "personalization.solidColor") : item.labelKey) }))
     }));
 
+    const { openMenu } = useContextMenu();
+    const openWallpaperMenu = (event: MouseEvent, id: string, name: string, url?: string) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (saving) return;
+        openMenu(event.clientX, event.clientY, "wallpaper", {
+            id, name,
+            onOpen: () => previewBackground(id, url),
+            onSave: () => url ? selectCustom(url) : selectStock(id),
+            onDelete: url ? () => deleteCustom(url) : undefined
+        });
+    };
+
     const selectStock = (id: string) => {
         if (saving) return;
         setNewBg(id);
@@ -213,7 +227,9 @@ export default function BackgroundLibrary() {
                                             </button>
                                             <div className="backgroundLibraryGrid" hidden={collapsedGroups.includes(group.id)}>
                                                 {group.items.map(item => (
-                                                    <div key={item.id} className="backgroundLibraryTile">
+                                                    <div key={item.id} className="backgroundLibraryTile"
+                                                        data-context-menu="true" data-context-menu-allow-button="true"
+                                                        onContextMenu={event => openWallpaperMenu(event, item.id, item.label)}>
                                                         <button type="button"
                                                             className={"backgroundLibraryChoose" + (bg === item.id ? " selected" : "")}
                                                             aria-pressed={bg === item.id}
@@ -262,7 +278,9 @@ export default function BackgroundLibrary() {
                             ) : (
                                 <div className="backgroundLibraryGrid">
                                     {bgGallery.map(item => (
-                                        <div key={item.url} className="backgroundLibraryTile">
+                                        <div key={item.url} className="backgroundLibraryTile"
+                                            data-context-menu="true" data-context-menu-allow-button="true"
+                                            onContextMenu={event => openWallpaperMenu(event, "custom", t("backgroundLibrary.customWallpaper"), item.url)}>
                                             <button type="button"
                                                 className={"backgroundLibraryChoose" + (bg === "custom" && bgUrl === item.url ? " selected" : "")}
                                                 aria-pressed={bg === "custom" && bgUrl === item.url}

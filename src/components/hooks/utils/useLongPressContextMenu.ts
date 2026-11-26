@@ -11,7 +11,7 @@ const edgeSize = 44;
 const edgeDelay = 300;
 const edgeRepeatDelay = 650;
 const contextTrigger = "[data-context-menu]";
-const scrollSurfaces = ".sideMenu .slide, .settingsDiv .settingsButtsWrapper, .settingsDiv .settingTab, .settingsDiv .searchReveal, .settingsDiv .buttsScroll, .chat, .chatMediaBody.active";
+const scrollSurfaces = ".sideMenu .slide, .settingsDiv .settingsButtsWrapper, .settingsDiv .settingTab, .settingsDiv .searchReveal, .settingsDiv .buttsScroll, .chat, .chatMediaBody.active, .backgroundLibraryScroll, .wallpaperStudioScroll";
 
 export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
     const latest = useRef(options);

@@ -21,7 +21,7 @@ export default function GeneralTab({ search }: { search: string }) {
         autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
         startupPage, setStartupPage, showMobileMenuOnStart, setShowMobileMenuOnStart,
         startupSideMenuTab, setStartupSideMenuTab, sideMenuSwipe, setSideMenuSwipe,
-        highlightContextEdges, setHighlightContextEdges } = useSettings();
+        highlightContextEdges, setHighlightContextEdges, previewCompositionOnTap, setPreviewCompositionOnTap } = useSettings();
 
     const timeZones = useMemo(() => {
         const device = browserTimeZone();
@@ -209,6 +209,11 @@ export default function GeneralTab({ search }: { search: string }) {
                     </div>
                 </div>
                 <span className="settingHint">{t("general.contextEdgesHint")}</span>
+                <div className="settingTogglerDiv" data-setting-id="previewCompositionOnTap"
+                    onClick={() => setPreviewCompositionOnTap(value => !value)}>
+                    <HighlightText text={t("general.previewCompositionOnTap")} search={search}/>
+                    <Toggler state={previewCompositionOnTap} setState={setPreviewCompositionOnTap} stopPropagation={true}/>
+                </div>
             </div>}
         </div>
     );

@@ -111,6 +111,11 @@ export function useSearchableSettings(): SearchableSection[] {
                     category: t("general.startupTitle"),
                 },
                 ...(isMobile ? [{
+                    id: "previewCompositionOnTap",
+                    name: t("general.previewCompositionOnTap"),
+                    icon: HandTapIcon,
+                    category: t("general.experimental"),
+                },{
                     id: "highlightContextEdges",
                     name: t("general.highlightContextEdges"),
                     icon: HandTapIcon,

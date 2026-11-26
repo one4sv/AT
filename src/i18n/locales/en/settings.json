@@ -80,6 +80,11 @@
     "savedSmartHint": "Highlight dates and schedules in the latest Saved message. Click to open a prefilled form. Nothing is created until you save. This preference applies only to this device."
   },
   "general": {
+    "compositionApply": "Apply",
+    "compositionPrevious": "Previous composition",
+    "compositionNext": "Next composition",
+    "compositionPreview": "Composition preview",
+    "previewCompositionOnTap": "Preview compositions on tap",
     "experimental": "Experimental settings",
     "highlightContextEdges": "Highlight navigation zones",
     "contextEdgesHint": "The left edge opens the previous item’s context menu and the right edge opens the next one.",
@@ -451,7 +456,7 @@
     "stock": "Built-in",
     "custom": "My backgrounds",
     "add": "Add background",
-    "limit": "You can store at most five backgrounds",
+    "limit": "You can store at most ten backgrounds",
     "delete": "Delete background",
     "preview": "Preview background",
     "exitPreview": "Exit full-screen preview",

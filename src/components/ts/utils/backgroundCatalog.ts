@@ -1,4 +1,4 @@
-export const MAX_CUSTOM_BACKGROUNDS = 5;
+export const MAX_CUSTOM_BACKGROUNDS = 10;
 
 export const allBackgroundGroups = [
     { id: "essential", items: [

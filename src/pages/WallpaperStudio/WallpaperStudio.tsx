@@ -11,6 +11,7 @@ import WallpaperHeader from "./WallpaperHeader";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import PageBottom from "../../components/ts/PageBottom";
 import useCompactLayout from "../../components/hooks/utils/useCompactLayout";
+import { useContextMenu } from "../../components/hooks/ContextMenuHook";
 import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { api } from "../../components/ts/api";
 import { Background } from "../../components/ts/utils/background";
@@ -29,6 +30,7 @@ export default function WallpaperStudio() {
     const { bg, bgUrl, bgGallery, setBgUrl, refetchSettings, wallpaperStyle, settingsLoaded } = useSettings();
     const { setNewBg } = useUpSettings();
     const isMobile = useCompactLayout();
+    const { openMenu } = useContextMenu();
     const { blackout, setBlackout } = useBlackout();
     const reduceMotion = useReducedMotion();
     const [ open, setOpen ] = useState(true);
@@ -389,7 +391,19 @@ export default function WallpaperStudio() {
     };
 
     const tile = (item: WallpaperItem, index: number) => (
-        <div key={item.id + (item.url ?? "")} className="wallpaperStudioTile" data-wallpaper-index={index}>
+        <div key={item.id + (item.url ?? "")} className="wallpaperStudioTile" data-wallpaper-index={index}
+            data-context-menu="true" data-context-menu-allow-button="true"
+            onContextMenu={event => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (busy) return;
+                openMenu(event.clientX, event.clientY, "wallpaper", {
+                    id: item.id, name: item.label,
+                    onOpen: () => setBlackout({seted: true, module: "BackgroundFullscreen", options: {id: item.id, url: item.url}}),
+                    onSave: () => apply(index),
+                    onDelete: item.url ? () => deleteCustom(item.url!) : undefined
+                });
+            }}>
             <button type="button" className={"wallpaperStudioTileChoose" + (index === currentIndex ? " selected" : "") + ((item.id === bg || (bg === "logo" && item.id === "color")) && (item.id !== "custom" || item.url === bgUrl) ? " applied" : "")}
                 disabled={busy}
                 onClick={() => view(index)}
@@ -492,7 +506,7 @@ export default function WallpaperStudio() {
                         onChange={event => {
                             const file = event.target.files?.[0];
                             event.target.value = "";
-                            if (file && bgGallery.length < 5) setBlackout({ seted: true, module: "BgHandler", bg: file });
+                            if (file && bgGallery.length < MAX_CUSTOM_BACKGROUNDS) setBlackout({ seted: true, module: "BgHandler", bg: file });
                         }}/>
                 </div>
             </div>
