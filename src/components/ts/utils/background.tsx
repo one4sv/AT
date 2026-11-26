@@ -1,13 +1,14 @@
 import { useSettings } from "../../hooks/SettingsHook";
-import type { BackgroundEffects, ContourPattern } from "../../context/SettingsContext";
+import type { BackgroundEffects, ContourPattern, WallpaperStyle } from "../../context/SettingsContext";
 import BackIconsScene from "./BackIconsScene";
 import { getBackgroundFilter } from "./backgroundFilter";
 import { BackgroundScene, type StockScene, isStockScene } from "./BackgroundScene";
 import "../../../scss/landingBackground.scss";
 import WallpaperMark from "./WallpaperMark";
 
-export function Background({ previewBg, previewUrl, previewEffects, previewContourPattern, previewContourSize, previewArtPattern, previewArtSize }: { previewBg?: string; previewUrl?: string; previewEffects?: BackgroundEffects; previewContourPattern?: ContourPattern; previewContourSize?: number; previewArtPattern?: ContourPattern; previewArtSize?: number } = {}) {
-  const { bg, bgUrl, bgEffects, contourPattern, contourSize, artPattern, artSize, wallpaperStyle } = useSettings();
+export function Background({ previewBg, previewUrl, previewEffects, previewContourPattern, previewContourSize, previewArtPattern, previewArtSize, previewWallpaperStyle }: { previewBg?: string; previewUrl?: string; previewEffects?: BackgroundEffects; previewContourPattern?: ContourPattern; previewContourSize?: number; previewArtPattern?: ContourPattern; previewArtSize?: number; previewWallpaperStyle?: WallpaperStyle } = {}) {
+  const { bg, bgUrl, bgEffects, contourPattern, contourSize, artPattern, artSize, wallpaperStyle: currentWallpaperStyle } = useSettings();
+  const wallpaperStyle = previewWallpaperStyle ?? currentWallpaperStyle;
   const effectsState = previewEffects ?? bgEffects;
   const selectedPattern = previewContourPattern ?? contourPattern;
   const selectedContourSize = previewContourSize ?? contourSize;
