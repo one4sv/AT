@@ -244,7 +244,7 @@ export default function ContextMenu() {
             <div className="ContextMenuFocusBackdrop" onPointerDown={event => {
                 if (event.pointerType !== "touch" && event.pointerType !== "pen") closeMenu();
             }}/>
-            <div className="ContextMenuFocusPreview" ref={previewRef} aria-hidden="true"
+            <div className={`ContextMenuFocusPreview${menu.point === "composition" ? " compositionContextPreview" : ""}`} ref={previewRef} aria-hidden="true"
                 style={{ top: pos.previewTop ?? 0, left: pos.previewLeft ?? 0,
                     width: pos.previewWidth ?? 0, height: pos.previewHeight ?? 0,
                     visibility: isAdjusted ? "visible" : "hidden" }}/>

@@ -359,6 +359,31 @@ test("mobile context menu moves to the next item at the highlighted side edge", 
     await expect(page).toHaveURL(/\/settings\/?$/);
 });
 
+test("mobile composition context preview keeps the card styles outside settings", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
+    await page.goto("/settings/pers");
+    await page.locator(".compositionCreate").click();
+    const card = page.locator(".compositionCard:not(.compositionCreate)").first();
+    await card.scrollIntoViewIfNeeded();
+    const name = await card.locator(".compositionCardName").innerText();
+    await card.evaluate(element => {
+        const rect = element.getBoundingClientRect();
+        element.dispatchEvent(new PointerEvent("pointerdown", {
+            clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2,
+            bubbles: true, pointerType: "touch", pointerId: 6, isPrimary: true
+        }));
+    });
+    await expect(page.getByRole("menu", { name })).toBeVisible();
+    const preview = page.locator(".ContextMenuFocusPreview");
+    await expect(preview.locator(".compositionCardName")).toHaveText(name);
+    await expect(preview.locator(".compositionCardApply")).toHaveCSS("display", "flex");
+    await expect(preview.locator(".compositionPreviewCanvas")).toHaveCSS("position", "absolute");
+    await page.evaluate(() => document.dispatchEvent(new PointerEvent("pointercancel", {
+        bubbles: true, pointerType: "touch", pointerId: 6
+    })));
+    await expect(preview).toHaveCount(0);
+});
+
 test("mobile SideMenu edge hold retargets the open menu to another chat", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
     await page.route("**/api/contacts", route => route.fulfill({json: {success: true, friendsArr: [
