@@ -34,10 +34,16 @@ export default function Acc() {
 
     const { nick } = useParams();
     const { setTitle, setTitleIcon } = usePageTitle();
-    const { setDontHandle, setIsDragging, dontHandleOther } = useSideMenu();
+    const { setDontHandle, setIsDragging, dontHandleOther, setRed } = useSideMenu();
     const { menu } = useContextMenu();
     const navigate = useNavigate();
     const location = useLocation();
+
+    useEffect(() => {
+        if (!location.state?.editProfile || !nick || nick !== user.nick) return;
+        setRed(true);
+        navigate(location.pathname + location.search, {replace: true, state: null});
+    }, [location.state, location.pathname, location.search, nick, user.nick, setRed, navigate]);
 
     const [ collapsed, setCollapsed ] = useState(0);
     const [ selector, setSelector ] = useState<"habits" | "posts">("posts");

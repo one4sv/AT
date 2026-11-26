@@ -118,6 +118,8 @@
     "forwardedMessage": "Пересланное сообщение"
   },
   "accountNavigation": {
+    "openProfile": "Открыть профиль",
+    "openSection": "Открыть раздел",
     "feed": "Лента",
     "feedDesc": "Новости и публикации друзей",
     "activities": "Активности",

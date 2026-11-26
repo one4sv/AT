@@ -118,6 +118,8 @@
     "forwardedMessage": "Forwarded message"
   },
   "accountNavigation": {
+    "openProfile": "Open profile",
+    "openSection": "Open section",
     "feed": "Feed",
     "feedDesc": "Friends’ news and posts",
     "activities": "Activities",

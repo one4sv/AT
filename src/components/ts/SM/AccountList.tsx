@@ -10,6 +10,7 @@ import useLocalStorage from "../../hooks/utils/useLocalStorage";
 import { Megaphone } from "lucide-react";
 import { useBlackout } from "../../hooks/BlackoutHook";
 import { useNote } from "../../hooks/NoteHook";
+import { useContextMenu } from "../../hooks/ContextMenuHook";
 
 const SearchedButts = lazy(() => import("../../../pages/Settings/components/Search/SearchedButts"));
 
@@ -20,6 +21,7 @@ export default function AccountList() {
     const { showNotification } = useNote()
     const { activeTab, closeMenu, settingsSearch: search } = useSideMenu();
     const { setBlackout } = useBlackout()
+    const { openMenu } = useContextMenu();
     const { t } = useTranslation("common");
     const location = useLocation();
     const navigate = useNavigate();
@@ -47,6 +49,11 @@ export default function AccountList() {
     };
 
     const openCreate = (module:string) => setBlackout({seted:true,module});
+    const openNavigationMenu = (event: React.MouseEvent<HTMLElement>, id: string, name: string) => {
+        event.preventDefault();
+        event.stopPropagation();
+        openMenu(event.clientX, event.clientY, "smAccountNavigation", {id, name});
+    };
 
     if (activeTab === "user" && search.trim()) {
         return <div className="accountList SMlist accountSettingsSearch"><Suspense fallback={<div className="skeletonLine" role="status" aria-label={t("sideMenu.loading")}/>}><SearchedButts search={search} selectSetting={selectSetting} staticResults/></Suspense></div>;
@@ -54,7 +61,7 @@ export default function AccountList() {
 
     return (
         <div className="accountList SMlist">
-            <Link to={`/acc/${user.nick}`} className={`SMaccount ${location.pathname === `/acc/${user.nick}` ? "active" : ""}`} onClick={closeMenu}>
+            <Link to={`/acc/${user.nick}`} className={`SMaccount ${location.pathname === `/acc/${user.nick}` ? "active" : ""}`} data-context-menu="true" onContextMenu={event => openNavigationMenu(event, "profile", user.username || user.nick || "")} onClick={closeMenu}>
                 <div className="SMAvatar">
                     {user.avatar_url ? <img src={user.avatar_url} alt=""/> : <UserIcon size={28} weight="fill"/>}
                 </div>
@@ -67,19 +74,19 @@ export default function AccountList() {
                 </div>
             </Link>
             <div className="SMaccountButtsWrapper">
-                <Link to="/" className={`SMmainButt ${location.pathname === "/" ? "active" : ""}`} onClick={closeMenu}>
+                <Link to="/" className={`SMmainButt ${location.pathname === "/" ? "active" : ""}`} data-context-menu="true" onContextMenu={event => openNavigationMenu(event, "feed", t("accountNavigation.feed"))} onClick={closeMenu}>
                     <span className="SMmainButtName"><NewspaperIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("accountNavigation.feed")}<CaretRightIcon className="fastButtCaret"/></span>
                     <div className="SMmainButtDesc">{t("accountNavigation.feedDesc")}</div>
                 </Link>
-                <Link to="/habit" className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} onClick={closeMenu}>
+                <Link to="/habit" className={`SMmainButt ${location.pathname === "/habit" ? "active" : ""}`} data-context-menu="true" onContextMenu={event => openNavigationMenu(event, "active", t("sideMenu.plansAndActivities"))} onClick={closeMenu}>
                     <span className="SMmainButtName"><SneakerMoveIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("sideMenu.plansAndActivities")}<CaretRightIcon className="fastButtCaret"/></span>
                     <div className="SMmainButtDesc">{t("accountNavigation.activitiesDesc")}</div>
                 </Link>
-                <Link to="/settings" className={`SMmainButt ${location.pathname.startsWith("/settings") ? "active" : ""}`} onClick={closeMenu}>
+                <Link to="/settings" className={`SMmainButt ${location.pathname.startsWith("/settings") ? "active" : ""}`} data-context-menu="true" onContextMenu={event => openNavigationMenu(event, "settings", t("accountNavigation.settings"))} onClick={closeMenu}>
                     <span className="SMmainButtName"><GearIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("accountNavigation.settings")}<CaretRightIcon className="fastButtCaret"/></span>
                     <div className="SMmainButtDesc">{t("accountNavigation.settingsDesc")}</div>
                 </Link>
-                <Link to={`/chat/${user.nick}`} className={`SMmainButt ${location.pathname === `/chat/${user.nick}` ? "active" : ""}`} onClick={closeMenu}>
+                <Link to={`/chat/${user.nick}`} className={`SMmainButt ${location.pathname === `/chat/${user.nick}` ? "active" : ""}`} data-context-menu="true" onContextMenu={event => openNavigationMenu(event, "saved", t("accountNavigation.saved"))} onClick={closeMenu}>
                     <span className="SMmainButtName"><BookmarkSimpleIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("accountNavigation.saved")}<CaretRightIcon className="fastButtCaret"/></span>
                     <div className="SMmainButtDesc">{t("accountNavigation.savedDesc")}</div>
                 </Link>
@@ -104,7 +111,7 @@ export default function AccountList() {
                         <Megaphone size={18} fill="currentColor"/> {t("sideMenu.newSpot")}
                     </div>
                     </>}
-                    <button type="button" className="SMcreateButt SMcreateMore" aria-expanded={createExpanded} onClick={()=>setCreateExpanded(value=>!value)}>
+                    <button type="button" className="SMcreateButt SMcreateMore" data-context-menu="true" data-context-menu-allow-button="true" onContextMenu={event => openNavigationMenu(event, "more", t("sideMenu.globalSearchMore"))} aria-expanded={createExpanded} onClick={()=>setCreateExpanded(value=>!value)}>
                         <CaretDownIcon size={18} className={createExpanded?"expanded":""}/>{t(createExpanded?"sideMenu.createLess":"sideMenu.globalSearchMore")}
                     </button>
                 </div>

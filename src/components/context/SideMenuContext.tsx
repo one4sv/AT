@@ -258,7 +258,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
     }, [settingsLoaded]);
 
     useEffect(() => {
-        setRed(false);
+        setRed(location.pathname.startsWith("/acc/") && location.state?.editProfile === true);
     }, [location.pathname]);
 
     const animateTo = useCallback((target: number, onComplete?: () => void) => {

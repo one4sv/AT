@@ -19,8 +19,10 @@
 .qrCodeWrap {
     position: relative;
     width: 100%;
-    aspect-ratio: 1/1;
     aspect-ratio: 1;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    min-width: 0;
     background: var(--bgc);
     padding: 2vh;
     border-radius: 24px;
@@ -44,7 +46,9 @@
     top: 50%;
     left: 50%;
     width: 30%;
-    height: 30%;
+    height: auto;
+    aspect-ratio: 1;
+    box-sizing: border-box;
     transform: translate(-50%, -50%);
     display: flex;
     align-items: center;

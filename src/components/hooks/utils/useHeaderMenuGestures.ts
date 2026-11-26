@@ -95,7 +95,8 @@ export default function useHeaderMenuGestures() {
             openMenu(box.left, box.bottom + 6, "habitHeader", { id: trigger.dataset.habitId || "" });
         } else if (kind === "plan" || kind === "profile") {
             if (!headerMenu) return;
-            openMenu(kind === "profile" ? Math.max(10, box.right - 240) : box.left, box.bottom + 6, headerMenu.point, headerMenu.options);
+            const anchor = kind === "profile" ? document.querySelector(".profileHeaderActionsButt")?.getBoundingClientRect() || box : box;
+            openMenu(kind === "profile" ? anchor.right : anchor.left, anchor.bottom + 6, headerMenu.point, kind === "profile" ? {...headerMenu.options, anchorRight: true} : headerMenu.options);
         } else {
             openMenu(box.left, box.bottom + 6, "headerQuickAction", { id: "headerQuickAction" });
         }

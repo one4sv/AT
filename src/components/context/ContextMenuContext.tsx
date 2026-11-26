@@ -7,6 +7,7 @@ const ContextMenuContext = createContext<ContextMenuContextType | null>(null)
 
 export type MenuOptions = {
     id: string,
+    anchorRight?: boolean,
     isDone?: boolean,
     name?:string,
     red?:boolean,

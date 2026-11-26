@@ -48,7 +48,8 @@ export default function Chat() {
         loadingMore,
         loadOlderMessages,
         activeHeader,
-        setActiveHeader
+        setActiveHeader,
+        setChatPanelHidden
     } = useChat();
     const {
         chosenMess,
@@ -180,6 +181,13 @@ export default function Chat() {
         [API_URL, messages, user.id, chatReady]
     );
     const [searchedMessages, setSearchedMessages] = useState<message[]>([]);
+    useEffect(() => {
+        if (!chatReady || !location.state?.openSavedSearch || id || nick !== user.nick) return;
+        setActiveHeader("search");
+        setChatPanelHidden(false);
+        navigate(location.pathname + location.search, {replace: true, state: null});
+    }, [chatReady, location.state, location.pathname, location.search, id, nick, user.nick, setActiveHeader, setChatPanelHidden, navigate]);
+
     const historyChatId = chatWith?.chat_id;
     useEffect(() => {
         setSearchedMessages([]);

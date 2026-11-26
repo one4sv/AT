@@ -8,6 +8,7 @@ import PersonMenu from "./menus/PersonMenu";
 import CommentMenu from "./menus/CommentMenu";
 import AccMenu from "./menus/AccMenu";
 import ProfileActionsMenu from "./menus/ProfileActionsMenu";
+import SMAccountMenu from "./menus/SMAccountMenu";
 import MemberMenu from "./menus/MemberMenu";
 import MessMenu from "./menus/MessMenu";
 import MediaMenu from "./menus/MediaMenu";
@@ -61,14 +62,16 @@ export default function ContextMenu() {
             const offsetLeft = viewport?.offsetLeft ?? 0;
             const offsetTop = viewport?.offsetTop ?? 0;
             const focused = !!menu.focusSource?.isConnected && !!menu.focusRect;
-            const previewWidth = focused ? Math.min(menu.focusRect!.width, viewportWidth - 32) : 0;
-            const previewHeight = focused ? Math.min(menu.focusRect!.height, viewportHeight * .28) : 0;
+            const fitProfile = menu.point === "profileCardActions" || (menu.point === "smAccountNavigation" && menu.options.id === "profile");
+            const previewScale = focused && fitProfile ? Math.min(1, (viewportWidth - 32) / Math.max(1, menu.focusRect!.width), viewportHeight * .28 / Math.max(1, menu.focusRect!.height)) : 1;
+            const previewWidth = focused ? Math.min(menu.focusRect!.width * previewScale, viewportWidth - 32) : 0;
+            const previewHeight = focused ? Math.min(menu.focusRect!.height * previewScale, viewportHeight * .28) : 0;
             const previewTop = Math.max(offsetTop + 12, offsetTop + (viewportHeight - previewHeight - menuHeight - 16) / 2);
             const previewLeft = offsetLeft + (viewportWidth - previewWidth) / 2;
             const minLeft = menu.originSide ? Math.max(offsetLeft + 10, menu.originSide.left + 10) : offsetLeft + 10;
             const maxRight = menu.originSide ? Math.min(offsetLeft + viewportWidth - 10, menu.originSide.right - 10) : offsetLeft + viewportWidth - 10;
             const left = mobileCalendar ? offsetLeft+(viewportWidth-menuWidth)/2 : focused ? offsetLeft + (viewportWidth - menuWidth) / 2 :
-                Math.max(minLeft, Math.min(menu.x, Math.max(minLeft, maxRight - menuWidth)));
+                Math.max(minLeft, Math.min(menu.options.anchorRight ? menu.x - menuWidth : menu.x, Math.max(minLeft, maxRight - menuWidth)));
             const top = mobileCalendar ? offsetTop+Math.max(10,(viewportHeight-menuHeight)/2) : focused ? Math.min(previewTop + previewHeight + 16, offsetTop + viewportHeight - menuHeight - 12) :
                 Math.max(offsetTop + 10, Math.min(menu.y, offsetTop + viewportHeight - menuHeight - 10));
             setPos({ top, left, previewTop, previewLeft, previewWidth, previewHeight });
@@ -76,6 +79,14 @@ export default function ContextMenu() {
                 const clone = menu.focusSource.cloneNode(true) as HTMLElement;
                 clone.removeAttribute("id");
                 clone.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
+                if (fitProfile) {
+                    clone.style.width = `${menu.focusRect!.width}px`;
+                    clone.style.height = `${menu.focusRect!.height}px`;
+                    clone.style.maxHeight = "none";
+                    clone.style.flexShrink = "0";
+                    clone.style.boxSizing = "border-box";
+                    clone.style.transform = `scale(${previewScale})`;
+                }
                 previewRef.current.replaceChildren(clone);
             }
             setIsAdjusted(true);
@@ -128,7 +139,10 @@ export default function ContextMenu() {
             case "comment":
                 return <CommentMenu />;
             case "profileActions":
+            case "profileCardActions":
                 return <ProfileActionsMenu />;
+            case "smAccountNavigation":
+                return <SMAccountMenu />;
             case "acc":
                 return <AccMenu />;
             case "member":

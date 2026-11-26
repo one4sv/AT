@@ -326,7 +326,7 @@ export default function SMheader() {
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.activities")}</div>
+                        <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.plansAndActivities")}</div>
                         <div
                             className={`smHeaderSelected ${openFilters === "habits" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("habits")}

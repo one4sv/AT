@@ -42,7 +42,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     const actionsMenu = planHeaderMenu || (isMobile ? profileHeaderMenu : null);
     const showActionsMenu = (x: number, y: number) => {
         if (profileHeaderMenu && menu.visible && menu.point === profileHeaderMenu.point) { closeMenu(); return; }
-        if (actionsMenu) openMenu(x, y, actionsMenu.point, actionsMenu.options);
+        if (actionsMenu) openMenu(x, y, actionsMenu.point, profileHeaderMenu ? {...actionsMenu.options, anchorRight: true} : actionsMenu.options);
     };
     const showPlanMenu = (x: number, y: number) => {
         if (planHeaderMenu) openMenu(x, y, planHeaderMenu.point, planHeaderMenu.options);
@@ -93,7 +93,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                     onContextMenu={e => {
                         e.preventDefault();
                         if (planHeaderMenu) showPlanMenu(e.clientX, e.clientY);
-                        else if (profileHeaderMenu) { e.stopPropagation(); openMenu(e.clientX, e.clientY, profileHeaderMenu.point, profileHeaderMenu.options); }
+                        else if (profileHeaderMenu) { e.stopPropagation(); const rect = document.querySelector(".profileHeaderActionsButt")?.getBoundingClientRect() || e.currentTarget.getBoundingClientRect(); showActionsMenu(rect.right, rect.bottom + 6); }
                         else if (!location.pathname.startsWith("/acc/")) openMenu(e.clientX, e.clientY, "headerQuickAction", { id: "headerQuickAction" });
                     }}
                     onClick={handleHeaderClick}
@@ -108,18 +108,19 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                     onClick={event => {
                         event.stopPropagation();
                         const rect = event.currentTarget.getBoundingClientRect();
-                        showActionsMenu(profileHeaderMenu ? Math.max(10, rect.right - 240) : rect.left, rect.bottom + 6);
+                        showActionsMenu(profileHeaderMenu ? rect.right : rect.left, rect.bottom + 6);
                     }}
                     onContextMenu={event => {
                         event.preventDefault();
                         event.stopPropagation();
-                        showActionsMenu(event.clientX, event.clientY);
+                        const rect = event.currentTarget.getBoundingClientRect();
+                        showActionsMenu(profileHeaderMenu ? rect.right : event.clientX, profileHeaderMenu ? rect.bottom + 6 : event.clientY);
                     }}
                     onKeyDown={event => {
                         if (event.key !== "Enter" && event.key !== " ") return;
                         event.preventDefault();
                         const rect = event.currentTarget.getBoundingClientRect();
-                        showActionsMenu(profileHeaderMenu ? Math.max(10, rect.right - 240) : rect.left, rect.bottom + 6);
+                        showActionsMenu(profileHeaderMenu ? rect.right : rect.left, rect.bottom + 6);
                     }}>
                     <DotsThreeOutlineVerticalIcon weight="fill"/>
                 </div>}

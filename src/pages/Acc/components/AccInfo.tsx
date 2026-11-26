@@ -94,8 +94,8 @@ export default function AccInfo({
         event.preventDefault();
         event.stopPropagation();
         if (!actionOptions || red || renaming) return;
-        if (menu.visible && menu.point === "profileActions") { closeMenu(); return; }
-        openMenu(event.clientX, event.clientY, "profileActions", actionOptions);
+        if (menu.visible && (menu.point === "profileActions" || menu.point === "profileCardActions")) { closeMenu(); return; }
+        openMenu(event.clientX, event.clientY, event.currentTarget.closest(".accProfileActions") ? "profileActions" : "profileCardActions", actionOptions);
     };
     const presence = (isOnline || lastSeen) && <span className={`accOnlineStauts ${isOnline ? "online" : "offline"}`}>
         <CircleIcon size={16} weight="fill" aria-hidden="true" />
@@ -161,8 +161,8 @@ export default function AccInfo({
                 pointerEvents: collapsed === 1 ? "none" : undefined
             }}
         >
-            <div className="accInfoInner" ref={innerRef}>
-                <div className="accInfoMain" onContextMenu={openActions}>
+            <div className="accInfoInner" ref={innerRef} data-context-menu={actionOptions && !red && !renaming ? "true" : undefined} onContextMenu={openActions}>
+                <div className="accInfoMain">
                     <div className="accPic" onClick={() => isMyAcc && red && fileInputRef.current?.click()}>
                         <input
                             type="file"
