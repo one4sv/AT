@@ -407,6 +407,13 @@ export function useSearchableSettings(includeUnavailable = false): SearchableSec
                     category: t("privacy.invites.title"),
                 },
                 { id: "groupInviteOthers", name: t("privacy.invites.others"), icon: ChatsTeardropIcon, category: t("privacy.invites.title") },
+                { id: "profileExceptions", name: t("catalog.exceptions.profile"), icon: LockIcon, category: t("privacy.accountInfo"), options: { icon2: UserIcon } },
+                { id: "habitsExceptions", name: t("catalog.exceptions.habits"), icon: LockIcon, category: t("privacy.activitiesVisibility"), options: { icon2: CheckCircleIcon } },
+                { id: "postsExceptions", name: t("catalog.exceptions.posts"), icon: LockIcon, category: t("privacy.postsVisibility"), options: { icon2: NewspaperIcon } },
+                { id: "plansExceptions", name: t("catalog.exceptions.plans"), icon: LockIcon, category: t("privacy.plansVisibility"), options: { icon2: CalendarBlankIcon } },
+                { id: "activityExceptions", name: t("catalog.exceptions.activityInvites"), icon: LockIcon, category: t("privacy.exceptions.activityTitle"), options: { icon2: SneakerMoveIcon } },
+                { id: "plan-inviteExceptions", name: t("catalog.exceptions.planInvites"), icon: LockIcon, category: t("privacy.planInvitesTitle"), options: { icon2: CalendarBlankIcon } },
+                { id: "groupExceptions", name: t("catalog.exceptions.groupInvites"), icon: LockIcon, category: t("privacy.invites.title"), options: { icon2: ChatsTeardropIcon } },
             ],
         },
         {

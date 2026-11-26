@@ -18,6 +18,17 @@
     "commandSuggestion": "Share a setting",
     "commandHelp": "/set interface theme dark — change theme in Saved; /settings interface theme dark — share."
   },
+  "catalog": {
+    "exceptions": {
+      "profile": "Profile visibility exceptions",
+      "habits": "Activity visibility exceptions",
+      "posts": "Post visibility exceptions",
+      "plans": "Plan visibility exceptions",
+      "activityInvites": "Activity invitation exceptions",
+      "planInvites": "Plan invitation exceptions",
+      "groupInvites": "Group chat invitation exceptions"
+    }
+  },
   "settings": {
     "title": "Settings",
     "searchPlaceholder": "Search...",

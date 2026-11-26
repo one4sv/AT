@@ -38,7 +38,7 @@ export function resolveSettingCommand(text: string, catalog: Entry[]) {
     return { entry, presetText: undefined };
 }
 
-export function settingCommandSuggestions(text: string, catalog: Entry[], t: (key: string) => string): EntitySuggestionItem[] {
+export function settingCommandSuggestions(text: string, catalog: Entry[], t: (key: string) => string, iconFor?: (section: SearchableSection, item?: SearchableSetting) => EntitySuggestionItem["icon"]): EntitySuggestionItem[] {
     const input = inputOf(text);
     const local = /^\/set(?=\s|$)/i.test(text);
     const prefix = local ? "/set " : "/settings ";
@@ -48,7 +48,7 @@ export function settingCommandSuggestions(text: string, catalog: Entry[], t: (ke
         const key = resolved.entry.preset;
         if (input === resolved.entry.path) {
             const values = settingValues(key);
-            return values.map(value => ({ id: input + " " + value, label: settingValueLabel(key, value, t), description: input }));
+            return values.map(value => ({ id: input + " " + value, label: settingValueLabel(key, value, t), description: input, icon: iconFor?.(resolved.entry.section, resolved.entry.item) }));
         }
     }
     const preset = [...catalog].sort((a, b) => b.path.length - a.path.length).find(entry => entry.preset && input.startsWith(entry.path + " "));
@@ -58,10 +58,10 @@ export function settingCommandSuggestions(text: string, catalog: Entry[], t: (ke
         const values = settingValues(key);
         if (values.includes(query) && /\s$/.test(text)) return [];
         return values.filter(value => value.startsWith(query)).map(value => ({ id: preset.path + " " + value,
-            label: settingValueLabel(key, value, t), description: preset.path }));
+            label: settingValueLabel(key, value, t), description: preset.path, icon: iconFor?.(preset.section, preset.item) }));
     }
     return catalog.filter(entry => input ? entry.path.startsWith(input) && (entry.path !== input || !/\s$/.test(text)) :
         !entry.path.includes(" ")).map(entry => ({
-        id: entry.path, label: entry.action === "backgroundAdd" ? t("backgroundLibrary.add") : entry.item?.name || (entry.preset ? t(sharedSettings[entry.preset].title) : entry.section.name), description: prefix + entry.path
+        id: entry.path, label: entry.action === "backgroundAdd" ? t("backgroundLibrary.add") : entry.item?.name || (entry.preset ? t(sharedSettings[entry.preset].title) : entry.section.name), description: prefix + entry.path, icon: iconFor?.(entry.section, entry.item)
     }));
 }

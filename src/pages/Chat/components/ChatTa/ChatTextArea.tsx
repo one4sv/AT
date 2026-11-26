@@ -1,4 +1,5 @@
 import { parseSettingCommand, settingLink, sharedSettings } from "../../../Settings/Arrays/sharedSettings";
+import SettingCatalogIcon from "../../../Settings/components/SettingCatalogIcon";
 import { useSearchableSettings } from "../../../Settings/Arrays/searchableSettings";
 import { settingsSearchNavigation } from "../../../Settings/Arrays/settingsSearchNavigation";
 import { settingCommandCatalog, settingCommandSuggestions, resolveSettingCommand, isBackgroundAddCommand } from "../../../Settings/Arrays/settingCommands";
@@ -148,7 +149,8 @@ export default function ChatTextArea({
     const quickPeriodItems = quickInput?.field === "periodicity" ? (["everyday", "weekly", "cycle", "sometimes"] as const).map(id => ({
         id, label: tc("habitUi.period." + id), description: tc("habitUi.periodHint." + id)
     })).filter(item => [item.id, item.label].some(value => value.toLowerCase().includes((quickInput.slots[2] || "").toLowerCase()))) : [];
-    const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed ? [] : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText) : quickPeriodItems;
+    const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed ? [] : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText, (section, item) =>
+        item ? <SettingCatalogIcon item={item} size={18}/> : <section.icon size={18}/>) : quickPeriodItems;
     const quickCommandItems: EntitySuggestionItem[] = [
         { id: "act", label: "/act", description: tc("chatUi.quickCommands.createActivity"), icon: <CheckCircleIcon size={18}/> },
         { id: "do", label: "/do", description: tc("chatUi.quickCommands.createPlan"), icon: <CalendarPlusIcon size={18}/> },

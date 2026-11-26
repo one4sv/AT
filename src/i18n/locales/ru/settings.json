@@ -18,6 +18,17 @@
     "commandSuggestion": "Поделиться настройкой",
     "commandHelp": "/set interface theme dark — изменить тему в «Избранном»; /settings interface theme dark — поделиться."
   },
+  "catalog": {
+    "exceptions": {
+      "profile": "Исключения видимости профиля",
+      "habits": "Исключения видимости активностей",
+      "posts": "Исключения видимости постов",
+      "plans": "Исключения видимости планов",
+      "activityInvites": "Исключения приглашений в активности",
+      "planInvites": "Исключения приглашений в планы",
+      "groupInvites": "Исключения приглашений в беседы"
+    }
+  },
   "settings": {
     "title": "Настройки",
     "searchPlaceholder": "Поиск...",
