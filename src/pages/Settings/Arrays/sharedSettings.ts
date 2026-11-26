@@ -2,15 +2,47 @@ export const sharedSettings = {
     "background blur": { section: "pers", id: "backgroundBlur", title: "backgroundLibrary.blurBackground", parent: "personalization.background", hint: "sharing.blurHint" },
     "theme": { section: "pers", id: "theme", title: "personalization.theme", parent: null, hint: "sharing.themeHint" },
     "context edges": { section: "gen", id: "highlightContextEdges", title: "general.highlightContextEdges", parent: "general.experimental", hint: "general.contextEdgesHint" },
-    "composition preview": { section: "gen", id: "previewCompositionOnTap", title: "general.previewCompositionOnTap", parent: "general.experimental", hint: "general.previewCompositionOnTapHint" }
+    "composition preview": { section: "gen", id: "previewCompositionOnTap", title: "general.previewCompositionOnTap", parent: "general.experimental", hint: "general.previewCompositionOnTapHint" },
+    "background movement": { section: "pers", id: "bg", title: "backgroundLibrary.movement", parent: "personalization.background", hint: "sharing.valueHint" },
+    "interface blur": { section: "pers", id: "blur", title: "personalization.decor", parent: "personalization.decor", hint: "sharing.valueHint" },
+    "decor": { section: "pers", id: "decor", title: "personalization.decor", parent: null, hint: "sharing.valueHint" },
+    "sidemenu": { section: "pers", id: "layout", title: "personalization.sideMenu", parent: null, hint: "sharing.valueHint" },
+    "startup page": { section: "gen", id: "startupPage", title: "general.startupPage", parent: "general.startupTitle", hint: "sharing.valueHint" },
+    "sidemenu swipe": { section: "gen", id: "sideMenuSwipe", title: "general.sideMenuSwipe", parent: "general.startupTitle", hint: "sharing.valueHint" },
+    "sidemenu on-start": { section: "gen", id: "showMobileMenuOnStart", title: "general.showMobileMenuOnStart", parent: "general.startupTitle", hint: "sharing.valueHint" },
+    "sidemenu tab": { section: "gen", id: "startupSideMenuTab", title: "general.startupSideMenuTab", parent: "general.startupTitle", hint: "sharing.valueHint" },
+    "auto-load images": { section: "gen", id: "autoLoadImages", title: "general.autoLoadImages", parent: "general.traffic", hint: "sharing.valueHint" },
+    "auto-play gif": { section: "gen", id: "autoPlayGif", title: "general.autoPlayGif", parent: "general.traffic", hint: "sharing.valueHint" },
+    "image cache": { section: "gen", id: "useImageCache", title: "general.useImageCache", parent: "general.traffic", hint: "sharing.valueHint" },
+    "font size": { section: "gen", id: "fontSize", title: "general.fontSize", parent: "general.text", hint: "sharing.valueHint" },
+    "date format": { section: "gen", id: "dateFormat", title: "general.dateFormat", parent: "general.text", hint: "sharing.valueHint" },
+    "time format": { section: "gen", id: "timeFormat", title: "general.timeFormat", parent: "general.text", hint: "sharing.valueHint" },
+    "show goals": { section: "activities", id: "showHabitGoals", title: "habits.showGoals", parent: "habits.goals", hint: "sharing.valueHint" },
+    "day summary": { section: "activities", id: "showFeedDaySummary", title: "habits.showFeedDaySummary", parent: "habits.feed", hint: "sharing.valueHint" },
+    "link preview": { section: "security", id: "showLinkPreview", title: "security.linkPreview", parent: "settings.security", hint: "sharing.valueHint" }
 } as const;
 
 export type SharedSetting = keyof typeof sharedSettings;
 
+export function settingValues(setting: SharedSetting): string[] {
+    switch (setting) {
+        case "background blur": return Array.from({length: 31}, (_, index) => String(index));
+        case "theme": return ["light", "dark", "system"];
+        case "interface blur": return Array.from({length: 35}, (_, index) => String(index + 2));
+        case "decor": return ["default","glass"];
+        case "sidemenu": return ["always","hidden"];
+        case "startup page": return ["feed","habits"];
+        case "sidemenu swipe": return ["close","sections"];
+        case "sidemenu tab": return ["chats","habits"];
+        case "font size": return Array.from({length: 11}, (_, index) => String(index + 12));
+        case "date format": return ["standart","american"];
+        case "time format": return ["twentyfour","twelve"];
+        default: return ["on", "off"];
+    }
+}
+
 export function validSettingValue(setting: SharedSetting, value: string) {
-    if (setting === "background blur") return /^(?:[0-9]|[12][0-9]|30)$/.test(value);
-    if (setting === "theme") return ["light", "dark", "system"].includes(value);
-    return value === "on" || value === "off";
+    return settingValues(setting).includes(value);
 }
 
 export function parseSettingCommand(text: string) {
@@ -44,6 +76,7 @@ export function parseSettingLink(href: string) {
 }
 
 export function settingValueLabel(setting: SharedSetting, value: string, translate: (key: string) => string) {
-    if (setting === "background blur") return value + " px";
-    return translate(setting === "theme" ? "sharing." + value : "sharing." + (value === "on" ? "on" : "off"));
+    if (setting === "background blur" || setting === "interface blur" || setting === "font size") return value + " px";
+    if (setting === "theme" || value === "on" || value === "off") return translate("sharing." + value);
+    return value;
 }

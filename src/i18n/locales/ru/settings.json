@@ -11,6 +11,7 @@
     "system": "Системная",
     "on": "Включено",
     "off": "Выключено",
+    "valueHint": "Предлагаемое значение настройки. Оно изменится только после нажатия «Применить».",
     "commandSuggestion": "Открыть или поделиться настройкой",
     "commandHelp": "Примеры: /settings background blur 12, /settings theme dark, /settings context edges on, /settings composition preview off."
   },

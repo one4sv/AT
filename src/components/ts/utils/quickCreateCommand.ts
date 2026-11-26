@@ -130,3 +130,48 @@ export function parseQuickFieldDate(value: string): string | undefined {
     if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return undefined;
     return [year, String(month).padStart(2, "0"), String(day).padStart(2, "0")].join("-");
 }
+
+
+export interface QuickCommandDraft extends QuickCreateDraft {
+    weeklyDays?: string;
+    cycleActive?: string;
+    cycleRest?: string;
+    startTimeText?: string;
+    endTimeText?: string;
+}
+export type QuickInputField = "name" | "description" | "periodicity" | "date" | "weeklyDays" | "cycleActive" | "cycleRest" | "startTime" | "endTime";
+
+/** A single editable TA: spaces separate slots; quotes preserve spaces inside a slot. */
+export function parseQuickInput(text: string) {
+    const command = /^\/(act|plan) /i.exec(text);
+    if (!command) return null;
+    const source = text.slice(command[0].length);
+    const slots: string[] = [""];
+    let quoted = false;
+    for (const char of source) {
+        if (char === '"') quoted = !quoted;
+        else if (char === " " && !quoted) slots.push("");
+        else slots[slots.length - 1] += char;
+    }
+    const kind = command[1].toLowerCase() === "act" ? "habit" : "plan";
+    const period = parseQuickFieldPeriodicity(slots[2] || "everyday");
+    const fields: QuickInputField[] = kind === "plan" ? ["name", "description", "date", "startTime", "endTime"] :
+        ["name", "description", "periodicity", ...(period === "weekly" ? ["weeklyDays" as const] :
+            period === "cycle" ? ["cycleActive" as const, "cycleRest" as const] : []), "startTime", "endTime"];
+    const get = (field: QuickInputField) => slots[fields.indexOf(field)] || "";
+    const draft: QuickCommandDraft = {
+        kind,
+        name: get("name"),
+        description: get("description"),
+        periodicity: period,
+        date: kind === "plan" ? normalizeDate(get("date")) : undefined,
+        weeklyDays: get("weeklyDays"),
+        cycleActive: get("cycleActive"),
+        cycleRest: get("cycleRest"),
+        startTimeText: get("startTime"),
+        endTimeText: get("endTime"),
+        startTime: parseQuickFieldTime(get("startTime")),
+        endTime: parseQuickFieldTime(get("endTime"))
+    };
+    return { draft, fields, slots, quoted, field: fields[slots.length - 1], overflow: slots.length > fields.length };
+}

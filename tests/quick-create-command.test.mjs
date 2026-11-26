@@ -67,3 +67,15 @@ test("inline command fields normalize time, date and RU/EN frequency", async () 
     assert.equal(parseQuickFieldPeriodicity("иногда"), "sometimes");
     assert.equal(parseQuickFieldPeriodicity("random"), undefined);
 });
+
+
+test("single TA positional fields preserve quoted text and skip optional description", async () => {
+    const { parseQuickInput } = await import("../src/components/ts/utils/quickCreateCommand.ts");
+    assert.equal(parseQuickInput("/act ")?.field, "name");
+    assert.equal(parseQuickInput("/plan \"Visit doctor\"  31.12.2099")?.draft.date, "2099-12-31");
+    assert.equal(parseQuickInput("/plan \"Visit doctor\"  31.12.2099")?.draft.name, "Visit doctor");
+    assert.equal(parseQuickInput("/act Gym  weekly 1,3 9 10")?.draft.weeklyDays, "1,3");
+    assert.equal(parseQuickInput("/act Gym  cycle 2 2")?.draft.cycleRest, "2");
+    assert.equal(parseQuickInput("/ac"), null);
+    assert.equal(parseQuickInput("/plan Doctor")?.draft.date, undefined);
+});

@@ -525,6 +525,9 @@
 }
 .chatCommandSuggestions,
 .chatSlashSuggestions {
+    .entitySuggestionItem {
+        gap: 6px;
+    }
     .entitySuggestionIcon > svg {
         width: 18px;
         height: 18px;
@@ -533,7 +536,8 @@
 }
 .chatCommandSuggestions.entitySuggestionPortal,
 .chatMentionSuggestions.entitySuggestionPortal,
-.chatShareSuggestions.entitySuggestionPortal {
+.chatShareSuggestions.entitySuggestionPortal,
+.chatFieldSuggestions.entitySuggestionPortal {
     // Span the full composer row (attachment, TA and Send), not only the TA.
     max-width: none;
 }
@@ -704,6 +708,36 @@
 
         > .answer {
             padding-inline: 1vw;
+        }
+    }
+}
+
+
+.chatWriteBar.inputWithEmoji > .chatCommandEditor.structuredCommand {
+    > .chatCommandFieldMirror {
+        position: absolute;
+        inset: max(.8dvh, calc((5dvh - 2px - 1.35em) / 2)) 5vh 0 1vw;
+        color: transparent;
+        font: inherit;
+        font-size: 16px;
+        line-height: 1.35;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        pointer-events: none;
+
+        .commandArgument {
+            background: var(--accent_highlight);
+            border-radius: 4px;
+        }
+
+        .commandPlaceholder {
+            color: var(--borderWh);
+            background: var(--accent_highlight);
+            border-radius: 4px;
+        }
+
+        @media (max-width: 800px) {
+            left: 3vw;
         }
     }
 }

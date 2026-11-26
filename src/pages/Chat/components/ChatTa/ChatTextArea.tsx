@@ -1,4 +1,7 @@
 import { parseSettingCommand, settingLink, sharedSettings } from "../../../Settings/Arrays/sharedSettings";
+import { useSearchableSettings } from "../../../Settings/Arrays/searchableSettings";
+import { settingsSearchNavigation } from "../../../Settings/Arrays/settingsSearchNavigation";
+import { settingCommandCatalog, settingCommandSuggestions, resolveSettingCommand } from "../../../Settings/Arrays/settingCommands";
 import { useTranslation } from "react-i18next";
 import TA from "../../../../components/ts/TA";
 import MediaDraft from "../../../../components/ts/MediaDraft";
@@ -16,10 +19,9 @@ import { useUser } from "../../../../components/hooks/UserHook";
 import { useNote } from "../../../../components/hooks/NoteHook";
 import EmojiButton from "../../../../components/ts/utils/EmojiButton";
 import EntitySuggestionList, { type EntitySuggestionItem } from "../../../../components/ts/EntitySuggestionList";
-import { isQuickCreateCommand, parseQuickCreateCommand, quickCommandOnSpace } from "../../../../components/ts/utils/quickCreateCommand";
-import QuickCommandComposer, { type QuickCommandDraft } from "./QuickCommandComposer";
+import { parseQuickInput, type QuickInputField } from "../../../../components/ts/utils/quickCreateCommand";
 import { api } from "../../../../components/ts/api";
-import { todayStrFunc, resolveTimeZone } from "../../../../components/ts/utils/dateToStr";
+import { resolveTimeZone } from "../../../../components/ts/utils/dateToStr";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
@@ -114,14 +116,15 @@ export default function ChatTextArea({
     const [activeShare, setActiveShare] = useState(0);
     const [sharePreview, setSharePreview] = useState<string | null>(null);
     const [shareDismissed, setShareDismissed] = useState(false);
-    const [savedShareKind, setSavedShareKind] = useState<"habit" | "plan" | "post" | "user" | null>(null);
     const [commandScrollTop, setCommandScrollTop] = useState(0);
     const [externalMentions, setExternalMentions] = useState<EntitySuggestionItem[]>([]);
     const { setBlackout } = useBlackout();
     const { refetchGroup } = useGroup();
     const [previewCommand, setPreviewCommand] = useState<string | null>(null);
     const [commandListDismissed, setCommandListDismissed] = useState(false);
-    const [quickDraft, setQuickDraft] = useState<QuickCommandDraft | null>(null);
+    const searchableSettings = useSearchableSettings();
+    const [fieldSuggestionsDismissed, setFieldSuggestionsDismissed] = useState(false);
+    const [activeFieldSuggestion, setActiveFieldSuggestion] = useState(0);
     const [quickSending, setQuickSending] = useState(false);
     const quickSubmitting = useRef(false);
     const commandPopupRef = useRef<HTMLDivElement | null>(null);
@@ -130,13 +133,27 @@ export default function ChatTextArea({
     const createdQuick = useRef<{ kind: "habit" | "plan"; id: number } | null>(null);
     const savedChat = !id && !!nick && !!user.nick &&
         nick.toLowerCase() === user.nick.toLowerCase() && !chatWith?.is_group;
+    const quickInput = savedChat && !editing ? parseQuickInput(mess) : null;
+    const quickDraft = quickInput?.draft ?? null;
+    const settingCatalog = settingCommandCatalog(searchableSettings);
+    const settingInput = !editing && /^\/settings /i.test(mess);
+    const quickLabels: Record<QuickInputField, string> = {
+        name: tc("chatUi.quickCommands.requiredName"), description: tc("chatUi.description"),
+        periodicity: tc("habitUi.periodicity"), date: tc("chatUi.quickCommands.requiredDate"),
+        weeklyDays: tc("chatUi.quickCommands.days"), cycleActive: tc("habitUi.activeDays"), cycleRest: tc("habitUi.restDays"),
+        startTime: tc("chatUi.quickCommands.startShort"), endTime: tc("chatUi.quickCommands.endShort")
+    };
+    const quickPeriodItems = quickInput?.field === "periodicity" ? (["everyday", "weekly", "cycle", "sometimes"] as const).map(id => ({
+        id, label: tc("habitUi.period." + id), description: tc("habitUi.periodHint." + id)
+    })).filter(item => [item.id, item.label].some(value => value.toLowerCase().includes((quickInput.slots[2] || "").toLowerCase()))) : [];
+    const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed ? [] : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText) : quickPeriodItems;
     const quickCommandItems: EntitySuggestionItem[] = [
         { id: "act", label: "/act", description: tc("chatUi.quickCommands.createActivity"), icon: <CheckCircleIcon size={18}/> },
         { id: "plan", label: "/plan", description: tc("chatUi.quickCommands.createPlan"), icon: <CalendarPlusIcon size={18}/> }
     ];
     const savedShareCommandItems: EntitySuggestionItem[] = [
         {id:"share:habit",label:"/habit",description:tc("chatUi.shareActivity"),icon:<CheckCircleIcon size={18}/>},
-        {id:"share:plan",label:"/plan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
+        {id:"share:plan",label:"/shareplan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
         {id:"share:post",label:"/post",description:tc("chatUi.sharePost"),icon:<ArticleIcon size={18}/>},
         {id:"share:user",label:"/user",description:tc("chatUi.shareUser"),icon:<UserCircleIcon size={18}/>},
         {id:"settings",label:"/settings",description:settingsText("sharing.commandSuggestion"),icon:<GearSixIcon size={18}/> }
@@ -144,10 +161,10 @@ export default function ChatTextArea({
     const commandQuery = mess.trim();
     const matchingCommands = /^\/[a-z]*$/i.test(commandQuery)
         ? [...quickCommandItems, ...savedShareCommandItems].filter(item =>
-            item.label.startsWith(commandQuery.toLowerCase()) && (item.id !== "settings" || !/\s$/.test(mess))) : [];
+            item.label.startsWith(commandQuery.toLowerCase()) && !/\s$/.test(mess)) : [];
     const shareCommands: EntitySuggestionItem[] = [
         {id:"habit",label:"/habit",description:tc("chatUi.shareActivity"),icon:<CheckCircleIcon size={18}/>},
-        {id:"plan",label:"/plan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
+        {id:"plan",label:"/shareplan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
         {id:"post",label:"/post",description:tc("chatUi.sharePost"),icon:<ArticleIcon size={18}/>},
         {id:"user",label:"/user",description:tc("chatUi.shareUser"),icon:<UserCircleIcon size={18}/>},
         {id:"group",label:"/group",description:tc("chatUi.shareGroup"),icon:<ChatsCircleIcon size={18}/> },
@@ -157,13 +174,16 @@ export default function ChatTextArea({
     const plainShare = !savedChat && !editing && !shareDismissed && /^\/[a-z]*$/i.test(mess)
         ? shareCommands.filter(item => item.label.startsWith(mess.toLowerCase())) : [];
     const shareMatch = !editing && !shareDismissed &&
-        (!savedChat || savedShareKind === "plan" || /^\/(?:habit|post|user)(?=\s|$)/i.test(mess))
-        ? /^\/(habit|plan|post|user|group|invite)(?:\s+(.{0,100}))?$/iu.exec(mess) : null;
+        (!savedChat || /^\/(?:shareplan|habit|post|user)(?=\s|$)/i.test(mess))
+        ? /^\/(habit|shareplan|plan|post|user|group|invite)(?:\s+(.{0,100}))?$/iu.exec(mess) : null;
+    if (shareMatch?.[1] === "shareplan") shareMatch[1] = "plan";
     const shareSuggestions = shareMatch ? shareItems : plainShare;
     const canShowCommands = savedChat && !quickDraft && !editing && !shareMatch &&
         !commandListDismissed && matchingCommands.length > 0;
     const chooseShare = (item: EntitySuggestionItem) => {
         if (!shareMatch && item.id === "settings") {
+            setFieldSuggestionsDismissed(false);
+            setActiveFieldSuggestion(0);
             setMess("/settings ");
             setShareDismissed(true);
             setSharePreview(null);
@@ -172,7 +192,7 @@ export default function ChatTextArea({
             return;
         }
         if (!shareMatch) {
-            setMess("/" + item.id);
+            setMess(item.label);
             setShareItems([]);
             setSharePreview(null);
             setActiveShare(0);
@@ -257,7 +277,6 @@ export default function ChatTextArea({
         setActiveShare(0);
         setSharePreview(null);
         setShareDismissed(true);
-        setSavedShareKind(null);
         requestAnimationFrame(() => textAreaRef.current?.focus({preventScroll:true}));
     };
     useEffect(() => {
@@ -287,7 +306,7 @@ export default function ChatTextArea({
         },250);
         return () => {window.clearTimeout(timer);controller.abort();};
     }, [mess, shareMatch?.[1], shareMatch?.[2], chatWith?.id, chatWith?.is_group]);
-    const mentionToken = !savedChat && !quickDraft && !editing && !mentionDismissed
+    const mentionToken = !savedChat && !quickDraft && !settingInput && !editing && !mentionDismissed
         ? findMentionToken(mess, mentionCaret) : null;
     const mentionMembers = chatWith?.is_group ? chatWith.members || [] : chatWith
         ? [{ id: chatWith.id, nick: chatWith.nick, avatar_url: chatWith.avatar_url || "" }] : [];
@@ -349,31 +368,36 @@ export default function ChatTextArea({
         });
     };
     const displayedMess = previewCommand || sharePreview || mess;
-    const commandHighlight = !editing && !quickDraft &&
+    const commandHighlight = !editing &&
         (savedChat || !/^\/act(?=\s|$)/i.test(displayedMess))
-        ? displayedMess.match(/^\/(?:act|habit|plan|post|user|invite|group|settings)(?=\s|$)/i)?.[0] : null;
+        ? displayedMess.match(/^\/(?:act|habit|plan|shareplan|post|user|invite|group|settings)(?=\s|$)/i)?.[0] : null;
     const commitCommand = (id: string) => {
-        const kind = id === "act" ? "habit" : "plan";
-        const parsed = parseQuickCreateCommand(mess);
-        const draft: QuickCommandDraft = parsed?.kind === kind ? {
-            ...parsed,
-            periodicity: parsed.periodicity || "everyday",
-            date: parsed.date || todayStrFunc()
-        } : {
-            kind,
-            periodicity: "everyday",
-            date: todayStrFunc()
-        };
         createdQuick.current = null;
-        setQuickDraft(draft);
-        setMess("");
+        setMess("/" + id + " ");
         setPreviewCommand(null);
         setCommandListDismissed(true);
+        setFieldSuggestionsDismissed(false);
         setShowEmojiBar(false);
+        requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
+    };
+    const chooseField = (item: EntitySuggestionItem) => {
+        if (settingInput) setMess("/settings " + item.id + " ");
+        else if (quickInput?.field === "periodicity") {
+            const prefix = mess.match(/^\/(?:act|plan) (?:[^" ]|"[^"]*")* (?:[^" ]|"[^"]*")* /i)?.[0] ?? mess.slice(0, mess.length - (quickInput.slots[2] || "").length);
+            setMess(prefix + item.id + " ");
+        }
+        setFieldSuggestionsDismissed(false);
+        setActiveFieldSuggestion(0);
+        requestAnimationFrame(() => {
+            textAreaRef.current?.focus({ preventScroll: true });
+            const ta = textAreaRef.current;
+            if (ta) ta.setSelectionRange(ta.value.length, ta.value.length);
+        });
     };
     const selectSavedCommand = (item: EntitySuggestionItem) => {
         if (item.id === "settings") {
-            setSavedShareKind(null);
+            setFieldSuggestionsDismissed(false);
+            setActiveFieldSuggestion(0);
             setMess("/settings ");
             setCommandListDismissed(true);
             setPreviewCommand(null);
@@ -385,21 +409,18 @@ export default function ChatTextArea({
             commitCommand(item.id);
             return;
         }
-        const kind = item.id.slice(6) as "habit" | "plan" | "post" | "user";
-        setSavedShareKind(kind);
         setShareDismissed(false);
         setCommandListDismissed(true);
         setPreviewCommand(null);
         setSharePreview(null);
         setActiveShare(0);
         setShareItems([]);
-        setMess("/" + kind);
+        setMess(item.label);
         requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
     };
     const cancelQuickCommand = () => {
         if (quickSending) return;
         createdQuick.current = null;
-        setQuickDraft(null);
         setMess("");
         setPreviewCommand(null);
         setCommandListDismissed(false);
@@ -408,8 +429,12 @@ export default function ChatTextArea({
     const submitQuickCommand = async () => {
         if (!quickDraft || quickSubmitting.current || sending.current || !savedChat || !nick ||
             files.length || oldMedia.length || editing || redirect || forwardPost || forwardMedia) return;
+        if (quickInput?.quoted || (quickInput && quickInput.slots.slice(quickInput.fields.length).some(Boolean))) {
+            showNotification("error", tc("chatUi.quickCommands.invalidInput"));
+            return;
+        }
         const name = quickDraft.name?.trim() || "";
-        if (!name || (quickDraft.kind === "habit" && name.length > 40)) {
+        if (!name || name.length > (quickDraft.kind === "habit" ? 40 : 160)) {
             showNotification("error", tc("chatUi.quickCommands.nameRequired"));
             return;
         }
@@ -507,7 +532,6 @@ export default function ChatTextArea({
                 return;
             }
             createdQuick.current = null;
-            setQuickDraft(null);
             setMess("");
             setCommandListDismissed(false);
             showNotification("success", entity.kind === "plan" ? tc("plans.added") : tc("chatUi.quickCommands.activityCreated"));
@@ -519,14 +543,13 @@ export default function ChatTextArea({
         }
     };
     useEffect(() => {
-        if (!canShowCommands && !quickDraft && !shareSuggestions.length) return;
+        if (!canShowCommands && !quickDraft && !shareSuggestions.length && !settingInput) return;
         const dismiss = (event: PointerEvent) => {
             const target = event.target as Node;
             if (commandPopupRef.current?.contains(target) || commandSendRef.current?.contains(target)) return;
-            if (quickDraft) {
-                if (emojiButtRef.current?.contains(target) ||
-                    (target instanceof Element && target.closest(".selectListPortalRoot, .react-datepicker-popper"))) return;
-                cancelQuickCommand();
+            if (quickDraft || settingInput) {
+                if (emojiButtRef.current?.contains(target)) return;
+                setFieldSuggestionsDismissed(true);
             } else if (shareSuggestions.length) {
                 if (target instanceof Element && target.closest(".chatCommandEditor")) return;
                 setShareDismissed(true);
@@ -543,7 +566,7 @@ export default function ChatTextArea({
         };
         document.addEventListener("pointerdown", dismiss, true);
         return () => document.removeEventListener("pointerdown", dismiss, true);
-    }, [canShowCommands, quickDraft, quickSending, mess, emojiButtRef, setMess, shareSuggestions.length]);
+    }, [canShowCommands, quickDraft, quickSending, mess, emojiButtRef, setMess, shareSuggestions.length, settingInput]);
     const routeRef = useRef("");
     const [oldMess, setOldMess] = useState<string>("");
     const [enterToSend, setEnterToSend] = useState(() => localStorage.getItem("at_chat_enter_to_send") !== "false");
@@ -563,9 +586,10 @@ export default function ChatTextArea({
     }, [draftKey]);
     useEffect(() => {
         createdQuick.current = null;
-        setQuickDraft(null);
         setPreviewCommand(null);
         setCommandListDismissed(false);
+        setFieldSuggestionsDismissed(false);
+        setActiveFieldSuggestion(0);
         setActiveSuggestion(0);
         setMentionCaret(0);
         setMentionDismissed(false);
@@ -573,7 +597,6 @@ export default function ChatTextArea({
         setLinkedEntity(null);
         setShareItems([]);
         setShareDismissed(false);
-        setSavedShareKind(null);
         setCommandScrollTop(0);
     }, [location.pathname, user.id]);
     useEffect(() => {
@@ -683,6 +706,23 @@ export default function ChatTextArea({
         [editing]
     );
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (!e.nativeEvent.isComposing && (quickDraft || settingInput)) {
+            if (e.key === "Escape") { e.preventDefault(); setFieldSuggestionsDismissed(true); return; }
+            if (fieldItems.length && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+                e.preventDefault();
+                setActiveFieldSuggestion(i => (i + (e.key === "ArrowDown" ? 1 : -1) + fieldItems.length) % fieldItems.length);
+                return;
+            }
+            if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                if (fieldItems.length) chooseField(fieldItems[Math.min(activeFieldSuggestion, fieldItems.length - 1)]);
+                else if (quickDraft && quickInput?.field && quickInput.field !== "endTime" && !quickInput.quoted && e.currentTarget.selectionStart === mess.length) {
+                    setMess(mess + " ");
+                    setFieldSuggestionsDismissed(false);
+                } else void handleSend();
+                return;
+            }
+        }
         if (shareSuggestions.length && !e.nativeEvent.isComposing) {
             if (e.key === "Escape") {
                 e.preventDefault();
@@ -738,12 +778,6 @@ export default function ChatTextArea({
                 return;
             }
         }
-        if (savedChat && !shareMatch && !savedShareKind && isQuickCreateCommand(mess) && e.key === "Enter" &&
-            !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.nativeEvent.isComposing) {
-            e.preventDefault();
-            commitCommand(mess.trimStart().toLowerCase().startsWith("/act") ? "act" : "plan");
-            return;
-        }
         if (shareMatch && e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
             e.preventDefault();
             showNotification("info", tc("chatUi.shareSearchHint"));
@@ -773,12 +807,9 @@ export default function ChatTextArea({
             selectSavedCommand(matchingCommands[Math.min(activeSuggestion, matchingCommands.length - 1)]);
             return;
         }
-        if (savedChat && !shareMatch && !savedShareKind && isQuickCreateCommand(mess)) {
-            commitCommand(mess.trimStart().toLowerCase().startsWith("/act") ? "act" : "plan");
-            return;
-        }
         if (sending.current || forwardMedia?.targetPath === location.pathname) return;
-        const command = !editing && !linkedEntity && !redirect && !forwardPost && !files.length ? parseSettingCommand(mess) : null;
+        const settingTarget = settingInput ? resolveSettingCommand(mess, settingCatalog) : null;
+        const command = !editing && !linkedEntity && !redirect && !forwardPost && !files.length ? parseSettingCommand(settingTarget?.presetText ?? mess) : null;
         let presetUrl: string | undefined;
         if (command) {
             if (command.setting && command.value !== null) {
@@ -788,6 +819,17 @@ export default function ChatTextArea({
                     setBlackout({ seted: true, module: "SharedSettingPreview", options: { url: presetUrl } });
                     return;
                 }
+            } else if (settingTarget?.entry && !settingTarget.presetText) {
+                const { section, item } = settingTarget.entry;
+                const target = item ? settingsSearchNavigation(section.id, item) : { pathname: "/settings/" + section.id, state: undefined };
+                if (savedChat) {
+                    setMess("");
+                    navigate(target.pathname, { state: target.state });
+                    return;
+                }
+                const url = new URL(target.pathname, window.location.origin);
+                if (item && target.pathname.startsWith("/settings/") && target.pathname !== "/settings/language") url.searchParams.set("setting", item.id);
+                presetUrl = url.href;
             } else {
                 if (savedChat && (command.input === "" || command.input === "background" || command.setting === command.input)) {
                     setMess("");
@@ -1076,38 +1118,39 @@ export default function ChatTextArea({
                         activeIndex={Math.min(activeSuggestion, matchingCommands.length - 1)}
                         onSelect={selectSavedCommand}
                         onPreview={item => setPreviewCommand((item.id.startsWith("share:") || item.id === "settings")
-                            ? item.label : tc(item.id === "act" ? "chatUi.quickCommands.actTemplate" : "chatUi.quickCommands.planTemplate"))}
+                            ? item.label : item.label + " ")}
                         onPreviewEnd={() => setPreviewCommand(null)}
                     />}
-                    {quickDraft ? <QuickCommandComposer
-                        draft={quickDraft}
-                        onChange={setQuickDraft}
-                        onCancel={cancelQuickCommand}
-                        onSubmit={() => void submitQuickCommand()}
-                        disabled={quickSending || !!createdQuick.current}
-                        suggestionPopupRef={commandPopupRef}
-                    /> : <div className="chatCommandEditor">
+                    {!!fieldItems.length && <EntitySuggestionList
+                        className="chatFieldSuggestions"
+                        anchorRef={commandRowRef}
+                        popupRef={commandPopupRef}
+                        items={fieldItems}
+                        activeIndex={Math.min(activeFieldSuggestion, fieldItems.length - 1)}
+                        onSelect={chooseField}
+                    />}
+                    <div className={`chatCommandEditor ${quickInput || settingInput ? "structuredCommand" : ""}`}>
                         {commandHighlight && <span className="chatCommandHighlight"
                             aria-hidden="true" style={{ transform: `translateY(-${commandScrollTop}px)` }}>
                             {commandHighlight}
                         </span>}
+                        {(quickInput || settingInput) && <div className="chatCommandFieldMirror" aria-hidden="true" style={{ transform: `translateY(-${commandScrollTop}px)` }}>
+                            <span>{commandHighlight}</span>{displayedMess.slice(commandHighlight?.length ?? 0).split(/("[^"]*"?|\s+)/).map((part, index) => part && <span key={index} className={part.trim() ? "commandArgument" : ""}>{part}</span>)}
+                            {/\s$/.test(displayedMess) && !quickInput?.quoted && (quickInput?.field || settingInput) && <span className="commandPlaceholder">{quickInput?.field ? quickLabels[quickInput.field] : settingsText("sharing.commandSuggestion")}</span>}
+                        </div>}
                         <TA
                             name="chatTA"
                             id="chatTA"
                             className="chatTA chatTAwFiles"
                             minHeight={0}
                             value={displayedMess}
+                            readOnly={quickSending || !!(quickDraft && createdQuick.current)}
                             taRef={textAreaRef}
                             onChange={e => {
                                 const nextText = e.currentTarget.value;
-                                if (savedChat && !editing && !savedShareKind) {
-                                    const command = quickCommandOnSpace(nextText);
-                                    if (command) {
-                                        commitCommand(command);
-                                        return;
-                                    }
-                                }
-                                if (savedShareKind && !nextText.startsWith("/" + savedShareKind)) setSavedShareKind(null);
+                                setFieldSuggestionsDismissed(false);
+                                setActiveFieldSuggestion(0);
+                                if (!parseQuickInput(nextText)) createdQuick.current = null;
                                 setPreviewCommand(null);
                                 setCommandListDismissed(false);
                                 setActiveSuggestion(0);
@@ -1126,12 +1169,13 @@ export default function ChatTextArea({
                             onClick={e => {
                                 setMentionCaret(e.currentTarget.selectionStart);
                                 setMentionDismissed(false);
+                                setFieldSuggestionsDismissed(false);
                             }}
                             onKeyUp={e => setMentionCaret(e.currentTarget.selectionStart)}
                             placeholder={savedChat ? tc("chatUi.savedPlaceholder") : tc("chatUi.placeholder")}
                             onPaste={handlePaste}
                         />
-                    </div>}
+                    </div>
                 </div>
                 <div ref={commandSendRef} className={quickSending ? "chatWriteTAButt quickSending" : "chatWriteTAButt"} onClick={handleSend}>
                     <PaperPlaneRightIcon className="chatSend" weight="fill" />

@@ -72,7 +72,11 @@ export default function Settings() {
     useEffect(() => {
         if (!user.id || !location.search) return;
         const url = new URL(location.pathname + location.search, window.location.origin).href;
-        if (!parseSettingLink(url)) return;
+        if (!parseSettingLink(url)) {
+            const settingId = new URL(url).searchParams.get("setting");
+            if (settingId) navigate(location.pathname, { replace: true, state: { settingId } });
+            return;
+        }
         navigate(location.pathname, { replace: true });
         setBlackout({ seted: true, module: "SharedSettingPreview", options: { url } });
     }, [user.id, location.pathname, location.search, navigate, setBlackout]);
