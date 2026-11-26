@@ -76,19 +76,16 @@
 }
 
 .compositionSample {
-    --composition-header-height: 5dvh;
-    --composition-menu-width: min(100%, max(19.5vw, 250px));
     box-sizing: border-box;
     position: relative;
     height: 100%;
     display: grid;
-    grid-template-columns: 19.5vw minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
     padding-bottom: calc(max(12px, env(safe-area-inset-bottom)) + 116px);
 }
 
 .compositionSampleHeader.headerDiv {
-    grid-column: 2;
     position: relative;
     top: auto;
     left: auto;
@@ -97,32 +94,7 @@
     > .headerTitle { cursor: default; }
 }
 
-.compositionSampleMenuButton.headerButt {
-    display: none;
-}
-
-.compositionSampleSide {
-    grid-row: 1 / -1;
-    min-width: 0;
-    padding: .75dvh .5vw;
-    overflow-y: auto;
-    background: var(--mc);
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
-
-    .SMAvatar {
-        display: grid;
-        place-items: center;
-        max-width: 100%;
-        aspect-ratio: 1;
-        height: auto;
-
-        > svg { width: 45%; height: auto; }
-    }
-}
-
 .compositionSampleSections {
-    grid-column: 2;
     box-sizing: border-box;
     width: min(100%, 40vw);
     justify-self: center;
@@ -154,44 +126,18 @@
     > :last-child { white-space: nowrap; }
 }
 
-@mixin overlayCompositionMenu {
-    .compositionSample { grid-template-columns: 0 minmax(0, 1fr); }
-    .compositionSampleMenuButton.headerButt { display: flex; }
-
-    .compositionSampleSide {
-        position: absolute;
-        top: var(--composition-header-height);
-        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 116px);
-        left: 0;
-        width: var(--composition-menu-width);
-        z-index: 1;
-        display: none;
-    }
-
-    .compositionSample[data-menu-open="true"] .compositionSampleSide { display: block; }
-}
-
-.compositionFullscreenSlide[data-layout="hidden"] {
-    @include overlayCompositionMenu;
+.compositionSampleMenuMode {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 @media (max-width: 800px) {
-    .compositionFullscreenSlide {
-        @include overlayCompositionMenu;
+    .compositionSampleSections {
+        width: 100%;
+        padding-inline: 2vw;
 
-        .compositionSample {
-            --composition-header-height: 7dvh;
-            --composition-menu-width: 100%;
-        }
-
-        .compositionSampleSide {
-            padding-inline: 2vw;
-        }
-
-        .compositionSampleSections {
-            width: 100%;
-            padding-inline: 2vw;
-        }
+        > .compositionSampleDesktopOnly { display: none; }
     }
 }
 
