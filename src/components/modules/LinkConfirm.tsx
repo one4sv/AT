@@ -1,9 +1,11 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 import { ArrowSquareOut, Link as LinkIcon, ShieldWarning } from "@phosphor-icons/react";
 import "./scss/LinkConfirm.scss";
 import { useBlackout } from "../hooks/BlackoutHook";
+import { useSettings } from "../hooks/SettingsHook";
 import { api } from "../ts/api";
 
 interface LinkPreviewData {
@@ -15,7 +17,9 @@ interface LinkPreviewData {
 }
 
 export default function LinkConfirm() {
+    const { t } = useTranslation("settings");
     const { blackout, setBlackout } = useBlackout();
+    const { showLinkPreview } = useSettings();
     const url = blackout.options?.url as string | undefined;
     const [preview, setPreview] = useState<LinkPreviewData | null>(null);
     const [loading, setLoading] = useState(false);
@@ -25,12 +29,13 @@ export default function LinkConfirm() {
     };
 
     useEffect(() => {
-        if (!url) {
+        if (!url || !showLinkPreview) {
+            setLoading(false);
             setPreview(null);
             return;
         }
 
-        let cancelled = false;
+        const controller = new AbortController();
 
         const loadPreview = async () => {
             setLoading(true);
@@ -40,47 +45,47 @@ export default function LinkConfirm() {
                 const target = /^https?:\/\//i.test(url) ? url : `https://${url}`;
                 const res = await api.get("link-preview", {
                     params: { url: target },
+                    signal: controller.signal,
                 });
 
-                if (!cancelled && res.data.success) {
+                if (!controller.signal.aborted && res.data.success) {
                     setPreview(res.data);
                 }
             } catch (err) {
+                if (controller.signal.aborted) return;
                 if (axios.isAxiosError(err) && err.response?.status === 401) {
                     return;
                 }
 
-                if (!cancelled) {
-                    let hostname = url;
+                let hostname = url;
 
-                    try {
-                        hostname = new URL(
-                            /^https?:\/\//i.test(url) ? url : `https://${url}`
-                        ).hostname;
-                    } catch {
-                        // Оставляем исходный адрес
-                    }
-
-                    setPreview({
-                        url,
-                        hostname,
-                        title: hostname,
-                        description: "",
-                    });
+                try {
+                    hostname = new URL(
+                        /^https?:\/\//i.test(url) ? url : `https://${url}`
+                    ).hostname;
+                } catch {
+                    // Оставляем исходный адрес
                 }
+
+                setPreview({
+                    url,
+                    hostname,
+                    title: hostname,
+                    description: "",
+                });
 
                 console.log(err);
             } finally {
-                if (!cancelled) setLoading(false);
+                if (!controller.signal.aborted) setLoading(false);
             }
         };
 
         loadPreview();
 
         return () => {
-            cancelled = true;
+            controller.abort();
         };
-    }, [url]);
+    }, [url, showLinkPreview]);
 
     if (!url) return null;
 
@@ -102,7 +107,7 @@ export default function LinkConfirm() {
         <div className="linkConfirmDiv">
             <div className="moduleName">
                 <LinkIcon size={24} />
-                Предпросмотр ссылки
+                {t(showLinkPreview ? "security.linkPreview" : "security.externalLink")}
             </div>
 
             <div className="linkConfirmWarning">
@@ -119,7 +124,7 @@ export default function LinkConfirm() {
             </div>
 
             <div className="linkConfirmCard" onClick={() => openLink()}>
-                {preview?.image && (
+                {showLinkPreview && preview?.image && (
                     <img
                         className="linkConfirmImage"
                         src={preview.image}
@@ -133,20 +138,22 @@ export default function LinkConfirm() {
                 )}
 
                 <div className="linkConfirmCardContent">
-                    <div className="linkConfirmHostname">
-                        {preview?.hostname || "Загрузка сайта..."}
-                    </div>
-
-                    <div className="linkConfirmTitle">
-                        {loading ? "Загрузка предпросмотра..." : preview?.title || url}
-                    </div>
-
-                    {!!preview?.description && (
-                        <div className="linkConfirmDescription">
-                            {preview.description}
+                    {showLinkPreview && <>
+                        <div className="linkConfirmHostname">
+                            {preview?.hostname || "Загрузка сайта..."}
                         </div>
-                    )}
 
+                        <div className="linkConfirmTitle">
+                            {loading ? "Загрузка предпросмотра..." : preview?.title || url}
+                        </div>
+
+                        {!!preview?.description && (
+                            <div className="linkConfirmDescription">
+                                {preview.description}
+                            </div>
+                        )}
+
+                    </>}
                     <div className="linkConfirmUrl">{url}</div>
                 </div>
             </div>

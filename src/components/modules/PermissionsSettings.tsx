@@ -424,7 +424,7 @@ export default function PermissionsSettings() {
                         </div>
                     </div>
 
-                    <div className="rolesModalFooter">
+                    {(!directMemberId || canEditMember) && <div className="rolesModalFooter">
                         {selection && !directMemberId && (
                             <button
                                 type="button"
@@ -435,15 +435,25 @@ export default function PermissionsSettings() {
                                 Назад
                             </button>
                         )}
+                        {directMemberId && changes.length > 0 && (
+                            <button
+                                type="button"
+                                className="rolesModalCancel"
+                                disabled={saving}
+                                onClick={() => setChanges([])}
+                            >
+                                {t("groupUi.cancel")}
+                            </button>
+                        )}
                         <button
                             type="button"
                             className="rolesModalSave"
                             disabled={saving || invalidRank || changes.length === 0}
                             onClick={() => void save()}
                         >
-                            {saving ? "Сохраняем…" : "Сохранить"}
+                            {t(saving ? "groupUi.saving" : "groupUi.save")}
                         </button>
-                    </div>
+                    </div>}
                 </>
             )}
         </div>

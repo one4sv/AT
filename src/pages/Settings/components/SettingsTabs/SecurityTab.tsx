@@ -8,12 +8,13 @@ import { Link } from "react-router-dom";
 import HighlightText from "../../../../components/ts/HighlightText";
 import { ShieldCheckIcon } from "@phosphor-icons/react";
 import { openCookiePreferences } from "../../../../components/ts/utils/cookieConsent";
+import Toggler from "../../../../components/ts/Toggler";
 import SectionArt from "../../../../components/ts/SectionArt";
 
 export default function SecurityTab({ search }: { search: string }) {
     const { t } = useTranslation("settings");
     const { user } = useUser();
-    const { twoAuth } = useSettings();
+    const { twoAuth, showLinkPreview, setShowLinkPreview } = useSettings();
     const [pending, setPending] = useState(false);
     const [password, setPassword] = useState("");
     const [busy, setBusy] = useState(false);
@@ -106,6 +107,15 @@ export default function SecurityTab({ search }: { search: string }) {
                     <Link className="securityAction" to="/settings/devices">{t("security.open")}</Link>
                 </div>
                 <span className="settingHint">{t("security.devicesHint")}</span>
+            </div>
+            <div className="settingInnerDiv" data-setting-id="showLinkPreview">
+                <div className="settingInnerList">
+                    <div className="settingTogglerDiv" onClick={() => setShowLinkPreview(value => !value)}>
+                        <HighlightText text={t("security.linkPreview")} search={search}/>
+                        <Toggler state={showLinkPreview} setState={setShowLinkPreview} stopPropagation={true}/>
+                    </div>
+                </div>
+                <span className="settingHint">{t("security.linkPreviewHint")}</span>
             </div>
             <div className="settingInnerDiv" data-setting-id="cookieConsent">
                 <div className="settingHeader">

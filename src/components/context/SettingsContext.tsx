@@ -85,6 +85,8 @@ export interface SettingsContextType {
     setEmote: React.Dispatch<React.SetStateAction<string>>;    
     messdb: string;
     setMessdb: React.Dispatch<React.SetStateAction<string>>;
+    showLinkPreview: boolean;
+    setShowLinkPreview: React.Dispatch<React.SetStateAction<boolean>>;
     twoAuth: boolean | null;
     setTwoAuth: React.Dispatch<React.SetStateAction<boolean | null>>;
     autoLoadImages: boolean;
@@ -203,6 +205,7 @@ const LOCAL_KEYS = {
     autoLoadImages: "settings_auto_load_images",
     autoPlayGif: "settings_auto_play_gif",
     useImageCache: "settings_use_image_cache",
+    showLinkPreview: "settings_link_preview",
     note:"settings_note",
     messnote:"settings_messnote",
     mentionsnote:"settings_mentionsnote",
@@ -323,6 +326,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ groupInvites, setGroupInvites ] = useState<GroupInviteRules>({ contacts: "message", others: "none" });
     const [ chatWelcome, setChatWelcome ] = useState<ChatWelcomeSettings>({ enabled: false, text: "" });
     const [ quickActions, setQuickActions ] = useState<QuickAction[]>([]);
+    const [ showLinkPreview, setShowLinkPreview ] = useLocalStorage(LOCAL_KEYS.showLinkPreview, true);
     const [ twoAuth, setTwoAuth ] = useState<boolean | null>(null);
     const [ privateShow, setPrivate ] = useState<PrivateSettings>({ number: "", mail: "", profile: "all", habits: "", posts: "", plans: "nobody" });
     const [ profileShareToken, setProfileShareToken ] = useState<string | null>(null);
@@ -490,7 +494,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             decor, setDecor,
             bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, wallpaperStyle, setWallpaperStyle, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang, fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat, timeZone, setTimeZone,
             privateShow, setPrivate, profileShareToken, groupInvites, chatWelcome, setChatWelcome, quickActions, setQuickActions,
-            twoAuth, setTwoAuth,
+            twoAuth, setTwoAuth, showLinkPreview, setShowLinkPreview,
             autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
             note, setNote,
             messNote, setMessNote,

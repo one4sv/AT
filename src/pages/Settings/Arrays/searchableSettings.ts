@@ -395,6 +395,12 @@ export function useSearchableSettings(): SearchableSection[] {
                     icon: DevicesIcon,
                     category: t("security.devices"),
                 },
+                {
+                    id: "showLinkPreview",
+                    name: t("security.linkPreview"),
+                    icon: ShieldCheckIcon,
+                    category: t("settings.security"),
+                },
             ],
         },
     ];

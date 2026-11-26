@@ -361,6 +361,9 @@
     "cookiesHint": "Essential sign-in cookies and an optional quick sign-in cookie. You can change your choice at any time."
   },
   "security": {
+    "linkPreview": "Link previews",
+    "externalLink": "External link",
+    "linkPreviewHint": "Load the title, description and image of an external site when opening a link.",
     "twoFactor": "Two-factor authentication",
     "enable": "Enable",
     "disable": "Disable",

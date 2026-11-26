@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SignOut, User, Users } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
+import { useUser } from "../../../hooks/UserHook";
 import { useBlackout } from "../../../hooks/BlackoutHook";
 import { useDelete } from "../../../hooks/DeleteHook";
 import { TogglePinned } from "../buttons/TogglePinned";
@@ -17,7 +18,9 @@ export default function ChatMenu() {
     const { setDeleteConfirm } = useDelete();
     const navigate = useNavigate();
 
+    const { user } = useUser();
     const { options, chatInfo } = menu;
+    const savedChat = !chatInfo?.is_group && !!user.id && options.id === user.id;
 
     return (
         <>
@@ -42,8 +45,8 @@ export default function ChatMenu() {
             )}
 
             <TogglePinned bool={chatInfo!.pinned} id={options.id} />
-            <PersonButtons />
-            {!chatInfo?.is_group && options.nick && <ReportButton targetType="account" targetId={options.nick}/>} 
+            {!savedChat && <PersonButtons />}
+            {!savedChat && !chatInfo?.is_group && options.nick && <ReportButton targetType="account" targetId={options.nick}/>}
 
             {options?.isMy && !chatInfo?.is_group && <DeleteButton />}
 

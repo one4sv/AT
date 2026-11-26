@@ -463,6 +463,7 @@
 }
 
 .rolesModalBack,
+.rolesModalCancel,
 .rolesModalSave {
     display: flex;
     align-items: center;
@@ -475,12 +476,17 @@
     border-radius: 24px;
     color: var(--tc);
     font: inherit;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
 }
 
 .rolesModalBack {
+    font-size: 18px;
     margin-right: auto;
+    background: var(--mc);
+}
+
+.rolesModalCancel {
     background: var(--mc);
 }
 
@@ -489,9 +495,14 @@
     color: var(--inner_text);
 
     &:disabled {
-        opacity: .5;
+        background: var(--mc);
+        color: var(--borderWh);
         cursor: default;
     }
+}
+
+.rolesModalCancel:disabled {
+    cursor: default;
 }
 
 @media (hover: hover) {
@@ -501,7 +512,8 @@
         background: var(--menuButtHover);
     }
 
-    .rolesModalBack:hover {
+    .rolesModalBack:hover,
+    .rolesModalCancel:not(:disabled):hover {
         background: var(--interact);
     }
 }
@@ -592,6 +604,7 @@
     }
 
     .rolesModalBack,
+    .rolesModalCancel,
     .rolesModalSave {
         padding: 0 4vw;
     }

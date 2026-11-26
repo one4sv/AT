@@ -1,4 +1,4 @@
-import { BellRingingIcon, ChatsTeardropIcon, GearIcon, MoonStarsIcon, PaintBucketIcon, SunIcon, TranslateIcon, ImageIcon, LockKeyIcon, ShieldCheckIcon, EyeIcon, UsersIcon, UserCircleIcon, CookieIcon } from "@phosphor-icons/react";
+import { BellRingingIcon, ChatsTeardropIcon, GearIcon, MoonStarsIcon, PaintBucketIcon, SunIcon, TranslateIcon, ImageIcon, LockKeyIcon, ShieldCheckIcon, EyeIcon, UsersIcon, UserCircleIcon, CookieIcon, LinkIcon } from "@phosphor-icons/react";
 import { MirrorRectangular } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,7 @@ import Toggler from "../../Toggler";
 export default function SettingsSectionMenu() {
     const { t } = useTranslation("settings");
     const { menu, closeMenu } = useContextMenu();
-    const { isDark, decor, note, messNote } = useSettings();
+    const { isDark, decor, note, messNote, showLinkPreview, setShowLinkPreview } = useSettings();
     const { setNewTheme, setNewDecor, setNewNote, setNewMessNote } = useUpSettings();
     const { setBlackout } = useBlackout();
     const navigate = useNavigate();
@@ -72,6 +72,10 @@ export default function SettingsSectionMenu() {
                     closeMenu();
                     navigate("/settings/devices");
                 }}><ShieldCheckIcon/>{t("security.devices")}</div>
+                <div className="ContextMenuButt" onClick={() => {
+                    setShowLinkPreview(value => !value);
+                    closeMenu();
+                }}><LinkIcon/>{t("security.linkPreview")}<Toggler state={showLinkPreview}/></div>
             </>}
 
             {section === "chats" && <div className="ContextMenuButt" onClick={() => openSection("chats", "chatWelcome")}>
