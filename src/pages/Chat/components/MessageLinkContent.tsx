@@ -1,19 +1,41 @@
+import { GearIcon } from "@phosphor-icons/react";
+import { useTranslation } from "react-i18next";
+import { useBlackout } from "../../../components/hooks/BlackoutHook";
+import { parseSettingLink, settingValueLabel, sharedSettings } from "../../Settings/Arrays/sharedSettings";
 import { Fragment, type ReactNode } from "react";
 import HighlightText from "../../../components/ts/HighlightText";
 import SharedEntityCard from "./SharedEntityCard";
 import { parseATEntityLink } from "../utils/parseATEntityLink";
 
 export default function MessageLinkContent({text,search}: {text:string;search:string}) {
+    const { t } = useTranslation("settings");
+    const { setBlackout } = useBlackout();
     const nodes: ReactNode[] = [];
     let cursor = 0;
     const pattern = /https?:\/\/[^\s<>"']+/gi;
     for (const match of text.matchAll(pattern)) {
         const href = match[0].replace(/[),.!?;:]+$/, "");
         const reference = parseATEntityLink(href);
-        if (!reference) continue;
+        const preset = parseSettingLink(href);
+        if (!reference && !preset) continue;
         const index = match.index ?? 0;
         if (index > cursor) nodes.push(<HighlightText key={"text"+cursor} text={text.slice(cursor,index)} search={search}/>);
-        nodes.push(<SharedEntityCard key={"entity"+index} kind={reference.kind} id={reference.id} fallbackUrl={href}/>);
+        if (preset) nodes.push(
+            <div className="sharedEntityCard" key={"setting" + index}>
+                <a className="sharedEntityLink" href={href} onClick={event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setBlackout({ seted: true, module: "SharedSettingPreview", options: { url: href } });
+                }}>
+                    <span className="sharedEntityIcon"><GearIcon size={22}/></span>
+                    <span className="sharedEntityInfo">
+                        <span className="sharedEntityName">{t(sharedSettings[preset.setting].title)}</span>
+                        <span className="sharedEntityDetails">{settingValueLabel(preset.setting, preset.value, t)}</span>
+                    </span>
+                </a>
+            </div>
+        );
+        else if (reference) nodes.push(<SharedEntityCard key={"entity"+index} kind={reference.kind} id={reference.id} fallbackUrl={href}/>);
         cursor = index + href.length;
     }
     if (cursor === 0) return <HighlightText text={text} search={search}/>;

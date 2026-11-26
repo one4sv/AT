@@ -1,9 +1,10 @@
+import { parseSettingCommand, settingLink, sharedSettings } from "../../../Settings/Arrays/sharedSettings";
 import { useTranslation } from "react-i18next";
 import TA from "../../../../components/ts/TA";
 import MediaDraft from "../../../../components/ts/MediaDraft";
 import { Paperclip, PaperPlaneRightIcon, X, CheckCircleIcon, CalendarPlusIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type SetStateAction } from "react";
-import { useLocation, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { useChat } from "../../../../components/hooks/ChatHook";
 import { isMobile } from "react-device-detect";
 import { useDrop } from "../../../../components/hooks/DropHook";
@@ -98,6 +99,8 @@ export default function ChatTextArea({
     const { refetchHabits } = useHabits();
     const { upsertPlan, refreshPlans } = usePlans();
     const { timeZone } = useSettings();
+    const { t: settingsText } = useTranslation("settings");
+    const navigate = useNavigate();
     const { showNotification } = useNote();
     const { t } = useTranslation("acc");
     const { t: tc } = useTranslation("common");
@@ -756,10 +759,30 @@ export default function ChatTextArea({
             return;
         }
         if (sending.current || forwardMedia?.targetPath === location.pathname) return;
+        const command = !editing && !linkedEntity && !redirect && !forwardPost && !files.length ? parseSettingCommand(mess) : null;
+        let presetUrl: string | undefined;
+        if (command) {
+            if (command.setting && command.value !== null) {
+                presetUrl = settingLink(command.setting, command.value);
+                if (savedChat) {
+                    setMess("");
+                    setBlackout({ seted: true, module: "SharedSettingPreview", options: { url: presetUrl } });
+                    return;
+                }
+            } else {
+                if (savedChat && (command.input === "" || command.input === "background" || command.setting === command.input)) {
+                    setMess("");
+                    const definition = command.setting ? sharedSettings[command.setting] : null;
+                    if (definition) navigate("/settings/" + definition.section, { state: { settingId: definition.id } });
+                    else navigate(command.input === "background" ? "/wallpapers" : "/settings");
+                } else showNotification("info", settingsText("sharing.commandHelp"));
+                return;
+            }
+        }
         const currentPost = forwardPost;
         const currentRoute = location.pathname;
         const currentDraftKey = draftKey;
-        const trimmedMess = [mess.trim(), currentPost ? new URL("/post/" + currentPost.id, window.location.origin).href : ""].filter(Boolean).join("\n\n");
+        const trimmedMess = [presetUrl ?? mess.trim(), currentPost ? new URL("/post/" + currentPost.id, window.location.origin).href : ""].filter(Boolean).join("\n\n");
         const currentEntity = linkedEntity;
         const hasContent = trimmedMess || files.length > 0 || editing && oldMedia.length > 0 || redirect || currentEntity;
         if (!(nick || id) || !hasContent) return;

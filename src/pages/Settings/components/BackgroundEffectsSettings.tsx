@@ -1,3 +1,5 @@
+import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
+import { settingLink } from "../Arrays/sharedSettings";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import Toggler from "../../../components/ts/Toggler";
@@ -10,6 +12,7 @@ import WallpaperColorControls from "../../../components/modules/WallpaperColorCo
 
 export default function BackgroundEffectsSettings({ search }: { search: string }) {
     const { t } = useTranslation("settings");
+    const { openMenu } = useContextMenu();
     const { bg, bgEffects, setBgEffects, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize } = useSettings();
     const update = (next: BackgroundEffects) => {
         setBgEffects(next);
@@ -23,7 +26,15 @@ export default function BackgroundEffectsSettings({ search }: { search: string }
             {(bg === "color" || bg === "logo") && <WallpaperColorControls target="fill"/>}
             {bg === "default" && <ContourPatternPicker value={contourPattern} onChange={setContourPattern} size={contourSize} onSizeChange={setContourSize}/>}
             {bg === "art" && <ContourPatternPicker value={artPattern} onChange={setArtPattern} size={artSize} onSizeChange={setArtSize} subject="art"/>}
-            <div className="settingInnerWrapper" data-setting-id="backgroundBlur">
+            <div className="settingInnerWrapper" data-setting-id="backgroundBlur" data-context-menu="true"
+                onContextMenu={event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openMenu(event.clientX, event.clientY, "sharedSetting", {
+                        id: "backgroundBlur", name: t("backgroundLibrary.blurBackground"),
+                        url: settingLink("background blur", String(bgEffects.blur))
+                    });
+                }}>
                 <div className="settingSpan">
                     <HighlightText text={t("backgroundLibrary.blurBackground")} search={search}/>
                 </div>

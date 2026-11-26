@@ -1,3 +1,5 @@
+import { useBlackout } from "../../components/hooks/BlackoutHook";
+import { parseSettingLink } from "./Arrays/sharedSettings";
 import PageBottom from "../../components/ts/PageBottom";
 
 import { useEffect, useState, type ElementType } from "react";
@@ -66,6 +68,14 @@ export default function Settings() {
     const location = useLocation();
     
     const navigate = useNavigate();
+    const { setBlackout } = useBlackout();
+    useEffect(() => {
+        if (!user.id || !location.search) return;
+        const url = new URL(location.pathname + location.search, window.location.origin).href;
+        if (!parseSettingLink(url)) return;
+        navigate(location.pathname, { replace: true });
+        setBlackout({ seted: true, module: "SharedSettingPreview", options: { url } });
+    }, [user.id, location.pathname, location.search, navigate, setBlackout]);
     const { openMenu } = useContextMenu();
     const openBackMenu = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();

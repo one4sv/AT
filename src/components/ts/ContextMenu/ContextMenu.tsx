@@ -30,6 +30,7 @@ import PlanCreateMenu from "./menus/PlanCreateMenu";
 import PlanMenu from "./menus/PlanMenu";
 import WallpaperMenu from "./menus/WallpaperMenu";
 import CompositionMenu from "./menus/CompositionMenu";
+import SharedSettingMenu from "./menus/SharedSettingMenu";
 import CalendarDayMenu from "./menus/CalendarDayMenu";
 import ActivityAvatarMenu from "./menus/ActivityAvatarMenu";
 function PreviewSender({ name, id, avatar }: { name: string; id?: string; avatar?: string }) {
@@ -220,6 +221,8 @@ export default function ContextMenu() {
                 return <ActivityAvatarMenu/>;
             case "wallpaper":
                 return <WallpaperMenu/>;
+            case "sharedSetting":
+                return <SharedSettingMenu/>;
             case "composition":
                 return <CompositionMenu />;
             default:

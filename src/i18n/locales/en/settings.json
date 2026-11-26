@@ -1,4 +1,18 @@
 {
+  "sharing": {
+    "copy": "Copy link to value",
+    "copied": "Link copied",
+    "copyFailed": "Could not copy link",
+    "blurHint": "Changes the blur of your current background.",
+    "themeHint": "Changes the interface color theme.",
+    "open": "Open setting",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "on": "On",
+    "off": "Off",
+    "commandHelp": "Examples: /settings background blur 12, /settings theme dark, /settings context edges on, /settings composition preview off."
+  },
   "settings": {
     "title": "Settings",
     "searchPlaceholder": "Search...",

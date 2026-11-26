@@ -1,4 +1,18 @@
 {
+  "sharing": {
+    "copy": "Скопировать ссылку на значение",
+    "copied": "Ссылка скопирована",
+    "copyFailed": "Не удалось скопировать ссылку",
+    "blurHint": "Меняет размытие текущего фона.",
+    "themeHint": "Меняет цветовую тему интерфейса.",
+    "open": "Открыть настройку",
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "system": "Системная",
+    "on": "Включено",
+    "off": "Выключено",
+    "commandHelp": "Примеры: /settings background blur 12, /settings theme dark, /settings context edges on, /settings composition preview off."
+  },
   "settings": {
     "title": "Настройки",
     "searchPlaceholder": "Поиск...",
