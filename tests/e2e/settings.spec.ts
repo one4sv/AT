@@ -362,9 +362,15 @@ test("mobile context menu moves to the next item at the highlighted side edge", 
 test("mobile SideMenu edge hold retargets the open menu to another chat", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
     await page.route("**/api/contacts", route => route.fulfill({json: {success: true, friendsArr: [
-        { id: "first", name: "First chat", nick: "first", lastMessage: null, unread_count: 0, note: true, is_blocked: false, pinned: false, is_group: false },
-        { id: "second", name: "Second chat", nick: "second", lastMessage: null, unread_count: 0, note: true, is_blocked: false, pinned: false, is_group: false }
+        { id: "first", name: "First chat", nick: "first", lastMessage: null, unread_count: 0, note: true, is_blocked: false, pinned: true, is_group: false },
+        { id: "second", name: "Second chat", nick: "second", unread_count: 0, note: true, is_blocked: false, pinned: false, is_group: true,
+            lastMessage: { id: 2, sender_id: "peer", sender_name: "Group sender", sender_avatar_url: "/avatar.png",
+                content: "", created_at: "2026-11-26T00:00:00Z", entity_type: "habit", entity_id: "19", read_by: [] }
+        }
     ]}}));
+    await page.route("**/api/chat/entity/habit/19", route => route.fulfill({json: {success: true, item: {
+        kind: "habit", id: "19", name: "Shared activity fixture", url: "/habit/19"
+    }}}));
     await page.goto("/settings");
     await swipe(page.locator(".settingsButtsWrapper .settingButt").first(), 30, 340);
     const sideMenu = page.locator(".sideMenu");
@@ -390,6 +396,10 @@ test("mobile SideMenu edge hold retargets the open menu to another chat", async 
     await moveTo("right");
     await expect(menu).toHaveAttribute("aria-label", "Second chat");
     await expect(page.locator(".ContextMenuFocusPreview")).toContainText("Second chat");
+    const preview = page.locator(".ContextMenuFocusPreview .contextMenuChatLastMessage.ur");
+    await expect(preview.locator(".contextMenuChatSender")).toHaveText("Group sender");
+    await expect(preview.locator(".contextMenuChatSender img")).toHaveAttribute("src", "/avatar.png");
+    await expect(preview.locator(".sharedEntityCard")).toContainText("Shared activity fixture");
     await moveTo("left");
     await expect(menu).toHaveAttribute("aria-label", "First chat");
     await page.evaluate(() => document.dispatchEvent(new PointerEvent("pointercancel", {

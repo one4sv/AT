@@ -4,6 +4,7 @@ import {
     CheckCircle,
     Circle,
     CopySimple,
+    TextTIcon,
     PencilSimple,
     PushPin,
     PushPinSlash,
@@ -17,11 +18,13 @@ import { useChat } from "../../../hooks/ChatHook";
 import { useMessages } from "../../../hooks/MessagesHook";
 import { useSendMess } from "../../../hooks/SendMessHook";
 import { DownloadButt } from "../buttons/DownloadButt";
+import useCompactLayout from "../../../hooks/utils/useCompactLayout";
 import useForwardMedia from "../../../hooks/utils/useForwardMedia";
 
 export default function MessMenu() {
     const { t } = useTranslation("common");
-    const { menu } = useContextMenu();
+    const isMobile = useCompactLayout();
+    const { menu, closeMenu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { setDeleteConfirm, setDeleteMess } = useDelete();
     const { messages, setActiveHeader, activeHeader } = useChat();
@@ -38,6 +41,7 @@ export default function MessMenu() {
     const { options, curChat, point } = menu;
     const isChose = activeHeader === "choosing"
     if (!curChat || !setChosenMess) return null;
+    const selectableText = curChat.selectableText || curChat.text;
 
     return (
         <>
@@ -103,6 +107,17 @@ export default function MessMenu() {
                     {t("chatMenu.reply")}
                 </div>
             )}
+
+            {isMobile && !isChose && !!selectableText?.trim() && <div
+                className="ContextMenuButt"
+                onClick={() => {
+                    closeMenu();
+                    setBlackout({ seted: true, module: "SelectMessageText", options: { text: selectableText } });
+                }}
+            >
+                <TextTIcon />
+                {t("chatMenu.selectText")}
+            </div>}
 
             {(chosenMess.some(message => !!message.text?.trim()) || !!curChat.text?.trim()) && <div
                 className="ContextMenuButt"

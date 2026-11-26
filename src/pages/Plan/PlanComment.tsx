@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState, type Dispatch, type KeyboardEvent, type SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowBendDownLeftIcon, ChatCenteredIcon, ClockCountdownIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
@@ -17,6 +18,7 @@ interface PlanCommentProps {
 
 export default function PlanComment({ planId, disabled = false, mobile = false, open = "comment", setOpen }: PlanCommentProps) {
     const { t } = useTranslation("common");
+    const reduceMotion = useReducedMotion();
     const {user}=useUser();
     const photos=useActivityCommentPhotos(String(planId),"",true,!disabled,true);
     const [comment, setComment] = useState("");
@@ -57,7 +59,8 @@ export default function PlanComment({ planId, disabled = false, mobile = false, 
         </button> : <>
             <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar}
                 setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef}/>
-            <div className="mobileCommentField">
+            <motion.div className="mobileCommentField" layout={!reduceMotion}
+                transition={{ layout: { duration: .32, ease: [.22, .61, .36, 1] } }}>
                 {photos.previews}
                 <div className="mobileCommentInput inputWithEmoji">
                     <TA placeholder={t("habitPageUi.day.commentPlaceholder")} taRef={textAreaRef}
@@ -68,7 +71,7 @@ export default function PlanComment({ planId, disabled = false, mobile = false, 
                         disabled={loading || disabled || saving}/>
                     <span className="mobileCommentCount">{comment.length}/200</span>
                 </div>
-            </div>
+            </motion.div>
             <div className="hdcTAExtraMobile">
                 <button className="saveCommentButtonMobile" type="button" disabled={cantSave} onClick={() => void save()}>
                     {saving ? <ClockCountdownIcon size={24}/> : <PaperPlaneRightIcon weight="fill" size={24}/>}

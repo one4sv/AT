@@ -219,7 +219,7 @@ export default function Contact({ contact }: ContactType) {
             onContextMenu={(e) => {
                 e.preventDefault();
                 const message = contact.lastMessage;
-                const file = message?.files?.[0];
+                const file = message?.files?.[0] ?? message?.redirected_files?.[0];
                 const photo = autoLoadImages && file && /^image\//i.test(file.type) &&
                     (autoPlayGif || file.type.toLowerCase() !== "image/gif") ? file.url : undefined;
                 openMenu(
@@ -232,9 +232,17 @@ export default function Contact({ contact }: ContactType) {
                         name: contact.name ? contact.name : contact.nick,
                         nick: contact.nick,
                         lastMessage: message ? {
-                            text: message.files?.length === 1 && !message.content && !photo
-                                ? file?.name || getLastMessageContent() || "" : getLastMessageContent() || "",
+                            text: message.is_system ? getLastMessageContent() || "" :
+                                message.content || message.redirected_content ||
+                                (photo || message.entity_type && message.entity_id ? "" : file?.name || getLastMessageContent() || ""),
                             sender: contact.is_group && !message.is_system ? message.sender_name : undefined,
+                            senderId: contact.is_group && !message.is_system ? message.sender_id : undefined,
+                            avatar: contact.is_group && !message.is_system ? message.sender_avatar_url ||
+                                (message.sender_id === user.id ? user.avatar_url ?? undefined : undefined) : undefined,
+                            mine: message.sender_id === user.id,
+                            forwardedBy: message.redirected_name || undefined,
+                            entity: message.entity_type && message.entity_id
+                                ? { kind: message.entity_type, id: message.entity_id } : undefined,
                             image: photo
                         } : undefined,
                     },

@@ -16,7 +16,7 @@ export interface Blackout {
     bg?: File;
     img?: string;
     point?: string;
-    options?: { id?: string; nick?: string; name?: string; url?: string; link?: string; habitId?: string; day?: string; hideGoals?: boolean };
+    options?: { id?: string; nick?: string; name?: string; url?: string; link?: string; text?: string; habitId?: string; day?: string; hideGoals?: boolean };
     sender?: { id?: string; nick?: string; name?: string; url?: string };
     postSettings?: {
         visibility: string;

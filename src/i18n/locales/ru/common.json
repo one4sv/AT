@@ -672,6 +672,7 @@
     "scheduleFailed": "Не удалось сохранить расписание"
   },
   "chatMenu": {
+    "selectText": "Выделить текст",
     "reaction": "Реакция",
     "edit": "Изменить",
     "cancelSelection": "Отменить выбор",

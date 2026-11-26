@@ -193,6 +193,7 @@ export default function Message({
                 isReacted,
                 isMy: m.sender_id === user.id,
                 text: m.content,
+                selectableText: m.content || m.redirected_content || undefined,
                 previewText: m.content || (m.files && m.files.length > 0 ? `${m.files.length} mediafile` : t("chatUi.forwarded")),
                 sender: m.sender_name,
                 files: m.files || undefined,

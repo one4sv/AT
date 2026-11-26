@@ -162,7 +162,7 @@
     display: flex;
     align-items: center;
     min-height: 5dvh;
-    padding: 0 .4vh 12px 0;
+    padding-inline-end: .4vh;
 
     > textarea {
         flex: 1;
@@ -207,7 +207,7 @@
 .mobileCommentCount {
     position: absolute;
     inset-inline-end: .6vh;
-    bottom: 0;
+    top: 100%;
     color: var(--borderHabit);
     font-size: 12px;
     pointer-events: none;
@@ -217,6 +217,10 @@
     > .mobileCommentField {
         grid-column: 1 / -1;
         grid-row: 1;
+
+        .mobileCommentCount {
+            inset-inline-end: 6vh;
+        }
     }
 
     > .hdcTAExtraMobile {

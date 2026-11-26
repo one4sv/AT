@@ -10,6 +10,7 @@ export interface message {
     sender_id: string;
     sender_name: string;
     sender_nick: string;
+    sender_avatar_url?: string | null;
     content: string;
     entity_type?: "user" | "habit" | "plan" | "post" | "group" | null;
     entity_id?: string | null;

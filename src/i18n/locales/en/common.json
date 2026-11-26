@@ -664,6 +664,7 @@
     "scheduleFailed": "Could not save schedule"
   },
   "chatMenu": {
+    "selectText": "Select text",
     "reaction": "React",
     "edit": "Edit",
     "cancelSelection": "Cancel selection",

@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from "motion/react";
 import { useActivityCommentPhotos } from "../../../../../components/ts/ActivityCommentPhotos";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
@@ -19,6 +20,7 @@ interface DayCommentProps {
 
 export default function DayCommentMobile({ id, isMy, open, setOpen }: DayCommentProps) {
     const { t } = useTranslation("common");
+    const reduceMotion = useReducedMotion();
 
     const { dayComment, habit,  } = useTheHabit();
     const { chosenDay } = useCalendar();
@@ -80,7 +82,8 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
             ) : (
                 <>
                     <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar} setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef} />
-                    <div className="mobileCommentField">
+                    <motion.div className="mobileCommentField" layout={!reduceMotion}
+                        transition={{ layout: { duration: .32, ease: [.22, .61, .36, 1] } }}>
                         {photos.previews}
                         <div className="mobileCommentInput inputWithEmoji">
                             <TA
@@ -97,7 +100,7 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
                             <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!isMy || !habit?.ongoing || syncing} />
                             <span className="mobileCommentCount">{comment.length}/200</span>
                         </div>
-                    </div>
+                    </motion.div>
                     <div className="hdcTAExtraMobile">
                         <button
                             className="saveCommentButtonMobile"

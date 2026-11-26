@@ -1,7 +1,13 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next";
+import { UserCircleIcon } from "@phosphor-icons/react";
+import MessageLinkContent from "../../../pages/Chat/components/MessageLinkContent";
+import SharedEntityCard from "../../../pages/Chat/components/SharedEntityCard";
 import "../../../scss/ContextMenu.scss";
 import "../../../scss/Loading.scss";
 import { prepareContextMedia } from "./prepareContextMedia";
+import { useIdentify } from "../../hooks/utils/useIdentify";
 import { useContextMenu } from "../../hooks/ContextMenuHook";
 import HabitMenu from "./menus/HabitMenu";
 import ChatMenu from "./menus/ChatMenu";
@@ -25,7 +31,17 @@ import PlanMenu from "./menus/PlanMenu";
 import CompositionMenu from "./menus/CompositionMenu";
 import CalendarDayMenu from "./menus/CalendarDayMenu";
 import ActivityAvatarMenu from "./menus/ActivityAvatarMenu";
+function PreviewSender({ name, id, avatar }: { name: string; id?: string; avatar?: string }) {
+    const { identified } = useIdentify(avatar ? undefined : id);
+    const avatarUrl = avatar || identified?.avatar_url;
+    return <div className="contextMenuChatSender">
+        {avatarUrl ? <img src={avatarUrl} alt=""/> : <UserCircleIcon aria-hidden="true"/>}
+        <span>{name}</span>
+    </div>;
+}
+
 export default function ContextMenu() {
+    const { t } = useTranslation("common");
     const {
         menu,
         menuRef,
@@ -46,6 +62,8 @@ export default function ContextMenu() {
     );
     const [isAdjusted, setIsAdjusted] = useState(false);
     const previewRef = useRef<HTMLDivElement>(null);
+    const [messagePreviewHost] = useState(() => document.createElement("div"));
+    const lastMessage = menu.point === "chat" && menu.focusSource ? menu.options.lastMessage : undefined;
     const mobileCalendar=menu.point==="calendarDay" && window.matchMedia("(pointer: coarse)").matches;
 
     useLayoutEffect(
@@ -70,7 +88,6 @@ export default function ContextMenu() {
             const photo = focused && /^image\//i.test(menu.options.type || "") && focusSource
                 ? (focusSource instanceof HTMLImageElement ? focusSource : focusSource.querySelector("img"))
                 : null;
-            const lastMessage = menu.point === "chat" ? menu.options.lastMessage : undefined;
             const photoWidth = photo?.naturalWidth || photo?.clientWidth || 0;
             const photoHeight = photo?.naturalHeight || photo?.clientHeight || 0;
             const previewRoom = Math.max(0, viewportHeight - menuHeight - 40);
@@ -80,7 +97,7 @@ export default function ContextMenu() {
             const photoPreview = photo && photoScale > 0 ? photo : null;
             const previewWidth = photoPreview ? photoWidth * photoScale : focused ? Math.min(menu.focusRect!.width * previewScale, viewportWidth - 32) : 0;
             const previewHeight = photoPreview ? photoHeight * photoScale :
-                focused ? Math.min(menu.focusRect!.height * previewScale + (lastMessage ? 78 : 0), previewRoom) : 0;
+                focused ? Math.min(menu.focusRect!.height * previewScale + (lastMessage ? (lastMessage.entity || /https?:\/\//i.test(lastMessage.text) ? 180 : lastMessage.image ? 138 : 105) : 0), previewRoom) : 0;
             const previewTop = Math.max(offsetTop + 12, offsetTop + (viewportHeight - previewHeight - menuHeight - 16) / 2);
             const previewLeft = offsetLeft + (viewportWidth - previewWidth) / 2;
             const minLeft = menu.originSide ? Math.max(offsetLeft + 10, menu.originSide.left + 10) : offsetLeft + 10;
@@ -110,25 +127,7 @@ export default function ContextMenu() {
                 } else if (lastMessage) {
                     const preview = document.createElement("div");
                     preview.className = "contextMenuChatPreview";
-                    const message = document.createElement("div");
-                    message.className = "contextMenuChatLastMessage";
-                    if (lastMessage.image) {
-                        const thumbnail = document.createElement("img");
-                        thumbnail.src = lastMessage.image;
-                        thumbnail.alt = "";
-                        message.append(thumbnail);
-                    }
-                    const text = document.createElement("div");
-                    if (lastMessage.sender) {
-                        const sender = document.createElement("strong");
-                        sender.textContent = lastMessage.sender;
-                        text.append(sender);
-                    }
-                    const content = document.createElement("span");
-                    content.textContent = lastMessage.text;
-                    text.append(content);
-                    message.append(text);
-                    preview.append(clone, message);
+                    preview.append(clone, messagePreviewHost);
                     previewRef.current.replaceChildren(preview);
                 } else {
                     previewRef.current.replaceChildren(clone);
@@ -155,7 +154,7 @@ export default function ContextMenu() {
             );
             return () => animation.cancel();
         },
-        [menu, menuRef,mobileCalendar]
+        [menu, menuRef, mobileCalendar, lastMessage, messagePreviewHost]
     );
     useLayoutEffect(() => {
         if (!menu.visible || !menuRef.current) return;
@@ -227,6 +226,19 @@ export default function ContextMenu() {
 
     return (
         <>
+        {lastMessage && createPortal(
+            <div className={`contextMenuChatLastMessage ${lastMessage.mine ? "my" : "ur"}`} inert>
+                {lastMessage.sender && <PreviewSender key={lastMessage.senderId} name={lastMessage.sender}
+                    id={lastMessage.senderId} avatar={lastMessage.avatar}/>}
+                <div className="contextMenuChatBubble">
+                    {lastMessage.forwardedBy && <small>{t("chatUi.forwarded")} · {lastMessage.forwardedBy}</small>}
+                    {lastMessage.image && <img className="contextMenuChatPhoto" src={lastMessage.image} alt=""/>}
+                    {lastMessage.text && <MessageLinkContent text={lastMessage.text} search=""/>}
+                    {lastMessage.entity && <SharedEntityCard kind={lastMessage.entity.kind} id={lastMessage.entity.id}/>}
+                </div>
+            </div>,
+            messagePreviewHost
+        )}
         {mobileCalendar && <div className="ContextMenuFocusBackdrop" onClick={closeMenu}/>}
         {menu.focusRect && menu.focusSource && <>
             <div className="ContextMenuFocusBackdrop" onPointerDown={event => {

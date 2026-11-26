@@ -23,6 +23,7 @@ const ModuleMap: Record<string, ComponentType> = {
     CreateChat: lazy(() => import("./CreateChat")),
     PermissionsSettings: lazy(() => import("./PermissionsSettings")),
     ShareAcc: lazy(() => import("./ShareAcc")),
+    SelectMessageText: lazy(() => import("./SelectMessageText")),
     LinkConfirm: lazy(() => import("./LinkConfirm")),
     ChatWithInfo: lazy(() => import("./ChatWithInfo")),
     PostSettings: lazy(() => import("./PostSettings")),

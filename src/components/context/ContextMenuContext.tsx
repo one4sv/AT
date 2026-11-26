@@ -8,7 +8,16 @@ const ContextMenuContext = createContext<ContextMenuContextType | null>(null)
 
 export type MenuOptions = {
     id: string,
-    lastMessage?: { text: string; sender?: string; image?: string },
+    lastMessage?: {
+        text: string;
+        sender?: string;
+        senderId?: string;
+        avatar?: string;
+        image?: string;
+        mine: boolean;
+        forwardedBy?: string;
+        entity?: { kind: "user" | "habit" | "plan" | "post" | "group"; id: string };
+    },
     anchorRight?: boolean,
     isDone?: boolean,
     name?:string,
@@ -51,6 +60,7 @@ export interface curChatType {
     isReacted?:string,
     isMy?:boolean,
     text?:string,
+    selectableText?: string,
     sender?:string,
     files?:Media[],
     previewText:string,

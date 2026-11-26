@@ -886,4 +886,7 @@
 .planOtherCommentAuthor .activityAvatar { width: 24px; height: 24px; }
 .planDesktopComment > .planOtherComments { margin-top: 8px; }
 .planDayCommentMobile.open > .planOtherComments { grid-column: 1 / -1; grid-row: 3; max-height: 18dvh; overflow-y: auto; }
+.planDayCommentMobile.open:not(:has(> .mobileCommentField > .activityPhotoStrip)) > .planOtherComments {
+    margin-top: 8px;
+}
 .planDayCommentMobile .hdcTAExtraMobile { gap: 4px; }
