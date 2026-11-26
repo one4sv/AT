@@ -368,7 +368,12 @@ test("mobile SideMenu swipes work on context triggers, the header and navigation
         expect(position).toBeLessThan(.5);
     }
     await expect(nav.locator('[data-tab="spots"]')).toHaveClass(/active/);
-    await swipe(nav.locator('[data-tab="spots"]'), 330, 230);
+    await swipe(nav.locator('[data-tab="spots"]'), 330, 70);
+    await expect(menu).not.toHaveClass(/open/);
+    await expect(nav.locator('[data-tab="spots"]')).toHaveClass(/active/);
+    await expect.poll(() => menu.evaluate(element => element.getBoundingClientRect().right)).toBeLessThanOrEqual(1);
+    await open();
+    await swipe(header, 330, 230);
     await expect(nav.locator('[data-tab="user"]')).toHaveClass(/active/);
     await swipe(settingsCard, 330, 230);
     await expect(menu).not.toHaveClass(/open/);

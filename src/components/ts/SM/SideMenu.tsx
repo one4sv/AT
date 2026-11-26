@@ -150,6 +150,8 @@ export default function SideMenu() {
         verticalScroll.current = false;
     };
 
+    const canSwipeSections = () => isMobile && !!user.id && sideMenuSwipe === "sections" && !startedOnNav.current;
+
     const handleTouchMove = (e: React.TouchEvent | TouchEvent) => {
         if (menu.visible || blackout.seted || e.touches.length !== 1) blockGesture();
         if (contextGesture.current || dontHandleOther && !horizontalSwipe.current) return;
@@ -172,8 +174,7 @@ export default function SideMenu() {
         if (isMobile && e.cancelable) e.preventDefault();
 
         swipeDistance.current = diffPx;
-        const switching = isMobile && user.id && sideMenuSwipe === "sections" &&
-            (activeTab !== "user" || diffPx >= 0);
+        const switching = canSwipeSections() && (activeTab !== "user" || diffPx >= 0);
         const width = sideMenuRef.current?.clientWidth || window.innerWidth;
         if (switching) {
             const offset = Math.max(-1, Math.min(1, -diffPx / width));
@@ -197,7 +198,7 @@ export default function SideMenu() {
                 setTranslateX(showSideMenu ? 0 : -100);
             } else {
                 const distance = swipeDistance.current;
-                if (isMobile && user.id && sideMenuSwipe === "sections" && Math.abs(distance) >= 40) {
+                if (canSwipeSections() && Math.abs(distance) >= 40) {
                     const next = sideMenuTabs[tabIndex + (distance < 0 ? 1 : -1)];
                     if (next) {
                         if (searchMode) {
@@ -208,7 +209,7 @@ export default function SideMenu() {
                     } else if (activeTab === "user" && distance < 0) {
                         closeMenu();
                     }
-                } else if (isMobile && user.id && sideMenuSwipe === "sections") {
+                } else if (canSwipeSections()) {
                     openSideMenu();
                 } else if (currentTranslate.current < (startedOnNav.current ? -40 : -18)) {
                     closeMenu();
