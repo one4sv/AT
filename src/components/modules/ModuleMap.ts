@@ -8,6 +8,7 @@ const ModuleMap: Record<string, ComponentType> = {
     HabitCreateChat: lazy(() => import("./HabitCreateChat")),
     AddHabit: lazy(() => import("./AddHabit")),
     AddPlan: lazy(() => import("./AddPlan")),
+    CommandHelp: lazy(() => import("./CommandHelp")),
     AddGoal: lazy(() => import("./AddGoal")),
     GoalDetails: lazy(() => import("./GoalDetails")),
     GoalHistory: lazy(() => import("./GoalHistory")),

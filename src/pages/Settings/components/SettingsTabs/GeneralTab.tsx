@@ -21,7 +21,7 @@ export default function GeneralTab({ search }: { search: string }) {
         autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
         startupPage, setStartupPage, showMobileMenuOnStart, setShowMobileMenuOnStart,
         startupSideMenuTab, setStartupSideMenuTab, sideMenuSwipe, setSideMenuSwipe,
-        highlightContextEdges, setHighlightContextEdges, previewCompositionOnTap, setPreviewCompositionOnTap } = useSettings();
+        highlightContextEdges, setHighlightContextEdges, previewCompositionOnTap, setPreviewCompositionOnTap, showRecentCommands, setShowRecentCommands } = useSettings();
 
     const timeZones = useMemo(() => {
         const device = browserTimeZone();
@@ -220,6 +220,12 @@ export default function GeneralTab({ search }: { search: string }) {
                     </div>
                 </div>
                 <div className="settingHint">{t("general.previewCompositionOnTapHint")}</div>
+                <div className="settingInnerList">
+                    <div className="settingTogglerDiv" data-setting-id="showRecentCommands" onClick={() => setShowRecentCommands(value => !value)}>
+                        <HighlightText text={t("general.showRecentCommands")} search={search}/>
+                        <Toggler state={showRecentCommands} setState={setShowRecentCommands} stopPropagation={true}/>
+                    </div>
+                </div>
             </div>
         </div>
     );

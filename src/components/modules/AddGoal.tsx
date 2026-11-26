@@ -43,7 +43,7 @@ export default function AddGoal() {
     const [loadError,setLoadError]=useState(false);
     const [loading,setLoading]=useState(Boolean(goalId));
     const [saving,setSaving]=useState(false);
-    const [name,setName]=useState("");
+    const [name,setName]=useState(blackout.options?.name || "");
     const [description,setDescription]=useState("");
     const [dueDate,setDueDate]=useState<Date | null>(null);
     const [mode,setMode]=useState<GoalMode>("manual");

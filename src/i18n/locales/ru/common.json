@@ -182,6 +182,10 @@
     "created": "создал беседу «{{name}}»"
   },
   "chatUi": {
+    "commandHelp": "Справочник команд",
+    "createGoalCommand": "Создать цель",
+    "localSettingsCommand": "Изменить настройки",
+    "shareSettingsCommand": "Поделиться настройкой",
     "internalPages": {
       "feed": "Лента",
       "activities": "Активности",

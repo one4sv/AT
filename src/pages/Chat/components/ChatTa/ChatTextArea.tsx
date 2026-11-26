@@ -1,3 +1,5 @@
+import useLocalStorage from "../../../../components/hooks/utils/useLocalStorage";
+import { QuestionIcon, TargetIcon, ClockCounterClockwiseIcon } from "@phosphor-icons/react";
 import { parseSettingCommand, settingLink, sharedSettings } from "../../../Settings/Arrays/sharedSettings";
 import SettingCatalogIcon from "../../../Settings/components/SettingCatalogIcon";
 import { useSearchableSettings } from "../../../Settings/Arrays/searchableSettings";
@@ -107,7 +109,14 @@ export default function ChatTextArea({
     const { list: mentionContacts } = useContacts();
     const { refetchHabits } = useHabits();
     const { upsertPlan, refreshPlans } = usePlans();
-    const { timeZone, bg, bgUrl, bgGallery, settingsLoaded, compositions } = useSettings();
+    const { timeZone, bg, bgUrl, bgGallery, settingsLoaded, compositions, showRecentCommands } = useSettings();
+    const [recentCommands, setRecentCommands] = useLocalStorage<string[]>("at_recent_commands", []);
+    const rememberCommand = (label: string) => setRecentCommands(previous => [label, ...previous.filter(value => value !== label)].slice(0, 3));
+    const orderCommands = (items: EntitySuggestionItem[], query: string) => {
+        if (!showRecentCommands || query !== "/") return items;
+        const recent = recentCommands.flatMap(label => items.filter(item => item.label === label));
+        return [...recent.map(item => ({ ...item, suffix: <ClockCounterClockwiseIcon size={16}/> })), ...items.filter(item => !recent.some(value => value.id === item.id))];
+    };
     const { t: settingsText } = useTranslation("settings");
     const navigate = useNavigate();
     const { showNotification } = useNote();
@@ -188,6 +197,8 @@ export default function ChatTextArea({
     const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed ? [] : compositionInput !== null ? compositionChoices : wallpaperInput !== null ? wallpaperChoices : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText, (section, item) =>
         item ? <SettingCatalogIcon item={item} size={18}/> : <section.icon size={18}/>) : quickPeriodItems;
     const quickCommandItems: EntitySuggestionItem[] = [
+        { id: "todo", label: "/todo", description: tc("chatUi.createGoalCommand"), icon: <TargetIcon size={18}/> },
+        { id: "help", label: "/help", description: tc("chatUi.commandHelp"), icon: <QuestionIcon size={18}/> },
         { id: "act", label: "/act", description: tc("chatUi.quickCommands.createActivity"), icon: <CheckCircleIcon size={18}/> },
         { id: "do", label: "/do", description: tc("chatUi.quickCommands.createPlan"), icon: <CalendarPlusIcon size={18}/> },
         { id: "set", label: "/set", description: settingsText("sharing.localCommandSuggestion"), icon: <GearSixIcon size={18}/> }
@@ -201,9 +212,10 @@ export default function ChatTextArea({
     ];
     const commandQuery = mess.trim();
     const matchingCommands = /^\/[a-z]*$/i.test(commandQuery)
-        ? [...quickCommandItems, ...savedShareCommandItems].filter(item =>
-            item.label.startsWith(commandQuery.toLowerCase()) && !/\s$/.test(mess)) : [];
+        ? orderCommands([...quickCommandItems, ...savedShareCommandItems].filter(item =>
+            item.label.startsWith(commandQuery.toLowerCase()) && !/\s$/.test(mess)), commandQuery) : [];
     const shareCommands: EntitySuggestionItem[] = [
+        { id: "help", label: "/help", description: tc("chatUi.commandHelp"), icon: <QuestionIcon size={18}/> },
         {id:"habit",label:"/habit",description:tc("chatUi.shareActivity"),icon:<CheckCircleIcon size={18}/>},
         {id:"plan",label:"/plan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
         {id:"post",label:"/post",description:tc("chatUi.sharePost"),icon:<ArticleIcon size={18}/>},
@@ -213,7 +225,7 @@ export default function ChatTextArea({
         {id:"settings",label:"/settings",description:settingsText("sharing.commandSuggestion"),icon:<GearSixIcon size={18}/> }
     ];
     const plainShare = !savedChat && !editing && !shareDismissed && /^\/[a-z]*$/i.test(mess)
-        ? shareCommands.filter(item => item.label.startsWith(mess.toLowerCase())) : [];
+        ? orderCommands(shareCommands.filter(item => item.label.startsWith(mess.toLowerCase())), mess) : [];
     const shareMatch = !editing && !shareDismissed &&
         (!savedChat || /^\/(?:plan|habit|post|user)(?=\s|$)/i.test(mess))
         ? /^\/(habit|plan|post|user|group|invite)(?:\s+(.{0,100}))?$/iu.exec(mess) : null;
@@ -224,6 +236,8 @@ export default function ChatTextArea({
     const canShowCommands = savedChat && !quickDraft && !editing && !shareMatch &&
         !commandListDismissed && matchingCommands.length > 0;
     const chooseShare = (item: EntitySuggestionItem) => {
+        if (!shareMatch) rememberCommand(item.label);
+        if (!shareMatch && item.id === "help") { setMess(""); setBlackout({ seted: true, module: "CommandHelp", options: { text: "chat" } }); return; }
         if (!shareMatch && item.id === "settings") {
             setFieldSuggestionsDismissed(false);
             setActiveFieldSuggestion(0);
@@ -441,6 +455,12 @@ export default function ChatTextArea({
         });
     };
     const selectSavedCommand = (item: EntitySuggestionItem) => {
+        rememberCommand(item.label);
+        if (item.id === "help" || item.id === "todo") {
+            setMess("");
+            setBlackout({ seted: true, module: item.id === "help" ? "CommandHelp" : "AddGoal", options: { text: item.id === "help" ? "saved" : "" } });
+            return;
+        }
         if (item.id === "settings" || item.id === "set") {
             setFieldSuggestionsDismissed(false);
             setActiveFieldSuggestion(0);
@@ -890,6 +910,9 @@ export default function ChatTextArea({
         }
     };
     const handleSend = async () => {
+        if (!editing && /^\/help\s*$/i.test(mess)) { rememberCommand("/help"); setMess(""); setBlackout({ seted: true, module: "CommandHelp", options: { text: savedChat ? "saved" : "chat" } }); return; }
+        const todo = savedChat && !editing ? /^\/todo(?:\s+(.+))?\s*$/i.exec(mess) : null;
+        if (todo) { rememberCommand("/todo"); setMess(""); setBlackout({ seted: true, module: "AddGoal", options: { name: todo[1]?.trim() } }); return; }
         if (shareLoading) return;
         if (quickDraft) {
             void submitQuickCommand();

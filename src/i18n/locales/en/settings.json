@@ -110,6 +110,7 @@
     "savedSmartHint": "Highlight dates and schedules in the latest Saved message. Click to open a prefilled form. Nothing is created until you save. This preference applies only to this device."
   },
   "general": {
+    "showRecentCommands": "Show recent commands",
     "compositionApply": "Apply",
     "compositionPrevious": "Previous composition",
     "compositionNext": "Next composition",

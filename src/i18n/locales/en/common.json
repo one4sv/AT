@@ -182,6 +182,10 @@
     "created": "created the group “{{name}}”"
   },
   "chatUi": {
+    "commandHelp": "Command help",
+    "createGoalCommand": "Create goal",
+    "localSettingsCommand": "Change settings",
+    "shareSettingsCommand": "Share setting",
     "internalPages": {
       "feed": "Feed",
       "activities": "Activities",

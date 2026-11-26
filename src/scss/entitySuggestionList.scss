@@ -8,14 +8,14 @@
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     border: 1px solid var(--block_border);
-    max-height: min(42dvh, 320px);
+    max-height: min(60dvh, 480px);
     overflow-y: auto;
     scrollbar-width: thin;
     box-shadow: 0 8px 28px #00000025;
 
     @media (max-width: 800px) {
         padding: .75dvh 2vw;
-        max-height: 35dvh;
+        max-height: 48dvh;
     }
 }
 
@@ -102,3 +102,8 @@
         width: 68%;
     }
 }
+
+.commandHelpList { display: flex; flex-direction: column; gap: 8px; max-height: 55dvh; overflow: auto; }
+.commandHelpList > div { display: flex; gap: 12px; align-items: center; padding: 8px 12px; border-radius: 18px; background: var(--interact); }
+.commandHelpList strong { flex: 0 0 88px; color: var(--accent_text); }
+.commandHelpList span { min-width: 0; overflow-wrap: anywhere; }

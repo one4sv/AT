@@ -127,6 +127,12 @@ export function useSearchableSettings(includeUnavailable = false): SearchableSec
                     name: t("general.previewCompositionOnTap"),
                     icon: HandTapIcon,
                     category: t("general.experimental"),
+                },
+                {
+                    id: "showRecentCommands",
+                    name: t("general.showRecentCommands"),
+                    icon: HandTapIcon,
+                    category: t("general.experimental"),
                 },{
                     id: "highlightContextEdges",
                     name: t("general.highlightContextEdges"),
