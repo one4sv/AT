@@ -1,16 +1,23 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
-import { CaretLeftIcon, CaretRightIcon, XIcon, GearIcon, CalendarBlankIcon, NewspaperIcon, BookmarkSimpleIcon } from "@phosphor-icons/react";
+import { CaretLeftIcon, CaretRightIcon, XIcon, GearIcon, CalendarBlankIcon, NewspaperIcon, BookmarkSimpleIcon, MoonStarsIcon, SunIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useSettings } from "../hooks/SettingsHook";
 import useModalSlider from "../hooks/utils/useModalSlider";
 import { compositionCycleKey, type CompositionAppearance } from "../ts/utils/compositions";
 import { Background } from "../ts/utils/background";
 import { validHex, getCustomHighlightHex } from "../ts/utils/customPalette";
+import Selector from "../ts/Selector";
+import SeekBar from "../../pages/Settings/components/SeekBar";
+import "../../pages/Settings/scss/seekbar.scss";
 import "./scss/CompositionFullscreen.scss";
 
+function resolveTheme(appearance: CompositionAppearance, systemDark: boolean) {
+    return appearance.theme === "system" ? systemDark ? "dark" : "light" : appearance.theme;
+}
+
 function themeProps(appearance: CompositionAppearance, systemDark: boolean) {
-    const theme = appearance.theme === "system" ? systemDark ? "dark" : "light" : appearance.theme;
+    const theme = resolveTheme(appearance, systemDark);
     const style: Record<string, string> = { "--blur": appearance.blur + "px" };
     const accent = appearance.customAccentHex;
     const grad = appearance.customGradHex;
@@ -25,6 +32,8 @@ function themeProps(appearance: CompositionAppearance, systemDark: boolean) {
     return { "data-theme": theme, "data-accent": appearance.accent, "data-grad": appearance.grad,
         "data-decor": appearance.decor, style: style as CSSProperties };
 }
+
+const keepPreviewValue = () => {};
 
 export default function CompositionFullscreen() {
     const { t } = useTranslation("settings");
@@ -61,7 +70,7 @@ export default function CompositionFullscreen() {
                             previewEffects={appearance.bgEffects} previewWallpaperStyle={appearance.wallpaperStyle}
                             previewContourPattern={appearance.contourPattern} previewContourSize={appearance.contourSize}
                             previewArtPattern={appearance.artPattern} previewArtSize={appearance.artSize}/>
-                        <div className="compositionSample" aria-hidden="true">
+                        <div className="compositionSample" inert>
                             <aside className="compositionSampleSide">
                                 <div><NewspaperIcon/>{t("accountNavigation.feed", { ns: "common" })}</div>
                                 <div><CalendarBlankIcon/>{t("accountNavigation.activities", { ns: "common" })}</div>
@@ -72,15 +81,15 @@ export default function CompositionFullscreen() {
                             <div className="compositionSampleSections">
                                 <section>
                                     <span>{t("personalization.theme")}</span>
-                                    <div className="compositionSampleOptions">
-                                        <span className="compositionSampleSelected">{t("personalization." + (appearance.theme === "system" ? systemDark ? "dark" : "light" : appearance.theme))}</span>
-                                    </div>
+                                    <Selector selected={resolveTheme(appearance, systemDark)} arr={[
+                                        { label: t("personalization.dark"), value: "dark", icon: MoonStarsIcon, func: keepPreviewValue },
+                                        { label: t("personalization.light"), value: "light", icon: SunIcon, func: keepPreviewValue }
+                                    ]}/>
                                 </section>
                                 <section>
                                     <span>{t("backgroundLibrary.blurBackground")}</span>
-                                    <div className="compositionSampleLevel">
-                                        <span style={{ width: `${Math.max(0, Math.min(100, appearance.bgEffects.blur / 30 * 100))}%` }}/>
-                                    </div>
+                                    <SeekBar id="compositionPreviewBackgroundBlur" min={0} max={30}
+                                        value={appearance.bgEffects.blur} unit="px" disabled={false}/>
                                 </section>
                             </div>
                         </div>
