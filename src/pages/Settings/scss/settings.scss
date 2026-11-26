@@ -531,3 +531,10 @@
 .experimentalSettings .settingTogglerDiv[aria-disabled="true"] {
     cursor: default;
 }
+
+
+// Search navigation highlights the actual target's background. Give otherwise
+// unstyled targets rounded corners without overriding component-specific radii.
+:where(.settingTab [data-setting-id]) {
+    border-radius: 24px;
+}
