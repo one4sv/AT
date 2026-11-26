@@ -11,6 +11,7 @@
     "system": "System",
     "on": "On",
     "off": "Off",
+    "commandSuggestion": "Open or share a setting",
     "commandHelp": "Examples: /settings background blur 12, /settings theme dark, /settings context edges on, /settings composition preview off."
   },
   "settings": {

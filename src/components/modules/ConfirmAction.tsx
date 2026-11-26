@@ -1,4 +1,4 @@
-import "./scss/confirmAction.scss";
+import ConfirmActionLayout from "./components/ConfirmActionLayout";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../hooks/BlackoutHook";
@@ -11,13 +11,7 @@ export default function ConfirmAction() {
     const submitting = useRef(false);
     const action = blackout.confirmAction;
     if (!action) return null;
-    return <div className="confirmActionModal" role="dialog" aria-modal="true" aria-label={action.title}>
-        <div className="confirmActionHeader">{action.title}</div>
-        <div className="confirmActionBody">
-            <p>{action.description}</p>
-            {error && <p role="alert">{error}</p>}
-        </div>
-        <div className="confirmActionButtons">
+    return <ConfirmActionLayout title={action.title} actions={<>
             <button type="button" disabled={saving} onClick={() => setBlackout({ seted: false })}>{t("dialog.cancel")}</button>
             <button type="button" className={action.variant === "approve" ? "approve" : "danger"} disabled={saving} onClick={async () => {
                 if (submitting.current) return;
@@ -33,6 +27,8 @@ export default function ConfirmAction() {
                     setSaving(false);
                 }
             }}>{saving ? t("dialog.saving") : action.label || t("habitUi.delete")}</button>
-        </div>
-    </div>;
+        </>}>
+        <p>{action.description}</p>
+        {error && <p role="alert">{error}</p>}
+    </ConfirmActionLayout>;
 }

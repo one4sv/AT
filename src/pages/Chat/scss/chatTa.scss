@@ -523,6 +523,14 @@
 .chatCommandSuggestions {
     box-sizing: border-box;
 }
+.chatCommandSuggestions,
+.chatSlashSuggestions {
+    .entitySuggestionIcon > svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+}
 .chatCommandSuggestions.entitySuggestionPortal,
 .chatMentionSuggestions.entitySuggestionPortal,
 .chatShareSuggestions.entitySuggestionPortal {

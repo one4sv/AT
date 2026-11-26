@@ -2,7 +2,7 @@ import { parseSettingCommand, settingLink, sharedSettings } from "../../../Setti
 import { useTranslation } from "react-i18next";
 import TA from "../../../../components/ts/TA";
 import MediaDraft from "../../../../components/ts/MediaDraft";
-import { Paperclip, PaperPlaneRightIcon, X, CheckCircleIcon, CalendarPlusIcon } from "@phosphor-icons/react";
+import { Paperclip, PaperPlaneRightIcon, X, CheckCircleIcon, CalendarPlusIcon, CalendarIcon, ArticleIcon, UserCircleIcon, ChatsCircleIcon, UserPlusIcon, GearSixIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type SetStateAction } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useChat } from "../../../../components/hooks/ChatHook";
@@ -131,26 +131,28 @@ export default function ChatTextArea({
     const savedChat = !id && !!nick && !!user.nick &&
         nick.toLowerCase() === user.nick.toLowerCase() && !chatWith?.is_group;
     const quickCommandItems: EntitySuggestionItem[] = [
-        { id: "act", label: "/act", description: tc("chatUi.quickCommands.createActivity"), icon: <CheckCircleIcon size={24}/> },
-        { id: "plan", label: "/plan", description: tc("chatUi.quickCommands.createPlan"), icon: <CalendarPlusIcon size={24}/> }
+        { id: "act", label: "/act", description: tc("chatUi.quickCommands.createActivity"), icon: <CheckCircleIcon size={18}/> },
+        { id: "plan", label: "/plan", description: tc("chatUi.quickCommands.createPlan"), icon: <CalendarPlusIcon size={18}/> }
     ];
     const savedShareCommandItems: EntitySuggestionItem[] = [
-        {id:"share:habit",label:"/habit",description:tc("chatUi.shareActivity")},
-        {id:"share:plan",label:"/plan",description:tc("chatUi.sharePlan")},
-        {id:"share:post",label:"/post",description:tc("chatUi.sharePost")},
-        {id:"share:user",label:"/user",description:tc("chatUi.shareUser")}
+        {id:"share:habit",label:"/habit",description:tc("chatUi.shareActivity"),icon:<CheckCircleIcon size={18}/>},
+        {id:"share:plan",label:"/plan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
+        {id:"share:post",label:"/post",description:tc("chatUi.sharePost"),icon:<ArticleIcon size={18}/>},
+        {id:"share:user",label:"/user",description:tc("chatUi.shareUser"),icon:<UserCircleIcon size={18}/>},
+        {id:"settings",label:"/settings",description:settingsText("sharing.commandSuggestion"),icon:<GearSixIcon size={18}/> }
     ];
     const commandQuery = mess.trim();
     const matchingCommands = /^\/[a-z]*$/i.test(commandQuery)
         ? [...quickCommandItems, ...savedShareCommandItems].filter(item =>
-            item.label.startsWith(commandQuery.toLowerCase())) : [];
+            item.label.startsWith(commandQuery.toLowerCase()) && (item.id !== "settings" || !/\s$/.test(mess))) : [];
     const shareCommands: EntitySuggestionItem[] = [
-        {id:"habit",label:"/habit",description:tc("chatUi.shareActivity")},
-        {id:"plan",label:"/plan",description:tc("chatUi.sharePlan")},
-        {id:"post",label:"/post",description:tc("chatUi.sharePost")},
-        {id:"user",label:"/user",description:tc("chatUi.shareUser")},
-        {id:"group",label:"/group",description:tc("chatUi.shareGroup")},
-        {id:"invite",label:"/invite",description:tc(chatWith?.is_group ? "chatUi.inviteLinkToChat" : "chatUi.shareInvite")}
+        {id:"habit",label:"/habit",description:tc("chatUi.shareActivity"),icon:<CheckCircleIcon size={18}/>},
+        {id:"plan",label:"/plan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
+        {id:"post",label:"/post",description:tc("chatUi.sharePost"),icon:<ArticleIcon size={18}/>},
+        {id:"user",label:"/user",description:tc("chatUi.shareUser"),icon:<UserCircleIcon size={18}/>},
+        {id:"group",label:"/group",description:tc("chatUi.shareGroup"),icon:<ChatsCircleIcon size={18}/> },
+        {id:"invite",label:"/invite",description:tc(chatWith?.is_group ? "chatUi.inviteLinkToChat" : "chatUi.shareInvite"),icon:<UserPlusIcon size={18}/> },
+        {id:"settings",label:"/settings",description:settingsText("sharing.commandSuggestion"),icon:<GearSixIcon size={18}/> }
     ];
     const plainShare = !savedChat && !editing && !shareDismissed && /^\/[a-z]*$/i.test(mess)
         ? shareCommands.filter(item => item.label.startsWith(mess.toLowerCase())) : [];
@@ -161,6 +163,14 @@ export default function ChatTextArea({
     const canShowCommands = savedChat && !quickDraft && !editing && !shareMatch &&
         !commandListDismissed && matchingCommands.length > 0;
     const chooseShare = (item: EntitySuggestionItem) => {
+        if (!shareMatch && item.id === "settings") {
+            setMess("/settings ");
+            setShareDismissed(true);
+            setSharePreview(null);
+            setActiveShare(0);
+            requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
+            return;
+        }
         if (!shareMatch) {
             setMess("/" + item.id);
             setShareItems([]);
@@ -341,7 +351,7 @@ export default function ChatTextArea({
     const displayedMess = previewCommand || sharePreview || mess;
     const commandHighlight = !editing && !quickDraft &&
         (savedChat || !/^\/act(?=\s|$)/i.test(displayedMess))
-        ? displayedMess.match(/^\/(?:act|habit|plan|post|user|invite|group)(?=\s|$)/i)?.[0] : null;
+        ? displayedMess.match(/^\/(?:act|habit|plan|post|user|invite|group|settings)(?=\s|$)/i)?.[0] : null;
     const commitCommand = (id: string) => {
         const kind = id === "act" ? "habit" : "plan";
         const parsed = parseQuickCreateCommand(mess);
@@ -362,6 +372,15 @@ export default function ChatTextArea({
         setShowEmojiBar(false);
     };
     const selectSavedCommand = (item: EntitySuggestionItem) => {
+        if (item.id === "settings") {
+            setSavedShareKind(null);
+            setMess("/settings ");
+            setCommandListDismissed(true);
+            setPreviewCommand(null);
+            setSharePreview(null);
+            requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
+            return;
+        }
         if (!item.id.startsWith("share:")) {
             commitCommand(item.id);
             return;
@@ -1032,7 +1051,7 @@ export default function ChatTextArea({
                         }}
                     >{quickDraft ? <X size={18}/> : "/"}</button>}
                     {!!shareSuggestions.length && <EntitySuggestionList
-                        className="chatShareSuggestions"
+                        className={`chatShareSuggestions ${!shareMatch ? "chatSlashSuggestions" : ""}`}
                         anchorRef={commandRowRef}
                         popupRef={commandPopupRef}
                         items={shareSuggestions}
@@ -1056,7 +1075,7 @@ export default function ChatTextArea({
                         items={matchingCommands}
                         activeIndex={Math.min(activeSuggestion, matchingCommands.length - 1)}
                         onSelect={selectSavedCommand}
-                        onPreview={item => setPreviewCommand(item.id.startsWith("share:")
+                        onPreview={item => setPreviewCommand((item.id.startsWith("share:") || item.id === "settings")
                             ? item.label : tc(item.id === "act" ? "chatUi.quickCommands.actTemplate" : "chatUi.quickCommands.planTemplate"))}
                         onPreviewEnd={() => setPreviewCommand(null)}
                     />}
