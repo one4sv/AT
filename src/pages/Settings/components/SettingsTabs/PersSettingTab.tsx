@@ -28,7 +28,7 @@ export default function PersSettingTab({ search }: { search: string }) {
     const navigate = useNavigate();
     const isMobile = useCompactLayout();
     const { setBlackout } = useBlackout();
-    const { isDark, accent, bg, bgUrl, bgEffects, contourPattern, contourSize, artPattern, artSize, decor, grad, blur, layout, wallpaperStyle } = useSettings();
+    const { isDark, accent, bg, bgUrl, bgEffects, contourPattern, contourSize, artPattern, artSize, decor, grad, blur, layout, wallpaperStyle, interfaceStyle, setInterfaceStyle } = useSettings();
     const { setNewTheme, setNewAccent, setNewDecor, setNewGrad, setNewBlur, setNewLayout } = useUpSettings();
 
     const themeArr = [
@@ -67,6 +67,15 @@ export default function PersSettingTab({ search }: { search: string }) {
     return (
         <div className="settingTab">
             {!search.trim() && <SectionArt theme="personalization"/>}
+            {/iPhone/.test(navigator.userAgent) && <div className="settingInnerDiv" data-setting-id="interfaceStyle">
+                <div className="settingHeader"><HighlightText text={t("personalization.interfaceStyle")} search={search}/></div>
+                <div className="settingInnerWrapper">
+                    <Selector selected={interfaceStyle} arr={[
+                        { value: "aphrodite", label: t("personalization.aphroditeStyle"), func: setInterfaceStyle },
+                        { value: "iphone", label: t("personalization.iphoneStyle"), func: setInterfaceStyle }
+                    ]}/>
+                </div>
+            </div>}
             <div className="settingInnerDiv" data-setting-id="theme">
                 <div className="settingHeader"><HighlightText text={t("personalization.theme")} search={search} /></div>
                 <div className="settingInnerWrapper">

@@ -386,3 +386,10 @@
         border-radius: 24px 24px 0 0;
     }
 }
+
+:root[data-interface-style="iphone"] .blackoutModule:not(:has(> .compositionFullscreen)) {
+    border-radius: 28px 28px 0 0;
+    background: var(--mc);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+}

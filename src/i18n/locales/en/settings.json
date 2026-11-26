@@ -250,6 +250,9 @@
     "reminderSaving": "Saving…"
   },
   "personalization": {
+    "interfaceStyle": "Interface style",
+    "aphroditeStyle": "Aphrodite",
+    "iphoneStyle": "iPhone",
     "appearance": "Appearance",
     "theme": "Theme",
     "dark": "Dark",

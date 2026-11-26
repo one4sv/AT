@@ -699,3 +699,10 @@
         }
     }
 }
+
+:root[data-interface-style="iphone"] .chatTA {
+    border: 1px solid var(--block_border);
+    background: var(--mc);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}

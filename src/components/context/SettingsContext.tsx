@@ -64,6 +64,8 @@ export interface SettingsContextType {
     showMobileMenuOnStart: boolean;
     setShowMobileMenuOnStart: React.Dispatch<React.SetStateAction<boolean>>;
     startupSideMenuTab: StartupSideMenuTab;
+    interfaceStyle: "aphrodite" | "iphone";
+    setInterfaceStyle: React.Dispatch<React.SetStateAction<"aphrodite" | "iphone">>;
     previewCompositionOnTap: boolean;
     setPreviewCompositionOnTap: React.Dispatch<React.SetStateAction<boolean>>;
     highlightContextEdges: boolean;
@@ -241,6 +243,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ layout, setLayout ] = useLocalStorage(LOCAL_KEYS.layout, "always");
     const [ startupPage, setStartupPage ] = useLocalStorage<StartupPage>(LOCAL_KEYS.startupPage, "feed");
     const [ showMobileMenuOnStart, setShowMobileMenuOnStart ] = useLocalStorage<boolean>(LOCAL_KEYS.showMobileMenuOnStart, true);
+    const [ interfaceStyle, setInterfaceStyle ] = useLocalStorage<"aphrodite" | "iphone">("settings_interface_style", "aphrodite");
     const [ previewCompositionOnTap, setPreviewCompositionOnTap ] = useLocalStorage("settings_composition_preview_on_tap", true);
     const [ highlightContextEdges, setHighlightContextEdges ] = useLocalStorage(LOCAL_KEYS.highlightContextEdges, false);
     const [ sideMenuSwipe, setSideMenuSwipe ] = useLocalStorage<"close" | "sections">(LOCAL_KEYS.sideMenuSwipe, "close");
@@ -486,6 +489,11 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         applyCustomPalette(accent, grad);
     }, [isDark, accent, grad, decor]);
 
+    useEffect(() => {
+        document.documentElement.dataset.interfaceStyle = /iPhone/.test(navigator.userAgent) && interfaceStyle === "iphone"
+            ? "iphone" : "aphrodite";
+    }, [interfaceStyle]);
+
     return (
         <SettingsContext.Provider value={{
             orderHabits, setOrderHabits, tab, setTab, refetchSettings,
@@ -497,6 +505,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             startupPage, setStartupPage, showMobileMenuOnStart, setShowMobileMenuOnStart,
             startupSideMenuTab, setStartupSideMenuTab,
             sideMenuSwipe, setSideMenuSwipe,
+            interfaceStyle, setInterfaceStyle,
             previewCompositionOnTap, setPreviewCompositionOnTap,
             highlightContextEdges, setHighlightContextEdges,
             bg, setBg,

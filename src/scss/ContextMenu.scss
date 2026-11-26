@@ -303,3 +303,19 @@ html:has(.ContextMenuWrapper) .sideMenu {
         }
     }
 }
+
+:root[data-interface-style="iphone"] .ContextMenuWrapper {
+    border: 1px solid var(--block_border);
+    border-radius: 18px;
+    background: var(--mc);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+
+    .ContextMenuButt {
+        padding-inline: 14px;
+    }
+
+    .ContextMenuButt + .ContextMenuButt {
+        border-top: 1px solid var(--block_border);
+    }
+}

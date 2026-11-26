@@ -252,6 +252,9 @@
     "reminderSaving": "Сохраняем…"
   },
   "personalization": {
+    "interfaceStyle": "Стиль интерфейса",
+    "aphroditeStyle": "Афродита",
+    "iphoneStyle": "Айфон",
     "appearance": "Внешний вид",
     "theme": "Тема",
     "dark": "Тёмная",
