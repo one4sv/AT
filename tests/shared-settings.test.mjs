@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseSettingCommand, parseSettingLink, settingLink } from "../src/pages/Settings/Arrays/sharedSettings.ts";
+import { parseSettingCommand, parseSettingLink, parseSettingNavigationLink, settingLink } from "../src/pages/Settings/Arrays/sharedSettings.ts";
 
 globalThis.window = { location: { origin: "https://achievetogether.vercel.app" } };
 
@@ -28,4 +28,15 @@ test("local and shared setting roots use identical value validation", () => {
     assert.deepEqual(parseSettingCommand("/set theme dark"), parseSettingCommand("/settings theme dark"));
     assert.equal(parseSettingCommand("/set theme invalid").value, null);
     assert.equal(parseSettingCommand("/setting"), null);
+});
+
+
+test("navigation-only settings cards do not apply preset values", () => {
+    assert.deepEqual(parseSettingNavigationLink("https://achievetogether.vercel.app/settings/security?setting=showLinkPreview"), {
+        section: "security", id: "showLinkPreview", pathname: "/settings/security", search: "?setting=showLinkPreview"
+    });
+    assert.equal(parseSettingNavigationLink("https://achievetogether.vercel.app/wallpapers").id, "bg");
+    assert.equal(parseSettingNavigationLink(settingLink("theme", "dark")), null);
+    assert.equal(parseSettingNavigationLink("https://example.com/settings"), null);
+    assert.equal(parseSettingNavigationLink("https://achievetogether.vercel.app/settings/unknown"), null);
 });

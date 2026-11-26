@@ -96,3 +96,19 @@ export function settingValueLabel(setting: SharedSetting, value: string, transla
     const key = keys[setting]?.[value];
     return key ? translate(key) : value;
 }
+
+
+/** Navigation-only shared setting links; never apply values or execute actions. */
+export function parseSettingNavigationLink(href: string) {
+    let url: URL;
+    try { url = new URL(href, window.location.origin); } catch { return null; }
+    if (url.origin !== window.location.origin && url.origin !== "https://achievetogether.vercel.app") return null;
+    if (url.searchParams.has("preset") || url.searchParams.has("value")) return null;
+    if (url.pathname === "/wallpapers") return { section: "pers", id: "bg", pathname: url.pathname, search: url.search };
+    if (url.pathname === "/settings/language") return { section: "gen", id: "language", pathname: url.pathname, search: url.search };
+    const match = /^\/settings(?:\/(acc|gen|pers|activities|chats|notes|privacy|security))?\/?$/.exec(url.pathname);
+    if (!match) return null;
+    const id = url.searchParams.get("setting") ?? "";
+    if (id && (!match[1] || !/^[a-zA-Z0-9-]{1,80}$/.test(id))) return null;
+    return { section: match[1] ?? "", id, pathname: url.pathname, search: url.search };
+}

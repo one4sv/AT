@@ -1,9 +1,10 @@
 import { GearIcon } from "@phosphor-icons/react";
 import SettingCatalogIcon from "../../Settings/components/SettingCatalogIcon";
 import { useSearchableSettings } from "../../Settings/Arrays/searchableSettings";
+import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
-import { parseSettingLink, settingValueLabel, sharedSettings } from "../../Settings/Arrays/sharedSettings";
+import { parseSettingLink, parseSettingNavigationLink, settingValueLabel, sharedSettings } from "../../Settings/Arrays/sharedSettings";
 import { Fragment, type ReactNode } from "react";
 import HighlightText from "../../../components/ts/HighlightText";
 import SharedEntityCard from "./SharedEntityCard";
@@ -11,8 +12,34 @@ import { parseATEntityLink } from "../utils/parseATEntityLink";
 
 function SharedSettingIcon({ section, id }: { section: string; id: string }) {
     const catalog = useSearchableSettings(true);
-    const item = catalog.find(group => group.id === section)?.items.find(entry => entry.id === id);
-    return item ? <SettingCatalogIcon item={item} size={24}/> : <GearIcon size={22}/>;
+    const group = catalog.find(entry => entry.id === section);
+    const item = group?.items.find(entry => entry.id === id);
+    const SectionIcon = group?.icon ?? GearIcon;
+    return item ? <SettingCatalogIcon item={item} size={24}/> : <SectionIcon size={22}/>;
+}
+
+function SharedSettingNavigationCard({ href, target }: { href: string; target: NonNullable<ReturnType<typeof parseSettingNavigationLink>> }) {
+    const catalog = useSearchableSettings(true);
+    const group = catalog.find(entry => entry.id === target.section);
+    const item = group?.items.find(entry => entry.id === target.id);
+    const { t } = useTranslation("settings");
+    const navigate = useNavigate();
+    const SectionIcon = group?.icon ?? GearIcon;
+    if (target.id && !item) return <a href={href}>{href}</a>;
+    return <div className="sharedEntityCard">
+        <a className="sharedEntityLink" href={href} onClick={event => {
+            if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+            event.stopPropagation();
+            navigate(target.pathname + target.search);
+        }}>
+            <span className="sharedEntityIcon">{item ? <SettingCatalogIcon item={item} size={24}/> : <SectionIcon size={22}/>}</span>
+            <span className="sharedEntityInfo">
+                <span className="sharedEntityName">{item?.name ?? group?.name ?? t("settings.title")}</span>
+                <span className="sharedEntityDetails">{item?.category ?? t("sharing.open")}</span>
+            </span>
+        </a>
+    </div>;
 }
 
 export default function MessageLinkContent({text,search}: {text:string;search:string}) {
@@ -25,7 +52,8 @@ export default function MessageLinkContent({text,search}: {text:string;search:st
         const href = match[0].replace(/[),.!?;:]+$/, "");
         const reference = parseATEntityLink(href);
         const preset = parseSettingLink(href);
-        if (!reference && !preset) continue;
+        const settingNavigation = parseSettingNavigationLink(href);
+        if (!reference && !preset && !settingNavigation) continue;
         const index = match.index ?? 0;
         if (index > cursor) nodes.push(<HighlightText key={"text"+cursor} text={text.slice(cursor,index)} search={search}/>);
         if (preset) nodes.push(
@@ -43,6 +71,7 @@ export default function MessageLinkContent({text,search}: {text:string;search:st
                 </a>
             </div>
         );
+        else if (settingNavigation) nodes.push(<SharedSettingNavigationCard key={"settingNavigation" + index} href={href} target={settingNavigation}/>);
         else if (reference) nodes.push(<SharedEntityCard key={"entity"+index} kind={reference.kind} id={reference.id} fallbackUrl={href}/>);
         cursor = index + href.length;
     }
