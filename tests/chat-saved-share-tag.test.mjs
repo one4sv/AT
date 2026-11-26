@@ -96,3 +96,17 @@ test("share results render authorized avatars or entity tag icons; command spaci
     assert.match(visual, /item\.kind === "habit" \? SneakerMoveIcon/);
     assert.match(css, /--command-icon-gap: 8px;\s*padding-inline-start: var\(--command-icon-gap\);\s*gap: var\(--command-icon-gap\);/);
 });
+
+
+test("selected entity visuals survive in the composer and suggestions clear the expanded bar", () => {
+    const chat = read("src/pages/Chat/components/ChatTa/ChatTextArea.tsx");
+    const list = read("src/components/ts/EntitySuggestionList.tsx");
+    const css = read("src/scss/entitySuggestionList.scss");
+    assert.match(chat, /setLinkedEntity\(\{type:kind,id:entityId,label:item\.label,icon:item\.icon\}\)/);
+    assert.match(chat, /linkedEntity\.icon \?\? <ShareSuggestionVisual/);
+    assert.equal((chat.match(/topAnchorRef=\{emojiButtRef\}/g) || []).length, 4);
+    assert.match(list, /Math\.min\(rect\.top, topAnchor\?\.getBoundingClientRect\(\)\.top/);
+    assert.match(list, /observer\.observe\(topAnchor\)/);
+    assert.match(list, /top - viewportTop - 16/);
+    assert.match(css, /max-height: min\(60dvh, 480px, var\(--entity-suggestion-available-height/);
+});

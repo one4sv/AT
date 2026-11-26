@@ -134,7 +134,7 @@ export default function ChatTextArea({
     const [activeMention, setActiveMention] = useState(0);
     const [mentionDismissed, setMentionDismissed] = useState(false);
     const [linkedGoal, setLinkedGoal] = useState<{url:string;label:string} | null>(null);
-    const [linkedEntity, setLinkedEntity] = useState<(LinkedEntity & {label:string}) | null>(null);
+    const [linkedEntity, setLinkedEntity] = useState<(LinkedEntity & {label:string; icon?: EntitySuggestionItem["icon"]}) | null>(null);
     const [shareItems, setShareItems] = useState<EntitySuggestionItem[]>([]);
     const [shareLoadedKey, setShareLoadedKey] = useState<string | null>(null);
     const [activeShare, setActiveShare] = useState(0);
@@ -358,7 +358,7 @@ export default function ChatTextArea({
             setMess("");
         } else {
             setLinkedGoal(null);
-            setLinkedEntity({type:kind,id:entityId,label:item.label});
+            setLinkedEntity({type:kind,id:entityId,label:item.label,icon:item.icon});
             setMess("");
         }
         setShareItems([]);
@@ -454,7 +454,7 @@ export default function ChatTextArea({
         const inserted = outside ? "" : "@" + member.id + " ";
         const next = mess.slice(0, mentionToken.start) + inserted + mess.slice(mentionToken.end);
         if (outside) setLinkedEntity({
-            type: "user", id: member.id.slice(5), label: member.description || member.label
+            type: "user", id: member.id.slice(5), label: member.description || member.label, icon: member.icon
         });
         const caret = mentionToken.start + inserted.length;
         setMess(next);
@@ -1144,7 +1144,7 @@ export default function ChatTextArea({
         const currentRoute = location.pathname;
         const currentDraftKey = draftKey;
         const trimmedMess = [presetUrl ?? mess.trim(), linkedGoal?.url || "", currentPost ? new URL("/post/" + currentPost.id, window.location.origin).href : ""].filter(Boolean).join("\n\n");
-        const currentEntity = linkedEntity;
+        const currentEntity = linkedEntity ? { type: linkedEntity.type, id: linkedEntity.id } : null;
         const hasContent = trimmedMess || files.length > 0 || editing && oldMedia.length > 0 || redirect || currentEntity;
         if (!(nick || id) || !hasContent) return;
         sending.current = true;
@@ -1337,6 +1337,7 @@ export default function ChatTextArea({
                         scrollToMessage={scrollToMessage}
                     />}
                     {forwardPost && <div className="answerDiv postForwardDraft">
+                        <span className="chatDraftVisual"><ShareSuggestionVisual item={{kind:"post",id:String(forwardPost.id),label:forwardPost.author,avatar_url:forwardPost.avatar_url}}/></span>
                         <div className="answer">
                             <div className="answer1str">{t("post.forward")}: {forwardPost.author}</div>
                             <div className="answer2str">{forwardPost.text || t("post.open")}</div>
@@ -1354,8 +1355,9 @@ export default function ChatTextArea({
                             <X />
                         </button>
                     </div>}
-                    {linkedGoal && <div className="chatSharedEntityDraft"><div className="answer"><div className="answer1str">{tc("chatUi.shareGoal")}</div><div className="answer2str">{linkedGoal.label}</div></div><button type="button" className="closeAnswer" aria-label={tc("chatUi.quickCommands.close")} onClick={() => setLinkedGoal(null)}><X/></button></div>}
+                    {linkedGoal && <div className="chatSharedEntityDraft"><span className="chatDraftVisual"><TargetIcon size={24}/></span><div className="answer"><div className="answer1str">{tc("chatUi.shareGoal")}</div><div className="answer2str">{linkedGoal.label}</div></div><button type="button" className="closeAnswer" aria-label={tc("chatUi.quickCommands.close")} onClick={() => setLinkedGoal(null)}><X/></button></div>}
                     {linkedEntity && <div className="chatSharedEntityDraft">
+                        <span className="chatDraftVisual">{linkedEntity.icon ?? <ShareSuggestionVisual item={{kind:linkedEntity.type,id:linkedEntity.id,label:linkedEntity.label}}/>}</span>
                         <div className="answer">
                             <div className="answer1str">{tc("chatUi.shareType." + linkedEntity.type)}</div>
                             <div className="answer2str">{linkedEntity.label}</div>
@@ -1396,6 +1398,7 @@ export default function ChatTextArea({
                     {shareListOpen && <EntitySuggestionList
                         className={`chatShareSuggestions ${!shareMatch ? "chatSlashSuggestions" : ""}`}
                         anchorRef={commandRowRef}
+                        topAnchorRef={emojiButtRef}
                         popupRef={commandPopupRef}
                         items={shareSuggestions}
                         loading={shareLoading}
@@ -1408,6 +1411,7 @@ export default function ChatTextArea({
                     {!!matchingMentions.length && <EntitySuggestionList
                         className="chatMentionSuggestions"
                         anchorRef={commandRowRef}
+                        topAnchorRef={emojiButtRef}
                         popupRef={commandPopupRef}
                         items={matchingMentions}
                         activeIndex={Math.min(activeMention, matchingMentions.length - 1)}
@@ -1416,6 +1420,7 @@ export default function ChatTextArea({
                     {canShowCommands && <EntitySuggestionList
                         className="chatCommandSuggestions"
                         anchorRef={commandRowRef}
+                        topAnchorRef={emojiButtRef}
                         popupRef={commandPopupRef}
                         items={matchingCommands}
                         activeIndex={Math.min(activeSuggestion, matchingCommands.length - 1)}
@@ -1427,6 +1432,7 @@ export default function ChatTextArea({
                     {(!!fieldItems.length || blurControl) && <EntitySuggestionList
                         className="chatFieldSuggestions"
                         anchorRef={commandRowRef}
+                        topAnchorRef={emojiButtRef}
                         popupRef={commandPopupRef}
                         items={fieldItems}
                         control={blurControl ? <div className="commandSeekBar">

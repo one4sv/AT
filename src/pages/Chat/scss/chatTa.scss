@@ -755,3 +755,16 @@
         }
     }
 }
+
+.chatDraftVisual {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent_text);
+    margin-inline-start: 4px;
+    > svg { width: 24px; height: 24px; }
+}
+.postForwardDraft > .chatDraftVisual { margin-inline-start: 8px; }

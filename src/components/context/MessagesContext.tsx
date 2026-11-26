@@ -5,7 +5,7 @@ import { type Media } from "./ChatContext";
 import { type message } from "./ChatContext";
 const MessagesContext = createContext<MessagesContextType | null>(null);
 
-export type ForwardPost = { id: number; text: string; author: string };
+export type ForwardPost = { id: number; text: string; author: string; avatar_url?: string | null };
 export type ForwardMedia = { url: string; name: string; type?: string; isLink?: boolean; targetPath?: string };
 
 export interface MessagesContextType {

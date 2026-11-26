@@ -99,7 +99,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
             navigate("/sign");
             return;
         }
-        setForwardPost({ id: post.id, text: post.text, author: post.user.username || post.user.nick || "" });
+        setForwardPost({ id: post.id, text: post.text, author: post.user.username || post.user.nick || "", avatar_url: post.user.avatar_url });
         setBlackout({ seted: true, module: "Redirecting" });
     };
     const openPostMenu = (x: number, y: number) => {

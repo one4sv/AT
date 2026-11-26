@@ -8,14 +8,15 @@
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     border: 1px solid var(--block_border);
-    max-height: min(60dvh, 480px);
+    max-height: min(60dvh, 480px, var(--entity-suggestion-available-height, 100dvh));
+    box-sizing: border-box;
     overflow-y: auto;
     scrollbar-width: thin;
     box-shadow: 0 8px 28px #00000025;
 
     @media (max-width: 800px) {
         padding: .75dvh 2vw;
-        max-height: 48dvh;
+        max-height: min(48dvh, var(--entity-suggestion-available-height, 100dvh));
     }
 }
 

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode, type RefObject, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import "../../scss/entitySuggestionList.scss";
 import "../../scss/Loading.scss";
@@ -22,6 +22,7 @@ export default function EntitySuggestionList({
     onPreviewEnd,
     className = "",
     anchorRef,
+    topAnchorRef,
     popupRef
 }: {
     items: EntitySuggestionItem[];
@@ -34,35 +35,67 @@ export default function EntitySuggestionList({
     onPreviewEnd?: () => void;
     className?: string;
     anchorRef?: RefObject<HTMLElement | null>;
+    topAnchorRef?: RefObject<HTMLElement | null>;
     popupRef?: RefObject<HTMLDivElement | null>;
 }) {
-    const [placement, setPlacement] = useState<{top: number; left: number; width: number} | null>(null);
+    const [placement, setPlacement] = useState<{top: number; left: number; width: number; availableHeight: number} | null>(null);
 
     useLayoutEffect(() => {
         const anchor = anchorRef?.current;
         if (!anchor) return;
+        const topAnchor = topAnchorRef?.current;
+        let frame = 0;
+        let followUntil = 0;
+        let last: {top:number; left:number; width:number; availableHeight:number} | null = null;
         const update = () => {
             const rect = anchor.getBoundingClientRect();
+            const top = Math.min(rect.top, topAnchor?.getBoundingClientRect().top ?? rect.top);
             const width = Math.min(rect.width, Math.max(0, window.innerWidth - 16));
             const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
-            setPlacement(previous => previous?.top === rect.top && previous.left === left &&
-                previous.width === width ? previous : { top: rect.top, left, width });
+            const viewportTop = window.visualViewport?.offsetTop ?? 0;
+            const availableHeight = Math.max(0, Math.floor(top - viewportTop - 16));
+            if (last?.top !== top || last.left !== left || last.width !== width || last.availableHeight !== availableHeight) {
+                last = { top, left, width, availableHeight };
+                setPlacement(last);
+            }
         };
-        const observer = new ResizeObserver(update);
+        // The expanded composer animates its bottom position as well as its size.
+        // ResizeObserver alone cannot track a pure position transition.
+        const follow = (now: number) => {
+            frame = 0;
+            update();
+            if (now < followUntil) frame = requestAnimationFrame(follow);
+        };
+        const refresh = () => {
+            update();
+            if (topAnchor) {
+                followUntil = performance.now() + 400;
+                if (!frame) frame = requestAnimationFrame(follow);
+            }
+        };
+        const observer = new ResizeObserver(refresh);
         observer.observe(anchor);
-        update();
-        window.addEventListener("resize", update);
-        window.addEventListener("scroll", update, true);
-        window.visualViewport?.addEventListener("resize", update);
-        window.visualViewport?.addEventListener("scroll", update);
+        if (topAnchor && topAnchor !== anchor) observer.observe(topAnchor);
+        refresh();
+        topAnchor?.addEventListener("transitionrun", refresh);
+        topAnchor?.addEventListener("transitionend", refresh);
+        topAnchor?.addEventListener("transitioncancel", refresh);
+        window.addEventListener("resize", refresh);
+        window.addEventListener("scroll", refresh, true);
+        window.visualViewport?.addEventListener("resize", refresh);
+        window.visualViewport?.addEventListener("scroll", refresh);
         return () => {
             observer.disconnect();
-            window.removeEventListener("resize", update);
-            window.removeEventListener("scroll", update, true);
-            window.visualViewport?.removeEventListener("resize", update);
-            window.visualViewport?.removeEventListener("scroll", update);
+            cancelAnimationFrame(frame);
+            topAnchor?.removeEventListener("transitionrun", refresh);
+            topAnchor?.removeEventListener("transitionend", refresh);
+            topAnchor?.removeEventListener("transitioncancel", refresh);
+            window.removeEventListener("resize", refresh);
+            window.removeEventListener("scroll", refresh, true);
+            window.visualViewport?.removeEventListener("resize", refresh);
+            window.visualViewport?.removeEventListener("scroll", refresh);
         };
-    }, [anchorRef]);
+    }, [anchorRef, topAnchorRef]);
 
     const listRef = useRef<HTMLDivElement | null>(null);
     const activeId = items[activeIndex]?.id;
@@ -89,8 +122,9 @@ export default function EntitySuggestionList({
                 top: placement?.top || 0,
                 left: placement?.left || 0,
                 width: placement?.width || 0,
-                visibility: placement ? "visible" : "hidden"
-            } : undefined}>
+                "--entity-suggestion-available-height": (placement?.availableHeight ?? 0) + "px",
+                visibility: placement && placement.availableHeight >= 24 ? "visible" : "hidden"
+            } as CSSProperties : undefined}>
             {control ?? (loading ? Array.from({ length: 4 }, (_, index) => <div key={index} className="entitySuggestionItem entitySuggestionSkeleton" aria-hidden="true">
                 <span className="entitySuggestionContent">
                     <span className="skeletonLine"/>
