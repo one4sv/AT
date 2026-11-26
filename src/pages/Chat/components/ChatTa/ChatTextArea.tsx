@@ -26,6 +26,7 @@ import { useSendMess } from "../../../../components/hooks/SendMessHook";
 import { useUser } from "../../../../components/hooks/UserHook";
 import { useNote } from "../../../../components/hooks/NoteHook";
 import EmojiButton from "../../../../components/ts/utils/EmojiButton";
+import ShareSuggestionVisual, { type ShareSearchResult } from "../ShareSuggestionVisual";
 import EntitySuggestionList, { type EntitySuggestionItem } from "../../../../components/ts/EntitySuggestionList";
 import { parseQuickInput, type QuickInputField } from "../../../../components/ts/utils/quickCreateCommand";
 import { api } from "../../../../components/ts/api";
@@ -392,10 +393,11 @@ export default function ChatTextArea({
             }))).then(results => {
                 if (controller.signal.aborted) return;
                 setShareItems(results.flatMap(response => response.data?.items || [])
-                    .filter((entry:{kind:string;id:string;label:string}) => entry.id && entry.label)
-                    .map((entry:{kind:string;id:string;label:string}) => ({
+                    .filter((entry: ShareSearchResult) => entry.id && entry.label)
+                    .map((entry: ShareSearchResult) => ({
                         id: entry.kind + ":" + entry.id, label: entry.label,
-                        description: tc("sideMenu.searchFilter." + entry.kind)
+                        description: tc("sideMenu.searchFilter." + entry.kind),
+                        icon: <ShareSuggestionVisual item={entry}/>
                     })));
                 setActiveShare(0);
             }).catch(() => { if (!controller.signal.aborted) setShareItems([]); })

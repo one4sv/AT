@@ -159,3 +159,14 @@
     .commandSeekBarHeading { min-width: 0; overflow-wrap: anywhere; }
     .seekBarWrapper { box-sizing: border-box; }
 }
+
+.shareSuggestionVisual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    > img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    > svg { width: 24px; height: 24px; flex-shrink: 0; }
+}

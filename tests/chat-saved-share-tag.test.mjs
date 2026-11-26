@@ -84,3 +84,15 @@ test("blur suggestions use the shared SeekBar without applying settings while dr
     assert.match(chat,/if \(blurControl\) setMess\(blurControl.prefix \+ " " \+ value\)/);
     assert.match(list,/control \?\? \(loading/);
 });
+
+
+test("share results render authorized avatars or entity tag icons; command spacing is balanced", () => {
+    const chat = read("src/pages/Chat/components/ChatTa/ChatTextArea.tsx");
+    const visual = read("src/pages/Chat/components/ShareSuggestionVisual.tsx");
+    const css = read("src/pages/Chat/scss/chatTa.scss");
+    assert.match(chat, /icon: <ShareSuggestionVisual item=\{entry\}\/>/);
+    assert.match(visual, /tags\.find\(tag => tag\.value === item\.tag\)/);
+    assert.match(visual, /onError=\{\(\) => setFailedSrc\(src\)\}/);
+    assert.match(visual, /item\.kind === "habit" \? SneakerMoveIcon/);
+    assert.match(css, /--command-icon-gap: 8px;\s*padding-inline-start: var\(--command-icon-gap\);\s*gap: var\(--command-icon-gap\);/);
+});

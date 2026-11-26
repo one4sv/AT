@@ -538,7 +538,9 @@
 .chatCommandSuggestions,
 .chatSlashSuggestions {
     .entitySuggestionItem {
-        gap: 6px;
+        --command-icon-gap: 8px;
+        padding-inline-start: var(--command-icon-gap);
+        gap: var(--command-icon-gap);
     }
     .entitySuggestionIcon > svg {
         width: 18px;
