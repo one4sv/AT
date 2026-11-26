@@ -290,7 +290,126 @@
     "addHabitToChatDescription": "Add activity “{{name}}” to “{{chat}}”?",
     "addPlanToChatDescription": "Add plan “{{name}}” to “{{chat}}”? Members will receive personal invitations.",
     "addedToChat": "Added to chat",
+    "commandHelpSyntax": "Syntax",
+    "commandHelpExamples": "Examples",
+    "commandHelpDetails": {
+      "act": {
+        "syntax": "/act <name> <description> <frequency> [days / cycle] [start] [end]",
+        "body": "Create an activity in Saved Messages. Spaces separate fields; double quotes preserve spaces inside a field. Two spaces skip an optional field. Frequencies: everyday, weekly, cycle, sometimes. For weekly, enter weekday numbers 0–6 (0 is Sunday). For cycle, enter active and rest day counts.",
+        "examples": [
+          "/act \"Morning exercise\" \"\" everyday 08:00 08:30",
+          "/act \"Workout\" \"\" weekly 1,3,5 18:00 19:00",
+          "/act \"Reading\" \"\" cycle 2 1"
+        ]
+      },
+      "do": {
+        "syntax": "/do <name> <description> <date> [start] [end]",
+        "body": "Create a plan in Saved Messages. Name and date are required. Use double quotes around multiword fields, or \"\" for an empty description. Dates: DD.MM.YYYY or YYYY-MM-DD. Times are optional.",
+        "examples": [
+          "/do \"Doctor appointment\" \"\" 15.12.2026 12:00",
+          "/do \"Birthday\" \"\" 02.03.2027"
+        ]
+      },
+      "todo": {
+        "syntax": "/todo [name]",
+        "body": "Open the goal creation form in Saved Messages, optionally with the name prefilled. Set the remaining parameters in the form.",
+        "examples": [
+          "/todo",
+          "/todo Read 20 books"
+        ]
+      },
+      "set": {
+        "syntax": "/set <section> <setting> [value]",
+        "body": "Only in Saved Messages. Without a value, open a setting; with a supported value, preview and apply a preset. Use background add to add your own wallpaper: attach one image or pick a file when running the command. Limit: 10 custom wallpapers, up to 25 MB per image.",
+        "examples": [
+          "/set interface theme dark",
+          "/set interface background blur 12",
+          "/set interface background add",
+          "/set general"
+        ]
+      },
+      "settings": {
+        "syntax": "/settings <section> <setting> [value]",
+        "body": "Share a setting or preset card in any chat. Sections: interface, general, account, chats, activities, notifications, privacy, security. Without a value, the card opens the setting. Use image to share the current wallpaper (current), a custom wallpaper by number (1–10), or a stock scene by group and name. compositions takes a saved composition number (1–10). Empty slots are not sent. Use /set, not /settings, to add your own wallpaper.",
+        "examples": [
+          "/settings interface theme dark",
+          "/settings interface background blur 12",
+          "/settings privacy",
+          "/settings interface background image current",
+          "/settings interface background image 3",
+          "/settings interface background image antic statue",
+          "/settings interface background image antic gladiator",
+          "/settings interface background image retro city",
+          "/settings interface background image myph tree",
+          "/settings interface compositions 1"
+        ]
+      },
+      "goal": {
+        "syntax": "/goal [name]",
+        "body": "Search available goals, select a result and send a card with its name, progress, due date and stages. This shares a snapshot, not editing access.",
+        "examples": [
+          "/goal",
+          "/goal Reading"
+        ]
+      },
+      "habit": {
+        "syntax": "/habit [name]",
+        "body": "Search available activities by name, select one and send its card. Use /act in Saved Messages to create an activity.",
+        "examples": [
+          "/habit",
+          "/habit Workout"
+        ]
+      },
+      "plan": {
+        "syntax": "/plan [name]",
+        "body": "Search available plans by name, select one and send its card. Use /do in Saved Messages to create a plan.",
+        "examples": [
+          "/plan",
+          "/plan Doctor"
+        ]
+      },
+      "user": {
+        "syntax": "/user [name or nickname]",
+        "body": "Search users by name or nickname, choose an account and send its card.",
+        "examples": [
+          "/user",
+          "/user bob"
+        ]
+      },
+      "post": {
+        "syntax": "/post [query]",
+        "body": "Search available posts, select a result and send its card.",
+        "examples": [
+          "/post",
+          "/post update"
+        ]
+      },
+      "group": {
+        "syntax": "/group [name]",
+        "body": "In a private chat, search chats you can invite the recipient to. Choose a chat and confirm the invitation. Not available in Saved Messages.",
+        "examples": [
+          "/group",
+          "/group Friends"
+        ]
+      },
+      "invite": {
+        "syntax": "/invite [name]",
+        "body": "In a private chat, invite the recipient to an available activity or plan. In a group chat, link an available activity or plan to the current chat. Select an item and confirm.",
+        "examples": [
+          "/invite",
+          "/invite Workout"
+        ]
+      },
+      "help": {
+        "syntax": "/help",
+        "body": "Open this command reference. Select a command to reveal its parameters and examples. Select it again to collapse the description.",
+        "examples": [
+          "/help"
+        ]
+      }
+    },
     "quickCommands": {
+      "close": "Close",
       "action": "Commands",
       "createActivity": "Create activity",
       "createPlan": "Create plan",
