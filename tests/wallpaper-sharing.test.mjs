@@ -25,9 +25,12 @@ test("custom links contain no private gallery URL and bind only one message imag
     assert.equal(sharedWallpaperAttachment("https://example.com/wallpapers?shared=custom",[media],origin),undefined);
     assert.equal(parseSharedWallpaperLink(origin+"/wallpapers?shared=modernParis",origin),null);
 });
-test("wallpaper catalog toggles on the left and applies from the center", () => {
+test("wallpaper catalog retains back on the left, applies in the center and toggles on the right", () => {
     const studio=readFileSync(new URL("../src/pages/WallpaperStudio/WallpaperStudio.tsx",import.meta.url),"utf8");
-    assert.match(studio,/open \? <ChevronDown\/> : <ChevronUp\/>/);
+    const bottom = studio.slice(studio.indexOf('<PageBottom className="wallpaperStudioBottom"'));
+    assert.match(bottom, /onBack=\{\(\) => navigate\("\/settings\/pers"\)\}/);
+    assert.ok(bottom.indexOf("pageBottomAction wallpaperHeaderApply") < bottom.indexOf("pageBottomBack wallpaperStudioCatalogToggle"));
+    assert.match(bottom,/open \? <ChevronDown\/> : <ChevronUp\/>/);
     assert.match(studio,/pageBottomAction wallpaperHeaderApply/);
     assert.match(studio,/isApplied \? "backgroundLibrary.shareSelected" : "backgroundLibrary.shareChoose"/);
 });

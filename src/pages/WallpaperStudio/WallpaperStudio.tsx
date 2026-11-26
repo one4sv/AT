@@ -520,16 +520,16 @@ export default function WallpaperStudio() {
                 </div>
             </div>
         </div>
-        <PageBottom className="wallpaperStudioBottom">
-            <button type="button" className="pageBottomBack wallpaperStudioCatalogToggle"
-                aria-label={t(open ? "backgroundLibrary.collapsePanel" : "backgroundLibrary.expandPanel")}
-                aria-expanded={open} aria-controls="wallpaperStudioContent" onClick={() => setOpen(value => !value)}>
-                {open ? <ChevronDown/> : <ChevronUp/>}
-            </button>
+        <PageBottom className="wallpaperStudioBottom" onBack={() => navigate("/settings/pers")}>
             <button type="button" className={`pageBottomAction wallpaperHeaderApply ${isApplied ? "active" : ""}`}
                 aria-pressed={Boolean(isApplied)} disabled={busy || Boolean(isApplied)}
                 onClick={() => { if (!isApplied) apply(currentIndex); }}>
                 {t(isApplied ? "backgroundLibrary.shareSelected" : "backgroundLibrary.shareChoose")}
+            </button>
+            <button type="button" className="pageBottomBack wallpaperStudioCatalogToggle"
+                aria-label={t(open ? "backgroundLibrary.collapsePanel" : "backgroundLibrary.expandPanel")}
+                aria-expanded={open} aria-controls="wallpaperStudioContent" onClick={() => setOpen(value => !value)}>
+                {open ? <ChevronDown/> : <ChevronUp/>}
             </button>
         </PageBottom>
     </main>;

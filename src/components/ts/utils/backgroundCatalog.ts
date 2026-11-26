@@ -110,7 +110,7 @@ export const shareableWallpapers = backgroundGroups.flatMap(group => group.items
         labelKey: item.labelKey,
         group: group.id as string,
         commandGroup: wallpaperGroupAliases[group.id] ?? group.id,
-        commandItem: wallpaperItemAliases[item.id] ?? (item.id.startsWith(group.id) && item.id !== group.id ? item.id.slice(group.id.length) : item.id).toLowerCase()
+        commandItem: wallpaperItemAliases[item.id] ?? (item.id.startsWith(group.id) ? item.id.slice(group.id.length) : item.id).toLowerCase()
     })));
 
 type WallpaperGallery = readonly { url: string }[];
