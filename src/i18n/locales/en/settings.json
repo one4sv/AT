@@ -81,9 +81,9 @@
   },
   "general": {
     "experimental": "Experimental settings",
-    "highlightContextEdges": "Highlight scroll zones",
-    "sideContextEdges": "Scroll from the side edges",
-    "contextEdgesHint": "While holding a context menu, the left edge scrolls up and the right edge scrolls down. The top and bottom edges are used by default.",
+    "highlightContextEdges": "Highlight navigation zones",
+    "sideContextEdges": "Navigate items from the side edges",
+    "contextEdgesHint": "The left edge opens the previous item’s context menu and the right edge opens the next one. The top and bottom edges are used by default.",
     "startupTitle": "When opening the app",
     "startupPage": "Start page",
     "startupFeed": "Feed",

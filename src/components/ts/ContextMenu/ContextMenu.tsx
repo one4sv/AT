@@ -162,7 +162,7 @@ export default function ContextMenu() {
             item.setAttribute("tabindex", "-1");
         });
         if (window.matchMedia("(pointer: fine)").matches) actions[0]?.focus({ preventScroll: true });
-    }, [menu.visible, menu.point, menuRef]);
+    }, [menu, menuRef]);
 
     if (!menu.visible) return null;
     const currentPos = isAdjusted ? pos : {

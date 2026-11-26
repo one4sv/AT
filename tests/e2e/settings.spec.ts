@@ -319,7 +319,7 @@ async function swipe(surface: Locator, from: number, to: number, inspectSections
     }, { from, to, inspectSections });
 }
 
-test("mobile context menu scrolls settings from the highlighted side edge", async ({ page }, testInfo) => {
+test("mobile context menu moves to the next item at the highlighted side edge", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
     await page.addInitScript(() => {
         localStorage.setItem("settingsfixture_settings_context_edges_highlight", "true");
@@ -340,19 +340,57 @@ test("mobile context menu scrolls settings from the highlighted side edge", asyn
     const menu = page.locator(".ContextMenuWrapper");
     await expect(menu).toBeVisible();
     await expect(page.locator(".contextScrollZone.right")).toBeVisible();
-    const scrollSurface = page.locator("[data-context-edge-scroll]");
-    const top = await scrollSurface.evaluate(element => element.scrollTop);
     await page.evaluate(origin => {
         document.dispatchEvent(new PointerEvent("pointermove", {
             clientX: window.innerWidth - 4, clientY: origin.clientY, bubbles: true, pointerType: "touch", pointerId: 4
         }));
     }, origin);
-    await expect.poll(() => scrollSurface.evaluate(element => element.scrollTop)).toBeGreaterThan(top);
-    await expect(menu).toBeVisible();
-    await page.evaluate(() => document.dispatchEvent(new PointerEvent("pointercancel", {
-        bubbles: true, pointerType: "touch", pointerId: 4
-    })));
+    await expect(menu.locator(".ContextMenuButt")).toHaveText("Язык приложения");
+    await page.evaluate(origin => document.dispatchEvent(new PointerEvent("pointerup", {
+        clientX: window.innerWidth - 4, clientY: origin.clientY, bubbles: true, pointerType: "touch", pointerId: 4
+    })), origin);
     await expect(page.locator(".contextScrollZone")).toHaveCount(0);
+    await expect(menu.locator(".ContextMenuButt")).toHaveText("Язык приложения");
+    await expect(page).toHaveURL(/\/settings\/?$/);
+});
+
+test("mobile SideMenu edge hold retargets the open menu to another chat", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
+    await page.addInitScript(() => localStorage.setItem("settingsfixture_settings_context_edges_horizontal", "true"));
+    await page.route("**/api/contacts", route => route.fulfill({json: {success: true, friendsArr: [
+        { id: "first", name: "First chat", nick: "first", lastMessage: null, unread_count: 0, note: true, is_blocked: false, pinned: false, is_group: false },
+        { id: "second", name: "Second chat", nick: "second", lastMessage: null, unread_count: 0, note: true, is_blocked: false, pinned: false, is_group: false }
+    ]}}));
+    await page.goto("/settings");
+    await swipe(page.locator(".settingsButtsWrapper .settingButt").first(), 30, 340);
+    const sideMenu = page.locator(".sideMenu");
+    await expect(sideMenu).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+    const chat = sideMenu.locator('.contactsUser[href="/chat/first"]');
+    await expect(chat).toBeVisible();
+    const origin = await chat.evaluate(element => {
+        const bounds = element.getBoundingClientRect();
+        const origin = {clientX: bounds.x + bounds.width / 2, clientY: bounds.y + bounds.height / 2};
+        element.dispatchEvent(new PointerEvent("pointerdown", {
+            ...origin, bubbles: true, pointerType: "touch", pointerId: 5, isPrimary: true
+        }));
+        return origin;
+    });
+    const menu = page.locator(".ContextMenuWrapper");
+    await expect(menu).toHaveAttribute("aria-label", "First chat");
+    const moveTo = (side: "left" | "right") => page.evaluate(({side, origin}) => {
+        document.dispatchEvent(new PointerEvent("pointermove", {
+            clientX: side === "left" ? 4 : window.innerWidth - 4, clientY: origin.clientY,
+            bubbles: true, pointerType: "touch", pointerId: 5
+        }));
+    }, {side, origin});
+    await moveTo("right");
+    await expect(menu).toHaveAttribute("aria-label", "Second chat");
+    await expect(page.locator(".ContextMenuFocusPreview")).toContainText("Second chat");
+    await moveTo("left");
+    await expect(menu).toHaveAttribute("aria-label", "First chat");
+    await page.evaluate(() => document.dispatchEvent(new PointerEvent("pointercancel", {
+        bubbles: true, pointerType: "touch", pointerId: 5
+    })));
     await expect(menu).toHaveCount(0);
 });
 

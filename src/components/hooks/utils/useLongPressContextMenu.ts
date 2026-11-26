@@ -3,12 +3,15 @@ import { useEffect, useRef, type RefObject } from "react";
 type SwipeContextMenuArgs = {
     closeMenu: () => void;
     menuRef: RefObject<HTMLDivElement | null>;
+    edgeSourceRef: RefObject<HTMLElement | null>;
     highlightContextEdges: boolean;
     sideContextEdges: boolean;
 };
 
 const edgeSize = 44;
 const edgeDelay = 300;
+const edgeRepeatDelay = 650;
+const contextTrigger = "[data-context-menu]";
 const scrollSurfaces = ".sideMenu .slide, .settingsDiv .settingsButtsWrapper, .settingsDiv .settingTab, .settingsDiv .searchReveal, .settingsDiv .buttsScroll, .chat, .chatMediaBody.active";
 
 export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
@@ -31,18 +34,63 @@ export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
         let scrollSurface: HTMLElement | null = null;
         let edgeFrame = 0;
         let edgeDirection = 0;
-        let edgeSince = 0;
-        let lastFrame = 0;
+        let nextEdgeStep = 0;
+        let edgeChanged = false;
+        let stepWithoutMove = false;
         let zones: HTMLDivElement[] = [];
 
         const stopEdgeScroll = () => {
             cancelAnimationFrame(edgeFrame);
             edgeFrame = 0;
             edgeDirection = 0;
+            edgeChanged = false;
+            stepWithoutMove = false;
             scrollSurface?.removeAttribute("data-context-edge-scroll");
             scrollSurface = null;
             zones.forEach(zone => zone.remove());
             zones = [];
+        };
+
+        const getListTriggers = (surface: HTMLElement) =>
+            [...surface.querySelectorAll<HTMLElement>(contextTrigger)].filter(element =>
+                element.closest(scrollSurfaces) === surface &&
+                !surface.contains(element.parentElement?.closest(contextTrigger) ?? null) &&
+                !element.matches(".chatMediaEntity, :disabled, [aria-disabled=true]") &&
+                element.getClientRects().length > 0
+            );
+
+        const stepToNeighbor = (surface: HTMLElement, direction: number) => {
+            if (!press) return;
+            const current = press.target;
+            const items = getListTriggers(surface);
+            const index = items.findIndex(item => item.contains(current));
+            const next = index < 0 ? undefined : items[index + direction];
+            if (!next) return;
+
+            const bounds = surface.getBoundingClientRect();
+            const item = next.getBoundingClientRect();
+            const top = Math.max(0, bounds.top);
+            const bottom = Math.min(window.innerHeight, bounds.bottom);
+            if (item.top < top || item.bottom > bottom) {
+                surface.scrollTop += item.top + item.height / 2 - (top + bottom) / 2;
+            }
+
+            const visible = next.getBoundingClientRect();
+            press.target = next;
+            edgeChanged = true;
+            stepWithoutMove = true;
+            clearHover();
+            const { edgeSourceRef } = latest.current;
+            edgeSourceRef.current = next;
+            try {
+                next.dispatchEvent(new MouseEvent("contextmenu", {
+                    bubbles: true, cancelable: true,
+                    clientX: visible.left + visible.width / 2,
+                    clientY: Math.max(top, Math.min(bottom, visible.top + visible.height / 2))
+                }));
+            } finally {
+                edgeSourceRef.current = null;
+            }
         };
 
         const tickEdgeScroll = (now: number) => {
@@ -60,21 +108,21 @@ export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
                 coordinate < edgeSize ? -1 : coordinate > size - edgeSize ? 1 : 0;
             if (direction !== edgeDirection) {
                 edgeDirection = direction;
-                edgeSince = now;
+                nextEdgeStep = now + edgeDelay;
             }
             zones.forEach((zone, index) => zone.classList.toggle("active", direction === (index === 0 ? -1 : 1)));
-            if (direction && now - edgeSince >= edgeDelay) {
-                scrollSurface.scrollTop += direction * Math.min(now - lastFrame, 32) * .42;
+            if (direction && now >= nextEdgeStep) {
+                stepToNeighbor(scrollSurface, direction);
+                nextEdgeStep = now + edgeRepeatDelay;
             }
-            lastFrame = now;
             edgeFrame = requestAnimationFrame(tickEdgeScroll);
         };
 
         const startEdgeScroll = (target: HTMLElement) => {
             if (target.closest("[data-calendar-date]")) return;
-            scrollSurface = target.closest<HTMLElement>(scrollSurfaces) ??
-                target.closest(".settingsDiv .settingsPage")?.querySelector<HTMLElement>(".settingTab") ?? null;
-            if (!scrollSurface) return;
+            const surface = target.closest<HTMLElement>(scrollSurfaces);
+            if (!surface || getListTriggers(surface).length < 2) return;
+            scrollSurface = surface;
 
             scrollSurface.setAttribute("data-context-edge-scroll", "");
             if (latest.current.highlightContextEdges) {
@@ -86,7 +134,6 @@ export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
                     return zone;
                 });
             }
-            lastFrame = performance.now();
             edgeFrame = requestAnimationFrame(() => { edgeFrame = requestAnimationFrame(tickEdgeScroll); });
         };
 
@@ -132,6 +179,7 @@ export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
 
         const move = (event: PointerEvent) => {
             if (!press || event.pointerId !== press.id) return;
+            if (press.x !== event.clientX || press.y !== event.clientY) stepWithoutMove = false;
             press.x = event.clientX;
             press.y = event.clientY;
 
@@ -166,12 +214,12 @@ export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
             const active = press.triggered;
             const origin = press.target;
             const target = document.elementFromPoint(event.clientX, event.clientY);
-            const item = active ? target?.closest<HTMLElement>(".ContextMenuWrapper .ContextMenuButt") : null;
+            const item = active && !stepWithoutMove ? target?.closest<HTMLElement>(".ContextMenuWrapper .ContextMenuButt") : null;
             const distance = Math.hypot(event.clientX - press.startX, event.clientY - press.startY);
             // An unmoved release must not choose an item, even when the
             // highlighted preview sits over a separate dimming layer.
             const calendarPreview=origin.hasAttribute("data-calendar-date") && !!target?.closest("[data-calendar-preview-day]");
-            const onOrigin = distance < 24 || target === origin || !!(target && origin.contains(target)) || calendarPreview;
+            const onOrigin = (edgeChanged && (edgeDirection !== 0 || stepWithoutMove)) || distance < 24 || target === origin || !!(target && origin.contains(target)) || calendarPreview;
             if(origin.hasAttribute("data-calendar-date"))window.dispatchEvent(new Event("calendar-context-end"));
             if (active) suppressUntil = performance.now() + 1400;
             cancel(event.type === "pointercancel" || active && !item && !onOrigin);

@@ -90,14 +90,16 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
         visible: false,
     })
     const menuRef = useRef<HTMLDivElement>(null);
+    const edgeSourceRef = useRef<HTMLElement | null>(null);
 
     const openMenu = (x:number, y:number, point:string, options:MenuOptions, habit?:Habit, chatInfo?:chatInfoType, curChat?:curChatType, memberInfo?:MemberType ) => {
         window.getSelection()?.removeAllRanges();
-        const side = document.elementFromPoint(x, y)?.closest<HTMLElement>(".sideMenu");
+        const source = edgeSourceRef.current ?? document.elementFromPoint(x, y);
+        const side = source?.closest<HTMLElement>(".sideMenu");
         const bounds = side?.getBoundingClientRect();
         // Header menus open below the header; do not capture the message underneath.
         const isHeaderMenu = ["chatAction", "acc", "profileActions", "headerQuickAction", "habitHeader", "settingsBack", "settingsSection"].includes(point);
-        const target = isHeaderMenu || point==="calendarDay" ? null : document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-context-menu]");
+        const target = isHeaderMenu || point==="calendarDay" ? null : source?.closest<HTMLElement>("[data-context-menu]");
         const focusSource = window.matchMedia("(pointer: coarse)").matches && target &&
             !target.closest(".headerDiv, [data-header-gesture]") ? target : undefined;
         const focusBounds = focusSource?.getBoundingClientRect();
@@ -114,7 +116,7 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
     }
 
     const { highlightContextEdges, sideContextEdges } = useSettings();
-    useLongPressContextMenu({ closeMenu, menuRef, highlightContextEdges, sideContextEdges });
+    useLongPressContextMenu({ closeMenu, menuRef, edgeSourceRef, highlightContextEdges, sideContextEdges });
 
     useEffect(() => {
         const close = () => closeMenu()
