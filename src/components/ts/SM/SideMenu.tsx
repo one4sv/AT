@@ -47,6 +47,8 @@ export default function SideMenu() {
         closeMenu,
         openSideMenu,
         activeTab,
+        tabDragPosition,
+        setTabDragPosition,
         searchMode,
         setSearchMode,
         searchQuery,
@@ -74,7 +76,8 @@ export default function SideMenu() {
             if (filter) setActiveTab(searchTabForFilter(filter));
         }}
         onChoose={() => { setSearchMode(false); setSearchQuery(""); setSearchFilter(null); closeMenu(); }}/> : null;
-    const translateSlider = activeTab === "chats" ? 0 : activeTab === "habits" ? -25 : activeTab === "spots" ? -50 : activeTab === "user" ? -75 : 0;
+    const tabIndex = sideMenuTabs.indexOf(activeTab);
+    const translateSlider = -(tabDragPosition ?? tabIndex) * 25;
     const startX = useRef(0);
     const startY = useRef(0);
     const startTranslate = useRef(0);
@@ -120,6 +123,7 @@ export default function SideMenu() {
         horizontalSwipe.current = false;
         verticalScroll.current = false;
         setIsDragging(false);
+        setTabDragPosition(null);
         setDontHandle(false);
         setDontHandleOther(false);
         setTranslateX(showSideMenu ? 0 : -100);
@@ -170,6 +174,13 @@ export default function SideMenu() {
         swipeDistance.current = diffPx;
         const switching = isMobile && user.id && sideMenuSwipe === "sections" &&
             (activeTab !== "user" || diffPx >= 0);
+        const width = sideMenuRef.current?.clientWidth || window.innerWidth;
+        if (switching) {
+            const offset = Math.max(-1, Math.min(1, -diffPx / width));
+            setTabDragPosition(Math.max(0, Math.min(sideMenuTabs.length - 1, tabIndex + offset)));
+        } else {
+            setTabDragPosition(null);
+        }
         const diffPercent = diffPx / window.innerWidth * 100;
         currentTranslate.current = switching ? startTranslate.current :
             Math.max(-100, Math.min(0, startTranslate.current + diffPercent));
@@ -179,6 +190,7 @@ export default function SideMenu() {
     const finishTouch = (cancelled: boolean) => {
         if (horizontalSwipe.current || verticalScroll.current) setDontHandle(false);
         if (horizontalSwipe.current) {
+            setTabDragPosition(null);
             setIsDragging(false);
             setDontHandleOther(false);
             if (cancelled || menu.visible || blackout.seted) {
@@ -186,8 +198,7 @@ export default function SideMenu() {
             } else {
                 const distance = swipeDistance.current;
                 if (isMobile && user.id && sideMenuSwipe === "sections" && Math.abs(distance) >= 40) {
-                    const index = sideMenuTabs.indexOf(activeTab);
-                    const next = sideMenuTabs[index + (distance < 0 ? 1 : -1)];
+                    const next = sideMenuTabs[tabIndex + (distance < 0 ? 1 : -1)];
                     if (next) {
                         if (searchMode) {
                             setSearchFilter(null);
@@ -316,7 +327,7 @@ export default function SideMenu() {
                     className="slider"
                     style={{
                         transform: `translateX(${translateSlider}%)`,
-                        transition: startupTabAnimationReady ? undefined : "none"
+                        transition: startupTabAnimationReady && tabDragPosition === null ? undefined : "none"
                     }}
                 >
                     <div className="slide">

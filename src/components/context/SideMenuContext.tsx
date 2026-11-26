@@ -48,6 +48,8 @@ interface SideMenuContextType {
     showSlide: slides;
     setShowSlide: React.Dispatch<SetStateAction<slides>>;
     activeTab: tab;
+    tabDragPosition: number | null;
+    setTabDragPosition: React.Dispatch<React.SetStateAction<number | null>>;
     setActiveTab: React.Dispatch<SetStateAction<tab>>;
     messageSelectedValue: string;
     setMessageSelectedValue: React.Dispatch<SetStateAction<string>>;
@@ -105,6 +107,7 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
         translateXRef.current = value;
         setTranslateXState(value);
     }, []);
+    const [tabDragPosition, setTabDragPosition] = useState<number | null>(null);
     const [startupTabAnimationReady, setStartupTabAnimationReady] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [dontHandle, setDontHandle] = useState(false);
@@ -409,6 +412,8 @@ export function SideMenuProvider({ children }: { children: ReactNode }) {
                 showSlide,
                 setShowSlide,
                 activeTab,
+                tabDragPosition,
+                setTabDragPosition,
                 setActiveTab,
                 setTranslateX,
                 translateX,

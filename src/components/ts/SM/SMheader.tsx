@@ -20,6 +20,7 @@ export default function SMheader() {
     const { user } = useUser()
     const {
         activeTab,
+        tabDragPosition,
         setActiveTab,
         searchMode,
         searchFilter,
@@ -320,7 +321,7 @@ export default function SMheader() {
             <div className="smHeaderSliderWrapper">
                 <div
                     className="smHeaderSlider"
-                    style={{ transform: `translateX(${translateSlider}%)`, transition: startupTabAnimationReady ? undefined : "none" }}
+                    style={{ transform: `translateX(${tabDragPosition === null ? translateSlider : -tabDragPosition * 25}%)`, transition: startupTabAnimationReady && tabDragPosition === null ? undefined : "none" }}
                 >
                     <div className="smHeaderPart">
                         <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.chats")}</div>

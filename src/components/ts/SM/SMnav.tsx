@@ -40,6 +40,7 @@ export default function SMnav() {
     const {
         setActiveTab,
         activeTab,
+        tabDragPosition,
         searchMode,
         setSearchMode,
         searchQuery,
@@ -627,7 +628,7 @@ export default function SMnav() {
             </div>
 
             <div className={`SMnav ${searchMode ? "dis" : "active"}`} ref={tabsRef}>
-                <div className={`SMnavActive ${activeTab}`} style={startupTabAnimationReady ? undefined : { transition: "none" }} />
+                <div className={`SMnavActive ${activeTab}`} style={tabDragPosition === null ? (startupTabAnimationReady ? undefined : { transition: "none" }) : { left: `calc(${tabDragPosition * 25}% + 1px)`, transition: "none" }} />
 
                 <div
                     className={`SMnavButt ${activeTab === "chats" ? "active" : ""}`}

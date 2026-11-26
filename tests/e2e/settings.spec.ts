@@ -275,8 +275,8 @@ test("personal plan participants can be invited and removed from its details pag
     await expect(section.locator(".planMember")).toHaveCount(1);
 });
 
-async function swipe(surface: Locator, from: number, to: number) {
-    await surface.evaluate((element, [from, to]) => {
+async function swipe(surface: Locator, from: number, to: number, inspectSections = false) {
+    return surface.evaluate(async (element, { from, to, inspectSections }) => {
         const touch = (x: number) => ({ identifier: 1, target: element, clientX: x, clientY: 300 });
         const fire = (type: string, x: number) => {
             const point = touch(x);
@@ -294,8 +294,19 @@ async function swipe(surface: Locator, from: number, to: number) {
         fire("touchstart", from);
         fire("touchmove", (from + to) / 2);
         fire("touchmove", to);
+        let positions: number[] = [];
+        if (inspectSections) {
+            await new Promise(requestAnimationFrame);
+            positions = [".sideMenu .slider", ".smHeaderSlider", ".SMnavActive"].map(selector => {
+                const part = document.querySelector<HTMLElement>(selector)!;
+                return selector === ".SMnavActive"
+                    ? parseFloat(getComputedStyle(part).left) / part.parentElement!.clientWidth
+                    : -new DOMMatrix(getComputedStyle(part).transform).m41 / part.offsetWidth;
+            });
+        }
         fire("touchend", to);
-    }, [from, to]);
+        return positions;
+    }, { from, to, inspectSections });
 }
 
 test("mobile settings buttons allow swiping SideMenu open", async ({ page }, testInfo) => {
@@ -350,7 +361,12 @@ test("mobile SideMenu swipes work on context triggers, the header and navigation
         localStorage.getItem("settingsfixture_settings_mobile_menu_swipe"))).toBe('"sections"');
     await open();
     await nav.locator('[data-tab="habits"]').tap();
-    await swipe(header, 330, 230);
+    const positions = await swipe(header, 330, 230, true);
+    expect(positions).toHaveLength(3);
+    for (const position of positions) {
+        expect(position).toBeGreaterThan(.25);
+        expect(position).toBeLessThan(.5);
+    }
     await expect(nav.locator('[data-tab="spots"]')).toHaveClass(/active/);
     await swipe(nav.locator('[data-tab="spots"]'), 330, 230);
     await expect(nav.locator('[data-tab="user"]')).toHaveClass(/active/);

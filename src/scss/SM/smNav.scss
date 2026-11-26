@@ -50,6 +50,10 @@
     background: linear-gradient(135deg, var(--accent), var(--grad));
     transition: left 0.3s ease, width .3s cubic-bezier(0.075, 0.82, 0.165, 1);
 
+    @media (max-width: 800px) {
+        transition-timing-function: ease-in-out, cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+
     &.chats {
         left: 1px;
     }
