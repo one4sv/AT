@@ -31,6 +31,7 @@ export type MenuOptions = {
     onCopy?: () => void,
     onCopyLink?: () => void,
     onOpen?: () => void,
+    onApply?: () => void,
     onShare?: () => void,
     onForward?: () => void,
     onReply?: () => void,

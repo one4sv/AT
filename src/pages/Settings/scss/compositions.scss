@@ -38,6 +38,7 @@
         &.active { outline: 2px solid var(--accent); outline-offset: -2px; }
     }
     .compositionCardApply {
+        border-radius: inherit;
         display: flex;
         flex-direction: column;
         text-align: start;
@@ -207,7 +208,7 @@
         > button.danger { color: var(--notValid); }
     }
     @media (hover: hover) {
-        .compositionCardApply:hover { background: var(--menuButtHover); border-radius: 24px; }
+        .compositionCardApply:hover { background: var(--menuButtHover); }
     }
     @media (max-width: 800px) {
         .compositionWeekday > span { flex-basis: 83px; }

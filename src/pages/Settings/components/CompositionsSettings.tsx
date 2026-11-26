@@ -167,6 +167,7 @@ export default function CompositionsSettings({ search }: { search: string }) {
                 setName(item.name);
             },
             onOpen: () => preview(item.id),
+            onApply: () => apply(item),
             onSave: () => overwrite(item),
             onDuplicate: () => duplicate(item),
             canDuplicate: compositions.items.length < MAX_COMPOSITIONS,
@@ -200,7 +201,6 @@ export default function CompositionsSettings({ search }: { search: string }) {
             <div className="compositionGrid">
                 {compositions.items.map(item => {
                     const active = compositions.activeId === item.id;
-                    const changed = active && JSON.stringify(current) !== JSON.stringify(item.appearance);
                     return <div key={item.id} className={"compositionCard" + (active ? " active" : "")}
                         data-context-menu="true" data-context-menu-allow-button="true"
                         onContextMenu={event => onCompositionContextMenu(event, item)}>
@@ -211,7 +211,7 @@ export default function CompositionsSettings({ search }: { search: string }) {
                             <span className="compositionCardName">{item.name}</span>
                             {active && <span className="compositionCardActive">
                                 <CheckCircleIcon size={16}/>
-                                {changed ? labels("changed") : labels("active")}
+                                {labels("active")}
                             </span>}
                         </button>
                         <button type="button" className="compositionMenuToggle"

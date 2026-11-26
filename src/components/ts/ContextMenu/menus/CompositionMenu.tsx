@@ -1,4 +1,4 @@
-import { ArrowsOutIcon, CopyIcon, PencilSimpleIcon, StackIcon, TrashIcon } from "@phosphor-icons/react";
+import { ArrowsOutIcon, CheckCircleIcon, CopyIcon, PencilSimpleIcon, StackIcon, TrashIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useContextMenu } from "../../../hooks/ContextMenuHook";
 
@@ -13,6 +13,9 @@ export default function CompositionMenu() {
     };
 
     return <>
+        <div className="ContextMenuButt" onClick={() => run(options.onApply)}>
+            <CheckCircleIcon/>{t("general.compositionApply")}
+        </div>
         <div className="ContextMenuButt" onClick={() => run(options.onOpen)}>
             <ArrowsOutIcon/>{t("general.compositionPreview")}
         </div>
