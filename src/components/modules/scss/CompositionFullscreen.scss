@@ -13,7 +13,7 @@
     color: var(--tc);
     background: var(--bgc);
 
-    button {
+    .compositionFullscreenControls > button {
         border: none;
         border-radius: 24px;
         background: var(--mc);
@@ -23,13 +23,6 @@
         min-height: 44px;
 
         &:disabled { opacity: .45; }
-    }
-
-    .compositionFullscreenClose {
-        position: absolute;
-        z-index: 1;
-        top: max(12px, env(safe-area-inset-top));
-        right: 12px;
     }
 
     .compositionFullscreenViewport {
@@ -70,7 +63,7 @@
         span { display: block; overflow-wrap: anywhere; }
     }
 
-    .compositionFullscreenApply {
+    .compositionFullscreenControls > .compositionFullscreenApply {
         grid-column: 1 / -1;
         background: linear-gradient(135deg, var(--accent), var(--grad));
         color: var(--inner_text);
@@ -83,79 +76,123 @@
 }
 
 .compositionSample {
+    --composition-header-height: 5dvh;
+    --composition-menu-width: min(100%, max(19.5vw, 250px));
+    box-sizing: border-box;
     position: relative;
     height: 100%;
     display: grid;
     grid-template-columns: 19.5vw minmax(0, 1fr);
-    grid-template-rows: min-content minmax(0, 1fr);
-    gap: 12px;
-    padding: 8px 64px 0 8px;
-    pointer-events: none;
+    grid-template-rows: auto minmax(0, 1fr);
+    padding-bottom: calc(max(12px, env(safe-area-inset-bottom)) + 116px);
 }
 
-.compositionSampleSide,
-.compositionSampleTitle,
-.compositionSampleSections > section {
-    background: var(--mc);
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
-    border-radius: 24px;
-    color: var(--tc);
+.compositionSampleHeader.headerDiv {
+    grid-column: 2;
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: 2;
+
+    > .headerTitle { cursor: default; }
+}
+
+.compositionSampleMenuButton.headerButt {
+    display: none;
 }
 
 .compositionSampleSide {
     grid-row: 1 / -1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-self: start;
-    padding: 12px;
+    min-width: 0;
+    padding: .75dvh .5vw;
+    overflow-y: auto;
+    background: var(--mc);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
 
-    > div {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px;
-        border-radius: 24px;
-        background: var(--interact);
+    .SMAvatar {
+        display: grid;
+        place-items: center;
+        max-width: 100%;
+        aspect-ratio: 1;
+        height: auto;
+
+        > svg { width: 45%; height: auto; }
     }
-}
-
-.compositionSampleTitle {
-    grid-column: 2;
-    padding: 10px 18px;
-    font-size: 20px;
 }
 
 .compositionSampleSections {
     grid-column: 2;
+    box-sizing: border-box;
     width: min(100%, 40vw);
     justify-self: center;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 1dvh .5vw;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 1dvh;
 
     > section {
         display: grid;
-        gap: 10px;
-        padding: 16px;
+        gap: 1dvh;
+        padding: 1.5dvh max(12px, 1vw);
+        border: 1px solid var(--block_border);
+        border-radius: 24px;
+        background: var(--mc);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
     }
 }
 
-.compositionSampleSide > .compositionSampleSelected {
-    background: linear-gradient(135deg, var(--accent), var(--grad));
-    color: var(--inner_text);
+.compositionSampleValue {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+
+    > :last-child { white-space: nowrap; }
+}
+
+@mixin overlayCompositionMenu {
+    .compositionSample { grid-template-columns: 0 minmax(0, 1fr); }
+    .compositionSampleMenuButton.headerButt { display: flex; }
+
+    .compositionSampleSide {
+        position: absolute;
+        top: var(--composition-header-height);
+        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 116px);
+        left: 0;
+        width: var(--composition-menu-width);
+        z-index: 1;
+        display: none;
+    }
+
+    .compositionSample[data-menu-open="true"] .compositionSampleSide { display: block; }
 }
 
 .compositionFullscreenSlide[data-layout="hidden"] {
-    .compositionSample { grid-template-columns: 0 minmax(0, 1fr); }
-    .compositionSampleSide { display: none; }
+    @include overlayCompositionMenu;
 }
 
 @media (max-width: 800px) {
-    .compositionSample { grid-template-columns: 0 minmax(0, 1fr); }
-    .compositionSampleSide { display: none; }
-    .compositionSampleSections { width: 100%; }
+    .compositionFullscreenSlide {
+        @include overlayCompositionMenu;
+
+        .compositionSample {
+            --composition-header-height: 7dvh;
+            --composition-menu-width: 100%;
+        }
+
+        .compositionSampleSide {
+            padding-inline: 2vw;
+        }
+
+        .compositionSampleSections {
+            width: 100%;
+            padding-inline: 2vw;
+        }
+    }
 }
 
 @media (min-width: 801px) {

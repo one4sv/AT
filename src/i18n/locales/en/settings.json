@@ -255,6 +255,7 @@
     "accentColors": "Accent colors",
     "mainColor": "Main color",
     "gradient": "Gradient",
+    "decorBlur": "Interface blur",
     "decor": "Decor",
     "default": "Monochrome",
     "glass": "Glass",
