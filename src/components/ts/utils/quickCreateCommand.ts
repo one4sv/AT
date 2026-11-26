@@ -46,17 +46,17 @@ function normalizeDate(raw: string): string | undefined {
     return year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
 }
 
-export function quickCommandOnSpace(text: string): "act" | "plan" | null {
-    const match = /^\s*\/(act|plan) $/i.exec(text);
-    return match ? match[1].toLowerCase() as "act" | "plan" : null;
+export function quickCommandOnSpace(text: string): "act" | "do" | null {
+    const match = /^\s*\/(act|do) $/i.exec(text);
+    return match ? match[1].toLowerCase() as "act" | "do" : null;
 }
 
 export function isQuickCreateCommand(text: string): boolean {
-    return /^\s*\/(act|plan)(?=\s|$)/i.test(text);
+    return /^\s*\/(act|do)(?=\s|$)/i.test(text);
 }
 
 export function parseQuickCreateCommand(text: string): QuickCreateDraft | null {
-    const command = text.trimStart().match(/^\/(act|plan)(?=\s|$)/i);
+    const command = text.trimStart().match(/^\/(act|do)(?=\s|$)/i);
     if (!command) return null;
 
     const rest = text.trimStart().slice(command[0].length);
@@ -143,7 +143,7 @@ export type QuickInputField = "name" | "description" | "periodicity" | "date" | 
 
 /** A single editable TA: spaces separate slots; quotes preserve spaces inside a slot. */
 export function parseQuickInput(text: string) {
-    const command = /^\/(act|plan) /i.exec(text);
+    const command = /^\/(act|do) /i.exec(text);
     if (!command) return null;
     const source = text.slice(command[0].length);
     const slots: string[] = [""];

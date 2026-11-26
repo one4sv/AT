@@ -13,8 +13,10 @@
     "off": "Off",
     "valueHint": "Suggested setting value. It changes only after you select Apply.",
     "backgroundAddSingle": "Attach only one image to add a wallpaper, without replying or forwarding.",
-    "commandSuggestion": "Open or share a setting",
-    "commandHelp": "Examples: /settings background blur 12, /settings theme dark, /settings context edges on, /settings composition preview off."
+    "localCommandSuggestion": "Open or change your setting",
+    "localOnly": "The /set command is only available in Saved messages.",
+    "commandSuggestion": "Share a setting",
+    "commandHelp": "/set interface theme dark — change theme in Saved; /settings interface theme dark — share."
   },
   "settings": {
     "title": "Settings",

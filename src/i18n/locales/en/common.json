@@ -282,7 +282,7 @@
       "createActivity": "Create activity",
       "createPlan": "Create plan",
       "actTemplate": "/act name: ; description: ; periodicity: everyday; start: ; end: ",
-      "planTemplate": "/plan name: ; description: ; date: ; start: ; end: ",
+      "planTemplate": "/do name: ; description: ; date: ; start: ; end: ",
       "aria": "Choose a command",
       "select": "Insert template",
       "activityCreated": "Activity created",

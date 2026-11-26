@@ -50,7 +50,7 @@ export function validSettingValue(setting: SharedSetting, value: string) {
 }
 
 export function parseSettingCommand(text: string) {
-    const match = /^\/settings(?:\s+(.*))?$/i.exec(text.trim());
+    const match = /^\/(?:settings|set)(?:\s+(.*))?$/i.exec(text.trim());
     if (!match) return null;
     const input = (match[1] ?? "").toLowerCase().trim().replace(/\s+/g, " ");
     if (!input || input === "background") return { input, setting: null, value: null };

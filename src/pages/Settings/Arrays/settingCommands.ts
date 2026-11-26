@@ -26,9 +26,9 @@ export function settingCommandCatalog(source: SearchableSection[]): Entry[] {
     });
 }
 
-const inputOf = (text: string) => text.replace(/^\/settings\s*/i, "").trim().toLowerCase().replace(/\s+/g, " ");
+const inputOf = (text: string) => text.replace(/^\/(?:settings|set)(?=\s|$)\s*/i, "").trim().toLowerCase().replace(/\s+/g, " ");
 export function isBackgroundAddCommand(text: string) {
-    return /^\s*\/settings\s+(?:interface\s+)?background\s+add\s*$/i.test(text);
+    return /^\s*\/set\s+(?:interface\s+)?background\s+add\s*$/i.test(text);
 }
 export function resolveSettingCommand(text: string, catalog: Entry[]) {
     const input = inputOf(text);
@@ -40,6 +40,9 @@ export function resolveSettingCommand(text: string, catalog: Entry[]) {
 
 export function settingCommandSuggestions(text: string, catalog: Entry[], t: (key: string) => string): EntitySuggestionItem[] {
     const input = inputOf(text);
+    const local = /^\/set(?=\s|$)/i.test(text);
+    const prefix = local ? "/set " : "/settings ";
+    catalog = catalog.filter(entry => local || !entry.action);
     const resolved = resolveSettingCommand(text, catalog);
     if (/\s$/.test(text) && resolved?.entry.preset) {
         const key = resolved.entry.preset;
@@ -59,6 +62,6 @@ export function settingCommandSuggestions(text: string, catalog: Entry[], t: (ke
     }
     return catalog.filter(entry => input ? entry.path.startsWith(input) && (entry.path !== input || !/\s$/.test(text)) :
         !entry.path.includes(" ")).map(entry => ({
-        id: entry.path, label: entry.action === "backgroundAdd" ? t("backgroundLibrary.add") : entry.item?.name || (entry.preset ? t(sharedSettings[entry.preset].title) : entry.section.name), description: "/settings " + entry.path
+        id: entry.path, label: entry.action === "backgroundAdd" ? t("backgroundLibrary.add") : entry.item?.name || (entry.preset ? t(sharedSettings[entry.preset].title) : entry.section.name), description: prefix + entry.path
     }));
 }

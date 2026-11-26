@@ -13,8 +13,10 @@
     "off": "Выключено",
     "valueHint": "Предлагаемое значение настройки. Оно изменится только после нажатия «Применить».",
     "backgroundAddSingle": "Для добавления фона прикрепите только одно изображение, без ответа или пересылки.",
-    "commandSuggestion": "Открыть или поделиться настройкой",
-    "commandHelp": "Примеры: /settings background blur 12, /settings theme dark, /settings context edges on, /settings composition preview off."
+    "localCommandSuggestion": "Открыть или изменить свою настройку",
+    "localOnly": "Команда /set доступна только в «Избранном».",
+    "commandSuggestion": "Поделиться настройкой",
+    "commandHelp": "/set interface theme dark — изменить тему в «Избранном»; /settings interface theme dark — поделиться."
   },
   "settings": {
     "title": "Настройки",

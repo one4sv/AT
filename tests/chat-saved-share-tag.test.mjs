@@ -21,7 +21,10 @@ test("Saved has share actions for entities without invitation or group commands"
     assert.doesNotMatch(list, /share:invite|share:group/);
     assert.match(c, /selectSavedCommand\(matchingCommands\[/);
     assert.match(c, /onSelect=\{selectSavedCommand\}/);
-    assert.match(list, /id:"share:plan",label:"\/shareplan"/);
+    assert.match(list, /id:"share:plan",label:"\/plan"/);
+    assert.match(c, /id: "do", label: "\/do"/);
+    assert.match(c, /id: "set", label: "\/set"/);
+    assert.doesNotMatch(c, /\/shareplan/);
     assert.match(c, /parseQuickInput\(mess\)/);
     assert.doesNotMatch(c, /<QuickCommandComposer/);
     assert.match(c, /shareMatch \? shareItems : plainShare/);

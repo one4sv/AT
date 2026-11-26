@@ -137,7 +137,8 @@ export default function ChatTextArea({
     const quickInput = savedChat && !editing ? parseQuickInput(mess) : null;
     const quickDraft = quickInput?.draft ?? null;
     const settingCatalog = settingCommandCatalog(searchableSettings);
-    const settingInput = !editing && /^\/settings /i.test(mess);
+    const localSetting = savedChat && !editing && /^\/set(?=\s|$)/i.test(mess);
+    const settingInput = !editing && (/^\/settings /i.test(mess) || (localSetting && /^\/set /i.test(mess)));
     const quickLabels: Record<QuickInputField, string> = {
         name: tc("chatUi.quickCommands.requiredName"), description: tc("chatUi.description"),
         periodicity: tc("habitUi.periodicity"), date: tc("chatUi.quickCommands.requiredDate"),
@@ -150,11 +151,12 @@ export default function ChatTextArea({
     const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed ? [] : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText) : quickPeriodItems;
     const quickCommandItems: EntitySuggestionItem[] = [
         { id: "act", label: "/act", description: tc("chatUi.quickCommands.createActivity"), icon: <CheckCircleIcon size={18}/> },
-        { id: "plan", label: "/plan", description: tc("chatUi.quickCommands.createPlan"), icon: <CalendarPlusIcon size={18}/> }
+        { id: "do", label: "/do", description: tc("chatUi.quickCommands.createPlan"), icon: <CalendarPlusIcon size={18}/> },
+        { id: "set", label: "/set", description: settingsText("sharing.localCommandSuggestion"), icon: <GearSixIcon size={18}/> }
     ];
     const savedShareCommandItems: EntitySuggestionItem[] = [
         {id:"share:habit",label:"/habit",description:tc("chatUi.shareActivity"),icon:<CheckCircleIcon size={18}/>},
-        {id:"share:plan",label:"/shareplan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
+        {id:"share:plan",label:"/plan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
         {id:"share:post",label:"/post",description:tc("chatUi.sharePost"),icon:<ArticleIcon size={18}/>},
         {id:"share:user",label:"/user",description:tc("chatUi.shareUser"),icon:<UserCircleIcon size={18}/>},
         {id:"settings",label:"/settings",description:settingsText("sharing.commandSuggestion"),icon:<GearSixIcon size={18}/> }
@@ -165,7 +167,7 @@ export default function ChatTextArea({
             item.label.startsWith(commandQuery.toLowerCase()) && !/\s$/.test(mess)) : [];
     const shareCommands: EntitySuggestionItem[] = [
         {id:"habit",label:"/habit",description:tc("chatUi.shareActivity"),icon:<CheckCircleIcon size={18}/>},
-        {id:"plan",label:"/shareplan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
+        {id:"plan",label:"/plan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
         {id:"post",label:"/post",description:tc("chatUi.sharePost"),icon:<ArticleIcon size={18}/>},
         {id:"user",label:"/user",description:tc("chatUi.shareUser"),icon:<UserCircleIcon size={18}/>},
         {id:"group",label:"/group",description:tc("chatUi.shareGroup"),icon:<ChatsCircleIcon size={18}/> },
@@ -175,9 +177,8 @@ export default function ChatTextArea({
     const plainShare = !savedChat && !editing && !shareDismissed && /^\/[a-z]*$/i.test(mess)
         ? shareCommands.filter(item => item.label.startsWith(mess.toLowerCase())) : [];
     const shareMatch = !editing && !shareDismissed &&
-        (!savedChat || /^\/(?:shareplan|habit|post|user)(?=\s|$)/i.test(mess))
-        ? /^\/(habit|shareplan|plan|post|user|group|invite)(?:\s+(.{0,100}))?$/iu.exec(mess) : null;
-    if (shareMatch?.[1] === "shareplan") shareMatch[1] = "plan";
+        (!savedChat || /^\/(?:plan|habit|post|user)(?=\s|$)/i.test(mess))
+        ? /^\/(habit|plan|post|user|group|invite)(?:\s+(.{0,100}))?$/iu.exec(mess) : null;
     const shareSuggestions = shareMatch ? shareItems : plainShare;
     const canShowCommands = savedChat && !quickDraft && !editing && !shareMatch &&
         !commandListDismissed && matchingCommands.length > 0;
@@ -370,8 +371,8 @@ export default function ChatTextArea({
     };
     const displayedMess = previewCommand || sharePreview || mess;
     const commandHighlight = !editing &&
-        (savedChat || !/^\/act(?=\s|$)/i.test(displayedMess))
-        ? displayedMess.match(/^\/(?:act|habit|plan|shareplan|post|user|invite|group|settings)(?=\s|$)/i)?.[0] : null;
+        (savedChat || !/^\/(?:act|do|set)(?=\s|$)/i.test(displayedMess))
+        ? displayedMess.match(/^\/(?:act|do|habit|plan|post|user|invite|group|set|settings)(?=\s|$)/i)?.[0] : null;
     const commitCommand = (id: string) => {
         createdQuick.current = null;
         setMess("/" + id + " ");
@@ -382,9 +383,9 @@ export default function ChatTextArea({
         requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
     };
     const chooseField = (item: EntitySuggestionItem) => {
-        if (settingInput) setMess("/settings " + item.id + " ");
+        if (settingInput) setMess((localSetting ? "/set " : "/settings ") + item.id + " ");
         else if (quickInput?.field === "periodicity") {
-            const prefix = mess.match(/^\/(?:act|plan) (?:[^" ]|"[^"]*")* (?:[^" ]|"[^"]*")* /i)?.[0] ?? mess.slice(0, mess.length - (quickInput.slots[2] || "").length);
+            const prefix = mess.match(/^\/(?:act|do) (?:[^" ]|"[^"]*")* (?:[^" ]|"[^"]*")* /i)?.[0] ?? mess.slice(0, mess.length - (quickInput.slots[2] || "").length);
             setMess(prefix + item.id + " ");
         }
         setFieldSuggestionsDismissed(false);
@@ -396,10 +397,10 @@ export default function ChatTextArea({
         });
     };
     const selectSavedCommand = (item: EntitySuggestionItem) => {
-        if (item.id === "settings") {
+        if (item.id === "settings" || item.id === "set") {
             setFieldSuggestionsDismissed(false);
             setActiveFieldSuggestion(0);
-            setMess("/settings ");
+            setMess(item.label + " ");
             setCommandListDismissed(true);
             setPreviewCommand(null);
             setSharePreview(null);
@@ -850,7 +851,7 @@ export default function ChatTextArea({
         }
         if (sending.current || forwardMedia?.targetPath === location.pathname) return;
         // Local wallpaper action must run before the normal attachment/message pipeline.
-        if (!editing && isBackgroundAddCommand(mess)) {
+        if (localSetting && isBackgroundAddCommand(mess)) {
             if (bgGallery.length >= MAX_CUSTOM_BACKGROUNDS) {
                 showNotification("info", settingsText("backgroundLibrary.limit"));
                 return;
@@ -864,35 +865,48 @@ export default function ChatTextArea({
             return;
         }
         const settingTarget = settingInput ? resolveSettingCommand(mess, settingCatalog) : null;
-        const command = !editing && !linkedEntity && !redirect && !forwardPost && !files.length ? parseSettingCommand(settingTarget?.presetText ?? mess) : null;
+        const command = !editing ? parseSettingCommand(settingTarget?.presetText ?? mess) : null;
         let presetUrl: string | undefined;
         if (command) {
+            if (/^\/set(?=\s|$)/i.test(mess) && !localSetting) {
+                showNotification("info", settingsText("sharing.localOnly"));
+                return;
+            }
+            if (files.length || linkedEntity || redirect || forwardPost || forwardMedia || answer) {
+                showNotification("info", settingsText("sharing.commandHelp"));
+                return;
+            }
             if (command.setting && command.value !== null) {
                 presetUrl = settingLink(command.setting, command.value);
-                if (savedChat) {
+                if (localSetting) {
                     setMess("");
                     setBlackout({ seted: true, module: "SharedSettingPreview", options: { url: presetUrl } });
                     return;
                 }
-            } else if (settingTarget?.entry && !settingTarget.presetText) {
-                const { section, item } = settingTarget.entry;
-                const target = item ? settingsSearchNavigation(section.id, item) : { pathname: "/settings/" + section.id, state: undefined };
-                if (savedChat) {
+            } else {
+                const entry = settingTarget?.entry;
+                const definition = command.setting && command.input === command.setting ? sharedSettings[command.setting] : null;
+                let target: { pathname: string; state?: { settingId?: string; settingName?: string; from?: string } } | undefined;
+                if (entry && !entry.action && (!settingTarget?.presetText || definition)) {
+                    target = entry.item ? settingsSearchNavigation(entry.section.id, entry.item) :
+                        definition ? { pathname: "/settings/" + definition.section, state: { settingId: definition.id } } :
+                        { pathname: "/settings/" + entry.section.id };
+                } else if (definition) target = { pathname: "/settings/" + definition.section, state: { settingId: definition.id } };
+                else if (command.input === "" || command.input === "background")
+                    target = { pathname: command.input === "background" ? "/wallpapers" : "/settings" };
+                if (!target) {
+                    showNotification("info", settingsText("sharing.commandHelp"));
+                    return;
+                }
+                if (localSetting) {
                     setMess("");
                     navigate(target.pathname, { state: target.state });
                     return;
                 }
                 const url = new URL(target.pathname, window.location.origin);
-                if (item && target.pathname.startsWith("/settings/") && target.pathname !== "/settings/language") url.searchParams.set("setting", item.id);
+                if (target.state?.settingId && target.pathname.startsWith("/settings/") && target.pathname !== "/settings/language")
+                    url.searchParams.set("setting", target.state.settingId);
                 presetUrl = url.href;
-            } else {
-                if (savedChat && (command.input === "" || command.input === "background" || command.setting === command.input)) {
-                    setMess("");
-                    const definition = command.setting ? sharedSettings[command.setting] : null;
-                    if (definition) navigate("/settings/" + definition.section, { state: { settingId: definition.id } });
-                    else navigate(command.input === "background" ? "/wallpapers" : "/settings");
-                } else showNotification("info", settingsText("sharing.commandHelp"));
-                return;
             }
         }
         const currentPost = forwardPost;
@@ -1172,7 +1186,7 @@ export default function ChatTextArea({
                         items={matchingCommands}
                         activeIndex={Math.min(activeSuggestion, matchingCommands.length - 1)}
                         onSelect={selectSavedCommand}
-                        onPreview={item => setPreviewCommand((item.id.startsWith("share:") || item.id === "settings")
+                        onPreview={item => setPreviewCommand((item.id.startsWith("share:") || item.id === "settings" || item.id === "set")
                             ? item.label : item.label + " ")}
                         onPreviewEnd={() => setPreviewCommand(null)}
                     />}
@@ -1191,7 +1205,7 @@ export default function ChatTextArea({
                         </span>}
                         {(quickInput || settingInput) && <div className="chatCommandFieldMirror" aria-hidden="true" style={{ transform: `translateY(-${commandScrollTop}px)` }}>
                             <span>{commandHighlight}</span>{displayedMess.slice(commandHighlight?.length ?? 0).split(/("[^"]*"?|\s+)/).map((part, index) => part && <span key={index} className={part.trim() ? "commandArgument" : ""}>{part}</span>)}
-                            {/\s$/.test(displayedMess) && !quickInput?.quoted && (quickInput?.field || settingInput) && <span className="commandPlaceholder">{quickInput?.field ? quickLabels[quickInput.field] : settingsText("sharing.commandSuggestion")}</span>}
+                            {/\s$/.test(displayedMess) && !quickInput?.quoted && (quickInput?.field || settingInput) && <span className="commandPlaceholder">{quickInput?.field ? quickLabels[quickInput.field] : settingsText(localSetting ? "sharing.localCommandSuggestion" : "sharing.commandSuggestion")}</span>}
                         </div>}
                         <TA
                             name="chatTA"
@@ -1241,7 +1255,7 @@ export default function ChatTextArea({
                 onChange={event => {
                     const file = event.currentTarget.files?.[0];
                     event.currentTarget.value = "";
-                    if (file && !editing && isBackgroundAddCommand(mess)) openBackgroundAdd(file);
+                    if (file && localSetting && isBackgroundAddCommand(mess)) openBackgroundAdd(file);
                 }}/>
             <input
                 type="file"

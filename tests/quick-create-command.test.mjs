@@ -4,7 +4,7 @@ import { isQuickCreateCommand, parseQuickCreateCommand, quickCommandOnSpace } fr
 
 test("recognizes only supported commands", () => {
     assert.equal(isQuickCreateCommand("/act"), true);
-    assert.equal(isQuickCreateCommand("/plan название: врач"), true);
+    assert.equal(isQuickCreateCommand("/do название: врач"), true);
     assert.equal(isQuickCreateCommand("hello /act"), false);
     assert.equal(isQuickCreateCommand("/active"), false);
     assert.equal(parseQuickCreateCommand("/anything"), null);
@@ -29,25 +29,25 @@ test("English activity and incomplete templates", () => {
 });
 
 test("Plan date and time are normalized, impossible dates rejected", () => {
-    const russian = parseQuickCreateCommand("/plan название: Врач; дата: 31.12.2099; начало: 12:00");
+    const russian = parseQuickCreateCommand("/do название: Врач; дата: 31.12.2099; начало: 12:00");
     assert.equal(russian?.kind, "plan");
     assert.equal(russian?.date, "2099-12-31");
     assert.equal(russian?.startTime, "12:00");
-    const invalid = parseQuickCreateCommand("/plan название: Пример; дата: 31.02.2099");
+    const invalid = parseQuickCreateCommand("/do название: Пример; дата: 31.02.2099");
     assert.equal(invalid?.date, undefined);
-    const english = parseQuickCreateCommand("/plan name: Appointment; date: 2099-12-31; time: 10:00 - 11:30");
+    const english = parseQuickCreateCommand("/do name: Appointment; date: 2099-12-31; time: 10:00 - 11:30");
     assert.equal(english?.endTime, "11:30");
 });
 
 
 test("space after slash command activates inline composer", () => {
     assert.equal(quickCommandOnSpace("/act "), "act");
-    assert.equal(quickCommandOnSpace("/plan "), "plan");
+    assert.equal(quickCommandOnSpace("/do "), "do");
     assert.equal(quickCommandOnSpace(" /ACT "), "act");
     assert.equal(quickCommandOnSpace("/act"), null);
     assert.equal(quickCommandOnSpace("/action "), null);
     assert.equal(quickCommandOnSpace("/act text"), null);
-    assert.equal(quickCommandOnSpace("/plan\n"), null);
+    assert.equal(quickCommandOnSpace("/do\n"), null);
 });
 
 
@@ -72,10 +72,12 @@ test("inline command fields normalize time, date and RU/EN frequency", async () 
 test("single TA positional fields preserve quoted text and skip optional description", async () => {
     const { parseQuickInput } = await import("../src/components/ts/utils/quickCreateCommand.ts");
     assert.equal(parseQuickInput("/act ")?.field, "name");
-    assert.equal(parseQuickInput("/plan \"Visit doctor\"  31.12.2099")?.draft.date, "2099-12-31");
-    assert.equal(parseQuickInput("/plan \"Visit doctor\"  31.12.2099")?.draft.name, "Visit doctor");
+    assert.equal(parseQuickInput("/do \"Visit doctor\"  31.12.2099")?.draft.date, "2099-12-31");
+    assert.equal(parseQuickInput("/do \"Visit doctor\"  31.12.2099")?.draft.name, "Visit doctor");
     assert.equal(parseQuickInput("/act Gym  weekly 1,3 9 10")?.draft.weeklyDays, "1,3");
     assert.equal(parseQuickInput("/act Gym  cycle 2 2")?.draft.cycleRest, "2");
     assert.equal(parseQuickInput("/ac"), null);
-    assert.equal(parseQuickInput("/plan Doctor")?.draft.date, undefined);
+    assert.equal(parseQuickInput("/plan Doctor"), null);
+    assert.equal(isQuickCreateCommand("/plan"), false);
+    assert.equal(parseQuickInput("/do Doctor")?.draft.date, undefined);
 });

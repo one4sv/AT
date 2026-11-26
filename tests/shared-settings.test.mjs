@@ -22,3 +22,10 @@ test("setting links preserve values and reject other origins, paths and invalid 
     assert.equal(parseSettingLink(url.replace("value=12", "value=31")), null);
     assert.equal(parseSettingLink("http://["), null);
 });
+
+
+test("local and shared setting roots use identical value validation", () => {
+    assert.deepEqual(parseSettingCommand("/set theme dark"), parseSettingCommand("/settings theme dark"));
+    assert.equal(parseSettingCommand("/set theme invalid").value, null);
+    assert.equal(parseSettingCommand("/setting"), null);
+});

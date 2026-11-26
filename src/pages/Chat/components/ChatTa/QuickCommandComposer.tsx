@@ -178,7 +178,7 @@ export default function QuickCommandComposer({ draft, onChange, onSubmit, onCanc
                 setPeriodicitySuggestionsOpen(false);
             }
         }}>
-        <div className="chatQuickCommandName">/{draft.kind === "habit" ? "act" : "plan"}</div>
+        <div className="chatQuickCommandName">/{draft.kind === "habit" ? "act" : "do"}</div>
         <div className="chatQuickFields">
             <InlineQuickField
                 label={t("chatUi.name")}
