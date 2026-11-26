@@ -27,7 +27,7 @@ export default function SystemMessage({m, answer, scrollToMessage}: SystemMessag
         : t("chatUi.user");
 
     return (
-        <div className="messageWrapper">
+        <div className="messageWrapper" data-history-message-id={m.id}>
             <div className={`systemMessage ${isMobile && "mobile"}`}>
                 <span className="systemMessageSender" onClick={() => navigate(`/acc/${m.sender_nick}`)}>
                     {m.sender_name}

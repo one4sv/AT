@@ -30,6 +30,9 @@
     padding-top: var(--chat-top-inset, var(--chat-header-inset));
     scroll-padding-top: var(--chat-top-inset, var(--chat-header-inset));
     padding-bottom:7dvh;
+    &.historyLoading {
+        overflow-anchor: none;
+    }
     @media (max-width: 800px) {
         padding-bottom:9vh;
         width: 99%;

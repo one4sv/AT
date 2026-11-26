@@ -82,7 +82,7 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
             // At the start keep the first message accessible; elsewhere preserve the visible content.
             if (oldTop > 2) chat.scrollTop = Math.max(0, oldTop + delta);
             else chat.scrollTop = 0;
-            chat.dispatchEvent(new CustomEvent("chat-action-inset", { detail: {height: chat.scrollHeight - oldHeight, top: chat.scrollTop - oldTop} }));
+            chat.dispatchEvent(new CustomEvent("chat-action-inset", { detail: {height: chat.scrollHeight - oldHeight, padding: delta, top: chat.scrollTop - oldTop} }));
             chat.style.overflowAnchor = previousAnchor;
         }
     };

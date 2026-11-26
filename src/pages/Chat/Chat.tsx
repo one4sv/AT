@@ -25,6 +25,31 @@ import { parseSavedMessageSuggestion } from "../../components/ts/utils/savedMess
 import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { useGroup } from "../../components/hooks/GroupHook";
 import useLocalStorage from "../../components/hooks/utils/useLocalStorage";
+const HISTORY_PREFETCH_REMAINING = 15;
+
+type HistoryAnchor = { id: string; offset: number };
+type HistoryLoad = { anchor: HistoryAnchor | null; finished: boolean };
+
+function captureHistoryAnchor(el: HTMLDivElement): HistoryAnchor | null {
+    const top = el.getBoundingClientRect().top;
+    const visibleTop = top + (parseFloat(getComputedStyle(el).scrollPaddingTop) || 0);
+    const nodes = el.querySelectorAll<HTMLElement>("[data-history-message-id]");
+    // The first message crossing the visible top, even if it is below a loading placeholder.
+    for (const node of nodes) {
+        const rect = node.getBoundingClientRect();
+        if (rect.bottom > visibleTop) return { id: node.dataset.historyMessageId!, offset: rect.top - top };
+    }
+    return null;
+}
+
+function restoreHistoryAnchor(el: HTMLDivElement, anchor: HistoryAnchor | null) {
+    if (!anchor) return;
+    const node = el.querySelector<HTMLElement>(`[data-history-message-id="${anchor.id}"]`);
+    if (!node) return;
+    const delta = node.getBoundingClientRect().top - el.getBoundingClientRect().top - anchor.offset;
+    if (Math.abs(delta) > .5) el.scrollTop += delta;
+}
+
 export default function Chat() {
     const { t } = useTranslation("common");
     const {
@@ -74,7 +99,9 @@ export default function Chat() {
     const pinnedBottomRef = useRef(true);
     const measuredScrollHeightRef = useRef(0);
     const unreadCapturedRef = useRef(false);
-    const prependSnapshotRef = useRef<{ height: number; top: number; firstId: number } | null>(null);
+    const prependSnapshotRef = useRef<HistoryLoad | null>(null);
+    const [historyCommit, setHistoryCommit] = useState(0);
+    const historyRetryAfterRef = useRef(0);
     const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
         const target = new URLSearchParams(location.search).get("message");
@@ -114,6 +141,7 @@ export default function Chat() {
         unreadCapturedRef.current = false;
         prependSnapshotRef.current = null;
         isLoadingMoreRef.current = false;
+        historyRetryAfterRef.current = 0;
         setUnreadDividerId(null);
     }, [nick, id]);
 
@@ -279,8 +307,13 @@ export default function Chat() {
             const el = chatContainerRef.current;
             if (!el || !chatReady) return;
             const onScroll = () => {
+                const snapshot = prependSnapshotRef.current;
                 const contentResized = Math.abs(el.scrollHeight - measuredScrollHeightRef.current) > 1;
-                if (contentResized && pinnedBottomRef.current && !isLoadingMoreRef.current && pendingScrollId === null) {
+                if (snapshot) {
+                    // Continue following the reader, not the scrollTop at request start.
+                    snapshot.anchor = captureHistoryAnchor(el) || snapshot.anchor;
+                    pinnedBottomRef.current = false;
+                } else if (contentResized && pinnedBottomRef.current && !isLoadingMoreRef.current && pendingScrollId === null) {
                     el.scrollTop = el.scrollHeight;
                 } else {
                     const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
@@ -288,32 +321,34 @@ export default function Chat() {
                 }
                 measuredScrollHeightRef.current = el.scrollHeight;
                 setShowGoDown(el.scrollHeight - el.scrollTop - el.clientHeight > 250);
-                if (!initialScrolledRef.current || pendingScrollId !== null || el.scrollHeight <= el.clientHeight + 20) return;
-                if (el.scrollTop < 150 && hasMore && messages.length > 0 && !isLoadingMoreRef.current && !loadingMore) {
-                    isLoadingMoreRef.current = true;
-                    const snapshot = { height: el.scrollHeight, top: el.scrollTop, firstId: messages[0].id };
-                    prependSnapshotRef.current = snapshot;
-                    loadOlderMessages().finally(
-                        () => {
-                            requestAnimationFrame(() => {
-                                if (prependSnapshotRef.current === snapshot) {
-                                    const current = chatContainerRef.current;
-                                    if (current) current.scrollTop = snapshot.top + current.scrollHeight - snapshot.height;
-                                    prependSnapshotRef.current = null;
-                                }
-                                isLoadingMoreRef.current = false;
-                            });
-                        }
-                    );
-                }
+                if (!initialScrolledRef.current || pendingScrollId !== null || el.scrollHeight <= el.clientHeight + 20 ||
+                    !hasMore || !messages.length || isLoadingMoreRef.current || loadingMore ||
+                    performance.now() < historyRetryAfterRef.current) return;
+
+                const thresholdId = messages[Math.min(HISTORY_PREFETCH_REMAINING - 1, messages.length - 1)].id;
+                const threshold = el.querySelector<HTMLElement>(`[data-history-message-id="${thresholdId}"]`);
+                const visibleTop = el.getBoundingClientRect().top + (parseFloat(getComputedStyle(el).scrollPaddingTop) || 0);
+                const nearHistory = threshold && threshold.getBoundingClientRect().bottom >= visibleTop;
+                if (!nearHistory && el.scrollTop >= 150) return;
+                // Do not auto-page while the reader is at the newest messages.
+                if (pinnedBottomRef.current && el.scrollTop > 150) return;
+
+                isLoadingMoreRef.current = true;
+                pinnedBottomRef.current = false;
+                const request: HistoryLoad = { anchor: captureHistoryAnchor(el), finished: false };
+                prependSnapshotRef.current = request;
+                void loadOlderMessages().finally(() => {
+                    if (prependSnapshotRef.current !== request) return;
+                    request.finished = true;
+                    // Ensure a layout commit even if the response contained no rows.
+                    setHistoryCommit(value => value + 1);
+                });
             };
             const onInset = (event: Event) => {
-                const {height, top} = (event as CustomEvent<{height:number;top:number}>).detail;
                 measuredScrollHeightRef.current = el.scrollHeight;
-                if (prependSnapshotRef.current) {
-                    prependSnapshotRef.current.height += height;
-                    prependSnapshotRef.current.top += top;
-                }
+                const snapshot = prependSnapshotRef.current;
+                const { padding, top } = (event as CustomEvent<{ padding: number; top: number }>).detail;
+                if (snapshot?.anchor) snapshot.anchor.offset += padding - top;
             };
             el.addEventListener("chat-action-inset", onInset);
             el.addEventListener("scroll", onScroll, {
@@ -333,10 +368,13 @@ export default function Chat() {
             if (!chatReady || !el) return;
             const snapshot = prependSnapshotRef.current;
             if (snapshot) {
-                if (!loadingMore && messages[0]?.id !== snapshot.firstId) {
-                    el.scrollTop = snapshot.top + el.scrollHeight - snapshot.height;
-                    measuredScrollHeightRef.current = el.scrollHeight;
+                if (pendingScrollId === null) restoreHistoryAnchor(el, snapshot.anchor);
+                measuredScrollHeightRef.current = el.scrollHeight;
+                pinnedBottomRef.current = false;
+                if (snapshot.finished && !loadingMore) {
                     prependSnapshotRef.current = null;
+                    isLoadingMoreRef.current = false;
+                    historyRetryAfterRef.current = performance.now() + 250;
                 }
                 return;
             }
@@ -350,14 +388,17 @@ export default function Chat() {
                 measuredScrollHeightRef.current = el.scrollHeight;
             }
         },
-        [chatReady, messages, unreadDividerId, pendingScrollId, loadingMore]
+        [chatReady, messages, unreadDividerId, pendingScrollId, loadingMore, historyCommit]
     );
 
     useEffect(() => {
         const el = chatContainerRef.current;
         if (!chatReady || !el || typeof ResizeObserver === "undefined") return;
         const observer = new ResizeObserver(() => {
-            if (initialScrolledRef.current && pinnedBottomRef.current && !isLoadingMoreRef.current && pendingScrollId === null) {
+            const snapshot = prependSnapshotRef.current;
+            if (snapshot && pendingScrollId === null) {
+                restoreHistoryAnchor(el, snapshot.anchor);
+            } else if (initialScrolledRef.current && pinnedBottomRef.current && !isLoadingMoreRef.current && pendingScrollId === null) {
                 el.scrollTop = el.scrollHeight;
             }
             measuredScrollHeightRef.current = el.scrollHeight;
@@ -376,7 +417,7 @@ export default function Chat() {
         <div className="chatDiv">
             <ChatUser />
             {chatReady && <ChatActionPanel key={chatWith?.chat_id} searchedMessages={searchedMessages}/>}
-            <div className={`chat AH${activeHeader}`} ref={chatContainerRef}>
+            <div className={`chat AH${activeHeader}${loadingMore ? " historyLoading" : ""}`} ref={chatContainerRef}>
                 {loadingMore && <Skeleton type="chatHistory" count={3} /> }
 
                 {!hadMessagesRef.current && messages.length === 0 && !id && chatWith &&

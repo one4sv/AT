@@ -200,6 +200,7 @@ export default function Message({
                 ${m.isPending ? "pending" : ""}
                 ${mediaOnly ? "mediaOnly" : ""} ${entityOnly ? "entityOnly" : ""} ${mediaOnly && m.files?.length === 1 ? "singleMedia" : ""}
             `}
+            data-history-message-id={m.id}
             ref={el => {
                 messageRefs?.current.set(m.id, el);
             }}

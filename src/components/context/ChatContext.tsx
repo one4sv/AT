@@ -167,6 +167,12 @@ export const ChatProvider = ({
     const notificationAggregator = new NotificationAggregator();
     const searchInputRef = useRef<HTMLInputElement | null>(null);
     const chatAbortRef = useRef<AbortController | null>(null);
+    const olderAbortRef = useRef<AbortController | null>(null);
+    const cancelOlder = useCallback(() => {
+        olderAbortRef.current?.abort();
+        olderAbortRef.current = null;
+        setLoadingMore(false);
+    }, []);
     const reactionPendingRef = useRef<Set<number>>(new Set());
 
     useEffect(() => {
@@ -174,6 +180,7 @@ export const ChatProvider = ({
     }, [chatWith]);
     const refetchChat = async (nick: string) => {
         if (!isAuthenticated) return;
+        cancelOlder();
         chatAbortRef.current?.abort();
         const controller = new AbortController();
         chatAbortRef.current = controller;
@@ -232,6 +239,7 @@ export const ChatProvider = ({
     };
     const refetchGroupChat = async (id: string) => {
         if (!isAuthenticated) return;
+        cancelOlder();
         chatAbortRef.current?.abort();
         const controller = new AbortController();
         chatAbortRef.current = controller;
@@ -283,7 +291,9 @@ export const ChatProvider = ({
     };
     const loadOlderMessages = useCallback(
         async () => {
-            if (!chatWith || loadingMore || !hasMore || messages.length === 0) return;
+            if (!chatWith || loadingMore || olderAbortRef.current || !hasMore || messages.length === 0) return;
+            const controller = new AbortController();
+            olderAbortRef.current = controller;
             setLoadingMore(true);
             try {
                 const oldestId = messages[0].id;
@@ -294,22 +304,30 @@ export const ChatProvider = ({
                         params: {
                             limit: 40,
                             beforeId: oldestId
-                        }
+                        },
+                        signal: controller.signal
                     }
                 );
+                if (controller.signal.aborted || olderAbortRef.current !== controller) return;
                 if (res.data.success) {
-                    const older = res.data.messages || [];
+                    const older: message[] = res.data.messages || [];
                     if (older.length === 0) {
                         setHasMore(false);
                     } else {
-                        setMessages(prev => [...older, ...prev]);
+                        setMessages(prev => {
+                            const ids = new Set(prev.map(item => item.id));
+                            return [...older.filter(item => !ids.has(item.id)), ...prev];
+                        });
                         setHasMore(res.data.hasMore ?? older.length === 40);
                     }
                 }
             } catch (e) {
-                console.error("Ошибка загрузки старых сообщений:", e);
+                if (!controller.signal.aborted) console.error("Ошибка загрузки старых сообщений:", e);
             } finally {
-                setLoadingMore(false);
+                if (olderAbortRef.current === controller) {
+                    olderAbortRef.current = null;
+                    setLoadingMore(false);
+                }
             }
         },
         [chatWith, loadingMore, hasMore, messages]
@@ -317,6 +335,7 @@ export const ChatProvider = ({
     const loadAroundMessage = useCallback(
         async (messageId: number): Promise<boolean> => {
             if (!chatWith) return false;
+            cancelOlder();
             try {
                 const url = chatWith.is_group ? `chat/group/${chatWith.id}` : `chat/${chatWith.nick}`;
                 const res = await api.get(
@@ -329,6 +348,7 @@ export const ChatProvider = ({
                     }
                 );
                 if (res.data.success && res.data.messages?.length) {
+                    cancelOlder();
                     setMessages(res.data.messages);
                     setHasMore(res.data.hasMore ?? true);
                     return true;
@@ -339,7 +359,7 @@ export const ChatProvider = ({
                 return false;
             }
         },
-        [chatWith]
+        [chatWith, cancelOlder]
     );
 
     useEffect(
