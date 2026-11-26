@@ -315,11 +315,6 @@
 .habitDayComment.inputWithEmoji > .inputEmojiButton {
     bottom: 5vh;
 }
-.habitDayCommentMobile.inputWithEmoji {
-    > textarea { padding-inline-end: 5vh; }
-    > .inputEmojiButton { right: 6vh; bottom: 1vh; }
-}
-
 
 .sharedDayComments {
     flex: 1;
@@ -438,11 +433,6 @@
         .sharedDayComment {
             padding: .75vh 2vw;
         }
-    }
-
-    .habitDayCommentMobile > textarea {
-        max-height: 20vh;
-        overflow-y: auto;
     }
 }
 

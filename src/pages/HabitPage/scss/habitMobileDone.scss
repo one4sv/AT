@@ -113,56 +113,21 @@
             width: 0;
             opacity: 0;
         }
-        textarea {
-            width: 0;
-            opacity: 0;
-        }
     }
     &.open {
         width: calc(100% - 5.5vh);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        overflow: visible;
+
+        &:only-child {
+            width: 100%;
+        }
+
         .saveCommentButtonMobile {
             width: 5vh;
             opacity: 1;
         }
-        textarea {
-            width: calc(100% - 5.5vh);
-            opacity: 1;
-        }
-    }
-    > textarea {
-        min-width: 0;
-        transition: width .3s cubic-bezier(0.075, 0.82, 0.165, 1), opacity .3s cubic-bezier(0.075, 0.82, 0.165, 1);
-        resize: none;
-        border: 1px solid var(--block_border);
-        background-color: var(--tr);
-        color: var(--tc);
-        font-size: 16px;
-        max-height: 50dvh;
-        height: 5dvh;
-        min-height: 5dvh;
-        line-height: 1.35;
-        padding: max(.8dvh, calc((5dvh - 1.35em) / 2)) 3vw;
-        box-sizing: border-box;
-        scrollbar-width:thin;
-        outline: none;
-        border-radius: 24px;
-        background-color: var(--interact);
-        backdrop-filter: blur(var(--blur));
-        -webkit-backdrop-filter: blur(var(--blur));
-        &::placeholder {
-            vertical-align: middle;
-            color: var(--borderWhLight);
-            word-break: normal;
-            overflow-wrap: normal;
-            hyphens: none;
-        }
-    }
-    >span {
-        position: absolute;
-        right: 7vh;
-        bottom: 0;
-        color: var(--borderHabit);
-        font-size: 12px;
     }
     >.bottomOpen {
         background-color: var(--interact);
@@ -171,7 +136,103 @@
     }
 }
 
+.mobileCommentField {
+    grid-column: 1;
+    min-width: 0;
+    border: 1px solid var(--block_border);
+    border-radius: 24px;
+    box-sizing: border-box;
+    background-color: var(--interact);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+
+    > .activityPhotoStrip {
+        padding: .5dvh 2vw;
+        box-sizing: border-box;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: thin;
+
+        > span { flex-shrink: 0; }
+        img { height: 10dvh; width: auto; max-width: 24vw; }
+    }
+}
+
+.mobileCommentInput.inputWithEmoji {
+    display: flex;
+    align-items: center;
+    min-height: 5dvh;
+    padding: 0 .4vh 12px 0;
+
+    > textarea {
+        flex: 1;
+        min-width: 0;
+        min-height: 5dvh;
+        resize: none;
+        border: none;
+        outline: none;
+        color: var(--tc);
+        background: transparent;
+        font-family: inherit;
+        font-size: 16px;
+        line-height: 1.35;
+        padding: max(.6dvh, calc((5dvh - 1.35em) / 2)) 1vw .6dvh 3vw;
+
+        &::placeholder {
+            color: var(--borderWhLight);
+        }
+    }
+
+    > .activityPhotoTools {
+        flex-shrink: 0;
+        gap: 0;
+    }
+
+    > .inputEmojiButton,
+    .attachActivityPhoto {
+        position: static;
+        flex-shrink: 0;
+        width: 4vh;
+        height: 4vh;
+        min-width: 36px;
+        min-height: 36px;
+        box-sizing: border-box;
+        align-items: center;
+        justify-content: center;
+
+        > svg { width: 22px; height: 22px; }
+    }
+}
+
+.mobileCommentCount {
+    position: absolute;
+    inset-inline-end: .6vh;
+    bottom: 0;
+    color: var(--borderHabit);
+    font-size: 12px;
+    pointer-events: none;
+}
+
+.habitDayCommentMobile.open:has(> .mobileCommentField > .activityPhotoStrip) {
+    > .mobileCommentField {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    > .hdcTAExtraMobile {
+        grid-row: 2;
+    }
+
+    &:not(:only-child) > .mobileCommentField {
+        width: calc(100% + 5.5vh);
+        margin-inline-start: -5.5vh;
+    }
+}
+
 .hdcTAExtraMobile {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
     flex-shrink: 0;
     height: 5dvh;
     width: 5vh;

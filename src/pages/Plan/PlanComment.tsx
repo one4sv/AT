@@ -55,17 +55,21 @@ export default function PlanComment({ planId, disabled = false, mobile = false, 
             aria-label={t("plans.comment")} onClick={() => setOpen?.("comment")}>
             <ChatCenteredIcon size={22}/>
         </button> : <>
-            <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar}
-                disabled={loading || disabled || saving}/>
             <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar}
                 setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef}/>
-            <TA placeholder={t("habitPageUi.day.commentPlaceholder")} taRef={textAreaRef}
-                readOnly={loading || disabled || saving} value={comment} maxLength={200}
-                onChange={event => setComment(event.target.value)} onKeyDown={handleKeyDown}/>
-            {photos.previews}
-            <span>{comment.length}/200</span>
+            <div className="mobileCommentField">
+                {photos.previews}
+                <div className="mobileCommentInput inputWithEmoji">
+                    <TA placeholder={t("habitPageUi.day.commentPlaceholder")} taRef={textAreaRef}
+                        readOnly={loading || disabled || saving} value={comment} maxLength={200} maxHeight={20}
+                        onChange={event => setComment(event.target.value)} onKeyDown={handleKeyDown}/>
+                    {photos.controls}
+                    <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar}
+                        disabled={loading || disabled || saving}/>
+                    <span className="mobileCommentCount">{comment.length}/200</span>
+                </div>
+            </div>
             <div className="hdcTAExtraMobile">
-                {photos.controls}
                 <button className="saveCommentButtonMobile" type="button" disabled={cantSave} onClick={() => void save()}>
                     {saving ? <ClockCountdownIcon size={24}/> : <PaperPlaneRightIcon weight="fill" size={24}/>}
                 </button>

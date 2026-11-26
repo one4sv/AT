@@ -79,21 +79,26 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
                 </div>
             ) : (
                 <>
-                    <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!isMy || !habit?.ongoing || syncing} />
                     <EmojiBar taRef={textAreaRef} setText={setComment} showEmojiBar={showEmojiBar} setShowEmojiBar={setShowEmojiBar} emojiRef={emojiRef} />
-                    <TA
-                        placeholder={t("habitPageUi.day.commentPlaceholder")}
-                        taRef={textAreaRef}
-                        readOnly={!isMy || !habit?.ongoing || !photos.ready || photos.busy}
-                        onChange={handleTextareaChange}
-                        onKeyDown={handleKeyDown}
-                        value={comment}
-                        maxLength={200}
-                    />
-                    {photos.previews}
-                    <span>{comment.length}/200</span>
+                    <div className="mobileCommentField">
+                        {photos.previews}
+                        <div className="mobileCommentInput inputWithEmoji">
+                            <TA
+                                placeholder={t("habitPageUi.day.commentPlaceholder")}
+                                taRef={textAreaRef}
+                                readOnly={!isMy || !habit?.ongoing || !photos.ready || photos.busy}
+                                onChange={handleTextareaChange}
+                                onKeyDown={handleKeyDown}
+                                value={comment}
+                                maxLength={200}
+                                maxHeight={20}
+                            />
+                            {photos.controls}
+                            <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar} disabled={!isMy || !habit?.ongoing || syncing} />
+                            <span className="mobileCommentCount">{comment.length}/200</span>
+                        </div>
+                    </div>
                     <div className="hdcTAExtraMobile">
-                        {photos.controls}
                         <button
                             className="saveCommentButtonMobile"
                             disabled={cantSave  || waitComAnswer}
