@@ -63,6 +63,8 @@ jobs:
         run: node --experimental-strip-types --test tests/global-search-query.test.mjs
       - name: Verify textarea vertical padding
         run: node --test tests/textarea-vertical-padding.test.mjs
+      - name: Verify settings catalog and internal link cards
+        run: node --experimental-strip-types --test tests/settings-catalog.test.mjs tests/shared-settings.test.mjs tests/at-page-links.test.mjs
       - name: Verify shared entity and media skeletons, post forwarding
         run: node --test tests/shared-entity-post-forward.test.mjs
       - name: Verify group /invite links plans and activities without replacing a chat

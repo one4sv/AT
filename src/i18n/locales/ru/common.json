@@ -182,6 +182,12 @@
     "created": "создал беседу «{{name}}»"
   },
   "chatUi": {
+    "internalPages": {
+      "feed": "Лента",
+      "activities": "Активности",
+      "profile": "Профиль",
+      "connection": "Подключение"
+    },
     "openPanel": "Панель чата",
     "hidePanel": "Скрыть панель",
     "pinnedPanel": "Закреплённые сообщения",

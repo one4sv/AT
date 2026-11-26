@@ -182,6 +182,12 @@
     "created": "created the group “{{name}}”"
   },
   "chatUi": {
+    "internalPages": {
+      "feed": "Feed",
+      "activities": "Activities",
+      "profile": "Profile",
+      "connection": "Connection"
+    },
     "openPanel": "Chat panel",
     "hidePanel": "Hide panel",
     "pinnedPanel": "Pinned messages",

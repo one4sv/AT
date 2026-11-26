@@ -142,8 +142,8 @@ test("plan management is offered on the first section and both header triggers",
     assert.match(page, /onContextMenu=\{event => \{/);
     assert.match(page, /setHeaderMenu\(\{ point: "plan"/);
     assert.doesNotMatch(page, /className="planSection">\s*<h2>\{t\("plans\.management"\)\}/);
-    assert.match(header, /className="headerButt planHeaderActionsButt"/);
-    assert.match(header, /data-header-gesture="plan"/);
+    assert.match(header, /className=\{`headerButt \$\{planHeaderMenu \? "planHeaderActionsButt" : "profileHeaderActionsButt"\}`\}/);
+    assert.match(header, /data-header-gesture=\{planHeaderMenu \? "plan" : "profile"\}/);
     assert.match(header, /if \(planHeaderMenu\) \{/);
     assert.match(gestures, /kind === "plan"/);
     assert.match(provider, /headerMenu: \{ point: string; options: MenuOptions \} \| null/);
@@ -172,7 +172,7 @@ test("plan header action is the same vertical three-dot control and width as the
     const styles = read("src/scss/header.scss");
     assert.match(chatHeader, /<div className="headerButt" data-header-gesture="chat"/);
     assert.match(chatHeader, /<DotsThreeOutlineVerticalIcon weight="fill"\/>/);
-    assert.match(sharedHeader, /className="headerButt planHeaderActionsButt"/);
+    assert.match(sharedHeader, /className=\{`headerButt \$\{planHeaderMenu \? "planHeaderActionsButt" : "profileHeaderActionsButt"\}`\}/);
     assert.match(sharedHeader, /<DotsThreeOutlineVerticalIcon weight="fill"\/>/);
     assert.doesNotMatch(sharedHeader, /<DotsThreeIcon/);
     assert.match(styles, /\.headerButt\s*\{[\s\S]*?height: 4dvh;[\s\S]*?aspect-ratio: 1\/1;/);

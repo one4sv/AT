@@ -102,7 +102,7 @@ export function settingValueLabel(setting: SharedSetting, value: string, transla
 export function parseSettingNavigationLink(href: string) {
     let url: URL;
     try { url = new URL(href, window.location.origin); } catch { return null; }
-    if (url.origin !== window.location.origin && url.origin !== "https://achievetogether.vercel.app") return null;
+    if (!["http:", "https:"].includes(url.protocol) || url.username || url.password || (url.origin !== window.location.origin && url.origin !== "https://achievetogether.vercel.app")) return null;
     if (url.searchParams.has("preset") || url.searchParams.has("value")) return null;
     if (url.pathname === "/wallpapers") return { section: "pers", id: "bg", pathname: url.pathname, search: url.search };
     if (url.pathname === "/settings/language") return { section: "gen", id: "language", pathname: url.pathname, search: url.search };
