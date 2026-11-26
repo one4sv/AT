@@ -474,7 +474,7 @@ export default function ChatTextArea({
     const chooseField = (item: EntitySuggestionItem) => {
         if (settingInput) setMess((localSetting ? "/set " : "/settings ") + item.id + " ");
         else if (quickInput?.field === "goalMode") {
-            setMess(mess.replace(/[^ ]*$/, "") + item.id + (item.id === "metric" ? " " : ""));
+            setMess(mess.replace(/[^ ]*$/, "") + item.id + " ");
         }
         else if (quickInput?.field === "periodicity") {
             const prefix = mess.match(/^\/(?:act|do) (?:[^" ]|"[^"]*")* (?:[^" ]|"[^"]*")* /i)?.[0] ?? mess.slice(0, mess.length - (quickInput.slots[2] || "").length);
