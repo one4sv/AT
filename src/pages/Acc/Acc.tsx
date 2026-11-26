@@ -10,6 +10,7 @@ import AccPosts from "./components/AccPosts";
 import { useAcc } from "../../components/hooks/AccHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
+import { useContextMenu } from "../../components/hooks/ContextMenuHook";
 import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
 import { UserIcon } from "@phosphor-icons/react";
@@ -34,6 +35,7 @@ export default function Acc() {
     const { nick } = useParams();
     const { setTitle, setTitleIcon } = usePageTitle();
     const { setDontHandle, setIsDragging, dontHandleOther } = useSideMenu();
+    const { menu } = useContextMenu();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -106,6 +108,8 @@ export default function Acc() {
     const canExpand = useRef(true);
     const isCollapsingGesture = useRef(false);
     const gestureBlocked = useRef(false);
+    const contextGesture = useRef(false);
+    const touchActive = useRef(false);
     const sliderGesture = useRef(false);
     const sliderStartLeft = useRef(0);
     const sliderOwnsGesture = useRef(false);
@@ -169,7 +173,7 @@ export default function Acc() {
     };
 
     const handleWheel = (e: WheelEvent) => {
-        if (isMobile || dontHandleOther || e.ctrlKey) return;
+        if (isMobile || menu.visible || dontHandleOther || e.ctrlKey) return;
         if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
         if ((e.target as Element).closest("input, textarea, [contenteditable='true'], .react-datepicker-popper")) return;
         if (getActiveSlideScrollTop() > 0) return;
@@ -205,7 +209,46 @@ export default function Acc() {
         else setSelector("posts");
     };
 
+    const blockContextGesture = () => {
+        if (!touchActive.current) return;
+        contextGesture.current = true;
+        gestureBlocked.current = true;
+        const owned = isCollapsingGesture.current || sliderOwnsGesture.current;
+        if (isCollapsingGesture.current) {
+            if (collapseFrame.current !== null) cancelAnimationFrame(collapseFrame.current);
+            collapseFrame.current = null;
+            collapsedRef.current = collapseInitial.current;
+            setCollapsed(collapseInitial.current);
+        }
+        expanded.current = false;
+        isHorizontal.current = false;
+        isCollapsingGesture.current = false;
+        sliderGesture.current = false;
+        sliderOwnsGesture.current = false;
+        pullRefresh.current = null;
+        if (owned) {
+            setIsDragging(false);
+            setDontHandle(false);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener("at-context-gesture-start", blockContextGesture);
+        if (menu.visible) blockContextGesture();
+        return () => window.removeEventListener("at-context-gesture-start", blockContextGesture);
+    });
+
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+        if (e.touches.length !== 1) {
+            blockContextGesture();
+            return;
+        }
+        touchActive.current = true;
+        contextGesture.current = menu.visible;
+        if (contextGesture.current) {
+            blockContextGesture();
+            return;
+        }
         if (collapseFrame.current !== null) {
             cancelAnimationFrame(collapseFrame.current);
             collapseFrame.current = null;
@@ -229,6 +272,7 @@ export default function Acc() {
     };
 
     const touchSliderStart = () => {
+        if (contextGesture.current || menu.visible || gestureBlocked.current) return;
         sliderGesture.current = true;
         sliderStartLeft.current = contentRef.current?.scrollLeft ?? 0;
 
@@ -238,6 +282,11 @@ export default function Acc() {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+        if (contextGesture.current || menu.visible || e.defaultPrevented) {
+            blockContextGesture();
+            if (e.cancelable) e.preventDefault();
+            return;
+        }
         if (dontHandleOther) {
             gestureBlocked.current = true;
             return;
@@ -353,6 +402,15 @@ export default function Acc() {
     });
 
     const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+        if (e.touches.length) return;
+        if (contextGesture.current || menu.visible) {
+            blockContextGesture();
+            touchActive.current = false;
+            contextGesture.current = false;
+            e.stopPropagation();
+            return;
+        }
+        touchActive.current = false;
         const pull = pullRefresh.current;
         pullRefresh.current = null;
 
@@ -398,6 +456,13 @@ export default function Acc() {
     };
 
     const handleTouchCancel = () => {
+        if (contextGesture.current || menu.visible) {
+            blockContextGesture();
+            touchActive.current = false;
+            contextGesture.current = false;
+            return;
+        }
+        touchActive.current = false;
         pullRefresh.current = null;
         const owned = isCollapsingGesture.current || sliderOwnsGesture.current;
         if (isCollapsingGesture.current) animateCollapse(collapseInitial.current > 0.45 ? 1 : 0);
@@ -413,7 +478,7 @@ export default function Acc() {
     };
 
     const handleSelectorClick = (i: number) => {
-        if (dontHandleOther || !contentRef.current) return;
+        if (menu.visible || dontHandleOther || !contentRef.current) return;
 
         const elWidth = contentRef.current.clientWidth;
         if (!elWidth) return;
@@ -463,11 +528,11 @@ export default function Acc() {
                 </div>
 
                 <div
-                    className="accContent"
+                    className={`accContent${menu.visible ? " accContentLocked" : ""}`}
                     ref={contentRef}
                     style={{
-                        overflowX: dontHandleOther ? "hidden" : undefined,
-                        touchAction: dontHandleOther ? "pan-y" : undefined,
+                        overflowX: menu.visible || dontHandleOther ? "hidden" : undefined,
+                        touchAction: menu.visible ? "none" : dontHandleOther ? "pan-y" : undefined,
                     }}
                     onScroll={handleScroll}
                     onTouchStartCapture={touchSliderStart}

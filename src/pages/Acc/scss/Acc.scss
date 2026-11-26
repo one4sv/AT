@@ -122,9 +122,14 @@
     }
 }
 
-.accContentLocked .accContentSlide {
-    overflow-y: hidden;
-    overflow-anchor: none;
+.accContentLocked {
+    overflow-x: hidden;
+    touch-action: none;
+
+    .accContentSlide {
+        overflow-y: hidden;
+        overflow-anchor: none;
+    }
 }
 
 .accSlide {

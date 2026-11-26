@@ -75,11 +75,13 @@ export default function AccountList() {
                     <span className="SMmainButtName"><SneakerMoveIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("sideMenu.plansAndActivities")}<CaretRightIcon className="fastButtCaret"/></span>
                     <div className="SMmainButtDesc">{t("accountNavigation.activitiesDesc")}</div>
                 </Link>
-                <Link to="/settings" className={`SMaccountButt ${location.pathname.startsWith("/settings") ? "active" : ""}`} onClick={closeMenu}>
-                    <span className="settingName"><GearIcon size={21} weight="fill"/>{t("accountNavigation.settings")}</span><CaretRightIcon className="fastButtCaret"/>
+                <Link to="/settings" className={`SMmainButt ${location.pathname.startsWith("/settings") ? "active" : ""}`} onClick={closeMenu}>
+                    <span className="SMmainButtName"><GearIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("accountNavigation.settings")}<CaretRightIcon className="fastButtCaret"/></span>
+                    <div className="SMmainButtDesc">{t("accountNavigation.settingsDesc")}</div>
                 </Link>
-                <Link to={`/chat/${user.nick}`} className="SMaccountButt" onClick={closeMenu}>
-                    <span className="settingName"><BookmarkSimpleIcon weight="fill"/>{t("accountNavigation.saved")}</span><CaretRightIcon className="fastButtCaret"/>
+                <Link to={`/chat/${user.nick}`} className={`SMmainButt ${location.pathname === `/chat/${user.nick}` ? "active" : ""}`} onClick={closeMenu}>
+                    <span className="SMmainButtName"><BookmarkSimpleIcon weight="fill" size={30} className="SMmainButtSvg"/>{t("accountNavigation.saved")}<CaretRightIcon className="fastButtCaret"/></span>
+                    <div className="SMmainButtDesc">{t("accountNavigation.savedDesc")}</div>
                 </Link>
                 <div className="SMcreateDiv">
                     <div className="SMcreateButt" onClick={() => { closeMenu(); navigate("/post/new"); }}>

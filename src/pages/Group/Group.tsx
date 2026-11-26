@@ -6,6 +6,7 @@ import { isMobile } from "react-device-detect";
 import { useGroup } from "../../components/hooks/GroupHook";
 import { usePageTitle } from "../../components/hooks/PageContextHook";
 import { useSideMenu } from "../../components/hooks/SideMenuHook";
+import { useContextMenu } from "../../components/hooks/ContextMenuHook";
 import Loader from "../../components/ts/Loader";
 import { api } from "../../components/ts/api";
 import { useHabits } from "../../components/hooks/HabitsHook";
@@ -28,6 +29,7 @@ export default function Group() {
     } = useGroup();
     const { setTitle } = usePageTitle();
     const { setDontHandle, setIsDragging, dontHandleOther } = useSideMenu();
+    const { menu } = useContextMenu();
     const { id } = useParams<{
         id: string;
     }>();
@@ -95,6 +97,8 @@ export default function Group() {
     const canExpand = useRef(true);
     const isCollapsingGesture = useRef(false);
     const gestureBlocked = useRef(false);
+    const contextGesture = useRef(false);
+    const touchActive = useRef(false);
     const sliderGesture = useRef(false);
     const sliderStartLeft = useRef(0);
     const sliderOwnsGesture = useRef(false);
@@ -146,7 +150,7 @@ export default function Group() {
     };
 
     const handleWheel = (e: WheelEvent) => {
-        if (isMobile || dontHandleOther || e.ctrlKey) return;
+        if (isMobile || menu.visible || dontHandleOther || e.ctrlKey) return;
         if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
         if ((e.target as Element).closest("input, textarea, [contenteditable='true'], .react-datepicker-popper")) return;
         if (getActiveSlideScrollTop() > 0) return;
@@ -176,7 +180,45 @@ export default function Group() {
         line.current.style.transform = `translateX(${proc}%)`;
         if (proc > 50) setSelector("habits"); else setSelector("members");
     };
+    const blockContextGesture = () => {
+        if (!touchActive.current) return;
+        contextGesture.current = true;
+        gestureBlocked.current = true;
+        const owned = isCollapsingGesture.current || sliderOwnsGesture.current;
+        if (isCollapsingGesture.current) {
+            if (collapseFrame.current !== null) cancelAnimationFrame(collapseFrame.current);
+            collapseFrame.current = null;
+            collapsedRef.current = collapseInitial.current;
+            setCollapsed(collapseInitial.current);
+        }
+        expanded.current = false;
+        isHorizontal.current = false;
+        isCollapsingGesture.current = false;
+        sliderGesture.current = false;
+        sliderOwnsGesture.current = false;
+        if (owned) {
+            setIsDragging(false);
+            setDontHandle(false);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener("at-context-gesture-start", blockContextGesture);
+        if (menu.visible) blockContextGesture();
+        return () => window.removeEventListener("at-context-gesture-start", blockContextGesture);
+    });
+
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+        if (e.touches.length !== 1) {
+            blockContextGesture();
+            return;
+        }
+        touchActive.current = true;
+        contextGesture.current = menu.visible;
+        if (contextGesture.current) {
+            blockContextGesture();
+            return;
+        }
         if (collapseFrame.current !== null) {
             cancelAnimationFrame(collapseFrame.current);
             collapseFrame.current = null;
@@ -194,20 +236,19 @@ export default function Group() {
         sliderOwnsGesture.current = false;
     };
 
-    const touchSliderStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const touchSliderStart = () => {
+        if (contextGesture.current || menu.visible || gestureBlocked.current) return;
         sliderGesture.current = true;
         sliderStartLeft.current = contentRef.current?.scrollLeft ?? 0;
-
-        if (dontHandleOther) return;
-
-        if (sliderStartLeft.current > 1) {
-            sliderOwnsGesture.current = true;
-            setDontHandle(true);
-            e.stopPropagation();
-        }
+        // As in Acc, ownership is decided only after the direction is known.
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+        if (contextGesture.current || menu.visible || e.defaultPrevented) {
+            blockContextGesture();
+            if (e.cancelable) e.preventDefault();
+            return;
+        }
         if (dontHandleOther) {
             gestureBlocked.current = true;
             return;
@@ -307,6 +348,15 @@ export default function Group() {
     });
 
     const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+        if (e.touches.length) return;
+        if (contextGesture.current || menu.visible) {
+            blockContextGesture();
+            touchActive.current = false;
+            contextGesture.current = false;
+            e.stopPropagation();
+            return;
+        }
+        touchActive.current = false;
         const wasCollapsingGesture = isCollapsingGesture.current;
         const ownedGesture = sliderOwnsGesture.current || wasCollapsingGesture;
 
@@ -330,6 +380,13 @@ export default function Group() {
     };
 
     const handleTouchCancel = () => {
+        if (contextGesture.current || menu.visible) {
+            blockContextGesture();
+            touchActive.current = false;
+            contextGesture.current = false;
+            return;
+        }
+        touchActive.current = false;
         const owned = isCollapsingGesture.current || sliderOwnsGesture.current;
         if (isCollapsingGesture.current) animateCollapse(collapseInitial.current > 0.45 ? 1 : 0);
         expanded.current = false;
@@ -344,7 +401,7 @@ export default function Group() {
     };
 
     const handleSelectorClick = (i: number) => {
-        if (dontHandleOther || !contentRef.current) return;
+        if (menu.visible || dontHandleOther || !contentRef.current) return;
 
         const elWidth = contentRef.current.clientWidth;
         if (!elWidth) return;
@@ -401,13 +458,13 @@ export default function Group() {
                     </div>
                 </div>
                 <div
-                    className="accContent"
+                    className={`accContent${menu.visible ? " accContentLocked" : ""}`}
                     ref={contentRef}
                     onScroll={handleScroll}
                     onTouchStartCapture={touchSliderStart}
                     style={{
-                        overflowX: dontHandleOther ? "hidden" : undefined,
-                        touchAction: dontHandleOther ? "pan-y" : undefined
+                        overflowX: menu.visible || dontHandleOther ? "hidden" : undefined,
+                        touchAction: menu.visible ? "none" : dontHandleOther ? "pan-y" : undefined
                     }}
                 >
                     <div

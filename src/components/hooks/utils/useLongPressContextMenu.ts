@@ -53,6 +53,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
             current.timer = setTimeout(() => {
                 if (press !== current || !current.target.isConnected) return;
                 current.triggered = true;
+                window.dispatchEvent(new Event("at-context-gesture-start"));
                 suppressUntil = performance.now() + 1400;
                 current.target.dispatchEvent(new MouseEvent("contextmenu", {
                     bubbles: true, cancelable: true, clientX: current.x, clientY: current.y
@@ -71,7 +72,8 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
                 // Match MobileLayout's 8px axis arbitration for every ordinary
                 // context-menu surface (posts, messages, settings cards, etc.).
                 // Otherwise the menu timer can fire during a slow swipe.
-                if ((Math.abs(dy) > 18 && Math.abs(dy) > Math.abs(dx)) ||
+                const verticalThreshold = press.target.closest(".accDiv") ? 8 : 18;
+                if ((Math.abs(dy) >= verticalThreshold && Math.abs(dy) >= Math.abs(dx)) ||
                     (Math.abs(dx) >= 8 && Math.abs(dx) > Math.abs(dy))) cancel();
                 return;
             }
