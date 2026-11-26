@@ -61,11 +61,24 @@ export default function ContextMenu() {
             const viewportHeight = viewport?.height ?? window.innerHeight;
             const offsetLeft = viewport?.offsetLeft ?? 0;
             const offsetTop = viewport?.offsetTop ?? 0;
-            const focused = !!menu.focusSource?.isConnected && !!menu.focusRect;
+            const focused = !!menu.focusSource && !!menu.focusRect;
             const fitProfile = menu.point === "profileCardActions" || (menu.point === "smAccountNavigation" && menu.options.id === "profile");
             const previewScale = focused && fitProfile ? Math.min(1, (viewportWidth - 32) / Math.max(1, menu.focusRect!.width), viewportHeight * .28 / Math.max(1, menu.focusRect!.height)) : 1;
-            const previewWidth = focused ? Math.min(menu.focusRect!.width * previewScale, viewportWidth - 32) : 0;
-            const previewHeight = focused ? Math.min(menu.focusRect!.height * previewScale, viewportHeight * .28) : 0;
+            const focusSource = menu.focusSource;
+            const photo = focused && /^image\//i.test(menu.options.type || "") && focusSource
+                ? (focusSource instanceof HTMLImageElement ? focusSource : focusSource.querySelector("img"))
+                : null;
+            const lastMessage = menu.point === "chat" ? menu.options.lastMessage : undefined;
+            const photoWidth = photo?.naturalWidth || photo?.clientWidth || 0;
+            const photoHeight = photo?.naturalHeight || photo?.clientHeight || 0;
+            const previewRoom = Math.max(0, viewportHeight - menuHeight - 40);
+            const photoScale = photoWidth && photoHeight
+                ? Math.min((viewportWidth - 32) / photoWidth, previewRoom / photoHeight, viewportHeight * .62 / photoHeight)
+                : 0;
+            const photoPreview = photo && photoScale > 0 ? photo : null;
+            const previewWidth = photoPreview ? photoWidth * photoScale : focused ? Math.min(menu.focusRect!.width * previewScale, viewportWidth - 32) : 0;
+            const previewHeight = photoPreview ? photoHeight * photoScale :
+                focused ? Math.min(menu.focusRect!.height * previewScale + (lastMessage ? 78 : 0), previewRoom) : 0;
             const previewTop = Math.max(offsetTop + 12, offsetTop + (viewportHeight - previewHeight - menuHeight - 16) / 2);
             const previewLeft = offsetLeft + (viewportWidth - previewWidth) / 2;
             const minLeft = menu.originSide ? Math.max(offsetLeft + 10, menu.originSide.left + 10) : offsetLeft + 10;
@@ -76,7 +89,7 @@ export default function ContextMenu() {
                 Math.max(offsetTop + 10, Math.min(menu.y, offsetTop + viewportHeight - menuHeight - 10));
             setPos({ top, left, previewTop, previewLeft, previewWidth, previewHeight });
             if (focused && previewRef.current && menu.focusSource) {
-                const clone = menu.focusSource.cloneNode(true) as HTMLElement;
+                const clone = (photoPreview || menu.focusSource).cloneNode(true) as HTMLElement;
                 clone.removeAttribute("id");
                 clone.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
                 if (fitProfile) {
@@ -87,7 +100,37 @@ export default function ContextMenu() {
                     clone.style.boxSizing = "border-box";
                     clone.style.transform = `scale(${previewScale})`;
                 }
-                previewRef.current.replaceChildren(clone);
+                if (photoPreview && clone instanceof HTMLImageElement) {
+                    clone.className = "contextMenuPhoto";
+                    clone.removeAttribute("style");
+                    clone.loading = "eager";
+                    previewRef.current.replaceChildren(clone);
+                } else if (lastMessage) {
+                    const preview = document.createElement("div");
+                    preview.className = "contextMenuChatPreview";
+                    const message = document.createElement("div");
+                    message.className = "contextMenuChatLastMessage";
+                    if (lastMessage.image) {
+                        const thumbnail = document.createElement("img");
+                        thumbnail.src = lastMessage.image;
+                        thumbnail.alt = "";
+                        message.append(thumbnail);
+                    }
+                    const text = document.createElement("div");
+                    if (lastMessage.sender) {
+                        const sender = document.createElement("strong");
+                        sender.textContent = lastMessage.sender;
+                        text.append(sender);
+                    }
+                    const content = document.createElement("span");
+                    content.textContent = lastMessage.text;
+                    text.append(content);
+                    message.append(text);
+                    preview.append(clone, message);
+                    previewRef.current.replaceChildren(preview);
+                } else {
+                    previewRef.current.replaceChildren(clone);
+                }
             }
             setIsAdjusted(true);
             if (mobileCalendar || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -182,7 +225,7 @@ export default function ContextMenu() {
     return (
         <>
         {mobileCalendar && <div className="ContextMenuFocusBackdrop" onClick={closeMenu}/>}
-        {menu.focusRect && menu.focusSource?.isConnected && <>
+        {menu.focusRect && menu.focusSource && <>
             <div className="ContextMenuFocusBackdrop" onPointerDown={event => {
                 if (event.pointerType !== "touch" && event.pointerType !== "pen") closeMenu();
             }}/>

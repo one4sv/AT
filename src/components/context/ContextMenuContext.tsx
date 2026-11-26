@@ -2,11 +2,13 @@ import { createContext, useEffect, useRef, useState, type ReactNode, type RefObj
 import type { Habit } from "./HabitsContext"
 import type { Media } from "./ChatContext"
 import type { Perms } from "./GroupContext"
+import { useSettings } from "../hooks/SettingsHook";
 import useLongPressContextMenu from "../hooks/utils/useLongPressContextMenu"
 const ContextMenuContext = createContext<ContextMenuContextType | null>(null)
 
 export type MenuOptions = {
     id: string,
+    lastMessage?: { text: string; sender?: string; image?: string },
     anchorRight?: boolean,
     isDone?: boolean,
     name?:string,
@@ -111,11 +113,13 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
         setMenu({ x: -1000, visible: false, y: 0, point: "", options: {id: "", name: ""}})
     }
 
-    useLongPressContextMenu({ closeMenu, menuRef });
+    const { highlightContextEdges, sideContextEdges } = useSettings();
+    useLongPressContextMenu({ closeMenu, menuRef, highlightContextEdges, sideContextEdges });
 
     useEffect(() => {
         const close = () => closeMenu()
         const scroll = (event: Event) => {
+            if (event.target instanceof HTMLElement && event.target.hasAttribute("data-context-edge-scroll")) return;
             if (!menuRef.current?.contains(event.target as Node) && !(event.target instanceof Element && event.target.closest(".selectListPortalRoot.calendarContextActivity"))) closeMenu()
         }
         const key = (event: KeyboardEvent) => { if (event.key === "Escape") closeMenu() }

@@ -409,6 +409,13 @@ export const roadmapFuture: RoadmapRelease[] = [
         ]
     },
     {
+        version: "0.6.7",
+        features: [
+            { ru: "Последнее сообщение в предпросмотре чата и увеличенные фото в контекстных меню", en: "Latest message in chat previews and larger context-menu photos" },
+            { ru: "Прокрутка списков при удержании у края экрана и экспериментальные настройки зон", en: "Scroll lists by holding at a screen edge, with experimental zone settings" }
+        ]
+    },
+    {
         version: "0.6+",
         features: [
             { ru: "Карточки активностей и действия внутри чатов", en: "Activity cards and actions in chats" },

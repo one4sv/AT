@@ -64,6 +64,10 @@ export interface SettingsContextType {
     showMobileMenuOnStart: boolean;
     setShowMobileMenuOnStart: React.Dispatch<React.SetStateAction<boolean>>;
     startupSideMenuTab: StartupSideMenuTab;
+    highlightContextEdges: boolean;
+    setHighlightContextEdges: React.Dispatch<React.SetStateAction<boolean>>;
+    sideContextEdges: boolean;
+    setSideContextEdges: React.Dispatch<React.SetStateAction<boolean>>;
     sideMenuSwipe: "close" | "sections";
     setSideMenuSwipe: React.Dispatch<React.SetStateAction<"close" | "sections">>;
     setStartupSideMenuTab: React.Dispatch<React.SetStateAction<StartupSideMenuTab>>;
@@ -191,6 +195,8 @@ const LOCAL_KEYS = {
     showMobileMenuOnStart: "settings_mobile_start_menu",
     startupSideMenuTab: "settings_mobile_start_tab",
     sideMenuSwipe: "settings_mobile_menu_swipe",
+    highlightContextEdges: "settings_context_edges_highlight",
+    sideContextEdges: "settings_context_edges_horizontal",
     bg: "settings_bg",
     bgUrl: "settings_bg_url",
     bgEffects: "settings_bg_effects",
@@ -236,6 +242,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ layout, setLayout ] = useLocalStorage(LOCAL_KEYS.layout, "always");
     const [ startupPage, setStartupPage ] = useLocalStorage<StartupPage>(LOCAL_KEYS.startupPage, "feed");
     const [ showMobileMenuOnStart, setShowMobileMenuOnStart ] = useLocalStorage<boolean>(LOCAL_KEYS.showMobileMenuOnStart, true);
+    const [ highlightContextEdges, setHighlightContextEdges ] = useLocalStorage(LOCAL_KEYS.highlightContextEdges, false);
+    const [ sideContextEdges, setSideContextEdges ] = useLocalStorage(LOCAL_KEYS.sideContextEdges, false);
     const [ sideMenuSwipe, setSideMenuSwipe ] = useLocalStorage<"close" | "sections">(LOCAL_KEYS.sideMenuSwipe, "close");
     const [ startupSideMenuTab, setStartupSideMenuTab ] = useLocalStorage<StartupSideMenuTab>(LOCAL_KEYS.startupSideMenuTab, "chats");
     const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "landing");
@@ -490,6 +498,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             startupPage, setStartupPage, showMobileMenuOnStart, setShowMobileMenuOnStart,
             startupSideMenuTab, setStartupSideMenuTab,
             sideMenuSwipe, setSideMenuSwipe,
+            highlightContextEdges, setHighlightContextEdges, sideContextEdges, setSideContextEdges,
             bg, setBg,
             decor, setDecor,
             bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, wallpaperStyle, setWallpaperStyle, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang, fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat, timeZone, setTimeZone,

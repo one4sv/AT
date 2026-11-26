@@ -20,7 +20,8 @@ export default function GeneralTab({ search }: { search: string }) {
     const { fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat, timeZone, setTimeZone,
         autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
         startupPage, setStartupPage, showMobileMenuOnStart, setShowMobileMenuOnStart,
-        startupSideMenuTab, setStartupSideMenuTab, sideMenuSwipe, setSideMenuSwipe } = useSettings();
+        startupSideMenuTab, setStartupSideMenuTab, sideMenuSwipe, setSideMenuSwipe,
+        highlightContextEdges, setHighlightContextEdges, sideContextEdges, setSideContextEdges } = useSettings();
 
     const timeZones = useMemo(() => {
         const device = browserTimeZone();
@@ -139,6 +140,22 @@ export default function GeneralTab({ search }: { search: string }) {
                     </div>}
                 </>}
             </div>
+            {isMobile && <div className="settingInnerDiv">
+                <div className="settingHeader">{t("general.experimental")}</div>
+                <div className="settingInnerList">
+                    <div className="settingTogglerDiv" data-setting-id="highlightContextEdges"
+                        onClick={() => setHighlightContextEdges(value => !value)}>
+                        <HighlightText text={t("general.highlightContextEdges")} search={search}/>
+                        <Toggler state={highlightContextEdges} setState={setHighlightContextEdges} stopPropagation={true}/>
+                    </div>
+                    <div className="settingTogglerDiv" data-setting-id="sideContextEdges"
+                        onClick={() => setSideContextEdges(value => !value)}>
+                        <HighlightText text={t("general.sideContextEdges")} search={search}/>
+                        <Toggler state={sideContextEdges} setState={setSideContextEdges} stopPropagation={true}/>
+                    </div>
+                </div>
+                <span className="settingHint">{t("general.contextEdgesHint")}</span>
+            </div>}
             <div className="settingInnerDiv">
                 <div className="settingHeader">
                     {t("general.traffic")}

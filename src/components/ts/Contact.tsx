@@ -2,6 +2,7 @@ import type { Contact } from "../context/ContactsContext";
 import { PushPin, SpeakerSimpleX, BookmarkSimpleIcon } from "@phosphor-icons/react";
 import { Check, CheckCheck, CircleUserRound } from "lucide-react";
 import { isMobile } from "react-device-detect";
+import { useSettings } from "../hooks/SettingsHook";
 import { useChat } from "../hooks/ChatHook";
 import { useContextMenu } from "../hooks/ContextMenuHook";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -28,6 +29,7 @@ export default function Contact({ contact }: ContactType) {
     const { onlineMap } = useContacts();
     const { setBlackout } = useBlackout();
     const { forwardMedia, setForwardMedia } = useMessages();
+    const { autoLoadImages, autoPlayGif } = useSettings();
     const { openMenu } = useContextMenu();
     const { setDroppedFiles } = useDrop();
     const { user } = useUser();
@@ -216,6 +218,10 @@ export default function Contact({ contact }: ContactType) {
             data-context-menu="true"
             onContextMenu={(e) => {
                 e.preventDefault();
+                const message = contact.lastMessage;
+                const file = message?.files?.[0];
+                const photo = autoLoadImages && file && /^image\//i.test(file.type) &&
+                    (autoPlayGif || file.type.toLowerCase() !== "image/gif") ? file.url : undefined;
                 openMenu(
                     e.clientX,
                     e.clientY,
@@ -225,6 +231,12 @@ export default function Contact({ contact }: ContactType) {
                         isMy: contact.lastMessage?.id !== undefined,
                         name: contact.name ? contact.name : contact.nick,
                         nick: contact.nick,
+                        lastMessage: message ? {
+                            text: message.files?.length === 1 && !message.content && !photo
+                                ? file?.name || getLastMessageContent() || "" : getLastMessageContent() || "",
+                            sender: contact.is_group && !message.is_system ? message.sender_name : undefined,
+                            image: photo
+                        } : undefined,
                     },
                     undefined,
                     {

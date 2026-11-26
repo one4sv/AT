@@ -172,3 +172,85 @@ html:has(.ContextMenuWrapper) .sideMenu {
     -webkit-user-select: none;
     user-select: none;
 }
+
+.ContextMenuFocusPreview > .contextMenuPhoto {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.contextMenuChatPreview {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    > .contactsUser {
+        flex-shrink: 0;
+        box-sizing: border-box;
+    }
+}
+
+.contextMenuChatLastMessage {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-width: 0;
+    padding: 6px 12px 10px;
+    color: var(--tc);
+
+    > img {
+        width: 52px;
+        height: 52px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        object-fit: cover;
+    }
+
+    > div {
+        min-width: 0;
+    }
+
+    strong {
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    span {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        overflow-wrap: anywhere;
+    }
+}
+
+.contextScrollZone {
+    position: fixed;
+    z-index: 999;
+    pointer-events: none;
+    background: color-mix(in srgb, var(--accent_text) 16%, transparent);
+
+    &.active {
+        background: color-mix(in srgb, var(--accent_text) 36%, transparent);
+    }
+
+    &.top, &.bottom {
+        left: 0;
+        right: 0;
+        height: 44px;
+    }
+
+    &.left, &.right {
+        top: 0;
+        bottom: 0;
+        width: 44px;
+    }
+
+    &.top { top: 0; }
+    &.bottom { bottom: 0; }
+    &.left { left: 0; }
+    &.right { right: 0; }
+}

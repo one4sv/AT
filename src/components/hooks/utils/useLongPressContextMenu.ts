@@ -3,11 +3,17 @@ import { useEffect, useRef, type RefObject } from "react";
 type SwipeContextMenuArgs = {
     closeMenu: () => void;
     menuRef: RefObject<HTMLDivElement | null>;
+    highlightContextEdges: boolean;
+    sideContextEdges: boolean;
 };
 
-export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeContextMenuArgs) {
-    const latest = useRef({ closeMenu, menuRef });
-    latest.current = { closeMenu, menuRef };
+const edgeSize = 44;
+const edgeDelay = 300;
+const scrollSurfaces = ".sideMenu .slide, .settingsDiv .settingsButtsWrapper, .settingsDiv .settingTab, .settingsDiv .searchReveal, .settingsDiv .buttsScroll, .chat, .chatMediaBody.active";
+
+export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
+    const latest = useRef(options);
+    latest.current = options;
 
     useEffect(() => {
         let press: {
@@ -22,6 +28,67 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
         } | null = null;
         let hovered: HTMLElement | null = null;
         let suppressUntil = 0;
+        let scrollSurface: HTMLElement | null = null;
+        let edgeFrame = 0;
+        let edgeDirection = 0;
+        let edgeSince = 0;
+        let lastFrame = 0;
+        let zones: HTMLDivElement[] = [];
+
+        const stopEdgeScroll = () => {
+            cancelAnimationFrame(edgeFrame);
+            edgeFrame = 0;
+            edgeDirection = 0;
+            scrollSurface?.removeAttribute("data-context-edge-scroll");
+            scrollSurface = null;
+            zones.forEach(zone => zone.remove());
+            zones = [];
+        };
+
+        const tickEdgeScroll = (now: number) => {
+            const { menuRef, sideContextEdges } = latest.current;
+            if (!press?.triggered || !scrollSurface?.isConnected || !menuRef.current?.isConnected) {
+                stopEdgeScroll();
+                return;
+            }
+            const viewport = window.visualViewport;
+            const offset = sideContextEdges ? viewport?.offsetLeft ?? 0 : viewport?.offsetTop ?? 0;
+            const size = sideContextEdges ? viewport?.width ?? window.innerWidth : viewport?.height ?? window.innerHeight;
+            const coordinate = (sideContextEdges ? press.x : press.y) - offset;
+            const target = document.elementFromPoint(press.x, press.y);
+            const direction = target?.closest(".ContextMenuWrapper, .selectListPortalRoot") ? 0 :
+                coordinate < edgeSize ? -1 : coordinate > size - edgeSize ? 1 : 0;
+            if (direction !== edgeDirection) {
+                edgeDirection = direction;
+                edgeSince = now;
+            }
+            zones.forEach((zone, index) => zone.classList.toggle("active", direction === (index === 0 ? -1 : 1)));
+            if (direction && now - edgeSince >= edgeDelay) {
+                scrollSurface.scrollTop += direction * Math.min(now - lastFrame, 32) * .42;
+            }
+            lastFrame = now;
+            edgeFrame = requestAnimationFrame(tickEdgeScroll);
+        };
+
+        const startEdgeScroll = (target: HTMLElement) => {
+            if (target.closest("[data-calendar-date]")) return;
+            scrollSurface = target.closest<HTMLElement>(scrollSurfaces) ??
+                target.closest(".settingsDiv .settingsPage")?.querySelector<HTMLElement>(".settingTab") ?? null;
+            if (!scrollSurface) return;
+
+            scrollSurface.setAttribute("data-context-edge-scroll", "");
+            if (latest.current.highlightContextEdges) {
+                zones = (latest.current.sideContextEdges ? ["left", "right"] : ["top", "bottom"]).map(edge => {
+                    const zone = document.createElement("div");
+                    zone.className = `contextScrollZone ${edge}`;
+                    zone.setAttribute("aria-hidden", "true");
+                    document.body.append(zone);
+                    return zone;
+                });
+            }
+            lastFrame = performance.now();
+            edgeFrame = requestAnimationFrame(() => { edgeFrame = requestAnimationFrame(tickEdgeScroll); });
+        };
 
         const clearHover = () => {
             hovered?.classList.remove("touchHover");
@@ -30,6 +97,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
 
         const cancel = (close = false) => {
             if (press?.timer) clearTimeout(press.timer);
+            stopEdgeScroll();
             document.documentElement.classList.remove("contextMenuPress");
             press = null;
             clearHover();
@@ -58,6 +126,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
                 current.target.dispatchEvent(new MouseEvent("contextmenu", {
                     bubbles: true, cancelable: true, clientX: current.x, clientY: current.y
                 }));
+                startEdgeScroll(current.target);
             }, 350);
         };
 

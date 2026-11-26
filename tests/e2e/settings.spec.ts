@@ -319,6 +319,43 @@ async function swipe(surface: Locator, from: number, to: number, inspectSections
     }, { from, to, inspectSections });
 }
 
+test("mobile context menu scrolls settings from the highlighted side edge", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
+    await page.addInitScript(() => {
+        localStorage.setItem("settingsfixture_settings_context_edges_highlight", "true");
+        localStorage.setItem("settingsfixture_settings_context_edges_horizontal", "true");
+    });
+    await page.goto("/settings");
+    const target = page.locator(".settingsButtsWrapper .settingButt").first();
+    await expect(target).toBeVisible();
+    const origin = await target.evaluate(element => {
+        const bounds = element.getBoundingClientRect();
+        const origin = { clientX: bounds.x + bounds.width / 2, clientY: bounds.y + bounds.height / 2 };
+        element.dispatchEvent(new PointerEvent("pointerdown", {
+            ...origin, bubbles: true, pointerType: "touch", pointerId: 4, isPrimary: true
+        }));
+        return origin;
+    });
+
+    const menu = page.locator(".ContextMenuWrapper");
+    await expect(menu).toBeVisible();
+    await expect(page.locator(".contextScrollZone.right")).toBeVisible();
+    const scrollSurface = page.locator("[data-context-edge-scroll]");
+    const top = await scrollSurface.evaluate(element => element.scrollTop);
+    await page.evaluate(origin => {
+        document.dispatchEvent(new PointerEvent("pointermove", {
+            clientX: window.innerWidth - 4, clientY: origin.clientY, bubbles: true, pointerType: "touch", pointerId: 4
+        }));
+    }, origin);
+    await expect.poll(() => scrollSurface.evaluate(element => element.scrollTop)).toBeGreaterThan(top);
+    await expect(menu).toBeVisible();
+    await page.evaluate(() => document.dispatchEvent(new PointerEvent("pointercancel", {
+        bubbles: true, pointerType: "touch", pointerId: 4
+    })));
+    await expect(page.locator(".contextScrollZone")).toHaveCount(0);
+    await expect(menu).toHaveCount(0);
+});
+
 test("mobile settings buttons allow swiping SideMenu open", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
     await page.goto("/settings");

@@ -80,6 +80,10 @@
     "savedSmartHint": "Highlight dates and schedules in the latest Saved message. Click to open a prefilled form. Nothing is created until you save. This preference applies only to this device."
   },
   "general": {
+    "experimental": "Experimental settings",
+    "highlightContextEdges": "Highlight scroll zones",
+    "sideContextEdges": "Scroll from the side edges",
+    "contextEdgesHint": "While holding a context menu, the left edge scrolls up and the right edge scrolls down. The top and bottom edges are used by default.",
     "startupTitle": "When opening the app",
     "startupPage": "Start page",
     "startupFeed": "Feed",
