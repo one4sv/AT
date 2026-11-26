@@ -56,7 +56,7 @@ jobs:
       - name: Verify accent highlight tokens in every palette
         run: node --experimental-strip-types --test tests/accent-highlights.test.mjs
       - name: Verify quick-create commands in Saved messages
-        run: node --experimental-strip-types --test tests/quick-create-command.test.mjs
+        run: node --experimental-strip-types --test tests/quick-create-command.test.mjs tests/command-help.test.mjs
       - name: Verify Saved message smart suggestions
         run: node --experimental-strip-types --test tests/saved-message-suggestions.test.mjs
       - name: Verify chat mention completion

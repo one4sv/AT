@@ -311,11 +311,12 @@
         ]
       },
       "todo": {
-        "syntax": "/todo [name]",
-        "body": "Open the goal creation form in Saved Messages, optionally with the name prefilled. Set the remaining parameters in the form.",
+        "syntax": "/todo <name> [description] [due date] [manual|metric] [start target unit]",
+        "body": "Create a goal directly in Saved Messages, just like /act and /do. Only the name is required. Description and due date are optional. Manual progress is the default; for metric, enter starting and target numbers, then an optional unit. Quote multiword or empty fields. Enter or Tab selects suggestions, Enter advances fields, and sending creates the goal and card. Configure linked activities, stages and recurrence in the goal editor.",
         "examples": [
-          "/todo",
-          "/todo Read 20 books"
+          "/todo \"Read 20 books\"",
+          "/todo \"Learn Go\" \"\" 01.06.2027 manual",
+          "/todo \"Read 20 books\" \"\" \"\" metric 0 20 books"
         ]
       },
       "set": {
@@ -409,6 +410,15 @@
       }
     },
     "quickCommands": {
+      "goalDueDate": "Due date (optional)",
+      "goalMode": "Progress mode",
+      "metricStart": "Starting value",
+      "metricTarget": "Target value",
+      "metricUnit": "Unit (optional)",
+      "goalModes": {"manual":"Manual","metric":"Numeric metric"},
+      "goalCreated": "Goal created",
+      "invalidGoalDate": "Enter a valid goal deadline",
+      "invalidGoalMode": "Check the progress mode, numeric values and field lengths",
       "close": "Close",
       "action": "Commands",
       "createActivity": "Create activity",

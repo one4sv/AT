@@ -1,3 +1,4 @@
+import { goalsChanged, previewGoal } from "../../../../components/hooks/useGoalsWorkspace";
 import { goalSnapshotLink } from "../../utils/sharedGoal";
 import type { Goal } from "../../../HabitPage/components/Overview/goalTypes";
 import useLocalStorage from "../../../../components/hooks/utils/useLocalStorage";
@@ -150,7 +151,7 @@ export default function ChatTextArea({
     const commandPopupRef = useRef<HTMLDivElement | null>(null);
     const commandRowRef = useRef<HTMLDivElement | null>(null);
     const commandSendRef = useRef<HTMLDivElement | null>(null);
-    const createdQuick = useRef<{ kind: "habit" | "plan"; id: number } | null>(null);
+    const createdQuick = useRef<{ kind: "habit" | "plan"; id: number } | { kind: "goal"; id: number; url: string } | null>(null);
     const savedChat = !id && !!nick && !!user.nick &&
         nick.toLowerCase() === user.nick.toLowerCase() && !chatWith?.is_group;
     const quickInput = savedChat && !editing ? parseQuickInput(mess) : null;
@@ -162,11 +163,16 @@ export default function ChatTextArea({
         name: tc("chatUi.quickCommands.requiredName"), description: tc("chatUi.description"),
         periodicity: tc("habitUi.periodicity"), date: tc("chatUi.quickCommands.requiredDate"),
         weeklyDays: tc("chatUi.quickCommands.days"), cycleActive: tc("habitUi.activeDays"), cycleRest: tc("habitUi.restDays"),
-        startTime: tc("chatUi.quickCommands.startShort"), endTime: tc("chatUi.quickCommands.endShort")
+        startTime: tc("chatUi.quickCommands.startShort"), endTime: tc("chatUi.quickCommands.endShort"),
+        dueDate: tc("chatUi.quickCommands.goalDueDate"), goalMode: tc("chatUi.quickCommands.goalMode"),
+        metricStart: tc("chatUi.quickCommands.metricStart"), metricTarget: tc("chatUi.quickCommands.metricTarget"), metricUnit: tc("chatUi.quickCommands.metricUnit")
     };
     const quickPeriodItems = quickInput?.field === "periodicity" ? (["everyday", "weekly", "cycle", "sometimes"] as const).map(id => ({
         id, label: tc("habitUi.period." + id), description: tc("habitUi.periodHint." + id)
     })).filter(item => [item.id, item.label].some(value => value.toLowerCase().includes((quickInput.slots[2] || "").toLowerCase()))) : [];
+    const quickModeItems = quickInput?.field === "goalMode" ? (["manual", "metric"] as const).map(id => ({
+        id, label: tc("chatUi.quickCommands.goalModes." + id), icon: <TargetIcon size={18}/>
+    })).filter(item => [item.id, item.label].some(value => value.toLowerCase().includes((quickInput.slots[3] || "").toLowerCase()))) : [];
     const wallpaperInput = !editing ? wallpaperCommandInput(mess) : null;
     const wallpaperChoice = wallpaperInput !== null ? resolveWallpaperShare(wallpaperInput, bg, bgUrl, bgGallery) : null;
     const wallpaperQuery = normalizeWallpaperQuery(wallpaperInput ?? "");
@@ -198,7 +204,7 @@ export default function ChatTextArea({
             icon: <span className="compositionContextPreview wallpaperShareThumbnail"><CompositionPreview composition={item}/></span>
         }] : []) : [];
     const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed ? [] : compositionInput !== null ? compositionChoices : wallpaperInput !== null ? wallpaperChoices : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText, (section, item) =>
-        item ? <SettingCatalogIcon item={item} size={18}/> : <section.icon size={18}/>) : quickPeriodItems;
+        item ? <SettingCatalogIcon item={item} size={18}/> : <section.icon size={18}/>) : quickInput?.field === "goalMode" ? quickModeItems : quickPeriodItems;
     const quickCommandItems: EntitySuggestionItem[] = [
         { id: "todo", label: "/todo", description: tc("chatUi.createGoalCommand"), icon: <TargetIcon size={18}/> },
         { id: "help", label: "/help", description: tc("chatUi.commandHelp"), icon: <QuestionIcon size={18}/> },
@@ -454,8 +460,8 @@ export default function ChatTextArea({
     };
     const displayedMess = previewCommand || sharePreview || mess;
     const commandHighlight = !editing &&
-        (savedChat || !/^\/(?:act|do|set)(?=\s|$)/i.test(displayedMess))
-        ? displayedMess.match(/^\/(?:act|do|habit|plan|post|user|invite|group|set|settings)(?=\s|$)/i)?.[0] : null;
+        (savedChat || !/^\/(?:act|do|todo|set)(?=\s|$)/i.test(displayedMess))
+        ? displayedMess.match(/^\/(?:act|do|todo|goal|habit|plan|post|user|invite|group|set|settings)(?=\s|$)/i)?.[0] : null;
     const commitCommand = (id: string) => {
         createdQuick.current = null;
         setMess("/" + id + " ");
@@ -467,6 +473,9 @@ export default function ChatTextArea({
     };
     const chooseField = (item: EntitySuggestionItem) => {
         if (settingInput) setMess((localSetting ? "/set " : "/settings ") + item.id + " ");
+        else if (quickInput?.field === "goalMode") {
+            setMess(mess.replace(/[^ ]*$/, "") + item.id + (item.id === "metric" ? " " : ""));
+        }
         else if (quickInput?.field === "periodicity") {
             const prefix = mess.match(/^\/(?:act|do) (?:[^" ]|"[^"]*")* (?:[^" ]|"[^"]*")* /i)?.[0] ?? mess.slice(0, mess.length - (quickInput.slots[2] || "").length);
             setMess(prefix + item.id + " ");
@@ -481,9 +490,9 @@ export default function ChatTextArea({
     };
     const selectSavedCommand = (item: EntitySuggestionItem) => {
         rememberCommand(item.label);
-        if (item.id === "help" || item.id === "todo") {
+        if (item.id === "help") {
             setMess("");
-            setBlackout({ seted: true, module: item.id === "help" ? "CommandHelp" : "AddGoal", options: { text: item.id === "help" ? "saved" : "" } });
+            setBlackout({ seted: true, module: "CommandHelp", options: { text: "saved" } });
             return;
         }
         if (item.id === "settings" || item.id === "set") {
@@ -529,6 +538,19 @@ export default function ChatTextArea({
             showNotification("error", tc("chatUi.quickCommands.nameRequired"));
             return;
         }
+        if (quickDraft.kind === "goal") {
+            if (quickDraft.dueDateText?.trim() && !quickDraft.date) {
+                showNotification("error", tc("chatUi.quickCommands.invalidGoalDate"));
+                return;
+            }
+            if (!quickDraft.goalMode || (quickDraft.description || "").length > 1200 || (quickDraft.metricUnit || "").length > 24 ||
+                (quickDraft.goalMode === "metric" && (!quickDraft.metricStart?.trim() || !quickDraft.metricTarget?.trim() ||
+                    !Number.isFinite(Number(quickDraft.metricStart)) || !Number.isFinite(Number(quickDraft.metricTarget)) ||
+                    Number(quickDraft.metricStart) === Number(quickDraft.metricTarget)))) {
+                showNotification("error", tc("chatUi.quickCommands.invalidGoalMode"));
+                return;
+            }
+        }
         if (quickDraft.kind === "habit" && !quickDraft.periodicity) {
             showNotification("error", tc("chatUi.quickCommands.invalidPeriodicity"));
             return;
@@ -565,7 +587,25 @@ export default function ChatTextArea({
         try {
             let entity = createdQuick.current;
             if (!entity) {
-                if (quickDraft.kind === "plan") {
+                if (quickDraft.kind === "goal") {
+                    const response = await api.post<{ success: boolean; goal: Goal }>("goal-workspace", {
+                        name, description: quickDraft.description || "", due_date: quickDraft.date || null,
+                        progress_mode: quickDraft.goalMode || "manual", repeat_frequency: "none",
+                        auto_complete: false, habit_ids: [], plan_ids: [], stages: [],
+                        metric_start: quickDraft.goalMode === "metric" ? Number(quickDraft.metricStart) : 0,
+                        metric_target: quickDraft.goalMode === "metric" ? Number(quickDraft.metricTarget) : 100,
+                        metric_unit: quickDraft.goalMode === "metric" ? quickDraft.metricUnit || "" : ""
+                    });
+                    const goal = response.data?.goal;
+                    if (!response.data?.success || !goal?.id) throw new Error("Goal creation failed");
+                    const url = goalSnapshotLink(goal, window.location.origin);
+                    if (!url) throw new Error("Goal snapshot failed");
+                    entity = { kind: "goal", id: Number(goal.id), url };
+                    createdQuick.current = entity;
+                    previewGoal(user.id, goal.id, {})(goal);
+                    goalsChanged();
+                    rememberCommand("/todo");
+                } else if (quickDraft.kind === "plan") {
                     const response = await api.post("plans", {
                         name,
                         description: quickDraft.description || "",
@@ -608,8 +648,8 @@ export default function ChatTextArea({
                     void refetchHabits().catch(() => {});
                 }
             }
-            const content = (entity.kind === "plan" ? tc("plans.added") : tc("chatUi.quickCommands.activityCreated")) +
-                "\n" + new URL("/" + (entity.kind === "plan" ? "plan" : "habit") + "/" + entity.id, window.location.origin).href;
+            const createdLabel = entity.kind === "goal" ? tc("chatUi.quickCommands.goalCreated") : entity.kind === "plan" ? tc("plans.added") : tc("chatUi.quickCommands.activityCreated");
+            const content = createdLabel + "\n" + (entity.kind === "goal" ? entity.url : new URL("/" + entity.kind + "/" + entity.id, window.location.origin).href);
             const currentRoute = location.pathname;
             const sent = await sendMess({ nick }, content, [], undefined, undefined, undefined, confirmed => {
                 if (routeRef.current !== currentRoute) return;
@@ -625,7 +665,7 @@ export default function ChatTextArea({
             createdQuick.current = null;
             setMess("");
             setCommandListDismissed(false);
-            showNotification("success", entity.kind === "plan" ? tc("plans.added") : tc("chatUi.quickCommands.activityCreated"));
+            showNotification("success", createdLabel);
         } catch {
             showNotification("error", tc("chatUi.quickCommands.createFailed"));
         } finally {
@@ -860,7 +900,7 @@ export default function ChatTextArea({
             if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
                 e.preventDefault();
                 if (fieldItems.length) chooseField(fieldItems[Math.min(activeFieldSuggestion, fieldItems.length - 1)]);
-                else if (quickDraft && quickInput?.field && quickInput.field !== "endTime" && !quickInput.quoted && e.currentTarget.selectionStart === mess.length) {
+                else if (quickDraft && quickInput?.field && quickInput.slots.length < quickInput.fields.length && !quickInput.quoted && e.currentTarget.selectionStart === mess.length) {
                     setMess(mess + " ");
                     setFieldSuggestionsDismissed(false);
                 } else void handleSend();
@@ -936,8 +976,7 @@ export default function ChatTextArea({
     };
     const handleSend = async () => {
         if (!editing && /^\/help\s*$/i.test(mess)) { rememberCommand("/help"); setMess(""); setBlackout({ seted: true, module: "CommandHelp", options: { text: savedChat ? "saved" : "chat" } }); return; }
-        const todo = savedChat && !editing ? /^\/todo(?:\s+(.+))?\s*$/i.exec(mess) : null;
-        if (todo) { rememberCommand("/todo"); setMess(""); setBlackout({ seted: true, module: "AddGoal", options: { name: todo[1]?.trim() } }); return; }
+        if (savedChat && !editing && /^\/todo$/i.test(mess.trim())) { rememberCommand("/todo"); commitCommand("todo"); return; }
         if (shareLoading) return;
         if (quickDraft) {
             void submitQuickCommand();

@@ -14,7 +14,7 @@ test("every command in help has localized syntax, description, examples and clos
             assert.ok(item.body.length > 10);
             assert.ok(item.examples.length);
             for (const example of item.examples) assert.ok(example.startsWith("/"+command));
-            if (command==="act" || command==="do") for (const example of item.examples) {
+            if (command==="act" || command==="do" || command==="todo") for (const example of item.examples) {
                 const parsed = parseQuickInput(example);
                 assert.ok(parsed.draft.name && !parsed.overflow && !parsed.quoted);
                 if(command==="do") assert.ok(parsed.draft.date);

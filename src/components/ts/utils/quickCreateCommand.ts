@@ -132,18 +132,24 @@ export function parseQuickFieldDate(value: string): string | undefined {
 }
 
 
-export interface QuickCommandDraft extends QuickCreateDraft {
+export interface QuickCommandDraft extends Omit<QuickCreateDraft, "kind"> {
+    kind: "habit" | "plan" | "goal";
+    goalMode?: "manual" | "metric";
+    dueDateText?: string;
+    metricStart?: string;
+    metricTarget?: string;
+    metricUnit?: string;
     weeklyDays?: string;
     cycleActive?: string;
     cycleRest?: string;
     startTimeText?: string;
     endTimeText?: string;
 }
-export type QuickInputField = "name" | "description" | "periodicity" | "date" | "weeklyDays" | "cycleActive" | "cycleRest" | "startTime" | "endTime";
+export type QuickInputField = "name" | "description" | "periodicity" | "date" | "weeklyDays" | "cycleActive" | "cycleRest" | "startTime" | "endTime" | "dueDate" | "goalMode" | "metricStart" | "metricTarget" | "metricUnit";
 
 /** A single editable TA: spaces separate slots; quotes preserve spaces inside a slot. */
 export function parseQuickInput(text: string) {
-    const command = /^\/(act|do) /i.exec(text);
+    const command = /^\/(act|do|todo) /i.exec(text);
     if (!command) return null;
     const source = text.slice(command[0].length);
     const slots: string[] = [""];
@@ -153,13 +159,20 @@ export function parseQuickInput(text: string) {
         else if (char === " " && !quoted) slots.push("");
         else slots[slots.length - 1] += char;
     }
-    const kind = command[1].toLowerCase() === "act" ? "habit" : "plan";
+    const root = command[1].toLowerCase();
+    const kind = root === "act" ? "habit" : root === "todo" ? "goal" : "plan";
     const period = parseQuickFieldPeriodicity(slots[2] || "everyday");
-    const fields: QuickInputField[] = kind === "plan" ? ["name", "description", "date", "startTime", "endTime"] :
+    const modeText = (slots[3] || "manual").toLowerCase();
+    const goalMode = modeText === "manual" || modeText === "metric" ? modeText : undefined;
+    const fields: QuickInputField[] = kind === "goal" ? ["name", "description", "dueDate", "goalMode", ...(goalMode === "metric" ? ["metricStart", "metricTarget", "metricUnit"] as const : [])] : kind === "plan" ? ["name", "description", "date", "startTime", "endTime"] :
         ["name", "description", "periodicity", ...(period === "weekly" ? ["weeklyDays" as const] :
             period === "cycle" ? ["cycleActive" as const, "cycleRest" as const] : []), "startTime", "endTime"];
     const get = (field: QuickInputField) => slots[fields.indexOf(field)] || "";
-    const draft: QuickCommandDraft = {
+    const draft: QuickCommandDraft = kind === "goal" ? {
+        kind, name: get("name"), description: get("description"),
+        date: normalizeDate(get("dueDate")), dueDateText: get("dueDate"), goalMode,
+        metricStart: get("metricStart"), metricTarget: get("metricTarget"), metricUnit: get("metricUnit")
+    } : {
         kind,
         name: get("name"),
         description: get("description"),

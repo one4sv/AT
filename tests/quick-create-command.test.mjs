@@ -81,3 +81,19 @@ test("single TA positional fields preserve quoted text and skip optional descrip
     assert.equal(isQuickCreateCommand("/plan"), false);
     assert.equal(parseQuickInput("/do Doctor")?.draft.date, undefined);
 });
+
+
+test("todo uses positional inline fields and defaults to manual progress", async () => {
+    const {parseQuickInput} = await import("../src/components/ts/utils/quickCreateCommand.ts");
+    const basic=parseQuickInput('/todo "Read books"');
+    assert.equal(basic.draft.kind,"goal");
+    assert.equal(basic.draft.goalMode,"manual");
+    assert.equal(basic.draft.name,"Read books");
+    const metric=parseQuickInput('/todo "Read books" "" 01.06.2027 metric 0 20 books');
+    assert.equal(metric.draft.date,"2027-06-01");
+    assert.equal(metric.draft.metricTarget,"20");
+    assert.equal(metric.field,"metricUnit");
+    assert.equal(metric.overflow,false);
+    assert.equal(parseQuickInput('/todo Goal "" 31.02.2027').draft.date,undefined);
+    assert.equal(parseQuickInput('/todo Goal "" "" invalid').draft.goalMode,undefined);
+});

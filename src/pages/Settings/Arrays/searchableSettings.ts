@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { SearchableSetting } from "../Settings";
 import type { ElementType } from "react";
 import { useSettings } from "../../../components/hooks/SettingsHook";
-import { MirrorRectangularIcon } from "lucide-react";
+import { Blend, MirrorRectangularIcon } from "lucide-react";
 import useCompactLayout from "../../../components/hooks/utils/useCompactLayout";
 import { reactionsArr } from "../../../components/ts/utils/emojies";
 import { ChatCircleIcon } from "@phosphor-icons/react/dist/ssr";
@@ -24,7 +24,7 @@ export function matchesSettingSearch(section: SearchableSection, item: Searchabl
 
 export function useSearchableSettings(includeUnavailable = false): SearchableSection[] {
     const { t } = useTranslation("settings");
-    const { isDark, decor, blur, emote, lang } = useSettings();
+    const { isDark, decor, emote, lang } = useSettings();
     const isMobile = useCompactLayout();
 
     return [
@@ -83,9 +83,8 @@ export function useSearchableSettings(includeUnavailable = false): SearchableSec
                 {
                     id: "blur",
                     name: t("personalization.decorBlur"),
-                    icon: null,
+                    icon: Blend,
                     category: t("settings.personalization"),
-                    options: { icon_text: `${blur.toString()}px` },
                 },
                 {
                     id: "bg",
@@ -94,7 +93,7 @@ export function useSearchableSettings(includeUnavailable = false): SearchableSec
                     category: t("settings.personalization"),
                 },
                 ...([["backgroundBlur", "blurBackground"], ["backgroundMovement", "movement"], ["backgroundSpeed", "speed"], ["backgroundFilters", "filters"]] as const).map(([id, key]) => ({
-                    id, name: t("backgroundLibrary." + key), icon: ImageIcon, category: t("personalization.background")
+                    id, name: t("backgroundLibrary." + key), icon: id === "backgroundBlur" ? Blend : ImageIcon, category: t("personalization.background")
                 })),
                 {
                     id: "compositions",
