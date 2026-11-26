@@ -6,7 +6,7 @@ import { useChatMessageScroll } from "../../../../components/hooks/utils/useChat
 import type { SetStateAction } from "react";
 import type React from "react";
 
-export default function ChatSearch ({searchedMessages, selectedIndex, setSelectedIndex, isOpen, setIsOpen}:{searchedMessages:message[], selectedIndex:number, setSelectedIndex:React.Dispatch<SetStateAction<number>>, isOpen:boolean, setIsOpen:React.Dispatch<SetStateAction<boolean>>}) {
+export default function ChatSearch ({active = true, searchedMessages, selectedIndex, setSelectedIndex, isOpen, setIsOpen}:{active?:boolean, searchedMessages:message[], selectedIndex:number, setSelectedIndex:React.Dispatch<SetStateAction<number>>, isOpen:boolean, setIsOpen:React.Dispatch<SetStateAction<boolean>>}) {
     const { t } = useTranslation("common");
     const { scrollToMessage, setHighlightedId } = useChatMessageScroll()
     const { searchMess, setSearchMess, searchInputRef } = useChat()
@@ -54,7 +54,7 @@ export default function ChatSearch ({searchedMessages, selectedIndex, setSelecte
                 </div>
                 <div className="chatSearch">
                     <input
-                        ref={searchInputRef}
+                        ref={active ? searchInputRef : undefined}
                         type="text"
                         placeholder={t("chatUi.search")}
                         value={searchMess}

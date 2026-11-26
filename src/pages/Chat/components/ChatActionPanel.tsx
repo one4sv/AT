@@ -29,6 +29,42 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
     blocked.current = menu.visible || dontHandleOther;
     const modes: activeHeaderType[] = pms.length ? ["pinned","search","choosing"] : ["search","choosing"];
     const panelVisible = modes.includes(activeHeader);
+    const [horizontalOffset, setHorizontalOffsetState] = useState(0);
+    const horizontalOffsetRef = useRef(0);
+    const horizontalFrame = useRef<number | null>(null);
+    const setHorizontalOffset = useCallback((next: number) => {
+        horizontalOffsetRef.current = Math.max(-100, Math.min(100, next));
+        setHorizontalOffsetState(horizontalOffsetRef.current);
+    }, []);
+    const stopHorizontal = useCallback(() => {
+        if (horizontalFrame.current !== null) cancelAnimationFrame(horizontalFrame.current);
+        horizontalFrame.current = null;
+    }, []);
+    const animateHorizontal = useCallback((target: number, onDone?: () => void) => {
+        stopHorizontal();
+        const start = horizontalOffsetRef.current;
+        if (Math.abs(start - target) < .1) {
+            setHorizontalOffset(target);
+            onDone?.();
+            return;
+        }
+        const started = performance.now();
+        const frame = (time: number) => {
+            const progress = Math.min(1, (time - started) / 320);
+            setHorizontalOffset(start + (target - start) * (1 - Math.pow(1 - progress, 3)));
+            if (progress < 1) horizontalFrame.current = requestAnimationFrame(frame);
+            else {
+                horizontalFrame.current = null;
+                onDone?.();
+            }
+        };
+        horizontalFrame.current = requestAnimationFrame(frame);
+    }, [setHorizontalOffset, stopHorizontal]);
+    useLayoutEffect(() => {
+        stopHorizontal();
+        setHorizontalOffset(0);
+    }, [activeHeader, pms.length > 0, setHorizontalOffset, stopHorizontal]);
+    useEffect(() => stopHorizontal, [stopHorizontal]);
     const [position, setPositionState] = useState(-100);
     const positionRef = useRef(-100);
     const [height, setHeight] = useState(0);
@@ -196,10 +232,11 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
     useEffect(() => {
         const row = rowRef.current;
         if (!row) return;
-        let press: {x:number;y:number;id:number;axis:"x"|"y"|null;startPosition:number} | null = null;
+        let press: {x:number;y:number;id:number;axis:"x"|"y"|null;startPosition:number;startHorizontal:number;width:number} | null = null;
         const release = () => {
             if (press?.axis) setDontHandle(false);
             if (press?.axis === "y") settle(hiddenRef.current);
+            if (press?.axis === "x") animateHorizontal(0);
             press = null;
         };
         const start = (event: TouchEvent) => {
@@ -208,7 +245,7 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
             if (event.touches.length !== 1 || blocked.current || !(event.target instanceof Element) ||
                 event.target.closest("input,textarea,button")) return;
             const touch = event.touches[0];
-            press = {x:touch.clientX,y:touch.clientY,id:touch.identifier,axis:null,startPosition:positionRef.current};
+            press = {x:touch.clientX,y:touch.clientY,id:touch.identifier,axis:null,startPosition:positionRef.current,startHorizontal:horizontalOffsetRef.current,width:Math.max(1,row.clientWidth)};
         };
         const move = (event:TouchEvent) => {
             if (!press || blocked.current || event.touches.length !== 1 || event.defaultPrevented) { release(); return; }
@@ -221,9 +258,11 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
                 suppressClick.current=true;
                 setDontHandle(true);
                 if (press.axis === "y") { stopAnimation(); press.startPosition = positionRef.current; }
+                else { stopHorizontal(); press.startHorizontal = horizontalOffsetRef.current; }
             }
             if (event.cancelable) event.preventDefault();
             if (press.axis === "y") setPosition(press.startPosition + dy / Math.max(1, panelHeight()) * 100);
+            else setHorizontalOffset(press.startHorizontal + dx / press.width * 100);
         };
         const end = (event:TouchEvent) => {
             if (press?.axis && !blocked.current) {
@@ -235,11 +274,23 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
                     press = null;
                     return;
                 }
-                if (touch && press.axis === "x" && Math.abs(touch.clientX-press.x)>=40) {
-                    const index=modes.indexOf(activeHeader);
-                    const next=modes[(index+(touch.clientX<press.x?1:-1)+modes.length)%modes.length];
-                    setChosenMess([]);
-                    setActiveHeader(next);
+                if (touch && press.axis === "x") {
+                    const offset = Math.max(-100, Math.min(100, press.startHorizontal + (touch.clientX - press.x) / press.width * 100));
+                    setHorizontalOffset(offset);
+                    const threshold = Math.min(40, press.width * .2);
+                    const index = modes.indexOf(activeHeader);
+                    const direction = offset < 0 ? 1 : -1;
+                    const next = modes[(index + direction + modes.length) % modes.length];
+                    if (Math.abs(offset) * press.width / 100 >= threshold && next !== activeHeader) {
+                        animateHorizontal(direction === 1 ? -100 : 100, () => {
+                            setChosenMess([]);
+                            setActiveHeader(next);
+                            setHorizontalOffset(0);
+                        });
+                    } else animateHorizontal(0);
+                    setDontHandle(false);
+                    press = null;
+                    return;
                 }
             }
             release();
@@ -253,23 +304,37 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
             row.removeEventListener("touchmove",move);
             row.removeEventListener("touchend",end);
             row.removeEventListener("touchcancel",release);
-            release();
+            if (press?.axis) setDontHandle(false);
+            press = null;
         };
-    }, [activeHeader,pms.length,setActiveHeader,setChosenMess,setDontHandle,settle,setPosition,stopAnimation]);
+    }, [activeHeader,pms.length,setActiveHeader,setChosenMess,setDontHandle,settle,setPosition,stopAnimation,animateHorizontal,setHorizontalOffset,stopHorizontal]);
 
     if (!panelVisible) return null;
     const showMenu = (x:number,y:number) => openMenu(x,y,"chatAction",{id:"chatAction"});
     const fullyHidden = position <= -99.9;
+    const modeIndex = modes.indexOf(activeHeader);
     return <div className="chatActionViewport">
     <div className={`chatActionPanel${fullyHidden ? " panelHidden" : ""}`} ref={pmRef}
         style={{ top: position * height / 100 }} inert={fullyHidden}>
         <div ref={rowRef} className="chatActionRow" data-context-menu="true" data-context-menu-allow-button
             onContextMenu={event=>{event.preventDefault();event.stopPropagation();showMenu(event.clientX,event.clientY);}}
-            onClickCapture={event=>{if(suppressClick.current){suppressClick.current=false;event.preventDefault();event.stopPropagation();}}}>
+            onClickCapture={event=>{if(suppressClick.current || horizontalFrame.current !== null){suppressClick.current=false;event.preventDefault();event.stopPropagation();}}}>
             <div className="chatActionContent">
-                {activeHeader==="pinned" && <ChatPinned/>}
-                {activeHeader==="search" && <ChatSearch searchedMessages={searchedMessages} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} isOpen={isSearchOpen} setIsOpen={setIsSearchOpen}/>}
-                {activeHeader==="choosing" && <ChatChoosingMess/>}
+                {modes.map((mode, index) => {
+                    const distance = (index - modeIndex + modes.length) % modes.length;
+                    // With two modes the same neighbour is on the side being revealed.
+                    const slot = distance === 0 ? 0 : modes.length === 2
+                        ? (horizontalOffset > 0 ? -1 : 1)
+                        : distance === 1 ? 1 : -1;
+                    const active = mode === activeHeader;
+                    return <div key={mode} className="chatActionSlide"
+                        style={{left: `${slot * 100 + horizontalOffset}%`}}
+                        inert={!active} aria-hidden={!active}>
+                        {mode==="pinned" && <ChatPinned/>}
+                        {mode==="search" && <ChatSearch active={active} searchedMessages={searchedMessages} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} isOpen={isSearchOpen} setIsOpen={setIsSearchOpen}/>}
+                        {mode==="choosing" && <ChatChoosingMess/>}
+                    </div>;
+                })}
             </div>
         </div>
         {activeHeader==="pinned" && <PmsList/>}
