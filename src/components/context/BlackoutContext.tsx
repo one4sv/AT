@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import { type ReactNode } from "react";
+import type { Composition } from "../ts/utils/compositions";
 import type { QuickCreateDraft } from "../ts/utils/quickCreateCommand";
 
 const BlackoutContext = createContext<BlackoutContextType | null>(null);
@@ -12,6 +13,7 @@ export interface Blackout {
     feedback?: { targetType: "account" | "post" | "message" | "comment" | "activity"; targetId: string; targetName?: string; targetUrl?: string };
     module?: string;
     commandDraft?: QuickCreateDraft;
+    sharedComposition?: Composition;
     pick?: File;
     bg?: File;
     onBgSaved?: () => void;

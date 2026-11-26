@@ -4,6 +4,10 @@ import { CaretLeftIcon, CaretRightIcon, XIcon, MoonStarsIcon, SunIcon } from "@p
 import { MirrorRectangular, PaintBucket } from "lucide-react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useSettings } from "../hooks/SettingsHook";
+import { useNote } from "../hooks/NoteHook";
+import { api } from "../ts/api";
+import { MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
+import { privateAssetUrl } from "../ts/utils/privateAssetUrl";
 import useModalSlider from "../hooks/utils/useModalSlider";
 import { compositionCycleKey, type CompositionAppearance } from "../ts/utils/compositions";
 import { Background } from "../ts/utils/background";
@@ -42,7 +46,18 @@ const filters = ["none", "grayscale", "sepia", "invert", "contrast", "saturate"]
 export default function CompositionFullscreen() {
     const { t } = useTranslation("settings");
     const { blackout, setBlackout } = useBlackout();
-    const { compositions, applyComposition, setCompositions } = useSettings();
+    const { compositions, applyComposition, setCompositions, bgGallery, settingsLoaded, refetchSettings } = useSettings();
+    const { showNotification } = useNote();
+    const [saving, setSaving] = useState(false);
+    const [sharedPreviewUrl, setSharedPreviewUrl] = useState("");
+    const shared = blackout.sharedComposition;
+    const sharedFile = shared ? blackout.bg : undefined;
+    useEffect(() => {
+        if (!sharedFile) { setSharedPreviewUrl(""); return; }
+        const url = URL.createObjectURL(sharedFile);
+        setSharedPreviewUrl(url);
+        return () => URL.revokeObjectURL(url);
+    }, [sharedFile]);
     const [systemDark, setSystemDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
     useEffect(() => {
         const query = window.matchMedia("(prefers-color-scheme: dark)");
@@ -50,13 +65,41 @@ export default function CompositionFullscreen() {
         query.addEventListener("change", change);
         return () => query.removeEventListener("change", change);
     }, []);
-    const items = compositions.items;
+    const items = shared ? [{ ...shared, appearance: { ...shared.appearance, bgUrl: sharedPreviewUrl } }] : compositions.items;
     const [index, setIndex] = useState(() => Math.max(0, items.findIndex(item => item.id === blackout.options?.id)));
     const activeIndex = Math.min(index, Math.max(0, items.length - 1));
     const slider = useModalSlider(activeIndex, items.length, "compositions", setIndex);
     const item = items[activeIndex];
-    const close = () => setBlackout({ seted: false });
+    const close = () => { if (!saving) setBlackout({ seted: false }); };
     if (!item) return null;
+    const apply = async () => {
+        if (saving) return;
+        let appearance = item.appearance;
+        if (shared && appearance.bg === "custom") {
+            if (!settingsLoaded || bgGallery.length >= MAX_CUSTOM_BACKGROUNDS) {
+                showNotification("error", t("backgroundLibrary.shareFull", { count: MAX_CUSTOM_BACKGROUNDS }));
+                return;
+            }
+            if (!sharedFile) { showNotification("error", t("backgroundLibrary.shareNotFound")); return; }
+            setSaving(true);
+            try {
+                const data = new FormData();
+                data.append("bg", sharedFile);
+                const result = await api.post("uploadbg", data);
+                if (!result.data?.success || typeof result.data.bg_url !== "string") throw new Error("Wallpaper upload failed");
+                const url = privateAssetUrl(result.data.bg_url);
+                if (!url.startsWith("/api/private-asset/bgs/")) throw new Error("Invalid saved wallpaper");
+                appearance = { ...appearance, bgUrl: url };
+                await refetchSettings();
+            } catch {
+                showNotification("error", t("backgroundLibrary.shareUnavailable"));
+                return;
+            } finally { setSaving(false); }
+        }
+        applyComposition(appearance);
+        setCompositions(previous => ({ ...previous, activeId: shared ? null : item.id, lastCycleKey: compositionCycleKey(previous.mode, new Date()) }));
+        setBlackout({ seted: false });
+    };
 
     return <div className="compositionFullscreen" {...themeProps(item.appearance, systemDark)} role="dialog" aria-label={t("general.compositionPreview")}>
         <div className="compositionFullscreenViewport" ref={slider.viewportRef}>
@@ -136,11 +179,7 @@ export default function CompositionFullscreen() {
             <div><span>{item.name}</span><span>{activeIndex + 1} / {items.length}</span></div>
             <button type="button" disabled={activeIndex === items.length - 1} onClick={() => setIndex(activeIndex + 1)}
                 aria-label={t("general.compositionNext")}><CaretRightIcon size={24}/></button>
-            <button className="compositionFullscreenApply" type="button" onClick={() => {
-                applyComposition(item.appearance);
-                setCompositions(previous => ({ ...previous, activeId: item.id, lastCycleKey: compositionCycleKey(previous.mode, new Date()) }));
-                close();
-            }}>{t("general.compositionApply")}</button>
+            <button className="compositionFullscreenApply" type="button" disabled={saving || (Boolean(sharedFile) && !sharedPreviewUrl)} onClick={() => void apply()}>{t(saving ? "backgroundLibrary.uploadSaving" : "general.compositionApply")}</button>
         </div>
     </div>;
 }

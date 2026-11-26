@@ -308,6 +308,7 @@
     "solidColor": "Solid color",
     "yourBg": "Your background",
     "compositions": {
+      "shareNotFound": "Composition not found",
       "title": "Compositions",
       "description": "Saved combinations of themes, colors, wallpapers and interface settings.",
       "defaultName": "Composition {{count}}",
@@ -476,6 +477,7 @@
     "search": "Search..."
   },
   "backgroundLibrary": {
+    "shareNotFound": "Wallpaper not found",
     "shareImage": "Share wallpaper",
     "shareCurrent": "Current wallpaper",
     "shareNumber": "Custom wallpaper {{count}}",

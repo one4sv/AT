@@ -26,7 +26,7 @@ jobs:
       - name: Check lazy page and modal style ownership
         run: npm run check:lazy-styles
       - name: Verify wallpaper sharing
-        run: node --experimental-strip-types --test tests/wallpaper-sharing.test.mjs
+        run: node --experimental-strip-types --test tests/wallpaper-sharing.test.mjs tests/shared-composition.test.mjs
       - name: Verify settings catalog and internal link cards
         run: node --experimental-strip-types --test tests/settings-catalog.test.mjs tests/shared-settings.test.mjs tests/at-page-links.test.mjs
       - name: Verify SelectList and contact picker styles

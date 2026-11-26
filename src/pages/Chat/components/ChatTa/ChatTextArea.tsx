@@ -28,6 +28,9 @@ import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { MAX_CUSTOM_BACKGROUNDS, WALLPAPER_SHARE_PATH, wallpaperCommandInput, normalizeWallpaperQuery, shareableWallpapers, resolveWallpaperShare, sharedWallpaperLink } from "../../../../components/ts/utils/backgroundCatalog";
 import WallpaperShareThumbnail from "../../../../components/ts/WallpaperShareThumbnail";
+import { COMPOSITION_SHARE_PATH, compositionCommandInput, resolveCompositionShare, sharedCompositionLink } from "../../../../components/ts/utils/sharedComposition";
+import { CompositionPreview } from "../../../Settings/components/CompositionsSettings";
+import { privateAssetUrl } from "../../../../components/ts/utils/privateAssetUrl";
 import { fetchWallpaperFile, fitWallpaperForChat } from "../../../../components/ts/utils/fetchWallpaperFile";
 import { findMentionToken } from "../../../../components/ts/utils/chatMentions";
 import type { LinkedEntity } from "../../../../components/context/SendMessContext";
@@ -104,7 +107,7 @@ export default function ChatTextArea({
     const { list: mentionContacts } = useContacts();
     const { refetchHabits } = useHabits();
     const { upsertPlan, refreshPlans } = usePlans();
-    const { timeZone, bg, bgUrl, bgGallery, settingsLoaded } = useSettings();
+    const { timeZone, bg, bgUrl, bgGallery, settingsLoaded, compositions } = useSettings();
     const { t: settingsText } = useTranslation("settings");
     const navigate = useNavigate();
     const { showNotification } = useNote();
@@ -175,7 +178,14 @@ export default function ChatTextArea({
             }
         }
     }
-    const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed ? [] : wallpaperInput !== null ? wallpaperChoices : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText, (section, item) =>
+    const compositionInput = !editing ? compositionCommandInput(mess) : null;
+    const compositionChoice = compositionInput !== null ? resolveCompositionShare(compositionInput, compositions.items) : null;
+    const compositionChoices: EntitySuggestionItem[] = compositionInput !== null && settingsLoaded && !(compositionChoice && /\s$/.test(mess))
+        ? compositions.items.flatMap((item, index) => String(index + 1).startsWith(compositionInput) ? [{
+            id: COMPOSITION_SHARE_PATH + " " + (index + 1), label: item.name, description: String(index + 1),
+            icon: <span className="compositionContextPreview wallpaperShareThumbnail"><CompositionPreview composition={item}/></span>
+        }] : []) : [];
+    const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed ? [] : compositionInput !== null ? compositionChoices : wallpaperInput !== null ? wallpaperChoices : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText, (section, item) =>
         item ? <SettingCatalogIcon item={item} size={18}/> : <section.icon size={18}/>) : quickPeriodItems;
     const quickCommandItems: EntitySuggestionItem[] = [
         { id: "act", label: "/act", description: tc("chatUi.quickCommands.createActivity"), icon: <CheckCircleIcon size={18}/> },
@@ -913,20 +923,60 @@ export default function ChatTextArea({
             return;
         }
         const settingTarget = settingInput ? resolveSettingCommand(mess, settingCatalog) : null;
-        const command = !editing && wallpaperInput === null ? parseSettingCommand(settingTarget?.presetText ?? mess) : null;
+        const command = !editing && wallpaperInput === null && compositionInput === null ? parseSettingCommand(settingTarget?.presetText ?? mess) : null;
         let presetUrl: string | undefined;
         let wallpaperFile: File | undefined;
+        if (compositionInput !== null) {
+            if (!settingsLoaded || !compositionChoice) {
+                showNotification("error", settingsText("personalization.compositions.shareNotFound"));
+                return;
+            }
+            if (files.length || linkedEntity || redirect || forwardPost || forwardMedia || answer) {
+                showNotification("info", settingsText("sharing.commandHelp"));
+                return;
+            }
+            const url = sharedCompositionLink(compositionChoice, window.location.origin);
+            if (!url) {
+                showNotification("error", settingsText("personalization.compositions.shareNotFound"));
+                return;
+            }
+            if (compositionChoice.appearance.bg === "custom") {
+                const source = privateAssetUrl(compositionChoice.appearance.bgUrl);
+                if (!source || !bgGallery.some(item => privateAssetUrl(item.url) === source)) {
+                    showNotification("error", settingsText("backgroundLibrary.shareNotFound"));
+                    return;
+                }
+                const sourceRoute = location.pathname;
+                sending.current = true;
+                setQuickSending(true);
+                try { wallpaperFile = await fitWallpaperForChat(await fetchWallpaperFile(source, "bgs")); }
+                catch { showNotification("error", settingsText("backgroundLibrary.shareNotFound")); return; }
+                finally { sending.current = false; setQuickSending(false); }
+                if (routeRef.current !== sourceRoute) return;
+            }
+            presetUrl = url;
+        }
         if (wallpaperInput !== null) {
-            if (!settingsLoaded || !wallpaperChoice || files.length || linkedEntity || redirect || forwardPost || forwardMedia || answer) {
+            if (!settingsLoaded || !wallpaperChoice) {
+                showNotification("error", settingsText("backgroundLibrary.shareNotFound"));
+                return;
+            }
+            if (files.length || linkedEntity || redirect || forwardPost || forwardMedia || answer) {
                 showNotification("info", settingsText("backgroundLibrary.shareInvalid"));
                 return;
             }
             const sourceRoute = location.pathname;
             if (wallpaperChoice.kind === "custom") {
+                if (!bgGallery.some(item => privateAssetUrl(item.url) === privateAssetUrl(wallpaperChoice.url))) {
+                    showNotification("error", settingsText("backgroundLibrary.shareNotFound"));
+                    return;
+                }
                 sending.current = true;
                 setQuickSending(true);
                 try {
-                    wallpaperFile = await fitWallpaperForChat(await fetchWallpaperFile(wallpaperChoice.url, "bgs"));
+                    const original = await fetchWallpaperFile(wallpaperChoice.url, "bgs").catch(() => null);
+                    if (!original) { showNotification("error", settingsText("backgroundLibrary.shareNotFound")); return; }
+                    wallpaperFile = await fitWallpaperForChat(original);
                 } catch {
                     showNotification("error", settingsText("backgroundLibrary.shareSendError"));
                     return;

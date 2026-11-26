@@ -310,6 +310,7 @@
     "solidColor": "Сплошной цвет",
     "yourBg": "Ваш фон",
     "compositions": {
+      "shareNotFound": "Композиция не найдена",
       "title": "Композиции",
       "description": "Сохранённые сочетания темы, цветов, обоев и настроек интерфейса.",
       "defaultName": "Композиция {{count}}",
@@ -478,6 +479,7 @@
     "search": "Поиск..."
   },
   "backgroundLibrary": {
+    "shareNotFound": "Фон не найден",
     "shareImage": "Поделиться фоном",
     "shareCurrent": "Текущий фон",
     "shareNumber": "Пользовательский фон {{count}}",

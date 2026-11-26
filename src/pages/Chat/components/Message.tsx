@@ -18,6 +18,7 @@ import ReactionIcon from "../../../components/ts/ReactionIcon";
 import ReactionPicker from "../../../components/ts/ReactionPicker";
 import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
 import MessageLinkContent from "./MessageLinkContent";
+import { sharedCompositionAttachment } from "../../../components/ts/utils/sharedComposition";
 import { sharedWallpaperAttachment } from "../../../components/ts/utils/backgroundCatalog";
 import HabitInvitation from "./HabitInvitation";
 import type { SavedMessageSuggestion } from "../../../components/ts/utils/savedMessageSuggestion";
@@ -311,7 +312,7 @@ export default function Message({
                         </>
                         : <MessageLinkContent text={m.content} search={searchMess} files={m.files} />}
                 </div>}
-                {m.files && m.files.length > 0 && !sharedWallpaperAttachment(m.content || "", m.files, window.location.origin) && <MessageFiles files={m.files} m={m} />}
+                {m.files && m.files.length > 0 && !sharedWallpaperAttachment(m.content || "", m.files, window.location.origin) && !sharedCompositionAttachment(m.content || "", m.files, window.location.origin) && <MessageFiles files={m.files} m={m} />}
                 {m.redirected_id && <div className="redirectedMess">
                     <div className="redirectSign">
                         <ShareFat weight="fill" />
@@ -324,7 +325,7 @@ export default function Message({
                     <div className="redirectText">
                         <MessageLinkContent text={m.redirected_content || ""} search={searchMess} files={m.redirected_files}/>
                     </div>
-                    {m.redirected_files && m.redirected_files.length > 0 && !sharedWallpaperAttachment(m.redirected_content || "", m.redirected_files, window.location.origin) && <MessageFiles files={m.redirected_files} m={m} />}
+                    {m.redirected_files && m.redirected_files.length > 0 && !sharedWallpaperAttachment(m.redirected_content || "", m.redirected_files, window.location.origin) && !sharedCompositionAttachment(m.redirected_content || "", m.redirected_files, window.location.origin) && <MessageFiles files={m.redirected_files} m={m} />}
                 </div>}
                 <div className="messageStatusBarDiv">
                     {isMy && chatWith ? m.isPending ? <div className="messageReadSign ">
