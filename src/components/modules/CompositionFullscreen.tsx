@@ -9,7 +9,7 @@ import { api } from "../ts/api";
 import { MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
 import { privateAssetUrl } from "../ts/utils/privateAssetUrl";
 import useModalSlider from "../hooks/utils/useModalSlider";
-import { compositionCycleKey, type CompositionAppearance } from "../ts/utils/compositions";
+import { MAX_COMPOSITIONS, compositionCycleKey, type CompositionAppearance } from "../ts/utils/compositions";
 import { Background } from "../ts/utils/background";
 import { validHex, getCustomHighlightHex } from "../ts/utils/customPalette";
 import Selector from "../ts/Selector";
@@ -72,8 +72,12 @@ export default function CompositionFullscreen() {
     const item = items[activeIndex];
     const close = () => { if (!saving) setBlackout({ seted: false }); };
     if (!item) return null;
-    const apply = async () => {
+    const apply = async (saveOnly = false) => {
         if (saving) return;
+        if (saveOnly && (!shared || compositions.items.length >= MAX_COMPOSITIONS)) {
+            showNotification("error", t("personalization.compositions.shareLimit"));
+            return;
+        }
         let appearance = item.appearance;
         if (shared && appearance.bg === "custom") {
             if (!settingsLoaded || bgGallery.length >= MAX_CUSTOM_BACKGROUNDS) {
@@ -95,6 +99,12 @@ export default function CompositionFullscreen() {
                 showNotification("error", t("backgroundLibrary.shareUnavailable"));
                 return;
             } finally { setSaving(false); }
+        }
+        if (saveOnly) {
+            setCompositions(previous => previous.items.length >= MAX_COMPOSITIONS ? previous : { ...previous, items: [...previous.items, { id: crypto.randomUUID(), name: item.name, appearance }] });
+            showNotification("success", t("personalization.compositions.shareSaved"));
+            setBlackout({ seted: false });
+            return;
         }
         applyComposition(appearance);
         setCompositions(previous => ({ ...previous, activeId: shared ? null : item.id, lastCycleKey: compositionCycleKey(previous.mode, new Date()) }));
@@ -173,13 +183,14 @@ export default function CompositionFullscreen() {
                 ))}
             </div>
         </div>
-        <div className="compositionFullscreenControls">
+        <div className={`compositionFullscreenControls${shared ? " shared" : ""}`}>
             <button type="button" disabled={activeIndex === 0} onClick={() => setIndex(activeIndex - 1)}
                 aria-label={t("general.compositionPrevious")}><CaretLeftIcon size={24}/></button>
             <div><span>{item.name}</span><span>{activeIndex + 1} / {items.length}</span></div>
             <button type="button" disabled={activeIndex === items.length - 1} onClick={() => setIndex(activeIndex + 1)}
                 aria-label={t("general.compositionNext")}><CaretRightIcon size={24}/></button>
             <button className="compositionFullscreenApply" type="button" disabled={saving || (Boolean(sharedFile) && !sharedPreviewUrl)} onClick={() => void apply()}>{t(saving ? "backgroundLibrary.uploadSaving" : "general.compositionApply")}</button>
+            {shared && <button className="compositionFullscreenSave" type="button" disabled={saving || (Boolean(sharedFile) && !sharedPreviewUrl)} onClick={() => void apply(true)}>{t("personalization.compositions.shareSave")}</button>}
         </div>
     </div>;
 }

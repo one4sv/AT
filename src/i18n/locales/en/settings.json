@@ -309,6 +309,9 @@
     "solidColor": "Solid color",
     "yourBg": "Your background",
     "compositions": {
+      "shareLimit": "All 10 composition slots are used",
+      "shareSaved": "Composition saved",
+      "shareSave": "Save to compositions",
       "shareNotFound": "Composition not found",
       "title": "Compositions",
       "description": "Saved combinations of themes, colors, wallpapers and interface settings.",

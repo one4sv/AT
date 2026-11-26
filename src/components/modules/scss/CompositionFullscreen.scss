@@ -147,3 +147,6 @@
         width: 80.5vw;
     }
 }
+
+.compositionFullscreen .compositionFullscreenControls > .compositionFullscreenSave { grid-column: 1 / -1; width: 100%; background: var(--interact); color: var(--tc); backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur)); font-size: 16px; }
+.compositionFullscreen:has(.compositionFullscreenControls.shared) .compositionSample { padding-bottom: calc(max(12px, env(safe-area-inset-bottom)) + 168px); }
