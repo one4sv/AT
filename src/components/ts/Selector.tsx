@@ -12,16 +12,20 @@ interface selectorArr<T extends string | number> {
 export default function Selector<T extends string | number>({
     arr,
     selected,
-    previewIndex
+    previewIndex,
+    onPreviewIndexChange
 }: {
     arr: selectorArr<T>[],
     selected: T,
-    previewIndex?: number
+    previewIndex?: number,
+    onPreviewIndexChange?: (index: number | null) => void
 }) {
     const { setDontHandle } = useSideMenu()
 
     const selectorRef = useRef<HTMLDivElement | null>(null)
     const pointerId = useRef<number | null>(null)
+    const pointerStartX = useRef(0)
+    const pointerMoved = useRef(false)
     const pendingSelection = useRef<ReturnType<typeof setTimeout> | null>(null)
     const suppressGhostClick = useRef<{ x: number; y: number; until: number } | null>(null)
     const selectedIndex = arr.findIndex(i => i.value === selected)
@@ -61,6 +65,10 @@ export default function Selector<T extends string | number>({
         if (pointerId.current !== null) return
 
         pointerId.current = e.pointerId
+        pointerStartX.current = e.clientX
+        pointerMoved.current = false
+        if (pendingSelection.current !== null) { clearTimeout(pendingSelection.current); pendingSelection.current = null }
+        onPreviewIndexChange?.(null)
         setDontHandle(true)
         e.currentTarget.setPointerCapture(e.pointerId)
         const index = findIndex(e.clientX)
@@ -72,6 +80,11 @@ export default function Selector<T extends string | number>({
         e.stopPropagation()
         const index = findIndex(e.clientX)
         if (index >= 0) setIndicator(index)
+        const rect = selectorRef.current?.getBoundingClientRect()
+        if (Math.abs(e.clientX - pointerStartX.current) >= 8) pointerMoved.current = true
+        if (onPreviewIndexChange && rect && rect.width > 0 && arr.length && pointerMoved.current) {
+            onPreviewIndexChange(Math.max(0, Math.min(arr.length - 1, (e.clientX - rect.left) / (rect.width / arr.length) - .5)))
+        }
     }
 
     const releasePointer = (e: PointerEvent<HTMLDivElement>, cancel = false) => {
@@ -96,6 +109,7 @@ export default function Selector<T extends string | number>({
 
         if (cancel || index < 0) {
             setIndicator(Math.max(0, selectedIndex))
+            onPreviewIndexChange?.(null)
             return
         }
         setIndicator(index)
@@ -105,8 +119,9 @@ export default function Selector<T extends string | number>({
             pendingSelection.current = setTimeout(() => {
                 pendingSelection.current = null
                 next.func(next.value)
+                onPreviewIndexChange?.(null)
             }, 40)
-        }
+        } else onPreviewIndexChange?.(null)
     }
 
     return (
@@ -117,6 +132,7 @@ export default function Selector<T extends string | number>({
             onPointerMove={handlePointerMove}
             onPointerUp={releasePointer}
             onPointerCancel={e => releasePointer(e, true)}
+            onLostPointerCapture={e => releasePointer(e, true)}
             onTouchStart={e => e.stopPropagation()}
             onTouchMove={e => {
                 e.stopPropagation()
@@ -155,7 +171,7 @@ export default function Selector<T extends string | number>({
                         }
                     }}
                 >
-                    <span className={`selectorSpan ${i.value === selected ? "chosen" : ""}`}>
+                    <span className={`selectorSpan ${(previewIndex === undefined ? i.value === selected : Math.round(previewIndex) === n) ? "chosen" : ""}`}>
                         {i.icon ? <i.icon size={20} weight="fill" /> : ""}
                         {i.label}
                     </span>

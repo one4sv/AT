@@ -310,10 +310,11 @@ export default function Blackout() {
         const module = moduleRefs.current.get(index);
         if (!module) return;
 
-        if (visibleStack[index]?.module === "ChatWithInfo" && e.defaultPrevented) return;
+        const horizontalSheet = visibleStack[index]?.module === "ChatWithInfo" || visibleStack[index]?.module === "Redirecting";
+        if (horizontalSheet && e.defaultPrevented) return;
         currentY.current = e.touches[0].clientY;
         const diff = currentY.current - startY.current;
-        if (visibleStack[index]?.module === "ChatWithInfo") {
+        if (horizontalSheet) {
             const dx = Math.abs(e.touches[0].clientX - startX.current);
             if (!chatInfoAxis.current && Math.max(dx, Math.abs(diff)) > 8) {
                 chatInfoAxis.current = dx >= Math.abs(diff) ? "x" : "y";
@@ -431,7 +432,7 @@ export default function Blackout() {
                         onTouchMove={(e) => handleTouchMove(e, index)}
                         onTouchEnd={() => handleTouchEnd(index)}
                         onTouchCancel={() => {
-                            if (visibleStack[index]?.module !== "ChatWithInfo") return;
+                            if (visibleStack[index]?.module !== "ChatWithInfo" && visibleStack[index]?.module !== "Redirecting") return;
                             currentY.current = startY.current;
                             handleTouchEnd(index);
                         }}

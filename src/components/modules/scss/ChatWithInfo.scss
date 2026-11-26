@@ -43,8 +43,6 @@
             height: 100%;
         }
         .chatMediaPanel {
-            position: absolute;
-            top: 0;
             height: 100%;
             overflow: hidden;
             overscroll-behavior: contain;
@@ -132,6 +130,7 @@
     overflow: hidden;
     cursor: pointer;
     > .selector { width: 100%; height: 100%; }
+    .selectedItem { transition: transform .32s cubic-bezier(.075,.82,.165,1); }
 }
 
 .chatMedia {
@@ -146,23 +145,31 @@
     width: 100%;
     min-width: 0;
     overflow: hidden;
+    overflow: clip;
     touch-action: pan-y;
 }
 
 .chatMediaTrack {
+    display: flex;
+    align-items: flex-start;
     position: relative;
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     transition: transform .32s cubic-bezier(.075,.82,.165,1);
     &.dragging { transition: none; }
 }
 
 .chatMediaPanel {
-    position: absolute;
-    top: 0;
+    position: relative;
+    flex: 0 0 100%;
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     box-sizing: border-box;
+    overflow-x: hidden;
     @media (min-width: 801px) {
-        &.active { position: relative; }
+        &:not(.active) { height: 0; overflow: visible; }
     }
 }
 
