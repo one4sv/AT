@@ -15,7 +15,7 @@ import { useContextMenu } from "../../components/hooks/ContextMenuHook";
 import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { api } from "../../components/ts/api";
 import { Background } from "../../components/ts/utils/background";
-import { backgroundGroups, MAX_CUSTOM_BACKGROUNDS } from "../../components/ts/utils/backgroundCatalog";
+import { sharedWallpaperLink, shareableWallpapers, backgroundGroups, MAX_CUSTOM_BACKGROUNDS } from "../../components/ts/utils/backgroundCatalog";
 import "./scss/WallpaperStudio.scss";
 
 type WallpaperItem = { id: string; url?: string; label: string; group: string };
@@ -408,6 +408,7 @@ export default function WallpaperStudio() {
                 if (busy) return;
                 openMenu(event.clientX, event.clientY, "wallpaper", {
                     id: item.id, name: item.label,
+                    onShare: item.url || shareableWallpapers.some(entry => entry.id === item.id) ? () => setBlackout({seted:true,module:"ShareObject",shareObject:{url:sharedWallpaperLink(item.url ? {kind:"custom",url:item.url} : {kind:"stock",id:item.id},window.location.origin),asset:item.url,bucket:"bgs"}}) : undefined,
                     onOpen: () => setBlackout({seted: true, module: "BackgroundFullscreen", options: {id: item.id, url: item.url}}),
                     onSave: () => apply(index),
                     onDelete: item.url ? () => deleteCustom(item.url!) : undefined

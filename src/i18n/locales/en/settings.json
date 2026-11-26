@@ -1,5 +1,8 @@
 {
   "sharing": {
+    "shareObject": "Share",
+    "sendObject": "Send",
+    "objectSent": "Object sent",
     "undo": "Undo",
     "copy": "Copy link to value",
     "copied": "Link copied",

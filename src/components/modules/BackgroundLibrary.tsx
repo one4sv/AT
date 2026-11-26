@@ -10,7 +10,7 @@ import { Background } from "../ts/utils/background";
 import Selector from "../ts/Selector";
 import { api } from "../ts/api";
 import { ChevronDown, CircleCheck, ImagePlus } from "lucide-react";
-import { backgroundGroups, MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
+import { sharedWallpaperLink, shareableWallpapers, backgroundGroups, MAX_CUSTOM_BACKGROUNDS } from "../ts/utils/backgroundCatalog";
 import { BackgroundHelpButton } from "./BackgroundHelp";
 import "./scss/BackgroundLibrary.scss";
 import "../../scss/Loading.scss";
@@ -173,6 +173,7 @@ export default function BackgroundLibrary() {
         if (saving) return;
         openMenu(event.clientX, event.clientY, "wallpaper", {
             id, name,
+            onShare: url || shareableWallpapers.some(entry => entry.id === id) ? () => setBlackout({seted:true,module:"ShareObject",shareObject:{url:sharedWallpaperLink(url ? {kind:"custom",url} : {kind:"stock",id},window.location.origin),name,asset:url,bucket:"bgs"}}) : undefined,
             onOpen: () => previewBackground(id, url),
             onSave: () => url ? selectCustom(url) : selectStock(id),
             onDelete: url ? () => deleteCustom(url) : undefined

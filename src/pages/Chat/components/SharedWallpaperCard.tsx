@@ -1,3 +1,4 @@
+import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
@@ -15,6 +16,7 @@ export default function SharedWallpaperCard({ target, media }: { target: NonNull
     const navigate = useNavigate();
     const { bgGallery, settingsLoaded, autoLoadImages, autoPlayGif } = useSettings();
     const { setBlackout } = useBlackout();
+    const { openMenu } = useContextMenu();
     const { showNotification } = useNote();
     const [busy, setBusy] = useState(false);
     const stock = target.kind === "stock" ? shareableWallpapers.find(item => item.id === target.id) : undefined;
@@ -40,7 +42,12 @@ export default function SharedWallpaperCard({ target, media }: { target: NonNull
             showNotification("error", t("backgroundLibrary.shareUnavailable"));
         } finally { setBusy(false); }
     };
-    return <div className="sharedEntityCard sharedWallpaperCard" onDoubleClick={event => event.stopPropagation()}>
+    return <div className="sharedEntityCard sharedWallpaperCard" data-context-menu="true" onContextMenu={event => {
+        event.preventDefault(); event.stopPropagation();
+        const url = target.kind === "stock" ? new URL("/wallpapers?shared=" + encodeURIComponent(target.id), window.location.origin).href : new URL("/wallpapers?shared=custom", window.location.origin).href;
+        if (!url) return;
+        openMenu(event.clientX, event.clientY, "sharedSetting", { id: "shared-object", url, onOpen: () => void open(), onShare: () => setBlackout({seted:true,module:"ShareObject",shareObject:{url,asset:media?.url,bucket:"media"}}) });
+    }} onDoubleClick={event => event.stopPropagation()}>
         <button type="button" className="sharedEntityLink" disabled={busy || (target.kind === "custom" && !settingsLoaded)}
             aria-busy={busy} onClick={event => { event.stopPropagation(); void open(); }}>
             <WallpaperShareThumbnail id={stock?.id} url={media?.url} blocked={target.kind === "custom" && (!autoLoadImages || (media?.type === "image/gif" && !autoPlayGif))}/>

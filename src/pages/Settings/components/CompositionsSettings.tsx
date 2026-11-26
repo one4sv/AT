@@ -9,6 +9,7 @@ import { getBackgroundFilter } from "../../../components/ts/utils/backgroundFilt
 import { BackgroundScene, isStockScene, getStockScenePreviewSources } from "../../../components/ts/utils/BackgroundScene";
 import BackIconsScene from "../../../components/ts/utils/BackIconsScene";
 import WallpaperMark from "../../../components/ts/utils/WallpaperMark";
+import { sharedCompositionLink } from "../../../components/ts/utils/sharedComposition";
 import { MAX_COMPOSITIONS, compositionCycleKey, type Composition, type CompositionAppearance, type CompositionRotation } from "../../../components/ts/utils/compositions";
 import SelectList from "../../../components/ts/SelectList";
 import HighlightText from "../../../components/ts/HighlightText";
@@ -166,6 +167,7 @@ export default function CompositionsSettings({ search }: { search: string }) {
                 setRenameId(item.id);
                 setName(item.name);
             },
+            onShare: () => { const url = sharedCompositionLink(item, window.location.origin); if (url) setBlackout({seted:true,module:"ShareObject",shareObject:{url,name:item.name,asset:item.appearance.bg === "custom" ? item.appearance.bgUrl : undefined,bucket:"bgs"}}); },
             onOpen: () => preview(item.id),
             onApply: () => apply(item),
             onSave: () => overwrite(item),

@@ -1,9 +1,11 @@
+import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { useNote } from "../../../components/hooks/NoteHook";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import { fetchWallpaperFile } from "../../../components/ts/utils/fetchWallpaperFile";
+import { sharedCompositionLink } from "../../../components/ts/utils/sharedComposition";
 import type { Composition } from "../../../components/ts/utils/compositions";
 import type { Media } from "../../../components/context/ChatContext";
 import { CompositionPreview } from "../../Settings/components/CompositionsSettings";
@@ -12,6 +14,7 @@ import "../scss/SharedEntityCard.scss";
 export default function SharedCompositionCard({ item, media }: { item: Composition; media?: Media }) {
     const { t } = useTranslation("settings");
     const { setBlackout } = useBlackout();
+    const { openMenu } = useContextMenu();
     const { showNotification } = useNote();
     const { autoLoadImages, autoPlayGif } = useSettings();
     const [busy, setBusy] = useState(false);
@@ -31,7 +34,12 @@ export default function SharedCompositionCard({ item, media }: { item: Compositi
         } catch { showNotification("error", t("backgroundLibrary.shareNotFound")); }
         finally { setBusy(false); }
     };
-    return <div className="sharedEntityCard sharedWallpaperCard" onDoubleClick={event => event.stopPropagation()}>
+    return <div className="sharedEntityCard sharedWallpaperCard" data-context-menu="true" onContextMenu={event => {
+        event.preventDefault(); event.stopPropagation();
+        const url = sharedCompositionLink(item, window.location.origin);
+        if (!url) return;
+        openMenu(event.clientX, event.clientY, "sharedSetting", { id: "shared-object", url, onOpen: () => void open(), onShare: () => setBlackout({seted:true,module:"ShareObject",shareObject:{url,asset:media?.url,bucket:"media"}}) });
+    }} onDoubleClick={event => event.stopPropagation()}>
         <button type="button" className="sharedEntityLink" disabled={busy} aria-busy={busy}
             onClick={event => { event.stopPropagation(); void open(); }}>
             <span className="compositionContextPreview wallpaperShareThumbnail"><CompositionPreview composition={preview}/></span>

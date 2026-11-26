@@ -14,6 +14,7 @@ export interface Blackout {
     module?: string;
     commandDraft?: QuickCreateDraft;
     sharedComposition?: Composition;
+    shareObject?: { url: string; name?: string; asset?: string; bucket?: "bgs" | "media" };
     pick?: File;
     bg?: File;
     onBgSaved?: () => void;
