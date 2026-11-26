@@ -468,6 +468,12 @@
     .sharedEntityIcon img { width: 100%; height: 100%; object-fit: cover; }
 }
 
+.chatWithInfoDiv .sharedEntityCard {
+    --shared-entity-icon-color: var(--tc);
+    background: var(--interact);
+    color: var(--tc);
+}
+
 .chatMediaViewport { clip-path: inset(0); }
 .chatMediaPanel { contain: paint; }
 .chatMediaEntity > .sharedEntityCard { flex: 1; }

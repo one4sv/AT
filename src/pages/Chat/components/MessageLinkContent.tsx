@@ -25,7 +25,7 @@ function SharedSettingIcon({ section, id }: { section: string; id: string }) {
     const group = catalog.find(entry => entry.id === section);
     const item = group?.items.find(entry => entry.id === id);
     const SectionIcon = group?.icon ?? GearIcon;
-    return item ? <SettingCatalogIcon item={item} size={24} color="var(--inner_text)"/> : <SectionIcon size={22}/>;
+    return item ? <SettingCatalogIcon item={item} size={24} color="var(--shared-entity-icon-color, var(--inner_text))"/> : <SectionIcon size={22}/>;
 }
 
 function SharedSettingNavigationCard({ href, target }: { href: string; target: NonNullable<ReturnType<typeof parseSettingNavigationLink>> }) {
@@ -47,7 +47,7 @@ function SharedSettingNavigationCard({ href, target }: { href: string; target: N
             event.stopPropagation();
             navigate(target.pathname + target.search + new URL(href, window.location.origin).hash);
         }}>
-            <span className="sharedEntityIcon">{item ? <SettingCatalogIcon item={item} size={24} color="var(--inner_text)"/> : <SectionIcon size={22}/>}</span>
+            <span className="sharedEntityIcon">{item ? <SettingCatalogIcon item={item} size={24} color="var(--shared-entity-icon-color, var(--inner_text))"/> : <SectionIcon size={22}/>}</span>
             <span className="sharedEntityInfo">
                 <span className="sharedEntityName">{item?.name ?? group?.name ?? t("settings.title")}</span>
                 <span className="sharedEntityDetails">{item?.category ?? t("sharing.open")}</span>

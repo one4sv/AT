@@ -222,8 +222,8 @@
 
 // Chat objects use the message foreground, not the settings search accent.
 .sharedEntityCard .sharedEntityIcon {
-    color: var(--inner_text);
+    color: var(--shared-entity-icon-color, var(--inner_text));
     svg, .settingSearchSpanIcon {
-        color: var(--inner_text);
+        color: var(--shared-entity-icon-color, var(--inner_text));
     }
 }
