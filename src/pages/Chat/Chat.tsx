@@ -339,8 +339,8 @@ export default function Chat() {
             el.addEventListener("touchstart", touchStart, {passive:true, capture:true});
             window.addEventListener("touchend", touchEnd, {passive:true, capture:true});
             window.addEventListener("touchcancel", touchEnd, {passive:true, capture:true});
+            const onWheel = () => markHistoryScroll(el);
             el.addEventListener("wheel", onWheel, {passive:true});
-            function onWheel() { markHistoryScroll(el); }
             el.addEventListener("chat-action-inset", onInset);
             el.addEventListener("scroll", onScroll, {
                 passive: true
