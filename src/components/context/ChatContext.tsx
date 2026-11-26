@@ -189,7 +189,7 @@ export const ChatProvider = ({
                 `chat/${nick}`,
                 {
                     params: {
-                        limit: 50
+                        limit: 100
                     },
                     signal: controller.signal
                 }
@@ -248,7 +248,7 @@ export const ChatProvider = ({
                 `chat/group/${id}`,
                 {
                     params: {
-                        limit: 50
+                        limit: 100
                     },
                     signal: controller.signal
                 }
@@ -302,7 +302,7 @@ export const ChatProvider = ({
                     url,
                     {
                         params: {
-                            limit: 40,
+                            limit: 50,
                             beforeId: oldestId
                         },
                         signal: controller.signal
@@ -318,7 +318,7 @@ export const ChatProvider = ({
                             const ids = new Set(prev.map(item => item.id));
                             return [...older.filter(item => !ids.has(item.id)), ...prev];
                         });
-                        setHasMore(res.data.hasMore ?? older.length === 40);
+                        setHasMore(res.data.hasMore ?? older.length === 50);
                     }
                 }
             } catch (e) {

@@ -41,6 +41,13 @@ type MessageComponentType = {
     smartSuggestion?: SavedMessageSuggestion;
     onSmartCreate?: () => void;
 };
+function ReactionAvatar({ src }: { src?: string | null }) {
+    const [failedSrc, setFailedSrc] = useState<string | null>(null);
+    return src && failedSrc !== src
+        ? <img src={src} alt="" loading="lazy" decoding="async" onError={() => setFailedSrc(src)}/>
+        : <UserCircle size={14} aria-hidden="true"/>;
+}
+
 export default function Message({
     message: m,
     answer,
@@ -361,7 +368,7 @@ export default function Message({
 
                                             return (
                                                 <span key={userId} className="reactionUser" title={name}>
-                                                    {avatar ? <img src={avatar} alt="" loading="lazy" /> : <UserCircle size={14} aria-hidden="true" />}
+                                                    <ReactionAvatar src={avatar}/>
                                                 </span>
                                             );
                                         })}
