@@ -83,3 +83,22 @@
     transform: translateY(calc(-100% - 8px));
     isolation: isolate;
 }
+
+.entitySuggestionSkeleton {
+    pointer-events: none;
+    cursor: default;
+
+    .skeletonLine {
+        height: 16px;
+        width: 55%;
+    }
+
+    .skeletonShort {
+        height: 13px;
+        width: 27%;
+    }
+
+    &:nth-child(2n) .skeletonLine:not(.skeletonShort) {
+        width: 68%;
+    }
+}

@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import "../../scss/entitySuggestionList.scss";
+import "../../scss/Loading.scss";
 
 export interface EntitySuggestionItem {
     id: string;
@@ -12,6 +13,8 @@ export interface EntitySuggestionItem {
 
 export default function EntitySuggestionList({
     items,
+    loading = false,
+    loadingLabel,
     activeIndex,
     onSelect,
     onPreview,
@@ -21,6 +24,8 @@ export default function EntitySuggestionList({
     popupRef
 }: {
     items: EntitySuggestionItem[];
+    loading?: boolean;
+    loadingLabel?: string;
     activeIndex: number;
     onSelect: (item: EntitySuggestionItem) => void;
     onPreview?: (item: EntitySuggestionItem) => void;
@@ -72,19 +77,24 @@ export default function EntitySuggestionList({
         else if (row.bottom > bottom) container.scrollTop += row.bottom - bottom;
     }, [activeIndex, activeId, placement]);
 
-    if (!items.length) return null;
+    if (!items.length && !loading) return null;
     const list = (
         <div ref={node => {
             listRef.current = node;
             if (popupRef) popupRef.current = node;
         }} className={`entitySuggestionList ${className} ${anchorRef ? "entitySuggestionPortal" : ""}`}
-            role="listbox" style={anchorRef ? {
+            role="listbox" aria-busy={loading || undefined} aria-label={loading ? loadingLabel : undefined} style={anchorRef ? {
                 top: placement?.top || 0,
                 left: placement?.left || 0,
                 width: placement?.width || 0,
                 visibility: placement ? "visible" : "hidden"
             } : undefined}>
-            {items.map((item, index) => (
+            {loading ? Array.from({ length: 4 }, (_, index) => <div key={index} className="entitySuggestionItem entitySuggestionSkeleton" aria-hidden="true">
+                <span className="entitySuggestionContent">
+                    <span className="skeletonLine"/>
+                    <span className="skeletonLine skeletonShort"/>
+                </span>
+            </div>) : items.map((item, index) => (
                 <button
                     key={item.id}
                     type="button"

@@ -115,6 +115,7 @@ export default function ChatTextArea({
     const [mentionDismissed, setMentionDismissed] = useState(false);
     const [linkedEntity, setLinkedEntity] = useState<(LinkedEntity & {label:string}) | null>(null);
     const [shareItems, setShareItems] = useState<EntitySuggestionItem[]>([]);
+    const [shareLoadedKey, setShareLoadedKey] = useState<string | null>(null);
     const [activeShare, setActiveShare] = useState(0);
     const [sharePreview, setSharePreview] = useState<string | null>(null);
     const [shareDismissed, setShareDismissed] = useState(false);
@@ -181,7 +182,10 @@ export default function ChatTextArea({
     const shareMatch = !editing && !shareDismissed &&
         (!savedChat || /^\/(?:plan|habit|post|user)(?=\s|$)/i.test(mess))
         ? /^\/(habit|plan|post|user|group|invite)(?:\s+(.{0,100}))?$/iu.exec(mess) : null;
-    const shareSuggestions = shareMatch ? shareItems : plainShare;
+    const shareRequestKey = shareMatch ? JSON.stringify([nick, id, user.id, chatWith?.id, chatWith?.is_group, shareMatch[1], mess]) : null;
+    const shareLoading = shareRequestKey !== null && shareLoadedKey !== shareRequestKey;
+    const shareSuggestions = shareLoading ? [] : shareMatch ? shareItems : plainShare;
+    const shareListOpen = shareLoading || shareSuggestions.length > 0;
     const canShowCommands = savedChat && !quickDraft && !editing && !shareMatch &&
         !commandListDismissed && matchingCommands.length > 0;
     const chooseShare = (item: EntitySuggestionItem) => {
@@ -285,7 +289,9 @@ export default function ChatTextArea({
     };
     useEffect(() => {
         setShareItems([]);
-        if (!shareMatch) return;
+        setShareLoadedKey(null);
+        setActiveShare(0);
+        if (!shareMatch || !shareRequestKey) return;
         const controller = new AbortController();
         const timer = window.setTimeout(() => {
             const q = shareMatch[2]?.trim() || "";
@@ -306,10 +312,11 @@ export default function ChatTextArea({
                         description: tc("sideMenu.searchFilter." + entry.kind)
                     })));
                 setActiveShare(0);
-            }).catch(() => { if (!controller.signal.aborted) setShareItems([]); });
+            }).catch(() => { if (!controller.signal.aborted) setShareItems([]); })
+                .finally(() => { if (!controller.signal.aborted) setShareLoadedKey(shareRequestKey); });
         },250);
         return () => {window.clearTimeout(timer);controller.abort();};
-    }, [mess, shareMatch?.[1], shareMatch?.[2], chatWith?.id, chatWith?.is_group]);
+    }, [shareRequestKey]);
     const mentionToken = !savedChat && !quickDraft && !settingInput && !editing && !mentionDismissed
         ? findMentionToken(mess, mentionCaret) : null;
     const mentionMembers = chatWith?.is_group ? chatWith.members || [] : chatWith
@@ -547,14 +554,14 @@ export default function ChatTextArea({
         }
     };
     useEffect(() => {
-        if (!canShowCommands && !quickDraft && !shareSuggestions.length && !settingInput) return;
+        if (!canShowCommands && !quickDraft && !shareListOpen && !settingInput) return;
         const dismiss = (event: PointerEvent) => {
             const target = event.target as Node;
             if (commandPopupRef.current?.contains(target) || commandSendRef.current?.contains(target)) return;
             if (quickDraft || settingInput) {
                 if (emojiButtRef.current?.contains(target)) return;
                 setFieldSuggestionsDismissed(true);
-            } else if (shareSuggestions.length) {
+            } else if (shareListOpen) {
                 if (target instanceof Element && target.closest(".chatCommandEditor")) return;
                 setShareDismissed(true);
                 setSharePreview(null);
@@ -570,7 +577,7 @@ export default function ChatTextArea({
         };
         document.addEventListener("pointerdown", dismiss, true);
         return () => document.removeEventListener("pointerdown", dismiss, true);
-    }, [canShowCommands, quickDraft, quickSending, mess, emojiButtRef, setMess, shareSuggestions.length, settingInput]);
+    }, [canShowCommands, quickDraft, quickSending, mess, emojiButtRef, setMess, shareListOpen, settingInput]);
     const routeRef = useRef("");
     const [oldMess, setOldMess] = useState<string>("");
     const [enterToSend, setEnterToSend] = useState(() => localStorage.getItem("at_chat_enter_to_send") !== "false");
@@ -728,6 +735,19 @@ export default function ChatTextArea({
         [editing]
     );
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (shareLoading && !e.nativeEvent.isComposing) {
+            if (e.key === "Escape") {
+                e.preventDefault();
+                setShareDismissed(true);
+                setSharePreview(null);
+                return;
+            }
+            if (e.key === "ArrowUp" || e.key === "ArrowDown" ||
+                (e.key === "Enter" && !e.shiftKey) || (e.key === "Tab" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey)) {
+                e.preventDefault();
+                return;
+            }
+        }
         if (e.key === "Tab" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey && !e.nativeEvent.isComposing) {
             if (fieldItems.length) {
                 e.preventDefault();
@@ -835,6 +855,7 @@ export default function ChatTextArea({
         }
     };
     const handleSend = async () => {
+        if (shareLoading) return;
         if (quickDraft) {
             void submitQuickCommand();
             return;
@@ -1163,11 +1184,13 @@ export default function ChatTextArea({
                             requestAnimationFrame(() => textAreaRef.current?.focus({ preventScroll: true }));
                         }}
                     >{quickDraft ? <X size={18}/> : "/"}</button>}
-                    {!!shareSuggestions.length && <EntitySuggestionList
+                    {shareListOpen && <EntitySuggestionList
                         className={`chatShareSuggestions ${!shareMatch ? "chatSlashSuggestions" : ""}`}
                         anchorRef={commandRowRef}
                         popupRef={commandPopupRef}
                         items={shareSuggestions}
+                        loading={shareLoading}
+                        loadingLabel={tc("sideMenu.globalSearchLoading")}
                         activeIndex={Math.min(activeShare,shareSuggestions.length-1)}
                         onSelect={chooseShare}
                         onPreview={item => { if (!shareMatch) setSharePreview(item.label + " "); }}

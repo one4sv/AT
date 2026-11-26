@@ -57,3 +57,19 @@ test("Tab accepts open suggestions and the active row stays visible in its own s
     assert.match(list, /\[activeIndex, activeId, placement\]/);
     assert.doesNotMatch(list, /\.scrollIntoView\(/);
 });
+
+
+test("share command search renders skeletons until the current request settles", () => {
+    const chat = read("src/pages/Chat/components/ChatTa/ChatTextArea.tsx");
+    const list = read("src/components/ts/EntitySuggestionList.tsx");
+    assert.match(chat, /shareLoadedKey !== shareRequestKey/);
+    assert.match(chat, /shareLoading \? \[\] : shareMatch \? shareItems : plainShare/);
+    assert.match(chat, /loading=\{shareLoading\}/);
+    assert.match(chat, /finally\(\(\) => \{ if \(!controller\.signal\.aborted\) setShareLoadedKey\(shareRequestKey\)/);
+    assert.match(chat, /controller\.abort\(\)/);
+    assert.match(chat, /if \(shareLoading\) return;/);
+    assert.match(list, /if \(!items\.length && !loading\) return null/);
+    assert.match(list, /aria-busy=\{loading \|\| undefined\}/);
+    assert.match(list, /loading \? Array\.from\(\{ length: 4 \}/);
+    assert.match(list, /entitySuggestionSkeleton/);
+});
