@@ -70,12 +70,14 @@
         flex-wrap: nowrap;
         white-space: nowrap;
         > div {
-            /* это блок с "Пересланное сообщение" */             margin-left: 2px;
+            /* это блок с "Пересланное сообщение" */
+             margin-left: 2px;
             margin-top: 0;
             display: inline-block;
             width: auto;
             max-width: 38vw;
-            /* ограничиваем длину цитаты */             overflow: hidden;
+            /* ограничиваем длину цитаты */
+             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             font-size: 13px;
@@ -793,6 +795,29 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
+        }
+    }
+}
+
+.message.mediaOnly.singleMedia:has(> .messageFiles.single > .messageFile > img.messageFilePreview:not(.messageMediaPending)) {
+    --single-photo-max-width: min(40vw, 520px);
+    width: fit-content;
+
+    @media (max-width: 800px) {
+        --single-photo-max-width: min(86vw, 520px);
+    }
+
+    > .messageFiles.single > .messageFile {
+        width: fit-content;
+        aspect-ratio: auto;
+        background: transparent;
+
+        > img.messageFilePreview {
+            position: static;
+            width: auto;
+            height: auto;
+            max-width: var(--single-photo-max-width);
+            max-height: 65dvh;
         }
     }
 }
