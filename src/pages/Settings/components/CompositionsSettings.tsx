@@ -2,7 +2,6 @@ import { useState, type CSSProperties, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckCircleIcon, DotsThreeIcon, PlusIcon, XIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
-import useCompactLayout from "../../../components/hooks/utils/useCompactLayout";
 import { useSettings } from "../../../components/hooks/SettingsHook";
 import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
 import { getCustomHex } from "../../../components/ts/utils/customPalette";
@@ -90,7 +89,6 @@ export default function CompositionsSettings({ search }: { search: string }) {
     const [name, setName] = useState("");
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const { setBlackout } = useBlackout();
-    const mobile = useCompactLayout();
     const { previewCompositionOnTap } = useSettings();
     const preview = (id: string) => setBlackout({ seted: true, module: "CompositionFullscreen", options: { id } });
     const current: CompositionAppearance = {
@@ -207,7 +205,7 @@ export default function CompositionsSettings({ search }: { search: string }) {
                         data-context-menu="true" data-context-menu-allow-button="true"
                         onContextMenu={event => onCompositionContextMenu(event, item)}>
                         <button type="button" className="compositionCardApply"
-                            onClick={() => mobile && previewCompositionOnTap ? preview(item.id) : apply(item)} title={labels("apply", { name: item.name })}
+                            onClick={() => previewCompositionOnTap ? preview(item.id) : apply(item)} title={labels("apply", { name: item.name })}
                             aria-label={labels("apply", { name: item.name })}>
                             <CompositionPreview composition={item}/>
                             <span className="compositionCardName">{item.name}</span>

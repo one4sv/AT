@@ -110,7 +110,7 @@ export function useSearchableSettings(): SearchableSection[] {
                     icon: NewspaperIcon,
                     category: t("general.startupTitle"),
                 },
-                ...(isMobile ? [{
+                {
                     id: "previewCompositionOnTap",
                     name: t("general.previewCompositionOnTap"),
                     icon: HandTapIcon,
@@ -120,7 +120,8 @@ export function useSearchableSettings(): SearchableSection[] {
                     name: t("general.highlightContextEdges"),
                     icon: HandTapIcon,
                     category: t("general.experimental"),
-                },{
+                },
+                ...(isMobile ? [{
                     id: "sideMenuSwipe",
                     name: t("general.sideMenuSwipe"),
                     icon: HandTapIcon,

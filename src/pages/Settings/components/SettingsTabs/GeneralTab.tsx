@@ -199,22 +199,28 @@ export default function GeneralTab({ search }: { search: string }) {
                 </div>
                 <Link to="/settings/language" state={{ from: "/settings/gen" }} className="settingTogglerDiv languageSettingLink"><TranslateIcon size={22}/><HighlightText text={t("general.language")} search={search}/><CaretRightIcon size={20}/></Link>
             </div>
-            {isMobile && <div className="settingInnerDiv">
+            <div className="settingInnerDiv experimentalSettings">
                 <div className="settingHeader">{t("general.experimental")}</div>
                 <div className="settingInnerList">
-                    <div className="settingTogglerDiv" data-setting-id="highlightContextEdges"
-                        onClick={() => setHighlightContextEdges(value => !value)}>
-                        <HighlightText text={t("general.highlightContextEdges")} search={search}/>
-                        <Toggler state={highlightContextEdges} setState={setHighlightContextEdges} stopPropagation={true}/>
+                    <div className="settingTogglerDiv" data-setting-id="highlightContextEdges" aria-disabled={!isMobile}
+                        onClick={() => { if (isMobile) setHighlightContextEdges(value => !value); }}>
+                        <span className="experimentalSettingTitle">
+                            <HighlightText text={t("general.highlightContextEdges")} search={search}/>
+                            <span className="experimentalSettingBadge">{t("general.phoneOnly")}</span>
+                        </span>
+                        <Toggler state={highlightContextEdges} disable={!isMobile} setState={setHighlightContextEdges} stopPropagation={true}/>
                     </div>
                 </div>
-                <span className="settingHint">{t("general.contextEdgesHint")}</span>
-                <div className="settingTogglerDiv" data-setting-id="previewCompositionOnTap"
-                    onClick={() => setPreviewCompositionOnTap(value => !value)}>
-                    <HighlightText text={t("general.previewCompositionOnTap")} search={search}/>
-                    <Toggler state={previewCompositionOnTap} setState={setPreviewCompositionOnTap} stopPropagation={true}/>
+                <div className="settingHint">{t("general.contextEdgesHint")}</div>
+                <div className="settingInnerList">
+                    <div className="settingTogglerDiv" data-setting-id="previewCompositionOnTap"
+                        onClick={() => setPreviewCompositionOnTap(value => !value)}>
+                        <HighlightText text={t("general.previewCompositionOnTap")} search={search}/>
+                        <Toggler state={previewCompositionOnTap} setState={setPreviewCompositionOnTap} stopPropagation={true}/>
+                    </div>
                 </div>
-            </div>}
+                <div className="settingHint">{t("general.previewCompositionOnTapHint")}</div>
+            </div>
         </div>
     );
 }
