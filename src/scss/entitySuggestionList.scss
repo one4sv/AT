@@ -148,3 +148,14 @@
     code { display: block; padding: 8px 10px; border-radius: 12px; background: var(--mc); white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
 }
 .commandHelpLabel { color: var(--borderWh); font-size: 13px; font-weight: 600; }
+
+.commandSeekBar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    padding: 8px 12px;
+    color: var(--tc);
+    .commandSeekBarHeading { min-width: 0; overflow-wrap: anywhere; }
+    .seekBarWrapper { box-sizing: border-box; }
+}

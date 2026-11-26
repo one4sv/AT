@@ -15,6 +15,7 @@ export default function EntitySuggestionList({
     items,
     loading = false,
     loadingLabel,
+    control,
     activeIndex,
     onSelect,
     onPreview,
@@ -26,6 +27,7 @@ export default function EntitySuggestionList({
     items: EntitySuggestionItem[];
     loading?: boolean;
     loadingLabel?: string;
+    control?: ReactNode;
     activeIndex: number;
     onSelect: (item: EntitySuggestionItem) => void;
     onPreview?: (item: EntitySuggestionItem) => void;
@@ -77,19 +79,19 @@ export default function EntitySuggestionList({
         else if (row.bottom > bottom) container.scrollTop += row.bottom - bottom;
     }, [activeIndex, activeId, placement]);
 
-    if (!items.length && !loading) return null;
+    if (!items.length && !loading && !control) return null;
     const list = (
         <div ref={node => {
             listRef.current = node;
             if (popupRef) popupRef.current = node;
         }} className={`entitySuggestionList ${className} ${anchorRef ? "entitySuggestionPortal" : ""}`}
-            role="listbox" aria-busy={loading || undefined} aria-label={loading ? loadingLabel : undefined} style={anchorRef ? {
+            role={control ? "group" : "listbox"} aria-busy={loading || undefined} aria-label={loading ? loadingLabel : undefined} style={anchorRef ? {
                 top: placement?.top || 0,
                 left: placement?.left || 0,
                 width: placement?.width || 0,
                 visibility: placement ? "visible" : "hidden"
             } : undefined}>
-            {loading ? Array.from({ length: 4 }, (_, index) => <div key={index} className="entitySuggestionItem entitySuggestionSkeleton" aria-hidden="true">
+            {control ?? (loading ? Array.from({ length: 4 }, (_, index) => <div key={index} className="entitySuggestionItem entitySuggestionSkeleton" aria-hidden="true">
                 <span className="entitySuggestionContent">
                     <span className="skeletonLine"/>
                     <span className="skeletonLine skeletonShort"/>
@@ -115,7 +117,7 @@ export default function EntitySuggestionList({
                     </span>
                     {item.suffix && <span className="entitySuggestionSuffix">{item.suffix}</span>}
                 </button>
-            ))}
+            )))}
         </div>
     );
     return anchorRef ? createPortal(list, document.body) : list;

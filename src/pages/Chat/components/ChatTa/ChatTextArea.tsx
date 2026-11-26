@@ -3,7 +3,9 @@ import { goalSnapshotLink } from "../../utils/sharedGoal";
 import type { Goal } from "../../../HabitPage/components/Overview/goalTypes";
 import useLocalStorage from "../../../../components/hooks/utils/useLocalStorage";
 import { QuestionIcon, TargetIcon, ClockCounterClockwiseIcon } from "@phosphor-icons/react";
-import { parseSettingCommand, settingLink, sharedSettings } from "../../../Settings/Arrays/sharedSettings";
+import SeekBar from "../../../Settings/components/SeekBar";
+import "../../../Settings/scss/seekbar.scss";
+import { blurCommandControl, parseSettingCommand, settingLink, sharedSettings } from "../../../Settings/Arrays/sharedSettings";
 import SettingCatalogIcon from "../../../Settings/components/SettingCatalogIcon";
 import { useSearchableSettings } from "../../../Settings/Arrays/searchableSettings";
 import { settingsSearchNavigation } from "../../../Settings/Arrays/settingsSearchNavigation";
@@ -112,7 +114,7 @@ export default function ChatTextArea({
     const { list: mentionContacts } = useContacts();
     const { refetchHabits } = useHabits();
     const { upsertPlan, refreshPlans } = usePlans();
-    const { timeZone, bg, bgUrl, bgGallery, settingsLoaded, compositions, showRecentCommands } = useSettings();
+    const { timeZone, bg, bgUrl, bgGallery, settingsLoaded, compositions, showRecentCommands, blur, bgEffects } = useSettings();
     const [recentCommands, setRecentCommands] = useLocalStorage<string[]>("at_recent_commands", []);
     const rememberCommand = (label: string) => setRecentCommands(previous => [label, ...previous.filter(value => value !== label)].slice(0, 3));
     const orderCommands = (items: EntitySuggestionItem[], query: string) => {
@@ -203,7 +205,11 @@ export default function ChatTextArea({
             id: COMPOSITION_SHARE_PATH + " " + (index + 1), label: item.name, description: String(index + 1),
             icon: <span className="compositionContextPreview wallpaperShareThumbnail"><CompositionPreview composition={item}/></span>
         }] : []) : [];
-    const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed ? [] : compositionInput !== null ? compositionChoices : wallpaperInput !== null ? wallpaperChoices : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText, (section, item) =>
+    const blurControl = settingInput && !fieldSuggestionsDismissed ? blurCommandControl(mess, { interfaceBlur: blur, backgroundBlur: bgEffects.blur }) : null;
+    const setBlurArgument = (value: number) => {
+        if (blurControl) setMess(blurControl.prefix + " " + value);
+    };
+    const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed || blurControl ? [] : compositionInput !== null ? compositionChoices : wallpaperInput !== null ? wallpaperChoices : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText, (section, item) =>
         item ? <SettingCatalogIcon item={item} size={18}/> : <section.icon size={18}/>) : quickInput?.field === "goalMode" ? quickModeItems : quickPeriodItems;
     const quickCommandItems: EntitySuggestionItem[] = [
         { id: "todo", label: "/todo", description: tc("chatUi.createGoalCommand"), icon: <TargetIcon size={18}/> },
@@ -868,6 +874,19 @@ export default function ChatTextArea({
                 return;
             }
         }
+        if (blurControl && !e.nativeEvent.isComposing && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                e.preventDefault();
+                setBlurArgument(Math.max(blurControl.min, Math.min(blurControl.max, blurControl.value + (e.key === "ArrowUp" ? 1 : -1))));
+                return;
+            }
+            if (e.key === "Tab") {
+                e.preventDefault();
+                setBlurArgument(blurControl.value);
+                setFieldSuggestionsDismissed(true);
+                return;
+            }
+        }
         if (e.key === "Tab" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey && !e.nativeEvent.isComposing) {
             if (fieldItems.length) {
                 e.preventDefault();
@@ -978,6 +997,11 @@ export default function ChatTextArea({
         if (!editing && /^\/help\s*$/i.test(mess)) { rememberCommand("/help"); setMess(""); setBlackout({ seted: true, module: "CommandHelp", options: { text: savedChat ? "saved" : "chat" } }); return; }
         if (savedChat && !editing && /^\/todo$/i.test(mess.trim())) { rememberCommand("/todo"); commitCommand("todo"); return; }
         if (shareLoading) return;
+        if (blurControl && !blurControl.hasValue) {
+            setBlurArgument(blurControl.value);
+            setFieldSuggestionsDismissed(true);
+            return;
+        }
         if (quickDraft) {
             void submitQuickCommand();
             return;
@@ -1398,11 +1422,19 @@ export default function ChatTextArea({
                             ? item.label : item.label + " ")}
                         onPreviewEnd={() => setPreviewCommand(null)}
                     />}
-                    {!!fieldItems.length && <EntitySuggestionList
+                    {(!!fieldItems.length || blurControl) && <EntitySuggestionList
                         className="chatFieldSuggestions"
                         anchorRef={commandRowRef}
                         popupRef={commandPopupRef}
                         items={fieldItems}
+                        control={blurControl ? <div className="commandSeekBar">
+                            <div className="commandSeekBarHeading">
+                                <span>{settingsText(sharedSettings[blurControl.setting].title)}</span>
+                            </div>
+                            <SeekBar id={"command-" + sharedSettings[blurControl.setting].id}
+                                min={blurControl.min} max={blurControl.max} step={1} unit="px"
+                                value={blurControl.value} disabled={quickSending} onChange={setBlurArgument}/>
+                        </div> : undefined}
                         activeIndex={Math.min(activeFieldSuggestion, fieldItems.length - 1)}
                         onSelect={chooseField}
                     />}

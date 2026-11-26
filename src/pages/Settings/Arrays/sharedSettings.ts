@@ -45,6 +45,21 @@ export function settingValues(setting: SharedSetting): string[] {
     }
 }
 
+/** Numeric blur arguments use the same domain as shared presets, not a second range. */
+export function blurCommandControl(text: string, current: { interfaceBlur: number; backgroundBlur: number }) {
+    const match = /^\/(settings|set)\s+((?:interface\s+)?background\s+blur|interface\s+blur)\s+([0-9]*)\s*$/i.exec(text);
+    if (!match) return null;
+    const setting = /background/i.test(match[2]) ? "background blur" as const : "interface blur" as const;
+    const path = match[2].toLowerCase().replace(/\s+/g, " ");
+    const values = settingValues(setting).map(Number);
+    const min = values[0];
+    const max = values[values.length - 1];
+    const fallback = setting === "background blur" ? current.backgroundBlur : current.interfaceBlur;
+    const raw = match[3] === "" ? fallback : Number(match[3]);
+    const value = Math.max(min, Math.min(max, Number.isFinite(raw) ? Math.round(raw) : min));
+    return { setting, prefix: "/" + match[1].toLowerCase() + " " + path, min, max, value, hasValue: match[3] !== "" };
+}
+
 export function validSettingValue(setting: SharedSetting, value: string) {
     return settingValues(setting).includes(value);
 }

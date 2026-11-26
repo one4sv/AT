@@ -68,8 +68,19 @@ test("share command search renders skeletons until the current request settles",
     assert.match(chat, /finally\(\(\) => \{ if \(!controller\.signal\.aborted\) setShareLoadedKey\(shareRequestKey\)/);
     assert.match(chat, /controller\.abort\(\)/);
     assert.match(chat, /if \(shareLoading\) return;/);
-    assert.match(list, /if \(!items\.length && !loading\) return null/);
+    assert.match(list, /if \(!items\.length && !loading && !control\) return null/);
     assert.match(list, /aria-busy=\{loading \|\| undefined\}/);
     assert.match(list, /loading \? Array\.from\(\{ length: 4 \}/);
     assert.match(list, /entitySuggestionSkeleton/);
+});
+
+
+test("blur suggestions use the shared SeekBar without applying settings while dragging", () => {
+    const chat = read("src/pages/Chat/components/ChatTa/ChatTextArea.tsx");
+    const list = read("src/components/ts/EntitySuggestionList.tsx");
+    assert.match(chat,/const fieldItems: EntitySuggestionItem\[\] = fieldSuggestionsDismissed \|\| blurControl \? \[\]/);
+    assert.match(chat,/control=\{blurControl \? <div className="commandSeekBar">/);
+    assert.match(chat,/<SeekBar id=\{"command-" \+ sharedSettings\[blurControl.setting\].id\}/);
+    assert.match(chat,/if \(blurControl\) setMess\(blurControl.prefix \+ " " \+ value\)/);
+    assert.match(list,/control \?\? \(loading/);
 });
