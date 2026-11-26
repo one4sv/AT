@@ -11,8 +11,15 @@ import { ChatCircleIcon } from "@phosphor-icons/react/dist/ssr";
 export interface SearchableSection {
     id: string;
     name: string;
+    aliases?: string[];
     items: SearchableSetting[];
     icon: ElementType;
+}
+
+export function matchesSettingSearch(section: SearchableSection, item: SearchableSetting, query: string) {
+    const terms = [section.name, ...(section.aliases ?? []), item.name, item.category];
+    if (item.id === "bg") terms.push("обои", "фон", "фоны", "wallpaper", "wallpapers", "background");
+    return terms.some(term => term?.toLowerCase().includes(query));
 }
 
 export function useSearchableSettings(): SearchableSection[] {
@@ -94,6 +101,7 @@ export function useSearchableSettings(): SearchableSection[] {
         {
             id: "gen",
             name: t("settings.general"),
+            aliases: [t("settings.generalSearchName"), t("settings.generalSearchLegacyName")],
             icon: WrenchIcon,
             items: [
                 {

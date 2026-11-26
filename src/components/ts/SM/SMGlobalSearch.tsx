@@ -5,7 +5,7 @@ import { MagnifyingGlassMinusIcon } from "@phosphor-icons/react";
 import { api } from "../api";
 import { tags } from "../tags";
 import { useContacts } from "../../hooks/ContactsHook";
-import { useSearchableSettings } from "../../../pages/Settings/Arrays/searchableSettings";
+import { matchesSettingSearch, useSearchableSettings } from "../../../pages/Settings/Arrays/searchableSettings";
 import { settingsSearchNavigation } from "../../../pages/Settings/Arrays/settingsSearchNavigation";
 import { formatSMSearchQuery, searchResultRank, searchSourceFilters, searchTabFilters, type SearchFilter } from "../utils/globalSearchQuery";
 import type { tab } from "../../context/SideMenuContext";
@@ -82,7 +82,7 @@ export default function SMGlobalSearch({ query, filter, tab: section, onFilterCh
         type.startsWith(term.slice(1).toLowerCase())) : [];
     const settings: SearchResult[] = activeFilters.includes("setting") && !isFilterInput
         ? sections.flatMap(section => section.items.filter(item =>
-            !term || [item.name, item.category].some(value => value?.toLowerCase().includes(term.toLowerCase())))
+            matchesSettingSearch(section, item, term.toLowerCase()))
             .map(item => ({
                 kind: "setting", id: item.id, label: item.name, description: item.category,
                 url: "/settings", settingSection: section.id

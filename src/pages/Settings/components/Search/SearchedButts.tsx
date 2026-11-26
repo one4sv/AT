@@ -1,6 +1,6 @@
 
 import { MagnifyingGlassMinusIcon } from "@phosphor-icons/react";
-import { useSearchableSettings, type SearchableSection } from "../../Arrays/searchableSettings";
+import { matchesSettingSearch, useSearchableSettings, type SearchableSection } from "../../Arrays/searchableSettings";
 import type { SearchableSetting } from "../../Settings";
 import { AnimatePresence, motion } from "motion/react";
 import SearchButt from "../SearchButt";
@@ -19,10 +19,7 @@ export default function SearchedButts({ search, selectSetting, staticResults = f
         .map((section) => {
             const filteredItems = query === "??" || query === "."
                 ? section.items
-                : section.items.filter((item) =>
-                    item.name.toLowerCase().includes(query) ||
-                    (item.id === "bg" && ["обои", "фон", "фоны", "wallpaper", "wallpapers", "background"].some(word => word.includes(query)))
-                );
+                : section.items.filter(item => matchesSettingSearch(section, item, query));
 
             if (filteredItems.length === 0) return null;
 

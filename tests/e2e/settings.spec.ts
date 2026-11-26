@@ -18,6 +18,16 @@ test.beforeEach(async ({ page, context }) => {
     }));
 });
 
+test("Основные settings can be found by the current and previous Russian names", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("settings_lang", JSON.stringify("ru")));
+    await page.goto("/settings");
+    const search = page.locator(".settingSearchInput");
+    for (const query of ["основные настройки", "общие настройки"]) {
+        await search.fill(query);
+        await expect(page.locator(".searchSectionHeader")).toHaveText("Основные");
+    }
+});
+
 test("device-local font, date and time preferences survive a reload", async ({ page }, testInfo) => {
     await page.goto("/settings/gen");
     await expect(page.locator('[data-setting-id="fontSize"]')).toBeVisible();
@@ -342,7 +352,7 @@ test("mobile SideMenu swipes work on context triggers, the header and navigation
     await settingsCard.click({ button: "right" });
     const contextMenu = page.locator(".ContextMenuWrapper");
     await expect(contextMenu.locator(".ContextMenuButt")).toHaveText([
-        "Аккаунт", "Общие", "Интерфейс", "Безопасность", "Приватность"
+        "Аккаунт", "Основные", "Интерфейс", "Безопасность", "Приватность"
     ]);
     await swipe(settingsCard, 330, 70);
     await expect(menu).toHaveClass(/open/);

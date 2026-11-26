@@ -5,6 +5,8 @@
     "account": "Account",
     "accountDesc": "Account and personal data management",
     "general": "General",
+    "generalSearchName": "General settings",
+    "generalSearchLegacyName": "General settings",
     "generalDesc": "Language, data saving and text size",
     "personalization": "Interface",
     "personalizationDesc": "Theme, appearance and app design",
