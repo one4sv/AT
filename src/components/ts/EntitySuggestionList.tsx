@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, type ReactNode, type RefObject } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import "../../scss/entitySuggestionList.scss";
 
@@ -57,9 +57,27 @@ export default function EntitySuggestionList({
         };
     }, [anchorRef]);
 
+    const listRef = useRef<HTMLDivElement | null>(null);
+    const activeId = items[activeIndex]?.id;
+    useLayoutEffect(() => {
+        const container = listRef.current;
+        const active = container?.querySelector<HTMLElement>('[aria-selected="true"]');
+        if (!container || !active) return;
+        const viewport = container.getBoundingClientRect();
+        const row = active.getBoundingClientRect();
+        const top = viewport.top + container.clientTop;
+        const bottom = top + container.clientHeight;
+        // Scroll only the suggestions, never the underlying chat or page.
+        if (row.top < top) container.scrollTop += row.top - top;
+        else if (row.bottom > bottom) container.scrollTop += row.bottom - bottom;
+    }, [activeIndex, activeId, placement]);
+
     if (!items.length) return null;
     const list = (
-        <div ref={popupRef} className={`entitySuggestionList ${className} ${anchorRef ? "entitySuggestionPortal" : ""}`}
+        <div ref={node => {
+            listRef.current = node;
+            if (popupRef) popupRef.current = node;
+        }} className={`entitySuggestionList ${className} ${anchorRef ? "entitySuggestionPortal" : ""}`}
             role="listbox" style={anchorRef ? {
                 top: placement?.top || 0,
                 left: placement?.left || 0,

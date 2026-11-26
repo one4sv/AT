@@ -38,3 +38,19 @@ test("inline slash highlight stays underneath editable textarea", () => {
     assert.match(css, /\.commandArgument \{[\s\S]*?background:\s*var\(--accent_highlight\)/);
     assert.match(c, /className="commandPlaceholder"/);
 });
+
+
+test("Tab accepts open suggestions and the active row stays visible in its own scroll container", () => {
+    const chat = read("src/pages/Chat/components/ChatTa/ChatTextArea.tsx");
+    const list = read("src/components/ts/EntitySuggestionList.tsx");
+    const tab = chat.slice(chat.indexOf('if (e.key === "Tab"'), chat.indexOf('if (!e.nativeEvent.isComposing && (quickDraft || settingInput))'));
+    assert.match(tab, /!e.shiftKey/);
+    assert.match(tab, /!e.nativeEvent.isComposing/);
+    for (const handler of ["chooseField", "chooseShare", "commitMention", "selectSavedCommand"]) {
+        assert.match(tab, new RegExp(handler + "\\("));
+    }
+    assert.match(list, /container\.scrollTop \+= row\.top - top/);
+    assert.match(list, /container\.scrollTop \+= row\.bottom - bottom/);
+    assert.match(list, /\[activeIndex, activeId, placement\]/);
+    assert.doesNotMatch(list, /\.scrollIntoView\(/);
+});

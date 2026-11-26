@@ -706,6 +706,28 @@ export default function ChatTextArea({
         [editing]
     );
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === "Tab" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey && !e.nativeEvent.isComposing) {
+            if (fieldItems.length) {
+                e.preventDefault();
+                chooseField(fieldItems[Math.min(activeFieldSuggestion, fieldItems.length - 1)]);
+                return;
+            }
+            if (shareSuggestions.length) {
+                e.preventDefault();
+                chooseShare(shareSuggestions[Math.min(activeShare, shareSuggestions.length - 1)]);
+                return;
+            }
+            if (matchingMentions.length) {
+                e.preventDefault();
+                commitMention(matchingMentions[Math.min(activeMention, matchingMentions.length - 1)]);
+                return;
+            }
+            if (canShowCommands) {
+                e.preventDefault();
+                selectSavedCommand(matchingCommands[Math.min(activeSuggestion, matchingCommands.length - 1)]);
+                return;
+            }
+        }
         if (!e.nativeEvent.isComposing && (quickDraft || settingInput)) {
             if (e.key === "Escape") { e.preventDefault(); setFieldSuggestionsDismissed(true); return; }
             if (fieldItems.length && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
