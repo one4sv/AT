@@ -476,6 +476,15 @@
     "search": "Search..."
   },
   "backgroundLibrary": {
+    "shareImage": "Share wallpaper",
+    "shareCurrent": "Current wallpaper",
+    "shareNumber": "Custom wallpaper {{count}}",
+    "shareInvalid": "Choose an available wallpaper. Sharing a wallpaper does not support extra attachments.",
+    "shareFull": "All {{count}} of {{count}} custom wallpaper slots are used. Delete one of your wallpapers.",
+    "shareUnavailable": "Could not open the shared wallpaper. The image may be unavailable.",
+    "shareImport": "Add to my wallpapers",
+    "shareChoose": "Choose",
+    "shareSelected": "Selected",
     "title": "Background",
     "help": "Wallpaper help",
     "helpTitle": "Wallpaper icon legend",

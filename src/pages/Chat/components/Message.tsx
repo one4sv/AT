@@ -18,6 +18,7 @@ import ReactionIcon from "../../../components/ts/ReactionIcon";
 import ReactionPicker from "../../../components/ts/ReactionPicker";
 import { useChatMessageScroll } from "../../../components/hooks/utils/useChatMessageScroll";
 import MessageLinkContent from "./MessageLinkContent";
+import { sharedWallpaperAttachment } from "../../../components/ts/utils/backgroundCatalog";
 import HabitInvitation from "./HabitInvitation";
 import type { SavedMessageSuggestion } from "../../../components/ts/utils/savedMessageSuggestion";
 import CreatedEntityCard, { parseCreatedEntityMessage } from "./CreatedEntityCard";
@@ -290,7 +291,7 @@ export default function Message({
                     <HabitInvitation messageId={m.id} recipientId={m.habit_invite_recipient_id}/> :
                     (!!m.content?.trim() || !!m.entity_type && !!m.entity_id) && <div className={`messageText ${isMobile ? "mobile" : ""}`}>
                     {m.entity_type && m.entity_id ? <>
-                        {!!m.content?.trim() && <MessageLinkContent text={m.content} search={searchMess}/>}
+                        {!!m.content?.trim() && <MessageLinkContent text={m.content} search={searchMess} files={m.files}/>}
                         <SharedEntityCard kind={m.entity_type} id={m.entity_id}/>
                     </> : createdReference ? <CreatedEntityCard item={createdReference}/> : smartSuggestion && onSmartCreate && !isChose && activeHeader === "text" && !searchMess.trim()
                         ? <>
@@ -308,9 +309,9 @@ export default function Message({
                             >{m.content.slice(smartSuggestion.start, smartSuggestion.end)}</button>
                             {m.content.slice(smartSuggestion.end)}
                         </>
-                        : <MessageLinkContent text={m.content} search={searchMess} />}
+                        : <MessageLinkContent text={m.content} search={searchMess} files={m.files} />}
                 </div>}
-                {m.files && m.files.length > 0 && <MessageFiles files={m.files} m={m} />}
+                {m.files && m.files.length > 0 && !sharedWallpaperAttachment(m.content || "", m.files, window.location.origin) && <MessageFiles files={m.files} m={m} />}
                 {m.redirected_id && <div className="redirectedMess">
                     <div className="redirectSign">
                         <ShareFat weight="fill" />
@@ -321,9 +322,9 @@ export default function Message({
                     </div>
                     {m.redirected_answer && redir_answer && m.redirected_name && scrollToMessage && <AnswerMess answer={redir_answer} scrollToMessage={scrollToMessage} />}
                     <div className="redirectText">
-                        <MessageLinkContent text={m.redirected_content || ""} search={searchMess}/>
+                        <MessageLinkContent text={m.redirected_content || ""} search={searchMess} files={m.redirected_files}/>
                     </div>
-                    {m.redirected_files && m.redirected_files.length > 0 && <MessageFiles files={m.redirected_files} m={m} />}
+                    {m.redirected_files && m.redirected_files.length > 0 && !sharedWallpaperAttachment(m.redirected_content || "", m.redirected_files, window.location.origin) && <MessageFiles files={m.redirected_files} m={m} />}
                 </div>}
                 <div className="messageStatusBarDiv">
                     {isMy && chatWith ? m.isPending ? <div className="messageReadSign ">

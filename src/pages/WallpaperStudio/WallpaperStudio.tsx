@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent, CSSProperties } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, useMotionValue, animate, useReducedMotion } from "framer-motion";
 import { flushSync } from "react-dom";
-import { ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleHelp, ImagePlus, Trash2, Images } from "lucide-react";
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, CircleCheck, CircleHelp, ImagePlus, Trash2 } from "lucide-react";
 import { useSettings } from "../../components/hooks/SettingsHook";
 import { useUpSettings } from "../../components/hooks/UpdateSettingsHook";
 import WallpaperHeader from "./WallpaperHeader";
@@ -23,6 +23,8 @@ type HandleDrag = { pointerId: number; x: number; y: number; moved: boolean; dir
 
 export default function WallpaperStudio() {
     const { tab } = useParams<{ tab?: string }>();
+    const [searchParams] = useSearchParams();
+    const sharedPreview = searchParams.get("preview") || searchParams.get("shared");
     const { setTitle } = usePageTitle();
     const settingsPage = tab === "settings";
     const navigate = useNavigate();
@@ -72,8 +74,15 @@ export default function WallpaperStudio() {
     useEffect(() => {
         if (initialized.current || !settingsLoaded || !items.length) return;
         initialized.current = true;
-        setPreview(Math.max(appliedIndex, 0));
-    }, [appliedIndex, items.length, settingsLoaded]);
+        const sharedIndex = items.findIndex(item => item.id !== "custom" && item.id === sharedPreview);
+        setPreview(sharedIndex >= 0 ? sharedIndex : Math.max(appliedIndex, 0));
+        if (sharedIndex >= 0) setOpen(false);
+    }, [appliedIndex, items.length, settingsLoaded, sharedPreview]);
+    useEffect(() => {
+        if (!sharedPreview || !settingsLoaded) return;
+        const index = items.findIndex(item => item.id !== "custom" && item.id === sharedPreview);
+        if (index >= 0) { setPreview(index); setOpen(false); }
+    }, [sharedPreview, settingsLoaded]);
 
     const currentIndex = Math.min(preview ?? Math.max(appliedIndex, 0), Math.max(items.length - 1, 0));
 
@@ -511,19 +520,16 @@ export default function WallpaperStudio() {
                 </div>
             </div>
         </div>
-        <PageBottom className="wallpaperStudioBottom" onBack={() => navigate("/settings/pers")}>
-            <button type="button" className="pageBottomAction wallpaperStudioSettingsButton"
-                aria-expanded={open} aria-controls="wallpaperStudioContent"
-                onClick={() => setOpen(value => !value)}>
-                <Images size={21}/>
-                {t("backgroundLibrary.previewBackgrounds")}
+        <PageBottom className="wallpaperStudioBottom">
+            <button type="button" className="pageBottomBack wallpaperStudioCatalogToggle"
+                aria-label={t(open ? "backgroundLibrary.collapsePanel" : "backgroundLibrary.expandPanel")}
+                aria-expanded={open} aria-controls="wallpaperStudioContent" onClick={() => setOpen(value => !value)}>
+                {open ? <ChevronDown/> : <ChevronUp/>}
             </button>
-            <button type="button" className={`pageBottomBack wallpaperHeaderApply ${isApplied ? "active" : ""}`}
-                title={t(isApplied ? "backgroundLibrary.selected" : "backgroundLibrary.apply")}
-                aria-label={t(isApplied ? "backgroundLibrary.selected" : "backgroundLibrary.apply")}
-                aria-pressed={Boolean(isApplied)}
+            <button type="button" className={`pageBottomAction wallpaperHeaderApply ${isApplied ? "active" : ""}`}
+                aria-pressed={Boolean(isApplied)} disabled={busy || Boolean(isApplied)}
                 onClick={() => { if (!isApplied) apply(currentIndex); }}>
-                <CircleCheck size={25}/>
+                {t(isApplied ? "backgroundLibrary.shareSelected" : "backgroundLibrary.shareChoose")}
             </button>
         </PageBottom>
     </main>;

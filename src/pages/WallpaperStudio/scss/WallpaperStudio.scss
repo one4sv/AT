@@ -505,38 +505,19 @@
         pointer-events: auto;
     }
 
-    .wallpaperStudioSettingsButton {
-        justify-content: center;
-        border: 1px solid var(--block_border);
-        gap: .7vw;
-        color: var(--tc);
-        font-size: 16px;
-    }
-
     .wallpaperHeaderApply {
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
         justify-content: center;
-        padding: 0;
-        box-sizing: border-box;
-        border: 1px solid var(--block_border);
-        aspect-ratio: 1;
-        color: var(--tc);
-
-        > svg {
-            flex-shrink: 0;
-            color: inherit;
-        }
+        background: linear-gradient(135deg, var(--accent), var(--grad));
+        color: var(--inner_text);
+        border: none;
+        font-size: 16px;
 
         &.active {
-            background: linear-gradient(135deg, var(--accent), var(--grad));
-            border: none;
-            color: var(--inner_text);
-
-            > svg {
-                color: var(--inner_text);
-            }
+            background: var(--mc);
+            backdrop-filter: blur(var(--blur));
+            -webkit-backdrop-filter: blur(var(--blur));
+            color: var(--tc);
+            cursor: default;
         }
     }
 
@@ -545,8 +526,5 @@
         padding: 0 3vw max(3dvh, env(safe-area-inset-bottom));
         gap: 2vw;
 
-        .wallpaperStudioSettingsButton {
-            gap: 2vw;
-        }
     }
 }

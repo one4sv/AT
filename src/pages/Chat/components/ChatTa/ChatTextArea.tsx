@@ -26,7 +26,9 @@ import { resolveTimeZone } from "../../../../components/ts/utils/dateToStr";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
-import { MAX_CUSTOM_BACKGROUNDS } from "../../../../components/ts/utils/backgroundCatalog";
+import { MAX_CUSTOM_BACKGROUNDS, WALLPAPER_SHARE_PATH, wallpaperCommandInput, normalizeWallpaperQuery, shareableWallpapers, resolveWallpaperShare, sharedWallpaperLink } from "../../../../components/ts/utils/backgroundCatalog";
+import WallpaperShareThumbnail from "../../../../components/ts/WallpaperShareThumbnail";
+import { fetchWallpaperFile } from "../../../../components/ts/utils/fetchWallpaperFile";
 import { findMentionToken } from "../../../../components/ts/utils/chatMentions";
 import type { LinkedEntity } from "../../../../components/context/SendMessContext";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
@@ -102,7 +104,7 @@ export default function ChatTextArea({
     const { list: mentionContacts } = useContacts();
     const { refetchHabits } = useHabits();
     const { upsertPlan, refreshPlans } = usePlans();
-    const { timeZone, bgGallery } = useSettings();
+    const { timeZone, bg, bgUrl, bgGallery, settingsLoaded } = useSettings();
     const { t: settingsText } = useTranslation("settings");
     const navigate = useNavigate();
     const { showNotification } = useNote();
@@ -150,7 +152,30 @@ export default function ChatTextArea({
     const quickPeriodItems = quickInput?.field === "periodicity" ? (["everyday", "weekly", "cycle", "sometimes"] as const).map(id => ({
         id, label: tc("habitUi.period." + id), description: tc("habitUi.periodHint." + id)
     })).filter(item => [item.id, item.label].some(value => value.toLowerCase().includes((quickInput.slots[2] || "").toLowerCase()))) : [];
-    const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed ? [] : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText, (section, item) =>
+    const wallpaperInput = !editing ? wallpaperCommandInput(mess) : null;
+    const wallpaperChoice = wallpaperInput !== null ? resolveWallpaperShare(wallpaperInput, bg, bgUrl, bgGallery) : null;
+    const wallpaperQuery = normalizeWallpaperQuery(wallpaperInput ?? "");
+    const wallpaperChoices: EntitySuggestionItem[] = [];
+    if (wallpaperInput !== null && settingsLoaded && !(wallpaperChoice && /\s$/.test(mess))) {
+        const addWallpaperChoice = (value: string, label: string, choice: NonNullable<typeof wallpaperChoice>) => {
+            if (!value.startsWith(wallpaperQuery)) return;
+            wallpaperChoices.push({ id: WALLPAPER_SHARE_PATH + " " + value, label, description: value,
+                icon: <WallpaperShareThumbnail id={choice.kind === "stock" ? choice.id : undefined} url={choice.kind === "custom" ? choice.url : undefined}/> });
+        };
+        const currentChoice = resolveWallpaperShare("current", bg, bgUrl, bgGallery);
+        if (currentChoice) addWallpaperChoice("current", settingsText("backgroundLibrary.shareCurrent"), currentChoice);
+        bgGallery.forEach((entry, index) => addWallpaperChoice(String(index + 1), settingsText("backgroundLibrary.shareNumber", { count: index + 1 }), { kind: "custom", url: entry.url }));
+        const groups = [...new Set(shareableWallpapers.map(item => item.commandGroup))];
+        for (const group of groups) {
+            const items = shareableWallpapers.filter(item => item.commandGroup === group);
+            if (!wallpaperQuery.includes(" ") && !(wallpaperQuery === group && /\s$/.test(mess))) {
+                addWallpaperChoice(group, settingsText("backgroundLibrary." + items[0].group), { kind: "stock", id: items[0].id });
+            } else if (wallpaperQuery === group || wallpaperQuery.startsWith(group + " ")) {
+                for (const item of items) addWallpaperChoice(group + " " + item.commandItem, settingsText(item.labelKey), { kind: "stock", id: item.id });
+            }
+        }
+    }
+    const fieldItems: EntitySuggestionItem[] = fieldSuggestionsDismissed ? [] : wallpaperInput !== null ? wallpaperChoices : settingInput ? settingCommandSuggestions(mess, settingCatalog, settingsText, (section, item) =>
         item ? <SettingCatalogIcon item={item} size={18}/> : <section.icon size={18}/>) : quickPeriodItems;
     const quickCommandItems: EntitySuggestionItem[] = [
         { id: "act", label: "/act", description: tc("chatUi.quickCommands.createActivity"), icon: <CheckCircleIcon size={18}/> },
@@ -888,8 +913,27 @@ export default function ChatTextArea({
             return;
         }
         const settingTarget = settingInput ? resolveSettingCommand(mess, settingCatalog) : null;
-        const command = !editing ? parseSettingCommand(settingTarget?.presetText ?? mess) : null;
+        const command = !editing && wallpaperInput === null ? parseSettingCommand(settingTarget?.presetText ?? mess) : null;
         let presetUrl: string | undefined;
+        let wallpaperFile: File | undefined;
+        if (wallpaperInput !== null) {
+            if (!settingsLoaded || !wallpaperChoice || files.length || linkedEntity || redirect || forwardPost || forwardMedia || answer) {
+                showNotification("info", settingsText("backgroundLibrary.shareInvalid"));
+                return;
+            }
+            const sourceRoute = location.pathname;
+            if (wallpaperChoice.kind === "custom") {
+                sending.current = true;
+                try {
+                    wallpaperFile = await fetchWallpaperFile(wallpaperChoice.url, "bgs");
+                } catch {
+                    showNotification("error", settingsText("backgroundLibrary.uploadInvalid"));
+                    return;
+                } finally { sending.current = false; }
+                if (routeRef.current !== sourceRoute) return;
+            }
+            presetUrl = sharedWallpaperLink(wallpaperChoice, window.location.origin);
+        }
         if (command) {
             if (/^\/set(?=\s|$)/i.test(mess) && !localSetting) {
                 showNotification("info", settingsText("sharing.localOnly"));
@@ -941,7 +985,7 @@ export default function ChatTextArea({
         if (!(nick || id) || !hasContent) return;
         sending.current = true;
         // Сохраняем текущие значения перед очисткой
-        const currentFiles = [...files];
+        const currentFiles = wallpaperFile ? [wallpaperFile] : [...files];
         const currentAnswer = answer;
         const currentRedirect = redirect;
         const currentShowNames = showNames;

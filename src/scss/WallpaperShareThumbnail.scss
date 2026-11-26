@@ -1,0 +1,50 @@
+.wallpaperShareThumbnail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    isolation: isolate;
+    width: 66px;
+    height: 40px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--mc);
+
+    > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    > .background {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+}
+
+.sharedWallpaperCard {
+    padding: .7dvh .65vw;
+
+    .sharedEntityLink {
+        appearance: none;
+        background: transparent;
+        border: none;
+        padding: 0;
+        text-align: left;
+        font: inherit;
+        cursor: pointer;
+    }
+
+    .wallpaperShareThumbnail {
+        width: 92px;
+        height: 56px;
+    }
+
+    @media (max-width: 800px) {
+        padding: .7dvh 2vw;
+    }
+}

@@ -8,6 +8,9 @@ import { parseSettingLink, parseSettingNavigationLink, settingValueLabel, shared
 import { Fragment, type ReactNode } from "react";
 import HighlightText from "../../../components/ts/HighlightText";
 import SharedEntityCard from "./SharedEntityCard";
+import SharedWallpaperCard from "./SharedWallpaperCard";
+import { parseSharedWallpaperLink, sharedWallpaperAttachment } from "../../../components/ts/utils/backgroundCatalog";
+import type { Media } from "../../../components/context/ChatContext";
 import { normalizeATLink, parseATPageLink } from "../utils/parseATPageLink";
 import { parseATEntityLink } from "../utils/parseATEntityLink";
 
@@ -71,7 +74,7 @@ function SharedATPageCard({ href, target }: { href: string; target: NonNullable<
     </div>;
 }
 
-export default function MessageLinkContent({text,search}: {text:string;search:string}) {
+export default function MessageLinkContent({text,search,files}: {text:string;search:string;files?: Media[] | null}) {
     const { t } = useTranslation("settings");
     const { setBlackout } = useBlackout();
     const nodes: ReactNode[] = [];
@@ -82,14 +85,16 @@ export default function MessageLinkContent({text,search}: {text:string;search:st
         const normalized = normalizeATLink(rawHref);
         if (!normalized) continue;
         const href = normalized.href;
+        const wallpaper = parseSharedWallpaperLink(href, window.location.origin);
         const reference = parseATEntityLink(href);
         const preset = parseSettingLink(href);
         const settingNavigation = parseSettingNavigationLink(href);
         const internalPage = parseATPageLink(href);
-        if (!reference && !preset && !settingNavigation && !internalPage) continue;
+        if (!wallpaper && !reference && !preset && !settingNavigation && !internalPage) continue;
         const index = match.index ?? 0;
         if (index > cursor) nodes.push(<HighlightText key={"text"+cursor} text={text.slice(cursor,index)} search={search}/>);
-        if (preset) nodes.push(
+        if (wallpaper) nodes.push(<SharedWallpaperCard key={"wallpaper" + index} target={wallpaper} media={sharedWallpaperAttachment(text, files, window.location.origin)}/>);
+        else if (preset) nodes.push(
             <div className="sharedEntityCard" key={"setting" + index}>
                 <a className="sharedEntityLink" href={href} onClick={event => {
                     event.preventDefault();
