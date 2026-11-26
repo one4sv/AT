@@ -95,7 +95,7 @@ export default function PersSettingTab({ search }: { search: string }) {
                         <span className="colorTitle"><HighlightText text={t("personalization.gradient")} search={search} /></span>
                         <ColorSelector arr={gradArr} value={grad} setNew={setNewGrad}/>
                     </div>
-                    <button type="button" className={`customPaletteOpen ${accent === "custom" || grad === "custom" ? "active" : ""}`}
+                    <button type="button" data-setting-id="customColors" className={`customPaletteOpen ${accent === "custom" || grad === "custom" ? "active" : ""}`}
                         onClick={() => setBlackout({ seted: true, module: "CustomThemeColor" })}>
                         <span className="customPaletteSwatch" aria-hidden="true"/>
                         {t("personalization.customColors")}

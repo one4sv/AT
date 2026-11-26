@@ -6,6 +6,8 @@ import { api } from "../api";
 import { tags } from "../tags";
 import { useContacts } from "../../hooks/ContactsHook";
 import { matchesSettingSearch, useSearchableSettings } from "../../../pages/Settings/Arrays/searchableSettings";
+import SettingCatalogIcon from "../../../pages/Settings/components/SettingCatalogIcon";
+import type { SearchableSetting } from "../../../pages/Settings/Settings";
 import { settingsSearchNavigation } from "../../../pages/Settings/Arrays/settingsSearchNavigation";
 import { formatSMSearchQuery, searchResultRank, searchSourceFilters, searchTabFilters, type SearchFilter } from "../utils/globalSearchQuery";
 import type { tab } from "../../context/SideMenuContext";
@@ -21,6 +23,7 @@ interface SearchResult {
     description: string;
     url: string;
     settingSection?: string;
+    settingItem?: SearchableSetting;
     avatar_url?: string | null;
     tag?: string | null;
     mine?: boolean;
@@ -33,7 +36,7 @@ function SMSearchResultVisual({ item }: { item: SearchResult }) {
         ? tags.find(tag => tag.value === item.tag)?.icon : null;
 
     return <span className={"smSearchVisual " + (hasAvatar ? "withImage" : "")} aria-hidden="true">
-        {hasAvatar ? <img src={item.avatar_url!} alt="" loading="lazy" onError={() => setFailedImage(true)}/>
+        {item.settingItem ? <SettingCatalogIcon item={item.settingItem} size={26}/> : hasAvatar ? <img src={item.avatar_url!} alt="" loading="lazy" onError={() => setFailedImage(true)}/>
             : TagIcon ? <TagIcon/> : <SMSearchFilterIcon filter={item.kind === "contact" ? "user" : item.kind as SearchFilter} size={26}/>}
     </span>;
 }
@@ -85,8 +88,8 @@ export default function SMGlobalSearch({ query, filter, tab: section, onFilterCh
             matchesSettingSearch(section, item, term.toLowerCase()))
             .map(item => ({
                 kind: "setting", id: item.id, label: item.name, description: item.category,
-                url: "/settings", settingSection: section.id
-            }))).slice(0, 20) : [];
+                url: "/settings", settingSection: section.id, settingItem: item
+            }))) : [];
     const requestKey = section + ":" + (filter || "none") + ":" + query;
     const valid = term.length <= 100;
     const moreRequest = useRef<AbortController | null>(null);

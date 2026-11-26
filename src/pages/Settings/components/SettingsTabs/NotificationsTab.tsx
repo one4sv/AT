@@ -328,7 +328,7 @@ export default function NotificationsTab({ search }: { search: string }) {
                 </div>
                 <div className="habitRemindersCatalog">
                     <div className="habitRemindersCatalogHeading">
-                        <div className="habitRemindersCatalogTitle">
+                        <div className="habitRemindersCatalogTitle" data-setting-id="activityReminders">
                             <SlidersHorizontalIcon size={20}/>
                             <span>{t("notifications.activityReminders")}</span>
                         </div>

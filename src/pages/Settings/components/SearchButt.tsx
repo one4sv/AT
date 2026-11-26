@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import AutoFitIconText from "./AutoFitIconText";
+import SettingCatalogIcon from "./SettingCatalogIcon";
 import type { SearchableSetting } from "../Settings";
 import type { SearchableSection } from "../Arrays/searchableSettings";
 import { isMobile } from "react-device-detect";
@@ -33,22 +33,7 @@ export default function SearchButt({item, section, itemIndex, selectSetting, sea
             layout={!staticResults}
         >
             <span className={`settingName ${item.options?.isDanger ? "danger" : ""}`}>
-                {item.icon ? (
-                    <item.icon
-                        size={22}
-                        weight="fill"
-                        color={item.options?.icon_color ?? "var(--accent)"}
-                    />
-                ) : (
-                    <AutoFitIconText text={item.options?.icon_text} />
-                )}
-                {item.options?.icon2 ? (
-                    <item.options.icon2
-                        size={22}
-                        weight="fill"
-                        color={item.options?.icon2_color ?? "var(--accent)"}
-                    />
-                ) : ""}
+                <SettingCatalogIcon item={item}/>
                 <HighlightText search={search} text={item.name}/>
             </span>
         </motion.div>

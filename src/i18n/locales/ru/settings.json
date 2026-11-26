@@ -18,6 +18,7 @@
     "commandSuggestion": "Поделиться настройкой",
     "commandHelp": "/set interface theme dark — изменить тему в «Избранном»; /settings interface theme dark — поделиться."
   },
+  "catalog": { "exceptions": "Исключения" },
   "settings": {
     "title": "Настройки",
     "searchPlaceholder": "Поиск...",

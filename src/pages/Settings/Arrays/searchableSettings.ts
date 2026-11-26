@@ -17,12 +17,12 @@ export interface SearchableSection {
 }
 
 export function matchesSettingSearch(section: SearchableSection, item: SearchableSetting, query: string) {
-    const terms = [section.name, ...(section.aliases ?? []), item.name, item.category];
+    const terms = [section.name, ...(section.aliases ?? []), item.name, item.category, item.id];
     if (item.id === "bg") terms.push("обои", "фон", "фоны", "wallpaper", "wallpapers", "background");
     return terms.some(term => term?.toLowerCase().includes(query));
 }
 
-export function useSearchableSettings(): SearchableSection[] {
+export function useSearchableSettings(includeUnavailable = false): SearchableSection[] {
     const { t } = useTranslation("settings");
     const { isDark, decor, blur, emote, lang } = useSettings();
     const isMobile = useCompactLayout();
@@ -33,7 +33,7 @@ export function useSearchableSettings(): SearchableSection[] {
             name: t("settings.personalization"),
             icon: PaintBucketIcon,
             items: [
-                ...(document.documentElement.dataset.atNative === "true" ? [{
+                ...(includeUnavailable || document.documentElement.dataset.atNative === "true" ? [{
                     id: "interfaceStyle",
                     name: t("personalization.interfaceStyle"),
                     icon: PaintBucketIcon,
@@ -72,6 +72,9 @@ export function useSearchableSettings(): SearchableSection[] {
                     },
                 },
                 {
+                    id: "customColors", name: t("personalization.customColors"), icon: PaletteIcon, category: t("personalization.accentColors"),
+                },
+                {
                     id: "decor",
                     name: t("personalization.decor"),
                     icon: decor === "default" ? PaintBucketIcon : MirrorRectangularIcon,
@@ -79,7 +82,7 @@ export function useSearchableSettings(): SearchableSection[] {
                 },
                 {
                     id: "blur",
-                    name: "Степень размытия",
+                    name: t("personalization.decorBlur"),
                     icon: null,
                     category: t("settings.personalization"),
                     options: { icon_text: `${blur.toString()}px` },
@@ -99,7 +102,7 @@ export function useSearchableSettings(): SearchableSection[] {
                     icon: StackIcon,
                     category: t("settings.personalization"),
                 },
-                ...(!isMobile ? [{
+                ...(includeUnavailable || !isMobile ? [{
                     id: "layout",
                     name: t("personalization.sideMenu"),
                     icon: TextIndentIcon,
@@ -130,7 +133,7 @@ export function useSearchableSettings(): SearchableSection[] {
                     icon: HandTapIcon,
                     category: t("general.experimental"),
                 },
-                ...(isMobile ? [{
+                ...(includeUnavailable || isMobile ? [{
                     id: "sideMenuSwipe",
                     name: t("general.sideMenuSwipe"),
                     icon: HandTapIcon,
@@ -212,7 +215,7 @@ export function useSearchableSettings(): SearchableSection[] {
             items: [
                 {
                     id: "editAcc",
-                    name: "Редактировать профиль",
+                    name: t("acc.edit"),
                     icon: PencilSimpleIcon,
                     category: t("settings.account") || "Аккаунт",
                 },
@@ -233,7 +236,7 @@ export function useSearchableSettings(): SearchableSection[] {
         },
         {
             id: "chats",
-            name: "Чаты",
+            name: t("settings.chats"),
             icon: ChatsTeardropIcon,
             items: [
                 {
@@ -279,7 +282,7 @@ export function useSearchableSettings(): SearchableSection[] {
         },
         {
             id: "activities",
-            name: "Активности",
+            name: t("settings.activities"),
             icon: SneakerMoveIcon,
             items: [
                 {
@@ -346,6 +349,9 @@ export function useSearchableSettings(): SearchableSection[] {
                     category: t("notifications.reminders"),
                 },
                 {
+                    id: "activityReminders", name: t("notifications.activityReminders"), icon: BellRingingIcon, category: t("notifications.reminders"),
+                },
+                {
                     id: "commonReminderTime",
                     name: t("notifications.commonReminderTime"),
                     icon: ClockIcon,
@@ -401,6 +407,9 @@ export function useSearchableSettings(): SearchableSection[] {
                     category: t("privacy.invites.title"),
                 },
                 { id: "groupInviteOthers", name: t("privacy.invites.others"), icon: ChatsTeardropIcon, category: t("privacy.invites.title") },
+                ...([["profileExceptions", "privacy.accountInfo"], ["habitsExceptions", "privacy.activitiesVisibility"], ["postsExceptions", "privacy.postsVisibility"], ["plansExceptions", "privacy.plansVisibility"], ["activityExceptions", "privacy.exceptions.activityTitle"], ["plan-inviteExceptions", "privacy.planInvitesTitle"], ["groupExceptions", "privacy.invites.title"]] as const).map(([id, category]) => ({
+                    id, name: t("catalog.exceptions"), icon: LockIcon, category: t(category)
+                })),
             ],
         },
         {
@@ -425,6 +434,9 @@ export function useSearchableSettings(): SearchableSection[] {
                     name: t("security.devices"),
                     icon: DevicesIcon,
                     category: t("security.devices"),
+                },
+                {
+                    id: "cookieConsent", name: t("privacy.cookies"), icon: ShieldCheckIcon, category: t("settings.security"),
                 },
                 {
                     id: "showLinkPreview",

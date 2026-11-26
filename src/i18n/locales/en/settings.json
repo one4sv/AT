@@ -18,6 +18,7 @@
     "commandSuggestion": "Share a setting",
     "commandHelp": "/set interface theme dark — change theme in Saved; /settings interface theme dark — share."
   },
+  "catalog": { "exceptions": "Exceptions" },
   "settings": {
     "title": "Settings",
     "searchPlaceholder": "Search...",
