@@ -1,3 +1,4 @@
+import { parseSharedGoalLink } from "./sharedGoal";
 import { parseSharedCompositionLink } from "../../../components/ts/utils/sharedComposition";
 import { parseSharedWallpaperLink, shareableWallpapers } from "../../../components/ts/utils/backgroundCatalog";
 import { parseSettingLink, parseSettingNavigationLink, sharedSettings, settingValueLabel } from "../../Settings/Arrays/sharedSettings";
@@ -10,6 +11,8 @@ export function internalObjectKind(text: string) {
     if (!url) return null;
     const href = url.href;
     const origin = window.location.origin;
+    const goal = parseSharedGoalLink(href, origin);
+    if (goal) return {kind:"goal" as const, goal};
     const composition = parseSharedCompositionLink(href, origin);
     if (composition) return { kind: "composition" as const, composition };
     const wallpaper = parseSharedWallpaperLink(href, origin);
@@ -27,6 +30,7 @@ export function internalObjectSummary(text: string, common: (key: string) => str
     const item = internalObjectKind(text);
     if (!item) return null;
     switch (item.kind) {
+        case "goal": return common("chatUi.goalObject") + ": " + item.goal.name;
         case "composition": return settings("personalization.compositions.title") + ": " + item.composition.name;
         case "wallpaper": {
             const wallpaper = item.wallpaper;

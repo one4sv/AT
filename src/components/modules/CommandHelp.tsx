@@ -8,7 +8,7 @@ export default function CommandHelp() {
     const saved = blackout.options?.text === "saved";
     const commands = [
         ...(saved ? [["/act", "quickCommands.createActivity"], ["/do", "quickCommands.createPlan"], ["/todo", "createGoalCommand"], ["/set", "localSettingsCommand"]] : []),
-        ["/habit", "shareActivity"], ["/plan", "sharePlan"], ["/user", "shareUser"], ["/post", "sharePost"],
+        ["/goal", "shareGoal"], ["/habit", "shareActivity"], ["/plan", "sharePlan"], ["/user", "shareUser"], ["/post", "sharePost"],
         ...(!saved ? [["/group", "shareGroup"], ["/invite", "shareInvite"]] : []),
         ["/settings", "shareSettingsCommand"], ["/help", "commandHelp"]
     ];

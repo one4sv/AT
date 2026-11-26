@@ -182,6 +182,9 @@
     "created": "created the group “{{name}}”"
   },
   "chatUi": {
+    "shareGoal": "Share goal",
+    "goalObject": "Goal",
+    "goalSnapshot": "Goal status at the time of sharing",
     "commandHelp": "Command help",
     "createGoalCommand": "Create goal",
     "localSettingsCommand": "Change settings",

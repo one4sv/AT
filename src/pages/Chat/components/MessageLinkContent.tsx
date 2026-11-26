@@ -11,6 +11,8 @@ import { Fragment, type ReactNode } from "react";
 import HighlightText from "../../../components/ts/HighlightText";
 import SharedEntityCard from "./SharedEntityCard";
 import SharedWallpaperCard from "./SharedWallpaperCard";
+import SharedGoalCard from "./SharedGoalCard";
+import { parseSharedGoalLink } from "../utils/sharedGoal";
 import SharedCompositionCard from "./SharedCompositionCard";
 import { parseSharedCompositionLink, sharedCompositionAttachment } from "../../../components/ts/utils/sharedComposition";
 import { parseSharedWallpaperLink, sharedWallpaperAttachment } from "../../../components/ts/utils/backgroundCatalog";
@@ -96,16 +98,18 @@ export default function MessageLinkContent({text,search,files}: {text:string;sea
         const normalized = normalizeATLink(rawHref);
         if (!normalized) continue;
         const href = normalized.href;
+        const goal = parseSharedGoalLink(href, window.location.origin);
         const composition = parseSharedCompositionLink(href, window.location.origin);
         const wallpaper = parseSharedWallpaperLink(href, window.location.origin);
         const reference = parseATEntityLink(href);
         const preset = parseSettingLink(href);
         const settingNavigation = parseSettingNavigationLink(href);
         const internalPage = parseATPageLink(href);
-        if (!composition && !wallpaper && !reference && !preset && !settingNavigation && !internalPage) continue;
+        if (!goal && !composition && !wallpaper && !reference && !preset && !settingNavigation && !internalPage) continue;
         const index = match.index ?? 0;
         if (index > cursor) nodes.push(<HighlightText key={"text"+cursor} text={text.slice(cursor,index)} search={search}/>);
-        if (composition) nodes.push(<SharedCompositionCard key={"composition" + index} item={composition} media={sharedCompositionAttachment(text, files, window.location.origin)}/>);
+        if (goal) nodes.push(<SharedGoalCard key={"goal" + index} goal={goal} href={href}/>);
+        else if (composition) nodes.push(<SharedCompositionCard key={"composition" + index} item={composition} media={sharedCompositionAttachment(text, files, window.location.origin)}/>);
         else if (wallpaper) nodes.push(<SharedWallpaperCard key={"wallpaper" + index} target={wallpaper} media={sharedWallpaperAttachment(text, files, window.location.origin)}/>);
         else if (preset) nodes.push(
             <div className="sharedEntityCard" key={"setting" + index} data-context-menu="true" onContextMenu={event => {

@@ -1,3 +1,5 @@
+import { goalSnapshotLink } from "../../utils/sharedGoal";
+import type { Goal } from "../../../HabitPage/components/Overview/goalTypes";
 import useLocalStorage from "../../../../components/hooks/utils/useLocalStorage";
 import { QuestionIcon, TargetIcon, ClockCounterClockwiseIcon } from "@phosphor-icons/react";
 import { parseSettingCommand, settingLink, sharedSettings } from "../../../Settings/Arrays/sharedSettings";
@@ -127,6 +129,7 @@ export default function ChatTextArea({
     const [mentionCaret, setMentionCaret] = useState(0);
     const [activeMention, setActiveMention] = useState(0);
     const [mentionDismissed, setMentionDismissed] = useState(false);
+    const [linkedGoal, setLinkedGoal] = useState<{url:string;label:string} | null>(null);
     const [linkedEntity, setLinkedEntity] = useState<(LinkedEntity & {label:string}) | null>(null);
     const [shareItems, setShareItems] = useState<EntitySuggestionItem[]>([]);
     const [shareLoadedKey, setShareLoadedKey] = useState<string | null>(null);
@@ -204,6 +207,7 @@ export default function ChatTextArea({
         { id: "set", label: "/set", description: settingsText("sharing.localCommandSuggestion"), icon: <GearSixIcon size={18}/> }
     ];
     const savedShareCommandItems: EntitySuggestionItem[] = [
+        {id:"share:goal",label:"/goal",description:tc("chatUi.shareGoal"),icon:<TargetIcon size={18}/>},
         {id:"share:habit",label:"/habit",description:tc("chatUi.shareActivity"),icon:<CheckCircleIcon size={18}/>},
         {id:"share:plan",label:"/plan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
         {id:"share:post",label:"/post",description:tc("chatUi.sharePost"),icon:<ArticleIcon size={18}/>},
@@ -215,6 +219,7 @@ export default function ChatTextArea({
         ? orderCommands([...quickCommandItems, ...savedShareCommandItems].filter(item =>
             item.label.startsWith(commandQuery.toLowerCase()) && !/\s$/.test(mess)), commandQuery) : [];
     const shareCommands: EntitySuggestionItem[] = [
+        {id:"goal",label:"/goal",description:tc("chatUi.shareGoal"),icon:<TargetIcon size={18}/>},
         { id: "help", label: "/help", description: tc("chatUi.commandHelp"), icon: <QuestionIcon size={18}/> },
         {id:"habit",label:"/habit",description:tc("chatUi.shareActivity"),icon:<CheckCircleIcon size={18}/>},
         {id:"plan",label:"/plan",description:tc("chatUi.sharePlan"),icon:<CalendarIcon size={18}/>},
@@ -227,8 +232,8 @@ export default function ChatTextArea({
     const plainShare = !savedChat && !editing && !shareDismissed && /^\/[a-z]*$/i.test(mess)
         ? orderCommands(shareCommands.filter(item => item.label.startsWith(mess.toLowerCase())), mess) : [];
     const shareMatch = !editing && !shareDismissed &&
-        (!savedChat || /^\/(?:plan|habit|post|user)(?=\s|$)/i.test(mess))
-        ? /^\/(habit|plan|post|user|group|invite)(?:\s+(.{0,100}))?$/iu.exec(mess) : null;
+        (!savedChat || /^\/(?:plan|habit|post|user|goal)(?=\s|$)/i.test(mess))
+        ? /^\/(habit|plan|post|user|group|invite|goal)(?:\s+(.{0,100}))?$/iu.exec(mess) : null;
     const shareRequestKey = shareMatch ? JSON.stringify([nick, id, user.id, chatWith?.id, chatWith?.is_group, shareMatch[1], mess]) : null;
     const shareLoading = shareRequestKey !== null && shareLoadedKey !== shareRequestKey;
     const shareSuggestions = shareLoading ? [] : shareMatch ? shareItems : plainShare;
@@ -254,6 +259,18 @@ export default function ChatTextArea({
             setSharePreview(null);
             setActiveShare(0);
             requestAnimationFrame(() => textAreaRef.current?.focus({preventScroll:true}));
+            return;
+        }
+        if (shareMatch[1] === "goal") {
+            if (sending.current) return;
+            const currentRoute = location.pathname;
+            sending.current = true; setQuickSending(true);
+            void api.get<{success:boolean;goal:Goal}>("goal-workspace/" + encodeURIComponent(item.id.slice(5))).then(({data}) => {
+                if (routeRef.current !== currentRoute) return;
+                const url = data.success && data.goal ? goalSnapshotLink(data.goal, window.location.origin) : null;
+                if (!url) throw new Error("Goal unavailable");
+                setLinkedEntity(null); setLinkedGoal({url,label:data.goal.name}); setMess(""); setShareDismissed(true); setShareItems([]); rememberCommand("/goal");
+            }).catch(() => showNotification("error", tc("chatUi.sharedEntityUnavailable"))).finally(() => { sending.current=false; setQuickSending(false); });
             return;
         }
         const separator = item.id.indexOf(":");
@@ -327,6 +344,7 @@ export default function ChatTextArea({
             });
             setMess("");
         } else {
+            setLinkedGoal(null);
             setLinkedEntity({type:kind,id:entityId,label:item.label});
             setMess("");
         }
@@ -344,6 +362,13 @@ export default function ChatTextArea({
         const controller = new AbortController();
         const timer = window.setTimeout(() => {
             const q = shareMatch[2]?.trim() || "";
+            if (shareMatch[1] === "goal") {
+                void api.get<{success:boolean;goals:Goal[]}>("goal-workspace", {signal:controller.signal}).then(({data}) => {
+                    if (controller.signal.aborted) return;
+                    setShareItems((data.goals || []).filter(goal => goal.name.toLowerCase().includes(q.toLowerCase())).slice(0,50).map(goal => ({ id:"goal:"+goal.id,label:goal.name,description:Math.round(Number(goal.progress) || 0)+"%",icon:<TargetIcon size={20}/> })));
+                }).catch(() => {if(!controller.signal.aborted)setShareItems([]);}).finally(() => {if(!controller.signal.aborted)setShareLoadedKey(shareRequestKey);});
+                return;
+            }
             const kinds = shareMatch[1] === "invite" ? ["habit","plan"] : [shareMatch[1]];
             void Promise.all(kinds.map(kind => api.get("search/global",{
                 params: {
@@ -660,7 +685,7 @@ export default function ChatTextArea({
         setMentionCaret(0);
         setMentionDismissed(false);
         setActiveMention(0);
-        setLinkedEntity(null);
+        setLinkedEntity(null); setLinkedGoal(null);
         setShareItems([]);
         setShareDismissed(false);
         setCommandScrollTop(0);
@@ -1053,7 +1078,7 @@ export default function ChatTextArea({
         const currentPost = forwardPost;
         const currentRoute = location.pathname;
         const currentDraftKey = draftKey;
-        const trimmedMess = [presetUrl ?? mess.trim(), currentPost ? new URL("/post/" + currentPost.id, window.location.origin).href : ""].filter(Boolean).join("\n\n");
+        const trimmedMess = [presetUrl ?? mess.trim(), linkedGoal?.url || "", currentPost ? new URL("/post/" + currentPost.id, window.location.origin).href : ""].filter(Boolean).join("\n\n");
         const currentEntity = linkedEntity;
         const hasContent = trimmedMess || files.length > 0 || editing && oldMedia.length > 0 || redirect || currentEntity;
         if (!(nick || id) || !hasContent) return;
@@ -1105,7 +1130,7 @@ export default function ChatTextArea({
                 setMessages(prev => [...prev, tempMessage]);
                 // Очищаем поле сразу
                 setMess("");
-                setLinkedEntity(null);
+                setLinkedEntity(null); setLinkedGoal(null);
                 setFiles([]);
                 setChosenMess([]);
                 setRedirect(undefined);
@@ -1204,7 +1229,7 @@ export default function ChatTextArea({
             setFiles(prev => prev.filter((_, i) => i !== index - oldMedia.length));
         }
     };
-    const barOpen = linkedEntity !== null || forwardPost !== null || forwardMedia?.targetPath === location.pathname || files.length > 0 || answer !== null || editing !== null || redirect !== undefined;
+    const barOpen = linkedGoal !== null || linkedEntity !== null || forwardPost !== null || forwardMedia?.targetPath === location.pathname || files.length > 0 || answer !== null || editing !== null || redirect !== undefined;
 
     return (
         <>
@@ -1264,6 +1289,7 @@ export default function ChatTextArea({
                             <X />
                         </button>
                     </div>}
+                    {linkedGoal && <div className="chatSharedEntityDraft"><div className="answer"><div className="answer1str">{tc("chatUi.shareGoal")}</div><div className="answer2str">{linkedGoal.label}</div></div><button type="button" className="closeAnswer" aria-label={tc("chatUi.quickCommands.close")} onClick={() => setLinkedGoal(null)}><X/></button></div>}
                     {linkedEntity && <div className="chatSharedEntityDraft">
                         <div className="answer">
                             <div className="answer1str">{tc("chatUi.shareType." + linkedEntity.type)}</div>

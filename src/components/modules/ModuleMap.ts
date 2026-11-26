@@ -9,6 +9,7 @@ const ModuleMap: Record<string, ComponentType> = {
     AddHabit: lazy(() => import("./AddHabit")),
     AddPlan: lazy(() => import("./AddPlan")),
     ShareObject: lazy(() => import("./ShareObject")),
+    SharedGoalPreview: lazy(() => import("./SharedGoalPreview")),
     CommandHelp: lazy(() => import("./CommandHelp")),
     AddGoal: lazy(() => import("./AddGoal")),
     GoalDetails: lazy(() => import("./GoalDetails")),

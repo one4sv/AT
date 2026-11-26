@@ -2,7 +2,8 @@ import { numberInputValue } from "../ts/utils/numberInputValue";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatAppDate,formatAppTime } from "../ts/utils/dateToStr";
-import { PlusIcon, PencilSimpleIcon, TrashIcon, XIcon, CheckIcon, ClockCounterClockwiseIcon } from "@phosphor-icons/react";
+import { goalSnapshotLink } from "../../pages/Chat/utils/sharedGoal";
+import { ShareFatIcon, PlusIcon, PencilSimpleIcon, TrashIcon, XIcon, CheckIcon, ClockCounterClockwiseIcon } from "@phosphor-icons/react";
 import { useBlackout } from "../hooks/BlackoutHook";
 import { useNote } from "../hooks/NoteHook";
 import { goalsChanged, previewGoal } from "../hooks/useGoalsWorkspace";
@@ -21,6 +22,7 @@ import "./scss/goalWorkspace.scss";
 
 export default function GoalDetails() {
     const {t}=useTranslation("goals");
+    const {t:settingsText}=useTranslation("settings");
     const {blackout,setBlackout}=useBlackout();
     const {showNotification}=useNote();
     const {user}=useUser();
@@ -141,6 +143,7 @@ export default function GoalDetails() {
         <div className="goalWorkspaceHeading">
             <h2>{goal.name}</h2>
             <div className="goalWorkspaceActions">
+                <button type="button" className="goalIconButton" aria-label={settingsText("sharing.shareObject")} onClick={()=>{const url=goalSnapshotLink(goal,window.location.origin);if(url)setBlackout({seted:true,module:"ShareObject",shareObject:{url,name:goal.name}});}}><ShareFatIcon size={24}/></button>
                 <button type="button" className="goalIconButton" aria-label={t("history")} title={t("history")}
                     onClick={()=>setBlackout({seted:true,module:"GoalHistory",options:{id:String(goal.id)}})}>
                     <ClockCounterClockwiseIcon size={24}/>

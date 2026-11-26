@@ -182,6 +182,9 @@
     "created": "создал беседу «{{name}}»"
   },
   "chatUi": {
+    "shareGoal": "Поделиться целью",
+    "goalObject": "Цель",
+    "goalSnapshot": "Состояние цели на момент отправки",
     "commandHelp": "Справочник команд",
     "createGoalCommand": "Создать цель",
     "localSettingsCommand": "Изменить настройки",
