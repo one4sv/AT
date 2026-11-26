@@ -254,3 +254,34 @@ html:has(.ContextMenuWrapper) .sideMenu {
     &.left { left: 0; }
     &.right { right: 0; }
 }
+
+.ContextMenuFocusPreview {
+    .contextMediaPending {
+        visibility: hidden;
+    }
+
+    .contextMediaSkeleton {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background-color: var(--interact);
+    }
+
+    .contextMediaFailed {
+        display: grid;
+        place-items: center;
+
+        &::after {
+            content: "";
+            width: 28px;
+            height: 20px;
+            border: 2px solid var(--borderWhLight);
+            border-radius: 5px;
+            background: linear-gradient(145deg, transparent 48%, var(--borderWhLight) 50%, transparent 55%);
+        }
+    }
+}

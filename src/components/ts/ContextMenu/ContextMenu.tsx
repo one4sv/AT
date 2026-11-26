@@ -1,5 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import "../../../scss/ContextMenu.scss";
+import "../../../scss/Loading.scss";
+import { prepareContextMedia } from "./prepareContextMedia";
 import { useContextMenu } from "../../hooks/ContextMenuHook";
 import HabitMenu from "./menus/HabitMenu";
 import ChatMenu from "./menus/ChatMenu";
@@ -131,6 +133,7 @@ export default function ContextMenu() {
                 } else {
                     previewRef.current.replaceChildren(clone);
                 }
+                prepareContextMedia(previewRef.current);
             }
             setIsAdjusted(true);
             if (mobileCalendar || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
