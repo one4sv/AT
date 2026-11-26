@@ -407,9 +407,6 @@ export function useSearchableSettings(includeUnavailable = false): SearchableSec
                     category: t("privacy.invites.title"),
                 },
                 { id: "groupInviteOthers", name: t("privacy.invites.others"), icon: ChatsTeardropIcon, category: t("privacy.invites.title") },
-                ...([["profileExceptions", "privacy.accountInfo"], ["habitsExceptions", "privacy.activitiesVisibility"], ["postsExceptions", "privacy.postsVisibility"], ["plansExceptions", "privacy.plansVisibility"], ["activityExceptions", "privacy.exceptions.activityTitle"], ["plan-inviteExceptions", "privacy.planInvitesTitle"], ["groupExceptions", "privacy.invites.title"]] as const).map(([id, category]) => ({
-                    id, name: t("catalog.exceptions"), icon: LockIcon, category: t(category)
-                })),
             ],
         },
         {
