@@ -341,7 +341,9 @@ test("mobile SideMenu swipes work on context triggers, the header and navigation
     await settingsCard.scrollIntoViewIfNeeded();
     await settingsCard.click({ button: "right" });
     const contextMenu = page.locator(".ContextMenuWrapper");
-    await expect(contextMenu.locator(".ContextMenuButt")).toHaveCount(10);
+    await expect(contextMenu.locator(".ContextMenuButt")).toHaveText([
+        "Аккаунт", "Общие", "Интерфейс", "Безопасность", "Приватность"
+    ]);
     await swipe(settingsCard, 330, 70);
     await expect(menu).toHaveClass(/open/);
     await contextMenu.press("Escape");
@@ -361,6 +363,7 @@ test("mobile SideMenu swipes work on context triggers, the header and navigation
         localStorage.getItem("settingsfixture_settings_mobile_menu_swipe"))).toBe('"sections"');
     await open();
     await nav.locator('[data-tab="habits"]').tap();
+    await expect(nav.locator('[data-tab="habits"]')).toHaveClass(/active/);
     const positions = await swipe(header, 330, 230, true);
     expect(positions).toHaveLength(3);
     for (const position of positions) {

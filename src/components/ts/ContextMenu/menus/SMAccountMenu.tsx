@@ -1,4 +1,4 @@
-import { ArrowSquareOutIcon, CalendarCheckIcon, CalendarPlusIcon, GearIcon, InfoIcon, MagnifyingGlassIcon, PencilSimpleIcon, ShareFatIcon, TargetIcon, UserIcon } from "@phosphor-icons/react";
+import { ArrowSquareOutIcon, CalendarCheckIcon, CalendarPlusIcon, MagnifyingGlassIcon, PencilSimpleIcon, ShareFatIcon, TargetIcon, UserIcon } from "@phosphor-icons/react";
 import { Megaphone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -54,14 +54,12 @@ export default function SMAccountMenu() {
         </>}
         {id === "more" && <div className="ContextMenuButt" onClick={() => {closeMenu(); showNotification("info", t("sideMenu.inDevelopment"));}}><Megaphone/>{t("sideMenu.newSpot")}</div>}
         {id === "settings" && <>
-            <div className="ContextMenuButt" onClick={() => go("/settings")}><GearIcon/>{t("accountNavigation.openSection")}</div>
             <div className="ContextMenuButt" onClick={() => go("/settings/acc")}><UserIcon weight="fill"/>{t("settings.account", {ns:"settings"})}</div>
-            {settingsTabs.map(section => (
+            {settingsTabs.filter(section => ["gen", "pers", "security", "privacy"].includes(section.tab)).map(section => (
                 <div key={section.tab} className="ContextMenuButt" onClick={() => go(`/settings/${section.tab}`)}>
                     <section.icon weight="fill"/>{section.name}
                 </div>
             ))}
-            <div className="ContextMenuButt" onClick={() => go("/info")}><InfoIcon weight="fill"/>{t("settings.info", {ns:"settings"})}</div>
         </>}
         {id === "saved" && <>
             <div className="ContextMenuButt" onClick={() => go(saved)}><ArrowSquareOutIcon/>{t("accountNavigation.openSection")}</div>
