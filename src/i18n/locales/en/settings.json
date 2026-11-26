@@ -482,6 +482,7 @@
     "shareInvalid": "Choose an available wallpaper. Sharing a wallpaper does not support extra attachments.",
     "shareFull": "All {{count}} of {{count}} custom wallpaper slots are used. Delete one of your wallpapers.",
     "shareUnavailable": "Could not open the shared wallpaper. The image may be unavailable.",
+    "shareSendError": "Could not prepare the wallpaper for sharing. Chat attachments are limited to 10 MB.",
     "shareImport": "Add to my wallpapers",
     "shareChoose": "Choose",
     "shareSelected": "Selected",

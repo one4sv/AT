@@ -28,7 +28,7 @@ import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
 import { MAX_CUSTOM_BACKGROUNDS, WALLPAPER_SHARE_PATH, wallpaperCommandInput, normalizeWallpaperQuery, shareableWallpapers, resolveWallpaperShare, sharedWallpaperLink } from "../../../../components/ts/utils/backgroundCatalog";
 import WallpaperShareThumbnail from "../../../../components/ts/WallpaperShareThumbnail";
-import { fetchWallpaperFile } from "../../../../components/ts/utils/fetchWallpaperFile";
+import { fetchWallpaperFile, fitWallpaperForChat } from "../../../../components/ts/utils/fetchWallpaperFile";
 import { findMentionToken } from "../../../../components/ts/utils/chatMentions";
 import type { LinkedEntity } from "../../../../components/context/SendMessContext";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
@@ -924,12 +924,13 @@ export default function ChatTextArea({
             const sourceRoute = location.pathname;
             if (wallpaperChoice.kind === "custom") {
                 sending.current = true;
+                setQuickSending(true);
                 try {
-                    wallpaperFile = await fetchWallpaperFile(wallpaperChoice.url, "bgs");
+                    wallpaperFile = await fitWallpaperForChat(await fetchWallpaperFile(wallpaperChoice.url, "bgs"));
                 } catch {
-                    showNotification("error", settingsText("backgroundLibrary.uploadInvalid"));
+                    showNotification("error", settingsText("backgroundLibrary.shareSendError"));
                     return;
-                } finally { sending.current = false; }
+                } finally { sending.current = false; setQuickSending(false); }
                 if (routeRef.current !== sourceRoute) return;
             }
             presetUrl = sharedWallpaperLink(wallpaperChoice, window.location.origin);

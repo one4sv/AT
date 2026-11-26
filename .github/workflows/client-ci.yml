@@ -25,6 +25,10 @@ jobs:
         run: npm run check:release
       - name: Check lazy page and modal style ownership
         run: npm run check:lazy-styles
+      - name: Verify wallpaper sharing
+        run: node --experimental-strip-types --test tests/wallpaper-sharing.test.mjs
+      - name: Verify settings catalog and internal link cards
+        run: node --experimental-strip-types --test tests/settings-catalog.test.mjs tests/shared-settings.test.mjs tests/at-page-links.test.mjs
       - name: Verify SelectList and contact picker styles
         run: node --test tests/select-list-modal-styles.test.mjs
       - name: Verify combined activity / plan chronology
@@ -63,8 +67,6 @@ jobs:
         run: node --experimental-strip-types --test tests/global-search-query.test.mjs
       - name: Verify textarea vertical padding
         run: node --test tests/textarea-vertical-padding.test.mjs
-      - name: Verify settings catalog and internal link cards
-        run: node --experimental-strip-types --test tests/settings-catalog.test.mjs tests/shared-settings.test.mjs tests/at-page-links.test.mjs tests/wallpaper-sharing.test.mjs
       - name: Verify shared entity and media skeletons, post forwarding
         run: node --test tests/shared-entity-post-forward.test.mjs
       - name: Verify group /invite links plans and activities without replacing a chat

@@ -13,7 +13,7 @@ import "../scss/SharedEntityCard.scss";
 export default function SharedWallpaperCard({ target, media }: { target: NonNullable<ReturnType<typeof parseSharedWallpaperLink>>; media?: Media }) {
     const { t } = useTranslation("settings");
     const navigate = useNavigate();
-    const { bgGallery, settingsLoaded, autoLoadImages } = useSettings();
+    const { bgGallery, settingsLoaded, autoLoadImages, autoPlayGif } = useSettings();
     const { setBlackout } = useBlackout();
     const { showNotification } = useNote();
     const [busy, setBusy] = useState(false);
@@ -43,7 +43,7 @@ export default function SharedWallpaperCard({ target, media }: { target: NonNull
     return <div className="sharedEntityCard sharedWallpaperCard" onDoubleClick={event => event.stopPropagation()}>
         <button type="button" className="sharedEntityLink" disabled={busy || (target.kind === "custom" && !settingsLoaded)}
             aria-busy={busy} onClick={event => { event.stopPropagation(); void open(); }}>
-            <WallpaperShareThumbnail id={stock?.id} url={media?.url} blocked={target.kind === "custom" && !autoLoadImages}/>
+            <WallpaperShareThumbnail id={stock?.id} url={media?.url} blocked={target.kind === "custom" && (!autoLoadImages || (media?.type === "image/gif" && !autoPlayGif))}/>
             <span className="sharedEntityInfo">
                 <span className="sharedEntityName">{stock ? t(stock.labelKey) : t("backgroundLibrary.customWallpaper")}</span>
                 <span className="sharedEntityDetails">{busy ? t("backgroundLibrary.uploadSaving") : t(stock ? "backgroundLibrary.catalog" : "backgroundLibrary.shareImport")}</span>
