@@ -29,7 +29,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
     const { user } = useUser()
     const { openMenu } = useContextMenu()
     
-    const imageFiles = files.filter(file => file.type.startsWith("image/"));
+    const imageFiles = files.filter(file => /^image\//i.test(file.type || ""));
 
     const openImage = (file: Media) => {
         const sender = {
@@ -75,12 +75,12 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
     };
 
     return (
-        <div className={`messageFiles ${files.length === 1 ? "single" : ""}`}>
+        <div className={`messageFiles ${files.length === 1 ? "single" : ""}${files.every(file => !/^(image|video)\//i.test(file.type || "")) ? " documentsOnly" : ""}`}>
             {files.map((file, j) => {
-                const isImage = file.type.startsWith("image/");
-                const isVideo = file.type.startsWith("video/");
+                const isImage = /^(image)\//i.test(file.type || "");
+                const isVideo = /^(video)\//i.test(file.type || "");
                 return (
-                    <div key={j} className="messageFile" data-context-menu="true"
+                    <div key={j} className={`messageFile${!isImage && !isVideo ? " documentFile" : ""}`} data-context-menu="true"
                         onContextMenu={event => {
                             event.preventDefault();
                             event.stopPropagation();

@@ -99,7 +99,7 @@ export interface ChatContextType {
     // пагинация
     hasMore: boolean;
     loadingMore: boolean;
-    loadOlderMessages: () => Promise<void>;
+    loadOlderMessages: (beforeInsert?: (signal: AbortSignal) => Promise<void>) => Promise<void>;
     loadAroundMessage: (messageId: number) => Promise<boolean>;
     activeHeader: activeHeaderType;
     chatPanelHidden: boolean;
@@ -290,7 +290,7 @@ export const ChatProvider = ({
         await refetchGroupChat(id);
     };
     const loadOlderMessages = useCallback(
-        async () => {
+        async (beforeInsert?: (signal: AbortSignal) => Promise<void>) => {
             if (!chatWith || loadingMore || olderAbortRef.current || !hasMore || messages.length === 0) return;
             const controller = new AbortController();
             olderAbortRef.current = controller;
@@ -314,6 +314,8 @@ export const ChatProvider = ({
                     if (older.length === 0) {
                         setHasMore(false);
                     } else {
+                        if (beforeInsert) await beforeInsert(controller.signal);
+                        if (controller.signal.aborted || olderAbortRef.current !== controller) return;
                         setMessages(prev => {
                             const ids = new Set(prev.map(item => item.id));
                             return [...older.filter(item => !ids.has(item.id)), ...prev];

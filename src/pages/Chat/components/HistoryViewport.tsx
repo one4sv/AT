@@ -17,13 +17,17 @@ export function captureHistoryAnchor(el: HTMLDivElement): HistoryAnchor | null {
     return { id: node.dataset.historyMessageId, offset: node.getBoundingClientRect().top - top, scrollTop: el.scrollTop };
 }
 
-export function restoreHistoryAnchor(el: HTMLDivElement, anchor: HistoryAnchor | null, accountForScroll = false) {
-    if (!anchor) return;
+export function historyAnchorDelta(el: HTMLDivElement, anchor: HistoryAnchor | null, accountForScroll = false): number {
+    if (!anchor) return 0;
     const node = el.querySelector<HTMLElement>(`[data-history-message-id="${anchor.id}"]`);
-    if (!node) return;
+    if (!node) return 0;
     const offset = anchor.offset - (accountForScroll ? el.scrollTop - anchor.scrollTop : 0);
-    const delta = node.getBoundingClientRect().top - el.getBoundingClientRect().top - offset;
-    if (Math.abs(delta) > .5) el.scrollTop += delta;
+    return node.getBoundingClientRect().top - el.getBoundingClientRect().top - offset;
+}
+
+export function restoreHistoryAnchor(el: HTMLDivElement, anchor: HistoryAnchor | null, accountForScroll = false) {
+    const delta = historyAnchorDelta(el, anchor, accountForScroll);
+    if (Math.abs(delta) > 1) el.scrollTop += delta;
 }
 
 type Props = {
@@ -44,7 +48,7 @@ export default class HistoryViewport extends Component<Props, Record<string, nev
         const el = this.props.viewportRef.current;
         if (!el || !this.props.preserve || previous.chatKey !== this.props.chatKey ||
             previous.firstId === undefined || !this.props.messageIds.includes(previous.firstId)) return null;
-        if (previous.firstId === this.props.firstId && previous.loadingMore === this.props.loadingMore) return null;
+        if (previous.firstId === this.props.firstId) return null;
         return captureHistoryAnchor(el);
     }
 

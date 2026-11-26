@@ -1,3 +1,4 @@
+import { isHistoryMoving, waitForHistoryIdle } from "../utils/historyScrollIdle";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useChat } from "../../../components/hooks/ChatHook";
 import { useMessages } from "../../../components/hooks/MessagesHook";
@@ -92,10 +93,23 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
         const host = panel?.closest<HTMLElement>(".chatDiv") || hostRef.current;
         if (!host) return;
         hostRef.current = host;
+        let waiting: AbortController | null = null;
         const updateInset = () => {
             const viewport = panel?.parentElement;
             if (panel) setHeight(panel.offsetHeight);
             const next = panelVisible && !hidden && panel && viewport ? `${Math.ceil(viewport.offsetTop + panel.offsetHeight)}px` : "0px";
+            const chat = host.querySelector<HTMLDivElement>(":scope > .chat");
+            if (chat && isHistoryMoving(chat)) {
+                if (waiting) return;
+                const controller = new AbortController();
+                waiting = controller;
+                void waitForHistoryIdle(chat, controller.signal).then(() => {
+                    if (controller.signal.aborted) return;
+                    waiting = null;
+                    updateInset();
+                });
+                return;
+            }
             applyInset(host, next);
         };
         updateInset();
@@ -104,6 +118,7 @@ export default function ChatActionPanel({searchedMessages}: {searchedMessages:me
         observer?.observe(host);
         window.addEventListener("resize", updateInset);
         return () => {
+            waiting?.abort();
             observer?.disconnect();
             window.removeEventListener("resize", updateInset);
         };

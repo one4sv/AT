@@ -170,3 +170,17 @@
 @media (max-width: 800px) {
     .chatDiv:has(.chatActionPanel) .chatUserInfo { touch-action: none; }
 }
+
+.chatHistoryLoading {
+    position: absolute;
+    top: max(6dvh, calc(var(--chat-action-bottom, 0px) + .5dvh));
+    left: 20%;
+    width: 60%;
+    z-index: 1;
+    pointer-events: none;
+    @media (max-width: 800px) {
+        top: max(6.5dvh, calc(var(--chat-action-bottom, 0px) + .5dvh));
+        left: 1%;
+        width: 98%;
+    }
+}

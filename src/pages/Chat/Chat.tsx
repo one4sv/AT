@@ -25,7 +25,8 @@ import { parseSavedMessageSuggestion } from "../../components/ts/utils/savedMess
 import { useBlackout } from "../../components/hooks/BlackoutHook";
 import { useGroup } from "../../components/hooks/GroupHook";
 import useLocalStorage from "../../components/hooks/utils/useLocalStorage";
-import HistoryViewport, { captureHistoryAnchor, restoreHistoryAnchor, type HistoryAnchor } from "./components/HistoryViewport";
+import HistoryViewport, { captureHistoryAnchor, restoreHistoryAnchor, historyAnchorDelta, type HistoryAnchor } from "./components/HistoryViewport";
+import { markHistoryScroll, setHistoryTouching, isHistoryMoving, waitForHistoryIdle } from "./utils/historyScrollIdle";
 const HISTORY_PREFETCH_REMAINING = 50;
 
 export default function Chat() {
@@ -66,6 +67,7 @@ export default function Chat() {
     const navigate = useNavigate();
     const location = useLocation();
     const [showGoDown, setShowGoDown] = useState(false);
+    const [nearHistoryEdge, setNearHistoryEdge] = useState(false);
     const [unreadDividerId, setUnreadDividerId] = useState<number | null>(null);
     const [mess, setMess] = useState<string>("");
     const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -80,6 +82,7 @@ export default function Chat() {
     const historyRequestRef = useRef<object | null>(null);
     const viewportAnchorRef = useRef<HistoryAnchor | null>(null);
     const historyRetryAfterRef = useRef(0);
+    const resizePendingRef = useRef(false);
     const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
         const target = new URLSearchParams(location.search).get("message");
@@ -119,6 +122,7 @@ export default function Chat() {
         unreadCapturedRef.current = false;
         historyRequestRef.current = null;
         viewportAnchorRef.current = null;
+        resizePendingRef.current = false;
         isLoadingMoreRef.current = false;
         historyRetryAfterRef.current = 0;
         setUnreadDividerId(null);
@@ -297,12 +301,14 @@ export default function Chat() {
             const el = chatContainerRef.current;
             if (!el || !chatReady) return;
             const onScroll = () => {
+                markHistoryScroll(el);
                 const resized = Math.abs(el.scrollHeight - measuredScrollHeightRef.current) > 1;
-                if (!resized) {
+                if (!resized && !resizePendingRef.current) {
                     viewportAnchorRef.current = captureHistoryAnchor(el);
-                    pinnedBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
                 }
+                if (!resized && !resizePendingRef.current) pinnedBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
                 setShowGoDown(el.scrollHeight - el.scrollTop - el.clientHeight > 250);
+                setNearHistoryEdge(el.scrollTop < 150);
                 if (!initialScrolledRef.current || pendingScrollId !== null ||
                     !hasMore || !messages.length || isLoadingMoreRef.current || loadingMore ||
                     performance.now() < historyRetryAfterRef.current) return;
@@ -316,7 +322,7 @@ export default function Chat() {
                 isLoadingMoreRef.current = true;
                 const request = {};
                 historyRequestRef.current = request;
-                void loadOlderMessages().finally(() => {
+                void loadOlderMessages(signal => waitForHistoryIdle(el, signal)).finally(() => {
                     if (historyRequestRef.current !== request) return;
                     historyRequestRef.current = null;
                     isLoadingMoreRef.current = false;
@@ -326,13 +332,25 @@ export default function Chat() {
             const onInset = () => {
                 measuredScrollHeightRef.current = el.scrollHeight;
                 viewportAnchorRef.current = captureHistoryAnchor(el);
+                resizePendingRef.current = false;
             };
+            const touchStart = () => setHistoryTouching(el, true);
+            const touchEnd = (event: TouchEvent) => { if (!event.touches.length) setHistoryTouching(el, false); };
+            el.addEventListener("touchstart", touchStart, {passive:true, capture:true});
+            window.addEventListener("touchend", touchEnd, {passive:true, capture:true});
+            window.addEventListener("touchcancel", touchEnd, {passive:true, capture:true});
+            el.addEventListener("wheel", onWheel, {passive:true});
+            function onWheel() { markHistoryScroll(el); }
             el.addEventListener("chat-action-inset", onInset);
             el.addEventListener("scroll", onScroll, {
                 passive: true
             });
             return () => {
                 el.removeEventListener("scroll", onScroll);
+                el.removeEventListener("touchstart", touchStart, true);
+                window.removeEventListener("touchend", touchEnd, true);
+                window.removeEventListener("touchcancel", touchEnd, true);
+                el.removeEventListener("wheel", onWheel);
                 el.removeEventListener("chat-action-inset", onInset);
             };
         },
@@ -348,13 +366,10 @@ export default function Chat() {
                 measuredScrollHeightRef.current = el.scrollHeight;
                 initialScrolledRef.current = true;
                 pinnedBottomRef.current = true;
-            } else if (pinnedBottomRef.current && pendingScrollId === null && !loadingMore && !isLoadingMoreRef.current) {
-                el.scrollTop = el.scrollHeight;
-            } else if (pendingScrollId === null && !pinnedBottomRef.current) {
-                restoreHistoryAnchor(el, viewportAnchorRef.current, true);
+                viewportAnchorRef.current = captureHistoryAnchor(el);
             }
-            measuredScrollHeightRef.current = el.scrollHeight;
-            viewportAnchorRef.current = captureHistoryAnchor(el);
+            // HistoryViewport owns prepend correction. ResizeObserver owns late size changes.
+            // Never restore a stale anchor again from this parent effect.
         },
         [chatReady, messages, unreadDividerId, pendingScrollId, loadingMore]
     );
@@ -362,18 +377,47 @@ export default function Chat() {
     useLayoutEffect(() => {
         const el = chatContainerRef.current;
         if (!chatReady || !el || typeof ResizeObserver === "undefined") return;
-        const observer = new ResizeObserver(() => {
-            if (Math.abs(el.scrollHeight - measuredScrollHeightRef.current) > 1 && pendingScrollId === null) {
-                if (initialScrolledRef.current && pinnedBottomRef.current && !isLoadingMoreRef.current) el.scrollTop = el.scrollHeight;
-                else restoreHistoryAnchor(el, viewportAnchorRef.current, true);
+        let timer: number | undefined;
+        const flush = () => {
+            timer = undefined;
+            if (!el.isConnected || !resizePendingRef.current) return;
+            if (pendingScrollId !== null) {
+                resizePendingRef.current = false;
+                viewportAnchorRef.current = captureHistoryAnchor(el);
+                return;
             }
+            if (isHistoryMoving(el)) {
+                timer = window.setTimeout(flush, 120);
+                return;
+            }
+            if (pinnedBottomRef.current && !isLoadingMoreRef.current) {
+                const distance = el.scrollHeight - el.scrollTop - el.clientHeight;
+                if (distance > 1) el.scrollTop = el.scrollHeight;
+            } else restoreHistoryAnchor(el, viewportAnchorRef.current, true);
+            resizePendingRef.current = false;
             measuredScrollHeightRef.current = el.scrollHeight;
             viewportAnchorRef.current = captureHistoryAnchor(el);
+        };
+        const observer = new ResizeObserver(() => {
+            const resized = Math.abs(el.scrollHeight - measuredScrollHeightRef.current) > 1;
+            const shifted = Math.abs(historyAnchorDelta(el, viewportAnchorRef.current, true)) > 1;
+            measuredScrollHeightRef.current = el.scrollHeight;
+            if (pendingScrollId !== null) {
+                resizePendingRef.current = false;
+                viewportAnchorRef.current = captureHistoryAnchor(el);
+                return;
+            }
+            if (!resized && !shifted && !resizePendingRef.current) return;
+            resizePendingRef.current = true;
+            if (timer === undefined) flush();
         });
         observer.observe(el);
         Array.from(el.children).forEach(child => observer.observe(child));
-        return () => observer.disconnect();
-    }, [chatReady, messages.length, loadingMore, pendingScrollId]);
+        return () => {
+            observer.disconnect();
+            if (timer !== undefined) window.clearTimeout(timer);
+        };
+    }, [chatReady, messages.length, pendingScrollId]);
     useEffect(() => {
         if (!chatLoading && messages.length > 0) hadMessagesRef.current = true;
     }, [chatLoading, messages.length]);
@@ -387,11 +431,12 @@ export default function Chat() {
             <HistoryViewport className={`chat AH${activeHeader}${loadingMore ? " historyLoading" : ""}`} viewportRef={chatContainerRef}
                 firstId={messages[0]?.id} loadingMore={loadingMore} chatKey={historyChatId} messageIds={messageIds}
                 preserve={pendingScrollId === null} onRestored={el => {
+                    resizePendingRef.current = false;
                     measuredScrollHeightRef.current = el.scrollHeight;
                     viewportAnchorRef.current = captureHistoryAnchor(el);
-                    pinnedBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+                    pinnedBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
                 }}>
-                {loadingMore && <Skeleton type="chatHistory" count={3} /> }
+
 
                 {!hadMessagesRef.current && messages.length === 0 && !id && chatWith &&
                     chatWith.nick === nick && chatWith.id !== user.id && chatWith.welcome_message &&
@@ -442,6 +487,7 @@ export default function Chat() {
                     </div>
                 )}
             </HistoryViewport>
+            {loadingMore && nearHistoryEdge && <div className="chatHistoryLoading" aria-hidden="true"><Skeleton type="chatHistory" count={3}/></div>}
             <ChatTAWrapper
                 showGoDown={showGoDown}
                 handleGoDown={() => {
