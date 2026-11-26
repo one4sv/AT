@@ -72,7 +72,7 @@ export default function useLongPressContextMenu({ closeMenu, menuRef }: SwipeCon
                 // Match MobileLayout's 8px axis arbitration for every ordinary
                 // context-menu surface (posts, messages, settings cards, etc.).
                 // Otherwise the menu timer can fire during a slow swipe.
-                const verticalThreshold = press.target.closest(".accDiv") ? 8 : 18;
+                const verticalThreshold = press.target.closest(".accDiv, .sideMenu") ? 8 : 18;
                 if ((Math.abs(dy) >= verticalThreshold && Math.abs(dy) >= Math.abs(dx)) ||
                     (Math.abs(dx) >= 8 && Math.abs(dx) > Math.abs(dy))) cancel();
                 return;

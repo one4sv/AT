@@ -139,6 +139,7 @@ export default function SMnav() {
                 longPressTriggered.current = true;
                 wasLongPress.current = true;
                 gesture.current = "longpress";
+                if (isMobile && touchStartPos.current) window.dispatchEvent(new Event("at-context-gesture-start"));
                 setDontHandle(true);
                 setExtraMenu(tab);
                 setIsExtraOpen(true);
@@ -166,6 +167,10 @@ export default function SMnav() {
     const handleNavTouchMove = (e: React.TouchEvent) => {
         if (contextMenu.visible) return;
         const touch = e.touches[0];
+        if (e.touches.length !== 1) {
+            cancelTouch();
+            return;
+        }
         if (longPressTriggered.current || gesture.current === "longpress") {
             const element = document.elementFromPoint(touch.clientX, touch.clientY);
             const extraButton = element?.closest(".SMextraMenuButt") as HTMLElement | null;
@@ -193,7 +198,13 @@ export default function SMnav() {
         const absX = Math.abs(dx);
         const absY = Math.abs(dy);
         if (gesture.current === "none") {
-            if (absX < 10 && absY < 10) return;
+            const threshold = isMobile ? 8 : 10;
+            if (absX < threshold && absY < threshold) return;
+            if (isMobile) {
+                gesture.current = "scroll";
+                cancelLongPress();
+                return;
+            }
             if (absY > absX) {
                 gesture.current = "scroll";
                 cancelLongPress();

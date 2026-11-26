@@ -1,4 +1,4 @@
-import { ArrowSquareOutIcon, CalendarCheckIcon, CalendarPlusIcon, GearIcon, LockKeyIcon, MagnifyingGlassIcon, PaintBucketIcon, PencilSimpleIcon, ShareFatIcon, TargetIcon, UserIcon } from "@phosphor-icons/react";
+import { ArrowSquareOutIcon, CalendarCheckIcon, CalendarPlusIcon, GearIcon, InfoIcon, MagnifyingGlassIcon, PencilSimpleIcon, ShareFatIcon, TargetIcon, UserIcon } from "@phosphor-icons/react";
 import { Megaphone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -8,8 +8,11 @@ import { useUser } from "../../../hooks/UserHook";
 import { useBlackout } from "../../../hooks/BlackoutHook";
 import { useNote } from "../../../hooks/NoteHook";
 
+import { useSettingsTabs } from "../../../../pages/Settings/Arrays/settingsTabs";
+
 export default function SMAccountMenu() {
     const { t } = useTranslation(["common", "acc", "settings"]);
+    const settingsTabs = useSettingsTabs();
     const { menu, closeMenu } = useContextMenu();
     const { closeMenu: closeSM, setRed } = useSideMenu();
     const { user } = useUser();
@@ -52,9 +55,13 @@ export default function SMAccountMenu() {
         {id === "more" && <div className="ContextMenuButt" onClick={() => {closeMenu(); showNotification("info", t("sideMenu.inDevelopment"));}}><Megaphone/>{t("sideMenu.newSpot")}</div>}
         {id === "settings" && <>
             <div className="ContextMenuButt" onClick={() => go("/settings")}><GearIcon/>{t("accountNavigation.openSection")}</div>
-            <div className="ContextMenuButt" onClick={() => go("/settings/pers")}><PaintBucketIcon/>{t("settings.personalization", {ns:"settings"})}</div>
-            <div className="ContextMenuButt" onClick={() => go("/settings/privacy")}><LockKeyIcon/>{t("settings.privacy", {ns:"settings"})}</div>
-            <div className="ContextMenuButt" onClick={() => go("/settings/security")}><LockKeyIcon/>{t("settings.security", {ns:"settings"})}</div>
+            <div className="ContextMenuButt" onClick={() => go("/settings/acc")}><UserIcon weight="fill"/>{t("settings.account", {ns:"settings"})}</div>
+            {settingsTabs.map(section => (
+                <div key={section.tab} className="ContextMenuButt" onClick={() => go(`/settings/${section.tab}`)}>
+                    <section.icon weight="fill"/>{section.name}
+                </div>
+            ))}
+            <div className="ContextMenuButt" onClick={() => go("/info")}><InfoIcon weight="fill"/>{t("settings.info", {ns:"settings"})}</div>
         </>}
         {id === "saved" && <>
             <div className="ContextMenuButt" onClick={() => go(saved)}><ArrowSquareOutIcon/>{t("accountNavigation.openSection")}</div>

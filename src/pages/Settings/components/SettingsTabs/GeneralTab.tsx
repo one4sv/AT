@@ -20,7 +20,7 @@ export default function GeneralTab({ search }: { search: string }) {
     const { fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat, timeZone, setTimeZone,
         autoLoadImages, setAutoLoadImages, autoPlayGif, setAutoPlayGif, useImageCache, setUseImageCache,
         startupPage, setStartupPage, showMobileMenuOnStart, setShowMobileMenuOnStart,
-        startupSideMenuTab, setStartupSideMenuTab } = useSettings();
+        startupSideMenuTab, setStartupSideMenuTab, sideMenuSwipe, setSideMenuSwipe } = useSettings();
 
     const timeZones = useMemo(() => {
         const device = browserTimeZone();
@@ -108,6 +108,17 @@ export default function GeneralTab({ search }: { search: string }) {
                         id="startupPage"/>
                 </div>
                 {isMobile && <>
+                    <div className="settingInnerWrapper" data-setting-id="sideMenuSwipe">
+                        <div className="settingSpan">
+                            <HighlightText text={t("general.sideMenuSwipe")} search={search}/>
+                        </div>
+                        <RadioGroup list={[
+                            { label: t("general.sideMenuSwipeClose"), value: "close" },
+                            { label: t("general.sideMenuSwipeSections"), value: "sections" }
+                        ]} val={sideMenuSwipe}
+                            newVal={value => setSideMenuSwipe(value === "sections" ? "sections" : "close")}
+                            id="sideMenuSwipe"/>
+                    </div>
                     <div className="settingInnerList">
                         <div className="settingTogglerDiv" data-setting-id="showMobileMenuOnStart"
                             onClick={() => setShowMobileMenuOnStart(!showMobileMenuOnStart)}>

@@ -103,6 +103,11 @@ export function useSearchableSettings(): SearchableSection[] {
                     category: t("general.startupTitle"),
                 },
                 ...(isMobile ? [{
+                    id: "sideMenuSwipe",
+                    name: t("general.sideMenuSwipe"),
+                    icon: HandTapIcon,
+                    category: t("general.startupTitle"),
+                },{
                     id: "showMobileMenuOnStart",
                     name: t("general.showMobileMenuOnStart"),
                     icon: TextIndentIcon,

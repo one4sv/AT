@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Locator } from "@playwright/test";
 
 // Settings tests use a synthetic account; the wallpaper service worker must not bypass route mocks after reload.
 test.use({ serviceWorkers: "block" });
@@ -275,14 +275,8 @@ test("personal plan participants can be invited and removed from its details pag
     await expect(section.locator(".planMember")).toHaveCount(1);
 });
 
-test("mobile settings buttons allow swiping SideMenu open", async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
-    await page.goto("/settings");
-    const button = page.locator(".settingsButtsWrapper .settingButt").first();
-    await expect(button).toBeVisible();
-    const menu = page.locator(".mobile-layout > .sideMenu");
-    await expect(menu).not.toHaveClass(/open/);
-    await button.evaluate(element => {
+async function swipe(surface: Locator, from: number, to: number) {
+    await surface.evaluate((element, [from, to]) => {
         const touch = (x: number) => ({ identifier: 1, target: element, clientX: x, clientY: 300 });
         const fire = (type: string, x: number) => {
             const point = touch(x);
@@ -297,13 +291,71 @@ test("mobile settings buttons allow swiping SideMenu open", async ({ page }, tes
             });
             element.dispatchEvent(event);
         };
-        fire("touchstart", 30);
-        fire("touchmove", Math.round(window.innerWidth * .45));
-        fire("touchmove", Math.round(window.innerWidth * .85));
-        fire("touchend", Math.round(window.innerWidth * .85));
-    });
+        fire("touchstart", from);
+        fire("touchmove", (from + to) / 2);
+        fire("touchmove", to);
+        fire("touchend", to);
+    }, [from, to]);
+}
+
+test("mobile settings buttons allow swiping SideMenu open", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
+    await page.goto("/settings");
+    const button = page.locator(".settingsButtsWrapper .settingButt").first();
+    await expect(button).toBeVisible();
+    const menu = page.locator(".mobile-layout > .sideMenu");
+    await expect(menu).not.toHaveClass(/open/);
+    await swipe(button, 30, 340);
     await expect(menu).toHaveClass(/open/);
     await expect(page).toHaveURL(/\/settings\/?$/);
+});
+
+test("mobile SideMenu swipes work on context triggers, the header and navigation", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
+    await page.goto("/settings/gen");
+    const mode = page.locator('.settingInnerWrapper[data-setting-id="sideMenuSwipe"]');
+    const menu = page.locator(".mobile-layout > .sideMenu");
+    const nav = page.locator(".SMnavDiv");
+    const header = page.locator(".smHeader");
+    const open = async () => {
+        await swipe(mode, 30, 340);
+        await expect(menu).toHaveClass(/open/);
+        await expect(menu).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+    };
+
+    await expect(mode).toBeVisible();
+    await open();
+    await nav.locator('[data-tab="user"]').tap();
+    const settingsCard = menu.locator('.SMmainButt[href="/settings"]');
+    await settingsCard.scrollIntoViewIfNeeded();
+    await settingsCard.click({ button: "right" });
+    const contextMenu = page.locator(".ContextMenuWrapper");
+    await expect(contextMenu.locator(".ContextMenuButt")).toHaveCount(10);
+    await swipe(settingsCard, 330, 70);
+    await expect(menu).toHaveClass(/open/);
+    await contextMenu.press("Escape");
+    await expect(contextMenu).toHaveCount(0);
+    await swipe(settingsCard, 330, 70);
+    await expect(menu).not.toHaveClass(/open/);
+    await expect(page.locator(".ContextMenuWrapper")).toHaveCount(0);
+    await expect(page).toHaveURL(/\/settings\/gen$/);
+
+    await open();
+    await swipe(header, 330, 70);
+    await expect(menu).not.toHaveClass(/open/);
+    await expect.poll(() => menu.evaluate(element => element.getBoundingClientRect().right)).toBeLessThanOrEqual(1);
+
+    await mode.locator(".radiobutt").nth(1).tap();
+    await expect.poll(() => page.evaluate(() =>
+        localStorage.getItem("settingsfixture_settings_mobile_menu_swipe"))).toBe('"sections"');
+    await open();
+    await nav.locator('[data-tab="habits"]').tap();
+    await swipe(header, 330, 230);
+    await expect(nav.locator('[data-tab="spots"]')).toHaveClass(/active/);
+    await swipe(nav.locator('[data-tab="spots"]'), 330, 230);
+    await expect(nav.locator('[data-tab="user"]')).toHaveClass(/active/);
+    await swipe(settingsCard, 330, 230);
+    await expect(menu).not.toHaveClass(/open/);
 });
 
 test("SelectList opens above near the bottom and below near the top", async ({ page }) => {

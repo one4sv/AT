@@ -12,11 +12,14 @@ import useCompactLayout from "../../hooks/utils/useCompactLayout";
 import { useSchedule } from "../../hooks/ScheduleHook.ts";
 import SideMenuUnAunthificated from "../SideMenuUnAunthificated.tsx";
 import { useSideMenu } from "../../hooks/SideMenuHook.ts";
+import { useBlackout } from "../../hooks/BlackoutHook.ts";
 import { useContextMenu } from "../../hooks/ContextMenuHook.ts";
 import { useContacts } from "../../hooks/ContactsHook.ts";
 import AccountList from "./AccountList.tsx";
 import SpotsList from "./SpotsList.tsx";
 import SMGlobalSearch from "./SMGlobalSearch";
+
+const sideMenuTabs = ["chats", "habits", "spots", "user"] as const;
 
 export default function SideMenu() {
     const isMobile = useCompactLayout();
@@ -37,7 +40,8 @@ export default function SideMenu() {
         loadingHabits
     } = useHabits();
     const { refreshSchedules } = useSchedule();
-    const { layout } = useSettings();
+    const { layout, sideMenuSwipe } = useSettings();
+    const { blackout } = useBlackout();
     const { menu } = useContextMenu();
     const {
         closeMenu,
@@ -59,7 +63,8 @@ export default function SideMenu() {
         habitsSelectedValue,
         setDontHandle,
         setDontHandleOther,
-        dontHandleOther
+        dontHandleOther,
+        dontHandle
     } = useSideMenu();
     const searchResults = searchMode ? <SMGlobalSearch key={activeTab} tab={activeTab} query={searchQuery}
         filter={searchFilter}
@@ -77,6 +82,8 @@ export default function SideMenu() {
     const horizontalSwipe = useRef(false);
     const verticalScroll = useRef(false);
     const contextGesture = useRef(false);
+    const swipeDistance = useRef(0);
+    const startedOnNav = useRef(false);
     const sideMenuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -107,86 +114,159 @@ export default function SideMenu() {
         if (user.id) refreshSchedules();
     }, [user.id, refreshSchedules]);
 
-    useEffect(() => {
-        if (!menu.visible) return;
+    const blockGesture = () => {
         contextGesture.current = true;
+        if (!horizontalSwipe.current && !verticalScroll.current) return;
         horizontalSwipe.current = false;
         verticalScroll.current = false;
         setIsDragging(false);
+        setDontHandle(false);
+        setDontHandleOther(false);
         setTranslateX(showSideMenu ? 0 : -100);
-    }, [menu.visible, showSideMenu, setIsDragging, setTranslateX]);
-    
-    const handleTouchStart = (e: React.TouchEvent) => {
-        if (studio && !isMobile) {
-            contextGesture.current = true;
+    };
+
+    const handleTouchStart = (e: React.TouchEvent | TouchEvent) => {
+        const target = e.target instanceof Element ? e.target : null;
+        contextGesture.current = studio && !isMobile || menu.visible || blackout.seted || dontHandle || dontHandleOther ||
+            e.touches.length !== 1 || !isMobile && !!target?.closest("[data-context-menu]") ||
+            !!target?.closest(
+                "input, textarea, select, [contenteditable=true], [data-header-gesture], .selector, .ContextMenuWrapper, .blackout, .smHeader.filtersOpen, .SMnavDiv:has(.SMnavExtraDiv.open)"
+            );
+        if (contextGesture.current) {
+            blockGesture();
             return;
         }
-        contextGesture.current = menu.visible ||
-            !!(e.target instanceof Element && e.target.closest("[data-context-menu], [data-header-gesture], .selector, .ContextMenuWrapper, .blackout"));
-        if (contextGesture.current || e.touches.length !== 1) return;
+        startedOnNav.current = !!target?.closest(".SMnavDiv");
         startX.current = e.touches[0].clientX;
         startY.current = e.touches[0].clientY;
         startTranslate.current = translateX;
         currentTranslate.current = translateX;
+        swipeDistance.current = 0;
         horizontalSwipe.current = false;
         verticalScroll.current = false;
     };
-    const handleTouchMove = (e: React.TouchEvent) => {
-        // ContextMenu retains ownership even if it closes before touchend bubbles.
-        if (menu.visible || contextGesture.current) {
-            contextGesture.current = true;
-            horizontalSwipe.current = false;
-            verticalScroll.current = false;
-            return;
-        }
-        if (dontHandleOther && !horizontalSwipe.current) return;
-        const clientX = e.touches[0].clientX;
-        const clientY = e.touches[0].clientY;
-        const diffPx = clientX - startX.current;
-        const diffPy = clientY - startY.current;
+
+    const handleTouchMove = (e: React.TouchEvent | TouchEvent) => {
+        if (menu.visible || blackout.seted || e.touches.length !== 1) blockGesture();
+        if (contextGesture.current || dontHandleOther && !horizontalSwipe.current) return;
+
+        const diffPx = e.touches[0].clientX - startX.current;
+        const diffPy = e.touches[0].clientY - startY.current;
         if (!horizontalSwipe.current && !verticalScroll.current) {
-            if (Math.abs(diffPy) >= 8 || Math.abs(diffPx) >= 8) {
-                if (Math.abs(diffPy) > Math.abs(diffPx)) {
-                    verticalScroll.current = true;
-                    setDontHandle(true);
-                    return;
-                }
-                horizontalSwipe.current = true;
-                setIsDragging(true);
-                setDontHandleOther(true);
-                setDontHandle(false);
+            if (Math.abs(diffPx) < 8 && Math.abs(diffPy) < 8) return;
+            if (Math.abs(diffPy) >= Math.abs(diffPx)) {
+                verticalScroll.current = true;
+                setDontHandle(true);
+                return;
             }
+            horizontalSwipe.current = true;
+            setIsDragging(true);
+            setDontHandleOther(true);
+            setDontHandle(false);
         }
         if (!horizontalSwipe.current) return;
+        if (isMobile && e.cancelable) e.preventDefault();
+
+        swipeDistance.current = diffPx;
+        const switching = isMobile && user.id && sideMenuSwipe === "sections" &&
+            (activeTab !== "user" || diffPx >= 0);
         const diffPercent = diffPx / window.innerWidth * 100;
-        let newTranslate = startTranslate.current + diffPercent;
-        newTranslate = Math.max(-100, Math.min(0, newTranslate));
-        currentTranslate.current = newTranslate;
-        setTranslateX(newTranslate);
+        currentTranslate.current = switching ? startTranslate.current :
+            Math.max(-100, Math.min(0, startTranslate.current + diffPercent));
+        setTranslateX(currentTranslate.current);
     };
-    const handleTouchEnd = () => {
-        if (menu.visible || contextGesture.current) {
-            contextGesture.current = false;
-            horizontalSwipe.current = false;
-            verticalScroll.current = false;
+
+    const finishTouch = (cancelled: boolean) => {
+        if (horizontalSwipe.current || verticalScroll.current) setDontHandle(false);
+        if (horizontalSwipe.current) {
             setIsDragging(false);
-            return;
+            setDontHandleOther(false);
+            if (cancelled || menu.visible || blackout.seted) {
+                setTranslateX(showSideMenu ? 0 : -100);
+            } else {
+                const distance = swipeDistance.current;
+                if (isMobile && user.id && sideMenuSwipe === "sections" && Math.abs(distance) >= 40) {
+                    const index = sideMenuTabs.indexOf(activeTab);
+                    const next = sideMenuTabs[index + (distance < 0 ? 1 : -1)];
+                    if (next) {
+                        if (searchMode) {
+                            setSearchFilter(null);
+                            if (searchQuery.trim().startsWith("/")) setSearchQuery("");
+                        }
+                        setActiveTab(next);
+                    } else if (activeTab === "user" && distance < 0) {
+                        closeMenu();
+                    }
+                } else if (isMobile && user.id && sideMenuSwipe === "sections") {
+                    openSideMenu();
+                } else if (currentTranslate.current < (startedOnNav.current ? -40 : -18)) {
+                    closeMenu();
+                } else {
+                    openSideMenu();
+                }
+            }
         }
-        if (!horizontalSwipe.current) {
-            setDontHandle(false);
-            verticalScroll.current = false;
-            horizontalSwipe.current = false;
-            return;
-        }
-        setIsDragging(false);
-        setDontHandle(false);
-        // Original SM drag settling: finish according to the actual menu
-        // position, not the swipe direction or a fixed distance in pixels.
-        if (currentTranslate.current < -18) closeMenu();
-        else openSideMenu();
+        contextGesture.current = false;
         horizontalSwipe.current = false;
         verticalScroll.current = false;
     };
+
+    const touchHandlers = useRef({ handleTouchStart, handleTouchMove, finishTouch, blockGesture, showSideMenu });
+    touchHandlers.current = { handleTouchStart, handleTouchMove, finishTouch, blockGesture, showSideMenu };
+
+    useEffect(() => {
+        if (!isMobile) return;
+        const layout = sideMenuRef.current?.closest<HTMLElement>(".mobile-layout");
+        if (!layout) return;
+        let tracking = false;
+        let suppressClickUntil = 0;
+
+        const start = (event: TouchEvent) => {
+            if (tracking) {
+                touchHandlers.current.blockGesture();
+                return;
+            }
+            suppressClickUntil = 0;
+            const target = event.target instanceof Element ? event.target : null;
+            if (!touchHandlers.current.showSideMenu || !target?.closest(".sideMenu, .smHeader, .SMnavDiv")) return;
+            tracking = true;
+            touchHandlers.current.handleTouchStart(event);
+        };
+        const move = (event: TouchEvent) => {
+            if (tracking) touchHandlers.current.handleTouchMove(event);
+        };
+        const end = (event: TouchEvent) => {
+            if (!tracking || event.type !== "touchcancel" && event.touches.length) return;
+            if (horizontalSwipe.current) suppressClickUntil = performance.now() + 400;
+            tracking = false;
+            touchHandlers.current.finishTouch(event.type === "touchcancel");
+        };
+        const contextStart = () => {
+            if (tracking) touchHandlers.current.blockGesture();
+        };
+        const click = (event: Event) => {
+            if (event instanceof MouseEvent && event.detail > 0 && performance.now() < suppressClickUntil) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        };
+
+        layout.addEventListener("touchstart", start, true);
+        layout.addEventListener("touchmove", move, { capture: true, passive: false });
+        layout.addEventListener("touchend", end, true);
+        layout.addEventListener("touchcancel", end, true);
+        layout.addEventListener("click", click, true);
+        window.addEventListener("at-context-gesture-start", contextStart);
+        return () => {
+            layout.removeEventListener("touchstart", start, true);
+            layout.removeEventListener("touchmove", move, true);
+            layout.removeEventListener("touchend", end, true);
+            layout.removeEventListener("touchcancel", end, true);
+            layout.removeEventListener("click", click, true);
+            window.removeEventListener("at-context-gesture-start", contextStart);
+            if (tracking) touchHandlers.current.finishTouch(true);
+        };
+    }, [isMobile, isAuthenticated, loadingUser]);
 
     useEffect(
         () => {
@@ -210,18 +290,11 @@ export default function SideMenu() {
     if (!isAuthenticated && !loadingUser) {
         return <SideMenuUnAunthificated
             ref={sideMenuRef}
-            onTouchS={handleTouchStart}
-            onTouchM={handleTouchMove}
-            onTouchE={handleTouchEnd}
+            onTouchS={event => { if (!isMobile) handleTouchStart(event); }}
+            onTouchM={event => { if (!isMobile) handleTouchMove(event); }}
+            onTouchE={() => { if (!isMobile) finishTouch(false); }}
             translateX={translateX}
-            onTouchCancel={() => {
-                contextGesture.current = false;
-                horizontalSwipe.current = false;
-                verticalScroll.current = false;
-                setIsDragging(false);
-                setDontHandle(false);
-                if (!menu.visible) setTranslateX(showSideMenu ? 0 : -100);
-            }}
+            onTouchCancel={() => { if (!isMobile) finishTouch(true); }}
         />;
     }
 
@@ -229,17 +302,10 @@ export default function SideMenu() {
         <div
             className={`sideMenu ${isMobile ? "mobileSM" : ""} ${showSideMenu ? "open" : ""}`}
             ref={sideMenuRef}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            onTouchCancel={() => {
-                contextGesture.current = false;
-                horizontalSwipe.current = false;
-                verticalScroll.current = false;
-                setIsDragging(false);
-                setDontHandle(false);
-                if (!menu.visible) setTranslateX(showSideMenu ? 0 : -100);
-            }}
+            onTouchStart={isMobile ? undefined : handleTouchStart}
+            onTouchMove={isMobile ? undefined : handleTouchMove}
+            onTouchEnd={isMobile ? undefined : () => finishTouch(false)}
+            onTouchCancel={isMobile ? undefined : () => finishTouch(true)}
             style={{
                 transform: isMobile || layout === "hidden" || studio || !user.id ? `translateX(${translateX}%)` : "none",
                 pointerEvents: (isMobile || layout === "hidden" || studio || !user.id) && !showSideMenu ? "none" : undefined

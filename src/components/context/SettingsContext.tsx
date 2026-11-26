@@ -64,6 +64,8 @@ export interface SettingsContextType {
     showMobileMenuOnStart: boolean;
     setShowMobileMenuOnStart: React.Dispatch<React.SetStateAction<boolean>>;
     startupSideMenuTab: StartupSideMenuTab;
+    sideMenuSwipe: "close" | "sections";
+    setSideMenuSwipe: React.Dispatch<React.SetStateAction<"close" | "sections">>;
     setStartupSideMenuTab: React.Dispatch<React.SetStateAction<StartupSideMenuTab>>;
     bg: string;
     setBg: React.Dispatch<React.SetStateAction<string>>;
@@ -186,6 +188,7 @@ const LOCAL_KEYS = {
     startupPage: "settings_startup_page",
     showMobileMenuOnStart: "settings_mobile_start_menu",
     startupSideMenuTab: "settings_mobile_start_tab",
+    sideMenuSwipe: "settings_mobile_menu_swipe",
     bg: "settings_bg",
     bgUrl: "settings_bg_url",
     bgEffects: "settings_bg_effects",
@@ -230,6 +233,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [ layout, setLayout ] = useLocalStorage(LOCAL_KEYS.layout, "always");
     const [ startupPage, setStartupPage ] = useLocalStorage<StartupPage>(LOCAL_KEYS.startupPage, "feed");
     const [ showMobileMenuOnStart, setShowMobileMenuOnStart ] = useLocalStorage<boolean>(LOCAL_KEYS.showMobileMenuOnStart, true);
+    const [ sideMenuSwipe, setSideMenuSwipe ] = useLocalStorage<"close" | "sections">(LOCAL_KEYS.sideMenuSwipe, "close");
     const [ startupSideMenuTab, setStartupSideMenuTab ] = useLocalStorage<StartupSideMenuTab>(LOCAL_KEYS.startupSideMenuTab, "chats");
     const [ bg, setBg ] = useLocalStorage(LOCAL_KEYS.bg, "landing");
     const [ contourPattern, setContourPattern ] = useLocalStorage<ContourPattern>(LOCAL_KEYS.contourPattern, "order");
@@ -481,6 +485,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
             layout, setLayout,
             startupPage, setStartupPage, showMobileMenuOnStart, setShowMobileMenuOnStart,
             startupSideMenuTab, setStartupSideMenuTab,
+            sideMenuSwipe, setSideMenuSwipe,
             bg, setBg,
             decor, setDecor,
             bgUrl, setBgUrl, bgGallery, setBgGallery, bgEffects, bgEffectsReady, setBgEffects, wallpaperStyle, setWallpaperStyle, contourPattern, setContourPattern, contourSize, setContourSize, artPattern, setArtPattern, artSize, setArtSize, lang, setLang, fontSize, setFontSize, dateFormat, setDateFormat, timeFormat, setTimeFormat, timeZone, setTimeZone,

@@ -44,6 +44,7 @@ export default function SMheader() {
     const longPressTriggered = useRef(false)
     const wasLongPress = useRef(false)
     const isPointerDown = useRef(false)
+    const touchStart = useRef<{x: number; y: number} | null>(null)
     const filtersRef = useRef<HTMLDivElement>(null)
     const headerRef = useRef<HTMLDivElement>(null)
     const touchHoverRef = useRef<HTMLElement | null>(null)
@@ -88,7 +89,8 @@ export default function SMheader() {
         touchHoverRef.current = element
     }
 
-    const startLongPress = (type: tab) => {
+    const startLongPress = (type: tab, touch?: Pick<Touch, "clientX" | "clientY">) => {
+        touchStart.current = touch ? {x: touch.clientX, y: touch.clientY} : null
         isPointerDown.current = true
         longPressTriggered.current = false
         wasLongPress.current = false
@@ -96,6 +98,7 @@ export default function SMheader() {
         if (timerRef.current) clearTimeout(timerRef.current)
 
         timerRef.current = window.setTimeout(() => {
+            if (isMobile && touchStart.current) window.dispatchEvent(new Event("at-context-gesture-start"))
             longPressTriggered.current = true
             wasLongPress.current = true
             setOpenFilters(type)
@@ -116,7 +119,17 @@ export default function SMheader() {
     }
 
     const handleTouchMove = (e: React.TouchEvent | TouchEvent) => {
-        if (!longPressTriggered.current && !wasLongPress.current) return
+        if (!longPressTriggered.current && !wasLongPress.current) {
+            const origin = touchStart.current;
+            const touch = e.touches[0];
+            if (origin && (!touch || e.touches.length !== 1 ||
+                Math.max(Math.abs(touch.clientX - origin.x), Math.abs(touch.clientY - origin.y)) >= 8)) {
+                cancelLongPress();
+                touchStart.current = null;
+                isPointerDown.current = false;
+            }
+            return;
+        }
 
         const touch = "touches" in e ? e.touches[0] : (e as TouchEvent).touches?.[0]
         if (!touch) return
@@ -136,6 +149,7 @@ export default function SMheader() {
             const wasLong = wasLongPress.current
 
             isPointerDown.current = false
+            touchStart.current = null
             cancelLongPress()
             if (e.type === "touchcancel") {
                 wasLongPress.current = false
@@ -313,7 +327,7 @@ export default function SMheader() {
                         <div
                             className={`smHeaderSelected ${openFilters === "chats" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("chats")}
-                            onTouchStart={() => startLongPress("chats")}
+                            onTouchStart={e => { if (e.touches.length === 1) startLongPress("chats", e.touches[0]); }}
                             onMouseUp={() => handleClick("chats")}
                             onContextMenu={(e) => e.preventDefault()}
                         >
@@ -330,7 +344,7 @@ export default function SMheader() {
                         <div
                             className={`smHeaderSelected ${openFilters === "habits" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("habits")}
-                            onTouchStart={() => startLongPress("habits")}
+                            onTouchStart={e => { if (e.touches.length === 1) startLongPress("habits", e.touches[0]); }}
                             onMouseUp={() => handleClick("habits")}
                             onContextMenu={(e) => e.preventDefault()}
                         >
@@ -343,7 +357,7 @@ export default function SMheader() {
                         <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.spots")}</div>
                         {searchMode && <div className={"smHeaderSelected " + (openFilters === "spots" ? "open" : "")}
                             onMouseDown={() => startLongPress("spots")}
-                            onTouchStart={() => startLongPress("spots")}
+                            onTouchStart={e => { if (e.touches.length === 1) startLongPress("spots", e.touches[0]); }}
                             onMouseUp={() => handleClick("spots")}
                             onContextMenu={e => e.preventDefault()}>
                             <SMSearchFilterIcon filter={searchFilter}/>{searchFilterLabel}
@@ -355,7 +369,7 @@ export default function SMheader() {
                         {searchMode ? <div
                             className={`smHeaderSelected ${openFilters === "user" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("user")}
-                            onTouchStart={() => startLongPress("user")}
+                            onTouchStart={e => { if (e.touches.length === 1) startLongPress("user", e.touches[0]); }}
                             onMouseUp={() => handleClick("user")}
                             onContextMenu={e => e.preventDefault()}
                         >

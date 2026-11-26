@@ -1,4 +1,8 @@
 .SMnavDiv {
+    @media (max-width: 800px) {
+        touch-action: pan-y;
+    }
+
     position: absolute;
     width: 19.5vw;
     height: 7dvh;
