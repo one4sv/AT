@@ -14,6 +14,7 @@ export type MenuOptions = {
         senderId?: string;
         avatar?: string;
         image?: string;
+        files?: Media[];
         mine: boolean;
         forwardedBy?: string;
         entity?: { kind: "user" | "habit" | "plan" | "post" | "group"; id: string };

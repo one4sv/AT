@@ -239,7 +239,7 @@ export default function ContextMenu() {
                 <div className="contextMenuChatBubble">
                     {lastMessage.forwardedBy && <small>{t("chatUi.forwarded")} · {lastMessage.forwardedBy}</small>}
                     {lastMessage.image && <img className="contextMenuChatPhoto" src={lastMessage.image} alt=""/>}
-                    {lastMessage.text && <MessageLinkContent text={lastMessage.text} search=""/>}
+                    {lastMessage.text && <MessageLinkContent text={lastMessage.text} search="" files={lastMessage.files}/>}
                     {lastMessage.entity && <SharedEntityCard kind={lastMessage.entity.kind} id={lastMessage.entity.id}/>}
                 </div>
             </div>,

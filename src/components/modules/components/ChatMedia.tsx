@@ -8,6 +8,9 @@ import {
 import { useChat } from "../../hooks/ChatHook";
 import type { LibraryCategory } from "../../context/ChatContext";
 import SharedEntityCard, { type SharedEntityKind } from "../../../pages/Chat/components/SharedEntityCard";
+import MessageLinkContent from "../../../pages/Chat/components/MessageLinkContent";
+import { internalObjectKind } from "../../../pages/Chat/utils/internalObjectSummary";
+import type { Media } from "../../context/ChatContext";
 import { parseATEntityLink } from "../../../pages/Chat/utils/parseATEntityLink";
 import { api } from "../../ts/api";
 import { useBlackout } from "../../hooks/BlackoutHook";
@@ -32,6 +35,7 @@ interface ChatMediaItem {
     category: MediaCategory;
     entity_type?: SharedEntityKind;
     entity_id?: string;
+    files?: Media[];
     sender: { id?: string; nick?: string; name?: string; url?: string };
 }
 
@@ -239,7 +243,7 @@ function ChatMediaPanel({ activeFilter, active, enabled }: { activeFilter: Exclu
     });
 
     const openMedia = (item: ChatMediaItem) => {
-        if (item.entity_type) return;
+        if (item.entity_type || (item.category === "link" && internalObjectKind(item.url))) return;
         if (item.category === "video") { openLink(item.url, true); return; }
         if (item.category === "link") {
             openLink(item.url, true);
@@ -345,7 +349,7 @@ function ChatMediaPanel({ activeFilter, active, enabled }: { activeFilter: Exclu
                             {filtered.map((item, index) => (
                                 <motion.div
                                     key={item.id}
-                                    className={`chatMediaItem chatMedia${item.category}${item.entity_type ? " chatMediaEntity" : ""}`}
+                                    className={`chatMediaItem chatMedia${item.category}${item.entity_type || (item.category === "link" && internalObjectKind(item.url)) ? " chatMediaEntity" : ""}`}
                                     variants={cardVariants}
                                     initial="hidden"
                                     animate="visible"
@@ -382,7 +386,7 @@ function ChatMediaPanel({ activeFilter, active, enabled }: { activeFilter: Exclu
                                         </>
                                     )}
 
-                                    {item.entity_type && item.entity_id ? <SharedEntityCard kind={item.entity_type} id={item.entity_id} fallbackUrl={item.url || undefined}/> : item.category === "link" && (
+                                    {item.entity_type && item.entity_id ? <SharedEntityCard kind={item.entity_type} id={item.entity_id} fallbackUrl={item.url || undefined}/> : item.category === "link" && internalObjectKind(item.url) ? <MessageLinkContent text={item.url} search="" files={item.files}/> : item.category === "link" && (
                                         <>
                                             <LinkIcon size={25} />
                                             <span>{item.name}</span>

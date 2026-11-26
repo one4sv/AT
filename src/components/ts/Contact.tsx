@@ -16,6 +16,7 @@ import { useMemo } from "react";
 import { useSideMenu } from "../hooks/SideMenuHook";
 import { useTranslation } from "react-i18next";
 import { useContacts } from "../hooks/ContactsHook";
+import { internalObjectSummary, internalObjectKind } from "../../pages/Chat/utils/internalObjectSummary";
 import localizeSystemMessage from "../../pages/Chat/utils/localizeSystemMessage";
 import { formatAppDate, formatAppTime } from "./utils/dateToStr";
 
@@ -25,6 +26,7 @@ export interface ContactType {
 
 export default function Contact({ contact }: ContactType) {
     const { t } = useTranslation("common");
+    const { t: settingsText } = useTranslation("settings");
     const { typingMap, setActiveHeader } = useChat();
     const { onlineMap } = useContacts();
     const { setBlackout } = useBlackout();
@@ -164,7 +166,11 @@ export default function Contact({ contact }: ContactType) {
         }
 
         if (msg.content) {
-            return msg.content;
+            return internalObjectSummary(msg.content, t, settingsText) ?? msg.content;
+        }
+        if (msg.redirected_content) {
+            const label = internalObjectSummary(msg.redirected_content, t, settingsText);
+            if (label) return label;
         }
 
         if (msg.files?.length) {
@@ -220,7 +226,8 @@ export default function Contact({ contact }: ContactType) {
                 e.preventDefault();
                 const message = contact.lastMessage;
                 const file = message?.files?.[0] ?? message?.redirected_files?.[0];
-                const photo = autoLoadImages && file && /^image\//i.test(file.type) &&
+                const object = internalObjectKind(message?.content || message?.redirected_content || "");
+                const photo = !object && autoLoadImages && file && /^image\//i.test(file.type) &&
                     (autoPlayGif || file.type.toLowerCase() !== "image/gif") ? file.url : undefined;
                 openMenu(
                     e.clientX,
@@ -243,7 +250,8 @@ export default function Contact({ contact }: ContactType) {
                             forwardedBy: message.redirected_name || undefined,
                             entity: message.entity_type && message.entity_id
                                 ? { kind: message.entity_type, id: message.entity_id } : undefined,
-                            image: photo
+                            image: photo,
+                            files: message.files?.length ? message.files : message.redirected_files ?? undefined
                         } : undefined,
                     },
                     undefined,
