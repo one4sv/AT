@@ -21,8 +21,9 @@ test("Saved has share actions for entities without invitation or group commands"
     assert.doesNotMatch(list, /share:invite|share:group/);
     assert.match(c, /selectSavedCommand\(matchingCommands\[/);
     assert.match(c, /onSelect=\{selectSavedCommand\}/);
-    assert.match(c, /savedShareKind === "plan"/);
-    assert.match(c, /!savedShareKind && isQuickCreateCommand\(mess\)/);
+    assert.match(list, /id:"share:plan",label:"\/shareplan"/);
+    assert.match(c, /parseQuickInput\(mess\)/);
+    assert.doesNotMatch(c, /<QuickCommandComposer/);
     assert.match(c, /shareMatch \? shareItems : plainShare/);
     assert.match(c, /setLinkedEntity\(\{type:kind,id:entityId,label:item.label\}\)/);
 });
@@ -34,5 +35,6 @@ test("inline slash highlight stays underneath editable textarea", () => {
     assert.match(c, /onScroll=\{e => setCommandScrollTop\(e.currentTarget.scrollTop\)\}/);
     assert.match(css, /\.chatCommandHighlight \{[\s\S]*?pointer-events:\s*none/);
     assert.match(css, /\.chatCommandHighlight \{[\s\S]*?background:\s*var\(--accent_highlight\)/);
-    assert.match(css, /\.chatQuickCommandName \{[\s\S]*?background:\s*var\(--accent_highlight\)/);
+    assert.match(css, /\.commandArgument \{[\s\S]*?background:\s*var\(--accent_highlight\)/);
+    assert.match(c, /className="commandPlaceholder"/);
 });

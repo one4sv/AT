@@ -3,8 +3,10 @@ export const sharedSettings = {
     "theme": { section: "pers", id: "theme", title: "personalization.theme", parent: null, hint: "sharing.themeHint" },
     "context edges": { section: "gen", id: "highlightContextEdges", title: "general.highlightContextEdges", parent: "general.experimental", hint: "general.contextEdgesHint" },
     "composition preview": { section: "gen", id: "previewCompositionOnTap", title: "general.previewCompositionOnTap", parent: "general.experimental", hint: "general.previewCompositionOnTapHint" },
-    "background movement": { section: "pers", id: "bg", title: "backgroundLibrary.movement", parent: "personalization.background", hint: "sharing.valueHint" },
-    "interface blur": { section: "pers", id: "blur", title: "personalization.decor", parent: "personalization.decor", hint: "sharing.valueHint" },
+    "background speed": { section: "pers", id: "backgroundSpeed", title: "backgroundLibrary.speed", parent: "personalization.background", hint: "sharing.valueHint" },
+    "background filters": { section: "pers", id: "backgroundFilters", title: "backgroundLibrary.filters", parent: "personalization.background", hint: "sharing.valueHint" },
+    "background movement": { section: "pers", id: "backgroundMovement", title: "backgroundLibrary.movement", parent: "personalization.background", hint: "sharing.valueHint" },
+    "interface blur": { section: "pers", id: "blur", title: "personalization.decorBlur", parent: "personalization.decor", hint: "sharing.valueHint" },
     "decor": { section: "pers", id: "decor", title: "personalization.decor", parent: null, hint: "sharing.valueHint" },
     "sidemenu": { section: "pers", id: "layout", title: "personalization.sideMenu", parent: null, hint: "sharing.valueHint" },
     "startup page": { section: "gen", id: "startupPage", title: "general.startupPage", parent: "general.startupTitle", hint: "sharing.valueHint" },
@@ -27,6 +29,8 @@ export type SharedSetting = keyof typeof sharedSettings;
 export function settingValues(setting: SharedSetting): string[] {
     switch (setting) {
         case "background blur": return Array.from({length: 31}, (_, index) => String(index));
+        case "background speed": return Array.from({length: 13}, (_, index) => String(index / 4));
+        case "background filters": return ["none", "grayscale", "sepia", "invert", "contrast", "saturate"];
         case "theme": return ["light", "dark", "system"];
         case "interface blur": return Array.from({length: 35}, (_, index) => String(index + 2));
         case "decor": return ["default","glass"];
@@ -78,5 +82,17 @@ export function parseSettingLink(href: string) {
 export function settingValueLabel(setting: SharedSetting, value: string, translate: (key: string) => string) {
     if (setting === "background blur" || setting === "interface blur" || setting === "font size") return value + " px";
     if (setting === "theme" || value === "on" || value === "off") return translate("sharing." + value);
-    return value;
+    if (setting === "background speed") return value + " ×";
+    if (setting === "background filters") return translate("backgroundLibrary." + value);
+    const keys: Record<string, Record<string, string>> = {
+        decor: { default: "personalization.default", glass: "personalization.glass" },
+        sidemenu: { always: "personalization.sideMenuAlways", hidden: "personalization.sideMenuButton" },
+        "startup page": { feed: "general.startupFeed", habits: "general.startupHabits" },
+        "sidemenu swipe": { close: "general.sideMenuSwipeClose", sections: "general.sideMenuSwipeSections" },
+        "sidemenu tab": { chats: "general.startupChats", habits: "general.startupActivities" },
+        "date format": { standart: "general.dateStandard", american: "general.dateAmerican" },
+        "time format": { twentyfour: "general.twentyFour", twelve: "general.twelve" }
+    };
+    const key = keys[setting]?.[value];
+    return key ? translate(key) : value;
 }

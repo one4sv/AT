@@ -90,6 +90,9 @@ export function useSearchableSettings(): SearchableSection[] {
                     icon: ImageIcon,
                     category: t("settings.personalization"),
                 },
+                ...([["backgroundBlur", "blurBackground"], ["backgroundMovement", "movement"], ["backgroundSpeed", "speed"], ["backgroundFilters", "filters"]] as const).map(([id, key]) => ({
+                    id, name: t("backgroundLibrary." + key), icon: ImageIcon, category: t("personalization.background")
+                })),
                 {
                     id: "compositions",
                     name: t("personalization.compositions.title"),
@@ -328,6 +331,8 @@ export function useSearchableSettings(): SearchableSection[] {
                     icon: ChatCircleIcon,
                     category: t("notifications.general"),
                 },
+                { id: "mentionsNote", name: t("notifications.mentions"), icon: BellIcon, category: t("notifications.general") },
+                { id: "browserNotifications", name: t("notifications.browserTitle"), icon: BellIcon, category: t("notifications.general") },
                 {
                     id: "habitsNote",
                     name: t("notifications.remindAboutActivities"),
@@ -395,6 +400,7 @@ export function useSearchableSettings(): SearchableSection[] {
                     icon: ChatsTeardropIcon,
                     category: t("privacy.invites.title"),
                 },
+                { id: "groupInviteOthers", name: t("privacy.invites.others"), icon: ChatsTeardropIcon, category: t("privacy.invites.title") },
             ],
         },
         {

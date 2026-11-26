@@ -36,6 +36,8 @@ export default function SharedSettingPreview() {
                     case "context edges": setHighlightContextEdges(value === "on"); break;
                     case "composition preview": setPreviewCompositionOnTap(value === "on"); break;
                     case "background movement": setBgEffects(previous => ({ ...previous, movement: value === "on" })); break;
+                    case "background speed": setBgEffects(previous => ({ ...previous, speed: Number(value) })); break;
+                    case "background filters": setBgEffects(previous => ({ ...previous, filter: value as typeof previous.filter })); break;
                     case "interface blur": setBlur(Number(value)); break;
                     case "decor": setDecor(value); break;
                     case "sidemenu": setLayout(value); break;

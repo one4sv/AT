@@ -6,13 +6,13 @@ import type { EntitySuggestionItem } from "../../../components/ts/EntitySuggesti
 type Entry = { path: string; section: SearchableSection; item?: SearchableSetting; preset?: SharedSetting };
 const sections: Record<string, string> = { pers: "interface", gen: "general", acc: "account", chats: "chats", activities: "activities", notes: "notifications", privacy: "privacy", security: "security" };
 const slug = (value: string) => value.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-const aliases: Record<string, string> = { bg: "background", layout: "sidemenu", sideMenuSwipe: "sidemenu swipe", startupSideMenuTab: "sidemenu tab", showMobileMenuOnStart: "sidemenu on-start" };
+const aliases: Record<string, string> = { bg: "background", backgroundBlur: "background blur", backgroundMovement: "background movement", backgroundSpeed: "background speed", backgroundFilters: "background filters", layout: "sidemenu", sideMenuSwipe: "sidemenu swipe", startupSideMenuTab: "sidemenu tab", showMobileMenuOnStart: "sidemenu on-start" };
 export function settingCommandCatalog(source: SearchableSection[]): Entry[] {
     return source.flatMap(section => {
         const path = sections[section.id] || section.id;
         const items: Entry[] = section.items.map(item => ({
             section, item, path: path + " " + (aliases[item.id] || slug(item.id)),
-            preset: (Object.keys(sharedSettings) as SharedSetting[]).find(key => sharedSettings[key].section === section.id && sharedSettings[key].id === item.id && key !== "background movement")
+            preset: (Object.keys(sharedSettings) as SharedSetting[]).find(key => sharedSettings[key].section === section.id && sharedSettings[key].id === item.id)
         }));
         for (const key of Object.keys(sharedSettings) as SharedSetting[]) {
             const definition = sharedSettings[key];

@@ -1,3 +1,4 @@
+import "./scss/confirmAction.scss";
 import ConfirmActionLayout from "./components/ConfirmActionLayout";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
