@@ -359,6 +359,22 @@ test("mobile context menu moves to the next item at the highlighted side edge", 
     await expect(page).toHaveURL(/\/settings\/?$/);
 });
 
+test("mobile composition previews before applying", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "webkit-mobile", "Mobile preview only");
+    await page.goto("/settings/pers");
+    await page.locator(".compositionCreate").click();
+    await page.locator(".compositionCreate").click();
+    await page.locator(".compositionCardApply").first().click();
+
+    const preview = page.locator(".compositionFullscreen");
+    await expect(preview).toBeVisible();
+    await preview.locator(".compositionFullscreenControls > button").nth(1).click();
+    await expect(preview.locator(".compositionFullscreenControls")).toContainText("2 / 2");
+    await preview.locator(".compositionFullscreenApply").click();
+    await expect(preview).toHaveCount(0);
+    await expect(page.locator(".compositionCard").nth(1)).toHaveClass(/active/);
+});
+
 test("mobile composition context preview keeps the card styles outside settings", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "webkit-mobile", "Mobile gesture only");
     await page.goto("/settings/pers");
