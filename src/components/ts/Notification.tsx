@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import "../../scss/Notification.scss";
 import { useNote } from "../hooks/NoteHook";
-import { Bell, CircleCheck, CircleX, InfoIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Bell, CircleCheck, CircleX, InfoIcon, Settings } from "lucide-react";
 
 function Notification() {
-    const { display, type, txt, id, setDisplay } = useNote();
+    const { display, type, txt, id, setDisplay, settingNotice, clearSettingNotice } = useNote();
+    const { t } = useTranslation("settings");
     const [animateClass, setAnimateClass] = useState("");
     const [visible, setVisible] = useState(false);
 
@@ -19,10 +21,13 @@ function Notification() {
         }
     }, [id, display]);
 
-    if (!visible) return null;
-
-    return (
-        <div
+    return <>
+        {settingNotice && <div className="settingAppliedNotification notificationActive" role="status">
+            <span className="settingAppliedIcon">{settingNotice.icon ?? <Settings size={24}/>}</span>
+            <div className="settingAppliedText"><strong>{settingNotice.title}</strong><span>{settingNotice.detail}</span></div>
+            <button type="button" onClick={() => { settingNotice.undo(); clearSettingNotice(); }}>{t("sharing.undo")}</button>
+        </div>}
+        {visible && !settingNotice && <div
             className={`notification ${animateClass} ${type}`}
             onClick={() => setDisplay(false)}
         >
@@ -36,8 +41,8 @@ function Notification() {
                 {/* {type === "success" ? "Успешно!" : type === "info" ? "Уведомление" : "Ошибка!"} */}
             </span>
             <span className="notificationBody">{txt}</span>
-        </div>
-    );
+        </div>}
+    </>;
 }
 
 export default Notification;

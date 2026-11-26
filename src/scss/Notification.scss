@@ -79,3 +79,9 @@
         padding-left: 1.5vw;
     }
 }
+
+.settingAppliedNotification { position: fixed; z-index: 1400; top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; width: min(440px, calc(100% - 24px)); box-sizing: border-box; padding: 12px 16px; border-radius: 24px; border: 1px solid var(--block_border); background: var(--mc); backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur)); color: var(--tc); box-shadow: 0 4px 12px #0003; }
+.settingAppliedIcon { display: flex; flex: none; color: var(--accent_text); }
+.settingAppliedText { display: flex; flex-direction: column; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.settingAppliedText > span { font-size: 13px; color: var(--borderWh); }
+.settingAppliedNotification > button { flex-shrink: 0; border: none; border-radius: 18px; padding: 8px 12px; background: var(--interact); color: var(--accent_text); font: inherit; cursor: pointer; }

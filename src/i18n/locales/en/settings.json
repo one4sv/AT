@@ -1,5 +1,6 @@
 {
   "sharing": {
+    "undo": "Undo",
     "copy": "Copy link to value",
     "copied": "Link copied",
     "copyFailed": "Could not copy link",

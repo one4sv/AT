@@ -3,6 +3,8 @@ import SettingCatalogIcon from "../../Settings/components/SettingCatalogIcon";
 import { useSearchableSettings } from "../../Settings/Arrays/searchableSettings";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
+import { useContextMenu } from "../../../components/hooks/ContextMenuHook";
+import useApplySharedSetting from "../../../components/hooks/useApplySharedSetting";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
 import { parseSettingLink, parseSettingNavigationLink, settingValueLabel, sharedSettings } from "../../Settings/Arrays/sharedSettings";
 import { Fragment, type ReactNode } from "react";
@@ -30,9 +32,13 @@ function SharedSettingNavigationCard({ href, target }: { href: string; target: N
     const item = group?.items.find(entry => entry.id === target.id);
     const { t } = useTranslation("settings");
     const navigate = useNavigate();
+    const { openMenu } = useContextMenu();
     const SectionIcon = group?.icon ?? GearIcon;
     // Old links may refer to a renamed setting. Keep a section card rather than raw URL.
-    return <div className="sharedEntityCard">
+    return <div className="sharedEntityCard" data-context-menu="true" onContextMenu={event => {
+        event.preventDefault(); event.stopPropagation();
+        openMenu(event.clientX, event.clientY, "sharedSetting", { id: target.id || target.section, url: href, onOpen: () => navigate(target.pathname + target.search) });
+    }}>
         <a className="sharedEntityLink" href={href} onClick={event => {
             if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
             event.preventDefault();
@@ -79,6 +85,9 @@ function SharedATPageCard({ href, target }: { href: string; target: NonNullable<
 export default function MessageLinkContent({text,search,files}: {text:string;search:string;files?: Media[] | null}) {
     const { t } = useTranslation("settings");
     const { setBlackout } = useBlackout();
+    const { openMenu } = useContextMenu();
+    const applySetting = useApplySharedSetting();
+    const navigate = useNavigate();
     const nodes: ReactNode[] = [];
     let cursor = 0;
     const pattern = /(?:https?:\/\/|(?:www\.)?achievetogether\.vercel\.app(?=\/|\s|$))[^\s<>"']*/gi;
@@ -99,7 +108,11 @@ export default function MessageLinkContent({text,search,files}: {text:string;sea
         if (composition) nodes.push(<SharedCompositionCard key={"composition" + index} item={composition} media={sharedCompositionAttachment(text, files, window.location.origin)}/>);
         else if (wallpaper) nodes.push(<SharedWallpaperCard key={"wallpaper" + index} target={wallpaper} media={sharedWallpaperAttachment(text, files, window.location.origin)}/>);
         else if (preset) nodes.push(
-            <div className="sharedEntityCard" key={"setting" + index}>
+            <div className="sharedEntityCard" key={"setting" + index} data-context-menu="true" onContextMenu={event => {
+                event.preventDefault(); event.stopPropagation();
+                const definition = sharedSettings[preset.setting];
+                openMenu(event.clientX, event.clientY, "sharedSetting", { id: definition.id, url: href, onOpen: () => navigate("/settings/" + definition.section, { state: { settingId: definition.id } }), onApply: () => applySetting(preset.setting, preset.value) });
+            }}>
                 <a className="sharedEntityLink" href={href} onClick={event => {
                     event.preventDefault();
                     event.stopPropagation();

@@ -2,7 +2,12 @@ import { createContext, useState, useRef, useCallback } from "react";
 import type { ReactNode } from "react";
 const NoteContext = createContext<NoteContextType | null>(null);
 
+export type SettingNotice = { title: string; detail: string; undo: () => void; icon?: ReactNode };
+
 export interface NoteContextType {
+    settingNotice: SettingNotice | null;
+    showSettingNotice: (notice: SettingNotice) => void;
+    clearSettingNotice: () => void;
     type: noteType;
     txt: string;
     display: boolean;
@@ -19,6 +24,18 @@ export const NoteProvider = ({children}:{children:ReactNode}) => {
     const [display, setDisplay] = useState(false);
     const [id, setId] = useState(0);
 
+    const [settingNotice, setSettingNotice] = useState<SettingNotice | null>(null);
+    const settingTimer = useRef<number | null>(null);
+    const clearSettingNotice = useCallback(() => {
+        if (settingTimer.current !== null) window.clearTimeout(settingTimer.current);
+        settingTimer.current = null;
+        setSettingNotice(null);
+    }, []);
+    const showSettingNotice = useCallback((notice: SettingNotice) => {
+        if (settingTimer.current !== null) window.clearTimeout(settingTimer.current);
+        setSettingNotice(notice);
+        settingTimer.current = window.setTimeout(clearSettingNotice, 8000);
+    }, [clearSettingNotice]);
     const timeoutRef = useRef<number | null>(null);
     const hideRef = useRef<number | null>(null);
 
@@ -45,7 +62,7 @@ export const NoteProvider = ({children}:{children:ReactNode}) => {
         showNotification({newtype:"info", newtxt:"В разработке"})
     }
     return(
-        <NoteContext.Provider value={{type, txt, display, id, showNotification: (newtype, newtxt) => showNotification({ newtype, newtxt }), setDisplay, showDevNote}}>
+        <NoteContext.Provider value={{type, txt, display, id, settingNotice, showSettingNotice, clearSettingNotice, showNotification: (newtype, newtxt) => showNotification({ newtype, newtxt }), setDisplay, showDevNote}}>
             {children}
         </NoteContext.Provider>
     )
