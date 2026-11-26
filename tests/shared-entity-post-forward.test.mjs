@@ -39,9 +39,21 @@ test("post actions have mobile spacing and ShareFatIcon while keeping forwarding
     const post = read("src/components/ts/Post.tsx");
     const css = read("src/scss/Post.scss");
     assert.match(post, /Heart, DotsThreeVertical, UserCircle, ShareFatIcon/);
-    assert.match(post, /<ShareFatIcon weight="fill" \/>/);
+    assert.match(post, /<ShareFatIcon weight="regular" \/>/);
+    assert.match(read("src/components/ts/ContextMenu/menus/PostMenu.tsx"), /<ShareFatIcon weight="regular" \/>/);
     assert.doesNotMatch(post, /ArrowBendUpRight/);
     assert.match(css, /\.PostInteract\s*\{\s*display:\s*flex;\s*align-items:\s*center;\s*gap:\s*1vw;\s*@media \(max-width: 800px\)\s*\{\s*gap:\s*3vw;/);
     assert.match(post, /onForward: forward/);
     assert.match(post, /setForwardPost\(/);
+});
+
+
+test("forwarding rows retain rounded hover outlines and reserve space for the dismiss button", () => {
+    const modal = read("src/components/modules/scss/Redirecting.scss");
+    const composer = read("src/pages/Chat/scss/chatTa.scss");
+    assert.match(modal, /> \.contactsList \{[^}]*box-sizing: border-box;[^}]*padding: 2px 2px 1dvh;/);
+    assert.match(modal, /\.contactsUser \{\s*outline-offset: -1px;/);
+    assert.match(composer, /\.answerDiv \{[^}]*min-width: 0;[^}]*box-sizing: border-box;/);
+    assert.match(composer, /\.answer \{\s*flex: 1 1 0;\s*width: auto;\s*min-width: 0;/);
+    assert.match(composer, /\.closeAnswer \{[^}]*flex: 0 0 4dvh;/);
 });

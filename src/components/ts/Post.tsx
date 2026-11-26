@@ -225,7 +225,7 @@ export default function Post({ post: sourcePost, isMy, expanded = false, onLike,
                                 event.stopPropagation();
                                 forward();
                             }}>
-                            <ShareFatIcon weight="fill" />
+                            <ShareFatIcon weight="regular" />
                         </button>
                     </div>
                     <div className="PostDate">

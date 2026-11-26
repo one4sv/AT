@@ -124,7 +124,14 @@
     box-sizing: border-box;
 
     > .contactsList {
-        padding-bottom: 1dvh;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 2px 2px 1dvh;
         margin-top: .5dvh;
+    }
+
+    .contactsUser {
+        outline-offset: -1px;
     }
 }
