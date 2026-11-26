@@ -14,6 +14,7 @@ export interface Blackout {
     commandDraft?: QuickCreateDraft;
     pick?: File;
     bg?: File;
+    onBgSaved?: () => void;
     img?: string;
     point?: string;
     options?: { id?: string; nick?: string; name?: string; url?: string; link?: string; text?: string; habitId?: string; day?: string; hideGoals?: boolean };

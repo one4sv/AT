@@ -12,6 +12,7 @@
     "on": "On",
     "off": "Off",
     "valueHint": "Suggested setting value. It changes only after you select Apply.",
+    "backgroundAddSingle": "Attach only one image to add a wallpaper, without replying or forwarding.",
     "commandSuggestion": "Open or share a setting",
     "commandHelp": "Examples: /settings background blur 12, /settings theme dark, /settings context edges on, /settings composition preview off."
   },

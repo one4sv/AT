@@ -1,7 +1,7 @@
 import { parseSettingCommand, settingLink, sharedSettings } from "../../../Settings/Arrays/sharedSettings";
 import { useSearchableSettings } from "../../../Settings/Arrays/searchableSettings";
 import { settingsSearchNavigation } from "../../../Settings/Arrays/settingsSearchNavigation";
-import { settingCommandCatalog, settingCommandSuggestions, resolveSettingCommand } from "../../../Settings/Arrays/settingCommands";
+import { settingCommandCatalog, settingCommandSuggestions, resolveSettingCommand, isBackgroundAddCommand } from "../../../Settings/Arrays/settingCommands";
 import { useTranslation } from "react-i18next";
 import TA from "../../../../components/ts/TA";
 import MediaDraft from "../../../../components/ts/MediaDraft";
@@ -25,6 +25,7 @@ import { resolveTimeZone } from "../../../../components/ts/utils/dateToStr";
 import { useHabits } from "../../../../components/hooks/HabitsHook";
 import { usePlans } from "../../../../components/hooks/PlansHook";
 import { useSettings } from "../../../../components/hooks/SettingsHook";
+import { MAX_CUSTOM_BACKGROUNDS } from "../../../../components/ts/utils/backgroundCatalog";
 import { findMentionToken } from "../../../../components/ts/utils/chatMentions";
 import type { LinkedEntity } from "../../../../components/context/SendMessContext";
 import { useBlackout } from "../../../../components/hooks/BlackoutHook";
@@ -100,7 +101,7 @@ export default function ChatTextArea({
     const { list: mentionContacts } = useContacts();
     const { refetchHabits } = useHabits();
     const { upsertPlan, refreshPlans } = usePlans();
-    const { timeZone } = useSettings();
+    const { timeZone, bgGallery } = useSettings();
     const { t: settingsText } = useTranslation("settings");
     const navigate = useNavigate();
     const { showNotification } = useNote();
@@ -688,6 +689,24 @@ export default function ChatTextArea({
         return () => window.removeEventListener("storage", syncKeyboard);
     }, []);
     const inputFileRef = useRef<HTMLInputElement>(null);
+    const backgroundFileRef = useRef<HTMLInputElement>(null);
+    const openBackgroundAdd = (file: File) => {
+        if (bgGallery.length >= MAX_CUSTOM_BACKGROUNDS) {
+            showNotification("info", settingsText("backgroundLibrary.limit"));
+            return;
+        }
+        if (file.size > 25 * 1024 * 1024 || !/^image\/(jpeg|png|webp|gif|avif)$/.test(file.type)) {
+            showNotification("error", settingsText("backgroundLibrary.uploadInvalid"));
+            return;
+        }
+        const currentRoute = location.pathname;
+        setBlackout({ seted: true, module: "BgHandler", bg: file, onBgSaved: () => {
+            if (routeRef.current !== currentRoute) return;
+            setMess(previous => isBackgroundAddCommand(previous) ? "" : previous);
+            setFiles(previous => previous.filter(item => item !== file));
+            setFieldSuggestionsDismissed(false);
+        } });
+    };
 
     useEffect(
         () => {
@@ -830,6 +849,20 @@ export default function ChatTextArea({
             return;
         }
         if (sending.current || forwardMedia?.targetPath === location.pathname) return;
+        // Local wallpaper action must run before the normal attachment/message pipeline.
+        if (!editing && isBackgroundAddCommand(mess)) {
+            if (bgGallery.length >= MAX_CUSTOM_BACKGROUNDS) {
+                showNotification("info", settingsText("backgroundLibrary.limit"));
+                return;
+            }
+            if (files.length > 1 || linkedEntity || redirect || forwardPost || forwardMedia || answer) {
+                showNotification("info", settingsText("sharing.backgroundAddSingle"));
+                return;
+            }
+            if (files.length === 1) openBackgroundAdd(files[0]);
+            else backgroundFileRef.current?.click();
+            return;
+        }
         const settingTarget = settingInput ? resolveSettingCommand(mess, settingCatalog) : null;
         const command = !editing && !linkedEntity && !redirect && !forwardPost && !files.length ? parseSettingCommand(settingTarget?.presetText ?? mess) : null;
         let presetUrl: string | undefined;
@@ -1203,6 +1236,13 @@ export default function ChatTextArea({
                     <PaperPlaneRightIcon className="chatSend" weight="fill" />
                 </div>
             </div>
+            <input type="file" hidden ref={backgroundFileRef}
+                accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+                onChange={event => {
+                    const file = event.currentTarget.files?.[0];
+                    event.currentTarget.value = "";
+                    if (file && !editing && isBackgroundAddCommand(mess)) openBackgroundAdd(file);
+                }}/>
             <input
                 type="file"
                 multiple

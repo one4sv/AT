@@ -56,6 +56,7 @@ export const BgHandler = () => {
             const saved = await setBgUrl(croppedFile);
             if (!saved) return;
             setNewBg("custom");
+            blackout.onBgSaved?.();
             setBlackout({ seted: false });
         } catch {
             showNotification("error", t("backgroundLibrary.uploadProcessingError"));

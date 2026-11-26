@@ -3,7 +3,7 @@ import type { SearchableSetting } from "../Settings";
 import { sharedSettings, settingValues, settingValueLabel, type SharedSetting } from "./sharedSettings";
 import type { EntitySuggestionItem } from "../../../components/ts/EntitySuggestionList";
 
-type Entry = { path: string; section: SearchableSection; item?: SearchableSetting; preset?: SharedSetting };
+type Entry = { path: string; section: SearchableSection; item?: SearchableSetting; preset?: SharedSetting; action?: "backgroundAdd" };
 const sections: Record<string, string> = { pers: "interface", gen: "general", acc: "account", chats: "chats", activities: "activities", notes: "notifications", privacy: "privacy", security: "security" };
 const slug = (value: string) => value.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 const aliases: Record<string, string> = { bg: "background", backgroundBlur: "background blur", backgroundMovement: "background movement", backgroundSpeed: "background speed", backgroundFilters: "background filters", layout: "sidemenu", sideMenuSwipe: "sidemenu swipe", startupSideMenuTab: "sidemenu tab", showMobileMenuOnStart: "sidemenu on-start" };
@@ -21,11 +21,15 @@ export function settingCommandCatalog(source: SearchableSection[]): Entry[] {
         }
         if (section.id === "gen" && !items.some(item => item.path === path + " sidemenu"))
             items.push({ path: path + " sidemenu", section, item: section.items.find(item => item.id === "sideMenuSwipe") });
+        if (section.id === "pers") items.push({ path: path + " background add", section, action: "backgroundAdd" });
         return [{ path, section }, ...items];
     });
 }
 
 const inputOf = (text: string) => text.replace(/^\/settings\s*/i, "").trim().toLowerCase().replace(/\s+/g, " ");
+export function isBackgroundAddCommand(text: string) {
+    return /^\s*\/settings\s+(?:interface\s+)?background\s+add\s*$/i.test(text);
+}
 export function resolveSettingCommand(text: string, catalog: Entry[]) {
     const input = inputOf(text);
     const entry = [...catalog].sort((a, b) => b.path.length - a.path.length).find(entry => entry.path === input || (entry.preset && input.startsWith(entry.path + " ")));
@@ -55,6 +59,6 @@ export function settingCommandSuggestions(text: string, catalog: Entry[], t: (ke
     }
     return catalog.filter(entry => input ? entry.path.startsWith(input) && (entry.path !== input || !/\s$/.test(text)) :
         !entry.path.includes(" ")).map(entry => ({
-        id: entry.path, label: entry.item?.name || (entry.preset ? t(sharedSettings[entry.preset].title) : entry.section.name), description: "/settings " + entry.path
+        id: entry.path, label: entry.action === "backgroundAdd" ? t("backgroundLibrary.add") : entry.item?.name || (entry.preset ? t(sharedSettings[entry.preset].title) : entry.section.name), description: "/settings " + entry.path
     }));
 }
