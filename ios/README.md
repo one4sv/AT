@@ -7,3 +7,7 @@
 Требуется Mac с Xcode, XcodeGen и iOS 16 или новее. В папке `ios` выполни `xcodegen generate`, открой `AchieveTogether.xcodeproj` и запусти схему AchieveTogether. Для физического iPhone выбери свою команду подписи в Signing & Capabilities.
 
 После входа открой «Интерфейс → Стиль интерфейса → Айфон», затем контекстное меню композиции. Проверь «Применить», отмену и недоступность дублирования при заполненных слотах. Оболочка загружает опубликованную версию AT, поэтому для этих сценариев Vercel должен развернуть соответствующий коммит.
+
+## Проверка без Mac
+
+[Workflow iOS prototype](https://github.com/one4sv/AT/actions/workflows/ios-ci.yml) собирает проект на macOS в GitHub Actions. Это проверка сборки для симулятора. Для установки на физический iPhone нужна подписанная сборка, например через TestFlight. Публикация в TestFlight требует аккаунта Apple Developer Program и настроенного приложения в App Store Connect.
