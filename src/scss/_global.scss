@@ -110,52 +110,9 @@ body {
     }
 }
 
-/* iOS standalone: paint the exposed status bar with the app background. */
-html[data-ios-pwa="true"] {
-    --at-safe-top: env(safe-area-inset-top, 0px);
-    background-color: var(--bgc);
-    &, body {
-        height: var(--at-app-height, 100dvh);
-        min-height: 0;
-        background-color: var(--bgc);
-    }
-    #root {
-        height: var(--at-app-height, 100dvh);
-        min-height: 0;
-    }
-    .mobile-layout {
-        position: relative;
-        height: 100%;
-        padding-top: var(--at-safe-top);
-    }
-    .mobile-layout > .headerDiv {
-        top: var(--at-safe-top);
-    }
-    .mobile-layout > .headerDiv.hide {
-        top: calc(var(--at-safe-top) - 7dvh);
-    }
-    .mobile-layout > .smHeader {
-        top: var(--at-safe-top);
-    }
-    .mobile-layout > .sideMenu {
-        top: var(--at-safe-top);
-        height: calc(var(--at-app-height, 100dvh) - var(--at-safe-top));
-    }
-    .mobile-layout > .sideMenuBackground {
-        height: var(--at-app-height, 100dvh);
-    }
-    .mobile-layout .routeTransition {
-        height: 100%;
-        min-height: 0;
-    }
-    .mobile-layout > .SMnavDiv {
-        bottom: env(safe-area-inset-bottom, 0px);
-    }
-    .chatTAWrapper {
-        margin-bottom: env(safe-area-inset-bottom, 0px);
-    }
-}
-
+/* iOS standalone intentionally uses the opaque system status bar and the
+   native fitted viewport. Do not apply safe-area offsets twice. The keyboard
+   override below is independent of the normal closed-keyboard layout. */
 @media (max-width: 800px) {
     html[data-at-keyboard="true"] {
         --at-safe-top: 0px;
