@@ -150,3 +150,31 @@
 
 .compositionFullscreen .compositionFullscreenControls > .compositionFullscreenSave { grid-column: 1 / -1; width: 100%; background: var(--interact); color: var(--tc); backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur)); font-size: 16px; }
 .compositionFullscreen:has(.compositionFullscreenControls.shared) .compositionSample { padding-bottom: calc(max(12px, env(safe-area-inset-bottom)) + 168px); }
+
+// Fullscreen previews are rendered by Blackout, outside .mobile-layout.
+// Match the current iOS PWA page header without changing the wallpaper canvas.
+@media (max-width: 800px) {
+    html[data-ios-pwa="true"] {
+        .blackoutModule:has(> .compositionFullscreen),
+        .compositionFullscreen {
+            height: 100%;
+            max-height: 100%;
+        }
+
+        .compositionSampleHeader.headerDiv {
+            height: calc(7dvh + var(--at-header-top));
+            padding-top: calc(1vh + var(--at-header-top));
+
+            &::before {
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+                mask-image: none;
+                -webkit-mask-image: none;
+                background: linear-gradient(to bottom,
+                    color-mix(in srgb, var(--bgc) 28%, transparent) 0px,
+                    color-mix(in srgb, var(--bgc) 18%, transparent) var(--at-safe-top),
+                    transparent 100%);
+            }
+        }
+    }
+}
