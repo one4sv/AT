@@ -30,6 +30,7 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
     const {
         title,
         titleIcon,
+        profileHeaderStatus,
         hideHeader,
         headerMenu
     } = usePageTitle();
@@ -99,7 +100,10 @@ export default function Header({ titleOverride, titleSuffix, rightAction, hideMe
                     onClick={handleHeaderClick}
                 >
                     {titleOverride === undefined && titleIcon && <span className="headerTitleTag">{titleIcon}</span>}
-                    <span className="headerCustomText">{titleOverride ?? title}</span>
+                    {location.pathname.startsWith("/acc/") && titleOverride === undefined && profileHeaderStatus ? <span className="profileHeaderText">
+                        <span className="headerCustomText">{title}</span>
+                        <span className="profileHeaderStatus">{profileHeaderStatus}</span>
+                    </span> : <span className="headerCustomText">{titleOverride ?? title}</span>}
                     {titleSuffix}
                 </div>
                 {rightAction}

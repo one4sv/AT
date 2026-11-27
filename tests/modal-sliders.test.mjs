@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 
 const read = path => readFileSync(new URL("../"+path, import.meta.url), "utf8");
 
-test("both modal sliders use full-width panels and shared preview", () => {
+test("forwarding and media sliders use full-width panels and shared preview", () => {
     for (const [component, stylesheet, panel] of [
         ["components/ChatMedia.tsx", "ChatWithInfo.scss", "chatMediaPanel"],
         ["Redirecting.tsx", "Redirecting.scss", "redirectSlide"]
@@ -13,7 +13,12 @@ test("both modal sliders use full-width panels and shared preview", () => {
         const css = read("src/components/modules/scss/"+stylesheet);
         assert.match(source, /useModalSlider\(/);
         assert.match(source, /onPreviewIndexChange=\{slider\.setPreviewIndex\}/);
-        assert.match(source, /translate3d\(\$\{-slider\.position \* 100\}%/);
+        if (panel === "chatMediaPanel") {
+            assert.match(source, /viewport\.scrollLeft = position \* viewport\.clientWidth/);
+            assert.match(source, /previewIndex=\{scrollPosition\}/);
+            assert.match(source, /viewport\.scrollLeft \/ viewport\.clientWidth/);
+            assert.doesNotMatch(css, /&:not\(\.active\) \{ height: 0/);
+        } else assert.match(source, /translate3d\(\$\{-slider\.position \* 100\}%/);
         const start = css.lastIndexOf("."+panel+" {");
         const rule = css.slice(start, start+400);
         assert.match(rule, /flex: 0 0 100%;/);
@@ -28,4 +33,16 @@ test("modal slider ends the gesture even outside its viewport", () => {
     assert.match(source, /window\.addEventListener\("touchcancel", cancel, true\)/);
     assert.match(source, /setPreviewIndex\(null\)/);
     assert.match(source, /if \(press\?\.owned\) setDontHandle\(false\)/);
+});
+
+
+test("collapsed profile uses chat-sized avatar and respects presence visibility", () => {
+    const acc = read("src/pages/Acc/Acc.tsx");
+    const header = read("src/components/ts/Header.tsx");
+    const css = read("src/scss/header.scss");
+    assert.match(acc, /showHeaderAvatar \? alias \|\| acc.username \|\| acc.nick : acc.nick/);
+    assert.match(acc, /const canShowPresence = acc\?\.can_view_presence !== false/);
+    assert.match(header, /profileHeaderStatus/);
+    assert.match(css, /padding-inline-start: \.5dvh/);
+    assert.match(css, /height: 80%/);
 });

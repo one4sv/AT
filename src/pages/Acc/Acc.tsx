@@ -14,6 +14,9 @@ import { useContextMenu } from "../../components/hooks/ContextMenuHook";
 import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
 import { UserIcon } from "@phosphor-icons/react";
+import { useContacts } from "../../components/hooks/ContactsHook";
+import useContactAlias from "../../components/hooks/utils/useContactAlias";
+import formatLastOnline from "../../components/ts/utils/formatOnline";
 import { CONTENT_REFRESH_EVENT, requestContentRefresh, type ContentRefreshEvent } from "../../components/ts/utils/contentRefresh";
 
 export default function Acc() {
@@ -33,7 +36,9 @@ export default function Acc() {
     } = useAcc();
 
     const { nick } = useParams();
-    const { setTitle, setTitleIcon } = usePageTitle();
+    const { setTitle, setTitleIcon, setProfileHeaderStatus } = usePageTitle();
+    const { onlineMap } = useContacts();
+    const [alias] = useContactAlias(acc?.id);
     const { setDontHandle, setIsDragging, dontHandleOther, setRed } = useSideMenu();
     const { menu } = useContextMenu();
     const navigate = useNavigate();
@@ -54,7 +59,7 @@ export default function Acc() {
             {acc.avatar_url ? <img src={acc.avatar_url} alt=""/> : <UserIcon/>}
         </span>);
     }, [loading, acc?.id, acc?.nick, acc?.avatar_url, nick, showHeaderAvatar, setTitleIcon]);
-    useEffect(() => () => setTitleIcon(null), [nick, setTitleIcon]);
+    useEffect(() => () => { setTitleIcon(null); setProfileHeaderStatus(null); }, [nick, setTitleIcon, setProfileHeaderStatus]);
 
     const collapsedRef = useRef(0);
     const collapseTarget = useRef(0);
@@ -160,11 +165,15 @@ export default function Acc() {
         return () => window.removeEventListener(CONTENT_REFRESH_EVENT, onRefresh);
     }, [nick, refetchAcc, refetchPosts]);
 
+    const canShowPresence = acc?.can_view_presence !== false;
+    const profileOnline = canShowPresence && (onlineMap[acc?.id || ""] ?? acc?.is_online ?? false);
+    const profileStatus = canShowPresence ? (profileOnline ? t("online") : formatLastOnline(acc?.last_online)) : "";
     useEffect(() => {
-        if (acc && !loading && acc.nick) {
-            setTitle(acc.nick);
-        }
-    }, [acc, loading, nick, setTitle]);
+        if (acc && !loading && acc.nick === nick) {
+            setTitle(showHeaderAvatar ? alias || acc.username || acc.nick : acc.nick);
+            setProfileHeaderStatus(showHeaderAvatar && profileStatus ? profileStatus : null);
+        } else setProfileHeaderStatus(null);
+    }, [acc, loading, nick, alias, showHeaderAvatar, profileStatus, setTitle, setProfileHeaderStatus]);
 
     const getActiveSlideScrollTop = () => {
         if (!contentRef.current) return 0;

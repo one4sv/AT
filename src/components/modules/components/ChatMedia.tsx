@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -18,7 +18,6 @@ import { useContextMenu } from "../../hooks/ContextMenuHook";
 import useOpenLink from "../../hooks/utils/useOpenLink";
 import GetIconByType from "../../../pages/Chat/utils/getIconByType";
 import Selector from "../../ts/Selector";
-import useCompactLayout from "../../hooks/utils/useCompactLayout";
 import useModalSlider from "../../hooks/utils/useModalSlider";
 
 type MediaCategory = "photo" | "video" | "link" | "file";
@@ -89,21 +88,69 @@ export default function ChatMedia() {
         setVisited(previous => [...new Set([...previous, ...filters.filter((_, i) => Math.abs(i - index) <= 1).map(filter => filter.id)])]);
     }, [filterKey]);
     const slider = useModalSlider(activeIndex, filters.length, filterKey, index => select(filters[index].id));
+    const [scrollPosition, setScrollPosition] = useState(activeIndex);
+    const positionRef = useRef(slider.position);
+    positionRef.current = slider.position;
+    const initialFilterKey = useRef<string | null>(null);
+    const updateScrollPosition = (viewport: HTMLDivElement) => {
+        if (viewport.clientWidth) setScrollPosition(Math.max(0, Math.min(filters.length - 1, viewport.scrollLeft / viewport.clientWidth)));
+    };
+    // One physical offset for both the content and Selector, just as in Acc.
+    useLayoutEffect(() => {
+        const viewport = slider.viewportRef.current;
+        if (!viewport || !filters.length) return;
+        const initial = initialFilterKey.current !== filterKey;
+        initialFilterKey.current = filterKey;
+        const target = slider.position;
+        const write = (position: number) => {
+            viewport.scrollLeft = position * viewport.clientWidth;
+            updateScrollPosition(viewport);
+        };
+        if (initial || slider.previewIndex !== null || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            write(target);
+            return;
+        }
+        const start = viewport.clientWidth ? viewport.scrollLeft / viewport.clientWidth : target;
+        if (Math.abs(start - target) < .001) { write(target); return; }
+        let frame = 0;
+        const began = performance.now();
+        const tick = (now: number) => {
+            const progress = Math.min(1, (now - began) / 320);
+            write(start + (target - start) * (1 - Math.pow(1 - progress, 3)));
+            if (progress < 1) frame = requestAnimationFrame(tick);
+        };
+        frame = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(frame);
+    }, [activeIndex, slider.previewIndex, filterKey]);
+    useLayoutEffect(() => {
+        const viewport = slider.viewportRef.current;
+        if (!viewport) return;
+        let width = viewport.clientWidth;
+        const observer = new ResizeObserver(() => {
+            if (width === viewport.clientWidth) return;
+            width = viewport.clientWidth;
+            viewport.scrollLeft = positionRef.current * width;
+            updateScrollPosition(viewport);
+        });
+        observer.observe(viewport);
+        return () => observer.disconnect();
+    }, [filterKey]);
 
     if (!filters.length) return null;
     return (
         <div className="chatMedia">
             {filters.length > 1 && <div className="chatMediaFilters">
-                <Selector key={filterKey} selected={effectiveFilter!} previewIndex={slider.previewIndex ?? undefined} onPreviewIndexChange={slider.setPreviewIndex}
+                <Selector key={filterKey} selected={effectiveFilter!} previewIndex={scrollPosition} onPreviewIndexChange={slider.setPreviewIndex}
                     arr={filters.map(filter => ({
                         value: filter.id,
                         label: t(`chatMedia.${filter.label}`),
                         func: select
                     }))}/>
             </div>}
-            <div className="chatMediaViewport" ref={slider.viewportRef} onClickCapture={slider.onClickCapture}>
-                <div className={`chatMediaTrack${slider.previewIndex !== null ? " dragging" : ""}`}
-                    style={{ transform: `translate3d(${-slider.position * 100}%, 0, 0)` }}>
+            <div className="chatMediaViewport" ref={slider.viewportRef} onClickCapture={slider.onClickCapture} onScroll={event => {
+                if (event.target === event.currentTarget) updateScrollPosition(event.currentTarget);
+            }}>
+                <div className="chatMediaTrack">
                     {filters.map(filter => (
                         filter.id === "activity" ? <ActivityPanel key={filter.id} active={filter.id === effectiveFilter}/> :
                         <ChatMediaPanel key={filter.id} activeFilter={filter.id}
@@ -117,7 +164,6 @@ export default function ChatMedia() {
 
 function ChatMediaPanel({ activeFilter, active, enabled }: { activeFilter: Exclude<LibraryCategory, "activity">; active: boolean; enabled: boolean }) {
     const { t } = useTranslation("common");
-    const isMobile = useCompactLayout();
     const openLink = useOpenLink();
     const { chatWith } = useChat();
     const { setBlackout } = useBlackout();
@@ -226,7 +272,7 @@ function ChatMediaPanel({ activeFilter, active, enabled }: { activeFilter: Exclu
                 }
             },
             {
-                root: isMobile ? panelRef.current : null,
+                root: panelRef.current,
                 rootMargin: "300px",
                 threshold: 0
             }
@@ -235,7 +281,7 @@ function ChatMediaPanel({ activeFilter, active, enabled }: { activeFilter: Exclu
         observer.observe(sentinel);
 
         return () => observer.disconnect();
-    }, [active, enabled, hasMore, loading, error, loadPage, isMobile]);
+    }, [active, enabled, hasMore, loading, error, loadPage]);
 
     const filtered = items.map(item => {
         const entity = item.category === "link" && !item.entity_type ? parseATEntityLink(item.url) : null;

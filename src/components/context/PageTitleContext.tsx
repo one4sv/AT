@@ -6,6 +6,8 @@ const PageTitleContext = createContext<PageTitleContextType | null>(null);
 export interface PageTitleContextType {
   title:string
   setTitle: React.Dispatch<SetStateAction<string>>
+  profileHeaderStatus: string | null
+  setProfileHeaderStatus: React.Dispatch<SetStateAction<string | null>>
   titleIcon: ReactNode
   setTitleIcon: React.Dispatch<SetStateAction<ReactNode>>
   hideHeader:boolean
@@ -17,6 +19,7 @@ export interface PageTitleContextType {
 export const PageTitleProvider = ({ children }: { children: ReactNode }) => {
   const [title, setTitle] = useState("Achieve Together");
   const [titleIcon, setTitleIcon] = useState<ReactNode>(null);
+  const [profileHeaderStatus, setProfileHeaderStatus] = useState<string | null>(null);
   const [hideHeader, setHideHeader] = useState(false);
   const [headerMenu, setHeaderMenu] = useState<{ point: string; options: MenuOptions } | null>(null);
 
@@ -25,7 +28,7 @@ export const PageTitleProvider = ({ children }: { children: ReactNode }) => {
   }, [title]);
 
   return (
-    <PageTitleContext.Provider value={{ title, setTitle, titleIcon, setTitleIcon, hideHeader, setHideHeader, headerMenu, setHeaderMenu }}>
+    <PageTitleContext.Provider value={{ title, setTitle, titleIcon, setTitleIcon, profileHeaderStatus, setProfileHeaderStatus, hideHeader, setHideHeader, headerMenu, setHeaderMenu }}>
       {children}
     </PageTitleContext.Provider>
   );
