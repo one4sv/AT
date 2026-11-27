@@ -67,6 +67,7 @@ export default function ContextMenu() {
     const [messagePreviewHost] = useState(() => document.createElement("div"));
     const lastMessage = menu.point === "chat" && menu.focusSource ? menu.options.lastMessage : undefined;
     const mobileCalendar=menu.point==="calendarDay" && window.matchMedia("(pointer: coarse)").matches;
+    const selectableMessage = menu.point === "mess" && !!(menu.curChat?.selectableText || menu.curChat?.text)?.trim();
 
     useLayoutEffect(
         () => {
@@ -113,6 +114,11 @@ export default function ContextMenu() {
                 const clone = (photoPreview || menu.focusSource).cloneNode(true) as HTMLElement;
                 clone.removeAttribute("id");
                 clone.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
+                if (selectableMessage) {
+                    clone.removeAttribute("data-context-menu");
+                    clone.querySelectorAll("[data-context-menu]").forEach(element => element.removeAttribute("data-context-menu"));
+                    clone.querySelectorAll(".messageText").forEach(element => element.classList.add("contextMessageSelectable"));
+                }
                 if (fitProfile) {
                     clone.style.width = `${menu.focusRect!.width}px`;
                     clone.style.height = `${menu.focusRect!.height}px`;
@@ -156,7 +162,7 @@ export default function ContextMenu() {
             );
             return () => animation.cancel();
         },
-        [menu, menuRef, mobileCalendar, lastMessage, messagePreviewHost]
+        [menu, menuRef, mobileCalendar, lastMessage, messagePreviewHost, selectableMessage]
     );
     useLayoutEffect(() => {
         if (!menu.visible || !menuRef.current) return;
@@ -250,7 +256,12 @@ export default function ContextMenu() {
             <div className="ContextMenuFocusBackdrop" onPointerDown={event => {
                 if (event.pointerType !== "touch" && event.pointerType !== "pen") closeMenu();
             }}/>
-            <div className={`ContextMenuFocusPreview${menu.point === "composition" ? " compositionContextPreview" : menu.point === "wallpaper" ? " wallpaperContextPreview" : ""}`} ref={previewRef} aria-hidden="true"
+            <div className={`ContextMenuFocusPreview${selectableMessage ? " selectableMessagePreview" : ""}${menu.point === "composition" ? " compositionContextPreview" : menu.point === "wallpaper" ? " wallpaperContextPreview" : ""}`} ref={previewRef} aria-hidden={!selectableMessage}
+                onClick={event => {
+                    if (!selectableMessage || !(event.target instanceof Element) || !event.target.closest(".contextMessageSelectable")) return;
+                    event.stopPropagation();
+                    if (event.target.closest("a")) event.preventDefault();
+                }}
                 style={{ top: pos.previewTop ?? 0, left: pos.previewLeft ?? 0,
                     width: pos.previewWidth ?? 0, height: pos.previewHeight ?? 0,
                     visibility: isAdjusted ? "visible" : "hidden" }}/>
