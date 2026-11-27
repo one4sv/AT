@@ -64,7 +64,7 @@ export default function PlanComment({ planId, disabled = false, mobile = false, 
                 {photos.previews}
                 <div className="mobileCommentInput inputWithEmoji">
                     <TA placeholder={t("habitPageUi.day.commentPlaceholder")} taRef={textAreaRef}
-                        readOnly={loading || disabled || saving} value={comment} maxLength={200} maxHeight={20}
+                        readOnly={loading || disabled || saving} value={comment} maxLength={200} minHeight={0} maxHeight={20}
                         onChange={event => setComment(event.target.value)} onKeyDown={handleKeyDown}/>
                     {photos.controls}
                     <EmojiButton taRef={textAreaRef} open={showEmojiBar} setOpen={setShowEmojiBar}

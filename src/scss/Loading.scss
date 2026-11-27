@@ -391,3 +391,27 @@
         padding: 1vh 0;
     }
 }
+
+// Match the loaded pages in standalone iOS, including the lazy route fallback.
+@media (max-width: 800px) {
+    html[data-ios-pwa="true"] {
+        :is(.mobile-layout, .appRoutePending) .skeleton-feed,
+        .mobile-layout .skeleton-profile,
+        .mobile-layout .skeleton-habit {
+            padding-top: calc(8vh + var(--at-page-header-top));
+        }
+
+        .mobile-layout .skeletonPageHeader {
+            top: calc(1vh + var(--at-page-header-top));
+        }
+
+        .mobile-layout .skeleton-chat .skeletonMessages {
+            padding-top: calc(7.5dvh + var(--at-page-header-top));
+            padding-bottom: calc(9vh + var(--at-bottom-extra));
+        }
+
+        .mobile-layout .skeleton-chat .skeletonComposer {
+            bottom: var(--at-bottom-dock);
+        }
+    }
+}

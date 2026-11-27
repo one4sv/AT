@@ -40,3 +40,13 @@ test("post, schedule, profile, roles and quick command fields use balanced paddi
     assert.ok(chat.includes("padding: .5dvh .75vw;"));
     assert.ok(chat.includes("padding: .5dvh 2vw;"));
 });
+
+test("empty mobile activity and plan comment fields include their border in the dock height", () => {
+    const css = read("src/pages/HabitPage/scss/habitMobileDone.scss");
+    assert.ok(css.includes("min-height: calc(5dvh - 2px);"));
+    assert.ok(css.includes("height: calc(5dvh - 2px) !important;"));
+    for (const path of [
+        "src/pages/HabitPage/components/Habit/Mobile/DayCommentMobile.tsx",
+        "src/pages/Plan/PlanComment.tsx"
+    ]) assert.ok(read(path).includes("minHeight={0}"), path);
+});
