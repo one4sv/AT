@@ -314,3 +314,24 @@ html:not(.contextMenuPress) .selectableMessagePreview .contextMessageSelectable 
     -webkit-touch-callout: default;
     cursor: text;
 }
+
+html:not(.contextMenuPress) .selectableMessagePreview {
+    pointer-events: auto;
+    overflow-y: auto;
+    align-items: flex-start;
+    overscroll-behavior: contain;
+    > * {
+        max-height: none;
+        flex-shrink: 0;
+    }
+}
+@media (pointer: fine) {
+    .messageWrapper.onContextMenu .messageText,
+    .messageWrapper.onContextMenu .messageText *,
+    .messageWrapper.onContextMenu .redirectText,
+    .messageWrapper.onContextMenu .redirectText * {
+        -webkit-user-select: text !important;
+        user-select: text !important;
+        cursor: text;
+    }
+}
