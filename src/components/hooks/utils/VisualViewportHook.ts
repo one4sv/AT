@@ -37,8 +37,10 @@ export function useVisualViewport() {
             if (!editableFocused() && !keyboard && height >= window.innerHeight - 8) {
                 closedHeight = window.innerHeight;
             }
+            const keyboardChanged = (root.dataset.atKeyboard === "true") !== keyboard;
             if (keyboard) root.dataset.atKeyboard = "true";
             else delete root.dataset.atKeyboard;
+            if (keyboardChanged) window.dispatchEvent(new Event("at-keyboard-change"));
 
             root.style.setProperty("--vv-height", `${Math.floor(height)}px`);
             root.style.setProperty("--vv-top", `${top}px`);
