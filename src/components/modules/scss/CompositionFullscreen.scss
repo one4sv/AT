@@ -162,8 +162,8 @@
         }
 
         .compositionSampleHeader.headerDiv {
-            height: calc(7dvh + var(--at-header-top));
-            padding-top: calc(1vh + var(--at-header-top));
+            height: calc(7dvh + var(--at-page-header-top));
+            padding-top: calc(1vh + var(--at-page-header-top));
 
             &::before {
                 backdrop-filter: none;
