@@ -94,6 +94,7 @@ export default function DayCommentMobile({ id, isMy, open, setOpen }: DayComment
                                 onKeyDown={handleKeyDown}
                                 value={comment}
                                 maxLength={200}
+                                minHeight={0}
                                 maxHeight={20}
                             />
                             {photos.controls}
