@@ -303,12 +303,16 @@ export default function SMheader() {
 
     if (!user.id) return null
 
+    const headerTransform = isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none";
+
     return (
+        <>
+        <div className="smHeaderBackdrop" aria-hidden="true" style={{ transform: headerTransform }}/>
         <div
             ref={headerRef}
             className={`smHeader ${openFilters ? "filtersOpen" : ""} ${searchMode ? "searchMode" : ""} ${studio && showSideMenu && translateX > -1 ? "studioOpen" : ""}`}
             style={{
-                transform: isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none",
+                transform: headerTransform,
             }}
         >
             {studio && showSideMenu && translateX > -1 &&
@@ -413,5 +417,6 @@ export default function SMheader() {
                 ))}
             </div>
         </div>
+        </>
     )
 }
