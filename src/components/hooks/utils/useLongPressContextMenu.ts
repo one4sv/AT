@@ -11,7 +11,7 @@ const edgeSize = 44;
 const edgeDelay = 300;
 const edgeRepeatDelay = 650;
 const contextTrigger = "[data-context-menu]";
-const scrollSurfaces = ".sideMenu .slide, .settingsDiv .settingsButtsWrapper, .settingsDiv .settingTab, .settingsDiv .searchReveal, .settingsDiv .buttsScroll, .chat, .chatMediaBody.active, .backgroundLibraryScroll, .wallpaperStudioScroll";
+const scrollSurfaces = ".sideMenu .slide, .settingsDiv .settingsButtsWrapper, .settingsDiv .settingTab, .settingsDiv .searchReveal, .settingsDiv .buttsScroll, .chat, .chatMediaBody.active, .backgroundLibraryScroll, .wallpaperStudioScroll, .accDiv .accContentSlide";
 
 export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
     const latest = useRef(options);
@@ -153,6 +153,7 @@ export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
         const down = (event: PointerEvent) => {
             if ((event.pointerType !== "touch" && event.pointerType !== "pen") || !event.isPrimary) return;
             const target = event.target instanceof Element ? event.target : null;
+            if (target?.closest(".contextMessageSelectable")) return;
             const element = target?.closest<HTMLElement>("[data-context-menu]");
             if (!element || target?.closest("input, textarea, select, [contenteditable=true], [data-header-gesture]") ||
                 target?.closest("button") && !element.hasAttribute("data-context-menu-allow-button")) return;
@@ -228,6 +229,7 @@ export default function useLongPressContextMenu(options: SwipeContextMenuArgs) {
 
         const suppress = (event: MouseEvent) => {
             if (!event.isTrusted || performance.now() >= suppressUntil) return;
+            if (event.target instanceof Element && event.target.closest(".contextMessageSelectable")) return;
             // Block the release-generated ghost click, but allow a deliberate
             // second tap on an opened menu item immediately after long-press.
             if (event.type === "click" && event.target instanceof Element &&
