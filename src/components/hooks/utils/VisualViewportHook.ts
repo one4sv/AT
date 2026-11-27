@@ -27,7 +27,7 @@ export function useVisualViewport() {
         let settleTimer: ReturnType<typeof setTimeout> | undefined;
         const update = () => {
             const height = viewport?.height ?? window.innerHeight;
-            const top = viewport?.offsetTop ?? 0;
+            const top = Math.max(0, viewport?.offsetTop ?? 0);
             if (Math.abs(window.innerWidth - lastWidth) > 80) {
                 lastWidth = window.innerWidth;
                 closedHeight = window.innerHeight;
@@ -40,11 +40,10 @@ export function useVisualViewport() {
             const keyboardChanged = (root.dataset.atKeyboard === "true") !== keyboard;
             if (keyboard) root.dataset.atKeyboard = "true";
             else delete root.dataset.atKeyboard;
-            if (keyboardChanged) window.dispatchEvent(new Event("at-keyboard-change"));
-
             root.style.setProperty("--vv-height", `${Math.floor(height)}px`);
             root.style.setProperty("--vv-top", `${top}px`);
             root.style.setProperty("--at-app-height", `${Math.floor(keyboard ? height : Math.min(window.innerHeight, height))}px`);
+            if (keyboardChanged) window.dispatchEvent(new Event("at-keyboard-change"));
 
             // Trust the actual visible viewport, not screen.height. A Home Screen
             // web view can be physically shorter than the display on iOS.
