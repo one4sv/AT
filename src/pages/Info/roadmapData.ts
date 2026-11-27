@@ -410,6 +410,7 @@ export const roadmapFuture: RoadmapRelease[] = [
     },
     {
         version: "0.6.7",
+        title: "/Arsenal",
         features: [
             { ru: "Последнее сообщение в предпросмотре чата и увеличенные фото в контекстных меню", en: "Latest message in chat previews and larger context-menu photos" },
             { ru: "Смена элемента контекстного меню при удержании у края экрана и настройки зон", en: "Switch context menu targets by holding at a screen edge, with configurable zones" }
