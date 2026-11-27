@@ -14,6 +14,8 @@ export default function ThemeHandler() {
                 ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
                 : theme);
             applyCustomPalette(accent, grad);
+            const background = getComputedStyle(root).getPropertyValue("--bgc").trim();
+            if (background) document.querySelector('meta[name="theme-color"]')?.setAttribute("content", background);
         };
         setTheme();
         if (theme !== "system") return;

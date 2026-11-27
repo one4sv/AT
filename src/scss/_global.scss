@@ -109,3 +109,70 @@ body {
         background-position: center center;
     }
 }
+
+/* iOS standalone: paint the exposed status bar with the app background. */
+html[data-ios-pwa="true"] {
+    --at-safe-top: env(safe-area-inset-top, 0px);
+    background-color: var(--bgc);
+    &, body {
+        height: auto;
+        min-height: 0;
+    }
+    #root {
+        height: var(--at-app-height, 100dvh);
+        min-height: 0;
+    }
+    &[data-ios-pwa-letterbox="true"] {
+        --at-safe-top: 0px;
+    }
+    .mobile-layout {
+        position: relative;
+        height: 100%;
+        padding-top: var(--at-safe-top);
+    }
+    .mobile-layout > .headerDiv {
+        top: var(--at-safe-top);
+    }
+    .mobile-layout > .headerDiv.hide {
+        top: calc(var(--at-safe-top) - 7dvh);
+    }
+    .mobile-layout > .smHeader {
+        top: var(--at-safe-top);
+    }
+    .mobile-layout > .sideMenu {
+        top: var(--at-safe-top);
+        height: calc(var(--at-app-height, 100dvh) - var(--at-safe-top));
+    }
+    .mobile-layout > .sideMenuBackground {
+        height: var(--at-app-height, 100dvh);
+    }
+}
+
+@media (max-width: 800px) {
+    html[data-at-keyboard="true"] {
+        --at-safe-top: 0px;
+        #root {
+            position: relative;
+            top: var(--vv-top, 0px);
+            height: var(--at-app-height, 100dvh);
+            min-height: 0;
+        }
+        .mobile-layout, .routeTransition {
+            height: 100%;
+            min-height: 0;
+        }
+        .blackout {
+            top: var(--vv-top, 0px);
+            bottom: auto;
+            height: var(--vv-height, 100dvh);
+        }
+        .blackoutModule {
+            height: 100%;
+            max-height: 100%;
+        }
+        .chatTAWrapper {
+            padding-bottom: 0;
+            height: 6dvh;
+        }
+    }
+}
