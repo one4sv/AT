@@ -116,7 +116,8 @@ body {
 html[data-ios-pwa="true"] {
     --at-safe-top: env(safe-area-inset-top, 0px);
     --at-safe-bottom: env(safe-area-inset-bottom, 0px);
-    --at-bottom-extra: max(0px, calc(var(--at-safe-bottom) + 6px - 3vh));
+    --at-bottom-dock: max(8px, calc(var(--at-safe-bottom) + 6px));
+    --at-bottom-extra: max(0px, calc(var(--at-bottom-dock) - 3vh));
     height: 100vh;
     min-height: 0;
     background-color: var(--bgc);
@@ -189,14 +190,20 @@ html[data-ios-pwa="true"] {
 
         .mobile-layout > .SMnavDiv {
             bottom: 0;
-            height: calc(8dvh + var(--at-bottom-extra));
-            padding-bottom: calc(3vh + var(--at-bottom-extra));
+            height: calc(5dvh + var(--at-bottom-dock));
+            padding-bottom: var(--at-bottom-dock);
+            align-items: flex-end;
 
             .SMnav {
-                bottom: calc(3vh + var(--at-bottom-extra));
+                bottom: var(--at-bottom-dock);
                 &.dis {
-                    bottom: calc(8.5vh + var(--at-bottom-extra));
+                    bottom: calc(5.5dvh + var(--at-bottom-dock));
                 }
+            }
+
+            .smNavSearch {
+                height: 5dvh;
+                min-height: 5dvh;
             }
         }
 
@@ -210,8 +217,12 @@ html[data-ios-pwa="true"] {
         }
 
         .mobile-layout .chatTAWrapper {
-            height: calc(8dvh + var(--at-bottom-extra));
-            padding-bottom: calc(3vh + var(--at-bottom-extra));
+            height: calc(5dvh + var(--at-bottom-dock));
+            padding-bottom: var(--at-bottom-dock);
+
+            > .chatComposerLayer {
+                bottom: var(--at-bottom-dock);
+            }
         }
 
         .mobile-layout .postFeed {
@@ -258,12 +269,19 @@ html[data-ios-pwa="true"] {
 
         // Bottom controls remain above the home indicator. Their existing
         // backdrop-filter pseudo-elements extend to the physical bottom edge.
-        .mobile-layout .postWriteWrapper {
-            padding-bottom: max(4vh, calc(var(--at-safe-bottom) + 6px));
+        .mobile-layout :is(.pageBottom, .postCommentBottom, .postWriteWrapper,
+            .habitMobileDone, .habitSaveDiv, .settingBackWrapper) {
+            bottom: 0;
+            margin-bottom: 0;
+            padding-bottom: var(--at-bottom-dock);
         }
 
-        .mobile-layout :is(.habitMobileDone, .habitSaveDiv, .settingBackWrapper) {
-            padding-bottom: calc(3vh + var(--at-bottom-extra));
+        .mobile-layout :is(.pageBottomBack, .pageBottomAction) {
+            height: 5dvh;
+        }
+
+        .mobile-layout .pageBottomBack {
+            flex-basis: 5dvh;
         }
 
         .mobile-layout :is(.SMnavDiv, .chatTAWrapper, .postWriteWrapper, .habitMobileDone, .habitSaveDiv, .settingBackWrapper)::before {
@@ -283,9 +301,27 @@ html[data-ios-pwa="true"] {
     }
 
     &[data-at-keyboard="true"] {
-        --at-safe-top: 0px;
+        --at-safe-top: max(0px, calc(env(safe-area-inset-top, 0px) - var(--vv-top, 0px)));
         --at-safe-bottom: 0px;
+        --at-bottom-dock: 6px;
         --at-bottom-extra: 0px;
+
+        body > .atKeyboardWallpaper {
+            position: absolute;
+            inset: 0;
+            height: 100vh;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        #root {
+            z-index: 1;
+        }
+
+        .mobile-layout > .background,
+        .mobile-layout .page-content > .background {
+            height: 100vh;
+        }
 
         #root {
             height: var(--at-app-height, 100dvh);
@@ -297,8 +333,8 @@ html[data-ios-pwa="true"] {
         }
 
         .mobile-layout .chatTAWrapper {
-            height: 6dvh;
-            padding-bottom: 0;
+            height: calc(5dvh + var(--at-bottom-dock));
+            padding-bottom: var(--at-bottom-dock);
         }
     }
 }
