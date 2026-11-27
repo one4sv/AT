@@ -21,7 +21,7 @@ import useForwardMedia from "../../../hooks/utils/useForwardMedia";
 
 export default function MessMenu() {
     const { t } = useTranslation("common");
-    const { menu, closeMenu } = useContextMenu();
+    const { menu } = useContextMenu();
     const { setBlackout } = useBlackout();
     const { setDeleteConfirm, setDeleteMess } = useDelete();
     const { messages, setActiveHeader, activeHeader } = useChat();
