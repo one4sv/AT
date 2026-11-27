@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { isIosStandalone } from "../hooks/utils/VisualViewportHook";
 import { Background } from "../ts/utils/background";
 import { useSettings } from "../hooks/SettingsHook";
+import { useDrop } from "../hooks/DropHook";
 import Header from "../ts/Header";
 import SideMenu from "../ts/SM/SideMenu";
 import { useLocation } from "react-router-dom";
@@ -23,6 +24,8 @@ export default function MobileLayout({ children }: LayoutProps) {
     const { menu: contextMenu } = useContextMenu();
     const { blackout } = useBlackout();
     const location = useLocation();
+    const { handleDrop, handleDragOver, handleDragEnter, handleDragLeave } = useDrop();
+    const needDrag = location.pathname.startsWith("/post") || location.pathname.startsWith("/chat");
     const {
         openSideMenu,
         closeMenu,
@@ -190,6 +193,10 @@ export default function MobileLayout({ children }: LayoutProps) {
             <div
                 className="page-content"
                 ref={pageRef}
+                onDragOver={needDrag ? handleDragOver : undefined}
+                onDragEnter={needDrag ? handleDragEnter : undefined}
+                onDragLeave={needDrag ? handleDragLeave : undefined}
+                onDrop={needDrag ? handleDrop : undefined}
                 inert={isMobile && showSideMenu}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
