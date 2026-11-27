@@ -328,7 +328,7 @@ export default function SMheader() {
                     style={{ transform: `translateX(${tabDragPosition === null ? translateSlider : -tabDragPosition * 25}%)`, transition: startupTabAnimationReady && tabDragPosition === null ? undefined : "none" }}
                 >
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.chats")}</div>
+                        <button type="button" className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.chats")}</button>
                         <div
                             className={`smHeaderSelected ${openFilters === "chats" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("chats")}
@@ -345,7 +345,7 @@ export default function SMheader() {
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.plansAndActivities")}</div>
+                        <button type="button" className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.plansAndActivities")}</button>
                         <div
                             className={`smHeaderSelected ${openFilters === "habits" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("habits")}
@@ -359,7 +359,7 @@ export default function SMheader() {
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.spots")}</div>
+                        <button type="button" className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : t("sideMenu.spots")}</button>
                         {searchMode && <div className={"smHeaderSelected " + (openFilters === "spots" ? "open" : "")}
                             onMouseDown={() => startLongPress("spots")}
                             onTouchStart={e => { if (e.touches.length === 1) startLongPress("spots", e.touches[0]); }}
@@ -370,7 +370,7 @@ export default function SMheader() {
                     </div>
 
                     <div className="smHeaderPart">
-                        <div className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : user.nick ?? t("sideMenu.loading")}</div>
+                        <button type="button" className="smHeaderTitle" onClick={handleTitleClick}>{searchMode ? t("sideMenu.searchTitle") : user.nick ?? t("sideMenu.loading")}</button>
                         {searchMode ? <div
                             className={`smHeaderSelected ${openFilters === "user" ? "open" : ""}`}
                             onMouseDown={() => startLongPress("user")}
