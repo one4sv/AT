@@ -42,14 +42,10 @@ export function useVisualViewport() {
 
             root.style.setProperty("--vv-height", `${Math.floor(height)}px`);
             root.style.setProperty("--vv-top", `${top}px`);
-            root.style.setProperty("--at-app-height", `${Math.floor(keyboard ? height : window.innerHeight)}px`);
+            root.style.setProperty("--at-app-height", `${Math.floor(keyboard ? height : Math.min(window.innerHeight, height))}px`);
 
-            // Never double the top inset when WebKit itself letterboxes the web view.
-            if (standalone) {
-                const screenHeight = window.screen.orientation?.type?.startsWith("landscape") || window.screen.width > window.screen.height ? Math.min(window.screen.width, window.screen.height) : Math.max(window.screen.width, window.screen.height);
-                const layoutHeight = keyboard ? closedHeight : window.innerHeight;
-                root.dataset.iosPwaLetterbox = screenHeight - layoutHeight > 45 ? "true" : "false";
-            }
+            // Trust the actual visible viewport, not screen.height. A Home Screen
+            // web view can be physically shorter than the display on iOS.
         };
         const schedule = () => {
             cancelAnimationFrame(frame);
@@ -85,7 +81,6 @@ export function useVisualViewport() {
             document.removeEventListener("focusin", schedule);
             document.removeEventListener("focusout", settle);
             delete root.dataset.iosPwa;
-            delete root.dataset.iosPwaLetterbox;
             delete root.dataset.atKeyboard;
             ["--vv-height", "--vv-top", "--at-app-height"].forEach(name => root.style.removeProperty(name));
         };

@@ -115,15 +115,13 @@ html[data-ios-pwa="true"] {
     --at-safe-top: env(safe-area-inset-top, 0px);
     background-color: var(--bgc);
     &, body {
-        height: auto;
+        height: var(--at-app-height, 100dvh);
         min-height: 0;
+        background-color: var(--bgc);
     }
     #root {
         height: var(--at-app-height, 100dvh);
         min-height: 0;
-    }
-    &[data-ios-pwa-letterbox="true"] {
-        --at-safe-top: 0px;
     }
     .mobile-layout {
         position: relative;
@@ -145,6 +143,16 @@ html[data-ios-pwa="true"] {
     }
     .mobile-layout > .sideMenuBackground {
         height: var(--at-app-height, 100dvh);
+    }
+    .mobile-layout .routeTransition {
+        height: 100%;
+        min-height: 0;
+    }
+    .mobile-layout > .SMnavDiv {
+        bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .chatTAWrapper {
+        margin-bottom: env(safe-area-inset-bottom, 0px);
     }
 }
 
@@ -172,6 +180,7 @@ html[data-ios-pwa="true"] {
         }
         .chatTAWrapper {
             padding-bottom: 0;
+            margin-bottom: 0;
             height: 6dvh;
         }
     }
