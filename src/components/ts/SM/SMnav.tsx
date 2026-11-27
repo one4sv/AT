@@ -226,6 +226,12 @@ export default function SMnav() {
         setTranslateX(next);
     };
     const handleNavTouchEnd = (event: React.TouchEvent) => {
+        if (touchTab.current && event.cancelable) {
+            // Touch navigation already performs its action here. Prevent the
+            // delayed compatibility click from landing on a page underneath.
+            event.preventDefault();
+            suppressMouseUntil.current = performance.now() + 800;
+        }
         if (contextMenu.visible) {
             cancelTouch();
             return;
@@ -574,6 +580,7 @@ export default function SMnav() {
                     ref={searchInputRef}
                     type="text"
                     className="smNavSearchInp"
+                    disabled={!searchMode}
                     placeholder={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")}
                     aria-label={t(activeTab === "user" ? "accountNavigation.settingsSearch" : "accountNavigation.search")}
                     value={search}

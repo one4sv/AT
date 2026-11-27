@@ -284,7 +284,7 @@
     // The list itself owns its scroll clearance; the nav overlays the scroll viewport.
     padding-bottom: calc(1dvh + var(--sm-nav-clearance, 11dvh));
     box-sizing: border-box;
-    margin-top: 5dvh;
+    margin-top: var(--sm-list-top, 5dvh);
     gap: 0.2vh;
     &.nothing {
         margin-top: 2dvh;
@@ -379,4 +379,12 @@
         transition: transform .2s ease;
         &.expanded { transform: rotate(180deg); }
     }
+}
+
+// Loading rows occupy the same position as the real list, including iOS safe area.
+.sideMenu .slide > .skeleton-list {
+    height: auto;
+    margin-top: var(--sm-list-top, 5dvh);
+    padding-top: 0;
+    padding-bottom: calc(1dvh + var(--sm-nav-clearance, 11dvh));
 }

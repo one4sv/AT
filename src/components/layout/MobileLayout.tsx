@@ -1,4 +1,6 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
+import { isIosStandalone } from "../hooks/utils/VisualViewportHook";
 import { Background } from "../ts/utils/background";
 import { useSettings } from "../hooks/SettingsHook";
 import Header from "../ts/Header";
@@ -39,6 +41,17 @@ export default function MobileLayout({ children }: LayoutProps) {
     const currentTranslate = useRef(-100);
     const pageRef = useRef<HTMLDivElement>(null);
     const gesture = useRef<"none" | "menu" | "scroll">("none");
+    const lastNavTouch = useRef(0);
+    const navTouchStarted = useRef(false);
+    const [keyboardWallpaper, setKeyboardWallpaper] = useState(false);
+
+    useEffect(() => {
+        if (!isIosStandalone()) return;
+        const update = () => setKeyboardWallpaper(document.documentElement.dataset.atKeyboard === "true");
+        update();
+        window.addEventListener("at-keyboard-change", update);
+        return () => window.removeEventListener("at-keyboard-change", update);
+    }, []);
 
     const handleTouchStart = (e: React.TouchEvent) => {
         gesture.current = "none";
@@ -133,7 +146,28 @@ export default function MobileLayout({ children }: LayoutProps) {
             : 100 - translateX;
 
     return (
-        <div className="mobile-layout">
+        <div className="mobile-layout"
+            onTouchStartCapture={event => {
+                navTouchStarted.current = event.target instanceof Element && !!event.target.closest(".SMnavDiv");
+                if (!navTouchStarted.current) lastNavTouch.current = 0;
+            }}
+            onTouchEndCapture={event => {
+                if (!event.touches.length && navTouchStarted.current) {
+                    lastNavTouch.current = performance.now() + 500;
+                    navTouchStarted.current = false;
+                }
+            }}
+            onTouchCancelCapture={() => { navTouchStarted.current = false; }}
+            onClickCapture={event => {
+                const target = event.target;
+                if (!(target instanceof Element) || target.closest(".sideMenu, .smHeader, .SMnavDiv")) return;
+                if ((isMobile && showSideMenu) || (event.detail > 0 && performance.now() < lastNavTouch.current)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            }}
+        >
+            {keyboardWallpaper && createPortal(<div className="atKeyboardWallpaper" aria-hidden="true"><Background/></div>, document.body)}
             {!hideHeader && <Header />}
 
             {isMobile && decor === "glass" ? (
@@ -156,6 +190,7 @@ export default function MobileLayout({ children }: LayoutProps) {
             <div
                 className="page-content"
                 ref={pageRef}
+                inert={isMobile && showSideMenu}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
                 onTouchCancel={handleTouchCancel}
