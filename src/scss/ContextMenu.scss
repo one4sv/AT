@@ -303,3 +303,14 @@ html:has(.ContextMenuWrapper) .sideMenu {
         }
     }
 }
+
+/* Native selection is enabled on the focused message itself, after the
+   initial long-press gesture has ended. Other previews stay inert. */
+html:not(.contextMenuPress) .selectableMessagePreview .contextMessageSelectable,
+html:not(.contextMenuPress) .selectableMessagePreview .contextMessageSelectable * {
+    pointer-events: auto !important;
+    -webkit-user-select: text !important;
+    user-select: text !important;
+    -webkit-touch-callout: default;
+    cursor: text;
+}
