@@ -157,8 +157,17 @@ html[data-ios-pwa="true"] {
             height: calc(4dvh + var(--at-safe-top));
             padding-top: var(--at-safe-top);
             &::before {
-                mask-image: linear-gradient(to bottom, black 0px, black calc(var(--at-safe-top) + 3dvh), transparent 100%);
-                -webkit-mask-image: linear-gradient(to bottom, black 0px, black calc(var(--at-safe-top) + 3dvh), transparent 100%);
+                // SideMenu already blurs the wallpaper. A second masked backdrop
+                // layer here can sample the header text itself in iOS WebKit.
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+                mask-image: none;
+                -webkit-mask-image: none;
+                background: linear-gradient(to bottom,
+                    color-mix(in srgb, var(--mc) 25%, transparent) 0px,
+                    color-mix(in srgb, var(--mc) 25%, transparent) var(--at-safe-top),
+                    transparent 100%);
+                transition: none;
             }
         }
 
