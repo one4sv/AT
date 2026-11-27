@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, type TextareaHTMLAttributes, type RefObject } from "react";
+import { getDroppedFiles, hasFileDrop } from "./utils/fileDrop";
 
 interface TAProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
     taRef?: RefObject<HTMLTextAreaElement | null>;
@@ -16,6 +17,8 @@ export default function TA({
     maxHeight = 50,
     onKeyDown,
     onPaste,
+    onDragOver,
+    onDrop,
     ...props
 }: TAProps) {
     const localRef = useRef<HTMLTextAreaElement>(null);
@@ -85,6 +88,22 @@ export default function TA({
             rows={1}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
+            onDragOver={event => {
+                onDragOver?.(event);
+                if (onFiles && hasFileDrop(event.dataTransfer)) {
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = "copy";
+                }
+            }}
+            onDrop={event => {
+                onDrop?.(event);
+                if (event.defaultPrevented || !onFiles) return;
+                const files = getDroppedFiles(event.dataTransfer);
+                if (!files.length) return;
+                event.preventDefault();
+                event.stopPropagation();
+                onFiles(files);
+            }}
         />
     );
 }
