@@ -182,6 +182,8 @@
     "created": "created the group “{{name}}”"
   },
   "chatUi": {
+    "commandHelpBack": "Back",
+    "commandHelpApply": "Apply",
     "shareGoal": "Share goal",
     "goalObject": "Goal",
     "goalSnapshot": "Goal status at the time of sharing",
@@ -403,7 +405,7 @@
       },
       "help": {
         "syntax": "/help",
-        "body": "Open this command reference. Select a command to reveal its parameters and examples. Select it again to collapse the description.",
+        "body": "Open this command reference. Select a command to see its parameters and examples. Use the back arrow or swipe right to return to the list. Apply inserts the selected command into the message field.",
         "examples": [
           "/help"
         ]

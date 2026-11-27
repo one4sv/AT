@@ -253,9 +253,47 @@ export default function ChatTextArea({
     const shareListOpen = shareLoading || shareSuggestions.length > 0;
     const canShowCommands = savedChat && !quickDraft && !editing && !shareMatch &&
         !commandListDismissed && matchingCommands.length > 0;
+    const openCommandHelp = () => {
+        const sourceRoute = location.pathname;
+        const commands = savedChat ? [...quickCommandItems, ...savedShareCommandItems] : shareCommands;
+        setMess("");
+        setPreviewCommand(null);
+        setSharePreview(null);
+        setCommandListDismissed(true);
+        setShareDismissed(true);
+        setBlackout({
+            seted: true,
+            module: "CommandHelp",
+            commandHelp: {
+                commands: commands.map(({label, description, icon}) => ({label, description, icon})),
+                onApply: command => {
+                    if (routeRef.current !== sourceRoute || !commands.some(item => item.label === command)) return;
+                    rememberCommand(command);
+                    createdQuick.current = null;
+                    setPreviewCommand(null);
+                    setSharePreview(null);
+                    setShareItems([]);
+                    setActiveShare(0);
+                    setActiveFieldSuggestion(0);
+                    setActiveSuggestion(0);
+                    setCommandListDismissed(true);
+                    setShareDismissed(false);
+                    setFieldSuggestionsDismissed(false);
+                    setShowEmojiBar(false);
+                    setMess(command + (command === "/help" ? "" : " "));
+                    textAreaRef.current?.focus({preventScroll:true});
+                    requestAnimationFrame(() => {
+                        const input = textAreaRef.current;
+                        input?.focus({preventScroll:true});
+                        if (input) input.setSelectionRange(input.value.length, input.value.length);
+                    });
+                }
+            }
+        });
+    };
     const chooseShare = (item: EntitySuggestionItem) => {
         if (!shareMatch) rememberCommand(item.label);
-        if (!shareMatch && item.id === "help") { setMess(""); setBlackout({ seted: true, module: "CommandHelp", options: { text: "chat" } }); return; }
+        if (!shareMatch && item.id === "help") { openCommandHelp(); return; }
         if (!shareMatch && item.id === "settings") {
             setFieldSuggestionsDismissed(false);
             setActiveFieldSuggestion(0);
@@ -499,8 +537,7 @@ export default function ChatTextArea({
     const selectSavedCommand = (item: EntitySuggestionItem) => {
         rememberCommand(item.label);
         if (item.id === "help") {
-            setMess("");
-            setBlackout({ seted: true, module: "CommandHelp", options: { text: "saved" } });
+            openCommandHelp();
             return;
         }
         if (item.id === "settings" || item.id === "set") {
@@ -996,7 +1033,7 @@ export default function ChatTextArea({
         }
     };
     const handleSend = async () => {
-        if (!editing && /^\/help\s*$/i.test(mess)) { rememberCommand("/help"); setMess(""); setBlackout({ seted: true, module: "CommandHelp", options: { text: savedChat ? "saved" : "chat" } }); return; }
+        if (!editing && /^\/help\s*$/i.test(mess)) { rememberCommand("/help"); openCommandHelp(); return; }
         if (savedChat && !editing && /^\/todo$/i.test(mess.trim())) { rememberCommand("/todo"); commitCommand("todo"); return; }
         if (shareLoading) return;
         if (blurControl && !blurControl.hasValue) {

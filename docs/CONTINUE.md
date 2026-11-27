@@ -8,6 +8,8 @@
 | Композиции, автосмена и восстановление фона | [ONE4SV-94](https://linear.app/atone4sv/issue/ONE4SV-94), [хранение и управление](COMPOSITIONS.md) |
 | Приёмка Mosaic | [ONE4SV-95](https://linear.app/atone4sv/issue/ONE4SV-95) |
 | Права доступа и регрессии | [ONE4SV-97](https://linear.app/atone4sv/issue/ONE4SV-97) и [ONE4SV-98](https://linear.app/atone4sv/issue/ONE4SV-98) |
-| Мобильные контекстки и комментарии 0.6.7 | [ONE4SV-99](https://linear.app/atone4sv/issue/ONE4SV-99), [жесты](GESTURES.md) и [приёмка](RELEASE_QA.md#мобильные-контекстки-и-комментарии-067) |
+| Мобильные контекстки, команды и интерфейс 0.6.7 | [ONE4SV-99](https://linear.app/atone4sv/issue/ONE4SV-99), [жесты](GESTURES.md) и [приёмка](RELEASE_QA.md#мобильные-контекстки-и-комментарии-067) |
 | Приёмка Horizon | [ONE4SV-96](https://linear.app/atone4sv/issue/ONE4SV-96) |
 | Цели | [Спецификация](GOALS.md) и [ONE4SV-16](https://linear.app/atone4sv/issue/ONE4SV-16). Функция реализуется внутри `/habit` через штатный Blackout, остаётся отдельный QA |
+
+Объём готовящегося выпуска 0.6.7 собран в [CHANGELOG.md](CHANGELOG.md#067--в-разработке). Текущая опубликованная версия в данных приложения остаётся 0.6.6 Horizon. Справочник команд и обмен объектами требуют авторизованной приёмки; не считать изменения main выпуском 0.6.7.

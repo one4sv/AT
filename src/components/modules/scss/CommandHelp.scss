@@ -1,0 +1,201 @@
+.commandHelpModal {
+    min-width: min(380px, 92vw);
+
+    .confirmActionBody {
+        overflow: hidden;
+    }
+
+    .confirmActionButtons > button {
+        font-size: 16px;
+    }
+
+    .confirmActionButtons > .commandHelpBack {
+        flex: 0 0 5dvh;
+        width: 5dvh;
+        min-width: 44px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 1 / 1;
+    }
+
+    @media (max-width: 800px) {
+        min-width: 0;
+
+        .confirmActionButtons > .commandHelpBack {
+            flex-basis: 6dvh;
+            width: 6dvh;
+        }
+    }
+}
+
+.commandHelpViewport {
+    width: 100%;
+    min-width: 0;
+    height: min(60dvh, 540px);
+    overflow: hidden;
+    touch-action: pan-y;
+    clip-path: inset(0);
+}
+
+.commandHelpTrack {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform .32s cubic-bezier(.075,.82,.165,1);
+
+    &.dragging {
+        transition: none;
+    }
+}
+
+.commandHelpPanel {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1px;
+    scrollbar-width: thin;
+}
+
+.commandHelpList {
+    display: flex;
+    flex-direction: column;
+    gap: .5dvh;
+}
+
+.commandHelpRow {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: .75vw;
+    width: 100%;
+    min-width: 0;
+    min-height: 6dvh;
+    box-sizing: border-box;
+    padding: .8dvh .75vw;
+    border: none;
+    border-radius: 24px;
+    background: var(--interact);
+    color: var(--tc);
+    text-align: start;
+    font: inherit;
+    cursor: pointer;
+
+    > svg {
+        flex-shrink: 0;
+        color: var(--borderWh);
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--menuButtHover);
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+        padding-inline: 3vw;
+    }
+}
+
+.commandHelpIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    color: var(--tc);
+}
+
+.commandHelpRowText {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+
+    > span:first-child {
+        font-size: 16px;
+        color: var(--tc);
+    }
+
+    > span:last-child {
+        color: var(--borderWh);
+        font-size: 13px;
+        overflow-wrap: anywhere;
+    }
+}
+
+.commandHelpDetailContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+    color: var(--tc);
+
+    > p {
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    > code {
+        display: block;
+        padding: 1dvh 1vw;
+        border-radius: 24px;
+        background: var(--interact);
+        color: var(--tc);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        user-select: text;
+
+        @media (max-width: 800px) {
+            padding-inline: 3vw;
+        }
+    }
+}
+
+.commandHelpDetailHeading {
+    display: flex;
+    align-items: center;
+    gap: .75vw;
+    padding: 1dvh 1vw;
+    border-radius: 24px;
+    background: var(--interact);
+
+    > div {
+        flex: 1;
+        min-width: 0;
+
+        > div {
+            font-size: 20px;
+        }
+
+        > span {
+            font-size: 14px;
+            color: var(--borderWh);
+            overflow-wrap: anywhere;
+        }
+    }
+
+    @media (max-width: 800px) {
+        gap: 2vw;
+        padding-inline: 3vw;
+    }
+}
+
+.commandHelpLabel {
+    color: var(--borderWh);
+    font-size: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .commandHelpTrack {
+        transition: none;
+    }
+}

@@ -13,6 +13,7 @@ export interface Blackout {
     feedback?: { targetType: "account" | "post" | "message" | "comment" | "activity"; targetId: string; targetName?: string; targetUrl?: string };
     module?: string;
     commandDraft?: QuickCreateDraft;
+    commandHelp?: { commands: { label: string; description?: string; icon?: ReactNode }[]; onApply: (command: string) => void };
     sharedComposition?: Composition;
     shareObject?: { url: string; name?: string; asset?: string; bucket?: "bgs" | "media" };
     pick?: File;

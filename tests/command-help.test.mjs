@@ -23,5 +23,26 @@ test("every command in help has localized syntax, description, examples and clos
         assert.ok(ui.commandHelpDetails.set.examples.includes("/set interface background add"));
         assert.ok(!ui.commandHelpDetails.settings.examples.includes("/settings interface background add"));
     }
-    assert.match(read("src/components/modules/CommandHelp.tsx"), /aria-expanded=\{open\}/);
+    assert.match(read("src/components/modules/CommandHelp.tsx"), /useModalSlider\(page, current \? 2 : 1/);
+});
+
+
+test("command help uses two sliding panels and applies the selected command without sending", () => {
+    const help = read("src/components/modules/CommandHelp.tsx");
+    const chat = read("src/pages/Chat/components/ChatTa/ChatTextArea.tsx");
+    const css = read("src/components/modules/scss/CommandHelp.scss");
+    assert.match(help, /blackout\.commandHelp\?\.commands/);
+    assert.match(help, /onClick=\{\(\) => setPage\(0\)\}/);
+    assert.match(help, /onApply\(current\.label\)/);
+    assert.match(help, /inert=\{page !== 0\}/);
+    assert.match(help, /inert=\{page !== 1\}/);
+    assert.match(css, /transition: transform \.32s cubic-bezier/);
+    const handler = chat.slice(chat.indexOf("const openCommandHelp"), chat.indexOf("const chooseShare"));
+    assert.match(handler, /setMess\(command \+ \(command === "\/help" \? "" : " "\)\)/);
+    assert.match(handler, /routeRef\.current !== sourceRoute/);
+    assert.doesNotMatch(handler, /sendMess\(/);
+    for (const lang of ["ru","en"]) {
+        const ui = JSON.parse(read("src/i18n/locales/"+lang+"/common.json")).chatUi;
+        assert.ok(ui.commandHelpApply && ui.commandHelpBack);
+    }
 });
