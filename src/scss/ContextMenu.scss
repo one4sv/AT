@@ -335,3 +335,22 @@ html:not(.contextMenuPress) .selectableMessagePreview {
         cursor: text;
     }
 }
+
+/* Native selection in a touch context menu is exclusive to message text.
+   Explicitly override descendant styles (e.g. .message user-select:text)
+   so WebKit cannot extend a selection to the original page or its controls. */
+@media (pointer: coarse) {
+    html:has(.ContextMenuFocusPreview) body,
+    html:has(.ContextMenuFocusPreview) body * {
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+    }
+
+    html:not(.contextMenuPress):has(.selectableMessagePreview) .selectableMessagePreview .contextMessageSelectable,
+    html:not(.contextMenuPress):has(.selectableMessagePreview) .selectableMessagePreview .contextMessageSelectable * {
+        -webkit-user-select: text !important;
+        user-select: text !important;
+        -webkit-touch-callout: default !important;
+    }
+}
