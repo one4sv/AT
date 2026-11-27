@@ -19,6 +19,7 @@ import { useLocation, useNavigate, useParams } from "react-router";
 import { useChat } from "../../../../components/hooks/ChatHook";
 import { isMobile } from "react-device-detect";
 import { useDrop } from "../../../../components/hooks/DropHook";
+import { getDraggedFiles, hasFileDrag } from "../../../../components/context/DropContext";
 import { useMessages } from "../../../../components/hooks/MessagesHook";
 import { MessBarBlock } from "../../utils/MessBarBlock";
 import type { Media, message } from "../../../../components/context/ChatContext";
@@ -95,7 +96,10 @@ export default function ChatTextArea({
     } = useParams();
     const {
         droppedFiles,
-        setDroppedFiles
+        setDroppedFiles,
+        chatDroppedFiles,
+        setChatDroppedFiles,
+        clearDrag
     } = useDrop();
     const {
         forwardPost,
@@ -1304,7 +1308,24 @@ export default function ChatTextArea({
 
     useEffect(() => {
         setFiles([]);
-    }, [nick]);
+    }, [nick, id]);
+
+    const targetedFiles = chatDroppedFiles[location.pathname];
+    const consumedTargetedFiles = useRef<File[] | undefined>(undefined);
+    useEffect(() => {
+        const targetReady = !chatLoading && !!chatWith && (id
+            ? chatWith.is_group && String(chatWith.id) === id
+            : !chatWith.is_group && chatWith.nick === nick);
+        if (!targetReady || !targetedFiles?.length || consumedTargetedFiles.current === targetedFiles) return;
+        consumedTargetedFiles.current = targetedFiles;
+        setFiles(previous => [...previous, ...targetedFiles]);
+        setChatDroppedFiles(previous => {
+            if (previous[location.pathname] !== targetedFiles) return previous;
+            const next = { ...previous };
+            delete next[location.pathname];
+            return next;
+        });
+    }, [targetedFiles, location.pathname, chatLoading, chatWith, id, nick, setChatDroppedFiles]);
 
     useEffect(
         () => {
@@ -1528,6 +1549,20 @@ export default function ChatTextArea({
                             onKeyUp={e => setMentionCaret(e.currentTarget.selectionStart)}
                             placeholder={savedChat ? tc("chatUi.savedPlaceholder") : tc("chatUi.placeholder")}
                             onPaste={handlePaste}
+                            onDragOver={event => {
+                                if (!hasFileDrag(event.dataTransfer)) return;
+                                event.preventDefault();
+                                event.stopPropagation();
+                                event.dataTransfer.dropEffect = "copy";
+                            }}
+                            onDrop={event => {
+                                const next = getDraggedFiles(event.dataTransfer);
+                                if (!next.length) return;
+                                event.preventDefault();
+                                event.stopPropagation();
+                                clearDrag();
+                                setFiles(previous => [...previous, ...next]);
+                            }}
                         />
                     </div>
                 </div>
