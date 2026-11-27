@@ -120,12 +120,12 @@ body {
 html[data-ios-pwa="true"] {
     --at-safe-top: env(safe-area-inset-top, 0px);
     // iOS system status-bar blur extends below the reported safe area.
-    --at-header-gap: 20px;
+    --at-header-gap: 12px;
     --at-header-top: calc(var(--at-safe-top) + var(--at-header-gap));
-    --at-page-header-gap: 8px;
+    --at-page-header-gap: 0px;
     --at-page-header-top: calc(var(--at-safe-top) + var(--at-page-header-gap));
     --at-safe-bottom: env(safe-area-inset-bottom, 0px);
-    --at-bottom-dock: max(8px, calc(var(--at-safe-bottom) + 6px));
+    --at-bottom-dock: max(4px, var(--at-safe-bottom));
     --at-bottom-extra: max(0px, calc(var(--at-bottom-dock) - 3vh));
     height: 100vh;
     min-height: 0;
@@ -288,7 +288,7 @@ html[data-ios-pwa="true"] {
 
         .mobile-layout .postFeed {
             padding-top: calc(8vh + var(--at-page-header-top));
-            padding-bottom: max(3vh, calc(var(--at-safe-bottom) + 6px));
+            padding-bottom: max(3vh, var(--at-bottom-dock));
         }
 
         .mobile-layout .StatsDivMain {
@@ -372,7 +372,7 @@ html[data-ios-pwa="true"] {
         --at-page-header-gap: 0px;
         --at-safe-top: max(0px, calc(env(safe-area-inset-top, 0px) - var(--vv-top, 0px)));
         --at-safe-bottom: 0px;
-        --at-bottom-dock: 6px;
+        --at-bottom-dock: 2px;
         --at-bottom-extra: 0px;
 
         body > .atKeyboardWallpaper {
@@ -393,7 +393,23 @@ html[data-ios-pwa="true"] {
         }
 
         #root {
-            height: var(--at-app-height, 100dvh);
+            // Anchor the interactive surface to the actual visual viewport.
+            // The wallpaper stays on the full layout canvas underneath.
+            position: fixed;
+            inset: var(--vv-top, 0px) 0 auto;
+            height: var(--vv-height, 100dvh);
+            min-height: 0;
+            flex: none;
+        }
+
+        .mobile-layout .page-content {
+            height: 100%;
+            min-height: 0;
+        }
+
+        .mobile-layout :is(.settingsSliderWrapper, .settingsSlider, .settingsPage) {
+            height: 100%;
+            min-height: 0;
         }
 
         .mobile-layout > .sideMenu,
@@ -410,7 +426,7 @@ html[data-ios-pwa="true"] {
 @media (max-width: 800px) {
     html[data-at-keyboard="true"] {
         --at-safe-top: 0px;
-        #root {
+        &:not([data-ios-pwa="true"]) #root {
             position: relative;
             top: var(--vv-top, 0px);
             height: var(--at-app-height, 100dvh);
@@ -429,7 +445,7 @@ html[data-ios-pwa="true"] {
             height: 100%;
             max-height: 100%;
         }
-        .chatTAWrapper {
+        &:not([data-ios-pwa="true"]) .chatTAWrapper {
             padding-bottom: 0;
             margin-bottom: 0;
             height: 6dvh;
