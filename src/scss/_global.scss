@@ -155,8 +155,8 @@ html[data-ios-pwa="true"] {
                 mask-image: none;
                 -webkit-mask-image: none;
                 background: linear-gradient(to bottom,
-                    color-mix(in srgb, var(--bgc) 55%, transparent) 0px,
-                    color-mix(in srgb, var(--bgc) 35%, transparent) var(--at-safe-top),
+                    color-mix(in srgb, var(--bgc) 28%, transparent) 0px,
+                    color-mix(in srgb, var(--bgc) 18%, transparent) var(--at-safe-top),
                     transparent 100%);
             }
         }
@@ -186,8 +186,8 @@ html[data-ios-pwa="true"] {
                 mask-image: none;
                 -webkit-mask-image: none;
                 background: linear-gradient(to bottom,
-                    color-mix(in srgb, var(--mc) 25%, transparent) 0px,
-                    color-mix(in srgb, var(--mc) 25%, transparent) var(--at-safe-top),
+                    color-mix(in srgb, var(--mc) 13%, transparent) 0px,
+                    color-mix(in srgb, var(--mc) 13%, transparent) var(--at-safe-top),
                     transparent 100%);
                 transition: none;
             }
@@ -234,6 +234,7 @@ html[data-ios-pwa="true"] {
             height: calc(5dvh + var(--at-bottom-dock));
             padding-bottom: var(--at-bottom-dock);
             align-items: flex-end;
+            --at-edge-blur: 24px;
 
             .SMnav {
                 bottom: var(--at-bottom-dock);
@@ -317,6 +318,10 @@ html[data-ios-pwa="true"] {
             padding-bottom: var(--at-bottom-dock);
         }
 
+        .mobile-layout .settingBackWrapper {
+            --at-edge-blur: 20px;
+        }
+
         .mobile-layout :is(.pageBottomBack, .pageBottomAction) {
             height: 5dvh;
         }
@@ -327,6 +332,8 @@ html[data-ios-pwa="true"] {
 
         .mobile-layout :is(.SMnavDiv, .chatTAWrapper, .postWriteWrapper, .habitMobileDone, .habitSaveDiv, .settingBackWrapper)::before {
             bottom: 0;
+            backdrop-filter: blur(calc(var(--at-edge-blur, var(--backdropTA, 12px)) * .5));
+            -webkit-backdrop-filter: blur(calc(var(--at-edge-blur, var(--backdropTA, 12px)) * .5));
             mask-image: linear-gradient(to top, black 0px, black var(--at-safe-bottom), transparent 100%);
             -webkit-mask-image: linear-gradient(to top, black 0px, black var(--at-safe-bottom), transparent 100%);
         }
