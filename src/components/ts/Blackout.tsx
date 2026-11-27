@@ -120,6 +120,13 @@ export default function Blackout() {
                 });
             }
         } else if (isOpen) {
+            // WebKit standalone can retain a stale backdrop-filter tile after
+            // the overlay is removed. Invalidate only the header blur layer.
+            if (document.documentElement.dataset.iosPwa === "true") {
+                const root = document.documentElement;
+                root.classList.add("atRepaintHeader");
+                requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("atRepaintHeader")));
+            }
             setIsOpen(false);
             setVisibleStack([]);
             wasOpen.current = false;
