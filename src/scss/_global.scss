@@ -115,6 +115,9 @@ body {
    interactive content consumes safe-area space; glass remains full bleed. */
 html[data-ios-pwa="true"] {
     --at-safe-top: env(safe-area-inset-top, 0px);
+    // iOS system status-bar blur extends below the reported safe area.
+    --at-header-gap: 20px;
+    --at-header-top: calc(var(--at-safe-top) + var(--at-header-gap));
     --at-safe-bottom: env(safe-area-inset-bottom, 0px);
     --at-bottom-dock: max(8px, calc(var(--at-safe-bottom) + 6px));
     --at-bottom-extra: max(0px, calc(var(--at-bottom-dock) - 3vh));
@@ -142,10 +145,10 @@ html[data-ios-pwa="true"] {
 
         // Extend the existing top glass, not the entire page's content.
         .mobile-layout .headerDiv {
-            height: calc(7dvh + var(--at-safe-top));
-            padding-top: calc(1vh + var(--at-safe-top));
+            height: calc(7dvh + var(--at-header-top));
+            padding-top: calc(1vh + var(--at-header-top));
             &.hide {
-                top: calc(-7dvh - var(--at-safe-top));
+                top: calc(-7dvh - var(--at-header-top));
             }
             &::before {
                 // WebKit can retain a blurred tile over foreground text when
@@ -163,15 +166,15 @@ html[data-ios-pwa="true"] {
 
         .mobile-layout > .smHeader {
             top: 0;
-            height: calc(4dvh + var(--at-safe-top));
-            padding-top: var(--at-safe-top);
+            height: calc(4dvh + var(--at-header-top));
+            padding-top: var(--at-header-top);
             .smHeaderSliderWrapper {
                 // Keep foreground text in its own compositing layer.
                 transform: translateZ(0);
                 filter: none;
             }
             .smHeaderCloseSideMenu {
-                top: var(--at-safe-top);
+                top: var(--at-header-top);
             }
             .smHeaderExtraDiv:not(.open) {
                 visibility: hidden;
@@ -216,16 +219,16 @@ html[data-ios-pwa="true"] {
                 backdrop-filter: blur(var(--blur));
                 -webkit-backdrop-filter: blur(var(--blur));
             }
-            --sm-list-top: calc(5dvh + var(--at-safe-top));
+            --sm-list-top: calc(5dvh + var(--at-header-top));
         }
 
         .mobile-layout .SMlist {
             margin-top: var(--sm-list-top, 5dvh);
             &.nothing {
-                margin-top: calc(2dvh + var(--at-safe-top));
+                margin-top: var(--sm-list-top, calc(5dvh + var(--at-header-top)));
             }
             &.smSearchResults {
-                margin-top: calc(4.5dvh + var(--at-safe-top));
+                margin-top: var(--sm-list-top, calc(5dvh + var(--at-header-top)));
             }
         }
 
@@ -250,12 +253,12 @@ html[data-ios-pwa="true"] {
         }
 
         .mobile-layout .chat {
-            --chat-header-inset: calc(6.5dvh + var(--at-safe-top));
+            --chat-header-inset: calc(7.5dvh + var(--at-header-top));
             padding-bottom: calc(9vh + var(--at-bottom-extra));
         }
 
         .mobile-layout .chatActionViewport {
-            top: calc(7.5dvh + var(--at-safe-top));
+            top: calc(7.5dvh + var(--at-header-top));
         }
 
         .mobile-layout .chatTAWrapper {
@@ -268,18 +271,18 @@ html[data-ios-pwa="true"] {
         }
 
         .mobile-layout .postFeed {
-            padding-top: calc(8vh + var(--at-safe-top));
+            padding-top: calc(8vh + var(--at-header-top));
             padding-bottom: max(3vh, calc(var(--at-safe-bottom) + 6px));
         }
 
         .mobile-layout .StatsDivMain {
-            padding-top: calc(8vh + var(--at-safe-top));
+            padding-top: calc(8vh + var(--at-header-top));
             padding-bottom: calc(8vh + var(--at-bottom-extra));
         }
 
         .mobile-layout .acc {
-            margin-top: calc(8vh + var(--at-safe-top));
-            height: calc(100% - 8vh - var(--at-safe-top));
+            margin-top: calc(8vh + var(--at-header-top));
+            height: calc(100% - 8vh - var(--at-header-top));
         }
 
         .mobile-layout .accContentSlide {
@@ -287,12 +290,12 @@ html[data-ios-pwa="true"] {
         }
 
         .mobile-layout :is(.settingsButtsWrapper, .settingTab) {
-            padding-top: calc(8dvh + var(--at-safe-top));
+            padding-top: calc(8dvh + var(--at-header-top));
             padding-bottom: calc(9vh + var(--at-bottom-extra));
         }
 
         .mobile-layout .postPageScroll {
-            padding-top: calc(8vh + var(--at-safe-top));
+            padding-top: calc(8vh + var(--at-header-top));
             padding-bottom: calc(14vh + var(--at-bottom-extra));
         }
 
@@ -305,7 +308,7 @@ html[data-ios-pwa="true"] {
         }
 
         .mobile-layout .planPage {
-            padding-top: calc(7dvh + var(--at-safe-top));
+            padding-top: calc(7dvh + var(--at-header-top));
             padding-bottom: max(2dvh, var(--at-safe-bottom));
         }
 
@@ -349,6 +352,7 @@ html[data-ios-pwa="true"] {
     }
 
     &[data-at-keyboard="true"] {
+        --at-header-gap: 0px;
         --at-safe-top: max(0px, calc(env(safe-area-inset-top, 0px) - var(--vv-top, 0px)));
         --at-safe-bottom: 0px;
         --at-bottom-dock: 6px;
