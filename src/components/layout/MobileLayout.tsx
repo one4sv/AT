@@ -1,3 +1,4 @@
+import { isIosStandalone } from "../hooks/utils/VisualViewportHook";
 import { useEffect, useRef, type ReactNode } from "react";
 import { Background } from "../ts/utils/background";
 import { useSettings } from "../hooks/SettingsHook";
@@ -151,7 +152,7 @@ export default function MobileLayout({ children }: LayoutProps) {
                 <SMnav />
             </>}
 
-            {decor === "glass" && <Background />}
+            {(decor === "glass" || isIosStandalone()) && <Background />}
 
             <div
                 className="page-content"
@@ -160,7 +161,7 @@ export default function MobileLayout({ children }: LayoutProps) {
                 onTouchEnd={handleTouchEnd}
                 onTouchCancel={handleTouchCancel}
             >
-                {decor === "default" && <Background />}
+                {decor === "default" && !isIosStandalone() && <Background />}
                 {children}
             </div>
         </div>
