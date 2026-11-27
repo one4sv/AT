@@ -380,21 +380,34 @@ export const roadmapHistory: RoadmapRelease[] = [
             { ru: "Новые возможности чатов — команды, упоминания и интерактивные карточки пользователей, планов, активностей и публикаций.", en: "New chat features — commands, mentions, and interactive cards for users, plans, activities, and posts." },
             { ru: "Умное «Избранное» — быстрое создание планов и активностей, распознавание дат и предложений из сообщений.", en: "Smarter Saved Messages — quickly create plans and activities, recognizing dates and suggestions from messages." }
         ]
+    },
+    {
+        version: "0.6.6",
+        date: "2026-11-25",
+        title: "Horizon",
+        features: [
+            { ru: "Личные, совместные и повторяющиеся цели.", en: "Personal, shared and recurring goals." },
+            { ru: "Улучшения взаимодействия с календарём и его контекстным меню.", en: "Improved calendar interactions and context menu." },
+            { ru: "Переработка статистики и графиков.", en: "Redesigned statistics and charts." },
+            { ru: "Аватарки активностей и планов.", en: "Activity and plan avatars." },
+            { ru: "Фотографии в комментариях активностей и планов.", en: "Photos in activity and plan comments." },
+            { ru: "Экспорт истории личных данных активности.", en: "Export of personal activity history." },
+            { ru: "Сегодняшняя сводка по активностям в ленте.", en: "Today's activity summary in the feed." }
+        ]
     }
 ];
 
 export const roadmapCurrent: RoadmapRelease = {
-    version: "0.6.6",
-    date: "2026-11-25",
-    title: "Horizon",
+    version: "0.6.7",
+    date: "2026-11-27",
+    title: "/arsenal",
     features: [
-        { ru: "Личные, совместные и повторяющиеся цели.", en: "Personal, shared and recurring goals." },
-        { ru: "Улучшения взаимодействия с календарём и его контекстным меню.", en: "Improved calendar interactions and context menu." },
-        { ru: "Переработка статистики и графиков.", en: "Redesigned statistics and charts." },
-        { ru: "Аватарки активностей и планов.", en: "Activity and plan avatars." },
-        { ru: "Фотографии в комментариях активностей и планов.", en: "Photos in activity and plan comments." },
-        { ru: "Экспорт истории личных данных активности.", en: "Export of personal activity history." },
-        { ru: "Сегодняшняя сводка по активностям в ленте.", en: "Today's activity summary in the feed." }
+        { ru: "Переработка интерфейса чатов и бесед.", en: "Redesigned chat and group conversation interface." },
+        { ru: "Расширение системы команд и интерактивный справочник.", en: "Expanded command system and interactive command reference." },
+        { ru: "Обмен настройками, фонами, композициями и целями.", en: "Sharing settings, wallpapers, compositions and goals." },
+        { ru: "Развитие контекстных меню и мобильных жестов.", en: "Expanded context menus and mobile gestures." },
+        { ru: "Обновление бокового меню и навигации.", en: "Updated SideMenu and navigation." },
+        { ru: "Управление ролями и разрешениями участников бесед.", en: "Management of group member roles and permissions." }
     ]
 };
 
@@ -406,14 +419,6 @@ export const roadmapFuture: RoadmapRelease[] = [
             { ru: "Споты — пространства для сообществ и интересов", en: "Spots — spaces for communities and shared interests" },
             { ru: "Публикации и обсуждения внутри спотов", en: "Posts and discussions within spots" },
             { ru: "Участники, подписки и взаимодействия", en: "Members, subscriptions and interactions" }
-        ]
-    },
-    {
-        version: "0.6.7",
-        title: "/Arsenal",
-        features: [
-            { ru: "Последнее сообщение в предпросмотре чата и увеличенные фото в контекстных меню", en: "Latest message in chat previews and larger context-menu photos" },
-            { ru: "Смена элемента контекстного меню при удержании у края экрана и настройки зон", en: "Switch context menu targets by holding at a screen edge, with configurable zones" }
         ]
     },
     {
