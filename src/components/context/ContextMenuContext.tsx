@@ -132,11 +132,11 @@ export function ContextMenuProvider({ children }:{ children: ReactNode }) {
 
     useEffect(() => {
         const close = (event: MouseEvent) => {
-            if (event.target instanceof Element && event.target.closest(".contextMessageSelectable")) return;
+            if (event.target instanceof Element && event.target.closest(".contextMessageSelectable, .messageWrapper.onContextMenu .messageText, .messageWrapper.onContextMenu .redirectText")) return;
             closeMenu();
         }
         const scroll = (event: Event) => {
-            if (event.target instanceof HTMLElement && event.target.hasAttribute("data-context-edge-scroll")) return;
+            if (event.target instanceof HTMLElement && (event.target.hasAttribute("data-context-edge-scroll") || event.target.closest(".selectableMessagePreview"))) return;
             if (!menuRef.current?.contains(event.target as Node) && !(event.target instanceof Element && event.target.closest(".selectListPortalRoot.calendarContextActivity"))) closeMenu()
         }
         const key = (event: KeyboardEvent) => { if (event.key === "Escape") closeMenu() }
