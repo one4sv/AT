@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import { type ReactNode } from "react"
+import { getDroppedFiles, hasFileDrop } from "../ts/utils/fileDrop";
 const DropContext = createContext<DropContextType | null>(null);
 
 export interface DropContextType {
@@ -16,11 +17,13 @@ export const DropProvider = ({children} : {children : ReactNode}) => {
     const [ isDragging, setIsDragging ] = useState(false);
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        if (!hasFileDrop(e.dataTransfer)) return;
         e.preventDefault();
         setIsDragging(true);
     };
 
     const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+        if (!hasFileDrop(e.dataTransfer)) return;
         e.preventDefault();
         setIsDragging(true);
     };
@@ -35,8 +38,10 @@ export const DropProvider = ({children} : {children : ReactNode}) => {
     };
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        const droppedFiles = getDroppedFiles(e.dataTransfer);
+        if (!droppedFiles.length && !hasFileDrop(e.dataTransfer)) return;
         e.preventDefault();
-        const droppedFiles = Array.from(e.dataTransfer.files);
+        e.stopPropagation();
         if (droppedFiles.length > 0) {
             setDroppedFiles(prev => [...prev, ...droppedFiles]);
         }
