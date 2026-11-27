@@ -117,7 +117,7 @@ export default function ContextMenu() {
                 if (selectableMessage) {
                     clone.removeAttribute("data-context-menu");
                     clone.querySelectorAll("[data-context-menu]").forEach(element => element.removeAttribute("data-context-menu"));
-                    clone.querySelectorAll(".messageText").forEach(element => element.classList.add("contextMessageSelectable"));
+                    clone.querySelectorAll(".messageText, .redirectText").forEach(element => element.classList.add("contextMessageSelectable"));
                 }
                 if (fitProfile) {
                     clone.style.width = `${menu.focusRect!.width}px`;
