@@ -174,6 +174,90 @@ export default function ContextMenu() {
         if (window.matchMedia("(pointer: fine)").matches) actions[0]?.focus({ preventScroll: true });
     }, [menu, menuRef]);
 
+    // Safari can extend native selection to the entire document even when
+    // the visual preview is the only selectable element. Restrict the range
+    // to the text region where the user began the second, deliberate gesture.
+    useLayoutEffect(() => {
+        if (!menu.visible || !menu.focusSource || !window.matchMedia("(pointer: coarse)").matches) return;
+        let region: HTMLElement | null = null;
+        const selectionRegion = (target: EventTarget | null) => {
+            const element = target instanceof Element ? target : target instanceof Node ? target.parentElement : null;
+            const candidate = element?.closest<HTMLElement>(".contextMessageSelectable");
+            return selectableMessage && candidate && previewRef.current?.contains(candidate) ? candidate : null;
+        };
+        const begin = (event: PointerEvent) => {
+            if (document.documentElement.classList.contains("contextMenuPress")) return;
+            const next = selectionRegion(event.target);
+            if (!next) return;
+            if (region !== next) window.getSelection()?.removeAllRanges();
+            region = next;
+        };
+        const selectStart = (event: Event) => {
+            if (document.documentElement.classList.contains("contextMenuPress") || !region?.isConnected) {
+                if (event.cancelable) event.preventDefault();
+                return;
+            }
+            if (!selectionRegion(event.target) && !window.getSelection()?.rangeCount && event.cancelable) event.preventDefault();
+        };
+        const restrict = () => {
+            const selection = window.getSelection();
+            if (!selection?.rangeCount || selection.isCollapsed) return;
+            if (!region?.isConnected || !previewRef.current?.contains(region) ||
+                document.documentElement.classList.contains("contextMenuPress")) {
+                selection.removeAllRanges();
+                return;
+            }
+            const range = selection.getRangeAt(0);
+            if (region.contains(range.startContainer) && region.contains(range.endContainer)) return;
+            const bounds = document.createRange();
+            bounds.selectNodeContents(region);
+            // An entirely unrelated selection is invalid; do not replace it
+            // with a selection of the message. Clamp only overlapping ranges.
+            if (range.compareBoundaryPoints(Range.END_TO_START, bounds) >= 0 ||
+                range.compareBoundaryPoints(Range.START_TO_END, bounds) <= 0) {
+                selection.removeAllRanges();
+                return;
+            }
+            const limited = range.cloneRange();
+            if (range.compareBoundaryPoints(Range.START_TO_START, bounds) < 0) {
+                limited.setStart(bounds.startContainer, bounds.startOffset);
+            }
+            if (range.compareBoundaryPoints(Range.END_TO_END, bounds) > 0) {
+                limited.setEnd(bounds.endContainer, bounds.endOffset);
+            }
+            const backwards = selection.anchorNode === range.endContainer && selection.anchorOffset === range.endOffset;
+            if (backwards && typeof selection.setBaseAndExtent === "function") {
+                selection.setBaseAndExtent(limited.endContainer, limited.endOffset, limited.startContainer, limited.startOffset);
+            } else {
+                selection.removeAllRanges();
+                selection.addRange(limited);
+            }
+        };
+        const copy = (event: ClipboardEvent) => {
+            const selection = window.getSelection();
+            if (!selection?.rangeCount || selection.isCollapsed) return;
+            const range = selection.getRangeAt(0);
+            if (!region?.isConnected || !region.contains(range.startContainer) || !region.contains(range.endContainer)) {
+                event.preventDefault();
+                restrict();
+                if (region?.isConnected && selection.rangeCount && !selection.isCollapsed) {
+                    event.clipboardData?.setData("text/plain", selection.toString());
+                }
+            }
+        };
+        document.addEventListener("pointerdown", begin, true);
+        document.addEventListener("selectstart", selectStart, true);
+        document.addEventListener("selectionchange", restrict);
+        document.addEventListener("copy", copy, true);
+        return () => {
+            document.removeEventListener("pointerdown", begin, true);
+            document.removeEventListener("selectstart", selectStart, true);
+            document.removeEventListener("selectionchange", restrict);
+            document.removeEventListener("copy", copy, true);
+            window.getSelection()?.removeAllRanges();
+        };
+    }, [menu, selectableMessage]);
+
     if (!menu.visible) return null;
     const currentPos = isAdjusted ? pos : {
         top: menu.y,
