@@ -46,9 +46,9 @@ export function useVisualViewport() {
 
             // Never double the top inset when WebKit itself letterboxes the web view.
             if (standalone) {
-                const screenHeight = window.screen.height;
+                const screenHeight = window.screen.orientation?.type?.startsWith("landscape") || window.screen.width > window.screen.height ? Math.min(window.screen.width, window.screen.height) : Math.max(window.screen.width, window.screen.height);
                 const layoutHeight = keyboard ? closedHeight : window.innerHeight;
-                root.dataset.iosPwaLetterbox = screenHeight - layoutHeight > 24 ? "true" : "false";
+                root.dataset.iosPwaLetterbox = screenHeight - layoutHeight > 45 ? "true" : "false";
             }
         };
         const schedule = () => {
