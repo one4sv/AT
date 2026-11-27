@@ -12,7 +12,8 @@ import { useMessages } from "../hooks/MessagesHook";
 import { useUser } from "../hooks/UserHook";
 import useContactAlias from "../hooks/utils/useContactAlias";
 import { useIdentify } from "../hooks/utils/useIdentify";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { getDraggedFiles, hasFileDrag } from "../context/DropContext";
 import { useSideMenu } from "../hooks/SideMenuHook";
 import { useTranslation } from "react-i18next";
 import { useContacts } from "../hooks/ContactsHook";
@@ -33,7 +34,8 @@ export default function Contact({ contact }: ContactType) {
     const { forwardMedia, setForwardMedia } = useMessages();
     const { autoLoadImages, autoPlayGif } = useSettings();
     const { openMenu } = useContextMenu();
-    const { setDroppedFiles } = useDrop();
+    const { setChatDroppedFiles, clearDrag } = useDrop();
+    const [fileDragOver, setFileDragOver] = useState(false);
     const { user } = useUser();
     const [alias] = useContactAlias(contact.is_group ? undefined : contact.id);
     const { closeMenu } = useSideMenu();
@@ -84,16 +86,24 @@ export default function Contact({ contact }: ContactType) {
         });
     };
 
-    const handleDrop = (e: React.DragEvent<HTMLAnchorElement>, nick: string) => {
-        e.preventDefault();
-        const droppedFiles = Array.from(e.dataTransfer.files);
+    const targetPath = contact.is_group ? `/chat/g/${contact.id}` : `/chat/${contact.nick}`;
 
-        if (droppedFiles.length > 0) {
-            navigate(`/chat/${nick}`);
-            setTimeout(() => {
-                setDroppedFiles((prev) => [...prev, ...droppedFiles]);
-            }, 10);
-        }
+    const handleDrop = (e: React.DragEvent<HTMLAnchorElement>) => {
+        const files = getDraggedFiles(e.dataTransfer);
+        setFileDragOver(false);
+        if (!files.length) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        clearDrag();
+        setChatDroppedFiles(previous => ({
+            ...previous,
+            [targetPath]: [...(previous[targetPath] ?? []), ...files],
+        }));
+        setBlackout({ seted: false });
+        setActiveHeader("text");
+        closeMenu();
+        navigate(targetPath);
     };
 
     const typingNames = typingMap[contact.id] || [];
@@ -207,7 +217,7 @@ export default function Contact({ contact }: ContactType) {
 
     return (
         <Link
-            className={`contactsUser ${isActive ? "active" : ""}`}
+            className={`contactsUser ${isActive ? "active" : ""} ${fileDragOver ? "fileDragOver" : ""}`}
             key={contact.id}
             onClick={() => {
                 if (forwardMedia && !forwardMedia.targetPath) {
@@ -220,7 +230,7 @@ export default function Contact({ contact }: ContactType) {
                 setActiveHeader("text");
                 closeMenu();
             }}
-            to={contact.is_group ? `/chat/g/${contact.id}` : `/chat/${contact.nick}`}
+            to={targetPath}
             data-context-menu="true"
             onContextMenu={(e) => {
                 e.preventDefault();
@@ -263,11 +273,19 @@ export default function Contact({ contact }: ContactType) {
                     }
                 );
             }}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
+            onDragOver={(e) => {
+                if (!hasFileDrag(e.dataTransfer)) return;
                 e.preventDefault();
-                handleDrop(e, contact.nick);
+                e.stopPropagation();
+                e.dataTransfer.dropEffect = "copy";
+                setFileDragOver(true);
             }}
+            onDragLeave={(e) => {
+                const next = e.relatedTarget;
+                if (!(next instanceof Node) || !e.currentTarget.contains(next)) setFileDragOver(false);
+            }}
+            onDragEnd={() => setFileDragOver(false)}
+            onDrop={handleDrop}
         >
             <div className="contactsUserPic">
                 {getAvatar()}
