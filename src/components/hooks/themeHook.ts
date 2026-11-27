@@ -13,6 +13,7 @@ export default function ThemeHandler() {
             root.setAttribute("data-theme", theme === "system"
                 ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
                 : theme);
+            root.style.colorScheme = root.dataset.theme === "light" ? "light" : "dark";
             applyCustomPalette(accent, grad);
             const background = getComputedStyle(root).getPropertyValue("--bgc").trim();
             if (background) document.querySelector('meta[name="theme-color"]')?.setAttribute("content", background);
