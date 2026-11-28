@@ -17,6 +17,11 @@
     <script>
       (function () {
         try {
+          const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+            (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+          if (ios && (window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true)) {
+            document.documentElement.dataset.iosPwa = "true";
+          }
           const read = (key, fallback) => {
             const value = localStorage.getItem(key);
             if (value === null) return fallback;
@@ -113,6 +118,7 @@
   </head>
 
   <body>
+    <div class="atStatusBarSurface" aria-hidden="true"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
