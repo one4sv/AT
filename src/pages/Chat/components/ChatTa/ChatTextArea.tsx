@@ -1317,12 +1317,8 @@ export default function ChatTextArea({
         },
         [chatLoading, droppedFiles, id, location.pathname, nick, setDroppedFiles]
     );
-    const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-        const pastedFiles = Array.from(e.clipboardData.files).filter(f => f instanceof File && typeof f.type === 'string');
-        if (pastedFiles.length > 0) {
-            if (!e.clipboardData.getData("text/plain")) e.preventDefault();
-            setFiles(prev => [...prev, ...pastedFiles]);
-        }
+    const addComposerFiles = (incoming: File[]) => {
+        setFiles(prev => [...prev, ...incoming]);
     };
     const handleRemoveFile = (index: number) => {
         if (index < oldMedia.length) {
@@ -1527,7 +1523,7 @@ export default function ChatTextArea({
                             }}
                             onKeyUp={e => setMentionCaret(e.currentTarget.selectionStart)}
                             placeholder={savedChat ? tc("chatUi.savedPlaceholder") : tc("chatUi.placeholder")}
-                            onPaste={handlePaste}
+                            onFiles={addComposerFiles}
                         />
                     </div>
                 </div>

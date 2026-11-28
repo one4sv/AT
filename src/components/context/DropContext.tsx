@@ -1,5 +1,6 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { type ReactNode } from "react"
+import { getDroppedFiles, hasFileDrop } from "../ts/utils/fileDrop";
 const DropContext = createContext<DropContextType | null>(null);
 
 export interface DropContextType {
@@ -15,12 +16,25 @@ export const DropProvider = ({children} : {children : ReactNode}) => {
     const [ droppedFiles, setDroppedFiles ] = useState<File[]>([])
     const [ isDragging, setIsDragging ] = useState(false);
 
+    useEffect(() => {
+        // The composer may consume the drop itself and stop propagation.
+        const reset = () => setIsDragging(false);
+        document.addEventListener("drop", reset, true);
+        document.addEventListener("dragend", reset, true);
+        return () => {
+            document.removeEventListener("drop", reset, true);
+            document.removeEventListener("dragend", reset, true);
+        };
+    }, []);
+
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        if (!hasFileDrop(e.dataTransfer)) return;
         e.preventDefault();
         setIsDragging(true);
     };
 
     const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+        if (!hasFileDrop(e.dataTransfer)) return;
         e.preventDefault();
         setIsDragging(true);
     };
@@ -35,8 +49,10 @@ export const DropProvider = ({children} : {children : ReactNode}) => {
     };
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        const droppedFiles = getDroppedFiles(e.dataTransfer);
+        if (!droppedFiles.length && !hasFileDrop(e.dataTransfer)) return;
         e.preventDefault();
-        const droppedFiles = Array.from(e.dataTransfer.files);
+        e.stopPropagation();
         if (droppedFiles.length > 0) {
             setDroppedFiles(prev => [...prev, ...droppedFiles]);
         }

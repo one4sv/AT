@@ -1,5 +1,6 @@
 import { createContext, type ReactNode } from "react";
 import { api } from "../ts/api";
+import axios from "axios";
 import type { message } from "./ChatContext";
 import { useNote } from "../hooks/NoteHook";
 import { useContacts } from "../hooks/ContactsHook";
@@ -45,7 +46,7 @@ export const SendMessProvider = ({ children }: { children: ReactNode }) => {
             throw new Error("Сервер не вернул отправленное сообщение");
         } catch (error) {
             console.error("Ошибка при отправке:", error);
-            showNotification("error", "Не удалось отправить сообщение");
+            showNotification("error", axios.isAxiosError(error) && error.response?.status === 413 ? "Превышен допустимый размер вложений" : "Не удалось отправить сообщение");
             return false;
         }
     };
@@ -64,7 +65,7 @@ export const SendMessProvider = ({ children }: { children: ReactNode }) => {
             }
         } catch (error) {
             console.error("Ошибка при редактировании:", error);
-            showNotification("error", "Не удалось отредактировать сообщение");
+            showNotification("error", axios.isAxiosError(error) && error.response?.status === 413 ? "Превышен допустимый размер вложений" : "Не удалось отредактировать сообщение");
             return false;
         }
     };
