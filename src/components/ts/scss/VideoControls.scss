@@ -44,12 +44,13 @@
         background: linear-gradient(transparent, #111c);
         pointer-events: auto;
     }
-    .atVideoTimeline {
-        width: 100%;
+    .atVideoTimeline, .atVideoVolume {
         .seekBarWrapper { background: transparent; padding: 8px 4px; box-sizing: border-box; }
         .seekBarLine { width: 100%; background: #fff5; }
         .seekBarHoverValue, .seekBarCurrent { display: none; }
     }
+    .atVideoTimeline { width: 100%; }
+    .atVideoVolume { width: 42px; flex: 1 1 32px; max-width: 80px; }
     .atVideoActions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2px; }
     .atVideoTime { font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 }
@@ -63,3 +64,7 @@
     background: #000 !important;
     > video { width: 100% !important; height: 100% !important; max-height: none !important; object-fit: contain !important; }
 }
+
+.atVideoControls:not(.paused):not(:focus-within) { visibility: hidden; }
+.messageFile.videoFile:hover > .atVideoControls,
+.imgPrevVideo:hover > .atVideoControls { visibility: visible; }
