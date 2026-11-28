@@ -398,3 +398,23 @@ html.atRepaintHeader .headerDiv::before {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
+
+.imgPrevSlide > .imgPrevVideo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 94vw;
+    max-height: 70dvh;
+    overflow: hidden;
+    pointer-events: auto;
+    > video {
+        display: block;
+        max-width: 94vw;
+        max-height: 70dvh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+    }
+}
+.imgPrevSlide:not(.active) > .imgPrevVideo { pointer-events: none; }
