@@ -31,3 +31,22 @@ export function installVideoPlaybackGuard() {
         window.removeEventListener("pagehide", pageHide);
     };
 }
+
+// Store only a small local poster, not a second network asset.
+export function firstFramePoster(video: HTMLVideoElement): string | undefined {
+    if (!video.videoWidth || !video.videoHeight || video.readyState < 2) return;
+    try {
+        const canvas = document.createElement("canvas");
+        const scale = Math.min(1, 480 / Math.max(video.videoWidth, video.videoHeight));
+        canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
+        canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
+        const context = canvas.getContext("2d");
+        if (!context) return;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL("image/jpeg", .8);
+    } catch {
+        // A cross-origin media resource may not permit canvas readback.
+        // The video fragment still requests its first frame.
+        return;
+    }
+}
