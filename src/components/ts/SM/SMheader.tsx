@@ -13,7 +13,7 @@ import { smHeaderPopupPosition } from "../utils/smHeaderPopupPosition";
 import { searchTabFilters, searchTabForFilter, type SearchFilter } from "../utils/globalSearchQuery";
 import SMSearchFilterIcon from "./SMSearchFilterIcon";
 
-export default function SMheader({ isolatedLayer = false }: { isolatedLayer?: boolean } = {}) {
+export default function SMheader() {
     const isMobile = useCompactLayout();
     const studio = useLocation().pathname.startsWith("/wallpapers");
     const { t } = useTranslation("common");
@@ -303,9 +303,7 @@ export default function SMheader({ isolatedLayer = false }: { isolatedLayer?: bo
 
     if (!user.id) return null
 
-    const headerTransform = isMobile || layout === "hidden" || studio
-        ? (isolatedLayer ? `translate3d(${translateX}%, 0, 0)` : `translateX(${translateX}%)`)
-        : "none";
+    const headerTransform = isMobile || layout === "hidden" || studio ? `translateX(${translateX}%)` : "none";
 
     return (
         <>
