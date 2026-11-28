@@ -291,16 +291,15 @@ function ChatMediaPanel({ activeFilter, active, enabled }: { activeFilter: Exclu
 
     const openMedia = (item: ChatMediaItem) => {
         if (item.entity_type || (item.category === "link" && internalObjectKind(item.url))) return;
-        if (item.category === "video") { openLink(item.url, true); return; }
         if (item.category === "link") {
             openLink(item.url, true);
             return;
         }
 
 
-        if (item.category === "photo" && chatWith) {
+        if ((item.category === "photo" || item.category === "video") && chatWith) {
             const chatPath = chatWith.is_group ? `g/${chatWith.id}` : chatWith.nick;
-            const photos = items.filter(media => media.category === "photo");
+            const photos = items.filter(media => media.category === "photo" || media.category === "video");
             const imageIndex = photos.findIndex(photo => photo.id === item.id);
 
             setBlackout({
@@ -310,6 +309,7 @@ function ChatMediaPanel({ activeFilter, active, enabled }: { activeFilter: Exclu
                 images: photos.map(photo => ({
                     url: photo.url,
                     name: photo.name,
+                    type: photo.category === "video" ? (photo.type?.startsWith("video/") ? photo.type : "video/unknown") : photo.type,
                     options: {
                         nick: chatPath,
                         id: String(photo.message_id),
