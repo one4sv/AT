@@ -30,3 +30,10 @@ test("iOS dropped files are detached from provider handles before multipart uplo
         assert.match(read(path), /materializeDroppedFiles\(/);
     }
 });
+
+test("single videos stay compact without changing their aspect ratio", () => {
+    const css = read("src/pages/Chat/scss/message.scss");
+    assert.ok(css.includes("--message-video-max-height: 38dvh;"));
+    assert.ok(css.includes("--message-video-max-width: min(70vw, 400px);"));
+    assert.ok(css.includes("calc(var(--message-video-max-height) * var(--message-video-ratio, 1.333333))"));
+});

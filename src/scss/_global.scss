@@ -114,35 +114,15 @@ body {
     display: none;
 }
 
-// Empty fixed surface for WebKit's top-edge background-color sampling.
-// The background is clipped to empty text, not painted across the status bar.
-.atStatusBarSurface {
-    display: none;
-}
-
-html[data-ios-pwa="true"] body > .atStatusBarSurface {
-    display: block;
-    position: fixed;
-    inset: 0 0 auto;
-    width: 100%;
-    height: 11px;
-    z-index: 2147483647;
-    pointer-events: none;
-    background-color: var(--bgc, #101014);
-    -webkit-background-clip: text;
-    background-clip: text;
-}
-
-
 /* iOS standalone edge-to-edge: use the stable large viewport for the
    outer canvas, not dvh or the possibly shortened visualViewport. Only
    interactive content consumes safe-area space; glass remains full bleed. */
 html[data-ios-pwa="true"] {
     --at-safe-top: env(safe-area-inset-top, 0px);
     // iOS system status-bar blur extends below the reported safe area.
-    --at-header-gap: 12px;
+    --at-header-gap: 20px;
     --at-header-top: calc(var(--at-safe-top) + var(--at-header-gap));
-    --at-page-header-gap: 0px;
+    --at-page-header-gap: 20px;
     --at-page-header-top: calc(var(--at-safe-top) + var(--at-page-header-gap));
     --at-safe-bottom: env(safe-area-inset-bottom, 0px);
     --at-bottom-dock: max(4px, var(--at-safe-bottom));
