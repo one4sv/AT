@@ -1161,3 +1161,61 @@
 .message:not(.mediaOnly) .messageFiles.documentsOnly.single > .messageFile {
     aspect-ratio: 1;
 }
+
+// Video controls own the entire player surface; message metadata is outside it.
+.message.hasVideo {
+    .messageFiles .messageFile.videoFile {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        transform: none;
+        > video.messageFilePreview {
+            display: block;
+            border: none;
+            box-shadow: none;
+            object-fit: cover;
+        }
+    }
+    .messageFiles.single > .messageFile.videoFile {
+        width: min(100%, calc(65dvh * var(--message-video-ratio, 1.333333)));
+        aspect-ratio: var(--message-video-ratio, 1.333333);
+        height: auto;
+        max-height: 65dvh;
+        > video.messageFilePreview {
+            position: static;
+            width: 100%;
+            height: auto;
+            max-height: 65dvh;
+            object-fit: contain;
+        }
+    }
+}
+.message.mediaOnly.hasVideo {
+    > .messageStatusBarDiv {
+        position: static;
+        align-self: flex-end;
+        margin: 3px 0 0 auto;
+        padding: 3px 6px;
+        width: fit-content;
+        max-width: 100%;
+        background: var(--mc);
+        border: none;
+        border-radius: 12px;
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+        .messTime, .editedMess, .messBarSvg, .messageReadSign, .reactionItem {
+            color: var(--tc);
+        }
+    }
+    &.singleMedia {
+        width: fit-content;
+        --message-video-max-width: min(40vw, 520px);
+        @media (max-width: 800px) {
+            --message-video-max-width: min(86vw, 520px);
+        }
+        > .messageFiles.single > .messageFile.videoFile {
+            width: min(var(--message-video-max-width), calc(65dvh * var(--message-video-ratio, 1.333333)));
+            max-width: 100%;
+        }
+    }
+}
