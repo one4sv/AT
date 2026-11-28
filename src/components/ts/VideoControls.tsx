@@ -99,6 +99,15 @@ export default function VideoControls({ videoRef }: { videoRef: RefObject<HTMLVi
                 <button type="button" aria-label={t("video.forward")} onClick={() => seek(state.time + 10)}><RotateCw/><span>10</span></button>
                 <span className="atVideoTime">{formatTime(state.time)} / {formatTime(state.duration)}</span>
                 <button type="button" aria-label={t(state.muted || !state.volume ? "video.unmute" : "video.mute")} onClick={mute}>{state.muted || !state.volume ? <VolumeX/> : <Volume2/>}</button>
+                <div className="atVideoVolume" role="slider" tabIndex={0} aria-label={t("video.volume")} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(state.muted ? 0 : state.volume * 100)} onKeyDown={event => {
+                    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+                    event.preventDefault(); event.stopPropagation();
+                    const video = videoRef.current;
+                    if (video) { video.muted = false; video.volume = Math.max(0, Math.min(1, video.volume + (event.key === "ArrowLeft" ? -.1 : .1))); }
+                }}><SeekBar id={id + "-volume"} min={0} max={100} value={state.muted ? 0 : state.volume * 100} disabled={false} onChange={value => {
+                    const video = videoRef.current;
+                    if (video) { video.muted = false; video.volume = value / 100; }
+                }}/></div>
                 <button type="button" aria-label={t("video.speed")} onClick={rate}>{state.rate}×</button>
                 <button type="button" aria-label={t(fullscreen ? "video.exitFullscreen" : "video.fullscreen")} onClick={() => void expand()}>{fullscreen ? <Minimize/> : <Maximize/>}</button>
             </div>
