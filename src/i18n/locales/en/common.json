@@ -1051,9 +1051,22 @@
     "confirm": "Confirm",
     "remove": "Delete"
   },
+  "video": {
+    "play": "Play",
+    "pause": "Pause",
+    "seek": "Playback position",
+    "back": "Back 10 seconds",
+    "forward": "Forward 10 seconds",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "speed": "Playback speed",
+    "fullscreen": "Fullscreen",
+    "exitFullscreen": "Exit fullscreen",
+    "volume": "Volume"
+  },
   "imagePreview": {
-    "previous": "Previous photo",
-    "next": "Next photo",
+    "previous": "Previous media",
+    "next": "Next media",
     "toMessage": "Go to message",
     "download": "Download"
   },
