@@ -1,3 +1,4 @@
+import { videoPreviewSource } from "../../ts/utils/videoPlayback";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "framer-motion";
@@ -421,7 +422,8 @@ function ChatMediaPanel({ activeFilter, active, enabled }: { activeFilter: Exclu
                                     {item.category === "video" && (
                                         <>
                                             <video
-                                                src={item.url}
+                                                src={videoPreviewSource(item.url, "metadata")}
+                                                playsInline
                                                 preload="metadata"
                                             />
                                             <PlayIcon

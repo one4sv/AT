@@ -17,6 +17,7 @@ import ThemeHandler from './components/hooks/themeHook';
 import ContextMenu from './components/ts/ContextMenu/ContextMenu';
 import CookieConsent from './components/ts/CookieConsent';
 import { useVisualViewport } from './components/hooks/utils/VisualViewportHook';
+import { installVideoPlaybackGuard, pauseVideos } from './components/ts/utils/videoPlayback';
 const PostEditor = lazy(() => import("./pages/Post/PostEditor"));
 const PostPage = lazy(() => import("./pages/Post/PostPage"));
 const QrApprove = lazy(() => import("./pages/QrApprove"));
@@ -44,6 +45,7 @@ function StartupNavigation() {
     const { user, initialLoading } = useUser();
     const { settingsLoaded, startupPage } = useSettings();
     const checked = useRef(false);
+    useEffect(() => { pauseVideos(); }, [location.pathname]);
 
     useEffect(() => {
         if (checked.current || initialLoading || !settingsLoaded) return;
@@ -58,6 +60,7 @@ function StartupNavigation() {
 
 function App() {
     useVisualViewport();
+    useEffect(() => installVideoPlaybackGuard(), []);
 
     return (
         <Router>

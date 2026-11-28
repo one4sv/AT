@@ -262,6 +262,8 @@
     "yesterdayShort": "Yesterday",
     "pendingDeletion": "This account is pending deletion. Messages are disabled.",
     "forwardMediaFailed": "Could not prepare media for forwarding",
+    "fileLimit": "Attachments in one message must not exceed 50 MB",
+    "dropReadFailed": "Could not read the file. Select it again using the attachment button.",
     "failedMessage": "Unsent message",
     "retryMessage": "Retry sending",
     "discardFailedMessage": "Discard unsent message",

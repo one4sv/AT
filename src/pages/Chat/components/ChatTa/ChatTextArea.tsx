@@ -23,6 +23,7 @@ import { useMessages } from "../../../../components/hooks/MessagesHook";
 import { MessBarBlock } from "../../utils/MessBarBlock";
 import type { Media, message } from "../../../../components/context/ChatContext";
 import { useSendMess } from "../../../../components/hooks/SendMessHook";
+import { materializeDroppedFiles } from "../../../../components/ts/utils/fileDrop";
 import { useUser } from "../../../../components/hooks/UserHook";
 import { useNote } from "../../../../components/hooks/NoteHook";
 import EmojiButton from "../../../../components/ts/utils/EmojiButton";
@@ -1548,7 +1549,10 @@ export default function ChatTextArea({
                 onChange={e => {
                     if (!e.target.files) return;
                     const selectedFiles = Array.from(e.target.files).filter(f => f instanceof File && typeof f.type === 'string');
-                    setFiles(prev => [...prev, ...selectedFiles]);
+                    const path = window.location.pathname;
+                    void materializeDroppedFiles(selectedFiles).then(prepared => {
+                        if (window.location.pathname === path) setFiles(prev => [...prev, ...prepared]);
+                    }).catch(error => showNotification("error", tc(error?.message === "CHAT_FILE_LIMIT" ? "chatUi.fileLimit" : "chatUi.dropReadFailed")));
                     e.target.value = "";
                 }}
             />

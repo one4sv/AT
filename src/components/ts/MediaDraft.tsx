@@ -34,6 +34,7 @@ export default function MediaDraft({ files, media = [], onRemove, disabled }: Me
                         ? <video
                             src={file.url}
                             controls
+                            playsInline
                             preload="metadata"
                         />
                         : <span>

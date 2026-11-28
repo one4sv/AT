@@ -126,6 +126,7 @@ export default function Message({
     const contextReactionOpen = menu.visible && menu.point === "mess" && menu.options.id === String(m.id) && !isChose;
     const mediaOnly = !m.content?.trim() && !m.entity_type && !!m.files?.length &&
         !m.redirected_id && !m.habit_invite_habit_id && m.files.every(file => /^(image|video)\//i.test(file.type || ""));
+    const hasVideo = [...(m.files ?? []), ...(m.redirected_files ?? [])].some(file => /^video\//i.test(file.type || ""));
     const documentOnly = !m.content?.trim() && !m.entity_type && !!m.files?.length &&
         !m.redirected_id && !m.habit_invite_habit_id && m.files.every(file => !/^(image|video)\//i.test(file.type || ""));
     const entityOnly = !m.content?.trim() && !!m.entity_type && !!m.entity_id &&
@@ -274,7 +275,7 @@ export default function Message({
             </div>}
             <div
                 ref={appearRef}
-                className={`message ${isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""} ${mediaOnly ? "mediaOnly" : ""} ${documentOnly ? "documentOnly" : ""} ${entityOnly ? "entityOnly" : ""} ${mediaOnly && m.files?.length === 1 ? "singleMedia" : ""}`}
+                className={`message ${hasVideo ? "hasVideo" : ""} ${isMy ? "my" : "ur"} ${isMobile ? "mobile" : ""} ${m.isPending ? "pending" : ""} ${mediaOnly ? "mediaOnly" : ""} ${documentOnly ? "documentOnly" : ""} ${entityOnly ? "entityOnly" : ""} ${mediaOnly && m.files?.length === 1 ? "singleMedia" : ""}`}
             >
                 {!isMy && (showNames === undefined || showNames === true) && chatWith?.is_group && <div
                     className="senderName"
