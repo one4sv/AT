@@ -1341,7 +1341,7 @@ export default function ChatTextArea({
                         </div>
                         <div className="chatFailedDraftActions">
                             <button type="button" disabled={retryingFailedId !== null} onClick={() => retryFailedDraft(draft)}>{tc("chatUi.retryMessage")}</button>
-                            <button type="button" disabled={retryingFailedId === draft.key} aria-label={tc("chatUi.discardFailedMessage")} onClick={() => removeFailedDraft(draft.key)}><X size={18}/></button>
+                            <button type="button" className="chatFailedDraftClose" disabled={retryingFailedId === draft.key} aria-label={tc("chatUi.discardFailedMessage")} onClick={() => removeFailedDraft(draft.key)}><X size={18}/></button>
                         </div>
                     </div>
                 ))}

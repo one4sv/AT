@@ -46,7 +46,8 @@
     @media (max-width:800px) {
         min-width: 92vw;
         padding: 1vh 3vw;
-        height: 5dvh;
+        min-height: 5dvh;
+        height: auto;
         top: 0.5dvh;
     }
 }
@@ -85,3 +86,10 @@
 .settingAppliedText { display: flex; flex-direction: column; flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .settingAppliedText > span { font-size: 13px; color: var(--borderWh); }
 .settingAppliedNotification > button { flex-shrink: 0; border: none; border-radius: 18px; padding: 8px 12px; background: var(--interact); color: var(--accent_text); font: inherit; cursor: pointer; }
+
+// Toasts must remain below the system status bar, including its blur edge.
+@media (max-width: 800px) {
+    html[data-ios-pwa="true"] :is(.notification, .settingAppliedNotification) {
+        top: calc(var(--at-header-top, env(safe-area-inset-top, 0px)) + .5dvh);
+    }
+}
