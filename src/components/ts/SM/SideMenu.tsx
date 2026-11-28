@@ -234,14 +234,12 @@ export default function SideMenu() {
         let suppressClickUntil = 0;
 
         const start = (event: TouchEvent) => {
-            const target = event.target instanceof Element ? event.target : null;
-            // The iOS experiment moves SMheader directly into body.
-            if (!target || (!layout.contains(target) && !target.closest("body > .smHeader"))) return;
             if (tracking) {
                 touchHandlers.current.blockGesture();
                 return;
             }
             suppressClickUntil = 0;
+            const target = event.target instanceof Element ? event.target : null;
             if (!touchHandlers.current.showSideMenu || !target?.closest(".sideMenu, .smHeader, .SMnavDiv")) return;
             tracking = true;
             touchHandlers.current.handleTouchStart(event);
@@ -259,26 +257,24 @@ export default function SideMenu() {
             if (tracking) touchHandlers.current.blockGesture();
         };
         const click = (event: Event) => {
-            const target = event.target instanceof Element ? event.target : null;
-            if (target && (layout.contains(target) || target.closest("body > .smHeader")) &&
-                event instanceof MouseEvent && event.detail > 0 && performance.now() < suppressClickUntil) {
+            if (event instanceof MouseEvent && event.detail > 0 && performance.now() < suppressClickUntil) {
                 event.preventDefault();
                 event.stopPropagation();
             }
         };
 
-        document.addEventListener("touchstart", start, true);
-        document.addEventListener("touchmove", move, { capture: true, passive: false });
-        document.addEventListener("touchend", end, true);
-        document.addEventListener("touchcancel", end, true);
-        document.addEventListener("click", click, true);
+        layout.addEventListener("touchstart", start, true);
+        layout.addEventListener("touchmove", move, { capture: true, passive: false });
+        layout.addEventListener("touchend", end, true);
+        layout.addEventListener("touchcancel", end, true);
+        layout.addEventListener("click", click, true);
         window.addEventListener("at-context-gesture-start", contextStart);
         return () => {
-            document.removeEventListener("touchstart", start, true);
-            document.removeEventListener("touchmove", move, true);
-            document.removeEventListener("touchend", end, true);
-            document.removeEventListener("touchcancel", end, true);
-            document.removeEventListener("click", click, true);
+            layout.removeEventListener("touchstart", start, true);
+            layout.removeEventListener("touchmove", move, true);
+            layout.removeEventListener("touchend", end, true);
+            layout.removeEventListener("touchcancel", end, true);
+            layout.removeEventListener("click", click, true);
             window.removeEventListener("at-context-gesture-start", contextStart);
             if (tracking) touchHandlers.current.finishTouch(true);
         };
