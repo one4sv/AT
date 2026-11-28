@@ -43,6 +43,7 @@ export interface BlackoutContextType {
 }
 export interface BlackoutImage {
     url: string;
+    type?: string;
     name?: string;
     options?: { id?: string; nick?: string; name?: string; url?: string; link?: string };
     sender?: { id?: string; nick?: string; name?: string; url?: string };
