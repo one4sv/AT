@@ -1,6 +1,8 @@
 import { createContext, useEffect, useState } from "react";
 import { type ReactNode } from "react"
-import { getDroppedFiles, hasFileDrop } from "../ts/utils/fileDrop";
+import { getDroppedFiles, hasFileDrop, materializeDroppedFiles } from "../ts/utils/fileDrop";
+import { useNote } from "../hooks/NoteHook";
+import { useTranslation } from "react-i18next";
 const DropContext = createContext<DropContextType | null>(null);
 
 export interface DropContextType {
@@ -13,6 +15,8 @@ export interface DropContextType {
     handleDragLeave: (e: React.DragEvent<HTMLDivElement>) => void,
 }
 export const DropProvider = ({children} : {children : ReactNode}) => {
+    const { showNotification } = useNote();
+    const { t } = useTranslation("common");
     const [ droppedFiles, setDroppedFiles ] = useState<File[]>([])
     const [ isDragging, setIsDragging ] = useState(false);
 
@@ -54,7 +58,10 @@ export const DropProvider = ({children} : {children : ReactNode}) => {
         e.preventDefault();
         e.stopPropagation();
         if (droppedFiles.length > 0) {
-            setDroppedFiles(prev => [...prev, ...droppedFiles]);
+            const path = window.location.pathname;
+            void materializeDroppedFiles(droppedFiles).then(files => {
+                if (window.location.pathname === path) setDroppedFiles(prev => [...prev, ...files]);
+            }).catch(error => showNotification("error", t(error?.message === "CHAT_FILE_LIMIT" ? "chatUi.fileLimit" : "chatUi.dropReadFailed")));
         }
         setIsDragging(false)
     };
