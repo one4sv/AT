@@ -1,3 +1,4 @@
+import { videoPreviewSource } from "../../../components/ts/utils/videoPlayback";
 import { X } from "@phosphor-icons/react";
 import { useEffect, useState, type MouseEvent } from "react";
 import GetIconByType from "../../Chat/utils/getIconByType";
@@ -24,8 +25,8 @@ function PostVideoPreview({ src, preload }: { src: string; preload: "metadata" |
 
     return <>
         {pending && <span className="skeletonBlock messageFileSkeleton" aria-hidden="true"/>}
-        <video src={src} className={`postFilePreview${pending ? " messageMediaPending" : ""}`}
-            preload={preload} controls onLoadedMetadata={() => setResolved(true)}
+        <video src={videoPreviewSource(src, preload)} className={`postFilePreview${pending ? " messageMediaPending" : ""}`}
+            preload={preload} controls playsInline onLoadedData={() => setResolved(true)} onPlay={() => setResolved(true)}
             onError={() => setResolved(true)}/>
     </>;
 }
@@ -136,7 +137,7 @@ export default function AccPostMedia({
                                             onClick={event => openImage(file, event)}
                                         />
                                     ) : isVideo ? (
-                                        <video src={file.url} className="postFilePreview" preload="metadata" controls />
+                                        <video src={file.url} className="postFilePreview" preload="metadata" controls playsInline />
                                     ) : (
                                         <div className="postFileOther">
                                             {GetIconByType(fileName, file.type)}
@@ -161,7 +162,7 @@ export default function AccPostMedia({
                                     {isImage ? (
                                         <img src={previewUrl} alt={file.name} className="postFilePreview" />
                                     ) : isVideo ? (
-                                        <video src={previewUrl} className="postFilePreview" preload="metadata" controls />
+                                        <video src={previewUrl} className="postFilePreview" preload="metadata" controls playsInline />
                                     ) : (
                                         <div className="postFileOther">
                                             {GetIconByType(file.name, file.type)}
