@@ -422,10 +422,20 @@ export const roadmapFuture: RoadmapRelease[] = [
         ]
     },
     {
+        version: "0.6.9",
+        title: "Chronicle",
+        features: [
+            { ru: "Журнал 2.0 — записи по дням, медиа и история участников.", en: "Journal 2.0 — daily entries, media and participant history." },
+            { ru: "Достижения, рекорды и серии выполнений.", en: "Achievements, records and completion streaks." },
+            { ru: "Еженедельные итоги и расширенная общая статистика.", en: "Weekly summaries and expanded overall statistics." },
+            { ru: "Карточки достижений и статистики для публикаций и пересылки.", en: "Shareable achievement and statistics cards." },
+            { ru: "Управление активностями непосредственно из чата.", en: "Manage activities directly from chats." },
+            { ru: "Стабилизация перед 0.7.", en: "Stabilization ahead of 0.7." }
+        ]
+    },
+    {
         version: "0.6+",
         features: [
-            { ru: "Карточки активностей и действия внутри чатов", en: "Activity cards and actions in chats" },
-            { ru: "Достижения и расширенные отчёты", en: "Achievements and expanded reports" },
             { ru: "Развитие комментариев и ответов", en: "Expanded comments and replies" },
             { ru: "Улучшения поиска и связанных настроек", en: "Search and linked settings improvements" },
             { ru: "Дальнейшее развитие сообщества и чатов", en: "Further community and chat features" }
