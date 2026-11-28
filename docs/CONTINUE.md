@@ -13,3 +13,5 @@
 | Цели | [Спецификация](GOALS.md) и [ONE4SV-16](https://linear.app/atone4sv/issue/ONE4SV-16). Функция реализуется внутри `/habit` через штатный Blackout, остаётся отдельный QA |
 
 Состав текущего обновления 0.6.7 /arsenal приведён в [CHANGELOG.md](CHANGELOG.md#067-arsenal). Справочник команд и обмен объектами требуют авторизованной приёмки; статус QA не менялся.
+
+| Голосовые и видеокружочки 0.6.8 | [ONE4SV-102](https://linear.app/atone4sv/issue/ONE4SV-102/068-golosovye-soobshcheniya-i-videokruzhochki) — запись, координация audio/video, контекстки, настройки, приёмка; план, без реализации записи. |
