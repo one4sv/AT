@@ -1,5 +1,7 @@
 import { useLayoutEffect, useRef, type TextareaHTMLAttributes, type RefObject } from "react";
-import { getDroppedFiles, hasFileDrop } from "./utils/fileDrop";
+import { getDroppedFiles, hasFileDrop, materializeDroppedFiles } from "./utils/fileDrop";
+import { useNote } from "../hooks/NoteHook";
+import { useTranslation } from "react-i18next";
 
 interface TAProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
     taRef?: RefObject<HTMLTextAreaElement | null>;
@@ -21,6 +23,8 @@ export default function TA({
     onDrop,
     ...props
 }: TAProps) {
+    const { showNotification } = useNote();
+    const { t } = useTranslation("common");
     const localRef = useRef<HTMLTextAreaElement>(null);
     const ref = taRef || localRef;
 
@@ -102,7 +106,10 @@ export default function TA({
                 if (!files.length) return;
                 event.preventDefault();
                 event.stopPropagation();
-                onFiles(files);
+                const path = window.location.pathname;
+                void materializeDroppedFiles(files).then(prepared => {
+                    if (window.location.pathname === path) onFiles(prepared);
+                }).catch(error => showNotification("error", t(error?.message === "CHAT_FILE_LIMIT" ? "chatUi.fileLimit" : "chatUi.dropReadFailed")));
             }}
         />
     );
