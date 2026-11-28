@@ -1,0 +1,65 @@
+.atVideoControls {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    color: #fff;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .15s ease;
+    &.paused, &:focus-within { opacity: 1; }
+    button {
+        position: relative;
+        pointer-events: auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        gap: 2px;
+        border: 0;
+        border-radius: 50%;
+        background: #1119;
+        color: inherit;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+        > svg { width: 17px; height: 17px; flex: none; }
+        > span { font-size: 9px; position: absolute; }
+        &:hover { background: #111d; }
+    }
+    .atVideoCenter {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 46px;
+        height: 46px;
+        > svg { width: 24px; height: 24px; }
+    }
+    .atVideoBottom {
+        position: absolute;
+        inset: auto 0 0;
+        padding: 8px 6px 5px;
+        background: linear-gradient(transparent, #111c);
+        pointer-events: auto;
+    }
+    .atVideoTimeline {
+        width: 100%;
+        .seekBarWrapper { background: transparent; padding: 8px 4px; box-sizing: border-box; }
+        .seekBarLine { width: 100%; background: #fff5; }
+        .seekBarHoverValue, .seekBarCurrent { display: none; }
+    }
+    .atVideoActions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2px; }
+    .atVideoTime { font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+}
+.messageFile.videoFile:hover > .atVideoControls,
+.imgPrevVideo:hover > .atVideoControls { opacity: 1; }
+.messageFile.videoFile:fullscreen, .imgPrevVideo:fullscreen {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    background: #000 !important;
+    > video { width: 100% !important; height: 100% !important; max-height: none !important; object-fit: contain !important; }
+}
