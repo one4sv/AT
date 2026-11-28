@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { videoPreviewSource } from "../../../components/ts/utils/videoPlayback";
+import { firstFramePoster, videoPreviewSource } from "../../../components/ts/utils/videoPlayback";
 import type { Media, message } from "../../../components/context/ChatContext";
 import { useTranslation } from "react-i18next";
 import { useBlackout } from "../../../components/hooks/BlackoutHook";
@@ -14,21 +14,32 @@ import "../../../scss/Loading.scss";
 function MessageVideoPreview({ src, preload }: { src: string; preload: "metadata" | "none" }) {
     const [resolved, setResolved] = useState(false);
     const [ratio, setRatio] = useState(4 / 3);
+    const [poster, setPoster] = useState<string | undefined>();
+    const showFirstFrame = (video: HTMLVideoElement) => {
+        setResolved(true);
+        if (!poster && video.paused && video.currentTime < .1) {
+            const frame = firstFramePoster(video);
+            if (frame) setPoster(frame);
+        }
+    };
 
     return <>
         {preload === "metadata" && !resolved && <span className="skeletonBlock messageFileSkeleton" aria-hidden="true"/>}
         <video src={videoPreviewSource(src, preload)} className={`messageFilePreview${preload === "metadata" && !resolved ? " messageMediaPending" : ""}`}
-            preload={preload} controls playsInline
+            preload={preload} controls playsInline poster={poster}
             style={{ aspectRatio: ratio }}
             onLoadedMetadata={event => {
                 const video = event.currentTarget;
+                // Keep controls usable even if Safari defers frame decoding.
+                setResolved(true);
                 if (video.videoWidth && video.videoHeight) {
                     const nextRatio = video.videoWidth / video.videoHeight;
                     setRatio(nextRatio);
                     video.parentElement?.style.setProperty("--message-video-ratio", String(nextRatio));
                 }
             }}
-            onLoadedData={() => setResolved(true)}
+            onLoadedData={event => showFirstFrame(event.currentTarget)}
+            onSeeked={event => showFirstFrame(event.currentTarget)}
             onPlay={() => setResolved(true)} onError={() => setResolved(true)}/>
     </>;
 }
