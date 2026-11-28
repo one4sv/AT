@@ -6,9 +6,11 @@ import { useMessages } from "../hooks/MessagesHook";
 import { isMobile } from "react-device-detect";
 import "../../scss/blackout.scss";
 import { useChat } from "../hooks/ChatHook";
+import { pauseVideos } from "./utils/videoPlayback";
 
 export default function Blackout() {
     const { blackout, blackoutStack, setBlackout } = useBlackout();
+    useEffect(() => { if (blackout.seted) pauseVideos(); }, [blackout.seted, blackoutStack.length, blackout.module]);
     const { redirect, setRedirect, setForwardPost, setForwardMedia, chosenMess, setChosenMess } = useMessages();
     const { setActiveHeader } = useChat();
 
