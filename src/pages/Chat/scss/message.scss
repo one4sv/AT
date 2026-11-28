@@ -1164,6 +1164,10 @@
 
 // Video controls own the entire player surface; message metadata is outside it.
 .message.hasVideo {
+    --message-video-max-height: min(45dvh, 400px);
+    @media (max-width: 800px) {
+        --message-video-max-height: 38dvh;
+    }
     .messageFiles .messageFile.videoFile {
         background: transparent;
         border: none;
@@ -1177,15 +1181,15 @@
         }
     }
     .messageFiles.single > .messageFile.videoFile {
-        width: min(100%, calc(65dvh * var(--message-video-ratio, 1.333333)));
+        width: min(100%, calc(var(--message-video-max-height) * var(--message-video-ratio, 1.333333)));
         aspect-ratio: var(--message-video-ratio, 1.333333);
         height: auto;
-        max-height: 65dvh;
+        max-height: var(--message-video-max-height);
         > video.messageFilePreview {
             position: static;
             width: 100%;
             height: auto;
-            max-height: 65dvh;
+            max-height: var(--message-video-max-height);
             object-fit: contain;
         }
     }
@@ -1209,12 +1213,12 @@
     }
     &.singleMedia {
         width: fit-content;
-        --message-video-max-width: min(40vw, 520px);
+        --message-video-max-width: min(32vw, 400px);
         @media (max-width: 800px) {
-            --message-video-max-width: min(86vw, 520px);
+            --message-video-max-width: min(70vw, 400px);
         }
         > .messageFiles.single > .messageFile.videoFile {
-            width: min(var(--message-video-max-width), calc(65dvh * var(--message-video-ratio, 1.333333)));
+            width: min(var(--message-video-max-width), calc(var(--message-video-max-height) * var(--message-video-ratio, 1.333333)));
             max-width: 100%;
         }
     }
