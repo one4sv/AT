@@ -143,6 +143,11 @@ export default function MobileLayout({ children }: LayoutProps) {
         location.pathname.startsWith("/habit/") ||
         location.pathname.startsWith("/wallpapers");
 
+    // Leave the keyboard and Wallpaper Studio in their existing stacking
+    // contexts. Normal standalone headers can live outside the clipped root.
+    const portalHeaders = isMobile && isIosStandalone() && !keyboardWallpaper &&
+        !location.pathname.startsWith("/wallpapers");
+
     const backgroundWidth =
         decor === "glass"
             ? `calc(${Math.max(0, 100 + translateX)}% - ${15 * Math.pow(Math.max(0, 100 - Math.max(0, 100 + translateX)) / 100, 0.25)}px)`
@@ -171,7 +176,7 @@ export default function MobileLayout({ children }: LayoutProps) {
             }}
         >
             {keyboardWallpaper && createPortal(<div className="atKeyboardWallpaper" aria-hidden="true"><Background/></div>, document.body)}
-            {!hideHeader && <Header />}
+            {!hideHeader && (portalHeaders ? createPortal(<Header />, document.body) : <Header />)}
 
             {isMobile && decor === "glass" ? (
                 <div
@@ -183,7 +188,7 @@ export default function MobileLayout({ children }: LayoutProps) {
             ) : null}
 
             {<>
-                <SMheader/>
+                {portalHeaders ? createPortal(<SMheader isolatedLayer />, document.body) : <SMheader />}
                 <SideMenu />
                 <SMnav />
             </>}

@@ -150,7 +150,7 @@ html[data-ios-pwa="true"] {
         }
 
         // Extend the existing top glass, not the entire page's content.
-        .mobile-layout .headerDiv {
+        :is(.mobile-layout .headerDiv, body > .headerDiv) {
             height: calc(7dvh + var(--at-page-header-top));
             padding-top: calc(1vh + var(--at-page-header-top));
             &.hide {
@@ -172,7 +172,7 @@ html[data-ios-pwa="true"] {
 
         // A sibling glass surface samples the scrolling list at z-index 8
         // while the header foreground at the same z-index paints after it.
-        .mobile-layout > .smHeaderBackdrop {
+        :is(.mobile-layout > .smHeaderBackdrop, body > .smHeaderBackdrop) {
             display: block;
             position: absolute;
             top: 0;
@@ -188,7 +188,7 @@ html[data-ios-pwa="true"] {
             -webkit-mask-image: linear-gradient(to bottom, black 0%, black 30%, rgba(0, 0, 0, .65) 70%, transparent 100%);
         }
 
-        .mobile-layout > .smHeader {
+        :is(.mobile-layout > .smHeader, body > .smHeader) {
             top: 0;
             height: calc(4dvh + var(--at-header-top));
             padding-top: var(--at-header-top);
@@ -210,6 +210,36 @@ html[data-ios-pwa="true"] {
                 // a second blur surface inside the header foreground.
                 content: none;
             }
+        }
+
+        // Body portals are independent of #root overflow and transforms.
+        // Keep the logical ordering: page (0), Header (6), SM (8),
+        // SM glass (9), SM foreground (10), Blackout (11), context menus (1000).
+        body > .headerDiv {
+            position: fixed;
+            isolation: isolate;
+            transform: translateZ(0);
+            z-index: 6;
+        }
+
+        body > .smHeaderBackdrop,
+        body > .smHeader {
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        body > .smHeader {
+            isolation: isolate;
+            z-index: 10;
+        }
+
+        // Custom route headers remain inside their gesture/scroll container.
+        .mobile-layout .page-content .headerDiv {
+            isolation: isolate;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            will-change: transform;
         }
 
         .mobile-layout > .sideMenu,
