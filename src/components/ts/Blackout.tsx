@@ -239,7 +239,7 @@ export default function Blackout() {
             return;
         }
         // Controls never own the swipe-down-to-dismiss gesture.
-        if (target.closest(".selector, button, input, textarea, select, [role='button']")) {
+        if (target.closest(".selector, .atVideoControls, video, button, input, textarea, select, [role='button']")) {
             dragging.current = false;
             canDismiss.current = false;
             return;

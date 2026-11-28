@@ -8,6 +8,20 @@ import { useMessages } from "../hooks/MessagesHook";
 import { ArrowDownToLine, ChevronLeft, ChevronRight, MessageCircleReply } from "lucide-react";
 import { UserIcon, ShareFat } from "@phosphor-icons/react";
 import useForwardMedia from "../hooks/utils/useForwardMedia";
+import VideoControls, { useDesktopVideoControls } from "../ts/VideoControls";
+import { videoPreviewSource } from "../ts/utils/videoPlayback";
+import type { BlackoutImage } from "../context/BlackoutContext";
+
+function PreviewVideo({ item, active, onClick }: { item: BlackoutImage; active: boolean; onClick: (event: React.MouseEvent) => void }) {
+    const ref = useRef<HTMLVideoElement>(null);
+    const desktop = useDesktopVideoControls();
+    return <div className="imgPrevVideo" onClick={onClick}>
+        <video ref={ref} src={videoPreviewSource(item.url, "metadata")} playsInline controls={active && !desktop} preload="metadata" muted={!active} tabIndex={active ? 0 : -1}/>
+        {active && desktop && <VideoControls videoRef={ref}/>}
+    </div>;
+}
+
+const isVideo = (item: BlackoutImage) => item.type?.startsWith("video/") || /\.(mp4|mov|webm|m4v|ogv)(?:[?#]|$)/i.test(item.url);
 
 export default function ImgPrev() {
     const { t } = useTranslation("common");
@@ -30,7 +44,7 @@ export default function ImgPrev() {
     const dragX = useMotionValue(0);
     const sliderRef = useRef<HTMLDivElement>(null);
 
-    const currentImages = images?.length
+    const currentImages: BlackoutImage[] = images?.length
         ? images
         : [{ url: blackout.img ?? "", name, options: blackout.options, sender }];
 
@@ -100,6 +114,7 @@ export default function ImgPrev() {
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.defaultPrevented || (event.target instanceof Element && event.target.closest(".atVideoControls, video"))) return;
             if (event.key === "ArrowLeft") changeImage(-1);
             if (event.key === "ArrowRight") changeImage(1);
             if (event.key === "Escape") setBlackout({ seted: false });
@@ -126,6 +141,11 @@ export default function ImgPrev() {
 
     const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
         if (currentImages.length < 2 || changing.current) return;
+        if (event.target instanceof Element) {
+            if (event.target.closest(".atVideoControls, button")) return;
+            const video = event.target.closest("video");
+            if (video && event.touches[0].clientY > video.getBoundingClientRect().bottom - 55) return;
+        }
 
         touchStartX.current = event.touches[0].clientX;
         touchStartY.current = event.touches[0].clientY;
@@ -231,23 +251,23 @@ export default function ImgPrev() {
                                     opacity: { duration: 0.2 }
                                 }}
                             >
-                                <img
+                                {isVideo(image) ? <PreviewVideo item={image} active={offset === 0} onClick={handleImageClick}/> : <img
                                     src={image.url}
                                     alt={image.name || ""}
                                     draggable={false}
                                     onClick={handleImageClick}
-                                />
+                                />}
                             </motion.div>
                         );
                     })
                 ) : (
                     <div className="imgPrevSlide active">
-                        <img
+                        {isVideo(currentImages[0]) ? <PreviewVideo key={currentImages[0].url} item={currentImages[0]} active onClick={handleImageClick}/> : <img
                             src={blackout.img}
                             alt={name || ""}
                             draggable={false}
                             onClick={handleImageClick}
-                        />
+                        />}
                     </div>
                 )}
             </div>
@@ -291,7 +311,8 @@ export default function ImgPrev() {
                         title={t("chatMenu.forward")}
                         onClick={() => forwardMedia({
                             url: blackout.img!,
-                            name: name || "image"
+                            name: name || "media",
+                            type: currentImages[imageIndex]?.type
                         })}
                     >
                         <ShareFat size={22} />

@@ -6,7 +6,7 @@ const read = path => readFileSync(new URL("../" + path, import.meta.url), "utf8"
 test("chat videos play inline, retain first frame and reserve a separate status row", () => {
     const view = read("src/pages/Chat/utils/MessageFiles.tsx");
     const css = read("src/pages/Chat/scss/message.scss");
-    assert.match(view, /controls playsInline poster=\{poster\}/);
+    assert.match(view, /controls=\{!desktop\} playsInline poster=\{poster\}/);
     assert.match(view, /firstFramePoster/);
     assert.match(view, /video\.videoWidth \/ video\.videoHeight/);
     assert.match(css, /\.message\.mediaOnly\.hasVideo\s*\{\s*>\s*\.messageStatusBarDiv\s*\{\s*position:\s*static/);

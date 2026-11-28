@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import VideoControls, { useDesktopVideoControls } from "../../../components/ts/VideoControls";
 import { firstFramePoster, videoPreviewSource } from "../../../components/ts/utils/videoPlayback";
 import type { Media, message } from "../../../components/context/ChatContext";
 import { useTranslation } from "react-i18next";
@@ -12,6 +13,8 @@ import { useSettings } from "../../../components/hooks/SettingsHook";
 import "../../../scss/Loading.scss";
 
 function MessageVideoPreview({ src, preload }: { src: string; preload: "metadata" | "none" }) {
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const desktop = useDesktopVideoControls();
     const [resolved, setResolved] = useState(false);
     const [ratio, setRatio] = useState(4 / 3);
     const [poster, setPoster] = useState<string | undefined>();
@@ -25,8 +28,8 @@ function MessageVideoPreview({ src, preload }: { src: string; preload: "metadata
 
     return <>
         {preload === "metadata" && !resolved && <span className="skeletonBlock messageFileSkeleton" aria-hidden="true"/>}
-        <video src={videoPreviewSource(src, preload)} className={`messageFilePreview${preload === "metadata" && !resolved ? " messageMediaPending" : ""}`}
-            preload={preload} controls playsInline poster={poster}
+        <video ref={videoRef} src={videoPreviewSource(src, preload)} className={`messageFilePreview${preload === "metadata" && !resolved ? " messageMediaPending" : ""}`}
+            preload={preload} controls={!desktop} playsInline poster={poster}
             style={{ aspectRatio: ratio }}
             onLoadedMetadata={event => {
                 const video = event.currentTarget;
@@ -41,6 +44,7 @@ function MessageVideoPreview({ src, preload }: { src: string; preload: "metadata
             onLoadedData={event => showFirstFrame(event.currentTarget)}
             onSeeked={event => showFirstFrame(event.currentTarget)}
             onPlay={() => setResolved(true)} onError={() => setResolved(true)}/>
+        {desktop && <VideoControls videoRef={videoRef}/>}
     </>;
 }
 
@@ -52,7 +56,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
     const { user } = useUser()
     const { openMenu } = useContextMenu()
     
-    const imageFiles = files.filter(file => /^image\//i.test(file.type || ""));
+    const imageFiles = files.filter(file => /^(image|video)\//i.test(file.type || ""));
 
     const openImage = (file: Media) => {
         const sender = {
@@ -84,6 +88,7 @@ export default function MessageFiles({files, m} : {files:Media[], m:message}) {
             images: imageFiles.map(image => ({
                 url: image.url,
                 name: image.name,
+                type: image.type,
                 options: {
                     ...options,
                     name: image.name,
