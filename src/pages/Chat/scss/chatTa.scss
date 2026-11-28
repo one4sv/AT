@@ -450,6 +450,7 @@
 .chatFailedDraftActions {
     display: flex;
     align-items: center;
+    flex: 0 0 auto;
     gap: .5vw;
 
     > button {
@@ -467,10 +468,25 @@
         cursor: default;
     }
 
+    > .chatFailedDraftClose {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 4.5dvh;
+        height: 4.5dvh;
+        flex: 0 0 4.5dvh;
+        padding: 0;
+        border-radius: 50%;
+        > svg {
+            display: block;
+            flex: none;
+        }
+    }
+
     @media (max-width: 800px) {
         gap: 1vw;
 
-        > button {
+        > button:not(.chatFailedDraftClose) {
             padding: 1dvh 2vw;
         }
     }
